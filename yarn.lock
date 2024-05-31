@@ -4085,7 +4085,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^5.17.15":
+"@tanstack/query-persist-client-core@npm:5.40.0":
+  version: 5.40.0
+  resolution: "@tanstack/query-persist-client-core@npm:5.40.0"
+  dependencies:
+    "@tanstack/query-core": 5.40.0
+  checksum: 8bd423a50336c024df1c8a94024fe3b5a3d954458e084bfcd9ee1e1444a70e1e0c1530d47c8561c406a17a44c380863f7b44bdb4816c343cfaee12179118d65f
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-sync-storage-persister@npm:^5.18.1":
+  version: 5.40.0
+  resolution: "@tanstack/query-sync-storage-persister@npm:5.40.0"
+  dependencies:
+    "@tanstack/query-core": 5.40.0
+    "@tanstack/query-persist-client-core": 5.40.0
+  checksum: d09201c0383f558d5ee9de63b2aa1d67d0525d76d5d8fa80cd18a0867a852194e12749cab9dca91c42b2301a1259e5e6f53a90dff88802e1157c13abdddabff9
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-persist-client@npm:^5.18.1":
+  version: 5.40.0
+  resolution: "@tanstack/react-query-persist-client@npm:5.40.0"
+  dependencies:
+    "@tanstack/query-persist-client-core": 5.40.0
+  peerDependencies:
+    "@tanstack/react-query": ^5.40.0
+    react: ^18 || ^19
+  checksum: 9c630ec959751b9fa49259dfeb6e1174e4be12c20c8df8364eb742ba3a5329c53ea434e0aa67629ff43129ebc52478a7b75e1737079c3a20b6e1bb0fd743bbc6
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.17.15, @tanstack/react-query@npm:^5.18.1":
   version: 5.40.0
   resolution: "@tanstack/react-query@npm:5.40.0"
   dependencies:
@@ -9452,25 +9483,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-app@workspace:examples/nextjs-app":
-  version: 0.0.0-use.local
-  resolution: "nextjs-app@workspace:examples/nextjs-app"
-  dependencies:
-    "@tanstack/react-query": ^5.17.15
-    "@types/node": ^18.19.3
-    "@types/react": ^18.2.43
-    eslint: ^8.15.0
-    eslint-config-next: ^14.0.4
-    next: ^14.0.4
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    typescript: ^5.0.4
-    viem: ^2.0.6
-    wagmi: ^2.2.1
-    widget: "workspace:packages/widget"
-  languageName: unknown
-  linkType: soft
-
 "nextjs@workspace:examples/nextjs":
   version: 0.0.0-use.local
   resolution: "nextjs@workspace:examples/nextjs"
@@ -12375,6 +12387,9 @@ __metadata:
   resolution: "widget@workspace:packages/widget"
   dependencies:
     "@interchain-ui/react": ^1.23.13
+    "@tanstack/query-sync-storage-persister": ^5.18.1
+    "@tanstack/react-query": ^5.18.1
+    "@tanstack/react-query-persist-client": ^5.18.1
     "@types/node": 18.7.18
     "@types/qrcode": ^1.4.2
     "@types/react": ^18.0.6
