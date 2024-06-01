@@ -1,5 +1,5 @@
-import { http } from "viem";
-import { createConfig } from "wagmi";
+import { http } from 'viem';
+import { createConfig } from 'wagmi';
 import {
   arbitrum,
   arbitrumSepolia,
@@ -23,7 +23,7 @@ import {
   polygon,
   polygonMumbai,
   sepolia,
-} from "wagmi/chains";
+} from 'wagmi/chains';
 
 // Update EVM_CHAINS in src/constants/wagmi.ts as well
 export const config = createConfig({
@@ -75,4 +75,5 @@ export const config = createConfig({
     [blast.id]: http(),
     [blastSepolia.id]: http(),
   },
+  ssr: true,
 });

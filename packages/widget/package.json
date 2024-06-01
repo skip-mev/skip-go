@@ -40,14 +40,21 @@
   "resolutions": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "viem": "^2.0.6",
-    "wagmi": "^2.2.1",
+    "viem": "^2.7.16",
+    "wagmi": "^2.5.7",
     "@graz-sh/types": "0.0.14"
   },
   "dependencies": {
     "@interchain-ui/react": "^1.23.13",
+    "@skip-router/core": "^4.1.1",
+    "@solana/spl-token": "^0.4.6",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.91.8",
     "@tanstack/query-sync-storage-persister": "^5.18.1",
     "@tanstack/react-query": "^5.18.1",
-    "@tanstack/react-query-persist-client": "^5.18.1"
+    "@tanstack/react-query-persist-client": "^5.18.1",
+    "react-hot-toast": "^2.4.1",
+    "zustand": "^4.5.2"
   }
 }

@@ -1,13 +1,13 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 
-import { Provider } from 'widget';
+import { WidgetProvider } from 'widget';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider>
+    <WidgetProvider>
       <Component {...pageProps} />
-    </Provider>
+    </WidgetProvider>
   );
 }
 
