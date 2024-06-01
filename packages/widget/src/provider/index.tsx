@@ -8,7 +8,10 @@ import { AssetsProvider } from './assets';
 interface WalletProviderProps {
   children: React.ReactNode;
 }
-interface SkipProviderProps {
+interface WidgetProviderProps {
+  children: React.ReactNode;
+}
+interface SkipAPIProviderProps {
   children: React.ReactNode;
 }
 
@@ -22,7 +25,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   );
 };
 
-export const SkipAPIProvider: React.FC<SkipProviderProps> = ({ children }) => {
+export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
+  children,
+}) => {
   return (
     <SkipProvider>
       <AssetsProvider>{children}</AssetsProvider>
@@ -30,7 +35,7 @@ export const SkipAPIProvider: React.FC<SkipProviderProps> = ({ children }) => {
   );
 };
 
-export const WidgetProvider: React.FC<SkipProviderProps> = ({ children }) => {
+export const WidgetProvider: React.FC<WidgetProviderProps> = ({ children }) => {
   return (
     <WalletProvider>
       <SkipAPIProvider>{children}</SkipAPIProvider>
