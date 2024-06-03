@@ -1,7 +1,7 @@
 import React from 'react';
-import { CosmosProvider } from './cosmos';
-import { EVMProvider } from './evm';
-import { SolanaProvider } from './solana';
+import { CosmosProvider } from './wallet/cosmos';
+import { EVMProvider } from './wallet/evm';
+import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
 

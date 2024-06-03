@@ -1,8 +1,8 @@
-import { ChainProvider } from "@cosmos-kit/react";
-import React, { ComponentProps } from "react";
+import { ChainProvider } from '@cosmos-kit/react';
+import React, { ComponentProps } from 'react';
 
-import { getAssetLists, getChains } from "../chains";
-import { wallets } from "../lib/cosmos-kit";
+import { getAssetLists, getChains } from '../../chains';
+import { wallets } from '../../lib/cosmos-kit';
 interface CosmosProviderProps {
   children: React.ReactNode;
 }
@@ -10,8 +10,8 @@ interface CosmosProviderProps {
 type ChainProviderProps = ComponentProps<typeof ChainProvider>;
 
 export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
-  const chains = getChains() as ChainProviderProps["chains"];
-  const assets = getAssetLists() as ChainProviderProps["assetLists"];
+  const chains = getChains() as ChainProviderProps['chains'];
+  const assets = getAssetLists() as ChainProviderProps['assetLists'];
   return (
     <ChainProvider
       chains={chains}
@@ -22,7 +22,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
       sessionOptions={{
         duration: 1000 * 60 * 60 * 24, // 1 day
       }}
-      key={"skip-widget-chain-provider"}
+      key={'skip-widget-chain-provider'}
     >
       {children}
     </ChainProvider>

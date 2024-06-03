@@ -1,5 +1,5 @@
 import { WalletProvider } from '@solana/wallet-adapter-react';
-import { solanaWallets } from '../lib/solana-adapter';
+import { solanaWallets } from '../../lib/solana-adapter';
 
 interface SolanaProviderProps {
   children: React.ReactNode;
