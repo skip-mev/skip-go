@@ -25,6 +25,8 @@ import {
   sepolia,
 } from 'wagmi/chains';
 
+import { forma, formaTestnet } from './viem/chains';
+
 // Update EVM_CHAINS in src/constants/wagmi.ts as well
 export const config = createConfig({
   chains: [
@@ -74,6 +76,8 @@ export const config = createConfig({
     [arbitrumSepolia.id]: http(),
     [blast.id]: http(),
     [blastSepolia.id]: http(),
+    [forma.id]: http(),
+    [formaTestnet.id]: http(),
   },
   ssr: true,
 });

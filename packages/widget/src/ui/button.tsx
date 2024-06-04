@@ -1,4 +1,8 @@
+import { useSwapWidget } from '../hooks/use-swap-widget';
+
 export const WidgetButton = () => {
+  const test = useSwapWidget();
+  console.log(test);
   return (
     <div className="flex flex-col font-jost">
       <p className="text-blackA8 ">this component using tailwind</p>
