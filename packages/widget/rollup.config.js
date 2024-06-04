@@ -1,5 +1,6 @@
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
+import postcss from 'rollup-plugin-postcss';
 
 import packageJson from './package.json';
 
@@ -13,6 +14,16 @@ export default [
       sourcemap: true,
     },
     plugins: [
+      postcss({
+        config: {
+          path: './postcss.config.js',
+        },
+        extensions: ['.css'],
+        minimize: true,
+        inject: {
+          insertAt: 'top',
+        },
+      }),
       peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
