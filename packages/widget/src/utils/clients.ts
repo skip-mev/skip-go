@@ -4,13 +4,15 @@ import { accountParser } from 'kujira.js';
 
 const STARGATE_CLIENTS: Record<string, StargateClient> = {};
 
-export async function getStargateClientForChainID(chainID: string) {
+export async function getStargateClientForChainID(
+  chainID: string,
+  rpcURL: string
+) {
   if (STARGATE_CLIENTS[chainID]) {
     return STARGATE_CLIENTS[chainID];
   }
 
-  const endpoint = `TODO`;
-  const client = await StargateClient.connect(endpoint, {
+  const client = await StargateClient.connect(rpcURL, {
     accountParser,
   });
 
@@ -19,13 +21,15 @@ export async function getStargateClientForChainID(chainID: string) {
 
 const COSMWASM_CLIENTS: Record<string, CosmWasmClient> = {};
 
-export async function getCosmWasmClientForChainID(chainID: string) {
+export async function getCosmWasmClientForChainID(
+  chainID: string,
+  rpcURL: string
+) {
   if (COSMWASM_CLIENTS[chainID]) {
     return COSMWASM_CLIENTS[chainID];
   }
 
-  const endpoint = `TODO`;
-  const client = await CosmWasmClient.connect(endpoint);
+  const client = await CosmWasmClient.connect(rpcURL);
 
   return (COSMWASM_CLIENTS[chainID] = client), client;
 }

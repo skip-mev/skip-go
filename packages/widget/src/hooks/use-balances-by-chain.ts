@@ -6,7 +6,7 @@ import { createPublicClient, erc20Abi, http, PublicClient } from 'viem';
 
 import { multicall3ABI } from '../constants/abis';
 import { Chain } from './use-chains';
-import { useSkipClient } from './use-skip-client';
+import { useSkipClient, useSkipConfig } from './use-skip-client';
 import { EVM_CHAINS } from '../constants/wagmi';
 import {
   getCosmWasmClientForChainID,
@@ -26,12 +26,12 @@ export function useBalancesByChain({
   chain,
   assets,
   enabled = true,
-  solanaRpcUrl,
 }: Args) {
   // const publicClient = usePublicClient({
   //   chainId: chain?.chainType === "evm" ? parseInt(chain.chainID) : undefined,
   // });
   const skipClient = useSkipClient();
+  const config = useSkipConfig();
 
   return useQuery({
     queryKey: ['USE_BALANCES_BY_CHAIN', address, chain, assets],
@@ -39,6 +39,11 @@ export function useBalancesByChain({
       if (!chain || !address) {
         return {};
       }
+      const rpcURL =
+        (await config.endpointOptions?.getRpcEndpointForChain?.(
+          chain.chainID
+        )) || config.endpointOptions?.endpoints?.[chain.chainID].rpc;
+
       if (chain.chainType === 'evm') {
         const publicClient = createPublicClient({
           chain: EVM_CHAINS.find((i) => i.id === Number(chain.chainID)),
@@ -51,12 +56,12 @@ export function useBalancesByChain({
           chain.chainID
         );
       }
-      if (chain.chainType === 'cosmos') {
-        return getBalancesByChain(address, chain.chainID, assets ?? []);
+      if (chain.chainType === 'cosmos' && rpcURL) {
+        return getBalancesByChain(rpcURL, address, chain.chainID, assets ?? []);
       }
-      if (chain.chainType === 'svm' && solanaRpcUrl) {
+      if (chain.chainType === 'svm' && rpcURL) {
         return getSvmChainBalances(
-          solanaRpcUrl,
+          rpcURL,
           address,
           chain.chainID,
           assets ?? []
@@ -68,13 +73,14 @@ export function useBalancesByChain({
 }
 
 export async function getBalancesByChain(
+  rpcURL: string,
   address: string,
   chainID: string,
   assets: Asset[]
 ) {
   const [stargate, cosmwasm] = await Promise.all([
-    getStargateClientForChainID(chainID),
-    getCosmWasmClientForChainID(chainID),
+    getStargateClientForChainID(rpcURL, chainID),
+    getCosmWasmClientForChainID(rpcURL, chainID),
   ]);
 
   const balances = await stargate.getAllBalances(address);

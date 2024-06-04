@@ -11,7 +11,12 @@ import { trackWallet } from '../store/track-wallet';
 import { gracefullyConnect, isWalletClientUsingLedger } from '../utils/wallet';
 
 export const SkipContext = createContext<
-  { skipClient: SkipRouter } | undefined
+  | {
+      skipClient: SkipRouter;
+      apiURL?: string;
+      endpointOptions?: SkipRouterOptions['endpointOptions'];
+    }
+  | undefined
 >(undefined);
 
 export function SkipProvider({
@@ -106,7 +111,7 @@ export function SkipProvider({
   });
 
   return (
-    <SkipContext.Provider value={{ skipClient }}>
+    <SkipContext.Provider value={{ skipClient, apiURL, endpointOptions }}>
       {children}
     </SkipContext.Provider>
   );
