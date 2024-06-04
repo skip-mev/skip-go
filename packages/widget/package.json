@@ -30,6 +30,8 @@
     "wagmi": "2.x"
   },
   "devDependencies": {
+    "@radix-ui/colors": "^3.0.0",
+    "@tailwindcss/forms": "^0.5.7",
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
     "@types/react": "^18.0.6",
@@ -38,6 +40,7 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.0.4"
   },
   "resolutions": {

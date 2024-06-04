@@ -3493,6 +3493,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/colors@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@radix-ui/colors@npm:3.0.0"
+  checksum: 5ac1b69df7a77525e2031c2d2948d6ef8d81c6b163809ee8e17a2138c4977678e3a9f67342595d2c88f0300f51fd2c64e24355008cda6c9db8dfd4ed3eaf9e8f
+  languageName: node
+  linkType: hard
+
 "@react-aria/breadcrumbs@npm:^3.5.13":
   version: 3.5.13
   resolution: "@react-aria/breadcrumbs@npm:3.5.13"
@@ -6088,6 +6095,17 @@ __metadata:
   dependencies:
     tslib: ^2.4.0
   checksum: 5d85e641d993264f38871bf53e7509da959cdff7646a40d876153291146b9d0aa701518546e5bfef18fa17c5944333bbeb66c2f0d7a570e8c5535d0937d76bd9
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/forms@npm:^0.5.7":
+  version: 0.5.7
+  resolution: "@tailwindcss/forms@npm:0.5.7"
+  dependencies:
+    mini-svg-data-uri: ^1.2.3
+  peerDependencies:
+    tailwindcss: ">=3.0.0 || >= 3.0.0-alpha.1"
+  checksum: 406fe102a44f89d896c9a945b705a40b926520472ffd8613d9fbfb9e63c23d600629f54096b8ba78316ce1278b79ae6070c166b820328256cf359e80f9d2146f
   languageName: node
   linkType: hard
 
@@ -13020,6 +13038,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mini-svg-data-uri@npm:^1.2.3":
+  version: 1.4.4
+  resolution: "mini-svg-data-uri@npm:1.4.4"
+  bin:
+    mini-svg-data-uri: cli.js
+  checksum: 997f1fbd8d59a70f03761e18626d335197a3479cb9d1ff75678e4b64b864d32a0b8fc18115eabde035e5299b8b4a354a78e57dd6ac10f9d604162a6170898d09
+  languageName: node
+  linkType: hard
+
 "minimalistic-assert@npm:^1.0.0, minimalistic-assert@npm:^1.0.1":
   version: 1.0.1
   resolution: "minimalistic-assert@npm:1.0.1"
@@ -16709,6 +16736,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tailwindcss-animate@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "tailwindcss-animate@npm:1.0.7"
+  peerDependencies:
+    tailwindcss: "*"
+  checksum: c1760983eb3fec0c8421e95082bf308e6845df43e2f90862386366e82545c801b26b4d189c4cd23d6915252b76d18005c8e5f591f8b119944c7fb8650d0f8bce
+  languageName: node
+  linkType: hard
+
 "tailwindcss@npm:^3.4.3":
   version: 3.4.3
   resolution: "tailwindcss@npm:3.4.3"
@@ -17758,11 +17794,13 @@ __metadata:
   resolution: "widget@workspace:packages/widget"
   dependencies:
     "@interchain-ui/react": ^1.23.13
+    "@radix-ui/colors": ^3.0.0
     "@skip-router/core": ^4.1.1
     "@solana/spl-token": ^0.4.6
     "@solana/wallet-adapter-react": ^0.15.35
     "@solana/wallet-adapter-wallets": ^0.19.32
     "@solana/web3.js": ^1.91.8
+    "@tailwindcss/forms": ^0.5.7
     "@tanstack/query-sync-storage-persister": ^5.18.1
     "@tanstack/react-query": ^5.18.1
     "@tanstack/react-query-persist-client": ^5.18.1
@@ -17775,6 +17813,7 @@ __metadata:
     postcss: ^8.4.38
     react-hot-toast: ^2.4.1
     tailwindcss: ^3.4.3
+    tailwindcss-animate: ^1.0.7
     typescript: ^5.0.4
     zustand: ^4.5.2
   peerDependencies:
