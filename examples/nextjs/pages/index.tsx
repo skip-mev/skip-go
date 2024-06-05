@@ -1,13 +1,13 @@
 import { NextPage } from 'next';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { EVMConnect } from '../components/EVMConnect';
-import { WidgetButton } from 'widget';
+import { Widget } from 'widget';
 
 const Home: NextPage = () => {
   return (
     <div>
       <EVMConnect />
-      <WidgetButton />
+      <Widget />
     </div>
   );
 };
