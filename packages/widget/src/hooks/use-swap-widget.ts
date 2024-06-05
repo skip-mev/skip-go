@@ -692,7 +692,30 @@ export function useSwapWidget() {
 
   // #endregion
 
-  // #endregion
+  const shareable = useMemo(() => {
+    const params = new URLSearchParams();
+    if (srcChain) {
+      params.set('src_chain', srcChain.chainID.toLowerCase());
+    }
+    if (srcAsset) {
+      params.set('src_asset', srcAsset.denom.toLowerCase());
+    }
+    if (dstChain) {
+      params.set('dest_chain', dstChain.chainID.toLowerCase());
+    }
+    if (dstAsset) {
+      params.set('dest_asset', dstAsset.denom.toLowerCase());
+    }
+    if (amountIn) {
+      params.set('amount_in', amountIn);
+    }
+    if (amountOut) {
+      params.set('amount_out', amountOut);
+    }
+    return {
+      link: `https://ibc.fun?${params}`,
+    };
+  }, [srcChain, srcAsset, dstChain, dstAsset, amountIn, amountOut]);
 
   /**
    * prefill source chain with {@link DEFAULT_SRC_CHAIN_ID} and trigger
@@ -751,6 +774,7 @@ export function useSwapWidget() {
     sourceFeeAsset: srcFeeAsset,
     swapPriceImpactPercent,
     usdDiffPercent,
+    shareable,
   };
 }
 

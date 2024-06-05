@@ -5,6 +5,7 @@ import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
 import { SkipRouterOptions } from '@skip-router/core';
+import { WalletModalProvider } from '../ui/WalletModal';
 
 interface WalletProviderProps {
   children: React.ReactNode;
@@ -22,7 +23,9 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   return (
     <SolanaProvider>
       <CosmosProvider>
-        <EVMProvider>{children}</EVMProvider>
+        <EVMProvider>
+          <WalletModalProvider>{children}</WalletModalProvider>
+        </EVMProvider>
       </CosmosProvider>
     </SolanaProvider>
   );
