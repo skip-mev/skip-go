@@ -298,7 +298,7 @@ export const PreviewRoute = ({
           className={cn(
             'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white',
             'outline-none transition-transform',
-            'enabled:hover:rotate-1 enabled:hover:scale-105',
+            'enabled:hover:rotate-1 enabled:hover:scale-102',
             'disabled:cursor-not-allowed disabled:opacity-75'
           )}
           onClick={() => submitMutation.mutate()}

@@ -19,7 +19,8 @@
     "start": "rollup --config rollup.config.js -w",
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "chains:generate": "tsx ./src/scripts/codegen.ts"
   },
   "peerDependencies": {
     "@graz-sh/types": "0.0.14",
@@ -52,6 +53,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.12.0",
     "typed-query-selector": "^2.11.2",
     "typescript": "^5.0.4"
   },

@@ -39,14 +39,7 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 }) => {
   return (
     <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
-      <AssetsProvider>
-        {children}
-        <Toaster
-          position={'top-right'}
-          containerClassName="font-jost"
-          toastOptions={{ duration: 1000 * 10 }}
-        />
-      </AssetsProvider>
+      <AssetsProvider>{children}</AssetsProvider>
     </SkipProvider>
   );
 };
@@ -57,7 +50,14 @@ export const WidgetProvider: React.FC<WidgetProviderProps> = ({
 }) => {
   return (
     <WalletProvider>
-      <SkipAPIProvider {...props}>{children}</SkipAPIProvider>
+      <SkipAPIProvider {...props}>
+        {children}
+        <Toaster
+          position={'top-right'}
+          containerClassName="font-jost"
+          toastOptions={{ duration: 1000 * 10 }}
+        />
+      </SkipAPIProvider>
     </WalletProvider>
   );
 };
