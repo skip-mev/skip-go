@@ -21,6 +21,7 @@ import { UsdDiff } from './UsdValue';
 import { useAccount } from '../hooks/use-account';
 import { useWalletModal, WalletModal } from './WalletModal';
 import { useChains } from '../hooks/use-chains';
+import TransactionDialog from './TransactionDialog';
 
 export const SwapWidget = () => {
   useEffect(() => void disclosure.rehydrate(), []);
@@ -85,7 +86,7 @@ export const SwapWidget = () => {
   return (
     <UsdDiff.Provider>
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
-        <div className="space-y-4 font-jost">
+        <div className="space-y-4 font-jost relative p-4">
           <div className="flex h-8 items-center">
             <p className="text-2xl font-semibold">From</p>
             <div className="flex-grow" />
@@ -245,7 +246,7 @@ export const SwapWidget = () => {
           )}
           {sourceChain && isWalletConnected && (
             <div className="space-y-4">
-              {/* <TransactionDialog
+              <TransactionDialog
                 isLoading={routeLoading}
                 route={route}
                 isAmountError={isAmountError}
@@ -255,7 +256,7 @@ export const SwapWidget = () => {
                 routeWarningTitle={routeWarningTitle}
                 routeWarningMessage={routeWarningMessage}
                 onAllTransactionComplete={onAllTransactionComplete}
-              /> */}
+              />
             </div>
           )}
         </div>

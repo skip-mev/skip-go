@@ -16,7 +16,7 @@ export function DialogContent({ children, onInteractOutside }: Props) {
 
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
+      <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-jost" />
       <Dialog.Content
         className={cn(
           'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',

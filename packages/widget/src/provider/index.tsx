@@ -6,6 +6,7 @@ import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
 import { SkipRouterOptions } from '@skip-router/core';
 import { WalletModalProvider } from '../ui/WalletModal';
+import { Toaster } from 'react-hot-toast';
 
 interface WalletProviderProps {
   children: React.ReactNode;
@@ -38,7 +39,14 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 }) => {
   return (
     <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
-      <AssetsProvider>{children}</AssetsProvider>
+      <AssetsProvider>
+        {children}
+        <Toaster
+          position={'top-right'}
+          containerClassName="font-jost"
+          toastOptions={{ duration: 1000 * 10 }}
+        />
+      </AssetsProvider>
     </SkipProvider>
   );
 };
