@@ -35,7 +35,18 @@ import { gracefullyConnect } from '../utils/wallet';
 const DEFAULT_SRC_CHAIN_ID = 'cosmoshub-4';
 const PRICE_IMPACT_THRESHOLD = 0.1;
 
-export function useSwapWidget() {
+export interface UseSwapWidgetProps {
+  defaultRoute?: {
+    amountIn?: number;
+    amountOut?: number;
+    srcChainID?: string;
+    srcAssetDenom?: string;
+    destChainID?: string;
+    destAssetDenom?: string;
+  };
+}
+
+export function useSwapWidget(props?: UseSwapWidgetProps) {
   /**
    * intentional manual hydration to prevent ssr mismatch
    * @see {useSwapWidgetStore}
@@ -717,29 +728,88 @@ export function useSwapWidget() {
     };
   }, [srcChain, srcAsset, dstChain, dstAsset, amountIn, amountOut]);
 
-  /**
-   * prefill source chain with {@link DEFAULT_SRC_CHAIN_ID} and trigger
-   * {@link onSourceChainChange} to sync source asset
-   */
+  const defaultSourceChain = props?.defaultRoute?.srcChainID;
+  const defaultSourceAsset = props?.defaultRoute?.srcAssetDenom;
+  const defaultDestinationChain = props?.defaultRoute?.destChainID;
+  const defaultDestinationAsset = props?.defaultRoute?.destAssetDenom;
+  const defaultAmountIn = props?.defaultRoute?.amountIn;
+  const defaultAmountOut = props?.defaultRoute?.amountOut;
+
   useEffect(() => {
-    return useSwapWidgetStore.subscribe(
-      (state) => [state.sourceChain, state.sourceAsset] as const,
-      ([chain, asset]) => {
-        if (!chain) {
-          chain ??= (chains ?? []).find(({ chainID }) => {
-            return chainID === DEFAULT_SRC_CHAIN_ID;
-          });
+    if (!chains || !isAssetsReady) return;
+    if (defaultSourceChain) {
+      const findChain = chains.find(
+        (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
+      );
+      if (findChain) {
+        onSourceChainChange(findChain);
+        if (defaultSourceAsset) {
+          const assets = assetsByChainID(findChain.chainID);
+          const findAsset = assets.find(
+            (x) => x.denom.toLowerCase() === defaultSourceAsset.toLowerCase()
+          );
+          if (findAsset) {
+            onSourceAssetChange(findAsset);
+          }
         }
-        if (chain && !asset) {
-          onSourceChainChange(chain);
-        }
-      },
-      {
-        equalityFn: shallow,
-        fireImmediately: true,
       }
-    );
-  }, [chains, onSourceChainChange]);
+    }
+  }, [
+    assetsByChainID,
+    chains,
+    isAssetsReady,
+    onSourceAssetChange,
+    onSourceChainChange,
+    defaultSourceChain,
+    defaultSourceAsset,
+  ]);
+
+  useEffect(() => {
+    if (!chains || !isAssetsReady) return;
+    if (defaultDestinationChain) {
+      const findChain = chains.find(
+        (x) => x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
+      );
+      if (findChain) {
+        if (defaultDestinationAsset) {
+          const assets = assetsByChainID(findChain.chainID);
+          const findAsset = assets.find(
+            (x) =>
+              x.denom.toLowerCase() === defaultDestinationAsset.toLowerCase()
+          );
+          if (findAsset) {
+            onDestinationChainChange(findChain, findAsset);
+            return;
+          }
+        }
+        onDestinationChainChange(findChain);
+      }
+    }
+  }, [
+    assetsByChainID,
+    chains,
+    isAssetsReady,
+    onDestinationAssetChange,
+    onDestinationChainChange,
+    defaultDestinationAsset,
+    defaultDestinationChain,
+  ]);
+
+  useEffect(() => {
+    if (defaultAmountIn) {
+      onSourceAmountChange(String(defaultAmountIn));
+      return;
+    }
+    if (defaultAmountOut) {
+      onDestinationAmountChange(String(defaultAmountOut));
+    }
+  }, [
+    onDestinationAmountChange,
+    onSourceAmountChange,
+    defaultAmountIn,
+    defaultAmountOut,
+  ]);
+
   /////////////////////////////////////////////////////////////////////////////
 
   return {
