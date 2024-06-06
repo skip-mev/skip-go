@@ -68,7 +68,7 @@ function TransactionDialog({
       <div>
         <button
           className={cn(
-            'w-full bg-[#FF486E] py-4 font-semibold text-white outline-none transition-[opacity,transform]',
+            'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white outline-none transition-[opacity,transform]',
             'disabled:cursor-not-allowed disabled:opacity-75'
           )}
           disabled={!route || (typeof isLoading === 'boolean' && isLoading)}

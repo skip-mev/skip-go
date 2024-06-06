@@ -6,8 +6,14 @@ import { SwapWidget } from 'widget';
 const Home: NextPage = () => {
   return (
     <div>
-      <EVMConnect />
-      <SwapWidget />
+      <div
+        style={{
+          width: '450px',
+          height: '820px',
+        }}
+      >
+        <SwapWidget />
+      </div>
     </div>
   );
 };
