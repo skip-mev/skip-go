@@ -12,6 +12,7 @@ import {
   getCosmWasmClientForChainID,
   getStargateClientForChainID,
 } from '../utils/clients';
+import { getRpcUrl } from '../utils/chain';
 
 interface Args {
   address?: string;
@@ -42,7 +43,9 @@ export function useBalancesByChain({
       const rpcURL =
         (await config.endpointOptions?.getRpcEndpointForChain?.(
           chain.chainID
-        )) || config.endpointOptions?.endpoints?.[chain.chainID].rpc;
+        )) ||
+        config.endpointOptions?.endpoints?.[chain.chainID].rpc ||
+        getRpcUrl(chain.chainID);
 
       if (chain.chainType === 'evm') {
         const publicClient = createPublicClient({
@@ -79,12 +82,10 @@ export async function getBalancesByChain(
   assets: Asset[]
 ) {
   const [stargate, cosmwasm] = await Promise.all([
-    getStargateClientForChainID(rpcURL, chainID),
-    getCosmWasmClientForChainID(rpcURL, chainID),
+    getStargateClientForChainID(chainID, rpcURL),
+    getCosmWasmClientForChainID(chainID, rpcURL),
   ]);
-
   const balances = await stargate.getAllBalances(address);
-
   const cw20Assets = assets.filter((asset) => asset.isCW20);
   const _cw20Balances = await Promise.all(
     cw20Assets.map(async (asset) => {

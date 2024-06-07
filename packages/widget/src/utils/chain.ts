@@ -2,6 +2,7 @@ import { FeeAsset } from '@skip-router/core';
 import { chainRecord } from '../chains/chains';
 
 import { GasPrice } from '@cosmjs/stargate';
+import { chainIdToName } from '../chains';
 /**
  * - deprio denoms start with 'ibc/' and 'factory/'
  * - prio denoms start with 'u' or 'uu'
@@ -42,4 +43,16 @@ export const getChainGasPrice = (chainID: string) => {
   if (!(ft && ft.average_gas_price && ft.denom)) return null;
   const gas = `${ft.average_gas_price}${ft.denom}`;
   return GasPrice.fromString(gas);
+};
+
+export const getRpcUrl = (chainID: string) => {
+  if (chainID === 'solana-devnet') {
+    return 'https://api.devnet.solana.com';
+  }
+  if (chainID === 'solana') {
+    return 'https://api.mainnet-beta.solana.com';
+  }
+  const chainPath = chainIdToName[chainID];
+  const cosmosDirectoryRPC = `https://rpc.cosmos.directory/${chainPath}`;
+  return cosmosDirectoryRPC;
 };

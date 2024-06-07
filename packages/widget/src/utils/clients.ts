@@ -11,11 +11,9 @@ export async function getStargateClientForChainID(
   if (STARGATE_CLIENTS[chainID]) {
     return STARGATE_CLIENTS[chainID];
   }
-
   const client = await StargateClient.connect(rpcURL, {
     accountParser,
   });
-
   return (STARGATE_CLIENTS[chainID] = client), client;
 }
 

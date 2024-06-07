@@ -100,14 +100,6 @@ export function SkipProvider({
     },
     apiURL,
     endpointOptions,
-    // endpointOptions: {
-    //   getRpcEndpointForChain: async (chainID) => {
-    //     return `${appUrl}/api/rpc/${chainID}`;
-    //   },
-    //   getRestEndpointForChain: async (chainID) => {
-    //     return `${appUrl}/api/rest/${chainID}`;
-    //   },
-    // },
   });
 
   return (
