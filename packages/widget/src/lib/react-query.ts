@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/react-query';
 
 export const persister = createSyncStoragePersister({
   storage: typeof window !== 'undefined' ? window.sessionStorage : undefined,
+  key: 'skip-widget',
 });
 
 export const queryClient = new QueryClient({

@@ -12,7 +12,6 @@ import {
   getCosmWasmClientForChainID,
   getStargateClientForChainID,
 } from '../utils/clients';
-import { getRpcUrl } from '../utils/chain';
 
 interface Args {
   address?: string;
@@ -43,9 +42,7 @@ export function useBalancesByChain({
       const rpcURL =
         (await config.endpointOptions?.getRpcEndpointForChain?.(
           chain.chainID
-        )) ||
-        config.endpointOptions?.endpoints?.[chain.chainID].rpc ||
-        getRpcUrl(chain.chainID);
+        )) || config.endpointOptions?.endpoints?.[chain.chainID].rpc;
 
       if (chain.chainType === 'evm') {
         const publicClient = createPublicClient({

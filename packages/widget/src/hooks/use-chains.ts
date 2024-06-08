@@ -32,7 +32,7 @@ export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
             ...chain,
             chainName: chainIdToName[chain.chainID] || chain.chainName,
             prettyName: chainIdToPrettyName[chain.chainID] || chain.chainName,
-            logoURI: chain.logoURI || '/logo-fallback.png',
+            logoURI: chain.logoURI || 'https://api.dicebear.com/6.x/shapes/svg',
           };
         })
         .filter((chain) =>

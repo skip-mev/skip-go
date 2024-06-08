@@ -5812,9 +5812,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skip-router/core@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "@skip-router/core@npm:4.1.1"
+"@skip-go/widget@workspace:packages/widget":
+  version: 0.0.0-use.local
+  resolution: "@skip-go/widget@workspace:packages/widget"
+  dependencies:
+    "@heroicons/react": ^2.1.3
+    "@interchain-ui/react": ^1.23.13
+    "@radix-ui/colors": ^3.0.0
+    "@radix-ui/react-accordion": ^1.1.2
+    "@radix-ui/react-collapsible": ^1.0.3
+    "@radix-ui/react-dialog": ^1.0.5
+    "@radix-ui/react-scroll-area": ^1.0.5
+    "@radix-ui/react-switch": ^1.0.3
+    "@radix-ui/react-tooltip": ^1.0.7
+    "@skip-router/core": ^4.2.0
+    "@solana/spl-token": ^0.4.6
+    "@solana/wallet-adapter-react": ^0.15.35
+    "@solana/wallet-adapter-wallets": ^0.19.32
+    "@solana/web3.js": ^1.91.8
+    "@tailwindcss/forms": ^0.5.7
+    "@tanstack/query-sync-storage-persister": ^5.18.1
+    "@tanstack/react-query": ^5.18.1
+    "@tanstack/react-query-persist-client": ^5.18.1
+    "@types/node": 18.7.18
+    "@types/qrcode": ^1.4.2
+    "@types/react": ^18.0.6
+    "@types/react-dom": ^18.0.2
+    "@types/styled-components": ^5.1.25
+    autoprefixer: ^10.4.19
+    clsx: ^2.1.1
+    match-sorter: ^6.3.4
+    postcss: ^8.4.38
+    react-hot-toast: ^2.4.1
+    react-icons: ^5.2.1
+    tailwind-merge: ^2.3.0
+    tailwindcss: ^3.4.3
+    tailwindcss-animate: ^1.0.7
+    typed-query-selector: ^2.11.2
+    typescript: ^5.0.4
+    zustand: ^4.5.2
+  peerDependencies:
+    "@graz-sh/types": 0.0.14
+    "@tanstack/react-query": ">=5.0.0"
+    react: 17.x || 18.x
+    react-dom: 17.x || 18.x
+    viem: 2.x
+    wagmi: 2.x
+  languageName: unknown
+  linkType: soft
+
+"@skip-router/core@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@skip-router/core@npm:4.2.0"
   dependencies:
     "@cosmjs/amino": 0.32.3
     "@cosmjs/cosmwasm-stargate": 0.32.3
@@ -5836,7 +5885,7 @@ __metadata:
     viem: 2.x
   peerDependencies:
     chain-registry: ^1.33.11
-  checksum: 25b03e969f892af2208e55b1c1f7cff6b714a4cc60b144a5f1243cb7b45a6a0ba7ebc42574f93a9fc48df076f7efdf77c00af7dbda3c157d1aaab3fac68ab4f3
+  checksum: f72b4936187b36205b3be74ddccfc5b5d5421a83efd1641ab51b228bbe3178fd9f27f7179106b87aae5bfde89209c0a50b7300169c8130a8cfdc6d4672ef3c2a
   languageName: node
   linkType: hard
 
@@ -14304,6 +14353,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs@workspace:examples/nextjs"
   dependencies:
+    "@skip-go/widget": "workspace:packages/widget"
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3
     "@types/react": ^18.2.43
@@ -14315,7 +14365,6 @@ __metadata:
     typescript: ^5.0.4
     viem: ^2.7.16
     wagmi: ^2.5.7
-    widget: "workspace:packages/widget"
   languageName: unknown
   linkType: soft
 
@@ -17084,38 +17133,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"skip-widget@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "skip-widget@workspace:."
-  dependencies:
-    "@changesets/cli": ^2.24.4
-    "@cosmos-kit/cosmostation-extension": ^2.7.10
-    "@cosmos-kit/keplr-extension": ^2.7.9
-    "@cosmos-kit/leap-extension": ^2.7.10
-    "@cosmos-kit/okxwallet": 2.4.x
-    "@cosmos-kit/react": 2.10.x
-    "@cosmos-kit/station": 2.5.x
-    "@cosmos-kit/vectis": 2.6.x
-    "@graz-sh/types": ^0.0.14
-    "@rollup/plugin-node-resolve": ^13.1.3
-    globby: ^14.0.1
-    p-map: ^7.0.2
-    react: ^18.0.0
-    react-dom: ^18.0.0
-    rollup: ^2.67.1
-    rollup-plugin-peer-deps-external: ^2.2.4
-    rollup-plugin-postcss: ^4.0.2
-    rollup-plugin-terser: ^7.0.2
-    rollup-plugin-typescript2: ^0.34.0
-    rollup-plugin-visualizer: ^5.5.4
-    tslib: ^1.9.3
-    tsx: ^4.12.0
-    typescript-plugin-styled-components: ^2.0.0
-    viem: ^2.7.16
-    wagmi: ^2.5.7
-  languageName: unknown
-  linkType: soft
-
 "slash@npm:^3.0.0":
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
@@ -17703,6 +17720,38 @@ __metadata:
   checksum: b92f71a8541468ffd0b81b8cdb36b1e242eea320bf3c1a9b2c8809945853e9d8c80c19744267eb91cabf06ae9d5fff3592d677df85a31be4ed59ff78534fa420
   languageName: node
   linkType: hard
+
+"swap-widget@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "swap-widget@workspace:."
+  dependencies:
+    "@changesets/cli": ^2.24.4
+    "@cosmos-kit/cosmostation-extension": ^2.7.10
+    "@cosmos-kit/keplr-extension": ^2.7.9
+    "@cosmos-kit/leap-extension": ^2.7.10
+    "@cosmos-kit/okxwallet": 2.4.x
+    "@cosmos-kit/react": 2.10.x
+    "@cosmos-kit/station": 2.5.x
+    "@cosmos-kit/vectis": 2.6.x
+    "@graz-sh/types": ^0.0.14
+    "@rollup/plugin-node-resolve": ^13.1.3
+    globby: ^14.0.1
+    p-map: ^7.0.2
+    react: ^18.0.0
+    react-dom: ^18.0.0
+    rollup: ^2.67.1
+    rollup-plugin-peer-deps-external: ^2.2.4
+    rollup-plugin-postcss: ^4.0.2
+    rollup-plugin-terser: ^7.0.2
+    rollup-plugin-typescript2: ^0.34.0
+    rollup-plugin-visualizer: ^5.5.4
+    tslib: ^1.9.3
+    tsx: ^4.12.0
+    typescript-plugin-styled-components: ^2.0.0
+    viem: ^2.7.16
+    wagmi: ^2.5.7
+  languageName: unknown
+  linkType: soft
 
 "symbol-observable@npm:^2.0.3":
   version: 2.0.3
@@ -18854,55 +18903,6 @@ __metadata:
   checksum: f17e84c042592c21e23c8195108cff18c64050b9efb8459589116999ea9da6dd1509e6a1bac3aeebefd137be00fabbb61b5c2bc0aa0f8526f32b58ee2f545651
   languageName: node
   linkType: hard
-
-"widget@workspace:packages/widget":
-  version: 0.0.0-use.local
-  resolution: "widget@workspace:packages/widget"
-  dependencies:
-    "@heroicons/react": ^2.1.3
-    "@interchain-ui/react": ^1.23.13
-    "@radix-ui/colors": ^3.0.0
-    "@radix-ui/react-accordion": ^1.1.2
-    "@radix-ui/react-collapsible": ^1.0.3
-    "@radix-ui/react-dialog": ^1.0.5
-    "@radix-ui/react-scroll-area": ^1.0.5
-    "@radix-ui/react-switch": ^1.0.3
-    "@radix-ui/react-tooltip": ^1.0.7
-    "@skip-router/core": ^4.1.1
-    "@solana/spl-token": ^0.4.6
-    "@solana/wallet-adapter-react": ^0.15.35
-    "@solana/wallet-adapter-wallets": ^0.19.32
-    "@solana/web3.js": ^1.91.8
-    "@tailwindcss/forms": ^0.5.7
-    "@tanstack/query-sync-storage-persister": ^5.18.1
-    "@tanstack/react-query": ^5.18.1
-    "@tanstack/react-query-persist-client": ^5.18.1
-    "@types/node": 18.7.18
-    "@types/qrcode": ^1.4.2
-    "@types/react": ^18.0.6
-    "@types/react-dom": ^18.0.2
-    "@types/styled-components": ^5.1.25
-    autoprefixer: ^10.4.19
-    clsx: ^2.1.1
-    match-sorter: ^6.3.4
-    postcss: ^8.4.38
-    react-hot-toast: ^2.4.1
-    react-icons: ^5.2.1
-    tailwind-merge: ^2.3.0
-    tailwindcss: ^3.4.3
-    tailwindcss-animate: ^1.0.7
-    typed-query-selector: ^2.11.2
-    typescript: ^5.0.4
-    zustand: ^4.5.2
-  peerDependencies:
-    "@graz-sh/types": 0.0.14
-    "@tanstack/react-query": ">=5.0.0"
-    react: 17.x || 18.x
-    react-dom: 17.x || 18.x
-    viem: 2.x
-    wagmi: 2.x
-  languageName: unknown
-  linkType: soft
 
 "wif@npm:^2.0.6":
   version: 2.0.6

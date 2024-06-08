@@ -44,15 +44,3 @@ export const getChainGasPrice = (chainID: string) => {
   const gas = `${ft.average_gas_price}${ft.denom}`;
   return GasPrice.fromString(gas);
 };
-
-export const getRpcUrl = (chainID: string) => {
-  if (chainID === 'solana-devnet') {
-    return 'https://api.devnet.solana.com';
-  }
-  if (chainID === 'solana') {
-    return 'https://api.mainnet-beta.solana.com';
-  }
-  const chainPath = chainIdToName[chainID];
-  const cosmosDirectoryRPC = `https://rpc.cosmos.directory/${chainPath}`;
-  return cosmosDirectoryRPC;
-};

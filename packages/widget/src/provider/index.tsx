@@ -4,17 +4,29 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { SkipRouterOptions } from '@skip-router/core';
+import { ChainAffiliates, SkipRouterOptions } from '@skip-router/core';
 import { WalletModalProvider } from '../ui/WalletModal';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, ToasterProps } from 'react-hot-toast';
+import { DefaultRouteConfig } from '../hooks/use-swap-widget';
+import { RouteConfig } from '../hooks/use-route';
+import {
+  endpointOptions as defaultEndpointOptions,
+  apiURL as defaultApiURL,
+} from '../constants/defaults';
 
 interface WalletProviderProps {
   children: React.ReactNode;
 }
-interface WidgetProviderProps extends SkipAPIProviderProps {
-  children: React.ReactNode;
+
+export interface WidgetConfig {
+  defaultRoute?: DefaultRouteConfig;
+  routeConfig?: RouteConfig;
 }
-interface SkipAPIProviderProps {
+interface WidgetProviderProps extends SkipAPIProviderProps, WidgetConfig {
+  children: React.ReactNode;
+  toasterProps?: ToasterProps;
+}
+interface SkipAPIProviderProps extends WidgetConfig {
   children: React.ReactNode;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
   apiURL?: string;
@@ -32,10 +44,10 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   );
 };
 
-export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
+const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   children,
-  endpointOptions,
-  apiURL,
+  endpointOptions = defaultEndpointOptions,
+  apiURL = defaultApiURL,
 }) => {
   return (
     <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
@@ -46,6 +58,7 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 
 export const WidgetProvider: React.FC<WidgetProviderProps> = ({
   children,
+  toasterProps,
   ...props
 }) => {
   return (
@@ -56,6 +69,7 @@ export const WidgetProvider: React.FC<WidgetProviderProps> = ({
           position={'top-right'}
           containerClassName="font-jost"
           toastOptions={{ duration: 1000 * 10 }}
+          {...toasterProps}
         />
       </SkipAPIProvider>
     </WalletProvider>

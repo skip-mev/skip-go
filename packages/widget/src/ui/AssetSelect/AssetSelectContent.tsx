@@ -109,7 +109,7 @@ function AssetSelectContent({
                 width={48}
                 alt={asset.recommendedSymbol || 'symbol'}
                 className="h-12 w-12 rounded-full object-contain"
-                src={asset.logoURI || '/logo-fallback.png'}
+                src={asset.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'}
                 onError={(e) =>
                   (e.currentTarget.src =
                     'https://api.dicebear.com/6.x/shapes/svg')

@@ -122,7 +122,7 @@ export const SetAddressDialog = ({
             </p>
             <img
               className="object-contain"
-              src={chain.logoURI || '/logo-fallback.png'}
+              src={chain.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'}
               alt={chain.chainName}
               height={28}
               width={28}

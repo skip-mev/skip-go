@@ -185,7 +185,7 @@ export const ChainStep = ({
         const chain = getChain(c.chainID);
         return {
           name: chain?.prettyName,
-          image: chain?.logoURI || '/logo-fallback.png',
+          image: chain?.logoURI || 'https://api.dicebear.com/6.x/shapes/svg',
         };
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,7 +231,9 @@ export const ChainStep = ({
           >
             <div className="flex h-full w-full items-center justify-center rounded-full bg-white p-1">
               <img
-                src={chain?.logoURI || '/logo-fallback.png'}
+                src={
+                  chain?.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
+                }
                 width={48}
                 height={48}
                 className={cn('rounded-full object-cover')}
@@ -254,7 +256,10 @@ export const ChainStep = ({
                   type="default"
                 >
                   <img
-                    src={bridge?.logoURI || '/logo-fallback.png'}
+                    src={
+                      bridge?.logoURI ||
+                      'https://api.dicebear.com/6.x/shapes/svg'
+                    }
                     height={16}
                     width={16}
                     className={cn(
@@ -377,7 +382,7 @@ export const ChainStep = ({
                           ? chainAddress?.source?.walletInfo.logo
                           : chainAddress?.source?.walletInfo.logo?.major ||
                             chainAddress?.source?.walletInfo.logo?.minor) ||
-                        '/logo-fallback.png'
+                        'https://api.dicebear.com/6.x/shapes/svg'
                       }
                     />
                   ) : (
@@ -416,7 +421,7 @@ export const ChainStep = ({
                         ? chainAddress?.source?.walletInfo.logo
                         : chainAddress?.source?.walletInfo.logo?.major ||
                           chainAddress?.source?.walletInfo.logo?.minor) ||
-                      '/logo-fallback.png'
+                      'https://api.dicebear.com/6.x/shapes/svg'
                     }
                   />
                 ) : (
@@ -527,7 +532,7 @@ const Asset = ({
         </div>
       </SimpleTooltip>
       <img
-        src={logoURI || '/logo-fallback.png'}
+        src={logoURI || 'https://api.dicebear.com/6.x/shapes/svg'}
         width={16}
         height={16}
         className={cn('rounded-full object-contain')}

@@ -1,6 +1,6 @@
 {
-  "name": "widget",
-  "version": "1.0.0",
+  "name": "@skip-go/widget",
+  "version": "0.0.1",
   "author": "Skip",
   "type": "module",
   "exports": {
@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@interchain-ui/react": "^1.23.13",
-    "@skip-router/core": "^4.1.1",
+    "@skip-router/core": "^4.2.0",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",

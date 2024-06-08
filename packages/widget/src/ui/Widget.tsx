@@ -1,5 +1,4 @@
 import { ArrowsUpDownIcon, FingerPrintIcon } from '@heroicons/react/20/solid';
-import { Spinner } from '@interchain-ui/react';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import type {} from 'typed-query-selector';
 import { ElementRef, useEffect, useRef } from 'react';
@@ -22,6 +21,7 @@ import { useAccount } from '../hooks/use-account';
 import { useWalletModal, WalletModal } from './WalletModal';
 import { useChains } from '../hooks/use-chains';
 import TransactionDialog from './TransactionDialog';
+import { SpinnerIcon } from './Icon/SpinnerIcon';
 
 export const SwapWidget = () => {
   useEffect(() => void disclosure.rehydrate(), []);
@@ -191,7 +191,7 @@ export const SwapWidget = () => {
           {routeLoading && (
             <div className="flex w-full items-center justify-between space-x-2 text-sm font-medium uppercase">
               <p className="text-neutral-400">Finding best route...</p>
-              <Spinner className=" h-5 w-5 text-neutral-200" />
+              <SpinnerIcon className="h-5 w-5 text-neutral-200 animate-spin" />
             </div>
           )}
           {route && !routeLoading && numberOfTransactions > 1 && (

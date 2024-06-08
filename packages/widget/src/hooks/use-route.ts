@@ -1,9 +1,25 @@
-import { ExperimentalFeature, SwapVenue } from '@skip-router/core';
+import {
+  Bridge,
+  BridgeType,
+  ExperimentalFeature,
+  RouteRequest,
+  RouteRequestGivenIn,
+  SwapVenue,
+  SwapVenueRequest,
+} from '@skip-router/core';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
-import { useSkipClient } from './use-skip-client';
+import { useSkipClient, useSkipConfig } from './use-skip-client';
 
-interface UseRouteArgs {
+export interface RouteConfig {
+  experimentalFeatures?: ExperimentalFeature[];
+  allowMultiTx?: boolean;
+  allowUnsafe?: boolean;
+  bridges?: BridgeType[];
+  swapVenues?: SwapVenueRequest[];
+}
+
+interface UseRouteArgs extends RouteConfig {
   direction: 'swap-in' | 'swap-out';
   amount: string;
   sourceAsset?: string;
@@ -11,8 +27,6 @@ interface UseRouteArgs {
   destinationAsset?: string;
   destinationAssetChainID?: string;
   enabled?: boolean;
-  swapVenue?: SwapVenue;
-  experimentalFeatures?: ExperimentalFeature[];
 }
 
 export function useRoute({
@@ -23,10 +37,14 @@ export function useRoute({
   destinationAsset,
   destinationAssetChainID,
   enabled,
-  swapVenue,
-  experimentalFeatures,
+  swapVenues,
+  bridges,
+  experimentalFeatures = ['hyperlane'],
+  allowMultiTx = true,
+  allowUnsafe = true,
 }: UseRouteArgs) {
   const skipClient = useSkipClient();
+  const { routeConfig } = useSkipConfig();
 
   const [refetchCount, setRefetchCount] = useState(0);
   const [isError, setIsError] = useState(false);
@@ -41,7 +59,7 @@ export function useRoute({
         destinationAsset,
         sourceAssetChainID,
         destinationAssetChainID,
-        swapVenue,
+        swapVenues,
         experimentalFeatures,
       ] as const,
     [
@@ -51,7 +69,7 @@ export function useRoute({
       direction,
       sourceAsset,
       sourceAssetChainID,
-      swapVenue,
+      swapVenues,
       experimentalFeatures,
     ]
   );
@@ -67,7 +85,7 @@ export function useRoute({
         destinationAsset,
         sourceAssetChainID,
         destinationAssetChainID,
-        swapVenue,
+        swapVenues,
         experimentalFeatures,
       ],
     }) => {
@@ -88,9 +106,10 @@ export function useRoute({
                 sourceAssetChainID: sourceAssetChainID,
                 destAssetDenom: destinationAsset,
                 destAssetChainID: destinationAssetChainID,
-                swapVenue,
-                allowMultiTx: true,
-                allowUnsafe: true,
+                swapVenues,
+                bridges,
+                allowMultiTx,
+                allowUnsafe,
                 experimentalFeatures,
                 smartRelay: true,
                 smartSwapOptions: {
@@ -103,9 +122,10 @@ export function useRoute({
                 sourceAssetChainID: sourceAssetChainID,
                 destAssetDenom: destinationAsset,
                 destAssetChainID: destinationAssetChainID,
-                swapVenue,
-                allowMultiTx: true,
-                allowUnsafe: true,
+                swapVenues,
+                bridges,
+                allowMultiTx,
+                allowUnsafe,
                 experimentalFeatures,
                 smartRelay: true,
                 smartSwapOptions: {

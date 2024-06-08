@@ -9,13 +9,14 @@ import { chainIdToName } from '../chains';
 import { config } from '../lib/wagmi';
 import { trackWallet } from '../store/track-wallet';
 import { gracefullyConnect, isWalletClientUsingLedger } from '../utils/wallet';
+import { WidgetConfig } from '.';
 
 export const SkipContext = createContext<
-  | {
+  | ({
       skipClient: SkipRouter;
       apiURL?: string;
       endpointOptions?: SkipRouterOptions['endpointOptions'];
-    }
+    } & WidgetConfig)
   | undefined
 >(undefined);
 
@@ -23,11 +24,13 @@ export function SkipProvider({
   children,
   apiURL,
   endpointOptions,
+  defaultRoute,
+  routeConfig,
 }: {
   children: ReactNode;
   apiURL?: string;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
-}) {
+} & WidgetConfig) {
   const { getWalletRepo } = useManager();
   const { wallets } = useWallet();
 
@@ -103,7 +106,15 @@ export function SkipProvider({
   });
 
   return (
-    <SkipContext.Provider value={{ skipClient, apiURL, endpointOptions }}>
+    <SkipContext.Provider
+      value={{
+        skipClient,
+        apiURL,
+        endpointOptions,
+        defaultRoute,
+        routeConfig,
+      }}
+    >
       {children}
     </SkipContext.Provider>
   );

@@ -90,7 +90,9 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
                   className="h-[48px] w-[48px] rounded-full object-contain"
                   width={48}
                   height={48}
-                  src={chain.logoURI || '/logo-fallback.png'}
+                  src={
+                    chain.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
+                  }
                 />
 
                 <div>

@@ -45,7 +45,7 @@ function AssetSelect({
               height={24}
               width={24}
               className="h-6 w-6 rounded-full object-contain"
-              src={asset.logoURI || '/logo-fallback.png'}
+              src={asset.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'}
               onError={(event) =>
                 (event.currentTarget.src =
                   'https://api.dicebear.com/6.x/shapes/svg')

@@ -1,14 +1,10 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 
-import { WidgetProvider } from 'widget';
+import { WidgetProvider } from '@skip-go/widget';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <WidgetProvider>
-      <Component {...pageProps} />
-    </WidgetProvider>
-  );
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;

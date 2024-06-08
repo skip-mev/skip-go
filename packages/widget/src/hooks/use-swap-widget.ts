@@ -28,25 +28,23 @@ import { Chain, useChains } from './use-chains';
 import { useBalancesByChain } from './use-balances-by-chain';
 import { useRoute } from './use-route';
 import { getChainFeeAssets, getChainGasPrice } from '../utils/chain';
-import { useSkipClient } from './use-skip-client';
+import { useSkipClient, useSkipConfig } from './use-skip-client';
 import { getAmountWei, parseAmountWei } from '../utils/number';
 import { gracefullyConnect } from '../utils/wallet';
 
 const DEFAULT_SRC_CHAIN_ID = 'cosmoshub-4';
 const PRICE_IMPACT_THRESHOLD = 0.1;
 
-export interface UseSwapWidgetProps {
-  defaultRoute?: {
-    amountIn?: number;
-    amountOut?: number;
-    srcChainID?: string;
-    srcAssetDenom?: string;
-    destChainID?: string;
-    destAssetDenom?: string;
-  };
+export interface DefaultRouteConfig {
+  amountIn?: number;
+  amountOut?: number;
+  srcChainID?: string;
+  srcAssetDenom?: string;
+  destChainID?: string;
+  destAssetDenom?: string;
 }
 
-export function useSwapWidget(props?: UseSwapWidgetProps) {
+export function useSwapWidget() {
   /**
    * intentional manual hydration to prevent ssr mismatch
    * @see {useSwapWidgetStore}
@@ -57,6 +55,7 @@ export function useSwapWidget(props?: UseSwapWidgetProps) {
 
   // #region -- core states
 
+  const { routeConfig, defaultRoute } = useSkipConfig();
   const skipClient = useSkipClient();
 
   const { assetsByChainID, getFeeAsset, isReady: isAssetsReady } = useAssets();
@@ -121,6 +120,7 @@ export function useSwapWidget(props?: UseSwapWidgetProps) {
     sourceAssetChainID: srcAsset?.chainID,
     destinationAsset: dstAsset?.denom,
     destinationAssetChainID: dstAsset?.chainID,
+    ...routeConfig,
     enabled: shouldRouteLoad,
   });
 
@@ -728,12 +728,12 @@ export function useSwapWidget(props?: UseSwapWidgetProps) {
     };
   }, [srcChain, srcAsset, dstChain, dstAsset, amountIn, amountOut]);
 
-  const defaultSourceChain = props?.defaultRoute?.srcChainID;
-  const defaultSourceAsset = props?.defaultRoute?.srcAssetDenom;
-  const defaultDestinationChain = props?.defaultRoute?.destChainID;
-  const defaultDestinationAsset = props?.defaultRoute?.destAssetDenom;
-  const defaultAmountIn = props?.defaultRoute?.amountIn;
-  const defaultAmountOut = props?.defaultRoute?.amountOut;
+  const defaultSourceChain = defaultRoute?.srcChainID;
+  const defaultSourceAsset = defaultRoute?.srcAssetDenom;
+  const defaultDestinationChain = defaultRoute?.destChainID;
+  const defaultDestinationAsset = defaultRoute?.destAssetDenom;
+  const defaultAmountIn = defaultRoute?.amountIn;
+  const defaultAmountOut = defaultRoute?.amountOut;
 
   useEffect(() => {
     if (!chains || !isAssetsReady) return;

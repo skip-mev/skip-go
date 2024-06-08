@@ -15,11 +15,13 @@ export function useSkipConfig() {
   const context = useContext(SkipContext);
 
   if (context === undefined) {
-    throw new Error('useSkipClient must be used within a SkipProvider');
+    throw new Error('useSkipConfig  must be used within a SkipProvider');
   }
 
   return {
     apiURL: context.apiURL,
     endpointOptions: context.endpointOptions,
+    defaultRoute: context.defaultRoute,
+    routeConfig: context.routeConfig,
   };
 }
