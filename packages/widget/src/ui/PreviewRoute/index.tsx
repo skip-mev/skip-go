@@ -34,6 +34,8 @@ import { txHistory } from '../../store/tx-history';
 import { isUserRejectedRequestError } from '../../utils/error';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
+import { useSwapWidgetUIStore } from '../../store/swap-widget';
+import { css } from '@emotion/css';
 
 export interface Wallet {
   walletName: string;
@@ -296,10 +298,14 @@ export const PreviewRoute = ({
       return (
         <button
           className={cn(
-            'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white',
+            'w-full rounded-md py-4 font-semibold text-white',
             'outline-none transition-transform',
             'enabled:hover:rotate-1 enabled:hover:scale-102',
-            'disabled:cursor-not-allowed disabled:opacity-75'
+            'disabled:cursor-not-allowed disabled:opacity-75',
+            css`
+              background-color: ${useSwapWidgetUIStore.getState().colors
+                .primary};
+            `
           )}
           onClick={() => submitMutation.mutate()}
           disabled={
@@ -317,9 +323,12 @@ export const PreviewRoute = ({
     return (
       <button
         className={cn(
-          'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white',
+          'w-full rounded-md py-4 font-semibold text-white',
           'outline-none transition-transform',
-          'disabled:cursor-not-allowed disabled:opacity-75'
+          'disabled:cursor-not-allowed disabled:opacity-75',
+          css`
+            background-color: ${useSwapWidgetUIStore.getState().colors.primary};
+          `
         )}
         onClick={async () => {
           if (!enabledSetAddressIndex) {
@@ -403,7 +412,12 @@ export const PreviewRoute = ({
             </div>
             {isExpanded && (
               <button
-                className="right-7 text-xs font-medium text-[#FF486E]"
+                className={cn(
+                  'right-7 text-xs font-medium',
+                  css`
+                    color: ${useSwapWidgetUIStore.getState().colors.primary};
+                  `
+                )}
                 onClick={() => setIsExpanded(false)}
               >
                 Hide Details
@@ -558,10 +572,14 @@ export const PreviewRoute = ({
           {submitMutation.isPending || submitMutation.isSuccess ? (
             <button
               className={cn(
-                'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white',
+                'w-full rounded-md py-4 font-semibold text-white',
                 'outline-none transition-transform',
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
-                'disabled:cursor-not-allowed disabled:opacity-75'
+                'disabled:cursor-not-allowed disabled:opacity-75',
+                css`
+                  background-color: ${useSwapWidgetUIStore.getState().colors
+                    .primary};
+                `
               )}
               onClick={control.close}
               disabled={route.txsRequired !== broadcastedTxs.length}

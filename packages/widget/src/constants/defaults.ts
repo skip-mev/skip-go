@@ -1,4 +1,4 @@
-const appUrl = 'https://ibc.fun';
+const appUrl = 'https://ibc-dot-fun-git-enable-cors-skip-protocol.vercel.app';
 
 export const endpointOptions = {
   getRpcEndpointForChain: async (chainID: string) => {

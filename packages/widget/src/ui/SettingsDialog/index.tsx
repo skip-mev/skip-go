@@ -54,11 +54,11 @@ export const SettingsDialog = () => {
               Learn more
             </AdaptiveLink>
           </p>
-          <PurgeSetting />
+          {/* <PurgeSetting />
           <p className="text-balance p-2 text-sm text-neutral-500 [&_a:hover]:underline [&_a]:text-red-500">
             Removes all of your data from the app, which includes connected
             wallets state, transaction history, and settings.
-          </p>
+          </p> */}
         </div>
       </Dialog.Content>
     </Dialog.Root>

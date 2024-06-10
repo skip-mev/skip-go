@@ -15,6 +15,8 @@ import { TrackWalletCtx } from '../../store/track-wallet';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
 import { cn } from '../../utils/ui';
+import { useSwapWidgetUIStore } from '../../store/swap-widget';
+import { css } from '@emotion/css';
 
 export const SetAddressDialog = ({
   open,
@@ -152,12 +154,17 @@ export const SetAddressDialog = ({
                     >
                       <button
                         className={cn(
-                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2 group-hover:bg-[#FF486E]/20',
-                          currentChainAddress &&
-                            currentChainAddress.source !== 'input' &&
-                            currentChainAddress.source?.walletName ===
-                              wallet.walletName &&
-                            'bg-[#FF486E]/20'
+                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2',
+                          `group-hover:opacity-90`
+                          // currentChainAddress &&
+                          //   currentChainAddress.source !== 'input' &&
+                          //   currentChainAddress.source?.walletName ===
+                          //     wallet.walletName &&
+                          //   css`
+                          //     border: 1px solid
+                          //       ${useSwapWidgetUIStore.getState().colors
+                          //         .primary};
+                          //   `
                         )}
                         onClick={async () => {
                           const resAddress = await wallet.getAddress?.({
@@ -225,8 +232,15 @@ export const SetAddressDialog = ({
                       />
                       <button
                         className={cn(
-                          'flex w-12 items-center justify-center rounded-md border-2 border-[#FF486E] bg-[#FF486E] text-sm text-white',
-                          'disabled:cursor-not-allowed disabled:opacity-50'
+                          'flex w-12 items-center justify-center rounded-md border-2 text-sm text-white',
+                          'disabled:cursor-not-allowed disabled:opacity-50',
+
+                          css`
+                            border-color: ${useSwapWidgetUIStore.getState()
+                              .colors.primary};
+                            background-color: ${useSwapWidgetUIStore.getState()
+                              .colors.primary};
+                          `
                         )}
                         onClick={() => save()}
                         disabled={!isValid}
@@ -234,7 +248,15 @@ export const SetAddressDialog = ({
                         <MdCheck className="size-6" />
                       </button>
                       <button
-                        className="flex w-12 items-center justify-center rounded-md border-2 border-[#FF486E] text-[#FF486E]"
+                        className={cn(
+                          'flex w-12 items-center justify-center rounded-md border-2',
+                          css`
+                            border-color: ${useSwapWidgetUIStore.getState()
+                              .colors.primary};
+                            color: ${useSwapWidgetUIStore.getState().colors
+                              .primary};
+                          `
+                        )}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />
@@ -244,10 +266,7 @@ export const SetAddressDialog = ({
                     <button
                       onClick={() => setIsEditing(true)}
                       className={cn(
-                        'flex w-full items-center gap-2 rounded-lg p-2 py-3 transition-colors focus:-outline-offset-2 group-hover:bg-[#FF486E]/20',
-                        currentChainAddress &&
-                          currentChainAddress.source === 'input' &&
-                          'bg-[#FF486E]/20'
+                        'flex w-full items-center gap-2 rounded-lg p-2 py-3 transition-colors focus:-outline-offset-2'
                       )}
                     >
                       <FaKeyboard className="mx-[6px] h-[24px] w-[24px] text-neutral-400" />

@@ -1,7 +1,5 @@
 import { NextPage } from 'next';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { EVMConnect } from '../components/EVMConnect';
-import { SwapWidget, WidgetProvider } from '@skip-go/widget';
+import { SwapWidget } from '@skip-go/widget';
 
 const Home: NextPage = () => {
   return (
@@ -12,9 +10,11 @@ const Home: NextPage = () => {
           height: '820px',
         }}
       >
-        <WidgetProvider>
-          <SwapWidget />
-        </WidgetProvider>
+        <SwapWidget
+          colors={{
+            primary: '#FF4FFF',
+          }}
+        />
       </div>
     </div>
   );

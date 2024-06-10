@@ -27,6 +27,8 @@ import { cn } from '../../utils/ui';
 import { ChainSymbol } from '../ChainSymbol';
 import { AssetValue } from '../AssetValue';
 import { disclosure } from '../../store/disclosures';
+import { useSwapWidgetUIStore } from '../../store/swap-widget';
+import { css } from '@emotion/css';
 
 type RootProps = Omit<Accordion.AccordionSingleProps, 'type'>;
 
@@ -260,7 +262,12 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             className={cn(
               'rounded-md px-2 py-1 text-xs transition-colors',
               'flex items-center justify-center space-x-1',
-              'bg-[#FF486E]/20 text-[#FF486E] hover:bg-[#FF486E]/30'
+              `opacity-80 hover:opacity-90`,
+              css`
+                color: ${useSwapWidgetUIStore.getState().colors.primary};
+                background-color: ${useSwapWidgetUIStore.getState().colors
+                  .primary};
+              `
             )}
             onClick={() => txHistory.remove(id)}
           >

@@ -28,6 +28,8 @@ import {
 } from '../../utils/ledger-warning';
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
+import { useSwapWidgetUIStore } from '../../store/swap-widget';
+import { css } from '@emotion/css';
 
 export const ChainStep = ({
   chainID,
@@ -242,7 +244,11 @@ export const ChainStep = ({
             </div>
             {signRequired && (
               <SimpleTooltip label={`Require signing`} type="default">
-                <div className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-[#FF486E]">
+                <div
+                  className={cn(
+                    'absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-[#FF486E]'
+                  )}
+                >
                   <FingerPrintIcon className="h-4 w-4 text-white" />
                 </div>
               </SimpleTooltip>
@@ -393,7 +399,12 @@ export const ChainStep = ({
             )}
             {stepState?.explorerLink && (
               <AdaptiveLink
-                className="flex flex-row items-center text-sm font-semibold text-[#FF486E] underline"
+                className={cn(
+                  'flex flex-row items-center text-sm font-semibold underline',
+                  css`
+                    color: ${useSwapWidgetUIStore.getState().colors.primary};
+                  `
+                )}
                 href={stepState.explorerLink.link}
                 data-testid={`explorer-link`}
               >
@@ -472,7 +483,12 @@ export const ChainStep = ({
                   <PencilSquareIcon
                     className={cn(
                       'h-4 w-4',
-                      !isNotFocused ? 'text-[#FF486E]' : 'text-neutral-400'
+                      !isNotFocused
+                        ? css`
+                            color: ${useSwapWidgetUIStore.getState().colors
+                              .primary};
+                          `
+                        : 'text-neutral-400'
                     )}
                   />
                 </button>

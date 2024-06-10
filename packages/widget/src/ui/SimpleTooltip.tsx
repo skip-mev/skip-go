@@ -1,6 +1,8 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { cn } from '../utils/ui';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
+import { css } from '@emotion/css';
 
 type Props = Tooltip.TooltipProps & {
   type?: 'default' | 'warning' | 'brand';
@@ -34,9 +36,18 @@ export const SimpleTooltip = (props: Props) => {
             'select-none shadow shadow-neutral-500/50',
             'text-sm',
             'animate-slide-up-and-fade',
-            type === 'warning' && 'bg-[#fbeef1] text-[#FF486E]',
+            type === 'warning' && `bg-[#fbeef1]`,
+            type === 'warning' &&
+              css`
+                color: ${useSwapWidgetUIStore.getState().colors.primary};
+              `,
             type === 'warning' && 'font-medium',
-            type === 'brand' && 'bg-[#FF486E] text-white',
+            type === 'brand' && `text-white`,
+            type === 'brand' &&
+              css`
+                background-color: ${useSwapWidgetUIStore.getState().colors
+                  .primary};
+              `,
             _content?.className
           )}
         >
@@ -45,7 +56,10 @@ export const SimpleTooltip = (props: Props) => {
             className={cn(
               'fill-white drop-shadow',
               type === 'warning' && 'fill-[#fbeef1]',
-              type === 'brand' && 'fill-[#FF486E]'
+              type === 'brand' &&
+                css`
+                  fill: ${useSwapWidgetUIStore.getState().colors.primary};
+                `
             )}
           />
         </Tooltip.Content>

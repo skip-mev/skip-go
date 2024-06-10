@@ -1,7 +1,7 @@
 import { ArrowsUpDownIcon, FingerPrintIcon } from '@heroicons/react/20/solid';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import type {} from 'typed-query-selector';
-import { ElementRef, useEffect, useRef } from 'react';
+import { ElementRef, useEffect, useRef, useState } from 'react';
 import { useSwapWidget } from '../hooks/use-swap-widget';
 import { disclosure } from '../store/disclosures';
 import { cn } from '../utils/ui';
@@ -22,12 +22,14 @@ import { useWalletModal, WalletModal } from './WalletModal';
 import { useChains } from '../hooks/use-chains';
 import TransactionDialog from './TransactionDialog';
 import { SpinnerIcon } from './Icon/SpinnerIcon';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
+import { css } from '@emotion/css';
+import SkipLogo from './Icon/SkipLogo';
 
-export const SwapWidget = () => {
+export const SwapWidgetUI = () => {
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
-
   const { data: chains } = useChains();
 
   const {
@@ -86,7 +88,7 @@ export const SwapWidget = () => {
   return (
     <UsdDiff.Provider>
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
-        <div className="space-y-4 font-jost relative p-4">
+        <div className="space-y-4 font-jost relative p-4 bg-white">
           <div className="flex h-8 items-center">
             <p className="text-2xl font-semibold">From</p>
             <div className="flex-grow" />
@@ -196,8 +198,24 @@ export const SwapWidget = () => {
           )}
           {route && !routeLoading && numberOfTransactions > 1 && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium uppercase">
-              <div className="relative rounded-full bg-[#FF486E] p-[4px]">
-                <div className="absolute h-6 w-6 animate-ping rounded-full bg-[#FF486E]" />
+              <div
+                className={cn(
+                  'relative rounded-full p-[4px]',
+                  css`
+                    background-color: ${useSwapWidgetUIStore.getState().colors
+                      .primary};
+                  `
+                )}
+              >
+                <div
+                  className={cn(
+                    'absolute h-6 w-6 animate-ping rounded-full',
+                    css`
+                      background-color: ${useSwapWidgetUIStore.getState().colors
+                        .primary};
+                    `
+                  )}
+                />
                 <FingerPrintIcon className="relative h-6 w-6 text-white" />
               </div>
               <p>{numberOfTransactions} Signature Required</p>
@@ -223,9 +241,13 @@ export const SwapWidget = () => {
           {!isWalletConnected && (
             <button
               className={cn(
-                'w-full rounded-md bg-[#FF486E] py-4 font-semibold text-white outline-none transition-[opacity,transform]',
+                'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
                 'disabled:cursor-not-allowed disabled:opacity-75',
-                'enabled:hover:rotate-1 enabled:hover:scale-105'
+                'enabled:hover:rotate-1 enabled:hover:scale-105',
+                css`
+                  background-color: ${useSwapWidgetUIStore.getState().colors
+                    .primary};
+                `
               )}
               disabled={!sourceChain}
               onClick={async () => {
@@ -259,6 +281,12 @@ export const SwapWidget = () => {
               />
             </div>
           )}
+          <div className="w-full flex flex-row justify-center items-center space-x-2">
+            <p className="text-sm font-semibold">Crafted by</p>
+            <a href="https://skip.money" target="_blank">
+              <SkipLogo width={80} height="100%" />
+            </a>
+          </div>
         </div>
         <HistoryDialog />
         <SettingsDialog />

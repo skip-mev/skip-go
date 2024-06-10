@@ -10,6 +10,7 @@ import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { useChainByID } from '../../hooks/use-chains';
 import { DialogContent } from '../Dialog/DialogContent';
+import { useSwapWidgetUIStore } from '../../store/swap-widget';
 
 interface Props {
   chainType: string;
@@ -84,7 +85,9 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                 )}
               >
                 <button
-                  className="flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2 group-hover:bg-[#FF486E]/20"
+                  className={cn(
+                    'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
+                  )}
                   onClick={() => onWalletConnect(wallet)}
                   disabled={chainType === 'svm' && wallet.isAvailable !== true}
                 >
@@ -111,7 +114,9 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                 {wallet.isWalletConnected && (
                   <button
                     aria-label={`Disconnect ${wallet.walletPrettyName}`}
-                    className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-lg bg-[#FF486E]/20 px-2.5 py-1 text-xs font-semibold text-[#FF486E] transition-colors focus:outline-none group-hover:bg-[#FF486E]/30"
+                    className={cn(
+                      'absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold  transition-colors focus:outline-none'
+                    )}
                     onClick={async (event) => {
                       event.stopPropagation();
                       await wallet.disconnect();
