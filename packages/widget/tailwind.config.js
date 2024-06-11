@@ -6,7 +6,6 @@ const plugin = require('tailwindcss/plugin');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/ui/**/*.tsx'],
-  purge: ['./src/ui/**/*.tsx'],
   theme: {
     extend: {
       animation: {

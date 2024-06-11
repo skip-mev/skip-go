@@ -21,7 +21,7 @@ import {
 import * as DescriptionList from './DescriptionList';
 import { RenderDate } from './RenderDate';
 import { txHistory, TxHistoryItem } from '../../store/tx-history';
-import { useFinalityTimeEstimate } from '../../hooks/useFinalityTimeEstimate';
+import { useFinalityTimeEstimate } from '../../hooks/use-finality-time-estimate';
 import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
 import { cn } from '../../utils/ui';
 import { ChainSymbol } from '../ChainSymbol';

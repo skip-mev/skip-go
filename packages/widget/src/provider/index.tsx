@@ -4,7 +4,7 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { ChainAffiliates, SkipRouterOptions } from '@skip-router/core';
+import { SkipRouterOptions } from '@skip-router/core';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { Toaster, ToasterProps } from 'react-hot-toast';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
@@ -48,9 +48,16 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   children,
   endpointOptions = defaultEndpointOptions,
   apiURL = defaultApiURL,
+  defaultRoute,
+  routeConfig,
 }) => {
   return (
-    <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
+    <SkipProvider
+      apiURL={apiURL}
+      endpointOptions={endpointOptions}
+      defaultRoute={defaultRoute}
+      routeConfig={routeConfig}
+    >
       <AssetsProvider>{children}</AssetsProvider>
     </SkipProvider>
   );

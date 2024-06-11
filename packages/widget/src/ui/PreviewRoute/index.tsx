@@ -26,7 +26,7 @@ import { useAssets } from '../../provider/assets';
 import { useChains } from '../../hooks/use-chains';
 import { useMakeWallets } from '../../hooks/use-make-wallets';
 import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
-import { useFinalityTimeEstimate } from '../../hooks/useFinalityTimeEstimate';
+import { useFinalityTimeEstimate } from '../../hooks/use-finality-time-estimate';
 import { randomId } from '../../utils/random';
 import { useSettingsStore } from '../../store/settings';
 import { getExplorerUrl } from '../../utils/explorer';

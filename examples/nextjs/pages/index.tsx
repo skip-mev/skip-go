@@ -14,6 +14,10 @@ const Home: NextPage = () => {
           colors={{
             primary: '#FF4FFF',
           }}
+          defaultRoute={{
+            srcChainID: 'cosmoshub-4',
+            srcAssetDenom: 'uatom',
+          }}
         />
       </div>
     </div>

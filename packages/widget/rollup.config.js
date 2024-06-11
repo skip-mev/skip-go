@@ -7,7 +7,16 @@ import packageJson from './package.json';
 export default [
   {
     input: ['./src/index.ts'],
-    external: ['react', 'react-dom', 'wagmi'],
+    external: [
+      'react',
+      'react-dom',
+      'wagmi',
+      '@wagmi/core',
+      '@cosmos-kit/*',
+      '@solana/*',
+      '@cosmjs/*',
+      '@skip-router/core',
+    ],
     output: {
       file: packageJson.exports.import,
       format: 'esm',
