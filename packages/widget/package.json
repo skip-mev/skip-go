@@ -71,9 +71,7 @@
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.91.8",
-    "@tanstack/query-sync-storage-persister": "^5.18.1",
     "@tanstack/react-query": "^5.18.1",
-    "@tanstack/react-query-persist-client": "^5.18.1",
     "react-hot-toast": "^2.4.1",
     "zustand": "^4.5.2"
   }

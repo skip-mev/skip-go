@@ -26,7 +26,10 @@ import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import SkipLogo from './Icon/SkipLogo';
 
-export const SwapWidgetUI = () => {
+export const SwapWidgetUI = ({
+  className,
+  ...divProps
+}: React.HTMLAttributes<HTMLDivElement>) => {
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
@@ -88,7 +91,10 @@ export const SwapWidgetUI = () => {
   return (
     <UsdDiff.Provider>
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
-        <div className="space-y-4 font-jost relative p-4 bg-white">
+        <div
+          className={cn('space-y-4 font-jost relative p-4 bg-white', className)}
+          {...divProps}
+        >
           <div className="flex h-8 items-center">
             <p className="text-2xl font-semibold">From</p>
             <div className="flex-grow" />
@@ -282,7 +288,7 @@ export const SwapWidgetUI = () => {
             </div>
           )}
           <div className="w-full flex flex-row justify-center items-center space-x-2">
-            <p className="text-sm font-semibold">Crafted by</p>
+            <p className="text-sm">Crafted by</p>
             <a href="https://skip.money" target="_blank">
               <SkipLogo width={80} height="100%" />
             </a>

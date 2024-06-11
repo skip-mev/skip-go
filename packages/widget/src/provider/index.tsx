@@ -22,7 +22,7 @@ export interface WidgetConfig {
   defaultRoute?: DefaultRouteConfig;
   routeConfig?: RouteConfig;
 }
-interface WidgetProviderProps extends SkipAPIProviderProps, WidgetConfig {
+interface WidgetProviderProps {
   children: React.ReactNode;
   toasterProps?: ToasterProps;
 }
@@ -59,7 +59,6 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 export const SwapWidgetProvider: React.FC<WidgetProviderProps> = ({
   children,
   toasterProps,
-  ...props
 }) => {
   return (
     <WalletProvider>
