@@ -1,8 +1,10 @@
-# SKIP GO WIDGET
+# Skip Go Widget
 
-The `@skip-go/widget` package is an npm package of react component that provide a full swap interface using [Skip API](https://skip.money/).
+The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip API](https://skip.money/).
 
 ## Installation
+
+To install the package, run the following command:
 
 ```bash
 npm install @skip-go/widget
@@ -10,52 +12,58 @@ npm install @skip-go/widget
 
 ## Quick Start Guide
 
-1. Wrap your app or page with the `SwapWidgetProvider` component.
+### 1. Wrap Your App with `SwapWidgetProvider`
 
-   ```tsx
-   import { SwapWidgetProvider } from '@skip-go/widget';
+First, wrap your application or the relevant page with the `SwapWidgetProvider` component:
 
-   function App() {
-     return (
-       <SwapWidgetProvider>
-         <YourApp />
-       </SwapWidgetProvider>
-     );
-   }
-   ```
+```tsx
+import { SwapWidgetProvider } from '@skip-go/widget';
 
-2. Use the `SwapWidget` component to render the swap interface.
+function App() {
+  return (
+    <SwapWidgetProvider>
+      <YourApp />
+    </SwapWidgetProvider>
+  );
+}
+```
 
-   ```tsx
-   import { SwapWidget } from '@skip-go/widget';
+### 2. Use the `SwapWidget` Component
 
-   const SwapPage = () => {
-     return (
-       <div
-         style={{
-           width: '450px',
-           height: '820px',
-         }}
-       >
-         <SwapWidget
-           colors={{
-             primary: '#FF4FFF',
-           }}
-         />
-       </div>
-     );
-   };
-   ```
+Next, use the `SwapWidget` component to render the swap interface:
 
-## Props
+```tsx
+import { SwapWidget } from '@skip-go/widget';
+
+const SwapPage = () => {
+  return (
+    <div
+      style={{
+        width: '450px',
+        height: '820px',
+      }}
+    >
+      <SwapWidget
+        colors={{
+          primary: '#FF4FFF',
+        }}
+      />
+    </div>
+  );
+};
+```
+
+## Component Props
 
 ### SwapWidget
 
+The `SwapWidget` component accepts the following props:
+
 ```tsx
 interface SwapWidgetProps {
-  colors?:{
-    primary?: string; // Custom colors for the widget. Defaults to `#FF486E`.
-  }
+  colors?: {
+    primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
+  };
   defaultRoute?: { // Default route for the widget.
     amountIn?: number;
     amountOut?: number;
@@ -64,12 +72,12 @@ interface SwapWidgetProps {
     destChainID?: string;
     destAssetDenom?: string;
   };
-  endpointOptions?: { // Endpoint options to override rpc/rest endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  endpointOptions?: { // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
-  apiURL?: string // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
   routeConfig?: {
     experimentalFeatures?: ["hyperlane"];
     allowMultiTx?: boolean;
@@ -79,6 +87,7 @@ interface SwapWidgetProps {
       name: string;
       chainID: string;
     }[];
+  };
   className?: string;
   style?: React.CSSProperties;
 }
@@ -86,4 +95,8 @@ interface SwapWidgetProps {
 
 ### SwapWidgetProvider
 
-- `toasterProps` (Optional) - Props for the toaster component. [ToasterProps](https://react-hot-toast.com/docs/toast-options). Defaults to `{ position: 'top-right' }`.
+The `SwapWidgetProvider` component accepts the following prop:
+
+- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
+
+By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
