@@ -97,6 +97,6 @@ interface SwapWidgetProps {
 
 The `SwapWidgetProvider` component accepts the following prop:
 
-- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
+- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast) for more details. Defaults to `{ position: 'top-right' }`.
 
 By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
