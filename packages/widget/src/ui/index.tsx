@@ -1,23 +1,27 @@
 import { SkipAPIProvider, SkipAPIProviderProps } from '../provider';
-import { configureSwapWidget } from '../store/swap-widget';
+import {
+  configureSwapWidget,
+  ConfigureSwapWidgetArgs,
+} from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
 
 interface SwapWidgetProps
   extends Omit<SkipAPIProviderProps, 'children'>,
-    Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'> {
-  colors?: {
-    primary?: string;
-  };
-}
+    Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
+    ConfigureSwapWidgetArgs {}
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
   className,
   style,
+  settings,
+  onlyTestnet,
   ...props
 }) => {
   configureSwapWidget({
-    colors: colors,
+    colors,
+    onlyTestnet,
+    settings,
   });
   const divProps = { className, style };
   return (

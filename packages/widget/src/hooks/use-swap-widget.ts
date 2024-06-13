@@ -58,7 +58,12 @@ export function useSwapWidget() {
   const { routeConfig, defaultRoute } = useSkipConfig();
   const skipClient = useSkipClient();
 
-  const { assetsByChainID, getFeeAsset, isReady: isAssetsReady } = useAssets();
+  const {
+    assetsByChainID,
+    getFeeAsset,
+    isReady: isAssetsReady,
+    getAsset,
+  } = useAssets();
   const { data: chains } = useChains();
 
   const { getWalletRepo } = useCosmosManager();
@@ -168,7 +173,49 @@ export function useSwapWidget() {
         balances[srcFeeAsset.denom] ?? '0'
       ).shiftedBy(-(srcFeeAsset.decimals ?? 6));
       const parsedGasRequired = BigNumber(gasRequired || '0');
+
+      if (srcChain?.chainID === 'stride-1') {
+        const tiaIbcToken =
+          'ibc/BF3B4F53F3694B66E13C23107C84B6485BD2B96296BB7EC680EA77BBA75B4801';
+        const tiaOnStride = getAsset(tiaIbcToken, 'stride-1');
+        const parsedTiaOnStrideBalance = BigNumber(
+          balances[tiaIbcToken] ?? '0'
+        ).shiftedBy(-(tiaOnStride?.decimals ?? 6));
+
+        const needTia = parsedTiaOnStrideBalance
+          .minus(parsedGasRequired)
+          .isLessThanOrEqualTo(0);
+        const needFeeToken = parsedFeeBalance
+          .minus(parsedGasRequired)
+          .isLessThanOrEqualTo(0);
+        const assetIsFeeDenom = srcFeeAsset.denom === srcAsset.denom;
+        const assetIsTiaDenom = srcAsset.denom === tiaIbcToken;
+
+        if (
+          parsedGasRequired.gt(0) &&
+          (assetIsFeeDenom
+            ? parsedAmount.isGreaterThan(
+                parsedBalance.minus(parsedGasRequired)
+              ) && needTia
+            : assetIsTiaDenom
+            ? parsedAmount.isGreaterThan(
+                parsedTiaOnStrideBalance.minus(parsedGasRequired)
+              ) && needFeeToken
+            : needFeeToken
+            ? needTia
+            : needTia
+            ? needFeeToken
+            : false)
+        ) {
+          if (parsedAmount.isGreaterThan(parsedBalance)) {
+            return `Insufficient balance.`;
+          }
+          return `Insufficient balance. You need ≈${gasRequired} ${srcFeeAsset.recommendedSymbol} or ${tiaOnStride?.recommendedSymbol} to accomodate gas fees.`;
+        }
+      }
+
       if (
+        srcChain?.chainID !== 'stride-1' &&
         parsedGasRequired.gt(0) &&
         (srcFeeAsset.denom === srcAsset.denom
           ? parsedAmount.isGreaterThan(parsedBalance.minus(parsedGasRequired))
@@ -183,7 +230,15 @@ export function useSwapWidget() {
     }
 
     return false;
-  }, [amountIn, balances, gasRequired, srcAsset, srcFeeAsset]);
+  }, [
+    amountIn,
+    balances,
+    gasRequired,
+    getAsset,
+    srcAsset,
+    srcChain?.chainID,
+    srcFeeAsset,
+  ]);
 
   const swapPriceImpactPercent = useMemo(() => {
     if (!route?.swapPriceImpactPercent) return undefined;
