@@ -1,7 +1,8 @@
 {
   "name": "@skip-go/widget",
-  "version": "0.0.2",
-  "author": "Skip",
+  "description": "Swap widget",
+  "version": "0.0.1-alpha.0",
+  "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
     "import": "./build/index.es.js",
@@ -88,5 +89,8 @@
     "react-icons": "^5.2.1",
     "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
