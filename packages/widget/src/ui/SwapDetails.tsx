@@ -232,9 +232,13 @@ export const SwapDetails = ({
           {sourceFeeAsset && (
             <>
               <dt>Estimated Transaction Fee</dt>
-              <dd>
-                {gasRequired ?? '-'} {sourceFeeAsset.recommendedSymbol}
-              </dd>
+              {sourceChain.chainID !== 'stride-1' ? (
+                <dd>
+                  {gasRequired ?? '-'} {sourceFeeAsset.recommendedSymbol}
+                </dd>
+              ) : (
+                <dd>--</dd>
+              )}
             </>
           )}
           {/* <dt>Gas Amount</dt>
