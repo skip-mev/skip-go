@@ -5,11 +5,13 @@ interface SwapWidgetStore {
   colors: {
     primary?: string;
   };
+  onlyTestnet?: boolean;
 }
 export const swapWidgetDefaultValues: SwapWidgetStore = {
   colors: {
     primary: '#FF486E',
   },
+  onlyTestnet: false,
 };
 
 export const useSwapWidgetUIStore = create(() => swapWidgetDefaultValues);
@@ -33,6 +35,7 @@ export interface ConfigureSwapWidgetArgs {
      */
     slippage?: number;
   };
+  onlyTestnet?: boolean;
 }
 
 export const configureSwapWidget = (args: ConfigureSwapWidgetArgs) => {
@@ -40,6 +43,7 @@ export const configureSwapWidget = (args: ConfigureSwapWidgetArgs) => {
     colors: {
       primary: args.colors?.primary || prev.colors.primary,
     },
+    onlyTestnet: args.onlyTestnet || prev.onlyTestnet,
   }));
   useSettingsStore.setState((prev) => ({
     customGasAmount:

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 import { chainIdToName } from '../chains';
 import { chainIdToPrettyName } from '../chains/pretty';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 export type Chain = SkipChain & {
   prettyName: string;
@@ -23,6 +24,7 @@ export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
       const chains = await skipClient.chains({
         includeEVM: true,
         includeSVM: true,
+        onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
       });
 
       return chains

@@ -15,10 +15,12 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   className,
   style,
   settings,
+  onlyTestnet,
   ...props
 }) => {
   configureSwapWidget({
     colors,
+    onlyTestnet,
     settings,
   });
   const divProps = { className, style };
