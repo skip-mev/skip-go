@@ -64,7 +64,8 @@ interface SwapWidgetProps {
   colors?: {
     primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
   };
-  defaultRoute?: { // Default route for the widget.
+  defaultRoute?: {
+    // Default route for the widget.
     amountIn?: number;
     amountOut?: number;
     srcChainID?: string;
@@ -72,17 +73,18 @@ interface SwapWidgetProps {
     destChainID?: string;
     destAssetDenom?: string;
   };
-  endpointOptions?: { // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  endpointOptions?: {
+    // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
   apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
   routeConfig?: {
-    experimentalFeatures?: ["hyperlane"];
+    experimentalFeatures?: ['hyperlane'];
     allowMultiTx?: boolean;
     allowUnsafe?: boolean;
-    bridges?: ("IBC" | "AXELAR" | "CCTP" | "HYPERLANE")[];
+    bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE')[];
     swapVenues?: {
       name: string;
       chainID: string;
@@ -90,6 +92,11 @@ interface SwapWidgetProps {
   };
   className?: string;
   style?: React.CSSProperties;
+  settings?: {
+    customGasAmount?: number; // custom gas amount for validation defaults to 200_000
+    slippage?: number; //percentage of slippage 0-100. defaults to 3
+  };
+  onlyTestnet?: boolean; // Only show testnet chains
 }
 ```
 
