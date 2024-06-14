@@ -36,9 +36,6 @@ export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
             logoURI: chain.logoURI || 'https://api.dicebear.com/6.x/shapes/svg',
           };
         })
-        .filter((chain) =>
-          process.env.NEXT_PUBLIC_IS_TESTNET ? chain.isTestnet : true
-        )
         .sort((chainA, chainB) => {
           return chainA.prettyName.localeCompare(chainB.prettyName);
         });
