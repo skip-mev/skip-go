@@ -36,6 +36,7 @@ import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { css } from '@emotion/css';
+import { CraftedBySkip } from '../CraftedBySkip';
 
 export interface Wallet {
   walletName: string;
@@ -613,6 +614,7 @@ export const PreviewRoute = ({
           ) : (
             <SubmitButton />
           )}
+          <CraftedBySkip />
         </div>
       </div>
     </div>

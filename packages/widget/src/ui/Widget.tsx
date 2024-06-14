@@ -1,7 +1,7 @@
 import { ArrowsUpDownIcon, FingerPrintIcon } from '@heroicons/react/20/solid';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import type {} from 'typed-query-selector';
-import { ElementRef, useEffect, useRef, useState } from 'react';
+import { ElementRef, useEffect, useRef } from 'react';
 import { useSwapWidget } from '../hooks/use-swap-widget';
 import { disclosure } from '../store/disclosures';
 import { cn } from '../utils/ui';
@@ -24,7 +24,7 @@ import TransactionDialog from './TransactionDialog';
 import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
-import SkipLogo from './Icon/SkipLogo';
+import { CraftedBySkip } from './CraftedBySkip';
 
 export const SwapWidgetUI = ({
   className,
@@ -287,12 +287,7 @@ export const SwapWidgetUI = ({
               />
             </div>
           )}
-          <div className="w-full flex flex-row justify-center items-center space-x-2">
-            <p className="text-sm">Crafted by</p>
-            <a href="https://skip.money" target="_blank">
-              <SkipLogo width={80} height="100%" />
-            </a>
-          </div>
+          <CraftedBySkip />
         </div>
         <HistoryDialog />
         <SettingsDialog />
