@@ -5,7 +5,7 @@ import {
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
 
-interface SwapWidgetProps
+export interface SwapWidgetProps
   extends Omit<SkipAPIProviderProps, 'children'>,
     Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
     ConfigureSwapWidgetArgs {}

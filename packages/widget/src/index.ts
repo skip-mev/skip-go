@@ -1,3 +1,3 @@
 import './styles/global.css';
 export { SwapWidgetProvider } from './provider';
-export { SwapWidget } from './ui';
+export { SwapWidget, SwapWidgetProps } from './ui';
