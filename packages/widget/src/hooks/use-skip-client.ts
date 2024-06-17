@@ -21,7 +21,5 @@ export function useSkipConfig() {
   return {
     apiURL: context.apiURL,
     endpointOptions: context.endpointOptions,
-    defaultRoute: context.defaultRoute,
-    routeConfig: context.routeConfig,
   };
 }

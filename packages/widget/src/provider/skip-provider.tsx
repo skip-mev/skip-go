@@ -12,11 +12,11 @@ import { gracefullyConnect, isWalletClientUsingLedger } from '../utils/wallet';
 import { WidgetConfig } from '.';
 
 export const SkipContext = createContext<
-  | ({
+  | {
       skipClient: SkipRouter;
       apiURL?: string;
       endpointOptions?: SkipRouterOptions['endpointOptions'];
-    } & WidgetConfig)
+    }
   | undefined
 >(undefined);
 
@@ -111,8 +111,6 @@ export function SkipProvider({
         skipClient,
         apiURL,
         endpointOptions,
-        defaultRoute,
-        routeConfig,
       }}
     >
       {children}

@@ -31,6 +31,7 @@ import { getChainFeeAssets, getChainGasPrice } from '../utils/chain';
 import { useSkipClient, useSkipConfig } from './use-skip-client';
 import { getAmountWei, parseAmountWei } from '../utils/number';
 import { gracefullyConnect } from '../utils/wallet';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 const DEFAULT_SRC_CHAIN_ID = 'cosmoshub-4';
 const PRICE_IMPACT_THRESHOLD = 0.1;
@@ -55,7 +56,7 @@ export function useSwapWidget() {
 
   // #region -- core states
 
-  const { routeConfig, defaultRoute } = useSkipConfig();
+  const { routeConfig, defaultRoute } = useSwapWidgetUIStore();
   const skipClient = useSkipClient();
 
   const {

@@ -6,8 +6,7 @@ import {
 import { SwapWidgetUI } from './Widget';
 
 export interface SwapWidgetProps
-  extends Omit<SkipAPIProviderProps, 'children'>,
-    Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
+  extends Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
     ConfigureSwapWidgetArgs {}
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
@@ -16,17 +15,16 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   style,
   settings,
   onlyTestnet,
-  ...props
+  defaultRoute,
+  routeConfig,
 }) => {
   configureSwapWidget({
     colors,
     onlyTestnet,
     settings,
+    defaultRoute,
+    routeConfig,
   });
   const divProps = { className, style };
-  return (
-    <SkipAPIProvider {...props}>
-      <SwapWidgetUI {...divProps} />
-    </SkipAPIProvider>
-  );
+  return <SwapWidgetUI {...divProps} />;
 };

@@ -1,15 +1,11 @@
 import {
-  Bridge,
   BridgeType,
   ExperimentalFeature,
-  RouteRequest,
-  RouteRequestGivenIn,
-  SwapVenue,
   SwapVenueRequest,
 } from '@skip-router/core';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
-import { useSkipClient, useSkipConfig } from './use-skip-client';
+import { useSkipClient } from './use-skip-client';
 
 export interface RouteConfig {
   experimentalFeatures?: ExperimentalFeature[];
@@ -44,7 +40,6 @@ export function useRoute({
   allowUnsafe = true,
 }: UseRouteArgs) {
   const skipClient = useSkipClient();
-  const { routeConfig } = useSkipConfig();
 
   const [refetchCount, setRefetchCount] = useState(0);
   const [isError, setIsError] = useState(false);
