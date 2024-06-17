@@ -306,7 +306,7 @@ export function useSwapWidget() {
    * - if not, select first available asset
    */
   const onSourceChainChange = useCallback(
-    async (chain: Chain) => {
+    async (chain: Chain, injectAsset?: Asset) => {
       let feeAsset: Asset | undefined = undefined;
       if (chain.chainType === 'cosmos') {
         feeAsset = await getFeeAsset(chain.chainID);
@@ -328,7 +328,7 @@ export function useSwapWidget() {
 
       useSwapWidgetStore.setState({
         sourceChain: chain,
-        sourceAsset: asset,
+        sourceAsset: injectAsset ? injectAsset : asset,
         sourceFeeAsset: feeAsset,
         sourceGasPrice: undefined,
         gasRequired: undefined,
@@ -798,16 +798,17 @@ export function useSwapWidget() {
         (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
       );
       if (findChain) {
-        onSourceChainChange(findChain);
         if (defaultSourceAsset) {
           const assets = assetsByChainID(findChain.chainID);
           const findAsset = assets.find(
             (x) => x.denom.toLowerCase() === defaultSourceAsset.toLowerCase()
           );
           if (findAsset) {
-            onSourceAssetChange(findAsset);
+            onSourceChainChange(findChain, findAsset);
+            return;
           }
         }
+        onSourceChainChange(findChain);
       }
     }
   }, [
