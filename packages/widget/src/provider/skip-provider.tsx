@@ -24,13 +24,11 @@ export function SkipProvider({
   children,
   apiURL,
   endpointOptions,
-  defaultRoute,
-  routeConfig,
 }: {
   children: ReactNode;
   apiURL?: string;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
-} & WidgetConfig) {
+}) {
   const { getWalletRepo } = useManager();
   const { wallets } = useWallet();
 
