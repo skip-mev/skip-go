@@ -805,21 +805,19 @@ export function useSwapWidget() {
           );
           if (findAsset) {
             onSourceChainChange(findChain, findAsset);
+            useSwapWidgetUIStore.setState({
+              defaultRoute: undefined,
+            });
             return;
           }
         }
         onSourceChainChange(findChain);
+        useSwapWidgetUIStore.setState({
+          defaultRoute: undefined,
+        });
       }
     }
-  }, [
-    assetsByChainID,
-    chains,
-    isAssetsReady,
-    onSourceAssetChange,
-    onSourceChainChange,
-    defaultSourceChain,
-    defaultSourceAsset,
-  ]);
+  }, [chains, isAssetsReady, defaultSourceChain, defaultSourceAsset]);
 
   useEffect(() => {
     if (!chains || !isAssetsReady) return;
@@ -836,36 +834,35 @@ export function useSwapWidget() {
           );
           if (findAsset) {
             onDestinationChainChange(findChain, findAsset);
+            useSwapWidgetUIStore.setState({
+              defaultRoute: undefined,
+            });
             return;
           }
         }
         onDestinationChainChange(findChain);
+        useSwapWidgetUIStore.setState({
+          defaultRoute: undefined,
+        });
       }
     }
-  }, [
-    assetsByChainID,
-    chains,
-    isAssetsReady,
-    onDestinationAssetChange,
-    onDestinationChainChange,
-    defaultDestinationAsset,
-    defaultDestinationChain,
-  ]);
+  }, [chains, isAssetsReady, defaultDestinationAsset, defaultDestinationChain]);
 
   useEffect(() => {
     if (defaultAmountIn) {
       onSourceAmountChange(String(defaultAmountIn));
+      useSwapWidgetUIStore.setState({
+        defaultRoute: undefined,
+      });
       return;
     }
     if (defaultAmountOut) {
       onDestinationAmountChange(String(defaultAmountOut));
+      useSwapWidgetUIStore.setState({
+        defaultRoute: undefined,
+      });
     }
-  }, [
-    onDestinationAmountChange,
-    onSourceAmountChange,
-    defaultAmountIn,
-    defaultAmountOut,
-  ]);
+  }, [defaultAmountIn, defaultAmountOut]);
 
   /////////////////////////////////////////////////////////////////////////////
 

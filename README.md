@@ -73,13 +73,6 @@ interface SwapWidgetProps {
     destChainID?: string;
     destAssetDenom?: string;
   };
-  endpointOptions?: {
-    // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-    endpoints?: Record<string, EndpointOptions>;
-    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-    getRestEndpointForChain?: (chainID: string) => Promise<string>;
-  };
-  apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
   routeConfig?: {
     experimentalFeatures?: ['hyperlane'];
     allowMultiTx?: boolean;
@@ -104,6 +97,18 @@ interface SwapWidgetProps {
 
 The `SwapWidgetProvider` component accepts the following prop:
 
-- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast) for more details. Defaults to `{ position: 'top-right' }`.
+- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
+- `endpointOptions` (Optional): Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+
+  ```ts
+  endpointOptions?: {
+      // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+      endpoints?: Record<string, EndpointOptions>;
+      getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+      getRestEndpointForChain?: (chainID: string) => Promise<string>;
+    };
+  ```
+
+- `apiURL` (Optional): Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
 By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.

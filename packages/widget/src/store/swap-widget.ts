@@ -2,6 +2,12 @@ import { create } from 'zustand';
 import { useSettingsStore } from './settings';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
 import { RouteConfig } from '../hooks/use-route';
+import {
+  createJSONStorage,
+  persist,
+  PersistOptions,
+  subscribeWithSelector,
+} from 'zustand/middleware';
 
 interface SwapWidgetStore {
   colors: {
@@ -24,7 +30,20 @@ export const swapWidgetDefaultValues: SwapWidgetStore = {
   },
 };
 
-export const useSwapWidgetUIStore = create(() => swapWidgetDefaultValues);
+const sessionOptions: PersistOptions<
+  SwapWidgetStore,
+  Pick<SwapWidgetStore, 'defaultRoute'>
+> = {
+  name: 'skip-go-widget',
+  partialize: (x) => ({
+    defaultRoute: x.defaultRoute,
+  }),
+  storage: createJSONStorage(() => window.sessionStorage),
+};
+
+export const useSwapWidgetUIStore = create(
+  subscribeWithSelector(persist(() => swapWidgetDefaultValues, sessionOptions))
+);
 
 export interface ConfigureSwapWidgetArgs {
   colors?: {
