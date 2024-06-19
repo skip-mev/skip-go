@@ -317,10 +317,10 @@ export function useSwapWidget() {
         const assets = assetsByChainID(chain.chainID);
         if (chain.chainType === 'evm') {
           asset = assets.find(
-            (asset) =>
-              asset.denom.endsWith('-native') ||
-              asset.name?.toLowerCase() === chain.chainName.toLowerCase() ||
-              asset.symbol?.toLowerCase().includes('usdc')
+            (x) =>
+              x.denom.endsWith('-native') ||
+              x.name?.toLowerCase() === chain.chainName.toLowerCase() ||
+              x.recommendedSymbol?.toLowerCase() === 'usdc'
           );
         }
         asset ??= assets[0];
@@ -377,10 +377,10 @@ export function useSwapWidget() {
         const assets = assetsByChainID(chain.chainID);
         if (chain.chainType === 'evm') {
           asset = assets.find(
-            (asset) =>
-              asset.denom.endsWith('-native') ||
-              asset.name?.toLowerCase() === chain.chainName.toLowerCase() ||
-              asset.symbol?.toLowerCase().includes('usdc')
+            (x) =>
+              x.denom.endsWith('-native') ||
+              x.name?.toLowerCase() === chain.chainName.toLowerCase() ||
+              x.recommendedSymbol?.toLowerCase() === 'usdc'
           );
         }
         asset ??= assets[0];
