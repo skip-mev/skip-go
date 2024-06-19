@@ -52,6 +52,8 @@ export const config = createConfig({
     arbitrumSepolia,
     blast,
     blastSepolia,
+    forma,
+    formaTestnet,
   ],
   transports: {
     [arbitrum.id]: http(),
