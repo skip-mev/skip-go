@@ -9,6 +9,7 @@ import {
 import { useAssets as useSkipAssets } from '../hooks/use-assets';
 import { useChains } from '../hooks/use-chains';
 import { sortFeeAssets } from '../utils/chain';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 interface AssetsContext {
   assets: Record<string, Asset[]>;
@@ -30,7 +31,9 @@ export const AssetsContext = createContext<AssetsContext>({
 
 export const AssetsProvider = ({ children }: { children: ReactNode }) => {
   const { data: chains } = useChains();
-  const { data: assets = {} } = useSkipAssets();
+  const { data: assets = {} } = useSkipAssets({
+    onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
+  });
 
   const assetsByChainID: AssetsContext['assetsByChainID'] = useCallback(
     (chainID?: string) => {

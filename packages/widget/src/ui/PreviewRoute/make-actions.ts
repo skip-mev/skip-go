@@ -1,7 +1,7 @@
-import { BridgeType, RouteResponse } from "@skip-router/core";
+import { BridgeType, RouteResponse } from '@skip-router/core';
 
 export interface TransferAction {
-  type: "TRANSFER";
+  type: 'TRANSFER';
   denomIn: string;
   denomOut: string;
   fromChainID: string;
@@ -15,7 +15,7 @@ export interface TransferAction {
 }
 
 export interface SwapAction {
-  type: "SWAP";
+  type: 'SWAP';
   denomIn: string;
   denomOut: string;
   chainID: string;
@@ -46,9 +46,9 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       }
     })();
 
-    if ("swap" in operation) {
+    if ('swap' in operation) {
       _actions.push({
-        type: "SWAP",
+        type: 'SWAP',
         denomIn: operation.swap.denomIn,
         denomOut: operation.swap.denomOut,
         chainID: operation.swap.chainID,
@@ -63,9 +63,24 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
-    if ("axelarTransfer" in operation) {
+    if ('evmSwap' in operation) {
       _actions.push({
-        type: "TRANSFER",
+        type: 'SWAP',
+        denomIn: operation.evmSwap.denomIn,
+        denomOut: operation.evmSwap.denomOut,
+        chainID: operation.evmSwap.fromChainID,
+        id: `swap-${swapCount}-${transferCount}-${i}`,
+        signRequired,
+        amountIn: operation.amountIn,
+        amountOut: operation.amountOut,
+        txIndex: operation.txIndex,
+      });
+      return;
+    }
+
+    if ('axelarTransfer' in operation) {
+      _actions.push({
+        type: 'TRANSFER',
         denomIn: operation.axelarTransfer.denomIn,
         denomOut: operation.axelarTransfer.denomOut,
         fromChainID: operation.axelarTransfer.fromChainID,
@@ -81,9 +96,9 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
-    if ("cctpTransfer" in operation) {
+    if ('cctpTransfer' in operation) {
       _actions.push({
-        type: "TRANSFER",
+        type: 'TRANSFER',
         denomIn: operation.cctpTransfer.denomIn,
         denomOut: operation.cctpTransfer.denomOut,
         fromChainID: operation.cctpTransfer.fromChainID,
@@ -99,9 +114,9 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
-    if ("hyperlaneTransfer" in operation) {
+    if ('hyperlaneTransfer' in operation) {
       _actions.push({
-        type: "TRANSFER",
+        type: 'TRANSFER',
         denomIn: operation.hyperlaneTransfer.denomIn,
         denomOut: operation.hyperlaneTransfer.denomOut,
         fromChainID: operation.hyperlaneTransfer.fromChainID,
@@ -117,9 +132,9 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
-    if ("bankSend" in operation) {
+    if ('bankSend' in operation) {
       _actions.push({
-        type: "TRANSFER",
+        type: 'TRANSFER',
         denomIn: operation.bankSend.denom,
         denomOut: operation.bankSend.denom,
         fromChainID: operation.bankSend.chainID,
@@ -135,7 +150,7 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
     }
 
     _actions.push({
-      type: "TRANSFER",
+      type: 'TRANSFER',
       denomIn: operation.transfer.denomIn,
       denomOut: operation.transfer.denomOut,
       fromChainID: operation.transfer.fromChainID,
