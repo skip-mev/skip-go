@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { SkipAPIProvider, SkipAPIProviderProps } from '../provider';
 import {
   configureSwapWidget,
@@ -18,13 +19,16 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   defaultRoute,
   routeConfig,
 }) => {
-  configureSwapWidget({
-    colors,
-    onlyTestnet,
-    settings,
-    defaultRoute,
-    routeConfig,
-  });
+  useEffect(() => {
+    configureSwapWidget({
+      colors,
+      onlyTestnet,
+      settings,
+      defaultRoute,
+      routeConfig,
+    });
+  }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
+
   const divProps = { className, style };
   return <SwapWidgetUI {...divProps} />;
 };

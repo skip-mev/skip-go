@@ -792,7 +792,7 @@ export function useSwapWidget() {
   const defaultAmountOut = defaultRoute?.amountOut;
 
   useEffect(() => {
-    if (!chains || !isAssetsReady) return;
+    if (!chains || !isAssetsReady || srcChain) return;
     if (defaultSourceChain) {
       const findChain = chains.find(
         (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
@@ -817,10 +817,10 @@ export function useSwapWidget() {
         });
       }
     }
-  }, [chains, isAssetsReady, defaultSourceChain, defaultSourceAsset]);
+  }, [srcChain, chains, isAssetsReady, defaultSourceChain, defaultSourceAsset]);
 
   useEffect(() => {
-    if (!chains || !isAssetsReady) return;
+    if (!chains || !isAssetsReady || dstChain) return;
     if (defaultDestinationChain) {
       const findChain = chains.find(
         (x) => x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
@@ -846,7 +846,13 @@ export function useSwapWidget() {
         });
       }
     }
-  }, [chains, isAssetsReady, defaultDestinationAsset, defaultDestinationChain]);
+  }, [
+    dstChain,
+    chains,
+    isAssetsReady,
+    defaultDestinationAsset,
+    defaultDestinationChain,
+  ]);
 
   useEffect(() => {
     if (defaultAmountIn) {
