@@ -1,6 +1,7 @@
 import {
   BridgeType,
   ExperimentalFeature,
+  SmartSwapOptions,
   SwapVenueRequest,
 } from '@skip-router/core';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ export interface RouteConfig {
   allowUnsafe?: boolean;
   bridges?: BridgeType[];
   swapVenues?: SwapVenueRequest[];
+  smartSwapOptions?: SmartSwapOptions;
 }
 
 interface UseRouteArgs extends RouteConfig {
@@ -38,6 +40,9 @@ export function useRoute({
   experimentalFeatures = ['hyperlane'],
   allowMultiTx = true,
   allowUnsafe = true,
+  smartSwapOptions = {
+    splitRoutes: true,
+  },
 }: UseRouteArgs) {
   const skipClient = useSkipClient();
 
@@ -56,6 +61,8 @@ export function useRoute({
         destinationAssetChainID,
         swapVenues,
         experimentalFeatures,
+        bridges,
+        smartSwapOptions,
       ] as const,
     [
       amount,
@@ -66,6 +73,8 @@ export function useRoute({
       sourceAssetChainID,
       swapVenues,
       experimentalFeatures,
+      bridges,
+      smartSwapOptions,
     ]
   );
 
@@ -82,6 +91,8 @@ export function useRoute({
         destinationAssetChainID,
         swapVenues,
         experimentalFeatures,
+        bridges,
+        smartSwapOptions,
       ],
     }) => {
       if (
@@ -107,9 +118,7 @@ export function useRoute({
                 allowUnsafe,
                 experimentalFeatures,
                 smartRelay: true,
-                smartSwapOptions: {
-                  splitRoutes: true,
-                },
+                smartSwapOptions,
               }
             : {
                 amountOut: amount,
@@ -123,9 +132,7 @@ export function useRoute({
                 allowUnsafe,
                 experimentalFeatures,
                 smartRelay: true,
-                smartSwapOptions: {
-                  splitRoutes: true,
-                },
+                smartSwapOptions,
               }
         );
 

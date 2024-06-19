@@ -27,6 +27,9 @@ export const swapWidgetDefaultValues: SwapWidgetStore = {
     allowMultiTx: true,
     allowUnsafe: true,
     experimentalFeatures: ['hyperlane'],
+    smartSwapOptions: {
+      splitRoutes: true,
+    },
   },
 };
 
