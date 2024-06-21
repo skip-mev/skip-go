@@ -42,6 +42,7 @@ export function useRoute({
   allowUnsafe = true,
   smartSwapOptions = {
     splitRoutes: true,
+    evmSwaps: true,
   },
 }: UseRouteArgs) {
   const skipClient = useSkipClient();

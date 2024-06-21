@@ -29,6 +29,7 @@ export const swapWidgetDefaultValues: SwapWidgetStore = {
     experimentalFeatures: ['hyperlane'],
     smartSwapOptions: {
       splitRoutes: true,
+      evmSwaps: true,
     },
   },
 };
