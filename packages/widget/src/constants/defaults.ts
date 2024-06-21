@@ -1,4 +1,4 @@
-const appUrl = 'https://ibc.fun';
+const appUrl = 'https://dev.ibc.fun';
 
 export const endpointOptions = {
   getRpcEndpointForChain: async (chainID: string) => {
