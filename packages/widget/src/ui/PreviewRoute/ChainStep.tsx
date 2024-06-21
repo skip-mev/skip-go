@@ -17,7 +17,6 @@ import { makeStepState } from './make-step-state';
 import { SetAddressDialog } from './SetAddressDialog';
 import { BroadcastedTx, ChainAddresses, SetChainAddressesParam } from './types';
 import { useChainByID, useChains } from '../../hooks/use-chains';
-import { useAssets } from '../../hooks/use-assets';
 import { useBridgeByID } from '../../hooks/use-bridges';
 import { useAutoSetAddress } from '../../hooks/use-auto-set-address';
 import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
@@ -30,6 +29,7 @@ import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { css } from '@emotion/css';
+import { useAssets } from '../../provider/assets';
 
 export const ChainStep = ({
   chainID,
@@ -81,10 +81,7 @@ export const ChainStep = ({
   const isDestination = index === totalChains - 1;
   const isSource = index === 0;
 
-  const { data: assets } = useAssets();
-
-  const getAsset = (_chainID: string, denom: string) =>
-    assets?.[_chainID]?.find((a) => a.denom === denom);
+  const { getAsset } = useAssets();
 
   const { data: bridge } = useBridgeByID(transferAction?.bridgeID);
 
