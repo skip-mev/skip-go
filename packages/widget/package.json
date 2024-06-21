@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "0.0.1-alpha.19",
+  "version": "0.0.1-alpha.20",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
@@ -73,7 +73,7 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@skip-router/core": "5.1.0-rc.0",
+    "@skip-router/core": "5.1.0",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",
