@@ -1,12 +1,18 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "0.0.1-alpha.20",
+  "version": "0.0.1-alpha.21",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
-    "import": "./build/index.es.js",
-    "types": "./build/index.d.ts"
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.es.js"
+    },
+    "./style.css": {
+      "import": "./build/style.css",
+      "default": "./build/style.css"
+    }
   },
   "types": "./build/index.d.ts",
   "engines": {
