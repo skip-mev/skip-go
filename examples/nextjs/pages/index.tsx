@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import { SwapWidget } from '@skip-go/widget';
+import '@skip-go/widget/style.css';
 
 const Home: NextPage = () => {
   return (

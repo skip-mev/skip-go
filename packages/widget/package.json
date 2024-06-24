@@ -5,8 +5,14 @@
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
-    "import": "./build/index.es.js",
-    "types": "./build/index.d.ts"
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.es.js"
+    },
+    "./style.css": {
+      "import": "./build/style.css",
+      "default": "./build/style.css"
+    }
   },
   "types": "./build/index.d.ts",
   "engines": {

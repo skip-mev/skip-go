@@ -9,7 +9,7 @@ export default [
     input: ['./src/index.ts'],
     external: ['react', 'react-dom'],
     output: {
-      file: packageJson.exports.import,
+      file: packageJson.exports['.'].import,
       format: 'esm',
       sourcemap: true,
     },
@@ -20,9 +20,7 @@ export default [
         },
         extensions: ['.css'],
         minimize: true,
-        inject: {
-          insertAt: 'top',
-        },
+        extract: 'style.css',
       }),
       peerDepsExternal(),
       typescript({
