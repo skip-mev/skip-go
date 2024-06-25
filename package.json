@@ -9,14 +9,15 @@
     "examples/*"
   ],
   "scripts": {
+    "dev": "yarn run dev:widget & yarn run dev:nextjs",
     "dev:widget": "yarn workspace @skip-go/widget run dev",
     "dev:nextjs": "yarn workspace nextjs run dev",
-    "dev:nextjs-app": "yarn workspace nextjs-app run dev",
-    "build": "yarn run chains && yarn workspace @skip-go/widget run build",
+    "build": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn build && yarn workspace nextjs build",
     "chains:update": "git submodule init && git submodule update --remote",
     "chains:generate": "yarn workspace @skip-go/widget run chains:generate",
-    "chains": "yarn run chains:update && yarn run chains:generate"
+    "chains": "yarn run chains:update && yarn run chains:generate",
+    "postinstall": "yarn run chains"
   },
   "devDependencies": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",
