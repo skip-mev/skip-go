@@ -12,23 +12,21 @@ interface Props {
 export function AssetValue({ chainId, denom, value }: Props) {
   const { getAsset } = useAssets();
 
-  const { decimals = 6, recommendedSymbol } = useMemo(() => {
-    return (
-      getAsset(denom, chainId) ||
-      raise(`AssetValue error: no asset found for '${denom}' on '${chainId}'`)
-    );
+  const asset = useMemo(() => {
+    return getAsset(denom, chainId);
   }, [chainId, denom, getAsset]);
 
   const formattedValue = useMemo(() => {
-    const v = formatUnits(BigInt(value), decimals);
+    if (!asset?.decimals) return '-';
+    const v = formatUnits(BigInt(value), asset.decimals);
     return parseFloat(v).toLocaleString('en-US', {
       maximumFractionDigits: 2,
     });
-  }, [decimals, value]);
+  }, [asset?.decimals, value]);
 
   return (
     <span className="tabular-nums">
-      {formattedValue} {recommendedSymbol}
+      {formattedValue} {asset?.recommendedSymbol || '--'}
     </span>
   );
 }

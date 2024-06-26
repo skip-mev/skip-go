@@ -17,14 +17,15 @@ export type UseChainsQueryArgs<T = Chain[]> = {
 export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
   const { select = (t) => t as T } = args;
   const skipClient = useSkipClient();
+  const onlyTestnet = useSwapWidgetUIStore((state) => state.onlyTestnet);
 
   return useQuery({
-    queryKey: ['USE_CHAINS'],
+    queryKey: ['USE_CHAINS', onlyTestnet],
     queryFn: async () => {
       const chains = await skipClient.chains({
         includeEVM: true,
         includeSVM: true,
-        onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
+        onlyTestnets: onlyTestnet,
       });
 
       return chains

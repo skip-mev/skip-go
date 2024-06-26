@@ -5922,7 +5922,7 @@ __metadata:
     tailwindcss: ^3.4.3
     tailwindcss-animate: ^1.0.7
     typed-query-selector: ^2.11.2
-    typescript: ^5.0.4
+    typescript: 5.2.x
     viem: 2.x
     wagmi: 2.x
     zustand: ^4.5.2
@@ -14250,7 +14250,7 @@ __metadata:
     next: ^14.0.4
     react: ^18.2.0
     react-dom: ^18.2.0
-    typescript: ^5.0.4
+    typescript: 5.2.x
     viem: ^2.7.16
     wagmi: ^2.5.7
   languageName: unknown
@@ -17514,7 +17514,8 @@ __metadata:
     rollup-plugin-visualizer: ^5.5.4
     tslib: ^1.9.3
     tsx: ^4.12.0
-    typescript-plugin-styled-components: ^2.0.0
+    typescript: 5.2.x
+    typescript-plugin-styled-components: 3.0.0
     viem: ^2.7.16
     wagmi: ^2.5.7
   languageName: unknown
@@ -17933,12 +17934,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript-plugin-styled-components@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "typescript-plugin-styled-components@npm:2.0.0"
+"typescript-plugin-styled-components@npm:3.0.0":
+  version: 3.0.0
+  resolution: "typescript-plugin-styled-components@npm:3.0.0"
   peerDependencies:
-    typescript: ^4.0
-  checksum: b4048b45e576ef01e0439f2f7fd6bddd96d83eb6fd91956b0952f56cfcbe952ab2a1330f1c46851b78f5bdf71821f43123145c0be1db6bb578257913a70ddd0b
+    typescript: ~4.8 || 5
+  checksum: b3b746f3842beb9364a58e02abbdc08113cbf455b206cf0d9600ef661b1d6cb5303448f120fdcab4812a302d6ee68324037650d0432d0cc68e3256e603ad77f8
+  languageName: node
+  linkType: hard
+
+"typescript@npm:5.2.x":
+  version: 5.2.2
+  resolution: "typescript@npm:5.2.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 7912821dac4d962d315c36800fe387cdc0a6298dba7ec171b350b4a6e988b51d7b8f051317786db1094bd7431d526b648aba7da8236607febb26cf5b871d2d3c
   languageName: node
   linkType: hard
 
@@ -17952,13 +17963,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.4":
-  version: 5.5.2
-  resolution: "typescript@npm:5.5.2"
+"typescript@patch:typescript@5.2.x#~builtin<compat/typescript>":
+  version: 5.2.2
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 9c5a7982dadcb2d38d129c575dd38645ae11588ae0d4a12852fb04482bbc5a1660b2371e48fd5b33b6b605cc57cefe777670054546856945a05e77bd22c8c2cd
+  checksum: 07106822b4305de3f22835cbba949a2b35451cad50888759b6818421290ff95d522b38ef7919e70fb381c5fe9c1c643d7dea22c8b31652a717ddbd57b7f4d554
   languageName: node
   linkType: hard
 
@@ -17969,16 +17980,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 2eee5c37cad4390385db5db5a8e81470e42e8f1401b0358d7390095d6f681b410f2c4a0c496c6ff9ebd775423c7785cdace7bcdad76c7bee283df3d9718c0f20
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
-  version: 5.5.2
-  resolution: "typescript@patch:typescript@npm%3A5.5.2#~builtin<compat/typescript>::version=5.5.2&hash=a1c5e5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 9d89bac0de650e15d6846485f238d1e65f1013f2c260d9e53e86a1da6ecf8109d9fad9402575c5c36a6592dc5d4370db090e12971c8630ae84453654baabb6b4
   languageName: node
   linkType: hard
 
