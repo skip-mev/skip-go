@@ -23,6 +23,6 @@
     "eslint": "^8.15.0",
     "eslint-config-next": "^14.0.4",
     "next": "^14.0.4",
-    "typescript": "^5.0.4"
+    "typescript": "5.2.x"
   }
 }

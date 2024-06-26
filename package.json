@@ -41,7 +41,8 @@
     "rollup-plugin-visualizer": "^5.5.4",
     "tslib": "^1.9.3",
     "tsx": "^4.12.0",
-    "typescript-plugin-styled-components": "^2.0.0",
+    "typescript": "5.2.x",
+    "typescript-plugin-styled-components": "3.0.0",
     "viem": "^2.7.16",
     "wagmi": "^2.5.7"
   },

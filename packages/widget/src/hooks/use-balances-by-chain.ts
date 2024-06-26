@@ -12,6 +12,7 @@ import {
   getCosmWasmClientForChainID,
   getStargateClientForChainID,
 } from '../utils/clients';
+import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 interface Args {
   address?: string;
@@ -34,7 +35,13 @@ export function useBalancesByChain({
   const config = useSkipConfig();
 
   return useQuery({
-    queryKey: ['USE_BALANCES_BY_CHAIN', address, chain, assets],
+    queryKey: [
+      'USE_BALANCES_BY_CHAIN',
+      address,
+      chain,
+      assets,
+      useSwapWidgetUIStore.getState().onlyTestnet,
+    ],
     queryFn: async () => {
       if (!chain || !address) {
         return {};
@@ -123,6 +130,7 @@ export async function getEvmChainBalances(
   const assets = await skipClient.assets({
     chainID,
     includeEvmAssets: true,
+    onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
   });
 
   const chainAssets = assets[chainID];

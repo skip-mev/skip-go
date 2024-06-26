@@ -22,3 +22,6 @@ yarn-debug.log*
 yarn-error.log*
 .yarn/cache
 .yarn/install-state.gz
+
+yalc.lock
+.yalc
