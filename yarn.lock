@@ -5900,7 +5900,7 @@ __metadata:
     "@radix-ui/react-scroll-area": ^1.0.5
     "@radix-ui/react-switch": ^1.0.3
     "@radix-ui/react-tooltip": ^1.0.7
-    "@skip-router/core": 5.1.0
+    "@skip-router/core": 5.1.1
     "@solana/spl-token": ^0.4.6
     "@solana/wallet-adapter-react": ^0.15.35
     "@solana/wallet-adapter-wallets": ^0.19.32
@@ -5932,9 +5932,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@skip-router/core@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@skip-router/core@npm:5.1.0"
+"@skip-router/core@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@skip-router/core@npm:5.1.1"
   dependencies:
     "@cosmjs/amino": 0.32.3
     "@cosmjs/cosmwasm-stargate": 0.32.3
@@ -5956,7 +5956,7 @@ __metadata:
     viem: 2.x
   peerDependencies:
     chain-registry: ^1.33.11
-  checksum: d7b12fb4b183e42f0cb9c6b5ca95ca6455fe940a16d74475708380275863c114558e4dbc331d50f7214c7999a7da49a392a74b8337dbeb0058bde013977ef856
+  checksum: f7bf72b7f9643ecea26b69f802538ae14bba88893928020cc58dd4150598236e6683d657c8d4c85494188dc57cd01ce5a4681fe07f913ac3c1ad617ff6765f1f
   languageName: node
   linkType: hard
 
