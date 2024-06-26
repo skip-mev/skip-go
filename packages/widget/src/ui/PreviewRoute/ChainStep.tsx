@@ -164,14 +164,14 @@ export const ChainStep = ({
   const swapAsset =
     swapAction &&
     getAsset(
-      swapAction.chainID,
-      isSource && totalChains !== 1 ? swapAction.denomIn : swapAction.denomOut
+      isSource && totalChains !== 1 ? swapAction.denomIn : swapAction.denomOut,
+      swapAction.chainID
     );
   const transferAsset =
     transferAction &&
     (isSource
-      ? getAsset(transferAction.fromChainID, transferAction.denomIn)
-      : getAsset(transferAction.toChainID, transferAction.denomOut));
+      ? getAsset(transferAction.denomIn, transferAction.fromChainID)
+      : getAsset(transferAction.denomOut, transferAction.toChainID));
 
   const { data: chains } = useChains();
   const getChain = (chainID: string) =>
@@ -318,20 +318,20 @@ export const ChainStep = ({
             <AssetSwap
               in={{
                 amount: swapAction.amountIn,
-                logoURI: getAsset(swapAction.chainID, swapAction.denomIn)
+                logoURI: getAsset(swapAction.denomIn, swapAction.chainID)
                   ?.logoURI,
-                symbol: getAsset(swapAction.chainID, swapAction.denomIn)
+                symbol: getAsset(swapAction.denomIn, swapAction.chainID)
                   ?.recommendedSymbol,
-                decimals: getAsset(swapAction.chainID, swapAction.denomIn)
+                decimals: getAsset(swapAction.denomIn, swapAction.chainID)
                   ?.decimals,
               }}
               out={{
                 amount: swapAction.amountOut,
-                logoURI: getAsset(swapAction.chainID, swapAction.denomOut)
+                logoURI: getAsset(swapAction.denomOut, swapAction.chainID)
                   ?.logoURI,
-                symbol: getAsset(swapAction.chainID, swapAction.denomOut)
+                symbol: getAsset(swapAction.denomOut, swapAction.chainID)
                   ?.recommendedSymbol,
-                decimals: getAsset(swapAction.chainID, swapAction.denomOut)
+                decimals: getAsset(swapAction.denomOut, swapAction.chainID)
                   ?.decimals,
               }}
             />
