@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useAssets } from '../provider/assets';
-import { raise } from '../utils/assert';
 
 interface Props {
   chainId: string;
