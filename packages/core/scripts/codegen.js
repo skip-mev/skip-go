@@ -1,20 +1,19 @@
 // @ts-check
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const fs = require("fs/promises");
-const path = require("path");
-const telescope = require("@cosmology/telescope").default;
-const protoDirs = require("../../../vendor");
+const fs = require('fs/promises');
+const path = require('path');
+const telescope = require('@cosmology/telescope').default;
+const protoDirs = require('../../../vendor');
 
 async function codegen() {
-  const outPath = path.resolve(__dirname, "../src/codegen/");
+  const outPath = path.resolve(__dirname, '../src/codegen/');
 
   await fs
     .rm(outPath, { recursive: true, force: true })
     .catch(() => {})
     .then(() => fs.mkdir(outPath, { recursive: true }))
-    .then(() => fs.writeFile(path.resolve(outPath, ".gitkeep"), "", "utf-8"));
-
+    .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
   await telescope({
     protoDirs,
     outPath,
@@ -26,12 +25,12 @@ async function codegen() {
         enabled: true,
         exceptions: {
           // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L33
-          "/ethermint.crypto.v1.ethsecp256k1.PrivKey": {
-            aminoType: "ethermint/PrivKeyEthSecp256k1",
+          '/ethermint.crypto.v1.ethsecp256k1.PrivKey': {
+            aminoType: 'ethermint/PrivKeyEthSecp256k1',
           },
           // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L35
-          "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
-            aminoType: "ethermint/PubKeyEthSecp256k1",
+          '/ethermint.crypto.v1.ethsecp256k1.PubKey': {
+            aminoType: 'ethermint/PubKeyEthSecp256k1',
           },
         },
         typeUrlToAmino: (typeUrl) => {
@@ -49,8 +48,8 @@ async function codegen() {
           const { mod, submod, type } = typeUrl.match(matcher)?.groups ?? {};
 
           // https://github.com/circlefin/noble-cctp/blob/release-2024-01-09T183203/x/cctp/types/codec.go#L30-L56
-          if (typeUrl.startsWith("/circle.cctp.v1.Msg")) {
-            return typeUrl.replace("/circle.cctp.v1.Msg", "cctp/");
+          if (typeUrl.startsWith('/circle.cctp.v1.Msg')) {
+            return typeUrl.replace('/circle.cctp.v1.Msg', 'cctp/');
           }
 
           /**
@@ -64,18 +63,18 @@ async function codegen() {
            * @type {Record<string, string>}
            */
           const lookup = {
-            ethermint: "evm",
-            evmos: "revenue",
+            ethermint: 'evm',
+            evmos: 'revenue',
           };
 
           if (mod && lookup[mod]) {
-            if (type === "MsgUpdateParams" && lookup[mod] === submod) {
+            if (type === 'MsgUpdateParams' && lookup[mod] === submod) {
               return `${mod}/MsgUpdateParams`;
             }
-            if (type === "MsgUpdateParams") {
+            if (type === 'MsgUpdateParams') {
               return `${mod}/${submod}/MsgUpdateParams`;
             }
-            if (type?.startsWith("Msg")) {
+            if (type?.startsWith('Msg')) {
               return `${mod}/${type}`;
             }
             return `${submod}/${type}`;
@@ -115,9 +114,9 @@ async function codegen() {
           customTypes: {
             useCosmosSDKDec: true,
           },
-          duration: "duration",
-          num64: "long",
-          timestamp: "date",
+          duration: 'duration',
+          num64: 'long',
+          timestamp: 'date',
           useDeepPartial: false,
           useExact: false,
         },
