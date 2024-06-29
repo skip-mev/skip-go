@@ -17,8 +17,7 @@ jobs:
         run: yarn
 
       - name: Generate cosmjs types
-        run: yarn run codegen
-        working-directory: ./packages/core
+        run: yarn workspace @skip-router/core run codegen
 
       - name: Test
         run: yarn test
@@ -36,11 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn
-        working-directory: ./packages/core
 
       - name: Generate cosmjs types
-        run: yarn run codegen
-        working-directory: ./packages/core
+        run: yarn workspace @skip-router/core run codegen
 
       - name: Setup starship
         run: yarn run e2e:setup HELM_FILE=starship/ci.yaml
