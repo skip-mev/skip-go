@@ -1,4 +1,4 @@
-# @skip-router/core
+# @skip-go/core
 
 ## 5.1.1
 

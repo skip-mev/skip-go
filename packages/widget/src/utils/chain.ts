@@ -1,4 +1,4 @@
-import { FeeAsset } from '@skip-router/core';
+import { FeeAsset } from '@skip-go/core';
 import { chainRecord } from '../chains/chains';
 
 import { GasPrice } from '@cosmjs/stargate';

@@ -3,7 +3,7 @@ import {
   ExperimentalFeature,
   SmartSwapOptions,
   SwapVenueRequest,
-} from '@skip-router/core';
+} from '@skip-go/core';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
 import { useSkipClient } from './use-skip-client';

@@ -1,4 +1,4 @@
-import { Asset, FeeAsset } from '@skip-router/core';
+import { Asset, FeeAsset } from '@skip-go/core';
 import {
   createContext,
   ReactNode,

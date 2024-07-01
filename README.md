@@ -51,3 +51,8 @@ Build the packages:
 ```bash
 yarn build
 ```
+
+## Examples
+
+- Widget: https://github.com/skip-mev/go-widget-example-next-js-app
+- Core: https://github.com/skip-mev/skip-next-simple-example

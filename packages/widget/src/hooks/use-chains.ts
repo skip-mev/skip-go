@@ -1,4 +1,4 @@
-import { Chain as SkipChain } from '@skip-router/core';
+import { Chain as SkipChain } from '@skip-go/core';
 import { useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 import { chainIdToName } from '../chains';

@@ -4,7 +4,7 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { SkipRouterOptions } from '@skip-router/core';
+import { SkipRouterOptions } from '@skip-go/core';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { Toaster, ToasterProps } from 'react-hot-toast';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';

@@ -1,5 +1,5 @@
 import { BackspaceIcon } from '@heroicons/react/20/solid';
-import { Asset } from '@skip-router/core';
+import { Asset } from '@skip-go/core';
 import { BigNumber } from 'bignumber.js';
 import { MouseEventHandler, useMemo } from 'react';
 import { formatUnits } from 'viem';

@@ -1,4 +1,4 @@
-import { AssetsRequest } from '@skip-router/core';
+import { AssetsRequest } from '@skip-go/core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useSkipClient } from './use-skip-client';

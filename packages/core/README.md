@@ -1,17 +1,17 @@
 ![header](https://files.readme.io/4f92aa7-DALLE_Cover_Photo_1..png)
 
-[![npm/v](https://badgen.net/npm/v/@skip-router/core)](https://www.npmjs.com/package/@skip-router/core)
-[![npm/dt](https://badgen.net/npm/dt/@skip-router/core?)](https://www.npmjs.com/package/@skip-router/core)
+[![npm/v](https://badgen.net/npm/v/@skip-go/core)](https://www.npmjs.com/package/@skip-go/core)
+[![npm/dt](https://badgen.net/npm/dt/@skip-go/core?)](https://www.npmjs.com/package/@skip-go/core)
 [![stars](https://badgen.net/github/stars/skip-mev/skip-router-sdk?)](https://github.com/skip-mev/skip-router-sdk)
 
-# @skip-router/core
+# @skip-go/core
 
 JavaScript SDK for Skip API
 
 ## Install
 
 ```bash
-npm install @skip-router/core
+npm install @skip-go/core
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ git submodule update --init --recursive
 npm install
 
 # run watch server to build on changes
-npm -w @skip-router/core run watch
+npm -w @skip-go/core run watch
 
 # build packages
 npm run build

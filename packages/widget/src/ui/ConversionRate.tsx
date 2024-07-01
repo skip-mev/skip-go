@@ -1,5 +1,5 @@
-import { Asset } from "@skip-router/core";
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { Asset } from '@skip-go/core';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 export interface Props {
   srcAsset: Asset;
@@ -30,7 +30,9 @@ export const ConversionRate = ({
 
   const toggle = useCallback(() => {
     setState((prev) => {
-      return prev === ConvDirection.DEST_SRC ? ConvDirection.SRC_DEST : ConvDirection.DEST_SRC;
+      return prev === ConvDirection.DEST_SRC
+        ? ConvDirection.SRC_DEST
+        : ConvDirection.DEST_SRC;
     });
   }, []);
 
@@ -47,13 +49,13 @@ export const ConversionRate = ({
 
   const renderArgs: RenderArgs = useMemo(
     () => ({ left, right, conversion, toggle }),
-    [conversion, left, right, toggle],
+    [conversion, left, right, toggle]
   );
 
   return children(renderArgs);
 };
 
 export enum ConvDirection {
-  DEST_SRC = "dest-src",
-  SRC_DEST = "src-dest",
+  DEST_SRC = 'dest-src',
+  SRC_DEST = 'src-dest',
 }

@@ -1,4 +1,4 @@
-import { RouteResponse, SkipRouter, TxStatusResponse } from '@skip-router/core';
+import { RouteResponse, SkipRouter, TxStatusResponse } from '@skip-go/core';
 import { differenceInMinutes, parseISO } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { useSkipClient } from '../../hooks/use-skip-client';

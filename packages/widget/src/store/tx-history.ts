@@ -1,4 +1,4 @@
-import { RouteResponse } from '@skip-router/core';
+import { RouteResponse } from '@skip-go/core';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { randomId } from '../utils/random';

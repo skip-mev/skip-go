@@ -1,4 +1,4 @@
-import { RouteResponse } from '@skip-router/core';
+import { RouteResponse } from '@skip-go/core';
 import { Fragment, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
