@@ -113,3 +113,37 @@ The `SwapWidgetProvider` component accepts the following prop:
 - `apiURL` (Optional): Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
 By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
+
+## Dev Setup
+
+Install dependencies:
+
+```bash
+yarn
+```
+
+Update submodule:
+
+```bash
+yarn run submodule
+```
+
+Generate codegen files:
+
+```bash
+yarn run codegen
+```
+
+Start the development server:
+
+it will run watch the core and widget packages,it will run the example app on `http://localhost:3000`
+
+```bash
+yarn dev
+```
+
+Build the packages:
+
+```bash
+yarn build
+```

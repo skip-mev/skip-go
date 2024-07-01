@@ -1,0 +1,68 @@
+chains:
+  - name: osmosis-1
+    type: osmosis
+    numValidators: 1
+    faucet:
+      enabled: true    
+    ports:
+      rest: 1313
+      rpc: 26653
+      faucet: 8082
+
+  - name: gaia-1
+    type: cosmos
+    numValidators: 1
+    faucet:
+      enabled: true    
+    ports:
+      rest: 1317
+      rpc: 26657
+      faucet: 8083
+
+  - name: evmos_9000-1
+    type: evmos
+    numValidators: 1
+    faucet:
+      enabled: false
+    ports:
+      rest: 1318
+      rpc: 26658
+      
+  - name: injective-1
+    type: injective
+    numValidators: 1
+    faucet:
+      enabled: false
+    ports:
+      rest: 1319
+      rpc: 26659    
+
+
+relayers:
+  - name: osmos-gaia
+    type: hermes
+    replicas: 1
+    chains:
+      - osmosis-1
+      - gaia-1
+  - name: injective-osmos
+    type: hermes
+    replicas: 1
+    chains:
+      - injective-1
+      - osmosis-1
+  - name: evmos-osmos
+    type: hermes
+    replicas: 1
+    chains:
+      - evmos_9000-1
+      - osmosis-1      
+
+explorer:
+  enabled: false
+
+registry:
+  enabled: true
+  ports:
+    rest: 8081
+    grpc: 9091

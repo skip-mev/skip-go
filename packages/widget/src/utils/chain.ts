@@ -2,7 +2,7 @@ import { FeeAsset } from '@skip-router/core';
 import { chainRecord } from '../chains/chains';
 
 import { GasPrice } from '@cosmjs/stargate';
-import { chainIdToName } from '../chains';
+
 /**
  * - deprio denoms start with 'ibc/' and 'factory/'
  * - prio denoms start with 'u' or 'uu'

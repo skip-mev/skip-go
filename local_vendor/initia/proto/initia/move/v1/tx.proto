@@ -1,0 +1,156 @@
+// This is copied from the initia repo. Everything unrelated to MsgExecute is deleted.
+
+syntax = "proto3";
+package initia.move.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/descriptor.proto";
+
+option go_package                      = "github.com/initia-labs/initia/x/move/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Msg defines the move Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // Execute runs a entry function with the given message
+  rpc Execute(MsgExecute) returns (MsgExecuteResponse);
+}
+
+// MsgExecute is the message to execute the given module function
+message MsgExecute {
+  option (signer) = "sender";
+
+  // Sender is the that actor that signed the messages
+  string sender = 1 [(scalar) = "cosmos.AddressString"];
+  // ModuleAddr is the address of the module deployer
+  string module_address = 2;
+  // ModuleName is the name of module to execute
+  string module_name = 3;
+  // FunctionName is the name of a function to execute
+  string function_name = 4;
+  // TypeArgs is the type arguments of a function to execute
+  // ex) "0x1::BasicCoin::Initia", "bool", "u8", "u64"
+  repeated string type_args = 5;
+  // Args is the arguments of a function to execute
+  // - number: little endian
+  // - string: base64 bytes
+  repeated bytes args = 6;
+}
+
+// MsgExecuteResponse returns execution result data.
+message MsgExecuteResponse {}
+
+// cosmos_proto/cosmos.proto
+extend google.protobuf.MessageOptions {
+
+    // implements_interface is used to indicate the type name of the interface
+    // that a message implements so that it can be used in google.protobuf.Any
+    // fields that accept that interface. A message can implement multiple
+    // interfaces. Interfaces should be declared using a declare_interface
+    // file option.
+    repeated string implements_interface = 93001;
+}
+
+extend google.protobuf.FieldOptions {
+
+    // accepts_interface is used to annotate that a google.protobuf.Any
+    // field accepts messages that implement the specified interface.
+    // Interfaces should be declared using a declare_interface file option.
+    string accepts_interface = 93001;
+
+    // scalar is used to indicate that this field follows the formatting defined
+    // by the named scalar which should be declared with declare_scalar. Code
+    // generators may choose to use this information to map this field to a
+    // language-specific type representing the scalar.
+    string scalar = 93002;
+}
+
+extend google.protobuf.FileOptions {
+
+    // declare_interface declares an interface type to be used with
+    // accepts_interface and implements_interface. Interface names are
+    // expected to follow the following convention such that their declaration
+    // can be discovered by tools: for a given interface type a.b.C, it is
+    // expected that the declaration will be found in a protobuf file named
+    // a/b/interfaces.proto in the file descriptor set.
+    repeated InterfaceDescriptor declare_interface = 793021;
+
+    // declare_scalar declares a scalar type to be used with
+    // the scalar field option. Scalar names are
+    // expected to follow the following convention such that their declaration
+    // can be discovered by tools: for a given scalar type a.b.C, it is
+    // expected that the declaration will be found in a protobuf file named
+    // a/b/scalars.proto in the file descriptor set.
+    repeated ScalarDescriptor declare_scalar = 793022;
+}
+
+// InterfaceDescriptor describes an interface type to be used with
+// accepts_interface and implements_interface and declared by declare_interface.
+message InterfaceDescriptor {
+
+    // name is the name of the interface. It should be a short-name (without
+    // a period) such that the fully qualified name of the interface will be
+    // package.name, ex. for the package a.b and interface named C, the
+    // fully-qualified name will be a.b.C.
+    string name = 1;
+
+    // description is a human-readable description of the interface and its
+    // purpose.
+    string description = 2;
+}
+
+// ScalarDescriptor describes an scalar type to be used with
+// the scalar field option and declared by declare_scalar.
+// Scalars extend simple protobuf built-in types with additional
+// syntax and semantics, for instance to represent big integers.
+// Scalars should ideally define an encoding such that there is only one
+// valid syntactical representation for a given semantic meaning,
+// i.e. the encoding should be deterministic.
+message ScalarDescriptor {
+
+    // name is the name of the scalar. It should be a short-name (without
+    // a period) such that the fully qualified name of the scalar will be
+    // package.name, ex. for the package a.b and scalar named C, the
+    // fully-qualified name will be a.b.C.
+    string name = 1;
+
+    // description is a human-readable description of the scalar and its
+    // encoding format. For instance a big integer or decimal scalar should
+    // specify precisely the expected encoding format.
+    string description = 2;
+
+    // field_type is the type of field with which this scalar can be used.
+    // Scalars can be used with one and only one type of field so that
+    // encoding standards and simple and clear. Currently only string and
+    // bytes fields are supported for scalars.
+    repeated ScalarType field_type = 3;
+}
+
+enum ScalarType {
+    SCALAR_TYPE_UNSPECIFIED = 0;
+    SCALAR_TYPE_STRING = 1;
+    SCALAR_TYPE_BYTES = 2;
+}
+
+// cosmos/msgs/v1/msg.proto
+extend google.protobuf.ServiceOptions {
+  // service indicates that the service is a Msg service and that requests
+  // must be transported via blockchain transactions rather than gRPC.
+  // Tooling can use this annotation to distinguish between Msg services and
+  // other types of services via reflection.
+  bool service = 11110000;
+}
+
+extend google.protobuf.MessageOptions {
+  // signer must be used in cosmos messages in order
+  // to signal to external clients which fields in a
+  // given cosmos message must be filled with signer
+  // information (address).
+  // The field must be the protobuf name of the message
+  // field extended with this MessageOption.
+  // The field must either be of string kind, or of message
+  // kind in case the signer information is contained within
+  // a message inside the cosmos message.
+  repeated string signer = 11110000;
+}

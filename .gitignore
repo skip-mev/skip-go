@@ -7,6 +7,11 @@ node_modules
 /coverage
 
 # production
+dist
+lib
+main
+mjs
+module
 build
 tsconfig.tsbuildinfo
 
@@ -25,3 +30,8 @@ yarn-error.log*
 
 yalc.lock
 .yalc
+
+.idea
+.node_repl_history
+.npm
+.turbo
