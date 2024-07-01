@@ -1,7 +1,7 @@
 {
-  "name": "@skip-router/core",
+  "name": "@skip-go/core",
   "description": "JavaScript SDK for Skip API",
-  "version": "5.1.1",
+  "version": "0.0.1",
   "repository": "https://github.com/skip-mev/skip-router-sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
