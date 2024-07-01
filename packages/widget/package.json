@@ -28,8 +28,10 @@
     "build": "rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
     "chains:generate": "tsx ./src/scripts/codegen.ts",
-    "postpublish": "git reset --hard",
-    "prepublishOnly": "node scripts/prepublish.js"
+    "postpublish": "git checkout -- package.json",
+    "prepublishOnly": "npm run build && node scripts/prepublish.cjs",
+    "prepack": "npm run build && node scripts/prepublish.cjs",
+    "postpack": "git checkout -- package.json"
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
