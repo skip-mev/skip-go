@@ -52,6 +52,11 @@ Build the packages:
 yarn build
 ```
 
+## Docs
+
+- [Core](./packages/core/README.md)
+- [Widget](./packages/widget/README.md)
+
 ## Examples
 
 - Widget: https://github.com/skip-mev/go-widget-example-next-js-app
