@@ -17,7 +17,9 @@ jobs:
         run: yarn
 
       - name: Generate cosmjs types
-        run: yarn workspace @skip-router/core run codegen
+        run: yarn run codegen
+        working-directory: ./packages/core
 
       - name: Test
-        run: yarn test
+        run: yarn run test
+        working-directory: ./packages/core
