@@ -14,6 +14,10 @@
 - `widget` (@skip-go/widget): React library that contains the swap widget components.
 - `examples`: The example app of the project
 
+### How the package consumed
+
+`@skip-go/core` -> `@skip-go/widget` -> `examples/nextjs`
+
 ## Dev Setup
 
 Install dependencies:
