@@ -13,6 +13,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: Fetch submodule
+        run: git submodule update --init --recursive
+
       - name: Install dependencies
         run: yarn
 
