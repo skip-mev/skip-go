@@ -27,7 +27,9 @@
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
-    "chains:generate": "tsx ./src/scripts/codegen.ts"
+    "chains:generate": "tsx ./src/scripts/codegen.ts",
+    "postpublish": "git reset --hard",
+    "prepublishOnly": "node scripts/prepublish.js"
   },
   "peerDependencies": {
     "react": "17.x || 18.x",

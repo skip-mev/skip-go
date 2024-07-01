@@ -61,7 +61,6 @@
     "vitest": "^1.2.2"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   }
 }
