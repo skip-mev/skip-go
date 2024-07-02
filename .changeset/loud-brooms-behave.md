@@ -1,5 +1,0 @@
----
-'@skip-go/widget': patch
----
-
-release 0.0.1
