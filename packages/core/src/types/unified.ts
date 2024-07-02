@@ -40,23 +40,31 @@ import {
 } from "./shared";
 
 export type AssetsRequestJSON = {
-  chain_id?: string;
+  chain_ids?: string[];
   native_only?: boolean;
   include_no_metadata_assets?: boolean;
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
   include_svm_assets?: boolean;
   only_testnets?: boolean;
+  /**
+   * @deprecated Use `chain_ids` instead
+   */
+  chain_id?: string;
 };
 
 export type AssetsRequest = {
-  chainID?: string;
+  chainIDs?: string[];
   nativeOnly?: boolean;
   includeNoMetadataAssets?: boolean;
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
   includeSvmAssets?: boolean;
   onlyTestnets?: boolean;
+  /**
+   * @deprecated Use `chainIDs` instead
+   */
+  chainID?: string;
 };
 
 export type AssetsFromSourceRequestJSON = {
