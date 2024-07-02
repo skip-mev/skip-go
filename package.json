@@ -24,7 +24,7 @@
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
-    "release": "yarn run build && changeset publish"
+    "release": "yarn run submodule && yarn run codegen && yarn run build && yarn workspace @skip-go/widget run  && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
