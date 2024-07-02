@@ -15,6 +15,10 @@ import {
   HyperlaneTransferInfoJSON,
   HyperlaneTransferTransactions,
   HyperlaneTransferTransactionsJSON,
+  OPInitTransferInfo,
+  OPInitTransferInfoJSON,
+  OPInitTransferTransactions,
+  OPInitTransferTransactionsJSON,
   NextBlockingTransfer,
   NextBlockingTransferJSON,
   Packet,
@@ -77,6 +81,8 @@ import {
   EvmTxJSON,
   HyperlaneTransfer,
   HyperlaneTransferJSON,
+  OPInitTransfer,
+  OPInitTransferJSON,
   IBCAddress,
   IBCAddressJSON,
   MultiChainMsg,
@@ -889,6 +895,15 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
+  if ("op_init_transfer" in operationJSON) {
+    return {
+      opInitTransfer: opInitTransferFromJSON(operationJSON.op_init_transfer),
+      txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
+    };
+  }
+
   if ("swap" in operationJSON) {
     return {
       swap: swapFromJSON(operationJSON.swap),
@@ -946,6 +961,15 @@ export function operationToJSON(operation: Operation): OperationJSON {
   if ("hyperlaneTransfer" in operation) {
     return {
       hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+    };
+  }
+
+  if ("opInitTransfer" in operation) {
+    return {
+      op_init_transfer: opInitTransferToJSON(operation.opInitTransfer),
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
@@ -1547,6 +1571,34 @@ export function hyperlaneTransferToJSON(
   };
 }
 
+export function opInitTransferFromJSON(
+  value: OPInitTransferJSON,
+): OPInitTransfer {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    denomIn: value.denom_in,
+    denomOut: value.denom_out,
+    opInitBridgeID: value.op_init_bridge_id,
+    bridgeID: value.bridge_id,
+    smartRelay: value.smart_relay,
+  };
+}
+
+export function opInitTransferToJSON(
+  value: OPInitTransfer,
+): OPInitTransferJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    denom_in: value.denomIn,
+    denom_out: value.denomOut,
+    op_init_bridge_id: value.opInitBridgeID,
+    bridge_id: value.bridgeID,
+    smart_relay: value.smartRelay,
+  };
+}
+
 export function erc20ApprovalFromJSON(
   erc20ApprovalJSON: ERC20ApprovalJSON,
 ): ERC20Approval {
@@ -1871,6 +1923,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("op_init_transfer" in value) {
+    return {
+      opInitTransfer: opInitTransferInfoFromJSON(value.op_init_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -1892,6 +1950,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("hyperlaneTransfer" in value) {
     return {
       hyperlane_transfer: hyperlaneTransferInfoToJSON(value.hyperlaneTransfer),
+    };
+  }
+
+  if ("opInitTransfer" in value) {
+    return {
+      op_init_transfer: opInitTransferInfoToJSON(value.opInitTransfer),
     };
   }
 
@@ -2199,6 +2263,50 @@ export function hyperlaneTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function opInitTransferTransactionsFromJSON(
+  value: OPInitTransferTransactionsJSON,
+): OPInitTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+  };
+}
+
+export function opInitTransferTransactionsToJSON(
+  value: OPInitTransferTransactions,
+): OPInitTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+  };
+}
+
+export function opInitTransferInfoFromJSON(
+  value: OPInitTransferInfoJSON,
+): OPInitTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && opInitTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function opInitTransferInfoToJSON(
+  value: OPInitTransferInfo,
+): OPInitTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && opInitTransferTransactionsToJSON(value.txs),
   };
 }
 

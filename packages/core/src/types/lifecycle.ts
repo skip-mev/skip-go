@@ -395,6 +395,35 @@ export type HyperlaneTransferInfo = {
   txs: HyperlaneTransferTransactions;
 };
 
+export type OPInitTransferState =
+  | "OPINIT_TRANSFER_UNKNOWN"
+  | "OPINT_TRANSFER_SENT"
+  | "OPINIT_TRANSFER_RECEIVED";
+
+export type OPInitTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+};
+
+export type OPInitTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+};
+
+export type OPInitTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: OPInitTransferState;
+  txs: OPInitTransferTransactionsJSON;
+};
+
+export type OPInitTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: OPInitTransferState;
+  txs: OPInitTransferTransactions;
+};
+
 export type TransferEventJSON =
   | {
       ibc_transfer: TransferInfoJSON;
@@ -403,7 +432,8 @@ export type TransferEventJSON =
       axelar_transfer: AxelarTransferInfoJSON;
     }
   | { cctp_transfer: CCTPTransferInfoJSON }
-  | { hyperlane_transfer: HyperlaneTransferInfoJSON };
+  | { hyperlane_transfer: HyperlaneTransferInfoJSON }
+  | { op_init_transfer: OPInitTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -411,4 +441,5 @@ export type TransferEvent =
     }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
-  | { hyperlaneTransfer: HyperlaneTransferInfo };
+  | { hyperlaneTransfer: HyperlaneTransferInfo }
+  | { opInitTransfer: OPInitTransferInfo };
