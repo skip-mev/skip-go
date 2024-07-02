@@ -132,6 +132,24 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
+    if ('opInitTransfer' in operation) {
+      _actions.push({
+        type: 'TRANSFER',
+        denomIn: operation.opInitTransfer.denomIn,
+        denomOut: operation.opInitTransfer.denomOut,
+        fromChainID: operation.opInitTransfer.fromChainID,
+        toChainID: operation.opInitTransfer.toChainID,
+        id: `transfer-${swapCount}-${transferCount}-${i}`,
+        bridgeID: operation.opInitTransfer.bridgeID,
+        signRequired,
+        amountIn: operation.amountIn,
+        amountOut: operation.amountOut,
+        txIndex: operation.txIndex,
+      });
+      transferCount++;
+      return;
+    }
+
     if ('bankSend' in operation) {
       _actions.push({
         type: 'TRANSFER',
