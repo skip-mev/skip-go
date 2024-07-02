@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.1.0
+
+### Minor Changes
+
+- 9142630: Allow multiple chain filtering for chains and assets requests
+
 ## 5.1.1
 
 ### Patch Changes
