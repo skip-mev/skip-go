@@ -251,9 +251,9 @@ export const ChainStep = ({
               </SimpleTooltip>
             )}
           </div>
-          {!isDestination && bridge && (
+          {!isDestination && (
             <div className="left-- relative flex h-16 w-4 items-center justify-center">
-              {transferAction && isExpanded && (
+              {transferAction && isExpanded && bridge && (
                 <SimpleTooltip
                   label={`Bridged with ${bridge?.name}`}
                   type="default"
