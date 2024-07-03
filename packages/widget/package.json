@@ -38,17 +38,18 @@
   "peerDependencies": {
     "react": "17.x || 18.x",
     "react-dom": "17.x || 18.x",
-    "styled-components": "*"
+    "styled-components": "^6.0.0",
+    "stylis": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
-    "@types/styled-components": "^5.1.25",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
-    "styled-components": "^6.1.11",
+    "styled-components": "^6.0.0",
+    "stylis": "^4.0.0",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
     "typed-query-selector": "^2.11.2",

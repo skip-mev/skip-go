@@ -25,7 +25,7 @@ import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
-import styled, { ThemeProvider } from 'styled-components';
+import { ThemeProvider, styled } from 'styled-components';
 import { defaultTheme } from './theme';
 
 export const SwapWidgetUI = ({
@@ -310,5 +310,6 @@ export const SwapWidgetUI = ({
 };
 
 const WidgetContainer = styled.div`
-  background-color: yellow;
+  background-color: ${(props) => props.theme.primary.backgroundColor};
+  color: ${(props) => props.theme.primary.textColor};
 `;

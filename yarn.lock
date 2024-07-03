@@ -7894,14 +7894,14 @@ __metadata:
     "@types/qrcode": ^1.4.2
     "@types/react": ^18.0.6
     "@types/react-dom": ^18.0.2
-    "@types/styled-components": ^5.1.25
     autoprefixer: ^10.4.19
     clsx: ^2.1.1
     match-sorter: ^6.3.4
     postcss: ^8.4.38
     react-hot-toast: ^2.4.1
     react-icons: ^5.2.1
-    styled-components: ^6.1.11
+    styled-components: ^6.0.0
+    stylis: ^4.0.0
     tailwind-merge: ^2.3.0
     tailwindcss: ^3.4.3
     tailwindcss-animate: ^1.0.7
@@ -7913,7 +7913,8 @@ __metadata:
   peerDependencies:
     react: 17.x || 18.x
     react-dom: 17.x || 18.x
-    styled-components: "*"
+    styled-components: ^6.0.0
+    stylis: ^4.0.0
   languageName: unknown
   linkType: soft
 
@@ -9602,16 +9603,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:*":
-  version: 3.3.5
-  resolution: "@types/hoist-non-react-statics@npm:3.3.5"
-  dependencies:
-    "@types/react": "*"
-    hoist-non-react-statics: ^3.3.0
-  checksum: b645b062a20cce6ab1245ada8274051d8e2e0b2ee5c6bd58215281d0ec6dae2f26631af4e2e7c8abe238cdcee73fcaededc429eef569e70908f82d0cc0ea31d7
-  languageName: node
-  linkType: hard
-
 "@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0, @types/istanbul-lib-coverage@npm:^2.0.1":
   version: 2.0.6
   resolution: "@types/istanbul-lib-coverage@npm:2.0.6"
@@ -9867,17 +9858,6 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 72576cc1522090fe497337c2b99d9838e320659ac57fa5560fcbdcbafcf5d0216c6b3a0a8a4ee4fdb3b1f5e3420aa4f6223ab57b82fef3578bec3206425c6cf5
-  languageName: node
-  linkType: hard
-
-"@types/styled-components@npm:^5.1.25":
-  version: 5.1.34
-  resolution: "@types/styled-components@npm:5.1.34"
-  dependencies:
-    "@types/hoist-non-react-statics": "*"
-    "@types/react": "*"
-    csstype: ^3.0.2
-  checksum: 7868066a15afe42d8b353953fc196a7f11a9918b1c980f51d21bb9b49e309c7fe2d730be2d3dc48e92ab4de20f44a3c9dfe6cc98b6ea4dd02655e6f8128171b6
   languageName: node
   linkType: hard
 
@@ -15788,7 +15768,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -22729,7 +22709,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^6.1.11":
+"styled-components@npm:^6.0.0":
   version: 6.1.11
   resolution: "styled-components@npm:6.1.11"
   dependencies:
@@ -22784,7 +22764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylis@npm:4.3.2":
+"stylis@npm:4.3.2, stylis@npm:^4.0.0":
   version: 4.3.2
   resolution: "stylis@npm:4.3.2"
   checksum: 0faa8a97ff38369f47354376cd9f0def9bf12846da54c28c5987f64aaf67dcb6f00dce88a8632013bfb823b2c4d1d62a44f4ac20363a3505a7ab4e21b70179fc

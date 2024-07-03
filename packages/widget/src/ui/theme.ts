@@ -3,7 +3,7 @@ import 'styled-components';
 export const defaultTheme = {
   primary: {
     backgroundColor: 'yellow',
-    textColor: 'black',
+    textColor: 'blue',
   },
   secondary: {
     backgroundColor: '',
