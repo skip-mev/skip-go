@@ -1,10 +1,11 @@
 import { SwapWidget, SwapWidgetProps } from "./index";
 import { SwapWidgetProvider } from "../provider";
 
-type SwapWidgetWebComponentProps = {
-  colors: string,
-  defaultRoute: string,
-}
+type Stringify<T> = {
+  [K in keyof T]: string;
+};
+
+type SwapWidgetWebComponentProps = Stringify<SwapWidgetProps>
 
 const WidgetWithProvider = (props: SwapWidgetProps) => {
   return (
@@ -24,7 +25,12 @@ export const initializeSwapWidget = () => {
       const WebComponent = ReactToWebComponent(WidgetWithProvider, {
         props: {
           colors: 'json',
+          className: 'string',
+          style: 'string',
+          settings: 'json',
+          onlyTestnet: 'json',
           defaultRoute: 'json',
+          routeConfig: 'json',
         }
       });
 
