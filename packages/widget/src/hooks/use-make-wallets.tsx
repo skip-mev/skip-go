@@ -7,6 +7,9 @@ import { chainIdToName } from '../chains';
 import { useChains } from './use-chains';
 import { gracefullyConnect } from '../utils/wallet';
 
+import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
+import { createPenumbraClient } from '@penumbra-zone/client/create';
+import { ViewService } from '@penumbra-zone/protobuf';
 export interface MinimalWallet {
   walletName: string;
   walletPrettyName: string;
@@ -59,6 +62,34 @@ export const useMakeWallets = () => {
     let wallets: MinimalWallet[] = [];
 
     if (chainType === 'cosmos') {
+      if (chainID.includes('penumbra')) {
+        const wallet: MinimalWallet = {
+          walletName: 'prax',
+          walletPrettyName: 'Prax Wallet',
+          walletInfo: {
+            logo: 'https://raw.githubusercontent.com/penumbra-zone/web/main/apps/extension/public/favicon/icon128.png',
+          },
+          connect: async () => {
+            console.error('Prax wallet is not supported');
+          },
+          getAddress: async () => {
+            // Or, you might prefer a specific provider.
+            const praxViewClient = await createPenumbraClient(
+              ViewService,
+              'chrome-extension://lkpmkhpnhknhmibgnmmhdhgdilepfghe'
+            );
+
+            const { address } = await praxViewClient.addressByIndex({});
+            console.log(bech32mAddress(address));
+            return 'testing';
+          },
+          disconnect: async () => {
+            console.error('Prax wallet is not supported');
+          },
+          isWalletConnected: false,
+        };
+        wallets.push(wallet);
+      }
       const chainName = chainIdToName[chainID];
       const walletRepo = getWalletRepo(chainName);
       wallets = walletRepo.wallets.map((wallet) => ({
