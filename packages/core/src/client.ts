@@ -628,7 +628,7 @@ export class SkipRouter {
         }
       }
     }
-    console.log('fee', fee);
+
     if (!fee) {
       raise(
         `executeRoute error: unable to get fee for message(s) ${
