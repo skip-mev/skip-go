@@ -8,7 +8,7 @@ import { SwapWidgetUI } from './Widget';
 
 export interface SwapWidgetProps
   extends Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
-  ConfigureSwapWidgetArgs {}
+    ConfigureSwapWidgetArgs {}
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
