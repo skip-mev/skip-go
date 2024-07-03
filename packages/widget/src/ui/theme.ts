@@ -2,24 +2,26 @@ import 'styled-components';
 
 export const defaultTheme = {
   primary: {
-    backgroundColor: 'yellow',
-    textColor: 'blue',
+    backgroundColor: 'white',
+    textColor: 'black',
   },
   secondary: {
-    backgroundColor: '',
-    textColor: '',
+    backgroundColor: 'rgb(245, 245, 245)',
+    textColor: 'black',
   },
 };
 
+export type Theme = {
+  primary: {
+    backgroundColor: string;
+    textColor: string;
+  };
+  secondary: {
+    backgroundColor: string;
+    textColor: string;
+  };
+};
+
 declare module 'styled-components' {
-  export interface DefaultTheme {
-    primary: {
-      backgroundColor: string;
-      textColor: string;
-    };
-    secondary: {
-      backgroundColor: string;
-      textColor: string;
-    };
-  }
+  export interface DefaultTheme extends Theme {}
 }

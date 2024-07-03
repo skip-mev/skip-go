@@ -26,12 +26,17 @@ import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
 import { ThemeProvider, styled } from 'styled-components';
-import { defaultTheme } from './theme';
+import { Theme, defaultTheme } from './theme';
+
+type SwapWidgetProps = React.HTMLAttributes<HTMLDivElement> & {
+  theme?: Theme;
+};
 
 export const SwapWidgetUI = ({
   className,
+  theme,
   ...divProps
-}: React.HTMLAttributes<HTMLDivElement>) => {
+}: SwapWidgetProps) => {
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
@@ -91,7 +96,7 @@ export const SwapWidgetUI = ({
   const accountStateKey = `${srcAccount?.isWalletConnected ? 'src' : 'no-src'}`;
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme ?? defaultTheme}>
       <UsdDiff.Provider>
         <Tooltip.Provider delayDuration={0} disableHoverableContent>
           <WidgetContainer

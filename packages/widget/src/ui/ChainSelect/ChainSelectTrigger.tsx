@@ -2,6 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { forwardRef } from 'react';
 import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
+import { styled } from 'styled-components';
 
 interface Props {
   chain?: Chain;
@@ -10,7 +11,7 @@ interface Props {
 const ChainSelectTrigger = forwardRef<HTMLButtonElement, Props>(
   function ChainSelectTrigger({ chain, ...props }, ref) {
     return (
-      <button
+      <ChainSelectButton
         className={cn(
           'flex w-full items-center px-4 py-2 sm:py-4',
           'whitespace-nowrap rounded-md bg-neutral-100 text-left font-semibold transition-colors',
@@ -24,10 +25,15 @@ const ChainSelectTrigger = forwardRef<HTMLButtonElement, Props>(
           {chain ? chain.prettyName : 'Select Chain'}
         </span>
         <ChevronDownIcon className="mt-0.5 h-4 w-4" />
-      </button>
+      </ChainSelectButton>
     );
   }
   //
 );
 
 export default ChainSelectTrigger;
+
+const ChainSelectButton = styled.button`
+  background-color: ${(props) => props.theme.secondary.backgroundColor};
+  color: ${(props) => props.theme.secondary.textColor};
+`;

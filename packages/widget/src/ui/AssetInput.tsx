@@ -21,6 +21,7 @@ import {
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
+import { styled } from 'styled-components';
 
 interface Props {
   amount: string;
@@ -120,7 +121,7 @@ function AssetInput({
             />
           </button>
         )}
-        <input
+        <AmountInput
           data-testid="amount"
           className={cn(
             'h-10 w-full text-3xl font-medium tabular-nums',
@@ -258,3 +259,8 @@ function AssetInput({
 }
 
 export default AssetInput;
+
+const AmountInput = styled.input`
+  background-color: ${(props) => props.theme.primary.backgroundColor};
+  color: ${(props) => props.theme.primary.textColor};
+`;

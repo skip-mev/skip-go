@@ -7,6 +7,7 @@ import { cn } from '../../utils/ui';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogTrigger } from '../Dialog/DialogTrigger';
 import { DialogContent } from '../Dialog/DialogContent';
+import { styled } from 'styled-components';
 
 interface Props {
   asset?: Asset;
@@ -29,7 +30,7 @@ function AssetSelect({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
-        <button
+        <AssetSelectButton
           className={cn(
             'whitespace-nowrap text-left font-semibold',
             'flex w-full items-center gap-2 rounded-md bg-neutral-100 px-4 py-2 transition-colors sm:py-4',
@@ -59,7 +60,7 @@ function AssetSelect({
           <div>
             <ChevronDownIcon className="h-4 w-4" />
           </div>
-        </button>
+        </AssetSelectButton>
       </DialogTrigger>
       <DialogContent>
         <AssetSelectContent
@@ -76,3 +77,8 @@ function AssetSelect({
 }
 
 export default AssetSelect;
+
+const AssetSelectButton = styled.button`
+  background-color: ${(props) => props.theme.secondary.backgroundColor};
+  color: ${(props) => props.theme.secondary.textColor};
+`;

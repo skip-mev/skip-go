@@ -5,10 +5,15 @@ import {
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
+import { Theme } from './theme';
 
-export interface SwapWidgetProps
-  extends Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
-    ConfigureSwapWidgetArgs {}
+export type SwapWidgetProps = Pick<
+  React.HTMLAttributes<HTMLDivElement>,
+  'className' | 'style'
+> &
+  ConfigureSwapWidgetArgs & {
+    theme?: Theme;
+  };
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
@@ -18,6 +23,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   onlyTestnet,
   defaultRoute,
   routeConfig,
+  theme,
 }) => {
   useEffect(() => {
     configureSwapWidget({
@@ -30,5 +36,5 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
   const divProps = { className, style };
-  return <SwapWidgetUI {...divProps} />;
+  return <SwapWidgetUI {...divProps} theme={theme} />;
 };
