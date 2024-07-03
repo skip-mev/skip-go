@@ -85,7 +85,7 @@ function AssetInput({
   }, [selectedAssetBalance]);
 
   return (
-    <div
+    <AssetInputContainer
       className={cn(
         'rounded-lg border border-neutral-200 p-4 transition-[border,shadow]',
         'focus-within:border-neutral-300 focus-within:shadow-sm',
@@ -254,7 +254,7 @@ function AssetInput({
           {isError}
         </div>
       )}
-    </div>
+    </AssetInputContainer>
   );
 }
 
@@ -263,4 +263,8 @@ export default AssetInput;
 const AmountInput = styled.input`
   background-color: ${(props) => props.theme.primary.backgroundColor};
   color: ${(props) => props.theme.primary.textColor};
+`;
+
+const AssetInputContainer = styled.div`
+  border-color: ${(props) => props.theme.primary.borderColor};
 `;

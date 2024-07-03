@@ -4,6 +4,7 @@ import { PropsWithChildren, useContext } from 'react';
 
 import { DialogContext } from './context';
 import { cn } from '../../utils/ui';
+import { styled } from 'styled-components';
 
 interface Props extends PropsWithChildren {
   onInteractOutside?: DialogContentProps['onInteractOutside'];
@@ -17,7 +18,7 @@ export function DialogContent({ children, onInteractOutside }: Props) {
   return (
     <Dialog.Portal>
       <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-jost" />
-      <Dialog.Content
+      <DialogWrapper
         className={cn(
           'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
           'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
@@ -26,7 +27,12 @@ export function DialogContent({ children, onInteractOutside }: Props) {
         onInteractOutside={onInteractOutside}
       >
         {children}
-      </Dialog.Content>
+      </DialogWrapper>
     </Dialog.Portal>
   );
 }
+
+const DialogWrapper = styled(Dialog.Content)`
+  background-color: ${(props) => props.theme.primary.backgroundColor};
+  color: ${(props) => props.theme.primary.textColor};
+`;

@@ -34,10 +34,12 @@ const Home: NextPage = () => {
             primary: {
               backgroundColor: 'black',
               textColor: 'white',
+              borderColor: 'gray',
             },
             secondary: {
               backgroundColor: 'grey',
               textColor: 'white',
+              borderColor: 'darkgray',
             },
           }}
           defaultRoute={{

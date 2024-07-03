@@ -4,6 +4,7 @@ import { matchSorter } from 'match-sorter';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
+import { SearchInput, ScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 
 interface Props {
   chains: Chain[];
@@ -36,7 +37,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
         </button>
         <p className="text-xl font-bold">Select Network</p>
       </div>
-      <input
+      <SearchInput
         className="z-20 w-full rounded-md border px-4 py-2"
         type="text"
         placeholder="Search for a chain"
@@ -68,7 +69,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
           </svg>
         </div>
       ) : (
-        <ScrollArea.Root
+        <ScrollAreaRoot
           className={cn(
             'relative isolate flex-grow overflow-hidden',
             'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
@@ -109,7 +110,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
             <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
           </ScrollArea.Scrollbar>
           <ScrollArea.Corner />
-        </ScrollArea.Root>
+        </ScrollAreaRoot>
       )}
     </div>
   );

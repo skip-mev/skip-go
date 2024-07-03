@@ -7,6 +7,7 @@ import { formatUnits } from 'viem';
 
 import { SpinnerIcon } from '../Icon/SpinnerIcon';
 import { cn } from '../../utils/ui';
+import { styled } from 'styled-components';
 
 interface Props {
   assets?: Asset[];
@@ -79,7 +80,7 @@ function AssetSelectContent({
           <SpinnerIcon className="h-4 w-4 animate-spin text-neutral-400" />
         )}
       </div>
-      <input
+      <SearchInput
         className="z-20 w-full rounded-md border px-4 py-2"
         type="text"
         placeholder="Search name or paste address"
@@ -87,7 +88,7 @@ function AssetSelectContent({
         value={searchValue}
         ref={inputRef}
       />
-      <ScrollArea.Root
+      <ScrollAreaRoot
         className={cn(
           'relative isolate flex-grow overflow-hidden',
           'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
@@ -153,9 +154,28 @@ function AssetSelectContent({
           <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
         </ScrollArea.Scrollbar>
         <ScrollArea.Corner />
-      </ScrollArea.Root>
+      </ScrollAreaRoot>
     </div>
   );
 }
 
 export default AssetSelectContent;
+
+export const ScrollAreaRoot = styled(ScrollArea.Root)`
+  &::before {
+    --tw-gradient-from: ${(props) => props.theme.primary.backgroundColor}
+      var(--tw-gradient-from-position);
+  }
+  &::after {
+    --tw-gradient-from: ${(props) => props.theme.primary.backgroundColor}
+      var(--tw-gradient-from-position);
+  }
+`;
+
+export const SearchInput = styled.input`
+  background-color: ${(props) => props.theme.secondary.backgroundColor};
+  border-color: ${(props) => props.theme.secondary.borderColor};
+  &::placeholder {
+    color: ${(props) => props.theme.secondary.textColor};
+  }
+`;

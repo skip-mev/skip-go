@@ -2,11 +2,12 @@ import { ShareIcon } from '@heroicons/react/20/solid';
 import toast from 'react-hot-toast';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
+import { styled } from 'styled-components';
 
 export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
   return (
     <SimpleTooltip label="Share">
-      <button
+      <ThemedButton
         onClick={() => {
           try {
             navigator.clipboard.writeText(shareableLink);
@@ -21,7 +22,11 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
         )}
       >
         <ShareIcon className="h-4 w-4" />
-      </button>
+      </ThemedButton>
     </SimpleTooltip>
   );
 };
+
+export const ThemedButton = styled.button`
+  color: ${(props) => props.theme.primary.textColor};
+`;
