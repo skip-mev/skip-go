@@ -14,23 +14,32 @@ const WidgetWithProvider = (props: SwapWidgetProps) => {
   )
 };
 
-if (typeof window !== 'undefined') {
-  import('@r2wc/react-to-web-component').then(({ default: ReactToWebComponent }) => {
-    const WebComponent = ReactToWebComponent(WidgetWithProvider, {
-      props: {
-        colors: 'json',
-        defaultRoute: 'json',
+const WEB_COMPONENT_NAME = 'skip-widget';
+
+let initialized = false;
+
+export const initializeSwapWidget = () => {
+  if (!initialized && typeof window !== 'undefined') {
+    import('@r2wc/react-to-web-component').then(({ default: ReactToWebComponent }) => {
+      const WebComponent = ReactToWebComponent(WidgetWithProvider, {
+        props: {
+          colors: 'json',
+          defaultRoute: 'json',
+        }
+      });
+
+      if (!customElements.get(WEB_COMPONENT_NAME)) {
+        customElements.define(WEB_COMPONENT_NAME, WebComponent);
       }
+      initialized = true;
     });
-    customElements.define('swap-widget', WebComponent);
-    console.log('defined custom web component');
-  });
+  }
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      ['swap-widget']: SwapWidgetWebComponentProps;
+      [WEB_COMPONENT_NAME]: SwapWidgetWebComponentProps;
     }
   }
 }
