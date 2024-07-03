@@ -3,7 +3,7 @@ import '@skip-go/widget';
 import '@skip-go/widget/style.css';
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { SwapWidget } from '@skip-go/widget';
+import { SwapWidget, initializeSwapWidget } from '@skip-go/widget';
 
 const NoSsrBase = (props: any) => <>{props.children}</>;
 
@@ -12,6 +12,7 @@ const NoSSR = dynamic(() => Promise.resolve(NoSsrBase), {
 })
 
 const Home: NextPage = () => {
+  initializeSwapWidget();
 
   return (
     <div style={{ display: 'flex', gap: 50 }}>
@@ -39,7 +40,7 @@ const Home: NextPage = () => {
         }}
       >
         <NoSSR>
-          <swap-widget
+          <skip-widget
             colors={JSON.stringify({
               primary: '#FF4FFF',
             })}
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
               srcAssetDenom:
                 'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
             })}>
-          </swap-widget>
+          </skip-widget>
         </NoSSR>
       </div>
     </div>
