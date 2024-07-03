@@ -20,13 +20,13 @@
 
 ## Dev Setup
 
-### Install dependencies:
+### Install dependencies
 
 ```bash
 yarn
 ```
 
-### Start the development server:
+### Start the development server
 
 it will run watch the core and widget packages,it will run the example app on `http://localhost:3000`
 
@@ -34,7 +34,7 @@ it will run watch the core and widget packages,it will run the example app on `h
 yarn dev
 ```
 
-Build the packages:
+### Build the packages
 
 ```bash
 yarn build
