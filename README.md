@@ -32,12 +32,6 @@ Update submodule:
 yarn run submodule
 ```
 
-Generate codegen files:
-
-```bash
-yarn run codegen
-```
-
 Start the development server:
 
 it will run watch the core and widget packages,it will run the example app on `http://localhost:3000`
