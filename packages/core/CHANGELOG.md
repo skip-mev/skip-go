@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.2.0
+
+### Minor Changes
+
+- b309549: Adds support for the op init transfer operation and lifecycle tracking objects
+
 ## 0.1.0
 
 ### Minor Changes
