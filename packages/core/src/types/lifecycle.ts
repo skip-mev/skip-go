@@ -17,15 +17,15 @@ export type SubmitTxResponse = {
 };
 
 export type StatusState =
-  | "STATE_UNKNOWN"
-  | "STATE_SUBMITTED"
-  | "STATE_PENDING"
-  | "STATE_RECEIVED"
-  | "STATE_COMPLETED"
-  | "STATE_ABANDONED"
-  | "STATE_COMPLETED_SUCCESS"
-  | "STATE_COMPLETED_ERROR"
-  | "STATE_PENDING_ERROR";
+  | 'STATE_UNKNOWN'
+  | 'STATE_SUBMITTED'
+  | 'STATE_PENDING'
+  | 'STATE_RECEIVED'
+  | 'STATE_COMPLETED'
+  | 'STATE_ABANDONED'
+  | 'STATE_COMPLETED_SUCCESS'
+  | 'STATE_COMPLETED_ERROR'
+  | 'STATE_PENDING_ERROR';
 
 export type NextBlockingTransferJSON = {
   transfer_sequence_index: number;
@@ -46,11 +46,11 @@ export type StatusRequest = {
 };
 
 export type TransferState =
-  | "TRANSFER_UNKNOWN"
-  | "TRANSFER_PENDING"
-  | "TRANSFER_RECEIVED"
-  | "TRANSFER_SUCCESS"
-  | "TRANSFER_FAILURE";
+  | 'TRANSFER_UNKNOWN'
+  | 'TRANSFER_PENDING'
+  | 'TRANSFER_RECEIVED'
+  | 'TRANSFER_SUCCESS'
+  | 'TRANSFER_FAILURE';
 
 export type TransferInfoJSON = {
   from_chain_id: string;
@@ -141,9 +141,9 @@ export type Packet = {
 };
 
 export type StatusErrorType =
-  | "STATUS_ERROR_UNKNOWN"
-  | "STATUS_ERROR_TRANSACTION_EXECUTION"
-  | "STATUS_ERROR_INDEXING";
+  | 'STATUS_ERROR_UNKNOWN'
+  | 'STATUS_ERROR_TRANSACTION_EXECUTION'
+  | 'STATUS_ERROR_INDEXING';
 
 export type TransactionExecutionError = {
   code: number;
@@ -169,9 +169,9 @@ export type StatusError = {
 };
 
 export type PacketErrorType =
-  | "PACKET_ERROR_UNKNOWN"
-  | "PACKET_ERROR_ACKNOWLEDGEMENT"
-  | "PACKET_ERROR_TIMEOUT";
+  | 'PACKET_ERROR_UNKNOWN'
+  | 'PACKET_ERROR_ACKNOWLEDGEMENT'
+  | 'PACKET_ERROR_TIMEOUT';
 
 export type AcknowledgementError = {
   message: string;
@@ -227,15 +227,15 @@ export type TrackTxResponse = {
 };
 
 export type AxelarTransferType =
-  | "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN"
-  | "AXELAR_TRANSFER_SEND_TOKEN";
+  | 'AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN'
+  | 'AXELAR_TRANSFER_SEND_TOKEN';
 
 export type AxelarTransferState =
-  | "AXELAR_TRANSFER_UNKNOWN"
-  | "AXELAR_TRANSFER_PENDING_CONFIRMATION"
-  | "AXELAR_TRANSFER_PENDING_RECEIPT"
-  | "AXELAR_TRANSFER_SUCCESS"
-  | "AXELAR_TRANSFER_FAILURE";
+  | 'AXELAR_TRANSFER_UNKNOWN'
+  | 'AXELAR_TRANSFER_PENDING_CONFIRMATION'
+  | 'AXELAR_TRANSFER_PENDING_RECEIPT'
+  | 'AXELAR_TRANSFER_SUCCESS'
+  | 'AXELAR_TRANSFER_FAILURE';
 
 export type AxelarTransferInfoJSON = {
   from_chain_id: string;
@@ -303,7 +303,7 @@ export type ContractCallWithTokenError = {
 };
 
 export type ContractCallWithTokenErrorType =
-  "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR";
+  'CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR';
 
 export type SendTokenTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -319,7 +319,7 @@ export type SendTokenTransactions = {
   error: SendTokenError | null;
 };
 
-export type SendTokenErrorType = "SEND_TOKEN_EXECUTION_ERROR";
+export type SendTokenErrorType = 'SEND_TOKEN_EXECUTION_ERROR';
 
 export type SendTokenError = {
   message: string;
@@ -327,11 +327,11 @@ export type SendTokenError = {
 };
 
 export type CCTPTransferState =
-  | "CCTP_TRANSFER_UNKNOWN"
-  | "CCTP_TRANSFER_SENT"
-  | "CCTP_TRANSFER_PENDING_CONFIRMATION"
-  | "CCTP_TRANSFER_CONFIRMED"
-  | "CCTP_TRANSFER_RECEIVED";
+  | 'CCTP_TRANSFER_UNKNOWN'
+  | 'CCTP_TRANSFER_SENT'
+  | 'CCTP_TRANSFER_PENDING_CONFIRMATION'
+  | 'CCTP_TRANSFER_CONFIRMED'
+  | 'CCTP_TRANSFER_RECEIVED';
 
 export type CCTPTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -366,10 +366,10 @@ export type CCTPTransferInfo = {
 };
 
 export type HyperlaneTransferState =
-  | "HYPERLANE_TRANSFER_UNKNOWN"
-  | "HYPERLANE_TRANSFER_SENT"
-  | "HYPERLANE_TRANSFER_FAILED"
-  | "HYPERLANE_TRANSFER_RECEIVED";
+  | 'HYPERLANE_TRANSFER_UNKNOWN'
+  | 'HYPERLANE_TRANSFER_SENT'
+  | 'HYPERLANE_TRANSFER_FAILED'
+  | 'HYPERLANE_TRANSFER_RECEIVED';
 
 export type HyperlaneTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -395,6 +395,35 @@ export type HyperlaneTransferInfo = {
   txs: HyperlaneTransferTransactions;
 };
 
+export type OPInitTransferState =
+  | 'OPINIT_TRANSFER_UNKNOWN'
+  | 'OPINIT_TRANSFER_SENT'
+  | 'OPINIT_TRANSFER_RECEIVED';
+
+export type OPInitTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+};
+
+export type OPInitTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+};
+
+export type OPInitTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: OPInitTransferState;
+  txs: OPInitTransferTransactionsJSON;
+};
+
+export type OPInitTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: OPInitTransferState;
+  txs: OPInitTransferTransactions;
+};
+
 export type TransferEventJSON =
   | {
       ibc_transfer: TransferInfoJSON;
@@ -403,7 +432,8 @@ export type TransferEventJSON =
       axelar_transfer: AxelarTransferInfoJSON;
     }
   | { cctp_transfer: CCTPTransferInfoJSON }
-  | { hyperlane_transfer: HyperlaneTransferInfoJSON };
+  | { hyperlane_transfer: HyperlaneTransferInfoJSON }
+  | { op_init_transfer: OPInitTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -411,4 +441,5 @@ export type TransferEvent =
     }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
-  | { hyperlaneTransfer: HyperlaneTransferInfo };
+  | { hyperlaneTransfer: HyperlaneTransferInfo }
+  | { opInitTransfer: OPInitTransferInfo };

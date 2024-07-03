@@ -1,0 +1,43 @@
+syntax = "proto3";
+package opinit.ophost.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "opinit/ophost/v1/types.proto";
+
+option go_package                      = "github.com/initia-labs/OPinit/x/ophost/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Msg defines the rollup Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // InitiateTokenDeposit defines a user facing l1 => l2 token transfer interface.
+  rpc InitiateTokenDeposit(MsgInitiateTokenDeposit) returns (MsgInitiateTokenDepositResponse);
+
+}
+
+
+// MsgInitiateTokenDeposit defines a SDK message for adding a new validator.
+message MsgInitiateTokenDeposit {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "ophost/MsgInitiateTokenDeposit";
+
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender    = 1 [(gogoproto.moretags) = "yaml:\"sender\"", (cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 bridge_id = 2 [(gogoproto.moretags) = "yaml:\"bridge_id\""];
+  string to        = 3 [(gogoproto.moretags) = "yaml:\"to\"", (cosmos_proto.scalar) = "cosmos.AddressString"];
+  cosmos.base.v1beta1.Coin amount = 4
+      [(gogoproto.moretags) = "yaml:\"amount\"", (gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  bytes data = 5 [(gogoproto.moretags) = "yaml:\"data\"", (gogoproto.nullable) = true, (amino.dont_omitempty) = false];
+}
+
+// MsgInitiateTokenDepositResponse returns a message handle result.
+message MsgInitiateTokenDepositResponse {
+  uint64 sequence = 1;
+}
