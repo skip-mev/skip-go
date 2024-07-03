@@ -1,5 +1,4 @@
 import { NextPage } from 'next';
-import '@skip-go/widget';
 import '@skip-go/widget/style.css';
 import React from 'react';
 import dynamic from 'next/dynamic';
@@ -8,8 +7,8 @@ import { SwapWidget, initializeSwapWidget } from '@skip-go/widget';
 const NoSsrBase = (props: any) => <>{props.children}</>;
 
 const NoSSR = dynamic(() => Promise.resolve(NoSsrBase), {
-  ssr: false
-})
+  ssr: false,
+});
 
 const Home: NextPage = () => {
   initializeSwapWidget();
@@ -48,8 +47,8 @@ const Home: NextPage = () => {
               srcChainID: 'osmosis-1',
               srcAssetDenom:
                 'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-            })}>
-          </skip-widget>
+            })}
+          ></skip-widget>
         </NoSSR>
       </div>
     </div>
