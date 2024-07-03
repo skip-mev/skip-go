@@ -5,7 +5,9 @@ type Stringify<T> = {
   [K in keyof T]: string;
 };
 
-type SwapWidgetWebComponentProps = Stringify<SwapWidgetProps>
+type SwapWidgetWebComponentProps = Stringify<SwapWidgetProps> & {
+  children: any;
+}
 
 const WidgetWithProvider = (props: SwapWidgetProps) => {
   return (
