@@ -1,9 +1,11 @@
-import { AssetsRequest } from '@skip-go/core';
-import { useQuery } from '@tanstack/react-query';
+import { Asset, AssetsRequest } from '@skip-go/core';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useSkipClient } from './use-skip-client';
 
-export function useAssets(options: AssetsRequest = {}) {
+export function useAssets(
+  options: AssetsRequest = {}
+): UseQueryResult<Record<string, Asset[]>> {
   const skipClient = useSkipClient();
 
   const queryKey = useMemo(() => ['solve-assets', options] as const, [options]);
@@ -16,7 +18,7 @@ export function useAssets(options: AssetsRequest = {}) {
         includeCW20Assets: true,
         includeSvmAssets: true,
         ...options,
-      });
+      }) as Promise<Record<string, Asset[]>>;
     },
     refetchOnMount: false,
     refetchOnReconnect: false,

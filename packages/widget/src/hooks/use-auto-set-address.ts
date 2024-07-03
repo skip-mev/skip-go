@@ -1,5 +1,5 @@
 import { Chain } from '@skip-go/core';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   ChainAddresses,
   SetChainAddressesParam,
@@ -27,7 +27,7 @@ export const useAutoSetAddress = ({
   signRequired?: boolean;
   chainAddresses: ChainAddresses;
   setChainAddresses: (v: SetChainAddressesParam) => void;
-}) => {
+}): UseQueryResult => {
   const trackedWallets = useTrackWallet(chain?.chainType as TrackWalletCtx);
   const source = chainAddresses?.[0];
   const destination =

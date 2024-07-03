@@ -1,5 +1,5 @@
 import { Bridge } from '@skip-go/core';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 
 export type UseBridgesQueryArgs<T = Bridge[]> = {
@@ -7,7 +7,9 @@ export type UseBridgesQueryArgs<T = Bridge[]> = {
   select?: (arr?: Bridge[]) => T;
 };
 
-export function useBridges<T = Bridge[]>(args: UseBridgesQueryArgs<T> = {}) {
+export function useBridges<T = Bridge[]>(
+  args: UseBridgesQueryArgs<T> = {}
+): UseQueryResult<T> {
   const { select = (t) => t as T } = args;
 
   const skipClient = useSkipClient();

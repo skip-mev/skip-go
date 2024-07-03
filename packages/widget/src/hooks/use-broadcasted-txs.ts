@@ -1,5 +1,5 @@
 import { ChainTransaction, TransferState, StatusState } from '@skip-go/core';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useState, useMemo } from 'react';
 import { useSkipClient } from './use-skip-client';
 
@@ -13,6 +13,13 @@ interface TransferSequence {
   state: TransferState;
 }
 
+interface TxsStatus {
+  isSuccess: boolean;
+  isSettled: boolean;
+  transferSequence: TransferSequence[];
+  states: StatusState[];
+}
+
 export const useBroadcastedTxsStatus = ({
   txs,
   txsRequired,
@@ -21,18 +28,10 @@ export const useBroadcastedTxsStatus = ({
   txsRequired: number;
   txs: { chainID: string; txHash: string }[] | undefined;
   enabled?: boolean;
-}) => {
+}): UseQueryResult<TxsStatus> => {
   const skipClient = useSkipClient();
   const [isSettled, setIsSettled] = useState(false);
-  const [prevData, setPrevData] = useState<
-    | {
-        isSuccess: boolean;
-        isSettled: boolean;
-        transferSequence: TransferSequence[];
-        states: StatusState[];
-      }
-    | undefined
-  >(undefined);
+  const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
   const queryKey = useMemo(
     () => ['solve-txs-status', txsRequired, txs] as const,
     [txs, txsRequired]

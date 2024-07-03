@@ -24,6 +24,7 @@ export default [
       }),
       peerDepsExternal(),
       typescript({
+        verbosity: 10,
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
       }),

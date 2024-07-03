@@ -80,6 +80,7 @@ export const useMakeWallets = () => {
             );
 
             const { address } = await praxViewClient.addressByIndex({});
+            if (!address) throw new Error('No address found');
             console.log(bech32mAddress(address));
             return 'testing';
           },

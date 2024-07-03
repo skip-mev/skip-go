@@ -1,7 +1,7 @@
 import { Asset, SkipRouter } from '@skip-go/core';
 import * as token from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { createPublicClient, erc20Abi, http, PublicClient } from 'viem';
 
 import { multicall3ABI } from '../constants/abis';
@@ -27,7 +27,7 @@ export function useBalancesByChain({
   chain,
   assets,
   enabled = true,
-}: Args) {
+}: Args): UseQueryResult<Record<string, string>> {
   // const publicClient = usePublicClient({
   //   chainId: chain?.chainType === "evm" ? parseInt(chain.chainID) : undefined,
   // });
@@ -127,11 +127,11 @@ export async function getEvmChainBalances(
   address: string,
   chainID: string
 ) {
-  const assets = await skipClient.assets({
+  const assets = (await skipClient.assets({
     chainID,
     includeEvmAssets: true,
     onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
-  });
+  })) as Record<string, Asset[]>;
 
   const chainAssets = assets[chainID];
 

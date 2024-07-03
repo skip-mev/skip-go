@@ -2334,6 +2334,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@connectrpc/connect@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@connectrpc/connect@npm:1.4.0"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.4.2
+  checksum: 388145ea90b3216f133b34d96a47dfd0273dfa12c4b4963c7223cf45bdcbf8b3490ab234dda34fd42a7112ad9f51f22efc013f3183744a3f2ae65b825917b870
+  languageName: node
+  linkType: hard
+
 "@cosmjs/amino@npm:0.27.1":
   version: 0.27.1
   resolution: "@cosmjs/amino@npm:0.27.1"
@@ -5890,6 +5899,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@penumbra-zone/transport-dom@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@penumbra-zone/transport-dom@npm:7.2.0"
+  dependencies:
+    "@bufbuild/protobuf": ^1.10.0
+    "@connectrpc/connect": ^1.4.0
+  checksum: 2ea4b832e0808ab0fd971893e09001843142b878a03dc0c5a749a570d49f981b46fac1f38d1aea729897f781e8c34ba55d3c069fcc4b030fc21fc2096c8ea90d
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -8332,6 +8351,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget"
   dependencies:
+    "@connectrpc/connect": ^1.4.0
     "@cosmos-kit/cosmostation-extension": ^2.7.10
     "@cosmos-kit/keplr-extension": ^2.7.9
     "@cosmos-kit/leap-extension": ^2.7.10
@@ -8347,6 +8367,7 @@ __metadata:
     "@penumbra-zone/bech32m": 6.1.0
     "@penumbra-zone/client": 10.0.0
     "@penumbra-zone/protobuf": 5.3.0
+    "@penumbra-zone/transport-dom": ^7.2.0
     "@radix-ui/colors": ^3.0.0
     "@radix-ui/react-accordion": ^1.1.2
     "@radix-ui/react-collapsible": ^1.0.3
@@ -21991,19 +22012,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-typescript2@npm:^0.34.0":
-  version: 0.34.1
-  resolution: "rollup-plugin-typescript2@npm:0.34.1"
+"rollup-plugin-typescript2@npm:^0.36.0":
+  version: 0.36.0
+  resolution: "rollup-plugin-typescript2@npm:0.36.0"
   dependencies:
     "@rollup/pluginutils": ^4.1.2
     find-cache-dir: ^3.3.2
     fs-extra: ^10.0.0
-    semver: ^7.3.7
-    tslib: ^2.4.0
+    semver: ^7.5.4
+    tslib: ^2.6.2
   peerDependencies:
     rollup: ">=1.26.3"
     typescript: ">=2.4.0"
-  checksum: 107e66b9ab1aaf4b237564e500ea9de9f2d3f0a81be5139dc753fc76bbf00a1a2230eb1ec59145d2dfc4c4da9be8211f1f3e1370007efe1e24ce45a00905e558
+  checksum: 199afe11f9218ad943b67138b3165c2be2cd2535926da6ed467124273f7bbb1dd779521a648a26a65073cafe43388104857a90e0fdf06ca526a6613771eb2e70
   languageName: node
   linkType: hard
 
@@ -22338,7 +22359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.3, semver@npm:^7.5.4":
+"semver@npm:^7.3.5, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.3, semver@npm:^7.5.4":
   version: 7.6.2
   resolution: "semver@npm:7.6.2"
   bin:
@@ -22578,7 +22599,7 @@ __metadata:
     rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-postcss: ^4.0.2
     rollup-plugin-terser: ^7.0.2
-    rollup-plugin-typescript2: ^0.34.0
+    rollup-plugin-typescript2: ^0.36.0
     rollup-plugin-visualizer: ^5.5.4
     ts-jest: ^29.1.2
     tslib: ^1.9.3
