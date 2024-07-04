@@ -12,6 +12,11 @@ export default [
       file: packageJson.exports['.'].import,
       format: 'esm',
       sourcemap: true,
+      globals: {
+        react: 'react',
+        'react-dom': 'react-dom',
+        '@r2wc/react-to-web-component': '@r2wc',
+      },
     },
     plugins: [
       postcss({
@@ -26,6 +31,9 @@ export default [
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
+      }),
+      resolve({
+        browser: true,
       }),
     ],
   },
