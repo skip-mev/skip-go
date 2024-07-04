@@ -17,14 +17,14 @@
     "build": "yarn run build:core && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn workspace nextjs build",
-    "build:core": "yarn run codegen && yarn workspace @skip-go/core build",
+    "build:core": "yarn workspace @skip-go/core build",
     "codegen": "yarn workspace @skip-go/core codegen",
     "chains": "yarn workspace @skip-go/widget run chains:generate",
     "test": "yarn workspace @skip-go/core run test",
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
-    "release": "yarn run submodule && yarn run codegen && yarn run build && yarn workspace @skip-go/widget run pre && changeset publish"
+    "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

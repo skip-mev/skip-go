@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/core",
   "description": "JavaScript SDK for Skip API",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "https://github.com/skip-mev/skip-router-sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,6 @@
     "e2e:start": "make start",
     "e2e:stop": "make stop",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.mjs --test-timeout=30000",
-    "postinstall": "npm run codegen",
     "postpublish": "git reset --hard",
     "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
