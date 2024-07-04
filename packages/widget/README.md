@@ -142,8 +142,13 @@ becomes
 
 ```tsx
 <swap-widget
+  class-name="classname"
   colors='{"primary":"#FF4FFF"}'
-  default-route='{"srcChainID":"osmosis-1","srcAssetDenom":"ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4"}'
+  default-route={JSON.stringify({
+    srcChainID: 'osmosis-1',
+    srcAssetDenom:
+      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+  })}
 ></swap-widget>
 ```
 
