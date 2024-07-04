@@ -113,3 +113,47 @@ The `SwapWidgetProvider` component accepts the following prop:
 - `apiURL` (Optional): Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
 By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
+
+### Web Component
+
+The web component is created with the `@r2wc/react-to-web-component` library.
+
+In order to register the web-component, you must call the `initializeSwapWidget` function:
+
+```tsx
+import { initializeSwapWidget } from '@skip-go/widget';
+
+initializeSwapWidget();
+```
+
+voila! you can now use the `swap-widget` web-component
+
+The props for the web component are the same as `SwapWidgetProps` and `SwapWidgetProviderProps` except that
+they are sent to the web-component as attributes in kebab-case as strings or stringified objects ie.
+
+```tsx
+interface SwapWidgetProps {
+  colors
+  defaultRoute
+  routeConfig
+```
+
+becomes
+
+```tsx
+<swap-widget
+  class-name="classname"
+  colors='{"primary":"#FF4FFF"}'
+  default-route={JSON.stringify({
+    srcChainID: 'osmosis-1',
+    srcAssetDenom:
+      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+  })}
+></swap-widget>
+```
+
+the web-component exposes the `SwapWidgetProviderProps` as attributes on swap-widget as well
+
+```tsx
+<swap-widget toaster-props="" endpoint-options="" api-url=""></swap-widget>
+```
