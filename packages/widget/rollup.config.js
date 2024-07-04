@@ -7,7 +7,7 @@ import packageJson from './package.json';
 export default [
   {
     input: ['./src/index.ts'],
-    external: ['react', 'react-dom', '@r2wc/react-to-web-component'],
+    external: ['react', 'react-dom'],
     output: {
       file: packageJson.exports['.'].import,
       format: 'esm',
