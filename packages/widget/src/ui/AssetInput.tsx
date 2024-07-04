@@ -236,7 +236,7 @@ function AssetInput({
                   'disabled:opacity-75',
                   css`
                     background-color: ${useSwapWidgetUIStore.getState().colors
-                      .primary};
+                      .primary} !important;
                   `
                 )}
                 disabled={maxButtonDisabled}

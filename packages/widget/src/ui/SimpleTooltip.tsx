@@ -28,41 +28,45 @@ export const SimpleTooltip = (props: Props) => {
     <Tooltip.Root {...tooltipProps}>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content
-          sideOffset={4}
-          {..._content}
-          className={cn(
-            'rounded-md bg-white px-4 py-2 leading-none',
-            'select-none shadow shadow-neutral-500/50',
-            'text-sm font-jost',
-            'animate-slide-up-and-fade',
-            type === 'warning' && `bg-[#fbeef1]`,
-            type === 'warning' &&
-              css`
-                color: ${useSwapWidgetUIStore.getState().colors.primary};
-              `,
-            type === 'warning' && 'font-medium',
-            type === 'brand' && `text-white`,
-            type === 'brand' &&
-              css`
-                background-color: ${useSwapWidgetUIStore.getState().colors
-                  .primary};
-              `,
-            _content?.className
-          )}
-        >
-          {label}
-          <Tooltip.Arrow
+        <div className="skip-go-widget">
+          <Tooltip.Content
+            sideOffset={4}
+            {..._content}
             className={cn(
-              'fill-white drop-shadow',
-              type === 'warning' && 'fill-[#fbeef1]',
+              'rounded-md bg-white px-4 py-2 leading-none',
+              'select-none shadow shadow-neutral-500/50',
+              'text-sm font-jost',
+              'animate-slide-up-and-fade',
+              type === 'warning' && `bg-[#fbeef1]`,
+              type === 'warning' &&
+                css`
+                  color: ${useSwapWidgetUIStore.getState().colors
+                    .primary} !important;
+                `,
+              type === 'warning' && 'font-medium',
+              type === 'brand' && `text-white`,
               type === 'brand' &&
                 css`
-                  fill: ${useSwapWidgetUIStore.getState().colors.primary};
-                `
+                  background-color: ${useSwapWidgetUIStore.getState().colors
+                    .primary} !important;
+                `,
+              _content?.className
             )}
-          />
-        </Tooltip.Content>
+          >
+            {label}
+            <Tooltip.Arrow
+              className={cn(
+                'fill-white drop-shadow',
+                type === 'warning' && 'fill-[#fbeef1]',
+                type === 'brand' &&
+                  css`
+                    fill: ${useSwapWidgetUIStore.getState().colors
+                      .primary} !important;
+                  `
+              )}
+            />
+          </Tooltip.Content>
+        </div>
       </Tooltip.Portal>
     </Tooltip.Root>
   );

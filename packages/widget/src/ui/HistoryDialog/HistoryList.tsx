@@ -255,23 +255,8 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
               disclosure.openJson({ title: 'Tx History JSON', data });
             }}
           >
-            <EyeIcon className="h-3 w-3" />
-            <span>View Raw Route</span>
-          </button>
-          <button
-            className={cn(
-              'rounded-md px-2 py-1 text-xs transition-colors',
-              'flex items-center justify-center space-x-1',
-              `opacity-80 hover:opacity-90`,
-              css`
-                color: ${useSwapWidgetUIStore.getState().colors.primary};
-                background-color: ${useSwapWidgetUIStore.getState().colors
-                  .primary};
-              `
-            )}
-            onClick={() => txHistory.remove(id)}
-          >
             <TrashIcon className="h-3 w-3" />
+            <span>Delete</span>
           </button>
         </div>
       </Accordion.Content>

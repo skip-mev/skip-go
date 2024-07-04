@@ -16,17 +16,19 @@ export function DialogContent({ children, onInteractOutside }: Props) {
 
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-jost" />
-      <Dialog.Content
-        className={cn(
-          'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
-          'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
-          'translate-x-[-50%] translate-y-[-50%] bg-white shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]'
-        )}
-        onInteractOutside={onInteractOutside}
-      >
-        {children}
-      </Dialog.Content>
+      <div className="skip-go-widget">
+        <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-jost" />
+        <Dialog.Content
+          className={cn(
+            'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
+            'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
+            'translate-x-[-50%] translate-y-[-50%] bg-white shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]'
+          )}
+          onInteractOutside={onInteractOutside}
+        >
+          {children}
+        </Dialog.Content>
+      </div>
     </Dialog.Portal>
   );
 }

@@ -75,7 +75,7 @@ function TransactionDialog({
             'enabled:hover:rotate-1 enabled:hover:scale-102',
             css`
               background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
+                .primary} !important;
             `
           )}
           disabled={!route || (typeof isLoading === 'boolean' && isLoading)}

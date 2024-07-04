@@ -7910,6 +7910,7 @@ __metadata:
     clsx: ^2.1.1
     match-sorter: ^6.3.4
     postcss: ^8.4.38
+    postcss-prefixwrap: ^1.49.0
     react-hot-toast: ^2.4.1
     react-icons: ^5.2.1
     tailwind-merge: ^2.3.0
@@ -20220,6 +20221,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-prefixwrap@npm:^1.49.0":
+  version: 1.49.0
+  resolution: "postcss-prefixwrap@npm:1.49.0"
+  peerDependencies:
+    postcss: "*"
+  checksum: 29a0e5dfa28aee072a62737f9e7e9af0631ea9a2eb956c6c6bf1717969468c1267ccdac1614386af83c43773429c8830b942be979ab82c4099d7726ce9fc3a35
+  languageName: node
+  linkType: hard
+
 "postcss-reduce-initial@npm:^5.1.2":
   version: 5.1.2
   resolution: "postcss-reduce-initial@npm:5.1.2"
@@ -22108,6 +22118,7 @@ __metadata:
     minimatch: ^9.0.3
     msw: ^1.2.3
     p-map: ^7.0.2
+    postcss-prefixwrap: ^1.49.0
     proxy-from-env: ^1.1.0
     react: ^18.0.0
     react-dom: ^18.0.0

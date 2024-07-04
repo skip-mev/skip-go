@@ -209,7 +209,7 @@ export const SwapWidgetUI = ({
                   'relative rounded-full p-[4px]',
                   css`
                     background-color: ${useSwapWidgetUIStore.getState().colors
-                      .primary};
+                      .primary} !important;
                   `
                 )}
               >
@@ -218,7 +218,7 @@ export const SwapWidgetUI = ({
                     'absolute h-6 w-6 animate-ping rounded-full',
                     css`
                       background-color: ${useSwapWidgetUIStore.getState().colors
-                        .primary};
+                        .primary} !important;
                     `
                   )}
                 />
@@ -252,7 +252,7 @@ export const SwapWidgetUI = ({
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
                 css`
                   background-color: ${useSwapWidgetUIStore.getState().colors
-                    .primary};
+                    .primary} !important;
                 `
               )}
               disabled={!sourceChain}
