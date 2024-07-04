@@ -2,7 +2,11 @@ import { NextPage } from 'next';
 import '@skip-go/widget/style.css';
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { SwapWidget, initializeSwapWidget } from '@skip-go/widget';
+import {
+  SwapWidget,
+  SwapWidgetProvider,
+  initializeSwapWidget,
+} from '@skip-go/widget';
 
 const NoSsrBase = (props: any) => <>{props.children}</>;
 
@@ -21,16 +25,18 @@ const Home: NextPage = () => {
           height: '820px',
         }}
       >
-        <SwapWidget
-          colors={{
-            primary: '#FF4FFF',
-          }}
-          defaultRoute={{
-            srcChainID: 'osmosis-1',
-            srcAssetDenom:
-              'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-          }}
-        />
+        <SwapWidgetProvider>
+          <SwapWidget
+            colors={{
+              primary: '#FF4FFF',
+            }}
+            defaultRoute={{
+              srcChainID: 'osmosis-1',
+              srcAssetDenom:
+                'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+            }}
+          />
+        </SwapWidgetProvider>
       </div>
       <div
         style={{
