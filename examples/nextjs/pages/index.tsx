@@ -2,11 +2,9 @@ import { NextPage } from 'next';
 import '@skip-go/widget/style.css';
 import React from 'react';
 import dynamic from 'next/dynamic';
-import {
-  SwapWidget,
-  SwapWidgetProvider,
-  initializeSwapWidget,
-} from '@skip-go/widget';
+import { SwapWidget, SwapWidgetProvider } from '@skip-go/widget';
+
+import { initializeSwapWidget } from '@skip-go/widget/web-component';
 
 const NoSsrBase = (props: any) => <>{props.children}</>;
 

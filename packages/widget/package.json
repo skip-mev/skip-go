@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha.0",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
@@ -12,6 +12,10 @@
     "./style.css": {
       "import": "./build/style.css",
       "default": "./build/style.css"
+    },
+    "./web-component": {
+      "types": "./build/web-component.d.ts",
+      "import": "./build/web-component.es.js"
     }
   },
   "types": "./build/index.d.ts",
@@ -24,8 +28,8 @@
   ],
   "scripts": {
     "start": "rollup --config rollup.config.js -w",
-    "dev": "rollup --config rollup.config.js -w",
-    "build": "rollup --config rollup.config.js",
+    "dev": "NODE_OPTIONS=--max-old-space-size=14000 rollup --config rollup.config.js -w",
+    "build": "NODE_OPTIONS=--max-old-space-size=14000 rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
     "chains:generate": "tsx ./src/scripts/codegen.ts",
     "postpublish": "yarn run post",
@@ -87,6 +91,9 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@skip-go/core": "workspace:packages/core",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
