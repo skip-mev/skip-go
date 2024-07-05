@@ -397,11 +397,11 @@ export const ChainStep = ({
             {stepState?.explorerLink && (
               <AdaptiveLink
                 className={cn(
-                  'flex flex-row items-center text-sm font-semibold underline',
-                  css`
-                    color: ${useSwapWidgetUIStore.getState().colors.primary};
-                  `
+                  'flex flex-row items-center text-sm font-semibold underline'
                 )}
+                style={{
+                  color: useSwapWidgetUIStore.getState().colors.primary,
+                }}
                 href={stepState.explorerLink.link}
                 data-testid={`explorer-link`}
               >
@@ -480,13 +480,13 @@ export const ChainStep = ({
                   <PencilSquareIcon
                     className={cn(
                       'h-4 w-4',
-                      !isNotFocused
-                        ? css`
-                            color: ${useSwapWidgetUIStore.getState().colors
-                              .primary};
-                          `
-                        : 'text-neutral-400'
+                      isNotFocused && 'text-neutral-400'
                     )}
+                    style={{
+                      color: !isNotFocused
+                        ? useSwapWidgetUIStore.getState().colors.primary
+                        : undefined,
+                    }}
                   />
                 </button>
               )}

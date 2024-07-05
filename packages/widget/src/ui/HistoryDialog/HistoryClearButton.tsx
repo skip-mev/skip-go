@@ -23,12 +23,12 @@ export const HistoryClearButton = ({ className, ...props }: Props) => {
           'flex items-center gap-1',
           'transition-colors focus:outline-none',
           `opacity-80 hover:opacity-90`,
-          css`
-            color: ${useSwapWidgetUIStore.getState().colors.primary};
-            background-color: ${useSwapWidgetUIStore.getState().colors.primary};
-          `,
           className
         )}
+        style={{
+          color: useSwapWidgetUIStore.getState().colors.primary,
+          backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+        }}
         onClick={() => txHistory.clear()}
         {...props}
       >

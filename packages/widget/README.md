@@ -34,7 +34,6 @@ Next, import the css and use the `SwapWidget` component to render the swap inter
 
 ```tsx
 import { SwapWidget } from '@skip-go/widget';
-import '@skip-go/widget/style.css';
 
 const SwapPage = () => {
   return (
