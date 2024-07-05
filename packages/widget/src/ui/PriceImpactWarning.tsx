@@ -42,12 +42,11 @@ export const PriceImpactWarning = ({
         <button
           className={cn(
             'w-full rounded-lg border border-transparent py-4 font-semibold text-white transition-colors',
-            `hover:opacity-90`,
-            css`
-              background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
-            `
+            `hover:opacity-90`
           )}
+          style={{
+            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+          }}
           onClick={() => {
             control.close();
             onGoBack();

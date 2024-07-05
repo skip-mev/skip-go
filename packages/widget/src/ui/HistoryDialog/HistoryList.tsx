@@ -262,13 +262,12 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             className={cn(
               'rounded-md px-2 py-1 text-xs transition-colors',
               'flex items-center justify-center space-x-1',
-              `opacity-80 hover:opacity-90`,
-              css`
-                color: ${useSwapWidgetUIStore.getState().colors.primary};
-                background-color: ${useSwapWidgetUIStore.getState().colors
-                  .primary};
-              `
+              `opacity-80 hover:opacity-90`
             )}
+            style={{
+              color: useSwapWidgetUIStore.getState().colors.primary,
+              backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+            }}
             onClick={() => txHistory.remove(id)}
           >
             <TrashIcon className="h-3 w-3" />

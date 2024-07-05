@@ -249,14 +249,13 @@ export const SetAddressDialog = ({
                       </button>
                       <button
                         className={cn(
-                          'flex w-12 items-center justify-center rounded-md border-2',
-                          css`
-                            border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
-                            color: ${useSwapWidgetUIStore.getState().colors
-                              .primary};
-                          `
+                          'flex w-12 items-center justify-center rounded-md border-2'
                         )}
+                        style={{
+                          backgroundColor:
+                            useSwapWidgetUIStore.getState().colors.primary,
+                          color: useSwapWidgetUIStore.getState().colors.primary,
+                        }}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />

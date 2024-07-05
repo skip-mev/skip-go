@@ -72,12 +72,11 @@ function TransactionDialog({
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
             'disabled:cursor-not-allowed disabled:opacity-75',
-            'enabled:hover:rotate-1 enabled:hover:scale-102',
-            css`
-              background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
-            `
+            'enabled:hover:rotate-1 enabled:hover:scale-102'
           )}
+          style={{
+            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+          }}
           disabled={!route || (typeof isLoading === 'boolean' && isLoading)}
           onClick={() => confirmControl.open()}
         >
