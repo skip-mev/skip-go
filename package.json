@@ -93,6 +93,9 @@
   },
   "packageManager": "yarn@3.2.0",
   "dependencies": {
-    "@changesets/cli": "^2.24.4"
+    "@changesets/cli": "^2.24.4",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "rollup-plugin-replace": "^2.2.0"
   }
 }

@@ -4,8 +4,8 @@ import postcss from 'rollup-plugin-postcss';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-
 import packageJson from './package.json';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 export default [
   {
@@ -49,17 +49,23 @@ export default [
         minimize: true,
         extract: 'style.css',
       }),
-      peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
       }),
       nodeResolve({
+        jsnext: true,
+        preferBuiltins: true,
         browser: true,
-        preferBuiltins: false,
       }),
       json(),
-      commonjs(),
+      commonjs({
+        sourceMap: false,
+      }),
+      nodePolyfills({
+        crypto: true,
+        buffer: true,
+      }),
     ],
   },
 ];
