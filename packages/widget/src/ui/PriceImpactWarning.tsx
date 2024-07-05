@@ -45,7 +45,7 @@ export const PriceImpactWarning = ({
             `hover:opacity-90`,
             css`
               background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
+                .primary} !important;
             `
           )}
           onClick={() => {

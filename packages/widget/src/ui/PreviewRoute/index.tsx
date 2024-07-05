@@ -305,7 +305,7 @@ export const PreviewRoute = ({
             'disabled:cursor-not-allowed disabled:opacity-75',
             css`
               background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
+                .primary} !important;
             `
           )}
           onClick={() => submitMutation.mutate()}
@@ -328,7 +328,8 @@ export const PreviewRoute = ({
           'outline-none transition-transform',
           'disabled:cursor-not-allowed disabled:opacity-75',
           css`
-            background-color: ${useSwapWidgetUIStore.getState().colors.primary};
+            background-color: ${useSwapWidgetUIStore.getState().colors
+              .primary} !important;
           `
         )}
         onClick={async () => {
@@ -416,7 +417,8 @@ export const PreviewRoute = ({
                 className={cn(
                   'right-7 text-xs font-medium',
                   css`
-                    color: ${useSwapWidgetUIStore.getState().colors.primary};
+                    color: ${useSwapWidgetUIStore.getState().colors
+                      .primary} !important;
                   `
                 )}
                 onClick={() => setIsExpanded(false)}
@@ -579,7 +581,7 @@ export const PreviewRoute = ({
                 'disabled:cursor-not-allowed disabled:opacity-75',
                 css`
                   background-color: ${useSwapWidgetUIStore.getState().colors
-                    .primary};
+                    .primary} !important;
                 `
               )}
               onClick={control.close}

@@ -62,14 +62,16 @@ export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
   ...skipApiProviderProps
 }) => {
   return (
-    <WalletProvider>
-      <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
-      <Toaster
-        position={'top-right'}
-        containerClassName="font-jost"
-        toastOptions={{ duration: 1000 * 10 }}
-        {...toasterProps}
-      />
-    </WalletProvider>
+    <div className="skip-go-widget">
+      <WalletProvider>
+        <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
+        <Toaster
+          position={'top-right'}
+          containerClassName="font-jost"
+          toastOptions={{ duration: 1000 * 10 }}
+          {...toasterProps}
+        />
+      </WalletProvider>
+    </div>
   );
 };

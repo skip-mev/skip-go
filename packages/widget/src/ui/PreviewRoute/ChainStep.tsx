@@ -399,7 +399,8 @@ export const ChainStep = ({
                 className={cn(
                   'flex flex-row items-center text-sm font-semibold underline',
                   css`
-                    color: ${useSwapWidgetUIStore.getState().colors.primary};
+                    color: ${useSwapWidgetUIStore.getState().colors
+                      .primary} !important;
                   `
                 )}
                 href={stepState.explorerLink.link}
@@ -483,7 +484,7 @@ export const ChainStep = ({
                       !isNotFocused
                         ? css`
                             color: ${useSwapWidgetUIStore.getState().colors
-                              .primary};
+                              .primary} !important;
                           `
                         : 'text-neutral-400'
                     )}

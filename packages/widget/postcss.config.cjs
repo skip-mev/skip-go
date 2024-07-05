@@ -1,6 +1,9 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
+  important: true,
+  plugins: [
+    require('tailwindcss'),
+    require('autoprefixer'),
+    require('postcss-prefixwrap')('.skip-go-widget'),
+  ],
 };

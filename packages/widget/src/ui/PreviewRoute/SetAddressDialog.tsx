@@ -163,7 +163,7 @@ export const SetAddressDialog = ({
                           //   css`
                           //     border: 1px solid
                           //       ${useSwapWidgetUIStore.getState().colors
-                          //         .primary};
+                          //         .primary} !important;
                           //   `
                         )}
                         onClick={async () => {
@@ -237,9 +237,9 @@ export const SetAddressDialog = ({
 
                           css`
                             border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
+                              .colors.primary} !important;
                             background-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
+                              .colors.primary} !important;
                           `
                         )}
                         onClick={() => save()}
@@ -252,9 +252,9 @@ export const SetAddressDialog = ({
                           'flex w-12 items-center justify-center rounded-md border-2',
                           css`
                             border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
+                              .colors.primary} !important;
                             color: ${useSwapWidgetUIStore.getState().colors
-                              .primary};
+                              .primary} !important;
                           `
                         )}
                         onClick={() => cancel()}
