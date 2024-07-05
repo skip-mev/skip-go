@@ -18,6 +18,8 @@ export default [
         config: {
           path: './postcss.config.js',
         },
+        inject: false,
+        modules: true,
         extensions: ['.css'],
         minimize: true,
         extract: 'style.css',

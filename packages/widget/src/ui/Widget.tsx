@@ -25,6 +25,7 @@ import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
+import root from 'react-shadow';
 
 export const SwapWidgetUI = ({
   className,
