@@ -101,6 +101,7 @@
     "react-shadow": "^20.5.0",
     "styled-components": "^6.1.11",
     "tailwind-merge": "^2.3.0",
+    "typescript-plugin-css-modules": "^5.1.0",
     "viem": "2.x",
     "wagmi": "2.x",
     "zustand": "^4.5.2"
