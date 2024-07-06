@@ -28,8 +28,8 @@ import { CraftedBySkip } from './CraftedBySkip';
 
 export const SwapWidgetUI = ({
   className,
-  ...divProps
-}: React.HTMLAttributes<HTMLDivElement>) => {
+  style,
+}: Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>) => {
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
@@ -93,7 +93,7 @@ export const SwapWidgetUI = ({
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
         <div
           className={cn('space-y-4 font-jost relative p-4 bg-white', className)}
-          {...divProps}
+          style={style}
         >
           <div className="flex h-8 items-center">
             <p className="text-2xl font-semibold">From</p>

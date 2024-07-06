@@ -8,15 +8,14 @@ import { SwapWidgetUI } from './Widget';
 import { useForceClientRender } from '../hooks/use-force-client-render';
 import root from 'react-shadow';
 import styles from '../styles/global.css';
+import toastStyles from '../styles/toastStyles.css';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
   'className' | 'style'
 > &
   ConfigureSwapWidgetArgs &
-  SwapWidgetProviderProps & {
-    children?: React.ReactNode;
-  };
+  Partial<SwapWidgetProviderProps>;
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
@@ -24,6 +23,8 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   onlyTestnet,
   defaultRoute,
   routeConfig,
+  className,
+  style,
   ...swapWidgetProps
 }) => {
   useEffect(() => {
@@ -38,9 +39,10 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
 
   const renderWidgetWithProvider = useForceClientRender(
     <root.div mode="open">
+      <style type="text/css">{toastStyles}</style>
       <style type="text/css">{styles}</style>
       <SwapWidgetProvider {...swapWidgetProps}>
-        <SwapWidgetUI {...swapWidgetProps} />
+        <SwapWidgetUI className={className} style={style} />
       </SwapWidgetProvider>
     </root.div>
   );
