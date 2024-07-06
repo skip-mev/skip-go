@@ -30,11 +30,10 @@ function App() {
 
 ### 2. Use the `SwapWidget` Component
 
-Next, import the css and use the `SwapWidget` component to render the swap interface:
+Next, use the `SwapWidget` component to render the swap interface:
 
 ```tsx
 import { SwapWidget } from '@skip-go/widget';
-import '@skip-go/widget/style.css';
 
 const SwapPage = () => {
   return (
