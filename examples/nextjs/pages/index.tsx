@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
-import '@skip-go/widget/style.css';
 import React from 'react';
 import { SwapWidget, SwapWidgetProvider } from '@skip-go/widget';
+import { NoSSR } from '../components/NoSSR';
 
 const Home: NextPage = () => {
   return (
-    <div style={{ display: 'flex', gap: 50 }}>
+    <NoSSR>
       <div
         style={{
           width: '450px',
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
           />
         </SwapWidgetProvider>
       </div>
-    </div>
+    </NoSSR>
   );
 };
 

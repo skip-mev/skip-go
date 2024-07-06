@@ -7913,6 +7913,7 @@ __metadata:
     postcss-prefixwrap: ^1.49.0
     react-hot-toast: ^2.4.1
     react-icons: ^5.2.1
+    react-shadow: ^20.5.0
     tailwind-merge: ^2.3.0
     tailwindcss: ^3.4.3
     tailwindcss-animate: ^1.0.7
@@ -15919,6 +15920,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"humps@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "humps@npm:2.0.1"
+  checksum: 7d5a674cfca2f34c04562f6fd0d129b4c43a5caf85fcc1c9eacf5d0729554c9375db362c4232519b37369c94dd2560d85f96ad4091a8fbf4af4e625ab5214a30
+  languageName: node
+  linkType: hard
+
 "i18next-browser-languagedetector@npm:7.1.0":
   version: 7.1.0
   resolution: "i18next-browser-languagedetector@npm:7.1.0"
@@ -20952,6 +20960,19 @@ __metadata:
     "@types/react":
       optional: true
   checksum: e0dbb6856beaed2cff4996d9ca62d775686ff72e3e9de34043034d932223b588993b2fc7a18644750dd3d73eb19bd3f2cedb8d91f0e424c1ef8403010da24b1d
+  languageName: node
+  linkType: hard
+
+"react-shadow@npm:^20.5.0":
+  version: 20.5.0
+  resolution: "react-shadow@npm:20.5.0"
+  dependencies:
+    humps: ^2.0.1
+  peerDependencies:
+    prop-types: ^15.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 94c47c8bce5b61e6c7f20641b39cc20028f0954dbaa0f17a6e153448dce264240a2a8fd85e4b93ddb962abbb3cea783eb255bb7b2b4c3a1cd0283ff8cf70d325
   languageName: node
   linkType: hard
 

@@ -20,7 +20,6 @@ import {
 } from '../utils/number';
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { css } from '@emotion/css';
 
 interface Props {
   amount: string;
@@ -233,12 +232,12 @@ function AssetInput({
                 className={cn(
                   'rounded-md px-2 py-1 text-xs font-semibold uppercase text-white',
                   'transition-[transform,background] enabled:hover:rotate-2 enabled:hover:scale-110 disabled:cursor-not-allowed',
-                  'disabled:opacity-75',
-                  css`
-                    background-color: ${useSwapWidgetUIStore.getState().colors
-                      .primary} !important;
-                  `
+                  'disabled:opacity-75'
                 )}
+                style={{
+                  backgroundColor:
+                    useSwapWidgetUIStore.getState().colors.primary,
+                }}
                 disabled={maxButtonDisabled}
                 onClick={onAmountMax}
               >

@@ -38,32 +38,33 @@ export const SimpleTooltip = (props: Props) => {
               'text-sm font-jost',
               'animate-slide-up-and-fade',
               type === 'warning' && `bg-[#fbeef1]`,
-              type === 'warning' &&
-                css`
-                  color: ${useSwapWidgetUIStore.getState().colors
-                    .primary} !important;
-                `,
               type === 'warning' && 'font-medium',
               type === 'brand' && `text-white`,
-              type === 'brand' &&
-                css`
-                  background-color: ${useSwapWidgetUIStore.getState().colors
-                    .primary} !important;
-                `,
               _content?.className
             )}
+            style={{
+              backgroundColor:
+                type === 'brand'
+                  ? useSwapWidgetUIStore.getState().colors.primary
+                  : undefined,
+              color:
+                type === 'warning'
+                  ? useSwapWidgetUIStore.getState().colors.primary
+                  : undefined,
+            }}
           >
             {label}
             <Tooltip.Arrow
               className={cn(
                 'fill-white drop-shadow',
-                type === 'warning' && 'fill-[#fbeef1]',
-                type === 'brand' &&
-                  css`
-                    fill: ${useSwapWidgetUIStore.getState().colors
-                      .primary} !important;
-                  `
+                type === 'warning' && 'fill-[#fbeef1]'
               )}
+              style={{
+                fill:
+                  type === 'brand'
+                    ? useSwapWidgetUIStore.getState().colors.primary
+                    : undefined,
+              }}
             />
           </Tooltip.Content>
         </div>

@@ -20,7 +20,6 @@ export default [
         },
         extensions: ['.css'],
         minimize: true,
-        extract: 'style.css',
       }),
       peerDepsExternal(),
       typescript({
