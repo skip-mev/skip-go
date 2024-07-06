@@ -1,23 +1,30 @@
 import { useEffect } from 'react';
-import { SkipAPIProvider, SkipAPIProviderProps } from '../provider';
+import { SwapWidgetProvider, SwapWidgetProviderProps } from '../provider';
 import {
   configureSwapWidget,
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
+import { useForceClientRender } from '../hooks/use-force-client-render';
+import root from 'react-shadow';
+import styles from '../styles/global.css';
 
-export interface SwapWidgetProps
-  extends Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
-    ConfigureSwapWidgetArgs {}
+export type SwapWidgetProps = Pick<
+  React.HTMLAttributes<HTMLDivElement>,
+  'className' | 'style'
+> &
+  ConfigureSwapWidgetArgs &
+  SwapWidgetProviderProps & {
+    children?: React.ReactNode;
+  };
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
-  className,
-  style,
   settings,
   onlyTestnet,
   defaultRoute,
   routeConfig,
+  ...swapWidgetProps
 }) => {
   useEffect(() => {
     configureSwapWidget({
@@ -29,6 +36,13 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
     });
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
-  const divProps = { className, style };
-  return <SwapWidgetUI {...divProps} />;
+  const renderWidgetWithProvider = useForceClientRender(
+    <root.div mode="open">
+      <style type="text/css">{styles}</style>
+      <SwapWidgetProvider {...swapWidgetProps}>
+        <SwapWidgetUI {...swapWidgetProps} />
+      </SwapWidgetProvider>
+    </root.div>
+  );
+  return renderWidgetWithProvider;
 };
