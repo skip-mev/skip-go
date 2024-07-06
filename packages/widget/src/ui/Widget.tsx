@@ -27,7 +27,6 @@ import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
 import root from 'react-shadow';
 import styles from '../styles/global.css';
-import resetStyles from '../styles/reset.css';
 
 export const SwapWidgetUI = ({
   className,
@@ -93,7 +92,6 @@ export const SwapWidgetUI = ({
 
   return (
     <root.div mode="closed">
-      <style type="text/css">{resetStyles}</style>
       <style type="text/css">{styles}</style>
       <UsdDiff.Provider>
         <Tooltip.Provider delayDuration={0} disableHoverableContent>
