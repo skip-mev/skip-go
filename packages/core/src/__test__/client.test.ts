@@ -22,10 +22,10 @@ describe('client', () => {
 
   afterAll(() => server.close());
 
-  describe('/v1/info/chains', () => {
+  describe('/v2/info/chains', () => {
     it('handles 200 OK', async () => {
       server.use(
-        rest.get('https://api.skip.build/v1/info/chains', (_, res, ctx) => {
+        rest.get('https://api.skip.build/v2/info/chains', (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({

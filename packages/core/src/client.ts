@@ -195,7 +195,7 @@ export class SkipRouter {
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
-    }>('/v1/info/chains', {
+    }>('/v2/info/chains', {
       include_evm: includeEVM,
       include_svm: includeSVM,
       only_testnets: onlyTestnets,
