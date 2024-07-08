@@ -66,7 +66,7 @@ function AssetSelectContent({
   }, [searchValue, sortedAssets]);
 
   return (
-    <div className="isolate flex h-full flex-col p-6 pb-2 font-jost">
+    <div className="isolate flex h-full flex-col p-6 pb-2 font-diatype">
       <div className="mb-4 flex items-center gap-4">
         <button
           className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"

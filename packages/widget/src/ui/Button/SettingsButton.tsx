@@ -3,6 +3,7 @@ import { ComponentProps } from 'react';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { disclosure } from '../../store/disclosures';
+import { GearIcon } from '../Icon/GearIcon';
 
 export const SettingsButton = ({
   className,
@@ -20,7 +21,7 @@ export const SettingsButton = ({
         role="group"
         {...props}
       >
-        <Cog6ToothIcon className="h-4 w-4" />
+        <GearIcon className="h-4 w-4" />
       </button>
     </SimpleTooltip>
   );

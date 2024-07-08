@@ -67,7 +67,7 @@ export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
         <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
         <Toaster
           position={'top-right'}
-          containerClassName="font-jost"
+          containerClassName="font-diatype"
           toastOptions={{ duration: 1000 * 10 }}
           {...toasterProps}
         />

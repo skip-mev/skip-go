@@ -17,7 +17,7 @@ export function DialogContent({ children, onInteractOutside }: Props) {
   return (
     <Dialog.Portal>
       <div className="skip-go-widget">
-        <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-jost" />
+        <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-diatype" />
         <Dialog.Content
           className={cn(
             'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',

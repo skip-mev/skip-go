@@ -27,7 +27,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
   const totalWallets = useTotalWallets();
 
   return (
-    <div className="flex h-full flex-col px-6 pb-2 pt-6 font-jost">
+    <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
       <div className="relative">
         <button
           className={cn(

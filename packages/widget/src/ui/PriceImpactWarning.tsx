@@ -25,10 +25,10 @@ export const PriceImpactWarning = ({
         <div className="flex justify-center py-16 text-red-400">
           <ExclamationTriangleIcon className="h-24 w-24" />
         </div>
-        <h3 className="mb-2 text-center text-lg font-bold tabular-nums text-red-500">
+        <h3 className="mb-2 text-center text-lg font-bold text-red-500">
           {title}
         </h3>
-        <p className="px-4 text-center text-lg tabular-nums leading-snug text-neutral-500">
+        <p className="px-4 text-center text-lg text-neutral-500">
           {message} Do you want to continue?
         </p>
       </div>

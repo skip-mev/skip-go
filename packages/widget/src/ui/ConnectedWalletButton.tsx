@@ -29,7 +29,7 @@ export const ConnectedWalletButton = forwardRef<HTMLButtonElement, Props>(
             src={walletLogo}
           />
         )}
-        <span className="font-mono text-xs font-semibold tabular-nums">
+        <span className="font-diatypeMono text-xs font-semibold tabular-nums">
           {address.slice(0, 8)}...{address.slice(-5)}
         </span>
       </button>
