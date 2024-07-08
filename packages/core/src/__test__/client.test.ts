@@ -146,10 +146,10 @@ describe('client', () => {
     });
   });
 
-  describe('/v1/fungible/assets', () => {
+  describe('/v2/fungible/assets', () => {
     it('handles 200 OK', async () => {
       server.use(
-        rest.get('https://api.skip.build/v1/fungible/assets', (_, res, ctx) => {
+        rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -265,7 +265,7 @@ describe('client', () => {
     it('handles 200 OK - with parameters', async () => {
       server.use(
         rest.get(
-          'https://api.skip.build/v1/fungible/assets',
+          'https://api.skip.build/v2/fungible/assets',
           (req, res, ctx) => {
             const chainID = req.url.searchParams.get('chain_id');
             const nativeOnly = req.url.searchParams.get('native_only');
@@ -339,7 +339,7 @@ describe('client', () => {
 
     it('handles 400 Bad Request', async () => {
       server.use(
-        rest.get('https://api.skip.build/v1/fungible/assets', (_, res, ctx) => {
+        rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
           return res(
             ctx.status(400),
             ctx.json({
@@ -360,7 +360,7 @@ describe('client', () => {
 
     it('handles 500 Internal Server Error', async () => {
       server.use(
-        rest.get('https://api.skip.build/v1/fungible/assets', (_, res, ctx) => {
+        rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
           return res(
             ctx.status(500),
             ctx.json({
@@ -380,11 +380,11 @@ describe('client', () => {
     });
   });
 
-  describe('/v1/fungible/assets_from_source', () => {
+  describe('/v2/fungible/assets_from_source', () => {
     it('handles 200 OK', async () => {
       server.use(
         rest.post(
-          'https://api.skip.build/v1/fungible/assets_from_source',
+          'https://api.skip.build/v2/fungible/assets_from_source',
           (_, res, ctx) => {
             return res(
               ctx.status(200),
@@ -478,7 +478,7 @@ describe('client', () => {
     it('handles 400 Bad Request', async () => {
       server.use(
         rest.post(
-          'https://api.skip.build/v1/fungible/assets_from_source',
+          'https://api.skip.build/v2/fungible/assets_from_source',
           (_, res, ctx) => {
             return res(
               ctx.status(400),
@@ -508,7 +508,7 @@ describe('client', () => {
     it('handles 500 Internal Server Error', async () => {
       server.use(
         rest.post(
-          'https://api.skip.build/v1/fungible/assets_from_source',
+          'https://api.skip.build/v2/fungible/assets_from_source',
           (_, res, ctx) => {
             return res(
               ctx.status(500),
@@ -536,7 +536,7 @@ describe('client', () => {
     });
   });
 
-  describe('/v1/fungible/recommend_assets', () => {
+  describe('/v2/fungible/recommend_assets', () => {
     it('handles 200 OK', async () => {
       server.use(
         rest.post(
@@ -623,7 +623,7 @@ describe('client', () => {
     });
   });
 
-  describe('/v1/fungible/msgs', () => {
+  describe('/v2/fungible/msgs', () => {
     it('handles 200 OK', async () => {
       server.use(
         rest.post('https://api.skip.build/v2/fungible/msgs', (_, res, ctx) => {
@@ -826,7 +826,7 @@ describe('client', () => {
     estimated_fees: [],
   };
 
-  describe('/v1/fungible/route', () => {
+  describe('/v2/fungible/route', () => {
     it('handles 200 OK', async () => {
       server.use(
         rest.post('https://api.skip.build/v2/fungible/route', (_, res, ctx) => {
@@ -931,10 +931,10 @@ describe('client', () => {
     });
   });
 
-  describe('/v1/fungible/venues', () => {
+  describe('/v2/fungible/venues', () => {
     it('handles 200 OK', async () => {
       server.use(
-        rest.get('https://api.skip.build/v1/fungible/venues', (_, res, ctx) => {
+        rest.get('https://api.skip.build/v2/fungible/venues', (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
