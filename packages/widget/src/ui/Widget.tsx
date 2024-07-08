@@ -95,7 +95,10 @@ export const SwapWidgetUI = ({
     <UsdDiff.Provider>
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
         <div
-          className={cn('space-y-4 font-jost relative p-4 bg-white', className)}
+          className={cn(
+            'space-y-4 font-diatype relative p-4 bg-white',
+            className
+          )}
           style={style}
         >
           <div className="flex h-8 items-center">

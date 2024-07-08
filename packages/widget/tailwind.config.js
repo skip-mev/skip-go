@@ -31,7 +31,8 @@ module.exports = {
         ...blackA,
       },
       fontFamily: {
-        jost: ['Jost', 'sans-serif'],
+        diatype: ['ABCDiatype', 'sans-serif'],
+        diatypeMono: ['ABCDiatypeMono', 'monospace'],
       },
       keyframes: {
         'accordion-open': {

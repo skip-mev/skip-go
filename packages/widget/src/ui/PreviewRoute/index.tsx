@@ -267,7 +267,7 @@ export const PreviewRoute = ({
         ({ createdAt, id }) => (
           <div className="flex flex-col">
             <h4 className="mb-2 font-bold">Transaction Failed!</h4>
-            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-mono text-xs">
+            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs">
               {err instanceof Error
                 ? `${err.name}: ${err.message}`
                 : String(err)}
