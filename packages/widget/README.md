@@ -1,6 +1,6 @@
 # Skip Go Widget
 
-The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip API](https://skip.build/).
+The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip Go API](https://skip.build/).
 
 ## Installation
 
@@ -110,7 +110,7 @@ The `SwapWidgetProvider` component accepts the following prop:
     };
   ```
 
-- `apiURL` (Optional): Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+- `apiURL` (Optional): Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
 By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
 

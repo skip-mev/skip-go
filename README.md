@@ -1,4 +1,4 @@
-# skip-go
+# Skip Go
 
 ## Project Structure
 

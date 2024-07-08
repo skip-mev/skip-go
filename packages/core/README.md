@@ -6,7 +6,7 @@
 
 # @skip-go/core
 
-JavaScript SDK for Skip API
+JavaScript SDK for Skip Go API
 
 ## Install
 
@@ -16,14 +16,14 @@ npm install @skip-go/core
 
 ## Usage
 
-Read more at Skip API docs website on [Getting Started: TypeScript SDK](https://api-docs.skip.money/docs/getting-started).
+Read more at Skip Go API docs website on [Getting Started: TypeScript SDK](https://docs.skip.build/go/general/getting-started).
 
 ## Development
 
 ```bash
 # clone repository
-git clone https://github.com/skip-mev/skip-router-sdk.git
-cd skip-router-sdk
+git clone https://github.com/skip-mev/skip-go.git
+cd skip-go/packages/core
 
 # prepare submodules
 git submodule update --init --recursive
@@ -71,6 +71,5 @@ npm run e2e:stop
 
 ## Documentation
 
-- [Skip API documentation](https://api-docs.skip.money)
-- [Skip API Reference](https://api-docs.skip.money/reference)
-- [Skip API Reference (Swagger)](https://api-swagger.skip.money)
+- [Skip Go API documentation](https://docs.skip.build/go)
+- [Skip Go API Reference](https://docs.skip.build/go/api-reference/prod/info/get-v2infochains)
