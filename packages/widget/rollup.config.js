@@ -1,14 +1,19 @@
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
-import copy from 'rollup-plugin-copy';
+import url from '@rollup/plugin-url';
 
 import packageJson from './package.json';
 
 export default [
   {
     input: ['./src/index.ts'],
-    external: ['react', 'react-dom', '@r2wc/react-to-web-component'],
+    external: [
+      'react',
+      'react-dom',
+      '@r2wc/react-to-web-component',
+      'react-shadow-scope',
+    ],
     output: {
       file: packageJson.exports['.'].import,
       format: 'esm',
@@ -23,16 +28,14 @@ export default [
         extensions: ['.css'],
         minimize: true,
       }),
+      url({
+        include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
+        limit: Infinity,
+      }),
       peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
-      }),
-      copy({
-        targets: [
-          // Need to copy the files over for usage
-          { src: 'src/assets/fonts', dest: 'build/assets' },
-        ],
       }),
     ],
   },

@@ -5,9 +5,10 @@ import {
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
-import styles from '../styles/global.css';
+import shadowDomStyles from '../styles/shadowDomStyles.css';
 import toastStyles from '../styles/toastStyles.css';
 import { Scope } from 'react-shadow-scope';
+import { useInjectStyleToDocumentHead } from '../hooks/use-inject-style-to-document-head';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -26,6 +27,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   style,
   ...swapWidgetProviderProps
 }) => {
+  useInjectStyleToDocumentHead();
   useEffect(() => {
     configureSwapWidget({
       colors,
@@ -37,7 +39,10 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
   return (
-    <Scope stylesheets={[toastStyles, styles]} config={{ dsd: 'emulated' }}>
+    <Scope
+      stylesheets={[toastStyles, shadowDomStyles]}
+      config={{ dsd: 'emulated' }}
+    >
       <SwapWidgetProvider {...swapWidgetProviderProps}>
         <SwapWidgetUI className={className} style={style} />
       </SwapWidgetProvider>
