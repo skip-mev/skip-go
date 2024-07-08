@@ -8,7 +8,6 @@ import { SwapWidgetUI } from './Widget';
 import styles from '../styles/global.css';
 import toastStyles from '../styles/toastStyles.css';
 import { Scope } from 'react-shadow-scope';
-import { useFixRadixUiWheelEvent } from '../hooks/use-fix-radix-ui-wheel-event';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -27,7 +26,6 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   style,
   ...swapWidgetProviderProps
 }) => {
-  useFixRadixUiWheelEvent();
   useEffect(() => {
     configureSwapWidget({
       colors,

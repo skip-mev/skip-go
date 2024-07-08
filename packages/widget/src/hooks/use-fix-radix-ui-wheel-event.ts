@@ -2,22 +2,23 @@ import { useEffect } from 'react';
 
 export const useFixRadixUiWheelEvent = () => {
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if ((e.target as Element).closest('[data-scrollable]')) return;
+    const element = document.querySelector('react-shadow-scope')?.shadowRoot;
+    if (!element) return;
+
+    const handleWheel = (e: Event) => {
       e.stopPropagation();
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      if ((e.target as Element).closest('[data-scrollable]')) return;
+    const handleTouchMove = (e: Event) => {
       e.stopPropagation();
     };
 
-    document.addEventListener('wheel', handleWheel, true);
-    document.addEventListener('touchmove', handleTouchMove, true);
+    element.addEventListener('wheel', handleWheel, true);
+    element.addEventListener('touchmove', handleTouchMove, true);
 
     return () => {
-      document.removeEventListener('wheel', handleWheel, true);
-      document.removeEventListener('touchmove', handleTouchMove, true);
+      element.removeEventListener('wheel', handleWheel, true);
+      element.removeEventListener('touchmove', handleTouchMove, true);
     };
   }, []);
 };
