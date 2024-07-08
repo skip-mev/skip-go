@@ -32,7 +32,7 @@ export const SimpleTooltip = (props: Props) => {
         className={cn(
           'rounded-md bg-white px-4 py-2 leading-none',
           'select-none shadow shadow-neutral-500/50',
-          'text-sm font-jost',
+          'text-sm font-diatype',
           'animate-slide-up-and-fade',
           type === 'warning' && `bg-[#fbeef1]`,
           type === 'warning' && 'font-medium',
@@ -57,10 +57,7 @@ export const SimpleTooltip = (props: Props) => {
             type === 'warning' && 'fill-[#fbeef1]'
           )}
           style={{
-            fill:
-              type === 'brand'
-                ? useSwapWidgetUIStore.getState().colors.primary
-                : undefined,
+            fill: useSwapWidgetUIStore.getState().colors.primary,
           }}
         />
       </Tooltip.Content>

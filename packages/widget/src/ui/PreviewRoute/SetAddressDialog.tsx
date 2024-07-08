@@ -109,7 +109,7 @@ export const SetAddressDialog = ({
   return (
     <Dialog onOpenChange={(v) => onOpen(v)} open={open} key={chainID}>
       <DialogContent>
-        <div className="flex h-full flex-col px-6 pb-2 pt-6 font-jost">
+        <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
           <div className="relative flex justify-between">
             <button
               className={cn(
