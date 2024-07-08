@@ -5,10 +5,9 @@ import {
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
-import { useForceClientRender } from '../hooks/use-force-client-render';
-import root from 'react-shadow';
 import styles from '../styles/global.css';
 import toastStyles from '../styles/toastStyles.css';
+import { Scope } from 'react-shadow-scope';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -25,7 +24,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   routeConfig,
   className,
   style,
-  ...swapWidgetProps
+  ...swapWidgetProviderProps
 }) => {
   useEffect(() => {
     configureSwapWidget({
@@ -37,14 +36,11 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
     });
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
-  const renderWidgetWithProvider = useForceClientRender(
-    <root.div mode="open">
-      <style type="text/css">{toastStyles}</style>
-      <style type="text/css">{styles}</style>
-      <SwapWidgetProvider {...swapWidgetProps}>
+  return (
+    <Scope stylesheets={[toastStyles, styles]} config={{ dsd: 'emulated' }}>
+      <SwapWidgetProvider {...swapWidgetProviderProps}>
         <SwapWidgetUI className={className} style={style} />
       </SwapWidgetProvider>
-    </root.div>
+    </Scope>
   );
-  return renderWidgetWithProvider;
 };
