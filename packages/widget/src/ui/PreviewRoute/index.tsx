@@ -523,10 +523,10 @@ export const PreviewRoute = ({
               <AlertCollapse.Content>
                 <p>
                   <b>WARNING: </b>
-                  ibc.fun does not support signing with Ledger when transferring
-                  over CCTP to the Ethereum ecosystem. We&apos;re actively
-                  working on fixing this with the Noble/Circle teams. We
-                  apologize for the inconvenience
+                  go.skip.build does not support signing with Ledger when
+                  transferring over CCTP to the Ethereum ecosystem. We&apos;re
+                  actively working on fixing this with the Noble/Circle teams.
+                  We apologize for the inconvenience
                 </p>
               </AlertCollapse.Content>
             </AlertCollapse.Root>
@@ -536,10 +536,10 @@ export const PreviewRoute = ({
               <AlertCollapse.Content>
                 <p>
                   <b>WARNING: </b>
-                  ibc.fun does not support signing with Ledger on Ethermint-like
-                  chains (e.g. Injective, Dymension, EVMOS, etc...). We&apos;re
-                  actively working on fixing this with the Ledger team. We
-                  apologize for the inconvenience.
+                  go.skip.build does not support signing with Ledger on
+                  Ethermint-like chains (e.g. Injective, Dymension, EVMOS,
+                  etc...). We&apos;re actively working on fixing this with the
+                  Ledger team. We apologize for the inconvenience.
                 </p>
               </AlertCollapse.Content>
             </AlertCollapse.Root>

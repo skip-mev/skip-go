@@ -65,7 +65,7 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 
-export const SKIP_API_URL = 'https://api.skip.money';
+export const SKIP_API_URL = 'https://api.skip.build';
 
 export class SkipRouter {
   protected requestClient: RequestClient;
