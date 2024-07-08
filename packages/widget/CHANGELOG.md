@@ -1,5 +1,17 @@
 # @skip-go/widget
 
+## 1.1.0
+
+### Minor Changes
+
+- 2c7e965: change url
+
+## 1.0.0
+
+### Major Changes
+
+- 0380db6: change fonts and logo
+
 ## 0.1.1
 
 ### Patch Changes

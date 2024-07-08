@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.3.0
+
+### Minor Changes
+
+- c68b63d: Only use v2 endpoints of the Skip Go API
+
 ## 0.2.0
 
 ### Minor Changes
