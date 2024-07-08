@@ -120,7 +120,7 @@ export class SkipRouter {
       },
       types.AssetsRequestJSON
     >(
-      '/v1/fungible/assets',
+      '/v2/fungible/assets',
       types.assetsRequestToJSON({
         ...options,
       })
@@ -144,7 +144,7 @@ export class SkipRouter {
       },
       types.AssetsFromSourceRequestJSON
     >(
-      '/v1/fungible/assets_from_source',
+      '/v2/fungible/assets_from_source',
       types.assetsFromSourceRequestToJSON({
         ...options,
       })
@@ -195,7 +195,7 @@ export class SkipRouter {
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
-    }>('/v1/info/chains', {
+    }>('/v2/info/chains', {
       include_evm: includeEVM,
       include_svm: includeSVM,
       only_testnets: onlyTestnets,
@@ -1334,7 +1334,7 @@ export class SkipRouter {
   async venues(onlyTestnets?: boolean): Promise<types.SwapVenue[]> {
     const response = await this.requestClient.get<{
       venues: types.SwapVenueJSON[];
-    }>('/v1/fungible/venues', {
+    }>('/v2/fungible/venues', {
       only_testnets: onlyTestnets,
     });
 
