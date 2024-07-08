@@ -1,4 +1,4 @@
-const appUrl = 'https://ibc.fun';
+const appUrl = 'https://go.skip.build';
 
 export const endpointOptions = {
   getRpcEndpointForChain: async (chainID: string) => {

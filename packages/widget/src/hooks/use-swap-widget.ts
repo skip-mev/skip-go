@@ -780,7 +780,7 @@ export function useSwapWidget() {
       params.set('amount_out', amountOut);
     }
     return {
-      link: `https://ibc.fun?${params}`,
+      link: `https://go.skip.build?${params}`,
     };
   }, [srcChain, srcAsset, dstChain, dstAsset, amountIn, amountOut]);
 
