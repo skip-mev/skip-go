@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { fonts } from '../styles/fonts';
 
-export const useInjectStyleToDocumentHead = () => {
+export const useInjectFontsToDocumentHead = () => {
   useEffect(() => {
     const styleElement = document.createElement('style');
     styleElement.textContent = fonts;

@@ -8,7 +8,7 @@ import { SwapWidgetUI } from './Widget';
 import shadowDomStyles from '../styles/shadowDomStyles.css';
 import toastStyles from '../styles/toastStyles.css';
 import { Scope } from 'react-shadow-scope';
-import { useInjectStyleToDocumentHead } from '../hooks/use-inject-style-to-document-head';
+import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -27,7 +27,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   style,
   ...swapWidgetProviderProps
 }) => {
-  useInjectStyleToDocumentHead();
+  useInjectFontsToDocumentHead();
   useEffect(() => {
     configureSwapWidget({
       colors,
