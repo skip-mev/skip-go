@@ -1,6 +1,6 @@
 # Skip Go Widget
 
-The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip API](https://skip.build/).
+The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip Go API](https://skip.build/).
 
 ## Installation
 
