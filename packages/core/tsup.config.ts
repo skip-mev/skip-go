@@ -1,16 +1,16 @@
-import type { Options } from 'tsup';
-import { defineConfig } from 'tsup';
+import type { Options } from "tsup";
+import { defineConfig } from "tsup";
 
 const defaultOptions: Options = {
   cjsInterop: true,
   clean: true,
   dts: true,
-  format: ['cjs'],
+  format: ["cjs"],
   minify: false,
   shims: true,
   splitting: true,
   treeshake: true,
-  tsconfig: './tsconfig.build.json',
+  tsconfig: "./tsconfig.build.json",
 };
 
 export default defineConfig(async ({ watch }) => {
@@ -19,12 +19,19 @@ export default defineConfig(async ({ watch }) => {
       ...defaultOptions,
       clean: !watch,
       entry: {
-        index: 'src/index.ts',
-        parser: 'src/parser.ts',
-        transactions: 'src/transactions.ts',
-        types: 'src/types/index.ts',
+        index: "src/index.ts",
+        parser: "src/parser.ts",
+        transactions: "src/transactions.ts",
+        types: "src/types/index.ts",
       },
-      target: ['es2020'],
+      external: [
+        /^@cosmjs\/.*/,
+        /^@injectivelabs\/.*/,
+        /^@protobufjs\/.*/,
+        "long",
+        "protobufjs",
+        //
+      ],
     },
   ];
 });
