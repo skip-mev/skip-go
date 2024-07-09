@@ -24,14 +24,6 @@ export default defineConfig(async ({ watch }) => {
         transactions: 'src/transactions.ts',
         types: 'src/types/index.ts',
       },
-      external: [
-        /^@cosmjs\/.*/,
-        /^@injectivelabs\/.*/,
-        /^@protobufjs\/.*/,
-        'long',
-        'protobufjs',
-        //
-      ],
       target: ['es2020'],
     },
   ];
