@@ -1,4 +1,5 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   test: {
@@ -14,4 +15,5 @@ export default defineConfig({
     },
     globals: true,
   },
+  plugins: [nodePolyfills()],
 });

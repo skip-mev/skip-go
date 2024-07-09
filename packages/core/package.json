@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/core",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.3.0",
+  "version": "0.3.0-alpha.0",
   "repository": "https://github.com/skip-mev/skip-router-sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,21 +11,6 @@
     "*.d.ts"
   ],
   "sideEffects": false,
-  "scripts": {
-    "build": "tsup",
-    "clean": "rm -rf dist",
-    "codegen": "node scripts/codegen.js",
-    "e2e:clean": "make stop clean",
-    "e2e:setup": "make setup && make setup-kind",
-    "e2e:start": "make start",
-    "e2e:stop": "make stop",
-    "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.mjs --test-timeout=30000",
-    "postpublish": "git reset --hard",
-    "prepublishOnly": "node scripts/prepublish.js",
-    "test": "vitest -c vitest.unit.config.mjs",
-    "watch": "tsup --watch",
-    "watch:link": "tsup --watch --onSuccess \"yalc push\""
-  },
   "peerDependencies": {
     "chain-registry": "^1.33.11"
   },
@@ -47,17 +32,8 @@
     "cosmjs-types": "0.8.0",
     "keccak256": "1.x",
     "kujira.js": "0.9.x",
-    "viem": "2.x"
-  },
-  "devDependencies": {
-    "@cosmjs/faucet": "0.32.3",
-    "@cosmjs/faucet-client": "0.32.3",
-    "@cosmology/telescope": "1.8.3",
-    "@protobufs/gogoproto": "0.0.10",
-    "@protobufs/google": "0.0.10",
-    "minimatch": "^9.0.3",
-    "proxy-from-env": "^1.1.0",
-    "vitest": "^1.2.2"
+    "viem": "2.x",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "publishConfig": {
     "access": "public"
