@@ -40,6 +40,7 @@
     "react-dom": "17.x || 18.x"
   },
   "devDependencies": {
+    "@rollup/plugin-url": "^8.0.2",
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
     "@types/react": "^18.0.6",
@@ -89,7 +90,6 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@rollup/plugin-url": "^8.0.2",
     "@skip-go/core": "workspace:packages/core",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
