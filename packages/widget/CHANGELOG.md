@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.1.1
+
+### Patch Changes
+
+- 6c044e1: Use latest core version and update readme
+
 ## 1.1.0
 
 ### Minor Changes
