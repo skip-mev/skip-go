@@ -39,7 +39,7 @@ const SwapPage = () => {
 
 The `SwapWidget` component accepts the following props:
 
-```tsx
+````tsx
 interface SwapWidgetProps {
   colors?: {
     primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
@@ -62,6 +62,33 @@ interface SwapWidgetProps {
       name: string;
       chainID: string;
     }[];
+  };
+  /**
+   * Filter chains and assets in selection
+   *
+   * Record<chainID, assetDenoms>
+   * if assetDenoms is undefined, all assets are allowed
+   * @example
+   * ```ts
+   * {
+   * source: {
+   *   'noble-1': undefined,
+   * },
+   * destination: {
+   *   'cosmoshub-4': [
+   *     'uatom',
+   *     'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86',
+   *   ],
+   *   'agoric-3': [
+   *     'ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9',
+   *   ],
+   *   'osmosis-1': undefined,
+   * }
+   * ```
+   */
+  filter?: {
+    source?: Record<string, string[] | undefined>;
+    destination?: Record<string, string[] | undefined>;
   };
   className?: string;
   style?: React.CSSProperties;
@@ -88,7 +115,7 @@ interface SwapWidgetProps {
   };
   apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 }
-```
+````
 
 ## Web Component usage
 
