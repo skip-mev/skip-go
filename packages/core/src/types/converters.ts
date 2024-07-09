@@ -305,6 +305,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     chainType: chainJSON.chain_type,
     ibcCapabilities: ibcCapabilitiesFromJSON(chainJSON.ibc_capabilities),
     isTestnet: chainJSON.is_testnet,
+    prettyName: chainJSON.pretty_name,
   };
 }
 
@@ -323,6 +324,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     chain_type: chain.chainType,
     ibc_capabilities: ibcCapabilitiesToJSON(chain.ibcCapabilities),
     is_testnet: chain.isTestnet,
+    pretty_name: chain.prettyName,
   };
 }
 
