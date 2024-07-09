@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.3.1
+
+### Patch Changes
+
+- 5adcdc0: Update readme and naming for Skip Go
+
 ## 0.3.0
 
 ### Minor Changes
