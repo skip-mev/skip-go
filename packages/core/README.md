@@ -49,24 +49,6 @@ npm run test -- --watch
 npm run test -- --coverage
 ```
 
-## E2E Tests
-
-E2E tests depend on [Starship](https://starship.cosmology.tech) to test interactions with various blockchains.
-
-```bash
-# run starship setup
-npm run e2e:setup
-
-# run starship devnets
-npm run e2e:start
-
-# run e2e tests
-npm run e2e:test
-
-# stop starship devnets
-npm run e2e:stop
-```
-
 ## Documentation
 
 - [Skip Go API documentation](https://docs.skip.build/go)
