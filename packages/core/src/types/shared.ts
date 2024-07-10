@@ -1,4 +1,4 @@
-import { BridgeType } from "./unified";
+import { BridgeType } from './unified';
 
 export type IBCAddressJSON = {
   address: string;
@@ -403,6 +403,26 @@ export type EvmSwap = {
   swapVenues: SwapVenue[];
 };
 
+export type SvmSwapJSON = {
+  amount_in: string;
+  amount_out: string;
+  denom_in: string;
+  denom_out: string;
+  from_chain_id: string;
+  swap_venues: SwapVenueJSON[];
+  payload: string;
+};
+
+export type SvmSwap = {
+  amountIn: string;
+  amountOut: string;
+  denomIn: string;
+  denomOut: string;
+  fromChainID: string;
+  swapVenues: SwapVenue[];
+  payload: string;
+};
+
 export type AffiliateJSON = {
   basis_points_fee: string;
   address: string;
@@ -421,7 +441,7 @@ export type ChainAffiliates = {
   affiliates: Affiliate[];
 };
 
-export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
+export type Reason = 'UNKNOWN' | 'BASE_TOKEN' | 'MOST_LIQUID' | 'DIRECT';
 
 export type CosmWasmContractMsgJSON = {
   contract_address: string;
@@ -433,7 +453,7 @@ export type CosmWasmContractMsg = {
   msg: string;
 };
 
-export type AutopilotAction = "LIQUID_STAKE" | "CLAIM";
+export type AutopilotAction = 'LIQUID_STAKE' | 'CLAIM';
 
 export type AutopilotMsg = {
   receiver: string;

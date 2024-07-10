@@ -78,6 +78,21 @@ export const makeActions = ({ route }: { route: RouteResponse }): Action[] => {
       return;
     }
 
+    if ('svmSwap' in operation) {
+      _actions.push({
+        type: 'SWAP',
+        denomIn: operation.svmSwap.denomIn,
+        denomOut: operation.svmSwap.denomOut,
+        chainID: operation.svmSwap.fromChainID,
+        id: `swap-${swapCount}-${transferCount}-${i}`,
+        signRequired,
+        amountIn: operation.amountIn,
+        amountOut: operation.amountOut,
+        txIndex: operation.txIndex,
+      });
+      return;
+    }
+
     if ('axelarTransfer' in operation) {
       _actions.push({
         type: 'TRANSFER',
