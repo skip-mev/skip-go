@@ -78,6 +78,13 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
+  if (message.msgTypeURL === '/circle.cctp.v1.MsgSendMessageWithCaller') {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgSendMessageWithCaller.fromAmino(msgJson),
+    };
+  }
+
   if (message.msgTypeURL === '/initia.move.v1.MsgExecute') {
     return {
       typeUrl: message.msgTypeURL,
