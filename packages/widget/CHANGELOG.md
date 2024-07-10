@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.0
+
+### Minor Changes
+
+- 6c4e611: Move widget to within shadow DOM
+
 ## 1.1.1
 
 ### Patch Changes
