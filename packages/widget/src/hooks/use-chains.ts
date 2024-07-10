@@ -12,7 +12,6 @@ export type Chain = SkipChain & {
 export type UseChainsQueryArgs<T = Chain[]> = {
   enabled?: boolean;
   select?: (arr?: Chain[]) => T;
-  chainIDs?: string[];
 };
 
 export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
@@ -21,13 +20,12 @@ export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
   const onlyTestnet = useSwapWidgetUIStore((state) => state.onlyTestnet);
 
   return useQuery({
-    queryKey: ['USE_CHAINS', onlyTestnet, args.chainIDs],
+    queryKey: ['USE_CHAINS', onlyTestnet],
     queryFn: async () => {
       const chains = await skipClient.chains({
         includeEVM: true,
         includeSVM: true,
         onlyTestnets: onlyTestnet,
-        chainIDs: args.chainIDs,
       });
 
       return chains

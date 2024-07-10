@@ -38,12 +38,28 @@ export const SwapWidgetUI = ({
   const { openWalletModal } = useWalletModal();
 
   const filter = useSwapWidgetUIStore((state) => state.filter);
+  const sourceChainIDs = filter?.source
+    ? Object.keys(filter.source)
+    : undefined;
+  const destinationChainIDs = filter?.destination
+    ? Object.keys(filter.destination)
+    : undefined;
 
   const { data: sourceChains } = useChains({
-    chainIDs: filter?.source ? Object.keys(filter.source) : undefined,
+    select: (chains) => {
+      if (!sourceChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return sourceChainIDs?.includes(chain.chainID);
+      });
+    },
   });
   const { data: destinationChains } = useChains({
-    chainIDs: filter?.destination ? Object.keys(filter.destination) : undefined,
+    select: (chains) => {
+      if (!destinationChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return destinationChainIDs?.includes(chain.chainID);
+      });
+    },
   });
 
   const {

@@ -57,6 +57,10 @@ function AssetInput({
   const filter = useSwapWidgetUIStore((state) => state.filter);
 
   const assets = useMemo(() => {
+    if (!chain && filter && filter?.[context]) {
+      return [];
+    }
+
     if (!chain) return getNativeAssets();
     const _assets = assetsByChainID(chain.chainID);
 
@@ -67,7 +71,7 @@ function AssetInput({
     }
 
     return _assets;
-  }, [assetsByChainID, chain, getNativeAssets]);
+  }, [assetsByChainID, chain, getNativeAssets, filter]);
 
   const account = useAccount(chain?.chainID);
 

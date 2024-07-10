@@ -59,13 +59,31 @@ export function useSwapWidget() {
   const { routeConfig, defaultRoute } = useSwapWidgetUIStore();
   const skipClient = useSkipClient();
 
+  const filter = useSwapWidgetUIStore((state) => state.filter);
+  const sourceChainIDs = filter?.source
+    ? Object.keys(filter.source)
+    : undefined;
+  const destinationChainIDs = filter?.destination
+    ? Object.keys(filter.destination)
+    : undefined;
+  const allChainIDs = useMemo(() => {
+    return [...(sourceChainIDs ?? []), ...(destinationChainIDs ?? [])];
+  }, [sourceChainIDs, destinationChainIDs]);
+
   const {
     assetsByChainID,
     getFeeAsset,
     isReady: isAssetsReady,
     getAsset,
   } = useAssets();
-  const { data: chains } = useChains();
+  const { data: chains } = useChains({
+    select: (chains) => {
+      if (!allChainIDs) return chains;
+      return chains?.filter(({ chainID }) => {
+        return allChainIDs.includes(chainID);
+      });
+    },
+  });
 
   const { getWalletRepo } = useCosmosManager();
   const { connector, chain: evmChain } = useWagmiAccount();
@@ -308,13 +326,16 @@ export function useSwapWidget() {
   const onSourceChainChange = useCallback(
     async (chain: Chain, injectAsset?: Asset) => {
       let feeAsset: Asset | undefined = undefined;
-      if (chain.chainType === 'cosmos') {
+      if (chain.chainType === 'cosmos' && !filter?.source?.[chain.chainID]) {
         feeAsset = await getFeeAsset(chain.chainID);
       }
 
       let asset = feeAsset;
       if (!asset) {
-        const assets = assetsByChainID(chain.chainID);
+        const assets = assetsByChainID(
+          chain.chainID,
+          filter?.source?.[chain.chainID]
+        );
         if (chain.chainType === 'evm') {
           asset = assets.find(
             (x) =>
@@ -365,16 +386,25 @@ export function useSwapWidget() {
     async (chain: Chain, injectAsset?: Asset) => {
       const { destinationAsset: currentDstAsset } =
         useSwapWidgetStore.getState();
-      const assets = assetsByChainID(chain.chainID);
+      const assets = assetsByChainID(
+        chain.chainID,
+        filter?.destination?.[chain.chainID]
+      );
 
       let feeAsset: Asset | undefined = undefined;
-      if (chain.chainType === 'cosmos') {
+      if (
+        chain.chainType === 'cosmos' &&
+        !filter?.destination?.[chain.chainID]
+      ) {
         feeAsset = await getFeeAsset(chain.chainID);
       }
 
       let asset = feeAsset;
       if (!asset) {
-        const assets = assetsByChainID(chain.chainID);
+        const assets = assetsByChainID(
+          chain.chainID,
+          filter?.destination?.[chain.chainID]
+        );
         if (chain.chainType === 'evm') {
           asset = assets.find(
             (x) =>
@@ -759,6 +789,8 @@ export function useSwapWidget() {
 
   // #endregion
 
+  // #region -- Default Route
+
   const shareable = useMemo(() => {
     const params = new URLSearchParams();
     if (srcChain) {
@@ -794,12 +826,17 @@ export function useSwapWidget() {
   useEffect(() => {
     if (!chains || !isAssetsReady || srcChain) return;
     if (defaultSourceChain) {
-      const findChain = chains.find(
-        (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
-      );
+      const findChain = chains
+        .filter((c) => sourceChainIDs?.includes(c.chainID))
+        .find(
+          (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
+        );
       if (findChain) {
         if (defaultSourceAsset) {
-          const assets = assetsByChainID(findChain.chainID);
+          const assets = assetsByChainID(
+            findChain.chainID,
+            filter?.source?.[findChain.chainID]
+          );
           const findAsset = assets.find(
             (x) => x.denom.toLowerCase() === defaultSourceAsset.toLowerCase()
           );
@@ -822,12 +859,18 @@ export function useSwapWidget() {
   useEffect(() => {
     if (!chains || !isAssetsReady || dstChain) return;
     if (defaultDestinationChain) {
-      const findChain = chains.find(
-        (x) => x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
-      );
+      const findChain = chains
+        .filter((c) => destinationChainIDs?.includes(c.chainID))
+        .find(
+          (x) =>
+            x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
+        );
       if (findChain) {
         if (defaultDestinationAsset) {
-          const assets = assetsByChainID(findChain.chainID);
+          const assets = assetsByChainID(
+            findChain.chainID,
+            filter?.destination?.[findChain.chainID]
+          );
           const findAsset = assets.find(
             (x) =>
               x.denom.toLowerCase() === defaultDestinationAsset.toLowerCase()
@@ -870,6 +913,7 @@ export function useSwapWidget() {
     }
   }, [defaultAmountIn, defaultAmountOut]);
 
+  // #endregion
   /////////////////////////////////////////////////////////////////////////////
 
   return {
