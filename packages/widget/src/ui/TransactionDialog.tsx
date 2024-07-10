@@ -7,7 +7,6 @@ import { useDisclosureKey } from '../store/disclosures';
 import { PriceImpactWarning } from './PriceImpactWarning';
 import { cn } from '../utils/ui';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { css } from '@emotion/css';
 
 export type ActionType = 'NONE' | 'TRANSFER' | 'SWAP';
 
@@ -72,12 +71,11 @@ function TransactionDialog({
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
             'disabled:cursor-not-allowed disabled:opacity-75',
-            'enabled:hover:rotate-1 enabled:hover:scale-102',
-            css`
-              background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary} !important;
-            `
+            'enabled:hover:rotate-1 enabled:hover:scale-102'
           )}
+          style={{
+            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+          }}
           disabled={!route || (typeof isLoading === 'boolean' && isLoading)}
           onClick={() => confirmControl.open()}
         >

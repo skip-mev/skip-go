@@ -7,3 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: gray;
 }
+
+input {
+  background-color: black;
+}

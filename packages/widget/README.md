@@ -10,31 +10,12 @@ To install the package, run the following command:
 npm install @skip-go/widget
 ```
 
-## Quick Start Guide
+## React Component usage
 
-### 1. Wrap Your App with `SwapWidgetProvider`
-
-First, wrap your application or the relevant page with the `SwapWidgetProvider` component:
-
-```tsx
-import { SwapWidgetProvider } from '@skip-go/widget';
-
-function App() {
-  return (
-    <SwapWidgetProvider>
-      <YourApp />
-    </SwapWidgetProvider>
-  );
-}
-```
-
-### 2. Use the `SwapWidget` Component
-
-Next, import the css and use the `SwapWidget` component to render the swap interface:
+import the `SwapWidget` from `'@skip-go/widget'` to render the swap interface:
 
 ```tsx
 import { SwapWidget } from '@skip-go/widget';
-import '@skip-go/widget/style.css';
 
 const SwapPage = () => {
   return (
@@ -54,9 +35,7 @@ const SwapPage = () => {
 };
 ```
 
-## Component Props
-
-### SwapWidget
+### SwapWidget props
 
 The `SwapWidget` component accepts the following props:
 
@@ -91,34 +70,31 @@ interface SwapWidgetProps {
     slippage?: number; //percentage of slippage 0-100. defaults to 3
   };
   onlyTestnet?: boolean; // Only show testnet chains
+  toasterProps?: {
+    // Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`
+    position?: ToastPosition;
+    toastOptions?: DefaultToastOptions;
+    reverseOrder?: boolean;
+    gutter?: number;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
+    children?: (toast: Toast) => JSX.Element;
+  };
+  endpointOptions?: {
+    // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+    endpoints?: Record<string, EndpointOptions>;
+    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+  };
+  apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 }
 ```
 
-### SwapWidgetProvider
-
-The `SwapWidgetProvider` component accepts the following prop:
-
-- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
-- `endpointOptions` (Optional): Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-
-  ```ts
-  endpointOptions?: {
-      // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-      endpoints?: Record<string, EndpointOptions>;
-      getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-      getRestEndpointForChain?: (chainID: string) => Promise<string>;
-    };
-  ```
-
-- `apiURL` (Optional): Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-
-By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
-
-### Web Component
+## Web Component usage
 
 The web component is created with the `@r2wc/react-to-web-component` library.
 
-In order to register the web-component, you must call the `initializeSwapWidget` function:
+In order to register the web-component, you must first call the `initializeSwapWidget` function:
 
 ```tsx
 import { initializeSwapWidget } from '@skip-go/widget';
@@ -126,9 +102,9 @@ import { initializeSwapWidget } from '@skip-go/widget';
 initializeSwapWidget();
 ```
 
-voila! you can now use the `swap-widget` web-component
+et voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`
 
-The props for the web component are the same as `SwapWidgetProps` and `SwapWidgetProviderProps` except that
+The props for the web component are the same as `SwapWidgetProps` except that
 they are sent to the web-component as attributes in kebab-case as strings or stringified objects ie.
 
 ```tsx
@@ -149,11 +125,8 @@ becomes
     srcAssetDenom:
       'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
   })}
+  toaster-props=""
+  endpoint-options=""
+  api-url=""
 ></swap-widget>
-```
-
-the web-component exposes the `SwapWidgetProviderProps` as attributes on swap-widget as well
-
-```tsx
-<swap-widget toaster-props="" endpoint-options="" api-url=""></swap-widget>
 ```
