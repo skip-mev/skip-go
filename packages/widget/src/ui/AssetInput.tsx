@@ -54,10 +54,24 @@ function AssetInput({
 }: Props) {
   const { assetsByChainID, getNativeAssets } = useAssets();
 
+  const filter = useSwapWidgetUIStore((state) => state.filter);
+
   const assets = useMemo(() => {
+    if (!chain && filter && filter?.[context]) {
+      return [];
+    }
+
     if (!chain) return getNativeAssets();
-    return assetsByChainID(chain.chainID);
-  }, [assetsByChainID, chain, getNativeAssets]);
+    const _assets = assetsByChainID(chain.chainID);
+
+    if (filter && filter?.[context] && filter[context]?.[chain.chainID]) {
+      return _assets.filter((asset) =>
+        filter[context]?.[chain.chainID]?.includes(asset.denom)
+      );
+    }
+
+    return _assets;
+  }, [assetsByChainID, chain, getNativeAssets, filter]);
 
   const account = useAccount(chain?.chainID);
 

@@ -25,6 +25,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   routeConfig,
   className,
   style,
+  filter,
   ...swapWidgetProviderProps
 }) => {
   useInjectFontsToDocumentHead();
@@ -35,6 +36,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
       settings,
       defaultRoute,
       routeConfig,
+      filter,
     });
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 

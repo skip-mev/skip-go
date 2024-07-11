@@ -36,7 +36,31 @@ export const SwapWidgetUI = ({
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
-  const { data: chains } = useChains();
+
+  const filter = useSwapWidgetUIStore((state) => state.filter);
+  const sourceChainIDs = filter?.source
+    ? Object.keys(filter.source)
+    : undefined;
+  const destinationChainIDs = filter?.destination
+    ? Object.keys(filter.destination)
+    : undefined;
+
+  const { data: sourceChains } = useChains({
+    select: (chains) => {
+      if (!sourceChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return sourceChainIDs?.includes(chain.chainID);
+      });
+    },
+  });
+  const { data: destinationChains } = useChains({
+    select: (chains) => {
+      if (!destinationChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return destinationChainIDs?.includes(chain.chainID);
+      });
+    },
+  });
 
   const {
     amountIn,
@@ -136,7 +160,7 @@ export const SwapWidgetUI = ({
               amountUSD={route?.usdAmountIn}
               asset={sourceAsset}
               chain={sourceChain}
-              chains={chains ?? []}
+              chains={sourceChains ?? []}
               onAmountChange={onSourceAmountChange}
               onAmountMax={onSourceAmountMax}
               onAssetChange={onSourceAssetChange}
@@ -176,7 +200,7 @@ export const SwapWidgetUI = ({
               diffPercentage={usdDiffPercent}
               asset={destinationAsset}
               chain={destinationChain}
-              chains={chains ?? []}
+              chains={destinationChains ?? []}
               onAmountChange={onDestinationAmountChange}
               onAssetChange={onDestinationAssetChange}
               onChainChange={onDestinationChainChange}

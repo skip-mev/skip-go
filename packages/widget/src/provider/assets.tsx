@@ -13,7 +13,7 @@ import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 interface AssetsContext {
   assets: Record<string, Asset[]>;
-  assetsByChainID: (chainID?: string) => Asset[];
+  assetsByChainID: (chainID?: string, filterDenoms?: string[]) => Asset[];
   getAsset(denom: string, chainID: string): Asset | undefined;
   getFeeAsset(chainID: string): Promise<Asset | undefined>;
   getNativeAssets(): Asset[];
@@ -36,8 +36,13 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const assetsByChainID: AssetsContext['assetsByChainID'] = useCallback(
-    (chainID?: string) => {
+    (chainID?: string, filterDenoms?: string[]) => {
       const chainAssets = chainID ? assets[chainID] || [] : [];
+      if (filterDenoms && filterDenoms.length > 0) {
+        return chainAssets.filter((asset) =>
+          filterDenoms.includes(asset.denom)
+        );
+      }
       return /* console.log(chainAssets), */ chainAssets;
     },
     [assets]
