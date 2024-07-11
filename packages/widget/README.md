@@ -117,6 +117,8 @@ interface SwapWidgetProps {
 }
 ````
 
+# Experimental features (still in development)
+
 ## Web Component usage
 
 The web component is created with the `@r2wc/react-to-web-component` library.
@@ -131,29 +133,35 @@ initializeSwapWidget();
 
 et voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`
 
-The props for the web component are the same as `SwapWidgetProps` except that
-they are sent to the web-component as attributes in kebab-case as strings or stringified objects ie.
+The props for the web component are the same as `SwapWidgetProps` except that all props
+are passed to the web-component via attributes in kebab-case as strings or stringified objects ie.
 
 ```tsx
-interface SwapWidgetProps {
-  colors
-  defaultRoute
-  routeConfig
+<SwapWidget
+  className="test-class"
+  onlyTestnet={true}
+  colors={{
+    primary: '#FF4FFF',
+  }}
+  defaultRoute={{
+    srcChainID: 'osmosis-1',
+    srcAssetDenom:
+      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+  }}
+/>
 ```
 
 becomes
 
 ```tsx
 <swap-widget
-  class-name="classname"
+  class-name="test-class"
+  onlyTestnet="true"
   colors='{"primary":"#FF4FFF"}'
   default-route={JSON.stringify({
     srcChainID: 'osmosis-1',
     srcAssetDenom:
       'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
   })}
-  toaster-props=""
-  endpoint-options=""
-  api-url=""
 ></swap-widget>
 ```
