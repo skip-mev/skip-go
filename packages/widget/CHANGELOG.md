@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.1
+
+### Patch Changes
+
+- 4939650: source/destination chains/assets filtering
+
 ## 1.2.0
 
 ### Minor Changes
