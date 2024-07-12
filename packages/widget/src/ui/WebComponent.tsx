@@ -1,5 +1,5 @@
 import { SwapWidget, SwapWidgetProps } from './index';
-import { SwapWidgetProvider, SwapWidgetProviderProps } from '../provider';
+import { SwapWidgetProviderProps } from '../provider';
 
 type WebComponentProps = SwapWidgetProps & SwapWidgetProviderProps;
 
@@ -32,17 +32,7 @@ const WidgetWithProvider = (props: WebComponentProps) => {
     return accumulator;
   }, {});
 
-  const { toasterProps, endpointOptions, apiURL, ...swapWidgetProps } =
-    realProps as WebComponentProps;
-  return (
-    <SwapWidgetProvider
-      toasterProps={toasterProps}
-      endpointOptions={endpointOptions}
-      apiURL={apiURL}
-    >
-      <SwapWidget {...swapWidgetProps} />
-    </SwapWidgetProvider>
-  );
+  return <SwapWidget {...realProps} />;
 };
 
 const WEB_COMPONENT_NAME = 'skip-widget';
