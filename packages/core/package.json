@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/core",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.3.1",
+  "version": "0.3.1-alpha.0",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,6 +45,7 @@
     "@solana/web3.js": "^1.91.1",
     "axios": "1.x",
     "cosmjs-types": "0.8.0",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
     "keccak256": "1.x",
     "kujira.js": "0.9.x",
     "viem": "2.x"
