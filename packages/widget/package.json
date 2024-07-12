@@ -97,6 +97,7 @@
     "@solana/web3.js": "^1.91.8",
     "@tailwindcss/forms": "^0.5.7",
     "@tanstack/react-query": "^5.18.1",
+    "buffer": "^6.0.3",
     "clsx": "^2.1.1",
     "match-sorter": "^6.3.4",
     "react-hot-toast": "^2.4.1",

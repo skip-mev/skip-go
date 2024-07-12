@@ -1,10 +1,10 @@
-import {
+const {
   CoinbaseWalletAdapter,
   LedgerWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TrustWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+} = await import('@solana/wallet-adapter-wallets');
 
 export const solanaWallets = [
   new PhantomWalletAdapter(),
