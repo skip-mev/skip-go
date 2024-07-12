@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.0
+
+### Minor Changes
+
+- f286e6f: support new pretty_name field on /v2/info/chains response
+
 ## 0.3.1
 
 ### Patch Changes
