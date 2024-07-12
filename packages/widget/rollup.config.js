@@ -13,7 +13,7 @@ export default [
     input: ['./src/index.ts'],
     external: ['react', 'react-dom', '@r2wc/react-to-web-component'],
     output: {
-      file: packageJson.exports['.'].import,
+      dir: 'build',
       format: 'esm',
       sourcemap: true,
       globals: {
