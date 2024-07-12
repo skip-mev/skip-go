@@ -1,24 +1,34 @@
 import { useEffect } from 'react';
-import { SkipAPIProvider, SkipAPIProviderProps } from '../provider';
+import { SwapWidgetProvider, SwapWidgetProviderProps } from '../provider';
 import {
   configureSwapWidget,
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
+import shadowDomStyles from '../styles/shadowDomStyles.css';
+import toastStyles from '../styles/toastStyles.css';
+import { Scope } from 'react-shadow-scope';
+import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
-export interface SwapWidgetProps
-  extends Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>,
-    ConfigureSwapWidgetArgs {}
+export type SwapWidgetProps = Pick<
+  React.HTMLAttributes<HTMLDivElement>,
+  'className' | 'style'
+> &
+  ConfigureSwapWidgetArgs &
+  Partial<SwapWidgetProviderProps>;
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
-  className,
-  style,
   settings,
   onlyTestnet,
   defaultRoute,
   routeConfig,
+  className,
+  style,
+  filter,
+  ...swapWidgetProviderProps
 }) => {
+  useInjectFontsToDocumentHead();
   useEffect(() => {
     configureSwapWidget({
       colors,
@@ -26,9 +36,18 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
       settings,
       defaultRoute,
       routeConfig,
+      filter,
     });
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
-  const divProps = { className, style };
-  return <SwapWidgetUI {...divProps} />;
+  return (
+    <Scope
+      stylesheets={[toastStyles, shadowDomStyles]}
+      config={{ dsd: 'emulated' }}
+    >
+      <SwapWidgetProvider {...swapWidgetProviderProps}>
+        <SwapWidgetUI className={className} style={style} />
+      </SwapWidgetProvider>
+    </Scope>
+  );
 };

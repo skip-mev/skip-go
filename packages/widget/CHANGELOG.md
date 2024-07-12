@@ -1,5 +1,29 @@
 # @skip-go/widget
 
+## 1.2.2
+
+### Patch Changes
+
+- 7240d7b: Update widget README
+
+## 1.2.1
+
+### Patch Changes
+
+- 4939650: source/destination chains/assets filtering
+
+## 1.2.0
+
+### Minor Changes
+
+- 6c4e611: Move widget to within shadow DOM
+
+## 1.1.1
+
+### Patch Changes
+
+- 6c044e1: Use latest core version and update readme
+
 ## 1.1.0
 
 ### Minor Changes

@@ -25,15 +25,42 @@ import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
+import { useFixRadixUiWheelEvent } from '../hooks/use-fix-radix-ui-wheel-event';
 
 export const SwapWidgetUI = ({
   className,
-  ...divProps
-}: React.HTMLAttributes<HTMLDivElement>) => {
+  style,
+}: Pick<React.HTMLAttributes<HTMLDivElement>, 'className' | 'style'>) => {
+  useFixRadixUiWheelEvent();
+
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
-  const { data: chains } = useChains();
+
+  const filter = useSwapWidgetUIStore((state) => state.filter);
+  const sourceChainIDs = filter?.source
+    ? Object.keys(filter.source)
+    : undefined;
+  const destinationChainIDs = filter?.destination
+    ? Object.keys(filter.destination)
+    : undefined;
+
+  const { data: sourceChains } = useChains({
+    select: (chains) => {
+      if (!sourceChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return sourceChainIDs?.includes(chain.chainID);
+      });
+    },
+  });
+  const { data: destinationChains } = useChains({
+    select: (chains) => {
+      if (!destinationChainIDs) return chains;
+      return chains?.filter((chain) => {
+        return destinationChainIDs?.includes(chain.chainID);
+      });
+    },
+  });
 
   const {
     amountIn,
@@ -96,7 +123,7 @@ export const SwapWidgetUI = ({
             'space-y-4 font-diatype relative p-4 bg-white',
             className
           )}
-          {...divProps}
+          style={style}
         >
           <div className="flex h-8 items-center">
             <p className="text-2xl font-semibold">From</p>
@@ -133,7 +160,7 @@ export const SwapWidgetUI = ({
               amountUSD={route?.usdAmountIn}
               asset={sourceAsset}
               chain={sourceChain}
-              chains={chains ?? []}
+              chains={sourceChains ?? []}
               onAmountChange={onSourceAmountChange}
               onAmountMax={onSourceAmountMax}
               onAssetChange={onSourceAssetChange}
@@ -173,7 +200,7 @@ export const SwapWidgetUI = ({
               diffPercentage={usdDiffPercent}
               asset={destinationAsset}
               chain={destinationChain}
-              chains={chains ?? []}
+              chains={destinationChains ?? []}
               onAmountChange={onDestinationAmountChange}
               onAssetChange={onDestinationAssetChange}
               onChainChange={onDestinationChainChange}
@@ -208,13 +235,11 @@ export const SwapWidgetUI = ({
           {route && !routeLoading && numberOfTransactions > 1 && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium uppercase">
               <div
-                className={cn(
-                  'relative rounded-full p-[4px]',
-                  css`
-                    background-color: ${useSwapWidgetUIStore.getState().colors
-                      .primary} !important;
-                  `
-                )}
+                className={cn('relative rounded-full p-[4px]')}
+                style={{
+                  backgroundColor:
+                    useSwapWidgetUIStore.getState().colors.primary,
+                }}
               >
                 <div
                   className={cn(
@@ -252,12 +277,11 @@ export const SwapWidgetUI = ({
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
                 'disabled:cursor-not-allowed disabled:opacity-75',
-                'enabled:hover:rotate-1 enabled:hover:scale-105',
-                css`
-                  background-color: ${useSwapWidgetUIStore.getState().colors
-                    .primary} !important;
-                `
+                'enabled:hover:rotate-1 enabled:hover:scale-105'
               )}
+              style={{
+                backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+              }}
               disabled={!sourceChain}
               onClick={async () => {
                 if (sourceChain && !srcAccount?.isWalletConnected) {

@@ -40,6 +40,12 @@ yarn dev
 yarn build
 ```
 
+### Updating changelog
+
+```
+npx changeset
+```
+
 ## Docs
 
 - [Core](./packages/core/README.md)

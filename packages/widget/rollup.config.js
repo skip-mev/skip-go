@@ -1,7 +1,7 @@
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
-import copy from 'rollup-plugin-copy';
+import url from '@rollup/plugin-url';
 
 import packageJson from './package.json';
 
@@ -19,20 +19,18 @@ export default [
         config: {
           path: './postcss.config.js',
         },
+        inject: false,
         extensions: ['.css'],
         minimize: true,
-        extract: 'style.css',
+      }),
+      url({
+        include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
+        limit: Infinity,
       }),
       peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
-      }),
-      copy({
-        targets: [
-          // Need to copy the files over for usage
-          { src: 'src/assets/fonts', dest: 'build/assets' },
-        ],
       }),
     ],
   },
