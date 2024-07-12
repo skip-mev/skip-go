@@ -1,13 +1,13 @@
-import { WalletClient } from '@cosmos-kit/core';
+import { Buffer as BufferPolyfill } from 'buffer';
+globalThis.Buffer = BufferPolyfill;
 
-const { wallets: keplr } = await import('@cosmos-kit/keplr-extension');
-const { wallets: leap } = await import('@cosmos-kit/leap-extension');
-const { wallets: cosmostation } = await import(
-  '@cosmos-kit/cosmostation-extension'
-);
-const { wallets: okxwallet } = await import('@cosmos-kit/okxwallet');
-const { wallets: station } = await import('@cosmos-kit/station');
-const { wallets: vectis } = await import('@cosmos-kit/vectis');
+import { WalletClient } from '@cosmos-kit/core';
+import { wallets as cosmostation } from '@cosmos-kit/cosmostation-extension';
+import { wallets as keplr } from '@cosmos-kit/keplr-extension';
+import { wallets as leap } from '@cosmos-kit/leap-extension';
+import { wallets as okxwallet } from '@cosmos-kit/okxwallet';
+import { wallets as station } from '@cosmos-kit/station';
+import { wallets as vectis } from '@cosmos-kit/vectis';
 
 export const wallets = [
   ...keplr,
