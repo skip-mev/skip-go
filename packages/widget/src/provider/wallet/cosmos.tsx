@@ -1,3 +1,6 @@
+import { Buffer as BufferPolyfill } from 'buffer';
+globalThis.Buffer = BufferPolyfill;
+
 import { ChainProvider } from '@cosmos-kit/react';
 import React, { ComponentProps } from 'react';
 

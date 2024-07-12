@@ -1,3 +1,6 @@
+import { Buffer as BufferPolyfill } from 'buffer';
+globalThis.Buffer = BufferPolyfill;
+
 import { WalletClient } from '@cosmos-kit/core';
 import { useManager as useCosmosManager } from '@cosmos-kit/react';
 import { useWallet } from '@solana/wallet-adapter-react';
