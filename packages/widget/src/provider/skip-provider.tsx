@@ -1,3 +1,6 @@
+import { Buffer as BufferPolyfill } from 'buffer';
+globalThis.Buffer = BufferPolyfill;
+
 import { useManager } from '@cosmos-kit/react';
 import { SkipRouter, SkipRouterOptions } from '@skip-go/core';
 import { useWallet } from '@solana/wallet-adapter-react';
