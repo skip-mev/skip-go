@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.2
+
+### Patch Changes
+
+- 7240d7b: Update widget README
+
 ## 1.2.1
 
 ### Patch Changes
