@@ -2,6 +2,9 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
 import url from '@rollup/plugin-url';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 
 import packageJson from './package.json';
 
@@ -18,6 +21,12 @@ export default [
       },
     },
     plugins: [
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+      }),
+      commonjs(),
+      json(),
       postcss({
         config: {
           path: './postcss.config.js',

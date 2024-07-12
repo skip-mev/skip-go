@@ -7,3 +7,5 @@ Object.assign(globalObject, {
   process: process,
   Buffer: Buffer,
 });
+
+console.log('polyfill buffer');
