@@ -1,6 +1,3 @@
-import { Buffer as BufferPolyfill } from 'buffer';
-globalThis.Buffer = BufferPolyfill;
-
 import { useManager } from '@cosmos-kit/react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import toast from 'react-hot-toast';

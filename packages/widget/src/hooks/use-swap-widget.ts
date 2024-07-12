@@ -1,6 +1,3 @@
-import { Buffer as BufferPolyfill } from 'buffer';
-globalThis.Buffer = BufferPolyfill;
-
 import { GasPrice } from '@cosmjs/stargate';
 import { useManager as useCosmosManager } from '@cosmos-kit/react';
 import { Asset, BridgeType } from '@skip-go/core';
