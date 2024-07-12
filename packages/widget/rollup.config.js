@@ -13,6 +13,9 @@ export default [
       file: packageJson.exports['.'].import,
       format: 'esm',
       sourcemap: true,
+      globals: {
+        global: 'window',
+      },
     },
     plugins: [
       postcss({
