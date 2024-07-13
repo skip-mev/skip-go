@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.3
+
+### Patch Changes
+
+- 1e173c3: Remove extra SwapWidgetProvider wrapping the web-component
+
 ## 1.2.2
 
 ### Patch Changes
