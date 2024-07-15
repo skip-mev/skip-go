@@ -1,5 +1,5 @@
 import { http } from 'viem';
-import { createConfig } from 'wagmi';
+import { Config as WagmiConfig, createConfig } from 'wagmi';
 import {
   arbitrum,
   arbitrumSepolia,
@@ -28,7 +28,7 @@ import {
 import { forma, formaTestnet } from './viem/chains';
 
 // Update EVM_CHAINS in src/constants/wagmi.ts as well
-export const config = createConfig({
+export const config: WagmiConfig = createConfig({
   chains: [
     arbitrum,
     avalanche,

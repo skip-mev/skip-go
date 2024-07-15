@@ -582,6 +582,7 @@ export function useSwapWidget() {
         [state.sourceChain, state.sourceAsset, state.sourceFeeAsset] as const,
       async ([srcChain, srcAsset, srcFeeAsset]) => {
         if (!(srcChain?.chainType === 'cosmos' && srcAsset)) return;
+        if (srcChain?.chainID.includes('penumbra')) return;
 
         let srcGasPrice = getChainGasPrice(srcChain.chainID);
 
@@ -712,7 +713,11 @@ export function useSwapWidget() {
       async (srcChain) => {
         const { cosmos, svm } = trackWallet.get();
 
-        if (srcChain && srcChain.chainType === 'cosmos') {
+        if (
+          srcChain &&
+          srcChain.chainType === 'cosmos' &&
+          !srcChain.chainID.includes('penumbra')
+        ) {
           const { wallets } = getWalletRepo(srcChain.chainName);
           let wallet: (typeof wallets)[number] | undefined;
 

@@ -25,6 +25,7 @@ export const WalletListItem = ({
   ...props
 }: Props) => {
   const Component = useMemo(() => {
+    if (walletName === 'prax') return PenumbraWalletListItem;
     return chainType === 'cosmos' ? CosmosWalletListItem : EvmWalletListItem;
   }, [chainType]);
   return (
@@ -89,5 +90,15 @@ const EvmWalletListItem = ({
     useStore.setState({ [walletName]: true });
   }, [walletName]);
 
+  return <div {...props}>{children}</div>;
+};
+
+const PenumbraWalletListItem = ({
+  children,
+  walletName,
+  ...props
+}: ComponentProps<'div'> & {
+  walletName: string;
+}) => {
   return <div {...props}>{children}</div>;
 };
