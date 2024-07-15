@@ -4,8 +4,6 @@ import { ComponentProps } from 'react';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { txHistory, useTxHistory } from '../../store/tx-history';
 import { cn } from '../../utils/ui';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 
 type Props = ComponentProps<'button'>;
 
@@ -15,7 +13,7 @@ export const HistoryClearButton = ({ className, ...props }: Props) => {
   if (!hasHistory) return null;
 
   return (
-    <SimpleTooltip label="Clear transaction history" type="warning">
+    <SimpleTooltip label="Clear transaction history">
       <button
         className={cn(
           'text-xs font-semibold',
@@ -23,10 +21,7 @@ export const HistoryClearButton = ({ className, ...props }: Props) => {
           'flex items-center gap-1',
           'transition-colors focus:outline-none',
           `opacity-80 hover:opacity-90`,
-          css`
-            color: ${useSwapWidgetUIStore.getState().colors.primary};
-            background-color: ${useSwapWidgetUIStore.getState().colors.primary};
-          `,
+          'text-red-500 bg-red-100',
           className
         )}
         onClick={() => txHistory.clear()}

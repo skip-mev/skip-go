@@ -1,8 +1,8 @@
-import { ShareIcon } from '@heroicons/react/20/solid';
 import toast from 'react-hot-toast';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { styled } from 'styled-components';
+import { ShareIcon } from '../Icon/ShareIcon';
 
 export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
   return (

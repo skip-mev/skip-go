@@ -1,0 +1,89 @@
+syntax = "proto3";
+package opinit.ophost.v1;
+
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+option go_package                      = "github.com/initia-labs/OPinit/x/ophost/types";
+option (gogoproto.equal_all)           = true;
+option (gogoproto.goproto_getters_all) = false;
+
+// Params defines the set of ophost parameters.
+message Params {
+  option (amino.name)                 = "ophost/Params";
+  option (gogoproto.equal)            = true;
+  option (gogoproto.goproto_stringer) = false;
+
+  // The amount to be paid by l2 creator.
+  repeated cosmos.base.v1beta1.Coin registration_fee = 1 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// BridgeConfig defines the set of bridge config.
+message BridgeConfig {
+  // The address of the challenger.
+  repeated string challengers = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // The address of the proposer.
+  string proposer = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // The information about batch submission.
+  BatchInfo batch_info = 3 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  // The time interval at which checkpoints must be submitted.
+  // NOTE: this param is currently not used, but will be used for challenge in future.
+  google.protobuf.Duration submission_interval = 4 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.jsontag)     = "submission_interval,omitempty",
+    (gogoproto.nullable)    = false,
+    (amino.dont_omitempty)  = true
+  ];
+  // The minium time duration that must elapse before a withdrawal can be finalized.
+  google.protobuf.Duration finalization_period = 5 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.jsontag)     = "finalization_period,omitempty",
+    (gogoproto.nullable)    = false,
+    (amino.dont_omitempty)  = true
+  ];
+  // The time of the first l2 block recorded.
+  // NOTE: this param is currently not used, but will be used for challenge in future.
+  google.protobuf.Timestamp submission_start_time = 6
+      [(gogoproto.stdtime) = true, (gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  // Normally it is IBC channelID for permissioned IBC relayer.
+  bytes metadata = 7;
+}
+
+// BatchInfo defines the set of batch information.
+message BatchInfo {
+  // The address of the batch submitter.
+  string submitter = 1;
+  // The target chain
+  string chain = 2;
+}
+
+// TokenPair defines l1 and l2 token pair
+message TokenPair {
+  string l1_denom = 1;
+  string l2_denom = 2;
+}
+
+// Output is a l2 block submitted by proposer.
+message Output {
+  // Hash of the l2 output.
+  bytes output_root = 1;
+  // Timestamp of the l1 block that the output root was submitted in.
+  google.protobuf.Timestamp l1_block_time = 2
+      [(gogoproto.stdtime) = true, (gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  // The l2 block number that the output root was submitted in.
+  uint64 l2_block_number = 3;
+}
+
+// BatchInfoWithOutput defines the batch information with output.
+message BatchInfoWithOutput {
+  BatchInfo batch_info = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  Output    output     = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}

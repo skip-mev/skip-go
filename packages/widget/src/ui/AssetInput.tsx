@@ -20,7 +20,6 @@ import {
 } from '../utils/number';
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { css } from '@emotion/css';
 import { styled } from 'styled-components';
 
 interface Props {
@@ -56,10 +55,24 @@ function AssetInput({
 }: Props) {
   const { assetsByChainID, getNativeAssets } = useAssets();
 
+  const filter = useSwapWidgetUIStore((state) => state.filter);
+
   const assets = useMemo(() => {
+    if (!chain && filter && filter?.[context]) {
+      return [];
+    }
+
     if (!chain) return getNativeAssets();
-    return assetsByChainID(chain.chainID);
-  }, [assetsByChainID, chain, getNativeAssets]);
+    const _assets = assetsByChainID(chain.chainID);
+
+    if (filter && filter?.[context] && filter[context]?.[chain.chainID]) {
+      return _assets.filter((asset) =>
+        filter[context]?.[chain.chainID]?.includes(asset.denom)
+      );
+    }
+
+    return _assets;
+  }, [assetsByChainID, chain, getNativeAssets, filter]);
 
   const account = useAccount(chain?.chainID);
 
@@ -234,12 +247,12 @@ function AssetInput({
                 className={cn(
                   'rounded-md px-2 py-1 text-xs font-semibold uppercase text-white',
                   'transition-[transform,background] enabled:hover:rotate-2 enabled:hover:scale-110 disabled:cursor-not-allowed',
-                  'disabled:opacity-75',
-                  css`
-                    background-color: ${useSwapWidgetUIStore.getState().colors
-                      .primary};
-                  `
+                  'disabled:opacity-75'
                 )}
+                style={{
+                  backgroundColor:
+                    useSwapWidgetUIStore.getState().colors.primary,
+                }}
                 disabled={maxButtonDisabled}
                 onClick={onAmountMax}
               >

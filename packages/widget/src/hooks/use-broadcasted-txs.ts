@@ -111,6 +111,29 @@ export const useBroadcastedTxsStatus = ({
                   state: hyperlaneState,
                 };
               }
+              if ('opInitTransfer' in transfer) {
+                const opInitState: TransferState = (() => {
+                  switch (transfer.opInitTransfer.state) {
+                    case 'OPINIT_TRANSFER_SENT':
+                      return 'TRANSFER_PENDING';
+                    case 'OPINIT_TRANSFER_RECEIVED':
+                      return 'TRANSFER_SUCCESS';
+                    case 'OPINIT_TRANSFER_UNKNOWN':
+                      return 'TRANSFER_UNKNOWN';
+                    default:
+                      return 'TRANSFER_UNKNOWN';
+                  }
+                })();
+                return {
+                  srcChainID: transfer.opInitTransfer.fromChainID,
+                  destChainID: transfer.opInitTransfer.toChainID,
+                  txs: {
+                    sendTx: transfer.opInitTransfer.txs.sendTx,
+                    receiveTx: transfer.opInitTransfer.txs.receiveTx,
+                  },
+                  state: opInitState,
+                };
+              }
               const axelarState: TransferState = (() => {
                 switch (transfer.axelarTransfer.state) {
                   case 'AXELAR_TRANSFER_PENDING_RECEIPT':

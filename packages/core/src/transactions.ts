@@ -15,6 +15,8 @@ import {
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
+import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
+
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
 export function getEncodeObjectFromCosmosMessage(
@@ -84,6 +86,18 @@ export function getEncodeObjectFromCosmosMessage(
         moduleName: msgJson.module_name,
         functionName: msgJson.function_name,
         args: msgJson.args,
+      }),
+    };
+  }
+
+  if (message.msgTypeURL === "/opinit.ophost.v1.MsgInitiateTokenDeposit") {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgInitiateTokenDeposit.fromPartial({
+        sender: msgJson.sender,
+        to: msgJson.to,
+        amount: msgJson.amount,
+        bridgeId: msgJson.bridge_id,
       }),
     };
   }

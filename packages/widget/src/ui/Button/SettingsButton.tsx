@@ -1,9 +1,9 @@
-import { Cog6ToothIcon } from '@heroicons/react/20/solid';
 import { ComponentProps } from 'react';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { disclosure } from '../../store/disclosures';
 import { ThemedButton } from './ShareButton';
+import { GearIcon } from '../Icon/GearIcon';
 
 export const SettingsButton = ({
   className,
@@ -21,7 +21,7 @@ export const SettingsButton = ({
         role="group"
         {...props}
       >
-        <Cog6ToothIcon className="h-4 w-4" />
+        <GearIcon className="h-4 w-4" />
       </ThemedButton>
     </SimpleTooltip>
   );

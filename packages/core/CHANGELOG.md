@@ -1,5 +1,29 @@
 # @skip-go/core
 
+## 0.4.0
+
+### Minor Changes
+
+- f286e6f: support new pretty_name field on /v2/info/chains response
+
+## 0.3.1
+
+### Patch Changes
+
+- 5adcdc0: Update readme and naming for Skip Go
+
+## 0.3.0
+
+### Minor Changes
+
+- c68b63d: Only use v2 endpoints of the Skip Go API
+
+## 0.2.0
+
+### Minor Changes
+
+- b309549: Adds support for the op init transfer operation and lifecycle tracking objects
+
 ## 0.1.0
 
 ### Minor Changes

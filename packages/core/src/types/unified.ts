@@ -14,6 +14,8 @@ import {
   EvmTxJSON,
   HyperlaneTransfer,
   HyperlaneTransferJSON,
+  OPInitTransfer,
+  OPInitTransferJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
   PostHandler,
@@ -37,7 +39,7 @@ import {
   SmartSwapOptionsJSON,
   ChainAffiliatesJSON,
   ChainAffiliates,
-} from "./shared";
+} from './shared';
 
 export type AssetsRequestJSON = {
   chain_ids?: string[];
@@ -207,16 +209,16 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
-export type RouteWarningType = "LOW_INFO_WARNING" | "BAD_PRICE_WARNING";
+export type RouteWarningType = 'LOW_INFO_WARNING' | 'BAD_PRICE_WARNING';
 
-export type ExperimentalFeature = "cctp" | "hyperlane";
+export type ExperimentalFeature = 'cctp' | 'hyperlane';
 
 export type RouteWarning = {
   type: RouteWarningType;
   message: string;
 };
 
-export type FeeType = "SMART_RELAY";
+export type FeeType = 'SMART_RELAY';
 
 export type EstimatedFee = {
   feeType: FeeType;
@@ -277,6 +279,12 @@ export type OperationJSON =
       tx_index: number;
       amount_in: string;
       amount_out: string;
+    }
+  | {
+      op_init_transfer: OPInitTransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
     };
 
 export type Operation =
@@ -303,6 +311,12 @@ export type Operation =
     }
   | {
       evmSwap: EvmSwap;
+      txIndex: number;
+      amountIn: string;
+      amountOut: string;
+    }
+  | {
+      opInitTransfer: OPInitTransfer;
       txIndex: number;
       amountIn: string;
       amountOut: string;
@@ -490,7 +504,7 @@ export type MsgsResponse = {
   txs: Tx[];
 };
 
-export type BridgeType = "IBC" | "AXELAR" | "CCTP" | "HYPERLANE";
+export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';
 
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;

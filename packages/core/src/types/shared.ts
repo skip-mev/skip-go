@@ -249,6 +249,26 @@ export type HyperlaneTransfer = {
   smartRelay: boolean;
 };
 
+export type OPInitTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  denom_in: string;
+  denom_out: string;
+  op_init_bridge_id: string;
+  bridge_id: BridgeType;
+  smart_relay: boolean;
+};
+
+export type OPInitTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  denomIn: string;
+  denomOut: string;
+  opInitBridgeID: string;
+  bridgeID: BridgeType;
+  smartRelay: boolean;
+};
+
 export type SwapVenueJSON = {
   name: string;
   chain_id: string;

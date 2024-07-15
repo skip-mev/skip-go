@@ -6,6 +6,7 @@ const plugin = require('tailwindcss/plugin');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/ui/**/*.tsx'],
+  important: true,
   theme: {
     extend: {
       animation: {
@@ -30,7 +31,8 @@ module.exports = {
         ...blackA,
       },
       fontFamily: {
-        jost: ['Jost', 'sans-serif'],
+        diatype: ['ABCDiatype', 'sans-serif'],
+        diatypeMono: ['ABCDiatypeMono', 'monospace'],
       },
       keyframes: {
         'accordion-open': {

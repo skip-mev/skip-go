@@ -29,7 +29,7 @@ export const JsonDialog = () => {
 
   return (
     <Dialog.Root modal open>
-      <Dialog.Content className="absolute inset-0 overflow-hidden rounded-3xl bg-white font-jost">
+      <Dialog.Content className="absolute inset-0 overflow-hidden rounded-3xl bg-white font-diatype">
         <button
           className={cn(
             'absolute right-4 top-5',
@@ -59,7 +59,7 @@ export const JsonDialog = () => {
             </h3>
             <div className="flex-grow" />
           </div>
-          <pre className="overflow-auto rounded-lg border p-2 font-mono text-xs">
+          <pre className="overflow-auto rounded-lg border p-2 font-diatypeMono text-xs">
             {JSON.stringify(state.data, null, 2)}
           </pre>
         </div>

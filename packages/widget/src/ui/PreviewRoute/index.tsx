@@ -267,7 +267,7 @@ export const PreviewRoute = ({
         ({ createdAt, id }) => (
           <div className="flex flex-col">
             <h4 className="mb-2 font-bold">Transaction Failed!</h4>
-            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-mono text-xs">
+            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs">
               {err instanceof Error
                 ? `${err.name}: ${err.message}`
                 : String(err)}
@@ -302,12 +302,11 @@ export const PreviewRoute = ({
             'w-full rounded-md py-4 font-semibold text-white',
             'outline-none transition-transform',
             'enabled:hover:rotate-1 enabled:hover:scale-102',
-            'disabled:cursor-not-allowed disabled:opacity-75',
-            css`
-              background-color: ${useSwapWidgetUIStore.getState().colors
-                .primary};
-            `
+            'disabled:cursor-not-allowed disabled:opacity-75'
           )}
+          style={{
+            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+          }}
           onClick={() => submitMutation.mutate()}
           disabled={
             submitMutation.isPending ||
@@ -326,11 +325,11 @@ export const PreviewRoute = ({
         className={cn(
           'w-full rounded-md py-4 font-semibold text-white',
           'outline-none transition-transform',
-          'disabled:cursor-not-allowed disabled:opacity-75',
-          css`
-            background-color: ${useSwapWidgetUIStore.getState().colors.primary};
-          `
+          'disabled:cursor-not-allowed disabled:opacity-75'
         )}
+        style={{
+          backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+        }}
         onClick={async () => {
           if (!enabledSetAddressIndex) {
             console.error('No address index found!');
@@ -413,12 +412,10 @@ export const PreviewRoute = ({
             </div>
             {isExpanded && (
               <button
-                className={cn(
-                  'right-7 text-xs font-medium',
-                  css`
-                    color: ${useSwapWidgetUIStore.getState().colors.primary};
-                  `
-                )}
+                className={cn('right-7 text-xs font-medium')}
+                style={{
+                  color: useSwapWidgetUIStore.getState().colors.primary,
+                }}
                 onClick={() => setIsExpanded(false)}
               >
                 Hide Details
@@ -521,10 +518,10 @@ export const PreviewRoute = ({
               <AlertCollapse.Content>
                 <p>
                   <b>WARNING: </b>
-                  ibc.fun does not support signing with Ledger when transferring
-                  over CCTP to the Ethereum ecosystem. We&apos;re actively
-                  working on fixing this with the Noble/Circle teams. We
-                  apologize for the inconvenience
+                  go.skip.build does not support signing with Ledger when
+                  transferring over CCTP to the Ethereum ecosystem. We&apos;re
+                  actively working on fixing this with the Noble/Circle teams.
+                  We apologize for the inconvenience
                 </p>
               </AlertCollapse.Content>
             </AlertCollapse.Root>
@@ -534,10 +531,10 @@ export const PreviewRoute = ({
               <AlertCollapse.Content>
                 <p>
                   <b>WARNING: </b>
-                  ibc.fun does not support signing with Ledger on Ethermint-like
-                  chains (e.g. Injective, Dymension, EVMOS, etc...). We&apos;re
-                  actively working on fixing this with the Ledger team. We
-                  apologize for the inconvenience.
+                  go.skip.build does not support signing with Ledger on
+                  Ethermint-like chains (e.g. Injective, Dymension, EVMOS,
+                  etc...). We&apos;re actively working on fixing this with the
+                  Ledger team. We apologize for the inconvenience.
                 </p>
               </AlertCollapse.Content>
             </AlertCollapse.Root>
@@ -576,12 +573,11 @@ export const PreviewRoute = ({
                 'w-full rounded-md py-4 font-semibold text-white',
                 'outline-none transition-transform',
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
-                'disabled:cursor-not-allowed disabled:opacity-75',
-                css`
-                  background-color: ${useSwapWidgetUIStore.getState().colors
-                    .primary};
-                `
+                'disabled:cursor-not-allowed disabled:opacity-75'
               )}
+              style={{
+                backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
+              }}
               onClick={control.close}
               disabled={route.txsRequired !== broadcastedTxs.length}
             >

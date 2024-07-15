@@ -109,7 +109,7 @@ export const SetAddressDialog = ({
   return (
     <Dialog onOpenChange={(v) => onOpen(v)} open={open} key={chainID}>
       <DialogContent>
-        <div className="flex h-full flex-col px-6 pb-2 pt-6 font-jost">
+        <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
           <div className="relative flex justify-between">
             <button
               className={cn(
@@ -163,7 +163,7 @@ export const SetAddressDialog = ({
                           //   css`
                           //     border: 1px solid
                           //       ${useSwapWidgetUIStore.getState().colors
-                          //         .primary};
+                          //         .primary} !important;
                           //   `
                         )}
                         onClick={async () => {
@@ -237,9 +237,9 @@ export const SetAddressDialog = ({
 
                           css`
                             border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
+                              .colors.primary} !important;
                             background-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
+                              .colors.primary} !important;
                           `
                         )}
                         onClick={() => save()}
@@ -249,14 +249,13 @@ export const SetAddressDialog = ({
                       </button>
                       <button
                         className={cn(
-                          'flex w-12 items-center justify-center rounded-md border-2',
-                          css`
-                            border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary};
-                            color: ${useSwapWidgetUIStore.getState().colors
-                              .primary};
-                          `
+                          'flex w-12 items-center justify-center rounded-md border-2'
                         )}
+                        style={{
+                          borderColor:
+                            useSwapWidgetUIStore.getState().colors.primary,
+                          color: useSwapWidgetUIStore.getState().colors.primary,
+                        }}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />

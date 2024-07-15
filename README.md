@@ -1,4 +1,4 @@
-# skip-go
+# Skip Go
 
 ## Project Structure
 
@@ -38,6 +38,12 @@ yarn dev
 
 ```bash
 yarn build
+```
+
+### Updating changelog
+
+```
+npx changeset
 ```
 
 ## Docs

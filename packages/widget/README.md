@@ -1,6 +1,6 @@
 # Skip Go Widget
 
-The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip API](https://skip.money/).
+The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip Go API](https://skip.build/).
 
 ## Installation
 
@@ -10,31 +10,12 @@ To install the package, run the following command:
 npm install @skip-go/widget
 ```
 
-## Quick Start Guide
+## React Component usage
 
-### 1. Wrap Your App with `SwapWidgetProvider`
-
-First, wrap your application or the relevant page with the `SwapWidgetProvider` component:
-
-```tsx
-import { SwapWidgetProvider } from '@skip-go/widget';
-
-function App() {
-  return (
-    <SwapWidgetProvider>
-      <YourApp />
-    </SwapWidgetProvider>
-  );
-}
-```
-
-### 2. Use the `SwapWidget` Component
-
-Next, import the css and use the `SwapWidget` component to render the swap interface:
+import the `SwapWidget` from `'@skip-go/widget'` to render the swap interface:
 
 ```tsx
 import { SwapWidget } from '@skip-go/widget';
-import '@skip-go/widget/style.css';
 
 const SwapPage = () => {
   return (
@@ -54,13 +35,11 @@ const SwapPage = () => {
 };
 ```
 
-## Component Props
-
-### SwapWidget
+### SwapWidget props
 
 The `SwapWidget` component accepts the following props:
 
-```tsx
+````tsx
 interface SwapWidgetProps {
   colors?: {
     primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
@@ -84,6 +63,33 @@ interface SwapWidgetProps {
       chainID: string;
     }[];
   };
+  /**
+   * Filter chains and assets in selection
+   *
+   * Record<chainID, assetDenoms>
+   * if assetDenoms is undefined, all assets are allowed
+   * @example
+   * ```ts
+   * {
+   * source: {
+   *   'noble-1': undefined,
+   * },
+   * destination: {
+   *   'cosmoshub-4': [
+   *     'uatom',
+   *     'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86',
+   *   ],
+   *   'agoric-3': [
+   *     'ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9',
+   *   ],
+   *   'osmosis-1': undefined,
+   * }
+   * ```
+   */
+  filter?: {
+    source?: Record<string, string[] | undefined>;
+    destination?: Record<string, string[] | undefined>;
+  };
   className?: string;
   style?: React.CSSProperties;
   settings?: {
@@ -91,25 +97,71 @@ interface SwapWidgetProps {
     slippage?: number; //percentage of slippage 0-100. defaults to 3
   };
   onlyTestnet?: boolean; // Only show testnet chains
+  toasterProps?: {
+    // Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`
+    position?: ToastPosition;
+    toastOptions?: DefaultToastOptions;
+    reverseOrder?: boolean;
+    gutter?: number;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
+    children?: (toast: Toast) => JSX.Element;
+  };
+  endpointOptions?: {
+    // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+    endpoints?: Record<string, EndpointOptions>;
+    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+  };
+  apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 }
+````
+
+# Experimental features (still in development)
+
+## Web Component usage
+
+The web component is created with the `@r2wc/react-to-web-component` library.
+
+In order to register the web-component, you must first call the `initializeSwapWidget` function:
+
+```tsx
+import { initializeSwapWidget } from '@skip-go/widget';
+
+initializeSwapWidget();
 ```
 
-### SwapWidgetProvider
+et voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`
 
-The `SwapWidgetProvider` component accepts the following prop:
+The props for the web component are the same as `SwapWidgetProps` except that all props
+are passed to the web-component via attributes in kebab-case as strings or stringified objects ie.
 
-- `toasterProps` (Optional): Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
-- `endpointOptions` (Optional): Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+```tsx
+<SwapWidget
+  className="test-class"
+  onlyTestnet={true}
+  colors={{
+    primary: '#FF4FFF',
+  }}
+  defaultRoute={{
+    srcChainID: 'osmosis-1',
+    srcAssetDenom:
+      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+  }}
+/>
+```
 
-  ```ts
-  endpointOptions?: {
-      // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-      endpoints?: Record<string, EndpointOptions>;
-      getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-      getRestEndpointForChain?: (chainID: string) => Promise<string>;
-    };
-  ```
+becomes
 
-- `apiURL` (Optional): Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
-
-By following these steps, you can easily integrate the Skip Go Widget into your React application and customize it to meet your specific needs.
+```tsx
+<swap-widget
+  class-name="test-class"
+  onlyTestnet="true"
+  colors='{"primary":"#FF4FFF"}'
+  default-route={JSON.stringify({
+    srcChainID: 'osmosis-1',
+    srcAssetDenom:
+      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+  })}
+></swap-widget>
+```

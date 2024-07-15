@@ -63,8 +63,9 @@ import * as clientTypes from './client-types';
 import { msgsDirectRequestToJSON } from './types/converters';
 import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
+import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 
-export const SKIP_API_URL = 'https://api.skip.money';
+export const SKIP_API_URL = 'https://api.skip.build';
 
 export class SkipRouter {
   protected requestClient: RequestClient;
@@ -99,6 +100,7 @@ export class SkipRouter {
       ...defaultRegistryTypes,
       ['/cosmwasm.wasm.v1.MsgExecuteContract', MsgExecuteContract],
       ['/initia.move.v1.MsgExecute', MsgExecute],
+      ['/opinit.ophost.v1.MsgInitiateTokenDeposit', MsgInitiateTokenDeposit],
       ...circleProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
@@ -118,7 +120,7 @@ export class SkipRouter {
       },
       types.AssetsRequestJSON
     >(
-      '/v1/fungible/assets',
+      '/v2/fungible/assets',
       types.assetsRequestToJSON({
         ...options,
       })
@@ -142,7 +144,7 @@ export class SkipRouter {
       },
       types.AssetsFromSourceRequestJSON
     >(
-      '/v1/fungible/assets_from_source',
+      '/v2/fungible/assets_from_source',
       types.assetsFromSourceRequestToJSON({
         ...options,
       })
@@ -193,7 +195,7 @@ export class SkipRouter {
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
-    }>('/v1/info/chains', {
+    }>('/v2/info/chains', {
       include_evm: includeEVM,
       include_svm: includeSVM,
       only_testnets: onlyTestnets,
@@ -1332,7 +1334,7 @@ export class SkipRouter {
   async venues(onlyTestnets?: boolean): Promise<types.SwapVenue[]> {
     const response = await this.requestClient.get<{
       venues: types.SwapVenueJSON[];
-    }>('/v1/fungible/venues', {
+    }>('/v2/fungible/venues', {
       only_testnets: onlyTestnets,
     });
 
@@ -1615,6 +1617,9 @@ export class SkipRouter {
       ? skipChain.feeAssets.find((skipFee) => skipFee.denom === defaultGasToken)
       : skipChain.feeAssets[0];
 
+    if (!skipFeeInfo && skipChain.feeAssets?.[0]?.gasPrice !== null) {
+      return skipChain.feeAssets[0];
+    }
     if (skipFeeInfo && skipFeeInfo.gasPrice !== null) {
       return skipFeeInfo;
     }
@@ -1677,6 +1682,7 @@ export class SkipRouter {
 
     // first check if the chain has a staking token, this is often the "default" gas token
     const stakingTokens = this.getStakingTokensForChain(chainID);
+
     if (stakingTokens && stakingTokens.length > 0) {
       const feeAsset = chain.fees.fee_tokens.find(
         (feeToken) => feeToken.denom === stakingTokens[0]?.denom
