@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.5
+
+### Patch Changes
+
+- 6a46c11: fix defaultRoute regression
+
 ## 1.2.4
 
 ### Patch Changes
