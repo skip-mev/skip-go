@@ -13,7 +13,7 @@ export const SettingsButton = ({
     <SimpleTooltip label="Swap Settings">
       <ThemedButton
         className={cn(
-          'rounded-full p-2 text-black/80 hover:bg-neutral-100 hover:text-black/100',
+          'rounded-full p-2 hover:bg-neutral-100',
           'transition-colors focus:outline-none',
           className
         )}

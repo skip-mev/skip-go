@@ -100,7 +100,7 @@ function AssetInput({
   return (
     <AssetInputContainer
       className={cn(
-        'rounded-lg border border-neutral-200 p-4 transition-[border,shadow]',
+        'rounded-lg border p-4 transition-[border,shadow]',
         'focus-within:border-neutral-300 focus-within:shadow-sm',
         'hover:border-neutral-300 hover:shadow-sm',
         !!isError &&

@@ -17,7 +17,7 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
           }
         }}
         className={cn(
-          'rounded-full p-2 text-black/80 hover:bg-neutral-100 hover:text-black/100',
+          'rounded-full p-2 hover:bg-neutral-100',
           'transition-colors focus:outline-none'
         )}
       >
@@ -29,4 +29,8 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
 
 export const ThemedButton = styled.button`
   color: ${(props) => props.theme.primary.textColor};
+  fill: ${(props) => props.theme.primary.textColor};
+  &:hover {
+    background-color: rgba(245, 245, 245, 0.5);
+  }
 `;

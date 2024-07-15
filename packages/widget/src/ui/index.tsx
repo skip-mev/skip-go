@@ -5,11 +5,9 @@ import {
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
-import { Theme } from './theme';
-import shadowDomStyles from '../styles/shadowDomStyles.css';
-import toastStyles from '../styles/toastStyles.css';
-import { Scope } from 'react-shadow-scope';
-import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
+import { defaultTheme, Theme } from './theme';
+import { WithStyledShadowDom } from './WithStyledShadowDom';
+import { ThemeProvider } from 'styled-components';
 
 export type SwapWidgetProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -32,7 +30,6 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   filter,
   ...swapWidgetProviderProps
 }) => {
-  useInjectFontsToDocumentHead();
   useEffect(() => {
     configureSwapWidget({
       colors,
@@ -45,13 +42,12 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
   return (
-    <Scope
-      stylesheets={[toastStyles, shadowDomStyles]}
-      config={{ dsd: 'emulated' }}
-    >
-      <SwapWidgetProvider {...swapWidgetProviderProps}>
-        <SwapWidgetUI className={className} style={style} theme={theme} />
-      </SwapWidgetProvider>
-    </Scope>
+    <WithStyledShadowDom>
+      <ThemeProvider theme={theme ?? defaultTheme}>
+        <SwapWidgetProvider {...swapWidgetProviderProps}>
+          <SwapWidgetUI className={className} style={style} />
+        </SwapWidgetProvider>
+      </ThemeProvider>
+    </WithStyledShadowDom>
   );
 };

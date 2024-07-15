@@ -33,8 +33,8 @@ function AssetSelect({
         <AssetSelectButton
           className={cn(
             'whitespace-nowrap text-left font-semibold',
-            'flex w-full items-center gap-2 rounded-md bg-neutral-100 px-4 py-2 transition-colors sm:py-4',
-            'border border-neutral-200 hover:border-neutral-300',
+            'flex w-full items-center gap-2 rounded-md px-4 py-2 transition-colors sm:py-4',
+            'border hover:border-neutral-300',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
           disabled={!assets || assets.length === 0}
