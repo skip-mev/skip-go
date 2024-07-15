@@ -2,6 +2,21 @@
 
 The `@skip-go/widget` package is an npm package providing a React component for a full swap interface using the [Skip Go API](https://skip.build/).
 
+### Polyfilling Node core modules
+
+If you encounter an error like "Buffer is not defined" when importing and using @skip-go/widget, it may be necessary to polyfill Node.js modules because Skip Go Widget relies on them.
+
+Here are some polyfill plugins for common environments:
+
+- [Webpack](https://www.npmjs.com/package/node-polyfill-webpack-plugin),
+- [Rollup](https://www.npmjs.com/package/rollup-plugin-polyfill-node),
+- [Vite](https://www.npmjs.com/package/vite-plugin-node-polyfills),
+- [ESBuild](https://www.npmjs.com/package/esbuild-plugins-node-modules-polyfill)
+
+### Wrap the widget with a fixed container
+
+It is recommended to wrap the widget with a container element that has a fixed size. This helps to prevent layout shifting as the widget uses shadow-dom (which currently needs to be rendered client-side)
+
 ## Installation
 
 To install the package, run the following command:
@@ -137,31 +152,40 @@ The props for the web component are the same as `SwapWidgetProps` except that al
 are passed to the web-component via attributes in kebab-case as strings or stringified objects ie.
 
 ```tsx
-<SwapWidget
-  className="test-class"
-  onlyTestnet={true}
-  colors={{
-    primary: '#FF4FFF',
+<div
+  style={{
+    width: '450px',
+    height: '820px',
   }}
-  defaultRoute={{
-    srcChainID: 'osmosis-1',
-    srcAssetDenom:
-      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-  }}
-/>
+>
+  <SwapWidget
+    className="test-class"
+    onlyTestnet={true}
+    colors={{
+      primary: '#FF4FFF',
+    }}
+    defaultRoute={{
+      srcChainID: 'osmosis-1',
+      srcAssetDenom:
+        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+    }}
+  />
+</div>
 ```
 
 becomes
 
 ```tsx
-<swap-widget
-  class-name="test-class"
-  onlyTestnet="true"
-  colors='{"primary":"#FF4FFF"}'
-  default-route={JSON.stringify({
-    srcChainID: 'osmosis-1',
-    srcAssetDenom:
-      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-  })}
-></swap-widget>
+<div style="width:450px;height:820px;">
+  <swap-widget
+    class-name="test-class"
+    onlyTestnet="true"
+    colors='{"primary":"#FF4FFF"}'
+    default-route={JSON.stringify({
+      srcChainID: 'osmosis-1',
+      srcAssetDenom:
+        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+    })}
+  ></swap-widget>
+</div>
 ```
