@@ -4,6 +4,7 @@ import {
   formatNumberWithCommas,
   formatNumberWithoutCommas,
 } from '../../utils/number';
+import { StyledInput } from '../AssetInput';
 
 export const GasSetting = () => {
   const currentValue = useSettingsStore((state) => state.customGasAmount);
@@ -14,7 +15,7 @@ export const GasSetting = () => {
       <div className="flex-grow" />
       <div className="flex w-full max-w-32 flex-col items-stretch gap-1">
         <div className="relative text-sm">
-          <input
+          <StyledInput
             className="w-full rounded-lg border px-2 py-1 text-end tabular-nums transition"
             type="text"
             inputMode="numeric"

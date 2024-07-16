@@ -17,6 +17,7 @@ import { DialogContent } from '../Dialog/DialogContent';
 import { cn } from '../../utils/ui';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { css } from '@emotion/css';
+import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 
 export const SetAddressDialog = ({
   open,
@@ -131,11 +132,10 @@ export const SetAddressDialog = ({
             />
           </div>
 
-          <ScrollArea.Root
+          <StyledScrollAreaRoot
             className={cn(
               'relative isolate flex-grow overflow-hidden',
-              'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2',
-              'before:bg-gradient-to-t before:from-white before:to-transparent'
+              'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2'
             )}
           >
             <ScrollArea.Viewport className="h-full w-full py-4">
@@ -284,7 +284,7 @@ export const SetAddressDialog = ({
               <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
             </ScrollArea.Scrollbar>
             <ScrollArea.Corner />
-          </ScrollArea.Root>
+          </StyledScrollAreaRoot>
         </div>
       </DialogContent>
     </Dialog>

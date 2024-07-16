@@ -30,6 +30,28 @@ export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
     shadowRoot.appendChild(appContainer);
 
     const Root = ({ children }: { children?: ReactNode }) => {
+      useEffect(() => {
+        const stopPropagation = (e: Event) => e.stopPropagation();
+
+        wrapper?.shadowRoot?.addEventListener('wheel', stopPropagation, true);
+        wrapper?.shadowRoot?.addEventListener(
+          'touchmove',
+          stopPropagation,
+          true
+        );
+        return () => {
+          wrapper?.shadowRoot?.removeEventListener(
+            'wheel',
+            stopPropagation,
+            true
+          );
+          wrapper?.shadowRoot?.removeEventListener(
+            'touchmove',
+            stopPropagation,
+            true
+          );
+        };
+      }, []);
       return (
         <StyleSheetManager target={styleContainer}>
           {children}
@@ -42,7 +64,6 @@ export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
 
       if (entrypoint.current) {
         createRoot(appContainer).render(<Root>{children}</Root>);
-        console.log('render styled shadow dom');
         entrypoint.current.appendChild(wrapper);
         setHasRendered(true);
       } else {

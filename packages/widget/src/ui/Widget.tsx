@@ -25,7 +25,6 @@ import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
-import { useFixRadixUiWheelEvent } from '../hooks/use-fix-radix-ui-wheel-event';
 import { styled } from 'styled-components';
 
 type SwapWidgetUIProps = Pick<
@@ -34,8 +33,6 @@ type SwapWidgetUIProps = Pick<
 >;
 
 export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
-  useFixRadixUiWheelEvent();
-
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();

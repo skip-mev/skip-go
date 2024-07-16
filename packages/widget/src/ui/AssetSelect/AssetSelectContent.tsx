@@ -88,7 +88,7 @@ function AssetSelectContent({
         value={searchValue}
         ref={inputRef}
       />
-      <ScrollAreaRoot
+      <StyledScrollAreaRoot
         className={cn(
           'relative isolate flex-grow overflow-hidden',
           'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
@@ -152,14 +152,14 @@ function AssetSelectContent({
           <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
         </ScrollArea.Scrollbar>
         <ScrollArea.Corner />
-      </ScrollAreaRoot>
+      </StyledScrollAreaRoot>
     </div>
   );
 }
 
 export default AssetSelectContent;
 
-export const ScrollAreaRoot = styled(ScrollArea.Root)`
+export const StyledScrollAreaRoot = styled(ScrollArea.Root)`
   &::before {
     background-image: linear-gradient(
       to bottom,

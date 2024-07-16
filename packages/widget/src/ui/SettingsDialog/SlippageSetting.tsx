@@ -5,6 +5,8 @@ import {
   formatNumberWithoutCommas,
 } from '../../utils/number';
 import { cn } from '../../utils/ui';
+import { StyledInput } from '../AssetInput';
+import { styled } from 'styled-components';
 
 const OPTION_VALUES = ['1', '3', '5'];
 
@@ -17,7 +19,7 @@ export const SlippageSetting = () => {
       <div className="flex-grow" />
       <div className="flex w-full max-w-32 flex-col items-stretch gap-1">
         <div className="relative text-sm">
-          <input
+          <StyledInput
             className={cn(
               'rounded-lg border px-2 py-1 text-end tabular-nums transition',
               'w-full pe-5 number-input-arrows-hide'
@@ -95,19 +97,24 @@ export const SlippageSetting = () => {
         </div>
         <div className="grid grid-flow-col gap-1">
           {OPTION_VALUES.map((value, i) => (
-            <button
+            <StyledButton
               key={i}
               className={cn(
                 'rounded-lg border px-2 py-px text-xs tabular-nums transition',
-                'text-neutral-600 hover:bg-neutral-100'
+                'hover:bg-neutral-100'
               )}
               onClick={() => useSettingsStore.setState({ slippage: value })}
             >
               {value}%
-            </button>
+            </StyledButton>
           ))}
         </div>
       </div>
     </div>
   );
 };
+
+export const StyledButton = styled.button`
+  background-color: ${(props) => props.theme.primary.backgroundColor};
+  color: ${(props) => props.theme.primary.textColor};
+`;

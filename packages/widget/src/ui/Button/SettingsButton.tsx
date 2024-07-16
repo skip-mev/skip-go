@@ -2,7 +2,7 @@ import { ComponentProps } from 'react';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { disclosure } from '../../store/disclosures';
-import { ThemedButton } from './ShareButton';
+import { StyledButton } from './ShareButton';
 import { GearIcon } from '../Icon/GearIcon';
 
 export const SettingsButton = ({
@@ -11,7 +11,7 @@ export const SettingsButton = ({
 }: ComponentProps<'button'>) => {
   return (
     <SimpleTooltip label="Swap Settings">
-      <ThemedButton
+      <StyledButton
         className={cn(
           'rounded-full p-2',
           'transition-colors focus:outline-none',
@@ -22,7 +22,7 @@ export const SettingsButton = ({
         {...props}
       >
         <GearIcon className="h-4 w-4" />
-      </ThemedButton>
+      </StyledButton>
     </SimpleTooltip>
   );
 };

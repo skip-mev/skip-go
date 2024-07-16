@@ -4,7 +4,10 @@ import { matchSorter } from 'match-sorter';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
-import { SearchInput, ScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
+import {
+  SearchInput,
+  StyledScrollAreaRoot,
+} from '../AssetSelect/AssetSelectContent';
 
 interface Props {
   chains: Chain[];
@@ -69,7 +72,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
           </svg>
         </div>
       ) : (
-        <ScrollAreaRoot
+        <StyledScrollAreaRoot
           className={cn(
             'relative isolate flex-grow overflow-hidden',
             'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
@@ -110,7 +113,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
             <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
           </ScrollArea.Scrollbar>
           <ScrollArea.Corner />
-        </ScrollAreaRoot>
+        </StyledScrollAreaRoot>
       )}
     </div>
   );

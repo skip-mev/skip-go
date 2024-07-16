@@ -30,7 +30,7 @@ function AssetSelect({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
-        <AssetSelectButton
+        <StyledButton
           className={cn(
             'whitespace-nowrap text-left font-semibold',
             'flex w-full items-center gap-2 rounded-md px-4 py-2 transition-colors sm:py-4',
@@ -60,7 +60,7 @@ function AssetSelect({
           <div>
             <ChevronDownIcon className="h-4 w-4" />
           </div>
-        </AssetSelectButton>
+        </StyledButton>
       </DialogTrigger>
       <DialogContent>
         <AssetSelectContent
@@ -78,7 +78,7 @@ function AssetSelect({
 
 export default AssetSelect;
 
-const AssetSelectButton = styled.button`
+export const StyledButton = styled.button`
   background-color: ${(props) => props.theme.secondary.backgroundColor};
   color: ${(props) => props.theme.secondary.textColor};
 `;

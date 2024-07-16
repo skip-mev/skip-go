@@ -134,7 +134,7 @@ function AssetInput({
             />
           </button>
         )}
-        <AmountInput
+        <StyledInput
           data-testid="amount"
           className={cn(
             'h-10 w-full text-3xl font-medium tabular-nums',
@@ -273,7 +273,7 @@ function AssetInput({
 
 export default AssetInput;
 
-const AmountInput = styled.input`
+export const StyledInput = styled.input`
   background-color: ${(props) => props.theme.primary.backgroundColor};
   color: ${(props) => props.theme.primary.textColor};
 `;

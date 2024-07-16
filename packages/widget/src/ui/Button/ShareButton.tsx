@@ -7,7 +7,7 @@ import { ShareIcon } from '../Icon/ShareIcon';
 export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
   return (
     <SimpleTooltip label="Share">
-      <ThemedButton
+      <StyledButton
         onClick={() => {
           try {
             navigator.clipboard.writeText(shareableLink);
@@ -22,12 +22,12 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
         )}
       >
         <ShareIcon className="h-4 w-4" />
-      </ThemedButton>
+      </StyledButton>
     </SimpleTooltip>
   );
 };
 
-export const ThemedButton = styled.button`
+export const StyledButton = styled.button`
   color: ${(props) => props.theme.primary.textColor};
   fill: ${(props) => props.theme.primary.textColor};
   &:hover {
