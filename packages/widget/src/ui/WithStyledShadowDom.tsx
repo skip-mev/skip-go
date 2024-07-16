@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { StyleSheetManager } from 'styled-components';
 import shadowDomStyles from '../styles/shadowDomStyles.css';
 import toastStyles from '../styles/toastStyles.css';
+import cssReset from '../styles/cssReset.css';
 import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
 export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
@@ -22,6 +23,7 @@ export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
       const appContainer = document.createElement('div');
       const hostStyle = document.createElement('style');
       hostStyle.textContent = `
+        ${cssReset}
         ${toastStyles}
         ${shadowDomStyles}
       `;
