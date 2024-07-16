@@ -33,7 +33,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
       <div className="relative">
         <StyledPrimaryButton
           className={cn(
-            'flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100',
+            'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             'absolute inset-y-0 left-0'
           )}
           onClick={onClose}
