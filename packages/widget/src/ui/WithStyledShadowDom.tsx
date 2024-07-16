@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { StyleSheetManager } from 'styled-components';
 import shadowDomStyles from '../styles/shadowDomStyles.css';
@@ -7,76 +7,62 @@ import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-docum
 
 export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
-  const [hasRendered, setHasRendered] = useState(false);
-  const entrypoint = useRef<HTMLDivElement>(null);
 
-  useInjectFontsToDocumentHead();
   useEffect(() => {
     setIsClient(true);
+  }, []);
 
-    const wrapper = document.createElement('div');
-    const shadowRoot = wrapper.attachShadow({ mode: 'open' });
+  useInjectFontsToDocumentHead();
 
-    const styleContainer = document.createElement('div');
-    const appContainer = document.createElement('div');
-    const hostStyle = document.createElement('style');
-    hostStyle.textContent = `
-      ${toastStyles}
-      ${shadowDomStyles}
-    `;
+  const onRefLoaded = useCallback((element: HTMLDivElement) => {
+    if (element !== null) {
+      const shadowRoot = element.attachShadow({ mode: 'open' });
 
-    shadowRoot.appendChild(hostStyle);
-    shadowRoot.appendChild(styleContainer);
-    shadowRoot.appendChild(appContainer);
+      const styleContainer = document.createElement('div');
+      const appContainer = document.createElement('div');
+      const hostStyle = document.createElement('style');
+      hostStyle.textContent = `
+        ${toastStyles}
+        ${shadowDomStyles}
+      `;
 
-    const Root = ({ children }: { children?: ReactNode }) => {
-      useEffect(() => {
-        const stopPropagation = (e: Event) => e.stopPropagation();
+      shadowRoot.appendChild(hostStyle);
+      shadowRoot.appendChild(styleContainer);
+      shadowRoot.appendChild(appContainer);
 
-        wrapper?.shadowRoot?.addEventListener('wheel', stopPropagation, true);
-        wrapper?.shadowRoot?.addEventListener(
-          'touchmove',
-          stopPropagation,
-          true
-        );
-        return () => {
-          wrapper?.shadowRoot?.removeEventListener(
-            'wheel',
-            stopPropagation,
-            true
-          );
-          wrapper?.shadowRoot?.removeEventListener(
+      const Root = ({ children }: { children?: ReactNode }) => {
+        useEffect(() => {
+          const stopPropagation = (e: Event) => e.stopPropagation();
+
+          element?.shadowRoot?.addEventListener('wheel', stopPropagation, true);
+          element?.shadowRoot?.addEventListener(
             'touchmove',
             stopPropagation,
             true
           );
-        };
-      }, []);
-      return (
-        <StyleSheetManager target={styleContainer}>
-          {children}
-        </StyleSheetManager>
-      );
-    };
+          return () => {
+            element?.shadowRoot?.removeEventListener(
+              'wheel',
+              stopPropagation,
+              true
+            );
+            element?.shadowRoot?.removeEventListener(
+              'touchmove',
+              stopPropagation,
+              true
+            );
+          };
+        }, []);
+        return (
+          <StyleSheetManager target={styleContainer}>
+            {children}
+          </StyleSheetManager>
+        );
+      };
 
-    const renderComponent = () => {
-      if (hasRendered) return;
+      createRoot(appContainer).render(<Root>{children}</Root>);
+    }
+  }, []);
 
-      if (entrypoint.current) {
-        createRoot(appContainer).render(<Root>{children}</Root>);
-        entrypoint.current.appendChild(wrapper);
-        setHasRendered(true);
-      } else {
-        setTimeout(renderComponent, 100);
-      }
-    };
-
-    renderComponent();
-
-    return () => {
-      wrapper.remove();
-    };
-  }, [children, hasRendered, entrypoint]);
-
-  return isClient ? <div ref={entrypoint}></div> : null;
+  return isClient ? <div ref={onRefLoaded}></div> : null;
 };
