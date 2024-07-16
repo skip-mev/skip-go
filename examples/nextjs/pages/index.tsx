@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import React, { useState } from 'react';
 import { SwapWidget } from '@skip-go/widget';
-import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
+import { PartialTheme } from '@skip-go/widget/build/ui/theme';
 
 function hashString(inputString: string) {
   const hash = crypto.createHash('sha256');
@@ -28,17 +28,19 @@ const defaultProps = {
     srcAssetDenom:
       'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
   },
-  theme: {
-    primary: {
-      backgroundColor: 'black',
-      textColor: 'white',
-      borderColor: 'gray',
-    },
-    secondary: {
-      backgroundColor: 'grey',
-      textColor: 'white',
-      borderColor: 'darkgray',
-    },
+};
+
+const darkTheme = {
+  primary: {
+    backgroundColor: 'black',
+    textColor: 'white',
+    borderColor: 'gray',
+    brandColor: '#FF4FFF',
+  },
+  secondary: {
+    backgroundColor: 'grey',
+    textColor: 'white',
+    borderColor: 'darkgray',
   },
 };
 
@@ -58,6 +60,14 @@ const Home: NextPage = () => {
       }
     }
   };
+
+  const handleUpdateTheme = (theme: PartialTheme) => {
+    const newProps = { ...props, theme: theme } as any;
+    const newHash = hashString(JSON.stringify(newProps));
+    setProps(newProps);
+    setPropsHash(newHash);
+  };
+
   return (
     <div style={{ display: 'flex', gap: 50 }}>
       <div
@@ -70,22 +80,41 @@ const Home: NextPage = () => {
         <SwapWidget {...props} key={propsHash} />
       </div>
       <div>
-        <button
-          onClick={() => {
-            if (
-              window.confirm('Are you sure you want to purge all settings?')
-            ) {
-              window.localStorage.clear();
-              window.sessionStorage.clear();
-              window.location.reload();
-            }
-          }}
-          style={{
-            height: '40px',
-          }}
-        >
-          Purge Settings
-        </button>
+        <div style={{ display: 'flex' }}>
+          <button
+            onClick={() => {
+              if (
+                window.confirm('Are you sure you want to purge all settings?')
+              ) {
+                window.localStorage.clear();
+                window.sessionStorage.clear();
+                window.location.reload();
+              }
+            }}
+            style={{
+              height: '40px',
+            }}
+          >
+            Purge Settings
+          </button>
+          <button
+            style={{
+              height: '40px',
+            }}
+            onClick={() => handleUpdateTheme(undefined)}
+          >
+            Default Theme
+          </button>
+          <button
+            style={{
+              height: '40px',
+            }}
+            onClick={() => handleUpdateTheme(darkTheme)}
+          >
+            Dark Theme
+          </button>
+        </div>
+
         <pre
           contentEditable="true"
           onBlur={handleOnChange}

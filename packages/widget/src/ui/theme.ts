@@ -18,7 +18,7 @@ type NestedPartial<T> = {
   [K in keyof T]?: Partial<T[K]>;
 };
 
-export type PartialTheme = NestedPartial<Theme>;
+export type PartialTheme = NestedPartial<Theme> | undefined;
 
 export type Theme = {
   primary: {
