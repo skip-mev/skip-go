@@ -1,70 +1,61 @@
-import { ReactNode, Suspense, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { StyleSheetManager, withTheme, ThemeProvider } from 'styled-components';
-import { Scope } from 'react-shadow-scope';
+import { StyleSheetManager } from 'styled-components';
 import shadowDomStyles from '../styles/shadowDomStyles.css';
 import toastStyles from '../styles/toastStyles.css';
 import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
 export const WithStyledShadowDom = ({ children }: { children: ReactNode }) => {
   const [isClient, setIsClient] = useState(false);
+  const [hasRendered, setHasRendered] = useState(false);
+  const entrypoint = useRef<HTMLDivElement>(null);
 
   useInjectFontsToDocumentHead();
   useEffect(() => {
     setIsClient(true);
-  }, []);
 
-  let styles = '';
+    const wrapper = document.createElement('div');
+    const shadowRoot = wrapper.attachShadow({ mode: 'open' });
 
-  const GenerateStyles = (props) => {
-    const container = document.createElement('div');
-    const target = document.createElement('div');
+    const styleContainer = document.createElement('div');
+    const appContainer = document.createElement('div');
+    const hostStyle = document.createElement('style');
+    hostStyle.textContent = `
+      ${toastStyles}
+      ${shadowDomStyles}
+    `;
 
-    const GenerateStyleSheetManager = ({
-      resolve,
-    }: {
-      resolve: (value?: any) => void;
-    }) => {
-      useEffect(() => {
-        //@ts-ignore
-        styles = target.firstChild?.innerHTML;
-        resolve();
-      });
+    shadowRoot.appendChild(hostStyle);
+    shadowRoot.appendChild(styleContainer);
+    shadowRoot.appendChild(appContainer);
 
-      return <StyleSheetManager target={target}>{children}</StyleSheetManager>;
+    const Root = ({ children }: { children?: ReactNode }) => {
+      return (
+        <StyleSheetManager target={styleContainer}>
+          {children}
+        </StyleSheetManager>
+      );
     };
 
-    if (!styles) {
-      const promise = new Promise((resolve) => {
-        createRoot(container).render(
-          <GenerateStyleSheetManager resolve={resolve} />
-        );
-      });
+    const renderComponent = () => {
+      if (hasRendered) return;
 
-      throw promise;
-    }
+      if (entrypoint.current) {
+        createRoot(appContainer).render(<Root>{children}</Root>);
+        console.log('render styled shadow dom');
+        entrypoint.current.appendChild(wrapper);
+        setHasRendered(true);
+      } else {
+        setTimeout(renderComponent, 100);
+      }
+    };
 
-    return props.children({ styles });
-  };
+    renderComponent();
 
-  return isClient ? (
-    <div>
-      <Suspense fallback={null}>
-        <GenerateStyles>
-          {({ styles }) => (
-            <Scope>
-              <div>
-                <style>
-                  {toastStyles}
-                  {shadowDomStyles}
-                  {styles}
-                </style>
-                {children}
-              </div>
-            </Scope>
-          )}
-        </GenerateStyles>
-      </Suspense>
-    </div>
-  ) : null;
+    return () => {
+      wrapper.remove();
+    };
+  }, [children, hasRendered, entrypoint]);
+
+  return isClient ? <div ref={entrypoint}></div> : null;
 };

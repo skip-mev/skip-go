@@ -27,7 +27,6 @@ import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
 import { useFixRadixUiWheelEvent } from '../hooks/use-fix-radix-ui-wheel-event';
 import { styled } from 'styled-components';
-import { Theme } from './theme';
 
 type SwapWidgetUIProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,

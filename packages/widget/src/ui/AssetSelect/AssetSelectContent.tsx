@@ -92,9 +92,7 @@ function AssetSelectContent({
         className={cn(
           'relative isolate flex-grow overflow-hidden',
           'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
-          'before:bg-gradient-to-b before:from-white before:to-transparent',
-          'after:absolute after:inset-x-0 after:bottom-0 after:z-10 after:h-2',
-          'before:to-transparent after:bg-gradient-to-t after:from-white'
+          'after:absolute after:inset-x-0 after:bottom-0 after:z-10 after:h-2'
         )}
       >
         <ScrollArea.Viewport className="h-full w-full py-4">
@@ -163,12 +161,18 @@ export default AssetSelectContent;
 
 export const ScrollAreaRoot = styled(ScrollArea.Root)`
   &::before {
-    --tw-gradient-from: ${(props) => props.theme.primary.backgroundColor}
-      var(--tw-gradient-from-position);
+    background-image: linear-gradient(
+      to bottom,
+      ${(props) => props.theme.primary.backgroundColor},
+      hsla(0, 0%, 100%, 0)
+    );
   }
   &::after {
-    --tw-gradient-from: ${(props) => props.theme.primary.backgroundColor}
-      var(--tw-gradient-from-position);
+    background-image: linear-gradient(
+      to top,
+      ${(props) => props.theme.primary.backgroundColor},
+      hsla(0, 0%, 100%, 0)
+    );
   }
 `;
 

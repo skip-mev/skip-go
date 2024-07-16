@@ -13,6 +13,7 @@ import {
   endpointOptions as defaultEndpointOptions,
   apiURL as defaultApiURL,
 } from '../constants/defaults';
+import { useTheme } from 'styled-components';
 
 interface WalletProviderProps {
   children: React.ReactNode;
@@ -61,13 +62,21 @@ export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
   toasterProps,
   ...skipApiProviderProps
 }) => {
+  const theme = useTheme();
+
   return (
     <WalletProvider>
       <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
       <Toaster
         position={'top-right'}
         containerClassName="font-diatype"
-        toastOptions={{ duration: 1000 * 10 }}
+        toastOptions={{
+          duration: 1000 * 10,
+          style: {
+            background: theme.primary.backgroundColor,
+            color: theme.primary.textColor,
+          },
+        }}
         {...toasterProps}
       />
     </WalletProvider>

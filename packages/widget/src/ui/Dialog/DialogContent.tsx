@@ -16,24 +16,24 @@ export function DialogContent({ children, onInteractOutside }: Props) {
   if (!open) return null;
 
   return (
-    <DialogWrapper>
+    <>
       <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-diatype z-10" />
-      <Dialog.Content
+      <StyledDialogContent
         className={cn(
           'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
           'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
-          'translate-x-[-50%] translate-y-[-50%] bg-white shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]',
+          'translate-x-[-50%] translate-y-[-50%] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]',
           'z-20'
         )}
         onInteractOutside={onInteractOutside}
       >
         {children}
-      </Dialog.Content>
-    </DialogWrapper>
+      </StyledDialogContent>
+    </>
   );
 }
 
-const DialogWrapper = styled.div`
+const StyledDialogContent = styled(Dialog.Content)`
   background-color: ${(props) => props.theme.primary.backgroundColor};
   color: ${(props) => props.theme.primary.textColor};
 `;
