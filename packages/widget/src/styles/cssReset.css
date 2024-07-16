@@ -3,7 +3,6 @@
   font-family: unset;
   font-style: unset;
   font-weight: unset;
-  color: unset;
   text-align: revert;
   text-decoration: unset;
   text-indent: unset;
@@ -19,4 +18,10 @@
   clear: unset;
   background-color: unset;
   word-spacing: unset;
+}
+
+div,
+p,
+span {
+  color: black;
 }
