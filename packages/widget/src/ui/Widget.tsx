@@ -6,7 +6,7 @@ import { useSwapWidget } from '../hooks/use-swap-widget';
 import { disclosure } from '../store/disclosures';
 import { cn } from '../utils/ui';
 import { AdaptiveLink } from './AdaptiveLink';
-import AssetInput, { StyledBrandButton, StyledBrandDiv } from './AssetInput';
+import AssetInput from './AssetInput';
 import { HistoryButton } from './Button/HistoryButton';
 import { SettingsButton } from './Button/SettingsButton';
 import { ShareButton } from './Button/ShareButton';
@@ -23,9 +23,11 @@ import { useChains } from '../hooks/use-chains';
 import TransactionDialog from './TransactionDialog';
 import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { css } from '@emotion/css';
 import { CraftedBySkip } from './CraftedBySkip';
-import { styled } from 'styled-components';
+import {
+  StyledPrimaryBrandDiv,
+  StyledPrimaryDiv,
+} from './StyledComponents/Theme';
 
 type SwapWidgetUIProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
@@ -118,7 +120,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
   return (
     <UsdDiff.Provider>
       <Tooltip.Provider delayDuration={0} disableHoverableContent>
-        <WidgetContainer
+        <StyledPrimaryDiv
           className={cn('space-y-4 font-diatype relative p-4', className)}
           style={style}
         >
@@ -231,12 +233,12 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
           )}
           {route && !routeLoading && numberOfTransactions > 1 && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium uppercase">
-              <StyledBrandDiv className={cn('relative rounded-full p-[4px]')}>
-                <StyledBrandDiv
+              <div className={cn('relative rounded-full p-[4px]')}>
+                <StyledPrimaryBrandDiv
                   className={cn('absolute h-6 w-6 animate-ping rounded-full')}
                 />
                 <FingerPrintIcon className="relative h-6 w-6 text-white" />
-              </StyledBrandDiv>
+              </div>
               <p>{numberOfTransactions} Signature Required</p>
             </div>
           )}
@@ -258,7 +260,8 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
             </div>
           )}
           {!isWalletConnected && (
-            <StyledBrandButton
+            <StyledPrimaryBrandDiv
+              as="button"
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
                 'disabled:cursor-not-allowed disabled:opacity-75',
@@ -279,7 +282,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
               <div key={accountStateKey} className="animate-slide-up-and-fade">
                 {!srcAccount?.isWalletConnected && 'Connect Wallet'}
               </div>
-            </StyledBrandButton>
+            </StyledPrimaryBrandDiv>
           )}
           {sourceChain && isWalletConnected && (
             <div className="space-y-4">
@@ -297,7 +300,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
             </div>
           )}
           <CraftedBySkip />
-        </WidgetContainer>
+        </StyledPrimaryDiv>
         <HistoryDialog />
         <SettingsDialog />
         <JsonDialog />
@@ -306,8 +309,3 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
     </UsdDiff.Provider>
   );
 };
-
-const WidgetContainer = styled.div`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
-`;

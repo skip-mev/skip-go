@@ -12,7 +12,7 @@ import { cn } from '../../utils/ui';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
-import { StyledButton } from '../Button/ShareButton';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 export const HistoryDialog = () => {
   const [isOpen, { close }] = useDisclosureKey('historyDialog');

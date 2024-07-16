@@ -3,7 +3,7 @@ import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { disclosure } from '../../store/disclosures';
 import { HistoryIcon } from '../Icon/HistoryIcon';
-import { StyledButton } from './ShareButton';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 export const HistoryButton = ({
   className,

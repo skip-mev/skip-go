@@ -34,10 +34,9 @@ import { txHistory } from '../../store/tx-history';
 import { isUserRejectedRequestError } from '../../utils/error';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { CraftedBySkip } from '../CraftedBySkip';
-import { StyledBrandButton } from '../AssetInput';
 import { styled } from 'styled-components';
+import { StyledPrimaryBrandDiv } from '../StyledComponents/Theme';
 
 export interface Wallet {
   walletName: string;
@@ -298,7 +297,8 @@ export const PreviewRoute = ({
   const SubmitButton = () => {
     if (allAddressFilled) {
       return (
-        <StyledBrandButton
+        <StyledPrimaryBrandDiv
+          as="button"
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white',
             'outline-none transition-transform',
@@ -314,12 +314,13 @@ export const PreviewRoute = ({
           }
         >
           Submit
-        </StyledBrandButton>
+        </StyledPrimaryBrandDiv>
       );
     }
 
     return (
-      <StyledBrandButton
+      <StyledPrimaryBrandDiv
+        as="button"
         className={cn(
           'w-full rounded-md py-4 font-semibold text-white',
           'outline-none transition-transform',
@@ -387,7 +388,7 @@ export const PreviewRoute = ({
           : isSignRequired
           ? 'Connect Wallet'
           : 'Set Recovery Address'}
-      </StyledBrandButton>
+      </StyledPrimaryBrandDiv>
     );
   };
 
@@ -560,7 +561,8 @@ export const PreviewRoute = ({
           )}
 
           {submitMutation.isPending || submitMutation.isSuccess ? (
-            <StyledBrandButton
+            <StyledPrimaryBrandDiv
+              as="button"
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white',
                 'outline-none transition-transform',
@@ -595,7 +597,7 @@ export const PreviewRoute = ({
               ) : (
                 <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
               )}
-            </StyledBrandButton>
+            </StyledPrimaryBrandDiv>
           ) : (
             <SubmitButton />
           )}

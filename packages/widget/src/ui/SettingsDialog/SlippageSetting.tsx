@@ -6,7 +6,7 @@ import {
 } from '../../utils/number';
 import { cn } from '../../utils/ui';
 import { StyledInput } from '../AssetInput';
-import { styled } from 'styled-components';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 const OPTION_VALUES = ['1', '3', '5'];
 
@@ -100,8 +100,7 @@ export const SlippageSetting = () => {
             <StyledButton
               key={i}
               className={cn(
-                'rounded-lg border px-2 py-px text-xs tabular-nums transition',
-                'hover:bg-neutral-100'
+                'rounded-lg border px-2 py-px text-xs tabular-nums transition'
               )}
               onClick={() => useSettingsStore.setState({ slippage: value })}
             >
@@ -113,8 +112,3 @@ export const SlippageSetting = () => {
     </div>
   );
 };
-
-export const StyledButton = styled.button`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
-`;

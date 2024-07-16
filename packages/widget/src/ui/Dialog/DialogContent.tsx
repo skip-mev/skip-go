@@ -4,7 +4,7 @@ import { PropsWithChildren, useContext } from 'react';
 
 import { DialogContext } from './context';
 import { cn } from '../../utils/ui';
-import { styled } from 'styled-components';
+import { StyledPrimaryDiv } from '../StyledComponents/Theme';
 
 interface Props extends PropsWithChildren {
   onInteractOutside?: DialogContentProps['onInteractOutside'];
@@ -18,7 +18,8 @@ export function DialogContent({ children, onInteractOutside }: Props) {
   return (
     <>
       <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 font-diatype z-10" />
-      <StyledDialogContent
+      <StyledPrimaryDiv
+        as={Dialog.Content}
         className={cn(
           'data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
           'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
@@ -28,12 +29,7 @@ export function DialogContent({ children, onInteractOutside }: Props) {
         onInteractOutside={onInteractOutside}
       >
         {children}
-      </StyledDialogContent>
+      </StyledPrimaryDiv>
     </>
   );
 }
-
-const StyledDialogContent = styled(Dialog.Content)`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
-`;

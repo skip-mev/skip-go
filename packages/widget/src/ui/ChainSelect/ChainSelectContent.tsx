@@ -9,6 +9,7 @@ import {
   StyledListItemButton,
   StyledScrollAreaRoot,
 } from '../AssetSelect/AssetSelectContent';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 interface Props {
   chains: Chain[];
@@ -33,12 +34,12 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
   return (
     <div className="isolate flex h-full flex-col p-6 pb-2 font-diatype">
       <div className="mb-4 flex items-center gap-4">
-        <button
+        <StyledButton
           className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
           onClick={onClose}
         >
           <ArrowLeftIcon className="h-6 w-6" />
-        </button>
+        </StyledButton>
         <p className="text-xl font-bold">Select Network</p>
       </div>
       <SearchInput

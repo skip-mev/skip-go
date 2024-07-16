@@ -2,8 +2,8 @@ import { ComponentProps } from 'react';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { disclosure } from '../../store/disclosures';
-import { StyledButton } from './ShareButton';
 import { GearIcon } from '../Icon/GearIcon';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 export const SettingsButton = ({
   className,

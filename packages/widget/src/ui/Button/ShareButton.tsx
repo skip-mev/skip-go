@@ -1,8 +1,8 @@
 import toast from 'react-hot-toast';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
-import { styled } from 'styled-components';
 import { ShareIcon } from '../Icon/ShareIcon';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
   return (
@@ -26,11 +26,3 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
     </SimpleTooltip>
   );
 };
-
-export const StyledButton = styled.button`
-  color: ${(props) => props.theme.primary.textColor};
-  fill: ${(props) => props.theme.primary.textColor};
-  &:hover {
-    background-color: ${(props) => props.theme.secondary.backgroundColor};
-  }
-`;

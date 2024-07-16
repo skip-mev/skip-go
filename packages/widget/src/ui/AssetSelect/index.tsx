@@ -78,7 +78,7 @@ function AssetSelect({
 
 export default AssetSelect;
 
-export const StyledButton = styled.button`
+const StyledButton = styled.button`
   background-color: ${(props) => props.theme.secondary.backgroundColor};
   border-color: ${(props) => props.theme.secondary.borderColor};
   color: ${(props) => props.theme.secondary.textColor};

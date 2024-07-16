@@ -1,8 +1,7 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { useDisclosureKey } from '../store/disclosures';
 import { cn } from '../utils/ui';
-import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { StyledBrandButton } from './AssetInput';
+import { StyledPrimaryBrandDiv } from './StyledComponents/Theme';
 
 interface Props {
   onGoBack: () => void;
@@ -39,7 +38,8 @@ export const PriceImpactWarning = ({
         >
           Continue
         </button>
-        <StyledBrandButton
+        <StyledPrimaryBrandDiv
+          as="button"
           className={cn(
             'w-full rounded-lg border border-transparent py-4 font-semibold text-white transition-colors',
             `hover:opacity-90`
@@ -50,7 +50,7 @@ export const PriceImpactWarning = ({
           }}
         >
           Go Back
-        </StyledBrandButton>
+        </StyledPrimaryBrandDiv>
       </div>
     </div>
   );

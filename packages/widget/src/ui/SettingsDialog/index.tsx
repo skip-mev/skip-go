@@ -7,7 +7,7 @@ import { useDisclosureKey } from '../../store/disclosures';
 
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
-import { StyledButton } from '../Button/ShareButton';
+import { StyledButton } from '../StyledComponents/Buttons';
 
 export const SettingsDialog = () => {
   const [isOpen, { close }] = useDisclosureKey('settingsDialog');

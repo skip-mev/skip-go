@@ -6,8 +6,7 @@ import { PreviewRoute } from './PreviewRoute';
 import { useDisclosureKey } from '../store/disclosures';
 import { PriceImpactWarning } from './PriceImpactWarning';
 import { cn } from '../utils/ui';
-import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { StyledBrandButton } from './AssetInput';
+import { StyledPrimaryBrandDiv } from './StyledComponents/Theme';
 
 export type ActionType = 'NONE' | 'TRANSFER' | 'SWAP';
 
@@ -68,7 +67,8 @@ function TransactionDialog({
   return (
     <Fragment>
       <div>
-        <StyledBrandButton
+        <StyledPrimaryBrandDiv
+          as="button"
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
             'disabled:cursor-not-allowed disabled:opacity-75',
@@ -78,7 +78,7 @@ function TransactionDialog({
           onClick={() => confirmControl.open()}
         >
           Preview Route
-        </StyledBrandButton>
+        </StyledPrimaryBrandDiv>
         {isOpen && route && (
           <PreviewRoute
             route={route}

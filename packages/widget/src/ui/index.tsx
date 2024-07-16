@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { SwapWidgetProvider, SwapWidgetProviderProps } from '../provider';
 import {
   configureSwapWidget,
@@ -15,7 +15,7 @@ export type SwapWidgetProps = Pick<
 > &
   ConfigureSwapWidgetArgs &
   Partial<SwapWidgetProviderProps> & {
-    theme?: Theme;
+    theme?: Partial<Theme>;
   };
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
@@ -41,9 +41,22 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
     });
   }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
 
+  const mergedThemes = useMemo(() => {
+    return {
+      primary: {
+        ...defaultTheme.primary,
+        ...theme?.primary,
+      },
+      secondary: {
+        ...defaultTheme.secondary,
+        ...theme?.secondary,
+      },
+    };
+  }, [defaultTheme, theme]);
+
   return (
     <WithStyledShadowDom>
-      <ThemeProvider theme={theme ?? defaultTheme}>
+      <ThemeProvider theme={mergedThemes}>
         <SwapWidgetProvider {...swapWidgetProviderProps}>
           <SwapWidgetUI className={className} style={style} />
         </SwapWidgetProvider>

@@ -21,6 +21,10 @@ import {
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { styled } from 'styled-components';
+import {
+  StyledPrimaryBrandDiv,
+  StyledPrimaryDiv,
+} from './StyledComponents/Theme';
 
 interface Props {
   amount: string;
@@ -134,7 +138,8 @@ function AssetInput({
             />
           </button>
         )}
-        <StyledInput
+        <StyledPrimaryDiv
+          as="input"
           data-testid="amount"
           className={cn(
             'h-10 w-full text-3xl font-medium tabular-nums',
@@ -243,7 +248,8 @@ function AssetInput({
                   </div>
                 </SimpleTooltip>
               )}
-              <StyledBrandButton
+              <StyledPrimaryBrandDiv
+                as="button"
                 className={cn(
                   'rounded-md px-2 py-1 text-xs font-semibold uppercase text-white',
                   'transition-[transform,background] enabled:hover:rotate-2 enabled:hover:scale-110 disabled:cursor-not-allowed',
@@ -253,7 +259,7 @@ function AssetInput({
                 onClick={onAmountMax}
               >
                 Max
-              </StyledBrandButton>
+              </StyledPrimaryBrandDiv>
             </div>
           )}
         </div>
@@ -269,19 +275,6 @@ function AssetInput({
 
 export default AssetInput;
 
-export const StyledInput = styled.input`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
-`;
-
 const AssetInputContainer = styled.div`
   border-color: ${(props) => props.theme.primary.borderColor};
-`;
-
-export const StyledBrandButton = styled.button`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-`;
-
-export const StyledBrandDiv = styled.div`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
 `;
