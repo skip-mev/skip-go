@@ -9,5 +9,13 @@ body {
 }
 
 input {
-  background-color: black;
+  background: black;
+}
+
+div,
+p,
+span {
+  color: gray;
+  border: 2px solid gray;
+  background: gray;
 }
