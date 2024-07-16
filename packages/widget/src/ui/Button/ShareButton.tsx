@@ -31,6 +31,6 @@ export const StyledButton = styled.button`
   color: ${(props) => props.theme.primary.textColor};
   fill: ${(props) => props.theme.primary.textColor};
   &:hover {
-    background-color: rgba(245, 245, 245, 0.5);
+    background-color: ${(props) => props.theme.secondary.backgroundColor};
   }
 `;

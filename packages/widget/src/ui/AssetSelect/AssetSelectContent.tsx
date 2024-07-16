@@ -97,10 +97,10 @@ function AssetSelectContent({
       >
         <ScrollArea.Viewport className="h-full w-full py-4">
           {filteredAssets.map((asset) => (
-            <button
+            <StyledListItemButton
               key={`${asset.chainID}-${asset.denom}`}
               data-testid="asset-item"
-              className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors hover:bg-[#ECD9D9] focus:-outline-offset-2"
+              className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
               onClick={() => (onClose(), onChange?.(asset))}
             >
               <img
@@ -142,7 +142,7 @@ function AssetSelectContent({
                   </p>
                 )}
               </div>
-            </button>
+            </StyledListItemButton>
           ))}
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
@@ -173,6 +173,12 @@ export const StyledScrollAreaRoot = styled(ScrollArea.Root)`
       ${(props) => props.theme.primary.backgroundColor},
       hsla(0, 0%, 100%, 0)
     );
+  }
+`;
+
+export const StyledListItemButton = styled.button`
+  &:hover {
+    background-color: ${(props) => props.theme.secondary.backgroundColor};
   }
 `;
 

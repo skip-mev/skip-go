@@ -6,6 +6,7 @@ import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
 import {
   SearchInput,
+  StyledListItemButton,
   StyledScrollAreaRoot,
 } from '../AssetSelect/AssetSelectContent';
 
@@ -81,8 +82,8 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
         >
           <ScrollArea.Viewport className="h-full w-full py-4">
             {filteredChains.map((chain) => (
-              <button
-                className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors hover:bg-[#ECD9D9] focus:-outline-offset-2"
+              <StyledListItemButton
+                className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
                 key={chain.chainID}
                 onClick={() => onChange(chain)}
                 data-testid="chain-item"
@@ -101,7 +102,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
                   <p className="text-lg font-semibold">{chain.prettyName}</p>
                   <p className="text-sm text-neutral-500">{chain.chainID}</p>
                 </div>
-              </button>
+              </StyledListItemButton>
             ))}
           </ScrollArea.Viewport>
           <ScrollArea.Scrollbar
