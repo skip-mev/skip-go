@@ -243,21 +243,17 @@ function AssetInput({
                   </div>
                 </SimpleTooltip>
               )}
-              <button
+              <StyledBrandButton
                 className={cn(
                   'rounded-md px-2 py-1 text-xs font-semibold uppercase text-white',
                   'transition-[transform,background] enabled:hover:rotate-2 enabled:hover:scale-110 disabled:cursor-not-allowed',
                   'disabled:opacity-75'
                 )}
-                style={{
-                  backgroundColor:
-                    useSwapWidgetUIStore.getState().colors.primary,
-                }}
                 disabled={maxButtonDisabled}
                 onClick={onAmountMax}
               >
                 Max
-              </button>
+              </StyledBrandButton>
             </div>
           )}
         </div>
@@ -280,4 +276,12 @@ export const StyledInput = styled.input`
 
 const AssetInputContainer = styled.div`
   border-color: ${(props) => props.theme.primary.borderColor};
+`;
+
+export const StyledBrandButton = styled.button`
+  background-color: ${(props) => props.theme.primary.backgroundColor};
+`;
+
+export const StyledBrandDiv = styled.div`
+  background-color: ${(props) => props.theme.primary.backgroundColor};
 `;

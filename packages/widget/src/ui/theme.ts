@@ -5,6 +5,7 @@ export const defaultTheme = {
     backgroundColor: 'white',
     textColor: 'black',
     borderColor: 'rgb(229 229 229)',
+    brandColor: 'rgb(255, 72, 110)',
   },
   secondary: {
     backgroundColor: 'rgb(245, 245, 245)',
@@ -18,6 +19,7 @@ export type Theme = {
     backgroundColor: string;
     textColor: string;
     borderColor: string;
+    brandColor: string;
   };
   secondary: {
     backgroundColor: string;

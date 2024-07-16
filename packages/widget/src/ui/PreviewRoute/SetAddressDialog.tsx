@@ -18,6 +18,7 @@ import { cn } from '../../utils/ui';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { css } from '@emotion/css';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
+import { styled } from 'styled-components';
 
 export const SetAddressDialog = ({
   open,
@@ -247,19 +248,14 @@ export const SetAddressDialog = ({
                       >
                         <MdCheck className="size-6" />
                       </button>
-                      <button
+                      <StyledButton
                         className={cn(
                           'flex w-12 items-center justify-center rounded-md border-2'
                         )}
-                        style={{
-                          borderColor:
-                            useSwapWidgetUIStore.getState().colors.primary,
-                          color: useSwapWidgetUIStore.getState().colors.primary,
-                        }}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />
-                      </button>
+                      </StyledButton>
                     </div>
                   ) : (
                     <button
@@ -290,3 +286,8 @@ export const SetAddressDialog = ({
     </Dialog>
   );
 };
+
+const StyledButton = styled.button`
+  color: ${(props) => props.theme.primary.brandColor};
+  border-color: ${(props) => props.theme.primary.brandColor};
+`;

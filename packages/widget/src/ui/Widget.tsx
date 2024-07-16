@@ -6,7 +6,7 @@ import { useSwapWidget } from '../hooks/use-swap-widget';
 import { disclosure } from '../store/disclosures';
 import { cn } from '../utils/ui';
 import { AdaptiveLink } from './AdaptiveLink';
-import AssetInput from './AssetInput';
+import AssetInput, { StyledBrandButton, StyledBrandDiv } from './AssetInput';
 import { HistoryButton } from './Button/HistoryButton';
 import { SettingsButton } from './Button/SettingsButton';
 import { ShareButton } from './Button/ShareButton';
@@ -231,24 +231,12 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
           )}
           {route && !routeLoading && numberOfTransactions > 1 && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium uppercase">
-              <div
-                className={cn('relative rounded-full p-[4px]')}
-                style={{
-                  backgroundColor:
-                    useSwapWidgetUIStore.getState().colors.primary,
-                }}
-              >
-                <div
-                  className={cn(
-                    'absolute h-6 w-6 animate-ping rounded-full',
-                    css`
-                      background-color: ${useSwapWidgetUIStore.getState().colors
-                        .primary} !important;
-                    `
-                  )}
+              <StyledBrandDiv className={cn('relative rounded-full p-[4px]')}>
+                <StyledBrandDiv
+                  className={cn('absolute h-6 w-6 animate-ping rounded-full')}
                 />
                 <FingerPrintIcon className="relative h-6 w-6 text-white" />
-              </div>
+              </StyledBrandDiv>
               <p>{numberOfTransactions} Signature Required</p>
             </div>
           )}
@@ -270,15 +258,12 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
             </div>
           )}
           {!isWalletConnected && (
-            <button
+            <StyledBrandButton
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
                 'disabled:cursor-not-allowed disabled:opacity-75',
                 'enabled:hover:rotate-1 enabled:hover:scale-105'
               )}
-              style={{
-                backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-              }}
               disabled={!sourceChain}
               onClick={async () => {
                 if (sourceChain && !srcAccount?.isWalletConnected) {
@@ -294,7 +279,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
               <div key={accountStateKey} className="animate-slide-up-and-fade">
                 {!srcAccount?.isWalletConnected && 'Connect Wallet'}
               </div>
-            </button>
+            </StyledBrandButton>
           )}
           {sourceChain && isWalletConnected && (
             <div className="space-y-4">

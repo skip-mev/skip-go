@@ -28,6 +28,7 @@ export const SimpleTooltip = (props: Props) => {
     <Tooltip.Root {...tooltipProps}>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <StyledTooltipContent
+        type={type}
         sideOffset={4}
         {..._content}
         className={cn(
@@ -39,12 +40,6 @@ export const SimpleTooltip = (props: Props) => {
           type === 'warning' && 'font-medium',
           _content?.className
         )}
-        style={{
-          color:
-            type === 'warning'
-              ? useSwapWidgetUIStore.getState().colors.primary
-              : undefined,
-        }}
       >
         {label}
         <Tooltip.Arrow
@@ -55,8 +50,14 @@ export const SimpleTooltip = (props: Props) => {
   );
 };
 
-const StyledTooltipContent = styled(Tooltip.Content)`
+const StyledTooltipContent = styled(Tooltip.Content)<{
+  type: 'default' | 'warning' | 'brand';
+}>`
   background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
+
   fill: ${(props) => props.theme.primary.backgroundColor};
+  color: ${(props) =>
+    props.type === 'warning'
+      ? props.theme.primary.brandColor
+      : props.theme.primary.textColor};
 `;

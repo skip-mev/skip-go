@@ -35,8 +35,9 @@ import { isUserRejectedRequestError } from '../../utils/error';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 import { CraftedBySkip } from '../CraftedBySkip';
+import { StyledBrandButton } from '../AssetInput';
+import { styled } from 'styled-components';
 
 export interface Wallet {
   walletName: string;
@@ -297,16 +298,13 @@ export const PreviewRoute = ({
   const SubmitButton = () => {
     if (allAddressFilled) {
       return (
-        <button
+        <StyledBrandButton
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white',
             'outline-none transition-transform',
             'enabled:hover:rotate-1 enabled:hover:scale-102',
             'disabled:cursor-not-allowed disabled:opacity-75'
           )}
-          style={{
-            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-          }}
           onClick={() => submitMutation.mutate()}
           disabled={
             submitMutation.isPending ||
@@ -316,20 +314,17 @@ export const PreviewRoute = ({
           }
         >
           Submit
-        </button>
+        </StyledBrandButton>
       );
     }
 
     return (
-      <button
+      <StyledBrandButton
         className={cn(
           'w-full rounded-md py-4 font-semibold text-white',
           'outline-none transition-transform',
           'disabled:cursor-not-allowed disabled:opacity-75'
         )}
-        style={{
-          backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-        }}
         onClick={async () => {
           if (!enabledSetAddressIndex) {
             console.error('No address index found!');
@@ -392,7 +387,7 @@ export const PreviewRoute = ({
           : isSignRequired
           ? 'Connect Wallet'
           : 'Set Recovery Address'}
-      </button>
+      </StyledBrandButton>
     );
   };
 
@@ -411,15 +406,12 @@ export const PreviewRoute = ({
               <p className="text-xl font-bold">Transaction Preview</p>
             </div>
             {isExpanded && (
-              <button
+              <StyledBrandTextButton
                 className={cn('right-7 text-xs font-medium')}
-                style={{
-                  color: useSwapWidgetUIStore.getState().colors.primary,
-                }}
                 onClick={() => setIsExpanded(false)}
               >
                 Hide Details
-              </button>
+              </StyledBrandTextButton>
             )}
           </div>
         </div>
@@ -568,16 +560,13 @@ export const PreviewRoute = ({
           )}
 
           {submitMutation.isPending || submitMutation.isSuccess ? (
-            <button
+            <StyledBrandButton
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white',
                 'outline-none transition-transform',
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
                 'disabled:cursor-not-allowed disabled:opacity-75'
               )}
-              style={{
-                backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-              }}
               onClick={control.close}
               disabled={route.txsRequired !== broadcastedTxs.length}
             >
@@ -606,7 +595,7 @@ export const PreviewRoute = ({
               ) : (
                 <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
               )}
-            </button>
+            </StyledBrandButton>
           ) : (
             <SubmitButton />
           )}
@@ -618,3 +607,7 @@ export const PreviewRoute = ({
 };
 
 const HREF_COMMON_FINALITY_TIMES = `https://docs.axelar.dev/learn/txduration#common-finality-time-for-interchain-transactions`;
+
+const StyledBrandTextButton = styled.button`
+  color: ${(props) => props.theme.primary.brandColor};
+`;
