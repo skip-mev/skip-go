@@ -36,6 +36,7 @@ export const SimpleTooltip = (props: Props) => {
           'select-none shadow shadow-neutral-500/50',
           'text-sm font-diatype',
           'animate-slide-up-and-fade',
+          'z-10',
           type === 'warning' && `bg-[#fbeef1]`,
           type === 'warning' && 'font-medium',
           _content?.className
