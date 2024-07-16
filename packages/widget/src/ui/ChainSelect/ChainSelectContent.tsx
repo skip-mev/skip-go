@@ -6,7 +6,7 @@ import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { StyledPrimaryButton } from '../StyledComponents/Buttons';
-import { StyledSearchInput } from '../StyledComponents/Input';
+import { StyledSecondarySearchInput } from '../StyledComponents/Input';
 
 interface Props {
   chains: Chain[];
@@ -39,7 +39,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
         </StyledPrimaryButton>
         <p className="text-xl font-bold">Select Network</p>
       </div>
-      <StyledSearchInput
+      <StyledSecondarySearchInput
         className="z-20 w-full rounded-md border px-4 py-2"
         type="text"
         placeholder="Search for a chain"
