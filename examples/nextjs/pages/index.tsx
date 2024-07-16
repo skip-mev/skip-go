@@ -20,9 +20,6 @@ function isJsonString(str: string) {
 }
 
 const defaultProps = {
-  colors: {
-    primary: '#FF4FFF',
-  },
   defaultRoute: {
     srcChainID: 'osmosis-1',
     srcAssetDenom:
