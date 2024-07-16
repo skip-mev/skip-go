@@ -1,0 +1,27 @@
+/* Reset relevant styles within Shadow DOM */
+* {
+  font-family: unset;
+  font-style: unset;
+  font-weight: unset;
+  text-align: revert;
+  text-decoration: unset;
+  text-indent: unset;
+  text-transform: unset;
+  line-height: unset;
+  letter-spacing: unset;
+  white-space: unset;
+  box-sizing: border-box;
+  margin: unset;
+  padding: unset;
+  visibility: unset;
+  float: unset;
+  clear: unset;
+  background-color: unset;
+  word-spacing: unset;
+}
+
+div,
+p,
+span {
+  color: black;
+}

@@ -69,6 +69,22 @@ const Home: NextPage = () => {
         <SwapWidget {...props} key={propsHash} />
       </div>
       <div>
+        <button
+          onClick={() => {
+            if (
+              window.confirm('Are you sure you want to purge all settings?')
+            ) {
+              window.localStorage.clear();
+              window.sessionStorage.clear();
+              window.location.reload();
+            }
+          }}
+          style={{
+            height: '40px',
+          }}
+        >
+          Purge Settings
+        </button>
         <pre
           contentEditable="true"
           onBlur={handleOnChange}

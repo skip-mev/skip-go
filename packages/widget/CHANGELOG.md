@@ -1,5 +1,23 @@
 # @skip-go/widget
 
+## 1.2.6
+
+### Patch Changes
+
+- 8250a67: Add cssReset to widget
+
+## 1.2.5
+
+### Patch Changes
+
+- 6a46c11: fix defaultRoute regression
+
+## 1.2.4
+
+### Patch Changes
+
+- c1d1880: Update README to mention polyfilling node core modules and wrapping widget with fixed container
+
 ## 1.2.3
 
 ### Patch Changes

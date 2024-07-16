@@ -78,7 +78,7 @@ export function useSwapWidget() {
   } = useAssets();
   const { data: chains } = useChains({
     select: (chains) => {
-      if (!allChainIDs) return chains;
+      if (allChainIDs.length === 0) return chains;
       return chains?.filter(({ chainID }) => {
         return allChainIDs.includes(chainID);
       });
@@ -826,11 +826,12 @@ export function useSwapWidget() {
   useEffect(() => {
     if (!chains || !isAssetsReady || srcChain) return;
     if (defaultSourceChain) {
-      const findChain = chains
-        .filter((c) => sourceChainIDs?.includes(c.chainID))
-        .find(
-          (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
-        );
+      const filteredChains = sourceChainIDs
+        ? chains.filter((c) => sourceChainIDs?.includes(c.chainID))
+        : chains;
+      const findChain = filteredChains.find(
+        (x) => x.chainID.toLowerCase() === defaultSourceChain.toLowerCase()
+      );
       if (findChain) {
         if (defaultSourceAsset) {
           const assets = assetsByChainID(
@@ -859,12 +860,12 @@ export function useSwapWidget() {
   useEffect(() => {
     if (!chains || !isAssetsReady || dstChain) return;
     if (defaultDestinationChain) {
-      const findChain = chains
-        .filter((c) => destinationChainIDs?.includes(c.chainID))
-        .find(
-          (x) =>
-            x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
-        );
+      const filteredChains = destinationChainIDs
+        ? chains.filter((c) => destinationChainIDs?.includes(c.chainID))
+        : chains;
+      const findChain = filteredChains.find(
+        (x) => x.chainID.toLowerCase() === defaultDestinationChain.toLowerCase()
+      );
       if (findChain) {
         if (defaultDestinationAsset) {
           const assets = assetsByChainID(
