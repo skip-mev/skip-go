@@ -19,6 +19,7 @@ import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { css } from '@emotion/css';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
+import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 export const SetAddressDialog = ({
   open,
@@ -113,14 +114,14 @@ export const SetAddressDialog = ({
       <DialogContent>
         <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
           <div className="relative flex justify-between">
-            <button
+            <StyledPrimaryButton
               className={cn(
                 'flex h-8 w-8 items-center justify-between rounded-full transition-colors hover:bg-neutral-100'
               )}
               onClick={() => onOpen(false)}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </button>
+            </StyledPrimaryButton>
             <p className="text-center text-xl font-bold capitalize">
               Set {isDestination ? 'Destination' : 'Recovery'} Address
             </p>

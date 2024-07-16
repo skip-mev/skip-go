@@ -37,6 +37,7 @@ import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { CraftedBySkip } from '../CraftedBySkip';
 import { styled } from 'styled-components';
 import { StyledPrimaryBrandDiv } from '../StyledComponents/Theme';
+import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 export interface Wallet {
   walletName: string;
@@ -398,12 +399,12 @@ export const PreviewRoute = ({
         <div>
           <div className="flex items-center justify-between pr-1">
             <div className="flex items-center gap-4">
-              <button
+              <StyledPrimaryButton
                 className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
                 onClick={control.close}
               >
                 <ArrowLeftIcon className="h-6 w-6" />
-              </button>
+              </StyledPrimaryButton>
               <p className="text-xl font-bold">Transaction Preview</p>
             </div>
             {isExpanded && (

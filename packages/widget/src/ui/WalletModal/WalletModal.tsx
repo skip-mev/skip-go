@@ -10,6 +10,8 @@ import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { useChainByID } from '../../hooks/use-chains';
 import { DialogContent } from '../Dialog/DialogContent';
+import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
+import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 interface Props {
   chainType: string;
@@ -29,7 +31,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
   return (
     <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
       <div className="relative">
-        <button
+        <StyledPrimaryButton
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100',
             'absolute inset-y-0 left-0'
@@ -37,7 +39,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
           onClick={onClose}
         >
           <ArrowLeftIcon className="h-6 w-6" />
-        </button>
+        </StyledPrimaryButton>
         <p className="text-center text-xl font-bold">Connect Wallet</p>
       </div>
       {totalWallets < 1 && (
@@ -63,11 +65,10 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
           </p>
         </div>
       )}
-      <ScrollArea.Root
+      <StyledScrollAreaRoot
         className={cn(
           'relative isolate flex-grow overflow-hidden',
-          'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2',
-          'before:bg-gradient-to-t before:from-white before:to-transparent'
+          'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2'
         )}
       >
         <ScrollArea.Viewport className="h-full w-full py-4">
@@ -144,7 +145,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
           <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
         </ScrollArea.Scrollbar>
         <ScrollArea.Corner />
-      </ScrollArea.Root>
+      </StyledScrollAreaRoot>
     </div>
   );
 }

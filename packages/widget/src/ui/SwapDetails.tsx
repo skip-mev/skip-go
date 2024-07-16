@@ -11,7 +11,7 @@ import { SimpleTooltip } from './SimpleTooltip';
 import { disclosure } from '../store/disclosures';
 import { SwapWidgetStore } from '../hooks/use-swap-widget';
 import { ConversionRate } from './ConversionRate';
-import { StyledButton } from './StyledComponents/Buttons';
+import { StyledPrimaryButton } from './StyledComponents/Buttons';
 
 type Props = SwapWidgetStore & {
   amountOut: string;
@@ -217,7 +217,7 @@ export const SwapDetails = ({
           <dt>Slippage</dt>
           <dd>
             <SimpleTooltip label="Click to change maximum slippage">
-              <StyledButton
+              <StyledPrimaryButton
                 className={cn(
                   'mr-1 inline-flex items-center gap-1 p-1 text-xs transition-colors',
                   'text-red-500',
@@ -226,7 +226,7 @@ export const SwapDetails = ({
                 onClick={() => disclosure.open('settingsDialog')}
               >
                 <PencilSquareIcon className="h-3 w-3" />
-              </StyledButton>
+              </StyledPrimaryButton>
             </SimpleTooltip>
             {slippage}%
           </dd>
