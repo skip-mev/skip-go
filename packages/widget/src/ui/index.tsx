@@ -5,7 +5,7 @@ import {
   ConfigureSwapWidgetArgs,
 } from '../store/swap-widget';
 import { SwapWidgetUI } from './Widget';
-import { defaultTheme, Theme } from './theme';
+import { defaultTheme, PartialTheme } from './theme';
 import { WithStyledShadowDom } from './WithStyledShadowDom';
 import { ThemeProvider } from 'styled-components';
 
@@ -15,7 +15,7 @@ export type SwapWidgetProps = Pick<
 > &
   ConfigureSwapWidgetArgs &
   Partial<SwapWidgetProviderProps> & {
-    theme?: Partial<Theme>;
+    theme?: PartialTheme;
   };
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
