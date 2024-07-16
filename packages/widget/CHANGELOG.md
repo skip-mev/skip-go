@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.2.6
+
+### Patch Changes
+
+- 8250a67: Add cssReset to widget
+
 ## 1.2.5
 
 ### Patch Changes
