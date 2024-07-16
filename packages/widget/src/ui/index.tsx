@@ -7,6 +7,7 @@ import {
 import { SwapWidgetUI } from './Widget';
 import shadowDomStyles from '../styles/shadowDomStyles.css';
 import toastStyles from '../styles/toastStyles.css';
+import cssReset from '../styles/cssReset.css';
 import { Scope } from 'react-shadow-scope';
 import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
@@ -42,7 +43,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
 
   return (
     <Scope
-      stylesheets={[toastStyles, shadowDomStyles]}
+      stylesheets={[cssReset, toastStyles, shadowDomStyles]}
       config={{ dsd: 'emulated' }}
     >
       <SwapWidgetProvider {...swapWidgetProviderProps}>
