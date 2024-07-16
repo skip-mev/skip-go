@@ -7954,7 +7954,6 @@ __metadata:
     postcss-prefixwrap: ^1.49.0
     react-hot-toast: ^2.4.1
     react-icons: ^5.2.1
-    react-shadow-scope: ^1.0.5
     rollup-plugin-copy: ^3.5.0
     styled-components: ^6.0.0
     stylis: ^4.0.0
@@ -21150,16 +21149,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: e0dbb6856beaed2cff4996d9ca62d775686ff72e3e9de34043034d932223b588993b2fc7a18644750dd3d73eb19bd3f2cedb8d91f0e424c1ef8403010da24b1d
-  languageName: node
-  linkType: hard
-
-"react-shadow-scope@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "react-shadow-scope@npm:1.0.5"
-  peerDependencies:
-    react: ^16.8.3 || ^18
-    react-dom: ^16.14.0 || ^18
-  checksum: 6ae39c58ac8ea4f18473da47ccb445a116f96fea162c44637dc5f69bd55858d423fee88436ba31319170b439f35b541f156729ff973de809e84e1eaa84c04cc9
   languageName: node
   linkType: hard
 
