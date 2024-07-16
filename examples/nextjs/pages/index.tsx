@@ -64,6 +64,7 @@ const Home: NextPage = () => {
         style={{
           width: '450px',
           height: '820px',
+          flexShrink: 0,
         }}
       >
         <SwapWidget {...props} key={propsHash} />
@@ -92,6 +93,7 @@ const Home: NextPage = () => {
             border: '1px solid black',
             padding: 20,
             fontSize: '20px',
+            color: 'black',
           }}
         >
           {JSON.stringify(props, null, 2)}
