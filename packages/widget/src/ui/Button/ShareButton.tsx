@@ -17,7 +17,7 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
           }
         }}
         className={cn(
-          'rounded-full p-2 hover:bg-neutral-100',
+          'rounded-full p-2',
           'transition-colors focus:outline-none'
         )}
       >

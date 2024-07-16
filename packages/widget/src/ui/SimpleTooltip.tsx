@@ -47,11 +47,8 @@ export const SimpleTooltip = (props: Props) => {
         }}
       >
         {label}
-        <StyledTooltipArrow
-          className={cn(
-            'fill-white drop-shadow',
-            type === 'warning' && 'fill-[#fbeef1]'
-          )}
+        <Tooltip.Arrow
+          className={cn('drop-shadow', type === 'warning' && 'fill-[#fbeef1]')}
         />
       </StyledTooltipContent>
     </Tooltip.Root>
@@ -61,8 +58,5 @@ export const SimpleTooltip = (props: Props) => {
 const StyledTooltipContent = styled(Tooltip.Content)`
   background-color: ${(props) => props.theme.primary.backgroundColor};
   color: ${(props) => props.theme.primary.textColor};
-`;
-
-const StyledTooltipArrow = styled(Tooltip.Arrow)`
   fill: ${(props) => props.theme.primary.backgroundColor};
 `;
