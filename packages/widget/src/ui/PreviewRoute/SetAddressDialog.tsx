@@ -20,6 +20,7 @@ import { css } from '@emotion/css';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledPrimaryBrandDiv } from '../StyledComponents/Theme';
 
 export const SetAddressDialog = ({
   open,
@@ -232,31 +233,25 @@ export const SetAddressDialog = ({
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                       />
-                      <button
+                      <StyledApproveButton
+                        as="button"
                         className={cn(
                           'flex w-12 items-center justify-center rounded-md border-2 text-sm text-white',
-                          'disabled:cursor-not-allowed disabled:opacity-50',
-
-                          css`
-                            border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary} !important;
-                            background-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary} !important;
-                          `
+                          'disabled:cursor-not-allowed'
                         )}
                         onClick={() => save()}
                         disabled={!isValid}
                       >
                         <MdCheck className="size-6" />
-                      </button>
-                      <StyledButton
+                      </StyledApproveButton>
+                      <StyledCancelButton
                         className={cn(
                           'flex w-12 items-center justify-center rounded-md border-2'
                         )}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />
-                      </StyledButton>
+                      </StyledCancelButton>
                     </div>
                   ) : (
                     <button
@@ -288,7 +283,11 @@ export const SetAddressDialog = ({
   );
 };
 
-const StyledButton = styled.button`
+const StyledApproveButton = styled(StyledPrimaryBrandDiv)`
+  border-color: ${(props) => props.theme.primary.brandColor};
+`;
+
+const StyledCancelButton = styled.button`
   color: ${(props) => props.theme.primary.brandColor};
   border-color: ${(props) => props.theme.primary.brandColor};
 `;
