@@ -20,29 +20,38 @@ et voilà! you can now use the `swap-widget` web-component as `<swap-widget></sw
 The props for the web component are the same as `SwapWidgetProps` except that all props
 are passed to the web-component via attributes in kebab-case as strings or stringified objects. Example below:
 ```tsx
-<SwapWidget
-  className="test-class"
-  onlyTestnet={true}
-  colors={{
-    primary: '#FF4FFF',
+<div
+  style={{
+    width: '450px',
+    height: '820px',
   }}
-  defaultRoute={{
-    srcChainID: 'osmosis-1',
-    srcAssetDenom:
-      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-  }}
-/>
+>
+  <SwapWidget
+    className="test-class"
+    onlyTestnet={true}
+    colors={{
+      primary: '#FF4FFF',
+    }}
+    defaultRoute={{
+      srcChainID: 'osmosis-1',
+      srcAssetDenom:
+        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+    }}
+  />
+</div>
 ```
 becomes
 ```tsx
-<swap-widget
-  class-name="test-class"
-  onlyTestnet="true"
-  colors='{"primary":"#FF4FFF"}'
-  default-route={JSON.stringify({
-    srcChainID: 'osmosis-1',
-    srcAssetDenom:
-      'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-  })}
-></swap-widget>
+<div style="width:450px;height:820px;">
+  <swap-widget
+    class-name="test-class"
+    onlyTestnet="true"
+    colors='{"primary":"#FF4FFF"}'
+    default-route={JSON.stringify({
+      srcChainID: 'osmosis-1',
+      srcAssetDenom:
+        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
+    })}
+  ></swap-widget>
+</div>
 ```
