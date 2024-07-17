@@ -1,0 +1,36 @@
+---
+title: "Understanding Quote Quality Metrics"
+description: "This doc covers the various ways route quote quality is measured -- slippage, USD estimates of the amount in and out, and price impact"
+---
+
+
+<Info>
+ **Video Summary**
+ 
+ Here's a video that summarizes the content below: [https://www.loom.com/share/5293719872714557b03db41fb5ca590e](https://www.loom.com/share/5293719872714557b03db41fb5ca590e)
+</Info>
+
+### Different ways to measure quote quality
+
+* `slippage`: This is the maximum allowable difference between what Skip estimates the price of the swap will execute at and the worst price it can execute at. If the price of the swap turns out to be worse than the slippage tolerance allows, the swap will revert entirely. Slippage does not account for the impact of the user's swap itself because this is incorporated in the estimate. You can still get a "bad price" with _low_ slippage if you make a big swap against a low liquidity pool because your swap itself will move the price. As a result, you should think of slippage as tolerance for difference between actual price and quoted price, not a measure of whether the quoted price is "good".
+* `usd_estimate_in` and `usd_estimate_out`: These are estimates of the dollar-value of the amount in and amount out. These use coingecko prices that can be a maximum of 5 minutes stale. These values aren't always available because not all tokens are listed on Coingecko (e.g. some meme coins or new coins won't have feeds). This is really useful for providing a sanity check on whether a price is "good" and flagging to users when the difference between estimated input and output dollar values exceeds some threshold as a percentage of the input amount. (For example, we recommend you flag the user when their input dollar value is $100 and their output is $50\. This indicates they're receiving a bad price for some reason.)
+* `price_impact`: This measures how much the user's expected execution price differs from the current on-chain spot price at time of execution. This is available whenever the underlying DEX makes it feasible to calculate on-chain spot price. This is especially useful when `usd_estimate_in` or `usd_estimate_out` isn't available. A high price impact means the user's swap size is large relative to the available on chain liquidity that they're swapping against, and they're moving the price significantly a lot. Like with USD estimate, we recommend warning users when this exceeds some threshold (e.g. 10%).
+
+### More on `slippage` vs `price_impact`
+
+Some people have asked why are both slippage and price\_impact necessary. The reason is that they are trying to capture fundamentally different concepts: 
+
+* slippage = tolerance to the world / liquidity changing between when the API gives you a quote and when the transaction gets executed (0 slippage = "I want to get exactly the amount out that Skip estimates"). Of course, this could still be a bad price if there's high price\_impact, or if the difference between `usd_amount_in` and `usd_amount_out` is large. **Slippage is better understood as a tolerance to volatility, rather than an estimate of execution quality.**
+* price impact = A measure of how much you're going to move the on-chain price with your trade. Some folks use the word "slippage" to describe price impact. This is intended to capture your tolerance to low liquidity and bad pricing.
+
+Fundamentally, you can execute a trade that has low price impact but high slippage if you want to execute a volatile trade against a lot of liquidity
+
+### Protecting users with SAFE interfaces
+
+If you're wondering how you should use these values to help protect your users from poor execution prices, we have a whole guide written about how to build a safe swapping interface: [SAFE Swapping: How to Protect Users from Bad Trades](/safe-swapping-how-to-protect-users-from-harming-themselves)! Check it out!
+
+ <Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>

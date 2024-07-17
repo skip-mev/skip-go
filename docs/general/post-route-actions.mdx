@@ -1,0 +1,143 @@
+---
+title: "Post-Route Actions"
+description: "How to specify actions to perform after a route of transfers/swaps is completed"
+---
+
+Callers of the Skip Go API can specify actions to execute on the destination chain after a route transfer or swap is complete using the `post_route_handler` parameter of `/v2/fungible/msgs`as a part of the same transaction where the swap/transfer took place. 
+
+This allows developers to build omni-chain and omni-token workflows where users can swap, liquid stake, deposit, buy an NFT, or take any other action starting from any chain or any token in Cosmos -- all in 1 transaction.
+
+This parameter currently supports:
+
+1. CosmWasm contract calls on the destination chain
+2. `autopilot` support for liquid staking interactions on Stride.
+
+### Background Info
+
+All after route actions must have the following characteristics: 
+
+* **Permissionless:** Skip Go API can only support permissionless actions because the underlying protocols (e.g. ibc-hooks, packet-forward-middleware) derive the addresses they use to call contracts based on the origin of the transfer. This means one user originating on two different chains or starting with two different tokens will eventually call the final contract / module with different addresses. You can only reliably permission actions that you know will 1) always originate on the same chain and 2) always take the same path to the destination chain. In general, we recommend not making this assumption unless you are an interoperability expert
+* **Single-token input:** The underlying IBC transfer protocol (ICS-20) doesn't support transferring more than 1 token denom in a single transfer message, so we can only send 1 denom of tokens to the final contract or module at a tme. That means the contract or module must not require multiple token denoms sent to it simultaneously. For example, a classic LP action where the user must provide tokens in both sides of the pool simultaneously would not work.
+
+<Warning>
+
+**Use authority-delegation with local address for permissionless actions that enable permissioned follow-ups**
+
+Commonly, the first interaction with a contract is permissionless, but it awards the end-user some kind of permissioned authority to perform follow-on actions (e.g. staking enables unstaking + collecting rewards; depositing enables withdrawing and earning yield) or receipt tokens (e.g. LPing produces LP receipt tokens). 
+
+As a cross-chain caller, you should generally avoid contracts that implicitly delegate these authorities or give receipt tokens to the caller because the caller will depend on the path the user has taken over IBC. You should look for contracts to implicit authority delegation -- i.e. contracts that explicitly assign permissions to an address in the calldata that may be different than the caller and address sending the tokens. Examples of this pattern are: 
+
+* Astroport’s `receiver` parameter in the `provide_liquidity` message
+* Mars’ `on_behalf_of` parameter in the `deposit` message
+* Astroport’s `to` parameter in the `swap` message
+
+We recommend setting these authority delegation parameters to the user's local address on the destination chain, so they can perform future actions locally.
+</Warning>
+### CosmWasm
+
+To call a CosmWasm contract on the destination chain, the following requirements must be satisfied:
+
+1. The destination chain supports `ibc-hooks` & has CosmWasm.
+2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
+
+To specify a CosmWasm contract call on the destination chain, pass a `wasm_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with: 
+
+* `contract_address`: The target contract address
+* `msg`: JSON string of the message to pass to the contract
+
+Set the destination address in the `address_list` to be the address of the contract as well.
+
+For example, this is a request for a transfer of USDC from Axelar to Neutron, with a post-route handler that swaps the USDC to Neutron using an Astroport pool on Neutron:
+
+```json
+{
+  "source_asset_denom": "uusdc",
+  "source_asset_chain_id": "axelar-dojo-1",
+  "dest_asset_denom": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+  "dest_asset_chain_id": "neutron-1",
+  "amount_in": "1000000",
+  "amount_out": "1000000",
+  "address_list": [
+    "axelar1x8ad0zyw52mvndh7hlnafrg0gt284ga7u3rez0",
+    "neutron1l3gtxnwjuy65rzk63k352d52ad0f2sh89kgrqwczgt56jc8nmc3qh5kag3"
+  ],
+  "operations": [
+    {
+      "transfer": {
+        "port": "transfer",
+        "channel": "channel-78",
+        "chain_id": "axelar-dojo-1",
+        "pfm_enabled": false,
+        "dest_denom": "ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349",
+        "supports_memo": true
+      }
+    }
+  ],
+  "post_route_handler": {
+    "wasm_msg": {
+      "contract_address": "neutron1l3gtxnwjuy65rzk63k352d52ad0f2sh89kgrqwczgt56jc8nmc3qh5kag3",
+        "msg": "{\"swap\":{\"offer_asset\":{\"info\":{\"native_token\":{\"denom\":\"ibc/F082B65C88E4B6D5EF1DB243CDA1D331D002759E938A0F5CD3FFDC5D53B3E349\"}},\"amount\":\"10000\"},\"to\":\"neutron1x8ad0zyw52mvndh7hlnafrg0gt284ga7uqunnf\"}}"
+    }
+  }
+}
+    
+```
+
+Note that the last address provided in the `address_list` is the address of the pool contract on Neutron, rather than a user address.
+
+The message returned from this request uses `ibc-hooks` on Neutron to perform the CosmWasm contract call atomically with the IBC transfer.
+
+### Autopilot
+
+To use autopilot after route actions, the following requirements must be satisfied:
+
+1. The destination chain supports the `autopilot` module. Currently, this means the destination chain must be `stride-1`.
+2. The chain in the route immediately before the destination chain supports IBC memos as well as `packet-forward-middleware`.
+
+To specify an Autopilot action on the destination chain, pass a `autopilot_msg` as the `post_route_handler` in the `/v2/fungible/msgs` call with: 
+
+* `receiver`: Set to the address on behalf of which you're performing the action
+* `action`: An enum giving the action that you wish to execute  
+   * This may be one of `LIQUID_STAKE` (for liquid staking an asset) or `CLAIM` for updating airdrop claim addresses.
+
+For example, this is a request for a transfer of ATOM from Cosmos Hub to Stride, with a post-route handler that atomically liquid stakes the transferred ATOM on Stride, sending stATOM to the specific receiver on Stride:
+
+```json
+{
+  "source_asset_denom": "uatom",
+  "source_asset_chain_id": "cosmoshub-4",
+  "dest_asset_denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+  "dest_asset_chain_id": "stride-1",
+  "amount_in": "1000000",
+  "amount_out": "1000000",
+  "address_list": [
+    "cosmos1x8ad0zyw52mvndh7hlnafrg0gt284ga7cl43fw",
+    "stride1x8ad0zyw52mvndh7hlnafrg0gt284ga7m54daz"
+  ],
+  "operations": [
+    {
+      "transfer": {
+        "port": "transfer",
+        "channel": "channel-391",
+        "chain_id": "cosmoshub-4",
+        "pfm_enabled": true,
+        "dest_denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+        "supports_memo": true
+      }
+    }
+  ],
+  "post_route_handler": {
+    "autopilot_msg": {
+      "receiver": "stride1x8ad0zyw52mvndh7hlnafrg0gt284ga7m54daz",
+      "action": "LIQUID_STAKE"
+    }
+  }
+}
+```
+
+
+<Check>
+  **Want to help us get better? Have questions or feedback?**
+
+You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+</Check>

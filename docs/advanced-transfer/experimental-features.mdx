@@ -1,0 +1,29 @@
+---
+title: "Experimental Features"
+description: "This page provides a living record of the features that can be turned on with the experimental_features flag"
+---
+
+### Background
+
+The `experimental_features` parameter on `/route` and `/msgs_direct` gives us a consistent mechanism for rolling out new features to the folks who want to adopt them ASAP in an "opt-in" fashion, without threatening to destabilize power users who might want the new hottness. 
+
+_(Of course, we avoid shipping changes that are technically breaking no matter what. But we've found that even additive changes can break some integrators)._
+
+We will probably auto-activate most features that we soft launch in `experimental_features` within a few weeks or months of the initial launch -- especially when the feature makes a strict improvement to end user UX (e.g. adding a new DEX or bridge). 
+
+The `experimental_features` parameter accepts an array of strings, where each string identifies a feature. The rest of this doc describes each experimental feature currently in prod, when the feature will become opt-out (rather than opt-in), and gives the feature's identifier. 
+
+### Hyperlane ("HYPERLANE")
+
+**Description:** Support for routing over all Hyperlane Warp Routes in the official Hyperlane registry
+
+**Opt-out switch**: Hyperlane routing will auto-activate on April 7 2024
+
+**Identifier:** "HYPERLANE"
+
+
+ <Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>

@@ -1,0 +1,84 @@
+---
+title: "SVM Transactions Intro"
+description: "This document explains how to use Skip Go API and Core TypeScript Package to construct SVM transactions."
+---
+
+## Intro
+
+* When a user needs to transfer or swap from an SVM chain (e.g. Solana), the Skip Go API will return an `SvmTx` type for the developer to pass to the user for signing
+* This doc is intended for CosmosSDK and EVM developers who aren't already familiar with the concepts of transaction construction in the SVM and need to use `SvmTx` to help their users move from/to Solana and other SVM chains.
+* **Due to the difficult nature of including Solana transactions on chain during times of high network congestion, we HIGHLY recommend using the `/submit` endpoint to avoid dealing with complex retry logic and/or multiple RPC providers for submission reliability. Skip Go API's `/submit` endpoint implements best practices for Solana transactions submission for you!**
+
+## Interact with Solana Wallets
+
+We recommend using [@solana/wallet-adapter](https://github.com/anza-xyz/wallet-adapter#readme) to interact with Solana wallets and build transactions. It provides a standardized `Adapter` object that wraps all major Solana wallets (e.g. Phantom, Backpack, etc...), as well as visual React components for wallet selection. See [here](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md) for all the supported wallets.
+
+## Set up the `SkipRouter` to use a Solana wallet
+
+All you need to do is initialize the `getSVMSigner` method in `SkipRouter.options` to extract the `@solana/wallet-adapter-base` from the user's connected wallet of choice:
+
+
+
+```TypeScript TypeScript
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PhantomWalletName } from "@solana/wallet-adapter-phantom"
+import { SkipRouter } from '@skip-go/core';
+
+const { wallets } = useWallet();
+
+const skipClient = new SkipRouter({
+  getSVMSigner: async (chainID) => {
+		const { svm } = trackWallet.get();
+		const solanaWallet = wallets.find((w) => w.adapter.name === PhantomWalletName);
+    return solanaWallet
+  }
+});
+```
+
+ After this point, you can use `route`, `executeRoute`, and the other methods of `SkipRouter` as you normally would. 
+
+The rest of these docs cover the underlying details of the data structures, in case you need them. 
+
+## Understand `SvmTx` Data Structure
+
+The `SvmTx` has 2 fields that the developer needs to understand: 
+
+* `chain_id`: The ID of the chain that this transaction should be submitted to
+* `tx`: This is the base64 encoded bytes of the transaction you should have the end user sign.
+
+### Info on `SvmTx.tx`
+
+This is a fully constructed transaction. You don't need to change it or add anything to it to prepare it for signing. You just need to sign it and have the user submit it on chain within about 1 minute (or the nonce will expire). 
+
+For more detail, the transaction already includes:
+
+* User's nonce (In Solana, this is actually a recent blockhash by default)
+* Instructions (Solana's equivalent to messages)
+* Base transaction fees (Set to the default of 500 lamports per signature)
+* Priority fees (More info on how we set these below)
+
+For more information on transactions, check out the Solana's official [docs](https://solana.com/docs/core/transactions)
+
+#### Signing `tx`
+
+[Skip Go Core](https://www.npmjs.com/package/@skip-go/core) takes care of all of the complexity of signing the transaction that gets returned in `SvmTx.tx`. 
+
+You just need to have set the `getSVMSigner` method in the `SkipRouterOptions` object in the `SkipRouter` constructor then use `executeRoute` or `executeTxs`. 
+
+#### How Priority Fees are Set
+
+Solana "priority fees" affect how likely it is a transaction gets included in a block. Unlike for many other major blockchain networks, Solana's priority fees are evaluated "locally". In other words, the size of the fee is compared to other transactions that access the same pieces of state (e.g. the same DEX pool, the same token contract etc...): 
+
+* If the fee is low relative to other transactions that access the same state, the transaction is unlikely to get included.
+* If its high relative to these other transactions accessing similar state, its likely to be included
+
+As a result, transactions that touch "congested" or "popular" state will be the most expensive. 
+
+At this time, we are setting priority fees to match the 90% percentile of priority fees for the "wif" pool state on Jupiter, which we believe is highly congested state. This is a very conservative setting, but it even with these "high amounts", fees are still fractions of a cent. 
+
+
+ <Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>

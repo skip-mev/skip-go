@@ -346,6 +346,7 @@ export type RouteResponseJSON = {
 
   warning?: RouteWarning;
   estimated_fees: EstimatedFeeJSON[];
+  estimated_route_duration_seconds: number;
 };
 
 export type RouteResponse = {
@@ -372,6 +373,7 @@ export type RouteResponse = {
 
   warning?: RouteWarning;
   estimatedFees: EstimatedFee[];
+  estimatedRouteDurationSeconds: number;
 };
 
 export type MsgsRequestJSON = {
