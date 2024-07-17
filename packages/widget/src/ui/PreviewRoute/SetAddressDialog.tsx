@@ -18,7 +18,7 @@ import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
-import { StyledBrandDiv } from '../StyledComponents/Theme';
+import { StyledBorderDiv, StyledBrandDiv } from '../StyledComponents/Theme';
 
 export const SetAddressDialog = ({
   open,
@@ -210,8 +210,9 @@ export const SetAddressDialog = ({
               {!signRequired && (
                 <div className="group relative mb-2 data-[unsupported=true]:opacity-30">
                   {isEditing ? (
-                    <div className="flex items-center space-x-2 py-2">
-                      <input
+                    <div className="flex items-center space-x-2 py-2 px-1">
+                      <StyledBorderDiv
+                        as="input"
                         type="text"
                         className={cn(
                           `w-full rounded-md border px-2 py-1`,
