@@ -15,8 +15,6 @@ import { TrackWalletCtx } from '../../store/track-wallet';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
 import { cn } from '../../utils/ui';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledPrimaryButton } from '../StyledComponents/Buttons';
@@ -117,7 +115,7 @@ export const SetAddressDialog = ({
           <div className="relative flex justify-between">
             <StyledPrimaryButton
               className={cn(
-                'flex h-8 w-8 items-center justify-between rounded-full transition-colors'
+                'flex h-8 w-8 items-center justify-center rounded-full transition-colors'
               )}
               onClick={() => onOpen(false)}
             >
@@ -155,19 +153,9 @@ export const SetAddressDialog = ({
                         'data-[unsupported=true]:before:absolute data-[unsupported=true]:before:inset-0 data-[unsupported=true]:before:cursor-not-allowed'
                       )}
                     >
-                      <button
+                      <StyledPrimaryButton
                         className={cn(
-                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2',
-                          `group-hover:opacity-90`
-                          // currentChainAddress &&
-                          //   currentChainAddress.source !== 'input' &&
-                          //   currentChainAddress.source?.walletName ===
-                          //     wallet.walletName &&
-                          //   css`
-                          //     border: 1px solid
-                          //       ${useSwapWidgetUIStore.getState().colors
-                          //         .primary} !important;
-                          //   `
+                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                         )}
                         onClick={async () => {
                           const resAddress = await wallet.getAddress?.({
@@ -209,7 +197,7 @@ export const SetAddressDialog = ({
                             ? 'Metamask (Leap Snap)'
                             : wallet.walletPrettyName}
                         </p>
-                      </button>
+                      </StyledPrimaryButton>
 
                       {chainType === 'svm' && wallet.isAvailable !== true && (
                         <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-lg bg-[#c2c2c2]/20 px-2.5 py-1 text-xs font-semibold text-[#909090] transition-colors focus:outline-none group-hover:bg-[#c2c2c2]/30">
@@ -254,7 +242,7 @@ export const SetAddressDialog = ({
                       </StyledCancelButton>
                     </div>
                   ) : (
-                    <button
+                    <StyledPrimaryButton
                       onClick={() => setIsEditing(true)}
                       className={cn(
                         'flex w-full items-center gap-2 rounded-lg p-2 py-3 transition-colors focus:-outline-offset-2'
@@ -264,7 +252,7 @@ export const SetAddressDialog = ({
                       <p className="flex-1 text-left font-semibold">
                         Set Manually
                       </p>
-                    </button>
+                    </StyledPrimaryButton>
                   )}
                 </div>
               )}
