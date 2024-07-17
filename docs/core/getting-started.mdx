@@ -1,0 +1,229 @@
+---
+title: "Getting Started"
+description: "Basic documentation for Skip Go Core, a TypeScript Package (@skip-go/core) that simplifies the process of interacting with the Skip Go API"
+---
+
+## Background
+
+This document covers the [Typescript Package](https://www.npmjs.com/package/@skip-go/core) Skip provides to wrap the functionality of the Skip Go API and make it even easier for developers to build applications with it. 
+
+## Set up the Library
+
+Install the library:
+
+
+```Shell Shell
+npm install @skip-go/core
+```
+
+## Initialize Client
+
+All integrations start by initializing a SkipRouter client (`@skip-go/core.SkipRouter`). 
+
+This helper objects wraps interactions with the API and provides useful helper methods for a variety of common actions that depend on inputs or outputs of the API (e.g. querying for assets and chains, constructing a route, constructing + signing a transaction from a message returned by the API)
+
+
+
+```TypeScript TypeScript
+import { SkipRouter, SKIP_API_URL } from "@skip-go/core";
+
+const client = new SkipRouter();
+```
+
+The client constructor takes several _optional_ inputs provided together by the `SkipRouterOptions` object 
+
+* `apiURL?: string;`: A URL for interacting with the Skip Go API (Defaults to the production URL)
+* `getEVMSigner?: (chainID: string) => Promise<WalletClient>;`: Method that `SkipRouter` calls internally whenever it needs a client for constructing and signing an EVM transaction. (`WalletClient` is defined in `viem` and other popular EVM client libraries)
+* `getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;`: Method that `SkipRouter` calls internally whenever it needs a client for constructing and signing a Cosmos transaction. (`OfflineSigner` is defined in `@cosmjs/proto-signing`)
+* `getSVMSigner?: () => Promise<Adapter>;`: Method that `SkipRouter` calls internally whenever it needs a client for constructing and signing a Solana transaction. (`Adapter` is defined in `@solana/wallet-adapter-base`)
+* `endpointOptions`:  
+   * `endpoints?: Record<string, clientTypes.EndpointOptions>;`: A map of `chainID`s to their respective endpoints.  
+         * `clientTypes.EndpointOptions` has `rpc` and `rest` fields  
+         * If you implement this, you do not need to implement the two functions below  
+   * `getRpcEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the RPC endpoint for a given `chainID`  
+   * `getRestEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the REST endpoint for a given `chainID`
+* `aminoTypes?: AminoConverters;`: additional amino types to be used in the router.
+* `registryTypes?: Iterable<[string, GeneratedType]>;`: additional registry types to be used in the router
+
+## Query Basic Info
+
+Now that your client is initialized, you can use it to query basic information about chains & assets to populate your user interface. 
+
+For example: 
+
+#### Get list of chains
+
+
+
+```TypeScript TypeScript
+// get a Chain[] of all supported cosmos chains
+const chains = await client.chains();
+// include EVM, SVM and testnets chains
+const chains = await client.chains({
+	includeEVM: true,
+	includeSVM: true,
+	includeTestnets: true
+})
+```
+
+#### Get a map of assets by chain id
+
+Return type will be `Record<string, Asset[]>`
+
+
+
+```TypeScript TypeScript
+// get all chains assets
+const assets = await client.assets({
+  includeEvmAssets: true,
+  includeCW20Assets: true,
+  includeSvmAssets: true,
+});
+
+// get assets filtered by chain id
+const assets = await client.assets({
+  chainID: 'cosmoshub-4'
+  includeEvmAssets: true,
+  includeCW20Assets: true,
+  includeSvmAssets: true,
+})
+```
+
+For more functions documentation please check
+
+## Get a Recommended Route
+
+After querying basic information about chains and assets, you can utilize the `recommendAssets` method to find the best routes for moving assets between chains. This feature is particularly useful for obtaining recommendations on which unique asset should be received on the destination chain for an optimal user experience. These recommendations are based on factors like liquidity pools, token denominations, and the unique characteristics of each IBC transfer route.
+
+Usage example:
+
+
+```TypeScript TypeScript
+const request = [
+  {
+    source_asset_denom: "uusdc",
+    source_asset_chain_id: "axelar-dojo-1",
+    dest_chain_id: "cosmoshub-4"
+  },
+  {
+    source_asset_denom: "uusdc",
+    source_asset_chain_id: "axelar-dojo-1",
+    dest_chain_id: "osmosis-1"
+  }
+];
+
+const recommendations = await client.recommendAssets(request);
+
+```
+
+Response example:
+
+
+
+```TypeScript TypeScript
+{
+  "recommendations": [],
+  "recommendation_entries": [
+    {
+      "recommendations": [
+        {
+          "asset": {
+            "denom": "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
+            "chain_id": "cosmoshub-4",
+            "origin_denom": "uusdc",
+            "origin_chain_id": "axelar-dojo-1",
+            "trace": "transfer/channel-293",
+            "is_cw20": false,
+            "is_evm": false,
+            "symbol": "USDC",
+            "name": "USDC",
+            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
+            "decimals": 6,
+            "description": "Circle's stablecoin on Axelar",
+            "coingecko_id": "axlusdc",
+            "recommended_symbol": "USDC.axl"
+          },
+          "reason": "MOST_LIQUID"
+        }
+      ]
+    },
+    {
+      "recommendations": [
+        {
+          "asset": {
+            "denom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+            "chain_id": "osmosis-1",
+            "origin_denom": "uusdc",
+            "origin_chain_id": "axelar-dojo-1",
+            "trace": "transfer/channel-208",
+            "is_cw20": false,
+            "is_evm": false,
+            "symbol": "USDC",
+            "name": "USDC",
+            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
+            "decimals": 6,
+            "description": "Circle's stablecoin on Axelar",
+            "coingecko_id": "axlusdc",
+            "recommended_symbol": "USDC.axl"
+          },
+          "reason": "MOST_LIQUID"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Get a Route
+
+Once your user has selected source and destination tokens and chains, you can use the client to generate a route and quote: 
+
+```
+const route = await client.route({
+  amountIn: AMOUNT_IN,
+  sourceAssetDenom: SOURCE_DENOM,
+  sourceAssetChainID: SOURCE_CHAIN_ID,
+  destAssetDenom: DEST_DENOM,
+  destAssetChainID: DEST_CHAIN_ID,
+  cumulativeAffiliateFeeBPS: "0",
+});
+```
+
+## Execute a Route
+
+Once you have a route, you can execute it in a single function call (passing in the route, the user addresses for at least the chains the route includes, and an optional callback function. 
+
+For example:
+
+
+
+```TypeScript TypeScript
+await client.executeRoute({
+  route,
+  userAddresses: USER_ADDRESSES,
+  onTransactionSuccess: async (chainID, txHash, success) => {
+    console.log(txHash);
+  },
+});
+```
+
+For routes that consist of multiple transactions, this will monitor each transaction until it completes, then generate the transaction for the next step and prompt the user to sign it. 
+
+_Alternatively, you can use the route to generate, sign, and submit the messages separately -- or use your own solutions for any/all of these steps if you like. See `SkipRouter.messages`, `SkipRouter.signMultiChainMessageDirect`, and `SkipRouter.submitTransaction` for details on these lower-level functions_
+
+## Cross-chain Transaction Tracking
+
+Once the user has signed a transaction to execute a cross-chain action, you can track it using the `SkipRouter` functions: 
+
+* `SkipRouter.trackTransaction`: Requests tracking for a that's already been submitted to the network through an RPC, using the transaction hash
+* `SkipRouter.submitTransaction`: Publishes the signed transaction to the network & begins tracking the cross-chain actions this transaction produces
+
+After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `SkipRouter.transactionStatus`. 
+
+We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`
+
+ <Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>
