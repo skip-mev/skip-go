@@ -25,23 +25,7 @@ The `@skip-go/widget` package is an npm package providing a React component for 
 npm install @skip-go/widget
 ```
 
-## 2. Wrap Your App with `SwapWidgetProvider`
-
-First, wrap your application or the relevant page with the `SwapWidgetProvider` component:
-
-```typescript type
-import { SwapWidgetProvider } from '@skip-go/widget';
-
-function App() {
-  return (
-    <SwapWidgetProvider>
-      <YourApp />
-    </SwapWidgetProvider>
-  );
-}
-```
-
-## 3. Use the `SwapWidget` Component
+## 2. Use the `SwapWidget` Component
 
 Next, use the `SwapWidget` component to render the swap interface:
 
@@ -66,6 +50,6 @@ const SwapPage = () => {
 };
 ```
 
-## 4. Configure away!
+## 3. Configure away!
 
 You're all done with the basic set up! Now that you have the widget integrated, it's time to configure the user experience. You can find all of the configurable component props in [Configuration Options](/widget-configuration-options).
