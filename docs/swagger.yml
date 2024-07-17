@@ -1,15 +1,15 @@
 openapi: 3.0.0
 info:
   title: Skip Go API
-  description: Simple APIs to build IBC-enabled products that do more with fewer transactions. For devs with all levels of IBC experience.
+  description: Simple APIs to build seamless cross-chain products that do more with fewer transactions. For devs with all levels of cross-chain experience.
   version: 0.1.0
 servers:
   - url: https://api.skip.build
-    description: Skip Go API (Production)
+    description: Production
   - url: https://api.dev.skip.build
-    description: Skip Go API (Development)
+    description: Development
   - url: http://localhost:8080
-    description: Skip Go API (Local)
+    description: Local
 tags:
   - name: 'Info'
     description: 'APIs that return general information useful for a variety of operations'
