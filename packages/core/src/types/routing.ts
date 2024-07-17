@@ -47,6 +47,7 @@ export type Chain = {
   chainType: string;
   ibcCapabilities: IbcCapabilities;
   isTestnet: boolean;
+  prettyName: string;
 };
 
 export type Venue = {
@@ -69,6 +70,7 @@ export type ChainJSON = {
   chain_type: string;
   ibc_capabilities: IbcCapabilitiesJSON;
   is_testnet: boolean;
+  pretty_name: string;
 };
 
 export type ModuleVersionInfo = {

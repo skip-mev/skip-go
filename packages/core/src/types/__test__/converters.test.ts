@@ -411,6 +411,7 @@ test("chainFromJSON", () => {
     pfm_enabled: true,
     is_testnet: false,
     cosmos_sdk_version: "v0.47.3",
+    pretty_name: "Osmosis",
     modules: {
       "github.com/cosmos/ibc-go": {
         path: "github.com/cosmos/ibc-go/v4",
@@ -461,6 +462,7 @@ test("chainFromJSON", () => {
     cosmosSDKVersion: "v0.47.3",
     chainType: "cosmos",
     isTestnet: false,
+    prettyName: "Osmosis",
     modules: {
       "github.com/cosmos/ibc-go": {
         path: "github.com/cosmos/ibc-go/v4",
@@ -513,6 +515,7 @@ test("chainToJSON", () => {
     isTestnet: false,
     cosmosSDKVersion: "v0.47.3",
     chainType: "cosmos",
+    prettyName: "Osmosis",
     modules: {
       "github.com/cosmos/ibc-go": {
         path: "github.com/cosmos/ibc-go/v4",
@@ -563,6 +566,7 @@ test("chainToJSON", () => {
     is_testnet: false,
     cosmos_sdk_version: "v0.47.3",
     chain_type: "cosmos",
+    pretty_name: "Osmosis",
     modules: {
       "github.com/cosmos/ibc-go": {
         path: "github.com/cosmos/ibc-go/v4",

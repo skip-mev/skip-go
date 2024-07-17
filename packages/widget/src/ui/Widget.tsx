@@ -294,7 +294,10 @@ export const SwapWidgetUI = ({
                 }
               }}
             >
-              <div key={accountStateKey} className="animate-slide-up-and-fade">
+              <div
+                key={accountStateKey}
+                className="animate-slide-up-and-fade text-white"
+              >
                 {!srcAccount?.isWalletConnected && 'Connect Wallet'}
               </div>
             </button>
