@@ -9,9 +9,6 @@ const VuePage: NextPage = () => {
     const { createApp } = require('vue/dist/vue.esm-bundler.js');
     const app = createApp({
       setup() {
-        const colors = JSON.stringify({
-          primary: '#FF4FFF',
-        });
         const defaultRoute = JSON.stringify({
           srcChainID: 'osmosis-1',
           srcAssetDenom:
@@ -19,13 +16,12 @@ const VuePage: NextPage = () => {
         });
 
         return {
-          colors,
           defaultRoute,
         };
       },
       template: `
         <div style="width:450px;height:820px;">
-          <skip-widget :colors="colors" :default-route="defaultRoute"></skip-widget>
+          <skip-widget :default-route="defaultRoute"></skip-widget>
         </div>
       `,
     });

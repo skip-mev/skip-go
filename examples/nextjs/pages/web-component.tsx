@@ -13,10 +13,6 @@ const WebComponent: NextPage = () => {
       }}
     >
       <skip-widget
-        class-name="test"
-        colors={JSON.stringify({
-          primary: '#FF4FFF',
-        })}
         default-route={JSON.stringify({
           srcChainID: 'osmosis-1',
           srcAssetDenom:
