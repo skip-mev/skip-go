@@ -14,6 +14,12 @@
       "dark": "#151617"
     }
   },
+  "metadata": {
+    "og:image": "https://github.com/skip-mev/slinky/blob/main/docs/img/connect-banner.png?raw=True",
+    "og:description": "Go Anywhere. Do Anything.",
+    "og:site_name": "Skip:Go Docs",
+    "twitter:site": "@skipprotocol"
+  },
   "topbarLinks": [
     {
       "name": "Skip:Connect",
