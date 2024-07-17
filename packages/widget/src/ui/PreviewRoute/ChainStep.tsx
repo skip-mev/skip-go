@@ -261,25 +261,18 @@ export const ChainStep = ({
                   label={`Bridged with ${bridge?.name}`}
                   type="default"
                 >
-                  <img
-                    src={
-                      bridge?.logoURI ||
-                      'https://api.dicebear.com/6.x/shapes/svg'
-                    }
-                    style={{
-                      filter:
-                        lightOrDark(nameToRgba(theme.backgroundColor)) ===
-                        'dark'
-                          ? 'invert(1)'
-                          : undefined,
-                    }}
-                    height={16}
-                    width={16}
-                    className={cn(
-                      'absolute right-4 top-[22px] bg-opacity-50 object-contain py-1'
-                    )}
-                    alt={chainID}
-                  />
+                  <StyledBridgeLogoContainer>
+                    <img
+                      className="object-contain"
+                      src={
+                        bridge?.logoURI ||
+                        'https://api.dicebear.com/6.x/shapes/svg'
+                      }
+                      height={16}
+                      width={16}
+                      alt={chainID}
+                    />
+                  </StyledBridgeLogoContainer>
                 </SimpleTooltip>
               )}
               {!isExpanded && (
@@ -583,4 +576,16 @@ const StyledAdaptiveLink = styled(AdaptiveLink)`
 
 const StyledPencilSquareIcon = styled(PencilSquareIcon)<{ isFocused: boolean }>`
   ${(props) => props.isFocused && props.theme.brandColor};
+`;
+
+const StyledBridgeLogoContainer = styled.div`
+  border-radius: 50%;
+  background-color: rgb(245, 245, 245);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 1rem;
 `;
