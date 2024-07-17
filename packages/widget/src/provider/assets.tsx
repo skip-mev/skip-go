@@ -30,8 +30,13 @@ export const AssetsContext = createContext<AssetsContext>({
   isReady: false,
 });
 
-export type SwapWidgetData = AssetsContext & {
+export type SwapWidgetData = {
+  assets: Record<string, Asset[]>;
   chains?: Chain[] | undefined;
+  assetsByChainID: (chainID?: string, filterDenoms?: string[]) => Asset[];
+  getAsset(denom: string, chainID: string): Asset | undefined;
+  getFeeAsset(chainID: string): Promise<Asset | undefined>;
+  getNativeAssets(): Asset[];
 };
 
 export type AssetsProviderProps = {
@@ -130,14 +135,13 @@ export const AssetsProvider = ({
   // }, [assets, chains, isReady]);
 
   useEffect(() => {
-    if (getWidgetData) {
+    if (getWidgetData && isReady) {
       getWidgetData({
         assets,
         assetsByChainID,
         getAsset,
         getFeeAsset,
         getNativeAssets,
-        isReady,
         chains: chains,
       });
     }
