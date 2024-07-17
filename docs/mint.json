@@ -61,7 +61,8 @@
         "widget/getting-started",
         "widget/configuration-options",
         "widget/experimental-features",
-        "widget/common-questions"
+        "widget/common-questions",
+        "widget/recommendations"
       ]
     },
     {
