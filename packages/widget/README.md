@@ -56,9 +56,6 @@ The `SwapWidget` component accepts the following props:
 
 ````tsx
 interface SwapWidgetProps {
-  colors?: {
-    primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
-  };
   defaultRoute?: {
     // Default route for the widget.
     amountIn?: number;
@@ -129,6 +126,13 @@ interface SwapWidgetProps {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
   apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  theme?: {
+    backgroundColor: string; // background color
+    textColor: string; // text color
+    borderColor: string; // border color
+    brandColor: string; // color used for confirmation buttons
+    highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
+  };
 }
 ````
 

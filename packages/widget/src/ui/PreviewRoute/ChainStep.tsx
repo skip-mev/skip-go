@@ -268,9 +268,8 @@ export const ChainStep = ({
                     }
                     style={{
                       filter:
-                        lightOrDark(
-                          nameToRgba(theme.primary.backgroundColor)
-                        ) === 'dark'
+                        lightOrDark(nameToRgba(theme.backgroundColor)) ===
+                        'dark'
                           ? 'invert(1)'
                           : undefined,
                     }}
