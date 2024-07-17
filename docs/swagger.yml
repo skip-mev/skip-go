@@ -5,6 +5,11 @@ info:
   version: 0.1.0
 servers:
   - url: https://api.skip.build
+    description: Skip Go API (Production)
+  - url: https://api.dev.skip.build
+    description: Skip Go API (Development)
+  - url: http://localhost:8080
+    description: Skip Go API (Local)
 tags:
   - name: 'Info'
     description: 'APIs that return general information useful for a variety of operations'
