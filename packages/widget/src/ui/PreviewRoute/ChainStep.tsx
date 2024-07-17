@@ -29,7 +29,6 @@ import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
 import { useAssets } from '../../provider/assets';
 import { StyledThemedDiv } from '../StyledComponents/Theme';
-import { lightOrDark, nameToRgba } from '../../utils/color';
 import { useTheme, styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
 
