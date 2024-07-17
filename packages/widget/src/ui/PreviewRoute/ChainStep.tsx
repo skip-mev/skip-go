@@ -27,11 +27,10 @@ import {
 } from '../../utils/ledger-warning';
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
 import { useAssets } from '../../provider/assets';
 import { StyledPrimaryDiv } from '../StyledComponents/Theme';
 import { lightOrDark, nameToRgba } from '../../utils/color';
-import { useTheme } from 'styled-components';
+import { useTheme, styled } from 'styled-components';
 import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 export const ChainStep = ({
@@ -407,19 +406,16 @@ export const ChainStep = ({
               </SimpleTooltip>
             )}
             {stepState?.explorerLink && (
-              <AdaptiveLink
+              <StyledAdaptiveLink
                 className={cn(
                   'flex flex-row items-center text-sm font-semibold underline'
                 )}
-                style={{
-                  color: useSwapWidgetUIStore.getState().colors.primary,
-                }}
                 href={stepState.explorerLink.link}
                 data-testid={`explorer-link`}
               >
                 {stepState.explorerLink.shorthand}
                 <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-              </AdaptiveLink>
+              </StyledAdaptiveLink>
             )}
           </div>
           <div
@@ -489,16 +485,12 @@ export const ChainStep = ({
               !mutationStatus.isPending &&
               !isSuccess && (
                 <button onClick={() => setIsAddressDialogOpen(index)}>
-                  <PencilSquareIcon
+                  <StyledPencilSquareIcon
                     className={cn(
                       'h-4 w-4',
                       isNotFocused && 'text-neutral-400'
                     )}
-                    style={{
-                      color: !isNotFocused
-                        ? useSwapWidgetUIStore.getState().colors.primary
-                        : undefined,
-                    }}
+                    isFocused={!isNotFocused}
                   />
                 </button>
               )}
@@ -585,3 +577,11 @@ const AssetSwap = (props: {
     </div>
   );
 };
+
+const StyledAdaptiveLink = styled(AdaptiveLink)`
+  color: ${(props) => props.theme.primary.brandColor};
+`;
+
+const StyledPencilSquareIcon = styled(PencilSquareIcon)<{ isFocused: boolean }>`
+  ${(props) => props.isFocused && props.theme.primary.brandColor};
+`;
