@@ -1,0 +1,63 @@
+---
+title: "Router SDK Migration Guide"
+---
+
+<Warning>The Skip Router SDK `@skip-router/core` is deprecated. Please migrate to Skip Go Core `@skip-go/core`, our actively maintained and developed [TypeScript Package](https://www.npmjs.com/package/@skip-go/core).</Warning>
+
+### 4.0.0 Breaking changes
+
+* Removed `clientID` param in `SkipRouter`
+* Added `apiKey` param in `SkipRouter`
+* Added `requiredChainAddresses` in `SkipRouter.route` response
+* Added `smartSwapOptions` in `SkipRouter.route`request  
+  
+```JavaScript JavaScript
+smartSwapOptions:{  
+	splitRoutes: boolean  
+}  
+```
+  
+### 3.0.0 Breaking Changes
+
+* Changed Param Type: `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types:
+* 
+```TypeScript TypeScript
+export interface UserAddress {  
+  chainID: string;  
+  address: string;  
+}  
+```
+  
+### 2.0.0 Breaking changes
+
+* Removed Method: `SkipRouter.executeMultiChainMessage`
+* Renamed Method: `SkipRouter.getGasAmountForMessage` \-> `SkipRouter.getCosmosGasAmountForMessage`
+* Renamed Method: `SkipRouter.getFeeForMessage`\-> \`SkipRouter.getCosmosFeeForMe
+* Renamed Type: `MultiChainMsg` \-> `CosmosMsg`
+* Renamed Method & Params changed: `SkipRouter.executeMultiChainMsgs`\-> `SkipRouter.executeTxs`  
+  
+```Diff Diff
+const client = new SkipRouter({  
+  apiURL: SKIP_API_URL,  
+// ... rest of your configs  
+});  
+- client.executeMultiChainMsgs({  
++ client.executeTxs({  
+	...options  
+-	msgs: types.Msg[]  
++	txs: types.Tx[]  
+})  
+```
+* Param Changed in `SkipRouter.executeCosmosMessage`: `message:MultiChainMsg` \-> `messages: CosmosMsg[]`  
+  
+```Diff Diff
+const client = new SkipRouter({  
+  apiURL: SKIP_API_URL,  
+// ... rest of your configs  
+});  
+client.executeCosmosMessage({  
+	...options  
+-	message: MultiChainMsg  
++	messages: CosmosMsg[]  
+})  
+```

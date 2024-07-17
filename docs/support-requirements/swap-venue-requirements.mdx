@@ -1,0 +1,51 @@
+---
+title: "Swap Venue Requirements"
+description: "This document covers what Skip Go API requires of DEXes to support them as potential swapping venues within the API's cross-chain DEX aggregation functionality. At the end, the document provides instructions for helping the Skip team add your DEX to the API as a swapping venue"
+---
+
+## Background
+
+* DEXes often want Skip Go API to add support for their DEX as a swapping venue because the API powers cross-chain swaps + transfers in all the major cosmos wallets (Leap, Keplr, IBC Wallet, Metamask Snap) and cross-chain DEX aggregation to many popular defi aggregator and dapp frontends (e.g. Stargaze). As a result, being added to the Skip Go API instantly offers distribution across the interchain for your DEX
+* The Skip Go API’s swapping system is currently built in CosmWasm and can support swapping assets on Cosmos SDK modules (ex: Osmosis Poolmanager) and other CosmWasm contracts (ex: Astroport DEX) that can be queried and executed by Skip Go API’s CosmWasm contracts.
+* **You can use [this form ](https://skip-protocol.notion.site/Request-to-add-Swapping-Venue-to-Skip-API-104299e5ec644d95acbef320926da041?pvs=4)to submit information about your swapping venue to Skip and track your progress through the required steps**
+
+### Chain Requirements
+
+1. The chain must already be supported by the Skip Go API  
+   1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/info/get-v2infochains)  
+   2. If your chain is not already supported, follow the instructions in [Chain Support Requirements](/chain-support-requirements) to request support  
+   3. **_This is a pre-requisite_**
+2. CosmWasm Support
+3. IBC support
+4. ibc-hooks Support (Check out [our blog post about ibc-hooks](https://ideas.skip.build/t/how-to-give-ibc-superpowers/81))
+
+### Module / Contract Requirements
+
+### General
+
+1. The module / contract must be able to be called by the Skip Go API’s CosmWasm contracts. For Cosmos SDK modules, this will require the module queries described below to be whitelisted and queryable by CosmWasm contracts ([see Osmosis for an example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/wasmbinding/stargate%5Fwhitelist.go#L169)).
+
+#### Execution Messages
+
+1. Supports a “Swap Exact In” method where a user specifies an input asset and path to swap, and the module / contract swaps the given user asset to the user’s desired output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L22), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L74)).  
+   1. Inputs into the swap:  
+         1. An asset (Native cosmos coin or CW20 token, incl. denom and amount)  
+         2. A path (can be a single pool, or multiple pools if designed like a router)  
+   2. Outputs of the swap:  
+         1. An asset
+2. NICE TO HAVE (Optional): Supports a “Swap Exact Out” method where a user specifies a desired output asset, a path to swap through to achieve that asset, and a maximum amount of an input asset to swap, and the module / contracts swaps in the exact input asset needed to acquire the specified output asset and sends it to the user ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/msg%5Fserver.go#L48)).  
+
+###  Query Messages  
+3. Exposes a “Swap Exact In Simulation” method where a user can put the inputs that would be used in the “Swap Exact In” execution method, and gets a response from the query that specifies the asset they would receive if executing the method ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L113), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/router/src/contract.rs#L240)).
+4. Exposes a “Swap Exact Out Simulation” method where a user can input the asset desired and a given pool / path, and the query returns the asset required to swap in to receive the output asset desired ([see Osmosis for a module example](https://github.com/osmosis-labs/osmosis/blob/d7eb3b7018cde0557216237c84f063b3915af650/x/poolmanager/client/grpc/grpc%5Fquery.go#L93), or [Astroport for a contract example](https://github.com/astroport-fi/astroport-core/blob/52af83eab04c620ac40019f7cc9cee433d0c601e/contracts/pair/src/contract.rs#L892)).
+
+## Getting Skip to add support for your DEX
+
+If your DEX and the chain its deployed on meets all of the functionality requirements described above, please fill out [this support request form](https://skip-protocol.notion.site/Template-for-Request-to-add-Swapping-Venue-to-Skip-API-104299e5ec644d95acbef320926da041?pvs=4) and submit it to [support@skip.build](support@skip.build) or TG:@bpiv400\. The form will help us scope how much work is required on our side to add support, guide our implementation, and inform our decision for how quickly to prioritize it in our roadmap (e.g. based on swapping volume + liquidity, and clarity of the technical information)
+
+
+ <Check>
+**Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily at [support@skip.build](support@skip.build) or in [our developer support channel on TG](https://t.me/+3y5biSyZRPIwZWIx)
+ </Check>

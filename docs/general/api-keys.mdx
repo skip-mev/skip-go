@@ -1,0 +1,185 @@
+---
+title: "Requesting & Using API Keys"
+---
+
+## Summary
+
+Authentication and authorization for the Skip Go API are managed via API keys.
+
+This document covers:
+
+1. Why you should use an API key
+2. How to get your key set up
+3. How to use the key in your requests
+
+
+ <Note>
+ **API Keys have replaced `client_id`**
+ 
+ Historically, we used the `client_id` passed as a request parameter to identify and authenticate integrators. This system has been fully deprecated. If you're currently using `client_id`, you should transition to using an API key. 
+ 
+ (We're making this transition because `client_id` didn't abide by best practices for security, and we could only attach limited functionality to it, since it was passed in the request body instead of a header.)
+</Note>
+## Benefits of using an API key
+
+Technically, you can access most of the basic functionality of the Skip Go API without an API key. But there are numerous benefits to authenticating yourself with a key:
+
+* **No rate limit**: Integrators that do not pass a valid API key in their requests will be subject to a restrictive global rate limit, shared with all other unauthenticated users.
+* **Improved fee revenue share pricing**: Unauthenticated integrators will be subject to a 25% revenue share on their fee revenue by default. Authenticated integrators who use API keys will be subject to a cheaper 20% revenue share by default.
+* **Access to privileged features:**  Integrators who authenticate with an API key will receive access to premium features that we cannot offer to the general public (e.g. Gas estimation APIs, universal balance query APIs, etc...)
+* **Metrics on your volume and revenue:**  Authenticated integrators will receive access to monthly statistics regarding their total swap and transfer volume and the amount of fee revenue they've earned. They will also receive transaction data for taxes annually.
+
+## How to get an API Key
+
+### 1\. Request an API Key
+
+Open a support ticket on our [Discord](https://skip.build/discord) and tell our customer support that you'd like an API key. \*\*
+
+Please provide the following information in your request to help us get to know your project: 
+
+1. Your name (or pseudo-anon name) and contact info (ideally Telegram, but possibly Email, Signal, etc...)
+2. Your project name
+3. A brief, 1-2 sentence description of your project
+
+The customer support team member at Skip will establish an official channel of communication between Skip and your project (e.g. an email thread or a telegram group etc...). 
+
+### 2\. Store the API Key Securely
+
+**You should store the API key immediately when you create it. We do not store your raw API key in our server for security reasons, so we will not be able to access it for you if you lose it.** 
+
+It is important to keep your API key private: Anyone with your API key can make requests to the Skip Go API as you, getting access to your rate limit, privileged features, and affecting your revenue and volume statistics. 
+
+## How to use an API key
+
+### Via REST API
+
+You should pass your API key in every call to the Skip Go API using the `authorization` HTTP header.
+
+For example: 
+
+```
+curl -X 'POST' \
+  'https://api.skip.build/v2/fungible/route' \
+  -H 'accept: application/json' \
+  -H 'authorization: <YOUR API KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "amount_in": "1000000",
+  "source_asset_denom": "uusdc",
+  "source_asset_chain_id": "axelar-dojo-1",
+  "dest_asset_denom": "uatom",
+  "dest_asset_chain_id": "cosmoshub-4",
+  "cumulative_affiliate_fee_bps": "0",
+  "allow_multi_tx": true,
+  "client_id": "skip-api-docs"
+}'
+
+```
+
+### Via `@skip-go/core`
+
+For users of the `@skip-go/core` TypeScript package, the `apiKey` can be included in the `SkipRouterOptions` object when constructing a `SkipRouter`. After you include it in construction, the `SkipRouter` will handle passing it in the `authorization` header of all requests. 
+
+For example: 
+
+``` typescript
+import { SkipRouter, SKIP_API_URL } from "@skip-go/core";
+
+const client = new SkipRouter({
+	apiKey: <YOUR API KEY>,
+});
+```
+
+### Setup a Proxy to Receive Skip Go API Requests and Add the API Key
+
+To keep your API key secure and private, we recommend that you proxy the API requests from the frontend to your own backend--where you can add your API key in the header before forwarding the request to Skip Go API.
+
+The snippets below show you how to use Next.js/Vercel for this kind of proxying. It only takes a moment to set up. 
+
+pages/api/skip/handler.tsnext.config.js@skip-router.env
+
+``` typescript
+// This handler runs server-side in Vercel and receive requests from the frontend 
+// sent to APP_URL/api/skip
+
+import type { NextApiRequest } from "next";
+import { PageConfig } from "next";
+
+import { API_URL } from "@/constants/api";
+
+export const config: PageConfig = {
+  api: {
+    externalResolver: true,
+    bodyParser: false,
+  },
+  runtime: "edge",
+};
+
+export default async function handler(req: NextApiRequest) {
+  try {
+    const splitter = "/api/skip/";
+
+    const [...args] = req.url!.split(splitter).pop()!.split("/");
+    const uri = [API_URL, ...args].join("/");
+    const headers = new Headers();
+    if (process.env.SKIP_API_KEY) {
+      headers.set("authorization", process.env.SKIP_API_KEY);
+    }
+    return fetch(uri, {
+      body: req.body,
+      method: req.method,
+      headers,
+    });
+  } catch (error) {
+    const data = JSON.stringify({ error });
+    return new Response(data, { status: 500 });
+  }
+}
+
+```
+
+``` typescript
+// This config maps the requests to APP_URL/api/skip to the handler we just defined
+	rewrites: async () => [
+    {
+      source: "/api/skip/(.*)",
+      destination: "/api/skip/handler",
+    },
+  ],
+// other config...
+```
+
+``` typescript
+// This configures your router to make requests to your proxy service instead of
+// the standard Skip Go API backend directly
+import { SkipRouter } from "@skip-go/core";
+
+const appUrl =
+  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" || process.env.NEXT_PUBLIC_VERCEL_ENV === "staging"
+    ? typeof window !== "undefined"
+      ? `https://${window.location.hostname}`
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+    : "https://<YOUR APP URL>";
+
+const client = new SkipRouter({
+// you don't need to pass apiKey since you already have it in your proxy handler
+  apiURL: `${appUrl}/api/skip`,
+});
+ ```
+
+```
+// These are environment variables you set in Vercel 
+// to store your API key securely in the backend
+SKIP_API_KEY=<YOUR API KEY>
+```
+
+## How to Request Volume & Revenue Statistics
+
+Just return to your official communication channel with Skip (probably a Telegram channel) and request the data. We will be able to share monthly reports. Eventually, we will create a customer portal and dashboards, so you'll have access to all the data you need continuously in a self-service manner. 
+
+
+ <Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>
