@@ -214,7 +214,7 @@ export const SetAddressDialog = ({
                       <input
                         type="text"
                         className={cn(
-                          `w-full rounded-md border px-2 py-1 text-black`,
+                          `w-full rounded-md border px-2 py-1`,
                           !isValid && 'border-red-500'
                         )}
                         placeholder={placeholder}
