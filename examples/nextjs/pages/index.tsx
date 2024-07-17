@@ -28,17 +28,11 @@ const defaultProps = {
 };
 
 const darkTheme = {
-  primary: {
-    backgroundColor: 'black',
-    textColor: 'white',
-    borderColor: 'gray',
-    brandColor: '#FF4FFF',
-  },
-  secondary: {
-    backgroundColor: 'grey',
-    textColor: 'white',
-    borderColor: 'darkgray',
-  },
+  backgroundColor: 'black',
+  textColor: 'white',
+  borderColor: 'gray',
+  brandColor: '#FF4FFF',
+  highlightColor: 'grey',
 };
 
 const defaultHash = hashString(JSON.stringify(defaultProps));

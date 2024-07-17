@@ -12,7 +12,7 @@ import { cn } from '../../utils/ui';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const HistoryDialog = () => {
   const [isOpen, { close }] = useDisclosureKey('historyDialog');
@@ -31,12 +31,12 @@ export const HistoryDialog = () => {
       <DialogContent>
         <div className="flex h-full flex-col space-y-2 px-4 py-6">
           <div className="flex items-center gap-4 pb-2">
-            <StyledPrimaryButton
+            <StyledThemedButton
               className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
               onClick={close}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </StyledPrimaryButton>
+            </StyledThemedButton>
             <h3 className="text-xl font-bold">Transaction History</h3>
             <div className="flex-grow" />
             <HistoryClearButton />
@@ -52,7 +52,7 @@ export const HistoryDialog = () => {
                   </span>
                 )}
                 {entries?.map(([id, data]) => (
-                  <StyledPrimaryButton
+                  <StyledThemedButton
                     as={HistoryList.Item}
                     key={id}
                     id={id}

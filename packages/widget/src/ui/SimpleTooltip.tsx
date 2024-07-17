@@ -54,11 +54,9 @@ export const SimpleTooltip = (props: Props) => {
 const StyledTooltipContent = styled(Tooltip.Content)<{
   type: 'default' | 'warning' | 'brand';
 }>`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
+  background-color: ${(props) => props.theme.backgroundColor};
 
-  fill: ${(props) => props.theme.primary.backgroundColor};
+  fill: ${(props) => props.theme.backgroundColor};
   color: ${(props) =>
-    props.type === 'warning'
-      ? props.theme.primary.brandColor
-      : props.theme.primary.textColor};
+    props.type === 'warning' ? props.theme.brandColor : props.theme.textColor};
 `;

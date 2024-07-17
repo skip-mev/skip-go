@@ -28,10 +28,10 @@ import {
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
 import { useAssets } from '../../provider/assets';
-import { StyledPrimaryDiv } from '../StyledComponents/Theme';
+import { StyledThemedDiv } from '../StyledComponents/Theme';
 import { lightOrDark, nameToRgba } from '../../utils/color';
 import { useTheme, styled } from 'styled-components';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const ChainStep = ({
   chainID,
@@ -231,7 +231,7 @@ export const ChainStep = ({
               isError && 'bg-red-600'
             )}
           >
-            <StyledPrimaryDiv className="flex h-full w-full items-center justify-center rounded-full p-1">
+            <StyledThemedDiv className="flex h-full w-full items-center justify-center rounded-full p-1">
               <img
                 src={
                   chain?.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
@@ -241,7 +241,7 @@ export const ChainStep = ({
                 className={cn('rounded-full object-cover')}
                 alt={chainID}
               />
-            </StyledPrimaryDiv>
+            </StyledThemedDiv>
             {signRequired && (
               <SimpleTooltip label={`Require signing`} type="default">
                 <div
@@ -301,12 +301,12 @@ export const ChainStep = ({
                 </div>
               )}
               {!isExpanded && (
-                <StyledPrimaryButton
+                <StyledThemedButton
                   className="absolute top-[18px] rounded-full border-2 border-neutral-200 p-1 text-neutral-400 transition-transform hover:scale-110"
                   onClick={() => setIsExpanded(true)}
                 >
                   <ExpandArrow className="h-4 w-4" />
-                </StyledPrimaryButton>
+                </StyledThemedButton>
               )}
 
               <div
@@ -579,9 +579,9 @@ const AssetSwap = (props: {
 };
 
 const StyledAdaptiveLink = styled(AdaptiveLink)`
-  color: ${(props) => props.theme.primary.brandColor};
+  color: ${(props) => props.theme.brandColor};
 `;
 
 const StyledPencilSquareIcon = styled(PencilSquareIcon)<{ isFocused: boolean }>`
-  ${(props) => props.isFocused && props.theme.primary.brandColor};
+  ${(props) => props.isFocused && props.theme.brandColor};
 `;

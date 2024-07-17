@@ -73,8 +73,8 @@ export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
         toastOptions={{
           duration: 1000 * 10,
           style: {
-            background: theme.primary.backgroundColor,
-            color: theme.primary.textColor,
+            background: theme.backgroundColor,
+            color: theme.textColor,
           },
         }}
         {...toasterProps}

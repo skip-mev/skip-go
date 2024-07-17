@@ -24,10 +24,7 @@ import TransactionDialog from './TransactionDialog';
 import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { CraftedBySkip } from './CraftedBySkip';
-import {
-  StyledPrimaryBrandDiv,
-  StyledPrimaryDiv,
-} from './StyledComponents/Theme';
+import { StyledBrandDiv, StyledThemedDiv } from './StyledComponents/Theme';
 import { styled } from 'styled-components';
 
 type SwapWidgetUIProps = Pick<
@@ -122,7 +119,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
     <StyledAppWrapper>
       <UsdDiff.Provider>
         <Tooltip.Provider delayDuration={0} disableHoverableContent>
-          <StyledPrimaryDiv
+          <StyledThemedDiv
             className={cn('space-y-4 font-diatype relative p-4', className)}
             style={style}
           >
@@ -237,7 +234,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
             {route && !routeLoading && numberOfTransactions > 1 && (
               <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium uppercase">
                 <div className={cn('relative rounded-full p-[4px]')}>
-                  <StyledPrimaryBrandDiv
+                  <StyledBrandDiv
                     className={cn('absolute h-6 w-6 animate-ping rounded-full')}
                   />
                   <FingerPrintIcon className="relative h-6 w-6 text-white" />
@@ -263,7 +260,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
               </div>
             )}
             {!isWalletConnected && (
-              <StyledPrimaryBrandDiv
+              <StyledBrandDiv
                 as="button"
                 className={cn(
                   'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
@@ -288,7 +285,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
                 >
                   {!srcAccount?.isWalletConnected && 'Connect Wallet'}
                 </div>
-              </StyledPrimaryBrandDiv>
+              </StyledBrandDiv>
             )}
             {sourceChain && isWalletConnected && (
               <div className="space-y-4">
@@ -306,7 +303,7 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
               </div>
             )}
             <CraftedBySkip />
-          </StyledPrimaryDiv>
+          </StyledThemedDiv>
           <HistoryDialog />
           <SettingsDialog />
           <JsonDialog />
@@ -321,6 +318,6 @@ const StyledAppWrapper = styled.div`
   div,
   p,
   span {
-    color: ${(props) => props.theme.primary.textColor};
+    color: ${(props) => props.theme.textColor};
   }
 `;

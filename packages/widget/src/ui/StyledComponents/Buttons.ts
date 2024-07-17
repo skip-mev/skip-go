@@ -1,17 +1,17 @@
 import { styled } from 'styled-components';
 
-export const StyledPrimaryButton = styled.button`
-  background-color: ${(props) => props.theme.primary.backgroundColor};
-  color: ${(props) => props.theme.primary.textColor};
-  fill: ${(props) => props.theme.primary.textColor};
-  border-color: ${(props) => props.theme.primary.borderColor};
+export const StyledThemedButton = styled.button`
+  background-color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.textColor};
+  fill: ${(props) => props.theme.textColor};
+  border-color: ${(props) => props.theme.borderColor};
   &:hover {
-    background-color: ${(props) => props.theme.secondary.backgroundColor};
+    background-color: ${(props) => props.theme.highlightColor};
   }
 `;
 
-export const StyledSecondaryButton = styled.button`
-  background-color: ${(props) => props.theme.secondary.backgroundColor};
-  border-color: ${(props) => props.theme.secondary.borderColor};
-  color: ${(props) => props.theme.secondary.textColor};
+export const StyledHighlightButton = styled.button`
+  background-color: ${(props) => props.theme.highlightColor};
+  border-color: ${(props) => props.theme.borderColor};
+  color: ${(props) => props.theme.textColor};
 `;

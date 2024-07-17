@@ -10,9 +10,6 @@ import {
 } from 'zustand/middleware';
 
 interface SwapWidgetStore {
-  colors: {
-    primary?: string;
-  };
   onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
   routeConfig?: RouteConfig;
@@ -45,9 +42,6 @@ interface SwapWidgetStore {
   };
 }
 export const swapWidgetDefaultValues: SwapWidgetStore = {
-  colors: {
-    primary: '#FF486E',
-  },
   onlyTestnet: false,
   defaultRoute: undefined,
   routeConfig: {
@@ -78,12 +72,6 @@ export const useSwapWidgetUIStore = create(
 );
 
 export interface ConfigureSwapWidgetArgs {
-  colors?: {
-    /**
-     * @default '#FF486E'
-     */
-    primary?: string;
-  };
   settings?: {
     /**
      * gas amount for validation
@@ -128,9 +116,6 @@ export interface ConfigureSwapWidgetArgs {
 
 export const configureSwapWidget = (args: ConfigureSwapWidgetArgs) => {
   useSwapWidgetUIStore.setState((prev) => ({
-    colors: {
-      primary: args.colors?.primary || prev.colors.primary,
-    },
     onlyTestnet: args.onlyTestnet || prev.onlyTestnet,
     defaultRoute: args.defaultRoute || prev.defaultRoute,
     routeConfig: {

@@ -37,11 +37,11 @@ import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { CraftedBySkip } from '../CraftedBySkip';
 import { styled } from 'styled-components';
 import {
-  StyledBorderColor,
-  StyledPrimaryBrandDiv,
-  StyledPrimaryDiv,
+  StyledBorderDiv,
+  StyledBrandDiv,
+  StyledThemedDiv,
 } from '../StyledComponents/Theme';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export interface Wallet {
   walletName: string;
@@ -302,7 +302,7 @@ export const PreviewRoute = ({
   const SubmitButton = () => {
     if (allAddressFilled) {
       return (
-        <StyledPrimaryBrandDiv
+        <StyledBrandDiv
           as="button"
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white',
@@ -319,12 +319,12 @@ export const PreviewRoute = ({
           }
         >
           Submit
-        </StyledPrimaryBrandDiv>
+        </StyledBrandDiv>
       );
     }
 
     return (
-      <StyledPrimaryBrandDiv
+      <StyledBrandDiv
         as="button"
         className={cn(
           'w-full rounded-md py-4 font-semibold text-white',
@@ -393,22 +393,22 @@ export const PreviewRoute = ({
           : isSignRequired
           ? 'Connect Wallet'
           : 'Set Recovery Address'}
-      </StyledPrimaryBrandDiv>
+      </StyledBrandDiv>
     );
   };
 
   return (
-    <StyledPrimaryDiv className="absolute inset-0 animate-fade-zoom-in">
+    <StyledThemedDiv className="absolute inset-0 animate-fade-zoom-in">
       <div className="flex h-full flex-col space-y-6 overflow-y-auto p-6 scrollbar-hide">
         <div>
           <div className="flex items-center justify-between pr-1">
             <div className="flex items-center gap-4">
-              <StyledPrimaryButton
+              <StyledThemedButton
                 className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
                 onClick={control.close}
               >
                 <ArrowLeftIcon className="h-6 w-6" />
-              </StyledPrimaryButton>
+              </StyledThemedButton>
               <p className="text-xl font-bold">Transaction Preview</p>
             </div>
             {isExpanded && (
@@ -422,7 +422,7 @@ export const PreviewRoute = ({
           </div>
         </div>
 
-        <StyledBorderColor className="flex flex-col rounded-xl border p-4">
+        <StyledBorderDiv className="flex flex-col rounded-xl border p-4">
           {chainIDsWithAction.map(
             ({ chainID, transferAction, swapAction }, index) => (
               <ChainStep
@@ -452,7 +452,7 @@ export const PreviewRoute = ({
               />
             )
           )}
-        </StyledBorderColor>
+        </StyledBorderDiv>
         <div className="flex-1 space-y-4">
           {statusData?.isSuccess && submitMutation.isSuccess ? (
             <div className="flex flex-row items-center space-x-2 font-semibold">
@@ -566,7 +566,7 @@ export const PreviewRoute = ({
           )}
 
           {submitMutation.isPending || submitMutation.isSuccess ? (
-            <StyledPrimaryBrandDiv
+            <StyledBrandDiv
               as="button"
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white',
@@ -602,19 +602,19 @@ export const PreviewRoute = ({
               ) : (
                 <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
               )}
-            </StyledPrimaryBrandDiv>
+            </StyledBrandDiv>
           ) : (
             <SubmitButton />
           )}
           <CraftedBySkip />
         </div>
       </div>
-    </StyledPrimaryDiv>
+    </StyledThemedDiv>
   );
 };
 
 const HREF_COMMON_FINALITY_TIMES = `https://docs.axelar.dev/learn/txduration#common-finality-time-for-interchain-transactions`;
 
 const StyledBrandTextButton = styled.button`
-  color: ${(props) => props.theme.primary.brandColor};
+  color: ${(props) => props.theme.brandColor};
 `;

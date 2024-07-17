@@ -21,9 +21,9 @@ import {
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import {
-  StyledBorderColor,
-  StyledPrimaryBrandDiv,
-  StyledPrimaryDiv,
+  StyledBorderDiv,
+  StyledBrandDiv,
+  StyledThemedDiv,
 } from './StyledComponents/Theme';
 
 interface Props {
@@ -102,7 +102,7 @@ function AssetInput({
   }, [selectedAssetBalance]);
 
   return (
-    <StyledBorderColor
+    <StyledBorderDiv
       className={cn(
         'rounded-lg border p-4 transition-[border,shadow]',
         'focus-within:border-neutral-300 focus-within:shadow-sm',
@@ -138,7 +138,7 @@ function AssetInput({
             />
           </button>
         )}
-        <StyledPrimaryDiv
+        <StyledThemedDiv
           as="input"
           data-testid="amount"
           className={cn(
@@ -248,7 +248,7 @@ function AssetInput({
                   </div>
                 </SimpleTooltip>
               )}
-              <StyledPrimaryBrandDiv
+              <StyledBrandDiv
                 as="button"
                 className={cn(
                   'rounded-md px-2 py-1 text-xs font-semibold uppercase text-white',
@@ -259,7 +259,7 @@ function AssetInput({
                 onClick={onAmountMax}
               >
                 Max
-              </StyledPrimaryBrandDiv>
+              </StyledBrandDiv>
             </div>
           )}
         </div>
@@ -269,7 +269,7 @@ function AssetInput({
           {isError}
         </div>
       )}
-    </StyledBorderColor>
+    </StyledBorderDiv>
   );
 }
 

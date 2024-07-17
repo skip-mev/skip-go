@@ -7,7 +7,7 @@ import { useDisclosureKey } from '../../store/disclosures';
 
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const SettingsDialog = () => {
   const [isOpen, { close }] = useDisclosureKey('settingsDialog');
@@ -16,12 +16,12 @@ export const SettingsDialog = () => {
       <DialogContent>
         <div className="h-full overflow-y-auto px-4 py-6 scrollbar-hide">
           <div className="flex items-center gap-4 pb-2">
-            <StyledPrimaryButton
+            <StyledThemedButton
               className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
               onClick={close}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </StyledPrimaryButton>
+            </StyledThemedButton>
             <h3 className="text-xl font-bold">Swap Settings</h3>
             <div className="flex-grow" />
             <SaveIndicator />

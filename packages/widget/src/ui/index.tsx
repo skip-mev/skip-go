@@ -19,7 +19,6 @@ export type SwapWidgetProps = Pick<
   };
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
-  colors,
   settings,
   onlyTestnet,
   defaultRoute,
@@ -32,25 +31,18 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
 }) => {
   useEffect(() => {
     configureSwapWidget({
-      colors,
       onlyTestnet,
       settings,
       defaultRoute,
       routeConfig,
       filter,
     });
-  }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
+  }, [onlyTestnet, settings, defaultRoute, routeConfig]);
 
   const mergedThemes = useMemo(() => {
     return {
-      primary: {
-        ...defaultTheme.primary,
-        ...theme?.primary,
-      },
-      secondary: {
-        ...defaultTheme.secondary,
-        ...theme?.secondary,
-      },
+      ...defaultTheme,
+      ...theme,
     };
   }, [defaultTheme, theme]);
 

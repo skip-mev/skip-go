@@ -27,7 +27,7 @@ import { cn } from '../../utils/ui';
 import { ChainSymbol } from '../ChainSymbol';
 import { AssetValue } from '../AssetValue';
 import { disclosure } from '../../store/disclosures';
-import { StyledSecondaryButton } from '../StyledComponents/Buttons';
+import { StyledHighlightButton } from '../StyledComponents/Buttons';
 
 type RootProps = Omit<Accordion.AccordionSingleProps, 'type'>;
 
@@ -245,7 +245,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
           </DescriptionList.Row>
         </DescriptionList.Root>
         <div className="flex space-x-1">
-          <StyledSecondaryButton
+          <StyledHighlightButton
             className={cn(
               'rounded-md border px-2 py-1 text-xs transition-colors',
               'flex flex-grow items-center justify-center space-x-1'
@@ -256,7 +256,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
           >
             <TrashIcon className="h-3 w-3" />
             <span>Delete</span>
-          </StyledSecondaryButton>
+          </StyledHighlightButton>
         </div>
       </Accordion.Content>
     </Accordion.Item>

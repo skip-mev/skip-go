@@ -17,8 +17,8 @@ import { DialogContent } from '../Dialog/DialogContent';
 import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
-import { StyledPrimaryBrandDiv } from '../StyledComponents/Theme';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
+import { StyledBrandDiv } from '../StyledComponents/Theme';
 
 export const SetAddressDialog = ({
   open,
@@ -113,14 +113,14 @@ export const SetAddressDialog = ({
       <DialogContent>
         <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
           <div className="relative flex justify-between">
-            <StyledPrimaryButton
+            <StyledThemedButton
               className={cn(
                 'flex h-8 w-8 items-center justify-center rounded-full transition-colors'
               )}
               onClick={() => onOpen(false)}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </StyledPrimaryButton>
+            </StyledThemedButton>
             <p className="text-center text-xl font-bold capitalize">
               Set {isDestination ? 'Destination' : 'Recovery'} Address
             </p>
@@ -153,7 +153,7 @@ export const SetAddressDialog = ({
                         'data-[unsupported=true]:before:absolute data-[unsupported=true]:before:inset-0 data-[unsupported=true]:before:cursor-not-allowed'
                       )}
                     >
-                      <StyledPrimaryButton
+                      <StyledThemedButton
                         className={cn(
                           'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                         )}
@@ -197,7 +197,7 @@ export const SetAddressDialog = ({
                             ? 'Metamask (Leap Snap)'
                             : wallet.walletPrettyName}
                         </p>
-                      </StyledPrimaryButton>
+                      </StyledThemedButton>
 
                       {chainType === 'svm' && wallet.isAvailable !== true && (
                         <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-lg bg-[#c2c2c2]/20 px-2.5 py-1 text-xs font-semibold text-[#909090] transition-colors focus:outline-none group-hover:bg-[#c2c2c2]/30">
@@ -242,7 +242,7 @@ export const SetAddressDialog = ({
                       </StyledCancelButton>
                     </div>
                   ) : (
-                    <StyledPrimaryButton
+                    <StyledThemedButton
                       onClick={() => setIsEditing(true)}
                       className={cn(
                         'flex w-full items-center gap-2 rounded-lg p-2 py-3 transition-colors focus:-outline-offset-2'
@@ -252,7 +252,7 @@ export const SetAddressDialog = ({
                       <p className="flex-1 text-left font-semibold">
                         Set Manually
                       </p>
-                    </StyledPrimaryButton>
+                    </StyledThemedButton>
                   )}
                 </div>
               )}
@@ -271,11 +271,11 @@ export const SetAddressDialog = ({
   );
 };
 
-const StyledApproveButton = styled(StyledPrimaryBrandDiv)`
-  border-color: ${(props) => props.theme.primary.brandColor};
+const StyledApproveButton = styled(StyledBrandDiv)`
+  border-color: ${(props) => props.theme.brandColor};
 `;
 
 const StyledCancelButton = styled.button`
-  color: ${(props) => props.theme.primary.brandColor};
-  border-color: ${(props) => props.theme.primary.brandColor};
+  color: ${(props) => props.theme.brandColor};
+  border-color: ${(props) => props.theme.brandColor};
 `;

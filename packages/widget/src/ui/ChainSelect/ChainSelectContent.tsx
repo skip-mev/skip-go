@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
-import { StyledSecondarySearchInput } from '../StyledComponents/Input';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
+import { StyledSearchInput } from '../StyledComponents/Input';
 
 interface Props {
   chains: Chain[];
@@ -31,15 +31,15 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
   return (
     <div className="isolate flex h-full flex-col p-6 pb-2 font-diatype">
       <div className="mb-4 flex items-center gap-4">
-        <StyledPrimaryButton
+        <StyledThemedButton
           className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
           onClick={onClose}
         >
           <ArrowLeftIcon className="h-6 w-6" />
-        </StyledPrimaryButton>
+        </StyledThemedButton>
         <p className="text-xl font-bold">Select Network</p>
       </div>
-      <StyledSecondarySearchInput
+      <StyledSearchInput
         className="z-20 w-full rounded-md border px-4 py-2"
         type="text"
         placeholder="Search for a chain"
@@ -80,7 +80,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
         >
           <ScrollArea.Viewport className="h-full w-full py-4">
             {filteredChains.map((chain) => (
-              <StyledPrimaryButton
+              <StyledThemedButton
                 className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
                 key={chain.chainID}
                 onClick={() => onChange(chain)}
@@ -100,7 +100,7 @@ function ChainSelectContent({ chains, onChange, onClose }: Props) {
                   <p className="text-lg font-semibold">{chain.prettyName}</p>
                   <p className="text-sm opacity-60">{chain.chainID}</p>
                 </div>
-              </StyledPrimaryButton>
+              </StyledThemedButton>
             ))}
           </ScrollArea.Viewport>
           <ScrollArea.Scrollbar

@@ -6,7 +6,7 @@ import { PreviewRoute } from './PreviewRoute';
 import { useDisclosureKey } from '../store/disclosures';
 import { PriceImpactWarning } from './PriceImpactWarning';
 import { cn } from '../utils/ui';
-import { StyledPrimaryBrandDiv } from './StyledComponents/Theme';
+import { StyledBrandDiv } from './StyledComponents/Theme';
 
 export type ActionType = 'NONE' | 'TRANSFER' | 'SWAP';
 
@@ -67,7 +67,7 @@ function TransactionDialog({
   return (
     <Fragment>
       <div>
-        <StyledPrimaryBrandDiv
+        <StyledBrandDiv
           as="button"
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white outline-none transition-[opacity,transform]',
@@ -78,7 +78,7 @@ function TransactionDialog({
           onClick={() => confirmControl.open()}
         >
           Preview Route
-        </StyledPrimaryBrandDiv>
+        </StyledBrandDiv>
         {isOpen && route && (
           <PreviewRoute
             route={route}

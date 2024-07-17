@@ -13,5 +13,5 @@ export const CraftedBySkip = () => {
 };
 
 const StyledSkipLogo = styled(SkipLogo)`
-  fill: ${(props) => props.theme.primary.textColor};
+  fill: ${(props) => props.theme.textColor};
 `;

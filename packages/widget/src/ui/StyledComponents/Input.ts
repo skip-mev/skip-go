@@ -1,9 +1,9 @@
 import { styled } from 'styled-components';
 
-export const StyledSecondarySearchInput = styled.input`
-  background-color: ${(props) => props.theme.secondary.backgroundColor};
-  border-color: ${(props) => props.theme.secondary.borderColor};
+export const StyledSearchInput = styled.input`
+  background-color: ${(props) => props.theme.highlightColor};
+  border-color: ${(props) => props.theme.borderColor};
   &::placeholder {
-    color: ${(props) => props.theme.secondary.textColor};
+    color: ${(props) => props.theme.textColor};
   }
 `;

@@ -11,7 +11,7 @@ import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { useChainByID } from '../../hooks/use-chains';
 import { DialogContent } from '../Dialog/DialogContent';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
-import { StyledPrimaryButton } from '../StyledComponents/Buttons';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 interface Props {
   chainType: string;
@@ -31,7 +31,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
   return (
     <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
       <div className="relative">
-        <StyledPrimaryButton
+        <StyledThemedButton
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
             'absolute inset-y-0 left-0'
@@ -39,7 +39,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
           onClick={onClose}
         >
           <ArrowLeftIcon className="h-6 w-6" />
-        </StyledPrimaryButton>
+        </StyledThemedButton>
         <p className="text-center text-xl font-bold">Connect Wallet</p>
       </div>
       {totalWallets < 1 && (
@@ -84,7 +84,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                   'data-[unsupported=true]:before:absolute data-[unsupported=true]:before:inset-0 data-[unsupported=true]:before:cursor-not-allowed'
                 )}
               >
-                <StyledPrimaryButton
+                <StyledThemedButton
                   className={cn(
                     'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                   )}
@@ -110,7 +110,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                       ? 'Metamask (Leap Snap)'
                       : wallet.walletPrettyName}
                   </p>
-                </StyledPrimaryButton>
+                </StyledThemedButton>
                 {wallet.isWalletConnected && (
                   <button
                     aria-label={`Disconnect ${wallet.walletPrettyName}`}

@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { forwardRef } from 'react';
 import { Chain } from '../../hooks/use-chains';
 import { cn } from '../../utils/ui';
-import { StyledSecondaryButton } from '../StyledComponents/Buttons';
+import { StyledHighlightButton } from '../StyledComponents/Buttons';
 
 interface Props {
   chain?: Chain;
@@ -11,7 +11,7 @@ interface Props {
 const ChainSelectTrigger = forwardRef<HTMLButtonElement, Props>(
   function ChainSelectTrigger({ chain, ...props }, ref) {
     return (
-      <StyledSecondaryButton
+      <StyledHighlightButton
         className={cn(
           'flex w-full items-center px-4 py-2 sm:py-4',
           'whitespace-nowrap rounded-md text-left font-semibold transition-colors',
@@ -27,7 +27,7 @@ const ChainSelectTrigger = forwardRef<HTMLButtonElement, Props>(
         <div>
           <ChevronDownIcon className="mt-0.5 h-4 w-4" />
         </div>
-      </StyledSecondaryButton>
+      </StyledHighlightButton>
     );
   }
   //
