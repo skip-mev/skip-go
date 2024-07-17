@@ -13,6 +13,7 @@ const WebComponent: NextPage = () => {
       }}
     >
       <skip-widget
+        class-name="test"
         colors={JSON.stringify({
           primary: '#FF4FFF',
         })}

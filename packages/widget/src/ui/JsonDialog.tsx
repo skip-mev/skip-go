@@ -50,7 +50,7 @@ export const JsonDialog = () => {
         <div className="h-full overflow-y-auto px-4 py-6 scrollbar-hide">
           <div className="flex items-center gap-4 pb-2">
             <StyledPrimaryButton
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
               onClick={close}
             >
               <ArrowLeftIcon className="h-6 w-6" />

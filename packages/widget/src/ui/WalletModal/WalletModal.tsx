@@ -84,10 +84,9 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                   'data-[unsupported=true]:before:absolute data-[unsupported=true]:before:inset-0 data-[unsupported=true]:before:cursor-not-allowed'
                 )}
               >
-                <button
+                <StyledPrimaryButton
                   className={cn(
-                    'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2',
-                    'group-hover:bg-[#000000]/5'
+                    'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                   )}
                   onClick={() => onWalletConnect(wallet)}
                   disabled={chainType === 'svm' && wallet.isAvailable !== true}
@@ -111,7 +110,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
                       ? 'Metamask (Leap Snap)'
                       : wallet.walletPrettyName}
                   </p>
-                </button>
+                </StyledPrimaryButton>
                 {wallet.isWalletConnected && (
                   <button
                     aria-label={`Disconnect ${wallet.walletPrettyName}`}

@@ -27,8 +27,7 @@ import { cn } from '../../utils/ui';
 import { ChainSymbol } from '../ChainSymbol';
 import { AssetValue } from '../AssetValue';
 import { disclosure } from '../../store/disclosures';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
+import { StyledSecondaryButton } from '../StyledComponents/Buttons';
 
 type RootProps = Omit<Accordion.AccordionSingleProps, 'type'>;
 
@@ -117,7 +116,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
       <Accordion.Header
         className={cn(
           'relative flex flex-col items-stretch space-y-2',
-          'rounded-md p-2 transition-colors hover:bg-neutral-100'
+          'rounded-md p-2 transition-colors'
         )}
         ref={headingRef}
       >
@@ -246,9 +245,9 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
           </DescriptionList.Row>
         </DescriptionList.Root>
         <div className="flex space-x-1">
-          <button
+          <StyledSecondaryButton
             className={cn(
-              'rounded-md border bg-neutral-100 px-2 py-1 text-xs transition-colors hover:bg-neutral-200',
+              'rounded-md border px-2 py-1 text-xs transition-colors',
               'flex flex-grow items-center justify-center space-x-1'
             )}
             onClick={() => {
@@ -257,7 +256,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
           >
             <TrashIcon className="h-3 w-3" />
             <span>Delete</span>
-          </button>
+          </StyledSecondaryButton>
         </div>
       </Accordion.Content>
     </Accordion.Item>

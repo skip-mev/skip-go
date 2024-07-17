@@ -42,10 +42,7 @@ export const HistoryDialog = () => {
             <HistoryClearButton />
           </div>
           <StyledScrollAreaRoot
-            className={cn(
-              'relative isolate -mx-4 overflow-hidden',
-              'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2'
-            )}
+            className={cn('relative isolate -mx-4 overflow-hidden')}
           >
             <ScrollArea.Viewport className="h-full w-full px-4">
               <HistoryList.Root>
@@ -55,7 +52,12 @@ export const HistoryDialog = () => {
                   </span>
                 )}
                 {entries?.map(([id, data]) => (
-                  <HistoryList.Item key={id} id={id} data={data} />
+                  <StyledPrimaryButton
+                    as={HistoryList.Item}
+                    key={id}
+                    id={id}
+                    data={data}
+                  />
                 ))}
                 {!isReady && (
                   <div className="p-4 text-center opacity-60">

@@ -33,7 +33,7 @@ export const PriceImpactWarning = ({
       </div>
       <div className="flex items-end gap-2">
         <button
-          className="w-full rounded-lg border border-neutral-400 py-4 font-semibold text-neutral-500 transition-colors hover:bg-neutral-100"
+          className="w-full rounded-lg border border-neutral-400 py-4 font-semibold text-neutral-500 transition-colors"
           onClick={() => control.close()}
         >
           Continue

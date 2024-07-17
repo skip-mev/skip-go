@@ -36,7 +36,10 @@ import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { CraftedBySkip } from '../CraftedBySkip';
 import { styled } from 'styled-components';
-import { StyledPrimaryBrandDiv } from '../StyledComponents/Theme';
+import {
+  StyledPrimaryBrandDiv,
+  StyledPrimaryDiv,
+} from '../StyledComponents/Theme';
 import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 export interface Wallet {
@@ -394,13 +397,13 @@ export const PreviewRoute = ({
   };
 
   return (
-    <div className="absolute inset-0 animate-fade-zoom-in bg-white">
+    <StyledPrimaryDiv className="absolute inset-0 animate-fade-zoom-in">
       <div className="flex h-full flex-col space-y-6 overflow-y-auto p-6 scrollbar-hide">
         <div>
           <div className="flex items-center justify-between pr-1">
             <div className="flex items-center gap-4">
               <StyledPrimaryButton
-                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
                 onClick={control.close}
               >
                 <ArrowLeftIcon className="h-6 w-6" />
@@ -605,7 +608,7 @@ export const PreviewRoute = ({
           <CraftedBySkip />
         </div>
       </div>
-    </div>
+    </StyledPrimaryDiv>
   );
 };
 

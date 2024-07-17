@@ -116,7 +116,7 @@ export const SetAddressDialog = ({
           <div className="relative flex justify-between">
             <StyledPrimaryButton
               className={cn(
-                'flex h-8 w-8 items-center justify-between rounded-full transition-colors hover:bg-neutral-100'
+                'flex h-8 w-8 items-center justify-between rounded-full transition-colors'
               )}
               onClick={() => onOpen(false)}
             >

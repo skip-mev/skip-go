@@ -13,10 +13,7 @@ export const Row = ({ className, ...props }: ComponentProps<'div'>) => {
 
 export const Dt = ({ className, ...props }: ComponentProps<'dt'>) => {
   return (
-    <dt
-      className={cn('col-span-1 flex items-center text-black/60', className)}
-      {...props}
-    />
+    <dt className={cn('col-span-1 flex items-center', className)} {...props} />
   );
 };
 

@@ -28,8 +28,11 @@ import {
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
 import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 import { useAssets } from '../../provider/assets';
+import { StyledPrimaryDiv } from '../StyledComponents/Theme';
+import { lightOrDark, nameToRgba } from '../../utils/color';
+import { useTheme } from 'styled-components';
+import { StyledPrimaryButton } from '../StyledComponents/Buttons';
 
 export const ChainStep = ({
   chainID,
@@ -75,6 +78,7 @@ export const ChainStep = ({
   chainAddresses: ChainAddresses;
   setChainAddresses: (v: SetChainAddressesParam) => void;
 }) => {
+  const theme = useTheme();
   const { data: chain } = useChainByID(chainID);
 
   const totalChains = chainIDsWithAction.length;
@@ -228,7 +232,7 @@ export const ChainStep = ({
               isError && 'bg-red-600'
             )}
           >
-            <div className="flex h-full w-full items-center justify-center rounded-full bg-white p-1">
+            <StyledPrimaryDiv className="flex h-full w-full items-center justify-center rounded-full p-1">
               <img
                 src={
                   chain?.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
@@ -238,7 +242,7 @@ export const ChainStep = ({
                 className={cn('rounded-full object-cover')}
                 alt={chainID}
               />
-            </div>
+            </StyledPrimaryDiv>
             {signRequired && (
               <SimpleTooltip label={`Require signing`} type="default">
                 <div
@@ -263,6 +267,14 @@ export const ChainStep = ({
                       bridge?.logoURI ||
                       'https://api.dicebear.com/6.x/shapes/svg'
                     }
+                    style={{
+                      filter:
+                        lightOrDark(
+                          nameToRgba(theme.primary.backgroundColor)
+                        ) === 'dark'
+                          ? 'invert(1)'
+                          : undefined,
+                    }}
                     height={16}
                     width={16}
                     className={cn(
@@ -290,12 +302,12 @@ export const ChainStep = ({
                 </div>
               )}
               {!isExpanded && (
-                <button
-                  className="absolute top-[18px] rounded-full border-2 border-neutral-200 bg-white p-1 text-neutral-400 transition-transform hover:scale-110"
+                <StyledPrimaryButton
+                  className="absolute top-[18px] rounded-full border-2 border-neutral-200 p-1 text-neutral-400 transition-transform hover:scale-110"
                   onClick={() => setIsExpanded(true)}
                 >
                   <ExpandArrow className="h-4 w-4" />
-                </button>
+                </StyledPrimaryButton>
               )}
 
               <div

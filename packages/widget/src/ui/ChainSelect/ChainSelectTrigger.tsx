@@ -24,7 +24,9 @@ const ChainSelectTrigger = forwardRef<HTMLButtonElement, Props>(
         <span className="flex-1">
           {chain ? chain.prettyName : 'Select Chain'}
         </span>
-        <ChevronDownIcon className="mt-0.5 h-4 w-4" />
+        <div>
+          <ChevronDownIcon className="mt-0.5 h-4 w-4" />
+        </div>
       </StyledSecondaryButton>
     );
   }
