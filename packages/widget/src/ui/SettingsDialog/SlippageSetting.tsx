@@ -99,6 +99,7 @@ export const SlippageSetting = () => {
         <div className="grid grid-flow-col gap-1">
           {OPTION_VALUES.map((value, i) => (
             <StyledPrimaryButton
+              as="input"
               key={i}
               className={cn(
                 'rounded-lg border px-2 py-px text-xs tabular-nums transition'

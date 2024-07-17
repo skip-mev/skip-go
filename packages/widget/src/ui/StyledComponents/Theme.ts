@@ -8,3 +8,7 @@ export const StyledPrimaryDiv = styled.div`
 export const StyledPrimaryBrandDiv = styled.div`
   background-color: ${(props) => props.theme.primary.brandColor};
 `;
+
+export const StyledBorderColor = styled.div`
+  border-color: ${(props) => props.theme.primary.borderColor};
+`;

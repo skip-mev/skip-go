@@ -15,7 +15,7 @@ export const ConnectedWalletButton = forwardRef<HTMLButtonElement, Props>(
       <StyledPrimaryButton
         className={cn(
           'flex items-center gap-2 transition-colors focus:outline-none',
-          'rounded-lg border border-neutral-200 px-2 py-1.5 hover:border-neutral-300',
+          'rounded-lg border px-2 py-1.5 hover:border-neutral-300',
           className
         )}
         {...rest}

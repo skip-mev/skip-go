@@ -37,6 +37,7 @@ import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
 import { CraftedBySkip } from '../CraftedBySkip';
 import { styled } from 'styled-components';
 import {
+  StyledBorderColor,
   StyledPrimaryBrandDiv,
   StyledPrimaryDiv,
 } from '../StyledComponents/Theme';
@@ -421,7 +422,7 @@ export const PreviewRoute = ({
           </div>
         </div>
 
-        <div className="flex flex-col rounded-xl border border-neutral-200 p-4">
+        <StyledBorderColor className="flex flex-col rounded-xl border p-4">
           {chainIDsWithAction.map(
             ({ chainID, transferAction, swapAction }, index) => (
               <ChainStep
@@ -451,7 +452,7 @@ export const PreviewRoute = ({
               />
             )
           )}
-        </div>
+        </StyledBorderColor>
         <div className="flex-1 space-y-4">
           {statusData?.isSuccess && submitMutation.isSuccess ? (
             <div className="flex flex-row items-center space-x-2 font-semibold">

@@ -20,8 +20,8 @@ import {
 } from '../utils/number';
 import { formatPercent, formatUSD } from '../utils/intl';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-import { styled } from 'styled-components';
 import {
+  StyledBorderColor,
   StyledPrimaryBrandDiv,
   StyledPrimaryDiv,
 } from './StyledComponents/Theme';
@@ -102,7 +102,7 @@ function AssetInput({
   }, [selectedAssetBalance]);
 
   return (
-    <AssetInputContainer
+    <StyledBorderColor
       className={cn(
         'rounded-lg border p-4 transition-[border,shadow]',
         'focus-within:border-neutral-300 focus-within:shadow-sm',
@@ -269,12 +269,8 @@ function AssetInput({
           {isError}
         </div>
       )}
-    </AssetInputContainer>
+    </StyledBorderColor>
   );
 }
 
 export default AssetInput;
-
-const AssetInputContainer = styled.div`
-  border-color: ${(props) => props.theme.primary.borderColor};
-`;

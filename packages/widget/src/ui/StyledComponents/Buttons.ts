@@ -4,6 +4,7 @@ export const StyledPrimaryButton = styled.button`
   background-color: ${(props) => props.theme.primary.backgroundColor};
   color: ${(props) => props.theme.primary.textColor};
   fill: ${(props) => props.theme.primary.textColor};
+  border-color: ${(props) => props.theme.primary.borderColor};
   &:hover {
     background-color: ${(props) => props.theme.secondary.backgroundColor};
   }
