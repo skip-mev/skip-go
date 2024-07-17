@@ -1,8 +1,12 @@
 import { NextPage } from 'next';
 import React from 'react';
 import { SwapWidget } from '@skip-go/widget';
+import { SwapWidgetData } from '@skip-go/widget/build/provider/assets';
 
 const Home: NextPage = () => {
+  const getWidgetData = (data: SwapWidgetData) => {
+    console.log(data);
+  };
   return (
     <div
       style={{
@@ -20,6 +24,7 @@ const Home: NextPage = () => {
           colors={{
             primary: '#FF4FFF',
           }}
+          getWidgetData={getWidgetData}
           defaultRoute={{
             srcChainID: 'osmosis-1',
             srcAssetDenom:

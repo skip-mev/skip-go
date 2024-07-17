@@ -4,14 +4,15 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
 } from 'react';
 import { useAssets as useSkipAssets } from '../hooks/use-assets';
-import { useChains } from '../hooks/use-chains';
+import { Chain, useChains } from '../hooks/use-chains';
 import { sortFeeAssets } from '../utils/chain';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 
-interface AssetsContext {
+export interface AssetsContext {
   assets: Record<string, Asset[]>;
   assetsByChainID: (chainID?: string, filterDenoms?: string[]) => Asset[];
   getAsset(denom: string, chainID: string): Asset | undefined;
@@ -29,7 +30,19 @@ export const AssetsContext = createContext<AssetsContext>({
   isReady: false,
 });
 
-export const AssetsProvider = ({ children }: { children: ReactNode }) => {
+export type SwapWidgetData = AssetsContext & {
+  chains?: Chain[] | undefined;
+};
+
+export type AssetsProviderProps = {
+  getWidgetData?: (data: SwapWidgetData) => void;
+  children: ReactNode;
+};
+
+export const AssetsProvider = ({
+  getWidgetData,
+  children,
+}: AssetsProviderProps) => {
   const { data: chains } = useChains();
   const { data: assets = {} } = useSkipAssets({
     onlyTestnets: useSwapWidgetUIStore.getState().onlyTestnet,
@@ -115,6 +128,20 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
   //     });
   //   });
   // }, [assets, chains, isReady]);
+
+  useEffect(() => {
+    if (getWidgetData) {
+      getWidgetData({
+        assets,
+        assetsByChainID,
+        getAsset,
+        getFeeAsset,
+        getNativeAssets,
+        isReady,
+        chains: chains,
+      });
+    }
+  }, [assets, chains]);
 
   return (
     <AssetsContext.Provider

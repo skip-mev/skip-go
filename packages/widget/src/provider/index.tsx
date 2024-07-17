@@ -3,7 +3,7 @@ import { CosmosProvider } from './wallet/cosmos';
 import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
-import { AssetsProvider } from './assets';
+import { AssetsProvider, SwapWidgetData } from './assets';
 import { SkipRouterOptions } from '@skip-go/core';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { Toaster, ToasterProps } from 'react-hot-toast';
@@ -26,10 +26,12 @@ export interface SwapWidgetProviderProps extends SkipAPIProviderProps {
   children: React.ReactNode;
   toasterProps?: ToasterProps;
 }
+
 export interface SkipAPIProviderProps {
   children: React.ReactNode;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
   apiURL?: string;
+  getWidgetData?: (data: SwapWidgetData) => void;
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
@@ -48,10 +50,11 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   children,
   endpointOptions = defaultEndpointOptions,
   apiURL = defaultApiURL,
+  getWidgetData,
 }) => {
   return (
     <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
-      <AssetsProvider>{children}</AssetsProvider>
+      <AssetsProvider getWidgetData={getWidgetData}>{children}</AssetsProvider>
     </SkipProvider>
   );
 };
