@@ -126,7 +126,7 @@ function AssetSelectContent({
                     {asset.recommendedSymbol || asset.symbol}
                   </p>
                   {asset.isCW20 && (
-                    <p className="rounded bg-yellow-600 px-1.5 text-xs font-semibold text-white">
+                    <p className="rounded bg-yellow-600 px-1.5 text-xs font-semibold">
                       CW20
                     </p>
                   )}

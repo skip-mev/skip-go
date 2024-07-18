@@ -308,7 +308,7 @@ export const PreviewRoute = ({
         <StyledBrandDiv
           as="button"
           className={cn(
-            'w-full rounded-md py-4 font-semibold text-white',
+            'w-full rounded-md py-4 font-semibold',
             'outline-none transition-transform',
             'enabled:hover:rotate-1 enabled:hover:scale-102',
             'disabled:cursor-not-allowed disabled:opacity-75'
@@ -330,7 +330,7 @@ export const PreviewRoute = ({
       <StyledBrandDiv
         as="button"
         className={cn(
-          'w-full rounded-md py-4 font-semibold text-white',
+          'w-full rounded-md py-4 font-semibold',
           'outline-none transition-transform',
           'disabled:cursor-not-allowed disabled:opacity-75'
         )}
@@ -572,7 +572,7 @@ export const PreviewRoute = ({
             <StyledBrandDiv
               as="button"
               className={cn(
-                'w-full rounded-md py-4 font-semibold text-white',
+                'w-full rounded-md py-4 font-semibold',
                 'outline-none transition-transform',
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
                 'disabled:cursor-not-allowed disabled:opacity-75'
@@ -603,9 +603,7 @@ export const PreviewRoute = ({
                   />
                 </svg>
               ) : (
-                <span className="text-white">
-                  Create New {route.doesSwap ? 'Swap' : 'Transfer'}
-                </span>
+                <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
               )}
             </StyledBrandDiv>
           ) : (
