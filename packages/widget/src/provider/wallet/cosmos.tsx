@@ -18,7 +18,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
       wallets={wallets}
       throwErrors={false}
       assetLists={assets}
-      disableIframe={true}
+      disableIframe={false}
       sessionOptions={{
         duration: 1000 * 60 * 60 * 24, // 1 day
       }}
