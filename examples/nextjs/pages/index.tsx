@@ -28,11 +28,11 @@ const defaultProps = {
 };
 
 const darkTheme = {
-  backgroundColor: 'black',
-  textColor: 'white',
-  borderColor: 'gray',
+  backgroundColor: '#191A1C',
+  textColor: '#E6EAE9',
+  borderColor: '#363B3F',
   brandColor: '#FF4FFF',
-  highlightColor: 'grey',
+  highlightColor: '#1F2022',
 };
 
 const defaultHash = hashString(JSON.stringify(defaultProps));
