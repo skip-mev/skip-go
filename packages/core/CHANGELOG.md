@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.1
+
+### Patch Changes
+
+- ef2f513: Add estimated_route_duration_seconds to route response
+
 ## 0.4.0
 
 ### Minor Changes
