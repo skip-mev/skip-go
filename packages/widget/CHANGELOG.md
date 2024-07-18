@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 1.3.1
+
+### Patch Changes
+
+- 6acd8e2: enable iframe wallets
+
 ## 1.3.0
 
 ### Minor Changes
