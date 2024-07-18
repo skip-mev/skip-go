@@ -603,7 +603,9 @@ export const PreviewRoute = ({
                   />
                 </svg>
               ) : (
-                <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
+                <span className="text-white">
+                  Create New {route.doesSwap ? 'Swap' : 'Transfer'}
+                </span>
               )}
             </StyledBrandDiv>
           ) : (
