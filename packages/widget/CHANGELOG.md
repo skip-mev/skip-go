@@ -1,5 +1,15 @@
 # @skip-go/widget
 
+## 2.0.0
+
+### Major Changes
+
+- e10995d: Add theme prop to enable custom styling
+
+### Patch Changes
+
+- 0eccea4: Fix auto selecting input fields in shadow-dom
+
 ## 1.3.1
 
 ### Patch Changes
