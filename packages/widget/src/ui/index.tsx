@@ -11,12 +11,48 @@ import cssReset from '../styles/cssReset.css';
 import { Scope } from 'react-shadow-scope';
 import { useInjectFontsToDocumentHead } from '../hooks/use-inject-fonts-to-document-head';
 
-export type SwapWidgetProps = Pick<
+export type SwapWidgetWithoutProvidersProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
   'className' | 'style'
 > &
-  ConfigureSwapWidgetArgs &
+  ConfigureSwapWidgetArgs;
+
+export type SwapWidgetProps = SwapWidgetWithoutProvidersProps &
   Partial<SwapWidgetProviderProps>;
+
+export const SwapWidgetWithoutProviders: React.FC<
+  SwapWidgetWithoutProvidersProps
+> = ({
+  colors,
+  settings,
+  onlyTestnet,
+  defaultRoute,
+  routeConfig,
+  className,
+  style,
+  filter,
+}) => {
+  useInjectFontsToDocumentHead();
+  useEffect(() => {
+    configureSwapWidget({
+      colors,
+      onlyTestnet,
+      settings,
+      defaultRoute,
+      routeConfig,
+      filter,
+    });
+  }, [colors, onlyTestnet, settings, defaultRoute, routeConfig]);
+
+  return (
+    <Scope
+      stylesheets={[cssReset, toastStyles, shadowDomStyles]}
+      config={{ dsd: 'emulated' }}
+    >
+      <SwapWidgetUI className={className} style={style} />
+    </Scope>
+  );
+};
 
 export const SwapWidget: React.FC<SwapWidgetProps> = ({
   colors,
