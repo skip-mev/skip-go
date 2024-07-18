@@ -7,6 +7,9 @@ import { formatUnits } from 'viem';
 
 import { SpinnerIcon } from '../Icon/SpinnerIcon';
 import { cn } from '../../utils/ui';
+import { styled } from 'styled-components';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
+import { StyledSearchInput } from '../StyledComponents/Input';
 
 interface Props {
   assets?: Asset[];
@@ -72,18 +75,18 @@ function AssetSelectContent({
   return (
     <div className="isolate flex h-full flex-col p-6 pb-2 font-diatype">
       <div className="mb-4 flex items-center gap-4">
-        <button
-          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+        <StyledThemedButton
+          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
           onClick={onClose}
         >
           <ArrowLeftIcon className="h-6 w-6" />
-        </button>
+        </StyledThemedButton>
         <p className="text-xl font-bold">Select Token</p>
         {isBalancesLoading && (
           <SpinnerIcon className="h-4 w-4 animate-spin text-neutral-400" />
         )}
       </div>
-      <input
+      <StyledSearchInput
         className="z-20 w-full rounded-md border px-4 py-2"
         type="text"
         placeholder="Search name or paste address"
@@ -91,21 +94,19 @@ function AssetSelectContent({
         value={searchValue}
         ref={inputRef}
       />
-      <ScrollArea.Root
+      <StyledScrollAreaRoot
         className={cn(
           'relative isolate flex-grow overflow-hidden',
           'before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-2',
-          'before:bg-gradient-to-b before:from-white before:to-transparent',
-          'after:absolute after:inset-x-0 after:bottom-0 after:z-10 after:h-2',
-          'before:to-transparent after:bg-gradient-to-t after:from-white'
+          'after:absolute after:inset-x-0 after:bottom-0 after:z-10 after:h-2'
         )}
       >
         <ScrollArea.Viewport className="h-full w-full py-4">
           {filteredAssets.map((asset) => (
-            <button
+            <StyledThemedButton
               key={`${asset.chainID}-${asset.denom}`}
               data-testid="asset-item"
-              className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors hover:bg-[#ECD9D9] focus:-outline-offset-2"
+              className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
               onClick={() => (onClose(), onChange?.(asset))}
             >
               <img
@@ -147,7 +148,7 @@ function AssetSelectContent({
                   </p>
                 )}
               </div>
-            </button>
+            </StyledThemedButton>
           ))}
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
@@ -157,9 +158,26 @@ function AssetSelectContent({
           <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
         </ScrollArea.Scrollbar>
         <ScrollArea.Corner />
-      </ScrollArea.Root>
+      </StyledScrollAreaRoot>
     </div>
   );
 }
 
 export default AssetSelectContent;
+
+export const StyledScrollAreaRoot = styled(ScrollArea.Root)`
+  &::before {
+    background-image: linear-gradient(
+      to bottom,
+      ${(props) => props.theme.backgroundColor},
+      hsla(0, 0%, 100%, 0)
+    );
+  }
+  &::after {
+    background-image: linear-gradient(
+      to top,
+      ${(props) => props.theme.backgroundColor},
+      hsla(0, 0%, 100%, 0)
+    );
+  }
+`;

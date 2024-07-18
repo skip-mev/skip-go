@@ -11,6 +11,8 @@ import { SimpleTooltip } from './SimpleTooltip';
 import { disclosure } from '../store/disclosures';
 import { SwapWidgetStore } from '../hooks/use-swap-widget';
 import { ConversionRate } from './ConversionRate';
+import { StyledThemedButton } from './StyledComponents/Buttons';
+import { StyledBorderDiv } from './StyledComponents/Theme';
 
 type Props = SwapWidgetStore & {
   amountOut: string;
@@ -126,12 +128,11 @@ export const SwapDetails = ({
   }
 
   return (
-    <Collapsible.Root
+    <StyledBorderDiv
+      as={Collapsible.Root}
       className={cn(
         'group rounded-lg px-4 py-2 text-sm',
-        'border border-neutral-200 transition-[border,shadow]',
-        'hover:border-neutral-300 hover:shadow-sm',
-        'focus-within:border-neutral-300 focus-within:shadow-sm'
+        'border transition-[border,shadow]'
       )}
       open={detailsOpen || priceImpactThresholdReached}
       onOpenChange={(open) => setDetailsOpen(open)}
@@ -216,16 +217,16 @@ export const SwapDetails = ({
           <dt>Slippage</dt>
           <dd>
             <SimpleTooltip label="Click to change maximum slippage">
-              <button
+              <StyledThemedButton
                 className={cn(
                   'mr-1 inline-flex items-center gap-1 p-1 text-xs transition-colors',
-                  'text-red-500 hover:bg-neutral-100',
+                  'text-red-500',
                   'rounded'
                 )}
                 onClick={() => disclosure.open('settingsDialog')}
               >
                 <PencilSquareIcon className="h-3 w-3" />
-              </button>
+              </StyledThemedButton>
             </SimpleTooltip>
             {slippage}%
           </dd>
@@ -281,6 +282,6 @@ export const SwapDetails = ({
           )}
         </dl>
       </Collapsible.Content>
-    </Collapsible.Root>
+    </StyledBorderDiv>
   );
 };

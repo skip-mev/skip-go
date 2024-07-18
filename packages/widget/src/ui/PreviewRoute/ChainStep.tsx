@@ -27,9 +27,10 @@ import {
 } from '../../utils/ledger-warning';
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 import { useAssets } from '../../provider/assets';
+import { StyledThemedDiv } from '../StyledComponents/Theme';
+import { useTheme, styled } from 'styled-components';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const ChainStep = ({
   chainID,
@@ -75,6 +76,7 @@ export const ChainStep = ({
   chainAddresses: ChainAddresses;
   setChainAddresses: (v: SetChainAddressesParam) => void;
 }) => {
+  const theme = useTheme();
   const { data: chain } = useChainByID(chainID);
 
   const totalChains = chainIDsWithAction.length;
@@ -216,7 +218,7 @@ export const ChainStep = ({
     >
       <div className="flex flex-row space-x-4">
         <div className={cn('flex flex-col items-center justify-center')}>
-          <div
+          <StyledChainLogoContainer
             className={cn(
               'relative h-14 w-14 rounded-full p-1 transition-all duration-500 ease-in-out',
               isDestination && '-mt-[15px]',
@@ -224,11 +226,11 @@ export const ChainStep = ({
                 ? swapAction
                   ? 'bg-gradient-to-b from-green-600 via-blue-800 to-green-600'
                   : 'bg-green-600'
-                : 'bg-neutral-200',
+                : '',
               isError && 'bg-red-600'
             )}
           >
-            <div className="flex h-full w-full items-center justify-center rounded-full bg-white p-1">
+            <StyledThemedDiv className="flex h-full w-full items-center justify-center rounded-full p-1">
               <img
                 src={
                   chain?.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
@@ -238,7 +240,7 @@ export const ChainStep = ({
                 className={cn('rounded-full object-cover')}
                 alt={chainID}
               />
-            </div>
+            </StyledThemedDiv>
             {signRequired && (
               <SimpleTooltip label={`Require signing`} type="default">
                 <div
@@ -250,7 +252,7 @@ export const ChainStep = ({
                 </div>
               </SimpleTooltip>
             )}
-          </div>
+          </StyledChainLogoContainer>
           {!isDestination && (
             <div className="left-- relative flex h-16 w-4 items-center justify-center">
               {transferAction && isExpanded && bridge && (
@@ -258,18 +260,18 @@ export const ChainStep = ({
                   label={`Bridged with ${bridge?.name}`}
                   type="default"
                 >
-                  <img
-                    src={
-                      bridge?.logoURI ||
-                      'https://api.dicebear.com/6.x/shapes/svg'
-                    }
-                    height={16}
-                    width={16}
-                    className={cn(
-                      'absolute right-4 top-[22px] bg-opacity-50 object-contain py-1'
-                    )}
-                    alt={chainID}
-                  />
+                  <StyledBridgeLogoContainer>
+                    <img
+                      className="object-contain"
+                      src={
+                        bridge?.logoURI ||
+                        'https://api.dicebear.com/6.x/shapes/svg'
+                      }
+                      height={16}
+                      width={16}
+                      alt={chainID}
+                    />
+                  </StyledBridgeLogoContainer>
                 </SimpleTooltip>
               )}
               {!isExpanded && (
@@ -290,22 +292,22 @@ export const ChainStep = ({
                 </div>
               )}
               {!isExpanded && (
-                <button
-                  className="absolute top-[18px] rounded-full border-2 border-neutral-200 bg-white p-1 text-neutral-400 transition-transform hover:scale-110"
+                <StyledThemedButton
+                  className="absolute top-[18px] rounded-full border-2 border-neutral-200 p-1 text-neutral-400 transition-transform hover:scale-110"
                   onClick={() => setIsExpanded(true)}
                 >
                   <ExpandArrow className="h-4 w-4" />
-                </button>
+                </StyledThemedButton>
               )}
 
-              <div
+              <StyledChainLogoContainer
                 className={cn(
                   'h-full w-1 transition-all',
                   isLoading
-                    ? 'animate-gradient-y bg-neutral-200 bg-gradient-to-b from-green-600 from-0% via-green-600 via-20% to-[#ffdc61] to-50%'
+                    ? 'animate-gradient-y bg-gradient-to-b from-green-600 from-0% via-green-600 via-20% to-[#ffdc61] to-50%'
                     : isSuccess
                     ? 'bg-green-600'
-                    : 'bg-neutral-200'
+                    : ''
                 )}
               />
             </div>
@@ -395,19 +397,16 @@ export const ChainStep = ({
               </SimpleTooltip>
             )}
             {stepState?.explorerLink && (
-              <AdaptiveLink
+              <StyledAdaptiveLink
                 className={cn(
                   'flex flex-row items-center text-sm font-semibold underline'
                 )}
-                style={{
-                  color: useSwapWidgetUIStore.getState().colors.primary,
-                }}
                 href={stepState.explorerLink.link}
                 data-testid={`explorer-link`}
               >
                 {stepState.explorerLink.shorthand}
                 <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-              </AdaptiveLink>
+              </StyledAdaptiveLink>
             )}
           </div>
           <div
@@ -477,16 +476,12 @@ export const ChainStep = ({
               !mutationStatus.isPending &&
               !isSuccess && (
                 <button onClick={() => setIsAddressDialogOpen(index)}>
-                  <PencilSquareIcon
+                  <StyledPencilSquareIcon
                     className={cn(
                       'h-4 w-4',
                       isNotFocused && 'text-neutral-400'
                     )}
-                    style={{
-                      color: !isNotFocused
-                        ? useSwapWidgetUIStore.getState().colors.primary
-                        : undefined,
-                    }}
+                    isFocused={!isNotFocused}
                   />
                 </button>
               )}
@@ -573,3 +568,27 @@ const AssetSwap = (props: {
     </div>
   );
 };
+
+const StyledAdaptiveLink = styled(AdaptiveLink)`
+  color: ${(props) => props.theme.brandColor};
+`;
+
+const StyledPencilSquareIcon = styled(PencilSquareIcon)<{ isFocused: boolean }>`
+  ${(props) => props.isFocused && props.theme.brandColor};
+`;
+
+const StyledBridgeLogoContainer = styled.div`
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.borderColor};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: 1rem;
+`;
+
+const StyledChainLogoContainer = styled.div`
+  background-color: ${(props) => props.theme.borderColor};
+`;

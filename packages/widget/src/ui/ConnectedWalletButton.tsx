@@ -1,5 +1,6 @@
 import { ComponentProps, forwardRef } from 'react';
 import { cn } from '../utils/ui';
+import { StyledThemedButton } from './StyledComponents/Buttons';
 
 type Props = ComponentProps<'button'> & {
   address: string;
@@ -11,10 +12,10 @@ export const ConnectedWalletButton = forwardRef<HTMLButtonElement, Props>(
   function Component(props, ref) {
     const { address, walletLogo, walletName, className, ...rest } = props;
     return (
-      <button
+      <StyledThemedButton
         className={cn(
           'flex items-center gap-2 transition-colors focus:outline-none',
-          'rounded-lg border border-neutral-200 px-2 py-1.5 hover:border-neutral-300 hover:bg-neutral-50',
+          'rounded-lg border px-2 py-1.5 hover:border-neutral-300',
           className
         )}
         {...rest}
@@ -32,7 +33,7 @@ export const ConnectedWalletButton = forwardRef<HTMLButtonElement, Props>(
         <span className="font-diatypeMono text-xs font-semibold tabular-nums">
           {address.slice(0, 8)}...{address.slice(-5)}
         </span>
-      </button>
+      </StyledThemedButton>
     );
   }
   //

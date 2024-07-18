@@ -1,35 +1,27 @@
 import { ArrowLeftIcon } from '@heroicons/react/16/solid';
-import * as Dialog from '@radix-ui/react-dialog';
-
 import { AdaptiveLink } from '../AdaptiveLink';
 import { GasSetting } from './GasSetting';
 import { SaveIndicator } from './SaveIndicator';
 import { SlippageSetting } from './SlippageSetting';
 import { useDisclosureKey } from '../../store/disclosures';
-import { cn } from '../../utils/ui';
+
+import { Dialog } from '../Dialog/Dialog';
+import { DialogContent } from '../Dialog/DialogContent';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const SettingsDialog = () => {
   const [isOpen, { close }] = useDisclosureKey('settingsDialog');
   return (
-    <Dialog.Root modal open={isOpen}>
-      <Dialog.Overlay className="bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0" />
-      <Dialog.Content
-        className={cn(
-          'font-diatype data-[state=open]:animate-contentShow fixed top-[50%] left-[50%]',
-          'w-[90vw] max-w-[450px] max-h-[820px] h-[90vh] rounded-xl',
-          'translate-x-[-50%] translate-y-[-50%] bg-white shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]'
-        )}
-        onInteractOutside={close}
-      >
-        {' '}
+    <Dialog open={isOpen} onOpenChange={() => close()}>
+      <DialogContent>
         <div className="h-full overflow-y-auto px-4 py-6 scrollbar-hide">
           <div className="flex items-center gap-4 pb-2">
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+            <StyledThemedButton
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
               onClick={close}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </button>
+            </StyledThemedButton>
             <h3 className="text-xl font-bold">Swap Settings</h3>
             <div className="flex-grow" />
             <SaveIndicator />
@@ -59,7 +51,7 @@ export const SettingsDialog = () => {
             wallets state, transaction history, and settings.
           </p> */}
         </div>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 };

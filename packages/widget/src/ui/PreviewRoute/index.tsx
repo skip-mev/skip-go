@@ -34,9 +34,14 @@ import { txHistory } from '../../store/tx-history';
 import { isUserRejectedRequestError } from '../../utils/error';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
 import { CraftedBySkip } from '../CraftedBySkip';
+import { styled } from 'styled-components';
+import {
+  StyledBorderDiv,
+  StyledBrandDiv,
+  StyledThemedDiv,
+} from '../StyledComponents/Theme';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export interface Wallet {
   walletName: string;
@@ -267,14 +272,17 @@ export const PreviewRoute = ({
         ({ createdAt, id }) => (
           <div className="flex flex-col">
             <h4 className="mb-2 font-bold">Transaction Failed!</h4>
-            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs">
+            <StyledBorderDiv
+              as="pre"
+              className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs"
+            >
               {err instanceof Error
                 ? `${err.name}: ${err.message}`
                 : String(err)}
               <br />
               <br />
               {new Date(createdAt).toISOString()}
-            </pre>
+            </StyledBorderDiv>
             <button
               className="self-end text-sm font-medium text-red-500 hover:underline"
               onClick={() => toast.dismiss(id)}
@@ -297,16 +305,14 @@ export const PreviewRoute = ({
   const SubmitButton = () => {
     if (allAddressFilled) {
       return (
-        <button
+        <StyledBrandDiv
+          as="button"
           className={cn(
             'w-full rounded-md py-4 font-semibold text-white',
             'outline-none transition-transform',
             'enabled:hover:rotate-1 enabled:hover:scale-102',
             'disabled:cursor-not-allowed disabled:opacity-75'
           )}
-          style={{
-            backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-          }}
           onClick={() => submitMutation.mutate()}
           disabled={
             submitMutation.isPending ||
@@ -316,20 +322,18 @@ export const PreviewRoute = ({
           }
         >
           Submit
-        </button>
+        </StyledBrandDiv>
       );
     }
 
     return (
-      <button
+      <StyledBrandDiv
+        as="button"
         className={cn(
           'w-full rounded-md py-4 font-semibold text-white',
           'outline-none transition-transform',
           'disabled:cursor-not-allowed disabled:opacity-75'
         )}
-        style={{
-          backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-        }}
         onClick={async () => {
           if (!enabledSetAddressIndex) {
             console.error('No address index found!');
@@ -392,39 +396,36 @@ export const PreviewRoute = ({
           : isSignRequired
           ? 'Connect Wallet'
           : 'Set Recovery Address'}
-      </button>
+      </StyledBrandDiv>
     );
   };
 
   return (
-    <div className="absolute inset-0 animate-fade-zoom-in bg-white">
+    <StyledThemedDiv className="absolute inset-0 animate-fade-zoom-in">
       <div className="flex h-full flex-col space-y-6 overflow-y-auto p-6 scrollbar-hide">
         <div>
           <div className="flex items-center justify-between pr-1">
             <div className="flex items-center gap-4">
-              <button
-                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+              <StyledThemedButton
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
                 onClick={control.close}
               >
                 <ArrowLeftIcon className="h-6 w-6" />
-              </button>
+              </StyledThemedButton>
               <p className="text-xl font-bold">Transaction Preview</p>
             </div>
             {isExpanded && (
-              <button
+              <StyledBrandTextButton
                 className={cn('right-7 text-xs font-medium')}
-                style={{
-                  color: useSwapWidgetUIStore.getState().colors.primary,
-                }}
                 onClick={() => setIsExpanded(false)}
               >
                 Hide Details
-              </button>
+              </StyledBrandTextButton>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col rounded-xl border border-neutral-200 p-4">
+        <StyledBorderDiv className="flex flex-col rounded-xl border p-4">
           {chainIDsWithAction.map(
             ({ chainID, transferAction, swapAction }, index) => (
               <ChainStep
@@ -454,7 +455,7 @@ export const PreviewRoute = ({
               />
             )
           )}
-        </div>
+        </StyledBorderDiv>
         <div className="flex-1 space-y-4">
           {statusData?.isSuccess && submitMutation.isSuccess ? (
             <div className="flex flex-row items-center space-x-2 font-semibold">
@@ -568,16 +569,14 @@ export const PreviewRoute = ({
           )}
 
           {submitMutation.isPending || submitMutation.isSuccess ? (
-            <button
+            <StyledBrandDiv
+              as="button"
               className={cn(
                 'w-full rounded-md py-4 font-semibold text-white',
                 'outline-none transition-transform',
                 'enabled:hover:rotate-1 enabled:hover:scale-105',
                 'disabled:cursor-not-allowed disabled:opacity-75'
               )}
-              style={{
-                backgroundColor: useSwapWidgetUIStore.getState().colors.primary,
-              }}
               onClick={control.close}
               disabled={route.txsRequired !== broadcastedTxs.length}
             >
@@ -604,17 +603,23 @@ export const PreviewRoute = ({
                   />
                 </svg>
               ) : (
-                <span>Create New {route.doesSwap ? 'Swap' : 'Transfer'}</span>
+                <span className="text-white">
+                  Create New {route.doesSwap ? 'Swap' : 'Transfer'}
+                </span>
               )}
-            </button>
+            </StyledBrandDiv>
           ) : (
             <SubmitButton />
           )}
           <CraftedBySkip />
         </div>
       </div>
-    </div>
+    </StyledThemedDiv>
   );
 };
 
 const HREF_COMMON_FINALITY_TIMES = `https://docs.axelar.dev/learn/txduration#common-finality-time-for-interchain-transactions`;
+
+const StyledBrandTextButton = styled.button`
+  color: ${(props) => props.theme.brandColor};
+`;

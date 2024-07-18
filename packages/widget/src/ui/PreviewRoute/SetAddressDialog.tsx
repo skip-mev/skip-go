@@ -15,8 +15,10 @@ import { TrackWalletCtx } from '../../store/track-wallet';
 import { Dialog } from '../Dialog/Dialog';
 import { DialogContent } from '../Dialog/DialogContent';
 import { cn } from '../../utils/ui';
-import { useSwapWidgetUIStore } from '../../store/swap-widget';
-import { css } from '@emotion/css';
+import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
+import { styled } from 'styled-components';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
+import { StyledBorderDiv, StyledBrandDiv } from '../StyledComponents/Theme';
 
 export const SetAddressDialog = ({
   open,
@@ -111,14 +113,14 @@ export const SetAddressDialog = ({
       <DialogContent>
         <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
           <div className="relative flex justify-between">
-            <button
+            <StyledThemedButton
               className={cn(
-                'flex h-8 w-8 items-center justify-between rounded-full transition-colors hover:bg-neutral-100'
+                'flex h-8 w-8 items-center justify-center rounded-full transition-colors'
               )}
               onClick={() => onOpen(false)}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </button>
+            </StyledThemedButton>
             <p className="text-center text-xl font-bold capitalize">
               Set {isDestination ? 'Destination' : 'Recovery'} Address
             </p>
@@ -131,11 +133,10 @@ export const SetAddressDialog = ({
             />
           </div>
 
-          <ScrollArea.Root
+          <StyledScrollAreaRoot
             className={cn(
               'relative isolate flex-grow overflow-hidden',
-              'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2',
-              'before:bg-gradient-to-t before:from-white before:to-transparent'
+              'before:absolute before:inset-x-0 before:bottom-0 before:z-10 before:h-2'
             )}
           >
             <ScrollArea.Viewport className="h-full w-full py-4">
@@ -152,19 +153,9 @@ export const SetAddressDialog = ({
                         'data-[unsupported=true]:before:absolute data-[unsupported=true]:before:inset-0 data-[unsupported=true]:before:cursor-not-allowed'
                       )}
                     >
-                      <button
+                      <StyledThemedButton
                         className={cn(
-                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2',
-                          `group-hover:opacity-90`
-                          // currentChainAddress &&
-                          //   currentChainAddress.source !== 'input' &&
-                          //   currentChainAddress.source?.walletName ===
-                          //     wallet.walletName &&
-                          //   css`
-                          //     border: 1px solid
-                          //       ${useSwapWidgetUIStore.getState().colors
-                          //         .primary} !important;
-                          //   `
+                          'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                         )}
                         onClick={async () => {
                           const resAddress = await wallet.getAddress?.({
@@ -206,7 +197,7 @@ export const SetAddressDialog = ({
                             ? 'Metamask (Leap Snap)'
                             : wallet.walletPrettyName}
                         </p>
-                      </button>
+                      </StyledThemedButton>
 
                       {chainType === 'svm' && wallet.isAvailable !== true && (
                         <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-lg bg-[#c2c2c2]/20 px-2.5 py-1 text-xs font-semibold text-[#909090] transition-colors focus:outline-none group-hover:bg-[#c2c2c2]/30">
@@ -219,50 +210,40 @@ export const SetAddressDialog = ({
               {!signRequired && (
                 <div className="group relative mb-2 data-[unsupported=true]:opacity-30">
                   {isEditing ? (
-                    <div className="flex items-center space-x-2 py-2">
-                      <input
+                    <div className="flex items-center space-x-2 py-2 px-1">
+                      <StyledBorderDiv
+                        as="input"
                         type="text"
                         className={cn(
-                          `w-full rounded-md border px-2 py-1 text-black`,
+                          `w-full rounded-md border px-2 py-1`,
                           !isValid && 'border-red-500'
                         )}
                         placeholder={placeholder}
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                       />
-                      <button
+                      <StyledApproveButton
+                        as="button"
                         className={cn(
                           'flex w-12 items-center justify-center rounded-md border-2 text-sm text-white',
-                          'disabled:cursor-not-allowed disabled:opacity-50',
-
-                          css`
-                            border-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary} !important;
-                            background-color: ${useSwapWidgetUIStore.getState()
-                              .colors.primary} !important;
-                          `
+                          'disabled:cursor-not-allowed'
                         )}
                         onClick={() => save()}
                         disabled={!isValid}
                       >
                         <MdCheck className="size-6" />
-                      </button>
-                      <button
+                      </StyledApproveButton>
+                      <StyledCancelButton
                         className={cn(
                           'flex w-12 items-center justify-center rounded-md border-2'
                         )}
-                        style={{
-                          borderColor:
-                            useSwapWidgetUIStore.getState().colors.primary,
-                          color: useSwapWidgetUIStore.getState().colors.primary,
-                        }}
                         onClick={() => cancel()}
                       >
                         <MdClose className="size-6" />
-                      </button>
+                      </StyledCancelButton>
                     </div>
                   ) : (
-                    <button
+                    <StyledThemedButton
                       onClick={() => setIsEditing(true)}
                       className={cn(
                         'flex w-full items-center gap-2 rounded-lg p-2 py-3 transition-colors focus:-outline-offset-2'
@@ -272,7 +253,7 @@ export const SetAddressDialog = ({
                       <p className="flex-1 text-left font-semibold">
                         Set Manually
                       </p>
-                    </button>
+                    </StyledThemedButton>
                   )}
                 </div>
               )}
@@ -284,9 +265,18 @@ export const SetAddressDialog = ({
               <ScrollArea.Thumb className="relative flex-1 rounded-[10px] bg-neutral-500/50 transition-colors before:absolute before:left-1/2 before:top-1/2 before:h-2 before:w-2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-neutral-500" />
             </ScrollArea.Scrollbar>
             <ScrollArea.Corner />
-          </ScrollArea.Root>
+          </StyledScrollAreaRoot>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
+
+const StyledApproveButton = styled(StyledBrandDiv)`
+  border-color: ${(props) => props.theme.brandColor};
+`;
+
+const StyledCancelButton = styled.button`
+  color: ${(props) => props.theme.brandColor};
+  border-color: ${(props) => props.theme.brandColor};
+`;

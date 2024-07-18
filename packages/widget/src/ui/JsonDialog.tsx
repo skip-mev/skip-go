@@ -7,6 +7,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { useMemo, useState } from 'react';
 import { useJsonDisclosure } from '../store/disclosures';
 import { cn } from '../utils/ui';
+import { StyledThemedButton } from './StyledComponents/Buttons';
 
 export const JsonDialog = () => {
   const [state, { close }] = useJsonDisclosure();
@@ -48,12 +49,12 @@ export const JsonDialog = () => {
         </button>
         <div className="h-full overflow-y-auto px-4 py-6 scrollbar-hide">
           <div className="flex items-center gap-4 pb-2">
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-neutral-100"
+            <StyledThemedButton
+              className="flex h-8 w-8 items-center justify-center rounded-full transition-colors"
               onClick={close}
             >
               <ArrowLeftIcon className="h-6 w-6" />
-            </button>
+            </StyledThemedButton>
             <h3 className="text-xl font-bold">
               {state.title || 'JSON Viewer'}
             </h3>

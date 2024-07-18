@@ -2,11 +2,12 @@ import toast from 'react-hot-toast';
 import { SimpleTooltip } from '../SimpleTooltip';
 import { cn } from '../../utils/ui';
 import { ShareIcon } from '../Icon/ShareIcon';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
   return (
     <SimpleTooltip label="Share">
-      <button
+      <StyledThemedButton
         onClick={() => {
           try {
             navigator.clipboard.writeText(shareableLink);
@@ -16,12 +17,12 @@ export const ShareButton = ({ shareableLink }: { shareableLink: string }) => {
           }
         }}
         className={cn(
-          'rounded-full p-2 text-black/80 hover:bg-neutral-100 hover:text-black/100',
+          'rounded-full p-2',
           'transition-colors focus:outline-none'
         )}
       >
         <ShareIcon className="h-4 w-4" />
-      </button>
+      </StyledThemedButton>
     </SimpleTooltip>
   );
 };

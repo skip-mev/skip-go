@@ -9,18 +9,7 @@ export const ShareIcon = (props: React.SVGProps<SVGSVGElement>) => {
       viewBox="0 0 119.79 119.79"
       {...props}
     >
-      <defs>
-        <style>{'.cls-1{fill:#000;stroke-width:0}'}</style>
-      </defs>
       <g id="Layer_1-2" data-name="Layer 1">
-        <rect
-          width={119.79}
-          height={119.79}
-          rx={30}
-          ry={30}
-          fill="#fff"
-          strokeWidth={0}
-        />
         <path
           className="cls-1"
           d="M54.27 44.22v33.52h11.25V44.22c0-4.13 4.99-6.2 7.91-3.28l12.78 12.78 7.96-7.95L59.9 11.5 25.64 45.76l7.95 7.96 12.77-12.77c2.92-2.92 7.91-.85 7.91 3.28"

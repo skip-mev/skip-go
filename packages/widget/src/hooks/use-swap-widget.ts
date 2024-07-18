@@ -28,7 +28,7 @@ import { Chain, useChains } from './use-chains';
 import { useBalancesByChain } from './use-balances-by-chain';
 import { useRoute } from './use-route';
 import { getChainFeeAssets, getChainGasPrice } from '../utils/chain';
-import { useSkipClient, useSkipConfig } from './use-skip-client';
+import { useSkipClient } from './use-skip-client';
 import { getAmountWei, parseAmountWei } from '../utils/number';
 import { gracefullyConnect } from '../utils/wallet';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
