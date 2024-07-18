@@ -1,5 +1,15 @@
 # @skip-go/widget
 
+## 1.3.0
+
+### Minor Changes
+
+- dcb144b: Export SwapWidgetWithoutProvider
+
+### Patch Changes
+
+- 6eb6740: source chain forma validate gas balance off
+
 ## 1.2.6
 
 ### Patch Changes
