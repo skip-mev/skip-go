@@ -27,7 +27,11 @@ function AssetSelectContent({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => inputRef.current?.focus(), []);
+  useEffect(() => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  }, []);
 
   const [searchValue, setSearchValue] = useState('');
 
