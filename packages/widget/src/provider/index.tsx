@@ -25,7 +25,6 @@ export interface WidgetConfig {
 }
 export interface SwapWidgetProviderProps extends SkipAPIProviderProps {
   children: React.ReactNode;
-  toasterProps?: ToasterProps;
 }
 export interface SkipAPIProviderProps {
   children: React.ReactNode;
@@ -59,26 +58,11 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 
 export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
   children,
-  toasterProps,
   ...skipApiProviderProps
 }) => {
-  const theme = useTheme();
-
   return (
     <WalletProvider>
       <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
-      <Toaster
-        position={'top-right'}
-        containerClassName="font-diatype"
-        toastOptions={{
-          duration: 1000 * 10,
-          style: {
-            background: theme.backgroundColor,
-            color: theme.textColor,
-          },
-        }}
-        {...toasterProps}
-      />
     </WalletProvider>
   );
 };

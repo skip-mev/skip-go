@@ -25,14 +25,22 @@ import { SpinnerIcon } from './Icon/SpinnerIcon';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { CraftedBySkip } from './CraftedBySkip';
 import { StyledBrandDiv, StyledThemedDiv } from './StyledComponents/Theme';
-import { styled } from 'styled-components';
+import { styled, useTheme } from 'styled-components';
+import { Toaster, ToasterProps } from 'react-hot-toast';
 
-type SwapWidgetUIProps = Pick<
+export type SwapWidgetUIProps = Pick<
   React.HTMLAttributes<HTMLDivElement>,
   'className' | 'style'
->;
+> & {
+  toasterProps?: ToasterProps;
+};
 
-export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
+export const SwapWidgetUI = ({
+  className,
+  style,
+  toasterProps,
+}: SwapWidgetUIProps) => {
+  const theme = useTheme();
   useEffect(() => void disclosure.rehydrate(), []);
 
   const { openWalletModal } = useWalletModal();
@@ -307,6 +315,18 @@ export const SwapWidgetUI = ({ className, style }: SwapWidgetUIProps) => {
           <HistoryDialog />
           <SettingsDialog />
           <JsonDialog />
+          <Toaster
+            position={'top-right'}
+            containerClassName="font-diatype"
+            toastOptions={{
+              duration: 1000 * 10,
+              style: {
+                background: theme.backgroundColor,
+                color: theme.textColor,
+              },
+            }}
+            {...toasterProps}
+          />
         </Tooltip.Provider>
         <WalletModal />
       </UsdDiff.Provider>
