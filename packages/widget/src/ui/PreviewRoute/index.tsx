@@ -272,14 +272,17 @@ export const PreviewRoute = ({
         ({ createdAt, id }) => (
           <div className="flex flex-col">
             <h4 className="mb-2 font-bold">Transaction Failed!</h4>
-            <pre className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs">
+            <StyledBorderDiv
+              as="pre"
+              className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 font-diatypeMono text-xs"
+            >
               {err instanceof Error
                 ? `${err.name}: ${err.message}`
                 : String(err)}
               <br />
               <br />
               {new Date(createdAt).toISOString()}
-            </pre>
+            </StyledBorderDiv>
             <button
               className="self-end text-sm font-medium text-red-500 hover:underline"
               onClick={() => toast.dismiss(id)}

@@ -19,9 +19,6 @@ const Home: NextPage = () => {
       >
         <SwapWidgetProvider>
           <SwapWidgetWithoutProviders
-            colors={{
-              primary: '#FF4FFF',
-            }}
             defaultRoute={{
               srcChainID: 'osmosis-1',
               srcAssetDenom:

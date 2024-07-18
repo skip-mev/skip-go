@@ -218,7 +218,7 @@ export const ChainStep = ({
     >
       <div className="flex flex-row space-x-4">
         <div className={cn('flex flex-col items-center justify-center')}>
-          <div
+          <StyledChainLogoContainer
             className={cn(
               'relative h-14 w-14 rounded-full p-1 transition-all duration-500 ease-in-out',
               isDestination && '-mt-[15px]',
@@ -226,7 +226,7 @@ export const ChainStep = ({
                 ? swapAction
                   ? 'bg-gradient-to-b from-green-600 via-blue-800 to-green-600'
                   : 'bg-green-600'
-                : 'bg-neutral-200',
+                : '',
               isError && 'bg-red-600'
             )}
           >
@@ -252,7 +252,7 @@ export const ChainStep = ({
                 </div>
               </SimpleTooltip>
             )}
-          </div>
+          </StyledChainLogoContainer>
           {!isDestination && (
             <div className="left-- relative flex h-16 w-4 items-center justify-center">
               {transferAction && isExpanded && bridge && (
@@ -300,14 +300,14 @@ export const ChainStep = ({
                 </StyledThemedButton>
               )}
 
-              <div
+              <StyledChainLogoContainer
                 className={cn(
                   'h-full w-1 transition-all',
                   isLoading
-                    ? 'animate-gradient-y bg-neutral-200 bg-gradient-to-b from-green-600 from-0% via-green-600 via-20% to-[#ffdc61] to-50%'
+                    ? 'animate-gradient-y bg-gradient-to-b from-green-600 from-0% via-green-600 via-20% to-[#ffdc61] to-50%'
                     : isSuccess
                     ? 'bg-green-600'
-                    : 'bg-neutral-200'
+                    : ''
                 )}
               />
             </div>
@@ -579,7 +579,7 @@ const StyledPencilSquareIcon = styled(PencilSquareIcon)<{ isFocused: boolean }>`
 
 const StyledBridgeLogoContainer = styled.div`
   border-radius: 50%;
-  background-color: rgb(245, 245, 245);
+  background-color: ${(props) => props.theme.borderColor};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -587,4 +587,8 @@ const StyledBridgeLogoContainer = styled.div`
   height: 24px;
   position: absolute;
   right: 1rem;
+`;
+
+const StyledChainLogoContainer = styled.div`
+  background-color: ${(props) => props.theme.borderColor};
 `;
