@@ -208,7 +208,7 @@ export const PreviewRoute = ({
       await skipClient.executeRoute({
         route,
         userAddresses,
-        validateGasBalance: true,
+        validateGasBalance: route.sourceAssetChainID !== '984122',
         getFallbackGasAmount: async (chainID, chainType) => {
           if (chainType === 'cosmos') {
             return Number(useSettingsStore.getState().customGasAmount);
