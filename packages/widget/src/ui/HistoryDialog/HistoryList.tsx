@@ -28,7 +28,6 @@ import { ChainSymbol } from '../ChainSymbol';
 import { AssetValue } from '../AssetValue';
 import { disclosure } from '../../store/disclosures';
 import { StyledHighlightButton } from '../StyledComponents/Buttons';
-import { StyledBorderDiv } from '../StyledComponents/Theme';
 
 type RootProps = Omit<Accordion.AccordionSingleProps, 'type'>;
 
@@ -102,11 +101,10 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
   }, [errorUpdateCount, id, txsStatus]);
 
   return (
-    <StyledBorderDiv
-      as={Accordion.Item}
+    <Accordion.Item
       className={cn(
         'p-1',
-        'rounded-lg border transition-all',
+        'rounded-lg border border-neutral-200 transition-all',
         'data-[state=open]:shadow-md',
         'data-[state=open]:-mx-1 data-[state=open]:p-2',
         className
@@ -261,6 +259,6 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
           </StyledHighlightButton>
         </div>
       </Accordion.Content>
-    </StyledBorderDiv>
+    </Accordion.Item>
   );
 });
