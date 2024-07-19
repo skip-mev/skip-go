@@ -226,7 +226,7 @@ function AssetInput({
           ) : null}
           <div className="flex-grow" />
           {context === 'source' && account?.address && asset && (
-            <div className="flex animate-slide-left-and-fade items-center text-sm text-neutral-400">
+            <div className="flex animate-slide-left-and-fade items-center text-sm">
               <span className="mr-1">Balance:</span>{' '}
               {isBalancesLoading ? (
                 <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />

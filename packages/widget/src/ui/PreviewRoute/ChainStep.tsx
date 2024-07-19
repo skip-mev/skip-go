@@ -28,7 +28,7 @@ import {
 import { cn } from '../../utils/ui';
 import { ExpandArrow } from '../Icon/ExpandArrow';
 import { useAssets } from '../../provider/assets';
-import { StyledThemedDiv } from '../StyledComponents/Theme';
+import { StyledBorderDiv, StyledThemedDiv } from '../StyledComponents/Theme';
 import { useTheme, styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
 
@@ -278,12 +278,13 @@ export const ChainStep = ({
                 <div className="absolute right-6 flex w-full flex-col">
                   {intermidiaryChainsImage.map((c, i) => (
                     <SimpleTooltip label={c.name} key={i}>
-                      <img
+                      <StyledBorderDiv
+                        as="img"
                         src={c.image}
                         height={20}
                         width={20}
                         className={cn(
-                          '-mt-1 rounded-full border-2 border-neutral-200 object-contain'
+                          '-mt-1 rounded-full border-2 object-contain'
                         )}
                         alt={chainID}
                       />
@@ -293,7 +294,7 @@ export const ChainStep = ({
               )}
               {!isExpanded && (
                 <StyledThemedButton
-                  className="absolute top-[18px] rounded-full border-2 border-neutral-200 p-1 text-neutral-400 transition-transform hover:scale-110"
+                  className="absolute top-[18px] rounded-full border-2 p-1 text-neutral-400 transition-transform hover:scale-110"
                   onClick={() => setIsExpanded(true)}
                 >
                   <ExpandArrow className="h-4 w-4" />
