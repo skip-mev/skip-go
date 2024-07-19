@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.0.1
+
+### Patch Changes
+
+- f621037: Update misc styling in widget
+
 ## 2.0.0
 
 ### Major Changes
