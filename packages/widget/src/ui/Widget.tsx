@@ -179,11 +179,11 @@ export const SwapWidgetUI = ({
             </div>
             <div className="relative">
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <button
+                <StyledSwapButton
                   className={cn(
-                    'pointer-events-auto flex h-8 w-8 items-center justify-center rounded-md bg-neutral-900 text-white',
+                    'pointer-events-auto flex h-8 w-8 items-center justify-center rounded-md',
                     'transition-transform enabled:hover:rotate-3 enabled:hover:scale-105',
-                    'disabled:cursor-not-allowed disabled:bg-neutral-500 disabled:hover:scale-100',
+                    'disabled:cursor-not-allowed disabled:hover:scale-100',
                     'data-[swap=true]:pointer-events-none data-[swap=true]:animate-spin-swap'
                   )}
                   disabled={!destinationChain}
@@ -196,7 +196,7 @@ export const SwapWidgetUI = ({
                   ref={invertButtonRef}
                 >
                   <ArrowsUpDownIcon className="h-4 w-4" />
-                </button>
+                </StyledSwapButton>
               </div>
               <p className="text-2xl font-semibold">To</p>
             </div>
@@ -252,12 +252,12 @@ export const SwapWidgetUI = ({
             )}
             {!!routeError && (
               <div className="flex w-full items-center rounded-md bg-red-50 p-3 text-left text-xs font-medium uppercase text-red-500">
-                <p className="flex-1">{routeError}</p>
+                <p className="flex-1 text-red-500">{routeError}</p>
               </div>
             )}
             {destinationChain?.chainID === 'dydx-mainnet-1' && (
               <div className="flex w-full items-center rounded-md bg-red-50 p-3 text-left text-xs font-medium uppercase text-red-500">
-                <p className="flex-1 [&_a]:underline">
+                <p className="flex-1 [&_a]:underline text-red-500">
                   This transaction will let you transfer and stake tokens on
                   dydx, it will not allow you to trade. Follow the{' '}
                   <AdaptiveLink href="https://dydx.exchange">
@@ -340,4 +340,10 @@ const StyledAppWrapper = styled.div`
   span {
     color: ${(props) => props.theme.textColor};
   }
+`;
+
+const StyledSwapButton = styled.button<{ disabled?: boolean }>`
+  background-color: ${(props) => props.theme.textColor};
+  ${(props) => props.disabled && 'opacity: 0.5'};
+  color: ${(props) => props.theme.backgroundColor};
 `;
