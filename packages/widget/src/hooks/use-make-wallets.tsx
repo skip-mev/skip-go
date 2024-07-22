@@ -16,13 +16,17 @@ import {
   isPraxInstalled,
   requestPraxAccess,
 } from '../utils/prax';
+
+interface ConnectProps {
+  penumbraWalletIndex?: number;
+}
 export interface MinimalWallet {
   walletName: string;
   walletPrettyName: string;
   walletInfo: {
     logo?: string | { major: string; minor: string };
   };
-  connect: () => Promise<void>;
+  connect: ({ penumbraWalletIndex }?: ConnectProps) => Promise<void>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
@@ -73,24 +77,30 @@ export const useMakeWallets = () => {
           walletName: 'prax',
           walletPrettyName: 'Prax Wallet',
           walletInfo: {
-            logo: 'https://raw.githubusercontent.com/penumbra-zone/web/main/apps/extension/public/favicon/icon128.png',
+            logo: 'https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg',
           },
-          connect: async () => {
+          connect: async (props) => {
+            const penumbraWalletIndex = props?.penumbraWalletIndex;
             try {
               const isInstalled = await isPraxInstalled();
               if (!isInstalled) {
                 throw new Error('Prax Wallet is not installed');
               }
               const isConnected = isPraxConnected();
-              if (!isConnected) {
-                console.log('requesting access');
-                await requestPraxAccess();
-                console.log('access requested');
-                const praxClient = createPraxClient(ViewService);
-                console.log(praxClient);
-                const address = await praxClient.addressByIndex({});
-                console.log(address);
-              }
+              console.log('requesting access');
+              await requestPraxAccess();
+              console.log('access requested');
+              const praxClient = createPraxClient(ViewService);
+              console.log(praxClient);
+              const address = await praxClient.addressByIndex({
+                addressIndex: {
+                  account: penumbraWalletIndex ? penumbraWalletIndex : 0,
+                },
+              });
+              console.log(address);
+              if (!address.address) throw new Error('No address found');
+              const bech32Address = bech32mAddress(address.address);
+              console.log(bech32Address);
               console.log('test', isInstalled, isConnected);
             } catch (error) {
               console.error(error);
