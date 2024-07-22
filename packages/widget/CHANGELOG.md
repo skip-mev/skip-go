@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.1.0
+
+### Minor Changes
+
+- b22d262: Revert shadow dom implentation to use react-shadow-scope
+
 ## 2.0.1
 
 ### Patch Changes
