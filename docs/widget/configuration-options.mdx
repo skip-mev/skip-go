@@ -64,6 +64,13 @@ interface SwapWidgetProps {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
   apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  theme?: {
+    backgroundColor: string; // background color
+    textColor: string; // text color
+    borderColor: string; // border color
+    brandColor: string; // color used for confirmation buttons
+    highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
+  };
 }
 ```
 
@@ -169,6 +176,20 @@ Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Plea
 ### `apiURL` (string) 
 
 Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+
+### `theme`:
+
+`theme` allows you to customize the look of the widget to fit your brand and application's aesthetics.
+
+```ts
+  theme?: {
+    backgroundColor: string; // background color
+    textColor: string; // text color
+    borderColor: string; // border color
+    brandColor: string; // color used for confirmation buttons
+    highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
+  };
+```
 
 ### `className` string
 
