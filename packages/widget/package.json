@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "2.1.1",
+  "version": "2.1.2-alpha.2",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
@@ -20,7 +20,8 @@
   },
   "files": [
     "build",
-    "README.md"
+    "README.md",
+    ".npmrc"
   ],
   "scripts": {
     "start": "rollup --config rollup.config.js -w",
@@ -116,6 +117,7 @@
     "zustand": "^4.5.2"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "@buf:registry": "https://buf.build/gen/npm/v1/"
   }
 }
