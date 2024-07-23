@@ -166,3 +166,33 @@
     opacity: 0;
   }
 }
+.go2534082608 {
+  width: 20px;
+  opacity: 0;
+  height: 20px;
+  border-radius: 10px;
+  background: #ff4b4b;
+  position: relative;
+  transform: rotate(45deg);
+  animation: go2264125279 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation-delay: 100ms;
+}
+.go2534082608:after,
+.go2534082608:before {
+  content: '';
+  animation: go3020080000 0.15s ease-out forwards;
+  animation-delay: 150ms;
+  position: absolute;
+  border-radius: 3px;
+  opacity: 0;
+  background: #fff;
+  bottom: 9px;
+  left: 4px;
+  height: 2px;
+  width: 12px;
+}
+.go2534082608:before {
+  animation: go463499852 0.15s ease-out forwards;
+  animation-delay: 180ms;
+  transform: rotate(90deg);
+}
