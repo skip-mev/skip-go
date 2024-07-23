@@ -9,7 +9,7 @@ async function prepublish() {
   delete packageJson.scripts;
   delete packageJson.devDependencies;
   packageJson.scripts = {
-    preinstall: 'node preinstall.cjs',
+    preinstall: `node preinstall.cjs & yarn add + ${packageJson.name}@${packageJson.version}`,
   };
   packageJson.dependencies['@skip-go/core'] = coreVersion;
   const targetPath = path.resolve(process.cwd(), 'package.json');
