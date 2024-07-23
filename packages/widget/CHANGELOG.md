@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.1.1
+
+### Patch Changes
+
+- 5533dbe: Add missing toast styles for toast.error
+
 ## 2.1.0
 
 ### Minor Changes
