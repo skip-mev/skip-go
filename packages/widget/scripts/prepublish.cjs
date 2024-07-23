@@ -8,6 +8,9 @@ const coreVersion = require('@skip-go/core/package.json').version;
 async function prepublish() {
   delete packageJson.scripts;
   delete packageJson.devDependencies;
+  packageJson.scripts = {
+    preinstall: 'node preinstall.cjs',
+  };
   packageJson.dependencies['@skip-go/core'] = coreVersion;
   const targetPath = path.resolve(process.cwd(), 'package.json');
   await fs.writeFile(targetPath, JSON.stringify(packageJson, null, 2), {
