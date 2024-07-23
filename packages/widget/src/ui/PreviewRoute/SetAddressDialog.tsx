@@ -19,6 +19,7 @@ import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
 import { StyledBorderDiv, StyledBrandDiv } from '../StyledComponents/Theme';
+import { PraxWalletIndex } from '../WalletModal/PraxWalletIndex';
 
 export const SetAddressDialog = ({
   open,
@@ -46,7 +47,7 @@ export const SetAddressDialog = ({
   const [address, setAddress] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  const currentChainAddress = chainAddresses[index];
+  const [praxWalletIndex, setPraxWalletIndex] = useState(0);
 
   const validateAddress = (address: string) => {
     if (chainType === 'cosmos') {
@@ -161,6 +162,10 @@ export const SetAddressDialog = ({
                           const resAddress = await wallet.getAddress?.({
                             signRequired,
                             context: isDestination ? 'destination' : 'recovery',
+                            penumbraWalletIndex:
+                              wallet.walletName === 'prax'
+                                ? praxWalletIndex
+                                : undefined,
                           });
                           if (resAddress) {
                             setAddress(resAddress);
@@ -197,6 +202,12 @@ export const SetAddressDialog = ({
                             ? 'Metamask (Leap Snap)'
                             : wallet.walletPrettyName}
                         </p>
+                        {wallet.walletName === 'prax' && (
+                          <PraxWalletIndex
+                            praxWalletIndex={praxWalletIndex}
+                            setPraxWalletIndex={setPraxWalletIndex}
+                          />
+                        )}
                       </StyledThemedButton>
 
                       {chainType === 'svm' && wallet.isAvailable !== true && (
@@ -272,11 +283,11 @@ export const SetAddressDialog = ({
   );
 };
 
-const StyledApproveButton = styled(StyledBrandDiv)`
+export const StyledApproveButton = styled(StyledBrandDiv)`
   border-color: ${(props) => props.theme.brandColor};
 `;
 
-const StyledCancelButton = styled.button`
+export const StyledCancelButton = styled.button`
   color: ${(props) => props.theme.brandColor};
   border-color: ${(props) => props.theme.brandColor};
 `;

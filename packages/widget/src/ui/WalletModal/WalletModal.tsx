@@ -4,7 +4,7 @@ import * as ScrollArea from '@radix-ui/react-scroll-area';
 
 import { AdaptiveLink } from '../AdaptiveLink';
 import { useWalletModal } from './context';
-import { useTotalWallets, WalletListItem } from './WalletListItem';
+import { WalletListItem } from './WalletListItem';
 import { MinimalWallet, useMakeWallets } from '../../hooks/use-make-wallets';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';

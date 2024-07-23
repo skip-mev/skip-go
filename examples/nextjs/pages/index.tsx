@@ -25,6 +25,7 @@ const defaultProps = {
     srcAssetDenom:
       'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
   },
+  onlyTestnet: true,
 };
 
 const darkTheme = {

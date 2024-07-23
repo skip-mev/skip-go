@@ -17,22 +17,20 @@ import {
   requestPraxAccess,
 } from '../utils/prax';
 
-interface ConnectProps {
-  penumbraWalletIndex?: number;
-}
 export interface MinimalWallet {
   walletName: string;
   walletPrettyName: string;
   walletInfo: {
     logo?: string | { major: string; minor: string };
   };
-  connect: ({ penumbraWalletIndex }?: ConnectProps) => Promise<void>;
+  connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
   getAddress?: (props: {
     signRequired?: boolean;
     context?: 'recovery' | 'destination';
+    penumbraWalletIndex?: number;
   }) => Promise<string | undefined>;
 }
 
@@ -79,50 +77,32 @@ export const useMakeWallets = () => {
           walletInfo: {
             logo: 'https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg',
           },
-          connect: async (props) => {
+          connect: async () => {
+            console.error('Prax wallet is not supported for connect');
+            toast.error('Prax wallet is not supported for connect');
+          },
+          getAddress: async (props) => {
             const penumbraWalletIndex = props?.penumbraWalletIndex;
             try {
               const isInstalled = await isPraxInstalled();
               if (!isInstalled) {
                 throw new Error('Prax Wallet is not installed');
               }
-              const isConnected = isPraxConnected();
-              console.log('requesting access');
               await requestPraxAccess();
-              console.log('access requested');
               const praxClient = createPraxClient(ViewService);
-              console.log(praxClient);
               const address = await praxClient.addressByIndex({
                 addressIndex: {
                   account: penumbraWalletIndex ? penumbraWalletIndex : 0,
                 },
               });
-              console.log(address);
               if (!address.address) throw new Error('No address found');
               const bech32Address = bech32mAddress(address.address);
-              console.log(bech32Address);
-              console.log('test', isInstalled, isConnected);
+              return bech32Address;
             } catch (error) {
               console.error(error);
-              toast.error(
-                <p>
-                  {/* @ts-expect-error */}
-                  <strong>{error?.message}</strong>
-                </p>
-              );
+              // @ts-expect-error
+              toast.error(error?.message);
             }
-          },
-          getAddress: async () => {
-            // Or, you might prefer a specific provider.
-            const praxViewClient = await createPenumbraClient(
-              ViewService,
-              'chrome-extension://lkpmkhpnhknhmibgnmmhdhgdilepfghe'
-            );
-
-            const { address } = await praxViewClient.addressByIndex({});
-            if (!address) throw new Error('No address found');
-            console.log(bech32mAddress(address));
-            return 'testing';
           },
           disconnect: async () => {
             console.error('Prax wallet is not supported');
