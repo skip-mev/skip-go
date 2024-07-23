@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const npmrcPath = path.resolve(__dirname, '../../.npmrc');
+const npmrcPath = path.resolve(__dirname, '../../../.npmrc');
 const registryConfig = '@buf:registry=https://buf.build/gen/npm/v1/';
 
 if (!fs.existsSync(npmrcPath)) {
