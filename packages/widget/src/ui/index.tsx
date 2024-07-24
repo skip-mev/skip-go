@@ -64,6 +64,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   style,
   filter,
   toasterProps,
+  persistSwapWidgetState,
   ...swapWidgetProviderProps
 }) => {
   useEffect(() => {
@@ -91,6 +92,7 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
             className={className}
             style={style}
             toasterProps={toasterProps}
+            persistSwapWidgetState={persistSwapWidgetState}
           />
         </SwapWidgetProvider>
       </ThemeProvider>

@@ -33,12 +33,14 @@ export type SwapWidgetUIProps = Pick<
   'className' | 'style'
 > & {
   toasterProps?: ToasterProps;
+  persistSwapWidgetState?: boolean;
 };
 
 export const SwapWidgetUI = ({
   className,
   style,
   toasterProps,
+  persistSwapWidgetState,
 }: SwapWidgetUIProps) => {
   const theme = useTheme();
   useEffect(() => void disclosure.rehydrate(), []);
@@ -102,7 +104,7 @@ export const SwapWidgetUI = ({
     swapPriceImpactPercent,
     usdDiffPercent,
     shareable,
-  } = useSwapWidget();
+  } = useSwapWidget(persistSwapWidgetState);
 
   const srcAccount = useAccount(sourceChain?.chainID);
 

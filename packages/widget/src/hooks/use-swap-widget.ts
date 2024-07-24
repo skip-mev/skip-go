@@ -45,12 +45,16 @@ export interface DefaultRouteConfig {
   destAssetDenom?: string;
 }
 
-export function useSwapWidget() {
+export function useSwapWidget(persistSwapWidgetState = true) {
   /**
    * intentional manual hydration to prevent ssr mismatch
    * @see {useSwapWidgetStore}
    */
-  useEffect(() => void useSwapWidgetStore.persist.rehydrate(), []);
+  useEffect(() => {
+    if (persistSwapWidgetState) {
+      useSwapWidgetStore.persist.rehydrate();
+    }
+  }, []);
 
   /////////////////////////////////////////////////////////////////////////////
 

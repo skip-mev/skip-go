@@ -133,6 +133,7 @@ interface SwapWidgetProps {
     brandColor: string; // color used for confirmation buttons
     highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
   };
+  persistSwapWidgetState?: boolean; // whether or not swap widget state should persist after refresh. Defaults to true
 }
 ````
 
