@@ -3616,21 +3616,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graz-sh/types@npm:0.0.14, @graz-sh/types@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "@graz-sh/types@npm:0.0.14"
-  peerDependencies:
-    long: "*"
-    zod: "*"
-  peerDependenciesMeta:
-    long:
-      optional: true
-    zod:
-      optional: true
-  checksum: fd83c3e7f8bbf095bfff0735a5a86c4f8b10766d90e916f8bc95d7232c48b082b341ed7e658979be94d75b59546eb0f1d56f0e4a6536409c41bab180bdbc031f
-  languageName: node
-  linkType: hard
-
 "@hapi/bourne@npm:^3.0.0":
   version: 3.0.0
   resolution: "@hapi/bourne@npm:3.0.0"
@@ -7906,7 +7891,7 @@ __metadata:
     "@cosmjs/stargate": 0.32.4
     "@cosmjs/tendermint-rpc": 0.32.4
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": 0.1.9
+    "@initia/initia-registry": latest
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.67
@@ -7915,6 +7900,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@solana/web3.js": ^1.91.1
     axios: 1.x
+    chain-registry: latest
     cosmjs-types: 0.8.0
     keccak256: 1.x
     kujira.js: 0.9.x
@@ -7922,8 +7908,6 @@ __metadata:
     proxy-from-env: ^1.1.0
     viem: 2.x
     vitest: ^1.2.2
-  peerDependencies:
-    chain-registry: ^1.33.11
   languageName: unknown
   linkType: soft
 
@@ -7939,7 +7923,6 @@ __metadata:
     "@cosmos-kit/station": 2.5.x
     "@cosmos-kit/vectis": 2.6.x
     "@emotion/css": ^11.11.2
-    "@graz-sh/types": 0.0.14
     "@heroicons/react": ^2.1.3
     "@initia/initia-registry": latest
     "@injectivelabs/utils": 1.14.6
@@ -22346,7 +22329,6 @@ __metadata:
     "@cosmos-kit/react": 2.10.x
     "@cosmos-kit/station": 2.5.x
     "@cosmos-kit/vectis": 2.6.x
-    "@graz-sh/types": ^0.0.14
     "@initia/initia-registry": 0.1.9
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5

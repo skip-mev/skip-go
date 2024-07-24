@@ -27,7 +27,6 @@
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
-    "chains:generate": "tsx ./src/scripts/codegen.ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
     "prepack": "yarn run pre",
@@ -69,8 +68,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "viem": "^2.7.16",
-    "wagmi": "^2.5.7",
-    "@graz-sh/types": "0.0.14"
+    "wagmi": "^2.5.7"
   },
   "dependencies": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",
@@ -81,7 +79,6 @@
     "@cosmos-kit/station": "2.5.x",
     "@cosmos-kit/vectis": "2.6.x",
     "@emotion/css": "^11.11.2",
-    "@graz-sh/types": "0.0.14",
     "@heroicons/react": "^2.1.3",
     "@initia/initia-registry": "latest",
     "@injectivelabs/utils": "1.14.6",
