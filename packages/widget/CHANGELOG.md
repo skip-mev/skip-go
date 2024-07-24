@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.2.0
+
+### Minor Changes
+
+- 52e827f: Add prop persistSwapWidgetState
+
 ## 2.1.1
 
 ### Patch Changes
