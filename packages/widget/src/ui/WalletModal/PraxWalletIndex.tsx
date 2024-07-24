@@ -1,11 +1,11 @@
 import { PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useState } from 'react';
-import { StyledBorderDiv } from '../StyledComponents/Theme';
-import { cn } from '../../utils/ui';
 import {
   StyledApproveButton,
+  StyledBorderDiv,
   StyledCancelButton,
-} from '../PreviewRoute/SetAddressDialog';
+} from '../StyledComponents/Theme';
+import { cn } from '../../utils/ui';
 import { MdCheck, MdClose } from 'react-icons/md';
 
 export const PraxWalletIndex = ({

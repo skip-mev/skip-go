@@ -18,7 +18,12 @@ import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
-import { StyledBorderDiv, StyledBrandDiv } from '../StyledComponents/Theme';
+import {
+  StyledApproveButton,
+  StyledBorderDiv,
+  StyledBrandDiv,
+  StyledCancelButton,
+} from '../StyledComponents/Theme';
 import { PraxWalletIndex } from '../WalletModal/PraxWalletIndex';
 
 export const SetAddressDialog = ({
@@ -282,12 +287,3 @@ export const SetAddressDialog = ({
     </Dialog>
   );
 };
-
-export const StyledApproveButton = styled(StyledBrandDiv)`
-  border-color: ${(props) => props.theme.brandColor};
-`;
-
-export const StyledCancelButton = styled.button`
-  color: ${(props) => props.theme.brandColor};
-  border-color: ${(props) => props.theme.brandColor};
-`;
