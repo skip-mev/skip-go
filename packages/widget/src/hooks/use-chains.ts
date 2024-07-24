@@ -1,5 +1,5 @@
 import { Chain as SkipChain } from '@skip-go/core';
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 
@@ -12,7 +12,9 @@ export type UseChainsQueryArgs<T = Chain[]> = {
   select?: (arr?: Chain[]) => T;
 };
 
-export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
+export function useChains<T = Chain[]>(
+  args: UseChainsQueryArgs<T> = {}
+): UseQueryResult<T> {
   const { select = (t) => t as T } = args;
   const skipClient = useSkipClient();
   const onlyTestnet = useSwapWidgetUIStore((state) => state.onlyTestnet);

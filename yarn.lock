@@ -2220,6 +2220,437 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@buf/cosmos_cosmos-proto.bufbuild_es@npm:1.10.0-20211202220400-1935555c206d.1":
+  version: 1.10.0-20211202220400-1935555c206d.1
+  resolution: "@buf/cosmos_cosmos-proto.bufbuild_es@npm:1.10.0-20211202220400-1935555c206d.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 368ae51e664d17196efb93eb9e8f2e1d6fda8f637eca38ca794bca40adc9922de9dbde0203f62821b2f9990ea121f95163bc99912dd721057731efef46900028
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-proto.bufbuild_es@npm:1.7.2-20211202220400-1935555c206d.2":
+  version: 1.7.2-20211202220400-1935555c206d.2
+  resolution: "@buf/cosmos_cosmos-proto.bufbuild_es@npm:1.7.2-20211202220400-1935555c206d.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 41a3cfca1801905bc0bafb546d17da7e394d7ab58c020eb5aeee0e6184bd12539d454c5085c63d760eedd4ee7caca44f3f15d62bd098eb53566bf01f4b4dbfef
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-proto.connectrpc_es@npm:1.4.0-20211202220400-1935555c206d.3":
+  version: 1.4.0-20211202220400-1935555c206d.3
+  resolution: "@buf/cosmos_cosmos-proto.connectrpc_es@npm:1.4.0-20211202220400-1935555c206d.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 9dcb5eb199fa398bbb7ad09ceec74b5b3cfee0f3851c711eb83fdb1c8023999df41f6dd78485f315c97f447967fedd52bf74666affd1d1afe29a5fb8a049f494
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.10.0-20230522115704-e7a85cef453e.1":
+  version: 1.10.0-20230522115704-e7a85cef453e.1
+  resolution: "@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.10.0-20230522115704-e7a85cef453e.1"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.10.0-20211202220400-1935555c206d.1
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.10.0-20221020125208-34d970b699f8.1
+    "@buf/googleapis_googleapis.bufbuild_es": 1.10.0-20221214150216-75b4300737fb.1
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: de55478fc3928359d8ff66522a2bab21d3c8ea44647de0845bfeeecb7d02d541dffec89428ed6911bdc8ed48aea0d5147ef3348c9cf09957779837b928310553
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.10.0-20230719110346-aa25660f4ff7.1":
+  version: 1.10.0-20230719110346-aa25660f4ff7.1
+  resolution: "@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.10.0-20230719110346-aa25660f4ff7.1"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.10.0-20211202220400-1935555c206d.1
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.10.0-20230509103710-5e5b9fdd0180.1
+    "@buf/googleapis_googleapis.bufbuild_es": 1.10.0-20230502210827-cc916c318597.1
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 8d6ce7dbdda079832fbfe59f70f1fcf71be177988383c5518537600b916b5e36a5b039483e02c80cd398a798a9931ff99e571c9a010a3be02321938d8eafa56e
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.7.2-20230522115704-e7a85cef453e.2":
+  version: 1.7.2-20230522115704-e7a85cef453e.2
+  resolution: "@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.7.2-20230522115704-e7a85cef453e.2"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20221020125208-34d970b699f8.2
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20221214150216-75b4300737fb.2
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: da0e1bcd7e0bd4b2278d95e82bdf3568095d3deb67683b944bf778402ff409c41b978862857829d520f0ef17b6b8f719d32ed167422f75f3c54821ff3d2e3e43
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.7.2-20230719110346-aa25660f4ff7.2":
+  version: 1.7.2-20230719110346-aa25660f4ff7.2
+  resolution: "@buf/cosmos_cosmos-sdk.bufbuild_es@npm:1.7.2-20230719110346-aa25660f4ff7.2"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20230509103710-5e5b9fdd0180.2
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20230502210827-cc916c318597.2
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 685ef2c4e4ed01a0c8e41a0364c1e614f01b1f23168e3e246b3a5a3c48d28aae700a91501ebc45ff6a280c5ec906a3d91490648deac6a055793b9b132835b08f
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.connectrpc_es@npm:1.4.0-20230522115704-e7a85cef453e.3":
+  version: 1.4.0-20230522115704-e7a85cef453e.3
+  resolution: "@buf/cosmos_cosmos-sdk.connectrpc_es@npm:1.4.0-20230522115704-e7a85cef453e.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.connectrpc_es": 1.4.0-20211202220400-1935555c206d.3
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.7.2-20230522115704-e7a85cef453e.2
+    "@buf/cosmos_gogo-proto.connectrpc_es": 1.4.0-20221020125208-34d970b699f8.3
+    "@buf/googleapis_googleapis.connectrpc_es": 1.4.0-20221214150216-75b4300737fb.3
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 98e626bc490f1254ed9b9d51b80c30800d490ecdba78e0c04101dc56b454a48160ce4abef629625f82e72234345582697abcb72a8a475311da260bcf2f655131
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_cosmos-sdk.connectrpc_es@npm:1.4.0-20230719110346-aa25660f4ff7.3":
+  version: 1.4.0-20230719110346-aa25660f4ff7.3
+  resolution: "@buf/cosmos_cosmos-sdk.connectrpc_es@npm:1.4.0-20230719110346-aa25660f4ff7.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.connectrpc_es": 1.4.0-20211202220400-1935555c206d.3
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.7.2-20230719110346-aa25660f4ff7.2
+    "@buf/cosmos_gogo-proto.connectrpc_es": 1.4.0-20230509103710-5e5b9fdd0180.3
+    "@buf/googleapis_googleapis.connectrpc_es": 1.4.0-20230502210827-cc916c318597.3
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: e07dd01d72c15db1ea17ba3eeb947170431971e3ac8e9fffd3f740ae36f830b701bcc62c82ce68445194599d06f99a99165de6f31fac7c9cd5917311e113dd5b
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.bufbuild_es@npm:1.10.0-20221020125208-34d970b699f8.1":
+  version: 1.10.0-20221020125208-34d970b699f8.1
+  resolution: "@buf/cosmos_gogo-proto.bufbuild_es@npm:1.10.0-20221020125208-34d970b699f8.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: e854e1356214ff0723e696264de73ba55115c176df2ca77be511b18cdd59bf011d16d7e6bc51d658dd249673e31570f86e8d2c0aa115a4da59a233619adb3cf7
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.bufbuild_es@npm:1.10.0-20230509103710-5e5b9fdd0180.1":
+  version: 1.10.0-20230509103710-5e5b9fdd0180.1
+  resolution: "@buf/cosmos_gogo-proto.bufbuild_es@npm:1.10.0-20230509103710-5e5b9fdd0180.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 64b43a7ed9d64a6dd9ba13555cb6d02a9ee48c1921a75d7ebbb4956a229724dfe907667dd0770f1e8caf319b996977d845f99845ab809525ee981125ee892338
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.bufbuild_es@npm:1.7.2-20221020125208-34d970b699f8.2":
+  version: 1.7.2-20221020125208-34d970b699f8.2
+  resolution: "@buf/cosmos_gogo-proto.bufbuild_es@npm:1.7.2-20221020125208-34d970b699f8.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 7fc96e24377142b6105610e82d246442b5b07afc7da2594755caffd733e48ad0f1fd458edb966e2affb4cf94efa79ed1e939c66056f0209aa3317dd9062ac1f1
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.bufbuild_es@npm:1.7.2-20230509103710-5e5b9fdd0180.2":
+  version: 1.7.2-20230509103710-5e5b9fdd0180.2
+  resolution: "@buf/cosmos_gogo-proto.bufbuild_es@npm:1.7.2-20230509103710-5e5b9fdd0180.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 804aae91b5630f4dd755d9a840cc475cc2073f2835909a87f322b0826970a09dc9332d8aac8a2ac14e9a5b232087aadaebb54d90d058adb010efcd9c8fecca41
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.connectrpc_es@npm:1.4.0-20221020125208-34d970b699f8.3":
+  version: 1.4.0-20221020125208-34d970b699f8.3
+  resolution: "@buf/cosmos_gogo-proto.connectrpc_es@npm:1.4.0-20221020125208-34d970b699f8.3"
+  dependencies:
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20221020125208-34d970b699f8.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 87e61f21224514b260324eba1ec0bd038ffd299fdc47db4be79ce8b94f93aee52ca71987883cc9a412f30cb657cf12cad216df4e7ba63e6006936f81e8ab1362
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_gogo-proto.connectrpc_es@npm:1.4.0-20230509103710-5e5b9fdd0180.3":
+  version: 1.4.0-20230509103710-5e5b9fdd0180.3
+  resolution: "@buf/cosmos_gogo-proto.connectrpc_es@npm:1.4.0-20230509103710-5e5b9fdd0180.3"
+  dependencies:
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20230509103710-5e5b9fdd0180.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 23bc532b31ab5c34c014330ecbe4452b193d8611fad28273d42d17006c85598b7d262ced1625ffb3f2e3f3bfdb44d02df73e33012eca20a1b1290a915a84ede1
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.bufbuild_es@npm:1.10.0-20230913112312-7ab44ae956a0.1":
+  version: 1.10.0-20230913112312-7ab44ae956a0.1
+  resolution: "@buf/cosmos_ibc.bufbuild_es@npm:1.10.0-20230913112312-7ab44ae956a0.1"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.10.0-20211202220400-1935555c206d.1
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.10.0-20230719110346-aa25660f4ff7.1
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.10.0-20221020125208-34d970b699f8.1
+    "@buf/cosmos_ics23.bufbuild_es": 1.10.0-20221207100654-55085f7c710a.1
+    "@buf/googleapis_googleapis.bufbuild_es": 1.10.0-20220908150232-8d7204855ec1.1
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: c328867eef799bc7adf540ba4becac4cf5b7e6b312205400fc27639bae4c1e64cac3885b96049791f5a55d6718bc3ce864bc15cada2945386d1fa829a818fb70
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.bufbuild_es@npm:1.10.0-20240625204953-f66a294d94c4.1":
+  version: 1.10.0-20240625204953-f66a294d94c4.1
+  resolution: "@buf/cosmos_ibc.bufbuild_es@npm:1.10.0-20240625204953-f66a294d94c4.1"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.10.0-20211202220400-1935555c206d.1
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.10.0-20230719110346-aa25660f4ff7.1
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.10.0-20221020125208-34d970b699f8.1
+    "@buf/cosmos_ics23.bufbuild_es": 1.10.0-20221207100654-55085f7c710a.1
+    "@buf/googleapis_googleapis.bufbuild_es": 1.10.0-20220908150232-8d7204855ec1.1
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 4f9ec8339e1dd7b7bf5c5edcfb6d4768697cd3b28e4c342c9af53c5611343e317eb990933408701c8cc63a41fed8b318ff1390c60463cf436e26b7c4aa8d4032
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.bufbuild_es@npm:1.7.2-20230913112312-7ab44ae956a0.2":
+  version: 1.7.2-20230913112312-7ab44ae956a0.2
+  resolution: "@buf/cosmos_ibc.bufbuild_es@npm:1.7.2-20230913112312-7ab44ae956a0.2"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.7.2-20230719110346-aa25660f4ff7.2
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20221020125208-34d970b699f8.2
+    "@buf/cosmos_ics23.bufbuild_es": 1.7.2-20221207100654-55085f7c710a.2
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20220908150232-8d7204855ec1.2
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: d791ce2b6ebebbe2d89887c9650923c7c9f80bf1baf5f3d97415a6fc4b37f35d08875879748361e71d9d07afb825f974d3d295243d5defa074c63aeba024f2ca
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.bufbuild_es@npm:1.7.2-20240625204953-f66a294d94c4.2":
+  version: 1.7.2-20240625204953-f66a294d94c4.2
+  resolution: "@buf/cosmos_ibc.bufbuild_es@npm:1.7.2-20240625204953-f66a294d94c4.2"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.7.2-20230719110346-aa25660f4ff7.2
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20221020125208-34d970b699f8.2
+    "@buf/cosmos_ics23.bufbuild_es": 1.7.2-20221207100654-55085f7c710a.2
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20220908150232-8d7204855ec1.2
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 6bd9b8a0dad37a3ae4d4b6b7fffbeebdf5e0f2bff00f9f8da0e2053f646fc551d6a77ed16e35e3ca6953e6c4c8263755e47a8b8ddaba5c7efa8f1f2f41dc7797
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.connectrpc_es@npm:1.4.0-20230913112312-7ab44ae956a0.3":
+  version: 1.4.0-20230913112312-7ab44ae956a0.3
+  resolution: "@buf/cosmos_ibc.connectrpc_es@npm:1.4.0-20230913112312-7ab44ae956a0.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.connectrpc_es": 1.4.0-20211202220400-1935555c206d.3
+    "@buf/cosmos_cosmos-sdk.connectrpc_es": 1.4.0-20230719110346-aa25660f4ff7.3
+    "@buf/cosmos_gogo-proto.connectrpc_es": 1.4.0-20221020125208-34d970b699f8.3
+    "@buf/cosmos_ibc.bufbuild_es": 1.7.2-20230913112312-7ab44ae956a0.2
+    "@buf/cosmos_ics23.connectrpc_es": 1.4.0-20221207100654-55085f7c710a.3
+    "@buf/googleapis_googleapis.connectrpc_es": 1.4.0-20220908150232-8d7204855ec1.3
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: aea59537acfb146c1d09e8110c3043247127981221bd893fef52efc4f91fb32087d6410a8af9b9166a929c326f1339268580579ae06cf6a59c68aefb6299d971
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ibc.connectrpc_es@npm:1.4.0-20240625204953-f66a294d94c4.3":
+  version: 1.4.0-20240625204953-f66a294d94c4.3
+  resolution: "@buf/cosmos_ibc.connectrpc_es@npm:1.4.0-20240625204953-f66a294d94c4.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.connectrpc_es": 1.4.0-20211202220400-1935555c206d.3
+    "@buf/cosmos_cosmos-sdk.connectrpc_es": 1.4.0-20230719110346-aa25660f4ff7.3
+    "@buf/cosmos_gogo-proto.connectrpc_es": 1.4.0-20221020125208-34d970b699f8.3
+    "@buf/cosmos_ibc.bufbuild_es": 1.7.2-20240625204953-f66a294d94c4.2
+    "@buf/cosmos_ics23.connectrpc_es": 1.4.0-20221207100654-55085f7c710a.3
+    "@buf/googleapis_googleapis.connectrpc_es": 1.4.0-20220908150232-8d7204855ec1.3
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 8850c88ff089e84eb45980a02e66da2810fba8c4c4314a38a3d9b1bb4341fa01dbf94465eaea0c22d90bccdcf6185da0676490b3e6bea04eb451d97b9ae9ac4b
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ics23.bufbuild_es@npm:1.10.0-20221207100654-55085f7c710a.1":
+  version: 1.10.0-20221207100654-55085f7c710a.1
+  resolution: "@buf/cosmos_ics23.bufbuild_es@npm:1.10.0-20221207100654-55085f7c710a.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 174e02a3db6d1947fcefbfc0bd71b3b9037f6567898cb6abfd44de3f38103a5f30eec2db2d6a156f6de7e10a0a18781dd9945ddd6346e4f460f44a45e57f9607
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ics23.bufbuild_es@npm:1.7.2-20221207100654-55085f7c710a.2":
+  version: 1.7.2-20221207100654-55085f7c710a.2
+  resolution: "@buf/cosmos_ics23.bufbuild_es@npm:1.7.2-20221207100654-55085f7c710a.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: df0b1a4650a4132eee50c3d5ad8be200eeff0df0c5ed9913f05245033bc5de4af53ce5b74d4563b4f5ec10472e29a539dbcf56a68302a6756afc0be7338cb774
+  languageName: node
+  linkType: hard
+
+"@buf/cosmos_ics23.connectrpc_es@npm:1.4.0-20221207100654-55085f7c710a.3":
+  version: 1.4.0-20221207100654-55085f7c710a.3
+  resolution: "@buf/cosmos_ics23.connectrpc_es@npm:1.4.0-20221207100654-55085f7c710a.3"
+  dependencies:
+    "@buf/cosmos_ics23.bufbuild_es": 1.7.2-20221207100654-55085f7c710a.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 48529f5dc46d7a603a4b9f2474000d3c72080ec1df592cb27acc42a92cd4994c8a9a55e8cdc4125cf53e01608bf3c3ebd85e7f3dbd1c7ba829c279bf1b336804
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20220908150232-8d7204855ec1.1":
+  version: 1.10.0-20220908150232-8d7204855ec1.1
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20220908150232-8d7204855ec1.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: a47e3be394f3e9d02e2af3172c70827792c5e48e0e5f0316c24f9acf0139fbb35b31fe2050839673debc2db901510423222f026058246ee3333af289b8f5235b
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20221214150216-75b4300737fb.1":
+  version: 1.10.0-20221214150216-75b4300737fb.1
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20221214150216-75b4300737fb.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 4366309a279771014fcf54edd47313edecef52a2dfaa9a573863a9dded5e2f28cecdd11d7b4a48ab920b7a2bc935fcd04767a404fab6781c3fabf9e16b2d8d40
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20230502210827-cc916c318597.1":
+  version: 1.10.0-20230502210827-cc916c318597.1
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.10.0-20230502210827-cc916c318597.1"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: efaba6fb93d262092f009897d67988edeefa5471b09af0538274a6f2b1dcd7038c020beaf6c8825360ca4fc075bceba8bb278a21a08167d85cbcb34fa1533d7b
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20220908150232-8d7204855ec1.2":
+  version: 1.7.2-20220908150232-8d7204855ec1.2
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20220908150232-8d7204855ec1.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 8a797c9818ace3b4ee300753364a2c08570df82c29813e5dc3355fa22b01672231bbb6eaad053ac2f17d0f2ea81fb0837abfea8f8c1dd9dd03af67bce70747e4
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20221214150216-75b4300737fb.2":
+  version: 1.7.2-20221214150216-75b4300737fb.2
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20221214150216-75b4300737fb.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: fd4e3763d56e6938e9d2a060ba75ee5b56af9bb3f151ea2273cc41ccf8da9f1a784d124ecf1443481b075a73a662f28c278cc12b8fa44c9525e4d7747ca6b2d0
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20230502210827-cc916c318597.2":
+  version: 1.7.2-20230502210827-cc916c318597.2
+  resolution: "@buf/googleapis_googleapis.bufbuild_es@npm:1.7.2-20230502210827-cc916c318597.2"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: 5ba53dbc50fa2400c5a81bf7abf929728a9a91d3cc02138b9e1e02b7e51a6b7eb15f8a944e30846649a4b496025b70d08d5c58a0c6add39f1d709b893acbe8c3
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20220908150232-8d7204855ec1.3":
+  version: 1.4.0-20220908150232-8d7204855ec1.3
+  resolution: "@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20220908150232-8d7204855ec1.3"
+  dependencies:
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20220908150232-8d7204855ec1.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: 04818f8047e4f20e26f16115f1944354cb549be7ab6a19e120f35a60566adff08046bcb086633986998e5081701507acca146affdd00ad84584e0b318d184135
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20221214150216-75b4300737fb.3":
+  version: 1.4.0-20221214150216-75b4300737fb.3
+  resolution: "@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20221214150216-75b4300737fb.3"
+  dependencies:
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20221214150216-75b4300737fb.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: a618dc0b08ab231266598b4028fdc8bf05f728587c8d796f4e2741d00f1443719c00e1b23ff96ced3c58179b822642df268da72b6b5b752ca27c8bd62cc5c8e6
+  languageName: node
+  linkType: hard
+
+"@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20230502210827-cc916c318597.3":
+  version: 1.4.0-20230502210827-cc916c318597.3
+  resolution: "@buf/googleapis_googleapis.connectrpc_es@npm:1.4.0-20230502210827-cc916c318597.3"
+  dependencies:
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20230502210827-cc916c318597.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: d27e05f1ecddc700738bd371d1b3dc0c45d29e98559e1e50a268dcca02887cb6b7bec37172630b1ffd89929e3d25dc7b6c9cc6774fb0d7f44d8de4e91f25be13
+  languageName: node
+  linkType: hard
+
+"@buf/penumbra-zone_penumbra.bufbuild_es@npm:1.10.0-20240625233123-429cb316aa7c.1":
+  version: 1.10.0-20240625233123-429cb316aa7c.1
+  resolution: "@buf/penumbra-zone_penumbra.bufbuild_es@npm:1.10.0-20240625233123-429cb316aa7c.1"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.10.0-20211202220400-1935555c206d.1
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.10.0-20230522115704-e7a85cef453e.1
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.10.0-20221020125208-34d970b699f8.1
+    "@buf/cosmos_ibc.bufbuild_es": 1.10.0-20230913112312-7ab44ae956a0.1
+    "@buf/cosmos_ics23.bufbuild_es": 1.10.0-20221207100654-55085f7c710a.1
+    "@buf/googleapis_googleapis.bufbuild_es": 1.10.0-20221214150216-75b4300737fb.1
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: a762e6e535b4a9e09ac02cb96771de18b011b1aed85041f41bee2923e6a6f360a6cfd1157b154ea4462389ac17c5b3c10b0c5d1fd5d1569458df201b6c0ac7e7
+  languageName: node
+  linkType: hard
+
+"@buf/penumbra-zone_penumbra.bufbuild_es@npm:1.7.2-20240625233123-429cb316aa7c.2":
+  version: 1.7.2-20240625233123-429cb316aa7c.2
+  resolution: "@buf/penumbra-zone_penumbra.bufbuild_es@npm:1.7.2-20240625233123-429cb316aa7c.2"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.bufbuild_es": 1.7.2-20211202220400-1935555c206d.2
+    "@buf/cosmos_cosmos-sdk.bufbuild_es": 1.7.2-20230522115704-e7a85cef453e.2
+    "@buf/cosmos_gogo-proto.bufbuild_es": 1.7.2-20221020125208-34d970b699f8.2
+    "@buf/cosmos_ibc.bufbuild_es": 1.7.2-20230913112312-7ab44ae956a0.2
+    "@buf/cosmos_ics23.bufbuild_es": 1.7.2-20221207100654-55085f7c710a.2
+    "@buf/googleapis_googleapis.bufbuild_es": 1.7.2-20221214150216-75b4300737fb.2
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.7.2
+  checksum: e7291079d9e098cbbc87bac2d3f69d44b75e7b7230d67e3def7113e42456c220c1db024c469f99c9ef8325b2f33c2e246870a31f5d89667b77d46ae8d3196835
+  languageName: node
+  linkType: hard
+
+"@buf/penumbra-zone_penumbra.connectrpc_es@npm:1.4.0-20240625233123-429cb316aa7c.3":
+  version: 1.4.0-20240625233123-429cb316aa7c.3
+  resolution: "@buf/penumbra-zone_penumbra.connectrpc_es@npm:1.4.0-20240625233123-429cb316aa7c.3"
+  dependencies:
+    "@buf/cosmos_cosmos-proto.connectrpc_es": 1.4.0-20211202220400-1935555c206d.3
+    "@buf/cosmos_cosmos-sdk.connectrpc_es": 1.4.0-20230522115704-e7a85cef453e.3
+    "@buf/cosmos_gogo-proto.connectrpc_es": 1.4.0-20221020125208-34d970b699f8.3
+    "@buf/cosmos_ibc.connectrpc_es": 1.4.0-20230913112312-7ab44ae956a0.3
+    "@buf/cosmos_ics23.connectrpc_es": 1.4.0-20221207100654-55085f7c710a.3
+    "@buf/googleapis_googleapis.connectrpc_es": 1.4.0-20221214150216-75b4300737fb.3
+    "@buf/penumbra-zone_penumbra.bufbuild_es": 1.7.2-20240625233123-429cb316aa7c.2
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+  checksum: c8bda27e70b606486c1acfaa91a9456a5243b47cdc54493d629523edae9fbb50502e103bbfff89a664dade1a995a70da31119703185a3fac0a3548802ba1ccd6
+  languageName: node
+  linkType: hard
+
+"@bufbuild/protobuf@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@bufbuild/protobuf@npm:1.10.0"
+  checksum: 84ba0bed65ebfc75dcb31d231af4226c87148cc4e333b59979674b187dd3e52b2a8f76431b236195d8cde5ea555bdc1ad38a76f418956f874041c15448f53402
+  languageName: node
+  linkType: hard
+
 "@chain-registry/client@npm:^1.48.1":
   version: 1.48.10
   resolution: "@chain-registry/client@npm:1.48.10"
@@ -2583,6 +3014,15 @@ __metadata:
     "@noble/hashes": ^1.0.0
     protobufjs: ^6.8.8
   checksum: 376d72f6440db60611b002b00a13e3a5bfd0d3503e7682358dbcf79641e74d8c26c234c321452fb4a758baf66eecef25d950e08bdea270486d9d03ee489e2960
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect@npm:1.4.0, @connectrpc/connect@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@connectrpc/connect@npm:1.4.0"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.4.2
+  checksum: 388145ea90b3216f133b34d96a47dfd0273dfa12c4b4963c7223cf45bdcbf8b3490ab234dda34fd42a7112ad9f51f22efc013f3183744a3f2ae65b825917b870
   languageName: node
   linkType: hard
 
@@ -6189,6 +6629,87 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@penumbra-zone/bech32m@npm:6.1.0":
+  version: 6.1.0
+  resolution: "@penumbra-zone/bech32m@npm:6.1.0"
+  dependencies:
+    bech32: ^2.0.0
+  checksum: 90575331e12a5128d27cbbd864da8637c52cff3ab6da7458cda929f19858bb025ed6b78bd3287159e326c27cfb07997192de9a9261c820ea3373bd99003b6ada
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/bech32m@npm:6.1.1":
+  version: 6.1.1
+  resolution: "@penumbra-zone/bech32m@npm:6.1.1"
+  dependencies:
+    bech32: ^2.0.0
+  checksum: f8bca323b9645514d67dcbf2898dcbf1d812d3cb4fc30b5900c182f8667114a454eae8414a44343042f269e3eb2d7b9c94bfe5af8f8ea57266fa800f75c8f123
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/client@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@penumbra-zone/client@npm:10.0.0"
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+    "@penumbra-zone/protobuf": 5.3.0
+    "@penumbra-zone/transport-dom": 7.2.0
+  checksum: 7208459910db1e7ae2d0cdc3980ab552816a1494739a3898f3ec3fdc9f7e9c488b0fcf48fb9fc4b49be71542e40afbcd965c07b1e85350e7ab03ce048f65566e
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/client@npm:11.0.1":
+  version: 11.0.1
+  resolution: "@penumbra-zone/client@npm:11.0.1"
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+    "@penumbra-zone/protobuf": 5.4.0
+    "@penumbra-zone/transport-dom": 7.2.2
+  checksum: ee7e76197295f4467490e2c78abbf92d9db615f6137ea30d8f4a0b87488ed70e75b0f59838f9c547270ec81989715448c118366201a3b99fee066a9c5074d994
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/protobuf@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@penumbra-zone/protobuf@npm:5.3.0"
+  dependencies:
+    "@buf/cosmos_ibc.bufbuild_es": 1.10.0-20240625204953-f66a294d94c4.1
+    "@buf/cosmos_ibc.connectrpc_es": 1.4.0-20240625204953-f66a294d94c4.3
+    "@buf/penumbra-zone_penumbra.bufbuild_es": 1.10.0-20240625233123-429cb316aa7c.1
+    "@buf/penumbra-zone_penumbra.connectrpc_es": 1.4.0-20240625233123-429cb316aa7c.3
+    "@bufbuild/protobuf": ^1.10.0
+  peerDependencies:
+    "@buf/cosmos_ibc.bufbuild_es": 1.10.0-20240625204953-f66a294d94c4.1
+    "@buf/cosmos_ibc.connectrpc_es": 1.4.0-20240625204953-f66a294d94c4.3
+    "@buf/penumbra-zone_penumbra.bufbuild_es": 1.10.0-20240625233123-429cb316aa7c.1
+    "@buf/penumbra-zone_penumbra.connectrpc_es": 1.4.0-20240625233123-429cb316aa7c.3
+  checksum: 1cd1a15e082f61675c900e0ff4766c6ccfec4f857344489d54fd0822b42ee39ef534304479546d8eb9b0f43ebab4fcd450eb14434503a6d5d4c07fa5ae2c0d47
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/protobuf@npm:5.4.0":
+  version: 5.4.0
+  resolution: "@penumbra-zone/protobuf@npm:5.4.0"
+  peerDependencies:
+    "@buf/cosmos_ibc.bufbuild_es": 1.10.0-20240703151202-d7191877c701.1
+    "@buf/cosmos_ibc.connectrpc_es": 1.4.0-20240703151202-d7191877c701.3
+    "@buf/penumbra-zone_penumbra.bufbuild_es": 1.10.0-20240703080008-312294d02bf9.1
+    "@buf/penumbra-zone_penumbra.connectrpc_es": 1.4.0-20240703080008-312294d02bf9.3
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: be34f06086f55c1813c9f443f8f727f26695d83226310ef54a4b2d37dd4e56ded909c906f54414e015a6ae43e5951d67f65b7426cd215fc915c971fc61794677
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/transport-dom@npm:7.2.2":
+  version: 7.2.2
+  resolution: "@penumbra-zone/transport-dom@npm:7.2.2"
+  dependencies:
+    "@bufbuild/protobuf": ^1.10.0
+    "@connectrpc/connect": ^1.4.0
+  checksum: 4cc90ec9558beb06a275b45896f3db20b54d7429b38c2d9d0bcdf450f6df5499d5d8163e6d1e831bdff9b43b028d9f95a8792302c9d169a2a2b81e60fe4eab79
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -8755,6 +9276,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget"
   dependencies:
+    "@connectrpc/connect": 1.4.0
     "@cosmos-kit/cosmostation-extension": ^2.7.10
     "@cosmos-kit/keplr-extension": ^2.7.9
     "@cosmos-kit/leap-extension": ^2.7.10
@@ -8767,6 +9289,10 @@ __metadata:
     "@initia/initia-registry": latest
     "@injectivelabs/utils": 1.14.6
     "@interchain-ui/react": ^1.23.13
+    "@penumbra-zone/bech32m": 6.1.1
+    "@penumbra-zone/client": 11.0.1
+    "@penumbra-zone/protobuf": 5.4.0
+    "@penumbra-zone/transport-dom": 7.2.2
     "@r2wc/react-to-web-component": ^2.0.3
     "@radix-ui/colors": ^3.0.0
     "@radix-ui/react-accordion": ^1.1.2
@@ -24776,19 +25302,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-typescript2@npm:^0.34.0":
-  version: 0.34.1
-  resolution: "rollup-plugin-typescript2@npm:0.34.1"
+"rollup-plugin-typescript2@npm:0.36.0":
+  version: 0.36.0
+  resolution: "rollup-plugin-typescript2@npm:0.36.0"
   dependencies:
     "@rollup/pluginutils": ^4.1.2
     find-cache-dir: ^3.3.2
     fs-extra: ^10.0.0
-    semver: ^7.3.7
-    tslib: ^2.4.0
+    semver: ^7.5.4
+    tslib: ^2.6.2
   peerDependencies:
     rollup: ">=1.26.3"
     typescript: ">=2.4.0"
-  checksum: 107e66b9ab1aaf4b237564e500ea9de9f2d3f0a81be5139dc753fc76bbf00a1a2230eb1ec59145d2dfc4c4da9be8211f1f3e1370007efe1e24ce45a00905e558
+  checksum: 199afe11f9218ad943b67138b3165c2be2cd2535926da6ed467124273f7bbb1dd779521a648a26a65073cafe43388104857a90e0fdf06ca526a6613771eb2e70
   languageName: node
   linkType: hard
 
@@ -25132,7 +25658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.3, semver@npm:^7.5.4":
+"semver@npm:^7.3.5, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.3, semver@npm:^7.5.4":
   version: 7.6.2
   resolution: "semver@npm:7.6.2"
   bin:
@@ -25408,6 +25934,9 @@ __metadata:
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.67
+    "@penumbra-zone/bech32m": 6.1.0
+    "@penumbra-zone/client": 10.0.0
+    "@penumbra-zone/protobuf": 5.3.0
     "@protobufs/gogoproto": 0.0.10
     "@protobufs/google": 0.0.10
     "@rollup/plugin-node-resolve": ^13.1.3
@@ -25439,7 +25968,7 @@ __metadata:
     rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-postcss: ^4.0.2
     rollup-plugin-terser: ^7.0.2
-    rollup-plugin-typescript2: ^0.34.0
+    rollup-plugin-typescript2: 0.36.0
     rollup-plugin-visualizer: ^5.5.4
     ts-jest: ^29.1.2
     tslib: ^1.9.3

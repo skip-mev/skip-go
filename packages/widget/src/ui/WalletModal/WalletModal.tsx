@@ -4,7 +4,7 @@ import * as ScrollArea from '@radix-ui/react-scroll-area';
 
 import { AdaptiveLink } from '../AdaptiveLink';
 import { useWalletModal } from './context';
-import { useTotalWallets, WalletListItem } from './WalletListItem';
+import { WalletListItem } from './WalletListItem';
 import { MinimalWallet, useMakeWallets } from '../../hooks/use-make-wallets';
 import { cn } from '../../utils/ui';
 import { trackWallet, TrackWalletCtx } from '../../store/track-wallet';
@@ -26,8 +26,6 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
     onClose();
   }
 
-  const totalWallets = useTotalWallets();
-
   return (
     <div className="flex h-full flex-col px-6 pb-2 pt-6 font-diatype">
       <div className="relative">
@@ -42,7 +40,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
         </StyledThemedButton>
         <p className="text-center text-xl font-bold">Connect Wallet</p>
       </div>
-      {totalWallets < 1 && (
+      {wallets.length < 1 && (
         <div className="flex flex-col items-center space-y-4 py-16 text-center">
           <FaceFrownIcon className="h-16 w-16 text-gray-500" />
           <h4 className="text-center font-medium">No Wallets Available</h4>

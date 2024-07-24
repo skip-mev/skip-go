@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getAssets } from '../chains';
 import { raise } from '../utils/assert';
@@ -11,7 +11,7 @@ export type Args = {
   value: string;
 };
 
-export function useUsdValue(args: Args) {
+export function useUsdValue(args: Args): UseQueryResult<number> {
   const queryKey = useMemo(() => ['USE_USD_VALUE', args] as const, [args]);
 
   const enabled = useMemo(() => {

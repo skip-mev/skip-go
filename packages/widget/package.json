@@ -71,6 +71,7 @@
     "wagmi": "^2.5.7"
   },
   "dependencies": {
+    "@connectrpc/connect": "1.4.0",
     "@cosmos-kit/cosmostation-extension": "^2.7.10",
     "@cosmos-kit/keplr-extension": "^2.7.9",
     "@cosmos-kit/leap-extension": "^2.7.10",
@@ -83,6 +84,10 @@
     "@initia/initia-registry": "latest",
     "@injectivelabs/utils": "1.14.6",
     "@interchain-ui/react": "^1.23.13",
+    "@penumbra-zone/bech32m": "6.1.1",
+    "@penumbra-zone/client": "11.0.1",
+    "@penumbra-zone/protobuf": "5.4.0",
+    "@penumbra-zone/transport-dom": "7.2.2",
     "@r2wc/react-to-web-component": "^2.0.3",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.1.2",
