@@ -8,7 +8,8 @@ const Home: NextPage = () => {
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        height: '130vh',
+        flexDirection: 'column-reverse',
       }}
     >
       <div

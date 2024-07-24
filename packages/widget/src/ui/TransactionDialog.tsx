@@ -75,7 +75,7 @@ function TransactionDialog({
             'enabled:hover:rotate-1 enabled:hover:scale-102'
           )}
           disabled={!route || (typeof isLoading === 'boolean' && isLoading)}
-          onClick={() => confirmControl.open()}
+          // onClick={() => confirmControl.open()}
         >
           Preview Route
         </StyledBrandDiv>
