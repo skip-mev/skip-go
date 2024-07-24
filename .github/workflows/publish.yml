@@ -39,8 +39,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Add Label to PR
+      - name: Add automerge Label to PR
         run: gh pr edit --add-label "automerge" "$PR_URL"
+        continue-on-error: true
         env:
           PR_URL: ${{ steps.changesets.outputs.pull_request_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
