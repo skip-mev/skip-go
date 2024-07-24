@@ -84,7 +84,7 @@ export const SetAddressDialog = ({
       return '0x...';
     }
     if (chainType === 'svm') {
-      return 'Enter solanma address...';
+      return 'Enter solana address...';
     }
     return 'Enter address...';
   }, [chainType, bech32Prefix]);
