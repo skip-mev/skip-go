@@ -1620,6 +1620,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chain-registry/types@npm:^0.45.31":
+  version: 0.45.31
+  resolution: "@chain-registry/types@npm:0.45.31"
+  checksum: eadcce6661d3d622e64ddc2b62c134623cbe1e07db367dbd0ce34aa4a03ff14015b4648cf7c9da4fe2e217886dde3128809b505e1bfc8bff69a7cc98cfa84611
+  languageName: node
+  linkType: hard
+
 "@chain-registry/utils@npm:^1.46.10":
   version: 1.46.10
   resolution: "@chain-registry/utils@npm:1.46.10"
@@ -3609,21 +3616,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graz-sh/types@npm:0.0.14, @graz-sh/types@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "@graz-sh/types@npm:0.0.14"
-  peerDependencies:
-    long: "*"
-    zod: "*"
-  peerDependenciesMeta:
-    long:
-      optional: true
-    zod:
-      optional: true
-  checksum: fd83c3e7f8bbf095bfff0735a5a86c4f8b10766d90e916f8bc95d7232c48b082b341ed7e658979be94d75b59546eb0f1d56f0e4a6536409c41bab180bdbc031f
-  languageName: node
-  linkType: hard
-
 "@hapi/bourne@npm:^3.0.0":
   version: 3.0.0
   resolution: "@hapi/bourne@npm:3.0.0"
@@ -3691,6 +3683,15 @@ __metadata:
   dependencies:
     "@initia/initia-registry-types": ^0.0.17
   checksum: a86b8ef452690b9409967271d8b662b39a85278dc771f9a8632986322e075bedbbbc77cd43bec1c8a3f80ef0868c605174bfffa633b84af592fe30f3931af7aa
+  languageName: node
+  linkType: hard
+
+"@initia/initia-registry@npm:latest":
+  version: 0.1.15
+  resolution: "@initia/initia-registry@npm:0.1.15"
+  dependencies:
+    "@initia/initia-registry-types": ^0.0.17
+  checksum: 7b658f44a56acea1182b91d1ceaf157b3d3c1a135e75e63a9324eac8f4e3dd356bcbe255bd2e2225c8aaeb87a07db04e1f4d5e1dd4034ac493fd0643c0589d2e
   languageName: node
   linkType: hard
 
@@ -7890,7 +7891,7 @@ __metadata:
     "@cosmjs/stargate": 0.32.4
     "@cosmjs/tendermint-rpc": 0.32.4
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": 0.1.9
+    "@initia/initia-registry": latest
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.67
@@ -7899,6 +7900,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@solana/web3.js": ^1.91.1
     axios: 1.x
+    chain-registry: latest
     cosmjs-types: 0.8.0
     keccak256: 1.x
     kujira.js: 0.9.x
@@ -7906,8 +7908,6 @@ __metadata:
     proxy-from-env: ^1.1.0
     viem: 2.x
     vitest: ^1.2.2
-  peerDependencies:
-    chain-registry: ^1.33.11
   languageName: unknown
   linkType: soft
 
@@ -7923,8 +7923,8 @@ __metadata:
     "@cosmos-kit/station": 2.5.x
     "@cosmos-kit/vectis": 2.6.x
     "@emotion/css": ^11.11.2
-    "@graz-sh/types": 0.0.14
     "@heroicons/react": ^2.1.3
+    "@initia/initia-registry": latest
     "@injectivelabs/utils": 1.14.6
     "@interchain-ui/react": ^1.23.13
     "@r2wc/react-to-web-component": ^2.0.3
@@ -7948,6 +7948,7 @@ __metadata:
     "@types/react": ^18.0.6
     "@types/react-dom": ^18.0.2
     autoprefixer: ^10.4.19
+    chain-registry: latest
     clsx: ^2.1.1
     match-sorter: ^6.3.4
     postcss: ^8.4.38
@@ -12457,6 +12458,15 @@ __metadata:
   dependencies:
     "@chain-registry/types": ^0.45.10
   checksum: 8ccce01446eeef3e25ac3ab6ad695dcc1ff58b6476802c67ffda7ef042ad5da8df06f4758ce8ffbcd172ea9c8e3a85ed7f51a7bdd705f408053b920008bb1d7d
+  languageName: node
+  linkType: hard
+
+"chain-registry@npm:latest":
+  version: 1.63.38
+  resolution: "chain-registry@npm:1.63.38"
+  dependencies:
+    "@chain-registry/types": ^0.45.31
+  checksum: b3d2cc043757b9320805df5628756ce8721dc14db5b7df7c1b0fbbe85d585da3e388a81159a3ac25bced7cbadfd2b56a30954d78391701eb36ded337d7a69d18
   languageName: node
   linkType: hard
 
@@ -22319,7 +22329,6 @@ __metadata:
     "@cosmos-kit/react": 2.10.x
     "@cosmos-kit/station": 2.5.x
     "@cosmos-kit/vectis": 2.6.x
-    "@graz-sh/types": ^0.0.14
     "@initia/initia-registry": 0.1.9
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5

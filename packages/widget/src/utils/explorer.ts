@@ -1,5 +1,5 @@
 import { EVM_CHAINS } from '../constants/wagmi';
-import { explorersRecord } from '../chains/explorers';
+import { getChain } from '../chains';
 
 export interface ChainExplorerResponse {
   evm: boolean;
@@ -26,7 +26,7 @@ export function getExplorerUrl(chainId: string) {
       baseUrl = chain.blockExplorers!.default.url;
     }
   } else {
-    const explorers = explorersRecord[chainId] || [];
+    const explorers = getChain(chainId).explorers || [];
 
     baseUrl ||= explorers.find(
       (explorer) => explorer.kind === 'mintscan'

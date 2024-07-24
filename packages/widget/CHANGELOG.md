@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.2.1
+
+### Patch Changes
+
+- 81833e6: remove chains codegen
+
 ## 2.2.0
 
 ### Minor Changes

@@ -1,9 +1,3 @@
-[submodule "chain-registry"]
-	path = chain-registry
-	url = https://github.com/cosmos/chain-registry.git
-[submodule "initia-registry"]
-	path = initia-registry
-	url = https://github.com/initia-labs/initia-registry.git
 [submodule "vendor/cosmos-proto"]
 	path = vendor/cosmos-proto
 	url = https://github.com/cosmos/cosmos-proto.git
