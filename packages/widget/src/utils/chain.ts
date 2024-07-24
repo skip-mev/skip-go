@@ -1,7 +1,7 @@
 import { FeeAsset } from '@skip-go/core';
-import { chainRecord } from '../chains/chains';
 
 import { GasPrice } from '@cosmjs/stargate';
+import { getChain } from '../chains';
 
 /**
  * - deprio denoms start with 'ibc/' and 'factory/'
@@ -24,7 +24,7 @@ export function sortFeeAssets(a: FeeAsset, b: FeeAsset) {
 }
 
 export const getChainFeeAssets = (chainID: string) => {
-  const { fees } = chainRecord[chainID];
+  const { fees } = getChain(chainID);
   const feeAssets: FeeAsset[] =
     fees?.fee_tokens.map((ft) => ({
       denom: ft.denom,
@@ -38,7 +38,7 @@ export const getChainFeeAssets = (chainID: string) => {
 };
 
 export const getChainGasPrice = (chainID: string) => {
-  const { fees } = chainRecord[chainID];
+  const { fees } = getChain(chainID);
   const ft = fees?.fee_tokens?.[0];
   if (!(ft && ft.average_gas_price && ft.denom)) return null;
   const gas = `${ft.average_gas_price}${ft.denom}`;

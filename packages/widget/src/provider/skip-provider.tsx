@@ -5,11 +5,10 @@ import { getWalletClient } from '@wagmi/core';
 import { createContext, ReactNode } from 'react';
 import { WalletClient } from 'viem';
 
-import { chainIdToName } from '../chains';
 import { config } from '../lib/wagmi';
 import { trackWallet } from '../store/track-wallet';
 import { gracefullyConnect, isWalletClientUsingLedger } from '../utils/wallet';
-import { WidgetConfig } from '.';
+import { chainIdToName } from '../chains';
 
 export const SkipContext = createContext<
   | {
@@ -34,7 +33,7 @@ export function SkipProvider({
 
   const skipClient = new SkipRouter({
     getCosmosSigner: async (chainID) => {
-      const chainName = chainIdToName[chainID];
+      const chainName = chainIdToName(chainID);
       if (!chainName) {
         throw new Error(`getCosmosSigner error: unknown chainID '${chainID}'`);
       }
