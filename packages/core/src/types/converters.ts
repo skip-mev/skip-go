@@ -1252,6 +1252,7 @@ export function trackTxResponseFromJSON(
 ): TrackTxResponse {
   return {
     txHash: trackResponseJSON.tx_hash,
+    explorerLink: trackResponseJSON.explorer_link,
   };
 }
 
@@ -1260,6 +1261,7 @@ export function trackTxResponseToJSON(
 ): TrackTxResponseJSON {
   return {
     tx_hash: trackResponse.txHash,
+    explorer_link: trackResponse.explorerLink,
   };
 }
 

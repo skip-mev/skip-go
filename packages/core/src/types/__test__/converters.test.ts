@@ -2564,20 +2564,24 @@ test('trackTxRequestToJSON', () => {
 test('trackTxResponseFromJSON', () => {
   const trackResponseJSON: TrackTxResponseJSON = {
     tx_hash: 'txid123',
+    explorer_link: 'https://osmosis.zone/tx/txid123',
   };
 
   expect(trackTxResponseFromJSON(trackResponseJSON)).toEqual({
     txHash: 'txid123',
+    explorerLink: 'https://osmosis.zone/tx/txid123',
   });
 });
 
 test('trackTxResponseToJSON', () => {
   const trackResponse: TrackTxResponse = {
     txHash: 'txid123',
+    explorerLink: 'https://osmosis.zone/tx/txid123',
   };
 
   const expected: TrackTxResponseJSON = {
     tx_hash: 'txid123',
+    explorer_link: 'https://osmosis.zone/tx/txid123',
   };
 
   expect(trackTxResponseToJSON(trackResponse)).toEqual(expected);
