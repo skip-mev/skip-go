@@ -26,9 +26,6 @@
     "watch": "tsup --watch",
     "watch:link": "tsup --watch --onSuccess \"yalc push\""
   },
-  "peerDependencies": {
-    "chain-registry": "^1.33.11"
-  },
   "dependencies": {
     "@cosmjs/amino": "0.32.4",
     "@cosmjs/cosmwasm-stargate": "0.32.4",
@@ -37,13 +34,14 @@
     "@cosmjs/proto-signing": "0.32.4",
     "@cosmjs/stargate": "0.32.4",
     "@cosmjs/tendermint-rpc": "0.32.4",
-    "@initia/initia-registry": "0.1.9",
+    "@initia/initia-registry": "latest",
     "@injectivelabs/core-proto-ts": "0.0.21",
     "@injectivelabs/sdk-ts": "1.14.5",
     "@keplr-wallet/unit": "^0.12.67",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/web3.js": "^1.91.1",
     "axios": "1.x",
+    "chain-registry": "latest",
     "cosmjs-types": "0.8.0",
     "keccak256": "1.x",
     "kujira.js": "0.9.x",
