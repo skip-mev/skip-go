@@ -220,10 +220,12 @@ export type TrackTxRequest = {
 
 export type TrackTxResponseJSON = {
   tx_hash: string;
+  explorer_link: string;
 };
 
 export type TrackTxResponse = {
   txHash: string;
+  explorerLink: string;
 };
 
 export type AxelarTransferType =
