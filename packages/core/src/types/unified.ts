@@ -171,12 +171,14 @@ export type MsgsDirectResponse = {
   msgs: Msg[];
   txs: Tx[];
   route: RouteResponse;
+  warning?: MsgsWarning,
 };
 
 export type MsgsDirectResponseJSON = {
   msgs: MsgJSON[];
   txs: TxJSON[];
   route: RouteResponseJSON;
+  warning?: MsgsWarning,
 };
 
 export type RouteRequestBase = {
@@ -210,11 +212,17 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
 export type RouteWarningType = 'LOW_INFO_WARNING' | 'BAD_PRICE_WARNING';
+export type MsgsWarningType = 'INSUFFICIENT_GAS_AT_DEST_EOA' | 'INSUFFICIENT_GAS_AT_INTERMEDIATE';
 
 export type ExperimentalFeature = 'cctp' | 'hyperlane';
 
 export type RouteWarning = {
   type: RouteWarningType;
+  message: string;
+};
+
+export type MsgsWarning = {
+  type: MsgsWarningType;
   message: string;
 };
 
@@ -495,6 +503,7 @@ export type MsgsResponseJSON = {
   msgs: MsgJSON[];
   estimated_fees: EstimatedFeeJSON[];
   txs: TxJSON[];
+  warning?: MsgsWarning;
 };
 
 export type MsgsResponse = {
@@ -504,6 +513,7 @@ export type MsgsResponse = {
   msgs: Msg[];
   estimatedFees: EstimatedFee[];
   txs: Tx[];
+  warning?: MsgsWarning,
 };
 
 export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';
