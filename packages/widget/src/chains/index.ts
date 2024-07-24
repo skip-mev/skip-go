@@ -1,30 +1,45 @@
-import { Asset, AssetList, Chain } from "@graz-sh/types";
+import { Chain, Asset, AssetList } from '@chain-registry/types';
+import {
+  chains as chainsChainRegistry,
+  assets as assetsChainRegistry,
+} from 'chain-registry';
+import {
+  chains as chainsInitiaRegistry,
+  assets as assetsInitiaRegistry,
+} from '@initia/initia-registry';
 
-import { assetsRecord } from "./assets";
-import { chainRecord } from "./chains";
-import { ChainId, chainIds, chainIdToName } from "./types";
+export const chains = [
+  ...chainsChainRegistry,
+  ...chainsInitiaRegistry,
+] as Chain[];
+export const assets = [
+  ...assetsChainRegistry,
+  ...assetsInitiaRegistry,
+] as AssetList[];
 
 function raise(message?: string): never {
   throw new Error(message);
 }
 
-export function getChain(chainId: ChainId): Chain {
-  return chainRecord[chainId] || raise(`chain '${chainId}' does not exist in chainRecord`);
+export function getChain(chainId: string): Chain {
+  return (
+    chains.find((c) => c.chain_id === chainId) ||
+    raise(`chain '${chainId}' does not exist in chainRecord`)
+  );
 }
 
-export function getAssets(chainId: ChainId): Asset[] {
-  return assetsRecord[chainId] || raise(`chain '${chainId}' does not exist in assetsRecord`);
+export function chainIdToName(chainId: string): string {
+  return getChain(chainId).chain_name;
+}
+
+export function getAssets(chainId: string): Asset[] {
+  const chainName = chainIdToName(chainId);
+  return (
+    assets.find((a) => a.chain_name === chainName)?.assets ||
+    raise(`chain '${chainId}' does not exist in assetsRecord`)
+  );
 }
 
 export function getChains(): Chain[] {
-  return Object.values(chainRecord);
+  return chains;
 }
-
-export function getAssetLists(): AssetList[] {
-  return chainIds.map((chainId) => ({
-    chain_name: chainIdToName[chainId],
-    assets: assetsRecord[chainId],
-  }));
-}
-
-export * from "./types";
