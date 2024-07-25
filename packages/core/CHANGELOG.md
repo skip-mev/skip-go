@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.3
+
+### Patch Changes
+
+- f17527e: add explorerLink to onTransactionTracked callback
+
 ## 0.4.2
 
 ### Patch Changes
