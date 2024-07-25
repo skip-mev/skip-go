@@ -21,7 +21,7 @@ function raise(message?: string): never {
   throw new Error(message);
 }
 
-export function getChain(chainId: string): Chain {
+function getChain(chainId: string): Chain {
   return (
     chains.find((c) => c.chain_id === chainId) ||
     raise(`chain '${chainId}' does not exist in chainRecord`)
@@ -38,8 +38,4 @@ export function getAssets(chainId: string): Asset[] {
     assets.find((a) => a.chain_name === chainName)?.assets ||
     raise(`chain '${chainId}' does not exist in assetsRecord`)
   );
-}
-
-export function getChains(): Chain[] {
-  return chains;
 }

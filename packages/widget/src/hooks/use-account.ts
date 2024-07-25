@@ -14,6 +14,7 @@ import {
   isReadyToCheckLedger,
 } from '../utils/wallet';
 import { useChainByID } from './use-chains';
+import { chainIdToName } from '../chains';
 
 export function useAccount(chainID?: string) {
   const { data: chain } = useChainByID(chainID);
@@ -23,7 +24,7 @@ export function useAccount(chainID?: string) {
 
   const cosmosWallet = useMemo(() => {
     if (chain?.chainType !== 'cosmos') return;
-    const { wallets } = getWalletRepo(chain.chainName);
+    const { wallets } = getWalletRepo(chainIdToName(chain.chainID));
     return wallets.find((w) => w.walletName === trackedWallet?.walletName);
   }, [
     chain?.chainName,
