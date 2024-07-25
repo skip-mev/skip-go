@@ -1302,9 +1302,10 @@ export class SkipRouter {
     onTransactionTracked?: (txInfo: {
       txHash: string;
       chainID: string;
+      explorerLink: string;
     }) => Promise<void>;
   }) {
-    await this.trackTransaction({
+    const { explorerLink } = await this.trackTransaction({
       chainID,
       txHash,
       options: {
@@ -1314,7 +1315,7 @@ export class SkipRouter {
       },
     });
     if (onTransactionTracked) {
-      await onTransactionTracked({ txHash, chainID });
+      await onTransactionTracked({ txHash, chainID, explorerLink });
     }
     // eslint-disable-next-line no-constant-condition
     while (true) {
