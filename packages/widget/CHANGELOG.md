@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.2.3
+
+### Patch Changes
+
+- bb83c5f: use chain name if pretty name empty
+
 ## 2.2.2
 
 ### Patch Changes
