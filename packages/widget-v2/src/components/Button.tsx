@@ -1,7 +1,14 @@
 export type ButtonProps = {
-  test?: string;
+  text?: string;
+  onClick?: () => void;
+  backgroundColor?: string;
+  primary?: boolean;
 };
 
 export const Button = (props: ButtonProps) => {
-  return <button>Test button {props.test}</button>;
+  return (
+    <button style={{ backgroundColor: props.backgroundColor }}>
+      {props.text}
+    </button>
+  );
 };

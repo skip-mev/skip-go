@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), dts({ insertTypesEntry: true })],
+  plugins: [react(), dts({ insertTypesEntry: true, outDir: 'build' })],
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
@@ -13,11 +13,24 @@ export default defineConfig({
       name: 'widget-v2',
     },
     sourcemap: true,
+    minify: 'terser',
     rollupOptions: {
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@r2wc/react-to-web-component',
+      ],
       output: {
         dir: 'build',
         format: 'esm',
         entryFileNames: '[name].js',
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'react/jsx-runtime',
+          '@r2wc/react-to-web-component': 'ReactToWebComponent',
+        },
       },
     },
   },
