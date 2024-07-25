@@ -31,7 +31,7 @@ export function useChains<T = Chain[]>(args: UseChainsQueryArgs<T> = {}) {
           return {
             ...chain,
             chainName: chain.chainName,
-            prettyName: chain.prettyName,
+            prettyName: chain.prettyName || chain.chainName,
             logoURI: chain.logoURI || 'https://api.dicebear.com/6.x/shapes/svg',
           };
         })
