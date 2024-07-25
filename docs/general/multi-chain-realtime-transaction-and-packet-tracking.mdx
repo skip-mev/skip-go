@@ -255,8 +255,8 @@ Once indexing for the transaction has begun, the `state` will change to `STATE_P
       "transfer_sequence": [
         {
          "ibc_transfer": {
-            "src_chain_id": "axelar_dojo-1",
-            "dst_chain_id": "osmosis-1",
+            "from_chain_id": "axelar_dojo-1",
+            "to_chain_id": "osmosis-1",
             "state": "TRANSFER_PENDING",
             "packet": {
               "send_tx": {
@@ -294,8 +294,8 @@ The transfer assets will be released before all expected acknowledgements have b
       "transfer_sequence": [
         {
           "ibc_transfer": {
-            "src_chain_id": "axelar_dojo-1",
-            "dst_chain_id": "osmosis-1",
+            "from_chain_id": "axelar_dojo-1",
+            "to_chain_id": "osmosis-1",
             "state": "TRANSFER_PENDING",
             "packet": {
               "send_tx": {
@@ -317,8 +317,8 @@ The transfer assets will be released before all expected acknowledgements have b
         },
         {
           "ibc_transfer": {
-            "src_chain_id": "osmosis-1",
-            "dst_chain_id": "cosmoshub-4",
+            "from_chain_id": "osmosis-1",
+            "to_chain_id": "cosmoshub-4",
             "state": "TRANSFER_SUCCESS",
             "packet": {
               "send_tx": {
@@ -363,8 +363,8 @@ Once it has been determined that all packets along the transfer sequence have ei
       "transfer_sequence": [
         {
           "ibc_transfer": {
-            "src_chain_id": "axelar_dojo-1",
-            "dst_chain_id": "osmosis-1",
+            "from_chain_id": "axelar_dojo-1",
+            "to_chain_id": "osmosis-1",
             "state": "TRANSFER_SUCCESS",
             "packet": {
               "send_tx": {
@@ -389,8 +389,8 @@ Once it has been determined that all packets along the transfer sequence have ei
         },
         {
         	"ibc_transfer": {
-            "src_chain_id": "osmosis-1",
-            "dst_chain_id": "cosmoshub-4",
+            "from_chain_id": "osmosis-1",
+            "to_chain_id": "cosmoshub-4",
             "state": "TRANSFER_SUCCESS",
             "packet": {
               "send_tx": {
@@ -438,8 +438,8 @@ Any packet acknowledgement errors will be surfaced in the error field for the re
       "transfer_sequence": [
         {
           "ibc_transfer": {
-            "src_chain_id": "osmosis-1",
-            "dst_chain_id": "cosmoshub-4",
+            "from_chain_id": "osmosis-1",
+            "to_chain_id": "cosmoshub-4",
             "state": "TRANSFER_FAILED",
             "packet": {
               "send_tx": {
