@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.2.2
+
+### Patch Changes
+
+- a3a03f0: increase API chains data usage
+
 ## 2.2.1
 
 ### Patch Changes
