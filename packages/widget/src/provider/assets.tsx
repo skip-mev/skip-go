@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { useAssets as useSkipAssets } from '../hooks/use-assets';
 import { useChains } from '../hooks/use-chains';
-import { sortFeeAssets } from '../utils/chain';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 
 interface AssetsContext {
@@ -58,28 +57,19 @@ export const AssetsProvider = ({ children }: { children: ReactNode }) => {
 
   const getFeeAsset = useCallback(
     async (chainID: string) => {
-      const cached = feeAssetCache[chainID];
-      if (cached) return cached;
-
-      let feeAsset: FeeAsset | undefined;
-
-      if (!feeAsset) {
-        const chain = (chains ?? []).find((chain) => chain.chainID === chainID);
-        if (!chain) return;
-        else if (chainID === 'carbon-1') {
-          feeAsset = chain.feeAssets.find((v) => v.denom == 'swth');
-        } else {
-          [feeAsset] = chain.feeAssets.sort(sortFeeAssets);
+      const chain = (chains ?? []).find((chain) => chain.chainID === chainID);
+      if (!chain) return;
+      const feeAsset = (() => {
+        if (chainID === 'carbon-1') {
+          return chain.feeAssets.find((v) => v.denom == 'swth');
         }
-      }
-      if (!feeAsset) {
-        return;
-      }
+        return chain.feeAssets?.[0];
+      })();
+      if (!feeAsset) return;
 
       const asset = getAsset(feeAsset.denom, chainID);
       if (!asset) return;
 
-      feeAssetCache[chainID] = asset;
       return asset;
     },
     [chains, getAsset]

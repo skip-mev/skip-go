@@ -29,7 +29,6 @@ import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
 import { useFinalityTimeEstimate } from '../../hooks/use-finality-time-estimate';
 import { randomId } from '../../utils/random';
 import { useSettingsStore } from '../../store/settings';
-import { getExplorerUrl } from '../../utils/explorer';
 import { txHistory } from '../../store/tx-history';
 import { isUserRejectedRequestError } from '../../utils/error';
 import { cn } from '../../utils/ui';
@@ -216,13 +215,10 @@ export const PreviewRoute = ({
         },
         slippageTolerancePercent: useSettingsStore.getState().slippage,
         onTransactionTracked: async (txStatus) => {
-          const makeExplorerUrl = getExplorerUrl(txStatus.chainID);
-          const explorerLink = makeExplorerUrl?.(txStatus.txHash);
-
           txHistory.addStatus(historyId, route, {
             chainId: txStatus.chainID,
             txHash: txStatus.txHash,
-            explorerLink: explorerLink || '#',
+            explorerLink: txStatus.explorerLink,
           });
 
           setBroadcastedTxs((v) => {
@@ -231,7 +227,7 @@ export const PreviewRoute = ({
               {
                 chainID: txStatus.chainID,
                 txHash: txStatus.txHash,
-                explorerLink: explorerLink || '#',
+                explorerLink: txStatus.explorerLink,
               },
             ];
             if (route.txsRequired === txs.length) {
