@@ -618,10 +618,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
             return denom === srcFeeAsset?.denom;
           });
 
-          feeDenomPrices ??= srcChain.feeAssets.find(({ denom }) => {
-            return denom === srcFeeAsset?.denom;
-          });
-
           if (!feeDenomPrices || !feeDenomPrices.gasPrice) {
             toast.error(
               `Unable to find gas prices for ${srcFeeAsset.denom} on ${srcChain.chainName}`
