@@ -2,10 +2,18 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), dts({ insertTypesEntry: true, outDir: 'build' })],
+  resolve: {
+    preserveSymlinks: true,
+  },
+  plugins: [
+    react(),
+    dts({ insertTypesEntry: true, outDir: 'build' }),
+    nodePolyfills(),
+  ],
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
