@@ -1,17 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import { resolve } from 'path';
+import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), dts({ insertTypesEntry: true })],
   build: {
-    outDir: 'build',
+    lib: {
+      // Could also be a dictionary or array of multiple entry points
+      entry: resolve(__dirname, 'src/index.tsx'),
+      name: 'widget-v2',
+    },
+    sourcemap: true,
     rollupOptions: {
-      input: path.resolve(__dirname, 'src/index.tsx'),
       output: {
+        dir: 'build',
         format: 'esm',
-        sourcemap: true,
+        entryFileNames: '[name].js',
       },
     },
   },
