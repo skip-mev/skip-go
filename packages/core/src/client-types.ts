@@ -1,20 +1,20 @@
-import { Coin, OfflineAminoSigner } from "@cosmjs/amino";
+import { Coin, OfflineAminoSigner } from '@cosmjs/amino';
 import {
   GeneratedType,
   OfflineDirectSigner,
   OfflineSigner,
-} from "@cosmjs/proto-signing";
+} from '@cosmjs/proto-signing';
 import {
   AminoConverters,
   GasPrice,
   SignerData,
   StdFee,
-} from "@cosmjs/stargate";
+} from '@cosmjs/stargate';
 
-import { WalletClient } from "viem";
+import { WalletClient } from 'viem';
 
-import * as types from "./types";
-import { Adapter } from "@solana/wallet-adapter-base";
+import * as types from './types';
+import { Adapter } from '@solana/wallet-adapter-base';
 
 export interface UserAddress {
   chainID: string;
@@ -57,11 +57,12 @@ export type ExecuteRouteOptions = {
   onTransactionTracked?: (txInfo: {
     txHash: string;
     chainID: string;
+    explorerLink: string;
   }) => Promise<void>;
   onTransactionCompleted?: (
     chainID: string,
     txHash: string,
-    status: types.TxStatusResponse,
+    status: types.TxStatusResponse
   ) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
@@ -120,10 +121,10 @@ export type SignCosmosMessageAminoOptions = {
 
 export type GetFallbackGasAmount = (
   chainID: string,
-  chainType: "cosmos" | "evm" | "svm",
+  chainType: 'cosmos' | 'evm' | 'svm'
 ) => Promise<number | undefined>;
 
 export type GetGasPrice = (
   chainID: string,
-  chainType: "cosmos" | "evm" | "svm",
+  chainType: 'cosmos' | 'evm' | 'svm'
 ) => Promise<GasPrice | undefined>;
