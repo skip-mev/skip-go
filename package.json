@@ -6,12 +6,14 @@
   "workspaces": [
     "packages/core",
     "packages/widget",
+    "packages/widget-v2",
     "examples/*",
     "vendor/"
   ],
   "scripts": {
     "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:core",
     "dev:widget": "yarn workspace @skip-go/widget run dev",
+    "dev:widgetv2": "yarn workspace @skip-go/widget-v2 run dev",
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:core": "yarn workspace @skip-go/core run watch",
     "build": "yarn run build:core && yarn run build:widget && yarn run build:nextjs",
