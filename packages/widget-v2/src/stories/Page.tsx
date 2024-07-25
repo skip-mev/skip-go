@@ -3,7 +3,7 @@ import {
   SwapWidgetProvider,
 } from '@skip-go/widget';
 
-export const Page: React.FC = () => {
+export const Page: React.FC = (props: any) => {
   return (
     <div>
       <div
@@ -13,7 +13,7 @@ export const Page: React.FC = () => {
         }}
       >
         <SwapWidgetProvider>
-          <SwapWidgetWithoutProviders />
+          <SwapWidgetWithoutProviders {...props} />
         </SwapWidgetProvider>
       </div>
     </div>

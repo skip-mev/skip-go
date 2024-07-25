@@ -13,7 +13,19 @@ const meta = {
 
 type Story = StoryObj<typeof meta>;
 
-export const LoggedOut: Story = {};
+export const WidgetLightTheme: Story = {};
+
+export const WidgetDarkTheme: Story = {
+  args: {
+    theme: {
+      backgroundColor: '#191A1C',
+      textColor: '#E6EAE9',
+      borderColor: '#363B3F',
+      brandColor: '#FF4FFF',
+      highlightColor: '#1F2022',
+    },
+  },
+};
 
 // More on interaction testing: https://storybook.js.org/docs/writing-tests/interaction-testing
 
