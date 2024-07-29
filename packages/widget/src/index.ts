@@ -1,4 +1,4 @@
-export { SwapWidgetProvider } from './provider';
+export { SwapWidgetProvider, SwapWidgetProviderProps } from './provider';
 export {
   SwapWidget,
   SwapWidgetProps,
