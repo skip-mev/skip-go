@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    value: 50,
+    value: '50',
     selectedAssetDenom: 'uatom',
     handleChangeAsset: () => alert('change asset'),
     handleChangeChain: () => alert('change chain'),

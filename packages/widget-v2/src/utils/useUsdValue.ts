@@ -9,7 +9,7 @@ interface Args {
 
 const cache = new Map<string, number>();
 
-export async function getUsdPrice({ coingeckoID }: Args) {
+async function getUsdPrice({ coingeckoID }: Args) {
   const cached = cache.get(coingeckoID);
   if (cached) return cached;
 
@@ -37,7 +37,7 @@ const priceResponseSchema = z.object({
 });
 
 export type Asset = {
-  chainId: string;
+  chainID: string;
   denom: string;
   coingeckoID?: string;
   value: string;
@@ -47,11 +47,11 @@ const getCoinGeckoId = (asset: Asset) => {
   if (asset.coingeckoID) {
     return asset.coingeckoID;
   } else {
-    const assets = getAssets(asset.chainId);
+    const assets = getAssets(asset.chainID);
     const assetFound = assets.find((a) => a.base === asset.denom);
     if (!assetFound?.coingecko_id) {
       throw new Error(
-        `getUsdValue error: ${asset.denom} does not have a 'coingecko_id' in ${asset.chainId}`
+        `getUsdValue error: ${asset.denom} does not have a 'coingecko_id' in ${asset.chainID}`
       );
     }
     return assetFound.coingecko_id;
@@ -63,12 +63,12 @@ async function getUsdValue(asset: Asset) {
   return parseFloat(asset.value) * usd;
 }
 
-export function useUsdValue(asset?: Asset) {
+export function useUsdValue(asset?: Partial<Asset>) {
   const queryKey = useMemo(() => ['USE_USD_VALUE', asset] as const, [asset]);
 
   const enabled = useMemo(() => {
-    if (!asset) return false;
-    const parsed = parseFloat(asset.value);
+    if (!asset?.value) return false;
+    const parsed = parseFloat(asset?.value);
     return !isNaN(parsed) && parsed > 0;
   }, [asset?.value]);
 
@@ -77,8 +77,8 @@ export function useUsdValue(asset?: Asset) {
     queryKeyHashFn: ([key, asset]) =>
       asset ? [key, ...Object.values(asset)].join('-') : key,
     queryFn: async ({ queryKey: [, asset] }) => {
-      if (asset) {
-        return getUsdValue(asset);
+      if (asset?.value) {
+        return getUsdValue(asset as Asset);
       }
     },
     staleTime: 1000 * 60, // 1 minute

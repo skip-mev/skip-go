@@ -8,11 +8,11 @@ import { CogIcon } from '../icons/CogIcon';
 import { Button } from './Button';
 import { useAtom } from 'jotai';
 import { skipAssets } from '../state/skip';
-import { useUsdValue } from '../utils/usd';
+import { useUsdValue } from '../utils/useUsdValue';
 import { formatUSD } from '../utils/intl';
 
 export type AssetChainInputProps = {
-  value?: number;
+  value?: string;
   onChangeValue?: (e: ChangeEvent) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
@@ -20,7 +20,7 @@ export type AssetChainInputProps = {
 };
 
 export const AssetChainInput = ({
-  value = 0,
+  value = '0',
   onChangeValue,
   selectedAssetDenom,
   handleChangeAsset,
