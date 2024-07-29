@@ -3,7 +3,7 @@ type IconProps = {
   backgroundColor?: string;
 };
 
-export const DownArrowIcon = ({
+export const ChevronIcon = ({
   color = 'black',
   backgroundColor = 'white',
 }: IconProps) => (
