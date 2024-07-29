@@ -32,11 +32,11 @@ const flattenData = (data: Record<string, Asset[]>) => {
 
   for (const chainKey in data) {
     data[chainKey].forEach((asset: Asset) => {
+      const chain = chains.find((c) => c.chain_id === asset.chainID);
       flattenedData.push({
         ...asset,
         chain_key: chainKey,
-        chainName: chains.find((c) => c.chain_id === asset.chainID)
-          ?.pretty_name,
+        chainName: chain?.pretty_name ?? chain?.chain_name ?? '',
       });
     });
   }
