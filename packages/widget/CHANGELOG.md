@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.2.4
+
+### Patch Changes
+
+- cca30c1: expose provider props
+
 ## 2.2.3
 
 ### Patch Changes
