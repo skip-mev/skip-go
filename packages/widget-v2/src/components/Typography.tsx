@@ -3,23 +3,14 @@ import { css, styled } from 'styled-components';
 type TextProps = {
   fontSize?: number;
   fontWeight?: 'normal' | 'bold' | number;
-  fontFamily?: 'sansSerif' | 'mono';
   textAlign?: string;
 };
 
 export const textProps = css<TextProps>`
+  font-family: 'ABCDiatype', sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
-  ${({ fontFamily }) => {
-    switch (fontFamily) {
-      case 'mono':
-        return `font-family: ${Fonts.monospace}`;
-      case 'sansSerif':
-      default:
-        return `font-family: ${Fonts.sansSerif}`;
-    }
-  }};
 `;
 
 export const SmallText = styled.p<TextProps>`
@@ -36,8 +27,3 @@ export const Text = styled(SmallText)`
   font-weight: 500;
   ${textProps}
 `;
-
-export const Fonts = {
-  sansSerif: `"ABCDiatype", sans-serif`,
-  monospace: `"JetBrains Mono", monospace`,
-};
