@@ -2290,6 +2290,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chain-registry/types@npm:^0.45.35":
+  version: 0.45.35
+  resolution: "@chain-registry/types@npm:0.45.35"
+  checksum: 6613f2115954ce5de3b2250570b4e0bbaed788ade63b8ca4547895d2ba48ffab1c43c3a35580cd3d5decfd2ca3ef8287c12a4d82bedd9d5cd913cb27f46f4e02
+  languageName: node
+  linkType: hard
+
 "@chain-registry/utils@npm:^1.46.10":
   version: 1.46.10
   resolution: "@chain-registry/utils@npm:1.46.10"
@@ -4359,6 +4366,15 @@ __metadata:
   dependencies:
     "@initia/initia-registry-types": ^0.0.17
   checksum: a86b8ef452690b9409967271d8b662b39a85278dc771f9a8632986322e075bedbbbc77cd43bec1c8a3f80ef0868c605174bfffa633b84af592fe30f3931af7aa
+  languageName: node
+  linkType: hard
+
+"@initia/initia-registry@npm:^0.1.16":
+  version: 0.1.16
+  resolution: "@initia/initia-registry@npm:0.1.16"
+  dependencies:
+    "@initia/initia-registry-types": ^0.0.17
+  checksum: d35d4a01dfbf725cfc7c1ebfd9277fdbf685cd774707383eef6161b38f25f8342b5e04bc7ed61eea417a94d0471ffb17189ec71a7eb0b5a9bd283e0afaa0fb40
   languageName: node
   linkType: hard
 
@@ -8717,7 +8733,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skip-go/core@workspace:packages/core":
+"@skip-go/core@workspace:^, @skip-go/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@skip-go/core@workspace:packages/core"
   dependencies:
@@ -10325,6 +10341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.51.15":
+  version: 5.51.15
+  resolution: "@tanstack/query-core@npm:5.51.15"
+  checksum: 701ff98cf88de872b0bf7271904f66ed41e3f268189bb2f016a83f770b263c7cd3d5067b681fde0b08006fb2a327aacd143cb49a4bc567b679a3ecfb069d13b3
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.17.15, @tanstack/react-query@npm:^5.18.1":
   version: 5.49.0
   resolution: "@tanstack/react-query@npm:5.49.0"
@@ -10333,6 +10356,17 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: 31bfe3318dd0699868e896ec598ed8e60cdaa6e035ff1515afaeb85c484f91b16cad8a4de153d383622e5d2e990f02226926a5bd6632788b6ceb415a23e6687a
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.51.15":
+  version: 5.51.15
+  resolution: "@tanstack/react-query@npm:5.51.15"
+  dependencies:
+    "@tanstack/query-core": 5.51.15
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 44c9c083fc8e5c05a92a6cd5afabd9ce5745484c398f9d231fdd885356e33903cf47521c5c0f760e66fcc57ae4448fb1979ef0cd0873b54ea76470bdcba65021
   languageName: node
   linkType: hard
 
@@ -14495,6 +14529,15 @@ __metadata:
   dependencies:
     "@chain-registry/types": ^0.45.10
   checksum: 8ccce01446eeef3e25ac3ab6ad695dcc1ff58b6476802c67ffda7ef042ad5da8df06f4758ce8ffbcd172ea9c8e3a85ed7f51a7bdd705f408053b920008bb1d7d
+  languageName: node
+  linkType: hard
+
+"chain-registry@npm:^1.63.43":
+  version: 1.63.43
+  resolution: "chain-registry@npm:1.63.43"
+  dependencies:
+    "@chain-registry/types": ^0.45.35
+  checksum: f9713ed2025222c3c6a5851e2d09eb1812dfb95a9010bcd849909cc3bd1aeda95c486fb725f05dc4ee3ce250c4d7d1324c182941f981401371e15c21dfcbf64a
   languageName: node
   linkType: hard
 
@@ -20093,6 +20136,21 @@ __metadata:
   version: 1.4.0
   resolution: "jju@npm:1.4.0"
   checksum: 3790481bd2b7827dd6336e6e3dc2dcc6d425679ba7ebde7b679f61dceb4457ea0cda330972494de608571f4973c6dfb5f70fab6f3c5037dbab19ac449a60424f
+  languageName: node
+  linkType: hard
+
+"jotai@npm:^2.9.1":
+  version: 2.9.1
+  resolution: "jotai@npm:2.9.1"
+  peerDependencies:
+    "@types/react": ">=17.0.0"
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 4ed48d62f7c47aa56f71238b28dfce60e32a8e289a8283c5c26a96bc9f83d69f324e1d464fd61615bb9624f7f097e25d53d2fb19f3a6371869de82286822a93c
   languageName: node
   linkType: hard
 
@@ -28261,6 +28319,8 @@ __metadata:
   resolution: "widget-v2@workspace:packages/widget-v2"
   dependencies:
     "@chromatic-com/storybook": ^1.6.1
+    "@initia/initia-registry": ^0.1.16
+    "@skip-go/core": "workspace:^"
     "@skip-go/widget": "workspace:packages/widget"
     "@storybook/addon-essentials": ^8.2.6
     "@storybook/addon-interactions": ^8.2.6
@@ -28270,17 +28330,22 @@ __metadata:
     "@storybook/react": ^8.2.6
     "@storybook/react-vite": ^8.2.6
     "@storybook/test": ^8.2.6
+    "@tanstack/react-query": ^5.51.15
     "@types/react": ^18.3.3
     "@types/react-dom": ^18.3.0
     "@typescript-eslint/eslint-plugin": ^7.15.0
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
+    chain-registry: ^1.63.43
+    jotai: ^2.9.1
+    react-shadow-scope: ^1.0.5
     storybook: ^8.2.6
     styled-components: ^6.0.0
     typescript: ^5.2.2
     vite: ^5.3.4
     vite-plugin-dts: ^4.0.0-beta.1
     vite-plugin-node-polyfills: ^0.22.0
+    zod: ^3.23.8
   peerDependencies:
     react: 17.x || 18.x
     react-dom: 17.x || 18.x
@@ -28697,7 +28762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.4":
+"zod@npm:^3.22.4, zod@npm:^3.23.8":
   version: 3.23.8
   resolution: "zod@npm:3.23.8"
   checksum: 15949ff82118f59c893dacd9d3c766d02b6fa2e71cf474d5aa888570c469dbf5446ac5ad562bb035bf7ac9650da94f290655c194f4a6de3e766f43febd432c5c

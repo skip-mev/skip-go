@@ -37,5 +37,14 @@
     "vite": "^5.3.4",
     "vite-plugin-dts": "^4.0.0-beta.1",
     "vite-plugin-node-polyfills": "^0.22.0"
+  },
+  "dependencies": {
+    "@initia/initia-registry": "^0.1.16",
+    "@skip-go/core": "workspace:^",
+    "@tanstack/react-query": "^5.51.15",
+    "chain-registry": "^1.63.43",
+    "jotai": "^2.9.1",
+    "react-shadow-scope": "^1.0.5",
+    "zod": "^3.23.8"
   }
 }
