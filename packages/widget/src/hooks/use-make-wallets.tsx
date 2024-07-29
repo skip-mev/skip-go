@@ -20,6 +20,7 @@ export interface MinimalWallet {
   getAddress?: (props: {
     signRequired?: boolean;
     context?: 'recovery' | 'destination';
+    penumbraWalletIndex?: number;
   }) => Promise<string | undefined>;
 }
 
