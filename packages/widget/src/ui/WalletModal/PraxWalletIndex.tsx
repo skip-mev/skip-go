@@ -7,6 +7,7 @@ import {
 } from '../StyledComponents/Theme';
 import { cn } from '../../utils/ui';
 import { MdCheck, MdClose } from 'react-icons/md';
+import { StyledThemedButton } from '../StyledComponents/Buttons';
 
 export const PraxWalletIndex = ({
   praxWalletIndex,
@@ -65,15 +66,17 @@ export const PraxWalletIndex = ({
       </StyledCancelButton>
     </div>
   ) : (
-    <button
+    <StyledThemedButton
+      className={cn(
+        'flex w-full items-center gap-2 rounded-lg p-1.5 px-2 transition-colors focus:-outline-offset-2'
+      )}
       onClick={(e) => {
         e.stopPropagation();
         setEditing(true);
       }}
-      className="flex flex-row space-x-1 justify-center align-middle text-xs bg-slate-200 rounded-lg p-1.5 px-2"
     >
       <p>Address Index {praxWalletIndex}</p>
       <PencilSquareIcon className="h-4 w-4" />
-    </button>
+    </StyledThemedButton>
   );
 };
