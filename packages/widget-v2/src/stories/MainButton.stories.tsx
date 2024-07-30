@@ -42,9 +42,26 @@ export const SwapWarning: Story = {
   },
 };
 
+export const InsufficientBalance: Story = {
+  args: {
+    label: 'Insufficient Balance',
+    disabled: true,
+    icon: ICONS.swap,
+  },
+};
+
+export const Connecting: Story = {
+  args: {
+    label: 'Connecting',
+    loading: true,
+  },
+};
+
 export const SwapInProgress: Story = {
   args: {
-    swapInProgress: true,
+    label: 'Swap in progress...',
+    loading: true,
+    loadingTimeString: '2 mins.',
   },
 };
 
