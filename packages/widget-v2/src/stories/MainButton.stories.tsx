@@ -25,6 +25,7 @@ export const ConnectWallet: Story = {
   args: {
     label: 'Connect Wallet',
     icon: ICONS.plus,
+    onClick: () => alert('connect wallet'),
   },
 };
 
@@ -32,6 +33,7 @@ export const Swap: Story = {
   args: {
     label: 'Swap',
     icon: ICONS.swap,
+    onClick: () => alert('should trigger alert'),
   },
 };
 
@@ -39,6 +41,7 @@ export const SwapWarning: Story = {
   args: {
     label: 'Swap',
     icon: ICONS.warning,
+    onClick: () => alert('should trigger alert'),
   },
 };
 
@@ -47,6 +50,7 @@ export const InsufficientBalance: Story = {
     label: 'Insufficient Balance',
     disabled: true,
     icon: ICONS.swap,
+    onClick: () => alert('should not trigger'),
   },
 };
 
@@ -54,6 +58,7 @@ export const Connecting: Story = {
   args: {
     label: 'Connecting',
     loading: true,
+    onClick: () => alert('should not trigger'),
   },
 };
 
@@ -62,6 +67,7 @@ export const SwapInProgress: Story = {
     label: 'Swap in progress...',
     loading: true,
     loadingTimeString: '2 mins.',
+    onClick: () => alert('should not trigger'),
   },
 };
 
@@ -70,6 +76,7 @@ export const SwapComplete: Story = {
     label: 'Swap Complete',
     backgroundColor: '#5FBF00',
     icon: ICONS.checkmark,
+    onClick: () => alert('should trigger'),
   },
 };
 
@@ -78,6 +85,7 @@ export const ContinueTransaction: Story = {
     label: 'Continue Transaction',
     backgroundColor: '#FF7A00',
     icon: ICONS.rightArrow,
+    onClick: () => alert('should trigger'),
   },
 };
 
@@ -86,5 +94,6 @@ export const GoBack: Story = {
     label: 'Go Back',
     backgroundColor: '#FF1616',
     leftIcon: ICONS.leftArrow,
+    onClick: () => alert('should trigger'),
   },
 };

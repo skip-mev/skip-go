@@ -35,6 +35,7 @@ export type MainButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   loadingTimeString?: string;
+  onClick?: () => void;
 };
 
 export const MainButton = ({
@@ -45,6 +46,7 @@ export const MainButton = ({
   disabled,
   loading,
   loadingTimeString,
+  onClick,
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background : theme.brandColor;
@@ -86,6 +88,7 @@ export const MainButton = ({
       padding={20}
       backgroundColor={backgroundColor}
       disabled={disabled}
+      onClick={onClick}
     >
       {leftIcon ? (
         <Row align="center" gap={10}>
