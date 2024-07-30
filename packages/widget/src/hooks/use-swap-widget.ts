@@ -348,6 +348,14 @@ export function useSwapWidget(persistSwapWidgetState = true) {
               x.recommendedSymbol?.toLowerCase() === 'usdc'
           );
         }
+        if (chain.chainType === 'svm') {
+          asset = assets.find(
+            (x) =>
+              // default to usdc
+              x.denom.toLowerCase() ===
+              'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'.toLowerCase()
+          );
+        }
         asset ??= assets[0];
       }
 
