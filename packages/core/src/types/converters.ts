@@ -1766,6 +1766,7 @@ export function messageResponseFromJSON(
     ),
     msgs: response.msgs.map((msg) => msgFromJSON(msg)),
     txs: response.txs?.map((tx) => txFromJSON(tx)),
+    warning: response.warning,
   };
 }
 

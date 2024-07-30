@@ -9,12 +9,14 @@ import { config } from '../lib/wagmi';
 import { trackWallet } from '../store/track-wallet';
 import { gracefullyConnect, isWalletClientUsingLedger } from '../utils/wallet';
 import { chainIdToName } from '../chains';
+import { MinimalWallet } from '../hooks/use-make-wallets';
 
 export const SkipContext = createContext<
   | {
       skipClient: SkipRouter;
       apiURL?: string;
       endpointOptions?: SkipRouterOptions['endpointOptions'];
+      makeDestinationWallets?: (chainID: string) => MinimalWallet[];
     }
   | undefined
 >(undefined);
@@ -23,10 +25,12 @@ export function SkipProvider({
   children,
   apiURL,
   endpointOptions,
+  makeDestinationWallets,
 }: {
   children: ReactNode;
   apiURL?: string;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
+  makeDestinationWallets?: (chainID: string) => MinimalWallet[];
 }) {
   const { getWalletRepo } = useManager();
   const { wallets } = useWallet();
@@ -108,6 +112,7 @@ export function SkipProvider({
         skipClient,
         apiURL,
         endpointOptions,
+        makeDestinationWallets,
       }}
     >
       {children}

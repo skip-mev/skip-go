@@ -348,6 +348,14 @@ export function useSwapWidget(persistSwapWidgetState = true) {
               x.recommendedSymbol?.toLowerCase() === 'usdc'
           );
         }
+        if (chain.chainType === 'svm') {
+          asset = assets.find(
+            (x) =>
+              // default to usdc
+              x.denom.toLowerCase() ===
+              'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'.toLowerCase()
+          );
+        }
         asset ??= assets[0];
       }
 
@@ -586,6 +594,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         [state.sourceChain, state.sourceAsset, state.sourceFeeAsset] as const,
       async ([srcChain, srcAsset, srcFeeAsset]) => {
         if (!(srcChain?.chainType === 'cosmos' && srcAsset)) return;
+        if (srcChain?.chainID.includes('penumbra')) return;
         const feeAsset = srcChain.feeAssets?.[0];
         const gas = `${feeAsset?.gasPrice?.average}${feeAsset.denom}`;
         const gasPrice = GasPrice.fromString(gas);
@@ -708,7 +717,11 @@ export function useSwapWidget(persistSwapWidgetState = true) {
       async (srcChain) => {
         const { cosmos, svm } = trackWallet.get();
 
-        if (srcChain && srcChain.chainType === 'cosmos') {
+        if (
+          srcChain &&
+          srcChain.chainType === 'cosmos' &&
+          !srcChain.chainID.includes('penumbra')
+        ) {
           const { wallets } = getWalletRepo(chainIdToName(srcChain.chainID));
           let wallet: (typeof wallets)[number] | undefined;
 

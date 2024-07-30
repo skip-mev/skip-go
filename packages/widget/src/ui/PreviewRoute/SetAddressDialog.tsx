@@ -18,7 +18,14 @@ import { cn } from '../../utils/ui';
 import { StyledScrollAreaRoot } from '../AssetSelect/AssetSelectContent';
 import { styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
-import { StyledBorderDiv, StyledBrandDiv } from '../StyledComponents/Theme';
+import {
+  StyledApproveButton,
+  StyledBorderDiv,
+  StyledBrandDiv,
+  StyledCancelButton,
+} from '../StyledComponents/Theme';
+import { useSkipConfig } from '../../hooks/use-skip-client';
+import { PraxWalletIndex } from '../WalletModal/PraxWalletIndex';
 
 export const SetAddressDialog = ({
   open,
@@ -40,14 +47,20 @@ export const SetAddressDialog = ({
   setChainAddresses: (v: SetChainAddressesParam) => void;
 }) => {
   const { chainType, chainID, bech32Prefix } = chain;
+
+  const { makeDestinationWallets } = useSkipConfig();
   const { makeWallets } = useMakeWallets();
-  const wallets = makeWallets(chainID);
+
+  const destinationWallets = makeDestinationWallets?.(chainID);
+  const wallets =
+    destinationWallets && destinationWallets.length > 0
+      ? destinationWallets
+      : makeWallets(chainID);
 
   const [address, setAddress] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  const currentChainAddress = chainAddresses[index];
-
+  const [praxWalletIndex, setPraxWalletIndex] = useState(0);
   const validateAddress = (address: string) => {
     if (chainType === 'cosmos') {
       try {
@@ -161,6 +174,10 @@ export const SetAddressDialog = ({
                           const resAddress = await wallet.getAddress?.({
                             signRequired,
                             context: isDestination ? 'destination' : 'recovery',
+                            penumbraWalletIndex:
+                              wallet.walletName === 'prax'
+                                ? praxWalletIndex
+                                : undefined,
                           });
                           if (resAddress) {
                             setAddress(resAddress);
@@ -197,6 +214,12 @@ export const SetAddressDialog = ({
                             ? 'Metamask (Leap Snap)'
                             : wallet.walletPrettyName}
                         </p>
+                        {wallet.walletName === 'prax' && (
+                          <PraxWalletIndex
+                            praxWalletIndex={praxWalletIndex}
+                            setPraxWalletIndex={setPraxWalletIndex}
+                          />
+                        )}
                       </StyledThemedButton>
 
                       {chainType === 'svm' && wallet.isAvailable !== true && (
@@ -271,12 +294,3 @@ export const SetAddressDialog = ({
     </Dialog>
   );
 };
-
-const StyledApproveButton = styled(StyledBrandDiv)`
-  border-color: ${(props) => props.theme.brandColor};
-`;
-
-const StyledCancelButton = styled.button`
-  color: ${(props) => props.theme.brandColor};
-  border-color: ${(props) => props.theme.brandColor};
-`;

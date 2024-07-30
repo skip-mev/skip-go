@@ -6,14 +6,13 @@ import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
 import { SkipRouterOptions } from '@skip-go/core';
 import { WalletModalProvider } from '../ui/WalletModal';
-import { Toaster, ToasterProps } from 'react-hot-toast';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
 import { RouteConfig } from '../hooks/use-route';
 import {
   endpointOptions as defaultEndpointOptions,
   apiURL as defaultApiURL,
 } from '../constants/defaults';
-import { useTheme } from 'styled-components';
+import { MinimalWallet } from '../hooks/use-make-wallets';
 
 interface WalletProviderProps {
   children: React.ReactNode;
@@ -30,6 +29,7 @@ export interface SkipAPIProviderProps {
   children: React.ReactNode;
   endpointOptions?: SkipRouterOptions['endpointOptions'];
   apiURL?: string;
+  makeDestinationWallets?: (chainID: string) => MinimalWallet[];
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
@@ -48,9 +48,14 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   children,
   endpointOptions = defaultEndpointOptions,
   apiURL = defaultApiURL,
+  makeDestinationWallets,
 }) => {
   return (
-    <SkipProvider apiURL={apiURL} endpointOptions={endpointOptions}>
+    <SkipProvider
+      apiURL={apiURL}
+      endpointOptions={endpointOptions}
+      makeDestinationWallets={makeDestinationWallets}
+    >
       <AssetsProvider>{children}</AssetsProvider>
     </SkipProvider>
   );

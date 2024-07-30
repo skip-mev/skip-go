@@ -13,3 +13,12 @@ export const StyledBrandDiv = styled.div`
 export const StyledBorderDiv = styled.div`
   border-color: ${(props) => props.theme.borderColor};
 `;
+
+export const StyledApproveButton = styled(StyledBrandDiv)`
+  border-color: ${(props) => props.theme.brandColor};
+`;
+
+export const StyledCancelButton = styled.button`
+  color: ${(props) => props.theme.brandColor};
+  border-color: ${(props) => props.theme.brandColor};
+`;
