@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.0
+
+### Minor Changes
+
+- 7fb01d3: add makeDestinationWallets param to provider
+
 ## 2.2.4
 
 ### Patch Changes
