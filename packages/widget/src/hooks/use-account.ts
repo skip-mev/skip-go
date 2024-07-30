@@ -24,9 +24,11 @@ export function useAccount(chainID?: string) {
 
   const cosmosWallet = useMemo(() => {
     if (chain?.chainType !== 'cosmos') return;
+    if (chain.chainID.includes('penumbra')) return;
     const { wallets } = getWalletRepo(chainIdToName(chain.chainID));
     return wallets.find((w) => w.walletName === trackedWallet?.walletName);
   }, [
+    chain?.chainID,
     chain?.chainName,
     chain?.chainType,
     getWalletRepo,
