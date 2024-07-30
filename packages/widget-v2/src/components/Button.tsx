@@ -1,14 +1,10 @@
-export type ButtonProps = {
-  text?: string;
-  onClick?: () => void;
-  backgroundColor?: string;
-  primary?: boolean;
-};
+import { styled } from 'styled-components';
+import { FlexProps, flexProps } from './Layout';
 
-export const Button = (props: ButtonProps) => {
-  return (
-    <button style={{ backgroundColor: props.backgroundColor }}>
-      {props.text}
-    </button>
-  );
-};
+export const Button = styled.button<FlexProps>`
+  all: unset;
+  &:hover {
+    cursor: pointer;
+  }
+  ${flexProps};
+`;
