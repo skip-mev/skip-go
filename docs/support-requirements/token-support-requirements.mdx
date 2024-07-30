@@ -92,6 +92,13 @@ After you've let enough time pass, you can verify that Skip Go API supports the 
 * `source_chain_id`: The chain on which your token is issued
 * `dest_chain_id`: The chain to which you've warm-started an IBC route in the previous step
 
+## Common questions
+
+### I want a CW20 token added to Skip Go, what do I need to do to add it?
+
+1. To add a CW20 token, you should first make sure its usable (either has ibc20-cw20 converter contracts deployed to IBC transfer the token or source-chain swappable on a swap venue used by Skip Go).
+2. Once confirmed usable, you must add the CW20 token's metadata to a registry we support indexing from. The easiest one is likely the Cosmos Chain Registry (https://github.com/cosmos/chain-registry), you can check out an example of a CW20 token entry here in Archway's assetlist.json: https://github.com/cosmos/chain-registry/blob/master/archway/assetlist.json
+3. Once the PR is merged into a registry, our indexing will add it to the API on our next indexing run (hourly).
 
  <Note>
  **Having trouble?**
