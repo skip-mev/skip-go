@@ -3,7 +3,7 @@ import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
 import { getHexColor, opacityToHex } from '../utils/colors';
 
-type GhostButtonProps = {
+export type GhostButtonProps = {
   secondary?: boolean;
 } & FlexProps;
 

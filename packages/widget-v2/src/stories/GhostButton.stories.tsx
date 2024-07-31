@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { GhostButton, GhostButtonProps } from '../components/Button';
+import { GhostButton } from '../components/Button';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -14,7 +14,7 @@ const meta = {
   tags: ['autodocs'],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-} satisfies Meta<GhostButtonProps>;
+} satisfies Meta<typeof GhostButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 
 export const primary: Story = {
   args: {
-    text: 'Ghost button',
-    onClick: () => alert('select token/chain'),
+    onClick: () => alert('handle click'),
+    children: 'ghost button',
   },
 };

@@ -1,5 +1,4 @@
 import { css, styled } from 'styled-components';
-import { FlexProps } from './Layout';
 
 type TextProps = {
   fontSize?: number;

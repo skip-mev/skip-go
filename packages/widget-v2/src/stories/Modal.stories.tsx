@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const renderModal = (props: ModalProps) => {
-  const modal = useModal(Modal);
+  const modal = useModal(NiceModal.create(Modal));
   return (
     <NiceModal.Provider>
       <button onClick={() => modal.show({ ...props })}>
