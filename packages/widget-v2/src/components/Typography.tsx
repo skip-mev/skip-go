@@ -1,5 +1,5 @@
 import { css, styled } from 'styled-components';
-import { removeButtonStyles } from './Button';
+import { FlexProps } from './Layout';
 
 type TextProps = {
   fontSize?: number;
@@ -9,6 +9,13 @@ type TextProps = {
   color?: string;
   opacity?: string;
 };
+
+export const removeButtonStyles = css`
+  background: none;
+  border: none;
+  padding: 0;
+  outline: inherit;
+`;
 
 export const textProps = css<TextProps>`
   font-family: 'ABCDiatype', sans-serif;
@@ -31,6 +38,11 @@ export const SmallText = styled.p<TextProps>`
 export const SmallTextButton = styled(SmallText).attrs({ as: 'button' })`
   ${removeButtonStyles}
   cursor: pointer;
+`;
+
+export const GhostText = styled(SmallText)<FlexProps>`
+  ${removeButtonStyles};
+  padding: 9px 0;
 `;
 
 export const Text = styled(SmallText)`
