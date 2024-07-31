@@ -39,7 +39,9 @@
     "vite-plugin-node-polyfills": "^0.22.0"
   },
   "dependencies": {
+    "@ebay/nice-modal-react": "^1.2.13",
     "@initia/initia-registry": "^0.1.16",
+    "@radix-ui/react-dialog": "^1.1.1",
     "@skip-go/core": "workspace:^",
     "@tanstack/react-query": "^5.51.15",
     "chain-registry": "^1.63.43",

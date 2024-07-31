@@ -3327,6 +3327,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ebay/nice-modal-react@npm:^1.2.13":
+  version: 1.2.13
+  resolution: "@ebay/nice-modal-react@npm:1.2.13"
+  peerDependencies:
+    react: ">16.8.0"
+    react-dom: ">16.8.0"
+  checksum: efc5a4b46b6b1d9c96ea8452aa5624d21e1c272a51c82865cf137151b2de8444e66d58f77a21979797da8d4181978762208bc2ba817e778ef8b1ab5c68eb707f
+  languageName: node
+  linkType: hard
+
 "@emotion/babel-plugin@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/babel-plugin@npm:11.11.0"
@@ -6515,7 +6525,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-dialog@npm:^1.0.5":
+"@radix-ui/react-dialog@npm:^1.0.5, @radix-ui/react-dialog@npm:^1.1.1":
   version: 1.1.1
   resolution: "@radix-ui/react-dialog@npm:1.1.1"
   dependencies:
@@ -28319,7 +28329,9 @@ __metadata:
   resolution: "widget-v2@workspace:packages/widget-v2"
   dependencies:
     "@chromatic-com/storybook": ^1.6.1
+    "@ebay/nice-modal-react": ^1.2.13
     "@initia/initia-registry": ^0.1.16
+    "@radix-ui/react-dialog": ^1.1.1
     "@skip-go/core": "workspace:^"
     "@skip-go/widget": "workspace:packages/widget"
     "@storybook/addon-essentials": ^8.2.6
