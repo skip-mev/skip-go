@@ -5,7 +5,7 @@ import { ChangeEvent } from 'react';
 import { ChevronIcon } from '../icons/ChevronIcon';
 import { useTheme } from 'styled-components';
 import { CogIcon } from '../icons/CogIcon';
-import { Button } from './Button';
+import { Button, GhostButton } from './Button';
 import { useAtom } from 'jotai';
 import { skipAssets } from '../state/skip';
 import { useUsdValue } from '../utils/useUsdValue';
@@ -65,10 +65,15 @@ export const AssetChainInput = ({
       <Row justify="space-between">
         <SmallText>{formatUSD(usdValue?.data ?? 0)}</SmallText>
         {selectedAsset ? (
-          <Button onClick={handleChangeChain} align="center" gap={4}>
+          <GhostButton
+            onClick={handleChangeChain}
+            align="center"
+            secondary
+            gap={4}
+          >
             <SmallText>on {selectedAsset?.chainName}</SmallText>
             <CogIcon color={theme.textColor} />
-          </Button>
+          </GhostButton>
         ) : (
           <Spacer />
         )}

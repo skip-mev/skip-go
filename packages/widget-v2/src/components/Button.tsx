@@ -3,14 +3,22 @@ import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
 import { getHexColor, opacityToHex } from '../utils/colors';
 
-export const GhostButton = styled(SmallText).attrs({ as: 'button' })<FlexProps>`
+type GhostButtonProps = {
+  secondary?: boolean;
+} & FlexProps;
+
+export const GhostButton = styled(SmallText).attrs({
+  as: 'button',
+})<GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
   &:hover {
-    background-color: ${({ theme, onClick }) =>
+    ${({ theme, onClick, secondary }) =>
       onClick &&
       css`
-        ${getHexColor(theme.backgroundColor) + opacityToHex(50)};
+        background-color: ${secondary
+          ? theme.secondary.background
+          : getHexColor(theme.backgroundColor) + opacityToHex(50)};
         opacity: 1;
       `};
   }
@@ -31,8 +39,3 @@ export const Button = styled.button<FlexProps>`
   }
   ${flexProps};
 `;
-
-export type GhostButtonProps = {
-  text?: string;
-  onClick?: () => void;
-};

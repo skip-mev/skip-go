@@ -40,11 +40,6 @@ export const SmallTextButton = styled(SmallText).attrs({ as: 'button' })`
   cursor: pointer;
 `;
 
-export const GhostText = styled(SmallText)<FlexProps>`
-  ${removeButtonStyles};
-  padding: 9px 0;
-`;
-
 export const Text = styled(SmallText)`
   opacity: unset;
   font-size: 20px;
