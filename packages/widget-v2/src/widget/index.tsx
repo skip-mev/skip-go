@@ -1,6 +1,7 @@
 import { AssetChainInput } from '../components/AssetChainInput';
 import { Column } from '../components/Layout';
-import { ICONS, MainButton } from '../components/MainButton';
+import { MainButton } from '../components/MainButton';
+import { ICONS } from '../icons';
 import { ShadowDomAndProviders } from './ShadowDomAndProviders';
 import { PartialTheme } from './theme';
 

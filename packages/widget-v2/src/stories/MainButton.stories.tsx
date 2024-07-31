@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { ICONS, MainButton } from '../components/MainButton';
+import { MainButton } from '../components/MainButton';
+import { ICONS } from '../icons';
+import { COLORS } from '../utils/colors';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -74,7 +76,7 @@ export const SwapInProgress: Story = {
 export const SwapComplete: Story = {
   args: {
     label: 'Swap Complete',
-    backgroundColor: '#5FBF00',
+    backgroundColor: COLORS.green,
     icon: ICONS.checkmark,
     onClick: () => alert('should trigger'),
   },
@@ -83,7 +85,7 @@ export const SwapComplete: Story = {
 export const ContinueTransaction: Story = {
   args: {
     label: 'Continue Transaction',
-    backgroundColor: '#FF7A00',
+    backgroundColor: COLORS.orange,
     icon: ICONS.rightArrow,
     onClick: () => alert('should trigger'),
   },
@@ -92,7 +94,7 @@ export const ContinueTransaction: Story = {
 export const GoBack: Story = {
   args: {
     label: 'Go Back',
-    backgroundColor: '#FF1616',
+    backgroundColor: COLORS.red,
     leftIcon: ICONS.leftArrow,
     onClick: () => alert('should trigger'),
   },
