@@ -55,6 +55,7 @@ export const TokenAndChain: Story = {
         <SmallText>$834.32</SmallText>
       </Column>
     ),
+    onClick: () => alert('select token/chain'),
   },
 };
 
@@ -62,6 +63,7 @@ export const EnterAddressManually: Story = {
   args: {
     leftContent: 'Enter address manually',
     rightContent: <StyledRightArrowIcon />,
+    onClick: () => alert('enter address'),
   },
 };
 
@@ -74,6 +76,17 @@ export const Wallet: Story = {
           width="35"
         />
         <Text lineHeight="17px">Keplr</Text>
+      </Row>
+    ),
+    onClick: () => alert('select wallet'),
+  },
+};
+
+export const NoOnClick: Story = {
+  args: {
+    leftContent: (
+      <Row gap={10} align="center">
+        <Text lineHeight="17px">No onClick</Text>
       </Row>
     ),
   },

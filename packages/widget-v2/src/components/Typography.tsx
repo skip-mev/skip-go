@@ -1,4 +1,5 @@
 import { css, styled } from 'styled-components';
+import { removeButtonStyles } from './Button';
 
 type TextProps = {
   fontSize?: number;
@@ -8,13 +9,6 @@ type TextProps = {
   color?: string;
   opacity?: string;
 };
-
-const removeButtonStyles = css`
-  background: none;
-  border: none;
-  padding: 0;
-  outline: inherit;
-`;
 
 export const textProps = css<TextProps>`
   font-family: 'ABCDiatype', sans-serif;
