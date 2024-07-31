@@ -4,6 +4,7 @@ type TextProps = {
   fontSize?: number;
   fontWeight?: 'normal' | 'bold' | number;
   textAlign?: string;
+  lineHeight?: string;
   color?: string;
   opacity?: string;
 };
@@ -22,6 +23,7 @@ export const textProps = css<TextProps>`
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
+  ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
 `;
 
 export const SmallText = styled.p<TextProps>`
