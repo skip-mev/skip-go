@@ -1,19 +1,14 @@
 import { css, styled } from 'styled-components';
+import { removeButtonStyles } from './Button';
 
 type TextProps = {
   fontSize?: number;
   fontWeight?: 'normal' | 'bold' | number;
   textAlign?: string;
+  lineHeight?: string;
   color?: string;
   opacity?: string;
 };
-
-const removeButtonStyles = css`
-  background: none;
-  border: none;
-  padding: 0;
-  outline: inherit;
-`;
 
 export const textProps = css<TextProps>`
   font-family: 'ABCDiatype', sans-serif;
@@ -22,6 +17,7 @@ export const textProps = css<TextProps>`
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
+  ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
 `;
 
 export const SmallText = styled.p<TextProps>`

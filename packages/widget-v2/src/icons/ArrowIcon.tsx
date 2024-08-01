@@ -2,14 +2,17 @@ type IconProps = {
   color?: string;
   backgroundColor?: string;
   direction?: 'right' | 'down' | 'left' | 'up';
+  className?: string;
 };
 
 export const ArrowIcon = ({
   color = 'black',
   backgroundColor = 'white',
   direction = 'right',
+  className,
 }: IconProps) => (
   <svg
+    className={className}
     width="40"
     height="40"
     viewBox="0 0 40 40"
@@ -37,9 +40,7 @@ const withBoundProps = (
   WrappedComponent: typeof ArrowIcon,
   boundProps: IconProps
 ) => {
-  return (props: JSX.IntrinsicAttributes) => (
-    <WrappedComponent {...boundProps} {...props} />
-  );
+  return (props: IconProps) => <WrappedComponent {...boundProps} {...props} />;
 };
 
 export const RightArrowIcon = withBoundProps(ArrowIcon, { direction: 'right' });

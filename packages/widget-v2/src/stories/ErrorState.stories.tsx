@@ -5,7 +5,7 @@ import { COLORS } from '../utils/colors';
 import { ICONS } from '../icons';
 import { SmallText, SmallTextButton, Text } from '../components/Typography';
 import { ChainIcon } from '../icons/ChainIcon';
-import { Column, Row } from '../components/Layout';
+import { Row } from '../components/Layout';
 import { XIcon } from '../icons/XIcon';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export

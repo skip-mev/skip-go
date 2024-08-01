@@ -7,7 +7,7 @@ export const defaultTheme = {
   brandColor: '#FF66FF',
   highlightColor: 'rgb(245, 245, 245)',
   secondary: {
-    background: '#141414',
+    background: '#252525B2',
   },
 };
 
