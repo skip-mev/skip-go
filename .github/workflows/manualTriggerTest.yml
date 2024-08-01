@@ -1,0 +1,12 @@
+name: ManualTriggerTest
+on: [pull_request, push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Automerge workflow
+        run: gh workflow run "automerge.yml" --ref main
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
