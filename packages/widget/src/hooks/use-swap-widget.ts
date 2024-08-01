@@ -601,7 +601,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
           try {
             return GasPrice.fromString(gas);
           } catch (error) {
-            toast.error('Unable to parse gas price asset');
+            console.error('Unable to parse gas price asset');
             return undefined;
           }
         })();
@@ -650,7 +650,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
             }
           })();
           if (!_gasPrice) {
-            toast.error(
+            console.error(
               `Unable to parse gas price for ${srcFeeAsset.denom} on ${srcChain.chainName}`
             );
             return;
