@@ -40,7 +40,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Auto approve PR
-        if: github.actor == 'github-actions[bot]'
+        if: ${{ github.actor == 'github-actions[bot]' }}
         uses: hmarr/auto-approve-action@v4
         with:
           review-message: 'Auto approved automated PR'
