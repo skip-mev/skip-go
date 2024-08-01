@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react';
-import { SwapWidgetWithoutNiceModalProvider } from '../widget';
+import { SwapWidgetWithoutNiceModalProvider } from '../widget/Widget';
 import styled from 'styled-components';
 import { Row } from '../components/Layout';
 import { defaultTheme, lightTheme } from '../widget/theme';

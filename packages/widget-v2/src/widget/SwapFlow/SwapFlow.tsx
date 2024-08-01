@@ -35,7 +35,11 @@ export const SwapFlow = () => {
             <GhostButton onClick={() => {}}>Max</GhostButton>
           </Row>
         </Row>
-        <AssetChainInput value="0" onChangeValue={() => {}} />
+        <AssetChainInput
+          selectedAssetDenom="uatom"
+          value="50"
+          onChangeValue={() => {}}
+        />
         <AssetChainInput value="0" onChangeValue={() => {}} />
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
 
@@ -43,6 +47,7 @@ export const SwapFlow = () => {
           gap={5}
           align="center"
           justify="space-between"
+          disabled
           onClick={() =>
             modal.show({
               drawer: true,

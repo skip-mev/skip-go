@@ -13,19 +13,20 @@ export const GhostButton = styled(SmallText).attrs({
   ${removeButtonStyles};
   line-height: 13px;
   &:hover {
-    ${({ theme, onClick, secondary }) =>
+    ${({ theme, onClick, secondary, disabled }) =>
       onClick &&
+      !disabled &&
       css`
         background-color: ${secondary
           ? theme.secondary.background
           : getHexColor(theme.backgroundColor) + opacityToHex(50)};
         opacity: 1;
+        cursor: pointer;
       `};
   }
   ${({ onClick }) =>
     onClick &&
     css`
-      cursor: pointer;
       padding: 9px 16px;
     `}
   border-radius: 90px;
