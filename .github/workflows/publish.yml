@@ -42,6 +42,7 @@ jobs:
       - name: Auto approve PR
         if: ${{ github.actor == 'github-actions[bot]' }}
         uses: hmarr/auto-approve-action@v4
+        continue-on-error: true
         with:
           review-message: 'Auto approved automated PR'
 
