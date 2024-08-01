@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
 import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
+import { BridgeIcon } from '../../icons/BridgeIcon';
+import { BridgeArrowIcon } from '../../icons/BridgeArrowIcon';
+import { SwapFlowBridge } from './SwapFlowBridge';
 
 export const SwapFlow = () => {
   const theme = useTheme();
@@ -35,12 +38,15 @@ export const SwapFlow = () => {
             <GhostButton onClick={() => {}}>Max</GhostButton>
           </Row>
         </Row>
-        <AssetChainInput
-          selectedAssetDenom="uatom"
-          value="50"
-          onChangeValue={() => {}}
-        />
-        <AssetChainInput value="0" onChangeValue={() => {}} />
+        <Column align="center">
+          <AssetChainInput
+            selectedAssetDenom="uatom"
+            value="50"
+            onChangeValue={() => {}}
+          />
+          <SwapFlowBridge />
+          <AssetChainInput value="0" onChangeValue={() => {}} />
+        </Column>
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
 
         <GhostButton

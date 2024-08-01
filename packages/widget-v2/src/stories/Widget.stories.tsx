@@ -3,7 +3,6 @@ import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '../widget/Widget';
 import styled from 'styled-components';
 import { Column, Row } from '../components/Layout';
 import { lightTheme } from '../widget/theme';
-import { Text } from '../components/Typography';
 
 const meta = {
   title: 'Widget',
