@@ -58,3 +58,9 @@ jobs:
           PR_URL: ${{ steps.changesets.outputs.pull_request_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ env.PR_NUMBER }}
+
+      - name: automerge
+        uses: 'pascalgn/automerge-action@v0.16.3'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          MERGE_METHOD: 'squash'
