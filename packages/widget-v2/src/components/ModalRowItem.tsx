@@ -1,10 +1,11 @@
 import { styled } from 'styled-components';
 import { Row } from './Layout';
-import { removeButtonStyles, Text } from './Typography';
+import { Text } from './Typography';
+import { removeButtonStyles } from './Button';
 
 export type ModalRowItemProps = {
-  leftContent?: string | React.ReactNode;
-  rightContent?: string | React.ReactNode;
+  leftContent?: React.ReactNode;
+  rightContent?: React.ReactNode;
   onClick?: () => void;
 };
 
