@@ -276,7 +276,7 @@ export const SwapWidgetUI = ({
               <div className="flex w-full items-center rounded-md bg-red-50 p-3 text-left text-xs font-medium uppercase text-red-500">
                 <p className="flex-1 [&_a]:underline text-red-500">
                   Notice: Skip Go currently only supports depositing assets into
-                  Penumbra. To withdraw assets from Penumbra, please use:
+                  Penumbra. To withdraw assets from Penumbra, please use:{' '}
                   <AdaptiveLink href="https://stake.with.starlingcyber.net/">
                     https://stake.with.starlingcyber.net/
                   </AdaptiveLink>

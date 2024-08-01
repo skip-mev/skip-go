@@ -174,10 +174,14 @@ export const SetAddressDialog = ({
                           const resAddress = await wallet.getAddress?.({
                             signRequired,
                             context: isDestination ? 'destination' : 'recovery',
-                            penumbraWalletIndex:
-                              wallet.walletName === 'prax'
-                                ? praxWalletIndex
-                                : undefined,
+                            praxWallet: {
+                              index:
+                                wallet.walletName === 'prax'
+                                  ? praxWalletIndex
+                                  : undefined,
+                              // chain id of the previous chain
+                              sourceChainID: chainAddresses[index - 1]?.chainID,
+                            },
                           });
                           if (resAddress) {
                             setAddress(resAddress);
