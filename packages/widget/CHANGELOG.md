@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.2
+
+### Patch Changes
+
+- d98865b: Update CCTP Warning message
+
 ## 2.3.1
 
 ### Patch Changes
