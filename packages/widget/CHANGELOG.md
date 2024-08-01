@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.3
+
+### Patch Changes
+
+- 9f2fd06: remove error toast parsing gas asset
+
 ## 2.3.2
 
 ### Patch Changes
