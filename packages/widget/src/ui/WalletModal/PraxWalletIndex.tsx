@@ -68,7 +68,7 @@ export const PraxWalletIndex = ({
   ) : (
     <StyledThemedButton
       className={cn(
-        'flex w-full items-center gap-2 rounded-lg p-1.5 px-2 transition-colors focus:-outline-offset-2'
+        'flex items-center gap-2 rounded-lg p-1.5 px-2 transition-colors focus:-outline-offset-2'
       )}
       onClick={(e) => {
         e.stopPropagation();

@@ -597,7 +597,14 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         if (srcChain?.chainID.includes('penumbra')) return;
         const feeAsset = srcChain.feeAssets?.[0];
         const gas = `${feeAsset?.gasPrice?.average}${feeAsset.denom}`;
-        const gasPrice = GasPrice.fromString(gas);
+        const gasPrice = (() => {
+          try {
+            return GasPrice.fromString(gas);
+          } catch (error) {
+            toast.error('Unable to parse gas price asset');
+            return undefined;
+          }
+        })();
 
         let srcGasPrice = feeAsset?.gasPrice && gasPrice;
 
@@ -633,10 +640,22 @@ export function useSwapWidget(persistSwapWidgetState = true) {
             );
             return;
           }
-
-          srcGasPrice = GasPrice.fromString(
-            `${feeDenomPrices.gasPrice.average}${feeDenomPrices.denom}`
-          );
+          const _gasPrice = (() => {
+            try {
+              return GasPrice.fromString(
+                `${feeDenomPrices.gasPrice.average}${feeDenomPrices.denom}`
+              );
+            } catch (error) {
+              return undefined;
+            }
+          })();
+          if (!_gasPrice) {
+            toast.error(
+              `Unable to parse gas price for ${srcFeeAsset.denom} on ${srcChain.chainName}`
+            );
+            return;
+          }
+          srcGasPrice = _gasPrice;
           selectedGasPrice = BigNumber(feeDenomPrices.gasPrice.average);
         }
 

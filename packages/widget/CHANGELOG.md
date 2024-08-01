@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.1
+
+### Patch Changes
+
+- d90ddd5: add source chain id in getAddress
+
 ## 2.3.0
 
 ### Minor Changes
