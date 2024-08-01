@@ -10,14 +10,17 @@ import { useState } from 'react';
 import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
 import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
-import { BridgeIcon } from '../../icons/BridgeIcon';
-import { BridgeArrowIcon } from '../../icons/BridgeArrowIcon';
 import { SwapFlowBridge } from './SwapFlowBridge';
+import { sourceAtom, destinationAtom } from '../../state/swap';
+import { useAtom } from 'jotai';
 
 export const SwapFlow = () => {
   const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAtom);
+  const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
+
   const modal = useModal(SwapFlowSettings);
 
   return (
@@ -40,12 +43,20 @@ export const SwapFlow = () => {
         </Row>
         <Column align="center">
           <AssetChainInput
-            selectedAssetDenom="uatom"
-            value="50"
-            onChangeValue={() => {}}
+            selectedAssetDenom={sourceAsset.denom}
+            value={sourceAsset.amount}
+            onChangeValue={(newValue) =>
+              setSourceAsset((old) => ({ ...old, amount: newValue }))
+            }
           />
           <SwapFlowBridge />
-          <AssetChainInput value="0" onChangeValue={() => {}} />
+          <AssetChainInput
+            selectedAssetDenom={destinationAsset.denom}
+            value={destinationAsset.amount}
+            onChangeValue={(newValue) =>
+              setDestinationAsset((old) => ({ ...old, amount: newValue }))
+            }
+          />
         </Column>
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
 

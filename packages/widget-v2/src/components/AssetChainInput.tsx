@@ -13,7 +13,7 @@ import { formatUSD } from '../utils/intl';
 
 export type AssetChainInputProps = {
   value?: string;
-  onChangeValue?: (e: ChangeEvent) => void;
+  onChangeValue?: (value: string) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
   selectedAssetDenom?: string;
@@ -43,7 +43,11 @@ export const AssetChainInput = ({
       borderRadius={25}
     >
       <Row justify="space-between">
-        <StyledInput type="text" value={value} onChange={onChangeValue} />
+        <StyledInput
+          type="text"
+          value={value}
+          onChange={(e) => onChangeValue?.(e.target.value)}
+        />
         <Button onClick={handleChangeAsset} gap={5}>
           {selectedAsset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>

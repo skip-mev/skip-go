@@ -11,7 +11,7 @@ export const SwapFlowFlooterItems = () => {
       <Row align="center" gap={5}>
         Powered by <SkipLogoIcon color={theme.textColor} />
       </Row>
-      <Row align="center" gap={9}>
+      <Row align="center" gap={5}>
         <GasIcon color={theme.textColor} />
         ~$0.03
         <SpeedometerIcon color={theme.textColor} />
