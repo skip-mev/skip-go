@@ -44,11 +44,15 @@ jobs:
         run: echo "PR_NUMBER=$(echo ${{ steps.changesets.outputs.pull_request_url }} | grep -o '[0-9]*$')" >> $GITHUB_ENV
         continue-on-error: true
 
+      - name: Debug PR Number
+        continue-on-error: true
+        run: echo "PR_NUMBER is $PR_NUMBER"
+
       - name: Auto approve PR
         uses: hmarr/auto-approve-action@v4
         continue-on-error: true
         with:
-          pull-request-number: ${{ env.PR_NUMBER }}
+          pull-request-number: $PR_NUMBER
           review-message: 'Auto approved automated PR'
 
       - name: Add automerge Label to PR
@@ -57,7 +61,6 @@ jobs:
         env:
           PR_URL: ${{ steps.changesets.outputs.pull_request_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ env.PR_NUMBER }}
 
       - name: automerge
         uses: 'pascalgn/automerge-action@v0.16.3'
@@ -65,3 +68,4 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_METHOD: 'squash'
+          PULL_REQUEST: $PR_NUMBER
