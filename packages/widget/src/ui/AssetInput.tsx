@@ -121,7 +121,7 @@ function AssetInput({
             assets={assets}
             balances={balances}
             onChange={onAssetChange}
-            showChainInfo={!!chain}
+            showChainInfo={true}
             isBalancesLoading={isBalancesLoading}
           />
         </div>

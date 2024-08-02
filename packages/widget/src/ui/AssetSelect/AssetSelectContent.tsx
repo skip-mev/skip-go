@@ -10,6 +10,7 @@ import { cn } from '../../utils/ui';
 import { styled } from 'styled-components';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
 import { StyledSearchInput } from '../StyledComponents/Input';
+import { useChainByID, useChains } from '../../hooks/use-chains';
 
 interface Props {
   assets?: Asset[];
@@ -29,6 +30,11 @@ function AssetSelectContent({
   isBalancesLoading,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { data: chains } = useChains();
+
+  const getChain = (chainID: string) => {
+    return chains?.find((chain) => chain.chainID === chainID);
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -102,54 +108,61 @@ function AssetSelectContent({
         )}
       >
         <ScrollArea.Viewport className="h-full w-full py-4">
-          {filteredAssets.map((asset) => (
-            <StyledThemedButton
-              key={`${asset.chainID}-${asset.denom}`}
-              data-testid="asset-item"
-              className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
-              onClick={() => (onClose(), onChange?.(asset))}
-            >
-              <img
-                height={48}
-                width={48}
-                alt={asset.recommendedSymbol || 'symbol'}
-                className="h-12 w-12 rounded-full object-contain"
-                src={asset.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'}
-                onError={(e) =>
-                  (e.currentTarget.src =
-                    'https://api.dicebear.com/6.x/shapes/svg')
-                }
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold">
-                    {asset.recommendedSymbol || asset.symbol}
-                  </p>
-                  {asset.isCW20 && (
-                    <p className="rounded bg-yellow-600 px-1.5 text-xs font-semibold text-white">
-                      CW20
+          {filteredAssets.map((asset) => {
+            const chain = getChain(asset.chainID);
+            return (
+              <StyledThemedButton
+                key={`${asset.chainID}-${asset.denom}`}
+                data-testid="asset-item"
+                className="flex w-full items-center gap-4 rounded-xl p-4 text-left transition-colors focus:-outline-offset-2"
+                onClick={() => (onClose(), onChange?.(asset))}
+              >
+                <img
+                  height={48}
+                  width={48}
+                  alt={asset.recommendedSymbol || 'symbol'}
+                  className="h-12 w-12 rounded-full object-contain"
+                  src={
+                    asset.logoURI || 'https://api.dicebear.com/6.x/shapes/svg'
+                  }
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      'https://api.dicebear.com/6.x/shapes/svg')
+                  }
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {asset.recommendedSymbol || asset.symbol}
+                    </p>
+                    {asset.isCW20 && (
+                      <p className="rounded bg-yellow-600 px-1.5 text-xs font-semibold text-white">
+                        CW20
+                      </p>
+                    )}
+                  </div>
+
+                  {showChainInfo && (
+                    <p className="text-sm text-neutral-400">
+                      {chain?.prettyName}
                     </p>
                   )}
                 </div>
-
-                {showChainInfo && (
-                  <p className="text-sm text-neutral-400">{asset.chainID}</p>
-                )}
-              </div>
-              <div>
-                {balances[asset.denom] && (
-                  <p className="text-sm font-medium text-neutral-400">
-                    {parseFloat(
-                      formatUnits(
-                        BigInt(balances[asset.denom]),
-                        asset.decimals ?? 6
-                      )
-                    ).toLocaleString('en-US', { maximumFractionDigits: 6 })}
-                  </p>
-                )}
-              </div>
-            </StyledThemedButton>
-          ))}
+                <div>
+                  {balances[asset.denom] && (
+                    <p className="text-sm font-medium text-neutral-400">
+                      {parseFloat(
+                        formatUnits(
+                          BigInt(balances[asset.denom]),
+                          asset.decimals ?? 6
+                        )
+                      ).toLocaleString('en-US', { maximumFractionDigits: 6 })}
+                    </p>
+                  )}
+                </div>
+              </StyledThemedButton>
+            );
+          })}
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
           className="z-20 flex touch-none select-none py-4 transition-colors ease-out data-[orientation=horizontal]:h-2 data-[orientation=vertical]:w-2 data-[orientation=horizontal]:flex-col"
