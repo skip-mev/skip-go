@@ -64,13 +64,13 @@ export const SwapFlow = () => {
           gap={5}
           align="center"
           justify="space-between"
-          disabled
           onClick={() =>
             modal.show({
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
                 open ? setDrawerOpen(true) : setDrawerOpen(false),
+              theme,
             })
           }
         >

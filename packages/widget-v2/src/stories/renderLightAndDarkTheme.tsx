@@ -8,7 +8,7 @@ export const renderLightAndDarkTheme = (
   style?: CSSProperties
 ) => {
   return (
-    <StyledWrapper gap={10} style={style}>
+    <StyledWrapper gap={10} align="center" style={style}>
       <ThemeProvider theme={defaultTheme}>{render}</ThemeProvider>
       <ThemeProvider theme={lightTheme}>{render}</ThemeProvider>
     </StyledWrapper>

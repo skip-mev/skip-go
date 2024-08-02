@@ -5,28 +5,38 @@ import NiceModal from '@ebay/nice-modal-react';
 import { SmallText } from '../../components/Typography';
 import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
 
-export const SwapFlowSettings = NiceModal.create((props: ModalProps) => {
+export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
+  const totalGas = '0.001 XYZ ($0.1)';
+  const routerFee = '0.001 XYZ ($0.1)';
+  const bridgeFee = '0.001 XYZ ($0.1)';
+
   return (
-    <Modal {...props}>
+    <Modal {...modalProps}>
       <StyledSwapFlowSettings gap={20}>
-        <Row justify="space-between">
-          <SettingText>Route</SettingText>
-        </Row>
-        <Row justify="space-between">
-          <SettingText>Total Gas</SettingText>
-          <SettingText> 0.001 XYZ ($0.1) </SettingText>
-        </Row>
-        <Row justify="space-between">
-          <SettingText>Router Fee</SettingText>
-          <SettingText> 0.001 XYZ ($0.1) </SettingText>
-        </Row>
-        <Row justify="space-between">
-          <SettingText>Bridge Fee</SettingText>
-          <SettingText> 0.001 XYZ ($0.1) </SettingText>
-        </Row>
-        <Row justify="space-between">
-          <SettingText>Max Slippage</SettingText>
-        </Row>
+        <Column gap={10}>
+          <Row justify="space-between">
+            <SettingText>Route</SettingText>
+          </Row>
+          <Row justify="space-between">
+            <SettingText>Max Slippage</SettingText>
+          </Row>
+        </Column>
+
+        <Column gap={10}>
+          <Row justify="space-between">
+            <SettingText>Total Gas</SettingText>
+            <SettingText>{totalGas}</SettingText>
+          </Row>
+          <Row justify="space-between">
+            <SettingText>Router Fee</SettingText>
+            <SettingText>{routerFee}</SettingText>
+          </Row>
+          <Row justify="space-between">
+            <SettingText>Bridge Fee</SettingText>
+            <SettingText>{bridgeFee}</SettingText>
+          </Row>
+        </Column>
+
         <SettingText justify="space-between">
           <SwapFlowFlooterItems />
         </SettingText>

@@ -3,12 +3,14 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ShadowDomAndProviders } from '../widget/ShadowDomAndProviders';
 import { useModal } from '@ebay/nice-modal-react';
 import { useEffect } from 'react';
+import { PartialTheme } from '../widget/theme';
 
 export type ModalProps = {
   children: React.ReactNode;
   drawer?: boolean;
   container?: HTMLElement;
   onOpenChange?: (open: boolean) => void;
+  theme?: PartialTheme;
 };
 
 export const Modal = ({
@@ -16,6 +18,7 @@ export const Modal = ({
   drawer,
   container,
   onOpenChange,
+  theme,
 }: ModalProps) => {
   const modal = useModal();
 
@@ -29,7 +32,7 @@ export const Modal = ({
   return (
     <Dialog.Root open={modal.visible} onOpenChange={() => modal.remove()}>
       <Dialog.Portal container={container}>
-        <ShadowDomAndProviders>
+        <ShadowDomAndProviders theme={theme}>
           <StyledOverlay drawer={drawer}>
             <StyledContent>{children}</StyledContent>
           </StyledOverlay>
