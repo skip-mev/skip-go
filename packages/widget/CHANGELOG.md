@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.4
+
+### Patch Changes
+
+- 640eafa: add pretty name in asset selection
+
 ## 2.3.3
 
 ### Patch Changes
