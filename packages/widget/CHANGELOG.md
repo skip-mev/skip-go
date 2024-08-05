@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.5
+
+### Patch Changes
+
+- c6690de: clarify noble cctp ledger warning
+
 ## 2.3.4
 
 ### Patch Changes
