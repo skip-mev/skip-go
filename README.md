@@ -48,10 +48,10 @@ npx changeset
 
 ## Docs
 
-- [Core](./packages/core/README.md)
+- [Client](./packages/client/README.md)
 - [Widget](./packages/widget/README.md)
 
 ## Examples
 
 - Widget: https://github.com/skip-mev/go-widget-example-next-js-app
-- Core: https://github.com/skip-mev/skip-next-simple-example
+- Client: https://github.com/skip-mev/skip-next-simple-example
