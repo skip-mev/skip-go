@@ -1,4 +1,4 @@
-import { RouteResponse } from '@skip-go/core';
+import { RouteResponse } from '@skip-go/client';
 import {
   knownBrokenCCTPLedgerChainIds,
   knownEthermintLedgerChainIds,

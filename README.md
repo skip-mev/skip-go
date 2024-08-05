@@ -10,13 +10,13 @@
 │   └── widget
 ```
 
-- `core` (@skip-go/core): The core package of the project. Contains the core logic, api fetch and types, helper functions, signing, etc.
+- `client` (@skip-go/client): The core package of the project. Contains the core logic, api fetch and types, helper functions, signing, etc.
 - `widget` (@skip-go/widget): React library that contains the swap widget components.
 - `examples`: The example app of the project
 
 ### How the package consumed
 
-`@skip-go/core` -> `@skip-go/widget` -> `examples/nextjs`
+`@skip-go/client` -> `@skip-go/widget` -> `examples/nextjs`
 
 ## Dev Setup
 

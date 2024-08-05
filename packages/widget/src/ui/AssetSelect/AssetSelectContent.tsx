@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
-import { Asset } from '@skip-go/core';
+import { Asset } from '@skip-go/client';
 import { matchSorter } from 'match-sorter';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { formatUnits } from 'viem';

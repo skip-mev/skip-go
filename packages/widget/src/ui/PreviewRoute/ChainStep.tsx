@@ -3,7 +3,7 @@ import {
   FingerPrintIcon,
   PencilSquareIcon,
 } from '@heroicons/react/20/solid';
-import { RouteResponse } from '@skip-go/core';
+import { RouteResponse } from '@skip-go/client';
 import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { FaExternalLinkAlt, FaKeyboard } from 'react-icons/fa';

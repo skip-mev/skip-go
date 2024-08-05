@@ -1,5 +1,5 @@
 import { useManager } from '@cosmos-kit/react';
-import { SkipRouter, SkipRouterOptions } from '@skip-go/core';
+import { SkipRouter, SkipRouterOptions } from '@skip-go/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getWalletClient } from '@wagmi/core';
 import { createContext, ReactNode } from 'react';

@@ -1,5 +1,5 @@
 {
-  "name": "@skip-go/core",
+  "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
   "version": "0.5.1",
   "repository": "https://github.com/skip-mev/skip-go",

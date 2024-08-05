@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { Asset } from '@skip-go/core';
+import { Asset } from '@skip-go/client';
 import { useState } from 'react';
 
 import AssetSelectContent from './AssetSelectContent';

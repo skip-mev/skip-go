@@ -1,6 +1,6 @@
 import { ChevronDownIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { BridgeType, RouteResponse } from '@skip-go/core';
+import { BridgeType, RouteResponse } from '@skip-go/client';
 import { useMemo, useState } from 'react';
 
 import { useSettingsStore } from '../store/settings';

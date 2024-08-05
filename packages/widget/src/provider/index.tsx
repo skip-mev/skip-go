@@ -4,7 +4,7 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { SkipRouterOptions } from '@skip-go/core';
+import { SkipRouterOptions } from '@skip-go/client';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
 import { RouteConfig } from '../hooks/use-route';

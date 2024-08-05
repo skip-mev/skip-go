@@ -1,4 +1,4 @@
-import { RouteResponse } from '@skip-go/core';
+import { RouteResponse } from '@skip-go/client';
 import { useMemo } from 'react';
 import { useChains } from './use-chains';
 import { getFinalityTime } from '../constants/finality';
