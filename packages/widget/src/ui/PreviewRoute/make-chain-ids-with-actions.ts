@@ -34,7 +34,7 @@ export const makeChainIDsWithAction = ({
       );
     });
 
-    const reversedActions = actions.reverse();
+    const reversedActions = actions.slice().reverse();
     // Find the last swap action that matches conditions
     const swapAction = reversedActions.find((action) => {
       if (
