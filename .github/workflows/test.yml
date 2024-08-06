@@ -21,10 +21,9 @@ jobs:
         id: get-pr-number
         run: |
           PR_URL=$(gh pr list --author "toddkao" --json url --jq '.[0].url')
-          if [ -n "$PR_URL" ]; then
-            PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
-            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-          fi
+          PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo ${{env.PR_NUMBER}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
