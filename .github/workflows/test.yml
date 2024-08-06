@@ -23,8 +23,8 @@ jobs:
           PR_URL=$(gh pr list --author "toddkao" --json url --jq '.[0].url')
           PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "The PR number is: $PR_NUMBER"
         env:
-          PR_NUMBER: ${{env.PR_NUMBER}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto approve PR
