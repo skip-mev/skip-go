@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/core",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

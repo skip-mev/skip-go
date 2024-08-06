@@ -515,10 +515,10 @@ export const PreviewRoute = ({
               <AlertCollapse.Content>
                 <p>
                   <b>WARNING: </b>
-                  go.skip.build does not support signing with Ledger when
-                  transferring over CCTP to the Ethereum ecosystem. We&apos;re
-                  actively working on fixing this with the Noble/Circle teams.
-                  We apologize for the inconvenience
+                  Due to a limitation of the Noble chain, signing with Ledger
+                  when transferring over CCTP to the Ethereum/Solana ecosystems
+                  is not supported. We're actively working on fixing this issue
+                  with the Noble team. We apologize for the inconvenience.
                 </p>
               </AlertCollapse.Content>
             </AlertCollapse.Root>

@@ -1,32 +1,33 @@
-import { toUtf8 } from "@cosmjs/encoding";
-import { EncodeObject } from "@cosmjs/proto-signing";
-import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
-import { Msgs } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs";
-import MsgExecuteContractInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract";
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
-import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
+import { toUtf8 } from '@cosmjs/encoding';
+import { EncodeObject } from '@cosmjs/proto-signing';
+import MsgTransferInjective from '@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer';
+import { Msgs } from '@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs';
+import MsgExecuteContractInjective from '@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract';
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx';
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
+import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
 
-import { CosmosMsg } from "./types";
+import { CosmosMsg } from './types';
 import {
   MsgDepositForBurn,
   MsgDepositForBurnWithCaller,
-} from "./codegen/circle/cctp/v1/tx";
-import { SigningStargateClient } from "@cosmjs/stargate";
-import { MsgExecute } from "./codegen/initia/move/v1/tx";
+} from './codegen/circle/cctp/v1/tx';
+import { SigningStargateClient } from '@cosmjs/stargate';
+import { MsgExecute } from './codegen/initia/move/v1/tx';
 
-import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
+import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
+import { ClawbackVestingAccount } from './codegen/evmos/vesting/v2/vesting';
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
 export function getEncodeObjectFromCosmosMessage(
-  message: CosmosMsg,
+  message: CosmosMsg
 ): EncodeObject {
   const msgJson = JSON.parse(message.msg);
 
-  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+  if (message.msgTypeURL === '/ibc.applications.transfer.v1.MsgTransfer') {
     return {
-      typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
       value: MsgTransfer.fromJSON({
         sourcePort: msgJson.source_port,
         sourceChannel: msgJson.source_channel,
@@ -40,7 +41,7 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
-  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+  if (message.msgTypeURL === '/cosmwasm.wasm.v1.MsgExecuteContract') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgExecuteContract.fromPartial({
@@ -52,7 +53,7 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
-  if (message.msgTypeURL === "/cosmos.bank.v1beta1.MsgSend") {
+  if (message.msgTypeURL === '/cosmos.bank.v1beta1.MsgSend') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgSend.fromPartial({
@@ -63,21 +64,21 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
-  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurn") {
+  if (message.msgTypeURL === '/circle.cctp.v1.MsgDepositForBurn') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgDepositForBurn.fromAmino(msgJson),
     };
   }
 
-  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurnWithCaller") {
+  if (message.msgTypeURL === '/circle.cctp.v1.MsgDepositForBurnWithCaller') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgDepositForBurnWithCaller.fromAmino(msgJson),
     };
   }
 
-  if (message.msgTypeURL === "/initia.move.v1.MsgExecute") {
+  if (message.msgTypeURL === '/initia.move.v1.MsgExecute') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgExecute.fromPartial({
@@ -90,7 +91,7 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
-  if (message.msgTypeURL === "/opinit.ophost.v1.MsgInitiateTokenDeposit") {
+  if (message.msgTypeURL === '/opinit.ophost.v1.MsgInitiateTokenDeposit') {
     return {
       typeUrl: message.msgTypeURL,
       value: MsgInitiateTokenDeposit.fromPartial({
@@ -102,6 +103,19 @@ export function getEncodeObjectFromCosmosMessage(
     };
   }
 
+  if (message.msgTypeURL === '/evmos.vesting.v2.ClawbackVestingAccount') {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: ClawbackVestingAccount.fromPartial({
+        baseVestingAccount: msgJson.base_vesting_account,
+        funderAddress: msgJson.funder_address,
+        lockupPeriods: msgJson.lockup_periods,
+        startTime: msgJson.start_time,
+        vestingPeriods: msgJson.vesting_periods,
+      }),
+    };
+  }
+
   return {
     typeUrl: message.msgTypeURL,
     value: msgJson,
@@ -109,11 +123,11 @@ export function getEncodeObjectFromCosmosMessage(
 }
 
 export function getEncodeObjectFromCosmosMessageInjective(
-  message: CosmosMsg,
+  message: CosmosMsg
 ): Msgs {
   const msgJson = JSON.parse(message.msg);
 
-  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+  if (message.msgTypeURL === '/ibc.applications.transfer.v1.MsgTransfer') {
     return MsgTransferInjective.fromJSON({
       port: msgJson.source_port,
       channelId: msgJson.source_channel,
@@ -125,7 +139,7 @@ export function getEncodeObjectFromCosmosMessageInjective(
     });
   }
 
-  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+  if (message.msgTypeURL === '/cosmwasm.wasm.v1.MsgExecuteContract') {
     return MsgExecuteContractInjective.fromJSON({
       sender: msgJson.sender,
       contractAddress: msgJson.contract,
@@ -134,7 +148,7 @@ export function getEncodeObjectFromCosmosMessageInjective(
     });
   }
 
-  throw new Error("Unsupported message type");
+  throw new Error('Unsupported message type');
 }
 
 export async function getCosmosGasAmountForMessage(
@@ -143,35 +157,35 @@ export async function getCosmosGasAmountForMessage(
   chainID: string,
   messages?: CosmosMsg[],
   encodedMsgs?: EncodeObject[],
-  multiplier: number = DEFAULT_GAS_MULTIPLIER,
+  multiplier: number = DEFAULT_GAS_MULTIPLIER
 ) {
   if (!messages && !encodedMsgs) {
-    throw new Error("Either message or encodedMsg must be provided");
+    throw new Error('Either message or encodedMsg must be provided');
   }
   const _encodedMsgs = messages?.map((message) =>
-    getEncodeObjectFromCosmosMessage(message),
+    getEncodeObjectFromCosmosMessage(message)
   );
   encodedMsgs = encodedMsgs || _encodedMsgs;
   if (!encodedMsgs) {
-    throw new Error("Either message or encodedMsg must be provided");
+    throw new Error('Either message or encodedMsg must be provided');
   }
   if (
-    chainID.includes("evmos") ||
-    chainID.includes("injective") ||
-    chainID.includes("dymension") ||
-    process?.env.NODE_ENV === "test"
+    chainID.includes('evmos') ||
+    chainID.includes('injective') ||
+    chainID.includes('dymension') ||
+    process?.env.NODE_ENV === 'test'
   ) {
     if (
       messages?.find(
-        (i) => i.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract",
+        (i) => i.msgTypeURL === '/cosmwasm.wasm.v1.MsgExecuteContract'
       )
     ) {
-      return "2400000";
+      return '2400000';
     }
-    return "280000";
+    return '280000';
   }
 
-  const estimatedGas = await client.simulate(signerAddress, encodedMsgs, "");
+  const estimatedGas = await client.simulate(signerAddress, encodedMsgs, '');
 
   const estimatedGasWithBuffer = estimatedGas * multiplier;
 

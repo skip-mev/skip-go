@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.4
+
+### Patch Changes
+
+- 5ef01aa: add evmos ClawbackVestingAccount msgType
+
 ## 0.4.3
 
 ### Patch Changes

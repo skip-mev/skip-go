@@ -39,9 +39,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Set PR Number
+        id: set-pr-number
+        run: echo "PR_NUMBER=$(echo ${{ steps.changesets.outputs.pull_request_url }} | grep -o '[0-9]*$')" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Debug PR Number
+        continue-on-error: true
+        run: echo "PR_NUMBER is $PR_NUMBER"
+
+      - name: Auto approve PR
+        uses: hmarr/auto-approve-action@v4
+        continue-on-error: true
+        with:
+          pull-request-number: $PR_NUMBER
+          review-message: 'Auto approved automated PR'
+
       - name: Add automerge Label to PR
         run: gh pr edit --add-label "automerge" "$PR_URL"
         continue-on-error: true
         env:
           PR_URL: ${{ steps.changesets.outputs.pull_request_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: automerge
+        uses: 'pascalgn/automerge-action@v0.16.3'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          MERGE_METHOD: 'squash'
+          PULL_REQUEST: $PR_NUMBER

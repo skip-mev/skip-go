@@ -1,5 +1,29 @@
 # @skip-go/widget
 
+## 2.3.5
+
+### Patch Changes
+
+- c6690de: clarify noble cctp ledger warning
+
+## 2.3.4
+
+### Patch Changes
+
+- 640eafa: add pretty name in asset selection
+
+## 2.3.3
+
+### Patch Changes
+
+- 9f2fd06: remove error toast parsing gas asset
+
+## 2.3.2
+
+### Patch Changes
+
+- d98865b: Update CCTP Warning message
+
 ## 2.3.1
 
 ### Patch Changes
