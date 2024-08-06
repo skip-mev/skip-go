@@ -16,10 +16,14 @@ export const SwapFlowFlooterItems = () => {
         Powered by <SkipLogoIcon color={theme.textColor} />
       </Row>
       {estimatedGas && estimatedTime && (
-        <Row align="center" gap={5}>
-          <GasIcon color={theme.textColor} />~{formatUSD(estimatedGas)}
-          <SpeedometerIcon color={theme.textColor} />
-          {estimatedTime}
+        <Row align="center" gap={8}>
+          <Row gap={2} align="flex-end">
+            <GasIcon color={theme.textColor} />~{formatUSD(estimatedGas)}
+          </Row>
+          <Row gap={2} align="flex-end">
+            <SpeedometerIcon color={theme.textColor} />
+            {estimatedTime}
+          </Row>
         </Row>
       )}
     </>

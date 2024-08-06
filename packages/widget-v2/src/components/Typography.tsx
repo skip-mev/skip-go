@@ -7,6 +7,7 @@ type TextProps = {
   lineHeight?: string;
   color?: string;
   opacity?: string;
+  monospace?: boolean;
 };
 
 export const removeButtonStyles = css`
@@ -24,6 +25,7 @@ export const textProps = css<TextProps>`
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
+  ${({ monospace }) => monospace && `font-family: 'ABCDiatype', monospace;`};
 `;
 
 export const SmallText = styled.p<TextProps>`

@@ -20,6 +20,7 @@ export const SwapFlow = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
+  const sourceAssetBalance = 125;
 
   const modal = useModal(SwapFlowSettings);
 
@@ -28,7 +29,7 @@ export const SwapFlow = () => {
       <Column
         gap={5}
         style={{
-          opacity: drawerOpen ? 0.5 : 1,
+          opacity: drawerOpen ? 0.3 : 1,
         }}
       >
         <Row justify="space-between">
@@ -36,10 +37,12 @@ export const SwapFlow = () => {
             <HistoryIcon color={theme.textColor} />
             History
           </GhostButton>
-          <Row align="center" gap={10}>
-            <SmallText> Balance: 125 </SmallText>
-            <GhostButton onClick={() => {}}>Max</GhostButton>
-          </Row>
+          {!!sourceAssetBalance && (
+            <Row align="center" gap={10}>
+              <SmallText> Balance: {sourceAssetBalance} </SmallText>
+              <GhostButton onClick={() => {}}>Max</GhostButton>
+            </Row>
+          )}
         </Row>
         <Column align="center">
           <AssetChainInput

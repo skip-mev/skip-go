@@ -1,5 +1,5 @@
 import { css, styled } from 'styled-components';
-import { FlexProps, flexProps } from './Layout';
+import { FlexProps, flexProps, Row } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
 import { getHexColor, opacityToHex } from '../utils/colors';
 
@@ -39,4 +39,14 @@ export const Button = styled.button<FlexProps>`
     cursor: pointer;
   }
   ${flexProps};
+`;
+
+const Pill = styled(Row).attrs({
+  padding: 8,
+})`
+  height: 40px;
+  border-radius: 10px;
+  white-space: nowrap;
+  color: ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.secondary.background};
 `;

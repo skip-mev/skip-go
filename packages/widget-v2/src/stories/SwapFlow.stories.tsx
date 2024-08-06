@@ -12,7 +12,9 @@ const meta = {
         <SwapFlowContainer>
           <SwapFlow {...props} />
         </SwapFlowContainer>
-      </NiceModal.Provider>
+      </NiceModal.Provider>,
+      undefined,
+      true
     ),
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
