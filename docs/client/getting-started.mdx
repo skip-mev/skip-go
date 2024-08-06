@@ -47,22 +47,22 @@ The client constructor takes several _optional_ inputs provided together by the 
 
 ## Setup Signers
 
-You can optionally set up a signer for each ecosystem chains.
+Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
 
-For EVM transactions, You need to install `viem` package:
+For EVM transactions, you need to install the `viem` package:
 
 ```Shell shell
 npm i viem
 ```
 
-For SVM transactions, You can pick what wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
+For SVM transactions, you can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
 For this example, we are going to use Phantom wallet:
 
 ```Shell shell
 npm i @solana/wallet-adapter-phantom
 ```
 
-Create the SkipRouter instance with the signers for each ecosystem chain:
+Now, let's create the SkipRouter instance with the signers for each ecosystem! 
 
 We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
 
@@ -237,9 +237,9 @@ const route = await client.route({
 
 ## Get Required Addresses
 
-Now that we have the route, we can use our signer to get the list of required user addresses for executing the route. 
+Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route. 
 
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with `SkipRouter.executeRoute` method. 
+We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipRouter.executeRoute` method. 
 
 The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use. 
 
@@ -247,14 +247,14 @@ The `requiredChainAddresses` field in the output of `route` gives the chainIDs w
  <Warning>
  **Use addresses your user can sign with**
  
- Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. a relayer timeout after a swap). So you must be sure your user can sign for each address you provide.
+ Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). So you must be sure your user can sign for each address you provide.
  
  See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address. 
  
  (Rest assured that `SkipRouter.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
 </Warning>
 
-it's better you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
+It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
 
 Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry: 
 
