@@ -34,7 +34,8 @@ export const makeChainIDsWithAction = ({
       );
     });
 
-    const swapAction = actions.find((action) => {
+    const reversedActions = actions.reverse();
+    const swapAction = reversedActions.find((action) => {
       if (
         index === 0 &&
         actions.length <= 2 &&
