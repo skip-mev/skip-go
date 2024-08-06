@@ -1133,6 +1133,7 @@ export function msgsRequestFromJSON(
     postRouteHandler:
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
+    enableGasWarnings: msgsRequestJSON.enable_gas_warnings,
   };
 }
 
@@ -1156,6 +1157,7 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     post_route_handler:
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
+    enable_gas_warnings: msgsRequest.enableGasWarnings,
   };
 }
 
@@ -2349,6 +2351,7 @@ export function msgsDirectRequestFromJSON(
       ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options)
       : undefined,
     allowSwaps: msgDirectRequestJSON.allow_swaps,
+    enableGasWarnings: msgDirectRequestJSON.enable_gas_warnings,
   };
 }
 
@@ -2386,6 +2389,7 @@ export function msgsDirectRequestToJSON(
       ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions)
       : undefined,
     allow_swaps: msgDirectRequest.allowSwaps,
+    enable_gas_warnings: msgDirectRequest.enableGasWarnings,
   };
 }
 
