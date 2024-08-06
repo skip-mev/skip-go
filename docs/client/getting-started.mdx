@@ -1,11 +1,11 @@
 ---
 title: "Getting Started"
-description: "Basic documentation for Skip Go Core, a TypeScript Package (@skip-go/core) that simplifies the process of interacting with the Skip Go API"
+description: "Basic documentation for Skip Go Client, a TypeScript Package (@skip-go/client) that simplifies the process of interacting with the Skip Go API"
 ---
 
 ## Background
 
-This document covers the [Typescript Package](https://www.npmjs.com/package/@skip-go/core) Skip provides to wrap the functionality of the Skip Go API and make it even easier for developers to build applications with it. 
+This document covers the [Typescript Package](https://www.npmjs.com/package/@skip-go/client) Skip provides to wrap the functionality of the Skip Go API and make it even easier for developers to build applications with it. 
 
 ## Set up the Library
 
@@ -13,19 +13,19 @@ Install the library:
 
 
 ```Shell Shell
-npm install @skip-go/core
+npm install @skip-go/client
 ```
 
 ## Initialize Client
 
-All integrations start by initializing a SkipRouter client (`@skip-go/core.SkipRouter`). 
+All integrations start by initializing a SkipRouter client (`@skip-go/client.SkipRouter`). 
 
 This helper objects wraps interactions with the API and provides useful helper methods for a variety of common actions that depend on inputs or outputs of the API (e.g. querying for assets and chains, constructing a route, constructing + signing a transaction from a message returned by the API)
 
 
 
 ```TypeScript TypeScript
-import { SkipRouter, SKIP_API_URL } from "@skip-go/core";
+import { SkipRouter, SKIP_API_URL } from "@skip-go/client";
 
 const client = new SkipRouter();
 ```

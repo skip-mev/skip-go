@@ -6,7 +6,7 @@
 ├── examples
 │   └── nextjs
 ├── packages
-│   ├── core
+│   ├── client
 │   └── widget
 ```
 
@@ -28,7 +28,7 @@ yarn
 
 ### Start the development server
 
-it will run watch the core and widget packages,it will run the example app on `http://localhost:3000`
+It will run the example app on `http://localhost:3000`
 
 ```bash
 yarn dev
