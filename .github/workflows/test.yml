@@ -27,6 +27,8 @@ jobs:
       - name: Auto approve PR
         uses: hmarr/auto-approve-action@v4
         continue-on-error: true
+        env:
+          PR_NUMBER: ${{ env.PR_NUMBER }}
         with:
-          pull-request-number: $PR_NUMBER
+          pull-request-number: ${{ env.PR_NUMBER }}
           review-message: 'Auto approved automated PR'
