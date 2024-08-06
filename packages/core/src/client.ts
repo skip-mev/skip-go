@@ -48,6 +48,10 @@ import {
   circleAminoConverters,
   circleProtoRegistry,
 } from './codegen/circle/client';
+import {
+  evmosAminoConverters,
+  evmosProtoRegistry,
+} from './codegen/evmos/client';
 import { erc20ABI } from './constants/abis';
 import { DEFAULT_GAS_DENOM_OVERRIDES } from './constants/constants';
 import { createTransaction } from './injective';
@@ -93,6 +97,7 @@ export class SkipRouter {
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
       ...circleAminoConverters,
+      ...evmosAminoConverters,
       ...(options.aminoTypes ?? {}),
     });
 
@@ -102,6 +107,7 @@ export class SkipRouter {
       ['/initia.move.v1.MsgExecute', MsgExecute],
       ['/opinit.ophost.v1.MsgInitiateTokenDeposit', MsgInitiateTokenDeposit],
       ...circleProtoRegistry,
+      ...evmosProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
 
