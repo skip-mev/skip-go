@@ -5,10 +5,10 @@ import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
 import { SpeedometerIcon } from '../../icons/SpeedometerIcon';
 import { formatUSD } from '../../utils/intl';
 
-export const SwapFlowFlooterItems = () => {
-  const estimatedGas = '0.03';
-  const estimatedTime = '1min';
+const estimatedGas = '0.03';
+const estimatedTime = '1min';
 
+export const SwapFlowFlooterItems = () => {
   const theme = useTheme();
   return (
     <>

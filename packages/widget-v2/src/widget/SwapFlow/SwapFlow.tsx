@@ -14,13 +14,14 @@ import { SwapFlowBridge } from './SwapFlowBridge';
 import { sourceAtom, destinationAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
 
+const sourceAssetBalance = 125;
+
 export const SwapFlow = () => {
   const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
-  const sourceAssetBalance = 125;
 
   const modal = useModal(SwapFlowSettings);
 

@@ -25,13 +25,13 @@ const SLIPPAGE_OPTIONS = [
   },
 ];
 
-export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
-  const totalGas = '0.001 XYZ ($0.1)';
-  const routerFee = '0.001 XYZ ($0.1)';
-  const bridgeFee = '0.001 XYZ ($0.1)';
-  const selectedOption = SLIPPAGE_OPTIONS[0];
-  const route = ['COSMOS', 'OSMOSIS', 'AXELAR'];
+const totalGas = '0.001 XYZ ($0.1)';
+const routerFee = '0.001 XYZ ($0.1)';
+const bridgeFee = '0.001 XYZ ($0.1)';
+const selectedOption = SLIPPAGE_OPTIONS[0];
+const route = ['COSMOS', 'OSMOSIS', 'AXELAR'];
 
+export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
   return (
     <Modal {...modalProps}>
       <StyledSwapFlowSettings gap={20}>
