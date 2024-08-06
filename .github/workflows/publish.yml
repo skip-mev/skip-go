@@ -40,6 +40,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Checkout Repo
+        continue-on-error: true
         uses: actions/checkout@v3
 
       - name: Get PR Number by Author
