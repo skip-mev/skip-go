@@ -40,13 +40,3 @@ export const Button = styled.button<FlexProps>`
   }
   ${flexProps};
 `;
-
-const Pill = styled(Row).attrs({
-  padding: 8,
-})`
-  height: 40px;
-  border-radius: 10px;
-  white-space: nowrap;
-  color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.secondary.background};
-`;

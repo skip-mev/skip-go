@@ -1,7 +1,6 @@
 import { styled } from 'styled-components';
 import { Column, Row, Spacer } from './Layout';
 import { SmallText, Text } from './Typography';
-import { ChangeEvent } from 'react';
 import { ChevronIcon } from '../icons/ChevronIcon';
 import { useTheme } from 'styled-components';
 import { CogIcon } from '../icons/CogIcon';
