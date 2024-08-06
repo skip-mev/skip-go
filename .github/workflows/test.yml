@@ -1,0 +1,32 @@
+name: TestingPRNumber
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  actions: write
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set PR Number
+        id: set-pr-number
+        run: echo "PR_NUMBER=$(echo https://github.com/skip-mev/skip-go/pull/137 | grep -o '[0-9]*$')" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Debug PR Number
+        continue-on-error: true
+        run: echo "PR_NUMBER is $PR_NUMBER"
+
+      - name: Auto approve PR
+        uses: hmarr/auto-approve-action@v4
+        continue-on-error: true
+        with:
+          pull-request-number: $PR_NUMBER
+          review-message: 'Auto approved automated PR'
