@@ -4,7 +4,7 @@ import { PlusIcon } from './PlusIcon';
 import { SignatureIcon } from './SignatureIcon';
 import { SwapIcon } from './SwapIcon';
 import { WarningIcon } from './WarningIcon';
-import { WarningIconTriangle } from './WarningIconTriangle';
+import { TriangleWarningIcon } from './TriangleWarningIcon';
 
 export enum ICONS {
   none,
@@ -14,7 +14,7 @@ export enum ICONS {
   leftArrow,
   swap,
   warning,
-  warningTriangle,
+  triangleWarning,
   signature,
 }
 
@@ -30,6 +30,6 @@ export const iconMap: IconMap = {
   [ICONS.leftArrow]: LeftArrowIcon,
   [ICONS.swap]: SwapIcon,
   [ICONS.warning]: WarningIcon,
-  [ICONS.warningTriangle]: WarningIconTriangle,
+  [ICONS.triangleWarning]: TriangleWarningIcon,
   [ICONS.signature]: SignatureIcon,
 };
