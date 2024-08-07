@@ -238,7 +238,7 @@ export const SetAddressDialog = ({
                 <div className="group relative mb-2 data-[unsupported=true]:opacity-30">
                   {isEditing ? (
                     <div className="flex items-center space-x-2 py-2 px-1">
-                      <StyledBorderDiv
+                      <StyledAddressInput
                         as="input"
                         type="text"
                         className={cn(
@@ -298,3 +298,8 @@ export const SetAddressDialog = ({
     </Dialog>
   );
 };
+
+const StyledAddressInput = styled(StyledBorderDiv)`
+  font-family: 'ABCDiatypeMono';
+  font-variant-numeric: slashed-zero;
+`;
