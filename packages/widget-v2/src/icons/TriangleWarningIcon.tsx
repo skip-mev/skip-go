@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const WarningIconTriangle = ({ color = 'black' }: IconProps) => (
+export const TriangleWarningIcon = ({ color = 'black' }: IconProps) => (
   <svg
     width="47"
     height="41"
