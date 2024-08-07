@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.6
+
+### Patch Changes
+
+- 9207d3e: Show last swap when there are multiple on a chain in transaction preview
+
 ## 2.3.5
 
 ### Patch Changes
