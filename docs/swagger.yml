@@ -750,6 +750,7 @@ paths:
                 usd_amount_out: '2005.23'
                 swap_price_impact_percent: '1.05'
                 estimated_fees: []
+                estimated_route_duration_seconds: 300
               schema:
                 $ref: '#/components/schemas/RouteResponse'
         '400':
@@ -1343,6 +1344,7 @@ paths:
                   usd_amount_in: '2000.01'
                   usd_amount_out: '2005.23'
                   swap_price_impact_percent: '1.05'
+                  estimated_route_duration_seconds: 60
               schema:
                 type: object
                 properties:
@@ -3035,6 +3037,9 @@ components:
           items:
             $ref: '#/components/schemas/Fee'
           type: array
+        estimated_route_duration_seconds:
+          description: The estimated time in seconds for the route to execute
+          type: integer
       type: object
     SendTokenError:
       properties:
