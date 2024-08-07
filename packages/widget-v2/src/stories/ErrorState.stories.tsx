@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const BadTrade: Story = {
   args: {
-    icon: ICONS.warningTriangle,
+    icon: ICONS.triangleWarning,
     title: 'Warning: Bad trade (–65.15%)',
     description: (
       <>
@@ -55,7 +55,7 @@ export const BadTrade: Story = {
 
 export const TransactionFailed: Story = {
   args: {
-    icon: ICONS.warningTriangle,
+    icon: ICONS.triangleWarning,
     title: 'Transaction failed',
     description: (
       <>
@@ -82,7 +82,7 @@ export const TransactionFailed: Story = {
 
 export const CriticalError: Story = {
   args: {
-    icon: ICONS.warningTriangle,
+    icon: ICONS.triangleWarning,
     title: 'Transaction failed',
     description: 'User rejected authentication request',
     backgroundColor: COLORS.backgroundError,

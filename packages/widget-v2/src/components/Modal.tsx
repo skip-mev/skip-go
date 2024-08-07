@@ -1,40 +1,46 @@
 import { css, styled } from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ShadowDomAndProviders } from '../widget/ShadowDomAndProviders';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
+import { useModal } from '@ebay/nice-modal-react';
 import { useEffect } from 'react';
+import { PartialTheme } from '../widget/theme';
 
 export type ModalProps = {
   children: React.ReactNode;
   drawer?: boolean;
   container?: HTMLElement;
   onOpenChange?: (open: boolean) => void;
+  theme?: PartialTheme;
 };
 
-export const Modal = NiceModal.create(
-  ({ children, drawer, container, onOpenChange }: ModalProps) => {
-    const modal = useModal();
+export const Modal = ({
+  children,
+  drawer,
+  container,
+  onOpenChange,
+  theme,
+}: ModalProps) => {
+  const modal = useModal();
 
-    useEffect(() => {
-      onOpenChange?.(true);
-      return () => {
-        onOpenChange?.(false);
-      };
-    }, []);
+  useEffect(() => {
+    onOpenChange?.(true);
+    return () => {
+      onOpenChange?.(false);
+    };
+  }, []);
 
-    return (
-      <Dialog.Root open={modal.visible} onOpenChange={() => modal.remove()}>
-        <Dialog.Portal container={container}>
-          <ShadowDomAndProviders>
-            <StyledOverlay drawer={drawer}>
-              <StyledContent>{children}</StyledContent>
-            </StyledOverlay>
-          </ShadowDomAndProviders>
-        </Dialog.Portal>
-      </Dialog.Root>
-    );
-  }
-);
+  return (
+    <Dialog.Root open={modal.visible} onOpenChange={() => modal.remove()}>
+      <Dialog.Portal container={container}>
+        <ShadowDomAndProviders theme={theme}>
+          <StyledOverlay drawer={drawer}>
+            <StyledContent>{children}</StyledContent>
+          </StyledOverlay>
+        </ShadowDomAndProviders>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
 
 const StyledOverlay = styled(Dialog.Overlay)<{ drawer?: boolean }>`
   background: rgba(0 0 0 / 0.5);

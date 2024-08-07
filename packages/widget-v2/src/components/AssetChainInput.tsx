@@ -1,11 +1,10 @@
 import { styled } from 'styled-components';
 import { Column, Row, Spacer } from './Layout';
 import { SmallText, Text } from './Typography';
-import { ChangeEvent } from 'react';
 import { ChevronIcon } from '../icons/ChevronIcon';
 import { useTheme } from 'styled-components';
 import { CogIcon } from '../icons/CogIcon';
-import { Button } from './Button';
+import { Button, GhostButton } from './Button';
 import { useAtom } from 'jotai';
 import { skipAssets } from '../state/skip';
 import { useUsdValue } from '../utils/useUsdValue';
@@ -13,7 +12,7 @@ import { formatUSD } from '../utils/intl';
 
 export type AssetChainInputProps = {
   value?: string;
-  onChangeValue?: (e: ChangeEvent) => void;
+  onChangeValue?: (value: string) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
   selectedAssetDenom?: string;
@@ -43,7 +42,11 @@ export const AssetChainInput = ({
       borderRadius={25}
     >
       <Row justify="space-between">
-        <StyledInput type="text" value={value} onChange={onChangeValue} />
+        <StyledInput
+          type="text"
+          value={value}
+          onChange={(e) => onChangeValue?.(e.target.value)}
+        />
         <Button onClick={handleChangeAsset} gap={5}>
           {selectedAsset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
@@ -65,10 +68,15 @@ export const AssetChainInput = ({
       <Row justify="space-between">
         <SmallText>{formatUSD(usdValue?.data ?? 0)}</SmallText>
         {selectedAsset ? (
-          <Button onClick={handleChangeChain} align="center" gap={4}>
+          <GhostButton
+            onClick={handleChangeChain}
+            align="center"
+            secondary
+            gap={4}
+          >
             <SmallText>on {selectedAsset?.chainName}</SmallText>
             <CogIcon color={theme.textColor} />
-          </Button>
+          </GhostButton>
         ) : (
           <Spacer />
         )}
