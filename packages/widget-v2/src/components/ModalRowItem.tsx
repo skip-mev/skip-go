@@ -6,12 +6,14 @@ export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   onClick?: () => void;
+  style?: React.CSSProperties;
 };
 
 export const ModalRowItem = ({
   leftContent,
   rightContent,
   onClick,
+  style,
 }: ModalRowItemProps) => {
   return (
     <StyledModalRowItemContainer
@@ -20,6 +22,7 @@ export const ModalRowItem = ({
       justify="space-between"
       onClick={onClick}
       gap={16}
+      style={style}
     >
       {typeof leftContent === 'string' ? (
         <Text fontSize={20}>{leftContent}</Text>
