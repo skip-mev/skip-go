@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.7
+
+### Patch Changes
+
+- 97837ef: Use monospace font for address input
+
 ## 2.3.6
 
 ### Patch Changes
