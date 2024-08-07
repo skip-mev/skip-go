@@ -39,33 +39,40 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Set PR Number
-        id: set-pr-number
-        run: echo "PR_NUMBER=$(echo ${{ steps.changesets.outputs.pull_request_url }} | grep -o '[0-9]*$')" >> $GITHUB_ENV
+      - name: Checkout Repo
         continue-on-error: true
+        uses: actions/checkout@v3
 
-      - name: Debug PR Number
+      - name: Get PR Number by Author
         continue-on-error: true
-        run: echo "PR_NUMBER is $PR_NUMBER"
+        run: |
+          PR_URL=$(gh pr list --author "github-actions[bot]" --json url --jq '.[0].url')
+          PR_NUMBER=$(echo $PR_URL | grep -o '[0-9]*$')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "The PR number is: $PR_NUMBER"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add automerge Label to PR
+        run: gh pr edit --add-label "automerge" "${{ env.PR_NUMBER }}"
+        continue-on-error: true
+        env:
+          PR_NUMBER: ${{ env.PR_NUMBER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto approve PR
         uses: hmarr/auto-approve-action@v4
         continue-on-error: true
-        with:
-          pull-request-number: $PR_NUMBER
-          review-message: 'Auto approved automated PR'
-
-      - name: Add automerge Label to PR
-        run: gh pr edit --add-label "automerge" "$PR_URL"
-        continue-on-error: true
         env:
-          PR_URL: ${{ steps.changesets.outputs.pull_request_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ env.PR_NUMBER }}
+        with:
+          pull-request-number: ${{ env.PR_NUMBER }}
+          review-message: 'Auto approved automated PR'
 
       - name: automerge
         uses: 'pascalgn/automerge-action@v0.16.3'
         continue-on-error: true
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MERGE_METHOD: 'squash'
-          PULL_REQUEST: $PR_NUMBER
+          PULL_REQUEST: ${{ env.PR_NUMBER }}
