@@ -1,6 +1,7 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import List from 'rc-virtual-list';
 import { getHexColor, opacityToHex } from '../utils/colors';
+import debounce from 'lodash/debounce';
 
 export type VirtualListProps<T> = {
   listItems: T[] | undefined;
@@ -22,7 +23,38 @@ export const VirtualList = <T extends unknown>({
   itemKey,
 }: VirtualListProps<T>) => {
   const itemsToShow = Math.floor(height / itemHeight);
-  const visibleRangeRef = useRef({ start: 0, end: itemsToShow + bufferSize });
+  const [visibleRange, setVisibleRange] = useState({
+    start: 0,
+    end: itemsToShow,
+  });
+
+  const handleVisibleChange = useCallback(
+    (visibleList: T[], fullList: T[]) => {
+      if (visibleList.length === 0) return;
+
+      const startIndex = fullList.indexOf(visibleList[0]);
+      const endIndex = fullList.indexOf(visibleList[visibleList.length - 1]);
+
+      if (startIndex === -1 || endIndex === -1) return;
+
+      const start = Math.max(0, startIndex - bufferSize);
+      const end = Math.min(fullList.length - 1, endIndex + bufferSize);
+
+      setVisibleRange({ start, end });
+    },
+    [bufferSize]
+  );
+
+  const debouncedUpdateVisibleRange = useMemo(
+    () => debounce(handleVisibleChange, 300, { maxWait: 500 }),
+    [handleVisibleChange]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedUpdateVisibleRange.cancel();
+    };
+  }, [debouncedUpdateVisibleRange]);
 
   return (
     <List
@@ -40,23 +72,11 @@ export const VirtualList = <T extends unknown>({
           backgroundColor: getHexColor(textColor) + opacityToHex(50),
         },
       }}
-      onVisibleChange={(visibleItems) => {
-        const start = Math.max(
-          0,
-          listItems?.indexOf(visibleItems[0]) ?? 0 - bufferSize
-        );
-        const end = Math.min(
-          listItems?.indexOf(visibleItems[visibleItems.length - 1]) ??
-            0 + bufferSize
-        );
-        visibleRangeRef.current = { start, end };
-      }}
+      onVisibleChange={debouncedUpdateVisibleRange}
     >
       {(item, index) => {
-        const min = visibleRangeRef.current.start;
-        const max = visibleRangeRef.current.end;
-
-        const isInBufferedRange = index >= min && index <= max;
+        const isInBufferedRange =
+          index >= visibleRange.start && index <= visibleRange.end;
         return renderItem(isInBufferedRange ? item : null, index);
       }}
     </List>

@@ -48,7 +48,6 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
           <SearchInput onSearch={handleSearch} />
           <VirtualList
             listItems={filteredAssets}
-            key={searchQuery}
             height={500}
             itemHeight={70}
             textColor={theme?.textColor ?? ''}

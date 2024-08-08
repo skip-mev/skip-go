@@ -46,6 +46,7 @@
     "@tanstack/react-query": "^5.51.15",
     "chain-registry": "^1.63.43",
     "jotai": "^2.9.1",
+    "lodash.debounce": "^4.0.8",
     "rc-virtual-list": "^3.14.5",
     "react-shadow-scope": "^1.0.5",
     "zod": "^3.23.8"
