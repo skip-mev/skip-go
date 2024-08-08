@@ -47,6 +47,7 @@ const StyledSearchIcon = styled(SearchIcon)`
 
 const StyledSearchInputContainer = styled(Row)`
   padding: 6px 10px;
+  height: 50px;
   position: relative;
 `;
 

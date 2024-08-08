@@ -7,20 +7,22 @@ export type VirtualListProps<T> = {
   listItems: T[] | undefined;
   height: number;
   itemHeight: number;
-  textColor: string;
+  scrollBarColor: string;
   bufferSize?: number;
   renderItem: (item: T | null, index: number) => React.ReactNode;
   itemKey: (item: T) => string;
+  className?: string;
 };
 
 export const VirtualList = <T extends unknown>({
   listItems,
   height,
   itemHeight,
-  textColor,
+  scrollBarColor,
   bufferSize = 6,
   renderItem,
   itemKey,
+  className,
 }: VirtualListProps<T>) => {
   const itemsToShow = Math.floor(height / itemHeight);
   const [visibleRange, setVisibleRange] = useState({
@@ -46,7 +48,7 @@ export const VirtualList = <T extends unknown>({
   );
 
   const debouncedUpdateVisibleRange = useMemo(
-    () => debounce(handleVisibleChange, 300, { maxWait: 500 }),
+    () => debounce(handleVisibleChange, 150, { maxWait: 300 }),
     [handleVisibleChange]
   );
 
@@ -63,13 +65,14 @@ export const VirtualList = <T extends unknown>({
       itemHeight={itemHeight}
       itemKey={itemKey}
       virtual
+      className={className}
       styles={{
         verticalScrollBar: {
           backgroundColor: 'transparent',
           visibility: 'visible',
         },
         verticalScrollBarThumb: {
-          backgroundColor: getHexColor(textColor) + opacityToHex(50),
+          backgroundColor: getHexColor(scrollBarColor) + opacityToHex(50),
         },
       }}
       onVisibleChange={debouncedUpdateVisibleRange}

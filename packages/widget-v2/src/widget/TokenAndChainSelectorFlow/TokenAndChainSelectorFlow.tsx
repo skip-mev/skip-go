@@ -8,22 +8,22 @@ import { useCallback, useMemo, useState } from 'react';
 import { VirtualList } from '../../components/VirtualList';
 import { RowItem, Skeleton } from './TokenAndChainSelectorFlowRowItem';
 import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
+import { getHexColor, opacityToHex } from '../../utils/colors';
+import { hashObject } from '../../utils/misc';
 
 export const TokenAndChainSelectorFlow = NiceModal.create(
   (modalProps: ModalProps) => {
     const theme = modalProps.theme;
-    const [loadingAssets] = useAtom(skipAssets);
+    const [{ data: assets }] = useAtom(skipAssets);
     const [searchQuery, setSearchQuery] = useState<string>('');
 
-    const assets =
-      loadingAssets.state === 'hasData' ? loadingAssets.data : undefined;
-
     const filteredAssets = useMemo(() => {
-      const filtered = assets?.filter((asset) =>
-        asset?.symbol?.toLowerCase().includes(searchQuery.toLowerCase())
+      if (!assets) return [];
+      const filtered = assets.filter((asset) =>
+        asset.symbol?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       return filtered;
-    }, [searchQuery]);
+    }, [searchQuery, assets]);
 
     const handleSearch = (term: string) => {
       setSearchQuery(term);
@@ -35,7 +35,11 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
           <RowItem
             asset={asset}
             index={index}
-            skeleton={<Skeleton color={theme?.secondary?.background} />}
+            skeleton={
+              <Skeleton
+                color={getHexColor(theme?.textColor ?? '') + opacityToHex(10)}
+              />
+            }
           />
         );
       },
@@ -46,16 +50,25 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
       <Modal {...modalProps}>
         <StyledContainer>
           <SearchInput onSearch={handleSearch} />
-          <VirtualList
-            listItems={filteredAssets}
-            height={500}
-            itemHeight={70}
-            textColor={theme?.textColor ?? ''}
-            renderItem={renderItem}
-            itemKey={(asset: ClientAsset) =>
-              asset.denom + asset.recommendedSymbol + asset.tokenContract
-            }
-          />
+          {filteredAssets ? (
+            <VirtualList
+              listItems={filteredAssets}
+              height={530}
+              itemHeight={70}
+              scrollBarColor={theme?.textColor ?? ''}
+              renderItem={renderItem}
+              itemKey={(asset: ClientAsset) => hashObject(asset)}
+            />
+          ) : (
+            <Column>
+              {Array.from({ length: 10 }, (_, index) => (
+                <Skeleton
+                  key={index}
+                  color={getHexColor(theme?.textColor ?? '') + opacityToHex(10)}
+                />
+              ))}
+            </Column>
+          )}
         </StyledContainer>
       </Modal>
     );
@@ -65,8 +78,9 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
 const StyledContainer = styled(Column)`
   padding: 10px;
   gap: 10px;
-  width: 480px;
+  width: 580px;
   height: 600px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.backgroundColor};
+  overflow: hidden;
 `;

@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+
 import { Asset, SkipRouter } from '@skip-go/core';
 import { Chain, AssetList } from '@chain-registry/types';
 import {
@@ -9,7 +10,7 @@ import {
   chains as chainsInitiaRegistry,
   assets as assetsInitiaRegistry,
 } from '@initia/initia-registry';
-import { loadable } from 'jotai/utils';
+import { atomWithQuery } from 'jotai-tanstack-query';
 
 export const chains = [
   ...chainsChainRegistry,
@@ -44,18 +45,21 @@ const flattenData = (data: Record<string, Asset[]>) => {
   return flattenedData;
 };
 
-export const skipAssets = loadable(
-  atom(async (get) => {
-    const skip = get(skipClient);
-    const assets = await skip.assets({
-      includeEvmAssets: true,
-      includeCW20Assets: true,
-      includeSvmAssets: true,
-    });
-
-    return flattenData(assets);
-  })
-);
+export const skipAssets = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  return {
+    queryKey: ['skipAssets'],
+    queryFn: async () => {
+      return skip
+        .assets({
+          includeEvmAssets: true,
+          includeCW20Assets: true,
+          includeSvmAssets: true,
+        })
+        .then(flattenData);
+    },
+  };
+});
 
 function getChain(chainId: string): Chain {
   const chain = chains.find((c) => c.chain_id === chainId);

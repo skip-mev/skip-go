@@ -28,7 +28,9 @@ export const RowItem = ({
             alt={`${asset.symbol} logo`}
           />
           <Text>{asset.symbol}</Text>
-          <SmallText>{asset.chainName ?? asset.chainID}</SmallText>
+          <SmallText>
+            {asset.chainName ?? asset.originChainID ?? asset.chainID}
+          </SmallText>
         </Row>
       }
     />

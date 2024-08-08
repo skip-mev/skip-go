@@ -10367,6 +10367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:^5.51.21":
+  version: 5.51.21
+  resolution: "@tanstack/query-core@npm:5.51.21"
+  checksum: a602e70bfbfa1fa28333be8c1b9ac9c9b97937b236d3997a757079ae04086fe59c2688cb6406fd82dcf9ef07f73e7a4ba1d373040f6cad340e1f64bceafe0e07
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.17.15, @tanstack/react-query@npm:^5.18.1":
   version: 5.49.0
   resolution: "@tanstack/react-query@npm:5.49.0"
@@ -20165,6 +20172,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai-tanstack-query@npm:^0.8.6":
+  version: 0.8.6
+  resolution: "jotai-tanstack-query@npm:0.8.6"
+  peerDependencies:
+    "@tanstack/query-core": "*"
+    jotai: ">=2.0.0"
+  checksum: d1fa964ead663f858adb8b4418013fc87fb03b12e6a3f8de3e578930cf95d459d09e4b0b1b8ab5e46e097e6eac67e1f3265357cb18ea266f6cea364d2c8e25d6
+  languageName: node
+  linkType: hard
+
 "jotai@npm:^2.9.1":
   version: 2.9.1
   resolution: "jotai@npm:2.9.1"
@@ -28408,6 +28425,7 @@ __metadata:
     "@storybook/react": ^8.2.6
     "@storybook/react-vite": ^8.2.6
     "@storybook/test": ^8.2.6
+    "@tanstack/query-core": ^5.51.21
     "@tanstack/react-query": ^5.51.15
     "@types/react": ^18.3.3
     "@types/react-dom": ^18.3.0
@@ -28416,6 +28434,7 @@ __metadata:
     "@vitejs/plugin-react": ^4.3.1
     chain-registry: ^1.63.43
     jotai: ^2.9.1
+    jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
     rc-virtual-list: ^3.14.5
     react-shadow-scope: ^1.0.5
