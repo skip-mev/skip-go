@@ -1,5 +1,12 @@
 # widget-v2
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [c7961e6]
+  - @skip-go/core@0.5.1
+
 ## 0.0.4
 
 ### Patch Changes
