@@ -19,16 +19,16 @@ You can reach us easily by joining [our discord](https://skip.build/discord) and
 
 For detailed information on all the Skip Go API endpoints and functionality, please see our [reference docs](/api-reference/info/get-v2infochains).
 
-## Example using @skip-go/core package
+## Example using @skip-go/client package
 
 This example is for browser environments.
 
-### 1\. Install @skip-go/core
+### 1\. Install @skip-go/client
 
-In your command line terminal, install the `@skip-go/core` package:
+In your command line terminal, install the `@skip-go/client` package:
 
 ```Shell shell
-npm i @skip-go/core
+npm i @skip-go/client
 ```
 
 <Info>
@@ -62,7 +62,7 @@ Now, let's create the SkipRouter instance with the signers for each ecosystem!
 We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
 
 ```Javascript SwapPage.tsx
-import { SkipRouter } from "@skip-router/core";
+import { SkipRouter } from "@skip-router/client";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { createWalletClient } from "viem";
 
@@ -117,7 +117,7 @@ The most basic outputs you will need are:
 - `amountOut`: The estimated amount your user will receive after their swap / transfer takes place -- net of fees (e.g. bridge fees, swap fees, etc..) and price impact.
 - `requiredChainAddresses`: These are the chainIDs for which you will need to pass a valid user address when generating the transaction.
 - `operations`: The set of steps that take place to get the user from their source chain & token to their destination chain & token
-  </Info>
+</Info>
 
  <Note>
 **Adding a fee for yourself**
@@ -208,7 +208,7 @@ These callbacks include:
 - `onTransactionBroadcast(txInfo {txHash, chainID})`: Executes after the transaction that the user signs gets broadcast on chain.
 - `onTransactionTracked(txInfo, {txHash, chainID})`: Executes after the transaction that the user signs is successfully registered for tracking.
 - `onTransactionCompleted(chainID, txHash, status)`: Executes after all of the operations triggered by a user's signature complete. For example, in this case, it executed after the transfer to Celestia completed. (For multi-tx routes that require multiple user signatures, this will be called once for each tx)
-  </Info>
+</Info>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**
