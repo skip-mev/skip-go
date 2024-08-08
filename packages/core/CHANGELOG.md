@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.5.1
+
+### Patch Changes
+
+- c7961e6: update deprecation readme
+
 ## 0.5.0
 
 ### Minor Changes
