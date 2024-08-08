@@ -3,7 +3,7 @@ import { ModalRowItem } from '../../components/ModalRowItem';
 import { SmallText, Text } from '../../components/Typography';
 import { ClientAsset } from '../../state/skip';
 
-export const TokenAndChainSelectorFlowRowItem = ({
+export const RowItem = ({
   asset,
   index,
   skeleton,
