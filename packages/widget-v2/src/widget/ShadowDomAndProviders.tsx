@@ -40,7 +40,7 @@ export const ShadowDomAndProviders = ({
 }) => {
   const [isClient, setIsClient] = useState<boolean>(false);
 
-  const [shadowDom, setShadowDom] = useState<HTMLElement>();
+  const [_shadowDom, setShadowDom] = useState<HTMLElement>();
   const [styledComponentContainer, setStyledComponentContainer] =
     useState<HTMLElement>();
 
@@ -73,8 +73,8 @@ export const ShadowDomAndProviders = ({
         shouldForwardProp={shouldForwardProp}
         target={styledComponentContainer}
       >
-        <GlobalStyles />
         <ThemeProvider theme={mergedThemes}>
+          <GlobalStyles />
           <QueryClientProvider client={queryClient} key={'skip-widget'}>
             {children}
           </QueryClientProvider>
