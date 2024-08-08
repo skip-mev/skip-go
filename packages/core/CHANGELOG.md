@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.5
+
+### Patch Changes
+
+- 76f85a7: public node usage improvement
+
 ## 0.4.4
 
 ### Patch Changes
