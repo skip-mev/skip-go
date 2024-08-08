@@ -1,10 +1,16 @@
-# Core to Client Migration Guide
+# Deprecation Notice
 
-@skip-go/core has been renamed to @skip-go/client. All future updates to the client package will be made in @skip-go/client. @skip-go/core@^0.4.5 is the same as @skip-go/client@0.4.5. To migrate packages with minimal disruption, please upgrade to @skip-go/core@^0.4.5 and then replace the package with @skip-go/client@0.4.5, then upgrading to the latest version from there.
+**⚠️ This project is deprecated**
+
+This repository is no longer actively maintained and may not receive future updates or bug fixes. Please use the now maintained and developed [@skip-go/core](https://www.npmjs.com/package/@skip-go/core) as a replacement.
+
+## Migration Guide
+
+@skip-go/core@^0.4.5 is the same as @skip-go/client@0.4.5. To migrate packages with minimal disruption, please upgrade to @skip-go/core@^0.4.5 and then replace the package with @skip-go/client@0.4.5, then upgrading to the latest version from there.
 
 Thank you for your understanding and for using our software.
 
-Please reach out to us in our [discord](https://skip.build/discord) if you have any questions and/or need assistance migrating!
+For any questions, please reach out to us in our [discord](https://skip.build/discord) if you have any questions and/or need assistance migrating!
 
 [![npm/v](https://badgen.net/npm/v/@skip-go/core)](https://www.npmjs.com/package/@skip-go/core)
 [![npm/dt](https://badgen.net/npm/dt/@skip-go/core?)](https://www.npmjs.com/package/@skip-go/core)
