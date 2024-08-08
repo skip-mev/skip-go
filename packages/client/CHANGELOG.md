@@ -1,4 +1,28 @@
-# @skip-go/core
+# @skip-go/client
+
+## 0.5.1
+
+### Patch Changes
+
+- c7961e6: update deprecation readme
+
+## 0.5.0
+
+### Minor Changes
+
+- 03f5e1e: Added enable_gas_warnings to Msg and MsgDirect requests
+
+## 0.4.6
+
+### Patch Changes
+
+- 0828086: deprecation notice
+
+## 0.4.5
+
+### Patch Changes
+
+- 76f85a7: public node usage improvement
 
 ## 0.4.4
 

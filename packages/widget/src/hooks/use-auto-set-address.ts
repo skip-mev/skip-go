@@ -1,4 +1,4 @@
-import { Chain } from '@skip-go/core';
+import { Chain } from '@skip-go/client';
 import { useQuery } from '@tanstack/react-query';
 import {
   ChainAddresses,

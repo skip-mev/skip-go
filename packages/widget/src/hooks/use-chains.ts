@@ -1,4 +1,4 @@
-import { Chain as SkipChain } from '@skip-go/core';
+import { Chain as SkipChain } from '@skip-go/client';
 import { useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 import { useSwapWidgetUIStore } from '../store/swap-widget';

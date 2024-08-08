@@ -1,6 +1,6 @@
 ---
 title: "SVM Transactions Intro"
-description: "This document explains how to use Skip Go API and Core TypeScript Package to construct SVM transactions."
+description: "This document explains how to use Skip Go API and Client TypeScript Package to construct SVM transactions."
 ---
 
 ## Intro
@@ -22,7 +22,7 @@ All you need to do is initialize the `getSVMSigner` method in `SkipRouter.option
 ```TypeScript TypeScript
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PhantomWalletName } from "@solana/wallet-adapter-phantom"
-import { SkipRouter } from '@skip-go/core';
+import { SkipRouter } from '@skip-go/client';
 
 const { wallets } = useWallet();
 
@@ -61,7 +61,7 @@ For more information on transactions, check out the Solana's official [docs](htt
 
 #### Signing `tx`
 
-[Skip Go Core](https://www.npmjs.com/package/@skip-go/core) takes care of all of the complexity of signing the transaction that gets returned in `SvmTx.tx`. 
+[Skip Go Client](https://www.npmjs.com/package/@skip-go/client) takes care of all of the complexity of signing the transaction that gets returned in `SvmTx.tx`. 
 
 You just need to have set the `getSVMSigner` method in the `SkipRouterOptions` object in the `SkipRouter` constructor then use `executeRoute` or `executeTxs`. 
 

@@ -2198,6 +2198,7 @@ test('msgsRequestFromJSON', () => {
         msg: 'cosmwasm message',
       },
     },
+    enable_gas_warnings: true,
   };
 
   const msgsRequest: MsgsRequest = {
@@ -2282,6 +2283,7 @@ test('msgsRequestFromJSON', () => {
         msg: 'cosmwasm message',
       },
     },
+    enableGasWarnings: true,
   };
 
   expect(msgsRequestFromJSON(msgsRequestJSON)).toEqual(msgsRequest);
@@ -2371,6 +2373,7 @@ test('msgsRequestToJSON', () => {
         msg: 'cosmwasm message',
       },
     },
+    enableGasWarnings: true,
   };
 
   const mesgsRequestJSON: MsgsRequestJSON = {
@@ -2456,6 +2459,7 @@ test('msgsRequestToJSON', () => {
         msg: 'cosmwasm message',
       },
     },
+    enable_gas_warnings: true,
   };
 
   expect(msgsRequestToJSON(msgsRequest)).toEqual(mesgsRequestJSON);

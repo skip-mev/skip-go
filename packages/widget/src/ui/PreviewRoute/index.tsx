@@ -5,7 +5,7 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/20/solid';
 
-import { RouteResponse } from '@skip-go/core';
+import { RouteResponse } from '@skip-go/client';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

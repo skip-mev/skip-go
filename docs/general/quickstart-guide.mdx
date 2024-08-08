@@ -1,273 +1,218 @@
 ---
-title: "Quickstart Guide"
+title: 'Quickstart Guide'
 ---
 
 ## Summary
 
-This will walkthrough shows you how to get started with the API by performing a swap of USDC on Noble to TIA on Celestia. 
-
+This will walkthrough shows you how to get started with the API by performing a swap of USDC on Noble to TIA on Celestia.
 
  <Note>
  **Get in touch if you're having trouble**
- 
- Please contact us if you believe the API doesn't conveniently support your desired user experience, or if you're confused about how to use it.
- 
- You can reach us easily by joining [our discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
+Please contact us if you believe the API doesn't conveniently support your desired user experience, or if you're confused about how to use it.
+
+You can reach us easily by joining [our discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
 </Note>
 
 ## Reference Docs
 
-For detailed information on all the Skip Go API endpoints and functionality, please see our [reference docs](/api-reference/info/get-v2infochains). 
+For detailed information on all the Skip Go API endpoints and functionality, please see our [reference docs](/api-reference/info/get-v2infochains).
 
-## Example
+## Example using @skip-go/client package
 
-### 1\. Install required libraries
+This example is for browser environments.
 
-Running this example requires a minimum of NodeJS 16.
+### 1\. Install @skip-go/client
 
- In your command line terminal, install all the required libraries: 
-
+In your command line terminal, install the `@skip-go/client` package:
 
 ```Shell shell
-npm i @skip-go/core
-npm i @cosmjs/crypto
-npm i @cosmjs/proto-signing 
+npm i @skip-go/client
 ```
 
 <Info>
  **Additional dependencies and steps will be required for EVM & SVM Transactions**
- 
- This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go API supports all major EVM chains & Solana. (See [Supported Ecosystems](/supported-ecosystems-and-bridges) for more info about which chains, routes, and tokens we support)
- 
- If you'd like to perform a cross-chain swap that starts or ends on Solana or an EVM chain, you'll need to import additional dependencies and configure additional tx signers. After going through this tutorial, check out [EVM Transactions Intro](/evm-transactions) and [SVM Transactions Intro](/svm-transaction-details) if you need.
+
+This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go API supports all major EVM chains & Solana. (See [Supported Ecosystems](/supported-ecosystems-and-bridges) for more info about which chains, routes, and tokens we support)
+
+If you'd like to perform a cross-chain swap that starts or ends on Solana or an EVM chain, you'll need to import additional dependencies and configure additional tx signers. After going through this tutorial, check out [EVM Transactions Intro](/evm-transactions) and [SVM Transactions Intro](/svm-transaction-details) if you need.
+
 </Info>
 
-### 2\. Import libraries and setup package.json
+### 2\. Setup Signers
 
-Next, you can copy the following code snippets to a javascript file (e.g. `skip-api-example.js`). 
+Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
 
-We'll build on this file throughout the example: 
+For EVM transactions, You need to install the `viem` package:
 
-
-
-```Javascript Node
-import * as chainRegistry from "chain-registry"; 
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { stringToPath } from "cosmjs/crypto";
-import { SkipRouter } from "@skip-go/core";
-
-// async main function
-(async () => { 
-	// empty for now
-}
-)()
+```Shell shell
+npm i viem
 ```
 
-You'll also need to initialize your package.json: 
+For SVM transactions, You can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
+For this example, we are going to use Phantom wallet:
 
-
-
-```JSON JSON
-{
-  "type": "module"
-}
+```Shell shell
+npm i @solana/wallet-adapter-phantom
 ```
 
-Now you should be able to run your script, but it won't do anything yet: 
+Now, let's create the SkipRouter instance with the signers for each ecosystem!
 
+We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
 
+```Javascript SwapPage.tsx
+import { SkipRouter } from "@skip-router/client";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import { createWalletClient } from "viem";
 
-```Shell Shell
-node skip-api-example.js
-```
-
-### 3\. Setup wallet for all Cosmos chains and Initialize `SkipRouter` client
-
-Since there are many chains in Cosmos (more than 50!), we will write a `getCosmosSigner` function that can generate your Cosmos signer for any chain, given a chain ID. 
-
-We'll pass this function into the `SkipRouter` when we initialize it, so we can sign any cross-chain Cosmos route it generates. 
-
-We'll also create another helper function called `getCosmosAddress` that uses `getCosmosSigner` to retrieve user addresses for individual chains later. 
-
-Copy the following code into `skip-api-example.js`:
-
-
-
-```Javascript Node
- // Generates a Cosmos signer for a given chainID, 
-// loading the mnemonic from the environment
-async function getCosmosSigner(chainID) {
-    // load mnemonic from environment
-    const mnemonic = process.env.MNEMONIC;
-    if (!mnemonic) {
-        throw new Error("Mnemonic not set")
+const skipClient = new SkipRouter({
+    getCosmosSigner: async (chainID) => {
+        const offlineSigner = window.keplr?.getOfflineSigner(chainID);
+        if (!offlineSigner) throw new Error("Keplr not installed");
+        return offlineSigner;
+    },
+    getEVMSigner: async () => {
+        const ethereum = window.ethereum;
+        if (!ethereum) throw new Error("MetaMask not installed");
+        const client = createWalletClient({
+        chain: mainnet,
+        transport: custom(window.ethereum),
+        });
+        return client;
+    },
+    getSVMSigner: async () => {
+        const phantom = new PhantomWalletAdapter();
+        return phantom;
     }
-    // find chain in chain registry to get bech32 prefix and cointype
-    const chain = chainRegistry.chains.find(chain => chain.chain_id==chainID)
-    if (!chain.bech32_prefix) {
-        throw new Error(`Chain Registry missing prefix for {chainID}`)
-    }
-    if (!chain.slip44) {
-        throw new Error(`Chain Registry missing cointype for {chainID}`)
-    }
-    // create wallet
-    const hdPath = stringToPath(`m/44'/${chain.slip44}'/0'/0/0`)
-    
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
-        prefix: chain.bech32_prefix,
-        hdPath: hdPath
-    })
-    return wallet
-}
-
-async function getCosmosAddress(chainID) {
-    const signer = await getCosmosSigner(chainID)
-    return signer.getAccounts()[0].address
-}
-
-(async () => { 
-    const skipClient = new SkipRouter({
-        getCosmosSigner,
-    })
-})()
+});
 ```
 
-Make sure you set up your mnemonic in your local environment:
+### 3\. Request a Quote
 
+Now, we can use the `SkipRouter.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia:
 
+Just add the following line after the line where you initialized the skipClient:
 
-```Shell Shell
-export MNEMONIC="12 word mnemonic here"
-```
-
-(If you don't already have one, you can generate one by installing a popular Cosmos wallet, like [Leap](https://www.leapwallet.io/) or [Keplr](https://www.keplr.app/).)
-
-### 4\. Request a Quote
-
-Now, we can use the `SkipRouter.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia: 
-
-Just add the following line after the line where you initialized the skipClient: 
-
-
-
-```Javascript Node
+```ts
 const route = await skipClient.route({
-  sourceAssetDenom: "uusdc",
-  sourceAssetChainID: "noble-1",
-  destAssetDenom: "utia",
-  destAssetChainID: "celestia",
-  amountIn: "1000000", // 1 uusdc
+  sourceAssetDenom: 'uusdc',
+  sourceAssetChainID: 'noble-1',
+  destAssetDenom: 'utia',
+  destAssetChainID: 'celestia',
+  amountIn: '1000000', // 1 uusdc
   smartSwapOptions: {
     splitRoutes: true,
-  }
-})
+  },
+});
 ```
-
 
  <Info>
  **Understanding the Route Response**
- 
- The route response contains a ton of information about how the user can move from their source chain & token to their destination. For more information, see [/v2/fungible/route](/api-reference/getroutev2) reference docs.
- 
- The most basic outputs you will need are: 
- 
- * `amountOut`: The estimated amount your user will receive after their swap / transfer takes place -- net of fees (e.g. bridge fees, swap fees, etc..) and price impact.
- * `requiredChainAddresses`: These are the chainIDs for which you will need to pass a valid user address when generating the transaction.
- * `operations`: The set of steps that take place to get the user from their source chain & token to their destination chain & token
-</Info>
 
+The route response contains a ton of information about how the user can move from their source chain & token to their destination. For more information, see [/v2/fungible/route](/api-reference/getroutev2) reference docs.
+
+The most basic outputs you will need are:
+
+- `amountOut`: The estimated amount your user will receive after their swap / transfer takes place -- net of fees (e.g. bridge fees, swap fees, etc..) and price impact.
+- `requiredChainAddresses`: These are the chainIDs for which you will need to pass a valid user address when generating the transaction.
+- `operations`: The set of steps that take place to get the user from their source chain & token to their destination chain & token
+</Info>
 
  <Note>
 **Adding a fee for yourself**
- 
- You can your set your own swap fee into the quote by setting `cumulativeAffiliateFeeBPS` to the total fee amount you want to collect from the user, measured in hundredths of a percent (aka "bips"). 
- 
- You can find more info about setting fees in [Setting Affiliate Fees](/affiliate-fees)
+
+You can your set your own swap fee into the quote by setting `cumulativeAffiliateFeeBPS` to the total fee amount you want to collect from the user, measured in hundredths of a percent (aka "bips").
+
+You can find more info about setting fees in [Setting Affiliate Fees](/affiliate-fees)
+
 </Note>
 ### 5\. Get Required Addresses
 
-Now that we have the route, we can use our signer to get the list of required user addresses for executing the route. 
+Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route.
 
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with `SkipRouter.executeRoute` method. 
+We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipRouter.executeRoute` method.
 
-The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use. 
-
+The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use.
 
  <Warning>
  **Use addresses your user can sign with**
- 
- Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. a relayer timeout after a swap). So you must be sure your user can sign for each address you provide.
- 
- See [Cross-chain Failure Cases](/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address. 
- 
- (Rest assured that `SkipRouter.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
+
+Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). So you must be sure your user can sign for each address you provide.
+
+See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address.
+
+(Rest assured that `SkipRouter.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
+
 </Warning>
 
-Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry: 
+It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
 
+Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry:
 
-
-```Javascript Node
+```ts
 // get user addresses for each requiredChainAddress
-    const userAddresses = await Promise.all(route.requiredChainAddresses.map(async (chainID) => {
-        return {
-            chainID: chainID,
-            address: await getCosmosAddress(chainID)
-        }
-    }))
+const userAddresses = await Promise.all(
+  route.requiredChainAddresses.map(async (chainID) => {
+    return {
+      chainID: chainID,
+      address: await getAddress(chainID),
+    };
+  })
+);
 ```
 
-Two things you should notice about this code: 
+Two things you should notice about this code:
 
 1. The `userAddresses` array contains objects with `{chainID, address}`
 2. The `userAddresses` array needs to have the same order and length as the `requiredChainAddresses` array had
 
-
 <Warning>
  **Never attempt to derive an address on one chain from an address on another chain**
- 
- Whenever you need a user address, please request it from the corresponding wallet / signer. Do not attempt to use bech32 cross-chain derivation. 
- 
- If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for and cannot use.
-</Warning>
-### 6\. Execute the route!
 
-Finally, just use the `SkipRouter.executeRoute` method to create, sign, submit, and track the transaction for you. 
+Whenever you need a user address, please request it from the corresponding wallet / signer. Do not attempt to use bech32 cross-chain derivation.
+
+If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for and cannot use.
+
+</Warning>
+
+### 4\. Execute the route!
+
+Finally, just use the `SkipRouter.executeRoute` method to create, sign, submit, and track the transaction for you.
 
 Simply add the following snippet below your retrieval code to execute the route:
 
-
-
-```Javascript Node
- await skipClient.executeRoute({
+```ts
+await skipClient.executeRoute({
   route,
   userAddresses,
   onTransactionCompleted: (chainID, txHash, status) => {
-    console.log(`Route completed with tx hash: ${txHash} & status: ${status.state}`)
-  }
-})
+    console.log(
+      `Route completed with tx hash: ${txHash} & status: ${status.state}`
+    );
+  },
+});
 ```
 
 After the transaction completes, you'll have additional TIA in your Celestia address!
 
-
  <Info>
  **`executeRoute` callbacks**
- 
- `executeRoute` takes care of all the complexity between getting a quote & executing a transaction: creating the tx, signing the tx, submitting it, and tracking it across all the chains. 
- 
- You can supply a variety of callbacks to hook into the process and update your UI or retrieve information while it's executing. 
- 
- These callbacks include: 
- 
- * `onTransactionBroadcast(txInfo {txHash, chainID})`: Executes after the transaction that the user signs gets broadcast on chain.
- * `onTransactionTracked(txInfo, {txHash, chainID})`: Executes after the transaction that the user signs is successfully registered for tracking.
- * `onTransactionCompleted(chainID, txHash, status)`: Executes after all of the operations triggered by a user's signature complete. For example, in this case, it executed after the transfer to Celestia completed. (For multi-tx routes that require multiple user signatures, this will be called once for each tx)
- </Info>
 
+`executeRoute` takes care of all the complexity between getting a quote & executing a transaction: creating the tx, signing the tx, submitting it, and tracking it across all the chains.
+
+You can supply a variety of callbacks to hook into the process and update your UI or retrieve information while it's executing.
+
+These callbacks include:
+
+- `onTransactionBroadcast(txInfo {txHash, chainID})`: Executes after the transaction that the user signs gets broadcast on chain.
+- `onTransactionTracked(txInfo, {txHash, chainID})`: Executes after the transaction that the user signs is successfully registered for tracking.
+- `onTransactionCompleted(chainID, txHash, status)`: Executes after all of the operations triggered by a user's signature complete. For example, in this case, it executed after the transfer to Celestia completed. (For multi-tx routes that require multiple user signatures, this will be called once for each tx)
+</Info>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**
- 
- You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
+You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
  </Check>

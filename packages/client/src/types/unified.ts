@@ -171,14 +171,14 @@ export type MsgsDirectResponse = {
   msgs: Msg[];
   txs: Tx[];
   route: RouteResponse;
-  warning?: MsgsWarning,
+  warning?: MsgsWarning;
 };
 
 export type MsgsDirectResponseJSON = {
   msgs: MsgJSON[];
   txs: TxJSON[];
   route: RouteResponseJSON;
-  warning?: MsgsWarning,
+  warning?: MsgsWarning;
 };
 
 export type RouteRequestBase = {
@@ -212,7 +212,9 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
 export type RouteWarningType = 'LOW_INFO_WARNING' | 'BAD_PRICE_WARNING';
-export type MsgsWarningType = 'INSUFFICIENT_GAS_AT_DEST_EOA' | 'INSUFFICIENT_GAS_AT_INTERMEDIATE';
+export type MsgsWarningType =
+  | 'INSUFFICIENT_GAS_AT_DEST_EOA'
+  | 'INSUFFICIENT_GAS_AT_INTERMEDIATE';
 
 export type ExperimentalFeature = 'cctp' | 'hyperlane';
 
@@ -399,6 +401,8 @@ export type MsgsRequestJSON = {
   affiliates?: AffiliateJSON[];
   chain_ids_to_affiliates?: Record<string, ChainAffiliatesJSON>;
   post_route_handler?: PostHandlerJSON;
+
+  enable_gas_warnings?: boolean;
 };
 
 export type MsgsRequest = {
@@ -420,6 +424,8 @@ export type MsgsRequest = {
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
 
   postRouteHandler?: PostHandler;
+
+  enableGasWarnings?: boolean;
 };
 
 export type MsgsDirectRequestJSON = {
@@ -449,6 +455,7 @@ export type MsgsDirectRequestJSON = {
   smart_relay?: boolean;
   smart_swap_options?: SmartSwapOptionsJSON;
   allow_swaps?: boolean;
+  enable_gas_warnings?: boolean;
 };
 
 export type MsgsDirectRequest = {
@@ -477,6 +484,7 @@ export type MsgsDirectRequest = {
   smartRelay?: boolean;
   smartSwapOptions?: SmartSwapOptions;
   allowSwaps?: boolean;
+  enableGasWarnings?: boolean;
 };
 
 export type MsgJSON =
@@ -513,7 +521,7 @@ export type MsgsResponse = {
   msgs: Msg[];
   estimatedFees: EstimatedFee[];
   txs: Tx[];
-  warning?: MsgsWarning,
+  warning?: MsgsWarning;
 };
 
 export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';

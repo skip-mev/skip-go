@@ -67,11 +67,11 @@
       ]
     },
     {
-      "group": "Skip Go Core",
+      "group": "Skip Go Client",
       "pages": [
-        "core/getting-started",
-        "core/gas-and-fee-tooling",
-        "core/migration-guide"
+        "client/getting-started",
+        "client/gas-and-fee-tooling",
+        "client/migration-guide"
       ]
     },
     {

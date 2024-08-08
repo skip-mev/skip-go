@@ -1,4 +1,4 @@
-import { ChainTransaction, TransferState, StatusState } from '@skip-go/core';
+import { ChainTransaction, TransferState, StatusState } from '@skip-go/client';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useMemo } from 'react';
 import { useSkipClient } from './use-skip-client';

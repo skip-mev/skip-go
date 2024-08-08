@@ -1,6 +1,5 @@
 import { atom } from 'jotai';
-
-import { Asset, SkipRouter } from '@skip-go/core';
+import { Asset, SkipRouter } from '@skip-go/client';
 import { Chain, AssetList } from '@chain-registry/types';
 import {
   chains as chainsChainRegistry,

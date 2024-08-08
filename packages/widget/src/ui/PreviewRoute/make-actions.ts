@@ -1,4 +1,4 @@
-import { BridgeType, RouteResponse } from '@skip-go/core';
+import { BridgeType, RouteResponse } from '@skip-go/client';
 
 export interface TransferAction {
   type: 'TRANSFER';

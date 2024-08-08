@@ -43,7 +43,7 @@ import { MsgExecute } from './codegen/initia/move/v1/tx';
 import { accountParser } from './parser';
 import { maxUint256, publicActions, WalletClient } from 'viem';
 
-import { chains, initiaChains } from './chains';
+import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
 import {
   circleAminoConverters,
   circleProtoRegistry,
@@ -1475,7 +1475,13 @@ export class SkipRouter {
       );
     }
 
-    const endpoint = chain.apis?.rpc?.[0]?.address;
+    if (chain.apis?.rpc?.length === 0 || !chain.apis?.rpc) {
+      throw new Error(
+        `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainID}'`
+      );
+    }
+    const endpoints = chain.apis?.rpc?.map((api) => api.address);
+    const endpoint = await findFirstWorkingEndpoint(endpoints, 'rpc');
 
     if (!endpoint) {
       throw new Error(
@@ -1512,8 +1518,13 @@ export class SkipRouter {
         `getRestEndpointForChain error: failed to find chain id '${chainID}' in registry`
       );
     }
-
-    const endpoint = chain.apis?.rest?.[0]?.address;
+    if (chain.apis?.rest?.length === 0 || !chain.apis?.rest) {
+      throw new Error(
+        `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainID}'`
+      );
+    }
+    const endpoints = chain.apis?.rest?.map((api) => api.address);
+    const endpoint = await findFirstWorkingEndpoint(endpoints, 'rest');
 
     if (!endpoint) {
       throw new Error(

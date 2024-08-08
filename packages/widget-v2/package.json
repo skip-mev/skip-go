@@ -1,7 +1,7 @@
 {
   "name": "widget-v2",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
@@ -42,9 +42,8 @@
     "@ebay/nice-modal-react": "^1.2.13",
     "@initia/initia-registry": "^0.1.16",
     "@radix-ui/react-dialog": "^1.1.1",
-    "@skip-go/core": "workspace:^",
+    "@skip-go/client": "workspace:^",
     "@tanstack/query-core": "^5.51.21",
-    "@tanstack/react-query": "^5.51.15",
     "chain-registry": "^1.63.43",
     "jotai": "^2.9.1",
     "jotai-tanstack-query": "^0.8.6",

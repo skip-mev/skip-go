@@ -1,4 +1,4 @@
-import { Asset } from '@skip-go/core';
+import { Asset } from '@skip-go/client';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 export interface Props {

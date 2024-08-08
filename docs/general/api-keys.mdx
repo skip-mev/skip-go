@@ -76,14 +76,14 @@ curl -X 'POST' \
 
 ```
 
-### Via `@skip-go/core`
+### Via `@skip-go/client`
 
-For users of the `@skip-go/core` TypeScript package, the `apiKey` can be included in the `SkipRouterOptions` object when constructing a `SkipRouter`. After you include it in construction, the `SkipRouter` will handle passing it in the `authorization` header of all requests. 
+For users of the `@skip-go/client` TypeScript package, the `apiKey` can be included in the `SkipRouterOptions` object when constructing a `SkipRouter`. After you include it in construction, the `SkipRouter` will handle passing it in the `authorization` header of all requests. 
 
 For example: 
 
 ``` typescript
-import { SkipRouter, SKIP_API_URL } from "@skip-go/core";
+import { SkipRouter, SKIP_API_URL } from "@skip-go/client";
 
 const client = new SkipRouter({
 	apiKey: <YOUR API KEY>,
@@ -152,7 +152,7 @@ export default async function handler(req: NextApiRequest) {
 ``` typescript
 // This configures your router to make requests to your proxy service instead of
 // the standard Skip Go API backend directly
-import { SkipRouter } from "@skip-go/core";
+import { SkipRouter } from "@skip-go/client";
 
 const appUrl =
   process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" || process.env.NEXT_PUBLIC_VERCEL_ENV === "staging"

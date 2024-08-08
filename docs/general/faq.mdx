@@ -187,7 +187,7 @@ _A common gotcha:_ `/assets_from_source` only returns assets reachable in a sing
 
 This is a great question and the best answer that exists is: It depends on many factors, including how many relayers are covering a particular channel, block times, the time-to-finality of the source chain, whether relayers are live, how many packets relayers are waiting to batch together, and much more...
 
-**In short, it can range from several seconds to minutes (or never) in the worst case.** After a timeout window, a packet won't be valid on the destination chain when it gets relayed. This timeout is set to 5 minutes for all packets created via the Skip Go API. It's important to understand what happens to user tokens in the event of timeouts. You can read about that in [Cross-chain Failure Cases](/handling-cross-chain-failure-cases)
+**In short, it can range from several seconds to minutes (or never) in the worst case.** After a timeout window, a packet won't be valid on the destination chain when it gets relayed. This timeout is set to 5 minutes for all packets created via the Skip Go API. It's important to understand what happens to user tokens in the event of timeouts. You can read about that in [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases)
 
 For now, we recommend making a small warning or disclaimer to users on your application, including some variant of the following: 
 
@@ -329,7 +329,7 @@ Shortly, the Skip Go API will surface recommended gas price too, and we will rel
 
 #### How should I set gas amount for Cosmos transactions?
 
-We recommend using the [Gas and Fee Tooling](/gas-and-fee-tooling) available in the [Skip Go Core TypeScript Package](https://www.npmjs.com/package/@skip-go/core). 
+We recommend using the [Gas and Fee Tooling](/gas-and-fee-tooling) available in the [Skip Go Client TypeScript Package](https://www.npmjs.com/package/@skip-go/client). 
 
 #### What does it mean when the docs say an endpoint is in "ALPHA" or "BETA"?
 
