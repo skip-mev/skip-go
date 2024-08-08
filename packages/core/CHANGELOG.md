@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.5.0
+
+### Minor Changes
+
+- 03f5e1e: Added enable_gas_warnings to Msg and MsgDirect requests
+
 ## 0.4.6
 
 ### Patch Changes
