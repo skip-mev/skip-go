@@ -10360,13 +10360,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.51.15":
-  version: 5.51.15
-  resolution: "@tanstack/query-core@npm:5.51.15"
-  checksum: 701ff98cf88de872b0bf7271904f66ed41e3f268189bb2f016a83f770b263c7cd3d5067b681fde0b08006fb2a327aacd143cb49a4bc567b679a3ecfb069d13b3
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:^5.51.21":
   version: 5.51.21
   resolution: "@tanstack/query-core@npm:5.51.21"
@@ -10382,17 +10375,6 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: 31bfe3318dd0699868e896ec598ed8e60cdaa6e035ff1515afaeb85c484f91b16cad8a4de153d383622e5d2e990f02226926a5bd6632788b6ceb415a23e6687a
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query@npm:^5.51.15":
-  version: 5.51.15
-  resolution: "@tanstack/react-query@npm:5.51.15"
-  dependencies:
-    "@tanstack/query-core": 5.51.15
-  peerDependencies:
-    react: ^18.0.0
-  checksum: 44c9c083fc8e5c05a92a6cd5afabd9ce5745484c398f9d231fdd885356e33903cf47521c5c0f760e66fcc57ae4448fb1979ef0cd0873b54ea76470bdcba65021
   languageName: node
   linkType: hard
 
@@ -28426,7 +28408,6 @@ __metadata:
     "@storybook/react-vite": ^8.2.6
     "@storybook/test": ^8.2.6
     "@tanstack/query-core": ^5.51.21
-    "@tanstack/react-query": ^5.51.15
     "@types/react": ^18.3.3
     "@types/react-dom": ^18.3.0
     "@typescript-eslint/eslint-plugin": ^7.15.0
