@@ -98,6 +98,7 @@ const StyledSearchInput = styled.input`
   box-sizing: border-box;
   width: 100%;
   border: none;
+  outline: none;
   color: ${({ theme }) => theme.textColor};
   background-color: ${({ theme }) => theme.backgroundColor};
 `;
