@@ -1,5 +1,11 @@
 # @skip-go/core
 
+## 0.4.6
+
+### Patch Changes
+
+- 0828086: deprecation notice
+
 ## 0.4.5
 
 ### Patch Changes
