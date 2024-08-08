@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { SwapFlow } from '../widget/SwapFlow/SwapFlow';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { TokenAndChainSelectorFlow } from '../widget/TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';

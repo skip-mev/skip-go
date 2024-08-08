@@ -13,6 +13,7 @@ import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
 import { SwapFlowBridge } from './SwapFlowBridge';
 import { sourceAtom, destinationAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
+import { TokenAndChainSelectorFlow } from '../TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';
 
 const sourceAssetBalance = 125;
 
@@ -24,6 +25,7 @@ export const SwapFlow = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
 
   const modal = useModal(SwapFlowSettings);
+  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorFlow);
 
   return (
     <>
@@ -48,6 +50,15 @@ export const SwapFlow = () => {
         <Column align="center">
           <AssetChainInput
             selectedAssetDenom={sourceAsset.denom}
+            handleChangeAsset={() =>
+              tokenAndChainSelectorFlow.show({
+                theme,
+                onSelect: (asset) => {
+                  setSourceAsset((old) => ({ ...old, denom: asset }));
+                  tokenAndChainSelectorFlow.hide();
+                },
+              })
+            }
             value={sourceAsset.amount}
             onChangeValue={(newValue) =>
               setSourceAsset((old) => ({ ...old, amount: newValue }))
@@ -56,6 +67,15 @@ export const SwapFlow = () => {
           <SwapFlowBridge />
           <AssetChainInput
             selectedAssetDenom={destinationAsset.denom}
+            handleChangeAsset={() =>
+              tokenAndChainSelectorFlow.show({
+                theme,
+                onSelect: (asset) => {
+                  setDestinationAsset((old) => ({ ...old, denom: asset }));
+                  tokenAndChainSelectorFlow.hide();
+                },
+              })
+            }
             value={destinationAsset.amount}
             onChangeValue={(newValue) =>
               setDestinationAsset((old) => ({ ...old, amount: newValue }))

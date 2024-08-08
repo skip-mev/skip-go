@@ -3,20 +3,19 @@ import { ModalRowItem } from '../../components/ModalRowItem';
 import { SmallText, Text } from '../../components/Typography';
 import { ClientAsset } from '../../state/skip';
 
-export const RowItem = ({
-  asset,
-  index,
-  skeleton,
-}: {
+export type RowItemType = {
   asset: ClientAsset | null;
   index: number;
   skeleton: React.ReactElement;
-}) => {
+  onSelect: (assetDenom: string) => void;
+};
+
+export const RowItem = ({ asset, index, skeleton, onSelect }: RowItemType) => {
   if (!asset) return skeleton;
   return (
     <ModalRowItem
       key={`${index}${asset.denom}`}
-      onClick={() => {}}
+      onClick={() => onSelect(asset.denom)}
       style={{ margin: '5px 0' }}
       leftContent={
         <Row align="center" gap={10}>

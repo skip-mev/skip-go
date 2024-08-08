@@ -26,12 +26,11 @@ export const AssetChainInput = ({
   handleChangeChain,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [assets] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssets);
 
-  const selectedAsset =
-    assets.state === 'hasData'
-      ? assets.data.find((asset) => asset.denom === selectedAssetDenom)
-      : undefined;
+  const selectedAsset = assets?.find(
+    (asset) => asset.denom === selectedAssetDenom
+  );
 
   const usdValue = useUsdValue({ ...selectedAsset, value });
 

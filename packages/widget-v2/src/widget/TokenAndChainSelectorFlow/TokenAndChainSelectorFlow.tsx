@@ -11,9 +11,13 @@ import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
 import { getHexColor, opacityToHex } from '../../utils/colors';
 import { hashObject } from '../../utils/misc';
 
+export type TokenAndChainSelectorFlowProps = ModalProps & {
+  onSelect: (tokenOrChain: string) => void;
+};
+
 export const TokenAndChainSelectorFlow = NiceModal.create(
-  (modalProps: ModalProps) => {
-    const theme = modalProps.theme;
+  (modalProps: TokenAndChainSelectorFlowProps) => {
+    const { theme, onSelect } = modalProps;
     const [{ data: assets }] = useAtom(skipAssets);
     const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -35,6 +39,7 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
           <RowItem
             asset={asset}
             index={index}
+            onSelect={onSelect}
             skeleton={
               <Skeleton
                 color={getHexColor(theme?.textColor ?? '') + opacityToHex(10)}
@@ -43,7 +48,7 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
           />
         );
       },
-      []
+      [onSelect]
     );
 
     return (
