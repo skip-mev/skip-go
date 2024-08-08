@@ -45,6 +45,54 @@ The client constructor takes several _optional_ inputs provided together by the 
 * `aminoTypes?: AminoConverters;`: additional amino types to be used in the router.
 * `registryTypes?: Iterable<[string, GeneratedType]>;`: additional registry types to be used in the router
 
+## Setup Signers
+
+Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
+
+For EVM transactions, you need to install the `viem` package:
+
+```Shell shell
+npm i viem
+```
+
+For SVM transactions, you can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
+For this example, we are going to use Phantom wallet:
+
+```Shell shell
+npm i @solana/wallet-adapter-phantom
+```
+
+Now, let's create the SkipRouter instance with the signers for each ecosystem! 
+
+We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
+
+```ts
+import { SkipRouter } from "@skip-router/client";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import { createWalletClient } from "viem";
+
+const skipClient = new SkipRouter({
+    getCosmosSigner: async (chainID) => {
+        const offlineSigner = window.keplr?.getOfflineSigner(chainID);
+        if (!offlineSigner) throw new Error("Keplr not installed");
+        return offlineSigner;
+    },
+    getEVMSigner: async () => {
+        const ethereum = window.ethereum;
+        if (!ethereum) throw new Error("MetaMask not installed");
+        const client = createWalletClient({
+        chain: mainnet,
+        transport: custom(window.ethereum),
+        });
+        return client;
+    },
+    getSVMSigner: async () => {
+        const phantom = new PhantomWalletAdapter();
+        return phantom;
+    }
+});
+```
+
 ## Query Basic Info
 
 Now that your client is initialized, you can use it to query basic information about chains & assets to populate your user interface. 
@@ -53,9 +101,7 @@ For example:
 
 #### Get list of chains
 
-
-
-```TypeScript TypeScript
+```ts
 // get a Chain[] of all supported cosmos chains
 const chains = await client.chains();
 // include EVM, SVM and testnets chains
@@ -72,7 +118,7 @@ Return type will be `Record<string, Asset[]>`
 
 
 
-```TypeScript TypeScript
+```ts
 // get all chains assets
 const assets = await client.assets({
   includeEvmAssets: true,
@@ -98,7 +144,7 @@ After querying basic information about chains and assets, you can utilize the `r
 Usage example:
 
 
-```TypeScript TypeScript
+```ts
 const request = [
   {
     source_asset_denom: "uusdc",
@@ -120,7 +166,7 @@ Response example:
 
 
 
-```TypeScript TypeScript
+```ts
 {
   "recommendations": [],
   "recommendation_entries": [
@@ -178,7 +224,7 @@ Response example:
 
 Once your user has selected source and destination tokens and chains, you can use the client to generate a route and quote: 
 
-```
+```ts
 const route = await client.route({
   amountIn: AMOUNT_IN,
   sourceAssetDenom: SOURCE_DENOM,
@@ -189,15 +235,47 @@ const route = await client.route({
 });
 ```
 
+## Get Required Addresses
+
+Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route. 
+
+We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipRouter.executeRoute` method. 
+
+The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use. 
+
+
+ <Warning>
+ **Use addresses your user can sign with**
+ 
+ Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). So you must be sure your user can sign for each address you provide.
+ 
+ See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address. 
+ 
+ (Rest assured that `SkipRouter.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
+</Warning>
+
+It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
+
+Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry: 
+
+
+```Javascript
+// get user addresses for each requiredChainAddress
+    const userAddresses = await Promise.all(route.requiredChainAddresses.map(async (chainID) => {
+        return {
+            chainID: chainID,
+            address: await getAddress(chainID)
+        }
+    }))
+```
+
 ## Execute a Route
 
 Once you have a route, you can execute it in a single function call (passing in the route, the user addresses for at least the chains the route includes, and an optional callback function. 
 
 For example:
 
-
-
-```TypeScript TypeScript
+```ts
 await client.executeRoute({
   route,
   userAddresses: USER_ADDRESSES,
