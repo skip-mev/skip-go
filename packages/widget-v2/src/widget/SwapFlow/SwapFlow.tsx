@@ -6,7 +6,7 @@ import { MainButton } from '../../components/MainButton';
 import { SmallText } from '../../components/Typography';
 import { ICONS } from '../../icons';
 import { HistoryIcon } from '../../icons/HistoryIcon';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
 import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
@@ -14,6 +14,7 @@ import { SwapFlowBridge } from './SwapFlowBridge';
 import { sourceAtom, destinationAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
 import { TokenAndChainSelectorFlow } from '../TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';
+import { getChainsContainingAsset, skipAssets } from '../../state/skip';
 
 const sourceAssetBalance = 125;
 
@@ -22,10 +23,23 @@ export const SwapFlow = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAtom);
+  const [{ data: assets }] = useAtom(skipAssets);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
 
-  const modal = useModal(SwapFlowSettings);
+  const swapFlowSettings = useModal(SwapFlowSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorFlow);
+
+  const chainsContainingSourceAsset = useMemo(() => {
+    if (!assets || !sourceAsset?.symbol) return;
+    const chains = getChainsContainingAsset(sourceAsset?.symbol, assets);
+    return chains;
+  }, [sourceAsset?.symbol]);
+
+  const chainsContainingDestinationAsset = useMemo(() => {
+    if (!assets || !destinationAsset?.symbol) return;
+    const chains = getChainsContainingAsset(destinationAsset?.symbol, assets);
+    return chains;
+  }, [destinationAsset?.symbol]);
 
   return (
     <>
@@ -49,17 +63,37 @@ export const SwapFlow = () => {
         </Row>
         <Column align="center">
           <AssetChainInput
-            selectedAssetDenom={sourceAsset.denom}
+            selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={() =>
               tokenAndChainSelectorFlow.show({
                 theme,
                 onSelect: (asset) => {
-                  setSourceAsset((old) => ({ ...old, denom: asset }));
+                  setSourceAsset((old) => ({
+                    ...old,
+                    ...asset,
+                  }));
                   tokenAndChainSelectorFlow.hide();
                 },
               })
             }
-            value={sourceAsset.amount}
+            handleChangeChain={
+              chainsContainingSourceAsset
+                ? () =>
+                    tokenAndChainSelectorFlow.show({
+                      theme,
+                      onSelect: (asset) => {
+                        setSourceAsset((old) => ({
+                          ...old,
+                          ...asset,
+                        }));
+                        tokenAndChainSelectorFlow.hide();
+                      },
+                      chainsContainingAsset: chainsContainingSourceAsset,
+                      asset: sourceAsset,
+                    })
+                : undefined
+            }
+            value={sourceAsset?.amount ?? '0'}
             onChangeValue={(newValue) =>
               setSourceAsset((old) => ({ ...old, amount: newValue }))
             }
@@ -71,12 +105,32 @@ export const SwapFlow = () => {
               tokenAndChainSelectorFlow.show({
                 theme,
                 onSelect: (asset) => {
-                  setDestinationAsset((old) => ({ ...old, denom: asset }));
+                  setDestinationAsset((old) => ({
+                    ...old,
+                    ...asset,
+                  }));
                   tokenAndChainSelectorFlow.hide();
                 },
               })
             }
-            value={destinationAsset.amount}
+            handleChangeChain={
+              chainsContainingDestinationAsset
+                ? () =>
+                    tokenAndChainSelectorFlow.show({
+                      theme,
+                      onSelect: (asset) => {
+                        setDestinationAsset((old) => ({
+                          ...old,
+                          ...asset,
+                        }));
+                        tokenAndChainSelectorFlow.hide();
+                      },
+                      chainsContainingAsset: chainsContainingDestinationAsset,
+                      asset: destinationAsset,
+                    })
+                : undefined
+            }
+            value={destinationAsset?.amount ?? '0'}
             onChangeValue={(newValue) =>
               setDestinationAsset((old) => ({ ...old, amount: newValue }))
             }
@@ -89,12 +143,12 @@ export const SwapFlow = () => {
           align="center"
           justify="space-between"
           onClick={() =>
-            modal.show({
+            swapFlowSettings.show({
+              theme,
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
                 open ? setDrawerOpen(true) : setDrawerOpen(false),
-              theme,
             })
           }
         >

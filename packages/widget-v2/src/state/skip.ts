@@ -61,6 +61,32 @@ export const skipAssets = atomWithQuery((get) => {
   };
 });
 
+export type ChainWithAsset = Chain & {
+  asset?: ClientAsset;
+};
+
+export const getChainsContainingAsset = (
+  assetSymbol: string,
+  assets: ClientAsset[]
+): ChainWithAsset[] => {
+  if (!assets) return [];
+  const chainIDs = assets
+    .filter((asset) => asset.symbol === assetSymbol)
+    .map((asset) => asset.chainID);
+  const chainsContainingAsset = chains
+    .filter((chain) => chainIDs?.includes(chain.chain_id))
+    .map((chain) => {
+      return {
+        ...chain,
+        asset: assets.find(
+          (asset) =>
+            asset.chainID === chain.chain_id && asset.symbol === assetSymbol
+        ),
+      };
+    });
+  return chainsContainingAsset;
+};
+
 function getChain(chainId: string): Chain {
   const chain = chains.find((c) => c.chain_id === chainId);
   if (!chain) {

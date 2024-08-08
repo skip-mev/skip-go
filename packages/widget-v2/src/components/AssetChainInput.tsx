@@ -99,7 +99,7 @@ const StyledInput = styled.input`
   background-color: ${(props) => props.theme.backgroundColor};
 `;
 
-const StyledAssetLabel = styled(Row).attrs({
+export const StyledAssetLabel = styled(Row).attrs({
   padding: 8,
 })`
   height: 40px;

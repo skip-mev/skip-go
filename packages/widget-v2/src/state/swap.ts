@@ -1,13 +1,10 @@
 import { atom } from 'jotai';
+import { ClientAsset } from './skip';
 
-export const sourceAtom = atom({
-  amount: '0',
-  denom: '',
-  chainId: '',
-});
+export type AssetAtom = ClientAsset & {
+  amount?: string;
+};
 
-export const destinationAtom = atom({
-  amount: '0',
-  denom: '',
-  chainId: '',
-});
+export const sourceAtom = atom<AssetAtom>({} as AssetAtom);
+
+export const destinationAtom = atom<AssetAtom>({} as AssetAtom);

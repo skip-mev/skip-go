@@ -1,44 +1,82 @@
 import { Row } from '../../components/Layout';
 import { ModalRowItem } from '../../components/ModalRowItem';
 import { SmallText, Text } from '../../components/Typography';
-import { ClientAsset } from '../../state/skip';
+import { ChainWithAsset, ClientAsset } from '../../state/skip';
 import {
   CircleSkeletonElement,
   SkeletonElement,
 } from '../../components/Skeleton';
 import { styled } from 'styled-components';
 import { getHexColor, opacityToHex } from '../../utils/colors';
+import { Chain } from '@chain-registry/types';
 
 export type RowItemType = {
-  asset: ClientAsset | null;
+  item: ClientAsset | ChainWithAsset;
   index: number;
   skeleton: React.ReactElement;
-  onSelect: (assetDenom: string) => void;
+  onSelect: (token: ClientAsset | null, chain?: ChainWithAsset) => void;
 };
 
-export const RowItem = ({ asset, index, skeleton, onSelect }: RowItemType) => {
-  if (!asset) return skeleton;
-  return (
-    <ModalRowItem
-      key={`${index}${asset.denom}`}
-      onClick={() => onSelect(asset.denom)}
-      style={{ margin: '5px 0' }}
-      leftContent={
-        <Row align="center" gap={10}>
-          <StyledAssetImage
-            height={35}
-            width={35}
-            src={asset.logoURI}
-            alt={`${asset.symbol} logo`}
-          />
-          <Text>{asset.symbol}</Text>
-          <SmallText>
-            {asset.chainName ?? asset.originChainID ?? asset.chainID}
-          </SmallText>
-        </Row>
-      }
-    />
-  );
+const isClientAsset = (
+  item: ClientAsset | ChainWithAsset
+): item is ClientAsset => {
+  return (item as ClientAsset).denom !== undefined;
+};
+
+const isChain = (
+  item: ClientAsset | ChainWithAsset
+): item is ChainWithAsset => {
+  return (item as Chain).chain_id !== undefined;
+};
+
+export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
+  if (!item) return skeleton;
+
+  if (isClientAsset(item)) {
+    return (
+      <ModalRowItem
+        key={`${index}${item.denom}`}
+        onClick={() => onSelect(item)}
+        style={{ margin: '5px 0' }}
+        leftContent={
+          <Row align="center" gap={10}>
+            <StyledAssetImage
+              height={35}
+              width={35}
+              src={item.logoURI}
+              alt={`${item.symbol} logo`}
+            />
+            <Text>{item.symbol}</Text>
+            <SmallText>
+              {item.chainName ?? item.originChainID ?? item.chainID}
+            </SmallText>
+          </Row>
+        }
+      />
+    );
+  }
+
+  if (isChain(item)) {
+    return (
+      <ModalRowItem
+        key={item.chain_id}
+        onClick={() => onSelect(item.asset)}
+        style={{ margin: '5px 0' }}
+        leftContent={
+          <Row align="center" gap={10}>
+            <StyledAssetImage
+              height={35}
+              width={35}
+              src={item?.images?.[0].svg ?? item?.images?.[0].png}
+              alt={`${item.chain_id} logo`}
+            />
+            <Text>{item.pretty_name}</Text>
+            <SmallText>{item.chain_name}</SmallText>
+          </Row>
+        }
+      />
+    );
+  }
 };
 
 const StyledAssetImage = styled.img`

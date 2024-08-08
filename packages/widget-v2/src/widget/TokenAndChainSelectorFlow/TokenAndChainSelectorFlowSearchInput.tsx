@@ -1,16 +1,28 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { styled, useTheme } from 'styled-components';
 import { Row } from '../../components/Layout';
 import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
 import { SmallText } from '../../components/Typography';
 import { SearchIcon } from '../../icons/SearchIcon.tsx';
+import { StyledAssetLabel } from '../../components/AssetChainInput.tsx';
+import { ClientAsset } from '../../state/skip.ts';
+import { LeftArrowIcon } from '../../icons/ArrowIcon.tsx';
+import { useModal } from '@ebay/nice-modal-react';
+import { Button } from '../../components/Button.tsx';
 
 interface SearchInputProps {
   onSearch: (term: string) => void;
+  asset?: ClientAsset;
 }
 
-export const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
+export const SearchInput: React.FC<SearchInputProps> = ({
+  onSearch,
+  asset,
+}) => {
   const theme = useTheme();
+  const modal = useModal();
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = useCallback(
@@ -22,15 +34,36 @@ export const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
     [onSearch]
   );
 
+  useEffect(() => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  }, []);
+
   return (
     <StyledSearchInputContainer align="center" gap={5}>
-      <StyledSearchIcon color={theme.textColor} />
+      {asset ? (
+        <>
+          <Button onClick={() => modal.remove()}>
+            <StyledLeftArrowIcon color={theme.textColor} />
+          </Button>
+          <StyledSelectedAsset gap={5}>
+            <img src={asset.logoURI} width={20} height={20} /> {asset.symbol}
+          </StyledSelectedAsset>
+        </>
+      ) : (
+        <StyledSearchIcon color={theme.textColor} />
+      )}
+
       <StyledSearchInput
+        ref={inputRef}
+        style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder="Search asset or network"
+        placeholder={asset ? 'Search networks' : 'Search  asset or network'}
         value={searchTerm}
         onChange={handleSearch}
       />
+
       <Row align="center" gap={5}>
         <SmallText style={{ textWrap: 'nowrap' }}> Powered by </SmallText>
         <SkipLogoIcon />
@@ -38,6 +71,15 @@ export const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
     </StyledSearchInputContainer>
   );
 };
+
+const StyledLeftArrowIcon = styled(LeftArrowIcon)`
+  width: 25px;
+  opacity: 0.5;
+`;
+
+const StyledSelectedAsset = styled(StyledAssetLabel)`
+  height: auto;
+`;
 
 const StyledSearchIcon = styled(SearchIcon)`
   position: absolute;
@@ -55,7 +97,6 @@ const StyledSearchInput = styled.input`
   height: 40px;
   box-sizing: border-box;
   width: 100%;
-  padding-left: 30px;
   border: none;
   color: ${({ theme }) => theme.textColor};
   background-color: ${({ theme }) => theme.backgroundColor};

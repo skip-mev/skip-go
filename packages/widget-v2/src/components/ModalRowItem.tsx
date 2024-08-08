@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 import { Row } from './Layout';
 import { removeButtonStyles, Text } from './Typography';
+import { getHexColor, opacityToHex } from '../utils/colors';
 
 export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
@@ -46,10 +47,10 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   padding: 12px 15px;
   ${({ theme }) => `background-color: ${theme.secondary.background}`};
 
-  ${({ onClick }) =>
+  ${({ onClick, theme }) =>
     onClick &&
     `  &:hover {
-    opacity: 0.7;
+    background-color: ${getHexColor(theme.textColor ?? '') + opacityToHex(20)};
     cursor: pointer;
   }`};
 `;

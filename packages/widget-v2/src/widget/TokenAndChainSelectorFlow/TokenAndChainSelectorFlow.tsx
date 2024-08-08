@@ -3,7 +3,7 @@ import { Modal, ModalProps } from '../../components/Modal';
 import { Column } from '../../components/Layout';
 import { styled } from 'styled-components';
 import { useAtom } from 'jotai';
-import { ClientAsset, skipAssets } from '../../state/skip';
+import { ChainWithAsset, ClientAsset, skipAssets } from '../../state/skip';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VirtualList } from '../../components/VirtualList';
 import { RowItem, Skeleton } from './TokenAndChainSelectorFlowRowItem';
@@ -11,24 +11,37 @@ import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
 import { hashObject } from '../../utils/misc';
 
 export type TokenAndChainSelectorFlowProps = ModalProps & {
-  onSelect: (tokenOrChain: string) => void;
+  onSelect: (token: ClientAsset | null, chain?: ChainWithAsset) => void;
+  chainsContainingAsset?: ChainWithAsset[];
+  asset?: ClientAsset;
 };
 
 export const TokenAndChainSelectorFlow = NiceModal.create(
   (modalProps: TokenAndChainSelectorFlowProps) => {
     const modal = useModal();
-    const { onSelect } = modalProps;
+    const { onSelect, chainsContainingAsset, asset } = modalProps;
     const [{ data: assets, isPending }] = useAtom(skipAssets);
+
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>('');
 
     const filteredAssets = useMemo(() => {
-      if (!assets) return [];
+      if (!assets) return;
       const filtered = assets.filter((asset) =>
         asset.symbol?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       return filtered;
     }, [searchQuery, assets]);
+
+    const filteredChains = useMemo(() => {
+      if (!chainsContainingAsset) return;
+      const filtered = chainsContainingAsset.filter(
+        (chain) =>
+          chain.chain_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          chain.pretty_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      return filtered;
+    }, [searchQuery, chainsContainingAsset]);
 
     useEffect(() => {
       if (!isPending && assets) {
@@ -48,10 +61,10 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
     };
 
     const renderItem = useCallback(
-      (asset: ClientAsset | null, index: number) => {
+      (asset: ClientAsset | ChainWithAsset, index: number) => {
         return (
           <RowItem
-            asset={asset}
+            item={asset}
             index={index}
             onSelect={onSelect}
             skeleton={<Skeleton />}
@@ -64,8 +77,8 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
     return (
       <Modal {...modalProps}>
         <StyledContainer>
-          <SearchInput onSearch={handleSearch} />
-          {showSkeleton ? (
+          <SearchInput onSearch={handleSearch} asset={asset} />
+          {showSkeleton || (!filteredAssets && !filteredChains) ? (
             <Column>
               {Array.from({ length: 10 }, (_, index) => (
                 <Skeleton key={index} />
@@ -73,11 +86,11 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
             </Column>
           ) : (
             <VirtualList
-              listItems={filteredAssets}
+              listItems={filteredChains ?? filteredAssets ?? []}
               height={530}
               itemHeight={70}
               renderItem={renderItem}
-              itemKey={(asset: ClientAsset) => hashObject(asset)}
+              itemKey={(item) => hashObject(item)}
             />
           )}
         </StyledContainer>

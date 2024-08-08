@@ -7,7 +7,7 @@ export type VirtualListProps<T> = {
   height: number;
   itemHeight: number;
   bufferSize?: number;
-  renderItem: (item: T | null, index: number) => React.ReactNode;
+  renderItem: (item: T, index: number) => React.ReactNode;
   itemKey: (item: T) => string;
   className?: string;
 };
