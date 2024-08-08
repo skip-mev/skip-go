@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.3.8
+
+### Patch Changes
+
+- bc44148: use @skip-go/client package
+
 ## 2.3.7
 
 ### Patch Changes
