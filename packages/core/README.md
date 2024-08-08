@@ -6,7 +6,7 @@
 
 ## Migration Guide
 
-@skip-go/core@^0.4.5 is the same as @skip-go/client@0.4.5. To migrate packages with minimal disruption, please upgrade to @skip-go/core@^0.4.5 and then replace the package with @skip-go/client@0.4.5, then upgrading to the latest version from there.
+@skip-go/core@^0.5.0 is the same as @skip-go/client@0.5.0. To migrate packages with minimal disruption, please upgrade to @skip-go/core@^0.5.0 and then replace the package with @skip-go/client@0.5.0, then upgrading to the latest version from there.
 
 Thank you for your understanding and for using our software.
 
