@@ -13,7 +13,6 @@ const meta = {
     layout: 'fullscreen',
   },
 } satisfies Meta<typeof SwapFlow>;
-type Story = StoryObj<typeof meta>;
 
 export default meta;
 

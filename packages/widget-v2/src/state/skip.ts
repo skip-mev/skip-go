@@ -22,7 +22,7 @@ export const assets = [
 
 export const skipClient = atom(new SkipRouter());
 
-type ClientAsset = Asset & {
+export type ClientAsset = Asset & {
   chain_key: string;
   chainName: string;
 };
