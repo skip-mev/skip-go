@@ -11,7 +11,7 @@ import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
 import { hashObject } from '../../utils/misc';
 
 export type TokenAndChainSelectorFlowProps = ModalProps & {
-  onSelect: (token: ClientAsset | null, chain?: ChainWithAsset) => void;
+  onSelect: (token: ClientAsset | null) => void;
   chainsContainingAsset?: ChainWithAsset[];
   asset?: ClientAsset;
 };

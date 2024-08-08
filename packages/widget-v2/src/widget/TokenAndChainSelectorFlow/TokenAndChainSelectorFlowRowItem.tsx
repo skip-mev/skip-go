@@ -14,7 +14,7 @@ export type RowItemType = {
   item: ClientAsset | ChainWithAsset;
   index: number;
   skeleton: React.ReactElement;
-  onSelect: (token: ClientAsset | null, chain?: ChainWithAsset) => void;
+  onSelect: (token: ClientAsset | null) => void;
 };
 
 const isClientAsset = (
@@ -60,7 +60,7 @@ export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
     return (
       <ModalRowItem
         key={item.chain_id}
-        onClick={() => onSelect(item.asset)}
+        onClick={() => onSelect(item?.asset || null)}
         style={{ margin: '5px 0' }}
         leftContent={
           <Row align="center" gap={10}>
