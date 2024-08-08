@@ -1,6 +1,6 @@
 import { GasPrice } from '@cosmjs/stargate';
 import { useManager as useCosmosManager } from '@cosmos-kit/react';
-import { Asset, BridgeType } from '@skip-go/core';
+import { Asset, BridgeType } from '@skip-go/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { BigNumber } from 'bignumber.js';
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';

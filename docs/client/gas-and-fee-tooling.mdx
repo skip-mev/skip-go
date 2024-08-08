@@ -1,11 +1,11 @@
 ---
 title: "Gas and Transaction Fee Tooling"
-description: "This doc describes the gas and fee tooling in @skip-go/core (our typescript library)"
+description: "This doc describes the gas and fee tooling in @skip-go/client (our typescript library)"
 ---
 
 ## Background
 
-`@skip-go/core` \-- the Typescript Package we build to abstract away the complexity of calling Skip Go API directly -- provides additional functionality for building transactions. Since we've heard setting gas amount, fee amount, and gas price well is really tricky, we try hard to use reasonable, reliable defaults for these values. But we also expose a lot of functionality that lets folks override these defaults and customize fees (e.g. use non-default tokens for fees) and gas. 
+`@skip-go/client` \-- the Typescript Package we build to abstract away the complexity of calling Skip Go API directly -- provides additional functionality for building transactions. Since we've heard setting gas amount, fee amount, and gas price well is really tricky, we try hard to use reasonable, reliable defaults for these values. But we also expose a lot of functionality that lets folks override these defaults and customize fees (e.g. use non-default tokens for fees) and gas. 
 
 This doc describes all the tooling we've built into the library to get information about gas & fees, and customize how they're set on your transactions. 
 

@@ -1,7 +1,7 @@
 import { fromBech32 } from '@cosmjs/encoding';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
-import { Chain } from '@skip-go/core';
+import { Chain } from '@skip-go/client';
 import { PublicKey } from '@solana/web3.js';
 import { useMemo, useState } from 'react';
 import { FaKeyboard } from 'react-icons/fa';

@@ -1,4 +1,4 @@
-import { Bridge } from '@skip-go/core';
+import { Bridge } from '@skip-go/client';
 import { useQuery } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 

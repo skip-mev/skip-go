@@ -1,4 +1,4 @@
-import { Asset, FeeAsset } from '@skip-go/core';
+import { Asset, FeeAsset } from '@skip-go/client';
 import {
   createContext,
   ReactNode,

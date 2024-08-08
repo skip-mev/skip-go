@@ -1,4 +1,4 @@
-import { Asset, SkipRouter } from '@skip-go/core';
+import { Asset, SkipRouter } from '@skip-go/client';
 import * as token from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';

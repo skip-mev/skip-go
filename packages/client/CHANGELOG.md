@@ -1,4 +1,4 @@
-# @skip-go/core
+# @skip-go/client
 
 ## 0.5.1
 

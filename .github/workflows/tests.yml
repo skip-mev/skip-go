@@ -21,8 +21,8 @@ jobs:
 
       - name: Generate cosmjs types
         run: yarn run codegen
-        working-directory: ./packages/core
+        working-directory: ./packages/client
 
       - name: Test
         run: yarn run test
-        working-directory: ./packages/core
+        working-directory: ./packages/client

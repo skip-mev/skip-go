@@ -8743,9 +8743,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skip-go/core@workspace:^, @skip-go/core@workspace:packages/core":
+"@skip-go/client@workspace:^, @skip-go/client@workspace:packages/client":
   version: 0.0.0-use.local
-  resolution: "@skip-go/core@workspace:packages/core"
+  resolution: "@skip-go/client@workspace:packages/client"
   dependencies:
     "@cosmjs/amino": 0.32.4
     "@cosmjs/cosmwasm-stargate": 0.32.4
@@ -8802,7 +8802,7 @@ __metadata:
     "@radix-ui/react-switch": ^1.0.3
     "@radix-ui/react-tooltip": ^1.0.7
     "@rollup/plugin-url": ^8.0.2
-    "@skip-go/core": "workspace:packages/core"
+    "@skip-go/client": "workspace:packages/client"
     "@solana/spl-token": ^0.4.6
     "@solana/wallet-adapter-react": ^0.15.35
     "@solana/wallet-adapter-wallets": ^0.19.32
@@ -28332,7 +28332,7 @@ __metadata:
     "@ebay/nice-modal-react": ^1.2.13
     "@initia/initia-registry": ^0.1.16
     "@radix-ui/react-dialog": ^1.1.1
-    "@skip-go/core": "workspace:^"
+    "@skip-go/client": "workspace:^"
     "@skip-go/widget": "workspace:packages/widget"
     "@storybook/addon-essentials": ^8.2.6
     "@storybook/addon-interactions": ^8.2.6

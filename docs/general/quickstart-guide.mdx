@@ -29,7 +29,7 @@ Running this example requires a minimum of NodeJS 16.
 
 
 ```Shell shell
-npm i @skip-go/core
+npm i @skip-go/client
 npm i @cosmjs/crypto
 npm i @cosmjs/proto-signing 
 ```
@@ -54,7 +54,7 @@ We'll build on this file throughout the example:
 import * as chainRegistry from "chain-registry"; 
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { stringToPath } from "cosmjs/crypto";
-import { SkipRouter } from "@skip-go/core";
+import { SkipRouter } from "@skip-go/client";
 
 // async main function
 (async () => { 

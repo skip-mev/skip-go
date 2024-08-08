@@ -20,19 +20,19 @@ This doc covers:
  
  If you're using the deprecated `@skip-router` library, you must use v4.0.0 or later to use Smart Swap.
 
- We advise all integators to use the new `@skip-go/core` [TypeScript Package](https://www.npmjs.com/package/@skip-go/core), which is being actively maintained and developed.
+ We advise all integators to use the new `@skip-go/client` [TypeScript Package](https://www.npmjs.com/package/@skip-go/client), which is being actively maintained and developed.
 </Warning>
 
 ## How to Use Smart Swap
 
 All Smart Swap features are controlled with a single configuration object: 
 
-1. `@skip-go/core` Package: `smartSwapOptions` object passed in`SkipRouter.route` options `SkipRouter.msgsDirect` options
+1. `@skip-go/client` Package: `smartSwapOptions` object passed in`SkipRouter.route` options `SkipRouter.msgsDirect` options
 2. REST API: `smart_swap_options` parameter passed in `/v2/fungible/route` and `/v2/fungible/msgs_direct`
 
 Read on for more info about the individual features and how to use each of them.
 
-(For the rest of this doc, examples will show how to use Smart Swap with the `@skip-go/core` library by configuring it on `SkipRouter.route`. The only changes you'll notice between this context and the REST API is naming conventions)
+(For the rest of this doc, examples will show how to use Smart Swap with the `@skip-go/client` library by configuring it on `SkipRouter.route`. The only changes you'll notice between this context and the REST API is naming conventions)
 
 ## Smart Swap Features
 
@@ -114,7 +114,7 @@ Currently, the API supports swapping on official Uniswap V3 deployments on the f
 
 #### How to use it
 
-Just set the `evmSwaps` flag to true in the `smartSwapOptions` object. If using the deprecated `@skip-router` library, you must be on version 5.1.0 or above (we advise you migrate over to `@skip-go/core` as soon as possible).
+Just set the `evmSwaps` flag to true in the `smartSwapOptions` object. If using the deprecated `@skip-router` library, you must be on version 5.1.0 or above (we advise you migrate over to `@skip-go/client` as soon as possible).
 
 
 <CodeGroup>
@@ -152,7 +152,7 @@ const route = await skipClient.route({
 
 #### What to expect from the route response
 
-When an EVM swap occurs in a route, a new operation type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` responses. If your API usage follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you are on the latest [Skip Go Core version](https://www.npmjs.com/package/@skip-go/core) and/or are decoding the operation properly. The `evm_swap` operation type is as follows:
+When an EVM swap occurs in a route, a new operation type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` responses. If your API usage follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you are on the latest [Skip Go Client version](https://www.npmjs.com/package/@skip-go/client) and/or are decoding the operation properly. The `evm_swap` operation type is as follows:
 
 <CodeGroup>
 
