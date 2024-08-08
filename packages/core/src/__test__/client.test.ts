@@ -731,6 +731,7 @@ describe('client', () => {
             msg: 'cosmwasm message',
           },
         },
+        enableGasWarnings: true,
       });
 
       expect(response.msgs).toEqual([
