@@ -50,7 +50,7 @@ export const AssetChainInput = ({
           {selectedAsset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <img src={selectedAsset?.logoURI} width={23} />
-              {selectedAsset?.name}
+              <Text>{selectedAsset?.name}</Text>
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>

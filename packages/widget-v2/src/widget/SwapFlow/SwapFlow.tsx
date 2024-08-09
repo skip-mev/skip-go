@@ -133,7 +133,7 @@ export const SwapFlow = () => {
           />
           <SwapFlowBridge />
           <AssetChainInput
-            selectedAssetDenom={destinationAsset.denom}
+            selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
             value={destinationAsset?.amount ?? '0'}

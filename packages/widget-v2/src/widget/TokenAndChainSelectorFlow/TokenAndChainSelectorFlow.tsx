@@ -13,7 +13,7 @@ import { hashObject } from '../../utils/misc';
 export type TokenAndChainSelectorFlowProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   chainsContainingAsset?: ChainWithAsset[];
-  asset?: ClientAsset;
+  asset?: Partial<ClientAsset>;
 };
 
 export const TokenAndChainSelectorFlow = NiceModal.create(
