@@ -30,6 +30,9 @@ export const SwapWidgetWithoutProviders: React.FC<
   filter,
   onWalletConnected,
   onWalletDisconnected,
+  onTransactionBroadcasted,
+  onTransactionComplete,
+  onTransactionFailed,
   ...swapWidgetUIProps
 }) => {
   useEffect(() => {
@@ -43,6 +46,9 @@ export const SwapWidgetWithoutProviders: React.FC<
     useCallbackStore.setState({
       onWalletConnected,
       onWalletDisconnected,
+      onTransactionBroadcasted,
+      onTransactionComplete,
+      onTransactionFailed,
     });
   }, [
     onlyTestnet,
@@ -51,6 +57,9 @@ export const SwapWidgetWithoutProviders: React.FC<
     routeConfig,
     onWalletConnected,
     onWalletDisconnected,
+    onTransactionBroadcasted,
+    onTransactionComplete,
+    onTransactionFailed,
   ]);
 
   const mergedThemes = useMemo(() => {
@@ -82,6 +91,9 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   persistSwapWidgetState,
   onWalletConnected,
   onWalletDisconnected,
+  onTransactionBroadcasted,
+  onTransactionComplete,
+  onTransactionFailed,
   ...swapWidgetProviderProps
 }) => {
   useEffect(() => {
@@ -95,6 +107,9 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
     useCallbackStore.setState({
       onWalletConnected,
       onWalletDisconnected,
+      onTransactionBroadcasted,
+      onTransactionComplete,
+      onTransactionFailed,
     });
   }, [
     onlyTestnet,
@@ -103,6 +118,9 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
     routeConfig,
     onWalletConnected,
     onWalletDisconnected,
+    onTransactionBroadcasted,
+    onTransactionComplete,
+    onTransactionFailed,
   ]);
 
   const mergedThemes = useMemo(() => {
