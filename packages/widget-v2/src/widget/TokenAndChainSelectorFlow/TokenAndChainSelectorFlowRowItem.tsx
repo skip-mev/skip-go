@@ -17,13 +17,13 @@ export type RowItemType = {
   onSelect: (token: ClientAsset | null) => void;
 };
 
-const isClientAsset = (
+export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
 ): item is ClientAsset => {
   return (item as ClientAsset).denom !== undefined;
 };
 
-const isChain = (
+export const isChainWithAsset = (
   item: ClientAsset | ChainWithAsset
 ): item is ChainWithAsset => {
   return (item as Chain).chain_id !== undefined;
@@ -56,7 +56,7 @@ export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
     );
   }
 
-  if (isChain(item)) {
+  if (isChainWithAsset(item)) {
     return (
       <ModalRowItem
         key={item.chain_id}
