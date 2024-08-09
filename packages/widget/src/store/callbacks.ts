@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { BroadcastedTx } from '../ui/PreviewRoute/types';
 
 type OnWalletConnected = {
   walletName: string;
@@ -12,11 +11,15 @@ type OnWalletDisconnected = {
 };
 
 type OnTransactionBroadcasted = {
-  broadcastedTxs: BroadcastedTx[];
+  txHash: string;
+  chainId: string;
+  explorerLink: string;
 };
 
 type OnTransactionComplete = {
-  broadcastedTxs: BroadcastedTx[];
+  txHash: string;
+  chainId: string;
+  explorerLink: string;
 };
 
 type OnTransactionFailed = {

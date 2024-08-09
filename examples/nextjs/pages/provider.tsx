@@ -29,11 +29,12 @@ const Home: NextPage = () => {
             onWalletDisconnected={({ chainType }) =>
               console.log('disconnected', chainType)
             }
-            onTransactionComplete={() => console.log('complete')}
-            onTransactionFailed={({ error }) => console.log('failed', error)}
-            onTransactionBroadcasted={({ broadcastedTxs }) =>
-              console.log('broadcasted', broadcastedTxs)
+            onTransactionBroadcasted={(data) =>
+              console.log('broadcasted', data)
             }
+            onTransactionComplete={(data) => console.log('complete', data)}
+            onTransactionFailed={({ error }) => console.log('failed', error)}
+    
           />
         </SwapWidgetProvider>
       </div>

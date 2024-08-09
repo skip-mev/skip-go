@@ -234,7 +234,9 @@ export const PreviewRoute = ({
               },
             ];
             onTransactionBroadcasted?.({
-              broadcastedTxs: txs,
+              chainId: txStatus.chainID,
+              txHash: txStatus.txHash,
+              explorerLink: txStatus.explorerLink,
             });
             if (route.txsRequired === txs.length) {
               toast.success(
@@ -317,7 +319,9 @@ export const PreviewRoute = ({
   useEffect(() => {
     if (statusData?.isSuccess && submitMutation.isSuccess) {
       onTransactionComplete?.({
-        broadcastedTxs,
+        txHash: broadcastedTxs?.[0]?.txHash,
+        chainId: broadcastedTxs?.[0]?.chainID,
+        explorerLink: broadcastedTxs?.[0]?.explorerLink,
       });
     }
   }, [statusData?.isSuccess, submitMutation.isSuccess]);
