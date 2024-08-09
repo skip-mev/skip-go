@@ -8,9 +8,11 @@ import { SwapWidgetUI, SwapWidgetUIProps } from './Widget';
 import { defaultTheme, PartialTheme } from './theme';
 import { WithStyledShadowDom } from './WithStyledShadowDom';
 import { ThemeProvider } from 'styled-components';
+import { useCallbackStore, WalletCallbackStore } from '../store/callbacks';
 
 export type SwapWidgetWithoutProvidersProps = SwapWidgetUIProps &
-  ConfigureSwapWidgetArgs & {
+  ConfigureSwapWidgetArgs &
+  WalletCallbackStore & {
     theme?: PartialTheme;
   };
 
@@ -26,6 +28,8 @@ export const SwapWidgetWithoutProviders: React.FC<
   routeConfig,
   theme,
   filter,
+  onWalletConnected,
+  onWalletDisconnected,
   ...swapWidgetUIProps
 }) => {
   useEffect(() => {
@@ -36,7 +40,18 @@ export const SwapWidgetWithoutProviders: React.FC<
       routeConfig,
       filter,
     });
-  }, [onlyTestnet, settings, defaultRoute, routeConfig]);
+    useCallbackStore.setState({
+      onWalletConnected,
+      onWalletDisconnected,
+    });
+  }, [
+    onlyTestnet,
+    settings,
+    defaultRoute,
+    routeConfig,
+    onWalletConnected,
+    onWalletDisconnected,
+  ]);
 
   const mergedThemes = useMemo(() => {
     return {
@@ -65,6 +80,8 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   filter,
   toasterProps,
   persistSwapWidgetState,
+  onWalletConnected,
+  onWalletDisconnected,
   ...swapWidgetProviderProps
 }) => {
   useEffect(() => {
@@ -75,7 +92,18 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
       routeConfig,
       filter,
     });
-  }, [onlyTestnet, settings, defaultRoute, routeConfig]);
+    useCallbackStore.setState({
+      onWalletConnected,
+      onWalletDisconnected,
+    });
+  }, [
+    onlyTestnet,
+    settings,
+    defaultRoute,
+    routeConfig,
+    onWalletConnected,
+    onWalletDisconnected,
+  ]);
 
   const mergedThemes = useMemo(() => {
     return {
