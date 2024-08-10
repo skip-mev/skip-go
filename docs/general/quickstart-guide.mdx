@@ -57,16 +57,16 @@ For this example, we are going to use Phantom wallet:
 npm i @solana/wallet-adapter-phantom
 ```
 
-Now, let's create the SkipRouter instance with the signers for each ecosystem!
+Now, let's create the SkipClient instance with the signers for each ecosystem!
 
 We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
 
 ```Javascript SwapPage.tsx
-import { SkipRouter } from "@skip-router/client";
+import { SkipClient } from "@skip-router/client";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { createWalletClient } from "viem";
 
-const skipClient = new SkipRouter({
+const skipClient = new SkipClient({
     getCosmosSigner: async (chainID) => {
         const offlineSigner = window.keplr?.getOfflineSigner(chainID);
         if (!offlineSigner) throw new Error("Keplr not installed");
@@ -90,7 +90,7 @@ const skipClient = new SkipRouter({
 
 ### 3\. Request a Quote
 
-Now, we can use the `SkipRouter.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia:
+Now, we can use the `SkipClient.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia:
 
 Just add the following line after the line where you initialized the skipClient:
 
@@ -117,7 +117,7 @@ The most basic outputs you will need are:
 - `amountOut`: The estimated amount your user will receive after their swap / transfer takes place -- net of fees (e.g. bridge fees, swap fees, etc..) and price impact.
 - `requiredChainAddresses`: These are the chainIDs for which you will need to pass a valid user address when generating the transaction.
 - `operations`: The set of steps that take place to get the user from their source chain & token to their destination chain & token
-</Info>
+  </Info>
 
  <Note>
 **Adding a fee for yourself**
@@ -131,7 +131,7 @@ You can find more info about setting fees in [Setting Affiliate Fees](/affiliate
 
 Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route.
 
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipRouter.executeRoute` method.
+We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipClient.executeRoute` method.
 
 The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use.
 
@@ -142,7 +142,7 @@ Funds could end up in any of the addresses you provide -- including intermediate
 
 See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address.
 
-(Rest assured that `SkipRouter.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
+(Rest assured that `SkipClient.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
 
 </Warning>
 
@@ -178,7 +178,7 @@ If you attempt to derive an address on one chain from an address on another chai
 
 ### 4\. Execute the route!
 
-Finally, just use the `SkipRouter.executeRoute` method to create, sign, submit, and track the transaction for you.
+Finally, just use the `SkipClient.executeRoute` method to create, sign, submit, and track the transaction for you.
 
 Simply add the following snippet below your retrieval code to execute the route:
 
@@ -208,7 +208,7 @@ These callbacks include:
 - `onTransactionBroadcast(txInfo {txHash, chainID})`: Executes after the transaction that the user signs gets broadcast on chain.
 - `onTransactionTracked(txInfo, {txHash, chainID})`: Executes after the transaction that the user signs is successfully registered for tracking.
 - `onTransactionCompleted(chainID, txHash, status)`: Executes after all of the operations triggered by a user's signature complete. For example, in this case, it executed after the transfer to Celestia completed. (For multi-tx routes that require multiple user signatures, this will be called once for each tx)
-</Info>
+  </Info>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**

@@ -1,38 +1,38 @@
 ---
-title: "Smart Swap"
-description: "This page introduces the Smart Swap functionality provided by the Skip Go API to improve swap speed, price, and customization."
+title: 'Smart Swap'
+description: 'This page introduces the Smart Swap functionality provided by the Skip Go API to improve swap speed, price, and customization.'
 ---
 
 ## Introduction
 
-Smart Swap refers to a broad range of functionality we're building out to improve swap speed, price, and customization. 
+Smart Swap refers to a broad range of functionality we're building out to improve swap speed, price, and customization.
 
 At this time, the main use case for smart swap is improving trade execution price by enabling third-party routers (e.g. Hallswap) and trade splitting. But much more is on the way!
 
-This doc covers: 
+This doc covers:
 
-* All the different features Smart Swap enables
-* Describes how to use each of them
-
+- All the different features Smart Swap enables
+- Describes how to use each of them
 
  <Warning>
  **`@skip-router` 4.0.0+ required**
- 
- If you're using the deprecated `@skip-router` library, you must use v4.0.0 or later to use Smart Swap.
 
- We advise all integators to use the new `@skip-go/client` [TypeScript Package](https://www.npmjs.com/package/@skip-go/client), which is being actively maintained and developed.
+If you're using the deprecated `@skip-router` library, you must use v4.0.0 or later to use Smart Swap.
+
+We advise all integators to use the new `@skip-go/client` [TypeScript Package](https://www.npmjs.com/package/@skip-go/client), which is being actively maintained and developed.
+
 </Warning>
 
 ## How to Use Smart Swap
 
-All Smart Swap features are controlled with a single configuration object: 
+All Smart Swap features are controlled with a single configuration object:
 
-1. `@skip-go/client` Package: `smartSwapOptions` object passed in`SkipRouter.route` options `SkipRouter.msgsDirect` options
+1. `@skip-go/client` Package: `smartSwapOptions` object passed in`SkipClient.route` options `SkipClient.msgsDirect` options
 2. REST API: `smart_swap_options` parameter passed in `/v2/fungible/route` and `/v2/fungible/msgs_direct`
 
 Read on for more info about the individual features and how to use each of them.
 
-(For the rest of this doc, examples will show how to use Smart Swap with the `@skip-go/client` library by configuring it on `SkipRouter.route`. The only changes you'll notice between this context and the REST API is naming conventions)
+(For the rest of this doc, examples will show how to use Smart Swap with the `@skip-go/client` library by configuring it on `SkipClient.route`. The only changes you'll notice between this context and the REST API is naming conventions)
 
 ## Smart Swap Features
 
@@ -40,7 +40,7 @@ Read on for more info about the individual features and how to use each of them.
 
 #### What is it
 
-The Skip Go API searches over multiple 1st and 3rd-party routers to find the route that gives you best execution. This has a chance of improving the price at which your user's swap executes. 
+The Skip Go API searches over multiple 1st and 3rd-party routers to find the route that gives you best execution. This has a chance of improving the price at which your user's swap executes.
 
 The swap routers currently supported are:
 
@@ -50,9 +50,7 @@ The swap routers currently supported are:
 
 #### How to use it
 
-Just pass the `smartSwapOptions` object into your route request. You're not required to activate a particular flag. 
-
-
+Just pass the `smartSwapOptions` object into your route request. You're not required to activate a particular flag.
 
 ```text TypeScript
 const route = await skipClient.route({
@@ -66,19 +64,17 @@ const route = await skipClient.route({
 }
 ```
 
-That's it! Skip Go API will now consider all routers we have available and give your user the best one. 
+That's it! Skip Go API will now consider all routers we have available and give your user the best one.
 
 ### Feature: Route Splitting
 
 #### What is it
 
-Route splitting is a technique in swap optimization where a user's trade is split into several parts and swapped through separate pools. It can help lower price impact and increase output for the user, compared to swapping with a single route. This technique is especially effective when one or both of the tokens the user is swapping is a commonly paired asset on a DEX (e.g. OSMO is paired with almost everything on Osmosis). 
+Route splitting is a technique in swap optimization where a user's trade is split into several parts and swapped through separate pools. It can help lower price impact and increase output for the user, compared to swapping with a single route. This technique is especially effective when one or both of the tokens the user is swapping is a commonly paired asset on a DEX (e.g. OSMO is paired with almost everything on Osmosis).
 
 #### How to use it
 
 Just pass the `splitRoutes` flag in the `smartSwapOptions` object.
-
-
 
 ```text TypeScript
 const route = await skipClient.route({
@@ -116,7 +112,6 @@ Currently, the API supports swapping on official Uniswap V3 deployments on the f
 
 Just set the `evmSwaps` flag to true in the `smartSwapOptions` object. If using the deprecated `@skip-router` library, you must be on version 5.1.0 or above (we advise you migrate over to `@skip-go/client` as soon as possible).
 
-
 <CodeGroup>
 ```Typescript TypeScript
 const route = await skipClient.route({
@@ -148,6 +143,7 @@ const route = await skipClient.route({
   },
 }
 ```
+
 </CodeGroup>
 
 #### What to expect from the route response
@@ -183,6 +179,7 @@ export type EvmSwap = {
   }
 }
 ```
+
 </CodeGroup>
 
 #### What to expect differently from the /msgs and /status responses
@@ -191,11 +188,9 @@ Nothing new in particular! The `msg_type` used for EVM swaps is the same `evm_tx
 
 ### Response Changes using Smart Swap
 
-We've added a new `swapType` called `SmartSwapExactCoinIn` you can expect to be returned in the `routeResponse` and `msgsDirectResponse` to take advantage of the new capabilities Smart Swaps offers! This new swap type has fields that allow for multiple routes, across multiple swap venues. 
+We've added a new `swapType` called `SmartSwapExactCoinIn` you can expect to be returned in the `routeResponse` and `msgsDirectResponse` to take advantage of the new capabilities Smart Swaps offers! This new swap type has fields that allow for multiple routes, across multiple swap venues.
 
-* **Note:** this new `SmartSwapExactCoinIn` type will currently only be returned if the route provided back is a split route.
-
-
+- **Note:** this new `SmartSwapExactCoinIn` type will currently only be returned if the route provided back is a split route.
 
 ```type type
 export type SmartSwapExactCoinIn = {
@@ -212,6 +207,7 @@ export type SwapRoute = {
 
   <Check>
  **Want to help us get better? Have questions or feedback?**
- 
- You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
+You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
  </Check>

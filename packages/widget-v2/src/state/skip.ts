@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Asset, SkipRouter } from '@skip-go/client';
+import { Asset, SkipClient } from '@skip-go/client';
 import { Chain, AssetList } from '@chain-registry/types';
 import {
   chains as chainsChainRegistry,
@@ -20,7 +20,7 @@ export const assets = [
   ...assetsInitiaRegistry,
 ] as AssetList[];
 
-export const skipClient = atom(new SkipRouter());
+export const skipClient = atom(new SkipClient());
 
 export type ClientAsset = Asset & {
   chain_key: string;

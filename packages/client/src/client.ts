@@ -71,7 +71,7 @@ import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
-export class SkipRouter {
+export class SkipClient {
   protected requestClient: RequestClient;
 
   protected aminoTypes: AminoTypes;
@@ -89,7 +89,7 @@ export class SkipRouter {
   protected chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
   protected cumulativeAffiliateFeeBPS?: string = '0';
 
-  constructor(options: clientTypes.SkipRouterOptions = {}) {
+  constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
       baseURL: options.apiURL || SKIP_API_URL,
       apiKey: options.apiKey,

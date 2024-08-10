@@ -4,7 +4,7 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { ChainAffiliates, SkipRouterOptions } from '@skip-go/client';
+import { ChainAffiliates, SkipClientOptions } from '@skip-go/client';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
 import { RouteConfig } from '../hooks/use-route';
@@ -27,7 +27,7 @@ export interface SwapWidgetProviderProps extends SkipAPIProviderProps {
 }
 export interface SkipAPIProviderProps {
   children: React.ReactNode;
-  endpointOptions?: SkipRouterOptions['endpointOptions'];
+  endpointOptions?: SkipClientOptions['endpointOptions'];
   apiURL?: string;
   makeDestinationWallets?: (chainID: string) => MinimalWallet[];
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;

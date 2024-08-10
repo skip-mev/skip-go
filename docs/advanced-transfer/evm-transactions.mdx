@@ -1,29 +1,28 @@
 ---
-title: "EVM Transactions Intro"
-description: "This doc covers how to interact with the EvmTx type returned by the Skip Go API"
+title: 'EVM Transactions Intro'
+description: 'This doc covers how to interact with the EvmTx type returned by the Skip Go API'
 ---
 
 ## Intro
 
-* When a user needs to transfer or swap from an EVM chain (e.g. Ethereum mainnet, Arbitrum, Optimism, etc...), the Skip Go API will return an `EvmTx` type for the developer to pass to the user for signing
-* Unlike CosmosSDK transactions, EVM transactions do not have a notion of messages, so this object doesn't correspond 1-to-1 to a "message", which might be a more familiar notion to Cosmos developers
-* This doc is intended for CosmosSDK developers who aren't already familiar with the concepts of transaction construction in the EVM and need to use `EvmTx` to help their users move from/to EVM chains.
+- When a user needs to transfer or swap from an EVM chain (e.g. Ethereum mainnet, Arbitrum, Optimism, etc...), the Skip Go API will return an `EvmTx` type for the developer to pass to the user for signing
+- Unlike CosmosSDK transactions, EVM transactions do not have a notion of messages, so this object doesn't correspond 1-to-1 to a "message", which might be a more familiar notion to Cosmos developers
+- This doc is intended for CosmosSDK developers who aren't already familiar with the concepts of transaction construction in the EVM and need to use `EvmTx` to help their users move from/to EVM chains.
 
 ## `EvmTx` Data Structure
 
-The EvmTx has 4 fields that the developer needs to understand: 
+The EvmTx has 4 fields that the developer needs to understand:
 
-* `to`: The address of the smart contract or externally owned account (EOA) with which this transaction interacts, as a hex-string prefixed with 0x (e.g. 0xfc05aD74C6FE2e7046E091D6Ad4F660D2A159762)
-* `value`: The amount of `wei` this transaction sends to the contract its interacting with (1 ETH = 1^18 WEI)
-* `data`: The calldata this transaction uses to call the smart contract it interacts with, as a hex string. The data bytes will be interpreted according to the application-binary-interface (ABI) of the contract that's being interacted with. If this field is empty, it means the transaction is sending funds to an address, rather than calling a contract.
-* `required_erc20_approvals`: The permissions that must be granted to a specific smart contract to spend or transfer a certain amount of their ERC-20 tokens on behalf of the end user. This allows smart contracts to execute expressive flows that may involve moving some amount of the user's ERC-20 tokens  
-   * If this field is non-empty, the approval must be granted, signed, and submitted before the `EvmTx` populated by the other fields in the response can be submitted to the network. Otherwise, it will fail to execute with a permission error.  
-   * Skip's `ERC20Approval` object has 3 fields that define approval:  
-         * `token_contract`: The address of the ERC-20 token on which the approval is granted  
-         * `spender`: The address of the contract to which the approval will grant spend authority  
-         * `amount`: The amount of `token_contract` tokens the approval will grant the `spender` to spend  
-   * Check out EIP-2612 for more information on ERC-20 approvals.
-* `chain_id`: This is the same as in the Cosmos context (simply an identifier for the chain), but it's an int instead of a string
+- `to`: The address of the smart contract or externally owned account (EOA) with which this transaction interacts, as a hex-string prefixed with 0x (e.g. 0xfc05aD74C6FE2e7046E091D6Ad4F660D2A159762)
+- `value`: The amount of `wei` this transaction sends to the contract its interacting with (1 ETH = 1^18 WEI)
+- `data`: The calldata this transaction uses to call the smart contract it interacts with, as a hex string. The data bytes will be interpreted according to the application-binary-interface (ABI) of the contract that's being interacted with. If this field is empty, it means the transaction is sending funds to an address, rather than calling a contract.
+- `required_erc20_approvals`: The permissions that must be granted to a specific smart contract to spend or transfer a certain amount of their ERC-20 tokens on behalf of the end user. This allows smart contracts to execute expressive flows that may involve moving some amount of the user's ERC-20 tokens
+  - If this field is non-empty, the approval must be granted, signed, and submitted before the `EvmTx` populated by the other fields in the response can be submitted to the network. Otherwise, it will fail to execute with a permission error.
+  - Skip's `ERC20Approval` object has 3 fields that define approval:
+    _ `token_contract`: The address of the ERC-20 token on which the approval is granted
+    _ `spender`: The address of the contract to which the approval will grant spend authority \* `amount`: The amount of `token_contract` tokens the approval will grant the `spender` to spend
+  - Check out EIP-2612 for more information on ERC-20 approvals.
+- `chain_id`: This is the same as in the Cosmos context (simply an identifier for the chain), but it's an int instead of a string
 
 For more information on transactions, check out the Ethereum foundation's [docs](https://ethereum.org/en/developers/docs/transactions/)
 
@@ -33,42 +32,38 @@ For more information on transactions, check out the Ethereum foundation's [docs]
 
 To enable EVM transactions in your application, first install an EVM developer library. The most popular options are:
 
-* [viem](https://viem.sh/)
-* [ethers.js](https://docs.ethers.org/v5/)
-* [web3.js](https://web3js.readthedocs.io/en/v1.10.0/)
+- [viem](https://viem.sh/)
+- [ethers.js](https://docs.ethers.org/v5/)
+- [web3.js](https://web3js.readthedocs.io/en/v1.10.0/)
 
-The code snippets below use viem. 
-
-
+The code snippets below use viem.
 
 ```Shell Shell
 npm i viem
 npm i @skip-go/client
 ```
 
-### 1\. Initialize the `SkipRouter` client with the EVM `WalletClient` object
+### 1\. Initialize the `SkipClient` client with the EVM `WalletClient` object
 
-All 3 libraries mentioned above allow you to create WalletClient "signer" objects that: 
+All 3 libraries mentioned above allow you to create WalletClient "signer" objects that:
 
-* Use an RPC provider under the hood to query the chain for necessary data to create transactions (e.g. nonce, gas price, etc...)
-* Expose an API that allows constructing, signing, and broadcasting transactions
+- Use an RPC provider under the hood to query the chain for necessary data to create transactions (e.g. nonce, gas price, etc...)
+- Expose an API that allows constructing, signing, and broadcasting transactions
 
-You need to set up the `getEVMSigner` function in the `SkipRouter` constructor to initialize this signer object for the a given EVM chain.
+You need to set up the `getEVMSigner` function in the `SkipClient` constructor to initialize this signer object for the a given EVM chain.
 
-For example, with Viem, we do the following: 
-
-
+For example, with Viem, we do the following:
 
 ```TypeScript TypeScript
 import { createWalletClient, custom} from 'viem';
 import * as chains from 'viem/chains';
-import { SkipRouter } from '@skip-go/client';
+import { SkipClient } from '@skip-go/client';
 
-const 
-const skipClient = new SkipRouter({
+const
+const skipClient = new SkipClient({
   getEVMSigner: async (chainID) => {
     const chain = extractChain({
-  		chains: Object.values(chains), 
+  		chains: Object.values(chains),
   		id: parseInt(chainID)
     });
     const evmWalletClient = createWalletClient({
@@ -80,12 +75,9 @@ const skipClient = new SkipRouter({
 });
 ```
 
-  
-### 2\. Request Route using `SkipRouter` and get required chain
+### 2\. Request Route using `SkipClient` and get required chain
 
 Next, request your route as normal:
-
-
 
 ```Typescript TypeScript
 const route = await skipClient.route({
@@ -99,14 +91,12 @@ const route = await skipClient.route({
     splitRoutes: true
   }
 };
-  
+
 ```
 
 ### 3\. Get User Addresses for all Required Chains
 
 Use the route to determine the chains for which you need to supply a user address (the source, destination, and all intermediate chains that require a recovery address for receiving tokens in case of a failure)
-
-
 
 ```TypeScript TypeScript
 let userAddresses = []
@@ -117,7 +107,7 @@ for (const chainID of requiredAddresses) {
     if (parseInt(chainID)) {
       // use signer library to get address from wallet
       const chain = extractChain({
-        chains: Object.values(chains), 
+        chains: Object.values(chains),
         id: parseInt(chainID)
       });
       const evmWalletClient = createWalletClient({
@@ -130,18 +120,16 @@ for (const chainID of requiredAddresses) {
     } else {
       // handle cosmos and SVM wallets -- not shown
     }
-  	
+
 });
 return evmWalletClient;
 }
 
 ```
 
-### 4\. Execute the Route using `SkipRouter`
+### 4\. Execute the Route using `SkipClient`
 
-Finally, you can use `SkipRouter.executeRoute` to prompt the user to sign the approval(s) and transaction, and submit the transaction on chain. 
-
-
+Finally, you can use `SkipClient.executeRoute` to prompt the user to sign the approval(s) and transaction, and submit the transaction on chain.
 
 ```TypeScript TypeScript
 await skipClient.executeRoute({
@@ -150,9 +138,9 @@ await skipClient.executeRoute({
 });
 ```
 
-
  <Check>
  **Want to help us get better? Have questions or feedback?**
- 
- You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
+You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
  </Check>

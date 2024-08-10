@@ -1,4 +1,4 @@
-import { RouteResponse, SkipRouter, TxStatusResponse } from '@skip-go/client';
+import { RouteResponse, SkipClient, TxStatusResponse } from '@skip-go/client';
 import { differenceInMinutes, parseISO } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { useSkipClient } from '../../hooks/use-skip-client';
@@ -96,7 +96,7 @@ function maybeGetAxelarscanLinkFromTransactionStatus(
 async function updatePendingRoute(
   id: string,
   historyItem: TxHistoryItem,
-  skipClient: SkipRouter
+  skipClient: SkipClient
 ) {
   const firstTx =
     historyItem.txStatus.length > 0 ? historyItem.txStatus[0] : undefined;
@@ -126,7 +126,7 @@ async function updatePendingRoute(
 async function updateAxelarscanLink(
   id: string,
   historyItem: TxHistoryItem,
-  skipClient: SkipRouter
+  skipClient: SkipClient
 ) {
   for (const tx of historyItem.txStatus) {
     try {

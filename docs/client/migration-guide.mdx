@@ -1,63 +1,70 @@
 ---
-title: "Router SDK Migration Guide"
+title: 'Router SDK Migration Guide'
 ---
 
-<Warning>Both the Skip Router SDK `@skip-router/core` and Skip Go Core `@skip-go/core` are deprecated. Please migrate to Skip Go Client `@skip-go/client`, our actively maintained and developed [TypeScript Package](https://www.npmjs.com/package/@skip-go/client).</Warning>
+<Warning>
+  Both the Skip Router SDK `@skip-router/core` and Skip Go Core `@skip-go/core`
+  are deprecated. Please migrate to Skip Go Client `@skip-go/client`, our
+  actively maintained and developed [TypeScript
+  Package](https://www.npmjs.com/package/@skip-go/client).
+</Warning>
 
 ### 4.0.0 Breaking changes
 
-* Removed `clientID` param in `SkipRouter`
-* Added `apiKey` param in `SkipRouter`
-* Added `requiredChainAddresses` in `SkipRouter.route` response
-* Added `smartSwapOptions` in `SkipRouter.route`request  
-  
+- Removed `clientID` param in `SkipClient`
+- Added `apiKey` param in `SkipClient`
+- Added `requiredChainAddresses` in `SkipClient.route` response
+- Added `smartSwapOptions` in `SkipClient.route`request
+
 ```JavaScript JavaScript
-smartSwapOptions:{  
-	splitRoutes: boolean  
-}  
+smartSwapOptions:{
+	splitRoutes: boolean
+}
 ```
-  
+
 ### 3.0.0 Breaking Changes
 
-* Changed Param Type: `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types:
-* 
+- Changed Param Type: `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types:
+-
+
 ```TypeScript TypeScript
-export interface UserAddress {  
-  chainID: string;  
-  address: string;  
-}  
+export interface UserAddress {
+  chainID: string;
+  address: string;
+}
 ```
-  
+
 ### 2.0.0 Breaking changes
 
-* Removed Method: `SkipRouter.executeMultiChainMessage`
-* Renamed Method: `SkipRouter.getGasAmountForMessage` \-> `SkipRouter.getCosmosGasAmountForMessage`
-* Renamed Method: `SkipRouter.getFeeForMessage`\-> \`SkipRouter.getCosmosFeeForMe
-* Renamed Type: `MultiChainMsg` \-> `CosmosMsg`
-* Renamed Method & Params changed: `SkipRouter.executeMultiChainMsgs`\-> `SkipRouter.executeTxs`  
-  
+- Removed Method: `SkipClient.executeMultiChainMessage`
+- Renamed Method: `SkipClient.getGasAmountForMessage` \-> `SkipClient.getCosmosGasAmountForMessage`
+- Renamed Method: `SkipClient.getFeeForMessage`\-> \`SkipClient.getCosmosFeeForMe
+- Renamed Type: `MultiChainMsg` \-> `CosmosMsg`
+- Renamed Method & Params changed: `SkipClient.executeMultiChainMsgs`\-> `SkipClient.executeTxs`
+
 ```Diff Diff
-const client = new SkipRouter({  
-  apiURL: SKIP_API_URL,  
-// ... rest of your configs  
-});  
-- client.executeMultiChainMsgs({  
-+ client.executeTxs({  
-	...options  
--	msgs: types.Msg[]  
-+	txs: types.Tx[]  
-})  
+const client = new SkipClient({
+  apiURL: SKIP_API_URL,
+// ... rest of your configs
+});
+- client.executeMultiChainMsgs({
++ client.executeTxs({
+	...options
+-	msgs: types.Msg[]
++	txs: types.Tx[]
+})
 ```
-* Param Changed in `SkipRouter.executeCosmosMessage`: `message:MultiChainMsg` \-> `messages: CosmosMsg[]`  
-  
+
+- Param Changed in `SkipClient.executeCosmosMessage`: `message:MultiChainMsg` \-> `messages: CosmosMsg[]`
+
 ```Diff Diff
-const client = new SkipRouter({  
-  apiURL: SKIP_API_URL,  
-// ... rest of your configs  
-});  
-client.executeCosmosMessage({  
-	...options  
--	message: MultiChainMsg  
-+	messages: CosmosMsg[]  
-})  
+const client = new SkipClient({
+  apiURL: SKIP_API_URL,
+// ... rest of your configs
+});
+client.executeCosmosMessage({
+	...options
+-	message: MultiChainMsg
++	messages: CosmosMsg[]
+})
 ```

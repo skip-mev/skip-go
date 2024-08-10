@@ -1,69 +1,71 @@
 ---
-title: "Overview & Common Usage Patterns"
+title: 'Overview & Common Usage Patterns'
 ---
 
 ## Summary
 
-This doc provides a high-level overview of the different kinds of methods available in the Skip Go API & describes how integrators typically use them in combination to create a cross-chain swapping frontend like [go.skip.build](https://go.skip.build) 
+This doc provides a high-level overview of the different kinds of methods available in the Skip Go API & describes how integrators typically use them in combination to create a cross-chain swapping frontend like [go.skip.build](https://go.skip.build)
 
 ## Overview of Methods
 
 ### `/info` methods: Functionality for Retrieving General Purpose Info
 
-The `/info` endpoints & their counterparts in `SkipRouter` provide general purpose metadata about the chains and bridges that the Skip Go API supports. 
+The `/info` endpoints & their counterparts in `SkipClient` provide general purpose metadata about the chains and bridges that the Skip Go API supports.
 
-The most important `info` methods include: 
+The most important `info` methods include:
 
-* `/v2/info/chains` (`SkipRouter.chains`): Get info about all supported chains, including capabilities, address type, logo, etc...
-* `/v2/info/bridges`: Get basic info about all supported bridges, including logo and name
+- `/v2/info/chains` (`SkipClient.chains`): Get info about all supported chains, including capabilities, address type, logo, etc...
+- `/v2/info/bridges`: Get basic info about all supported bridges, including logo and name
 
 ### `/fungible` methods: Functionality for fungible token swaps and transfers
 
-The `/v2/fungible` endpoints & their counterparts in `SkipRouter` provide APIs for cross-chain swaps and transfers of fungible tokens. 
+The `/v2/fungible` endpoints & their counterparts in `SkipClient` provide APIs for cross-chain swaps and transfers of fungible tokens.
 
-In the background, the API provides automatic DEX aggregation, bridge routing, denom recommendation, and relaying for all actions. 
+In the background, the API provides automatic DEX aggregation, bridge routing, denom recommendation, and relaying for all actions.
 
-The most important `fungible` methods include : 
+The most important `fungible` methods include :
 
-* `/v2/fungible/route` (`SkipRouter.route`): Get a swap/transfer route and quote between a pair of tokens & chains (You can customize this request significantly to only consider particular DEXes, bridges; to add route splitting for better prices; and much more...)
-* `/v2/fungible/msgs` (`SkipRouter.msgs` ): Generates the transaction data for the transaction(s) the user must sign to execute a given route
-* `/v2/fungible/msgs_direct` (`SkipRouter.msgsDirect`) : Generates a route, quote, and associated transaction data at the same time
-* `/v2/fungible/venues`(`SkipRouter.venues`): Get metadata for all supported swapping venues (DEXes, liquid staking protocols, etc...), including name and logo.
+- `/v2/fungible/route` (`SkipClient.route`): Get a swap/transfer route and quote between a pair of tokens & chains (You can customize this request significantly to only consider particular DEXes, bridges; to add route splitting for better prices; and much more...)
+- `/v2/fungible/msgs` (`SkipClient.msgs` ): Generates the transaction data for the transaction(s) the user must sign to execute a given route
+- `/v2/fungible/msgs_direct` (`SkipClient.msgsDirect`) : Generates a route, quote, and associated transaction data at the same time
+- `/v2/fungible/venues`(`SkipClient.venues`): Get metadata for all supported swapping venues (DEXes, liquid staking protocols, etc...), including name and logo.
 
 (There are many other providing more specific functionality for power users. See API docs for more details.)
 
 ### `/tx` methods: Functionality for Tracking Inflight transactions
 
-The `/v2/tx` endpoints & their counterparts in `SkipRouter` provide functionality for submitting transactions and tracking the status of cross-chain transactions with a unified interface across all underlying hops & bridge types. 
+The `/v2/tx` endpoints & their counterparts in `SkipClient` provide functionality for submitting transactions and tracking the status of cross-chain transactions with a unified interface across all underlying hops & bridge types.
 
-The most important `tx` methods include: 
+The most important `tx` methods include:
 
-* `/v2/tx/submit`(`SkipRouter.submitTransaction`): Submits a transaction on chain through Skip's nodes and registers the transaction for tracking with Skip Go API _(Recommended especially for Solana and other high congestion networks where successfully submitting a transaction can be tricky)_
-* `/v2/tx/track`(`SkipRouter.trackTransaction`): Registers a transaction for tracking with Skip Go API (Often used instead of `/submit` when an integrator has their own chain nodes for submitting)
-* `/v2/tx/status` (`SkipRouter.transactionStatus`) : Get the current status of a multi-hop transaction
+- `/v2/tx/submit`(`SkipClient.submitTransaction`): Submits a transaction on chain through Skip's nodes and registers the transaction for tracking with Skip Go API _(Recommended especially for Solana and other high congestion networks where successfully submitting a transaction can be tricky)_
+- `/v2/tx/track`(`SkipClient.trackTransaction`): Registers a transaction for tracking with Skip Go API (Often used instead of `/submit` when an integrator has their own chain nodes for submitting)
+- `/v2/tx/status` (`SkipClient.transactionStatus`) : Get the current status of a multi-hop transaction
 
 ## Typical Usage in Cross-chain Swapping Frontend
 
-On a cross-chain swapping and transferring frontend, integrators typically: 
+On a cross-chain swapping and transferring frontend, integrators typically:
 
 1. Use the `info` methods to populate the list of potential starting & ending chains & assets
-<Frame>![](/images/ca61685-CleanShot_2024-05-23_at_15.28.242x.png)</Frame> 
 
-2. Use `/fungible/route` (`SkipRouter.route`) to get a quote when the user selects all their chains & tokens and inputs one of their amounts
-<Frame>![](/images/78d8d3f-CleanShot_2024-05-23_at_15.33.182x.png)</Frame> 
+   <Frame>![](/images/ca61685-CleanShot_2024-05-23_at_15.28.242x.png)</Frame>
 
-3. Use `/fungible/msgs` (`SkipRouter.msgs`) to get a transaction for the user to sign after they've locked in the route & begun the transaction creation process
-<Frame>![](/images/b42b522-CleanShot_2024-05-23_at_15.38.522x.png)</Frame> 
+2. Use `/fungible/route` (`SkipClient.route`) to get a quote when the user selects all their chains & tokens and inputs one of their amounts
 
-4. Use `/tx/track`(`SkipRouter.trackTransaction`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
+   <Frame>![](/images/78d8d3f-CleanShot_2024-05-23_at_15.33.182x.png)</Frame>
 
-5. Use `/status` (`SkipRouter.transactionStatus`) to get the real-time status of the transaction as it progresses through multiple bridges/chains.
-<Frame>![](/images/a83beaf-CleanShot_2024-05-23_at_15.59.452x.png)</Frame>   
+3. Use `/fungible/msgs` (`SkipClient.msgs`) to get a transaction for the user to sign after they've locked in the route & begun the transaction creation process
 
+   <Frame>![](/images/b42b522-CleanShot_2024-05-23_at_15.38.522x.png)</Frame>
+
+4. Use `/tx/track`(`SkipClient.trackTransaction`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
+
+5. Use `/status` (`SkipClient.transactionStatus`) to get the real-time status of the transaction as it progresses through multiple bridges/chains.
+   <Frame>![](/images/a83beaf-CleanShot_2024-05-23_at_15.59.452x.png)</Frame>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**
- 
- You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
+You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+
  </Check>
- 
