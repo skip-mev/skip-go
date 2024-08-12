@@ -6,6 +6,7 @@ import { trackWallet } from '../store/track-wallet';
 import { chainIdToName } from '../chains';
 import { useChains } from './use-chains';
 import { gracefullyConnect } from '../utils/wallet';
+import { useCallbackStore } from '../store/callbacks';
 
 export interface MinimalWallet {
   walletName: string;
@@ -29,6 +30,9 @@ export interface MinimalWallet {
 
 export const useMakeWallets = () => {
   const { data: chains } = useChains();
+  const { onWalletConnected, onWalletDisconnected } =
+    useCallbackStore.getState();
+
   const getChain = (_chainID: string) =>
     chains?.find((chain) => chain.chainID === _chainID);
 
@@ -75,6 +79,11 @@ export const useMakeWallets = () => {
           try {
             await gracefullyConnect(wallet);
             trackWallet.track('cosmos', wallet.walletName, chainType);
+            onWalletConnected?.({
+              walletName: wallet.walletPrettyName,
+              chainId: chainID,
+              address: wallet.address,
+            });
           } catch (error) {
             console.error(error);
             toast.error(
@@ -127,6 +136,7 @@ export const useMakeWallets = () => {
         disconnect: async () => {
           await wallet.disconnect();
           trackWallet.untrack('cosmos');
+          onWalletDisconnected?.({ chainType });
         },
         isWalletConnected: wallet.isWalletConnected,
       }));
@@ -152,6 +162,11 @@ export const useMakeWallets = () => {
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
               trackWallet.track('evm', connector.id, chainType);
+              onWalletConnected?.({
+                walletName: connector.name,
+                chainId: chainID,
+                address: evmAddress,
+              });
             } catch (error) {
               console.error(error);
               throw error;
@@ -195,6 +210,7 @@ export const useMakeWallets = () => {
           disconnect: async () => {
             await disconnectAsync();
             trackWallet.untrack('evm');
+            onWalletDisconnected?.({ chainType });
           },
           isWalletConnected: connector.id === currentConnector?.id,
         };
@@ -215,6 +231,11 @@ export const useMakeWallets = () => {
             try {
               await wallet.adapter.connect();
               trackWallet.track('svm', wallet.adapter.name, chainType);
+              onWalletConnected?.({
+                walletName: wallet.adapter.name,
+                chainId: chainID,
+                address: wallet.adapter.publicKey?.toBase58(),
+              });
             } catch (error) {
               console.error(error);
               toast.error(
@@ -254,6 +275,7 @@ export const useMakeWallets = () => {
           disconnect: async () => {
             await wallet.adapter.disconnect();
             trackWallet.untrack('svm');
+            onWalletDisconnected?.({ chainType });
           },
           isWalletConnected: wallet.adapter.connected,
           isAvailable: wallet.readyState === 'Installed',

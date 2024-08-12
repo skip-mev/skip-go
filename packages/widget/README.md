@@ -134,6 +134,33 @@ interface SwapWidgetProps {
     highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
   };
   persistSwapWidgetState?: boolean; // whether or not swap widget state should persist after refresh. Defaults to true
+
+  // Pass in callback functions to handle events in the widget.
+  onWalletConnected?: ({
+    walletName: string,
+    chainId: string,
+    address?: string,
+  }) => void;
+
+  onWalletDisconnected?: ({
+    chainType?: string
+  }) => void;
+
+  onTransactionBroadcasted?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionComplete?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionFailed?: ({
+  error: string;
+  }) => void;
 }
 ````
 
@@ -166,8 +193,8 @@ are passed to the web-component via attributes in kebab-case as strings or strin
   <SwapWidget
     className="test-class"
     onlyTestnet={true}
-    colors={{
-      primary: '#FF4FFF',
+    theme={{
+      brandColor: '#FF4FFF',
     }}
     defaultRoute={{
       srcChainID: 'osmosis-1',
@@ -185,7 +212,7 @@ becomes
   <swap-widget
     class-name="test-class"
     onlyTestnet="true"
-    colors='{"primary":"#FF4FFF"}'
+    theme='{"brandColor":"#FF4FFF"}'
     default-route={JSON.stringify({
       srcChainID: 'osmosis-1',
       srcAssetDenom:

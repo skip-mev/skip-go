@@ -8,9 +8,11 @@ import { SwapWidgetUI, SwapWidgetUIProps } from './Widget';
 import { defaultTheme, PartialTheme } from './theme';
 import { WithStyledShadowDom } from './WithStyledShadowDom';
 import { ThemeProvider } from 'styled-components';
+import { useCallbackStore, CallbackStore } from '../store/callbacks';
 
 export type SwapWidgetWithoutProvidersProps = SwapWidgetUIProps &
-  ConfigureSwapWidgetArgs & {
+  ConfigureSwapWidgetArgs &
+  CallbackStore & {
     theme?: PartialTheme;
   };
 
@@ -26,6 +28,11 @@ export const SwapWidgetWithoutProviders: React.FC<
   routeConfig,
   theme,
   filter,
+  onWalletConnected,
+  onWalletDisconnected,
+  onTransactionBroadcasted,
+  onTransactionComplete,
+  onTransactionFailed,
   ...swapWidgetUIProps
 }) => {
   useEffect(() => {
@@ -36,7 +43,24 @@ export const SwapWidgetWithoutProviders: React.FC<
       routeConfig,
       filter,
     });
-  }, [onlyTestnet, settings, defaultRoute, routeConfig]);
+    useCallbackStore.setState({
+      onWalletConnected,
+      onWalletDisconnected,
+      onTransactionBroadcasted,
+      onTransactionComplete,
+      onTransactionFailed,
+    });
+  }, [
+    onlyTestnet,
+    settings,
+    defaultRoute,
+    routeConfig,
+    onWalletConnected,
+    onWalletDisconnected,
+    onTransactionBroadcasted,
+    onTransactionComplete,
+    onTransactionFailed,
+  ]);
 
   const mergedThemes = useMemo(() => {
     return {
@@ -65,6 +89,11 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
   filter,
   toasterProps,
   persistSwapWidgetState,
+  onWalletConnected,
+  onWalletDisconnected,
+  onTransactionBroadcasted,
+  onTransactionComplete,
+  onTransactionFailed,
   ...swapWidgetProviderProps
 }) => {
   useEffect(() => {
@@ -75,7 +104,24 @@ export const SwapWidget: React.FC<SwapWidgetProps> = ({
       routeConfig,
       filter,
     });
-  }, [onlyTestnet, settings, defaultRoute, routeConfig]);
+    useCallbackStore.setState({
+      onWalletConnected,
+      onWalletDisconnected,
+      onTransactionBroadcasted,
+      onTransactionComplete,
+      onTransactionFailed,
+    });
+  }, [
+    onlyTestnet,
+    settings,
+    defaultRoute,
+    routeConfig,
+    onWalletConnected,
+    onWalletDisconnected,
+    onTransactionBroadcasted,
+    onTransactionComplete,
+    onTransactionFailed,
+  ]);
 
   const mergedThemes = useMemo(() => {
     return {

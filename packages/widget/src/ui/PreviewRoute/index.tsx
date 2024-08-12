@@ -41,6 +41,7 @@ import {
   StyledThemedDiv,
 } from '../StyledComponents/Theme';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
+import { useCallbackStore } from '../../store/callbacks';
 
 export interface Wallet {
   walletName: string;
@@ -71,6 +72,8 @@ export const PreviewRoute = ({
   const getChain = (chainID: string) =>
     chains?.find((chain) => chain.chainID === chainID);
   const { makeWallets } = useMakeWallets();
+  const { onTransactionBroadcasted, onTransactionComplete, onTransactionFailed } =
+    useCallbackStore.getState();
 
   const [isExpanded, setIsExpanded] = useState(() =>
     route.chainIDs.length === 2 ? true : false
@@ -230,6 +233,11 @@ export const PreviewRoute = ({
                 explorerLink: txStatus.explorerLink,
               },
             ];
+            onTransactionBroadcasted?.({
+              chainId: txStatus.chainID,
+              txHash: txStatus.txHash,
+              explorerLink: txStatus.explorerLink,
+            });
             if (route.txsRequired === txs.length) {
               toast.success(
                 <p>
@@ -252,6 +260,11 @@ export const PreviewRoute = ({
       if (isUserRejectedRequestError(err)) {
         throw new Error('User rejected request');
       }
+      onTransactionFailed?.({
+        error: err instanceof Error
+        ? `${err.name}: ${err.message}`
+        : String(err)
+      });
       throw err;
     }
   }
@@ -264,6 +277,11 @@ export const PreviewRoute = ({
     },
     onError: (err: unknown) => {
       console.error(err);
+      onTransactionFailed?.({
+        error: err instanceof Error
+        ? `${err.name}: ${err.message}`
+        : String(err)
+      });
       toast(
         ({ createdAt, id }) => (
           <div className="flex flex-col">
@@ -297,6 +315,16 @@ export const PreviewRoute = ({
       );
     },
   });
+
+  useEffect(() => {
+    if (statusData?.isSuccess && submitMutation.isSuccess) {
+      onTransactionComplete?.({
+        txHash: broadcastedTxs?.[0]?.txHash,
+        chainId: broadcastedTxs?.[0]?.chainID,
+        explorerLink: broadcastedTxs?.[0]?.explorerLink,
+      });
+    }
+  }, [statusData?.isSuccess, submitMutation.isSuccess]);
 
   const SubmitButton = () => {
     if (allAddressFilled) {
