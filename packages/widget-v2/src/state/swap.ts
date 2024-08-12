@@ -1,13 +1,10 @@
 import { atom } from 'jotai';
+import { ClientAsset } from './skip';
 
-export const sourceAtom = atom({
-  amount: '0',
-  denom: '',
-  chainId: '',
-});
+export type AssetAtom = Partial<ClientAsset> & {
+  amount?: string;
+};
 
-export const destinationAtom = atom({
-  amount: '0',
-  denom: '',
-  chainId: '',
-});
+export const sourceAtom = atom<AssetAtom | undefined>();
+
+export const destinationAtom = atom<AssetAtom | undefined>();

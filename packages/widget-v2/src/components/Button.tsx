@@ -1,5 +1,5 @@
 import { css, styled } from 'styled-components';
-import { FlexProps, flexProps, Row } from './Layout';
+import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
 import { getHexColor, opacityToHex } from '../utils/colors';
 

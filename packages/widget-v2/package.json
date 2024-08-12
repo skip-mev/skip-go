@@ -5,10 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "tsc -b && vite build",
+    "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "build-storybook": "storybook build"
+  },
+  "exports": {
+    ".": {
+      "import": "./build/index.js"
+    }
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
@@ -43,9 +48,12 @@
     "@initia/initia-registry": "^0.1.16",
     "@radix-ui/react-dialog": "^1.1.1",
     "@skip-go/client": "workspace:^",
-    "@tanstack/react-query": "^5.51.15",
+    "@tanstack/query-core": "^5.51.21",
     "chain-registry": "^1.63.43",
     "jotai": "^2.9.1",
+    "jotai-tanstack-query": "^0.8.6",
+    "lodash.debounce": "^4.0.8",
+    "rc-virtual-list": "^3.14.5",
     "react-shadow-scope": "^1.0.5",
     "zod": "^3.23.8"
   }

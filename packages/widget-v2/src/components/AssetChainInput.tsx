@@ -26,12 +26,11 @@ export const AssetChainInput = ({
   handleChangeChain,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [assets] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssets);
 
-  const selectedAsset =
-    assets.state === 'hasData'
-      ? assets.data.find((asset) => asset.denom === selectedAssetDenom)
-      : undefined;
+  const selectedAsset = assets?.find(
+    (asset) => asset.denom === selectedAssetDenom
+  );
 
   const usdValue = useUsdValue({ ...selectedAsset, value });
 
@@ -51,7 +50,7 @@ export const AssetChainInput = ({
           {selectedAsset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <img src={selectedAsset?.logoURI} width={23} />
-              {selectedAsset?.name}
+              <Text>{selectedAsset?.name}</Text>
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
@@ -100,7 +99,7 @@ const StyledInput = styled.input`
   background-color: ${(props) => props.theme.backgroundColor};
 `;
 
-const StyledAssetLabel = styled(Row).attrs({
+export const StyledAssetLabel = styled(Row).attrs({
   padding: 8,
 })`
   height: 40px;
