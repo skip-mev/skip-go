@@ -25,6 +25,16 @@ const Home: NextPage = () => {
                 'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
             }}
             persistSwapWidgetState={false}
+            onWalletConnected={(data) => console.log('connected', data)}
+            onWalletDisconnected={({ chainType }) =>
+              console.log('disconnected', chainType)
+            }
+            onTransactionBroadcasted={(data) =>
+              console.log('broadcasted', data)
+            }
+            onTransactionComplete={(data) => console.log('complete', data)}
+            onTransactionFailed={({ error }) => console.log('failed', error)}
+    
           />
         </SwapWidgetProvider>
       </div>
