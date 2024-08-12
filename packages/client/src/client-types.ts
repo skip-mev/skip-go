@@ -39,6 +39,7 @@ export interface SkipRouterOptions {
   };
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
+  chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
 }
 
 export type ExecuteRouteOptions = {

@@ -86,6 +86,7 @@ export class SkipRouter {
   protected getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   protected getSVMSigner?: () => Promise<Adapter>;
+  protected chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.requestClient = new RequestClient({
@@ -115,6 +116,11 @@ export class SkipRouter {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
+
+    if (options.chainIDsToAffiliates) {
+      validateChainIDsToAffiliates(options.chainIDsToAffiliates);
+      this.chainIDsToAffiliates = options.chainIDsToAffiliates;
+    }
   }
 
   async assets(
@@ -1902,6 +1908,43 @@ export class SkipRouter {
       );
     }
     return successful.amount;
+  }
+}
+
+function validateChainIDsToAffiliates(
+  chainIDsToAffiliates: Record<string, types.ChainAffiliates>
+) {
+  const affiliatesArray: types.Affiliate[][] = Object.values(
+    chainIDsToAffiliates
+  ).map((chain) => chain.affiliates);
+
+  const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce(
+    (acc, affiliate) => {
+      if (!affiliate.basisPointsFee) {
+        throw new Error('basisPointFee must exist in each affiliate');
+      }
+      return acc + parseInt(affiliate.basisPointsFee, 10);
+    },
+    0
+  );
+
+  const allBasisPointsAreEqual = affiliatesArray.every((affiliate) => {
+    const totalBasisPointsFee = affiliate.reduce((acc, affiliate) => {
+      if (!affiliate.basisPointsFee) {
+        throw new Error('basisPointFee must exist in each affiliate');
+      }
+      if (!affiliate.address) {
+        throw new Error('address to receive fee must exist in each affiliate');
+      }
+      return acc + parseInt(affiliate?.basisPointsFee, 10);
+    }, 0);
+    return totalBasisPointsFee === firstAffiliateBasisPointsFee;
+  });
+
+  if (!allBasisPointsAreEqual) {
+    throw new Error(
+      'basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates'
+    );
   }
 }
 
