@@ -64,10 +64,9 @@ export const TransactionFailed: Story = {
           Please contact our support team below.
         </SmallText>
         <Row
-          gap={5}
           as={SmallTextButton}
+          gap={5}
           onClick={() => alert('xd')}
-          textDecoration="underline"
           color={COLORS.gray}
         >
           Transaction: <u>0x120A...Wfw8x0</u>

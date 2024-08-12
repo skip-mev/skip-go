@@ -54,5 +54,6 @@ export const ShowSwapWidget = ({
 };
 
 const WidgetContainer = styled.div`
+  width: 480px;
   position: relative;
 `;

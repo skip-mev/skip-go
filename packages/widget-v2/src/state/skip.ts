@@ -9,7 +9,7 @@ import {
   chains as chainsInitiaRegistry,
   assets as assetsInitiaRegistry,
 } from '@initia/initia-registry';
-import { loadable } from 'jotai/utils';
+import { atomWithQuery } from 'jotai-tanstack-query';
 
 export const chains = [
   ...chainsChainRegistry,
@@ -22,7 +22,7 @@ export const assets = [
 
 export const skipClient = atom(new SkipRouter());
 
-type ClientAsset = Asset & {
+export type ClientAsset = Asset & {
   chain_key: string;
   chainName: string;
 };
@@ -44,18 +44,47 @@ const flattenData = (data: Record<string, Asset[]>) => {
   return flattenedData;
 };
 
-export const skipAssets = loadable(
-  atom(async (get) => {
-    const skip = get(skipClient);
-    const assets = await skip.assets({
-      includeEvmAssets: true,
-      includeCW20Assets: true,
-      includeSvmAssets: true,
-    });
+export const skipAssets = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  return {
+    queryKey: ['skipAssets'],
+    queryFn: async () => {
+      return skip
+        .assets({
+          includeEvmAssets: true,
+          includeCW20Assets: true,
+          includeSvmAssets: true,
+        })
+        .then(flattenData);
+    },
+  };
+});
 
-    return flattenData(assets);
-  })
-);
+export type ChainWithAsset = Chain & {
+  asset?: ClientAsset;
+};
+
+export const getChainsContainingAsset = (
+  assetSymbol: string,
+  assets: ClientAsset[]
+): ChainWithAsset[] => {
+  if (!assets) return [];
+  const chainIDs = assets
+    .filter((asset) => asset.symbol === assetSymbol)
+    .map((asset) => asset.chainID);
+  const chainsContainingAsset = chains
+    .filter((chain) => chainIDs?.includes(chain.chain_id))
+    .map((chain) => {
+      return {
+        ...chain,
+        asset: assets.find(
+          (asset) =>
+            asset.chainID === chain.chain_id && asset.symbol === assetSymbol
+        ),
+      };
+    });
+  return chainsContainingAsset;
+};
 
 function getChain(chainId: string): Chain {
   const chain = chains.find((c) => c.chain_id === chainId);
