@@ -6,14 +6,13 @@ import { useAtom } from 'jotai';
 import { ChainWithAsset, ClientAsset, skipAssets } from '../../state/skip';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VirtualList } from '../../components/VirtualList';
-import { RowItem, Skeleton } from './TokenAndChainSelectorFlowRowItem';
+import { isChainWithAsset, RowItem, Skeleton } from './TokenAndChainSelectorFlowRowItem';
 import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
-import { hashObject } from '../../utils/misc';
 
 export type TokenAndChainSelectorFlowProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   chainsContainingAsset?: ChainWithAsset[];
-  asset?: ClientAsset;
+  asset?: Partial<ClientAsset>;
 };
 
 export const TokenAndChainSelectorFlow = NiceModal.create(
@@ -90,7 +89,12 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
               height={530}
               itemHeight={70}
               renderItem={renderItem}
-              itemKey={(item) => hashObject(item)}
+              itemKey={(item) => {
+                if (isChainWithAsset(item)) {
+                  return `${item.chain_id}${item.chain_name}`
+                }
+                return `${item.chainID}${item.denom}`
+              }}
             />
           )}
         </StyledContainer>

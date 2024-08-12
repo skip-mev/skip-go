@@ -6,7 +6,7 @@ import { MainButton } from '../../components/MainButton';
 import { SmallText } from '../../components/Typography';
 import { ICONS } from '../../icons';
 import { HistoryIcon } from '../../icons/HistoryIcon';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
 import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
@@ -41,6 +41,66 @@ export const SwapFlow = () => {
     return chains;
   }, [destinationAsset?.symbol]);
 
+  const handleChangeSourceAsset = useCallback(() => {
+    tokenAndChainSelectorFlow.show({
+      theme,
+      onSelect: (asset) => {
+        setSourceAsset((old) => ({
+          ...old,
+          ...asset,
+        }));
+        tokenAndChainSelectorFlow.hide();
+      },
+    });
+  }, []);
+
+  const handleChangeSourceChain = useCallback(() => {
+    if (!chainsContainingSourceAsset) return;
+
+    return tokenAndChainSelectorFlow.show({
+      theme,
+      onSelect: (asset) => {
+        setSourceAsset((old) => ({
+          ...old,
+          ...asset,
+        }));
+        tokenAndChainSelectorFlow.hide();
+      },
+      chainsContainingAsset: chainsContainingSourceAsset,
+      asset: sourceAsset,
+    });
+  }, [chainsContainingSourceAsset, sourceAsset]);
+
+  const handleChangeDestinationAsset = useCallback(() => {
+    tokenAndChainSelectorFlow.show({
+      theme,
+      onSelect: (asset) => {
+        setDestinationAsset((old) => ({
+          ...old,
+          ...asset,
+        }));
+        tokenAndChainSelectorFlow.hide();
+      },
+    });
+  }, []);
+
+  const handleChangeDestinationChain = useCallback(() => {
+    if (!chainsContainingDestinationAsset) return;
+
+    return tokenAndChainSelectorFlow.show({
+      theme,
+      onSelect: (asset) => {
+        setDestinationAsset((old) => ({
+          ...old,
+          ...asset,
+        }));
+        tokenAndChainSelectorFlow.hide();
+      },
+      chainsContainingAsset: chainsContainingDestinationAsset,
+      asset: destinationAsset,
+    });
+  }, [chainsContainingDestinationAsset, destinationAsset]);
+
   return (
     <>
       <Column
@@ -64,35 +124,8 @@ export const SwapFlow = () => {
         <Column align="center">
           <AssetChainInput
             selectedAssetDenom={sourceAsset?.denom}
-            handleChangeAsset={() =>
-              tokenAndChainSelectorFlow.show({
-                theme,
-                onSelect: (asset) => {
-                  setSourceAsset((old) => ({
-                    ...old,
-                    ...asset,
-                  }));
-                  tokenAndChainSelectorFlow.hide();
-                },
-              })
-            }
-            handleChangeChain={
-              chainsContainingSourceAsset
-                ? () =>
-                    tokenAndChainSelectorFlow.show({
-                      theme,
-                      onSelect: (asset) => {
-                        setSourceAsset((old) => ({
-                          ...old,
-                          ...asset,
-                        }));
-                        tokenAndChainSelectorFlow.hide();
-                      },
-                      chainsContainingAsset: chainsContainingSourceAsset,
-                      asset: sourceAsset,
-                    })
-                : undefined
-            }
+            handleChangeAsset={handleChangeSourceAsset}
+            handleChangeChain={handleChangeSourceChain}
             value={sourceAsset?.amount ?? '0'}
             onChangeValue={(newValue) =>
               setSourceAsset((old) => ({ ...old, amount: newValue }))
@@ -100,36 +133,9 @@ export const SwapFlow = () => {
           />
           <SwapFlowBridge />
           <AssetChainInput
-            selectedAssetDenom={destinationAsset.denom}
-            handleChangeAsset={() =>
-              tokenAndChainSelectorFlow.show({
-                theme,
-                onSelect: (asset) => {
-                  setDestinationAsset((old) => ({
-                    ...old,
-                    ...asset,
-                  }));
-                  tokenAndChainSelectorFlow.hide();
-                },
-              })
-            }
-            handleChangeChain={
-              chainsContainingDestinationAsset
-                ? () =>
-                    tokenAndChainSelectorFlow.show({
-                      theme,
-                      onSelect: (asset) => {
-                        setDestinationAsset((old) => ({
-                          ...old,
-                          ...asset,
-                        }));
-                        tokenAndChainSelectorFlow.hide();
-                      },
-                      chainsContainingAsset: chainsContainingDestinationAsset,
-                      asset: destinationAsset,
-                    })
-                : undefined
-            }
+            selectedAssetDenom={destinationAsset?.denom}
+            handleChangeAsset={handleChangeDestinationAsset}
+            handleChangeChain={handleChangeDestinationChain}
             value={destinationAsset?.amount ?? '0'}
             onChangeValue={(newValue) =>
               setDestinationAsset((old) => ({ ...old, amount: newValue }))

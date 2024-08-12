@@ -9,10 +9,11 @@ import { ClientAsset } from '../../state/skip.ts';
 import { LeftArrowIcon } from '../../icons/ArrowIcon.tsx';
 import { useModal } from '@ebay/nice-modal-react';
 import { Button } from '../../components/Button.tsx';
+import { Text } from '../../components/Typography';
 
 interface SearchInputProps {
   onSearch: (term: string) => void;
-  asset?: ClientAsset;
+  asset?: Partial<ClientAsset>;
 }
 
 export const SearchInput: React.FC<SearchInputProps> = ({
@@ -47,8 +48,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           <Button onClick={() => modal.remove()}>
             <StyledLeftArrowIcon color={theme.textColor} />
           </Button>
-          <StyledSelectedAsset gap={5}>
-            <img src={asset.logoURI} width={20} height={20} /> {asset.symbol}
+          <StyledSelectedAsset gap={5} align="center" justify="center">
+            <img src={asset.logoURI} width={20} height={20} />
+            <Text>{asset?.symbol}</Text>
           </StyledSelectedAsset>
         </>
       ) : (
