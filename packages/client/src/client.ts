@@ -87,6 +87,7 @@ export class SkipRouter {
   protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   protected getSVMSigner?: () => Promise<Adapter>;
   protected chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
+  protected cumulativeAffiliateFeeBps?: string;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.requestClient = new RequestClient({
@@ -118,7 +119,9 @@ export class SkipRouter {
     this.getSVMSigner = options.getSVMSigner;
 
     if (options.chainIDsToAffiliates) {
-      validateChainIDsToAffiliates(options.chainIDsToAffiliates);
+      this.cumulativeAffiliateFeeBps = validateChainIDsToAffiliates(
+        options.chainIDsToAffiliates
+      );
       this.chainIDsToAffiliates = options.chainIDsToAffiliates;
     }
   }
@@ -252,6 +255,7 @@ export class SkipRouter {
       amountOut: route.estimatedAmountOut || '0',
       addressList: addressList,
       operations: route.operations,
+      chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
     await this.executeTxs({ ...options, txs: messages.txs });
@@ -1091,7 +1095,9 @@ export class SkipRouter {
       types.RouteRequestJSON
     >('/v2/fungible/route', {
       ...types.routeRequestToJSON(options),
-      cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS || '0',
+      cumulative_affiliate_fee_bps:
+        this.cumulativeAffiliateFeeBps ??
+        (options.cumulativeAffiliateFeeBPS || '0'),
     });
 
     return types.routeResponseFromJSON(response);
@@ -1946,6 +1952,8 @@ function validateChainIDsToAffiliates(
       'basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates'
     );
   }
+
+  return firstAffiliateBasisPointsFee?.toFixed(0);
 }
 
 function raise(message?: string, options?: ErrorOptions): never {
