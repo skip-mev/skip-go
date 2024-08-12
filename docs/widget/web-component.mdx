@@ -24,8 +24,8 @@ are passed to the web-component via attributes in kebab-case as strings or strin
   <SwapWidget
     className="test-class"
     onlyTestnet={true}
-    colors={{
-      primary: '#FF4FFF',
+    theme={{
+      brandColor: '#FF4FFF',
     }}
     defaultRoute={{
       srcChainID: 'osmosis-1',
@@ -41,7 +41,7 @@ becomes
   <swap-widget
     class-name="test-class"
     onlyTestnet="true"
-    colors='{"primary":"#FF4FFF"}'
+    theme='{"brandColor":"#FF4FFF"}'
     default-route={JSON.stringify({
       srcChainID: 'osmosis-1',
       srcAssetDenom:

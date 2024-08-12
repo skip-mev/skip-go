@@ -14,9 +14,6 @@ The `SwapWidget` component accepts the following props:
 
 ```typescript
 interface SwapWidgetProps {
-  colors?: {
-    primary?: string; // Custom primary color for the widget. Defaults to `#FF486E`.
-  };
   defaultRoute?: {
     // Default route for the widget.
     amountIn?: number;
@@ -72,12 +69,35 @@ interface SwapWidgetProps {
     highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
   };
   persistSwapWidgetState?: boolean; // whether or not swap widget state should persist after refresh. Defaults to true
+
+  // Pass in callback functions to handle events in the widget.
+  onWalletConnected?: ({
+    walletName: string,
+    chainId: string,
+    address?: string,
+  }) => void;
+
+  onWalletDisconnected?: ({
+    chainType?: string
+  }) => void;
+
+  onTransactionBroadcasted?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionComplete?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionFailed?: ({
+  error: string;
+  }) => void;
 }
 ```
-
-### `colors`
-
-- `primary` (string): Custom primary color of the widget, defaulting to `#FF486E`
 
 ### `defaultRoute`
 
@@ -190,6 +210,38 @@ Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoi
     brandColor: string; // color used for confirmation buttons
     highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
   };
+```
+
+### `callback functions`:
+
+Pass in callback functions to handle events in the widget.
+
+```ts
+  onWalletConnected?: ({
+    walletName: string,
+    chainId: string,
+    address?: string,
+  }) => void;
+
+  onWalletDisconnected?: ({
+    chainType?: string
+  }) => void;
+
+  onTransactionBroadcasted?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionComplete?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionFailed?: ({
+  error: string;
+  }) => void;
 ```
 
 ### `className` string
