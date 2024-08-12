@@ -98,7 +98,7 @@ interface SwapWidgetProps {
   }) => void;
 
   /**
-   * Pass in affiliate fees by chain.
+   * Use chainIDsToAffiliates to define fees per chain and which addresses should receive the fees
    * The basisPointsFee of each affiliate must add up to the same amount across each chain, or an error will be thrown.
    * The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
    *
@@ -275,7 +275,7 @@ Pass in callback functions to handle events in the widget.
 
 ### `chainIDsToAffiliates`:
 
-Pass in affiliate fees by chain
+Use chainIDsToAffiliates to define fees per chain and which addresses should receive the fees
 
 The basisPointsFee of each affiliate must add up to the same amount across each chain, or an error will be thrown.
 The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
