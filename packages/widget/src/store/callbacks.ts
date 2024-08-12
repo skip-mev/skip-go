@@ -26,7 +26,7 @@ type OnTransactionFailed = {
   error: string;
 };
 
-export type WalletCallbackStore = {
+export type CallbackStore = {
   onWalletConnected?: (props: OnWalletConnected) => void;
   onWalletDisconnected?: (props: OnWalletDisconnected) => void;
   onTransactionBroadcasted?: (props: OnTransactionBroadcasted) => void;
@@ -34,8 +34,6 @@ export type WalletCallbackStore = {
   onTransactionFailed?: (props: OnTransactionFailed) => void;
 };
 
-export const defaultValues: WalletCallbackStore = {};
+export const defaultValues: CallbackStore = {};
 
-export const useCallbackStore = create<WalletCallbackStore>()(
-  () => defaultValues
-);
+export const useCallbackStore = create<CallbackStore>()(() => defaultValues);

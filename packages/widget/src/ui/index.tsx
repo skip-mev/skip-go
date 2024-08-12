@@ -8,11 +8,11 @@ import { SwapWidgetUI, SwapWidgetUIProps } from './Widget';
 import { defaultTheme, PartialTheme } from './theme';
 import { WithStyledShadowDom } from './WithStyledShadowDom';
 import { ThemeProvider } from 'styled-components';
-import { useCallbackStore, WalletCallbackStore } from '../store/callbacks';
+import { useCallbackStore, CallbackStore } from '../store/callbacks';
 
 export type SwapWidgetWithoutProvidersProps = SwapWidgetUIProps &
   ConfigureSwapWidgetArgs &
-  WalletCallbackStore & {
+  CallbackStore & {
     theme?: PartialTheme;
   };
 
