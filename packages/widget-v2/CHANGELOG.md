@@ -1,5 +1,12 @@
 # widget-v2
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [a5890d7]
+  - @skip-go/client@0.6.0
+
 ## 0.0.6
 
 ### Patch Changes
