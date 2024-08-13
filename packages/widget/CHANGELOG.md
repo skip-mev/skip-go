@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.0
+
+### Minor Changes
+
+- 014c913: Add chainIDsToAffiliates to SkipRouterOptions
+
 ## 2.3.8
 
 ### Patch Changes
