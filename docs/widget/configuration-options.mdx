@@ -96,6 +96,35 @@ interface SwapWidgetProps {
   onTransactionFailed?: ({
   error: string;
   }) => void;
+
+  /**
+   * Use chainIDsToAffiliates to define fees per chain and which addresses should receive the fees
+   * The basisPointsFee of each affiliate must add up to the same amount across each chain, or an error will be thrown.
+   * The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
+   *
+   * @example
+   * ```ts
+   * chainIDsToAffiliates: {
+   *   'noble-1': {
+   *     affiliates: [{
+   *       basisPointsFee: '100', // 1% fee
+   *       address: 'test', // address to receive fee
+   *     },
+   *     {
+   *       basisPointsFee: '100', // 1% fee
+   *       address: 'test2', // address to receive fee
+   *     }]
+   *   },
+   *   'osmosis-1': {
+   *     affiliates: [{
+   *       basisPointsFee: '200', // 2% fee
+   *       address: 'test', // address to receive fee
+   *     },]
+   *   }
+   * }
+   * ```
+   */
+  chainIDsToAffiliates: // Record<string, ChainAffiliates>
 }
 ```
 
@@ -242,6 +271,34 @@ Pass in callback functions to handle events in the widget.
   onTransactionFailed?: ({
   error: string;
   }) => void;
+```
+
+### `chainIDsToAffiliates`:
+
+Use chainIDsToAffiliates to define fees per chain and which addresses should receive the fees
+
+The basisPointsFee of each affiliate must add up to the same amount across each chain, or an error will be thrown.
+The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
+
+```ts
+  chainIDsToAffiliates: {
+    'noble-1': {
+      affiliates: [{
+        basisPointsFee: '100', // 1% fee
+        address: 'test', // address to receive fee
+      },
+      {
+        basisPointsFee: '100', // 1% fee
+        address: 'test2', // address to receive fee
+      }]
+    },
+    'osmosis-1': {
+      affiliates: [{
+        basisPointsFee: '200', // 2% fee
+        address: 'test', // address to receive fee
+      },]
+    }
+  }
 ```
 
 ### `className` string
