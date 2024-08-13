@@ -10,7 +10,7 @@ import {
   Wallet,
 } from '../../components/RenderWalletList';
 import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
-import { COLORS, getHexColor, opacityToHex } from '../../utils/colors';
+import { getHexColor, opacityToHex } from '../../utils/colors';
 import { Button } from '../../components/Button';
 import { SmallText, Text } from '../../components/Typography';
 
@@ -22,7 +22,7 @@ export type ManualAddressFlowProps = ModalProps & {
 
 export const ManualAddressFlow = NiceModal.create(
   (modalProps: ManualAddressFlowProps) => {
-    const { onSelect, chainName, chainLogo } = modalProps;
+    const { onSelect, chainName, chainLogo, theme } = modalProps;
     const modal = useModal();
     const [showManualAddressInput, setShowManualAddressInput] = useState(false);
     const [walletAddress, setWalletAddress] = useState('');
@@ -35,8 +35,8 @@ export const ManualAddressFlow = NiceModal.create(
         rightContent: () => {
           return (
             <RightArrowIcon
-              color={modalProps.theme?.primary.background.normal}
-              backgroundColor={modalProps.theme?.primary.text.normal}
+              color={theme?.primary?.background.normal}
+              backgroundColor={theme?.primary?.text.normal}
             />
           );
         },
@@ -81,7 +81,11 @@ export const ManualAddressFlow = NiceModal.create(
               <StyledAddressValidatorDot validAddress={addressIsValid} />
             </StyledInputContainer>
             {addressIsValid === false && (
-              <SmallText color={COLORS.red} opacity={1} textAlign="center">
+              <SmallText
+                color={theme?.error?.text}
+                opacity={1}
+                textAlign="center"
+              >
                 Please enter a valid wallet address for {chainName}
               </SmallText>
             )}
@@ -138,14 +142,13 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
   height: 11px;
   width: 11px;
   border-radius: 50%;
-  background-color: ${({ theme }) =>
-    getHexColor(theme.primary.text.normal) + opacityToHex(70)};
+  background-color: ${({ theme }) => theme.primary.text.lowContrast};
 
-  ${({ validAddress }) =>
+  ${({ validAddress, theme }) =>
     validAddress === true
-      ? `background-color: ${COLORS.green}`
+      ? `background-color: ${theme.success.text}`
       : validAddress === false
-      ? `background-color: ${COLORS.red}`
+      ? `background-color: ${theme.error.text}`
       : ''};
 
   top: calc(50% - 11px / 2);
@@ -165,11 +168,11 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
   color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 12px;
 
-  ${({ validAddress }) =>
+  ${({ validAddress, theme }) =>
     validAddress === false &&
     css`
-      border-color: ${COLORS.red};
-      background-color: ${COLORS.backgroundError};
+      border-color: ${theme.error.text};
+      background-color: ${theme.error.background};
     `}
 `;
 
