@@ -18,6 +18,5 @@ export const renderLightAndDarkTheme = (
 
 const StyledWrapper = styled(Column)<{ row?: boolean }>`
   ${({ row }) => row && 'flex-direction: row;'}
-  background-color: gray;
   padding: 20px;
 `;

@@ -1,41 +1,37 @@
-import type { Meta } from '@storybook/react';
-import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '../widget/Widget';
+import type { Meta, StoryObj } from '@storybook/react';
+import { SwapWidget, SwapWidgetProps } from '../widget/Widget';
 import styled from 'styled-components';
-import { Column, Row } from '../components/Layout';
-import { lightTheme } from '../widget/theme';
+import { Column } from '../components/Layout';
+import { defaultTheme, lightTheme } from '../widget/theme';
+
+export const WidgetExample = (props: SwapWidgetProps) => (
+  <SwapWidget {...props} />
+);
 
 const meta = {
   title: 'Widget',
-  component: (props) => Widget(props),
+  component: WidgetExample,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
+  },
+  args: {
+    theme: defaultTheme,
+  },
+  argTypes: {
+    theme: {
+      options: ['defaultTheme', 'lightTheme'],
+      mapping: {
+        defaultTheme: defaultTheme,
+        lightTheme: lightTheme,
+      },
+    },
   },
 } satisfies Meta<typeof SwapWidget>;
 
 export default meta;
 
-export const Widget = (props: SwapWidgetProps) => {
-  return (
-    <StyledWrapper gap={10}>
-      <Row gap={10}>
-        <ShowSwapWidget
-          {...props}
-          button={<StyledDarkButton> dark mode </StyledDarkButton>}
-        />
-        <ShowSwapWidget
-          {...props}
-          theme={lightTheme}
-          button={<StyledWhiteButton> light mode</StyledWhiteButton>}
-        />
-      </Row>
-      <Row gap={10}>
-        <SwapWidget {...props} />
-        <SwapWidget {...props} theme={lightTheme} />
-      </Row>
-    </StyledWrapper>
-  );
-};
+type Story = StoryObj<typeof meta>;
 
 const StyledWrapper = styled(Column)`
   background-color: gray;

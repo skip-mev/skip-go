@@ -22,3 +22,18 @@ export const getHexColor = (color: string) => {
   }
   return color;
 };
+
+export const getBrandButtonTextColor = (color: string) => {
+  let r: number, g: number, b: number, hsp: number;
+
+  color = getHexColor(color);
+
+  r = parseInt(color.slice(1, 3), 16);
+  g = parseInt(color.slice(3, 5), 16);
+  b = parseInt(color.slice(5, 7), 16);
+
+  hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+
+  const typeOfColor = hsp > 127.5 ? 'light' : 'dark';
+  return typeOfColor === 'light' ? 'black' : 'white';
+};

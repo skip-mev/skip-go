@@ -1,4 +1,5 @@
 import { css, styled } from 'styled-components';
+import { getBrandButtonTextColor } from '../utils/colors';
 
 type TextProps = {
   fontSize?: number;
@@ -8,6 +9,7 @@ type TextProps = {
   color?: string;
   opacity?: string;
   monospace?: boolean;
+  brandButtonText?: boolean;
 };
 
 export const removeButtonStyles = css`
@@ -26,6 +28,8 @@ export const textProps = css<TextProps>`
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
   ${({ monospace }) => monospace && `font-family: 'ABCDiatype', monospace;`};
+  ${({ brandButtonText, theme }) =>
+    brandButtonText && `color: ${getBrandButtonTextColor(theme.brandColor)}`};
 `;
 
 export const SmallText = styled.p<TextProps>`

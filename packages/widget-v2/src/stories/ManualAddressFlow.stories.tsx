@@ -2,21 +2,21 @@ import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Row } from '../components/Layout';
 import { defaultTheme, lightTheme } from '../widget/theme';
-import { WalletSelectorFlow } from '../widget/WalletSelectorFlow/WalletSelectorFlow';
+import { ManualAddressFlow } from '../widget/ManualAddressFlow/ManualAddressFlow';
 
 const meta = {
-  title: 'Flows/WalletSelectorFlow',
-  component: () => <WalletSelectorFlowExample />,
+  title: 'Flows/ManualAddressFlow',
+  component: () => <ManualAddressFlowExample />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof WalletSelectorFlow>;
+} satisfies Meta<typeof ManualAddressFlow>;
 
 export default meta;
 
-export const WalletSelectorFlowExample = () => {
-  const modal = useModal(WalletSelectorFlow);
+export const ManualAddressFlowExample = () => {
+  const modal = useModal(ManualAddressFlow);
 
   return (
     <NiceModal.Provider>

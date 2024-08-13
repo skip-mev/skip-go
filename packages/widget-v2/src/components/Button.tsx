@@ -1,7 +1,11 @@
 import { css, styled } from 'styled-components';
 import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
-import { getHexColor, opacityToHex } from '../utils/colors';
+import {
+  getBrandButtonTextColor,
+  getHexColor,
+  opacityToHex,
+} from '../utils/colors';
 
 export type GhostButtonProps = {
   secondary?: boolean;
@@ -39,4 +43,9 @@ export const Button = styled.button<FlexProps>`
     cursor: pointer;
   }
   ${flexProps};
+`;
+
+export const StyledBrandButton = styled(Button)`
+  background-color: ${({ theme }) => theme.brandColor};
+  color: ${({ theme }) => getBrandButtonTextColor(theme.brandColor)};
 `;

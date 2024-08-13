@@ -3,6 +3,7 @@ import { Row } from './Layout';
 import { SmallText, Text } from './Typography';
 import { useTheme } from 'styled-components';
 import { ICONS, iconMap } from '../icons';
+import { getBrandButtonTextColor } from '../utils/colors';
 
 export type MainButtonProps = {
   label: string;
@@ -27,6 +28,8 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background : theme.brandColor;
+
+  const brandButton = backgroundColor === theme.brandColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -53,10 +56,14 @@ export const MainButton = ({
       {leftIcon ? (
         <Row align="center" gap={10}>
           <LeftIcon backgroundColor={backgroundColor} color={theme.textColor} />
-          <Text fontSize={24}>{label}</Text>
+          <Text fontSize={24} brandButtonText={brandButton}>
+            {label}
+          </Text>
         </Row>
       ) : (
-        <Text fontSize={24}>{label}</Text>
+        <Text fontSize={24} brandButtonText={brandButton}>
+          {label}
+        </Text>
       )}
 
       <Icon backgroundColor={backgroundColor} color={theme.textColor} />
