@@ -27,7 +27,9 @@ export const MainButton = ({
   onClick,
 }: MainButtonProps) => {
   const theme = useTheme();
-  backgroundColor ??= disabled ? theme.secondary.background : theme.brandColor;
+  backgroundColor ??= disabled
+    ? theme.secondary.background.normal
+    : theme.brandColor;
 
   const brandButton = backgroundColor === theme.brandColor;
 
@@ -55,7 +57,10 @@ export const MainButton = ({
     >
       {leftIcon ? (
         <Row align="center" gap={10}>
-          <LeftIcon backgroundColor={backgroundColor} color={theme.textColor} />
+          <LeftIcon
+            backgroundColor={backgroundColor}
+            color={theme.primary.text.normal}
+          />
           <Text fontSize={24} brandButtonText={brandButton}>
             {label}
           </Text>
@@ -66,7 +71,10 @@ export const MainButton = ({
         </Text>
       )}
 
-      <Icon backgroundColor={backgroundColor} color={theme.textColor} />
+      <Icon
+        backgroundColor={backgroundColor}
+        color={theme.primary.text.normal}
+      />
     </StyledMainButton>
   );
 };
@@ -118,7 +126,7 @@ const StyledMainButton = styled(Row).attrs({
     props.disabled &&
     `
       opacity: 0.5;
-      background-color: ${props.theme.secondary.background};
+      background-color: ${props.theme.secondary.background.normal};
       &:hover {
         cursor: not-allowed;
       }
@@ -126,7 +134,7 @@ const StyledMainButton = styled(Row).attrs({
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)`
-  background-color: ${(props) => props.theme.secondary.background};
+  background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
@@ -141,7 +149,7 @@ const StyledLoadingButton = styled(StyledMainButton)`
       transparent,
       transparent,
       transparent,
-      ${(props) => props.theme.textColor}
+      ${(props) => props.theme.primary.text.normal}
     );
     animation: rotate 4s linear infinite;
   }
@@ -156,7 +164,7 @@ const StyledLoadingButton = styled(StyledMainButton)`
 `;
 
 const StyledTimeRemaining = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background};
+  background-color: ${(props) => props.theme.secondary.background.normal};
   padding: 16px;
   border-radius: 10px;
 `;

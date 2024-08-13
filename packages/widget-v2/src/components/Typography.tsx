@@ -33,7 +33,7 @@ export const textProps = css<TextProps>`
 `;
 
 export const SmallText = styled.p<TextProps>`
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.primary.text.normal};
   ${(props) => !props.color && `opacity: 0.5`};
   margin: 0;
   font-size: 13px;

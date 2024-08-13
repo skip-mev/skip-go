@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import { css, styled } from 'styled-components';
 import { Row } from './Layout';
 import { removeButtonStyles, Text } from './Typography';
 import { getHexColor, opacityToHex } from '../utils/colors';
@@ -45,12 +45,14 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   height: 60px;
   border-radius: 12px;
   padding: 12px 15px;
-  ${({ theme }) => `background-color: ${theme.secondary.background}`};
+  ${({ theme }) => `background-color: ${theme.secondary.background.normal}`};
 
   ${({ onClick, theme }) =>
     onClick &&
-    `  &:hover {
-    background-color: ${getHexColor(theme.textColor ?? '') + opacityToHex(20)};
-    cursor: pointer;
-  }`};
+    css`
+      &:hover {
+        background-color: ${theme.primary.background.transparent};
+        cursor: pointer;
+      }
+    `};
 `;

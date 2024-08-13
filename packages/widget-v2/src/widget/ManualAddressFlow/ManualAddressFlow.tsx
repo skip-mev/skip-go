@@ -36,7 +36,7 @@ export const ManualAddressFlow = NiceModal.create(
           return (
             <RightArrowIcon
               color={modalProps.theme?.primary.background.normal}
-              backgroundColor={modalProps.theme?.textColor}
+              backgroundColor={modalProps.theme?.primary.text.normal}
             />
           );
         },
@@ -130,7 +130,7 @@ const StyledChainLogoContainerRow = styled(Row)`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.secondary.background};
+  background-color: ${({ theme }) => theme.secondary.background.normal};
 `;
 
 const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
@@ -139,7 +139,7 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
   width: 11px;
   border-radius: 50%;
   background-color: ${({ theme }) =>
-    getHexColor(theme.textColor) + opacityToHex(70)};
+    getHexColor(theme.primary.text.normal) + opacityToHex(70)};
 
   ${({ validAddress }) =>
     validAddress === true
@@ -159,9 +159,10 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
   outline: none;
   padding: 8px 40px 8px 15px;
   border: 1px solid
-    ${({ theme }) => getHexColor(theme.textColor ?? '') + opacityToHex(20)};
-  background-color: ${({ theme }) => theme.secondary.background};
-  color: ${({ theme }) => theme.textColor};
+    ${({ theme }) =>
+      getHexColor(theme.primary.text.normal ?? '') + opacityToHex(20)};
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 12px;
 
   ${({ validAddress }) =>
@@ -177,5 +178,5 @@ export const StyledBrandButton = styled(Button)`
   height: 60px;
   border-radius: 12px;
   ${({ disabled, theme }) =>
-    disabled && `background-color: ${theme.secondary.background}`};
+    disabled && `background-color: ${theme.secondary.background.normal}`};
 `;

@@ -11,7 +11,7 @@ const StyledRightArrowIcon = styled(RightArrowIcon)`
     fill: ${({ theme }) => theme.primary.background.normal};
   }
   rect {
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.primary.text.normal};
   }
 `;
 

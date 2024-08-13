@@ -22,7 +22,7 @@ export const GhostButton = styled(SmallText).attrs({
       !disabled &&
       css`
         background-color: ${secondary
-          ? theme.secondary.background
+          ? theme.secondary.background.normal
           : getHexColor(theme.primary.background.normal) + opacityToHex(50)};
         opacity: 1;
         cursor: pointer;

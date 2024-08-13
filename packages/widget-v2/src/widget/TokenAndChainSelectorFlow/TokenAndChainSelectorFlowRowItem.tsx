@@ -84,7 +84,7 @@ const StyledAssetImage = styled.img`
   object-fit: cover;
   ${({ theme }) =>
     `background-color: ${
-      getHexColor(theme.textColor ?? '') + opacityToHex(10)
+      getHexColor(theme.primary.text.normal ?? '') + opacityToHex(10)
     }`};
 `;
 

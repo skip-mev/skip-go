@@ -42,7 +42,7 @@ export const RenderWalletListHeader = ({
       <Button onClick={() => onClickBackButton()}>
         <StyledLeftArrowIcon
           color={theme?.primary.background.normal}
-          backgroundColor={theme?.textColor}
+          backgroundColor={theme?.primary.text.normal}
         />
       </Button>
       <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>

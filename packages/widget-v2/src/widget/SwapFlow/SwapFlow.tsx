@@ -111,7 +111,7 @@ export const SwapFlow = () => {
       >
         <Row justify="space-between">
           <GhostButton gap={5} onClick={() => {}}>
-            <HistoryIcon color={theme.textColor} />
+            <HistoryIcon color={theme.primary.text.normal} />
             History
           </GhostButton>
           {!!sourceAssetBalance && (

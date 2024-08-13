@@ -60,7 +60,7 @@ export const AssetChainInput = ({
 
           <ChevronIcon
             color={theme.primary.background.normal}
-            backgroundColor={theme.textColor}
+            backgroundColor={theme.primary.text.normal}
           />
         </Button>
       </Row>
@@ -74,7 +74,7 @@ export const AssetChainInput = ({
             gap={4}
           >
             <SmallText>on {selectedAsset?.chainName}</SmallText>
-            <CogIcon color={theme.textColor} />
+            <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (
           <Spacer />
@@ -95,7 +95,7 @@ const StyledInput = styled.input`
   font-size: 38px;
   font-weight: 300;
   width: 100%;
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
@@ -105,8 +105,8 @@ export const StyledAssetLabel = styled(Row).attrs({
   height: 40px;
   border-radius: 10px;
   white-space: nowrap;
-  color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.secondary.background};
+  color: ${(props) => props.theme.primary.text.normal};
+  background-color: ${(props) => props.theme.secondary.background.normal};
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`

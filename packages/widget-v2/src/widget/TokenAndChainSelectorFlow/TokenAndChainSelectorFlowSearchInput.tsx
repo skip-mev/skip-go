@@ -46,7 +46,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       {asset ? (
         <>
           <Button onClick={() => modal.remove()}>
-            <StyledLeftArrowIcon color={theme.textColor} />
+            <StyledLeftArrowIcon color={theme.primary.text.normal} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
             <img src={asset.logoURI} width={20} height={20} />
@@ -54,7 +54,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           </StyledSelectedAsset>
         </>
       ) : (
-        <StyledSearchIcon color={theme.textColor} />
+        <StyledSearchIcon color={theme.primary.text.normal} />
       )}
 
       <StyledSearchInput
@@ -101,6 +101,6 @@ const StyledSearchInput = styled.input`
   width: 100%;
   border: none;
   outline: none;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.primary.text.normal};
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

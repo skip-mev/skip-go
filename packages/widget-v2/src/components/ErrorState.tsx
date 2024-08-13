@@ -19,7 +19,7 @@ export const ErrorState = ({
   icon = ICONS.none,
 }: ErrorStateProps) => {
   const theme = useTheme();
-  textColor ??= theme.textColor;
+  textColor ??= theme.primary.text.normal;
   backgroundColor ??= theme.primary.background.normal;
 
   const Icon = iconMap[icon];
