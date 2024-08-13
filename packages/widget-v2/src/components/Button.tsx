@@ -1,11 +1,6 @@
 import { css, styled } from 'styled-components';
 import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
-import {
-  getBrandButtonTextColor,
-  getHexColor,
-  opacityToHex,
-} from '../utils/colors';
 
 export type GhostButtonProps = {
   secondary?: boolean;
@@ -23,7 +18,7 @@ export const GhostButton = styled(SmallText).attrs({
       css`
         background-color: ${secondary
           ? theme.secondary.background.normal
-          : getHexColor(theme.primary.background.normal) + opacityToHex(50)};
+          : theme.primary.ghostButtonHover};
         opacity: 1;
         cursor: pointer;
       `};

@@ -2,7 +2,6 @@ import 'styled-components';
 import { opacityToHex } from '../utils/colors';
 
 export const defaultTheme = {
-  textColor: 'white',
   brandColor: '#ff66ff',
   primary: {
     background: {
@@ -36,7 +35,6 @@ export const defaultTheme = {
 };
 
 export const lightTheme = {
-  textColor: '#000000',
   brandColor: 'darkblue',
   primary: {
     background: {
@@ -72,10 +70,7 @@ export const lightTheme = {
 export type PartialTheme = Partial<Theme> | undefined;
 
 export type Theme = {
-  textColor: string;
-  borderColor: string;
   brandColor: string;
-  highlightColor: string;
   primary: {
     background: {
       normal: string;

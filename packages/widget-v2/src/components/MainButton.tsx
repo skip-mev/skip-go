@@ -112,7 +112,7 @@ const StyledMainButton = styled(Row).attrs({
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${(props) => props.primary.background.normal};
+  background-color: ${({ theme }) => theme.brandColor};
   height: 70px;
   width: 480px;
   border-radius: 25px;
@@ -174,5 +174,5 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   height: 66px;
   width: 476px;
   border-radius: 24px;
-  background-color: ${(props) => props.primary.background.normal};
+  background-color: ${({ theme }) => theme.brandColor};
 `;
