@@ -681,7 +681,10 @@ export class SkipRouter {
         address: requiredApproval.tokenContract as `0x${string}`,
         abi: erc20ABI,
         functionName: 'approve',
-        args: [requiredApproval.spender as `0x${string}`, maxUint256],
+        args: [
+          requiredApproval.spender as `0x${string}`,
+          BigInt(requiredApproval.amount),
+        ],
         chain: signer.chain,
       });
 
