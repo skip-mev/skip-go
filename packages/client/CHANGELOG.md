@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.6.0
+
+### Minor Changes
+
+- a5890d7: Add chainIDsToAffiliates to SkipRouterOptions
+
 ## 0.5.2
 
 ### Patch Changes
