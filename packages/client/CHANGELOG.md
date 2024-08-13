@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.7.0
+
+### Minor Changes
+
+- 87727c5: rename SkipRouter to SkipClient
+
 ## 0.6.0
 
 ### Minor Changes
