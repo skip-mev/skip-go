@@ -6,7 +6,11 @@ import { useAtom } from 'jotai';
 import { ChainWithAsset, ClientAsset, skipAssets } from '../../state/skip';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { VirtualList } from '../../components/VirtualList';
-import { isChainWithAsset, RowItem, Skeleton } from './TokenAndChainSelectorFlowRowItem';
+import {
+  isChainWithAsset,
+  RowItem,
+  Skeleton,
+} from './TokenAndChainSelectorFlowRowItem';
 import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
 
 export type TokenAndChainSelectorFlowProps = ModalProps & {
@@ -91,9 +95,9 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
               renderItem={renderItem}
               itemKey={(item) => {
                 if (isChainWithAsset(item)) {
-                  return `${item.chain_id}${item.chain_name}`
+                  return `${item.chain_id}${item.chain_name}`;
                 }
-                return `${item.chainID}${item.denom}`
+                return `${item.chainID}${item.denom}`;
               }}
             />
           )}
@@ -109,6 +113,6 @@ const StyledContainer = styled(Column)`
   width: 580px;
   height: 600px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
 `;

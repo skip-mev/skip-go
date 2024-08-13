@@ -2,7 +2,6 @@ import 'styled-components';
 import { opacityToHex } from '../utils/colors';
 
 export const defaultTheme = {
-  backgroundColor: 'black',
   textColor: 'white',
   brandColor: '#ff66ff',
   primary: {
@@ -18,8 +17,10 @@ export const defaultTheme = {
     ghostButtonHover: '#000000' + opacityToHex(40),
   },
   secondary: {
-    background: '#141414',
-    transparent: '#252525' + opacityToHex(70),
+    background: {
+      normal: '#141414',
+      transparent: '#252525' + opacityToHex(70),
+    },
   },
   success: {
     text: '#6fde00',
@@ -35,7 +36,6 @@ export const defaultTheme = {
 };
 
 export const lightTheme = {
-  backgroundColor: '#ffffff',
   textColor: '#000000',
   brandColor: 'darkblue',
   primary: {
@@ -51,8 +51,10 @@ export const lightTheme = {
     ghostButtonHover: '#ffffff' + opacityToHex(90),
   },
   secondary: {
-    background: '#f1f1f1',
-    transparent: '#eeeeee' + opacityToHex(90),
+    background: {
+      normal: '#f1f1f1',
+      transparent: '#eeeeee' + opacityToHex(90),
+    },
   },
   success: {
     text: '#6bcf07',
@@ -70,14 +72,15 @@ export const lightTheme = {
 export type PartialTheme = Partial<Theme> | undefined;
 
 export type Theme = {
-  backgroundColor: string;
   textColor: string;
   borderColor: string;
   brandColor: string;
   highlightColor: string;
   primary: {
-    background: string;
-    transparent: string;
+    background: {
+      normal: string;
+      transparent: string;
+    };
     text: {
       normal: string;
       lowContrast: string;
@@ -86,8 +89,7 @@ export type Theme = {
     ghostButtonHover: string;
   };
   secondary: {
-    background: string;
-    transparent: {
+    background: {
       normal: string;
       transparent: string;
     };

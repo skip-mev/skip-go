@@ -41,7 +41,7 @@ export const RenderWalletListHeader = ({
     <StyledHeader align="center" justify="space-between">
       <Button onClick={() => onClickBackButton()}>
         <StyledLeftArrowIcon
-          color={theme?.backgroundColor}
+          color={theme?.primary.background.normal}
           backgroundColor={theme?.textColor}
         />
       </Button>
@@ -132,7 +132,7 @@ export const StyledContainer = styled(Column)`
   gap: 10px;
   width: 580px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
 `;
 

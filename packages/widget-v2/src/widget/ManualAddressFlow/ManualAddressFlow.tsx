@@ -35,7 +35,7 @@ export const ManualAddressFlow = NiceModal.create(
         rightContent: () => {
           return (
             <RightArrowIcon
-              color={modalProps.theme?.backgroundColor}
+              color={modalProps.theme?.primary.background.normal}
               backgroundColor={modalProps.theme?.textColor}
             />
           );
@@ -118,7 +118,7 @@ const StyledContainer = styled(Column)`
   gap: 15px;
   width: 580px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
 `;
 

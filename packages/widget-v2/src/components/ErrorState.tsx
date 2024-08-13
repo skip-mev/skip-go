@@ -20,7 +20,7 @@ export const ErrorState = ({
 }: ErrorStateProps) => {
   const theme = useTheme();
   textColor ??= theme.textColor;
-  backgroundColor ??= theme.backgroundColor;
+  backgroundColor ??= theme.primary.background.normal;
 
   const Icon = iconMap[icon];
 

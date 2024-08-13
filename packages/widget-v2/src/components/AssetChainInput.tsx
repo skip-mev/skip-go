@@ -59,7 +59,7 @@ export const AssetChainInput = ({
           )}
 
           <ChevronIcon
-            color={theme.backgroundColor}
+            color={theme.primary.background.normal}
             backgroundColor={theme.textColor}
           />
         </Button>
@@ -87,7 +87,7 @@ export const AssetChainInput = ({
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 480px;
-  background-color: ${(props) => props.theme.backgroundColor};
+  background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
 const StyledInput = styled.input`
@@ -96,7 +96,7 @@ const StyledInput = styled.input`
   font-weight: 300;
   width: 100%;
   color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.backgroundColor};
+  background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
 export const StyledAssetLabel = styled(Row).attrs({

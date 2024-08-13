@@ -102,5 +102,5 @@ const StyledSearchInput = styled.input`
   border: none;
   outline: none;
   color: ${({ theme }) => theme.textColor};
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
 `;
