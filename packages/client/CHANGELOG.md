@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.5.2
+
+### Patch Changes
+
+- 7c9146c: erc20 approval set to required approval amount
+
 ## 0.5.1
 
 ### Patch Changes
