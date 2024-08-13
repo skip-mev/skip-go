@@ -58,8 +58,8 @@ export const MainButton = ({
       {leftIcon ? (
         <Row align="center" gap={10}>
           <LeftIcon
-            backgroundColor={backgroundColor}
-            color={theme.primary.text.normal}
+            backgroundColor={theme.primary.text.normal}
+            color={backgroundColor}
           />
           <Text fontSize={24} brandButtonText={brandButton}>
             {label}
@@ -72,8 +72,12 @@ export const MainButton = ({
       )}
 
       <Icon
-        backgroundColor={backgroundColor}
-        color={theme.primary.text.normal}
+        backgroundColor={
+          brandButton
+            ? getBrandButtonTextColor(theme.brandColor)
+            : theme.primary.text.normal
+        }
+        color={backgroundColor}
       />
     </StyledMainButton>
   );
@@ -112,7 +116,8 @@ const StyledMainButton = styled(Row).attrs({
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${({ theme }) => theme.brandColor};
+  background-color: ${({ theme, backgroundColor }) =>
+    backgroundColor ?? theme.brandColor};
   height: 70px;
   width: 480px;
   border-radius: 25px;
@@ -174,5 +179,5 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   height: 66px;
   width: 476px;
   border-radius: 24px;
-  background-color: ${({ theme }) => theme.brandColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
 `;

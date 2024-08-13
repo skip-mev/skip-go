@@ -7,6 +7,7 @@ export const defaultTheme = {
     background: {
       normal: '#000',
       transparent: '#000000' + opacityToHex(90),
+      hover: '#4A4A4A',
     },
     text: {
       normal: '#fff',
@@ -40,6 +41,7 @@ export const lightTheme = {
     background: {
       normal: '#ffffff',
       transparent: '#ffffff' + opacityToHex(95),
+      hover: '#e0e0e0',
     },
     text: {
       normal: '#000000',
@@ -75,6 +77,7 @@ export type Theme = {
     background: {
       normal: string;
       transparent: string;
+      hover: string;
     };
     text: {
       normal: string;
