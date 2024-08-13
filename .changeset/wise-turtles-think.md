@@ -1,5 +1,5 @@
 ---
-'@skip-go/client': patch
+'@skip-go/client': minor
 ---
 
 rename SkipRouter to SkipClient

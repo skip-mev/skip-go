@@ -1956,6 +1956,10 @@ function validateChainIDsToAffiliates(
 
   return firstAffiliateBasisPointsFee?.toFixed(0);
 }
+/**
+ * @deprecated SkipRouter is deprecated please use SkipClient instead
+ */
+export class SkipRouter extends SkipClient {}
 
 function raise(message?: string, options?: ErrorOptions): never {
   throw new Error(message, options);

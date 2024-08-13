@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { SKIP_API_URL, SkipClient } from '../client';
+import { SKIP_API_URL, SkipClient, SkipRouter } from '../client';
 import {
   Chain,
   ChainJSON,
@@ -86,10 +86,9 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipClient({
+      const client = new SkipRouter({
         apiURL: SKIP_API_URL,
       });
-
       const response = await client.chains();
 
       expect(response).toEqual([
