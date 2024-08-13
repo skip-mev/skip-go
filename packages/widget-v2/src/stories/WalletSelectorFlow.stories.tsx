@@ -3,19 +3,25 @@ import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Row } from '../components/Layout';
 import { defaultTheme, lightTheme } from '../widget/theme';
 import { WalletSelectorFlow } from '../widget/WalletSelectorFlow/WalletSelectorFlow';
+import { Wallet } from '../components/RenderWalletList';
 
 const meta = {
   title: 'Flows/WalletSelectorFlow',
-  component: () => <WalletSelectorFlowExample />,
+  component: (props) => <WalletSelectorFlowExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
+  },
+  args: {
+    onSelect: (wallet: Wallet) => {
+      alert(`selected ${wallet.name}`);
+    },
   },
 } satisfies Meta<typeof WalletSelectorFlow>;
 
 export default meta;
 
-export const WalletSelectorFlowExample = () => {
+export const WalletSelectorFlowExample = (props: any) => {
   const modal = useModal(WalletSelectorFlow);
 
   return (
@@ -25,6 +31,7 @@ export const WalletSelectorFlowExample = () => {
           onClick={() =>
             modal.show({
               theme: defaultTheme,
+              ...props,
             })
           }
         >
@@ -34,6 +41,7 @@ export const WalletSelectorFlowExample = () => {
           onClick={() =>
             modal.show({
               theme: lightTheme,
+              ...props,
             })
           }
         >
