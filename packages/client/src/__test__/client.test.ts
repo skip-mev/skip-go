@@ -1801,6 +1801,292 @@ describe('client', () => {
       ]);
     });
   });
+
+  describe('validateChainIDsToAffiliates', () => {
+    it('returns an error when basisPointsFee is not included in one of the affiliates', async () => {
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  address: 'address',
+                } as any,
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(
+          new Error('basisPointFee must exist in each affiliate')
+        );
+      }
+    });
+
+    it('returns an error when address is not included in one of the affiliates', async () => {
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  address: '',
+                } as any,
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(
+          new Error('basisPointFee must exist in each affiliate')
+        );
+      }
+    });
+
+    it('returns an error when affiliate bps differs (only comparing 2 bps)', async () => {
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(
+          new Error(
+            'basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates'
+          )
+        );
+      }
+    });
+
+    it('returns an error when first affiliate bps are the same but total differs', async () => {
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(
+          new Error(
+            'basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates'
+          )
+        );
+      }
+    });
+
+    it('returns an error when first and last affiliates bps are the same but total bps differs', async () => {
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '10',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(
+          new Error(
+            'basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates'
+          )
+        );
+      }
+    });
+
+    it('does not return an error when affiliate bps are exactly the same', async () => {
+      let errorOccurred = false;
+      try {
+        const client = new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        errorOccurred = true;
+      }
+      expect(errorOccurred).toBe(false);
+    });
+
+    it('does not return an error if 2 bps on first chain adds up to 2nd chains first bps', async () => {
+      let errorOccurred = false;
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        errorOccurred = true;
+      }
+      expect(errorOccurred).toBe(false);
+    });
+
+    it('does not return an error if 3 chains are passed and each have different number of affiliates but still add up to the same total', async () => {
+      let errorOccurred = false;
+      try {
+        new SkipRouter({
+          chainIDsToAffiliates: {
+            chain1: {
+              affiliates: [
+                {
+                  basisPointsFee: '50',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '150',
+                  address: 'address',
+                },
+              ],
+            },
+            chain2: {
+              affiliates: [
+                {
+                  basisPointsFee: '100',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '52',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '38',
+                  address: 'address',
+                },
+                {
+                  basisPointsFee: '110',
+                  address: 'address',
+                },
+              ],
+            },
+            chain3: {
+              affiliates: [
+                {
+                  basisPointsFee: '300',
+                  address: 'address',
+                },
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        errorOccurred = true;
+      }
+      expect(errorOccurred).toBe(false);
+    });
+  });
 });
 
 test('dymension', async () => {

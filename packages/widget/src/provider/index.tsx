@@ -4,7 +4,7 @@ import { EVMProvider } from './wallet/evm';
 import { SolanaProvider } from './wallet/solana';
 import { SkipProvider } from './skip-provider';
 import { AssetsProvider } from './assets';
-import { SkipRouterOptions } from '@skip-go/client';
+import { ChainAffiliates, SkipRouterOptions } from '@skip-go/client';
 import { WalletModalProvider } from '../ui/WalletModal';
 import { DefaultRouteConfig } from '../hooks/use-swap-widget';
 import { RouteConfig } from '../hooks/use-route';
@@ -30,6 +30,7 @@ export interface SkipAPIProviderProps {
   endpointOptions?: SkipRouterOptions['endpointOptions'];
   apiURL?: string;
   makeDestinationWallets?: (chainID: string) => MinimalWallet[];
+  chainIDsToAffiliates?: Record<string, ChainAffiliates>;
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
@@ -49,12 +50,14 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   endpointOptions = defaultEndpointOptions,
   apiURL = defaultApiURL,
   makeDestinationWallets,
+  chainIDsToAffiliates,
 }) => {
   return (
     <SkipProvider
       apiURL={apiURL}
       endpointOptions={endpointOptions}
       makeDestinationWallets={makeDestinationWallets}
+      chainIDsToAffiliates={chainIDsToAffiliates}
     >
       <AssetsProvider>{children}</AssetsProvider>
     </SkipProvider>
