@@ -1,5 +1,9 @@
 import { useManager } from '@cosmos-kit/react';
-import { ChainAffiliates, SkipRouter, SkipRouterOptions } from '@skip-go/client';
+import {
+  ChainAffiliates,
+  SkipClient,
+  SkipClientOptions,
+} from '@skip-go/client';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getWalletClient } from '@wagmi/core';
 import { createContext, ReactNode } from 'react';
@@ -14,11 +18,11 @@ import { SkipAPIProviderProps } from './index';
 
 export const SkipContext = createContext<
   | {
-      skipClient: SkipRouter;
+      skipClient: SkipClient;
       apiURL?: string;
-      endpointOptions?: SkipRouterOptions['endpointOptions'];
+      endpointOptions?: SkipClientOptions['endpointOptions'];
       makeDestinationWallets?: (chainID: string) => MinimalWallet[];
-      chainIDsToAffiliates?: Record<string, ChainAffiliates>
+      chainIDsToAffiliates?: Record<string, ChainAffiliates>;
     }
   | undefined
 >(undefined);
@@ -33,7 +37,7 @@ export function SkipProvider({
   const { getWalletRepo } = useManager();
   const { wallets } = useWallet();
 
-  const skipClient = new SkipRouter({
+  const skipClient = new SkipClient({
     chainIDsToAffiliates,
     getCosmosSigner: async (chainID) => {
       const chainName = chainIdToName(chainID);

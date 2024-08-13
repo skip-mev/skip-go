@@ -1,4 +1,4 @@
-import { Asset, SkipRouter } from '@skip-go/client';
+import { Asset, SkipClient } from '@skip-go/client';
 import * as token from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
@@ -122,7 +122,7 @@ export async function getBalancesByChain(
 }
 
 export async function getEvmChainBalances(
-  skipClient: SkipRouter,
+  skipClient: SkipClient,
   publicClient: PublicClient,
   address: string,
   chainID: string

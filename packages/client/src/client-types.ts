@@ -26,7 +26,7 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export interface SkipRouterOptions {
+export interface SkipClientOptions {
   apiURL?: string;
   apiKey?: string;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;

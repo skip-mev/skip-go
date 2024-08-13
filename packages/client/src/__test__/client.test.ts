@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { SKIP_API_URL, SkipRouter } from '../client';
+import { SKIP_API_URL, SkipClient, SkipRouter } from '../client';
 import {
   Chain,
   ChainJSON,
@@ -89,7 +89,6 @@ describe('client', () => {
       const client = new SkipRouter({
         apiURL: SKIP_API_URL,
       });
-
       const response = await client.chains();
 
       expect(response).toEqual([
@@ -208,7 +207,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -308,7 +307,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -351,7 +350,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -372,7 +371,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -431,7 +430,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -492,7 +491,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -522,7 +521,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -577,7 +576,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -645,7 +644,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -835,7 +834,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -954,7 +953,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -987,7 +986,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1016,7 +1015,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1142,7 +1141,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1377,7 +1376,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1619,7 +1618,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1699,7 +1698,7 @@ describe('client', () => {
         )
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1721,7 +1720,7 @@ describe('client', () => {
 
   describe('getRecommendedGasPrice', () => {
     it('returns the recommended gas price for a chain', async () => {
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1731,7 +1730,7 @@ describe('client', () => {
     }, 30000);
 
     it('returns the recommended gas price for Noble (no staking token)', async () => {
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -1773,7 +1772,7 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
       });
 
@@ -2090,7 +2089,7 @@ describe('client', () => {
 });
 
 test('dymension', async () => {
-  const client = new SkipRouter({
+  const client = new SkipClient({
     apiURL: SKIP_API_URL,
   });
 
