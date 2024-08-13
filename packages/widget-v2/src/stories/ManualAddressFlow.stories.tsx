@@ -6,16 +6,21 @@ import { ManualAddressFlow } from '../widget/ManualAddressFlow/ManualAddressFlow
 
 const meta = {
   title: 'Flows/ManualAddressFlow',
-  component: () => <ManualAddressFlowExample />,
+  component: (props) => <ManualAddressFlowExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
+  },
+  args: {
+    chainName: 'Base',
+    chainLogo:
+      'https://raw.githubusercontent.com/base-org/brand-kit/5ce7f4e9ba1a1ceaa7beb22156679899fff7faaf/logo/in-product/Base_Network_Logo.svg',
   },
 } satisfies Meta<typeof ManualAddressFlow>;
 
 export default meta;
 
-export const ManualAddressFlowExample = () => {
+export const ManualAddressFlowExample = (props: any) => {
   const modal = useModal(ManualAddressFlow);
 
   return (
@@ -25,6 +30,7 @@ export const ManualAddressFlowExample = () => {
           onClick={() =>
             modal.show({
               theme: defaultTheme,
+              ...props,
             })
           }
         >
@@ -34,6 +40,7 @@ export const ManualAddressFlowExample = () => {
           onClick={() =>
             modal.show({
               theme: lightTheme,
+              ...props,
             })
           }
         >

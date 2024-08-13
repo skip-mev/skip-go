@@ -39,13 +39,19 @@ export const GhostButton = styled(SmallText).attrs({
 
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
-  &:hover {
-    cursor: pointer;
-  }
-  ${flexProps};
-`;
 
-export const StyledBrandButton = styled(Button)`
-  background-color: ${({ theme }) => theme.brandColor};
-  color: ${({ theme }) => getBrandButtonTextColor(theme.brandColor)};
+  ${({ disabled }) =>
+    disabled
+      ? css`
+          &:hover {
+            cursor: not-allowed;
+          }
+        `
+      : css`
+          &:hover {
+            cursor: pointer;
+          }
+        `}
+
+  ${flexProps};
 `;

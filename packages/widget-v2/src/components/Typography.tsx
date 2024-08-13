@@ -7,7 +7,7 @@ type TextProps = {
   textAlign?: string;
   lineHeight?: string;
   color?: string;
-  opacity?: string;
+  opacity?: string | number;
   monospace?: boolean;
   brandButtonText?: boolean;
 };

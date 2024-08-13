@@ -25,23 +25,28 @@ export type Wallet = {
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 
+type RenderWalletListHeaderProps = {
+  title: string;
+  onClickBackButton: () => void;
+  rightContent?: () => React.ReactNode;
+};
+
 export const RenderWalletListHeader = ({
   title,
   onClickBackButton,
-}: {
-  title: string;
-  onClickBackButton: () => void;
-}) => {
+  rightContent,
+}: RenderWalletListHeaderProps) => {
   const theme = useTheme();
   return (
-    <StyledHeader align="center" justify="center">
-      <StyledBackButton onClick={() => onClickBackButton()}>
-        <LeftArrowIcon
+    <StyledHeader align="center" justify="space-between">
+      <Button onClick={() => onClickBackButton()}>
+        <StyledLeftArrowIcon
           color={theme?.backgroundColor}
           backgroundColor={theme?.textColor}
         />
-      </StyledBackButton>
-      <Text textAlign="center">{title}</Text>
+      </Button>
+      <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
+      {rightContent?.()}
     </StyledHeader>
   );
 };
@@ -108,14 +113,17 @@ export const RenderWalletList = ({
   );
 };
 
-const StyledBackButton = styled(Button)`
+const StyledCenteredTitle = styled(Text)`
   position: absolute;
-  left: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
 `;
 
 export const StyledHeader = styled(Row)`
   height: 40px;
   margin-top: 10px;
+  padding: 0 12px;
 `;
 
 export const StyledContainer = styled(Column)`
@@ -126,4 +134,8 @@ export const StyledContainer = styled(Column)`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.backgroundColor};
   overflow: hidden;
+`;
+
+const StyledLeftArrowIcon = styled(LeftArrowIcon)`
+  opacity: 0.2;
 `;

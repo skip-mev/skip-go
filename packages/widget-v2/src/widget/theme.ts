@@ -15,7 +15,7 @@ export const lightTheme = {
   backgroundColor: 'white',
   textColor: 'black',
   borderColor: 'rgb(229 229 229)',
-  brandColor: '#0033cc',
+  brandColor: 'darkblue',
   highlightColor: 'rgb(245, 245, 245)',
   secondary: {
     background: '#F1F1F1',

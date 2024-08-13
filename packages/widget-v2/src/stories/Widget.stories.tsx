@@ -1,22 +1,33 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { SwapWidget, SwapWidgetProps } from '../widget/Widget';
-import styled from 'styled-components';
-import { Column } from '../components/Layout';
+import type { Meta } from '@storybook/react';
+import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '../widget/Widget';
 import { defaultTheme, lightTheme } from '../widget/theme';
+import NiceModal from '@ebay/nice-modal-react';
+import { styled } from 'styled-components';
 
-export const WidgetExample = (props: SwapWidgetProps) => (
-  <SwapWidget {...props} />
-);
+export const Widget = (props: SwapWidgetProps) => <SwapWidget {...props} />;
+
+export const Modal = (props: typeof ShowSwapWidget) => {
+  return (
+    <NiceModal.Provider>
+      <ShowSwapWidget {...props} />
+    </NiceModal.Provider>
+  );
+};
+
+const StyledCustomButton = styled.button`
+  border: none;
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  background-color: navy;
+`;
 
 const meta = {
   title: 'Widget',
-  component: WidgetExample,
-  parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
-  },
+  component: Widget,
   args: {
     theme: defaultTheme,
+    button: undefined,
   },
   argTypes: {
     theme: {
@@ -26,29 +37,19 @@ const meta = {
         lightTheme: lightTheme,
       },
     },
+    button: {
+      options: ['default', 'custom'],
+      mapping: {
+        default: undefined,
+        custom: (
+          <StyledCustomButton>
+            Custom button <br />
+            click to open swap widget
+          </StyledCustomButton>
+        ),
+      },
+    },
   },
-} satisfies Meta<typeof SwapWidget>;
+} satisfies Meta<typeof SwapWidget | typeof ShowSwapWidget>;
 
 export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-const StyledWrapper = styled(Column)`
-  background-color: gray;
-  padding: 20px;
-`;
-
-const StyledDarkButton = styled.button`
-  border: none;
-  border-radius: 20px;
-  background-color: black;
-  color: white;
-  &:hover {
-    pointer: cursor;
-  }
-`;
-
-const StyledWhiteButton = styled(StyledDarkButton)`
-  background-color: white;
-  color: black;
-`;

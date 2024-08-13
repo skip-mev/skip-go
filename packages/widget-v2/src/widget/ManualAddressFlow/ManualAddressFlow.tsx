@@ -1,8 +1,8 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Modal, ModalProps } from '../../components/Modal';
-import { Column } from '../../components/Layout';
-import { styled } from 'styled-components';
-import { useState } from 'react';
+import { Column, Row } from '../../components/Layout';
+import { css, styled } from 'styled-components';
+import { useCallback, useMemo, useState } from 'react';
 import { RightArrowIcon } from '../../icons/ArrowIcon';
 import {
   RenderWalletList,
@@ -10,18 +10,22 @@ import {
   Wallet,
 } from '../../components/RenderWalletList';
 import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
-import { getHexColor, opacityToHex } from '../../utils/colors';
-import { StyledBrandButton } from '../../components/Button';
+import { COLORS, getHexColor, opacityToHex } from '../../utils/colors';
+import { Button } from '../../components/Button';
+import { SmallText, Text } from '../../components/Typography';
 
 export type ManualAddressFlowProps = ModalProps & {
   onSelect: (wallet: Wallet) => void;
+  chainName?: string;
+  chainLogo?: string;
 };
 
 export const ManualAddressFlow = NiceModal.create(
   (modalProps: ManualAddressFlowProps) => {
-    const { onSelect } = modalProps;
+    const { onSelect, chainName, chainLogo } = modalProps;
     const modal = useModal();
     const [showManualAddressInput, setShowManualAddressInput] = useState(false);
+    const [walletAddress, setWalletAddress] = useState('');
 
     const walletList: Wallet[] = [
       ...WALLET_LIST,
@@ -39,16 +43,61 @@ export const ManualAddressFlow = NiceModal.create(
       },
     ];
 
+    const handleChangeAddress = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setWalletAddress(e.target.value);
+      },
+      []
+    );
+
+    const addressIsValid = useMemo(() => {
+      // TODO: actually validate addresses
+      if (walletAddress.length < 10) {
+        return;
+      }
+      return walletAddress.length === 10;
+    }, [walletAddress]);
+
     return (
       <Modal {...modalProps}>
         {showManualAddressInput ? (
           <StyledContainer gap={15}>
             <RenderWalletListHeader
-              title="Enter a Base wallet address"
+              title={`Enter a ${chainName} wallet address`}
               onClickBackButton={() => setShowManualAddressInput(false)}
+              rightContent={() => (
+                <StyledChainLogoContainerRow align="center" justify="center">
+                  <img width="25px" height="25px" src={chainLogo} />
+                </StyledChainLogoContainerRow>
+              )}
             />
-            <StyledInput placeholder="0xABCDEFG..." />
-            <StyledBrandButton>Confirm</StyledBrandButton>
+            <StyledInputContainer>
+              <StyledInput
+                placeholder="0xABCDEFG..."
+                value={walletAddress}
+                onChange={handleChangeAddress}
+                validAddress={addressIsValid}
+              />
+              <StyledAddressValidatorDot validAddress={addressIsValid} />
+            </StyledInputContainer>
+            {addressIsValid === false && (
+              <SmallText color={COLORS.red} opacity={1} textAlign="center">
+                Please enter a valid wallet address for {chainName}
+              </SmallText>
+            )}
+            <StyledBrandButton
+              align="center"
+              justify="center"
+              disabled={!addressIsValid}
+            >
+              <Text
+                brandButtonText={addressIsValid === true}
+                opacity={addressIsValid ? 1 : 0.5}
+                fontSize={24}
+              >
+                Confirm
+              </Text>
+            </StyledBrandButton>
           </StyledContainer>
         ) : (
           <RenderWalletList
@@ -66,19 +115,67 @@ export const ManualAddressFlow = NiceModal.create(
 const StyledContainer = styled(Column)`
   position: relative;
   padding: 10px;
-  gap: 10px;
+  gap: 15px;
   width: 580px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.backgroundColor};
   overflow: hidden;
 `;
 
-const StyledInput = styled.input`
+const StyledInputContainer = styled.div`
+  position: relative;
+`;
+
+const StyledChainLogoContainerRow = styled(Row)`
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.secondary.background};
+`;
+
+const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
+  position: absolute;
+  height: 11px;
+  width: 11px;
+  border-radius: 50%;
+  background-color: ${({ theme }) =>
+    getHexColor(theme.textColor) + opacityToHex(70)};
+
+  ${({ validAddress }) =>
+    validAddress === true
+      ? `background-color: ${COLORS.green}`
+      : validAddress === false
+      ? `background-color: ${COLORS.red}`
+      : ''};
+
+  top: calc(50% - 11px / 2);
+  right: 20px;
+`;
+
+const StyledInput = styled.input<{ validAddress?: boolean }>`
   height: 60px;
+  width: 100%;
   box-sizing: border-box;
-  padding: 8px 20px 8px 15px;
+  outline: none;
+  padding: 8px 40px 8px 15px;
   border: 1px solid
     ${({ theme }) => getHexColor(theme.textColor ?? '') + opacityToHex(20)};
   background-color: ${({ theme }) => theme.secondary.background};
+  color: ${({ theme }) => theme.textColor};
   border-radius: 12px;
+
+  ${({ validAddress }) =>
+    validAddress === false &&
+    css`
+      border-color: ${COLORS.red};
+      background-color: ${COLORS.backgroundError};
+    `}
+`;
+
+export const StyledBrandButton = styled(Button)`
+  background-color: ${({ theme }) => theme.brandColor};
+  height: 60px;
+  border-radius: 12px;
+  ${({ disabled, theme }) =>
+    disabled && `background-color: ${theme.secondary.background}`};
 `;
