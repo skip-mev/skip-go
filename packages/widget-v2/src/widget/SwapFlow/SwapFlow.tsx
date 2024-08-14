@@ -1,7 +1,7 @@
 import { useTheme } from 'styled-components';
 import { AssetChainInput } from '../../components/AssetChainInput';
 import { GhostButton } from '../../components/Button';
-import { Column, Row } from '../../components/Layout';
+import { Column } from '../../components/Layout';
 import { MainButton } from '../../components/MainButton';
 import { SmallText } from '../../components/Typography';
 import { ICONS } from '../../icons';
@@ -15,6 +15,7 @@ import { sourceAtom, destinationAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
 import { TokenAndChainSelectorFlow } from '../TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';
 import { getChainsContainingAsset, skipAssets } from '../../state/skip';
+import { SwapFlowHeaderItems } from './SwapFlowHeaderItems';
 
 const sourceAssetBalance = 125;
 
@@ -109,18 +110,26 @@ export const SwapFlow = () => {
           opacity: drawerOpen ? 0.3 : 1,
         }}
       >
-        <Row justify="space-between">
-          <GhostButton gap={5} onClick={() => {}}>
-            <HistoryIcon color={theme.primary.text.normal} />
-            History
-          </GhostButton>
-          {!!sourceAssetBalance && (
-            <Row align="center" gap={10}>
+        <SwapFlowHeaderItems
+          leftButton={{
+            content: (
+              <>
+                <HistoryIcon color={theme.primary.text.normal} />
+                History
+              </>
+            ),
+            onClick: () => {},
+          }}
+          rightButton={{
+            content: 'Max',
+            onClick: () => {},
+          }}
+          rightContent={
+            !!sourceAssetBalance ? (
               <SmallText> Balance: {sourceAssetBalance} </SmallText>
-              <GhostButton onClick={() => {}}>Max</GhostButton>
-            </Row>
-          )}
-        </Row>
+            ) : undefined
+          }
+        />
         <Column align="center">
           <AssetChainInput
             selectedAssetDenom={sourceAsset?.denom}
@@ -158,7 +167,7 @@ export const SwapFlow = () => {
             })
           }
         >
-          <SwapFlowFlooterItems />
+          <SwapFlowFlooterItems showRouteInfo />
         </GhostButton>
       </Column>
       <div

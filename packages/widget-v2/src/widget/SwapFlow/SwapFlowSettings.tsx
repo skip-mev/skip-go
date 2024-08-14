@@ -84,7 +84,7 @@ export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
         </Column>
 
         <SettingText justify="space-between">
-          <SwapFlowFlooterItems />
+          <SwapFlowFlooterItems showRouteInfo />
         </SettingText>
       </StyledSwapFlowSettings>
     </Modal>

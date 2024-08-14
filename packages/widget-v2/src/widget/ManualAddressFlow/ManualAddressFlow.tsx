@@ -87,11 +87,7 @@ export const ManualAddressFlow = NiceModal.create(
               <StyledAddressValidatorDot validAddress={addressIsValid} />
             </StyledInputContainer>
             {addressIsValid === false && (
-              <SmallText
-                color={theme?.error?.text}
-                opacity={1}
-                textAlign="center"
-              >
+              <SmallText color={theme?.error?.text} textAlign="center">
                 Please enter a valid wallet address for {chainName}
               </SmallText>
             )}

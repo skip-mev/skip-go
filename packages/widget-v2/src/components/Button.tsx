@@ -19,7 +19,7 @@ export const GhostButton = styled(SmallText).attrs({
         background-color: ${secondary
           ? theme.secondary.background.normal
           : theme.primary.ghostButtonHover};
-        opacity: 1;
+        color: ${theme.primary.text.normal};
         cursor: pointer;
       `};
   }

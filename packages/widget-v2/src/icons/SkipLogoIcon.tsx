@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const SkipLogoIcon = ({ color = 'gray' }: IconProps) => (
+export const SkipLogoIcon = ({ color = 'currentColor' }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="50"

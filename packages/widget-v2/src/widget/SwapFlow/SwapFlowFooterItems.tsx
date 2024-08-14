@@ -4,29 +4,45 @@ import { GasIcon } from '../../icons/GasIcon';
 import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
 import { SpeedometerIcon } from '../../icons/SpeedometerIcon';
 import { formatUSD } from '../../utils/intl';
+import { useMemo } from 'react';
 
 const estimatedGas = '0.03';
 const estimatedTime = '1min';
 
-export const SwapFlowFlooterItems = () => {
+export type SwapFlowFooterItemsProps = {
+  rightContent?: React.ReactNode;
+  showRouteInfo?: boolean;
+};
+
+export const SwapFlowFlooterItems = ({
+  rightContent = null,
+  showRouteInfo,
+}: SwapFlowFooterItemsProps) => {
   const theme = useTheme();
-  return (
-    <>
-      <Row align="center" gap={5}>
-        Powered by <SkipLogoIcon color={theme.primary.text.normal} />
-      </Row>
-      {estimatedGas && estimatedTime && (
+
+  const renderRightContent = useMemo(() => {
+    if (showRouteInfo && estimatedGas && estimatedTime) {
+      return (
         <Row align="center" gap={8}>
           <Row gap={2} align="flex-end">
-            <GasIcon color={theme.primary.text.normal} />~
-            {formatUSD(estimatedGas)}
+            <GasIcon />~{formatUSD(estimatedGas)}
           </Row>
           <Row gap={2} align="flex-end">
-            <SpeedometerIcon color={theme.primary.text.normal} />
+            <SpeedometerIcon />
             {estimatedTime}
           </Row>
         </Row>
-      )}
+      );
+    }
+    return rightContent;
+  }, [showRouteInfo, rightContent, estimatedGas, estimatedTime, theme]);
+
+  return (
+    <>
+      <Row align="center" gap={5}>
+        Powered by <SkipLogoIcon />
+      </Row>
+      {renderRightContent}
     </>
   );
 };

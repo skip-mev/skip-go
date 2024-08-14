@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const HistoryIcon = ({ color = 'gray' }: IconProps) => (
+export const HistoryIcon = ({ color = 'currentColor' }: IconProps) => (
   <svg
     width="14"
     height="12"

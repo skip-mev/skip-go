@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const ChainIcon = ({ color = 'gray' }: IconProps) => (
+export const ChainIcon = ({ color = 'currentColor' }: IconProps) => (
   <svg
     width="13"
     height="13"

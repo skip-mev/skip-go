@@ -22,7 +22,7 @@ export default meta;
 
 export const ListExample: Story = {
   args: {
-    listItems: Array.from({ length: 10000 }) as number[],
+    listItems: Array.from({ length: 500 }) as number[],
     height: 500,
     itemHeight: 100,
     renderItem: (item, index) => (

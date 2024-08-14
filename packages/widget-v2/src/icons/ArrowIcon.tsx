@@ -6,7 +6,7 @@ type IconProps = {
 };
 
 export const ArrowIcon = ({
-  color = 'black',
+  color = 'currentColor',
   backgroundColor = 'transparent',
   direction = 'right',
   className,
