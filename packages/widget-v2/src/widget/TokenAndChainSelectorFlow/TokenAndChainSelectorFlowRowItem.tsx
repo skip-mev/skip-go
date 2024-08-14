@@ -7,7 +7,6 @@ import {
   SkeletonElement,
 } from '../../components/Skeleton';
 import { styled } from 'styled-components';
-import { getHexColor, opacityToHex } from '../../utils/colors';
 import { Chain } from '@chain-registry/types';
 
 export type RowItemType = {
