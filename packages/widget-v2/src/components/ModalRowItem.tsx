@@ -50,7 +50,7 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
     onClick &&
     css`
       &:hover {
-        background-color: ${theme.primary.background.hover};
+        background-color: ${theme.secondary.background.hover};
         cursor: pointer;
       }
     `};
