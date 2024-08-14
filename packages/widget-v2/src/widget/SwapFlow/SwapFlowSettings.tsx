@@ -47,7 +47,7 @@ export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
                     src="https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png"
                   />
                   {index !== route.length - 1 && (
-                    <RouteArrow color={modalProps.theme?.textColor} />
+                    <RouteArrow color={modalProps.theme?.primary.text.normal} />
                   )}
                 </>
               ))}
@@ -95,23 +95,23 @@ const StyledSwapFlowSettings = styled(Column)`
   width: 480px;
   padding: 20px;
   border-radius: 20px;
-  background-color: ${(props) => props.theme.backgroundColor};
+  background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
 const StyledSlippageOptionLabel = styled(SmallText)<{ selected?: boolean }>`
   border-radius: 7px;
   padding: 4px 7px;
   white-space: nowrap;
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.primary.text.normal};
   &:hover {
-    background-color: ${(props) => props.theme.secondary.background};
+    background-color: ${(props) => props.theme.secondary.background.normal};
     opacity: 1;
     cursor: pointer;
   }
   ${({ selected, theme }) =>
     selected &&
     css`
-      background-color: ${theme.secondary.background};
+      background-color: ${theme.secondary.background.normal};
       opacity: 1;
     `}
 `;

@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { MainButton } from '../components/MainButton';
+import { MainButton, MainButtonProps } from '../components/MainButton';
 import { ICONS } from '../icons';
-import { COLORS } from '../utils/colors';
+import { useTheme } from 'styled-components';
+import { defaultTheme, lightTheme, Theme } from '../widget/theme';
+import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 
+type Props = MainButtonProps & { theme: Theme };
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: 'Components/MainButton',
@@ -16,7 +18,19 @@ const meta = {
   tags: ['autodocs'],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-} satisfies Meta<typeof MainButton>;
+  args: {
+    theme: defaultTheme,
+  },
+  argTypes: {
+    theme: {
+      options: ['defaultTheme', 'lightTheme'],
+      mapping: {
+        defaultTheme: defaultTheme,
+        lightTheme: lightTheme,
+      },
+    },
+  },
+} satisfies Meta<Props>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -74,27 +88,36 @@ export const SwapInProgress: Story = {
 };
 
 export const SwapComplete: Story = {
+  render: (props) =>
+    renderLightAndDarkTheme(
+      <MainButton {...props} backgroundColor={useTheme().success.text} />
+    ),
   args: {
     label: 'Swap Complete',
-    backgroundColor: COLORS.green,
     icon: ICONS.checkmark,
     onClick: () => alert('should trigger'),
   },
 };
 
 export const ContinueTransaction: Story = {
+  render: (props) =>
+    renderLightAndDarkTheme(
+      <MainButton {...props} backgroundColor={useTheme().warning.text} />
+    ),
   args: {
     label: 'Continue Transaction',
-    backgroundColor: COLORS.orange,
     icon: ICONS.rightArrow,
     onClick: () => alert('should trigger'),
   },
 };
 
 export const GoBack: Story = {
+  render: (props) =>
+    renderLightAndDarkTheme(
+      <MainButton {...props} backgroundColor={useTheme().error.text} />
+    ),
   args: {
     label: 'Go Back',
-    backgroundColor: COLORS.red,
     leftIcon: ICONS.leftArrow,
     onClick: () => alert('should trigger'),
   },

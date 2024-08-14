@@ -1,17 +1,30 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
+import type { Meta } from '@storybook/react';
 import { ErrorState, ErrorStateProps } from '../components/ErrorState';
-import { COLORS } from '../utils/colors';
 import { ICONS } from '../icons';
 import { SmallText, SmallTextButton, Text } from '../components/Typography';
 import { ChainIcon } from '../icons/ChainIcon';
 import { Row } from '../components/Layout';
 import { XIcon } from '../icons/XIcon';
+import { defaultTheme, lightTheme, Theme } from '../widget/theme';
+import {
+  renderLightAndDarkTheme,
+  renderLightAndDarkThemeSeperateProps,
+} from './renderLightAndDarkTheme';
 
+type props = {
+  dark: ErrorStateProps;
+  light: ErrorStateProps;
+};
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: 'Components/ErrorState',
-  component: (props) => renderLightAndDarkTheme(<ErrorState {...props} />),
+  component: (props) =>
+    renderLightAndDarkThemeSeperateProps(
+      // @ts-ignore
+      <ErrorState />,
+      props.dark,
+      props.light
+    ),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: 'centered',
@@ -20,20 +33,19 @@ const meta = {
   tags: ['autodocs'],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-} satisfies Meta<ErrorStateProps>;
+} satisfies Meta<props>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 
-export const BadTrade: Story = {
-  args: {
+const badTradeProps = (theme: Theme) => {
+  return {
     icon: ICONS.triangleWarning,
     title: 'Warning: Bad trade (–65.15%)',
     description: (
       <>
-        <SmallText opacity="0.5" color={COLORS.red} textAlign="center">
+        <SmallText color={theme.error.text} textAlign="center">
           You will lose ~65% of your input value with this trade
           <br />
           Input: 1500 USDC ($1500)
@@ -42,24 +54,30 @@ export const BadTrade: Story = {
         </SmallText>
         <SmallTextButton
           onClick={() => alert('that was dumb')}
-          color={COLORS.gray}
+          color={theme.primary.text.lowContrast}
         >
           I know the risk, continue anyway
         </SmallTextButton>
       </>
     ),
-    backgroundColor: COLORS.backgroundError,
-    textColor: COLORS.red,
+    backgroundColor: theme.error.background,
+    textColor: theme.error.text,
+  };
+};
+export const BadTrade = {
+  args: {
+    dark: badTradeProps(defaultTheme),
+    light: badTradeProps(lightTheme),
   },
 };
 
-export const TransactionFailed: Story = {
-  args: {
+const transactionFailedProps = (theme: Theme) => {
+  return {
     icon: ICONS.triangleWarning,
     title: 'Transaction failed',
     description: (
       <>
-        <SmallText opacity="0.5" color={COLORS.red} textAlign="center">
+        <SmallText color={theme.error.text} textAlign="center">
           This transaction encountered a critical error. <br />
           Please contact our support team below.
         </SmallText>
@@ -67,35 +85,49 @@ export const TransactionFailed: Story = {
           as={SmallTextButton}
           gap={5}
           onClick={() => alert('xd')}
-          color={COLORS.gray}
+          color={theme.primary.text.lowContrast}
         >
           Transaction: <u>0x120A...Wfw8x0</u>
-          <ChainIcon color={COLORS.gray} />
+          <ChainIcon color={theme.primary.text.lowContrast} />
         </Row>
       </>
     ),
-    backgroundColor: COLORS.backgroundError,
-    textColor: COLORS.red,
+    backgroundColor: theme.error.background,
+    textColor: theme.error.text,
+  };
+};
+
+export const TransactionFailed = {
+  args: {
+    dark: transactionFailedProps(defaultTheme),
+    light: transactionFailedProps(lightTheme),
   },
 };
 
-export const CriticalError: Story = {
-  args: {
+const criticalErrorProps = (theme: Theme) => {
+  return {
     icon: ICONS.triangleWarning,
     title: 'Transaction failed',
     description: 'User rejected authentication request',
-    backgroundColor: COLORS.backgroundError,
-    textColor: COLORS.red,
+    backgroundColor: theme.error.background,
+    textColor: theme.error.text,
+  };
+};
+
+export const CriticalError = {
+  args: {
+    dark: criticalErrorProps(defaultTheme),
+    light: criticalErrorProps(lightTheme),
   },
 };
 
-export const Timeout: Story = {
-  args: {
+const timeoutProps = (theme: Theme) => {
+  return {
     icon: ICONS.warning,
     title: 'This transaction is taking longer than usual.',
     description: (
       <>
-        <SmallText opacity="0.5" color={COLORS.orange} textAlign="center">
+        <SmallText color={theme.warning.text} textAlign="center">
           Unstable network conditions mean this transaction may take up
           <br />
           to 48 hours to complete. Your funds are secure in the meantime.
@@ -107,30 +139,37 @@ export const Timeout: Story = {
           align="center"
           as={SmallTextButton}
           onClick={() => alert('xd')}
-          color={COLORS.gray}
+          color={theme.primary.text.lowContrast}
         >
-          <ChainIcon color={COLORS.gray} />
+          <ChainIcon color={theme.primary.text.lowContrast} />
           View on mintscan
         </Row>
       </>
     ),
-    backgroundColor: COLORS.backgroundWarning,
-    textColor: COLORS.orange,
+    backgroundColor: theme.warning.background,
+    textColor: theme.warning.text,
+  };
+};
+
+export const Timeout = {
+  args: {
+    dark: timeoutProps(defaultTheme),
+    light: timeoutProps(lightTheme),
   },
 };
 
-export const ActionRequired: Story = {
-  args: {
+const actionRequiredProps = (theme: Theme) => {
+  return {
     icon: ICONS.warning,
     title: 'Action Required',
     description: (
       <>
-        <SmallText opacity="0.5" color={COLORS.orange} textAlign="center">
+        <SmallText color={theme.warning.text} textAlign="center">
           This transaction reverted while trying to execute.
           <br />
           You can continue executing this transaction now.
         </SmallText>
-        <SmallText color={COLORS.gray} textAlign="center">
+        <SmallText color={theme.primary.text.lowContrast} textAlign="center">
           Current asset location: 1 ATOM on Osmosis (osmosis1209...18fa)
         </SmallText>
         <Row gap={25} justify="center">
@@ -139,9 +178,9 @@ export const ActionRequired: Story = {
             align="center"
             as={SmallTextButton}
             onClick={() => alert('view on mintscan')}
-            color={COLORS.gray}
+            color={theme.primary.text.lowContrast}
           >
-            <ChainIcon color={COLORS.gray} />
+            <ChainIcon color={theme.primary.text.lowContrast} />
             View on mintscan
           </Row>
           <Row
@@ -149,20 +188,29 @@ export const ActionRequired: Story = {
             align="center"
             as={SmallTextButton}
             onClick={() => alert("don't continue")}
-            color={COLORS.gray}
+            color={theme.primary.text.lowContrast}
           >
-            <XIcon color={COLORS.gray} />
+            <XIcon color={theme.primary.text.lowContrast} />
             Don't continue
           </Row>
         </Row>
       </>
     ),
-    backgroundColor: COLORS.backgroundWarning,
-    textColor: COLORS.orange,
+    backgroundColor: theme.warning.background,
+    textColor: theme.warning.text,
+  };
+};
+
+export const ActionRequired = {
+  args: {
+    dark: actionRequiredProps(defaultTheme),
+    light: actionRequiredProps(lightTheme),
   },
 };
 
-export const AdditionalSignature: Story = {
+export const AdditionalSignature = {
+  render: (props: ErrorStateProps) =>
+    renderLightAndDarkTheme(<ErrorState {...props} />),
   args: {
     title: (
       <Text>

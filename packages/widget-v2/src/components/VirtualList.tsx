@@ -36,7 +36,8 @@ export const VirtualList = <T extends unknown>({
           visibility: 'visible',
         },
         verticalScrollBarThumb: {
-          backgroundColor: getHexColor(theme.textColor) + opacityToHex(50),
+          backgroundColor:
+            getHexColor(theme.primary.text.normal) + opacityToHex(50),
         },
       }}
     >

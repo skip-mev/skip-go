@@ -9,7 +9,7 @@ export const SkeletonElement = styled.div<{
     css`
       width: ${width}px;
       height: ${height}px;
-      background-color: ${getHexColor(theme.textColor ?? '') +
+      background-color: ${getHexColor(theme.primary.text.normal ?? '') +
       opacityToHex(10)};
     `};
 `;

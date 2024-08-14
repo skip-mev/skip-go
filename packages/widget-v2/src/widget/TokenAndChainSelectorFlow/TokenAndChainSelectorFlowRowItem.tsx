@@ -7,7 +7,6 @@ import {
   SkeletonElement,
 } from '../../components/Skeleton';
 import { styled } from 'styled-components';
-import { getHexColor, opacityToHex } from '../../utils/colors';
 import { Chain } from '@chain-registry/types';
 
 export type RowItemType = {
@@ -82,10 +81,7 @@ export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) =>
-    `background-color: ${
-      getHexColor(theme.textColor ?? '') + opacityToHex(10)
-    }`};
+  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
 `;
 
 export const Skeleton = () => {

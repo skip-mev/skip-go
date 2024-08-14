@@ -1,7 +1,6 @@
 import { css, styled } from 'styled-components';
 import { FlexProps, flexProps } from './Layout';
 import { removeButtonStyles, SmallText } from './Typography';
-import { getHexColor, opacityToHex } from '../utils/colors';
 
 export type GhostButtonProps = {
   secondary?: boolean;
@@ -18,8 +17,8 @@ export const GhostButton = styled(SmallText).attrs({
       !disabled &&
       css`
         background-color: ${secondary
-          ? theme.secondary.background
-          : getHexColor(theme.backgroundColor) + opacityToHex(50)};
+          ? theme.secondary.background.normal
+          : theme.primary.ghostButtonHover};
         opacity: 1;
         cursor: pointer;
       `};
@@ -35,8 +34,19 @@ export const GhostButton = styled(SmallText).attrs({
 
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
-  &:hover {
-    cursor: pointer;
-  }
+
+  ${({ disabled }) =>
+    disabled
+      ? css`
+          &:hover {
+            cursor: not-allowed;
+          }
+        `
+      : css`
+          &:hover {
+            cursor: pointer;
+          }
+        `}
+
   ${flexProps};
 `;

@@ -1,58 +1,60 @@
 import type { Meta } from '@storybook/react';
 import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '../widget/Widget';
-import styled from 'styled-components';
-import { Column, Row } from '../components/Layout';
-import { lightTheme } from '../widget/theme';
+import { defaultTheme, lightTheme, Theme } from '../widget/theme';
+import NiceModal from '@ebay/nice-modal-react';
+import { styled } from 'styled-components';
+import { ReactElement } from 'react';
 
-const meta = {
-  title: 'Widget',
-  component: (props) => Widget(props),
-  parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
-  },
-} satisfies Meta<typeof SwapWidget>;
+type Props = SwapWidgetProps & { theme: Theme; button?: ReactElement };
 
-export default meta;
+export const Widget = (props: Props) => (
+  <SwapWidget {...props} key={props.theme.primary.background.normal} />
+);
 
-export const Widget = (props: SwapWidgetProps) => {
+export const Modal = (props: Props) => {
   return (
-    <StyledWrapper gap={10}>
-      <Row gap={10}>
-        <ShowSwapWidget
-          {...props}
-          button={<StyledDarkButton> dark mode </StyledDarkButton>}
-        />
-        <ShowSwapWidget
-          {...props}
-          theme={lightTheme}
-          button={<StyledWhiteButton> light mode</StyledWhiteButton>}
-        />
-      </Row>
-      <Row gap={10}>
-        <SwapWidget {...props} />
-        <SwapWidget {...props} theme={lightTheme} />
-      </Row>
-    </StyledWrapper>
+    <NiceModal.Provider>
+      <ShowSwapWidget {...props} key={props.theme.primary.background.normal} />
+    </NiceModal.Provider>
   );
 };
 
-const StyledWrapper = styled(Column)`
-  background-color: gray;
-  padding: 20px;
-`;
-
-const StyledDarkButton = styled.button`
+const StyledCustomButton = styled.button`
   border: none;
-  border-radius: 20px;
-  background-color: black;
+  border-radius: 12px;
+  padding: 20px;
   color: white;
-  &:hover {
-    pointer: cursor;
-  }
+  background-color: navy;
 `;
 
-const StyledWhiteButton = styled(StyledDarkButton)`
-  background-color: white;
-  color: black;
-`;
+const meta = {
+  title: 'Widget',
+  component: Widget,
+  args: {
+    theme: defaultTheme,
+    button: undefined,
+  },
+  argTypes: {
+    theme: {
+      options: ['defaultTheme', 'lightTheme'],
+      mapping: {
+        defaultTheme: defaultTheme,
+        lightTheme: lightTheme,
+      },
+    },
+    button: {
+      options: ['default', 'custom'],
+      mapping: {
+        default: undefined,
+        custom: (
+          <StyledCustomButton>
+            Custom button <br />
+            click to open swap widget
+          </StyledCustomButton>
+        ),
+      },
+    },
+  },
+} satisfies Meta<Props>;
+
+export default meta;

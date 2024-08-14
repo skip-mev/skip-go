@@ -54,13 +54,13 @@ export const AssetChainInput = ({
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
-              <Text>Select token</Text>
+              <Text mainButtonColor>Select token</Text>
             </StyledSelectTokenLabel>
           )}
 
           <ChevronIcon
-            color={theme.backgroundColor}
-            backgroundColor={theme.textColor}
+            color={theme.primary.background.normal}
+            backgroundColor={theme.primary.text.normal}
           />
         </Button>
       </Row>
@@ -74,7 +74,7 @@ export const AssetChainInput = ({
             gap={4}
           >
             <SmallText>on {selectedAsset?.chainName}</SmallText>
-            <CogIcon color={theme.textColor} />
+            <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (
           <Spacer />
@@ -87,7 +87,7 @@ export const AssetChainInput = ({
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 480px;
-  background-color: ${(props) => props.theme.backgroundColor};
+  background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
 const StyledInput = styled.input`
@@ -95,8 +95,8 @@ const StyledInput = styled.input`
   font-size: 38px;
   font-weight: 300;
   width: 100%;
-  color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.primary.text.normal};
+  background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
 export const StyledAssetLabel = styled(Row).attrs({
@@ -105,8 +105,8 @@ export const StyledAssetLabel = styled(Row).attrs({
   height: 40px;
   border-radius: 10px;
   white-space: nowrap;
-  color: ${(props) => props.theme.textColor};
-  background-color: ${(props) => props.theme.secondary.background};
+  color: ${(props) => props.theme.primary.text.normal};
+  background-color: ${(props) => props.theme.secondary.background.normal};
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`

@@ -12,6 +12,25 @@ const preview: Preview = {
       </div>
     ),
   ],
+  parameters: {
+    backgrounds: {
+      default: 'gray',
+      values: [
+        {
+          name: 'gray',
+          value: 'gray',
+        },
+        {
+          name: 'white',
+          value: 'white',
+        },
+        {
+          name: 'black',
+          value: 'black',
+        },
+      ],
+    },
+  },
 };
 
 export default preview;

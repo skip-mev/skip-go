@@ -19,8 +19,8 @@ export const ErrorState = ({
   icon = ICONS.none,
 }: ErrorStateProps) => {
   const theme = useTheme();
-  textColor ??= theme.textColor;
-  backgroundColor ??= theme.backgroundColor;
+  textColor ??= theme.primary.text.normal;
+  backgroundColor ??= theme.primary.background.normal;
 
   const Icon = iconMap[icon];
 
@@ -31,7 +31,7 @@ export const ErrorState = ({
       backgroundColor={backgroundColor}
       gap={16}
     >
-      <Icon backgroundColor={backgroundColor} color={textColor} />
+      <Icon backgroundColor={textColor} color={backgroundColor} />
       {typeof title === 'string' ? (
         <Text fontSize={20} color={textColor}>
           {title}
@@ -40,7 +40,7 @@ export const ErrorState = ({
         title
       )}
       {typeof description === 'string' ? (
-        <SmallText opacity="0.5" color={textColor} textAlign="center">
+        <SmallText color={textColor} textAlign="center">
           {description}
         </SmallText>
       ) : (

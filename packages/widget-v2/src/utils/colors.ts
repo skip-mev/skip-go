@@ -1,12 +1,3 @@
-export enum COLORS {
-  red = '#FF1616',
-  green = '#5FBF00',
-  orange = '#FF7A00',
-  backgroundError = '#430000',
-  backgroundWarning = '#411F00',
-  gray = '#FFFFFF80',
-}
-
 export const opacityToHex = (p: number) => {
   const percent = Math.max(0, Math.min(100, p)); // bound percent from 0 to 100
   const intValue = Math.round((percent / 100) * 255); // map percent to nearest integer (0 - 255)
@@ -21,4 +12,19 @@ export const getHexColor = (color: string) => {
     return context.fillStyle;
   }
   return color;
+};
+
+export const getBrandButtonTextColor = (color: string) => {
+  let r: number, g: number, b: number, hsp: number;
+
+  color = getHexColor(color);
+
+  r = parseInt(color.slice(1, 3), 16);
+  g = parseInt(color.slice(3, 5), 16);
+  b = parseInt(color.slice(5, 7), 16);
+
+  hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
+
+  const typeOfColor = hsp > 127.5 ? 'light' : 'dark';
+  return typeOfColor === 'light' ? 'black' : 'white';
 };

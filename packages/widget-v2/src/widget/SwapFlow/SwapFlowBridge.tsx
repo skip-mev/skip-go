@@ -6,8 +6,8 @@ export const SwapFlowBridge = () => {
   const theme = useTheme();
   return (
     <div style={{ position: 'relative' }}>
-      <BridgeIcon color={theme.backgroundColor} />
-      <StyledBridgeArrow color={theme.textColor} />
+      <BridgeIcon color={theme.primary.background.normal} />
+      <StyledBridgeArrow color={theme.primary.text.normal} />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Row } from './Layout';
 import { SmallText, Text } from './Typography';
 import { useTheme } from 'styled-components';
 import { ICONS, iconMap } from '../icons';
+import { getBrandButtonTextColor } from '../utils/colors';
 
 export type MainButtonProps = {
   label: string;
@@ -26,7 +27,11 @@ export const MainButton = ({
   onClick,
 }: MainButtonProps) => {
   const theme = useTheme();
-  backgroundColor ??= disabled ? theme.secondary.background : theme.brandColor;
+  backgroundColor ??= disabled
+    ? theme.secondary.background.normal
+    : theme.brandColor;
+
+  const textColor = getBrandButtonTextColor(backgroundColor);
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -35,7 +40,7 @@ export const MainButton = ({
     return (
       <LoadingButton
         label={label}
-        backgroundColor={theme.backgroundColor}
+        backgroundColor={theme.primary.background.normal}
         loadingTimeString={loadingTimeString}
       />
     );
@@ -52,14 +57,22 @@ export const MainButton = ({
     >
       {leftIcon ? (
         <Row align="center" gap={10}>
-          <LeftIcon backgroundColor={backgroundColor} color={theme.textColor} />
-          <Text fontSize={24}>{label}</Text>
+          <LeftIcon backgroundColor={textColor} color={backgroundColor} />
+          <Text
+            fontSize={24}
+            color={textColor}
+            mainButtonColor={backgroundColor}
+          >
+            {label}
+          </Text>
         </Row>
       ) : (
-        <Text fontSize={24}>{label}</Text>
+        <Text fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
+          {label}
+        </Text>
       )}
 
-      <Icon backgroundColor={backgroundColor} color={theme.textColor} />
+      <Icon backgroundColor={textColor} color={backgroundColor} />
     </StyledMainButton>
   );
 };
@@ -97,7 +110,8 @@ const StyledMainButton = styled(Row).attrs({
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${({ theme, backgroundColor }) =>
+    backgroundColor ?? theme.brandColor};
   height: 70px;
   width: 480px;
   border-radius: 25px;
@@ -111,7 +125,7 @@ const StyledMainButton = styled(Row).attrs({
     props.disabled &&
     `
       opacity: 0.5;
-      background-color: ${props.theme.secondary.background};
+      background-color: ${props.theme.secondary.background.normal};
       &:hover {
         cursor: not-allowed;
       }
@@ -119,7 +133,7 @@ const StyledMainButton = styled(Row).attrs({
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)`
-  background-color: ${(props) => props.theme.secondary.background};
+  background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
@@ -134,7 +148,7 @@ const StyledLoadingButton = styled(StyledMainButton)`
       transparent,
       transparent,
       transparent,
-      ${(props) => props.theme.textColor}
+      ${(props) => props.theme.primary.text.normal}
     );
     animation: rotate 4s linear infinite;
   }
@@ -149,7 +163,7 @@ const StyledLoadingButton = styled(StyledMainButton)`
 `;
 
 const StyledTimeRemaining = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background};
+  background-color: ${(props) => props.theme.secondary.background.normal};
   padding: 16px;
   border-radius: 10px;
 `;
@@ -159,5 +173,5 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   height: 66px;
   width: 476px;
   border-radius: 24px;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${({ theme }) => theme.primary.background.normal};
 `;
