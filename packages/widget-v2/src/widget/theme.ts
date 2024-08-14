@@ -7,7 +7,6 @@ export const defaultTheme = {
     background: {
       normal: '#000',
       transparent: '#000000' + opacityToHex(90),
-      hover: '#4A4A4A',
     },
     text: {
       normal: '#fff',
@@ -20,6 +19,7 @@ export const defaultTheme = {
     background: {
       normal: '#141414',
       transparent: '#252525' + opacityToHex(70),
+      hover: '#4A4A4A',
     },
   },
   success: {
@@ -41,7 +41,6 @@ export const lightTheme = {
     background: {
       normal: '#ffffff',
       transparent: '#ffffff' + opacityToHex(95),
-      hover: '#e0e0e0',
     },
     text: {
       normal: '#000000',
@@ -54,6 +53,7 @@ export const lightTheme = {
     background: {
       normal: '#f1f1f1',
       transparent: '#eeeeee' + opacityToHex(90),
+      hover: '#e0e0e0',
     },
   },
   success: {

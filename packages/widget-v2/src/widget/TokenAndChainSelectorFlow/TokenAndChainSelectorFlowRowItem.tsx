@@ -81,7 +81,7 @@ export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) => `background-color: ${theme.primary.background.hover};`};
+  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
 `;
 
 export const Skeleton = () => {
