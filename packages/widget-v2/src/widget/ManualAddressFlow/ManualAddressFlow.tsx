@@ -15,7 +15,7 @@ import { Button } from '../../components/Button';
 import { SmallText, Text } from '../../components/Typography';
 
 export type ManualAddressFlowProps = ModalProps & {
-  onSelect: (wallet: Wallet) => void;
+  onSelectWallet: (wallet: Wallet) => void;
   onSetManualWalletAddress: (address: string) => void;
   chainName?: string;
   chainLogo?: string;
@@ -23,8 +23,13 @@ export type ManualAddressFlowProps = ModalProps & {
 
 export const ManualAddressFlow = NiceModal.create(
   (modalProps: ManualAddressFlowProps) => {
-    const { onSelect, chainName, chainLogo, theme, onSetManualWalletAddress } =
-      modalProps;
+    const {
+      onSelectWallet,
+      chainName,
+      chainLogo,
+      theme,
+      onSetManualWalletAddress,
+    } = modalProps;
     const modal = useModal();
     const [showManualAddressInput, setShowManualAddressInput] = useState(false);
     const [manualWalletAddress, setManualWalletAddress] = useState('');
@@ -112,7 +117,7 @@ export const ManualAddressFlow = NiceModal.create(
           <RenderWalletList
             title="Destination wallet"
             walletList={walletList}
-            onSelect={onSelect}
+            onSelect={onSelectWallet}
             onClickBackButton={() => modal.remove()}
           />
         )}

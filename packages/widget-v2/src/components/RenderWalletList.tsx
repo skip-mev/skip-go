@@ -68,7 +68,13 @@ export const RenderWalletList = ({
       return (
         <ModalRowItem
           key={name}
-          onClick={() => onSelectOverride?.(wallet) ?? onSelect?.(wallet)}
+          onClick={() => {
+            if (onSelectOverride) {
+              onSelectOverride(wallet);
+            } else if (onSelect) {
+              onSelect(wallet);
+            }
+          }}
           style={{ marginTop: ITEM_GAP }}
           leftContent={
             <Row align="center" gap={10}>

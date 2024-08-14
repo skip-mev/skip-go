@@ -12,6 +12,9 @@ const meta = {
     layout: 'fullscreen',
   },
   args: {
+    onSelectWallet(wallet) {
+      alert(`selected wallet is ${wallet.name}`);
+    },
     onSetManualWalletAddress: (address: string) =>
       alert(`manual address is ${address}`),
     chainName: 'Base',
