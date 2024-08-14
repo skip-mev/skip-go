@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MainButton, MainButtonProps } from '../components/MainButton';
 import { ICONS } from '../icons';
-import { COLORS } from '../utils/colors';
-import { ThemeProvider, useTheme } from 'styled-components';
+import { useTheme } from 'styled-components';
 import { defaultTheme, lightTheme, Theme } from '../widget/theme';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 
@@ -101,18 +100,24 @@ export const SwapComplete: Story = {
 };
 
 export const ContinueTransaction: Story = {
+  render: (props) =>
+    renderLightAndDarkTheme(
+      <MainButton {...props} backgroundColor={useTheme().warning.text} />
+    ),
   args: {
     label: 'Continue Transaction',
-    backgroundColor: COLORS.orange,
     icon: ICONS.rightArrow,
     onClick: () => alert('should trigger'),
   },
 };
 
 export const GoBack: Story = {
+  render: (props) =>
+    renderLightAndDarkTheme(
+      <MainButton {...props} backgroundColor={useTheme().error.text} />
+    ),
   args: {
     label: 'Go Back',
-    backgroundColor: COLORS.red,
     leftIcon: ICONS.leftArrow,
     onClick: () => alert('should trigger'),
   },
