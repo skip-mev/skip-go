@@ -12,6 +12,8 @@ const meta = {
     layout: 'fullscreen',
   },
   args: {
+    onSetManualWalletAddress: (address: string) =>
+      alert(`manual address is ${address}`),
     chainName: 'Base',
     chainLogo:
       'https://raw.githubusercontent.com/base-org/brand-kit/5ce7f4e9ba1a1ceaa7beb22156679899fff7faaf/logo/in-product/Base_Network_Logo.svg',

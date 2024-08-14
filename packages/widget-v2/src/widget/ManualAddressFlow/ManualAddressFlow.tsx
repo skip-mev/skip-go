@@ -16,16 +16,18 @@ import { SmallText, Text } from '../../components/Typography';
 
 export type ManualAddressFlowProps = ModalProps & {
   onSelect: (wallet: Wallet) => void;
+  onSetManualWalletAddress: (address: string) => void;
   chainName?: string;
   chainLogo?: string;
 };
 
 export const ManualAddressFlow = NiceModal.create(
   (modalProps: ManualAddressFlowProps) => {
-    const { onSelect, chainName, chainLogo, theme } = modalProps;
+    const { onSelect, chainName, chainLogo, theme, onSetManualWalletAddress } =
+      modalProps;
     const modal = useModal();
     const [showManualAddressInput, setShowManualAddressInput] = useState(false);
-    const [walletAddress, setWalletAddress] = useState('');
+    const [manualWalletAddress, setManualWalletAddress] = useState('');
 
     const walletList: Wallet[] = [
       ...WALLET_LIST,
@@ -45,18 +47,18 @@ export const ManualAddressFlow = NiceModal.create(
 
     const handleChangeAddress = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        setWalletAddress(e.target.value);
+        setManualWalletAddress(e.target.value);
       },
       []
     );
 
     const addressIsValid = useMemo(() => {
-      // TODO: actually validate addresses
-      if (walletAddress.length < 10) {
+      // TODO: implement logic to actually validate addresses
+      if (manualWalletAddress.length < 10) {
         return;
       }
-      return walletAddress.length === 10;
-    }, [walletAddress]);
+      return manualWalletAddress.length === 10;
+    }, [manualWalletAddress]);
 
     return (
       <Modal {...modalProps}>
@@ -74,7 +76,7 @@ export const ManualAddressFlow = NiceModal.create(
             <StyledInputContainer>
               <StyledInput
                 placeholder="0xABCDEFG..."
-                value={walletAddress}
+                value={manualWalletAddress}
                 onChange={handleChangeAddress}
                 validAddress={addressIsValid}
               />
@@ -93,9 +95,12 @@ export const ManualAddressFlow = NiceModal.create(
               align="center"
               justify="center"
               disabled={!addressIsValid}
+              onClick={() => onSetManualWalletAddress(manualWalletAddress)}
             >
               <Text
-                mainButtonColor={addressIsValid === true}
+                mainButtonColor={
+                  addressIsValid === true ? theme?.brandColor : undefined
+                }
                 opacity={addressIsValid ? 1 : 0.5}
                 fontSize={24}
               >
