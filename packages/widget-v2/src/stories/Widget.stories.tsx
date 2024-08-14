@@ -1,15 +1,20 @@
 import type { Meta } from '@storybook/react';
 import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '../widget/Widget';
-import { defaultTheme, lightTheme } from '../widget/theme';
+import { defaultTheme, lightTheme, Theme } from '../widget/theme';
 import NiceModal from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
+import { ReactElement } from 'react';
 
-export const Widget = (props: SwapWidgetProps) => <SwapWidget {...props} />;
+type Props = SwapWidgetProps & { theme: Theme; button?: ReactElement };
 
-export const Modal = (props: typeof ShowSwapWidget) => {
+export const Widget = (props: Props) => (
+  <SwapWidget {...props} key={props.theme.primary.background.normal} />
+);
+
+export const Modal = (props: Props) => {
   return (
     <NiceModal.Provider>
-      <ShowSwapWidget {...props} />
+      <ShowSwapWidget {...props} key={props.theme.primary.background.normal} />
     </NiceModal.Provider>
   );
 };
@@ -50,6 +55,6 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof SwapWidget | typeof ShowSwapWidget>;
+} satisfies Meta<Props>;
 
 export default meta;
