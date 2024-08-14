@@ -54,7 +54,7 @@ export const AssetChainInput = ({
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
-              <Text brandButtonText>Select token</Text>
+              <Text mainButtonColor>Select token</Text>
             </StyledSelectTokenLabel>
           )}
 

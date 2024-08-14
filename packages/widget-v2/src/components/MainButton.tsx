@@ -31,7 +31,7 @@ export const MainButton = ({
     ? theme.secondary.background.normal
     : theme.brandColor;
 
-  const brandButton = backgroundColor === theme.brandColor;
+  const textColor = getBrandButtonTextColor(backgroundColor);
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -57,28 +57,22 @@ export const MainButton = ({
     >
       {leftIcon ? (
         <Row align="center" gap={10}>
-          <LeftIcon
-            backgroundColor={theme.primary.text.normal}
-            color={backgroundColor}
-          />
-          <Text fontSize={24} brandButtonText={brandButton}>
+          <LeftIcon backgroundColor={textColor} color={backgroundColor} />
+          <Text
+            fontSize={24}
+            color={textColor}
+            mainButtonColor={backgroundColor}
+          >
             {label}
           </Text>
         </Row>
       ) : (
-        <Text fontSize={24} brandButtonText={brandButton}>
+        <Text fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
           {label}
         </Text>
       )}
 
-      <Icon
-        backgroundColor={
-          brandButton
-            ? getBrandButtonTextColor(theme.brandColor)
-            : theme.primary.text.normal
-        }
-        color={backgroundColor}
-      />
+      <Icon backgroundColor={textColor} color={backgroundColor} />
     </StyledMainButton>
   );
 };

@@ -95,7 +95,7 @@ export const ManualAddressFlow = NiceModal.create(
               disabled={!addressIsValid}
             >
               <Text
-                brandButtonText={addressIsValid === true}
+                mainButtonColor={addressIsValid === true}
                 opacity={addressIsValid ? 1 : 0.5}
                 fontSize={24}
               >
