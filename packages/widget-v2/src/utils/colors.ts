@@ -1,12 +1,3 @@
-export enum COLORS {
-  red = '#FF1616',
-  green = '#5FBF00',
-  orange = '#FF7A00',
-  backgroundError = '#430000',
-  backgroundWarning = '#411F00',
-  gray = '#FFFFFF80',
-}
-
 export const opacityToHex = (p: number) => {
   const percent = Math.max(0, Math.min(100, p)); // bound percent from 0 to 100
   const intValue = Math.round((percent / 100) * 255); // map percent to nearest integer (0 - 255)

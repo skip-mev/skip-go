@@ -10,7 +10,6 @@ import {
   Wallet,
 } from '../../components/RenderWalletList';
 import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
-import { getHexColor, opacityToHex } from '../../utils/colors';
 import { Button } from '../../components/Button';
 import { SmallText, Text } from '../../components/Typography';
 
@@ -171,9 +170,7 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
   box-sizing: border-box;
   outline: none;
   padding: 8px 40px 8px 15px;
-  border: 1px solid
-    ${({ theme }) =>
-      getHexColor(theme.primary.text.normal ?? '') + opacityToHex(20)};
+  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
   background-color: ${({ theme }) => theme.secondary.background.normal};
   color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 12px;

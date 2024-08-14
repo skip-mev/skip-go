@@ -82,10 +82,7 @@ export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) =>
-    `background-color: ${
-      getHexColor(theme.primary.text.normal ?? '') + opacityToHex(10)
-    }`};
+  ${({ theme }) => `background-color: ${theme.primary.background.hover};`};
 `;
 
 export const Skeleton = () => {

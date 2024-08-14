@@ -1,7 +1,6 @@
 import { css, styled } from 'styled-components';
 import { Row } from './Layout';
 import { removeButtonStyles, Text } from './Typography';
-import { getHexColor, opacityToHex } from '../utils/colors';
 
 export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
