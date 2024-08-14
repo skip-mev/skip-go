@@ -112,16 +112,12 @@ export const SwapFlow = () => {
       >
         <SwapFlowHeaderItems
           leftButton={{
-            content: (
-              <>
-                <HistoryIcon color={theme.primary.text.normal} />
-                History
-              </>
-            ),
+            label: 'History',
+            icon: ICONS.history,
             onClick: () => {},
           }}
           rightButton={{
-            content: 'Max',
+            label: 'Max',
             onClick: () => {},
           }}
           rightContent={

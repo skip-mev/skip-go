@@ -5,6 +5,10 @@ import { SignatureIcon } from './SignatureIcon';
 import { SwapIcon } from './SwapIcon';
 import { WarningIcon } from './WarningIcon';
 import { TriangleWarningIcon } from './TriangleWarningIcon';
+import { PenIcon } from './PenIcon';
+import { HistoryIcon } from './HistoryIcon';
+import { ThinArrowIcon } from './ThinArrowIcon';
+import { HamburgerIcon } from './HamburgerIcon';
 
 export enum ICONS {
   none,
@@ -16,6 +20,10 @@ export enum ICONS {
   warning,
   triangleWarning,
   signature,
+  pen,
+  history,
+  thinArrow,
+  hamburger,
 }
 
 type IconMap = {
@@ -32,4 +40,8 @@ export const iconMap: IconMap = {
   [ICONS.warning]: WarningIcon,
   [ICONS.triangleWarning]: TriangleWarningIcon,
   [ICONS.signature]: SignatureIcon,
+  [ICONS.pen]: PenIcon,
+  [ICONS.history]: HistoryIcon,
+  [ICONS.thinArrow]: ThinArrowIcon,
+  [ICONS.hamburger]: HamburgerIcon,
 };

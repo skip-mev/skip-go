@@ -6,6 +6,10 @@ import { SmallText } from '../../components/Typography';
 import { SwapFlowHeaderItems } from '../SwapFlow/SwapFlowHeaderItems';
 import { useMemo, useState } from 'react';
 import { ICONS } from '../../icons';
+import { SwapExecutionFlowRow } from './SwapExecutionFlowRow';
+import { useAtom } from 'jotai';
+import { sourceAtom, destinationAtom, AssetAtom } from '../../state/swap';
+import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -18,6 +22,9 @@ export const SwapExecutionFlow = () => {
   const [swapExecutionState, setSwapExecutionState] = useState(
     SwapExecutionState.destinationAddressUnset
   );
+
+  const [sourceAsset] = useAtom(sourceAtom);
+  const [destinationAsset] = useAtom(destinationAtom);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -44,15 +51,29 @@ export const SwapExecutionFlow = () => {
     <StyledSwapExecutionFlowContainer gap={5}>
       <SwapFlowHeaderItems
         leftButton={{
-          content: 'Back',
+          label: 'Back',
+          icon: ICONS.thinArrow,
           onClick: () => {},
         }}
         rightButton={{
-          content: 'Details',
+          label: 'Details',
+          icon: ICONS.hamburger,
           onClick: () => {},
         }}
       />
-      <StyledSwapExecutionFlowRoute></StyledSwapExecutionFlowRoute>
+      <StyledSwapExecutionFlowRoute justify="space-between">
+        <SwapExecutionFlowRow
+          asset={sourceAsset as AssetAtom}
+          wallet={WALLET_LIST[0]}
+        />
+        <SwapExecutionFlowRow
+          asset={destinationAsset as AssetAtom}
+          wallet={WALLET_LIST[1]}
+          destination
+          icon={ICONS.pen}
+          onClickEditDestinationWallet={() => {}}
+        />
+      </StyledSwapExecutionFlowRoute>
       {renderMainButton}
       <SmallText>
         <SwapFlowFlooterItems />
@@ -64,6 +85,7 @@ export const SwapExecutionFlow = () => {
 const StyledSwapExecutionFlowContainer = styled(Column)``;
 
 const StyledSwapExecutionFlowRoute = styled(Column)`
+  padding: 35px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;

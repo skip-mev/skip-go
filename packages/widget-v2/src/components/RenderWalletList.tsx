@@ -17,6 +17,7 @@ export type RenderWalletListProps = {
 
 export type Wallet = {
   name: string;
+  address: string;
   imageUrl?: string;
   onSelect?: ((wallet: Wallet) => void) | (() => void);
   rightContent?: () => React.ReactNode;
