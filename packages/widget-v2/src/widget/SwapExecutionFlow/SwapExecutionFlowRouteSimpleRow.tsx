@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components';
 import { Button } from '../../components/Button';
 import { Column, Row } from '../../components/Layout';
 import { SmallText, Text } from '../../components/Typography';
-import { getChain } from '../../state/skip';
+import { getChain, skipAssets } from '../../state/skip';
 import { AssetAtom } from '../../state/swap';
 import {
   formatCryptoAmount,
@@ -15,9 +15,11 @@ import { iconMap, ICONS } from '../../icons';
 import React from 'react';
 import { withBoundProps } from '../../utils/misc';
 import { ChainTransaction } from '@skip-go/client';
+import { Operation } from './SwapExecutionFlowRouteDetailedRow';
+import { useAtom } from 'jotai';
 
-export type SwapExecutionFlowSimpleRouteRowProps = {
-  asset: AssetAtom;
+export type SwapExecutionFlowRouteSimpleRowProps = {
+  operation: Operation;
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction['explorerLink'];
@@ -25,16 +27,19 @@ export type SwapExecutionFlowSimpleRouteRowProps = {
   icon?: ICONS;
 };
 
-export const SwapExecutionFlowSimpleRouteRow = ({
-  asset,
+export const SwapExecutionFlowRouteSimpleRow = ({
+  operation,
   destination,
   onClickEditDestinationWallet,
   wallet,
   icon = ICONS.none,
-}: SwapExecutionFlowSimpleRouteRowProps) => {
+}: SwapExecutionFlowRouteSimpleRowProps) => {
   const theme = useTheme();
-  const usdValue = useUsdValue({ ...asset, value: asset.amount });
-  const chain = getChain(asset.chainID ?? '');
+  const [{ data: assets }] = useAtom(skipAssets);
+
+  const asset = assets?.find((asset) => asset.denom === operation.denomIn);
+  // const usdValue = useUsdValue({ ...asset, value: asset.amount });
+  const chain = getChain(operation?.fromChainID ?? '');
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);
 
   const ButtonOrFragment = onClickEditDestinationWallet
@@ -53,15 +58,15 @@ export const SwapExecutionFlowSimpleRouteRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {formatCryptoAmount(asset.amount ?? 0, asset.decimals)}{' '}
-          {asset.recommendedSymbol}
+          {getFormattedAssetAmount(operation.amountIn ?? 0, asset?.decimals)}{' '}
+          {asset?.recommendedSymbol}
         </Text>
         <SmallText>
-          {formatUSD(usdValue?.data ?? 0)}
+          {/* {formatUSD(usdValue?.data ?? 0)} */}
           {destination && ' after fees'}
         </SmallText>
         <Row align="center" gap={5}>
-          <SmallText normalTextColor>on {asset.chainName}</SmallText>
+          <SmallText normalTextColor>on {asset?.chainName}</SmallText>
           {wallet && (
             <>
               {wallet.imageUrl && (

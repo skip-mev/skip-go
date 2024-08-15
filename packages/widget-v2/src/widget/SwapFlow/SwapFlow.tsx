@@ -63,6 +63,8 @@ export const SwapFlow = () => {
           ...old,
           ...asset,
         }));
+
+        console.log(asset);
         tokenAndChainSelectorFlow.hide();
       },
       chainsContainingAsset: chainsContainingSourceAsset,

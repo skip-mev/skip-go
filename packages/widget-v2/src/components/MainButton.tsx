@@ -105,6 +105,36 @@ export const LoadingButton = ({
   </StyledLoadingButton>
 );
 
+export const SpinningBorderAnimation = ({
+  backgroundColor,
+  children,
+  width,
+  height,
+  borderSize = 3,
+}: {
+  backgroundColor: string;
+  children?: React.ReactNode;
+  width: number;
+  height: number;
+  borderSize: number;
+}) => (
+  <StyledLoadingContainer
+    align="center"
+    justify="center"
+    width={width}
+    height={height}
+    borderSize={borderSize}
+  >
+    <StyledLoadingOverlay
+      className="overlay"
+      justify="space-between"
+      backgroundColor={backgroundColor}
+    >
+      {children}
+    </StyledLoadingOverlay>
+  </StyledLoadingContainer>
+);
+
 const StyledMainButton = styled(Row).attrs({
   as: 'button',
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
@@ -130,6 +160,41 @@ const StyledMainButton = styled(Row).attrs({
         cursor: not-allowed;
       }
     `};
+`;
+
+const StyledLoadingContainer = styled(Row)<{
+  height: number;
+  width: number;
+  borderSize: number;
+}>`
+  position: relative;
+  overflow: hidden;
+  height: ${({ height, borderSize }) => height + borderSize * 2}px;
+  width: ${({ width, borderSize }) => width + borderSize * 2}px;
+  margin-left: -${({ borderSize }) => borderSize}px;
+  border-radius: 50%;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: ${({ height }) => `${height + 20}px;`}
+    width: ${({ width }) => `${width + 20}px;`}
+    background-image: conic-gradient(
+      transparent,
+      transparent,
+      transparent,
+      ${(props) => props.theme.success.text}
+    );
+    animation: rotate 4s linear infinite;
+  }
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)`
@@ -173,5 +238,11 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   height: 66px;
   width: 476px;
   border-radius: 24px;
+  background-color: ${({ theme }) => theme.primary.background.normal};
+`;
+
+const StyledLoadingOverlay = styled(Row)<{ backgroundColor?: string }>`
+  position: absolute;
+  border-radius: 50%;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

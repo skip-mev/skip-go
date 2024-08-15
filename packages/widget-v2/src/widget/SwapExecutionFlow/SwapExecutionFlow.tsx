@@ -10,6 +10,11 @@ import { ManualAddressFlow } from '../ManualAddressFlow/ManualAddressFlow';
 import { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
 import { destinationAssetAtom, destinationWalletAtom } from '../../state/swap';
+import { SwapExecutionFlowRouteSimple } from './SwapExecutionFlowRouteSimple';
+import { SwapExecutionFlowRouteDetailed } from './SwapExecutionFlowRouteDetailed';
+
+import { withBoundProps } from '../../utils/misc';
+import { Operation } from './SwapExecutionFlowRouteDetailedRow';
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -18,7 +23,11 @@ enum SwapExecutionState {
   confirmed,
 }
 
-export const SwapExecutionFlow = () => {
+export type SwapExecutionFlowProps = {
+  operations: Operation[];
+};
+
+export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
   const theme = useTheme();
 
   const [swapExecutionState, setSwapExecutionState] = useState(
@@ -56,6 +65,16 @@ export const SwapExecutionFlow = () => {
     }
   }, [swapExecutionState]);
 
+  const SwapExecutionFlowRoute = simpleRoute
+    ? withBoundProps(SwapExecutionFlowRouteSimple, {
+        onClickEditDestinationWallet: () => {
+          modal.show({
+            theme,
+          });
+        },
+      })
+    : SwapExecutionFlowRouteDetailed;
+
   return (
     <Column gap={5}>
       <SwapFlowHeader
@@ -70,7 +89,7 @@ export const SwapExecutionFlow = () => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      <SwapExecutionFlowRoute simple={simpleRoute} />
+      <SwapExecutionFlowRoute operations={operations} />
       {renderMainButton}
       <SwapFlowFooter />
     </Column>

@@ -27,7 +27,7 @@
       "tokenContract": ""
     },
     "isTestnet": false,
-    "bridgeId": "AXELAR",
+    "bridgeID": "AXELAR",
     "smartRelay": false,
     "txIndex": 0,
     "amountIn": "4775458",
