@@ -16,17 +16,21 @@ export function useTotalWallets() {
 type Props = ComponentProps<'div'> & {
   chainType: string;
   walletName: string;
+  walletChainType: 'evm' | 'cosmos' | 'svm';
 };
 
 export const WalletListItem = ({
   children,
   chainType,
   walletName,
+  walletChainType,
   ...props
 }: Props) => {
   const Component = useMemo(() => {
     if (walletName === 'prax') return PenumbraWalletListItem;
-    return chainType === 'cosmos' ? CosmosWalletListItem : EvmWalletListItem;
+    return walletChainType === 'cosmos'
+      ? CosmosWalletListItem
+      : EvmWalletListItem;
   }, [chainType]);
   return (
     <Component walletName={walletName} {...props}>

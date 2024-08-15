@@ -11,10 +11,14 @@ import { createPenumbraClient } from '@penumbra-zone/client';
 import { ViewService } from '@penumbra-zone/protobuf';
 import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
 import { bech32CompatAddress } from '@penumbra-zone/bech32m/penumbracompat1';
+import { createPublicClient, http } from 'viem';
+import { sei } from 'viem/chains';
+import { seiPrecompileAddrABI } from '../constants/abis';
 
 export interface MinimalWallet {
   walletName: string;
   walletPrettyName: string;
+  walletChainType: 'evm' | 'cosmos' | 'svm';
   walletInfo: {
     logo?: string | { major: string; minor: string };
   };
@@ -75,6 +79,7 @@ export const useMakeWallets = () => {
         const praxWallet: MinimalWallet = {
           walletName: 'prax',
           walletPrettyName: 'Prax Wallet',
+          walletChainType: 'cosmos',
           walletInfo: {
             logo: 'https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg',
           },
@@ -122,6 +127,7 @@ export const useMakeWallets = () => {
       wallets = walletRepo.wallets.map((wallet) => ({
         walletName: wallet.walletName,
         walletPrettyName: wallet.walletPrettyName,
+        walletChainType: 'cosmos',
         walletInfo: {
           logo: wallet.walletInfo.logo,
         },
@@ -192,7 +198,10 @@ export const useMakeWallets = () => {
       }));
     }
 
-    if (chainType === 'evm') {
+    if (
+      chainType === 'evm' ||
+      (chainType === 'cosmos' && chainID === 'pacific-1')
+    ) {
       for (const connector of connectors) {
         if (
           wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
@@ -201,9 +210,29 @@ export const useMakeWallets = () => {
           continue;
         }
 
-        const minimalWallet: MinimalWallet = {
+        const evmGetAddress: MinimalWallet['getAddress'] = async ({
+          signRequired,
+          context,
+        }) => {
+          if (connector.id === currentConnector?.id) {
+            if (isEvmConnected && evmAddress) {
+              if (signRequired) {
+                trackWallet.track('evm', connector.id, chainType);
+              }
+              return evmAddress;
+            }
+          } else {
+            await connectAsync({ connector, chainId: Number(chainID) });
+            trackWallet.track('evm', connector.id, chainType);
+
+            return evmAddress;
+          }
+        };
+
+        let minimalWallet: MinimalWallet = {
           walletName: connector.id,
           walletPrettyName: connector.name,
+          walletChainType: 'evm',
           walletInfo: {
             logo: connector.icon,
           },
@@ -224,29 +253,13 @@ export const useMakeWallets = () => {
           },
           getAddress: async ({ signRequired, context }) => {
             try {
-              if (connector.id === currentConnector?.id) {
-                if (isEvmConnected && evmAddress) {
-                  if (signRequired) {
-                    trackWallet.track('evm', connector.id, chainType);
-                  }
-                  if (context && evmAddress) {
-                    toast.success(
-                      `Successfully retrieved ${context} address from ${connector.name}`
-                    );
-                  }
-                  return evmAddress;
-                }
-              } else {
-                await connectAsync({ connector, chainId: Number(chainID) });
-                trackWallet.track('evm', connector.id, chainType);
-
-                if (context) {
-                  toast.success(
-                    `Successfully retrieved ${context} address from ${connector.name}`
-                  );
-                }
-                return evmAddress;
+              const address = await evmGetAddress({ signRequired, context });
+              if (address && context) {
+                toast.success(
+                  `Successfully retrieved ${context} address from ${connector.name}`
+                );
               }
+              return address;
             } catch (error) {
               console.error(error);
               toast.error(
@@ -264,6 +277,50 @@ export const useMakeWallets = () => {
           isWalletConnected: connector.id === currentConnector?.id,
         };
 
+        if (chainType === 'cosmos' && chainID === 'pacific-1') {
+          minimalWallet.getAddress = async ({ signRequired, context }) => {
+            const address = await evmGetAddress({ signRequired, context });
+            if (!address) {
+              toast.error(
+                <p>
+                  <strong>Failed to get address!</strong>
+                </p>
+              );
+            }
+            const publicClient = createPublicClient({
+              chain: sei,
+              transport: http(),
+            });
+            try {
+              const seiAddress = await publicClient.readContract({
+                args: [address as `0x${string}`],
+                address: '0x0000000000000000000000000000000000001004',
+                abi: seiPrecompileAddrABI,
+                functionName: 'getSeiAddr',
+              });
+              toast.success(
+                `Successfully retrieved ${context} address from ${connector.name}`
+              );
+              return seiAddress;
+            } catch (error) {
+              console.error(error);
+              toast.error(
+                <p>
+                  Your EVM address (0x) has not associated on chain yet. Please
+                  visit{' '}
+                  <a
+                    target="_blank"
+                    className="underline"
+                    href="https://app.sei.io/"
+                  >
+                    https://app.sei.io/
+                  </a>{' '}
+                  to associate your SEI address.
+                </p>
+              );
+            }
+          };
+        }
         wallets.push(minimalWallet);
       }
     }
@@ -273,6 +330,7 @@ export const useMakeWallets = () => {
         const minimalWallet: MinimalWallet = {
           walletName: wallet.adapter.name,
           walletPrettyName: wallet.adapter.name,
+          walletChainType: 'svm',
           walletInfo: {
             logo: wallet.adapter.icon,
           },

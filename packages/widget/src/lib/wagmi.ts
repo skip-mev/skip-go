@@ -22,6 +22,7 @@ import {
   optimismSepolia,
   polygon,
   polygonMumbai,
+  sei,
   sepolia,
 } from 'wagmi/chains';
 
@@ -54,6 +55,7 @@ export const config: Config = createConfig({
     blastSepolia,
     forma,
     formaTestnet,
+    sei,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -80,6 +82,7 @@ export const config: Config = createConfig({
     [blastSepolia.id]: http(),
     [forma.id]: http(),
     [formaTestnet.id]: http(),
+    [sei.id]: http(),
   },
   ssr: true,
 });
