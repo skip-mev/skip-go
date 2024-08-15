@@ -3,11 +3,12 @@ import { Column, Row } from '../../components/Layout';
 import {
   Operation,
   SwapExecutionFlowRouteDetailedRow,
+  txState,
 } from './SwapExecutionFlowRouteDetailedRow';
 import { SwapExecutionBridgeIcon } from '../../icons/SwapExecutionBridgeIcon';
 import { SwapExecutionSendIcon } from '../../icons/SwapExecutionSendIcon';
 import { SwapExecutionSwapIcon } from '../../icons/SwapExecutionSwapIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SmallText } from '../../components/Typography';
 
 export type SwapExecutionFlowRouteDetailedProps = {
@@ -19,9 +20,9 @@ type operationTypeToIcon = {
 };
 
 const operationTypeToIcon: operationTypeToIcon = {
-  axelarTransfer: <SwapExecutionBridgeIcon />,
-  swap: <SwapExecutionSwapIcon />,
-  transfer: <SwapExecutionSendIcon />,
+  axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
+  swap: <SwapExecutionSwapIcon width={34} />,
+  transfer: <SwapExecutionSendIcon width={34} />,
 };
 
 const operationTypeToSimpleOperationType = {
@@ -58,6 +59,35 @@ export const SwapExecutionFlowRouteDetailed = ({
     }));
   };
 
+  const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
+    0: 'broadcasted',
+  });
+
+  useEffect(() => {
+    // for testing/demo
+    setTimeout(() => {
+      setTxStateMap({
+        0: 'confirmed',
+        1: 'broadcasted',
+      });
+    }, 5000);
+    setTimeout(() => {
+      setTxStateMap({
+        0: 'confirmed',
+        1: 'confirmed',
+        2: 'broadcasted',
+      });
+    }, 5000);
+
+    setTimeout(() => {
+      setTxStateMap({
+        0: 'confirmed',
+        1: 'confirmed',
+        2: 'confirmed',
+      });
+    }, 5000);
+  }, []);
+
   return (
     <StyledSwapExecutionFlowRoute justify="space-between">
       {operations.map((operation, index) => {
@@ -89,6 +119,7 @@ export const SwapExecutionFlowRouteDetailed = ({
           <>
             <SwapExecutionFlowRouteDetailedRow
               {...asset}
+              txState={txStateMap[index]}
               key={`row-${asset?.denom}-${index}`}
             />
             {operation !== operations[operations.length - 1] && (

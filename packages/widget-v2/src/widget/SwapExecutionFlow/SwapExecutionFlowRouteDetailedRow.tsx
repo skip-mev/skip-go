@@ -5,6 +5,8 @@ import { getChain, skipAssets } from '../../state/skip';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { styled } from 'styled-components';
 import { SpinningBorderAnimation } from '../../components/MainButton';
+import { withBoundProps } from '../../utils/misc';
+import React from 'react';
 
 type OperationType =
   | 'swap'
@@ -34,7 +36,7 @@ export type Operation = {
   }[];
 };
 
-type txState = 'pending' | 'confirmed' | 'failed';
+export type txState = 'pending' | 'broadcasted' | 'confirmed' | 'failed';
 
 export type SwapExecutionFlowRouteDetailedRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];
@@ -56,16 +58,26 @@ export const SwapExecutionFlowRouteDetailedRow = ({
 
   const chain = getChain(chainID ?? '');
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);
+
+  const ChainImageContainer =
+    txState === 'broadcasted'
+      ? withBoundProps(SpinningBorderAnimation, {
+          height: 30,
+          width: 30,
+          backgroundColor: 'green',
+        })
+      : React.Fragment;
   return (
     <Row gap={15} align="center" {...props}>
       {chainImage && (
-        <SpinningBorderAnimation height={30} width={30} backgroundColor="green">
+        <ChainImageContainer>
           <StyledChainImage
             height={30}
             width={30}
             src={chainImage.svg ?? chainImage.png}
+            state={txState}
           />
-        </SpinningBorderAnimation>
+        </ChainImageContainer>
       )}
 
       <Row gap={5}>
@@ -81,7 +93,7 @@ export const SwapExecutionFlowRouteDetailedRow = ({
 
 const StyledChainImage = styled.img<{ state?: txState }>`
   ${({ theme, state }) =>
-    state === 'confirmed' && `border: 2px solid ${theme.success.text}`}
+    state === 'confirmed' && `border: 2px solid ${theme.success.text};`}
   border-radius: 50%;
-  box-sizing: border-box;
+  box-sizing: content-box;
 `;

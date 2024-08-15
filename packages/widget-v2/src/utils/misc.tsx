@@ -3,7 +3,7 @@ export const withBoundProps = <T extends React.ComponentType<any>>(
   WrappedComponent: T,
   boundProps: Partial<React.ComponentProps<T>>
 ) => {
-  return (props: React.ComponentProps<T>) => {
+  return (props: Partial<React.ComponentProps<T>>) => {
     const combinedProps = {
       ...boundProps,
       ...props,

@@ -110,13 +110,13 @@ export const SpinningBorderAnimation = ({
   children,
   width,
   height,
-  borderSize = 3,
+  borderSize = 2,
 }: {
   backgroundColor: string;
   children?: React.ReactNode;
   width: number;
   height: number;
-  borderSize: number;
+  borderSize?: number;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -171,7 +171,6 @@ const StyledLoadingContainer = styled(Row)<{
   overflow: hidden;
   height: ${({ height, borderSize }) => height + borderSize * 2}px;
   width: ${({ width, borderSize }) => width + borderSize * 2}px;
-  margin-left: -${({ borderSize }) => borderSize}px;
   border-radius: 50%;
 
   &:before {
