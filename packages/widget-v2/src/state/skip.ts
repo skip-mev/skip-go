@@ -55,7 +55,7 @@ export const skipAssets = atomWithQuery((get) => {
           includeCW20Assets: true,
           includeSvmAssets: true,
         })
-        .then(flattenData) as ClientAsset[];
+        .then(flattenData);
     },
   };
 });

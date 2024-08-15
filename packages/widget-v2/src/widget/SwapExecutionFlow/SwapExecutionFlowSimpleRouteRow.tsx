@@ -4,7 +4,10 @@ import { Column, Row } from '../../components/Layout';
 import { SmallText, Text } from '../../components/Typography';
 import { getChain } from '../../state/skip';
 import { AssetAtom } from '../../state/swap';
-import { getFormattedAssetAmount } from '../../utils/crypto';
+import {
+  formatCryptoAmount,
+  getFormattedAssetAmount,
+} from '../../utils/crypto';
 import { formatUSD } from '../../utils/intl';
 import { useUsdValue } from '../../utils/useUsdValue';
 import { Wallet } from '../../components/RenderWalletList';
@@ -28,7 +31,6 @@ export const SwapExecutionFlowSimpleRouteRow = ({
   onClickEditDestinationWallet,
   wallet,
   icon = ICONS.none,
-  transaction,
 }: SwapExecutionFlowSimpleRouteRowProps) => {
   const theme = useTheme();
   const usdValue = useUsdValue({ ...asset, value: asset.amount });
@@ -51,7 +53,7 @@ export const SwapExecutionFlowSimpleRouteRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {getFormattedAssetAmount(asset.amount ?? 0, asset.decimals)}{' '}
+          {formatCryptoAmount(asset.amount ?? 0, asset.decimals)}{' '}
           {asset.recommendedSymbol}
         </Text>
         <SmallText>

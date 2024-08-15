@@ -1,0 +1,93 @@
+[
+  {
+    "type": "axelarTransfer",
+    "fromChain": "Ethereum",
+    "fromChainID": "1",
+    "toChain": "osmosis",
+    "toChainID": "osmosis-1",
+    "asset": "uusdc",
+    "shouldUnwrap": false,
+    "denomIn": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    "denomOut": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+    "feeAmount": "88014880109141",
+    "usdFeeAmount": "0.23",
+    "feeAsset": {
+      "denom": "ethereum-native",
+      "chainID": "1",
+      "originDenom": "",
+      "originChainID": "",
+      "trace": "",
+      "isCw20": false,
+      "isEvm": true,
+      "isSvm": false,
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "logoUri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/_non-cosmos/ethereum/images/eth-blue.svg",
+      "decimals": 18,
+      "tokenContract": ""
+    },
+    "isTestnet": false,
+    "bridgeId": "AXELAR",
+    "smartRelay": false,
+    "txIndex": 0,
+    "amountIn": "4775458",
+    "amountOut": "4775458"
+  },
+  {
+    "type": "swap",
+    "swapOut": {
+      "swapVenue": {
+        "name": "osmosis-poolmanager",
+        "chainID": "osmosis-1",
+        "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png"
+      },
+      "swapOperations": [
+        {
+          "pool": "1212",
+          "denomIn": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+          "denomOut": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "pool": "1282",
+          "denomIn": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "denomOut": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+        }
+      ],
+      "swapAmountOut": "1000000",
+      "priceImpactPercent": "0.1518"
+    },
+    "estimatedAffiliateFee": "0ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+    "fromChainID": "osmosis-1",
+    "chainID": "osmosis-1",
+    "denomIn": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+    "denomOut": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+    "swapVenues": [
+      {
+        "name": "osmosis-poolmanager",
+        "chainID": "osmosis-1",
+        "logoUri": "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png"
+      }
+    ],
+    "txIndex": 0,
+    "amountIn": "4775458",
+    "amountOut": "1000000"
+  },
+  {
+    "type": "transfer",
+    "port": "transfer",
+    "channel": "channel-0",
+    "fromChainID": "osmosis-1",
+    "toChainID": "cosmoshub-4",
+    "pfmEnabled": true,
+    "supportsMemo": true,
+    "denomIn": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+    "denomOut": "uatom",
+    "bridgeId": "IBC",
+    "smartRelay": false,
+    "chainID": "osmosis-1",
+    "destDenom": "uatom",
+    "txIndex": 0,
+    "amountIn": "1000000",
+    "amountOut": "1000000"
+  }
+]
