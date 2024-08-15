@@ -3,7 +3,7 @@ import { Modal, ModalProps } from '../../components/Modal';
 import { Column, Row } from '../../components/Layout';
 import NiceModal from '@ebay/nice-modal-react';
 import { SmallText } from '../../components/Typography';
-import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
+import { SwapFlowFlooterItems } from './SwapFlowFooter';
 import { RouteArrow } from '../../icons/RouteArrow';
 
 const SLIPPAGE_OPTIONS = [
@@ -47,7 +47,9 @@ export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
                     src="https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png"
                   />
                   {index !== route.length - 1 && (
-                    <RouteArrow color={modalProps.theme?.primary.text.normal} />
+                    <RouteArrow
+                      color={modalProps.theme?.primary?.text.normal}
+                    />
                   )}
                 </>
               ))}
@@ -118,7 +120,7 @@ const StyledSlippageOptionLabel = styled(SmallText)<{ selected?: boolean }>`
 
 const SettingText = styled(Row).attrs({
   as: SmallText,
-  opacity: '1',
+  normalTextColor: true,
 })`
   letter-spacing: 0.26px;
 `;

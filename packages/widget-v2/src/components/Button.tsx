@@ -23,11 +23,7 @@ export const GhostButton = styled(SmallText).attrs({
         cursor: pointer;
       `};
   }
-  ${({ onClick }) =>
-    onClick &&
-    css`
-      padding: 9px 16px;
-    `}
+  padding: 9px 16px;
   border-radius: 90px;
   ${flexProps};
 `;

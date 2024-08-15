@@ -22,7 +22,7 @@ export const WALLET_LIST: Wallet[] = [
     name: 'MetaMask',
     imageUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/512px-MetaMask_Fox.svg.png',
-    address: '0x30f5d...D0B95',
+    address: '0x30f5d...D0BFF',
   },
 ];
 

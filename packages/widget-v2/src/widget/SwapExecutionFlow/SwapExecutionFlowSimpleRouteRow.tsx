@@ -2,7 +2,6 @@ import { useTheme } from 'styled-components';
 import { Button } from '../../components/Button';
 import { Column, Row } from '../../components/Layout';
 import { SmallText, Text } from '../../components/Typography';
-import { PenIcon } from '../../icons/PenIcon';
 import { getChain } from '../../state/skip';
 import { AssetAtom } from '../../state/swap';
 import { getFormattedAssetAmount } from '../../utils/crypto';
@@ -11,29 +10,37 @@ import { useUsdValue } from '../../utils/useUsdValue';
 import { Wallet } from '../../components/RenderWalletList';
 import { iconMap, ICONS } from '../../icons';
 import React from 'react';
+import { withBoundProps } from '../../utils/misc';
+import { ChainTransaction } from '@skip-go/client';
 
-export type SwapExecutionFlowRowProps = {
+export type SwapExecutionFlowSimpleRouteRowProps = {
   asset: AssetAtom;
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
+  explorerLink?: ChainTransaction['explorerLink'];
   wallet?: Wallet;
   icon?: ICONS;
 };
 
-export const SwapExecutionFlowRow = ({
+export const SwapExecutionFlowSimpleRouteRow = ({
   asset,
   destination,
   onClickEditDestinationWallet,
   wallet,
   icon = ICONS.none,
-}: SwapExecutionFlowRowProps) => {
+  transaction,
+}: SwapExecutionFlowSimpleRouteRowProps) => {
   const theme = useTheme();
   const usdValue = useUsdValue({ ...asset, value: asset.amount });
   const chain = getChain(asset.chainID ?? '');
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);
 
   const ButtonOrFragment = onClickEditDestinationWallet
-    ? Button
+    ? withBoundProps(Button, {
+        onClick: onClickEditDestinationWallet,
+        align: 'center',
+        gap: 5,
+      })
     : React.Fragment;
   const Icon = iconMap[icon];
 
@@ -55,12 +62,10 @@ export const SwapExecutionFlowRow = ({
           <SmallText normalTextColor>on {asset.chainName}</SmallText>
           {wallet && (
             <>
-              <img height={10} width={10} src={wallet.imageUrl} />
-              <ButtonOrFragment
-                onClick={onClickEditDestinationWallet}
-                align="center"
-                gap={5}
-              >
+              {wallet.imageUrl && (
+                <img height={10} width={10} src={wallet.imageUrl} />
+              )}
+              <ButtonOrFragment>
                 <SmallText>{wallet.address}</SmallText>
                 <Icon
                   width={10}

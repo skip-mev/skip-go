@@ -9,6 +9,7 @@ import { PenIcon } from './PenIcon';
 import { HistoryIcon } from './HistoryIcon';
 import { ThinArrowIcon } from './ThinArrowIcon';
 import { HamburgerIcon } from './HamburgerIcon';
+import { HorizontalLineIcon } from './HorizontalLineIcon';
 
 export enum ICONS {
   none,
@@ -24,6 +25,7 @@ export enum ICONS {
   history,
   thinArrow,
   hamburger,
+  horizontalLine,
 }
 
 type IconMap = {
@@ -44,4 +46,5 @@ export const iconMap: IconMap = {
   [ICONS.history]: HistoryIcon,
   [ICONS.thinArrow]: ThinArrowIcon,
   [ICONS.hamburger]: HamburgerIcon,
+  [ICONS.horizontalLine]: HorizontalLineIcon,
 };

@@ -114,7 +114,7 @@ export const RenderWalletList = ({
         height={height}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
-        itemKey={(item) => hashObject(item)}
+        itemKey={(item) => item.address}
       />
     </StyledContainer>
   );

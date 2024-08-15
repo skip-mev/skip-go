@@ -8,17 +8,17 @@ export type SwapFlowHeaderItemButton = {
   onClick?: () => void;
 };
 
-type SwapFlowHeaderItemsProps = {
+type SwapFlowHeaderProps = {
   leftButton?: SwapFlowHeaderItemButton;
   rightButton?: SwapFlowHeaderItemButton;
   rightContent?: React.ReactNode;
 };
 
-export const SwapFlowHeaderItems = ({
+export const SwapFlowHeader = ({
   leftButton,
   rightButton,
   rightContent,
-}: SwapFlowHeaderItemsProps) => {
+}: SwapFlowHeaderProps) => {
   const LeftIcon = iconMap[leftButton?.icon || ICONS.none];
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
   return (

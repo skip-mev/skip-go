@@ -5,6 +5,7 @@ import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
 import { SpeedometerIcon } from '../../icons/SpeedometerIcon';
 import { formatUSD } from '../../utils/intl';
 import { useMemo } from 'react';
+import { GhostButton } from '../../components/Button';
 
 const estimatedGas = '0.03';
 const estimatedTime = '1min';
@@ -44,5 +45,23 @@ export const SwapFlowFlooterItems = ({
       </Row>
       {renderRightContent}
     </>
+  );
+};
+
+export const SwapFlowFooter = ({
+  onClick,
+  ...props
+}: {
+  onClick?: () => void;
+} & SwapFlowFooterItemsProps) => {
+  return (
+    <GhostButton
+      gap={5}
+      align="center"
+      justify="space-between"
+      onClick={onClick}
+    >
+      <SwapFlowFlooterItems {...props} />
+    </GhostButton>
   );
 };
