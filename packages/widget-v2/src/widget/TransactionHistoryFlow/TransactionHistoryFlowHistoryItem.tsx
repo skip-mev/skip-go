@@ -2,13 +2,15 @@ import { Chain, RouteResponse } from '@skip-go/client';
 import { SmallText, Text } from '../../components/Typography';
 import { useAtom } from 'jotai';
 import { skipAssets, getChain, ClientAsset } from '../../state/skip';
-import { Row } from '../../components/Layout';
+import { Column, Row } from '../../components/Layout';
 import { ThinArrowIcon } from '../../icons/ThinArrowIcon';
 import styled, { useTheme } from 'styled-components';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { XIcon } from '../../icons/XIcon';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { StyledAnimatedBorder } from '../SwapExecutionFlow/SwapExecutionFlowRouteDetailedRow';
+import React from 'react';
+import { TransactionHistoryFlowHistoryItemDetails } from './TransactionHistoryFlowHistoryItemDetails';
 
 export interface TxStatus {
   chainId: string;
@@ -28,13 +30,19 @@ export type TxHistoryItemInput = Pick<TxHistoryItem, 'route'>;
 
 export type TxHistoryState = Record<string, TxHistoryItem>;
 
-type TransactionHistoryFlowRowProps = {
+type TransactionHistoryFlowHistoryItemProps = {
   txHistoryItem: TxHistoryItem;
+  showDetails?: boolean;
+  onClickRow?: () => void;
+  onClickTransactionID: () => void;
 };
 
-export const TransactionHistoryFlowRow = ({
+export const TransactionHistoryFlowHistoryItem = ({
   txHistoryItem,
-}: TransactionHistoryFlowRowProps) => {
+  showDetails,
+  onClickRow,
+  onClickTransactionID,
+}: TransactionHistoryFlowHistoryItemProps) => {
   const theme = useTheme();
   const {
     route: {
@@ -86,34 +94,61 @@ export const TransactionHistoryFlowRow = ({
       case 'failed':
         return <XIcon color={theme.error.text} />;
     }
-  }, []);
+  }, [status]);
+
+  const relativeTime = useMemo(() => {
+    // get relative time based on timestamp
+    return '5 mins ago';
+  }, [timestamp]);
 
   return (
-    <StyledRowContainer justify="space-between">
-      <Row gap={5} align="center">
-        <RenderAssetAmount {...source} />
-        <ThinArrowIcon
-          direction="right"
-          color={theme.primary.text.lowContrast}
+    <StyledHistoryContainer showDetails={showDetails}>
+      <StyledHistoryItemRow justify="space-between" onClick={onClickRow}>
+        <Row gap={5} align="center">
+          <RenderAssetAmount {...source} />
+          <ThinArrowIcon
+            direction="right"
+            color={theme.primary.text.lowContrast}
+          />
+          <RenderAssetAmount {...destination} />
+          <SmallText normalTextColor>
+            on {destinationChain?.pretty_name ?? destinationChain?.chain_name}
+          </SmallText>
+        </Row>
+        <Row align="center" gap={10}>
+          <SmallText>1 min ago.</SmallText>
+          {renderStatus}
+        </Row>
+      </StyledHistoryItemRow>
+      {showDetails && (
+        <TransactionHistoryFlowHistoryItemDetails
+          status={status}
+          sourceChainName={sourceChain?.pretty_name ?? sourceChain?.chain_name}
+          destinationChainName={
+            destinationChain?.pretty_name ?? destinationChain?.chain_name
+          }
+          relativeTimeString={relativeTime}
+          transactionID={txStatus[0].txHash}
+          onClickTransactionID={onClickTransactionID}
+          onClickDelete={() => {}}
         />
-        <RenderAssetAmount {...destination} />
-        <SmallText normalTextColor>
-          on {destinationChain?.pretty_name ?? destinationChain?.chain_name}
-        </SmallText>
-      </Row>
-      <Row align="center" gap={10}>
-        <SmallText>1 min ago.</SmallText>
-        {renderStatus}
-      </Row>
-    </StyledRowContainer>
+      )}
+    </StyledHistoryContainer>
   );
 };
 
-const StyledRowContainer = styled(Row)`
+const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   padding: 10px;
-  border-radius: 6px;
+  background-color: ${({ theme, showDetails }) =>
+    showDetails && theme.secondary.background.normal};
   &:hover {
     background-color: ${({ theme }) => theme.secondary.background.normal};
+  }
+  border-radius: 6px;
+`;
+
+const StyledHistoryItemRow = styled(Row)`
+  &:hover {
     cursor: pointer;
   }
 `;

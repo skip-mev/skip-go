@@ -7,11 +7,11 @@ import { SwapFlowFooter } from '../SwapFlow/SwapFlowFooter';
 import { ICONS } from '../../icons';
 import { VirtualList } from '../../components/VirtualList';
 import {
-  TransactionHistoryFlowRow,
+  TransactionHistoryFlowHistoryItem,
   TxHistoryItem,
-} from './TransactionHistoryFlowRow';
+} from './TransactionHistoryFlowHistoryItem';
 import { RouteResponse } from '@skip-go/client';
-import { useMemo } from 'react';
+import { useState } from 'react';
 
 const TX_HISTORY: TxHistoryItem[] = [
   {
@@ -28,7 +28,7 @@ const TX_HISTORY: TxHistoryItem[] = [
     txStatus: [
       {
         chainId: '',
-        txHash: '',
+        txHash: '19D4a2e9Eb0',
         explorerLink: '',
         axelarscanLink: '',
       },
@@ -48,7 +48,7 @@ const TX_HISTORY: TxHistoryItem[] = [
     txStatus: [
       {
         chainId: '',
-        txHash: '',
+        txHash: 'e9Eb0cE3606',
         explorerLink: '',
         axelarscanLink: '',
       },
@@ -68,7 +68,7 @@ const TX_HISTORY: TxHistoryItem[] = [
     txStatus: [
       {
         chainId: '',
-        txHash: '',
+        txHash: '8b36c1d',
         explorerLink: '',
         axelarscanLink: '',
       },
@@ -81,10 +81,9 @@ const ITEM_GAP = 5;
 
 export const TransactionHistoryFlow = NiceModal.create(
   (modalProps: ModalProps) => {
-    const height = useMemo(() => {
-      return Math.min(530, TX_HISTORY.length * (ITEM_HEIGHT + ITEM_GAP));
-    }, [TX_HISTORY]);
-
+    const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
+      number | undefined
+    >();
     return (
       <Modal {...modalProps}>
         <SwapFlowHeader
@@ -97,10 +96,23 @@ export const TransactionHistoryFlow = NiceModal.create(
         <StyledContainer>
           <VirtualList
             listItems={TX_HISTORY}
-            height={height}
+            height={300}
             itemHeight={ITEM_HEIGHT + ITEM_GAP}
-            renderItem={(item) => (
-              <TransactionHistoryFlowRow txHistoryItem={item} />
+            renderItem={(item, index) => (
+              <TransactionHistoryFlowHistoryItem
+                txHistoryItem={item}
+                showDetails={index === itemIndexToShowDetail}
+                onClickRow={() => {
+                  if (index !== itemIndexToShowDetail) {
+                    setItemIndexToShowDetail(index);
+                  } else {
+                    setItemIndexToShowDetail(undefined);
+                  }
+                }}
+                onClickTransactionID={() => {
+                  window.open(item.txStatus[0].explorerLink, '_blank');
+                }}
+              />
             )}
             itemKey={(item) => item.timestamp}
           />
@@ -114,7 +126,7 @@ export const TransactionHistoryFlow = NiceModal.create(
 const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
-  min-height: 300px;
+  height: 300px;
   width: 480px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
