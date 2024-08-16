@@ -10,7 +10,7 @@ import { XIcon } from '../../icons/XIcon';
 import { useMemo, useState } from 'react';
 import { StyledAnimatedBorder } from '../SwapExecutionFlow/SwapExecutionFlowRouteDetailedRow';
 import React from 'react';
-import { TransactionHistoryFlowHistoryItemDetails } from './TransactionHistoryFlowHistoryItemDetails';
+import { TransactionHistoryFlowItemDetails } from './TransactionHistoryFlowItemDetails';
 
 export interface TxStatus {
   chainId: string;
@@ -30,19 +30,19 @@ export type TxHistoryItemInput = Pick<TxHistoryItem, 'route'>;
 
 export type TxHistoryState = Record<string, TxHistoryItem>;
 
-type TransactionHistoryFlowHistoryItemProps = {
+type TransactionHistoryFlowItemProps = {
   txHistoryItem: TxHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickTransactionID: () => void;
 };
 
-export const TransactionHistoryFlowHistoryItem = ({
+export const TransactionHistoryFlowItem = ({
   txHistoryItem,
   showDetails,
   onClickRow,
   onClickTransactionID,
-}: TransactionHistoryFlowHistoryItemProps) => {
+}: TransactionHistoryFlowItemProps) => {
   const theme = useTheme();
   const {
     route: {
@@ -121,7 +121,7 @@ export const TransactionHistoryFlowHistoryItem = ({
         </Row>
       </StyledHistoryItemRow>
       {showDetails && (
-        <TransactionHistoryFlowHistoryItemDetails
+        <TransactionHistoryFlowItemDetails
           status={status}
           sourceChainName={sourceChain?.pretty_name ?? sourceChain?.chain_name}
           destinationChainName={

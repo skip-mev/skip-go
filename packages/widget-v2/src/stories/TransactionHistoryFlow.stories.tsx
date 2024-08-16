@@ -3,6 +3,7 @@ import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Row } from '../components/Layout';
 import { defaultTheme, lightTheme } from '../widget/theme';
 import { TransactionHistoryFlow } from '../widget/TransactionHistoryFlow/TransactionHistoryFlow';
+import txHistory from '../widget/TransactionHistoryFlow/tx_history.json';
 
 const meta = {
   title: 'Flows/TransactionHistoryFlow',
@@ -11,7 +12,9 @@ const meta = {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
-  args: {},
+  args: {
+    txHistory: txHistory as any,
+  },
 } satisfies Meta<typeof TransactionHistoryFlow>;
 
 export default meta;

@@ -7,7 +7,7 @@ import { ChainIcon } from '../../icons/ChainIcon';
 import { Button } from '../../components/Button';
 import { TrashIcon } from '../../icons/TrashIcon';
 
-type TransactionHistoryFlowHistoryItemDetailsProps = {
+type TransactionHistoryFlowItemDetailsProps = {
   status: string;
   sourceChainName: string;
   destinationChainName: string;
@@ -17,7 +17,7 @@ type TransactionHistoryFlowHistoryItemDetailsProps = {
   onClickDelete: () => void;
 };
 
-export const TransactionHistoryFlowHistoryItemDetails = ({
+export const TransactionHistoryFlowItemDetails = ({
   status,
   sourceChainName,
   destinationChainName,
@@ -25,16 +25,8 @@ export const TransactionHistoryFlowHistoryItemDetails = ({
   transactionID,
   onClickTransactionID,
   onClickDelete,
-}: TransactionHistoryFlowHistoryItemDetailsProps) => {
+}: TransactionHistoryFlowItemDetailsProps) => {
   const theme = useTheme();
-
-  const handleClick = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    fn: () => void
-  ) => {
-    e.stopPropagation();
-    fn();
-  };
 
   return (
     <Column padding={10} gap={10}>
@@ -59,7 +51,7 @@ export const TransactionHistoryFlowHistoryItemDetails = ({
       </Row>
       <Row align="center">
         <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
-        <Button onClick={(e) => handleClick(e, onClickTransactionID)} gap={5}>
+        <Button onClick={onClickTransactionID} gap={5}>
           <SmallText normalTextColor>{transactionID}</SmallText>
           <SmallText>
             <ChainIcon />
@@ -67,11 +59,7 @@ export const TransactionHistoryFlowHistoryItemDetails = ({
         </Button>
       </Row>
       <Row align="center" style={{ marginTop: 10 }}>
-        <Button
-          onClick={(e) => handleClick(e, onClickDelete)}
-          gap={5}
-          align="center"
-        >
+        <Button onClick={onClickDelete} gap={5} align="center">
           <SmallText color={theme.error.text}>Delete</SmallText>
           <TrashIcon color={theme.error.text} />
         </Button>
