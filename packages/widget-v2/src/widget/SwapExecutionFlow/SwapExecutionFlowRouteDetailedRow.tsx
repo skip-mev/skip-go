@@ -139,10 +139,14 @@ export const StyledAnimatedBorder = ({
     height={height}
     borderSize={borderSize}
     txState={txState}
+    backgroundColor={backgroundColor}
   >
     <StyledLoadingOverlay
       className="overlay"
       justify="space-between"
+      width={width}
+      height={height}
+      borderSize={borderSize}
       backgroundColor={backgroundColor}
     >
       {children}
@@ -155,6 +159,7 @@ const StyledLoadingContainer = styled(Row)<{
   width: number;
   borderSize: number;
   txState?: txState;
+  backgroundColor?: string;
 }>`
   position: relative;
   overflow: hidden;
@@ -183,7 +188,7 @@ const StyledLoadingContainer = styled(Row)<{
       transparent,
       transparent,
       transparent,
-      ${(props) => props.theme.success.text}
+      ${({ theme, backgroundColor }) => backgroundColor ?? theme.success.text}
     );
       ${({ txState }) =>
         txState === 'broadcasted' && 'animation: rotate 4s linear infinite;'}
@@ -198,7 +203,14 @@ const StyledLoadingContainer = styled(Row)<{
   }
 `;
 
-const StyledLoadingOverlay = styled(Row)<{ backgroundColor?: string }>`
+const StyledLoadingOverlay = styled(Row)<{
+  backgroundColor?: string;
+  width: number;
+  height: number;
+  borderSize: number;
+}>`
+  width: ${({ width, borderSize }) => width - borderSize}px;
+  height: ${({ height, borderSize }) => height - borderSize}px;
   position: absolute;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.primary.background.normal};
