@@ -2,25 +2,33 @@ import { SmallText } from '../../components/Typography';
 import { Column, Row } from '../../components/Layout';
 import { ThinArrowIcon } from '../../icons/ThinArrowIcon';
 import styled, { useTheme } from 'styled-components';
-import React from 'react';
 import { ChainIcon } from '../../icons/ChainIcon';
 import { Button } from '../../components/Button';
 import { TrashIcon } from '../../icons/TrashIcon';
+import { useMemo } from 'react';
 
 type TransactionHistoryFlowItemDetailsProps = {
-  status: string;
+  status: 'pending' | 'success' | 'failed';
   sourceChainName: string;
   destinationChainName: string;
+  absoluteTimeString: string;
   relativeTimeString: string;
   transactionID: string;
   onClickTransactionID: () => void;
   onClickDelete: () => void;
 };
 
+const statusMap = {
+  pending: 'In Progress',
+  success: 'Completed',
+  failed: 'Failed',
+};
+
 export const TransactionHistoryFlowItemDetails = ({
   status,
   sourceChainName,
   destinationChainName,
+  absoluteTimeString,
   relativeTimeString,
   transactionID,
   onClickTransactionID,
@@ -28,13 +36,24 @@ export const TransactionHistoryFlowItemDetails = ({
 }: TransactionHistoryFlowItemDetailsProps) => {
   const theme = useTheme();
 
+  const statusColor = useMemo(() => {
+    if (status === 'failed') {
+      return theme.error.text;
+    } else if (status === 'success') {
+      return theme.success.text;
+    }
+    return;
+  }, [status, theme]);
+
   return (
     <Column padding={10} gap={10}>
       <Row align="center">
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
-          <SmallText normalTextColor>{status}</SmallText>
-          <SmallText>at 15:42 EST 12/4/24</SmallText>
+          <SmallText normalTextColor color={statusColor}>
+            {statusMap[status]}
+          </SmallText>
+          <SmallText>at {absoluteTimeString}</SmallText>
         </Row>
       </Row>
       <Row align="center">

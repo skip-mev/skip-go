@@ -96,10 +96,17 @@ export const TransactionHistoryFlowItem = ({
     }
   }, [status]);
 
+  const absoluteTimeString = useMemo(() => {
+    return new Date(timestamp).toLocaleString();
+  }, [timestamp]);
+
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
+    if (status === 'pending') {
+      return 'In Progress';
+    }
     return '5 mins ago';
-  }, [timestamp]);
+  }, [timestamp, status]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -116,7 +123,7 @@ export const TransactionHistoryFlowItem = ({
           </SmallText>
         </Row>
         <Row align="center" gap={10}>
-          <SmallText>1 min ago.</SmallText>
+          <SmallText>{relativeTime}</SmallText>
           {renderStatus}
         </Row>
       </StyledHistoryItemRow>
@@ -127,6 +134,7 @@ export const TransactionHistoryFlowItem = ({
           destinationChainName={
             destinationChain?.pretty_name ?? destinationChain?.chain_name
           }
+          absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
           transactionID={txStatus[0].txHash}
           onClickTransactionID={onClickTransactionID}
