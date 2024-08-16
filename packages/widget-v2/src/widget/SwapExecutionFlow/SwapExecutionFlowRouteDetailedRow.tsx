@@ -88,7 +88,7 @@ export const SwapExecutionFlowRouteDetailedRow = ({
             {asset?.recommendedSymbol}
           </SmallText>
           <SmallText> on {asset?.chainName}</SmallText>
-          {txState === 'confirmed' && (
+          {txState === 'broadcasted' && (
             <Button onClick={() => window.open(explorerLink, '_blank')}>
               <SmallText>
                 <ChainIcon />
