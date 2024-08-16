@@ -47,7 +47,6 @@ export const SwapExecutionFlowRouteSimple = ({
         {...source}
         wallet={WALLET_LIST[0]}
         txState={overallSwapState}
-        explorerLink="https://www.google.com/"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionFlowRouteSimpleRow
@@ -57,7 +56,9 @@ export const SwapExecutionFlowRouteSimple = ({
         icon={ICONS.pen}
         txState={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
-        explorerLink="https://www.google.com/"
+        explorerLink={
+          overallSwapState !== 'pending' ? 'https://www.google.com/' : undefined
+        }
       />
     </StyledSwapExecutionFlowRoute>
   );

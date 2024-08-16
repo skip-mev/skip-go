@@ -93,7 +93,11 @@ export const SwapExecutionFlowRouteDetailed = ({
             <SwapExecutionFlowRouteDetailedRow
               {...asset}
               txState={txStateMap[index]}
-              explorerLink="https://www.google.com/"
+              explorerLink={
+                txStateMap[index] !== 'pending'
+                  ? 'https://www.google.com/'
+                  : undefined
+              }
               key={`row-${asset?.denom}-${index}`}
             />
             {operation !== operations[operations.length - 1] && (

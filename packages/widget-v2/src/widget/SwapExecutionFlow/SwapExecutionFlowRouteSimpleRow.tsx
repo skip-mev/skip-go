@@ -102,7 +102,7 @@ export const SwapExecutionFlowRouteSimpleRow = ({
               )}
               <SmallText>{wallet.address}</SmallText>
 
-              {txState === 'broadcasted' ? (
+              {explorerLink ? (
                 <Button onClick={() => window.open(explorerLink, '_blank')}>
                   <SmallText>
                     <ChainIcon />
