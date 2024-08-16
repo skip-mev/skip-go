@@ -8,11 +8,12 @@ import {
 import { SwapExecutionBridgeIcon } from '../../icons/SwapExecutionBridgeIcon';
 import { SwapExecutionSendIcon } from '../../icons/SwapExecutionSendIcon';
 import { SwapExecutionSwapIcon } from '../../icons/SwapExecutionSwapIcon';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SmallText } from '../../components/Typography';
 
 export type SwapExecutionFlowRouteDetailedProps = {
   operations: Operation[];
+  txStateMap: { [index: number]: txState };
 };
 
 type operationTypeToIcon = {
@@ -42,6 +43,7 @@ type tooltipMap = {
 
 export const SwapExecutionFlowRouteDetailed = ({
   operations,
+  txStateMap,
 }: SwapExecutionFlowRouteDetailedProps) => {
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -58,36 +60,6 @@ export const SwapExecutionFlowRouteDetailed = ({
       [index]: false,
     }));
   };
-
-  const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
-    0: 'broadcasted',
-    1: 'pending',
-    2: 'pending',
-  });
-
-  useEffect(() => {
-    // for testing/demo
-    setTimeout(() => {
-      setTxStateMap({
-        0: 'confirmed',
-        1: 'broadcasted',
-      });
-      setTimeout(() => {
-        setTxStateMap({
-          0: 'confirmed',
-          1: 'confirmed',
-          2: 'broadcasted',
-        });
-        setTimeout(() => {
-          setTxStateMap({
-            0: 'confirmed',
-            1: 'confirmed',
-            2: 'confirmed',
-          });
-        }, 5000);
-      }, 5000);
-    }, 5000);
-  }, []);
 
   return (
     <StyledSwapExecutionFlowRoute justify="space-between">
@@ -121,6 +93,7 @@ export const SwapExecutionFlowRouteDetailed = ({
             <SwapExecutionFlowRouteDetailedRow
               {...asset}
               txState={txStateMap[index]}
+              explorerLink="https://www.google.com/"
               key={`row-${asset?.denom}-${index}`}
             />
             {operation !== operations[operations.length - 1] && (
@@ -167,7 +140,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
 `;
 
 const StyledSwapExecutionFlowRoute = styled(Column)`
-  padding: 35px;
+  padding: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;

@@ -31,6 +31,7 @@
     "@storybook/react": "^8.2.6",
     "@storybook/react-vite": "^8.2.6",
     "@storybook/test": "^8.2.6",
+    "@types/pluralize": "^0.0.33",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
@@ -53,6 +54,7 @@
     "jotai": "^2.9.1",
     "jotai-tanstack-query": "^0.8.6",
     "lodash.debounce": "^4.0.8",
+    "pluralize": "^8.0.0",
     "rc-virtual-list": "^3.14.5",
     "react-shadow-scope": "^1.0.5",
     "zod": "^3.23.8"

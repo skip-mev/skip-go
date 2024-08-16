@@ -11379,6 +11379,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pluralize@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "@types/pluralize@npm:0.0.33"
+  checksum: 282d42dc0187e5e0912f9f36ee0f5615bfd273a08d40afe5bf5881cb28daf1977abe10564543032aa0f42352ebba739ff3d86bf5562ac4691c6d1761fcc7cf39
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2.6.1":
   version: 2.7.3
   resolution: "@types/prettier@npm:2.7.3"
@@ -22856,6 +22863,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pluralize@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "pluralize@npm:8.0.0"
+  checksum: 08931d4a6a4a5561a7f94f67a31c17e6632cb21e459ab3ff4f6f629d9a822984cf8afef2311d2005fbea5d7ef26016ebb090db008e2d8bce39d0a9a9d218736e
+  languageName: node
+  linkType: hard
+
 "pngjs@npm:^3.3.0":
   version: 3.4.0
   resolution: "pngjs@npm:3.4.0"
@@ -28408,6 +28422,7 @@ __metadata:
     "@storybook/react-vite": ^8.2.6
     "@storybook/test": ^8.2.6
     "@tanstack/query-core": ^5.51.21
+    "@types/pluralize": ^0.0.33
     "@types/react": ^18.3.3
     "@types/react-dom": ^18.3.0
     "@typescript-eslint/eslint-plugin": ^7.15.0
@@ -28417,6 +28432,7 @@ __metadata:
     jotai: ^2.9.1
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
+    pluralize: ^8.0.0
     rc-virtual-list: ^3.14.5
     react-shadow-scope: ^1.0.5
     storybook: ^8.2.6

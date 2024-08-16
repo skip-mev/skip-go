@@ -5,6 +5,9 @@ import { getChain, skipAssets } from '../../state/skip';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { styled, useTheme } from 'styled-components';
 import React from 'react';
+import { ChainIcon } from '../../icons/ChainIcon';
+import { Button } from '../../components/Button';
+import { ChainTransaction } from '@skip-go/client';
 
 type OperationType =
   | 'swap'
@@ -40,6 +43,7 @@ export type SwapExecutionFlowRouteDetailedRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];
   amount: Operation['amountIn'] | Operation['amountOut'];
   chainID: Operation['fromChainID'] | Operation['chainID'];
+  explorerLink?: ChainTransaction['explorerLink'];
   txState?: txState;
 };
 
@@ -48,6 +52,7 @@ export const SwapExecutionFlowRouteDetailedRow = ({
   amount,
   chainID,
   txState,
+  explorerLink,
   ...props
 }: SwapExecutionFlowRouteDetailedRowProps) => {
   const theme = useTheme();
@@ -83,6 +88,13 @@ export const SwapExecutionFlowRouteDetailedRow = ({
             {asset?.recommendedSymbol}
           </SmallText>
           <SmallText> on {asset?.chainName}</SmallText>
+          {txState === 'confirmed' && (
+            <Button onClick={() => window.open(explorerLink, '_blank')}>
+              <SmallText>
+                <ChainIcon />
+              </SmallText>
+            </Button>
+          )}
         </Row>
         <StyledWalletAddress>cosmos17...zha0v</StyledWalletAddress>
       </Row>
@@ -105,7 +117,7 @@ const StyledWalletAddress = styled(SmallText)`
   background-color: ${({ theme }) => theme.secondary.background.normal};
 `;
 
-const StyledAnimatedBorder = ({
+export const StyledAnimatedBorder = ({
   backgroundColor,
   children,
   width,
@@ -173,7 +185,8 @@ const StyledLoadingContainer = styled(Row)<{
       transparent,
       ${(props) => props.theme.success.text}
     );
-    animation: rotate 4s linear infinite;
+      ${({ txState }) =>
+        txState === 'broadcasted' && 'animation: rotate 4s linear infinite;'}
   }
   @keyframes rotate {
     0% {

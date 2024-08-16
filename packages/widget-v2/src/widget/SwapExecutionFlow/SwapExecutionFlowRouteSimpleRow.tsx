@@ -6,13 +6,18 @@ import { ClientAsset, getChain, skipAssets } from '../../state/skip';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { Wallet } from '../../components/RenderWalletList';
 import { iconMap, ICONS } from '../../icons';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { withBoundProps } from '../../utils/misc';
 import { ChainTransaction } from '@skip-go/client';
-import { Operation } from './SwapExecutionFlowRouteDetailedRow';
+import {
+  Operation,
+  StyledAnimatedBorder,
+  txState,
+} from './SwapExecutionFlowRouteDetailedRow';
 import { useAtom } from 'jotai';
 import { useUsdValue } from '../../utils/useUsdValue';
 import { formatUSD } from '../../utils/intl';
+import { ChainIcon } from '../../icons/ChainIcon';
 
 export type SwapExecutionFlowRouteSimpleRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];
@@ -21,6 +26,7 @@ export type SwapExecutionFlowRouteSimpleRowProps = {
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction['explorerLink'];
+  txState?: txState;
   wallet?: Wallet;
   icon?: ICONS;
 };
@@ -29,11 +35,16 @@ export const SwapExecutionFlowRouteSimpleRow = ({
   denom,
   amount,
   chainID,
+  txState,
   destination,
   onClickEditDestinationWallet,
+  explorerLink,
   wallet,
   icon = ICONS.none,
 }: SwapExecutionFlowRouteSimpleRowProps) => {
+  useEffect(() => {
+    'mount';
+  }, []);
   const theme = useTheme();
   const [{ data: assets }] = useAtom(skipAssets);
   const asset = assets?.find((asset) => asset.denom === denom);
@@ -52,19 +63,26 @@ export const SwapExecutionFlowRouteSimpleRow = ({
     value: normalizedAmount.toString(),
   });
 
-  const ButtonOrFragment = onClickEditDestinationWallet
-    ? withBoundProps(Button, {
-        onClick: onClickEditDestinationWallet,
-        align: 'center',
-        gap: 5,
-      })
-    : React.Fragment;
+  const txStateOfAnimatedBorder = useMemo(() => {
+    if (destination && txState === 'broadcasted') {
+      return;
+    }
+    return txState;
+  }, [txState, destination]);
+
   const Icon = iconMap[icon];
 
   return (
     <Row gap={25} align="center">
       {chainImage && (
-        <img height={50} width={50} src={chainImage.svg ?? chainImage.png} />
+        <StyledAnimatedBorder
+          width={50}
+          height={50}
+          backgroundColor={theme.success.text}
+          txState={txStateOfAnimatedBorder}
+        >
+          <img height={50} width={50} src={chainImage.svg ?? chainImage.png} />
+        </StyledAnimatedBorder>
       )}
       <Column gap={5}>
         <Text fontSize={24}>
@@ -82,14 +100,23 @@ export const SwapExecutionFlowRouteSimpleRow = ({
               {wallet.imageUrl && (
                 <img height={10} width={10} src={wallet.imageUrl} />
               )}
-              <ButtonOrFragment>
-                <SmallText>{wallet.address}</SmallText>
-                <Icon
-                  width={10}
-                  height={10}
-                  color={theme.primary.text.lowContrast}
-                />
-              </ButtonOrFragment>
+              <SmallText>{wallet.address}</SmallText>
+
+              {txState === 'confirmed' ? (
+                <Button onClick={() => window.open(explorerLink, '_blank')}>
+                  <SmallText>
+                    <ChainIcon />
+                  </SmallText>
+                </Button>
+              ) : (
+                <Button align="center" onClick={onClickEditDestinationWallet}>
+                  <Icon
+                    width={10}
+                    height={10}
+                    color={theme.primary.text.lowContrast}
+                  />
+                </Button>
+              )}
             </>
           )}
         </Row>
