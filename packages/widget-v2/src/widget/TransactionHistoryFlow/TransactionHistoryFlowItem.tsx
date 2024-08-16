@@ -1,16 +1,15 @@
-import { Chain, RouteResponse } from '@skip-go/client';
-import { SmallText, Text } from '../../components/Typography';
+import { RouteResponse } from '@skip-go/client';
+import { SmallText } from '../../components/Typography';
 import { useAtom } from 'jotai';
 import { skipAssets, getChain, ClientAsset } from '../../state/skip';
 import { Column, Row } from '../../components/Layout';
-import { ThinArrowIcon } from '../../icons/ThinArrowIcon';
 import styled, { useTheme } from 'styled-components';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { XIcon } from '../../icons/XIcon';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { StyledAnimatedBorder } from '../SwapExecutionFlow/SwapExecutionFlowRouteDetailedRow';
-import React from 'react';
 import { TransactionHistoryFlowItemDetails } from './TransactionHistoryFlowItemDetails';
+import { HistoryArrowIcon } from '../../icons/HistoryArrowIcon';
 
 export interface TxStatus {
   chainId: string;
@@ -113,10 +112,7 @@ export const TransactionHistoryFlowItem = ({
       <StyledHistoryItemRow justify="space-between" onClick={onClickRow}>
         <Row gap={5} align="center">
           <RenderAssetAmount {...source} />
-          <ThinArrowIcon
-            direction="right"
-            color={theme.primary.text.lowContrast}
-          />
+          <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
           <SmallText normalTextColor>
             on {destinationChain?.pretty_name ?? destinationChain?.chain_name}

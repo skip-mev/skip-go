@@ -1,11 +1,11 @@
 import { SmallText } from '../../components/Typography';
 import { Column, Row } from '../../components/Layout';
-import { ThinArrowIcon } from '../../icons/ThinArrowIcon';
 import styled, { useTheme } from 'styled-components';
 import { ChainIcon } from '../../icons/ChainIcon';
 import { Button } from '../../components/Button';
 import { TrashIcon } from '../../icons/TrashIcon';
 import { useMemo } from 'react';
+import { HistoryArrowIcon } from '../../icons/HistoryArrowIcon';
 
 type TransactionHistoryFlowItemDetailsProps = {
   status: 'pending' | 'success' | 'failed';
@@ -60,7 +60,7 @@ export const TransactionHistoryFlowItemDetails = ({
         <StyledDetailsLabel>Chain route</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor>{sourceChainName}</SmallText>
-          <ThinArrowIcon direction="right" color={theme.primary.text.normal} />
+          <HistoryArrowIcon color={theme.primary.text.normal} />
           <SmallText normalTextColor>{destinationChainName}</SmallText>
         </Row>
       </Row>
