@@ -61,6 +61,8 @@ export const SwapExecutionFlowRouteDetailed = ({
 
   const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
     0: 'broadcasted',
+    1: 'pending',
+    2: 'pending',
   });
 
   useEffect(() => {
@@ -70,21 +72,20 @@ export const SwapExecutionFlowRouteDetailed = ({
         0: 'confirmed',
         1: 'broadcasted',
       });
-    }, 5000);
-    setTimeout(() => {
-      setTxStateMap({
-        0: 'confirmed',
-        1: 'confirmed',
-        2: 'broadcasted',
-      });
-    }, 5000);
-
-    setTimeout(() => {
-      setTxStateMap({
-        0: 'confirmed',
-        1: 'confirmed',
-        2: 'confirmed',
-      });
+      setTimeout(() => {
+        setTxStateMap({
+          0: 'confirmed',
+          1: 'confirmed',
+          2: 'broadcasted',
+        });
+        setTimeout(() => {
+          setTxStateMap({
+            0: 'confirmed',
+            1: 'confirmed',
+            2: 'confirmed',
+          });
+        }, 5000);
+      }, 5000);
     }, 5000);
   }, []);
 

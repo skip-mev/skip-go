@@ -2,14 +2,13 @@ import { Column } from '../../components/Layout';
 import { MainButton } from '../../components/MainButton';
 import { SwapFlowFooter } from '../SwapFlow/SwapFlowFooter';
 import { SwapFlowHeader } from '../SwapFlow/SwapFlowHeader';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ICONS } from '../../icons';
-import { SwapExecutionFlowRoute } from './SwapExecutionFlowRoute';
 import { useModal } from '@ebay/nice-modal-react';
 import { ManualAddressFlow } from '../ManualAddressFlow/ManualAddressFlow';
 import { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
-import { destinationAssetAtom, destinationWalletAtom } from '../../state/swap';
+import { destinationWalletAtom } from '../../state/swap';
 import { SwapExecutionFlowRouteSimple } from './SwapExecutionFlowRouteSimple';
 import { SwapExecutionFlowRouteDetailed } from './SwapExecutionFlowRouteDetailed';
 
@@ -30,11 +29,20 @@ export type SwapExecutionFlowProps = {
 export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
   const theme = useTheme();
 
+  const [destinationWallet] = useAtom(destinationWalletAtom);
   const [swapExecutionState, setSwapExecutionState] = useState(
-    SwapExecutionState.destinationAddressUnset
+    destinationWallet
+      ? SwapExecutionState.unconfirmed
+      : SwapExecutionState.destinationAddressUnset
   );
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressFlow);
+
+  useEffect(() => {
+    if (destinationWallet) {
+      setSwapExecutionState(SwapExecutionState.unconfirmed);
+    }
+  }, [destinationWallet]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -51,17 +59,34 @@ export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
           />
         );
       case SwapExecutionState.unconfirmed:
-        return <MainButton label="Confirm swap" icon={ICONS.rightArrow} />;
+        return (
+          <MainButton
+            label="Confirm swap"
+            icon={ICONS.rightArrow}
+            onClick={() => {
+              setSwapExecutionState(SwapExecutionState.broadcasted);
+              setTimeout(() => {
+                setSwapExecutionState(SwapExecutionState.confirmed);
+              }, 5_000);
+            }}
+          />
+        );
       case SwapExecutionState.broadcasted:
         return (
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString="2 mins."
+            loadingTimeString="5 seconds"
           />
         );
       case SwapExecutionState.confirmed:
-        return <MainButton label="Swap complete" icon={ICONS.checkmark} />;
+        return (
+          <MainButton
+            label="Swap complete"
+            icon={ICONS.checkmark}
+            backgroundColor={theme.success.text}
+          />
+        );
     }
   }, [swapExecutionState]);
 

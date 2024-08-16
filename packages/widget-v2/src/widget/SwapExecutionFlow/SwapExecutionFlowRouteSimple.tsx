@@ -20,8 +20,6 @@ export const SwapExecutionFlowRouteSimple = ({
 }: SwapExecutionFlowRouteSimpleProps) => {
   const theme = useTheme();
 
-  const [{ data: assets }] = useAtom(skipAssets);
-
   const [destinationWallet] = useAtom(destinationWalletAtom);
 
   const firstOperation = operations[0];
@@ -30,38 +28,22 @@ export const SwapExecutionFlowRouteSimple = ({
   const destinationDenom = lastOperation.denomOut;
 
   const source = {
-    asset: assets?.find((asset) => asset.denom === sourceDenom),
-    chain: firstOperation.fromChainID,
-    chainImage: getChain(firstOperation.fromChainID ?? '').images?.find(
-      (image) => image.svg ?? image.png
-    ),
+    denom: sourceDenom,
+    amount: firstOperation.amountIn,
+    chainID: firstOperation.fromChainID ?? firstOperation.chainID,
   };
   const destination = {
-    asset: assets?.find((asset) => asset.denom === destinationDenom),
-    chain: lastOperation.fromChainID,
-    chainImage: getChain(lastOperation.fromChainID ?? '').images?.find(
-      (image) => image.svg ?? image.png
-    ),
+    denom: destinationDenom,
+    amount: lastOperation.amountOut,
+    chainID: lastOperation.toChainID ?? lastOperation.chainID,
   };
-
-  if (!source.asset) {
-    throw new Error(`Asset not found for sourceAsset denom: ${sourceDenom}`);
-  }
-  if (!destination.asset) {
-    throw new Error(
-      `Asset not found for destinationAsset denom: ${destinationDenom}`
-    );
-  }
 
   return (
     <StyledSwapExecutionFlowRoute justify="space-between">
-      <SwapExecutionFlowRouteSimpleRow
-        operation={firstOperation}
-        wallet={WALLET_LIST[0]}
-      />
+      <SwapExecutionFlowRouteSimpleRow {...source} wallet={WALLET_LIST[0]} />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionFlowRouteSimpleRow
-        operation={lastOperation}
+        {...destination}
         wallet={destinationWallet}
         destination
         icon={ICONS.pen}
