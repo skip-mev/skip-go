@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.1
+
+### Patch Changes
+
+- 9a23c8c: added wagmiConfig param in provider
+
 ## 2.4.0
 
 ### Minor Changes
