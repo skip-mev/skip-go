@@ -14,6 +14,7 @@ import { bech32CompatAddress } from '@penumbra-zone/bech32m/penumbracompat1';
 import { createPublicClient, http } from 'viem';
 import { sei } from 'viem/chains';
 import { seiPrecompileAddrABI } from '../constants/abis';
+import { StyledBorderDiv } from '../ui/StyledComponents/Theme';
 
 export interface MinimalWallet {
   walletName: string;
@@ -71,6 +72,7 @@ export const useMakeWallets = () => {
 
   const makeWallets = (chainID: string) => {
     const chainType = getChain(chainID)?.chainType;
+    const isSei = chainType === 'cosmos' && chainID === 'pacific-1';
 
     let wallets: MinimalWallet[] = [];
 
@@ -198,10 +200,7 @@ export const useMakeWallets = () => {
       }));
     }
 
-    if (
-      chainType === 'evm' ||
-      (chainType === 'cosmos' && chainID === 'pacific-1')
-    ) {
+    if (chainType === 'evm' || isSei) {
       for (const connector of connectors) {
         if (
           wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
@@ -219,6 +218,7 @@ export const useMakeWallets = () => {
               if (signRequired) {
                 trackWallet.track('evm', connector.id, chainType);
               }
+
               return evmAddress;
             }
           } else {
@@ -277,7 +277,7 @@ export const useMakeWallets = () => {
           isWalletConnected: connector.id === currentConnector?.id,
         };
 
-        if (chainType === 'cosmos' && chainID === 'pacific-1') {
+        if (isSei) {
           minimalWallet.getAddress = async ({ signRequired, context }) => {
             const address = await evmGetAddress({ signRequired, context });
             if (!address) {
@@ -298,25 +298,49 @@ export const useMakeWallets = () => {
                 abi: seiPrecompileAddrABI,
                 functionName: 'getSeiAddr',
               });
-              toast.success(
-                `Successfully retrieved ${context} address from ${connector.name}`
-              );
+              if (context) {
+                toast.success(
+                  `Successfully retrieved ${context} address from ${connector.name}`
+                );
+              }
+
               return seiAddress;
             } catch (error) {
               console.error(error);
-              toast.error(
-                <p>
-                  Your EVM address (0x) has not associated on chain yet. Please
-                  visit{' '}
-                  <a
-                    target="_blank"
-                    className="underline"
-                    href="https://app.sei.io/"
-                  >
-                    https://app.sei.io/
-                  </a>{' '}
-                  to associate your SEI address.
-                </p>
+              toast(
+                ({ id }) => (
+                  <div className="flex flex-col">
+                    <h4 className="mb-2 font-bold">
+                      Failed to get the address
+                    </h4>
+                    <StyledBorderDiv
+                      as="pre"
+                      className="mb-4 overflow-auto whitespace-pre-wrap break-all rounded border p-2 text-sm"
+                    >
+                      <p>
+                        Your EVM address (0x) has not associated on chain yet.
+                        Please visit{' '}
+                        <a
+                          target="_blank"
+                          className="underline"
+                          href="https://app.sei.io/"
+                        >
+                          https://app.sei.io/
+                        </a>{' '}
+                        to associate your SEI address.
+                      </p>
+                    </StyledBorderDiv>
+                    <button
+                      className="self-end text-sm font-medium text-red-500 hover:underline"
+                      onClick={() => toast.dismiss(id)}
+                    >
+                      Clear Notification &times;
+                    </button>
+                  </div>
+                ),
+                {
+                  duration: Infinity,
+                }
               );
             }
           };
