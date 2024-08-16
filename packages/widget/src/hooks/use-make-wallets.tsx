@@ -9,7 +9,8 @@ import { gracefullyConnect } from '../utils/wallet';
 import { useCallbackStore } from '../store/callbacks';
 import { createPenumbraClient } from '@penumbra-zone/client';
 import { ViewService } from '@penumbra-zone/protobuf';
-import { getPenumbraCompatibleAddress } from '../lib/penumbra';
+import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
+import { bech32CompatAddress } from '@penumbra-zone/bech32m/penumbracompat1';
 
 export interface MinimalWallet {
   walletName: string;
@@ -341,4 +342,18 @@ export const useMakeWallets = () => {
   return {
     makeWallets,
   };
+};
+
+const penumbraBech32ChainIDs = ['noble-1', 'grand-1'];
+const getPenumbraCompatibleAddress = ({
+  chainID,
+  address,
+}: {
+  chainID?: string;
+  address: { inner: Uint8Array };
+}): string => {
+  if (!chainID) return bech32mAddress(address);
+  return penumbraBech32ChainIDs.includes(chainID)
+    ? bech32CompatAddress(address)
+    : bech32mAddress(address);
 };
