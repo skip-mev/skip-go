@@ -13,8 +13,10 @@ import {
   apiURL as defaultApiURL,
 } from '../constants/defaults';
 import { MinimalWallet } from '../hooks/use-make-wallets';
+import { Config } from 'wagmi';
 
 interface WalletProviderProps {
+  wagmiConfig?: Config;
   children: React.ReactNode;
 }
 
@@ -23,6 +25,7 @@ export interface WidgetConfig {
   routeConfig?: RouteConfig;
 }
 export interface SwapWidgetProviderProps extends SkipAPIProviderProps {
+  wagmiConfig?: Config;
   children: React.ReactNode;
 }
 export interface SkipAPIProviderProps {
@@ -33,11 +36,14 @@ export interface SkipAPIProviderProps {
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
 }
 
-export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
+export const WalletProvider: React.FC<WalletProviderProps> = ({
+  children,
+  wagmiConfig,
+}) => {
   return (
     <SolanaProvider>
       <CosmosProvider>
-        <EVMProvider>
+        <EVMProvider wagmiConfig={wagmiConfig}>
           <WalletModalProvider>{children}</WalletModalProvider>
         </EVMProvider>
       </CosmosProvider>
@@ -66,10 +72,11 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
 
 export const SwapWidgetProvider: React.FC<SwapWidgetProviderProps> = ({
   children,
+  wagmiConfig,
   ...skipApiProviderProps
 }) => {
   return (
-    <WalletProvider>
+    <WalletProvider wagmiConfig={wagmiConfig}>
       <SkipAPIProvider {...skipApiProviderProps}>{children}</SkipAPIProvider>
     </WalletProvider>
   );
