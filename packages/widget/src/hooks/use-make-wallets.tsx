@@ -83,13 +83,11 @@ export const useMakeWallets = () => {
             toast.error('Prax wallet is not supported for connect');
           },
           getAddress: async ({ praxWallet }) => {
-            console.log('praxWallet', praxWallet);
             const penumbraWalletIndex = praxWallet?.index;
             const sourceChainID = praxWallet?.sourceChainID;
             const prax_id = 'lkpmkhpnhknhmibgnmmhdhgdilepfghe';
             const prax_origin = `chrome-extension://${prax_id}`;
             const client = createPenumbraClient(prax_origin);
-            console.log(penumbraWalletIndex);
             try {
               await client.connect();
 
@@ -177,7 +175,7 @@ export const useMakeWallets = () => {
             }
             return wallet.address;
           } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(
               <p>
                 <strong>Failed to get address!</strong>
@@ -239,7 +237,6 @@ export const useMakeWallets = () => {
                   return evmAddress;
                 }
               } else {
-                console.log('connecting');
                 await connectAsync({ connector, chainId: Number(chainID) });
                 trackWallet.track('evm', connector.id, chainType);
 

@@ -171,7 +171,6 @@ export const SetAddressDialog = ({
                           'flex w-full items-center gap-2 rounded-lg p-2 transition-colors focus:-outline-offset-2'
                         )}
                         onClick={async () => {
-                          console.log('walletclicked', praxWalletIndex);
                           const resAddress = await wallet.getAddress?.({
                             signRequired,
                             context: isDestination ? 'destination' : 'recovery',
