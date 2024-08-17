@@ -211,22 +211,14 @@ export const useMakeWallets = () => {
 
         const evmGetAddress: MinimalWallet['getAddress'] = async ({
           signRequired,
-          context,
         }) => {
-          if (connector.id === currentConnector?.id) {
-            if (isEvmConnected && evmAddress) {
-              if (signRequired) {
-                trackWallet.track('evm', connector.id, chainType);
-              }
-
-              return evmAddress;
-            }
-          } else {
+          if (connector.id !== currentConnector?.id) {
             await connectAsync({ connector, chainId: Number(chainID) });
             trackWallet.track('evm', connector.id, chainType);
-
-            return evmAddress;
+          } else if (evmAddress && isEvmConnected && signRequired) {
+            trackWallet.track('evm', connector.id, chainType);
           }
+          return evmAddress;
         };
 
         let minimalWallet: MinimalWallet = {
