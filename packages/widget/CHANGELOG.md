@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.3
+
+### Patch Changes
+
+- 17277e3: not showing 0 transaction remaining
+
 ## 2.4.2
 
 ### Patch Changes
