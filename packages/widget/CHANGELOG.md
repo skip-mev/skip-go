@@ -1,5 +1,12 @@
 # @skip-go/widget
 
+## 2.4.2
+
+### Patch Changes
+
+- 52f410a: prax wallet support
+- aabf5aa: sei destination address evm wallet support
+
 ## 2.4.1
 
 ### Patch Changes
