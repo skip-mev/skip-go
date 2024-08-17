@@ -2229,6 +2229,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bufbuild/protobuf@npm:1.10.0":
+  version: 1.10.0
+  resolution: "@bufbuild/protobuf@npm:1.10.0"
+  checksum: 84ba0bed65ebfc75dcb31d231af4226c87148cc4e333b59979674b187dd3e52b2a8f76431b236195d8cde5ea555bdc1ad38a76f418956f874041c15448f53402
+  languageName: node
+  linkType: hard
+
 "@chain-registry/client@npm:^1.48.1":
   version: 1.48.10
   resolution: "@chain-registry/client@npm:1.48.10"
@@ -2599,6 +2606,15 @@ __metadata:
     "@noble/hashes": ^1.0.0
     protobufjs: ^6.8.8
   checksum: 376d72f6440db60611b002b00a13e3a5bfd0d3503e7682358dbcf79641e74d8c26c234c321452fb4a758baf66eecef25d950e08bdea270486d9d03ee489e2960
+  languageName: node
+  linkType: hard
+
+"@connectrpc/connect@npm:1.4.0":
+  version: 1.4.0
+  resolution: "@connectrpc/connect@npm:1.4.0"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.4.2
+  checksum: 388145ea90b3216f133b34d96a47dfd0273dfa12c4b4963c7223cf45bdcbf8b3490ab234dda34fd42a7112ad9f51f22efc013f3183744a3f2ae65b825917b870
   languageName: node
   linkType: hard
 
@@ -6224,6 +6240,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@penumbra-zone/bech32m@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@penumbra-zone/bech32m@npm:7.0.0"
+  dependencies:
+    bech32: ^2.0.0
+  peerDependencies:
+    "@penumbra-zone/protobuf": 6.0.0
+  checksum: 61261e725b9bf1a78c374e79b9400c2ca3795fe3895f0406aee72fb3ce45ab398604c3ef8de00386c0eb243eaec7424a0c5747713bd95459ee669b0ee8a27b10
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/client@npm:18.0.0":
+  version: 18.0.0
+  resolution: "@penumbra-zone/client@npm:18.0.0"
+  peerDependencies:
+    "@connectrpc/connect": ^1.4.0
+    "@penumbra-zone/protobuf": 6.0.0
+    "@penumbra-zone/transport-dom": 7.5.0
+  checksum: 42860e065055a0cae08325e17046cf7d57d2924b8a5b3aba9ed034133ec28be3c7007fb1b5e9e784fccca02db8f74818c542cd2b653c4ee204f46cd1954cb342
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/protobuf@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@penumbra-zone/protobuf@npm:6.0.0"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+  checksum: 35563a32304e16400cf706d5e3a13e2aeeac5ca778ed5a0583ac35842f01eac9b3e4ecad3c40c6d611db85e584c4b9133b176f82326990cc6659d0bf52870eb2
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/transport-dom@npm:7.5.0":
+  version: 7.5.0
+  resolution: "@penumbra-zone/transport-dom@npm:7.5.0"
+  dependencies:
+    "@bufbuild/protobuf": 1.10.0
+    "@connectrpc/connect": 1.4.0
+  checksum: b0392cfc9307123fcb09e814656e7b11c999945e83d3bc10f3415e3dc6c145093bf1767fd7b563ca69d956a9cf5449ae370d4469aac36add250ceb20220baedf
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -8802,6 +8859,10 @@ __metadata:
     "@initia/initia-registry": latest
     "@injectivelabs/utils": 1.14.6
     "@interchain-ui/react": ^1.23.13
+    "@penumbra-zone/bech32m": 7.0.0
+    "@penumbra-zone/client": 18.0.0
+    "@penumbra-zone/protobuf": 6.0.0
+    "@penumbra-zone/transport-dom": 7.5.0
     "@r2wc/react-to-web-component": ^2.0.3
     "@radix-ui/colors": ^3.0.0
     "@radix-ui/react-accordion": ^1.1.2
@@ -24909,19 +24970,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-typescript2@npm:^0.34.0":
-  version: 0.34.1
-  resolution: "rollup-plugin-typescript2@npm:0.34.1"
+"rollup-plugin-typescript2@npm:0.36.0":
+  version: 0.36.0
+  resolution: "rollup-plugin-typescript2@npm:0.36.0"
   dependencies:
     "@rollup/pluginutils": ^4.1.2
     find-cache-dir: ^3.3.2
     fs-extra: ^10.0.0
-    semver: ^7.3.7
-    tslib: ^2.4.0
+    semver: ^7.5.4
+    tslib: ^2.6.2
   peerDependencies:
     rollup: ">=1.26.3"
     typescript: ">=2.4.0"
-  checksum: 107e66b9ab1aaf4b237564e500ea9de9f2d3f0a81be5139dc753fc76bbf00a1a2230eb1ec59145d2dfc4c4da9be8211f1f3e1370007efe1e24ce45a00905e558
+  checksum: 199afe11f9218ad943b67138b3165c2be2cd2535926da6ed467124273f7bbb1dd779521a648a26a65073cafe43388104857a90e0fdf06ca526a6613771eb2e70
   languageName: node
   linkType: hard
 
@@ -25572,7 +25633,7 @@ __metadata:
     rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-postcss: ^4.0.2
     rollup-plugin-terser: ^7.0.2
-    rollup-plugin-typescript2: ^0.34.0
+    rollup-plugin-typescript2: 0.36.0
     rollup-plugin-visualizer: ^5.5.4
     ts-jest: ^29.1.2
     tslib: ^1.9.3

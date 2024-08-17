@@ -7,6 +7,10 @@ import { chainIdToName } from '../chains';
 import { useChains } from './use-chains';
 import { gracefullyConnect } from '../utils/wallet';
 import { useCallbackStore } from '../store/callbacks';
+import { createPenumbraClient } from '@penumbra-zone/client';
+import { ViewService } from '@penumbra-zone/protobuf';
+import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
+import { bech32CompatAddress } from '@penumbra-zone/bech32m/penumbracompat1';
 
 export interface MinimalWallet {
   walletName: string;
@@ -67,6 +71,52 @@ export const useMakeWallets = () => {
     let wallets: MinimalWallet[] = [];
 
     if (chainType === 'cosmos') {
+      if (chainID.includes('penumbra')) {
+        const praxWallet: MinimalWallet = {
+          walletName: 'prax',
+          walletPrettyName: 'Prax Wallet',
+          walletInfo: {
+            logo: 'https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg',
+          },
+          connect: async () => {
+            console.error('Prax wallet is not supported for connect');
+            toast.error('Prax wallet is not supported for connect');
+          },
+          getAddress: async ({ praxWallet }) => {
+            const penumbraWalletIndex = praxWallet?.index;
+            const sourceChainID = praxWallet?.sourceChainID;
+            const prax_id = 'lkpmkhpnhknhmibgnmmhdhgdilepfghe';
+            const prax_origin = `chrome-extension://${prax_id}`;
+            const client = createPenumbraClient(prax_origin);
+            try {
+              await client.connect();
+
+              const viewService = client.service(ViewService);
+              const address = await viewService.addressByIndex({
+                addressIndex: {
+                  account: penumbraWalletIndex ? penumbraWalletIndex : 0,
+                },
+              });
+              if (!address.address) throw new Error('No address found');
+              const bech32Address = getPenumbraCompatibleAddress({
+                address: address.address,
+                chainID: sourceChainID,
+              });
+              return bech32Address;
+            } catch (error) {
+              console.error(error);
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
+              toast.error(error?.message);
+            }
+          },
+          disconnect: async () => {
+            console.error('Prax wallet is not supported');
+          },
+          isWalletConnected: false,
+        };
+        return [praxWallet];
+      }
       const chainName = chainIdToName(chainID);
       const walletRepo = getWalletRepo(chainName);
       wallets = walletRepo.wallets.map((wallet) => ({
@@ -125,7 +175,7 @@ export const useMakeWallets = () => {
             }
             return wallet.address;
           } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error(
               <p>
                 <strong>Failed to get address!</strong>
@@ -187,7 +237,6 @@ export const useMakeWallets = () => {
                   return evmAddress;
                 }
               } else {
-                console.log('connecting');
                 await connectAsync({ connector, chainId: Number(chainID) });
                 trackWallet.track('evm', connector.id, chainType);
 
@@ -290,4 +339,18 @@ export const useMakeWallets = () => {
   return {
     makeWallets,
   };
+};
+
+const penumbraBech32ChainIDs = ['noble-1', 'grand-1'];
+const getPenumbraCompatibleAddress = ({
+  chainID,
+  address,
+}: {
+  chainID?: string;
+  address: { inner: Uint8Array };
+}): string => {
+  if (!chainID) return bech32mAddress(address);
+  return penumbraBech32ChainIDs.includes(chainID)
+    ? bech32CompatAddress(address)
+    : bech32mAddress(address);
 };

@@ -31,8 +31,10 @@ export const PraxWalletIndex = ({
         type="number"
         className={cn(`w-16 h-5.5 rounded-md border px-2 text-xs`)}
         value={Number(input)}
-        onChange={(e) => {
+        onClick={(e) => {
           e.stopPropagation();
+        }}
+        onChange={(e) => {
           if (Number(e.target.value) < 0) {
             setInput(0);
             return;
