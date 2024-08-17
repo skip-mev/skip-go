@@ -72,8 +72,11 @@ export const PreviewRoute = ({
   const getChain = (chainID: string) =>
     chains?.find((chain) => chain.chainID === chainID);
   const { makeWallets } = useMakeWallets();
-  const { onTransactionBroadcasted, onTransactionComplete, onTransactionFailed } =
-    useCallbackStore.getState();
+  const {
+    onTransactionBroadcasted,
+    onTransactionComplete,
+    onTransactionFailed,
+  } = useCallbackStore.getState();
 
   const [isExpanded, setIsExpanded] = useState(() =>
     route.chainIDs.length === 2 ? true : false
@@ -261,9 +264,8 @@ export const PreviewRoute = ({
         throw new Error('User rejected request');
       }
       onTransactionFailed?.({
-        error: err instanceof Error
-        ? `${err.name}: ${err.message}`
-        : String(err)
+        error:
+          err instanceof Error ? `${err.name}: ${err.message}` : String(err),
       });
       throw err;
     }
@@ -278,9 +280,8 @@ export const PreviewRoute = ({
     onError: (err: unknown) => {
       console.error(err);
       onTransactionFailed?.({
-        error: err instanceof Error
-        ? `${err.name}: ${err.message}`
-        : String(err)
+        error:
+          err instanceof Error ? `${err.name}: ${err.message}` : String(err),
       });
       toast(
         ({ createdAt, id }) => (
@@ -577,7 +578,8 @@ export const PreviewRoute = ({
         <div className="space-y-4">
           {!submitMutation.isError && !submitMutation.isSuccess && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium">
-              {route.txsRequired > 1 ? (
+              {route.txsRequired > 1 &&
+              route.txsRequired - broadcastedTxs.length !== 0 ? (
                 <>
                   <div className="relative rounded-full bg-[#FF486E] p-[4px]">
                     <div className="absolute h-6 w-6 animate-ping rounded-full bg-[#FF486E]" />
