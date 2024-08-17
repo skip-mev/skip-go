@@ -76,6 +76,7 @@ export function WalletModal({ chainType, onClose, wallets }: Props) {
               <WalletListItem
                 key={wallet.walletName}
                 chainType={chainType}
+                walletChainType={wallet.walletChainType}
                 walletName={wallet.walletName}
                 className={cn(
                   'group relative mb-2 data-[unsupported=true]:opacity-30',
@@ -153,7 +154,9 @@ function WalletModalWithContext() {
   const { data: chain } = useChainByID(chainID);
 
   const { makeWallets } = useMakeWallets();
-  const wallets = makeWallets(chainID);
+  const wallets = makeWallets(chainID).filter(
+    (wallet) => wallet.walletChainType === chain?.chainType
+  );
 
   if (!chain) {
     return null;

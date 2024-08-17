@@ -159,6 +159,7 @@ export const SetAddressDialog = ({
                   return (
                     <WalletListItem
                       key={wallet.walletName}
+                      walletChainType={wallet.walletChainType}
                       chainType={chainType}
                       walletName={wallet.walletName}
                       className={cn(
