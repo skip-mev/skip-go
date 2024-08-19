@@ -3,7 +3,7 @@ import { Row } from '../../components/Layout';
 import { SmallText } from '../../components/Typography';
 import { getChain, skipAssets } from '../../state/skip';
 import { getFormattedAssetAmount } from '../../utils/crypto';
-import { styled, useTheme } from 'styled-components';
+import { css, styled, useTheme } from 'styled-components';
 import React from 'react';
 import { ChainIcon } from '../../icons/ChainIcon';
 import { Button } from '../../components/Button';
@@ -103,8 +103,6 @@ export const SwapExecutionFlowRouteDetailedRow = ({
 };
 
 const StyledChainImage = styled.img<{ state?: txState }>`
-  ${({ theme, state }) =>
-    state === 'confirmed' && `border: 2px solid ${theme.success.text};`}
   border-radius: 50%;
   box-sizing: content-box;
 `;
@@ -146,7 +144,6 @@ export const StyledAnimatedBorder = ({
       justify="space-between"
       width={width}
       height={height}
-      borderSize={borderSize}
       backgroundColor={backgroundColor}
     >
       {children}
@@ -172,9 +169,8 @@ const StyledLoadingContainer = styled(Row)<{
       case 'failed':
         return `border: ${borderSize}px solid ${theme.error.text}`;
       case 'broadcasted':
-        return '';
       default:
-        return `border: ${borderSize}px solid transparent`;
+        return '';
     }
   }};
   border-radius: 50%;
@@ -184,14 +180,17 @@ const StyledLoadingContainer = styled(Row)<{
     position: absolute;
     height: ${({ height }) => `${height + 20}px;`}
     width: ${({ width }) => `${width + 20}px;`}
-    background-image: conic-gradient(
-      transparent,
-      transparent,
-      transparent,
-      ${({ theme, backgroundColor }) => backgroundColor ?? theme.success.text}
-    );
-      ${({ txState }) =>
-        txState === 'broadcasted' && 'animation: rotate 4s linear infinite;'}
+    ${({ txState, backgroundColor, theme }) =>
+      txState === 'broadcasted' &&
+      css`
+        background-image: conic-gradient(
+          transparent,
+          transparent,
+          transparent,
+          ${backgroundColor ?? theme.success.text}
+        );
+        animation: rotate 4s linear infinite;
+      `};
   }
   @keyframes rotate {
     0% {
@@ -207,10 +206,9 @@ const StyledLoadingOverlay = styled(Row)<{
   backgroundColor?: string;
   width: number;
   height: number;
-  borderSize: number;
 }>`
-  width: ${({ width, borderSize }) => width - borderSize}px;
-  height: ${({ height, borderSize }) => height - borderSize}px;
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
   position: absolute;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.primary.background.normal};

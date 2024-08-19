@@ -109,7 +109,7 @@ export const TransactionHistoryFlowItem = ({
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
-      <StyledHistoryItemRow justify="space-between" onClick={onClickRow}>
+      <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
         <Row gap={5} align="center">
           <RenderAssetAmount {...source} />
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
@@ -142,7 +142,6 @@ export const TransactionHistoryFlowItem = ({
 };
 
 const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
-  padding: 10px;
   background-color: ${({ theme, showDetails }) =>
     showDetails && theme.secondary.background.normal};
   &:hover {
@@ -152,6 +151,8 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
 `;
 
 const StyledHistoryItemRow = styled(Row)`
+  padding: 0 10px;
+  height: 40px;
   &:hover {
     cursor: pointer;
   }
