@@ -1,5 +1,5 @@
 import { Chain } from '@skip-go/client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import {
   ChainAddresses,
   SetChainAddressesParam,
@@ -27,7 +27,7 @@ export const useAutoSetAddress = ({
   signRequired?: boolean;
   chainAddresses: ChainAddresses;
   setChainAddresses: (v: SetChainAddressesParam) => void;
-}) => {
+}): UseQueryResult => {
   const trackedWallets = useTrackWallet(chain?.chainType as TrackWalletCtx);
   const source = chainAddresses?.[0];
   const destination =
@@ -69,7 +69,8 @@ export const useAutoSetAddress = ({
           index !== 0 &&
           signRequired &&
           source?.chainType === 'cosmos' &&
-          cosmos
+          cosmos &&
+          !chain.chainID.includes('penumbra')
         ) {
           const walletSelected = wallets.find(
             (wallet) => wallet.walletName === cosmos?.walletName
@@ -91,7 +92,8 @@ export const useAutoSetAddress = ({
           destination?.chainType === 'cosmos' &&
           destination?.source !== 'input' &&
           index !== 0 &&
-          !signRequired
+          !signRequired &&
+          !chain.chainID.includes('penumbra')
         ) {
           const walletName = destination.source?.walletName;
           const walletSelected = wallets.find(

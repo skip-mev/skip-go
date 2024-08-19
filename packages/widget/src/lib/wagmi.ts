@@ -1,5 +1,5 @@
 import { http } from 'viem';
-import { createConfig } from 'wagmi';
+import { Config, createConfig } from 'wagmi';
 import {
   arbitrum,
   arbitrumSepolia,
@@ -22,13 +22,14 @@ import {
   optimismSepolia,
   polygon,
   polygonMumbai,
+  sei,
   sepolia,
 } from 'wagmi/chains';
 
 import { forma, formaTestnet } from './viem/chains';
 
 // Update EVM_CHAINS in src/constants/wagmi.ts as well
-export const config = createConfig({
+export const config: Config = createConfig({
   chains: [
     arbitrum,
     avalanche,
@@ -54,6 +55,7 @@ export const config = createConfig({
     blastSepolia,
     forma,
     formaTestnet,
+    sei,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -80,6 +82,7 @@ export const config = createConfig({
     [blastSepolia.id]: http(),
     [forma.id]: http(),
     [formaTestnet.id]: http(),
+    [sei.id]: http(),
   },
   ssr: true,
 });
