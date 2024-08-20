@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const XIcon = ({ color = 'gray' }: IconProps) => (
+export const XIcon = ({ color = 'currentColor' }: IconProps) => (
   <svg
     width="10"
     height="10"

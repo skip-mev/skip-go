@@ -61,14 +61,14 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         ref={inputRef}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder={asset ? 'Search networks' : 'Search  asset or network'}
+        placeholder={asset ? 'Search networks' : 'Search asset or network'}
         value={searchTerm}
         onChange={handleSearch}
       />
 
       <Row align="center" gap={5}>
         <SmallText style={{ textWrap: 'nowrap' }}> Powered by </SmallText>
-        <SkipLogoIcon />
+        <SkipLogoIcon color={theme.primary.text.lowContrast} />
       </Row>
     </StyledSearchInputContainer>
   );

@@ -1,3 +1,5 @@
+import { withBoundProps } from '../utils/misc';
+
 type IconProps = {
   color?: string;
   backgroundColor?: string;
@@ -6,7 +8,7 @@ type IconProps = {
 };
 
 export const ArrowIcon = ({
-  color = 'black',
+  color = 'currentColor',
   backgroundColor = 'transparent',
   direction = 'right',
   className,
@@ -35,13 +37,6 @@ export const ArrowIcon = ({
     />
   </svg>
 );
-
-const withBoundProps = (
-  WrappedComponent: typeof ArrowIcon,
-  boundProps: IconProps
-) => {
-  return (props: IconProps) => <WrappedComponent {...boundProps} {...props} />;
-};
 
 export const RightArrowIcon = withBoundProps(ArrowIcon, { direction: 'right' });
 

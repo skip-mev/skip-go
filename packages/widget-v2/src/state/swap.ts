@@ -1,10 +1,15 @@
 import { atom } from 'jotai';
 import { ClientAsset } from './skip';
+import { Wallet } from '../components/RenderWalletList';
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-export const sourceAtom = atom<AssetAtom | undefined>();
+export const sourceAssetAtom = atom<AssetAtom>();
 
-export const destinationAtom = atom<AssetAtom | undefined>();
+export const destinationAssetAtom = atom<AssetAtom>();
+
+export const connectedWalletAtom = atom<Wallet>();
+
+export const destinationWalletAtom = atom<Wallet>();

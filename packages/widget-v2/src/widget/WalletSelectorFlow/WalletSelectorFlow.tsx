@@ -1,32 +1,28 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Modal, ModalProps } from '../../components/Modal';
-import { RenderWalletList } from '../../components/RenderWalletList';
+import { RenderWalletList, Wallet } from '../../components/RenderWalletList';
 
 export type WalletSelectorFlowProps = ModalProps & {
   onSelect: (wallet: Wallet) => void;
-};
-
-type Wallet = {
-  name: string;
-  imageUrl?: string;
-  rightContent?: () => React.ReactNode;
 };
 
 export const WALLET_LIST: Wallet[] = [
   {
     name: 'Keplr',
     imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/512px-MetaMask_Fox.svg.png',
+      'https://cdn.prod.website-files.com/63eb7ddf41cf5b1c8fdfbc74/63eb7ddf41cf5bddb7dfbcc9_Keplr_256.png',
+    address: 'cosmos17...zha0v',
   },
   {
     name: 'Phantom',
-    imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/512px-MetaMask_Fox.svg.png',
+    imageUrl: 'https://phantom.app/favicon/favicon-32x32.png',
+    address: '0x30f5d...D0B95',
   },
   {
     name: 'MetaMask',
     imageUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/512px-MetaMask_Fox.svg.png',
+    address: '0x30f5d...D0BFF',
   },
 ];
 

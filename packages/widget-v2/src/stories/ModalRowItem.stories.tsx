@@ -51,7 +51,7 @@ export const TokenAndChain: Story = {
     ),
     rightContent: (
       <Column gap={5}>
-        <SmallText opacity="1">100.1233</SmallText>
+        <SmallText normalTextColor>100.1233</SmallText>
         <SmallText>$834.32</SmallText>
       </Column>
     ),

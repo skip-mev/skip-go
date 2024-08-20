@@ -17,6 +17,7 @@ export type RenderWalletListProps = {
 
 export type Wallet = {
   name: string;
+  address: string;
   imageUrl?: string;
   onSelect?: ((wallet: Wallet) => void) | (() => void);
   rightContent?: () => React.ReactNode;
@@ -113,7 +114,7 @@ export const RenderWalletList = ({
         height={height}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
-        itemKey={(item) => hashObject(item)}
+        itemKey={(item) => item.address}
       />
     </StyledContainer>
   );

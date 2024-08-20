@@ -12,118 +12,119 @@ import {
 import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
 import { Button } from '../../components/Button';
 import { SmallText, Text } from '../../components/Typography';
+import { destinationAssetAtom, destinationWalletAtom } from '../../state/swap';
+import { useAtom } from 'jotai';
+import { getChain } from '../../state/skip';
 
-export type ManualAddressFlowProps = ModalProps & {
-  onSelectWallet: (wallet: Wallet) => void;
-  onSetManualWalletAddress: (address: string) => void;
-  chainName?: string;
-  chainLogo?: string;
-};
+export const ManualAddressFlow = NiceModal.create((modalProps: ModalProps) => {
+  const { theme } = modalProps;
+  const modal = useModal();
+  const [destinationAsset] = useAtom(destinationAssetAtom);
+  const [_destinationWallet, setDestinationWallet] = useAtom(
+    destinationWalletAtom
+  );
+  const chain = getChain(destinationAsset?.chainID ?? '');
+  const chainName = destinationAsset?.chainName;
+  const chainImage = chain.images?.find((image) => image.svg ?? image.png);
+  const chainLogo = chainImage?.svg ?? chainImage?.png;
+  const [showManualAddressInput, setShowManualAddressInput] = useState(false);
+  const [manualWalletAddress, setManualWalletAddress] = useState('');
 
-export const ManualAddressFlow = NiceModal.create(
-  (modalProps: ManualAddressFlowProps) => {
-    const {
-      onSelectWallet,
-      chainName,
-      chainLogo,
-      theme,
-      onSetManualWalletAddress,
-    } = modalProps;
-    const modal = useModal();
-    const [showManualAddressInput, setShowManualAddressInput] = useState(false);
-    const [manualWalletAddress, setManualWalletAddress] = useState('');
-
-    const walletList: Wallet[] = [
-      ...WALLET_LIST,
-      {
-        name: 'Enter address manually',
-        onSelect: () => setShowManualAddressInput(true),
-        rightContent: () => {
-          return (
-            <RightArrowIcon
-              color={theme?.primary?.background.normal}
-              backgroundColor={theme?.primary?.text.normal}
-            />
-          );
-        },
-      },
-    ];
-
-    const handleChangeAddress = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        setManualWalletAddress(e.target.value);
-      },
-      []
-    );
-
-    const addressIsValid = useMemo(() => {
-      // TODO: implement logic to actually validate addresses
-      if (manualWalletAddress.length < 10) {
-        return;
-      }
-      return manualWalletAddress.length === 10;
-    }, [manualWalletAddress]);
-
-    return (
-      <Modal {...modalProps}>
-        {showManualAddressInput ? (
-          <StyledContainer gap={15}>
-            <RenderWalletListHeader
-              title={`Enter a ${chainName} wallet address`}
-              onClickBackButton={() => setShowManualAddressInput(false)}
-              rightContent={() => (
-                <StyledChainLogoContainerRow align="center" justify="center">
-                  <img width="25px" height="25px" src={chainLogo} />
-                </StyledChainLogoContainerRow>
-              )}
-            />
-            <StyledInputContainer>
-              <StyledInput
-                placeholder="0xABCDEFG..."
-                value={manualWalletAddress}
-                onChange={handleChangeAddress}
-                validAddress={addressIsValid}
-              />
-              <StyledAddressValidatorDot validAddress={addressIsValid} />
-            </StyledInputContainer>
-            {addressIsValid === false && (
-              <SmallText
-                color={theme?.error?.text}
-                opacity={1}
-                textAlign="center"
-              >
-                Please enter a valid wallet address for {chainName}
-              </SmallText>
-            )}
-            <StyledBrandButton
-              align="center"
-              justify="center"
-              disabled={!addressIsValid}
-              onClick={() => onSetManualWalletAddress(manualWalletAddress)}
-            >
-              <Text
-                mainButtonColor={
-                  addressIsValid === true ? theme?.brandColor : undefined
-                }
-                opacity={addressIsValid ? 1 : 0.5}
-                fontSize={24}
-              >
-                Confirm
-              </Text>
-            </StyledBrandButton>
-          </StyledContainer>
-        ) : (
-          <RenderWalletList
-            title="Destination wallet"
-            walletList={walletList}
-            onSelect={onSelectWallet}
-            onClickBackButton={() => modal.remove()}
+  const walletList: Wallet[] = [
+    ...WALLET_LIST,
+    {
+      name: 'Enter address manually',
+      onSelect: () => setShowManualAddressInput(true),
+      rightContent: () => {
+        return (
+          <RightArrowIcon
+            color={theme?.primary?.background.normal}
+            backgroundColor={theme?.primary?.text.normal}
           />
-        )}
-      </Modal>
-    );
-  }
-);
+        );
+      },
+    } as Wallet,
+  ];
+
+  const handleChangeAddress = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setManualWalletAddress(e.target.value);
+    },
+    []
+  );
+
+  const addressIsValid = useMemo(() => {
+    // TODO: implement logic to actually validate addresses
+    if (manualWalletAddress.length < 10) {
+      return;
+    }
+    return manualWalletAddress.length === 10;
+  }, [manualWalletAddress]);
+
+  return (
+    <Modal {...modalProps}>
+      {showManualAddressInput ? (
+        <StyledContainer gap={15}>
+          <RenderWalletListHeader
+            title={`Enter a ${chainName} wallet address`}
+            onClickBackButton={() => setShowManualAddressInput(false)}
+            rightContent={() => (
+              <StyledChainLogoContainerRow align="center" justify="center">
+                <img width="25px" height="25px" src={chainLogo} />
+              </StyledChainLogoContainerRow>
+            )}
+          />
+          <StyledInputContainer>
+            <StyledInput
+              placeholder="0xABCDEFG..."
+              value={manualWalletAddress}
+              onChange={handleChangeAddress}
+              validAddress={addressIsValid}
+            />
+            <StyledAddressValidatorDot validAddress={addressIsValid} />
+          </StyledInputContainer>
+          {addressIsValid === false && (
+            <SmallText color={theme?.error?.text} textAlign="center">
+              Please enter a valid wallet address for {chainName}
+            </SmallText>
+          )}
+          <StyledBrandButton
+            align="center"
+            justify="center"
+            disabled={!addressIsValid}
+            onClick={() => {
+              setDestinationWallet({
+                name: 'manual wallet address',
+                address: manualWalletAddress,
+              });
+              modal.remove();
+            }}
+          >
+            <Text
+              mainButtonColor={
+                addressIsValid === true ? theme?.brandColor : undefined
+              }
+              opacity={addressIsValid ? 1 : 0.5}
+              fontSize={24}
+            >
+              Confirm
+            </Text>
+          </StyledBrandButton>
+        </StyledContainer>
+      ) : (
+        <RenderWalletList
+          title="Destination wallet"
+          walletList={walletList}
+          onSelect={(wallet) => {
+            setDestinationWallet(wallet);
+            modal.remove();
+          }}
+          onClickBackButton={() => modal.remove()}
+        />
+      )}
+    </Modal>
+  );
+});
 
 const StyledContainer = styled(Column)`
   position: relative;

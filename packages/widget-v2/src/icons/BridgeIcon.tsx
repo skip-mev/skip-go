@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const BridgeIcon = ({ color = 'black' }: IconProps) => (
+export const BridgeIcon = ({ color = 'currentColor' }: IconProps) => (
   <svg
     width="47"
     height="7"

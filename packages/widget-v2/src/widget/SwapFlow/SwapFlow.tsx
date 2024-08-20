@@ -1,20 +1,19 @@
 import { useTheme } from 'styled-components';
 import { AssetChainInput } from '../../components/AssetChainInput';
-import { GhostButton } from '../../components/Button';
-import { Column, Row } from '../../components/Layout';
+import { Column } from '../../components/Layout';
 import { MainButton } from '../../components/MainButton';
 import { SmallText } from '../../components/Typography';
 import { ICONS } from '../../icons';
-import { HistoryIcon } from '../../icons/HistoryIcon';
 import { useCallback, useMemo, useState } from 'react';
 import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
-import { SwapFlowFlooterItems } from './SwapFlowFooterItems';
+import { SwapFlowFooter } from './SwapFlowFooter';
 import { SwapFlowBridge } from './SwapFlowBridge';
-import { sourceAtom, destinationAtom } from '../../state/swap';
+import { sourceAssetAtom, destinationAssetAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
 import { TokenAndChainSelectorFlow } from '../TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';
 import { getChainsContainingAsset, skipAssets } from '../../state/skip';
+import { SwapFlowHeader } from './SwapFlowHeader';
 
 const sourceAssetBalance = 125;
 
@@ -22,9 +21,9 @@ export const SwapFlow = () => {
   const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAtom);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: assets }] = useAtom(skipAssets);
-  const [destinationAsset, setDestinationAsset] = useAtom(destinationAtom);
+  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
   const swapFlowSettings = useModal(SwapFlowSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorFlow);
@@ -64,6 +63,8 @@ export const SwapFlow = () => {
           ...old,
           ...asset,
         }));
+
+        console.log(asset);
         tokenAndChainSelectorFlow.hide();
       },
       chainsContainingAsset: chainsContainingSourceAsset,
@@ -109,18 +110,22 @@ export const SwapFlow = () => {
           opacity: drawerOpen ? 0.3 : 1,
         }}
       >
-        <Row justify="space-between">
-          <GhostButton gap={5} onClick={() => {}}>
-            <HistoryIcon color={theme.primary.text.normal} />
-            History
-          </GhostButton>
-          {!!sourceAssetBalance && (
-            <Row align="center" gap={10}>
+        <SwapFlowHeader
+          leftButton={{
+            label: 'History',
+            icon: ICONS.history,
+            onClick: () => {},
+          }}
+          rightButton={{
+            label: 'Max',
+            onClick: () => {},
+          }}
+          rightContent={
+            !!sourceAssetBalance ? (
               <SmallText> Balance: {sourceAssetBalance} </SmallText>
-              <GhostButton onClick={() => {}}>Max</GhostButton>
-            </Row>
-          )}
-        </Row>
+            ) : undefined
+          }
+        />
         <Column align="center">
           <AssetChainInput
             selectedAssetDenom={sourceAsset?.denom}
@@ -144,10 +149,8 @@ export const SwapFlow = () => {
         </Column>
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
 
-        <GhostButton
-          gap={5}
-          align="center"
-          justify="space-between"
+        <SwapFlowFooter
+          showRouteInfo
           onClick={() =>
             swapFlowSettings.show({
               theme,
@@ -157,9 +160,7 @@ export const SwapFlow = () => {
                 open ? setDrawerOpen(true) : setDrawerOpen(false),
             })
           }
-        >
-          <SwapFlowFlooterItems />
-        </GhostButton>
+        />
       </Column>
       <div
         id="swap-flow-settings-container"

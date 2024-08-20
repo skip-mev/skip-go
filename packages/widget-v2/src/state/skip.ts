@@ -55,7 +55,7 @@ export const skipAssets = atomWithQuery((get) => {
           includeCW20Assets: true,
           includeSvmAssets: true,
         })
-        .then(flattenData) as ClientAsset[];
+        .then(flattenData);
     },
   };
 });
@@ -86,7 +86,7 @@ export const getChainsContainingAsset = (
   return chainsContainingAsset;
 };
 
-function getChain(chainId: string): Chain {
+export function getChain(chainId: string): Chain {
   const chain = chains.find((c) => c.chain_id === chainId);
   if (!chain) {
     throw new Error(`chain '${chainId}' does not exist in chainRecord`);

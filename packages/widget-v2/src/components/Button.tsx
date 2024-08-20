@@ -19,21 +19,18 @@ export const GhostButton = styled(SmallText).attrs({
         background-color: ${secondary
           ? theme.secondary.background.normal
           : theme.primary.ghostButtonHover};
-        opacity: 1;
+        color: ${theme.primary.text.normal};
         cursor: pointer;
       `};
   }
-  ${({ onClick }) =>
-    onClick &&
-    css`
-      padding: 9px 16px;
-    `}
+  padding: 9px 16px;
   border-radius: 90px;
   ${flexProps};
 `;
 
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
+  line-height: initial;
 
   ${({ disabled }) =>
     disabled

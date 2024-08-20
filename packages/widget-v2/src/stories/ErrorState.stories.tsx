@@ -220,7 +220,7 @@ export const AdditionalSignature = {
       </Text>
     ),
     description: (
-      <SmallText opacity="1"> ATOM {' -> '} 71.235 COREUM</SmallText>
+      <SmallText normalTextColor> ATOM {' -> '} 71.235 COREUM</SmallText>
     ),
     icon: ICONS.signature,
   },
