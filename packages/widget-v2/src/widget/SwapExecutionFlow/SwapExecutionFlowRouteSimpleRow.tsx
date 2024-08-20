@@ -2,12 +2,11 @@ import { useTheme } from 'styled-components';
 import { Button } from '../../components/Button';
 import { Column, Row } from '../../components/Layout';
 import { SmallText, Text } from '../../components/Typography';
-import { ClientAsset, getChain, skipAssets } from '../../state/skip';
+import { getChain, skipAssets } from '../../state/skip';
 import { getFormattedAssetAmount } from '../../utils/crypto';
 import { Wallet } from '../../components/RenderWalletList';
 import { iconMap, ICONS } from '../../icons';
-import React, { useEffect, useMemo } from 'react';
-import { withBoundProps } from '../../utils/misc';
+import { useEffect, useMemo } from 'react';
 import { ChainTransaction } from '@skip-go/client';
 import {
   Operation,

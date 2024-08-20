@@ -7,7 +7,6 @@ import { BridgeArrowIcon } from '../../icons/BridgeArrowIcon';
 import { ICONS } from '../../icons';
 import { destinationWalletAtom } from '../../state/swap';
 import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
-import { useMemo } from 'react';
 
 export type SwapExecutionFlowRouteSimpleProps = {
   operations: Operation[];
