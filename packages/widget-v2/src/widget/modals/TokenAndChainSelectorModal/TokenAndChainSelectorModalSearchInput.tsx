@@ -1,25 +1,25 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { styled, useTheme } from 'styled-components';
-import { Row } from '../../components/Layout';
-import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
-import { SmallText } from '../../components/Typography';
-import { SearchIcon } from '../../icons/SearchIcon.tsx';
-import { StyledAssetLabel } from '../../components/AssetChainInput.tsx';
-import { ClientAsset } from '../../state/skip.ts';
-import { LeftArrowIcon } from '../../icons/ArrowIcon.tsx';
+import { Row } from '@components/Layout.tsx';
+import { SkipLogoIcon } from '@icons/SkipLogoIcon.tsx';
+import { SmallText } from '@components/Typography.tsx';
+import { SearchIcon } from '@icons/SearchIcon.tsx';
+import { StyledAssetLabel } from '@components/AssetChainInput.tsx';
+import { ClientAsset } from '@state/skip.ts';
+import { LeftArrowIcon } from '@icons/ArrowIcon.tsx';
 import { useModal } from '@ebay/nice-modal-react';
-import { Button } from '../../components/Button.tsx';
-import { Text } from '../../components/Typography';
+import { Button } from '@components/Button.tsx';
+import { Text } from '@components/Typography.tsx';
 
-interface SearchInputProps {
+type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
   asset?: Partial<ClientAsset>;
-}
+};
 
-export const SearchInput: React.FC<SearchInputProps> = ({
+export const TokenAndChainSelectorModalSearchInput = ({
   onSearch,
   asset,
-}) => {
+}: TokenAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const modal = useModal();
   const inputRef = useRef<HTMLInputElement>(null);

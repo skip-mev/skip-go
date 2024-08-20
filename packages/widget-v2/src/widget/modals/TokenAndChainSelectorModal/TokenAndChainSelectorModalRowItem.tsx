@@ -1,20 +1,10 @@
-import { Row } from '../../components/Layout';
-import { ModalRowItem } from '../../components/ModalRowItem';
-import { SmallText, Text } from '../../components/Typography';
-import { ChainWithAsset, ClientAsset } from '../../state/skip';
-import {
-  CircleSkeletonElement,
-  SkeletonElement,
-} from '../../components/Skeleton';
+import { Row } from '@components/Layout';
+import { ModalRowItem } from '@components/ModalRowItem';
+import { SmallText, Text } from '@components/Typography';
+import { ChainWithAsset, ClientAsset } from '@state/skip';
+import { CircleSkeletonElement, SkeletonElement } from '@components/Skeleton';
 import { styled } from 'styled-components';
 import { Chain } from '@chain-registry/types';
-
-export type RowItemType = {
-  item: ClientAsset | ChainWithAsset;
-  index: number;
-  skeleton: React.ReactElement;
-  onSelect: (token: ClientAsset | null) => void;
-};
 
 export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
@@ -28,7 +18,19 @@ export const isChainWithAsset = (
   return (item as Chain).chain_id !== undefined;
 };
 
-export const RowItem = ({ item, index, skeleton, onSelect }: RowItemType) => {
+export type TokenAndChainSelectorModalRowItemProps = {
+  item: ClientAsset | ChainWithAsset;
+  index: number;
+  skeleton: React.ReactElement;
+  onSelect: (token: ClientAsset | null) => void;
+};
+
+export const TokenAndChainSelectorModalRowItem = ({
+  item,
+  index,
+  skeleton,
+  onSelect,
+}: TokenAndChainSelectorModalRowItemProps) => {
   if (!item) return skeleton;
 
   if (isClientAsset(item)) {

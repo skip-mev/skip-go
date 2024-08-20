@@ -1,14 +1,14 @@
 import { styled } from 'styled-components';
 import { Column, Row, Spacer } from './Layout';
 import { SmallText, Text } from './Typography';
-import { ChevronIcon } from '../icons/ChevronIcon';
+import { ChevronIcon } from '@icons/ChevronIcon';
 import { useTheme } from 'styled-components';
-import { CogIcon } from '../icons/CogIcon';
+import { CogIcon } from '@icons/CogIcon';
 import { Button, GhostButton } from './Button';
 import { useAtom } from 'jotai';
-import { skipAssets } from '../state/skip';
-import { useUsdValue } from '../utils/useUsdValue';
-import { formatUSD } from '../utils/intl';
+import { skipAssets } from '@state/skip';
+import { useUsdValue } from '@utils/useUsdValue';
+import { formatUSD } from '@utils/intl';
 
 export type AssetChainInputProps = {
   value?: string;

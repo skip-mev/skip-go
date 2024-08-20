@@ -3,7 +3,7 @@ import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { Scope } from 'react-shadow-scope';
 import { defaultTheme, PartialTheme } from './theme';
 import { createGlobalStyle } from 'styled-components';
-import regular from '../fonts/ABCDiatype-Regular.woff2';
+import regular from '@fonts/ABCDiatype-Regular.woff2';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import isPropValid from '@emotion/is-prop-valid';

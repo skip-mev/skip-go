@@ -3,11 +3,22 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
     preserveSymlinks: true,
+    alias: {
+      '@components': path.resolve(__dirname, './src/components'),
+      '@fonts': path.resolve(__dirname, './src/fonts'),
+      '@icons': path.resolve(__dirname, './src/icons'),
+      '@state': path.resolve(__dirname, './src/state'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@widget': path.resolve(__dirname, './src/widget'),
+      '@modals': path.resolve(__dirname, './src/widget/modals'),
+      '@pages': path.resolve(__dirname, './src/widget/pages'),
+    },
   },
   plugins: [
     react(),

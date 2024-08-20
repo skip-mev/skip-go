@@ -1,5 +1,5 @@
 import { css, styled } from 'styled-components';
-import { getHexColor, opacityToHex } from '../utils/colors';
+import { getHexColor, opacityToHex } from '@utils/colors';
 
 export const SkeletonElement = styled.div<{
   width: number;

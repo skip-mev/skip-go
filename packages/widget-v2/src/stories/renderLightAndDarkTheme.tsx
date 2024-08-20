@@ -1,7 +1,7 @@
 import { cloneElement, CSSProperties, ReactNode } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import { defaultTheme, lightTheme } from '../widget/theme';
-import { Column } from '../components/Layout';
+import { defaultTheme, lightTheme } from '@widget/theme';
+import { Column } from '@components/Layout';
 
 export const renderLightAndDarkTheme = (
   render: ReactNode,

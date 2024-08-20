@@ -1,32 +1,28 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '../components/Layout';
-import { defaultTheme, lightTheme } from '../widget/theme';
-import { ManualAddressFlow } from '../widget/ManualAddressFlow/ManualAddressFlow';
+import { Row } from '@components/Layout';
+import { defaultTheme, lightTheme } from '@widget/theme';
+import { WalletSelectorModal } from '@modals/WalletSelectorModal/WalletSelectorFlow';
+import { Wallet } from '@components/RenderWalletList';
 
 const meta = {
-  title: 'Flows/ManualAddressFlow',
-  component: (props) => <ManualAddressFlowExample {...props} />,
+  title: 'Modals/WalletSelectorModal',
+  component: (props) => <WalletSelectorModalExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
   args: {
-    onSelectWallet(wallet) {
-      alert(`selected wallet is ${wallet.name}`);
+    onSelect: (wallet: Wallet) => {
+      alert(`selected ${wallet.name}`);
     },
-    onSetManualWalletAddress: (address: string) =>
-      alert(`manual address is ${address}`),
-    chainName: 'Base',
-    chainLogo:
-      'https://raw.githubusercontent.com/base-org/brand-kit/5ce7f4e9ba1a1ceaa7beb22156679899fff7faaf/logo/in-product/Base_Network_Logo.svg',
   },
-} satisfies Meta<typeof ManualAddressFlow>;
+} satisfies Meta<typeof WalletSelectorModal>;
 
 export default meta;
 
-export const ManualAddressFlowExample = (props: any) => {
-  const modal = useModal(ManualAddressFlow);
+export const WalletSelectorModalExample = (props: any) => {
+  const modal = useModal(WalletSelectorModal);
 
   return (
     <NiceModal.Provider>

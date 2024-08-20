@@ -1,21 +1,21 @@
-import { Column, Row } from '../../components/Layout';
-import { MainButton } from '../../components/MainButton';
-import { SwapFlowFooter } from '../SwapFlow/SwapFlowFooter';
-import { SwapFlowHeader } from '../SwapFlow/SwapFlowHeader';
+import { Column, Row } from '@components/Layout';
+import { MainButton } from '@components/MainButton';
+import { SwapPageFooter } from '@pages/SwapPage/SwapPageFooter';
+import { SwapPageHeader } from '@pages/SwapPage/SwapPageHeader';
 import { useEffect, useMemo, useState } from 'react';
-import { ICONS } from '../../icons';
+import { ICONS } from '@icons';
 import { useModal } from '@ebay/nice-modal-react';
-import { ManualAddressFlow } from '../ManualAddressFlow/ManualAddressFlow';
+import { ManualAddressModal } from '@modals/ManualAddressModal/ManualAddressModal';
 import styled, { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
-import { destinationWalletAtom } from '../../state/swap';
-import { SwapExecutionFlowRouteSimple } from './SwapExecutionFlowRouteSimple';
-import { SwapExecutionFlowRouteDetailed } from './SwapExecutionFlowRouteDetailed';
+import { destinationWalletAtom } from '@state/swap';
+import { SwapExecutionPageRouteSimple } from './SwapExecutionPageRouteSimple';
+import { SwapExecutionPageRouteDetailed } from './SwapExecutionPageRouteDetailed';
 
-import { withBoundProps } from '../../utils/misc';
-import { Operation, txState } from './SwapExecutionFlowRouteDetailedRow';
-import { SmallText } from '../../components/Typography';
-import { SignatureIcon } from '../../icons/SignatureIcon';
+import { withBoundProps } from '@utils/misc';
+import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
+import { SmallText } from '@components/Typography';
+import { SignatureIcon } from '@icons/SignatureIcon';
 import pluralize from 'pluralize';
 
 enum SwapExecutionState {
@@ -25,14 +25,14 @@ enum SwapExecutionState {
   confirmed,
 }
 
-export type SwapExecutionFlowProps = {
+export type SwapExecutionPageProps = {
   operations: Operation[];
 };
 
 const SIGNATURES_REQUIRED = 2;
 const TX_DELAY_MS = 5_000; // 5 seconds
 
-export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
+export const SwapExecutionPage = ({ operations }: SwapExecutionPageProps) => {
   const theme = useTheme();
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
@@ -48,7 +48,7 @@ export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
     }
   }, [destinationWallet]);
   const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useModal(ManualAddressFlow);
+  const modal = useModal(ManualAddressModal);
 
   const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
     0: 'pending',
@@ -133,19 +133,19 @@ export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
     }
   }, [swapExecutionState]);
 
-  const SwapExecutionFlowRoute = simpleRoute
-    ? withBoundProps(SwapExecutionFlowRouteSimple, {
+  const SwapExecutionPageRoute = simpleRoute
+    ? withBoundProps(SwapExecutionPageRouteSimple, {
         onClickEditDestinationWallet: () => {
           modal.show({
             theme,
           });
         },
       })
-    : SwapExecutionFlowRouteDetailed;
+    : SwapExecutionPageRouteDetailed;
 
   return (
     <Column gap={5}>
-      <SwapFlowHeader
+      <SwapPageHeader
         leftButton={{
           label: 'Back',
           icon: ICONS.thinArrow,
@@ -157,9 +157,9 @@ export const SwapExecutionFlow = ({ operations }: SwapExecutionFlowProps) => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      <SwapExecutionFlowRoute txStateMap={txStateMap} operations={operations} />
+      <SwapExecutionPageRoute txStateMap={txStateMap} operations={operations} />
       {renderMainButton}
-      <SwapFlowFooter
+      <SwapPageFooter
         rightContent={
           SIGNATURES_REQUIRED && (
             <Row align="center">

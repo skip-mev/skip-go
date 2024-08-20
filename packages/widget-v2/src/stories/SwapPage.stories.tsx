@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SwapFlow } from '../widget/SwapFlow/SwapFlow';
+import { SwapPage } from '@pages/SwapPage/SwapPage';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 import { styled } from 'styled-components';
 import NiceModal from '@ebay/nice-modal-react';
 
 const meta = {
-  title: 'Flows/SwapFlow',
+  title: 'Pages/SwapPage',
   component: (props) =>
     renderLightAndDarkTheme(
       <NiceModal.Provider>
         <SwapFlowContainer>
-          <SwapFlow {...props} />
+          <SwapPage {...props} />
         </SwapFlowContainer>
       </NiceModal.Provider>,
       undefined,
@@ -20,12 +20,12 @@ const meta = {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof SwapFlow>;
+} satisfies Meta<typeof SwapPage>;
 type Story = StoryObj<typeof meta>;
 
 export default meta;
 
-export const SwapFlowExample: Story = {
+export const Example: Story = {
   args: {},
 };
 

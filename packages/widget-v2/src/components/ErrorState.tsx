@@ -1,6 +1,6 @@
 import { styled, useTheme } from 'styled-components';
 import { Column } from './Layout';
-import { iconMap, ICONS } from '../icons';
+import { iconMap, ICONS } from '@icons/index';
 import { SmallText, Text } from './Typography';
 
 export type ErrorStateProps = {

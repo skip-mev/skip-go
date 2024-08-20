@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { SwapExecutionFlow } from '../widget/SwapExecutionFlow/SwapExecutionFlow';
+import { SwapExecutionPage } from '@pages/SwapExecutionPage/SwapExecutionPage';
 import NiceModal from '@ebay/nice-modal-react';
-import { destinationAssetAtom } from '../state/swap';
+import { destinationAssetAtom } from '@state/swap';
 import { useAtom } from 'jotai';
-import operations from '../widget/SwapExecutionFlow/operations.json';
-import { skipAssets } from '../state/skip';
+import operations from '@pages/SwapExecutionPage/operations.json';
+import { skipAssets } from '@state/skip';
 import { useEffect, useState } from 'react';
+import { Operation } from '@pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
 
 const meta = {
-  title: 'Flows/SwapExecutionFlow',
+  title: 'Pages/SwapExecutionPage',
   component: (props) => {
     const [_sourceAsset, setSourceAsset] = useAtom(destinationAssetAtom);
     const [_destinationAsset, setDestinationAsset] =
@@ -38,7 +39,7 @@ const meta = {
     if (shouldRender) {
       return renderLightAndDarkTheme(
         <NiceModal.Provider>
-          <SwapExecutionFlow {...props} />
+          <SwapExecutionPage {...props} />
         </NiceModal.Provider>,
         undefined,
         true
@@ -50,13 +51,13 @@ const meta = {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof SwapExecutionFlow>;
+} satisfies Meta<typeof SwapExecutionPage>;
 type Story = StoryObj<typeof meta>;
 
 export default meta;
 
-export const SwapExecutionFlowExample: Story = {
+export const SwapExecutionPageExample: Story = {
   args: {
-    operations,
+    operations: operations as Operation[],
   },
 };

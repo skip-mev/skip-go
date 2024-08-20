@@ -1,5 +1,5 @@
 import List from 'rc-virtual-list';
-import { getHexColor, opacityToHex } from '../utils/colors';
+import { getHexColor, opacityToHex } from '@utils/colors';
 import { useTheme } from 'styled-components';
 
 export type VirtualListProps<T> = {

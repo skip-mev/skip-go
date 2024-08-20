@@ -1,24 +1,24 @@
-import { useTheme } from 'styled-components';
-import { Row } from '../../components/Layout';
-import { GasIcon } from '../../icons/GasIcon';
-import { SkipLogoIcon } from '../../icons/SkipLogoIcon';
-import { SpeedometerIcon } from '../../icons/SpeedometerIcon';
-import { formatUSD } from '../../utils/intl';
 import { useMemo } from 'react';
-import { GhostButton } from '../../components/Button';
+import { useTheme } from 'styled-components';
+import { Row } from '@components/Layout';
+import { GhostButton } from '@components/Button';
+import { GasIcon } from '@icons/GasIcon';
+import { SkipLogoIcon } from '@icons/SkipLogoIcon';
+import { SpeedometerIcon } from '@icons/SpeedometerIcon';
+import { formatUSD } from '@utils/intl';
 
 const estimatedGas = '0.03';
 const estimatedTime = '1min';
 
-export type SwapFlowFooterItemsProps = {
+export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
   showRouteInfo?: boolean;
 };
 
-export const SwapFlowFlooterItems = ({
+export const SwapPageFooterItems = ({
   rightContent = null,
   showRouteInfo,
-}: SwapFlowFooterItemsProps) => {
+}: SwapPageFooterItemsProps) => {
   const theme = useTheme();
 
   const renderRightContent = useMemo(() => {
@@ -48,12 +48,12 @@ export const SwapFlowFlooterItems = ({
   );
 };
 
-export const SwapFlowFooter = ({
+export const SwapPageFooter = ({
   onClick,
   ...props
 }: {
   onClick?: () => void;
-} & SwapFlowFooterItemsProps) => {
+} & SwapPageFooterItemsProps) => {
   return (
     <GhostButton
       gap={5}
@@ -61,7 +61,7 @@ export const SwapFlowFooter = ({
       justify="space-between"
       onClick={onClick}
     >
-      <SwapFlowFlooterItems {...props} />
+      <SwapPageFooterItems {...props} />
     </GhostButton>
   );
 };

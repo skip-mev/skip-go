@@ -1,13 +1,13 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '../components/Layout';
-import { defaultTheme, lightTheme } from '../widget/theme';
-import { TransactionHistoryFlow } from '../widget/TransactionHistoryFlow/TransactionHistoryFlow';
-import txHistory from '../widget/TransactionHistoryFlow/tx_history.json';
+import { Row } from '@components/Layout';
+import { defaultTheme, lightTheme } from '@widget/theme';
+import { TransactionHistoryModal } from '@modals/TransactionHistoryModal/TransactionHistoryModal';
+import txHistory from '@modals/TransactionHistoryModal/tx_history.json';
 
 const meta = {
-  title: 'Flows/TransactionHistoryFlow',
-  component: (props) => <TransactionHistoryFlowExample {...props} />,
+  title: 'Modals/TransactionHistoryModal',
+  component: (props) => <TransactionHistoryModalExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
@@ -15,12 +15,12 @@ const meta = {
   args: {
     txHistory: txHistory as any,
   },
-} satisfies Meta<typeof TransactionHistoryFlow>;
+} satisfies Meta<typeof TransactionHistoryModal>;
 
 export default meta;
 
-export const TransactionHistoryFlowExample = (props: any) => {
-  const modal = useModal(TransactionHistoryFlow);
+export const TransactionHistoryModalExample = (props: any) => {
+  const modal = useModal(TransactionHistoryModal);
 
   return (
     <NiceModal.Provider>

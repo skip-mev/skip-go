@@ -1,12 +1,12 @@
 import { useAtom } from 'jotai';
-import { Row } from '../../components/Layout';
-import { SmallText } from '../../components/Typography';
-import { getChain, skipAssets } from '../../state/skip';
-import { getFormattedAssetAmount } from '../../utils/crypto';
+import { Row } from '@components/Layout';
+import { SmallText } from '@components/Typography';
+import { getChain, skipAssets } from '@state/skip';
+import { getFormattedAssetAmount } from '@utils/crypto';
 import { css, styled, useTheme } from 'styled-components';
 import React from 'react';
-import { ChainIcon } from '../../icons/ChainIcon';
-import { Button } from '../../components/Button';
+import { ChainIcon } from '@icons/ChainIcon';
+import { Button } from '@components/Button';
 import { ChainTransaction } from '@skip-go/client';
 
 type OperationType =
@@ -39,7 +39,7 @@ export type Operation = {
 
 export type txState = 'pending' | 'broadcasted' | 'confirmed' | 'failed';
 
-export type SwapExecutionFlowRouteDetailedRowProps = {
+export type SwapExecutionPageRouteDetailedRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];
   amount: Operation['amountIn'] | Operation['amountOut'];
   chainID: Operation['fromChainID'] | Operation['chainID'];
@@ -47,14 +47,14 @@ export type SwapExecutionFlowRouteDetailedRowProps = {
   txState?: txState;
 };
 
-export const SwapExecutionFlowRouteDetailedRow = ({
+export const SwapExecutionPageRouteDetailedRow = ({
   denom,
   amount,
   chainID,
   txState,
   explorerLink,
   ...props
-}: SwapExecutionFlowRouteDetailedRowProps) => {
+}: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
   const [{ data: assets }] = useAtom(skipAssets);
 

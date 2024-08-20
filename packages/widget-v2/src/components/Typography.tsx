@@ -1,5 +1,5 @@
 import { css, styled } from 'styled-components';
-import { getBrandButtonTextColor } from '../utils/colors';
+import { getBrandButtonTextColor } from '@utils/colors';
 
 type TextProps = {
   fontSize?: number;

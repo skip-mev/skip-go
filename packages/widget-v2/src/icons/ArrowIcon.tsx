@@ -1,4 +1,4 @@
-import { withBoundProps } from '../utils/misc';
+import { withBoundProps } from '@utils/misc';
 
 type IconProps = {
   color?: string;
