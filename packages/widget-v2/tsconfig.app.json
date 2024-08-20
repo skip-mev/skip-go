@@ -26,15 +26,7 @@
     /* Aliases */
     "baseUrl": ".",
     "paths": {
-      "@components*": ["src/components*"],
-      "@fonts*": ["src/fonts*"],
-      "@icons*": ["src/icons*"],
-      "@icons": ["src/icons"],
-      "@state*": ["src/state*"],
-      "@utils*": ["src/utils*"],
-      "@widget*": ["src/widget*"],
-      "@modals*": ["src/widget/modals*"],
-      "@pages*": ["src/widget/pages*"]
+      "@*": ["src/*"]
     }
   },
   "include": ["src"]

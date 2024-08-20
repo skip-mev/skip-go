@@ -1,12 +1,12 @@
 import { useAtom } from 'jotai';
-import { Row } from '@components/Layout';
-import { SmallText } from '@components/Typography';
-import { getChain, skipAssets } from '@state/skip';
-import { getFormattedAssetAmount } from '@utils/crypto';
+import { Row } from '@/components/Layout';
+import { SmallText } from '@/components/Typography';
+import { getChain, skipAssets } from '@/state/skip';
+import { getFormattedAssetAmount } from '@/utils/crypto';
 import { css, styled, useTheme } from 'styled-components';
 import React from 'react';
-import { ChainIcon } from '@icons/ChainIcon';
-import { Button } from '@components/Button';
+import { ChainIcon } from '@/icons/ChainIcon';
+import { Button } from '@/components/Button';
 import { ChainTransaction } from '@skip-go/client';
 
 type OperationType =

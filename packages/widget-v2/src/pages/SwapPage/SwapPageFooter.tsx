@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTheme } from 'styled-components';
-import { Row } from '@components/Layout';
-import { GhostButton } from '@components/Button';
-import { GasIcon } from '@icons/GasIcon';
-import { SkipLogoIcon } from '@icons/SkipLogoIcon';
-import { SpeedometerIcon } from '@icons/SpeedometerIcon';
-import { formatUSD } from '@utils/intl';
+import { Row } from '@/components/Layout';
+import { GhostButton } from '@/components/Button';
+import { GasIcon } from '@/icons/GasIcon';
+import { SkipLogoIcon } from '@/icons/SkipLogoIcon';
+import { SpeedometerIcon } from '@/icons/SpeedometerIcon';
+import { formatUSD } from '@/utils/intl';
 
 const estimatedGas = '0.03';
 const estimatedTime = '1min';

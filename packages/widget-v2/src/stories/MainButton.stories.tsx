@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MainButton, MainButtonProps } from '@components/MainButton';
-import { ICONS } from '@icons';
+import { MainButton, MainButtonProps } from '@/components/MainButton';
+import { ICONS } from '@/icons';
 import { useTheme } from 'styled-components';
-import { defaultTheme, lightTheme, Theme } from '@widget/theme';
+import { defaultTheme, lightTheme, Theme } from '@/widget/theme';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 
 type Props = MainButtonProps & { theme: Theme };

@@ -1,8 +1,8 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { TokenAndChainSelectorModal } from '@modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
-import { Row } from '@components/Layout';
-import { defaultTheme, lightTheme } from '@widget/theme';
+import { TokenAndChainSelectorModal } from '@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
+import { Row } from '@/components/Layout';
+import { defaultTheme, lightTheme } from '@/widget/theme';
 
 const meta = {
   title: 'Modals/TokenAndChainSelectorModal',

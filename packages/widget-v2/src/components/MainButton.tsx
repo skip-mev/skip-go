@@ -2,8 +2,8 @@ import { styled } from 'styled-components';
 import { Row } from './Layout';
 import { SmallText, Text } from './Typography';
 import { useTheme } from 'styled-components';
-import { ICONS, iconMap } from '@icons';
-import { getBrandButtonTextColor } from '@utils/colors';
+import { ICONS, iconMap } from '@/icons';
+import { getBrandButtonTextColor } from '@/utils/colors';
 
 export type MainButtonProps = {
   label: string;

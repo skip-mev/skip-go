@@ -1,15 +1,15 @@
 import styled from 'styled-components';
-import { Column, Row } from '@components/Layout';
+import { Column, Row } from '@/components/Layout';
 import {
   Operation,
   SwapExecutionPageRouteDetailedRow,
   txState,
 } from './SwapExecutionPageRouteDetailedRow';
-import { SwapExecutionBridgeIcon } from '@icons/SwapExecutionBridgeIcon';
-import { SwapExecutionSendIcon } from '@icons/SwapExecutionSendIcon';
-import { SwapExecutionSwapIcon } from '@icons/SwapExecutionSwapIcon';
+import { SwapExecutionBridgeIcon } from '@/icons/SwapExecutionBridgeIcon';
+import { SwapExecutionSendIcon } from '@/icons/SwapExecutionSendIcon';
+import { SwapExecutionSwapIcon } from '@/icons/SwapExecutionSwapIcon';
 import { useState } from 'react';
-import { SmallText } from '@components/Typography';
+import { SmallText } from '@/components/Typography';
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: Operation[];

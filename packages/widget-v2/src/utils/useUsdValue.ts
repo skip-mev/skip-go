@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { z } from 'zod';
-import { getAssets } from '@state/skip';
+import { getAssets } from '@/state/skip';
 
 interface Args {
   coingeckoID: string;

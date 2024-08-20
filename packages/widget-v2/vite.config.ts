@@ -10,14 +10,7 @@ export default defineConfig({
   resolve: {
     preserveSymlinks: true,
     alias: {
-      '@components': path.resolve(__dirname, './src/components'),
-      '@fonts': path.resolve(__dirname, './src/fonts'),
-      '@icons': path.resolve(__dirname, './src/icons'),
-      '@state': path.resolve(__dirname, './src/state'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@widget': path.resolve(__dirname, './src/widget'),
-      '@modals': path.resolve(__dirname, './src/widget/modals'),
-      '@pages': path.resolve(__dirname, './src/widget/pages'),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   plugins: [

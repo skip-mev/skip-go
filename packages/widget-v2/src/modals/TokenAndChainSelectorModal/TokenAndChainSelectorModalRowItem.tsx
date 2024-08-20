@@ -1,8 +1,8 @@
-import { Row } from '@components/Layout';
-import { ModalRowItem } from '@components/ModalRowItem';
-import { SmallText, Text } from '@components/Typography';
-import { ChainWithAsset, ClientAsset } from '@state/skip';
-import { CircleSkeletonElement, SkeletonElement } from '@components/Skeleton';
+import { Row } from '@/components/Layout';
+import { ModalRowItem } from '@/components/ModalRowItem';
+import { SmallText, Text } from '@/components/Typography';
+import { ChainWithAsset, ClientAsset } from '@/state/skip';
+import { CircleSkeletonElement, SkeletonElement } from '@/components/Skeleton';
 import { styled } from 'styled-components';
 import { Chain } from '@chain-registry/types';
 

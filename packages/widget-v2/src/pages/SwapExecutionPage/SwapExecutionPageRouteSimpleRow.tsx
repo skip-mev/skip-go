@@ -1,11 +1,11 @@
 import { useTheme } from 'styled-components';
-import { Button } from '@components/Button';
-import { Column, Row } from '@components/Layout';
-import { SmallText, Text } from '@components/Typography';
-import { getChain, skipAssets } from '@state/skip';
-import { getFormattedAssetAmount } from '@utils/crypto';
-import { Wallet } from '@components/RenderWalletList';
-import { iconMap, ICONS } from '@icons';
+import { Button } from '@/components/Button';
+import { Column, Row } from '@/components/Layout';
+import { SmallText, Text } from '@/components/Typography';
+import { getChain, skipAssets } from '@/state/skip';
+import { getFormattedAssetAmount } from '@/utils/crypto';
+import { Wallet } from '@/components/RenderWalletList';
+import { iconMap, ICONS } from '@/icons';
 import { useEffect, useMemo } from 'react';
 import { ChainTransaction } from '@skip-go/client';
 import {
@@ -14,9 +14,9 @@ import {
   txState,
 } from './SwapExecutionPageRouteDetailedRow';
 import { useAtom } from 'jotai';
-import { useUsdValue } from '@utils/useUsdValue';
-import { formatUSD } from '@utils/intl';
-import { ChainIcon } from '@icons/ChainIcon';
+import { useUsdValue } from '@/utils/useUsdValue';
+import { formatUSD } from '@/utils/intl';
+import { ChainIcon } from '@/icons/ChainIcon';
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];

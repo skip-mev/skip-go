@@ -1,20 +1,20 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@components/Modal';
-import { Column, Row } from '@components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column, Row } from '@/components/Layout';
 import { css, styled } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';
-import { RightArrowIcon } from '@icons/ArrowIcon';
+import { RightArrowIcon } from '@/icons/ArrowIcon';
 import {
   RenderWalletList,
   RenderWalletListHeader,
   Wallet,
-} from '@components/RenderWalletList';
-import { WALLET_LIST } from '@modals/WalletSelectorModal/WalletSelectorFlow';
-import { Button } from '@components/Button';
-import { SmallText, Text } from '@components/Typography';
-import { destinationAssetAtom, destinationWalletAtom } from '@state/swap';
+} from '@/components/RenderWalletList';
+import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
+import { Button } from '@/components/Button';
+import { SmallText, Text } from '@/components/Typography';
+import { destinationAssetAtom, destinationWalletAtom } from '@/state/swap';
 import { useAtom } from 'jotai';
-import { getChain } from '@state/skip';
+import { getChain } from '@/state/skip';
 
 export const ManualAddressModal = NiceModal.create((modalProps: ModalProps) => {
   const { theme } = modalProps;

@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { SwapExecutionPage } from '@pages/SwapExecutionPage/SwapExecutionPage';
+import { SwapExecutionPage } from '@/pages/SwapExecutionPage/SwapExecutionPage';
 import NiceModal from '@ebay/nice-modal-react';
-import { destinationAssetAtom } from '@state/swap';
+import { destinationAssetAtom } from '@/state/swap';
 import { useAtom } from 'jotai';
-import operations from '@pages/SwapExecutionPage/operations.json';
-import { skipAssets } from '@state/skip';
+import operations from '@/pages/SwapExecutionPage/operations.json';
+import { skipAssets } from '@/state/skip';
 import { useEffect, useState } from 'react';
-import { Operation } from '@pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
+import { Operation } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
 
 const meta = {
   title: 'Pages/SwapExecutionPage',

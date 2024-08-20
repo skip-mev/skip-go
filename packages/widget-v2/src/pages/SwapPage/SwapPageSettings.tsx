@@ -1,9 +1,9 @@
 import { css, styled } from 'styled-components';
-import { Modal, ModalProps } from '@components/Modal';
-import { Column, Row } from '@components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column, Row } from '@/components/Layout';
 import NiceModal from '@ebay/nice-modal-react';
-import { SmallText } from '@components/Typography';
-import { RouteArrow } from '@icons/RouteArrow';
+import { SmallText } from '@/components/Typography';
+import { RouteArrow } from '@/icons/RouteArrow';
 import { SwapPageFooterItems } from './SwapPageFooter';
 
 const SLIPPAGE_OPTIONS = [

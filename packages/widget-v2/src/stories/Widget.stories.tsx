@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
-import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '@widget/Widget';
-import { defaultTheme, lightTheme, Theme } from '@widget/theme';
+import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '@/widget/Widget';
+import { defaultTheme, lightTheme, Theme } from '@/widget/theme';
 import NiceModal from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
 import { ReactElement } from 'react';

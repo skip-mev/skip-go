@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { GhostButton } from '@components/Button';
+import { GhostButton } from '@/components/Button';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {

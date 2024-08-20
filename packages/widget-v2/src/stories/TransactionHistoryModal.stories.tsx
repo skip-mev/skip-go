@@ -1,9 +1,9 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '@components/Layout';
-import { defaultTheme, lightTheme } from '@widget/theme';
-import { TransactionHistoryModal } from '@modals/TransactionHistoryModal/TransactionHistoryModal';
-import txHistory from '@modals/TransactionHistoryModal/tx_history.json';
+import { Row } from '@/components/Layout';
+import { defaultTheme, lightTheme } from '@/widget/theme';
+import { TransactionHistoryModal } from '@/modals/TransactionHistoryModal/TransactionHistoryModal';
+import txHistory from '@/modals/TransactionHistoryModal/tx_history.json';
 
 const meta = {
   title: 'Modals/TransactionHistoryModal',

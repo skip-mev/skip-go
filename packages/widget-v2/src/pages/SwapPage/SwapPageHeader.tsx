@@ -1,6 +1,6 @@
-import { Row } from '@components/Layout';
-import { GhostButton } from '@components/Button';
-import { iconMap, ICONS } from '@icons';
+import { Row } from '@/components/Layout';
+import { GhostButton } from '@/components/Button';
+import { iconMap, ICONS } from '@/icons';
 
 export type SwapPageHeaderItemButton = {
   label: React.ReactNode;

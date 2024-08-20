@@ -1,15 +1,15 @@
 import { RouteResponse } from '@skip-go/client';
-import { SmallText } from '@components/Typography';
+import { SmallText } from '@/components/Typography';
 import { useAtom } from 'jotai';
-import { skipAssets, getChain, ClientAsset } from '@state/skip';
-import { Column, Row } from '@components/Layout';
+import { skipAssets, getChain, ClientAsset } from '@/state/skip';
+import { Column, Row } from '@/components/Layout';
 import styled, { useTheme } from 'styled-components';
-import { getFormattedAssetAmount } from '@utils/crypto';
-import { XIcon } from '@icons/XIcon';
+import { getFormattedAssetAmount } from '@/utils/crypto';
+import { XIcon } from '@/icons/XIcon';
 import { useMemo } from 'react';
 import { StyledAnimatedBorder } from '@pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
 import { TransactionHistoryModalItemDetails } from './TransactionHistoryModalItemDetails';
-import { HistoryArrowIcon } from '@icons/HistoryArrowIcon';
+import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
 
 export interface TxStatus {
   chainId: string;

@@ -1,11 +1,11 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@components/Modal';
-import { Column } from '@components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { useAtom } from 'jotai';
-import { ChainWithAsset, ClientAsset, skipAssets } from '@state/skip';
+import { ChainWithAsset, ClientAsset, skipAssets } from '@/state/skip';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { VirtualList } from '@components/VirtualList';
+import { VirtualList } from '@/components/VirtualList';
 import {
   isChainWithAsset,
   TokenAndChainSelectorModalRowItem,

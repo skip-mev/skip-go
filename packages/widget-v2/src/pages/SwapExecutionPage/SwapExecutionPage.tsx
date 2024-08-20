@@ -1,21 +1,21 @@
-import { Column, Row } from '@components/Layout';
-import { MainButton } from '@components/MainButton';
+import { Column, Row } from '@/components/Layout';
+import { MainButton } from '@/components/MainButton';
 import { SwapPageFooter } from '@pages/SwapPage/SwapPageFooter';
 import { SwapPageHeader } from '@pages/SwapPage/SwapPageHeader';
 import { useEffect, useMemo, useState } from 'react';
-import { ICONS } from '@icons';
+import { ICONS } from '@/icons';
 import { useModal } from '@ebay/nice-modal-react';
-import { ManualAddressModal } from '@modals/ManualAddressModal/ManualAddressModal';
+import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
 import styled, { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
-import { destinationWalletAtom } from '@state/swap';
+import { destinationWalletAtom } from '@/state/swap';
 import { SwapExecutionPageRouteSimple } from './SwapExecutionPageRouteSimple';
 import { SwapExecutionPageRouteDetailed } from './SwapExecutionPageRouteDetailed';
 
-import { withBoundProps } from '@utils/misc';
+import { withBoundProps } from '@/utils/misc';
 import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
-import { SmallText } from '@components/Typography';
-import { SignatureIcon } from '@icons/SignatureIcon';
+import { SmallText } from '@/components/Typography';
+import { SignatureIcon } from '@/icons/SignatureIcon';
 import pluralize from 'pluralize';
 
 enum SwapExecutionState {

@@ -1,12 +1,12 @@
 import styled, { useTheme } from 'styled-components';
-import { Column } from '@components/Layout';
+import { Column } from '@/components/Layout';
 import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
 import { useAtom } from 'jotai';
 import { SwapExecutionPageRouteSimpleRow } from './SwapExecutionPageRouteSimpleRow';
-import { BridgeArrowIcon } from '@icons/BridgeArrowIcon';
-import { ICONS } from '@icons';
-import { destinationWalletAtom } from '@state/swap';
-import { WALLET_LIST } from '@modals/WalletSelectorModal/WalletSelectorFlow';
+import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
+import { ICONS } from '@/icons';
+import { destinationWalletAtom } from '@/state/swap';
+import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: Operation[];

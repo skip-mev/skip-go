@@ -1,11 +1,11 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '@components/Layout';
-import { defaultTheme, lightTheme } from '@widget/theme';
-import { ManualAddressModal } from '@modals/ManualAddressModal/ManualAddressModal';
+import { Row } from '@/components/Layout';
+import { defaultTheme, lightTheme } from '@/widget/theme';
+import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
 import { useEffect, useState } from 'react';
-import { skipAssets } from '@state/skip';
-import { destinationAssetAtom } from '@state/swap';
+import { skipAssets } from '@/state/skip';
+import { destinationAssetAtom } from '@/state/swap';
 import { useAtom } from 'jotai';
 
 const meta = {

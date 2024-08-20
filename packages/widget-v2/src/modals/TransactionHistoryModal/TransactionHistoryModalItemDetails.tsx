@@ -1,11 +1,11 @@
-import { SmallText } from '@components/Typography';
-import { Column, Row } from '@components/Layout';
+import { SmallText } from '@/components/Typography';
+import { Column, Row } from '@/components/Layout';
 import styled, { useTheme } from 'styled-components';
-import { ChainIcon } from '@icons/ChainIcon';
-import { Button } from '@components/Button';
-import { TrashIcon } from '@icons/TrashIcon';
+import { ChainIcon } from '@/icons/ChainIcon';
+import { Button } from '@/components/Button';
+import { TrashIcon } from '@/icons/TrashIcon';
 import { useMemo } from 'react';
-import { HistoryArrowIcon } from '@icons/HistoryArrowIcon';
+import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
 
 type TransactionHistoryModalItemDetailsProps = {
   status: 'pending' | 'success' | 'failed';

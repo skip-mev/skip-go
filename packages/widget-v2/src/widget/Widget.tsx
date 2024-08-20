@@ -1,10 +1,10 @@
 import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import { PartialTheme } from './theme';
-import { SwapPage } from '@pages/SwapPage/SwapPage';
+import { SwapPage } from '@/pages/SwapPage/SwapPage';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
-import { Modal } from '@components/Modal';
+import { Modal } from '@/components/Modal';
 import { cloneElement, ReactElement } from 'react';
+import { PartialTheme } from './theme';
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;

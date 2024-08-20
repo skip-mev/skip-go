@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SwapPage } from '@pages/SwapPage/SwapPage';
+import { SwapPage } from '@/pages/SwapPage/SwapPage';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 import { styled } from 'styled-components';
 import NiceModal from '@ebay/nice-modal-react';

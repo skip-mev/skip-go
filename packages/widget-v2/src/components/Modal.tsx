@@ -1,9 +1,9 @@
 import { css, styled } from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ShadowDomAndProviders } from '@widget/ShadowDomAndProviders';
+import { ShadowDomAndProviders } from '@/widget/ShadowDomAndProviders';
 import { useModal } from '@ebay/nice-modal-react';
 import { useEffect } from 'react';
-import { PartialTheme } from '@widget/theme';
+import { PartialTheme } from '@/widget/theme';
 
 export type ModalProps = {
   children: React.ReactNode;
