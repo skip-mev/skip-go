@@ -2,8 +2,8 @@ import NiceModal from '@ebay/nice-modal-react';
 import { Modal, ModalProps } from '@/components/Modal';
 import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
-import { SwapPageHeader } from '@pages/SwapPage/SwapPageHeader';
-import { SwapPageFooter } from '@pages/SwapPage/SwapPageFooter';
+import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
+import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
 import { ICONS } from '@/icons';
 import { VirtualList } from '@/components/VirtualList';
 import {

@@ -7,7 +7,7 @@ import styled, { useTheme } from 'styled-components';
 import { getFormattedAssetAmount } from '@/utils/crypto';
 import { XIcon } from '@/icons/XIcon';
 import { useMemo } from 'react';
-import { StyledAnimatedBorder } from '@pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
+import { StyledAnimatedBorder } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
 import { TransactionHistoryModalItemDetails } from './TransactionHistoryModalItemDetails';
 import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
 

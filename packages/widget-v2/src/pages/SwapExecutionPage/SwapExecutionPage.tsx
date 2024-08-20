@@ -1,7 +1,7 @@
 import { Column, Row } from '@/components/Layout';
 import { MainButton } from '@/components/MainButton';
-import { SwapPageFooter } from '@pages/SwapPage/SwapPageFooter';
-import { SwapPageHeader } from '@pages/SwapPage/SwapPageHeader';
+import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
+import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
 import { useEffect, useMemo, useState } from 'react';
 import { ICONS } from '@/icons';
 import { useModal } from '@ebay/nice-modal-react';
