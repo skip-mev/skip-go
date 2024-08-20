@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
-import { Row } from './Layout';
-import { SmallText, Text } from './Typography';
+import { Row } from '@/components/Layout';
+import { SmallText, Text } from '@/components/Typography';
 import { useTheme } from 'styled-components';
 import { ICONS, iconMap } from '@/icons';
 import { getBrandButtonTextColor } from '@/utils/colors';

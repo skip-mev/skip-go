@@ -1,6 +1,6 @@
 import { css, styled } from 'styled-components';
-import { FlexProps, flexProps } from './Layout';
-import { removeButtonStyles, SmallText } from './Typography';
+import { FlexProps, flexProps } from '@/components/Layout';
+import { removeButtonStyles, SmallText } from '@/components/Typography';
 
 export type GhostButtonProps = {
   secondary?: boolean;

@@ -1,10 +1,10 @@
 import { styled } from 'styled-components';
-import { Column, Row, Spacer } from './Layout';
-import { SmallText, Text } from './Typography';
+import { Column, Row, Spacer } from '@/components/Layout';
+import { SmallText, Text } from '@/components/Typography';
 import { ChevronIcon } from '@/icons/ChevronIcon';
 import { useTheme } from 'styled-components';
 import { CogIcon } from '@/icons/CogIcon';
-import { Button, GhostButton } from './Button';
+import { Button, GhostButton } from '@/components/Button';
 import { useAtom } from 'jotai';
 import { skipAssets } from '@/state/skip';
 import { useUsdValue } from '@/utils/useUsdValue';
