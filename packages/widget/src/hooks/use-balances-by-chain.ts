@@ -1,7 +1,7 @@
 import { Asset, SkipClient } from '@skip-go/client';
 import * as token from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { createPublicClient, erc20Abi, http, PublicClient } from 'viem';
 
 import { multicall3ABI } from '../constants/abis';
@@ -27,7 +27,7 @@ export function useBalancesByChain({
   chain,
   assets,
   enabled = true,
-}: Args) {
+}: Args): UseQueryResult<Record<string, string> | undefined> {
   // const publicClient = usePublicClient({
   //   chainId: chain?.chainType === "evm" ? parseInt(chain.chainID) : undefined,
   // });

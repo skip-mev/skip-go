@@ -1,10 +1,11 @@
 import {
   BridgeType,
   ExperimentalFeature,
+  RouteResponse,
   SmartSwapOptions,
   SwapVenueRequest,
 } from '@skip-go/client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
 import { useSkipClient } from './use-skip-client';
 
@@ -44,7 +45,7 @@ export function useRoute({
     splitRoutes: true,
     evmSwaps: true,
   },
-}: UseRouteArgs) {
+}: UseRouteArgs): UseQueryResult<RouteResponse | undefined> {
   const skipClient = useSkipClient();
 
   const [refetchCount, setRefetchCount] = useState(0);
