@@ -1,32 +1,26 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '../components/Layout';
-import { defaultTheme, lightTheme } from '../widget/theme';
-import { ManualAddressFlow } from '../widget/ManualAddressFlow/ManualAddressFlow';
+import { Row } from '@/components/Layout';
+import { defaultTheme, lightTheme } from '@/widget/theme';
+import { TransactionHistoryModal } from '@/modals/TransactionHistoryModal/TransactionHistoryModal';
+import txHistory from '@/modals/TransactionHistoryModal/tx_history.json';
 
 const meta = {
-  title: 'Flows/ManualAddressFlow',
-  component: (props) => <ManualAddressFlowExample {...props} />,
+  title: 'Modals/TransactionHistoryModal',
+  component: (props) => <TransactionHistoryModalExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
   args: {
-    onSelectWallet(wallet) {
-      alert(`selected wallet is ${wallet.name}`);
-    },
-    onSetManualWalletAddress: (address: string) =>
-      alert(`manual address is ${address}`),
-    chainName: 'Base',
-    chainLogo:
-      'https://raw.githubusercontent.com/base-org/brand-kit/5ce7f4e9ba1a1ceaa7beb22156679899fff7faaf/logo/in-product/Base_Network_Logo.svg',
+    txHistory: txHistory as any,
   },
-} satisfies Meta<typeof ManualAddressFlow>;
+} satisfies Meta<typeof TransactionHistoryModal>;
 
 export default meta;
 
-export const ManualAddressFlowExample = (props: any) => {
-  const modal = useModal(ManualAddressFlow);
+export const TransactionHistoryModalExample = (props: any) => {
+  const modal = useModal(TransactionHistoryModal);
 
   return (
     <NiceModal.Provider>

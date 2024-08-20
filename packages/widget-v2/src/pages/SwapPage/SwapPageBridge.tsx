@@ -1,8 +1,8 @@
 import { useTheme, styled } from 'styled-components';
-import { BridgeArrowIcon } from '../../icons/BridgeArrowIcon';
-import { BridgeIcon } from '../../icons/BridgeIcon';
+import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
+import { BridgeIcon } from '@/icons/BridgeIcon';
 
-export const SwapFlowBridge = () => {
+export const SwapPageBridge = () => {
   const theme = useTheme();
   return (
     <div style={{ position: 'relative' }}>

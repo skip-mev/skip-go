@@ -1,10 +1,10 @@
 import { css, styled } from 'styled-components';
-import { Modal, ModalProps } from '../../components/Modal';
-import { Column, Row } from '../../components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column, Row } from '@/components/Layout';
 import NiceModal from '@ebay/nice-modal-react';
-import { SmallText } from '../../components/Typography';
-import { SwapFlowFlooterItems } from './SwapFlowFooter';
-import { RouteArrow } from '../../icons/RouteArrow';
+import { SmallText } from '@/components/Typography';
+import { RouteArrow } from '@/icons/RouteArrow';
+import { SwapPageFooterItems } from './SwapPageFooter';
 
 const SLIPPAGE_OPTIONS = [
   {
@@ -31,10 +31,10 @@ const bridgeFee = '0.001 XYZ ($0.1)';
 const selectedOption = SLIPPAGE_OPTIONS[0];
 const route = ['COSMOS', 'OSMOSIS', 'AXELAR'];
 
-export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
+export const SwapPageSettings = NiceModal.create((modalProps: ModalProps) => {
   return (
     <Modal {...modalProps}>
-      <StyledSwapFlowSettings gap={20}>
+      <StyledSwapPageSettings gap={20}>
         <Column gap={10}>
           <Row justify="space-between">
             <SettingText>Route</SettingText>
@@ -86,14 +86,14 @@ export const SwapFlowSettings = NiceModal.create((modalProps: ModalProps) => {
         </Column>
 
         <SettingText justify="space-between">
-          <SwapFlowFlooterItems showRouteInfo />
+          <SwapPageFooterItems showRouteInfo />
         </SettingText>
-      </StyledSwapFlowSettings>
+      </StyledSwapPageSettings>
     </Modal>
   );
 });
 
-const StyledSwapFlowSettings = styled(Column)`
+const StyledSwapPageSettings = styled(Column)`
   width: 480px;
   padding: 20px;
   border-radius: 20px;

@@ -1,26 +1,26 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '../../components/Modal';
-import { Column } from '../../components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { useAtom } from 'jotai';
-import { ChainWithAsset, ClientAsset, skipAssets } from '../../state/skip';
+import { ChainWithAsset, ClientAsset, skipAssets } from '@/state/skip';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { VirtualList } from '../../components/VirtualList';
+import { VirtualList } from '@/components/VirtualList';
 import {
   isChainWithAsset,
-  RowItem,
+  TokenAndChainSelectorModalRowItem,
   Skeleton,
-} from './TokenAndChainSelectorFlowRowItem';
-import { SearchInput } from './TokenAndChainSelectorFlowSearchInput';
+} from './TokenAndChainSelectorModalRowItem';
+import { TokenAndChainSelectorModalSearchInput } from './TokenAndChainSelectorModalSearchInput';
 
-export type TokenAndChainSelectorFlowProps = ModalProps & {
+export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   chainsContainingAsset?: ChainWithAsset[];
   asset?: Partial<ClientAsset>;
 };
 
-export const TokenAndChainSelectorFlow = NiceModal.create(
-  (modalProps: TokenAndChainSelectorFlowProps) => {
+export const TokenAndChainSelectorModal = NiceModal.create(
+  (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect, chainsContainingAsset, asset } = modalProps;
     const [{ data: assets, isPending }] = useAtom(skipAssets);
@@ -66,7 +66,7 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
     const renderItem = useCallback(
       (asset: ClientAsset | ChainWithAsset, index: number) => {
         return (
-          <RowItem
+          <TokenAndChainSelectorModalRowItem
             item={asset}
             index={index}
             onSelect={onSelect}
@@ -80,7 +80,10 @@ export const TokenAndChainSelectorFlow = NiceModal.create(
     return (
       <Modal {...modalProps}>
         <StyledContainer>
-          <SearchInput onSearch={handleSearch} asset={asset} />
+          <TokenAndChainSelectorModalSearchInput
+            onSearch={handleSearch}
+            asset={asset}
+          />
           {showSkeleton || (!filteredAssets && !filteredChains) ? (
             <Column>
               {Array.from({ length: 10 }, (_, index) => (

@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import styled, { useTheme } from 'styled-components';
-import { LeftArrowIcon } from '../icons/ArrowIcon';
-import { hashObject } from '../utils/misc';
-import { Button } from './Button';
-import { Row, Column } from './Layout';
+import { LeftArrowIcon } from '@/icons/ArrowIcon';
+import { hashObject } from '@/utils/misc';
+import { Button } from '@/components/Button';
+import { Row, Column } from '@/components/Layout';
 import { ModalRowItem } from './ModalRowItem';
 import { VirtualList } from './VirtualList';
-import { Text } from '../components/Typography';
+import { Text } from '@/components/Typography';
 
 export type RenderWalletListProps = {
   title: string;

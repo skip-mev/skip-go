@@ -1,10 +1,10 @@
 import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import { PartialTheme } from './theme';
-import { SwapFlow } from './SwapFlow/SwapFlow';
+import { SwapPage } from '@/pages/SwapPage/SwapPage';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
-import { Modal } from '../components/Modal';
+import { Modal } from '@/components/Modal';
 import { cloneElement, ReactElement } from 'react';
+import { PartialTheme } from './theme';
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
@@ -15,7 +15,7 @@ export const SwapWidget = (props: SwapWidgetProps) => {
     <NiceModal.Provider>
       <ShadowDomAndProviders {...props}>
         <WidgetContainer>
-          <SwapFlow />
+          <SwapPage />
         </WidgetContainer>
       </ShadowDomAndProviders>
     </NiceModal.Provider>
@@ -26,7 +26,7 @@ const SwapWidgetWithoutNiceModalProvider = (props: SwapWidgetProps) => {
   return (
     <ShadowDomAndProviders {...props}>
       <WidgetContainer>
-        <SwapFlow />
+        <SwapPage />
       </WidgetContainer>
     </ShadowDomAndProviders>
   );

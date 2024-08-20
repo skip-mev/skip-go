@@ -1,24 +1,24 @@
 import styled, { useTheme } from 'styled-components';
-import { Column } from '../../components/Layout';
-import { Operation, txState } from './SwapExecutionFlowRouteDetailedRow';
+import { Column } from '@/components/Layout';
+import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
 import { useAtom } from 'jotai';
-import { SwapExecutionFlowRouteSimpleRow } from './SwapExecutionFlowRouteSimpleRow';
-import { BridgeArrowIcon } from '../../icons/BridgeArrowIcon';
-import { ICONS } from '../../icons';
-import { destinationWalletAtom } from '../../state/swap';
-import { WALLET_LIST } from '../WalletSelectorFlow/WalletSelectorFlow';
+import { SwapExecutionPageRouteSimpleRow } from './SwapExecutionPageRouteSimpleRow';
+import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
+import { ICONS } from '@/icons';
+import { destinationWalletAtom } from '@/state/swap';
+import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
 
-export type SwapExecutionFlowRouteSimpleProps = {
+export type SwapExecutionPageRouteSimpleProps = {
   operations: Operation[];
   txStateMap: { [index: number]: txState };
   onClickEditDestinationWallet?: () => void;
 };
 
-export const SwapExecutionFlowRouteSimple = ({
+export const SwapExecutionPageRouteSimple = ({
   operations,
   txStateMap,
   onClickEditDestinationWallet,
-}: SwapExecutionFlowRouteSimpleProps) => {
+}: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
@@ -41,14 +41,14 @@ export const SwapExecutionFlowRouteSimple = ({
   };
 
   return (
-    <StyledSwapExecutionFlowRoute justify="space-between">
-      <SwapExecutionFlowRouteSimpleRow
+    <StyledSwapExecutionPageRoute justify="space-between">
+      <SwapExecutionPageRouteSimpleRow
         {...source}
         wallet={WALLET_LIST[0]}
         txState={overallSwapState}
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
-      <SwapExecutionFlowRouteSimpleRow
+      <SwapExecutionPageRouteSimpleRow
         {...destination}
         wallet={destinationWallet}
         destination
@@ -59,7 +59,7 @@ export const SwapExecutionFlowRouteSimple = ({
           overallSwapState !== 'pending' ? 'https://www.google.com/' : undefined
         }
       />
-    </StyledSwapExecutionFlowRoute>
+    </StyledSwapExecutionPageRoute>
   );
 };
 
@@ -82,7 +82,7 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
   width: 54px;
 `;
 
-const StyledSwapExecutionFlowRoute = styled(Column)`
+const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 35px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;

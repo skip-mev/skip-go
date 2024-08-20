@@ -1,26 +1,28 @@
 import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '../components/Layout';
-import { defaultTheme, lightTheme } from '../widget/theme';
-import { TransactionHistoryFlow } from '../widget/TransactionHistoryFlow/TransactionHistoryFlow';
-import txHistory from '../widget/TransactionHistoryFlow/tx_history.json';
+import { Row } from '@/components/Layout';
+import { defaultTheme, lightTheme } from '@/widget/theme';
+import { WalletSelectorModal } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
+import { Wallet } from '@/components/RenderWalletList';
 
 const meta = {
-  title: 'Flows/TransactionHistoryFlow',
-  component: (props) => <TransactionHistoryFlowExample {...props} />,
+  title: 'Modals/WalletSelectorModal',
+  component: (props) => <WalletSelectorModalExample {...props} />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
   args: {
-    txHistory: txHistory as any,
+    onSelect: (wallet: Wallet) => {
+      alert(`selected ${wallet.name}`);
+    },
   },
-} satisfies Meta<typeof TransactionHistoryFlow>;
+} satisfies Meta<typeof WalletSelectorModal>;
 
 export default meta;
 
-export const TransactionHistoryFlowExample = (props: any) => {
-  const modal = useModal(TransactionHistoryFlow);
+export const WalletSelectorModalExample = (props: any) => {
+  const modal = useModal(WalletSelectorModal);
 
   return (
     <NiceModal.Provider>

@@ -1,23 +1,23 @@
 import { useTheme } from 'styled-components';
-import { AssetChainInput } from '../../components/AssetChainInput';
-import { Column } from '../../components/Layout';
-import { MainButton } from '../../components/MainButton';
-import { SmallText } from '../../components/Typography';
-import { ICONS } from '../../icons';
 import { useCallback, useMemo, useState } from 'react';
-import { SwapFlowSettings } from './SwapFlowSettings';
 import { useModal } from '@ebay/nice-modal-react';
-import { SwapFlowFooter } from './SwapFlowFooter';
-import { SwapFlowBridge } from './SwapFlowBridge';
-import { sourceAssetAtom, destinationAssetAtom } from '../../state/swap';
 import { useAtom } from 'jotai';
-import { TokenAndChainSelectorFlow } from '../TokenAndChainSelectorFlow/TokenAndChainSelectorFlow';
-import { getChainsContainingAsset, skipAssets } from '../../state/skip';
-import { SwapFlowHeader } from './SwapFlowHeader';
+import { AssetChainInput } from '@/components/AssetChainInput';
+import { Column } from '@/components/Layout';
+import { MainButton } from '@/components/MainButton';
+import { SmallText } from '@/components/Typography';
+import { ICONS } from '@/icons';
+import { skipAssets, getChainsContainingAsset } from '@/state/skip';
+import { sourceAssetAtom, destinationAssetAtom } from '@/state/swap';
+import { TokenAndChainSelectorModal } from '@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
+import { SwapPageSettings } from './SwapPageSettings';
+import { SwapPageFooter } from './SwapPageFooter';
+import { SwapPageBridge } from './SwapPageBridge';
+import { SwapPageHeader } from './SwapPageHeader';
 
 const sourceAssetBalance = 125;
 
-export const SwapFlow = () => {
+export const SwapPage = () => {
   const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -25,8 +25,8 @@ export const SwapFlow = () => {
   const [{ data: assets }] = useAtom(skipAssets);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
-  const swapFlowSettings = useModal(SwapFlowSettings);
-  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorFlow);
+  const swapFlowSettings = useModal(SwapPageSettings);
+  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!assets || !sourceAsset?.symbol) return;
@@ -110,7 +110,7 @@ export const SwapFlow = () => {
           opacity: drawerOpen ? 0.3 : 1,
         }}
       >
-        <SwapFlowHeader
+        <SwapPageHeader
           leftButton={{
             label: 'History',
             icon: ICONS.history,
@@ -136,7 +136,7 @@ export const SwapFlow = () => {
               setSourceAsset((old) => ({ ...old, amount: newValue }))
             }
           />
-          <SwapFlowBridge />
+          <SwapPageBridge />
           <AssetChainInput
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
@@ -149,7 +149,7 @@ export const SwapFlow = () => {
         </Column>
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
 
-        <SwapFlowFooter
+        <SwapPageFooter
           showRouteInfo
           onClick={() =>
             swapFlowSettings.show({

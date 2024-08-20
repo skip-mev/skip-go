@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-import { Column, Row } from '../../components/Layout';
+import { Column, Row } from '@/components/Layout';
 import {
   Operation,
-  SwapExecutionFlowRouteDetailedRow,
+  SwapExecutionPageRouteDetailedRow,
   txState,
-} from './SwapExecutionFlowRouteDetailedRow';
-import { SwapExecutionBridgeIcon } from '../../icons/SwapExecutionBridgeIcon';
-import { SwapExecutionSendIcon } from '../../icons/SwapExecutionSendIcon';
-import { SwapExecutionSwapIcon } from '../../icons/SwapExecutionSwapIcon';
+} from './SwapExecutionPageRouteDetailedRow';
+import { SwapExecutionBridgeIcon } from '@/icons/SwapExecutionBridgeIcon';
+import { SwapExecutionSendIcon } from '@/icons/SwapExecutionSendIcon';
+import { SwapExecutionSwapIcon } from '@/icons/SwapExecutionSwapIcon';
 import { useState } from 'react';
-import { SmallText } from '../../components/Typography';
+import { SmallText } from '@/components/Typography';
 
-export type SwapExecutionFlowRouteDetailedProps = {
+export type SwapExecutionPageRouteDetailedProps = {
   operations: Operation[];
   txStateMap: { [index: number]: txState };
 };
@@ -41,10 +41,10 @@ type tooltipMap = {
   [index: number]: boolean;
 };
 
-export const SwapExecutionFlowRouteDetailed = ({
+export const SwapExecutionPageRouteDetailed = ({
   operations,
   txStateMap,
-}: SwapExecutionFlowRouteDetailedProps) => {
+}: SwapExecutionPageRouteDetailedProps) => {
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
   const handleMouseEnterOperationType = (index: number) => {
@@ -62,7 +62,7 @@ export const SwapExecutionFlowRouteDetailed = ({
   };
 
   return (
-    <StyledSwapExecutionFlowRoute justify="space-between">
+    <StyledSwapExecutionPageRoute justify="space-between">
       {operations.map((operation, index) => {
         const lastIndex = index === operations.length - 1;
 
@@ -90,7 +90,7 @@ export const SwapExecutionFlowRouteDetailed = ({
             };
         return (
           <>
-            <SwapExecutionFlowRouteDetailedRow
+            <SwapExecutionPageRouteDetailedRow
               {...asset}
               txState={txStateMap[index]}
               explorerLink={
@@ -120,7 +120,7 @@ export const SwapExecutionFlowRouteDetailed = ({
           </>
         );
       })}
-    </StyledSwapExecutionFlowRoute>
+    </StyledSwapExecutionPageRoute>
   );
 };
 
@@ -143,7 +143,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
   }
 `;
 
-const StyledSwapExecutionFlowRoute = styled(Column)`
+const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;

@@ -1,34 +1,34 @@
 import NiceModal from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '../../components/Modal';
-import { Column } from '../../components/Layout';
+import { Modal, ModalProps } from '@/components/Modal';
+import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
-import { SwapFlowHeader } from '../SwapFlow/SwapFlowHeader';
-import { SwapFlowFooter } from '../SwapFlow/SwapFlowFooter';
-import { ICONS } from '../../icons';
-import { VirtualList } from '../../components/VirtualList';
+import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
+import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
+import { ICONS } from '@/icons';
+import { VirtualList } from '@/components/VirtualList';
 import {
-  TransactionHistoryFlowItem,
+  TransactionHistoryModalItem,
   TxHistoryItem,
-} from './TransactionHistoryFlowItem';
+} from './TransactionHistoryModalItem';
 import { useState } from 'react';
-import { HistoryIcon } from '../../icons/HistoryIcon';
-import { SmallText } from '../../components/Typography';
+import { HistoryIcon } from '@/icons/HistoryIcon';
+import { SmallText } from '@/components/Typography';
 
 const ITEM_HEIGHT = 40;
 const ITEM_GAP = 5;
 
-export type TransactionHistoryFlowProps = ModalProps & {
+export type TransactionHistoryModalProps = ModalProps & {
   txHistory: TxHistoryItem[];
 };
 
-export const TransactionHistoryFlow = NiceModal.create(
-  ({ txHistory, ...modalProps }: TransactionHistoryFlowProps) => {
+export const TransactionHistoryModal = NiceModal.create(
+  ({ txHistory, ...modalProps }: TransactionHistoryModalProps) => {
     const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
       number | undefined
     >();
     return (
       <Modal {...modalProps}>
-        <SwapFlowHeader
+        <SwapPageHeader
           leftButton={{
             label: 'Back',
             icon: ICONS.thinArrow,
@@ -55,7 +55,7 @@ export const TransactionHistoryFlow = NiceModal.create(
               height={300}
               itemHeight={ITEM_HEIGHT + ITEM_GAP}
               renderItem={(item, index) => (
-                <TransactionHistoryFlowItem
+                <TransactionHistoryModalItem
                   txHistoryItem={item}
                   showDetails={index === itemIndexToShowDetail}
                   onClickRow={() => {
@@ -74,7 +74,7 @@ export const TransactionHistoryFlow = NiceModal.create(
             />
           )}
         </StyledContainer>
-        <SwapFlowFooter />
+        <SwapPageFooter />
       </Modal>
     );
   }

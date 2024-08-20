@@ -1,5 +1,5 @@
 import 'styled-components';
-import { opacityToHex } from '../utils/colors';
+import { opacityToHex } from '@/utils/colors';
 
 export const defaultTheme = {
   brandColor: '#ff66ff',

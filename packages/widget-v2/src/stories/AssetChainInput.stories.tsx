@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { AssetChainInput } from '../components/AssetChainInput';
+import { AssetChainInput } from '@/components/AssetChainInput';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export

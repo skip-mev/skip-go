@@ -1,15 +1,15 @@
 import { RouteResponse } from '@skip-go/client';
-import { SmallText } from '../../components/Typography';
+import { SmallText } from '@/components/Typography';
 import { useAtom } from 'jotai';
-import { skipAssets, getChain, ClientAsset } from '../../state/skip';
-import { Column, Row } from '../../components/Layout';
+import { skipAssets, getChain, ClientAsset } from '@/state/skip';
+import { Column, Row } from '@/components/Layout';
 import styled, { useTheme } from 'styled-components';
-import { getFormattedAssetAmount } from '../../utils/crypto';
-import { XIcon } from '../../icons/XIcon';
+import { getFormattedAssetAmount } from '@/utils/crypto';
+import { XIcon } from '@/icons/XIcon';
 import { useMemo } from 'react';
-import { StyledAnimatedBorder } from '../SwapExecutionFlow/SwapExecutionFlowRouteDetailedRow';
-import { TransactionHistoryFlowItemDetails } from './TransactionHistoryFlowItemDetails';
-import { HistoryArrowIcon } from '../../icons/HistoryArrowIcon';
+import { StyledAnimatedBorder } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
+import { TransactionHistoryModalItemDetails } from './TransactionHistoryModalItemDetails';
+import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
 
 export interface TxStatus {
   chainId: string;
@@ -29,19 +29,19 @@ export type TxHistoryItemInput = Pick<TxHistoryItem, 'route'>;
 
 export type TxHistoryState = Record<string, TxHistoryItem>;
 
-type TransactionHistoryFlowItemProps = {
+type TransactionHistoryModalItemProps = {
   txHistoryItem: TxHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickTransactionID: () => void;
 };
 
-export const TransactionHistoryFlowItem = ({
+export const TransactionHistoryModalItem = ({
   txHistoryItem,
   showDetails,
   onClickRow,
   onClickTransactionID,
-}: TransactionHistoryFlowItemProps) => {
+}: TransactionHistoryModalItemProps) => {
   const theme = useTheme();
   const {
     route: {
@@ -109,7 +109,11 @@ export const TransactionHistoryFlowItem = ({
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
-      <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
+      <StyledHistoryItemRow
+        align="center"
+        justify="space-between"
+        onClick={onClickRow}
+      >
         <Row gap={5} align="center">
           <RenderAssetAmount {...source} />
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
@@ -124,7 +128,7 @@ export const TransactionHistoryFlowItem = ({
         </Row>
       </StyledHistoryItemRow>
       {showDetails && (
-        <TransactionHistoryFlowItemDetails
+        <TransactionHistoryModalItemDetails
           status={status}
           sourceChainName={sourceChain?.pretty_name ?? sourceChain?.chain_name}
           destinationChainName={

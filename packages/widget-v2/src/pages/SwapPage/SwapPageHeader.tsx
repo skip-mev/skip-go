@@ -1,24 +1,24 @@
-import { Row } from '../../components/Layout';
-import { GhostButton } from '../../components/Button';
-import { iconMap, ICONS } from '../../icons';
+import { Row } from '@/components/Layout';
+import { GhostButton } from '@/components/Button';
+import { iconMap, ICONS } from '@/icons';
 
-export type SwapFlowHeaderItemButton = {
+export type SwapPageHeaderItemButton = {
   label: React.ReactNode;
   icon?: ICONS;
   onClick?: () => void;
 };
 
-type SwapFlowHeaderProps = {
-  leftButton?: SwapFlowHeaderItemButton;
-  rightButton?: SwapFlowHeaderItemButton;
+type SwapPageHeaderProps = {
+  leftButton?: SwapPageHeaderItemButton;
+  rightButton?: SwapPageHeaderItemButton;
   rightContent?: React.ReactNode;
 };
 
-export const SwapFlowHeader = ({
+export const SwapPageHeader = ({
   leftButton,
   rightButton,
   rightContent,
-}: SwapFlowHeaderProps) => {
+}: SwapPageHeaderProps) => {
   const LeftIcon = iconMap[leftButton?.icon || ICONS.none];
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
   return (

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { VirtualList } from '../components/VirtualList';
+import { VirtualList } from '@/components/VirtualList';
 import { ThemeProvider } from 'styled-components';
-import { lightTheme } from '../widget/theme';
+import { lightTheme } from '@/widget/theme';
 
 const meta = {
   title: 'Components/VirtualList',

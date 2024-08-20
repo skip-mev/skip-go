@@ -1,8 +1,8 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '../../components/Modal';
-import { RenderWalletList, Wallet } from '../../components/RenderWalletList';
+import { Modal, ModalProps } from '@/components/Modal';
+import { RenderWalletList, Wallet } from '@/components/RenderWalletList';
 
-export type WalletSelectorFlowProps = ModalProps & {
+export type WalletSelectorModalProps = ModalProps & {
   onSelect: (wallet: Wallet) => void;
 };
 
@@ -26,8 +26,8 @@ export const WALLET_LIST: Wallet[] = [
   },
 ];
 
-export const WalletSelectorFlow = NiceModal.create(
-  (modalProps: WalletSelectorFlowProps) => {
+export const WalletSelectorModal = NiceModal.create(
+  (modalProps: WalletSelectorModalProps) => {
     const { onSelect } = modalProps;
     const modal = useModal();
 

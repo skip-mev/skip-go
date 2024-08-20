@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Modal, ModalProps } from '../components/Modal';
+import { Modal, ModalProps } from '@/components/Modal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
 

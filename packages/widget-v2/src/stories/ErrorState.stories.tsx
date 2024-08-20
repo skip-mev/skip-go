@@ -1,11 +1,11 @@
 import type { Meta } from '@storybook/react';
-import { ErrorState, ErrorStateProps } from '../components/ErrorState';
-import { ICONS } from '../icons';
-import { SmallText, SmallTextButton, Text } from '../components/Typography';
-import { ChainIcon } from '../icons/ChainIcon';
-import { Row } from '../components/Layout';
-import { XIcon } from '../icons/XIcon';
-import { defaultTheme, lightTheme, Theme } from '../widget/theme';
+import { ErrorState, ErrorStateProps } from '@/components/ErrorState';
+import { ICONS } from '@/icons';
+import { SmallText, SmallTextButton, Text } from '@/components/Typography';
+import { ChainIcon } from '@/icons/ChainIcon';
+import { Row } from '@/components/Layout';
+import { XIcon } from '@/icons/XIcon';
+import { defaultTheme, lightTheme, Theme } from '@/widget/theme';
 import {
   renderLightAndDarkTheme,
   renderLightAndDarkThemeSeperateProps,

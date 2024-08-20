@@ -1,24 +1,24 @@
 import { useTheme } from 'styled-components';
-import { Button } from '../../components/Button';
-import { Column, Row } from '../../components/Layout';
-import { SmallText, Text } from '../../components/Typography';
-import { getChain, skipAssets } from '../../state/skip';
-import { getFormattedAssetAmount } from '../../utils/crypto';
-import { Wallet } from '../../components/RenderWalletList';
-import { iconMap, ICONS } from '../../icons';
+import { Button } from '@/components/Button';
+import { Column, Row } from '@/components/Layout';
+import { SmallText, Text } from '@/components/Typography';
+import { getChain, skipAssets } from '@/state/skip';
+import { getFormattedAssetAmount } from '@/utils/crypto';
+import { Wallet } from '@/components/RenderWalletList';
+import { iconMap, ICONS } from '@/icons';
 import { useEffect, useMemo } from 'react';
 import { ChainTransaction } from '@skip-go/client';
 import {
   Operation,
   StyledAnimatedBorder,
   txState,
-} from './SwapExecutionFlowRouteDetailedRow';
+} from './SwapExecutionPageRouteDetailedRow';
 import { useAtom } from 'jotai';
-import { useUsdValue } from '../../utils/useUsdValue';
-import { formatUSD } from '../../utils/intl';
-import { ChainIcon } from '../../icons/ChainIcon';
+import { useUsdValue } from '@/utils/useUsdValue';
+import { formatUSD } from '@/utils/intl';
+import { ChainIcon } from '@/icons/ChainIcon';
 
-export type SwapExecutionFlowRouteSimpleRowProps = {
+export type SwapExecutionPageRouteSimpleRowProps = {
   denom: Operation['denomIn'] | Operation['denomOut'];
   amount: Operation['amountIn'] | Operation['amountOut'];
   chainID: Operation['fromChainID'] | Operation['chainID'];
@@ -30,7 +30,7 @@ export type SwapExecutionFlowRouteSimpleRowProps = {
   icon?: ICONS;
 };
 
-export const SwapExecutionFlowRouteSimpleRow = ({
+export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   amount,
   chainID,
@@ -40,7 +40,7 @@ export const SwapExecutionFlowRouteSimpleRow = ({
   explorerLink,
   wallet,
   icon = ICONS.none,
-}: SwapExecutionFlowRouteSimpleRowProps) => {
+}: SwapExecutionPageRouteSimpleRowProps) => {
   useEffect(() => {
     'mount';
   }, []);
