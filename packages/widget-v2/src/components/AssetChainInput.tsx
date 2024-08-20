@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components';
 import { CogIcon } from '@/icons/CogIcon';
 import { Button, GhostButton } from '@/components/Button';
 import { useAtom } from 'jotai';
-import { skipAssets } from '@/state/skip';
+import { skipAssets } from '@/state/skipClient';
 import { useUsdValue } from '@/utils/useUsdValue';
 import { formatUSD } from '@/utils/intl';
 

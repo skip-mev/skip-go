@@ -4,8 +4,8 @@ import { Row } from '@/components/Layout';
 import { defaultTheme, lightTheme } from '@/widget/theme';
 import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
 import { useEffect, useState } from 'react';
-import { skipAssets } from '@/state/skip';
-import { destinationAssetAtom } from '@/state/swap';
+import { skipAssets } from '@/state/skipClient';
+import { destinationAssetAtom } from '@/state/swapPage';
 import { useAtom } from 'jotai';
 
 const meta = {

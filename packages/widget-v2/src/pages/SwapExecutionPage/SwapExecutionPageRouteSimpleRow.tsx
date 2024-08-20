@@ -2,7 +2,7 @@ import { useTheme } from 'styled-components';
 import { Button } from '@/components/Button';
 import { Column, Row } from '@/components/Layout';
 import { SmallText, Text } from '@/components/Typography';
-import { getChain, skipAssets } from '@/state/skip';
+import { getChain, skipAssets } from '@/state/skipClient';
 import { getFormattedAssetAmount } from '@/utils/crypto';
 import { Wallet } from '@/components/RenderWalletList';
 import { iconMap, ICONS } from '@/icons';

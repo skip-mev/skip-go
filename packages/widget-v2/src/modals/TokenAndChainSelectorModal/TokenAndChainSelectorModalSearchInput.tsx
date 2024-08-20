@@ -5,7 +5,7 @@ import { SkipLogoIcon } from '@/icons/SkipLogoIcon';
 import { SmallText } from '@/components/Typography';
 import { SearchIcon } from '@/icons/SearchIcon';
 import { StyledAssetLabel } from '@/components/AssetChainInput';
-import { ClientAsset } from '@/state/skip';
+import { ClientAsset } from '@/state/skipClient';
 import { LeftArrowIcon } from '@/icons/ArrowIcon';
 import { useModal } from '@ebay/nice-modal-react';
 import { Button } from '@/components/Button';

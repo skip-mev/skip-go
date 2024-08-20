@@ -12,9 +12,9 @@ import {
 import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
 import { Button } from '@/components/Button';
 import { SmallText, Text } from '@/components/Typography';
-import { destinationAssetAtom, destinationWalletAtom } from '@/state/swap';
+import { destinationAssetAtom, destinationWalletAtom } from '@/state/swapPage';
 import { useAtom } from 'jotai';
-import { getChain } from '@/state/skip';
+import { getChain } from '@/state/skipClient';
 
 export const ManualAddressModal = NiceModal.create((modalProps: ModalProps) => {
   const { theme } = modalProps;

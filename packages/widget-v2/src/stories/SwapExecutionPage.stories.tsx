@@ -2,12 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
 import { SwapExecutionPage } from '@/pages/SwapExecutionPage/SwapExecutionPage';
 import NiceModal from '@ebay/nice-modal-react';
-import { destinationAssetAtom } from '@/state/swap';
+import { destinationAssetAtom } from '@/state/swapPage';
 import { useAtom } from 'jotai';
 import operations from '@/pages/SwapExecutionPage/operations.json';
-import { skipAssets } from '@/state/skip';
+import { skipAssets } from '@/state/skipClient';
 import { useEffect, useState } from 'react';
-import { Operation } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
 
 const meta = {
   title: 'Pages/SwapExecutionPage',
@@ -16,8 +15,8 @@ const meta = {
     const [_destinationAsset, setDestinationAsset] =
       useAtom(destinationAssetAtom);
     const [shouldRender, setShouldRender] = useState(false);
-    const firstOperation = props.operations[0];
-    const lastOperation = props.operations[props.operations.length - 1];
+    const firstOperation = operations[0];
+    const lastOperation = operations[operations.length - 1];
 
     const [{ data: assets }] = useAtom(skipAssets);
 
@@ -57,7 +56,5 @@ type Story = StoryObj<typeof meta>;
 export default meta;
 
 export const SwapExecutionPageExample: Story = {
-  args: {
-    operations: operations as Operation[],
-  },
+  args: {},
 };
