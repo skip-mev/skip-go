@@ -138,7 +138,6 @@ export const TransactionHistoryModalItem = ({
           relativeTimeString={relativeTime}
           transactionID={txStatus[0].txHash}
           onClickTransactionID={onClickTransactionID}
-          onClickDelete={() => {}}
         />
       )}
     </StyledHistoryContainer>

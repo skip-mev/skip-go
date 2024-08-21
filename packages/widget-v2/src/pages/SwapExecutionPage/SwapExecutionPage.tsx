@@ -50,7 +50,7 @@ export const SwapExecutionPage = ({ operations }: SwapExecutionPageProps) => {
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
 
-  const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
+  const [txStateMap, setTxStateMap] = useState<Record<number, txState>>({
     0: 'pending',
     1: 'pending',
     2: 'pending',
@@ -149,7 +149,6 @@ export const SwapExecutionPage = ({ operations }: SwapExecutionPageProps) => {
         leftButton={{
           label: 'Back',
           icon: ICONS.thinArrow,
-          onClick: () => {},
         }}
         rightButton={{
           label: simpleRoute ? 'Details' : 'Hide details',

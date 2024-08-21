@@ -20,9 +20,7 @@ export const ManualAddressModal = NiceModal.create((modalProps: ModalProps) => {
   const { theme } = modalProps;
   const modal = useModal();
   const [destinationAsset] = useAtom(destinationAssetAtom);
-  const [_destinationWallet, setDestinationWallet] = useAtom(
-    destinationWalletAtom
-  );
+  const [, setDestinationWallet] = useAtom(destinationWalletAtom);
   const chain = getChain(destinationAsset?.chainID ?? '');
   const chainName = destinationAsset?.chainName;
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);

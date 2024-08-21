@@ -12,7 +12,7 @@ export type VirtualListProps<T> = {
   className?: string;
 };
 
-export const VirtualList = <T extends unknown>({
+export const VirtualList = <T,>({
   listItems,
   height,
   itemHeight,

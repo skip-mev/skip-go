@@ -1,7 +1,8 @@
-import { cloneElement, CSSProperties, ReactNode } from 'react';
+import { cloneElement, ComponentProps, CSSProperties, ReactNode } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { defaultTheme, lightTheme } from '@/widget/theme';
 import { Column } from '@/components/Layout';
+import React from 'react';
 
 export const renderLightAndDarkTheme = (
   render: ReactNode,
@@ -15,14 +16,16 @@ export const renderLightAndDarkTheme = (
     </StyledWrapper>
   );
 };
+export const renderLightAndDarkThemeSeperateProps = <
+  T extends React.ComponentType
+>(
+  render: React.ReactElement<ComponentProps<T>>,
+  defaultProps: Partial<ComponentProps<T>>,
+  lightProps: Partial<ComponentProps<T>>
+): React.ReactElement => {
+  const renderDarkElement = cloneElement(render, defaultProps);
+  const renderLightElement = cloneElement(render, lightProps);
 
-export const renderLightAndDarkThemeSeperateProps = (
-  render: React.ReactElement,
-  defaultProps: any,
-  lightProps: any
-) => {
-  const renderDarkElement = cloneElement(render, { ...defaultProps });
-  const renderLightElement = cloneElement(render, { ...lightProps });
   return (
     <StyledWrapper gap={10} align="center">
       <ThemeProvider theme={defaultTheme}>{renderDarkElement}</ThemeProvider>
@@ -30,7 +33,6 @@ export const renderLightAndDarkThemeSeperateProps = (
     </StyledWrapper>
   );
 };
-
 export const StyledWrapper = styled(Column)<{ row?: boolean }>`
   ${({ row }) => row && 'flex-direction: row;'}
   padding: 20px;

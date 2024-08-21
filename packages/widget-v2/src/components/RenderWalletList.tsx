@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { LeftArrowIcon } from '@/icons/ArrowIcon';
-import { hashObject } from '@/utils/misc';
 import { Button } from '@/components/Button';
 import { Row, Column } from '@/components/Layout';
 import { ModalRowItem } from './ModalRowItem';

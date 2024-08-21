@@ -10,7 +10,7 @@ import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: Operation[];
-  txStateMap: { [index: number]: txState };
+  txStateMap: Record<number, txState>;
   onClickEditDestinationWallet?: () => void;
 };
 
@@ -63,7 +63,7 @@ export const SwapExecutionPageRouteSimple = ({
   );
 };
 
-const getOverallSwapState = (txStateMap: { [index: number]: txState }) => {
+const getOverallSwapState = (txStateMap: Record<number, txState>) => {
   const txStateArray = Object.values(txStateMap);
 
   if (txStateArray.find((state) => state === 'failed')) {

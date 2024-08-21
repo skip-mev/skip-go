@@ -32,7 +32,6 @@ export const TransactionHistoryModal = NiceModal.create(
           leftButton={{
             label: 'Back',
             icon: ICONS.thinArrow,
-            onClick: () => {},
           }}
         />
         <StyledContainer>

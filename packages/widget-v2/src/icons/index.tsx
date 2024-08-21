@@ -10,6 +10,7 @@ import { HistoryIcon } from './HistoryIcon';
 import { ThinArrowIcon } from './ThinArrowIcon';
 import { HamburgerIcon } from './HamburgerIcon';
 import { HorizontalLineIcon } from './HorizontalLineIcon';
+import { SVGProps } from 'react';
 
 export enum ICONS {
   none,
@@ -28,8 +29,14 @@ export enum ICONS {
   horizontalLine,
 }
 
+type IconProps = SVGProps<SVGSVGElement> & {
+  color?: string;
+  direction?: 'right' | 'left';
+  backgroundColor?: string;
+};
+
 type IconMap = {
-  [key in ICONS]: (args: any) => JSX.Element | null;
+  [key in ICONS]: (props: IconProps) => JSX.Element | null;
 };
 
 export const iconMap: IconMap = {

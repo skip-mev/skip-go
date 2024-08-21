@@ -114,14 +114,12 @@ export const SwapPage = () => {
           leftButton={{
             label: 'History',
             icon: ICONS.history,
-            onClick: () => {},
           }}
           rightButton={{
             label: 'Max',
-            onClick: () => {},
           }}
           rightContent={
-            !!sourceAssetBalance ? (
+            sourceAssetBalance ? (
               <SmallText> Balance: {sourceAssetBalance} </SmallText>
             ) : undefined
           }

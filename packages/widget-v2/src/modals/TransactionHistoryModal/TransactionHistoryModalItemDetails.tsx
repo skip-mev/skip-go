@@ -15,7 +15,7 @@ type TransactionHistoryModalItemDetailsProps = {
   relativeTimeString: string;
   transactionID: string;
   onClickTransactionID: () => void;
-  onClickDelete: () => void;
+  onClickDelete?: () => void;
 };
 
 const statusMap = {

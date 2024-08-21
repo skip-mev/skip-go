@@ -13,12 +13,10 @@ import { SmallText } from '@/components/Typography';
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: Operation[];
-  txStateMap: { [index: number]: txState };
+  txStateMap: Record<number, txState>;
 };
 
-type operationTypeToIcon = {
-  [index: string]: JSX.Element;
-};
+type operationTypeToIcon = Record<string, JSX.Element>;
 
 const operationTypeToIcon: operationTypeToIcon = {
   axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
@@ -37,9 +35,7 @@ const operationTypeToSimpleOperationType = {
   bankSend: 'Sent',
 };
 
-type tooltipMap = {
-  [index: number]: boolean;
-};
+type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,

@@ -20,8 +20,7 @@ const meta = {
   title: 'Components/ErrorState',
   component: (props) =>
     renderLightAndDarkThemeSeperateProps(
-      // @ts-ignore
-      <ErrorState />,
+      <ErrorState title={undefined} description={undefined} />,
       props.dark,
       props.light
     ),

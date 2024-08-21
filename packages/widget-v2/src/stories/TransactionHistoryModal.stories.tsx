@@ -2,8 +2,12 @@ import type { Meta } from '@storybook/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { Row } from '@/components/Layout';
 import { defaultTheme, lightTheme } from '@/widget/theme';
-import { TransactionHistoryModal } from '@/modals/TransactionHistoryModal/TransactionHistoryModal';
+import {
+  TransactionHistoryModal,
+  TransactionHistoryModalProps,
+} from '@/modals/TransactionHistoryModal/TransactionHistoryModal';
 import txHistory from '@/modals/TransactionHistoryModal/tx_history.json';
+import { TxHistoryItem } from '@modals/TransactionHistoryModal/TransactionHistoryModalItem';
 
 const meta = {
   title: 'Modals/TransactionHistoryModal',
@@ -13,13 +17,15 @@ const meta = {
     layout: 'fullscreen',
   },
   args: {
-    txHistory: txHistory as any,
+    txHistory: txHistory as TxHistoryItem[],
   },
 } satisfies Meta<typeof TransactionHistoryModal>;
 
 export default meta;
 
-export const TransactionHistoryModalExample = (props: any) => {
+export const TransactionHistoryModalExample = (
+  props: TransactionHistoryModalProps
+) => {
   const modal = useModal(TransactionHistoryModal);
 
   return (

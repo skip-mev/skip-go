@@ -12,9 +12,8 @@ import { Operation } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetai
 const meta = {
   title: 'Pages/SwapExecutionPage',
   component: (props) => {
-    const [_sourceAsset, setSourceAsset] = useAtom(destinationAssetAtom);
-    const [_destinationAsset, setDestinationAsset] =
-      useAtom(destinationAssetAtom);
+    const [, setSourceAsset] = useAtom(destinationAssetAtom);
+    const [, setDestinationAsset] = useAtom(destinationAssetAtom);
     const [shouldRender, setShouldRender] = useState(false);
     const firstOperation = props.operations[0];
     const lastOperation = props.operations[props.operations.length - 1];

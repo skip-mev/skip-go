@@ -1,4 +1,11 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ComponentType,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { Scope } from 'react-shadow-scope';
 import { defaultTheme, PartialTheme } from './theme';
@@ -24,7 +31,10 @@ export const GlobalStyles = createGlobalStyle`
   }
 `;
 
-function shouldForwardProp(propName: string, target: any) {
+function shouldForwardProp(
+  propName: string,
+  target: string | ComponentType<unknown>
+) {
   if (typeof target === 'string') {
     return isPropValid(propName);
   }
@@ -40,7 +50,7 @@ export const ShadowDomAndProviders = ({
 }) => {
   const [isClient, setIsClient] = useState<boolean>(false);
 
-  const [_shadowDom, setShadowDom] = useState<HTMLElement>();
+  const [, setShadowDom] = useState<HTMLElement>();
   const [styledComponentContainer, setStyledComponentContainer] =
     useState<HTMLElement>();
 
