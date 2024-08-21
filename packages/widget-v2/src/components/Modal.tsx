@@ -1,7 +1,11 @@
 import { css, styled, useTheme } from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ShadowDomAndProviders } from '@/widget/ShadowDomAndProviders';
-import NiceModal, { useModal as useNiceModal } from '@ebay/nice-modal-react';
+import NiceModal, {
+  remove,
+  show,
+  useModal as useNiceModal,
+} from '@ebay/nice-modal-react';
 import { ComponentType, FC, useCallback, useEffect, useMemo } from 'react';
 import { PartialTheme } from '@/widget/theme';
 
@@ -34,7 +38,7 @@ export const Modal = ({
     return () => {
       onOpenChange?.(false);
     };
-  }, []);
+  }, [onOpenChange]);
 
   return (
     <Dialog.Root open={modal.visible} onOpenChange={() => modal.remove()}>
@@ -78,34 +82,29 @@ export const useModal = <T extends ModalProps>(
     numberOfModalsOpenAtom
   );
 
-  const modalInstance = modal
-    ? useNiceModal(modal, initialArgs)
-    : useNiceModal();
-
-  const show = useCallback(
-    (showArgs?: Partial<T & ModalProps>) => {
-      setNumberOfModalsOpen((prev) => prev + 1);
-      modalInstance.show({
-        theme,
-        stackedModal: numberOfModalsOpen > 0,
-        ...showArgs,
-      } as Partial<T>);
-    },
-    [modalInstance, setNumberOfModalsOpen, theme, numberOfModalsOpen]
-  );
-
-  const remove = useCallback(() => {
-    setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
-    modalInstance.remove();
-  }, [modalInstance, setNumberOfModalsOpen]);
+  const modalInstance = useNiceModal(modal as FC<unknown>, initialArgs);
 
   return useMemo(
     () => ({
       ...modalInstance,
-      show,
-      remove,
+      show: (showArgs?: Partial<T & ModalProps>) => {
+        modalInstance.show({
+          theme,
+          stackedModal: numberOfModalsOpen > 0,
+          ...showArgs,
+        } as Partial<T>);
+        setNumberOfModalsOpen((prev) => prev + 1);
+      },
+      remove: () => {
+        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
+        modalInstance.remove();
+      },
+      hide: () => {
+        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
+        modalInstance.hide();
+      },
     }),
-    [modalInstance, show, remove]
+    [modalInstance, setNumberOfModalsOpen, theme, numberOfModalsOpen]
   );
 };
 

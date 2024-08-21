@@ -88,10 +88,11 @@ export const SwapInProgress: Story = {
 };
 
 export const SwapComplete: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function SwapComplete(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().success.text} />
-    ),
+    );
+  },
   args: {
     label: 'Swap Complete',
     icon: ICONS.checkmark,
@@ -100,10 +101,11 @@ export const SwapComplete: Story = {
 };
 
 export const ContinueTransaction: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function ContinueTransaction(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().warning.text} />
-    ),
+    );
+  },
   args: {
     label: 'Continue Transaction',
     icon: ICONS.rightArrow,
@@ -112,10 +114,11 @@ export const ContinueTransaction: Story = {
 };
 
 export const GoBack: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function GoBack(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().error.text} />
-    ),
+    );
+  },
   args: {
     label: 'Go Back',
     leftIcon: ICONS.leftArrow,

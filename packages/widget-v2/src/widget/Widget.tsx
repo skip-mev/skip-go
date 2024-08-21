@@ -49,7 +49,9 @@ export const ShowSwapWidget = ({
 
   const handleClick = () => {
     resetNumberOfModalsOpen();
-    modal.show();
+    modal.show({
+      stackedModal: false,
+    });
   };
 
   const Element = cloneElement(button, { onClick: handleClick });

@@ -95,7 +95,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [walletList]
+    [onSelect]
   );
 
   const height = useMemo(() => {

@@ -30,13 +30,13 @@ export const SwapPage = () => {
     if (!assets || !sourceAsset?.symbol) return;
     const chains = getChainsContainingAsset(sourceAsset?.symbol, assets);
     return chains;
-  }, [sourceAsset?.symbol]);
+  }, [assets, sourceAsset?.symbol]);
 
   const chainsContainingDestinationAsset = useMemo(() => {
     if (!assets || !destinationAsset?.symbol) return;
     const chains = getChainsContainingAsset(destinationAsset?.symbol, assets);
     return chains;
-  }, [destinationAsset?.symbol]);
+  }, [assets, destinationAsset?.symbol]);
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
@@ -48,7 +48,7 @@ export const SwapPage = () => {
         tokenAndChainSelectorFlow.hide();
       },
     });
-  }, []);
+  }, [setSourceAsset, tokenAndChainSelectorFlow]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
@@ -66,7 +66,12 @@ export const SwapPage = () => {
       chainsContainingAsset: chainsContainingSourceAsset,
       asset: sourceAsset,
     });
-  }, [chainsContainingSourceAsset, sourceAsset]);
+  }, [
+    chainsContainingSourceAsset,
+    setSourceAsset,
+    sourceAsset,
+    tokenAndChainSelectorFlow,
+  ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
@@ -78,7 +83,7 @@ export const SwapPage = () => {
         tokenAndChainSelectorFlow.hide();
       },
     });
-  }, []);
+  }, [setDestinationAsset, tokenAndChainSelectorFlow]);
 
   const handleChangeDestinationChain = useCallback(() => {
     if (!chainsContainingDestinationAsset) return;
@@ -94,7 +99,12 @@ export const SwapPage = () => {
       chainsContainingAsset: chainsContainingDestinationAsset,
       asset: destinationAsset,
     });
-  }, [chainsContainingDestinationAsset, destinationAsset]);
+  }, [
+    chainsContainingDestinationAsset,
+    destinationAsset,
+    setDestinationAsset,
+    tokenAndChainSelectorFlow,
+  ]);
 
   return (
     <>

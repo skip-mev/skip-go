@@ -124,7 +124,7 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [swapExecutionState]);
+  }, [modal, swapExecutionState, theme.success.text]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? withBoundProps(SwapExecutionPageRouteSimple, {

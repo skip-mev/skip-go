@@ -34,7 +34,7 @@ export const ManualAddressModalsExample = () => {
     if (destinationAsset) {
       setShouldRender(true);
     }
-  }, [asset, destinationAsset]);
+  }, [asset, destinationAsset, setDestinationAsset]);
   if (shouldRender) {
     return (
       <NiceModal.Provider>

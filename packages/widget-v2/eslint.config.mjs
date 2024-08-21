@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
+import { fixupPluginRules } from '@eslint/compat';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -9,10 +10,11 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   {
     plugins: {
-      'react-hooks': reactHooks,
+      'react-hooks': fixupPluginRules(reactHooks),
     },
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'off',
+      ...reactHooks.configs.recommended.rules,
     },
   }
 );

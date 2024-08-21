@@ -3678,6 +3678,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/compat@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@eslint/compat@npm:1.1.1"
+  checksum: c9146b139e52ee4f79e25b97f22d2936c50b876cef8e9c5789600f12d8fabae689d75571a8429e5aae0d5e8067b0628fd87b7e849cee391b485db9557b40b6a4
+  languageName: node
+  linkType: hard
+
 "@eslint/config-array@npm:^0.17.1":
   version: 0.17.1
   resolution: "@eslint/config-array@npm:0.17.1"
@@ -28800,6 +28807,7 @@ __metadata:
   dependencies:
     "@chromatic-com/storybook": ^1.6.1
     "@ebay/nice-modal-react": ^1.2.13
+    "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
     "@initia/initia-registry": ^0.1.16
     "@radix-ui/react-dialog": ^1.1.1

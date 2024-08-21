@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 
 const meta = {
   title: 'Pages/SwapExecutionPage',
-  component: (props) => {
+  component: function SwapExecutionPageStory(props) {
     const [, setSourceAsset] = useAtom(destinationAssetAtom);
     const [, setDestinationAsset] = useAtom(destinationAssetAtom);
     const [shouldRender, setShouldRender] = useState(false);
@@ -33,7 +33,7 @@ const meta = {
       if (sourceAsset && destinationAsset) {
         setShouldRender(true);
       }
-    }, [sourceAsset, destinationAsset]);
+    }, [sourceAsset, destinationAsset, setSourceAsset, setDestinationAsset]);
     if (shouldRender) {
       return renderLightAndDarkTheme(
         <NiceModal.Provider>

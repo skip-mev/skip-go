@@ -74,7 +74,7 @@ export const ShadowDomAndProviders = ({
       ...defaultTheme,
       ...theme,
     };
-  }, [defaultTheme, theme]);
+  }, [theme]);
 
   return isClient ? (
     <Scope ref={onShadowDomLoaded}>

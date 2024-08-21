@@ -4,4 +4,4 @@ export const errorAtom = atomWithReset<
   ExpectedErrorDetails | Error | undefined
 >(undefined);
 
-type ExpectedErrorDetails = {};
+type ExpectedErrorDetails = object;

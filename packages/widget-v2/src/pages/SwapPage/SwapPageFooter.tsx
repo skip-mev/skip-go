@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useTheme } from 'styled-components';
 import { Row } from '@/components/Layout';
 import { GhostButton } from '@/components/Button';
 import { GasIcon } from '@/icons/GasIcon';
@@ -19,8 +18,6 @@ export const SwapPageFooterItems = ({
   rightContent = null,
   showRouteInfo,
 }: SwapPageFooterItemsProps) => {
-  const theme = useTheme();
-
   const renderRightContent = useMemo(() => {
     if (showRouteInfo && estimatedGas && estimatedTime) {
       return (
@@ -36,7 +33,7 @@ export const SwapPageFooterItems = ({
       );
     }
     return rightContent;
-  }, [showRouteInfo, rightContent, estimatedGas, estimatedTime, theme]);
+  }, [showRouteInfo, rightContent]);
 
   return (
     <>

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --fix",
     "preview": "vite preview",
     "build-storybook": "storybook build"
   },
@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
+    "@eslint/compat": "^1.1.1",
     "@initia/initia-registry": "^0.1.16",
     "@radix-ui/react-dialog": "^1.1.1",
     "@skip-go/client": "workspace:^",

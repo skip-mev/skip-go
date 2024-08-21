@@ -93,7 +93,7 @@ export const TransactionHistoryModalItem = ({
       case 'failed':
         return <XIcon color={theme.error.text} />;
     }
-  }, [status]);
+  }, [status, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
     return new Date(timestamp).toLocaleString();
@@ -105,7 +105,7 @@ export const TransactionHistoryModalItem = ({
       return 'In Progress';
     }
     return '5 mins ago';
-  }, [timestamp, status]);
+  }, [status]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
