@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { ClientAsset } from './skip';
+import { ClientAsset } from '@/state/skipClient';
 import { Wallet } from '@/components/RenderWalletList';
 
 export type AssetAtom = Partial<ClientAsset> & {

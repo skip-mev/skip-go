@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import { Row } from '@/components/Layout';
 import { SmallText } from '@/components/Typography';
-import { getChain, skipAssets } from '@/state/skip';
+import { getChain, skipAssets } from '@/state/skipClient';
 import { getFormattedAssetAmount } from '@/utils/crypto';
 import { css, styled, useTheme } from 'styled-components';
 import React from 'react';
