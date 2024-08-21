@@ -1,4 +1,4 @@
-import { createModal, Modal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps } from '@/components/Modal';
 import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
@@ -26,7 +26,7 @@ export const TransactionHistoryModal = createModal(
       number | undefined
     >();
     return (
-      <Modal {...modalProps}>
+      <>
         <SwapPageHeader
           leftButton={{
             label: 'Back',
@@ -74,7 +74,7 @@ export const TransactionHistoryModal = createModal(
           )}
         </StyledContainer>
         <SwapPageFooter />
-      </Modal>
+      </>
     );
   }
 );

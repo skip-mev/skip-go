@@ -1,5 +1,5 @@
 import { useModal } from '@ebay/nice-modal-react';
-import { createModal, Modal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps } from '@/components/Modal';
 import { Column, Row } from '@/components/Layout';
 import { css, styled } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';
@@ -62,7 +62,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   }, [manualWalletAddress]);
 
   return (
-    <Modal {...modalProps}>
+    <>
       {showManualAddressInput ? (
         <StyledContainer gap={15}>
           <RenderWalletListHeader
@@ -122,7 +122,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
           onClickBackButton={() => modal.remove()}
         />
       )}
-    </Modal>
+    </>
   );
 });
 

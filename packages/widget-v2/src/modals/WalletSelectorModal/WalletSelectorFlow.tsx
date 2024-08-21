@@ -1,5 +1,5 @@
 import { useModal } from '@ebay/nice-modal-react';
-import { createModal, Modal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps } from '@/components/Modal';
 import { RenderWalletList, Wallet } from '@/components/RenderWalletList';
 
 export type WalletSelectorModalProps = ModalProps & {
@@ -32,14 +32,12 @@ export const WalletSelectorModal = createModal(
     const modal = useModal();
 
     return (
-      <Modal {...modalProps}>
-        <RenderWalletList
-          title="Connect wallet"
-          walletList={WALLET_LIST}
-          onSelect={onSelect}
-          onClickBackButton={() => modal.remove()}
-        />
-      </Modal>
+      <RenderWalletList
+        title="Connect wallet"
+        walletList={WALLET_LIST}
+        onSelect={onSelect}
+        onClickBackButton={() => modal.remove()}
+      />
     );
   }
 );
