@@ -1,10 +1,12 @@
 import { ShadowDomAndProviders } from './ShadowDomAndProviders';
 import NiceModal from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
-import { Modal, useModal } from '@/components/Modal';
+import { createModal, useModal } from '@/components/Modal';
 import { cloneElement, ReactElement } from 'react';
 import { PartialTheme } from './theme';
 import { Router } from './Router';
+import { useResetAtom } from 'jotai/utils';
+import { numberOfModalsOpenAtom } from '@/state/modal';
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
@@ -40,12 +42,14 @@ export const ShowSwapWidget = ({
   button = <button>show widget</button>,
   ...props
 }: ShowSwapWidget) => {
-  const modal = useModal(NiceModal.create(Modal));
+  const modal = useModal(
+    createModal(() => <SwapWidgetWithoutNiceModalProvider {...props} />)
+  );
+  const resetNumberOfModalsOpen = useResetAtom(numberOfModalsOpenAtom);
 
   const handleClick = () => {
-    modal.show({
-      children: <SwapWidgetWithoutNiceModalProvider {...props} />,
-    });
+    resetNumberOfModalsOpen();
+    modal.show();
   };
 
   const Element = cloneElement(button, { onClick: handleClick });

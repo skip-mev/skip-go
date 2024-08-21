@@ -1,5 +1,4 @@
 import { errorAtom } from '@/state/errorPage';
-import NiceModal from '@ebay/nice-modal-react';
 import { useResetAtom } from 'jotai/utils';
 
 export const ErrorPage = ({

@@ -1,3 +1,3 @@
-import { atom } from 'jotai';
+import { atomWithReset } from 'jotai/utils';
 
-export const numberOfModalsOpenAtom = atom<number>(0);
+export const numberOfModalsOpenAtom = atomWithReset<number>(0);
