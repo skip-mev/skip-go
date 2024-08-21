@@ -47,10 +47,12 @@ export const Modal = ({
   );
 };
 
-export const createModal = (component: ComponentType<any>) => {
+export const createModal = <T extends ModalProps>(
+  component: ComponentType<T>
+) => {
   const Component = component;
 
-  const WrappedComponent = (props: any) => {
+  const WrappedComponent = (props: T) => {
     const [, setError] = useAtom(errorAtom);
 
     return (
