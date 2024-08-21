@@ -55,10 +55,7 @@ export const createModal = (component: ComponentType<any>) => {
 
     return (
       <Modal {...props}>
-        <ErrorBoundary
-          FallbackComponent={ErrorPage}
-          onError={(error) => setError(error)}
-        >
+        <ErrorBoundary fallback={null} onError={(error) => setError(error)}>
           <Component {...props} />
         </ErrorBoundary>
       </Modal>
