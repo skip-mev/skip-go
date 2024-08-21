@@ -17,7 +17,7 @@ import { SmallText } from '@/components/Typography';
 import { SignatureIcon } from '@/icons/SignatureIcon';
 import pluralize from 'pluralize';
 import operations from './operations.json';
-import { useThemedModal } from '@/components/Modal';
+import { useModal } from '@/components/Modal';
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -45,7 +45,7 @@ export const SwapExecutionPage = () => {
     }
   }, [destinationWallet]);
   const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useThemedModal(ManualAddressModal);
+  const modal = useModal(ManualAddressModal);
 
   const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
     0: 'pending',

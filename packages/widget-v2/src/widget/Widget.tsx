@@ -1,7 +1,7 @@
 import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
+import NiceModal from '@ebay/nice-modal-react';
 import { styled } from 'styled-components';
-import { Modal } from '@/components/Modal';
+import { Modal, useModal } from '@/components/Modal';
 import { cloneElement, ReactElement } from 'react';
 import { PartialTheme } from './theme';
 import { Router } from './Router';

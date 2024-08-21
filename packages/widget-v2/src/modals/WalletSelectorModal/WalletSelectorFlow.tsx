@@ -1,5 +1,4 @@
-import { useModal } from '@ebay/nice-modal-react';
-import { createModal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps, useModal } from '@/components/Modal';
 import { RenderWalletList, Wallet } from '@/components/RenderWalletList';
 
 export type WalletSelectorModalProps = ModalProps & {

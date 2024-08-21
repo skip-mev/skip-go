@@ -7,9 +7,9 @@ import { SearchIcon } from '@/icons/SearchIcon';
 import { StyledAssetLabel } from '@/components/AssetChainInput';
 import { ClientAsset } from '@/state/skipClient';
 import { LeftArrowIcon } from '@/icons/ArrowIcon';
-import { useModal } from '@ebay/nice-modal-react';
 import { Button } from '@/components/Button';
 import { Text } from '@/components/Typography';
+import { useModal } from '@/components/Modal';
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;

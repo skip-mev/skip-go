@@ -1,5 +1,4 @@
-import { useModal } from '@ebay/nice-modal-react';
-import { createModal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps, useModal } from '@/components/Modal';
 import { Column, Row } from '@/components/Layout';
 import { css, styled } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';

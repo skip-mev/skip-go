@@ -1,6 +1,4 @@
-import { useTheme } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';
-import { useModal } from '@ebay/nice-modal-react';
 import { useAtom } from 'jotai';
 import { AssetChainInput } from '@/components/AssetChainInput';
 import { Column } from '@/components/Layout';
@@ -14,7 +12,7 @@ import { SwapPageSettings } from './SwapPageSettings';
 import { SwapPageFooter } from './SwapPageFooter';
 import { SwapPageBridge } from './SwapPageBridge';
 import { SwapPageHeader } from './SwapPageHeader';
-import { useThemedModal } from '@/components/Modal';
+import { useModal } from '@/components/Modal';
 
 const sourceAssetBalance = 125;
 
@@ -25,8 +23,8 @@ export const SwapPage = () => {
   const [{ data: assets }] = useAtom(skipAssets);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
-  const swapFlowSettings = useThemedModal(SwapPageSettings);
-  const tokenAndChainSelectorFlow = useThemedModal(TokenAndChainSelectorModal);
+  const swapFlowSettings = useModal(SwapPageSettings);
+  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!assets || !sourceAsset?.symbol) return;
