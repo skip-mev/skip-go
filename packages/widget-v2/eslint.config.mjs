@@ -14,6 +14,7 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'off',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       ...reactHooks.configs.recommended.rules,
     },
   }

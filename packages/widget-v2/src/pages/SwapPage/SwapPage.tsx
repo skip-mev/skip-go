@@ -59,8 +59,6 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-
-        console.log(asset);
         tokenAndChainSelectorFlow.hide();
       },
       chainsContainingAsset: chainsContainingSourceAsset,

@@ -1,12 +1,8 @@
 import { css, styled, useTheme } from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ShadowDomAndProviders } from '@/widget/ShadowDomAndProviders';
-import NiceModal, {
-  remove,
-  show,
-  useModal as useNiceModal,
-} from '@ebay/nice-modal-react';
-import { ComponentType, FC, useCallback, useEffect, useMemo } from 'react';
+import NiceModal, { useModal as useNiceModal } from '@ebay/nice-modal-react';
+import { ComponentType, FC, useEffect, useMemo } from 'react';
 import { PartialTheme } from '@/widget/theme';
 
 import { ErrorBoundary } from 'react-error-boundary';
