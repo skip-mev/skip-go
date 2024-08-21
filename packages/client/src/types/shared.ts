@@ -211,6 +211,7 @@ export type CCTPTransferJSON = {
   denom_in: string;
   denom_out: string;
   smart_relay: boolean;
+  smart_relay_fee_quote: SmartRelayFeeQuoteJSON;
 };
 
 export type CCTPTransfer = {
@@ -221,6 +222,7 @@ export type CCTPTransfer = {
   denomIn: string;
   denomOut: string;
   smartRelay: boolean;
+  smartRelayFeeQuote: SmartRelayFeeQuote;
 };
 
 export type HyperlaneTransferJSON = {
@@ -268,6 +270,24 @@ export type OPInitTransfer = {
   bridgeID: BridgeType;
   smartRelay: boolean;
 };
+
+export type SmartRelayFeeQuoteJSON = {
+  fee_amount: string;
+  fee_address?: string;
+  payment_contract_address?: string;
+  relayer_address: string;
+  expiration: Date;
+  token: string;
+}
+
+export type SmartRelayFeeQuote = {
+  feeAmount: string;
+  feeAddress?: string;
+  paymentContractAddress?: string;
+  relayerAddress: string;
+  expiration: Date;
+  token: string;
+}
 
 export type SwapVenueJSON = {
   name: string;
