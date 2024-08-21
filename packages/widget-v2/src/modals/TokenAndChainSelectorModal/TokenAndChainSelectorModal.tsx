@@ -1,5 +1,5 @@
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@/components/Modal';
+import { useModal } from '@ebay/nice-modal-react';
+import { createModal, Modal, ModalProps } from '@/components/Modal';
 import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { useAtom } from 'jotai';
@@ -19,7 +19,7 @@ export type TokenAndChainSelectorModalProps = ModalProps & {
   asset?: Partial<ClientAsset>;
 };
 
-export const TokenAndChainSelectorModal = NiceModal.create(
+export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect, chainsContainingAsset, asset } = modalProps;

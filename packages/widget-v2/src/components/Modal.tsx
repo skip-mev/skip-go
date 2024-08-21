@@ -1,9 +1,14 @@
-import { css, styled } from 'styled-components';
+import { css, styled, useTheme } from 'styled-components';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ShadowDomAndProviders } from '@/widget/ShadowDomAndProviders';
-import { useModal } from '@ebay/nice-modal-react';
-import { useEffect } from 'react';
+import NiceModal, { useModal } from '@ebay/nice-modal-react';
+import { ComponentProps, ComponentType, FC, useEffect } from 'react';
 import { PartialTheme } from '@/widget/theme';
+
+import { ErrorBoundary } from 'react-error-boundary';
+import { useAtom } from 'jotai';
+import { errorAtom } from '@/state/errorPage';
+import { ErrorPage } from '@/pages/ErrorPage/ErrorPage';
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -40,6 +45,41 @@ export const Modal = ({
       </Dialog.Portal>
     </Dialog.Root>
   );
+};
+
+export const createModal = (component: ComponentType<any>) => {
+  const Component = component;
+
+  const WrappedComponent = (props: any) => {
+    const [, setError] = useAtom(errorAtom);
+
+    return (
+      <Modal {...props}>
+        <ErrorBoundary
+          FallbackComponent={ErrorPage}
+          onError={(error) => setError(error)}
+        >
+          <Component {...props} />
+        </ErrorBoundary>
+      </Modal>
+    );
+  };
+
+  return NiceModal.create(WrappedComponent);
+};
+
+export const useThemedModal = <T extends FC<any>>(
+  modal: T,
+  args?: Partial<ComponentProps<T>>
+) => {
+  const theme = useTheme();
+  const modalInstance = NiceModal.useModal(modal, { theme, ...args });
+
+  return {
+    ...modalInstance,
+    show: (showArgs?: Partial<ComponentProps<T>>) =>
+      modalInstance.show({ theme, ...showArgs }),
+  };
 };
 
 const StyledOverlay = styled(Dialog.Overlay)<{ drawer?: boolean }>`

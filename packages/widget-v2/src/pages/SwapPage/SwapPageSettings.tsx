@@ -1,10 +1,11 @@
 import { css, styled } from 'styled-components';
-import { Modal, ModalProps } from '@/components/Modal';
+import { createModal, Modal, ModalProps } from '@/components/Modal';
 import { Column, Row } from '@/components/Layout';
 import NiceModal from '@ebay/nice-modal-react';
 import { SmallText } from '@/components/Typography';
 import { RouteArrow } from '@/icons/RouteArrow';
 import { SwapPageFooterItems } from './SwapPageFooter';
+import { useEffect } from 'react';
 
 const SLIPPAGE_OPTIONS = [
   {
@@ -31,65 +32,61 @@ const bridgeFee = '0.001 XYZ ($0.1)';
 const selectedOption = SLIPPAGE_OPTIONS[0];
 const route = ['COSMOS', 'OSMOSIS', 'AXELAR'];
 
-export const SwapPageSettings = NiceModal.create((modalProps: ModalProps) => {
+export const SwapPageSettings = createModal((modalProps: ModalProps) => {
   return (
-    <Modal {...modalProps}>
-      <StyledSwapPageSettings gap={20}>
-        <Column gap={10}>
-          <Row justify="space-between">
-            <SettingText>Route</SettingText>
-            <Row align="center" gap={5}>
-              {route.map((_path, index) => (
-                <>
-                  <img
-                    width="20"
-                    height="20"
-                    src="https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png"
-                  />
-                  {index !== route.length - 1 && (
-                    <RouteArrow
-                      color={modalProps.theme?.primary?.text.normal}
-                    />
-                  )}
-                </>
-              ))}
-            </Row>
+    <StyledSwapPageSettings gap={20}>
+      <Column gap={10}>
+        <Row justify="space-between">
+          <SettingText>Route</SettingText>
+          <Row align="center" gap={5}>
+            {route.map((_path, index) => (
+              <>
+                <img
+                  width="20"
+                  height="20"
+                  src="https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png"
+                />
+                {index !== route.length - 1 && (
+                  <RouteArrow color={modalProps.theme?.primary?.text.normal} />
+                )}
+              </>
+            ))}
           </Row>
-          <Row justify="space-between">
-            <SettingText>Max Slippage</SettingText>
-            <Row>
-              {SLIPPAGE_OPTIONS.map(({ label }) => (
-                <StyledSlippageOptionLabel
-                  monospace
-                  selected={selectedOption.label === label}
-                >
-                  {label}
-                </StyledSlippageOptionLabel>
-              ))}
-            </Row>
+        </Row>
+        <Row justify="space-between">
+          <SettingText>Max Slippage</SettingText>
+          <Row>
+            {SLIPPAGE_OPTIONS.map(({ label }) => (
+              <StyledSlippageOptionLabel
+                monospace
+                selected={selectedOption.label === label}
+              >
+                {label}
+              </StyledSlippageOptionLabel>
+            ))}
           </Row>
-        </Column>
+        </Row>
+      </Column>
 
-        <Column gap={10}>
-          <Row justify="space-between">
-            <SettingText>Total Gas</SettingText>
-            <SettingText monospace>{totalGas}</SettingText>
-          </Row>
-          <Row justify="space-between">
-            <SettingText>Router Fee</SettingText>
-            <SettingText monospace>{routerFee}</SettingText>
-          </Row>
-          <Row justify="space-between">
-            <SettingText>Bridge Fee</SettingText>
-            <SettingText monospace>{bridgeFee}</SettingText>
-          </Row>
-        </Column>
+      <Column gap={10}>
+        <Row justify="space-between">
+          <SettingText>Total Gas</SettingText>
+          <SettingText monospace>{totalGas}</SettingText>
+        </Row>
+        <Row justify="space-between">
+          <SettingText>Router Fee</SettingText>
+          <SettingText monospace>{routerFee}</SettingText>
+        </Row>
+        <Row justify="space-between">
+          <SettingText>Bridge Fee</SettingText>
+          <SettingText monospace>{bridgeFee}</SettingText>
+        </Row>
+      </Column>
 
-        <SettingText justify="space-between">
-          <SwapPageFooterItems showRouteInfo />
-        </SettingText>
-      </StyledSwapPageSettings>
-    </Modal>
+      <SettingText justify="space-between">
+        <SwapPageFooterItems showRouteInfo />
+      </SettingText>
+    </StyledSwapPageSettings>
   );
 });
 

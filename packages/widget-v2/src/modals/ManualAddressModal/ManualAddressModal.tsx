@@ -1,5 +1,5 @@
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@/components/Modal';
+import { useModal } from '@ebay/nice-modal-react';
+import { createModal, Modal, ModalProps } from '@/components/Modal';
 import { Column, Row } from '@/components/Layout';
 import { css, styled } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';
@@ -16,7 +16,7 @@ import { destinationAssetAtom, destinationWalletAtom } from '@/state/swapPage';
 import { useAtom } from 'jotai';
 import { getChain } from '@/state/skipClient';
 
-export const ManualAddressModal = NiceModal.create((modalProps: ModalProps) => {
+export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
   const modal = useModal();
   const [destinationAsset] = useAtom(destinationAssetAtom);

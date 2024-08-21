@@ -14,19 +14,19 @@ import { SwapPageSettings } from './SwapPageSettings';
 import { SwapPageFooter } from './SwapPageFooter';
 import { SwapPageBridge } from './SwapPageBridge';
 import { SwapPageHeader } from './SwapPageHeader';
+import { useThemedModal } from '@/components/Modal';
 
 const sourceAssetBalance = 125;
 
 export const SwapPage = () => {
-  const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: assets }] = useAtom(skipAssets);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
-  const swapFlowSettings = useModal(SwapPageSettings);
-  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
+  const swapFlowSettings = useThemedModal(SwapPageSettings);
+  const tokenAndChainSelectorFlow = useThemedModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!assets || !sourceAsset?.symbol) return;
@@ -42,7 +42,6 @@ export const SwapPage = () => {
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -57,7 +56,6 @@ export const SwapPage = () => {
     if (!chainsContainingSourceAsset) return;
 
     return tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -74,7 +72,6 @@ export const SwapPage = () => {
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -89,7 +86,6 @@ export const SwapPage = () => {
     if (!chainsContainingDestinationAsset) return;
 
     return tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -153,7 +149,6 @@ export const SwapPage = () => {
           showRouteInfo
           onClick={() =>
             swapFlowSettings.show({
-              theme,
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
