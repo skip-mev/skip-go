@@ -1,5 +1,4 @@
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps, useModal } from '@/components/Modal';
 import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { useAtom } from 'jotai';
@@ -19,7 +18,7 @@ export type TokenAndChainSelectorModalProps = ModalProps & {
   asset?: Partial<ClientAsset>;
 };
 
-export const TokenAndChainSelectorModal = NiceModal.create(
+export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect, chainsContainingAsset, asset } = modalProps;
@@ -78,34 +77,32 @@ export const TokenAndChainSelectorModal = NiceModal.create(
     );
 
     return (
-      <Modal {...modalProps}>
-        <StyledContainer>
-          <TokenAndChainSelectorModalSearchInput
-            onSearch={handleSearch}
-            asset={asset}
+      <StyledContainer>
+        <TokenAndChainSelectorModalSearchInput
+          onSearch={handleSearch}
+          asset={asset}
+        />
+        {showSkeleton || (!filteredAssets && !filteredChains) ? (
+          <Column>
+            {Array.from({ length: 10 }, (_, index) => (
+              <Skeleton key={index} />
+            ))}
+          </Column>
+        ) : (
+          <VirtualList
+            listItems={filteredChains ?? filteredAssets ?? []}
+            height={530}
+            itemHeight={70}
+            renderItem={renderItem}
+            itemKey={(item) => {
+              if (isChainWithAsset(item)) {
+                return `${item.chain_id}${item.chain_name}`;
+              }
+              return `${item.chainID}${item.denom}`;
+            }}
           />
-          {showSkeleton || (!filteredAssets && !filteredChains) ? (
-            <Column>
-              {Array.from({ length: 10 }, (_, index) => (
-                <Skeleton key={index} />
-              ))}
-            </Column>
-          ) : (
-            <VirtualList
-              listItems={filteredChains ?? filteredAssets ?? []}
-              height={530}
-              itemHeight={70}
-              renderItem={renderItem}
-              itemKey={(item) => {
-                if (isChainWithAsset(item)) {
-                  return `${item.chain_id}${item.chain_name}`;
-                }
-                return `${item.chainID}${item.denom}`;
-              }}
-            />
-          )}
-        </StyledContainer>
-      </Modal>
+        )}
+      </StyledContainer>
     );
   }
 );

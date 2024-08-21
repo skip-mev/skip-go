@@ -4,7 +4,6 @@ import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
 import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
 import { useEffect, useMemo, useState } from 'react';
 import { ICONS } from '@/icons';
-import { useModal } from '@ebay/nice-modal-react';
 import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
 import styled, { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
@@ -18,6 +17,7 @@ import { SmallText } from '@/components/Typography';
 import { SignatureIcon } from '@/icons/SignatureIcon';
 import pluralize from 'pluralize';
 import operations from './operations.json';
+import { useModal } from '@/components/Modal';
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -92,11 +92,7 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Set destination address"
             icon={ICONS.rightArrow}
-            onClick={() =>
-              modal.show({
-                theme,
-              })
-            }
+            onClick={() => modal.show()}
           />
         );
       case SwapExecutionState.unconfirmed:
@@ -133,9 +129,7 @@ export const SwapExecutionPage = () => {
   const SwapExecutionPageRoute = simpleRoute
     ? withBoundProps(SwapExecutionPageRouteSimple, {
         onClickEditDestinationWallet: () => {
-          modal.show({
-            theme,
-          });
+          modal.show();
         },
       })
     : SwapExecutionPageRouteDetailed;

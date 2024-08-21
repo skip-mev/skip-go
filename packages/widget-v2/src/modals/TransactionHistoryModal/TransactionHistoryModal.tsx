@@ -1,5 +1,4 @@
-import NiceModal from '@ebay/nice-modal-react';
-import { Modal, ModalProps } from '@/components/Modal';
+import { createModal, ModalProps } from '@/components/Modal';
 import { Column } from '@/components/Layout';
 import { styled } from 'styled-components';
 import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
@@ -21,13 +20,13 @@ export type TransactionHistoryModalProps = ModalProps & {
   txHistory: TxHistoryItem[];
 };
 
-export const TransactionHistoryModal = NiceModal.create(
+export const TransactionHistoryModal = createModal(
   ({ txHistory, ...modalProps }: TransactionHistoryModalProps) => {
     const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
       number | undefined
     >();
     return (
-      <Modal {...modalProps}>
+      <>
         <SwapPageHeader
           leftButton={{
             label: 'Back',
@@ -74,7 +73,7 @@ export const TransactionHistoryModal = NiceModal.create(
           )}
         </StyledContainer>
         <SwapPageFooter />
-      </Modal>
+      </>
     );
   }
 );

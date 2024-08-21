@@ -1,6 +1,4 @@
-import { useTheme } from 'styled-components';
 import { useCallback, useMemo, useState } from 'react';
-import { useModal } from '@ebay/nice-modal-react';
 import { useAtom } from 'jotai';
 import { AssetChainInput } from '@/components/AssetChainInput';
 import { Column } from '@/components/Layout';
@@ -14,11 +12,11 @@ import { SwapPageSettings } from './SwapPageSettings';
 import { SwapPageFooter } from './SwapPageFooter';
 import { SwapPageBridge } from './SwapPageBridge';
 import { SwapPageHeader } from './SwapPageHeader';
+import { useModal } from '@/components/Modal';
 
 const sourceAssetBalance = 125;
 
 export const SwapPage = () => {
-  const theme = useTheme();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
@@ -42,7 +40,6 @@ export const SwapPage = () => {
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -57,7 +54,6 @@ export const SwapPage = () => {
     if (!chainsContainingSourceAsset) return;
 
     return tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -74,7 +70,6 @@ export const SwapPage = () => {
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -89,7 +84,6 @@ export const SwapPage = () => {
     if (!chainsContainingDestinationAsset) return;
 
     return tokenAndChainSelectorFlow.show({
-      theme,
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -151,7 +145,6 @@ export const SwapPage = () => {
           showRouteInfo
           onClick={() =>
             swapFlowSettings.show({
-              theme,
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
