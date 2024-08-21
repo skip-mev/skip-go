@@ -8,7 +8,7 @@ import { useModal } from '@ebay/nice-modal-react';
 import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
 import styled, { useTheme } from 'styled-components';
 import { useAtom } from 'jotai';
-import { destinationWalletAtom } from '@/state/swap';
+import { destinationWalletAtom } from '@/state/swapPage';
 import { SwapExecutionPageRouteSimple } from './SwapExecutionPageRouteSimple';
 import { SwapExecutionPageRouteDetailed } from './SwapExecutionPageRouteDetailed';
 
@@ -17,6 +17,7 @@ import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
 import { SmallText } from '@/components/Typography';
 import { SignatureIcon } from '@/icons/SignatureIcon';
 import pluralize from 'pluralize';
+import operations from './operations.json';
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -25,14 +26,10 @@ enum SwapExecutionState {
   confirmed,
 }
 
-export type SwapExecutionPageProps = {
-  operations: Operation[];
-};
-
 const SIGNATURES_REQUIRED = 2;
 const TX_DELAY_MS = 5_000; // 5 seconds
 
-export const SwapExecutionPage = ({ operations }: SwapExecutionPageProps) => {
+export const SwapExecutionPage = () => {
   const theme = useTheme();
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
@@ -157,7 +154,10 @@ export const SwapExecutionPage = ({ operations }: SwapExecutionPageProps) => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      <SwapExecutionPageRoute txStateMap={txStateMap} operations={operations} />
+      <SwapExecutionPageRoute
+        txStateMap={txStateMap}
+        operations={operations as Operation[]}
+      />
       {renderMainButton}
       <SwapPageFooter
         rightContent={

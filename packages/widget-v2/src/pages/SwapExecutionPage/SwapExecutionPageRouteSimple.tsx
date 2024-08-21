@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { SwapExecutionPageRouteSimpleRow } from './SwapExecutionPageRouteSimpleRow';
 import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
 import { ICONS } from '@/icons';
-import { destinationWalletAtom } from '@/state/swap';
+import { destinationWalletAtom } from '@/state/swapPage';
 import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
 
 export type SwapExecutionPageRouteSimpleProps = {
