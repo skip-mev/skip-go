@@ -1673,6 +1673,8 @@ export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
     path: cosmosTxJSON.path,
     msgs: cosmosTxJSON.msgs.map(cosmosMsgFromJSON),
     signerAddress: cosmosTxJSON.signer_address,
+    memo: cosmosTxJSON.memo,
+    expiration: cosmosTxJSON.expiration,
   };
 }
 
@@ -1682,6 +1684,8 @@ export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
     path: cosmosTx.path,
     msgs: cosmosTx.msgs.map(cosmosMsgToJSON),
     signer_address: cosmosTx.signerAddress,
+    memo: cosmosTx.memo,
+    expiration: cosmosTx.expiration,
   };
 }
 

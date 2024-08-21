@@ -194,6 +194,8 @@ export type CosmosTxJSON = {
   path: string[];
   msgs: CosmosMsgJSON[];
   signer_address: string;
+  memo: string;
+  expiration: Date;
 };
 
 export type CosmosTx = {
@@ -201,6 +203,8 @@ export type CosmosTx = {
   path: string[];
   msgs: CosmosMsg[];
   signerAddress: string;
+  memo: string;
+  expiration: Date;
 };
 
 export type CCTPTransferJSON = {
