@@ -76,9 +76,9 @@ export const createModal = <T extends ModalProps>(
   return NiceModal.create(WrappedComponent);
 };
 
-export const useModal = <T extends FC<any>>(
-  modal?: T,
-  initialArgs?: Partial<ComponentProps<T>>
+export const useModal = <T extends ModalProps>(
+  modal?: FC<T>,
+  initialArgs?: Partial<T>
 ) => {
   const theme = useTheme();
   const [numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
@@ -90,15 +90,15 @@ export const useModal = <T extends FC<any>>(
     : useNiceModal();
 
   const show = useCallback(
-    (showArgs?: any) => {
+    (showArgs?: Partial<T & ModalProps>) => {
       setNumberOfModalsOpen((prev) => prev + 1);
       modalInstance.show({
         theme,
         stackedModal: numberOfModalsOpen > 0,
         ...showArgs,
-      });
+      } as Partial<T>);
     },
-    [modalInstance, setNumberOfModalsOpen]
+    [modalInstance, setNumberOfModalsOpen, theme, numberOfModalsOpen]
   );
 
   const remove = useCallback(() => {
