@@ -106,5 +106,5 @@ export type Theme = {
 };
 
 declare module 'styled-components' {
-  export interface DefaultTheme extends Theme, Record<never, never> {}
+  export type DefaultTheme = {} & Theme & Record<never, never>
 }

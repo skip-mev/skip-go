@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { z } from 'zod';
 import { getAssets } from '@/state/skipClient';
 
-interface Args {
+type Args = {
   coingeckoID: string;
 }
 

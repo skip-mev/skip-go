@@ -13,7 +13,7 @@ export default tseslint.config(
       'react-hooks': fixupPluginRules(reactHooks),
     },
     rules: {
-      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       'no-console': ['error', { allow: ['warn', 'error'] }],
       ...reactHooks.configs.recommended.rules,
     },

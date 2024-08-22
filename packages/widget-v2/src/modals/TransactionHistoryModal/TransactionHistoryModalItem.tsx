@@ -11,14 +11,14 @@ import { StyledAnimatedBorder } from '@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryModalItemDetails } from './TransactionHistoryModalItemDetails';
 import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
 
-export interface TxStatus {
+export type TxStatus = {
   chainId: string;
   txHash: string;
   explorerLink: string;
   axelarscanLink?: string;
 }
 
-export interface TxHistoryItem {
+export type TxHistoryItem = {
   route: RouteResponse;
   txStatus: TxStatus[];
   timestamp: string;
