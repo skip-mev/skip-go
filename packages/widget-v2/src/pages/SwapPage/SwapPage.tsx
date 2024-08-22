@@ -1,18 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useAtom } from 'jotai';
-import { AssetChainInput } from '@/components/AssetChainInput';
-import { Column } from '@/components/Layout';
-import { MainButton } from '@/components/MainButton';
-import { SmallText } from '@/components/Typography';
-import { ICONS } from '@/icons';
-import { skipAssets, getChainsContainingAsset } from '@/state/skipClient';
-import { sourceAssetAtom, destinationAssetAtom } from '@/state/swapPage';
-import { TokenAndChainSelectorModal } from '@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
-import { SwapPageSettings } from './SwapPageSettings';
-import { SwapPageFooter } from './SwapPageFooter';
-import { SwapPageBridge } from './SwapPageBridge';
-import { SwapPageHeader } from './SwapPageHeader';
-import { useModal } from '@/components/Modal';
+import { useCallback, useMemo, useState } from "react";
+import { useAtom } from "jotai";
+import { AssetChainInput } from "@/components/AssetChainInput";
+import { Column } from "@/components/Layout";
+import { MainButton } from "@/components/MainButton";
+import { SmallText } from "@/components/Typography";
+import { ICONS } from "@/icons";
+import { skipAssets, getChainsContainingAsset } from "@/state/skipClient";
+import { sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
+import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
+import { SwapPageSettings } from "./SwapPageSettings";
+import { SwapPageFooter } from "./SwapPageFooter";
+import { SwapPageBridge } from "./SwapPageBridge";
+import { SwapPageHeader } from "./SwapPageHeader";
+import { useModal } from "@/components/Modal";
 
 const sourceAssetBalance = 125;
 
@@ -114,11 +114,11 @@ export const SwapPage = () => {
       >
         <SwapPageHeader
           leftButton={{
-            label: 'History',
+            label: "History",
             icon: ICONS.history,
           }}
           rightButton={{
-            label: 'Max',
+            label: "Max",
           }}
           rightContent={
             sourceAssetBalance ? (
@@ -131,7 +131,7 @@ export const SwapPage = () => {
             selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
-            value={sourceAsset?.amount ?? '0'}
+            value={sourceAsset?.amount ?? "0"}
             onChangeValue={(newValue) =>
               setSourceAsset((old) => ({ ...old, amount: newValue }))
             }
@@ -141,7 +141,7 @@ export const SwapPage = () => {
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
-            value={destinationAsset?.amount ?? '0'}
+            value={destinationAsset?.amount ?? "0"}
             onChangeValue={(newValue) =>
               setDestinationAsset((old) => ({ ...old, amount: newValue }))
             }

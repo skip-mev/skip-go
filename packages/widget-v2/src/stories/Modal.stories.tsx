@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Modal, ModalProps } from '@/components/Modal';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Modal, ModalProps } from "@/components/Modal";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
 
 const Wrapper = styled.div`
   background-color: white;
@@ -15,7 +15,7 @@ const RenderModal = (props: ModalProps) => {
   return (
     <NiceModal.Provider>
       <button onClick={() => modal.show({ ...props })}>
-        open {props.drawer ? 'drawer' : 'modal'}
+        open {props.drawer ? "drawer" : "modal"}
       </button>
     </NiceModal.Provider>
   );
@@ -23,14 +23,14 @@ const RenderModal = (props: ModalProps) => {
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: 'Components/Modal',
+  title: "Components/Modal",
   component: (props) => RenderModal(props),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
-    layout: 'centered',
+    layout: "centered",
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
 } satisfies Meta<ModalProps>;

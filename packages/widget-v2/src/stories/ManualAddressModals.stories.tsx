@@ -1,18 +1,18 @@
-import type { Meta } from '@storybook/react';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '@/components/Layout';
-import { defaultTheme, lightTheme } from '@/widget/theme';
-import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
-import { useEffect, useState } from 'react';
-import { skipAssets } from '@/state/skipClient';
-import { destinationAssetAtom } from '@/state/swapPage';
-import { useAtom } from 'jotai';
+import type { Meta } from "@storybook/react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { Row } from "@/components/Layout";
+import { defaultTheme, lightTheme } from "@/widget/theme";
+import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import { useEffect, useState } from "react";
+import { skipAssets } from "@/state/skipClient";
+import { destinationAssetAtom } from "@/state/swapPage";
+import { useAtom } from "jotai";
 
 const meta = {
-  title: 'Modals/ManualAddressModal',
+  title: "Modals/ManualAddressModal",
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
   args: {},
 } satisfies Meta<typeof ManualAddressModal>;
@@ -26,7 +26,7 @@ export const ManualAddressModalsExample = () => {
 
   const [{ data: assets }] = useAtom(skipAssets);
 
-  const asset = assets?.find((asset) => asset.denom === 'uatom');
+  const asset = assets?.find((asset) => asset.denom === "uatom");
 
   useEffect(() => {
     setDestinationAsset(asset);

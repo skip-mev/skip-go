@@ -1,34 +1,34 @@
-import { css, styled } from 'styled-components';
-import { createModal, ModalProps } from '@/components/Modal';
-import { Column, Row } from '@/components/Layout';
-import { SmallText } from '@/components/Typography';
-import { RouteArrow } from '@/icons/RouteArrow';
-import { SwapPageFooterItems } from './SwapPageFooter';
+import { css, styled } from "styled-components";
+import { createModal, ModalProps } from "@/components/Modal";
+import { Column, Row } from "@/components/Layout";
+import { SmallText } from "@/components/Typography";
+import { RouteArrow } from "@/icons/RouteArrow";
+import { SwapPageFooterItems } from "./SwapPageFooter";
 
 const SLIPPAGE_OPTIONS = [
   {
-    value: '0.5',
-    label: '0.5%',
+    value: "0.5",
+    label: "0.5%",
   },
   {
-    value: '3',
-    label: '3%',
+    value: "3",
+    label: "3%",
   },
   {
-    value: '5',
-    label: '5%',
+    value: "5",
+    label: "5%",
   },
   {
-    value: '10',
-    label: '10%',
+    value: "10",
+    label: "10%",
   },
 ];
 
-const totalGas = '0.001 XYZ ($0.1)';
-const routerFee = '0.001 XYZ ($0.1)';
-const bridgeFee = '0.001 XYZ ($0.1)';
+const totalGas = "0.001 XYZ ($0.1)";
+const routerFee = "0.001 XYZ ($0.1)";
+const bridgeFee = "0.001 XYZ ($0.1)";
 const selectedOption = SLIPPAGE_OPTIONS[0];
-const route = ['COSMOS', 'OSMOSIS', 'AXELAR'];
+const route = ["COSMOS", "OSMOSIS", "AXELAR"];
 
 export const SwapPageSettings = createModal((modalProps: ModalProps) => {
   return (

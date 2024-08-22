@@ -1,10 +1,10 @@
-import { Row } from '@/components/Layout';
-import { ModalRowItem } from '@/components/ModalRowItem';
-import { SmallText, Text } from '@/components/Typography';
-import { ChainWithAsset, ClientAsset } from '@/state/skipClient';
-import { CircleSkeletonElement, SkeletonElement } from '@/components/Skeleton';
-import { styled } from 'styled-components';
-import { Chain } from '@chain-registry/types';
+import { Row } from "@/components/Layout";
+import { ModalRowItem } from "@/components/ModalRowItem";
+import { SmallText, Text } from "@/components/Typography";
+import { ChainWithAsset, ClientAsset } from "@/state/skipClient";
+import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
+import { styled } from "styled-components";
+import { Chain } from "@chain-registry/types";
 
 export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
@@ -38,7 +38,7 @@ export const TokenAndChainSelectorModalRowItem = ({
       <ModalRowItem
         key={`${index}${item.denom}`}
         onClick={() => onSelect(item)}
-        style={{ margin: '5px 0' }}
+        style={{ margin: "5px 0" }}
         leftContent={
           <Row align="center" gap={10}>
             <StyledAssetImage
@@ -62,7 +62,7 @@ export const TokenAndChainSelectorModalRowItem = ({
       <ModalRowItem
         key={item.chain_id}
         onClick={() => onSelect(item?.asset || null)}
-        style={{ margin: '5px 0' }}
+        style={{ margin: "5px 0" }}
         leftContent={
           <Row align="center" gap={10}>
             <StyledAssetImage
@@ -89,7 +89,7 @@ const StyledAssetImage = styled.img`
 export const Skeleton = () => {
   return (
     <ModalRowItem
-      style={{ margin: '5px 0' }}
+      style={{ margin: "5px 0" }}
       leftContent={
         <StyledRow align="center" gap={10}>
           <CircleSkeletonElement width={35} height={35} />

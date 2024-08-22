@@ -1,11 +1,11 @@
-import { useCallback, useMemo } from 'react';
-import styled, { useTheme } from 'styled-components';
-import { LeftArrowIcon } from '@/icons/ArrowIcon';
-import { Button } from '@/components/Button';
-import { Row, Column } from '@/components/Layout';
-import { ModalRowItem } from './ModalRowItem';
-import { VirtualList } from './VirtualList';
-import { Text } from '@/components/Typography';
+import { useCallback, useMemo } from "react";
+import styled, { useTheme } from "styled-components";
+import { LeftArrowIcon } from "@/icons/ArrowIcon";
+import { Button } from "@/components/Button";
+import { Row, Column } from "@/components/Layout";
+import { ModalRowItem } from "./ModalRowItem";
+import { VirtualList } from "./VirtualList";
+import { Text } from "@/components/Typography";
 
 export type RenderWalletListProps = {
   title: string;
@@ -82,7 +82,7 @@ export const RenderWalletList = ({
                 <img
                   height={35}
                   width={35}
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: "cover" }}
                   src={imageUrl}
                   alt={`${name} logo`}
                 />

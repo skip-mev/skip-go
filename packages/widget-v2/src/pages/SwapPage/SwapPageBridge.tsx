@@ -1,11 +1,11 @@
-import { useTheme, styled } from 'styled-components';
-import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
-import { BridgeIcon } from '@/icons/BridgeIcon';
+import { useTheme, styled } from "styled-components";
+import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
+import { BridgeIcon } from "@/icons/BridgeIcon";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: "relative" }}>
       <BridgeIcon color={theme.primary.background.normal} />
       <StyledBridgeArrow color={theme.primary.text.normal} />
     </div>

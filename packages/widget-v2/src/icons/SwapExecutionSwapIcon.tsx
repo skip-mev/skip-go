@@ -3,7 +3,7 @@ type IconProps = {
 };
 
 export const SwapExecutionSwapIcon = ({
-  color = 'currentColor',
+  color = "currentColor",
   ...props
 }: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg

@@ -1,15 +1,15 @@
-import { atom } from 'jotai';
-import { Asset, SkipClient } from '@skip-go/client';
-import { Chain, AssetList } from '@chain-registry/types';
+import { atom } from "jotai";
+import { Asset, SkipClient } from "@skip-go/client";
+import { Chain, AssetList } from "@chain-registry/types";
 import {
   chains as chainsChainRegistry,
   assets as assetsChainRegistry,
-} from 'chain-registry';
+} from "chain-registry";
 import {
   chains as chainsInitiaRegistry,
   assets as assetsInitiaRegistry,
-} from '@initia/initia-registry';
-import { atomWithQuery } from 'jotai-tanstack-query';
+} from "@initia/initia-registry";
+import { atomWithQuery } from "jotai-tanstack-query";
 
 export const chains = [
   ...chainsChainRegistry,
@@ -36,7 +36,7 @@ const flattenData = (data: Record<string, Asset[]>) => {
       flattenedData.push({
         ...asset,
         chain_key: chainKey,
-        chainName: chain?.pretty_name ?? chain?.chain_name ?? '',
+        chainName: chain?.pretty_name ?? chain?.chain_name ?? "",
       });
     });
   }
@@ -47,7 +47,7 @@ const flattenData = (data: Record<string, Asset[]>) => {
 export const skipAssets = atomWithQuery((get) => {
   const skip = get(skipClient);
   return {
-    queryKey: ['skipAssets'],
+    queryKey: ["skipAssets"],
     queryFn: async () => {
       return skip
         .assets({

@@ -1,14 +1,14 @@
-import { css, styled, useTheme } from 'styled-components';
-import * as Dialog from '@radix-ui/react-dialog';
-import { ShadowDomAndProviders } from '@/widget/ShadowDomAndProviders';
-import NiceModal, { useModal as useNiceModal } from '@ebay/nice-modal-react';
-import { ComponentType, FC, useEffect, useMemo } from 'react';
-import { PartialTheme } from '@/widget/theme';
+import { css, styled, useTheme } from "styled-components";
+import * as Dialog from "@radix-ui/react-dialog";
+import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
+import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
+import { ComponentType, FC, useEffect, useMemo } from "react";
+import { PartialTheme } from "@/widget/theme";
 
-import { ErrorBoundary } from 'react-error-boundary';
-import { useAtom } from 'jotai';
-import { errorAtom } from '@/state/errorPage';
-import { numberOfModalsOpenAtom } from '@/state/modal';
+import { ErrorBoundary } from "react-error-boundary";
+import { useAtom } from "jotai";
+import { errorAtom } from "@/state/errorPage";
+import { numberOfModalsOpenAtom } from "@/state/modal";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -108,7 +108,7 @@ const StyledOverlay = styled(Dialog.Overlay)<{
   drawer?: boolean;
   invisible?: boolean;
 }>`
-  ${({ invisible }) => (invisible ? '' : 'background: rgba(0 0 0 / 0.5);')}
+  ${({ invisible }) => (invisible ? "" : "background: rgba(0 0 0 / 0.5);")}
   position: fixed;
   top: 0;
   left: 0;

@@ -1,12 +1,12 @@
-import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import NiceModal from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
-import { createModal, useModal } from '@/components/Modal';
-import { cloneElement, ReactElement } from 'react';
-import { PartialTheme } from './theme';
-import { Router } from './Router';
-import { useResetAtom } from 'jotai/utils';
-import { numberOfModalsOpenAtom } from '@/state/modal';
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
+import { createModal, useModal } from "@/components/Modal";
+import { cloneElement, ReactElement } from "react";
+import { PartialTheme } from "./theme";
+import { Router } from "./Router";
+import { useResetAtom } from "jotai/utils";
+import { numberOfModalsOpenAtom } from "@/state/modal";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;

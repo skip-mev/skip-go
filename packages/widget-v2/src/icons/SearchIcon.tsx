@@ -4,7 +4,7 @@ type IconProps = {
 };
 
 export const SearchIcon = ({
-  color = 'currentColor',
+  color = "currentColor",
   className,
 }: IconProps) => (
   <svg

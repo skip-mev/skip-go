@@ -1,15 +1,15 @@
-import type { Meta } from '@storybook/react';
-import { ErrorState, ErrorStateProps } from '@/components/ErrorState';
-import { ICONS } from '@/icons';
-import { SmallText, SmallTextButton, Text } from '@/components/Typography';
-import { ChainIcon } from '@/icons/ChainIcon';
-import { Row } from '@/components/Layout';
-import { XIcon } from '@/icons/XIcon';
-import { defaultTheme, lightTheme, Theme } from '@/widget/theme';
+import type { Meta } from "@storybook/react";
+import { ErrorState, ErrorStateProps } from "@/components/ErrorState";
+import { ICONS } from "@/icons";
+import { SmallText, SmallTextButton, Text } from "@/components/Typography";
+import { ChainIcon } from "@/icons/ChainIcon";
+import { Row } from "@/components/Layout";
+import { XIcon } from "@/icons/XIcon";
+import { defaultTheme, lightTheme, Theme } from "@/widget/theme";
 import {
   renderLightAndDarkTheme,
   renderLightAndDarkThemeSeperateProps,
-} from './renderLightAndDarkTheme';
+} from "./renderLightAndDarkTheme";
 
 type props = {
   dark: ErrorStateProps;
@@ -17,7 +17,7 @@ type props = {
 };
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: 'Components/ErrorState',
+  title: "Components/ErrorState",
   component: (props) =>
     renderLightAndDarkThemeSeperateProps(
       <ErrorState title={undefined} description={undefined} />,
@@ -26,10 +26,10 @@ const meta = {
     ),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
-    layout: 'centered',
+    layout: "centered",
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
 } satisfies Meta<props>;
@@ -41,7 +41,7 @@ export default meta;
 const badTradeProps = (theme: Theme) => {
   return {
     icon: ICONS.triangleWarning,
-    title: 'Warning: Bad trade (–65.15%)',
+    title: "Warning: Bad trade (–65.15%)",
     description: (
       <>
         <SmallText color={theme.error.text} textAlign="center">
@@ -52,7 +52,7 @@ const badTradeProps = (theme: Theme) => {
           Estimated output: ~100 XYZ ($1000)
         </SmallText>
         <SmallTextButton
-          onClick={() => alert('that was dumb')}
+          onClick={() => alert("that was dumb")}
           color={theme.primary.text.lowContrast}
         >
           I know the risk, continue anyway
@@ -73,7 +73,7 @@ export const BadTrade = {
 const transactionFailedProps = (theme: Theme) => {
   return {
     icon: ICONS.triangleWarning,
-    title: 'Transaction failed',
+    title: "Transaction failed",
     description: (
       <>
         <SmallText color={theme.error.text} textAlign="center">
@@ -83,7 +83,7 @@ const transactionFailedProps = (theme: Theme) => {
         <Row
           as={SmallTextButton}
           gap={5}
-          onClick={() => alert('xd')}
+          onClick={() => alert("xd")}
           color={theme.primary.text.lowContrast}
         >
           Transaction: <u>0x120A...Wfw8x0</u>
@@ -106,8 +106,8 @@ export const TransactionFailed = {
 const criticalErrorProps = (theme: Theme) => {
   return {
     icon: ICONS.triangleWarning,
-    title: 'Transaction failed',
-    description: 'User rejected authentication request',
+    title: "Transaction failed",
+    description: "User rejected authentication request",
     backgroundColor: theme.error.background,
     textColor: theme.error.text,
   };
@@ -123,7 +123,7 @@ export const CriticalError = {
 const timeoutProps = (theme: Theme) => {
   return {
     icon: ICONS.warning,
-    title: 'This transaction is taking longer than usual.',
+    title: "This transaction is taking longer than usual.",
     description: (
       <>
         <SmallText color={theme.warning.text} textAlign="center">
@@ -137,7 +137,7 @@ const timeoutProps = (theme: Theme) => {
           gap={5}
           align="center"
           as={SmallTextButton}
-          onClick={() => alert('xd')}
+          onClick={() => alert("xd")}
           color={theme.primary.text.lowContrast}
         >
           <ChainIcon color={theme.primary.text.lowContrast} />
@@ -160,7 +160,7 @@ export const Timeout = {
 const actionRequiredProps = (theme: Theme) => {
   return {
     icon: ICONS.warning,
-    title: 'Action Required',
+    title: "Action Required",
     description: (
       <>
         <SmallText color={theme.warning.text} textAlign="center">
@@ -176,7 +176,7 @@ const actionRequiredProps = (theme: Theme) => {
             gap={5}
             align="center"
             as={SmallTextButton}
-            onClick={() => alert('view on mintscan')}
+            onClick={() => alert("view on mintscan")}
             color={theme.primary.text.lowContrast}
           >
             <ChainIcon color={theme.primary.text.lowContrast} />
@@ -219,7 +219,7 @@ export const AdditionalSignature = {
       </Text>
     ),
     description: (
-      <SmallText normalTextColor> ATOM {' -> '} 71.235 COREUM</SmallText>
+      <SmallText normalTextColor> ATOM {" -> "} 71.235 COREUM</SmallText>
     ),
     icon: ICONS.signature,
   },

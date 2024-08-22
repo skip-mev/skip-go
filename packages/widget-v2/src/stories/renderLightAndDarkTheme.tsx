@@ -1,8 +1,8 @@
-import { cloneElement, ComponentProps, CSSProperties, ReactNode } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
-import { defaultTheme, lightTheme } from '@/widget/theme';
-import { Column } from '@/components/Layout';
-import React from 'react';
+import { cloneElement, ComponentProps, CSSProperties, ReactNode } from "react";
+import styled, { ThemeProvider } from "styled-components";
+import { defaultTheme, lightTheme } from "@/widget/theme";
+import { Column } from "@/components/Layout";
+import React from "react";
 
 export const renderLightAndDarkTheme = (
   render: ReactNode,
@@ -34,6 +34,6 @@ export const renderLightAndDarkThemeSeperateProps = <
   );
 };
 export const StyledWrapper = styled(Column)<{ row?: boolean }>`
-  ${({ row }) => row && 'flex-direction: row;'}
+  ${({ row }) => row && "flex-direction: row;"}
   padding: 20px;
 `;

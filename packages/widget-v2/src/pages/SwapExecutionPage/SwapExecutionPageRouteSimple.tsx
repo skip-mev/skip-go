@@ -1,12 +1,12 @@
-import styled, { useTheme } from 'styled-components';
-import { Column } from '@/components/Layout';
-import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
-import { useAtom } from 'jotai';
-import { SwapExecutionPageRouteSimpleRow } from './SwapExecutionPageRouteSimpleRow';
-import { BridgeArrowIcon } from '@/icons/BridgeArrowIcon';
-import { ICONS } from '@/icons';
-import { destinationWalletAtom } from '@/state/swapPage';
-import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
+import styled, { useTheme } from "styled-components";
+import { Column } from "@/components/Layout";
+import { Operation, txState } from "./SwapExecutionPageRouteDetailedRow";
+import { useAtom } from "jotai";
+import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
+import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
+import { ICONS } from "@/icons";
+import { destinationWalletAtom } from "@/state/swapPage";
+import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorFlow";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: Operation[];
@@ -56,7 +56,7 @@ export const SwapExecutionPageRouteSimple = ({
         txState={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={
-          overallSwapState !== 'pending' ? 'https://www.google.com/' : undefined
+          overallSwapState !== "pending" ? "https://www.google.com/" : undefined
         }
       />
     </StyledSwapExecutionPageRoute>
@@ -66,14 +66,14 @@ export const SwapExecutionPageRouteSimple = ({
 const getOverallSwapState = (txStateMap: Record<number, txState>) => {
   const txStateArray = Object.values(txStateMap);
 
-  if (txStateArray.find((state) => state === 'failed')) {
-    return 'failed';
-  } else if (txStateArray.find((state) => state === 'broadcasted')) {
-    return 'broadcasted';
-  } else if (txStateArray.every((state) => state === 'pending')) {
-    return 'pending';
-  } else if (txStateArray.every((state) => state === 'confirmed')) {
-    return 'confirmed';
+  if (txStateArray.find((state) => state === "failed")) {
+    return "failed";
+  } else if (txStateArray.find((state) => state === "broadcasted")) {
+    return "broadcasted";
+  } else if (txStateArray.every((state) => state === "pending")) {
+    return "pending";
+  } else if (txStateArray.every((state) => state === "confirmed")) {
+    return "confirmed";
   }
 };
 

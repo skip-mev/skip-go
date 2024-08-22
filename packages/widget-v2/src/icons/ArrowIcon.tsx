@@ -1,16 +1,16 @@
-import { withBoundProps } from '@/utils/misc';
+import { withBoundProps } from "@/utils/misc";
 
 type IconProps = {
   color?: string;
   backgroundColor?: string;
-  direction?: 'right' | 'down' | 'left' | 'up';
+  direction?: "right" | "down" | "left" | "up";
   className?: string;
 };
 
 export const ArrowIcon = ({
-  color = 'currentColor',
-  backgroundColor = 'transparent',
-  direction = 'right',
+  color = "currentColor",
+  backgroundColor = "transparent",
+  direction = "right",
   className,
 }: IconProps) => (
   <svg
@@ -21,13 +21,13 @@ export const ArrowIcon = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     transform={
-      direction === 'down'
-        ? 'rotate(90)'
-        : direction === 'left'
-        ? 'rotate(180)'
-        : direction === 'up'
-        ? 'rotate(-90)'
-        : ''
+      direction === "down"
+        ? "rotate(90)"
+        : direction === "left"
+        ? "rotate(180)"
+        : direction === "up"
+        ? "rotate(-90)"
+        : ""
     }
   >
     <rect width="40" height="40" rx="10" fill={backgroundColor} />
@@ -38,6 +38,6 @@ export const ArrowIcon = ({
   </svg>
 );
 
-export const RightArrowIcon = withBoundProps(ArrowIcon, { direction: 'right' });
+export const RightArrowIcon = withBoundProps(ArrowIcon, { direction: "right" });
 
-export const LeftArrowIcon = withBoundProps(ArrowIcon, { direction: 'left' });
+export const LeftArrowIcon = withBoundProps(ArrowIcon, { direction: "left" });

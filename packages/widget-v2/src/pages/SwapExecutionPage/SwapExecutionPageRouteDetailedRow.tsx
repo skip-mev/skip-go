@@ -1,23 +1,23 @@
-import { useAtom } from 'jotai';
-import { Row } from '@/components/Layout';
-import { SmallText } from '@/components/Typography';
-import { getChain, skipAssets } from '@/state/skipClient';
-import { getFormattedAssetAmount } from '@/utils/crypto';
-import { css, styled, useTheme } from 'styled-components';
-import React from 'react';
-import { ChainIcon } from '@/icons/ChainIcon';
-import { Button } from '@/components/Button';
-import { ChainTransaction } from '@skip-go/client';
+import { useAtom } from "jotai";
+import { Row } from "@/components/Layout";
+import { SmallText } from "@/components/Typography";
+import { getChain, skipAssets } from "@/state/skipClient";
+import { getFormattedAssetAmount } from "@/utils/crypto";
+import { css, styled, useTheme } from "styled-components";
+import React from "react";
+import { ChainIcon } from "@/icons/ChainIcon";
+import { Button } from "@/components/Button";
+import { ChainTransaction } from "@skip-go/client";
 
 type OperationType =
-  | 'swap'
-  | 'evmSwap'
-  | 'transfer'
-  | 'axelarTransfer'
-  | 'cctpTransfer'
-  | 'hyperlaneTransfer'
-  | 'opInitTransfer'
-  | 'bankSend';
+  | "swap"
+  | "evmSwap"
+  | "transfer"
+  | "axelarTransfer"
+  | "cctpTransfer"
+  | "hyperlaneTransfer"
+  | "opInitTransfer"
+  | "bankSend";
 
 export type Operation = {
   type: OperationType;
@@ -32,18 +32,18 @@ export type Operation = {
   amountOut: string;
   bridgeID?: string;
   swapVenues?: {
-    name: '';
-    chainID: '';
+    name: "";
+    chainID: "";
   }[];
 };
 
-export type txState = 'pending' | 'broadcasted' | 'confirmed' | 'failed';
+export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
-  denom: Operation['denomIn'] | Operation['denomOut'];
-  amount: Operation['amountIn'] | Operation['amountOut'];
-  chainID: Operation['fromChainID'] | Operation['chainID'];
-  explorerLink?: ChainTransaction['explorerLink'];
+  denom: Operation["denomIn"] | Operation["denomOut"];
+  amount: Operation["amountIn"] | Operation["amountOut"];
+  chainID: Operation["fromChainID"] | Operation["chainID"];
+  explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
 };
 
@@ -60,7 +60,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = getChain(chainID ?? '');
+  const chain = getChain(chainID ?? "");
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);
 
   return (
@@ -84,12 +84,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
       <Row align="center" justify="space-between" style={{ flex: 1 }}>
         <Row gap={5}>
           <SmallText normalTextColor>
-            {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{' '}
+            {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
             {asset?.recommendedSymbol}
           </SmallText>
           <SmallText> on {asset?.chainName}</SmallText>
           {explorerLink && (
-            <Button onClick={() => window.open(explorerLink, '_blank')}>
+            <Button onClick={() => window.open(explorerLink, "_blank")}>
               <SmallText>
                 <ChainIcon />
               </SmallText>
@@ -164,13 +164,13 @@ const StyledLoadingContainer = styled(Row)<{
   width: ${({ width, borderSize }) => width + borderSize * 2}px;
   ${({ txState, borderSize, theme }) => {
     switch (txState) {
-      case 'confirmed':
+      case "confirmed":
         return `border: ${borderSize}px solid ${theme.success.text}`;
-      case 'failed':
+      case "failed":
         return `border: ${borderSize}px solid ${theme.error.text}`;
-      case 'broadcasted':
+      case "broadcasted":
       default:
-        return '';
+        return "";
     }
   }};
   border-radius: 50%;
@@ -181,7 +181,7 @@ const StyledLoadingContainer = styled(Row)<{
     height: ${({ height }) => `${height + 20}px;`}
     width: ${({ width }) => `${width + 20}px;`}
     ${({ txState, backgroundColor, theme }) =>
-      txState === 'broadcasted' &&
+      txState === "broadcasted" &&
       css`
         background-image: conic-gradient(
           transparent,

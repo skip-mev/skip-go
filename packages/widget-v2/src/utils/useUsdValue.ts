@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import { z } from 'zod';
-import { getAssets } from '@/state/skipClient';
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { z } from "zod";
+import { getAssets } from "@/state/skipClient";
 
 type Args = {
   coingeckoID: string;
@@ -64,7 +64,7 @@ async function getUsdValue(asset: Asset) {
 }
 
 export function useUsdValue(asset?: Partial<Asset>) {
-  const queryKey = useMemo(() => ['USE_USD_VALUE', asset] as const, [asset]);
+  const queryKey = useMemo(() => ["USE_USD_VALUE", asset] as const, [asset]);
 
   const enabled = useMemo(() => {
     if (!asset?.value) return false;
@@ -75,7 +75,7 @@ export function useUsdValue(asset?: Partial<Asset>) {
   return useQuery({
     queryKey,
     queryKeyHashFn: ([key, asset]) =>
-      asset ? [key, ...Object.values(asset)].join('-') : key,
+      asset ? [key, ...Object.values(asset)].join("-") : key,
     queryFn: async ({ queryKey: [, asset] }) => {
       if (asset?.value) {
         return getUsdValue(asset as Asset);

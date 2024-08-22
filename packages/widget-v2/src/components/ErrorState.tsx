@@ -1,7 +1,7 @@
-import { styled, useTheme } from 'styled-components';
-import { Column } from '@/components/Layout';
-import { iconMap, ICONS } from '@/icons';
-import { SmallText, Text } from '@/components/Typography';
+import { styled, useTheme } from "styled-components";
+import { Column } from "@/components/Layout";
+import { iconMap, ICONS } from "@/icons";
+import { SmallText, Text } from "@/components/Typography";
 
 export type ErrorStateProps = {
   icon?: ICONS;
@@ -32,14 +32,14 @@ export const ErrorState = ({
       gap={16}
     >
       <Icon backgroundColor={textColor} color={backgroundColor} />
-      {typeof title === 'string' ? (
+      {typeof title === "string" ? (
         <Text fontSize={20} color={textColor}>
           {title}
         </Text>
       ) : (
         title
       )}
-      {typeof description === 'string' ? (
+      {typeof description === "string" ? (
         <SmallText color={textColor} textAlign="center">
           {description}
         </SmallText>

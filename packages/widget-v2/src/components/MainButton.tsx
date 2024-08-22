@@ -1,9 +1,9 @@
-import { styled } from 'styled-components';
-import { Row } from '@/components/Layout';
-import { SmallText, Text } from '@/components/Typography';
-import { useTheme } from 'styled-components';
-import { ICONS, iconMap } from '@/icons';
-import { getBrandButtonTextColor } from '@/utils/colors';
+import { styled } from "styled-components";
+import { Row } from "@/components/Layout";
+import { SmallText, Text } from "@/components/Typography";
+import { useTheme } from "styled-components";
+import { ICONS, iconMap } from "@/icons";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 export type MainButtonProps = {
   label: string;
@@ -106,7 +106,7 @@ export const LoadingButton = ({
 );
 
 const StyledMainButton = styled(Row).attrs({
-  as: 'button',
+  as: "button",
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;

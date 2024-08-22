@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { SwapExecutionPage } from '@/pages/SwapExecutionPage/SwapExecutionPage';
-import NiceModal from '@ebay/nice-modal-react';
-import { destinationAssetAtom } from '@/state/swapPage';
-import { useAtom } from 'jotai';
-import operations from '@/pages/SwapExecutionPage/operations.json';
-import { skipAssets } from '@/state/skipClient';
-import { useEffect, useState } from 'react';
+import type { Meta, StoryObj } from "@storybook/react";
+import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
+import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
+import NiceModal from "@ebay/nice-modal-react";
+import { destinationAssetAtom } from "@/state/swapPage";
+import { useAtom } from "jotai";
+import operations from "@/pages/SwapExecutionPage/operations.json";
+import { skipAssets } from "@/state/skipClient";
+import { useEffect, useState } from "react";
 
 const meta = {
-  title: 'Pages/SwapExecutionPage',
+  title: "Pages/SwapExecutionPage",
   component: function SwapExecutionPageStory(props) {
     const [, setSourceAsset] = useAtom(destinationAssetAtom);
     const [, setDestinationAsset] = useAtom(destinationAssetAtom);
@@ -47,7 +47,7 @@ const meta = {
   },
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
 } satisfies Meta<typeof SwapExecutionPage>;
 type Story = StoryObj<typeof meta>;
