@@ -106,5 +106,6 @@ export type Theme = {
 };
 
 declare module 'styled-components' {
-  export type DefaultTheme = {} & Theme & Record<never, never>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-empty-object-type
+  export interface DefaultTheme extends Theme {}
 }
