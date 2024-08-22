@@ -1,13 +1,12 @@
-// Define a generic type that infers the props of the wrapped component
-export const withBoundProps = <T extends React.ComponentType<any>>(
-  WrappedComponent: T,
-  boundProps: Partial<React.ComponentProps<T>>
+export const withBoundProps = <P extends object>(
+  WrappedComponent: React.ComponentType<P>,
+  boundProps: Partial<P>
 ) => {
-  return (props: Partial<React.ComponentProps<T>>) => {
+  return (props: Partial<P>): React.ReactElement => {
     const combinedProps = {
       ...boundProps,
       ...props,
-    } as React.ComponentProps<T>;
+    } as P;
     return <WrappedComponent {...combinedProps} />;
   };
 };

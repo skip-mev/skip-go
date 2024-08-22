@@ -1,16 +1,16 @@
-import { createModal, ModalProps, useModal } from '@/components/Modal';
-import { Column } from '@/components/Layout';
-import { styled } from 'styled-components';
-import { useAtom } from 'jotai';
-import { ChainWithAsset, ClientAsset, skipAssets } from '@/state/skipClient';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { VirtualList } from '@/components/VirtualList';
+import { createModal, ModalProps, useModal } from "@/components/Modal";
+import { Column } from "@/components/Layout";
+import { styled } from "styled-components";
+import { useAtom } from "jotai";
+import { ChainWithAsset, ClientAsset, skipAssets } from "@/state/skipClient";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { VirtualList } from "@/components/VirtualList";
 import {
   isChainWithAsset,
   TokenAndChainSelectorModalRowItem,
   Skeleton,
-} from './TokenAndChainSelectorModalRowItem';
-import { TokenAndChainSelectorModalSearchInput } from './TokenAndChainSelectorModalSearchInput';
+} from "./TokenAndChainSelectorModalRowItem";
+import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
@@ -25,7 +25,7 @@ export const TokenAndChainSelectorModal = createModal(
     const [{ data: assets, isPending }] = useAtom(skipAssets);
 
     const [showSkeleton, setShowSkeleton] = useState(true);
-    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const filteredAssets = useMemo(() => {
       if (!assets) return;
@@ -55,7 +55,7 @@ export const TokenAndChainSelectorModal = createModal(
     }, [isPending, assets]);
 
     useEffect(() => {
-      setSearchQuery('');
+      setSearchQuery("");
     }, [modal.visible]);
 
     const handleSearch = (term: string) => {

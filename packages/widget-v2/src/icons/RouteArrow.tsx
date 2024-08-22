@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const RouteArrow = ({ color = 'currentColor' }: IconProps) => (
+export const RouteArrow = ({ color = "currentColor" }: IconProps) => (
   <svg
     width="9"
     height="11"

@@ -1,9 +1,7 @@
-import { errorAtom } from '@/state/errorPage';
-import { useResetAtom } from 'jotai/utils';
+import { errorAtom } from "@/state/errorPage";
+import { useResetAtom } from "jotai/utils";
 
 export const ErrorPage = ({
-  error,
-  componentStack,
   resetErrorBoundary,
 }: {
   error?: Error;

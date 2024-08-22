@@ -1,24 +1,22 @@
-import styled from 'styled-components';
-import { Column, Row } from '@/components/Layout';
+import styled from "styled-components";
+import { Column, Row } from "@/components/Layout";
 import {
   Operation,
   SwapExecutionPageRouteDetailedRow,
   txState,
-} from './SwapExecutionPageRouteDetailedRow';
-import { SwapExecutionBridgeIcon } from '@/icons/SwapExecutionBridgeIcon';
-import { SwapExecutionSendIcon } from '@/icons/SwapExecutionSendIcon';
-import { SwapExecutionSwapIcon } from '@/icons/SwapExecutionSwapIcon';
-import { useState } from 'react';
-import { SmallText } from '@/components/Typography';
+} from "./SwapExecutionPageRouteDetailedRow";
+import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
+import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
+import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
+import { useState } from "react";
+import { SmallText } from "@/components/Typography";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: Operation[];
-  txStateMap: { [index: number]: txState };
+  txStateMap: Record<number, txState>;
 };
 
-type operationTypeToIcon = {
-  [index: string]: JSX.Element;
-};
+type operationTypeToIcon = Record<string, JSX.Element>;
 
 const operationTypeToIcon: operationTypeToIcon = {
   axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
@@ -27,19 +25,17 @@ const operationTypeToIcon: operationTypeToIcon = {
 };
 
 const operationTypeToSimpleOperationType = {
-  swap: 'Swapped',
-  evmSwap: 'Swapped',
-  transfer: 'Bridged',
-  axelarTransfer: 'Bridged',
-  cctpTransfer: 'Bridged',
-  hyperlaneTransfer: 'Bridged',
-  opInitTransfer: 'Bridged',
-  bankSend: 'Sent',
+  swap: "Swapped",
+  evmSwap: "Swapped",
+  transfer: "Bridged",
+  axelarTransfer: "Bridged",
+  cctpTransfer: "Bridged",
+  hyperlaneTransfer: "Bridged",
+  opInitTransfer: "Bridged",
+  bankSend: "Sent",
 };
 
-type tooltipMap = {
-  [index: number]: boolean;
-};
+type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
@@ -94,14 +90,14 @@ export const SwapExecutionPageRouteDetailed = ({
               {...asset}
               txState={txStateMap[index]}
               explorerLink={
-                txStateMap[index] !== 'pending'
-                  ? 'https://www.google.com/'
+                txStateMap[index] !== "pending"
+                  ? "https://www.google.com/"
                   : undefined
               }
               key={`row-${asset?.denom}-${index}`}
             />
             {operation !== operations[operations.length - 1] && (
-              <Row style={{ height: '25px' }} align="center">
+              <Row style={{ height: "25px" }} align="center">
                 <OperationTypeIconContainer
                   onMouseEnter={() => handleMouseEnterOperationType(index)}
                   onMouseLeave={() => handleMouseLeaveOperationType(index)}

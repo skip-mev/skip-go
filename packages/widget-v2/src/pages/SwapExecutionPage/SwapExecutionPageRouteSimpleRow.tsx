@@ -1,30 +1,30 @@
-import { useTheme } from 'styled-components';
-import { Button } from '@/components/Button';
-import { Column, Row } from '@/components/Layout';
-import { SmallText, Text } from '@/components/Typography';
-import { getChain, skipAssets } from '@/state/skipClient';
-import { getFormattedAssetAmount } from '@/utils/crypto';
-import { Wallet } from '@/components/RenderWalletList';
-import { iconMap, ICONS } from '@/icons';
-import { useEffect, useMemo } from 'react';
-import { ChainTransaction } from '@skip-go/client';
+import { useTheme } from "styled-components";
+import { Button } from "@/components/Button";
+import { Column, Row } from "@/components/Layout";
+import { SmallText, Text } from "@/components/Typography";
+import { getChain, skipAssets } from "@/state/skipClient";
+import { getFormattedAssetAmount } from "@/utils/crypto";
+import { Wallet } from "@/components/RenderWalletList";
+import { iconMap, ICONS } from "@/icons";
+import { useEffect, useMemo } from "react";
+import { ChainTransaction } from "@skip-go/client";
 import {
   Operation,
   StyledAnimatedBorder,
   txState,
-} from './SwapExecutionPageRouteDetailedRow';
-import { useAtom } from 'jotai';
-import { useUsdValue } from '@/utils/useUsdValue';
-import { formatUSD } from '@/utils/intl';
-import { ChainIcon } from '@/icons/ChainIcon';
+} from "./SwapExecutionPageRouteDetailedRow";
+import { useAtom } from "jotai";
+import { useUsdValue } from "@/utils/useUsdValue";
+import { formatUSD } from "@/utils/intl";
+import { ChainIcon } from "@/icons/ChainIcon";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
-  denom: Operation['denomIn'] | Operation['denomOut'];
-  amount: Operation['amountIn'] | Operation['amountOut'];
-  chainID: Operation['fromChainID'] | Operation['chainID'];
+  denom: Operation["denomIn"] | Operation["denomOut"];
+  amount: Operation["amountIn"] | Operation["amountOut"];
+  chainID: Operation["fromChainID"] | Operation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
-  explorerLink?: ChainTransaction['explorerLink'];
+  explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
   wallet?: Wallet;
   icon?: ICONS;
@@ -42,13 +42,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   useEffect(() => {
-    'mount';
+    "mount";
   }, []);
   const theme = useTheme();
   const [{ data: assets }] = useAtom(skipAssets);
   const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = getChain(chainID ?? '');
+  const chain = getChain(chainID ?? "");
   const chainImage = chain.images?.find((image) => image.svg ?? image.png);
 
   if (!asset) {
@@ -63,7 +63,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {
-    if (destination && txState === 'broadcasted') {
+    if (destination && txState === "broadcasted") {
       return;
     }
     return txState;
@@ -85,12 +85,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{' '}
+          {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
           {asset?.recommendedSymbol}
         </Text>
         <SmallText>
           {formatUSD(usdValue?.data ?? 0)}
-          {destination && ' after fees'}
+          {destination && " after fees"}
         </SmallText>
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {asset?.chainName}</SmallText>
@@ -102,7 +102,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
               <SmallText>{wallet.address}</SmallText>
 
               {explorerLink ? (
-                <Button onClick={() => window.open(explorerLink, '_blank')}>
+                <Button onClick={() => window.open(explorerLink, "_blank")}>
                   <SmallText>
                     <ChainIcon />
                   </SmallText>

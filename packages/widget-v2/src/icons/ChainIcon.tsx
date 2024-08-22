@@ -3,7 +3,7 @@ type IconProps = {
 };
 
 export const ChainIcon = ({
-  color = 'currentColor',
+  color = "currentColor",
   ...props
 }: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg

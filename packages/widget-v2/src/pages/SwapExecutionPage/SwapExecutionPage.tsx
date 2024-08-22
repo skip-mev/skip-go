@@ -1,23 +1,23 @@
-import { Column, Row } from '@/components/Layout';
-import { MainButton } from '@/components/MainButton';
-import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
-import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
-import { useEffect, useMemo, useState } from 'react';
-import { ICONS } from '@/icons';
-import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
-import styled, { useTheme } from 'styled-components';
-import { useAtom } from 'jotai';
-import { destinationWalletAtom } from '@/state/swapPage';
-import { SwapExecutionPageRouteSimple } from './SwapExecutionPageRouteSimple';
-import { SwapExecutionPageRouteDetailed } from './SwapExecutionPageRouteDetailed';
+import { Column, Row } from "@/components/Layout";
+import { MainButton } from "@/components/MainButton";
+import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
+import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { useEffect, useMemo, useState } from "react";
+import { ICONS } from "@/icons";
+import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import styled, { useTheme } from "styled-components";
+import { useAtom } from "jotai";
+import { destinationWalletAtom } from "@/state/swapPage";
+import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
+import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
-import { withBoundProps } from '@/utils/misc';
-import { Operation, txState } from './SwapExecutionPageRouteDetailedRow';
-import { SmallText } from '@/components/Typography';
-import { SignatureIcon } from '@/icons/SignatureIcon';
-import pluralize from 'pluralize';
-import operations from './operations.json';
-import { useModal } from '@/components/Modal';
+import { withBoundProps } from "@/utils/misc";
+import { Operation, txState } from "./SwapExecutionPageRouteDetailedRow";
+import { SmallText } from "@/components/Typography";
+import { SignatureIcon } from "@/icons/SignatureIcon";
+import pluralize from "pluralize";
+import operations from "./operations.json";
+import { useModal } from "@/components/Modal";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -47,37 +47,37 @@ export const SwapExecutionPage = () => {
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
 
-  const [txStateMap, setTxStateMap] = useState<{ [index: number]: txState }>({
-    0: 'pending',
-    1: 'pending',
-    2: 'pending',
+  const [txStateMap, setTxStateMap] = useState<Record<number, txState>>({
+    0: "pending",
+    1: "pending",
+    2: "pending",
   });
 
   const tempBeginSwap = () => {
     // for testing/demo
     setSwapExecutionState(SwapExecutionState.broadcasted);
     setTxStateMap({
-      0: 'broadcasted',
-      1: 'pending',
-      2: 'pending',
+      0: "broadcasted",
+      1: "pending",
+      2: "pending",
     });
     setTimeout(() => {
       setTxStateMap({
-        0: 'confirmed',
-        1: 'broadcasted',
-        2: 'pending',
+        0: "confirmed",
+        1: "broadcasted",
+        2: "pending",
       });
       setTimeout(() => {
         setTxStateMap({
-          0: 'confirmed',
-          1: 'confirmed',
-          2: 'broadcasted',
+          0: "confirmed",
+          1: "confirmed",
+          2: "broadcasted",
         });
         setTimeout(() => {
           setTxStateMap({
-            0: 'confirmed',
-            1: 'confirmed',
-            2: 'confirmed',
+            0: "confirmed",
+            1: "confirmed",
+            2: "confirmed",
           });
           setSwapExecutionState(SwapExecutionState.confirmed);
         }, TX_DELAY_MS);
@@ -118,13 +118,13 @@ export const SwapExecutionPage = () => {
       case SwapExecutionState.confirmed:
         return (
           <MainButton
-            label="Swap complete"
+            label="Swap Complete"
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
           />
         );
     }
-  }, [swapExecutionState]);
+  }, [modal, swapExecutionState, theme.success.text]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? withBoundProps(SwapExecutionPageRouteSimple, {
@@ -138,12 +138,11 @@ export const SwapExecutionPage = () => {
     <Column gap={5}>
       <SwapPageHeader
         leftButton={{
-          label: 'Back',
+          label: "Back",
           icon: ICONS.thinArrow,
-          onClick: () => {},
         }}
         rightButton={{
-          label: simpleRoute ? 'Details' : 'Hide details',
+          label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
@@ -163,8 +162,8 @@ export const SwapExecutionPage = () => {
                 height={20}
               />
               <StyledSignatureRequired>
-                {SIGNATURES_REQUIRED}{' '}
-                {pluralize('signature', SIGNATURES_REQUIRED)} still required
+                {SIGNATURES_REQUIRED}{" "}
+                {pluralize("signature", SIGNATURES_REQUIRED)} still required
               </StyledSignatureRequired>
             </Row>
           )

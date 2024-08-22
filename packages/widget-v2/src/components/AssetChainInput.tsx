@@ -1,14 +1,14 @@
-import { styled } from 'styled-components';
-import { Column, Row, Spacer } from '@/components/Layout';
-import { SmallText, Text } from '@/components/Typography';
-import { ChevronIcon } from '@/icons/ChevronIcon';
-import { useTheme } from 'styled-components';
-import { CogIcon } from '@/icons/CogIcon';
-import { Button, GhostButton } from '@/components/Button';
-import { useAtom } from 'jotai';
-import { skipAssets } from '@/state/skipClient';
-import { useUsdValue } from '@/utils/useUsdValue';
-import { formatUSD } from '@/utils/intl';
+import { styled } from "styled-components";
+import { Column, Row, Spacer } from "@/components/Layout";
+import { SmallText, Text } from "@/components/Typography";
+import { ChevronIcon } from "@/icons/ChevronIcon";
+import { useTheme } from "styled-components";
+import { CogIcon } from "@/icons/CogIcon";
+import { Button, GhostButton } from "@/components/Button";
+import { useAtom } from "jotai";
+import { skipAssets } from "@/state/skipClient";
+import { useUsdValue } from "@/utils/useUsdValue";
+import { formatUSD } from "@/utils/intl";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -19,7 +19,7 @@ export type AssetChainInputProps = {
 };
 
 export const AssetChainInput = ({
-  value = '0',
+  value = "0",
   onChangeValue,
   selectedAssetDenom,
   handleChangeAsset,
