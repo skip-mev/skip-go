@@ -3,33 +3,32 @@
   "version": "0.0.0",
   "description": "Skip Go",
   "private": true,
-  "workspaces": [
-    "packages/client",
-    "packages/widget",
-    "packages/widget-v2",
-    "packages/web-component",
-    "examples/*",
-    "vendor/"
-  ],
+  "pnpm": {
+    "packages": [
+      "packages/*",
+      "examples/*",
+      "vendor/"
+    ]
+  },
   "scripts": {
-    "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client",
-    "dev:https": "yarn run dev:widget & yarn run dev:nextjs-https & yarn run dev:client",
-    "dev:widget": "yarn workspace @skip-go/widget run dev",
-    "dev:widgetv2": "yarn workspace widget-v2 run dev",
-    "dev:nextjs": "yarn workspace nextjs run dev",
-    "dev:nextjs-https": "yarn workspace nextjs run dev:https",
-    "dev:client": "yarn workspace @skip-go/client run watch",
-    "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
-    "build:widget": "yarn workspace @skip-go/widget run build",
-    "build:nextjs": "yarn workspace nextjs build",
-    "build:web-component": "NODE_OPTIONS=--max-old-space-size=16384 yarn workspace @skip-go/web-component run build",
-    "build:client": "yarn workspace @skip-go/client build",
-    "codegen": "yarn workspace @skip-go/client codegen",
-    "test": "yarn workspace @skip-go/client run test",
-    "submodule": "yarn run submodule:init && yarn run submodule:update",
+    "dev": "pnpm -r --parallel run dev",
+    "dev:https": "pnpm run dev:widget & pnpm run dev:nextjs-https & pnpm run dev:client",
+    "dev:widget": "pnpm --filter @skip-go/widget run dev",
+    "dev:widgetv2": "pnpm --filter @skip-go/widget-v2 run dev",
+    "dev:nextjs": "pnpm --filter @skip-go/nextjs run dev",
+    "dev:nextjs-https": "pnpm --filter @skip-go/nextjs run dev:https",
+    "dev:client": "pnpm --filter @skip-go/client run watch",
+    "build": "pnpm -r run build",
+    "build:widget": "pnpm --filter @skip-go/widget run build",
+    "build:nextjs": "pnpm --filter @skip-go/nextjs build",
+    "build:web-component": "pnpm --filter @skip-go/web-component run build",
+    "build:client": "pnpm --filter @skip-go/client build",
+    "codegen": "pnpm --filter @skip-go/client run codegen",
+    "test": "pnpm -r run test",
+    "submodule": "pnpm run submodule:init && pnpm run submodule:update",
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
-    "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
+    "release": "pnpm run build && pnpm --filter @skip-go/widget run pre && changeset publish",
     "swagger": "npx open-swagger-ui --open docs/swagger.yml"
   },
   "devDependencies": {
@@ -57,6 +56,7 @@
     "@keplr-wallet/unit": "^0.12.67",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/web3.js": "^1.91.1",
@@ -81,7 +81,7 @@
     "proxy-from-env": "^1.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "rollup": "^2.67.1",
+    "rollup": "^2.79.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
@@ -98,8 +98,8 @@
     "vitest": "^1.2.2",
     "wagmi": "^2.5.7"
   },
-  "packageManager": "yarn@3.2.0",
   "dependencies": {
-    "@changesets/cli": "^2.24.4"
-  }
+    "@injectivelabs/utils": "1.14.6"
+  },
+  "packageManager": "pnpm@9.7.1"
 }

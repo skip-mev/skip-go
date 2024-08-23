@@ -1493,7 +1493,7 @@ export class SkipClient {
         `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainID}'`
       );
     }
-    const endpoints = chain.apis?.rpc?.map((api) => api.address);
+    const endpoints = chain.apis?.rpc?.map((api: { address: any; }) => api.address);
     const endpoint = await findFirstWorkingEndpoint(endpoints, 'rpc');
 
     if (!endpoint) {
@@ -1536,7 +1536,7 @@ export class SkipClient {
         `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainID}'`
       );
     }
-    const endpoints = chain.apis?.rest?.map((api) => api.address);
+    const endpoints = chain.apis?.rest?.map((api: { address: any; }) => api.address);
     const endpoint = await findFirstWorkingEndpoint(endpoints, 'rest');
 
     if (!endpoint) {
@@ -1669,7 +1669,7 @@ export class SkipClient {
     }
 
     const registryFeeInfo = chain.fees.fee_tokens.find(
-      (feeToken) => feeToken.denom === defaultGasToken
+      (feeToken: { denom: any; }) => feeToken.denom === defaultGasToken
     );
 
     if (!registryFeeInfo) {
@@ -1716,7 +1716,7 @@ export class SkipClient {
 
     if (stakingTokens && stakingTokens.length > 0) {
       const feeAsset = chain.fees.fee_tokens.find(
-        (feeToken) => feeToken.denom === stakingTokens[0]?.denom
+        (feeToken: { denom: any; }) => feeToken.denom === stakingTokens[0]?.denom
       );
 
       if (feeAsset) {
@@ -1726,7 +1726,7 @@ export class SkipClient {
 
     // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
     const nonIBCAsset = chain.fees.fee_tokens.find(
-      (token) =>
+      (token: { denom: string; }) =>
         !token.denom.startsWith('ibc/') && !token.denom.startsWith('l2/')
     );
     if (nonIBCAsset) {
@@ -1734,7 +1734,7 @@ export class SkipClient {
     }
 
     const nonL2Asset = chain.fees.fee_tokens.find(
-      (token) => !token.denom.startsWith('l2/')
+      (token: { denom: string; }) => !token.denom.startsWith('l2/')
     );
     if (nonL2Asset) {
       return nonL2Asset.denom;

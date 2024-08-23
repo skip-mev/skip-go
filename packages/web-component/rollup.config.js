@@ -5,19 +5,36 @@ import commonjs from '@rollup/plugin-commonjs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import terser from '@rollup/plugin-terser';
 
+// List of @cosmjs packages to externalize
+const cosmjsPackages = [
+  '@cosmjs/utils',
+  '@cosmjs/crypto',
+  '@cosmjs/encoding',
+  '@cosmjs/math',
+  '@cosmjs/amino',
+  '@cosmjs/stargate',
+  '@cosmjs/proto-signing',
+  '@cosmjs/cosmwasm-stargate',
+];
+
 export default [
   {
-    input: ['./src/index.tsx'],
+    input: ['./src/index.ts'],
     output: {
-      file: 'build/index.js',
-      format: 'umd',
+      dir: 'build',
+      format: 'esm',
       name: 'WebComponent',
-      inlineDynamicImports: true,
+      sourcemap: true,
+      globals: {
+        react: 'react',
+        'react-dom': 'ReactDOM',
+        ...Object.fromEntries(
+          cosmjsPackages.map((pkg) => [pkg, `CosmJS.${pkg.split('/')[1]}`])
+        ),
+      },
     },
+    external: ['react', 'react-dom', ...cosmjsPackages],
     plugins: [
-      nodeResolve({
-        browser: true,
-      }),
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
@@ -28,7 +45,7 @@ export default [
         filename: 'bundle-analysis.html',
         open: true,
       }),
-      terser(),
+      // terser(),
     ],
   },
 ];

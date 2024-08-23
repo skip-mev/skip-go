@@ -4,16 +4,6 @@
   "version": "2.4.3",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./build/index.d.ts",
-      "import": "./build/index.es.js"
-    },
-    "./style.css": {
-      "import": "./build/style.css",
-      "default": "./build/style.css"
-    }
-  },
   "types": "./build/index.d.ts",
   "engines": {
     "node": ">=12.4"
@@ -95,7 +85,8 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@skip-go/client": "workspace:packages/client",
+    "@rollup/plugin-json": "^6.1.0",
+    "@skip-go/client": "workspace:*",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",

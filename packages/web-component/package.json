@@ -34,11 +34,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@skip-go/widget": "workspace:^",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rollup-plugin-internal": "^1.0.4",
-    "styled-components": "^6.1.12"
+    "@skip-go/widget": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
