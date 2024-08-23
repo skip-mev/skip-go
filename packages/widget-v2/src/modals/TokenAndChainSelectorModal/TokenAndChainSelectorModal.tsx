@@ -1,5 +1,5 @@
 import { createModal, ModalProps, useModal } from "@/components/Modal";
-import { Column } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { styled } from "styled-components";
 import { useAtom } from "jotai";
 import { ChainWithAsset, ClientAsset, skipAssets } from "@/state/skipClient";
@@ -11,6 +11,7 @@ import {
   Skeleton,
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
+import { SmallText } from "@/components/Typography";
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
@@ -82,6 +83,9 @@ export const TokenAndChainSelectorModal = createModal(
           onSearch={handleSearch}
           asset={asset}
         />
+        <Row gap={5} style={{marginTop: -10}}>
+          {["All", "Bitcoin", "Ethereum", "Cosmos","Osmosis", "Optimism", "Select chain"].map(chain => <StyledChainPill><SmallText>{chain}</SmallText></StyledChainPill>)}
+        </Row>
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <Column>
             {Array.from({ length: 10 }, (_, index) => (
@@ -115,4 +119,10 @@ const StyledContainer = styled(Column)`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
+`;
+
+const StyledChainPill = styled.div`
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  padding: 5px 10px;
+  border-radius: 10px;
 `;
