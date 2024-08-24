@@ -39,6 +39,7 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "postcss-prefixwrap": "^1.49.0",
+    "rollup": "^4.21.0",
     "rollup-plugin-copy": "^3.5.0",
     "styled-components": "^6.0.0",
     "stylis": "^4.0.0",
@@ -46,19 +47,6 @@
     "tailwindcss-animate": "^1.0.7",
     "typed-query-selector": "^2.11.2",
     "typescript": "5.2.x"
-  },
-  "resolutions": {
-    "@cosmos-kit/cosmostation-extension": "^2.7.10",
-    "@cosmos-kit/keplr-extension": "^2.7.9",
-    "@cosmos-kit/leap-extension": "^2.7.10",
-    "@cosmos-kit/okxwallet": "2.4.x",
-    "@cosmos-kit/react": "2.10.x",
-    "@cosmos-kit/station": "2.5.x",
-    "@cosmos-kit/vectis": "2.6.x",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "viem": "^2.7.16",
-    "wagmi": "^2.5.7"
   },
   "dependencies": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",

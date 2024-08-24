@@ -2,6 +2,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
 import url from '@rollup/plugin-url';
+import path from 'path';
 
 export default [
   {
@@ -28,7 +29,7 @@ export default [
       peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
-        exclude: 'node_modules/**',
+        exclude: ['node_modules', '../../node_modules', '../../../../node_modules'],
       }),
     ],
   },

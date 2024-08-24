@@ -15,7 +15,8 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "jsx": "react-jsx",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "preserveSymlinks": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build", "src/**/*.test.tsx?"],

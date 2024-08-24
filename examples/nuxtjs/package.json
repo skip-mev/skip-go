@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@skip-go/widget": "^2.4.3",
+    "@skip-go/widget": "workspace:*",
     "nuxt": "^3.13.0",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "latest"
