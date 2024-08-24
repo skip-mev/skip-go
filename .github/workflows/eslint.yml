@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
         working-directory: packages/widget-v2
       - name: Run ESLint
-        run: yarn lint
+        run: pnpm lint
         working-directory: packages/widget-v2

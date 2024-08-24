@@ -2,35 +2,104 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
 import url from '@rollup/plugin-url';
-import path from 'path';
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import alias from '@rollup/plugin-alias';
+
+const createConfig = (
+  directory = '',
+  file = '',
+  output = {},
+  plugins = [],
+  config = {}
+) => ({
+  input: 'src/index.ts',
+  output: {
+    sourcemap: true,
+    file: `${directory}/${file}`,
+    ...output,
+  },
+  plugins: [
+    postcss({
+      config: {
+        path: './postcss.config.js',
+      },
+      inject: false,
+      extensions: ['.css'],
+      minimize: true,
+    }),
+    url({
+      include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
+      limit: Infinity,
+    }),
+    ...plugins,
+    typescript({
+      tsconfig: './tsconfig.json',
+      tsconfigOverride: {
+        compilerOptions: {
+          declaration: true,
+          declarationDir: './build/types',
+        },
+      },
+      useTsconfigDeclarationDir: true,
+    }),
+  ],
+  ...config,
+});
 
 export default [
-  {
-    input: ['./src/index.ts'],
-    external: ['react', 'react-dom', '@r2wc/react-to-web-component'],
-    output: {
-      file: "./build/index.es.js",
+  // (external React)
+  createConfig(
+    './build/react',
+    'index.es.js',
+    { format: 'esm' },
+    [peerDepsExternal()],
+    { external: ['react', 'react-dom'] }
+  ),
+  // (bundled React)
+  createConfig(
+    './build/web-component',
+    'index.es.js',
+    {
       format: 'esm',
-      sourcemap: true,
+      name: 'WebComponent',
+      inlineDynamicImports: true,
+      globals: {
+        react: 'React',
+        'react-dom': 'ReactDOM',
+        'react/jsx-runtime': 'React.jsx',
+      },
     },
-    plugins: [
-      postcss({
-        config: {
-          path: './postcss.config.js',
-        },
-        inject: false,
-        extensions: ['.css'],
-        minimize: true,
+    [
+      alias({
+        entries: [
+          {
+            find: /(.*)react\/jsx-runtime$/,
+            replacement: 'react/jsx-runtime.js',
+          },
+          {
+            find: 'process.env.NODE_ENV',
+            replacement: JSON.stringify('production'),
+          },
+        ],
       }),
-      url({
-        include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
-        limit: Infinity,
+      nodeResolve({
+        resolveOnly: [
+          'react',
+          'react-dom',
+          '@radix-ui',
+          'styled-components',
+          'tslib',
+          '@vanilla-extract',
+        ],
+        dedupe: ['react', 'react-dom'],
+        preserveSymlinks: true,
       }),
-      peerDepsExternal(),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        exclude: ['node_modules', '../../node_modules', '../../../../node_modules'],
+      commonjs({
+        include: /node_modules/,
+        requireReturnsDefault: 'auto',
+        transformMixedEsModules: true,
       }),
-    ],
-  },
+    ]
+  ),
 ];

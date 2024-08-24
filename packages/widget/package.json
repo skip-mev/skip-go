@@ -4,7 +4,15 @@
   "version": "2.4.3",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
-  "types": "./build/index.d.ts",
+  "main": "./build/react/index.es.js",
+  "module": "./build/react/index.es.js",
+  "types": "./build/types/index.d.ts",
+  "exports": {
+    "./web-component": {
+      "types": "./build/types/index.d.ts",
+      "default": "./build/web-component/index.es.js"
+    }
+  },
   "engines": {
     "node": ">=12.4"
   },
@@ -26,11 +34,16 @@
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
-    "react-dom": "17.x || 18.x",
-    "styled-components": "^6.0.0",
-    "stylis": "^4.0.0"
+    "react-dom": "17.x || 18.x"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-react": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-url": "^8.0.2",
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
@@ -41,8 +54,6 @@
     "postcss-prefixwrap": "^1.49.0",
     "rollup": "^4.21.0",
     "rollup-plugin-copy": "^3.5.0",
-    "styled-components": "^6.0.0",
-    "stylis": "^4.0.0",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
     "typed-query-selector": "^2.11.2",
@@ -73,6 +84,7 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@skip-go/client": "workspace:*",
     "@solana/spl-token": "^0.4.6",
@@ -87,7 +99,11 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
     "react-shadow-scope": "^1.0.5",
+    "rollup-plugin-dts": "^6.1.1",
+    "styled-components": "^6.0.0",
+    "stylis": "^4.3.4",
     "tailwind-merge": "^2.3.0",
+    "tslib": "^1.9.3",
     "viem": "2.x",
     "wagmi": "2.x",
     "zustand": "^4.5.2"

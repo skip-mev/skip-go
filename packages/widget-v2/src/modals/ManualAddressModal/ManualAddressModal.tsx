@@ -56,7 +56,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
       return;
     }
     return manualWalletAddress.length === 10;
-  }, [manualWalletAddress]);
+  }, [manualWalletAddress.length]);
 
   return (
     <>

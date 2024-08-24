@@ -7,7 +7,7 @@ import {
   TransactionHistoryModalProps,
 } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import txHistory from "@/modals/TransactionHistoryModal/tx_history.json";
-import { TxHistoryItem } from "@modals/TransactionHistoryModal/TransactionHistoryModalItem";
+import { TxHistoryItem } from "@/modals/TransactionHistoryModal/TransactionHistoryModalItem";
 
 const meta = {
   title: "Modals/TransactionHistoryModal",

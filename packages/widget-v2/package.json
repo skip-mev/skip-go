@@ -1,5 +1,6 @@
 {
-  "name": "widget-v2",
+  "name": "@skip-go/widget-v2",
+  "description": "Swap widget",
   "private": true,
   "version": "0.0.8",
   "type": "module",

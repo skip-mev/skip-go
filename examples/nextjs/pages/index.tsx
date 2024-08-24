@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import React, { useState } from 'react';
 import { SwapWidget } from '@skip-go/widget';
 import crypto from 'crypto';
-import { PartialTheme } from '@skip-go/widget/build/ui/theme';
+import { PartialTheme } from '@skip-go/widget/build/types/ui/theme';
 
 function hashString(inputString: string) {
   const hash = crypto.createHash('sha256');

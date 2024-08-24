@@ -17,12 +17,12 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
 
       - name: Generate cosmjs types
-        run: yarn run codegen
+        run: pnpm run codegen
         working-directory: ./packages/client
 
       - name: Test
-        run: yarn run test
+        run: pnpm run test
         working-directory: ./packages/client

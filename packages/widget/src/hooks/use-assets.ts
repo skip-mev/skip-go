@@ -28,7 +28,7 @@ export function useAssets(
         Object.entries(assets).map(([chainID, chainAssets]) => {
           return [
             chainID,
-            (chainAssets as any).filter((asset: Asset) => {
+            chainAssets.filter((asset) => {
               return !(
                 asset.denom === 'solana-devnet-native' ||
                 asset.denom === 'solana-native'
