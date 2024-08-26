@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { initializeSwapWidget } from '@skip-go/widget';
 
 const VuePage: NextPage = () => {
-  initializeSwapWidget();
+  const test = initializeSwapWidget();
+  console.log(test);
 
   useEffect(() => {
     const { createApp } = require('vue/dist/vue.esm-bundler.js');

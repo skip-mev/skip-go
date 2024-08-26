@@ -27,7 +27,7 @@
   "scripts": {
     "start": "yarn dev",
     "dev": "yarn build -w",
-    "build": "NODE_OPTIONS=--max-old-space-size=16384 rollup --config rollup.config.js",
+    "build": "NODE_OPTIONS=--max-old-space-size=32384 rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
@@ -37,16 +37,18 @@
     "post": "git checkout -- package.json"
   },
   "peerDependencies": {
-    "react": "17.x || 18.x",
-    "react-dom": "17.x || 18.x",
+    "react": "18.x",
+    "react-dom": "18.x",
     "styled-components": "^6.0.0",
     "stylis": "^4.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@rollup/plugin-url": "^8.0.2",
+    "@rollup/plugin-virtual": "^3.0.2",
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
     "@types/react": "^18.0.6",
@@ -54,6 +56,8 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "postcss-prefixwrap": "^1.49.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "styled-components": "^6.0.0",
@@ -114,6 +118,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
     "react-shadow-scope": "^1.0.5",
+    "react-to-webcomponent": "^2.0.0",
     "tailwind-merge": "^2.3.0",
     "viem": "2.x",
     "wagmi": "2.x",
