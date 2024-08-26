@@ -1,37 +1,80 @@
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
 import url from '@rollup/plugin-url';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import alias from '@rollup/plugin-alias';
 
-import packageJson from './package.json';
+const createConfig = (
+  directory = '',
+  file = '',
+  output = {},
+  plugins = [],
+  config = {}
+) => ({
+  input: 'src/index.ts',
+  output: {
+    sourcemap: true,
+    file: `${directory}/${file}`,
+    ...output,
+  },
+  plugins: [
+    postcss({
+      config: {
+        path: './postcss.config.js',
+      },
+      inject: false,
+      extensions: ['.css'],
+      minimize: true,
+    }),
+    url({
+      include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
+      limit: Infinity,
+    }),
+    ...plugins,
+    typescript(),
+  ],
+  ...config,
+});
 
 export default [
-  {
-    input: ['./src/index.ts'],
-    external: ['react', 'react-dom', '@r2wc/react-to-web-component'],
-    output: {
-      file: packageJson.exports['.'].import,
+  // (external React)
+  createConfig(
+    './build/react',
+    'index.es.js',
+    { format: 'esm' },
+    [peerDepsExternal()],
+  ),
+  // (bundled React)
+  createConfig(
+    './build/web-component',
+    'index.es.js',
+    {
       format: 'esm',
-      sourcemap: true,
+      name: 'WebComponent',
+      inlineDynamicImports: true,
+      globals: {
+        react: 'React',
+        'react-dom': 'ReactDOM',
+        'react/jsx-runtime': 'React.jsx',
+      },
     },
-    plugins: [
-      postcss({
-        config: {
-          path: './postcss.config.js',
-        },
-        inject: false,
-        extensions: ['.css'],
-        minimize: true,
+    [
+      alias({
+        entries: [
+          {
+            find: 'process.env.NODE_ENV',
+            replacement: JSON.stringify('production'),
+          },
+        ],
       }),
-      url({
-        include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
-        limit: Infinity,
-      }),
-      peerDepsExternal(),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        exclude: 'node_modules/**',
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+        resolveOnly: ['react', 'react-dom', '@radix-ui'],
+        dedupe: ['react', 'react-dom'],
+        preserveSymlinks: true,
       }),
     ],
-  },
+  ),
 ];

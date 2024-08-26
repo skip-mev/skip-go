@@ -5,7 +5,7 @@
     "rootDir": "src",
     "outDir": "build",
     "declaration": true,
-    "declarationDir": "build",
+    "declarationDir": "./build/types",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ES2019",
@@ -15,7 +15,7 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "jsx": "react-jsx",
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build", "src/**/*.test.tsx?"],

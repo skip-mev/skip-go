@@ -4,17 +4,15 @@
   "version": "2.4.3",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
+  "main": "./build/react/index.es.js",
+  "module": "./build/react/index.es.js",
+  "types": "./build/types/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./build/index.d.ts",
-      "import": "./build/index.es.js"
-    },
-    "./style.css": {
-      "import": "./build/style.css",
-      "default": "./build/style.css"
+    "./web-component": {
+      "types": "./build/types/index.d.ts",
+      "default": "./build/web-component/index.es.js"
     }
   },
-  "types": "./build/index.d.ts",
   "engines": {
     "node": ">=12.4"
   },
@@ -41,6 +39,8 @@
     "stylis": "^4.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@rollup/plugin-url": "^8.0.2",
     "@types/node": "18.7.18",
     "@types/qrcode": "^1.4.2",
