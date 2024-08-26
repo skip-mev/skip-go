@@ -25,9 +25,9 @@
     "README.md"
   ],
   "scripts": {
-    "start": "rollup --config rollup.config.js -w",
-    "dev": "rollup --config rollup.config.js -w",
-    "build": "rollup --config rollup.config.js",
+    "start": "yarn dev",
+    "dev": "yarn build -w",
+    "build": "NODE_OPTIONS=--max-old-space-size=16384 rollup --config rollup.config.js",
     "lint": "eslint src --ext .ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@rollup/plugin-url": "^8.0.2",
     "@types/node": "18.7.18",
@@ -54,6 +55,7 @@
     "postcss": "^8.4.38",
     "postcss-prefixwrap": "^1.49.0",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "styled-components": "^6.0.0",
     "stylis": "^4.0.0",
     "tailwindcss": "^3.4.3",

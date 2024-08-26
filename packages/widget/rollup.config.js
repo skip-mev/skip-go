@@ -5,18 +5,20 @@ import url from '@rollup/plugin-url';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import alias from '@rollup/plugin-alias';
+import json from '@rollup/plugin-json';
+import { visualizer } from 'rollup-plugin-visualizer';
 
-const createConfig = (
+const createConfig = ({
+  input = 'src/index.ts',
   directory = '',
-  file = '',
   output = {},
   plugins = [],
   config = {}
-) => ({
-  input: 'src/index.ts',
+}) => ({
+  input,
   output: {
     sourcemap: true,
-    file: `${directory}/${file}`,
+    file: `${directory}/index.es.js`,
     ...output,
   },
   plugins: [
@@ -49,47 +51,33 @@ const createConfig = (
 
 export default [
   // (external React)
-  createConfig(
-    './build/react',
-    'index.es.js',
-    { format: 'esm' },
-    [peerDepsExternal()],
-  ),
+  createConfig({
+    directory: './build/react',
+    plugins: [peerDepsExternal()],
+  }),
   // (bundled React)
-  createConfig(
-    './build/web-component',
-    'index.es.js',
-    {
-      format: 'esm',
+  createConfig({
+    directory:  './build/web-component',
+    output: {
       name: 'WebComponent',
-      inlineDynamicImports: true,
-      globals: {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-        'react/jsx-runtime': 'React.jsx',
-      },
+      interop: "esModule",
     },
-    [
-      alias({
-        entries: [
-          {
-            find: 'process.env.NODE_ENV',
-            replacement: JSON.stringify('production'),
-          },
-        ],
-      }),
+    plugins: [
       nodeResolve({
         browser: true,
-        preferBuiltins: false,
-        resolveOnly: ['react', 'react-dom', '@radix-ui', 'styled-components'],
+        resolveOnly: ['react', 'react-dom', 'styled-components'],
         dedupe: ['react', 'react-dom'],
-        preserveSymlinks: true,
       }),
+      json(),
       commonjs({
         include: /node_modules/,
         requireReturnsDefault: 'auto',
         transformMixedEsModules: true,
       }),
-    ],
-  ),
+      visualizer({
+        filename: 'bundle-analysis.html',
+        open: true,
+      }),
+    ]
+  })
 ];

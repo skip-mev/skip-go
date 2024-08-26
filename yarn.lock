@@ -10032,6 +10032,7 @@ __metadata:
     "@radix-ui/react-switch": ^1.0.3
     "@radix-ui/react-tooltip": ^1.0.7
     "@rollup/plugin-alias": ^5.1.0
+    "@rollup/plugin-json": ^6.1.0
     "@rollup/plugin-typescript": ^11.1.6
     "@rollup/plugin-url": ^8.0.2
     "@skip-go/client": "workspace:packages/client"
@@ -10055,6 +10056,7 @@ __metadata:
     react-icons: ^5.2.1
     react-shadow-scope: ^1.0.5
     rollup-plugin-copy: ^3.5.0
+    rollup-plugin-visualizer: ^5.12.0
     styled-components: ^6.0.0
     stylis: ^4.0.0
     tailwind-merge: ^2.3.0
