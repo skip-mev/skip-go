@@ -1,7 +1,8 @@
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
 import url from '@rollup/plugin-url';
+import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import alias from '@rollup/plugin-alias';
 
@@ -32,7 +33,16 @@ const createConfig = (
       limit: Infinity,
     }),
     ...plugins,
-    typescript(),
+    typescript({
+      tsconfig: './tsconfig.json',
+      tsconfigOverride: {
+        compilerOptions: {
+          declaration: true,
+          declarationDir: './build/types',
+        },
+      },
+      useTsconfigDeclarationDir: true,
+    }),
   ],
   ...config,
 });
@@ -71,9 +81,14 @@ export default [
       nodeResolve({
         browser: true,
         preferBuiltins: false,
-        resolveOnly: ['react', 'react-dom', '@radix-ui'],
+        resolveOnly: ['react', 'react-dom', '@radix-ui', 'styled-components'],
         dedupe: ['react', 'react-dom'],
         preserveSymlinks: true,
+      }),
+      commonjs({
+        include: /node_modules/,
+        requireReturnsDefault: 'auto',
+        transformMixedEsModules: true,
       }),
     ],
   ),

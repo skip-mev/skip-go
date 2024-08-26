@@ -8,6 +8,10 @@
   "module": "./build/react/index.es.js",
   "types": "./build/types/index.d.ts",
   "exports": {
+    ".": {
+      "types": "./build/types/index.d.ts",
+      "default": "./build/react/index.es.js"
+    },
     "./web-component": {
       "types": "./build/types/index.d.ts",
       "default": "./build/web-component/index.es.js"
