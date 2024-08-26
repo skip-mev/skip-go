@@ -1070,6 +1070,7 @@ test('swapExactCoinInFromJSON', () => {
       },
     ],
     swap_amount_in: '1000000',
+    estimated_amount_out: '2000000',
   };
 
   expect(swapExactCoinInFromJSON(swapExactCoinInJSON)).toEqual({
@@ -1087,6 +1088,7 @@ test('swapExactCoinInFromJSON', () => {
       },
     ],
     swapAmountIn: '1000000',
+    estimatedAmountOut: '2000000',
   });
 });
 
@@ -1106,6 +1108,7 @@ test('swapExactCoinInToJSON', () => {
       },
     ],
     swapAmountIn: '1000000',
+    estimatedAmountOut: '2000000',
   };
 
   expect(swapExactCoinInToJSON(swapExactCoinIn)).toEqual({
@@ -1123,6 +1126,7 @@ test('swapExactCoinInToJSON', () => {
       },
     ],
     swap_amount_in: '1000000',
+    estimated_amount_out: '2000000',
   });
 });
 
@@ -1215,6 +1219,7 @@ test('swapFromJSON - swap in', () => {
         },
       ],
       swap_amount_in: '1000000',
+      estimated_amount_out: '2000000',
     },
     estimated_affiliate_fee: '1000000',
     chain_id: 'neutron-1',
@@ -1247,6 +1252,7 @@ test('swapFromJSON - swap in', () => {
         },
       ],
       swapAmountIn: '1000000',
+      estimatedAmountOut: '2000000',
     },
     estimatedAffiliateFee: '1000000',
     chainID: 'neutron-1',
@@ -1347,6 +1353,7 @@ test('swapToJSON - swap in', () => {
         },
       ],
       swapAmountIn: '1000000',
+      estimatedAmountOut: '2000000',
     },
     chainID: 'neutron-1',
     fromChainID: 'neutron-1',
@@ -1379,6 +1386,7 @@ test('swapToJSON - swap in', () => {
         },
       ],
       swap_amount_in: '1000000',
+      estimated_amount_out: '2000000',
     },
     chain_id: 'neutron-1',
     from_chain_id: 'neutron-1',
@@ -1522,6 +1530,7 @@ test('operationFromJSON - swap', () => {
           },
         ],
         swap_amount_in: '1000000',
+        estimated_amount_out: '1000000',
       },
       chain_id: 'neutron-1',
       from_chain_id: 'neutron-1',
@@ -1559,6 +1568,7 @@ test('operationFromJSON - swap', () => {
           },
         ],
         swapAmountIn: '1000000',
+        estimatedAmountOut: '1000000',
       },
       chainID: 'neutron-1',
       fromChainID: 'neutron-1',
@@ -1640,6 +1650,7 @@ test('operationToJSON - swap', () => {
           },
         ],
         swapAmountIn: '1000000',
+        estimatedAmountOut: '1000000',
       },
       chainID: 'neutron-1',
       fromChainID: 'neutron-1',
@@ -1677,6 +1688,7 @@ test('operationToJSON - swap', () => {
           },
         ],
         swap_amount_in: '1000000',
+        estimated_amount_out: '1000000',
       },
       chain_id: 'neutron-1',
       from_chain_id: 'neutron-1',
@@ -1724,6 +1736,7 @@ test('routeResponseFromJSON', () => {
               },
             ],
             swap_amount_in: '1000000',
+            estimated_amount_out: '1000000',
           },
           estimated_affiliate_fee: '1000000',
           chain_id: 'neutron-1',
@@ -1805,6 +1818,7 @@ test('routeResponseFromJSON', () => {
               },
             ],
             swapAmountIn: '1000000',
+            estimatedAmountOut: '1000000',
           },
           estimatedAffiliateFee: '1000000',
           chainID: 'neutron-1',
@@ -1888,6 +1902,7 @@ test('routeResponseToJSON', () => {
               },
             ],
             swapAmountIn: '1000000',
+            estimatedAmountOut: '1000000',
           },
           estimatedAffiliateFee: '1000000',
           chainID: 'neutron-1',
@@ -1969,6 +1984,7 @@ test('routeResponseToJSON', () => {
               },
             ],
             swap_amount_in: '1000000',
+            estimated_amount_out: '1000000',
           },
           estimated_affiliate_fee: '1000000',
           chain_id: 'neutron-1',
@@ -2144,6 +2160,7 @@ test('msgsRequestFromJSON', () => {
               },
             ],
             swap_amount_in: '1000000',
+            estimated_amount_out: '1000000',
           },
           estimated_affiliate_fee: '1000000',
           chain_id: 'neutron-1',
@@ -2230,6 +2247,7 @@ test('msgsRequestFromJSON', () => {
               },
             ],
             swapAmountIn: '1000000',
+            estimatedAmountOut: '1000000',
           },
           estimatedAffiliateFee: '1000000',
           chainID: 'neutron-1',
@@ -2319,6 +2337,7 @@ test('msgsRequestToJSON', () => {
               },
             ],
             swapAmountIn: '1000000',
+            estimatedAmountOut: '1000000',
           },
           estimatedAffiliateFee: '1000000',
           chainID: 'neutron-1',
@@ -2405,6 +2424,7 @@ test('msgsRequestToJSON', () => {
               },
             ],
             swap_amount_in: '1000000',
+            estimated_amount_out: '1000000',
           },
           estimated_affiliate_fee: '1000000',
           chain_id: 'neutron-1',

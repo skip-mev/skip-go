@@ -1,4 +1,4 @@
-import { BridgeType } from "./unified";
+import { BridgeType } from './unified';
 
 export type IBCAddressJSON = {
   address: string;
@@ -324,6 +324,7 @@ export type SwapExactCoinInJSON = {
   swap_operations: SwapOperationJSON[];
   swap_amount_in?: string;
   price_impact_percent?: string;
+  estimated_amount_out: string;
 };
 
 export type SwapExactCoinIn = {
@@ -331,6 +332,7 @@ export type SwapExactCoinIn = {
   swapOperations: SwapOperation[];
   swapAmountIn?: string;
   priceImpactPercent?: string;
+  estimatedAmountOut: string;
 };
 
 export type SwapRouteJSON = {
@@ -348,11 +350,13 @@ export type SwapRoute = {
 export type SmartSwapExactCoinInJSON = {
   swap_venue: SwapVenueJSON;
   swap_routes: SwapRouteJSON[];
+  estimated_amount_out: string;
 };
 
 export type SmartSwapExactCoinIn = {
   swapVenue: SwapVenue;
   swapRoutes: SwapRoute[];
+  estimatedAmountOut: string;
 };
 
 export type SwapJSON = (
@@ -421,7 +425,7 @@ export type ChainAffiliates = {
   affiliates: Affiliate[];
 };
 
-export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
+export type Reason = 'UNKNOWN' | 'BASE_TOKEN' | 'MOST_LIQUID' | 'DIRECT';
 
 export type CosmWasmContractMsgJSON = {
   contract_address: string;
@@ -433,7 +437,7 @@ export type CosmWasmContractMsg = {
   msg: string;
 };
 
-export type AutopilotAction = "LIQUID_STAKE" | "CLAIM";
+export type AutopilotAction = 'LIQUID_STAKE' | 'CLAIM';
 
 export type AutopilotMsg = {
   receiver: string;
