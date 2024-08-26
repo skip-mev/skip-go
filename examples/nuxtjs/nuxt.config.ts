@@ -7,9 +7,10 @@ export default defineNuxtConfig({
     optimizeDeps: {
       noDiscovery: true,
       include: [],
+      exclude: ['cssesc']
     },
     plugins: [
       nodePolyfills()
     ]
-  }
+  },
 })

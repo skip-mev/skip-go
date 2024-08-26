@@ -74,24 +74,15 @@ export default [
       alias({
         entries: [
           {
-            find: /(.*)react\/jsx-runtime$/,
-            replacement: 'react/jsx-runtime.js',
-          },
-          {
             find: 'process.env.NODE_ENV',
             replacement: JSON.stringify('production'),
           },
         ],
       }),
       nodeResolve({
-        resolveOnly: [
-          'react',
-          'react-dom',
-          '@radix-ui',
-          'styled-components',
-          'tslib',
-          '@vanilla-extract',
-        ],
+        browser: true,
+        preferBuiltins: false,
+        resolveOnly: ['react', 'react-dom', '@radix-ui'],
         dedupe: ['react', 'react-dom'],
         preserveSymlinks: true,
       }),
@@ -100,6 +91,7 @@ export default [
         requireReturnsDefault: 'auto',
         transformMixedEsModules: true,
       }),
-    ]
+    ],
+    { external: ['styled-components'] }
   ),
 ];
