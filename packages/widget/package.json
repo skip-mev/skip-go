@@ -100,8 +100,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "viem": "^2.7.16",
-    "wagmi": "^2.5.7",
-    "@chain-registry/types": "0.17.0"
+    "wagmi": "^2.5.7"
   },
   "dependencies": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",
