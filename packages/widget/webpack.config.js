@@ -106,9 +106,9 @@ export default {
     minimize: true,
   },
 
-  experiments: {
-    outputModule: true,
+  externals: {
+    '@injective-labs': '@injective-labs',
+    'chain-registry': 'chain-registry',
+    '@cosmjs': '@cosmjs',
   },
-
-  externals: {},
 };

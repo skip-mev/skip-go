@@ -44,6 +44,8 @@ const WEB_COMPONENT_NAME = 'skip-widget';
 const WebComponent = toWebComponent(WidgetWithProvider, React, ReactDOM);
 customElements.define(WEB_COMPONENT_NAME, WebComponent);
 
+export default WebComponent;
+
 type Stringify<T> = {
   [K in keyof T]?: string;
 };
