@@ -28835,6 +28835,7 @@ __metadata:
     jotai: ^2.9.1
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
+    match-sorter: ^6.3.4
     pluralize: ^8.0.0
     rc-virtual-list: ^3.14.5
     react-error-boundary: ^4.0.13

@@ -5,7 +5,7 @@ import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { skipAssets, getChainsContainingAsset } from "@/state/skipClient";
+import { skipAssetsAtom, getChainsContainingAsset, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapPageSettings } from "./SwapPageSettings";
@@ -20,23 +20,24 @@ export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
-    if (!assets || !sourceAsset?.symbol) return;
-    const chains = getChainsContainingAsset(sourceAsset?.symbol, assets);
-    return chains;
-  }, [assets, sourceAsset?.symbol]);
+    if (!chains || !assets || !sourceAsset?.symbol) return;
+    const result = getChainsContainingAsset(sourceAsset?.symbol, assets, chains);
+    return result;
+  }, [assets, sourceAsset?.symbol, chains]);
 
   const chainsContainingDestinationAsset = useMemo(() => {
-    if (!assets || !destinationAsset?.symbol) return;
-    const chains = getChainsContainingAsset(destinationAsset?.symbol, assets);
-    return chains;
-  }, [assets, destinationAsset?.symbol]);
+    if (!chains || !assets || !destinationAsset?.symbol) return;
+    const result = getChainsContainingAsset(destinationAsset?.symbol, assets, chains);
+    return result;
+  }, [assets, destinationAsset?.symbol, chains]);
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({

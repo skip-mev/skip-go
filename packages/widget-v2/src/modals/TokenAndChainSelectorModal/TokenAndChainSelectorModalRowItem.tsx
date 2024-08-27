@@ -1,10 +1,11 @@
 import { Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { SmallText, Text } from "@/components/Typography";
-import { ChainWithAsset, ClientAsset } from "@/state/skipClient";
+import { ChainWithAsset, ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
-import { Chain } from "@chain-registry/types";
+import { useAtomValue } from "jotai";
+import { Chain } from "@skip-go/client";
 
 export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
@@ -15,7 +16,7 @@ export const isClientAsset = (
 export const isChainWithAsset = (
   item: ClientAsset | ChainWithAsset
 ): item is ChainWithAsset => {
-  return (item as Chain).chain_id !== undefined;
+  return (item as Chain).chainID !== undefined;
 };
 
 export type TokenAndChainSelectorModalRowItemProps = {
@@ -31,9 +32,12 @@ export const TokenAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
 }: TokenAndChainSelectorModalRowItemProps) => {
-  if (!item) return skeleton;
+  const { isLoading: isChainsLoading, data: chains } = useAtomValue(skipChainsAtom)
+
+  if (!item || isChainsLoading) return skeleton;
 
   if (isClientAsset(item)) {
+    const chain = chains?.find((chain) => chain.chainID === item.chainID)
     return (
       <ModalRowItem
         key={`${index}${item.denom}`}
@@ -49,7 +53,7 @@ export const TokenAndChainSelectorModalRowItem = ({
             />
             <Text>{item.symbol}</Text>
             <SmallText>
-              {item.chainName ?? item.originChainID ?? item.chainID}
+              {chain?.prettyName}
             </SmallText>
           </Row>
         }
@@ -58,9 +62,11 @@ export const TokenAndChainSelectorModalRowItem = ({
   }
 
   if (isChainWithAsset(item)) {
+
+    const chain = chains?.find((chain) => chain.chainID === item.chainID)
     return (
       <ModalRowItem
-        key={item.chain_id}
+        key={item.chainID}
         onClick={() => onSelect(item?.asset || null)}
         style={{ margin: "5px 0" }}
         leftContent={
@@ -68,11 +74,11 @@ export const TokenAndChainSelectorModalRowItem = ({
             <StyledAssetImage
               height={35}
               width={35}
-              src={item?.images?.[0].svg ?? item?.images?.[0].png}
-              alt={`${item.chain_id} logo`}
+              src={item?.logoURI}
+              alt={`${item.chainID} logo`}
             />
-            <Text>{item.pretty_name}</Text>
-            <SmallText>{item.chain_name}</SmallText>
+            <Text>{chain?.prettyName}</Text>
+            <SmallText>{item.chainID}</SmallText>
           </Row>
         }
       />
