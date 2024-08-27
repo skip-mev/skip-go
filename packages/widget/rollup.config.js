@@ -9,6 +9,9 @@ import json from '@rollup/plugin-json';
 import { visualizer } from 'rollup-plugin-visualizer';
 import terser from '@rollup/plugin-terser';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import {resolve, dirname} from 'path';
+import css from "rollup-plugin-import-css";
+import { vanillaExtractPlugin} from "@vanilla-extract/rollup-plugin"
 
 const createConfig = ({
   input = 'src/index.ts',
@@ -25,7 +28,6 @@ const createConfig = ({
     ...output,
   },
   plugins: [
-    ...plugins,
     postcss({
       config: {
         path: './postcss.config.js',
@@ -38,6 +40,7 @@ const createConfig = ({
       include: ['**/*.woff', '**/*.woff2', '**/*.ttf'],
       limit: Infinity,
     }),
+    ...plugins,
     typescript({
       // tsconfig: './tsconfig.json',
       // tsconfigOverride: {
@@ -70,18 +73,27 @@ export default [
       inlineDynamicImports: true,
     },
     plugins: [
+      alias({
+        entries: [
+          {
+            find: 'process.env.NODE_ENV',
+            replacement: JSON.stringify('production'),
+          },
+          // { find: 'cssesc', replacement: resolve(dirname('src/cssesc-wrapper.js')) }
+        ]
+      }),
       nodeResolve({
          resolveOnly: [
           'react',
           'react-dom',
           'styled-components',
-          '@interchain-ui/react',
-          '@cosmos-kit/react',
-          'immer',
-          'zustand',
+          // '@interchain-ui/react',
+          // '@vanilla-extract',
+          // '@cosmos-kit/react',
+          // 'immer',
+          // 'zustand',
           'tslib',
-          'bignumber.js',
-          'cssesc'
+          // 'bignumber.js',
         ],
         dedupe: ['react', 'react-dom'],
         preferBuiltins: false,
@@ -92,12 +104,19 @@ export default [
       }),
       json(),
       commonjs({
-        include: /node_modules/,
-        requireReturnsDefault: 'namespace'
+        include: [
+          /node_modules(\/|\\).*/,
+          /node_modules(\/|\\).*\/node_modules/,
+        ],
+        requireReturnsDefault: 'auto',
+        defaultIsModuleExports: 'auto',
       }),
       visualizer({
         filename: 'bundle-analysis.html',
       }),
-    ]
+    ],
+    config: {
+      external: ['@interchain-ui/react']
+    }
   })
 ];
