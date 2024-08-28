@@ -10,7 +10,6 @@
   "types": "./types.d.ts",
   "files": [
     "build",
-    "README.md",
-    "CHANGELOG.md"
+    "README.md"
   ]
 }
