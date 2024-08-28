@@ -1,6 +1,6 @@
 {
   "name": "@skip-go/widget-web-component",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Swap widget web component",
   "exports": {
     ".": {
@@ -8,11 +8,9 @@
     }
   },
   "types": "./types.d.ts",
-  "scripts": {
-    "publish": "npm publish"
-  },
   "files": [
     "build",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ]
 }

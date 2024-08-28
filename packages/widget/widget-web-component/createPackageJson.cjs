@@ -14,9 +14,6 @@ module.exports = async function createPackageJson() {
       }
     },
     "types": "./types.d.ts",
-    "scripts": {
-      "publish": "npm publish"
-    },
     "files": [
       "build",
       "README.md",
