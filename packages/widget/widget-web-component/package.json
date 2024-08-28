@@ -1,23 +1,18 @@
 {
   "name": "@skip-go/widget-web-component",
+  "version": "2.4.3",
   "description": "Swap widget web component",
-  "version": "0.0.4",
-  "repository": "https://github.com/skip-mev/widget",
-  "type": "module",
   "exports": {
     ".": {
       "import": "./build/index.js"
     }
   },
-  "types": "./build/index.d.ts",
+  "types": "./types.d.ts",
+  "scripts": {
+    "publish": "npm publish widget-web-component --access public"
+  },
   "files": [
     "build",
     "README.md"
-  ],
-  "scripts": {
-    "publish": "npm publish"
-  },
-  "publishConfig": {
-    "access": "public"
-  }
+  ]
 }

@@ -46,15 +46,7 @@ export default {
       },
       {
         test: /\.tsx?$/, // Transpile TypeScript and JSX files
-        use: {
-          loader: 'ts-loader',
-          options: {
-            compilerOptions: {
-              declaration: true,
-              declarationDir: resolve(__dirname, 'widget-web-component/build'),
-            },
-          }
-        },
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
       {
