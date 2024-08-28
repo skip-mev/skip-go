@@ -2,7 +2,7 @@ import { useTheme } from "styled-components";
 import { Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { getChain, skipAssets } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { getFormattedAssetAmount } from "@/utils/crypto";
 import { Wallet } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
@@ -45,11 +45,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
     "mount";
   }, []);
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
   const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = getChain(chainID ?? "");
-  const chainImage = chain.images?.find((image) => image.svg ?? image.png);
+  const chain = chains?.find((chain) => chain.chainID === chainID);
+  const chainImage = chain?.logoURI
 
   if (!asset) {
     throw new Error(`Asset not found for denom: ${denom}`);
@@ -80,7 +81,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           backgroundColor={theme.success.text}
           txState={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={chainImage.svg ?? chainImage.png} />
+          <img height={50} width={50} src={chainImage} />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>

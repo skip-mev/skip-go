@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
-import { getChain, skipAssets } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { getFormattedAssetAmount } from "@/utils/crypto";
 import { css, styled, useTheme } from "styled-components";
 import React from "react";
@@ -56,12 +56,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
 
   const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = getChain(chainID ?? "");
-  const chainImage = chain.images?.find((image) => image.svg ?? image.png);
+  const chain = chains?.find(c => c.chainID === chainID)
+  const chainImage = chain?.logoURI
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -75,7 +76,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <StyledChainImage
             height={30}
             width={30}
-            src={chainImage.svg ?? chainImage.png}
+            src={chainImage}
             state={txState}
           />
         </StyledAnimatedBorder>
@@ -151,7 +152,7 @@ export const StyledAnimatedBorder = ({
   </StyledLoadingContainer>
 );
 
-const StyledLoadingContainer = styled(Row)<{
+const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
@@ -178,11 +179,11 @@ const StyledLoadingContainer = styled(Row)<{
   &:before {
     content: '';
     position: absolute;
-    height: ${({ height }) => `${height + 20}px;`}
-    width: ${({ width }) => `${width + 20}px;`}
+    height: ${({ height }) => `${height + 20}px;`};
+    width: ${({ width }) => `${width + 20}px;`};
     ${({ txState, backgroundColor, theme }) =>
-      txState === "broadcasted" &&
-      css`
+    txState === "broadcasted" &&
+    css`
         background-image: conic-gradient(
           transparent,
           transparent,
@@ -202,7 +203,7 @@ const StyledLoadingContainer = styled(Row)<{
   }
 `;
 
-const StyledLoadingOverlay = styled(Row)<{
+const StyledLoadingOverlay = styled(Row) <{
   backgroundColor?: string;
   width: number;
   height: number;
