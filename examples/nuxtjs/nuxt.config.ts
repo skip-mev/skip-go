@@ -4,10 +4,9 @@ export default defineNuxtConfig({
   plugins: [
     { src: './plugins/skip-widget.client.ts', mode: 'client' },
   ],
-  vite: {
-    optimizeDeps: {
-      noDiscovery: true,
-      exclude: ['@skip-go/widget'],
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => ['skip-widget'].includes(tag),
     },
-  }
+  },
 })

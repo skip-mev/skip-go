@@ -2,24 +2,25 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
-import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+import webpack from 'webpack';
 
 export default {
-  entry: './src/web-component.tsx', 
+  entry: './src/web-component.tsx',
 
   // Output configuration
   output: {
     path: resolve(__dirname, 'build/web-component'),
     filename: 'index.js', // Output file name
     library: {
-      name: 'web-component',
-      type: 'commonjs',
-      export: 'default'
+      // name: 'web-component',
+      type: 'module',
+      export: 'default',
     },
-    umdNamedDefine: true,
+    module: true,
     globalObject: 'typeof self !== "undefined" ? self : this',
   },
 
@@ -28,13 +29,13 @@ export default {
     extensionAlias: {
       '.js': ['.js', '.ts'],
       '.cjs': ['.cjs', '.cts'],
-      '.mjs': ['.mjs', '.mts']
+      '.mjs': ['.mjs', '.mts'],
     },
   },
 
   mode: 'production',
 
-  devtool: 'source-map',
+  // devtool: 'source-map',
 
   // Module rules
   module: {
@@ -42,8 +43,8 @@ export default {
       {
         test: /\.m?js/,
         resolve: {
-          fullySpecified: false
-        }
+          fullySpecified: false,
+        },
       },
       {
         test: /\.tsx?$/, // Transpile TypeScript and JSX files
@@ -57,7 +58,7 @@ export default {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', {modules: false}],
+              ['@babel/preset-env', { modules: false }],
               '@babel/preset-react',
             ],
             plugins: ['@babel/plugin-transform-modules-commonjs'],
@@ -69,7 +70,7 @@ export default {
         use: [
           'raw-loader',
           {
-            loader: "postcss-loader",
+            loader: 'postcss-loader',
             options: {
               postcssOptions: {
                 config: resolve(__dirname, 'postcss.config.mjs'),
@@ -99,16 +100,28 @@ export default {
       openAnalyzer: false,
       reportFilename: 'bundle-analysis.html',
     }),
+    // new webpack.optimize.LimitChunkCountPlugin({
+    //   maxChunks: 1,
+    // }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_DEBUG': JSON.stringify(false),
+    }),
     new NodePolyfillPlugin(),
   ],
 
   optimization: {
     minimize: true,
+    // splitChunks: false,
+    // runtimeChunk: false,
   },
 
-  externals: {
-    '@injective-labs': '@injective-labs',
-    'chain-registry': 'chain-registry',
-    '@cosmjs': '@cosmjs',
+  experiments: {
+    outputModule: true,
   },
+
+  externals: [
+    // 'chain-registry/types',
+    // 'chain-registry',
+    // '@initia/initia-registry'
+  ],
 };

@@ -42,7 +42,19 @@ const WidgetWithProvider = (props: WebComponentProps) => {
 const WEB_COMPONENT_NAME = 'skip-widget';
 
 const WebComponent = toWebComponent(WidgetWithProvider, React, ReactDOM);
-customElements.define(WEB_COMPONENT_NAME, WebComponent);
+
+function initializeSkipWidget() {
+  if (!customElements.get(WEB_COMPONENT_NAME)) {
+    customElements.define(WEB_COMPONENT_NAME, WebComponent);
+  }
+
+  // Upgrade any existing skip-widget elements
+  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => {
+    customElements.upgrade(el);
+  });
+}
+
+initializeSkipWidget();
 
 export default WebComponent;
 

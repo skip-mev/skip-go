@@ -1,4 +1,16 @@
 import { defineNuxtPlugin } from '#app'
-import '@skip-go/widget/web-component';
 
-export default defineNuxtPlugin(nuxtApp => {})
+export default defineNuxtPlugin(() => {
+
+  const loadSkipWidget = async () => {
+    return import('@skip-go/widget/web-component');
+  };
+
+  loadSkipWidget();
+
+  return {
+    provide: {
+      loadSkipWidget
+    }
+  }
+});
