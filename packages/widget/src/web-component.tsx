@@ -1,5 +1,5 @@
-import { SwapWidget, SwapWidgetProps } from './index';
-import { SwapWidgetProviderProps } from '../provider';
+import toWebComponent from "@r2wc/react-to-web-component";
+import { SwapWidgetProps, SwapWidgetProviderProps, SwapWidget } from '.';
 
 type WebComponentProps = SwapWidgetProps & SwapWidgetProviderProps;
 
@@ -35,24 +35,25 @@ const WidgetWithProvider = (props: WebComponentProps) => {
   return <SwapWidget {...realProps} />;
 };
 
+
 const WEB_COMPONENT_NAME = 'skip-widget';
 
-let initialized = false;
+const WebComponent = toWebComponent(WidgetWithProvider);
 
-export const initializeSwapWidget = () => {
-  if (!initialized && typeof window !== 'undefined') {
-    import('@r2wc/react-to-web-component').then(
-      ({ default: ReactToWebComponent }) => {
-        const WebComponent = ReactToWebComponent(WidgetWithProvider);
-
-        if (!customElements.get(WEB_COMPONENT_NAME)) {
-          customElements.define(WEB_COMPONENT_NAME, WebComponent);
-        }
-        initialized = true;
-      }
-    );
+function initializeSkipWidget() {
+  if (!customElements.get(WEB_COMPONENT_NAME)) {
+    customElements.define(WEB_COMPONENT_NAME, WebComponent);
   }
-};
+
+  // Upgrade any existing skip-widget elements
+  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => {
+    customElements.upgrade(el);
+  });
+}
+
+initializeSkipWidget();
+
+export default WebComponent;
 
 type Stringify<T> = {
   [K in keyof T]?: string;
