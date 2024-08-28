@@ -15,11 +15,12 @@ module.exports = async function createPackageJson() {
     },
     "types": "./types.d.ts",
     "scripts": {
-      "publish": "npm publish widget-web-component --access public"
+      "publish": "npm publish"
     },
     "files": [
       "build",
-      "README.md"
+      "README.md",
+      "CHANGELOG.md"
     ]
   };
 
@@ -31,5 +32,14 @@ module.exports = async function createPackageJson() {
     JSON.stringify(mergedPackage, null, 2),
     { encoding: 'utf-8' }
   );
+
+  // Copy README.md and CHANGELOG.md
+  const filesToCopy = ['README.md', 'CHANGELOG.md'];
+  for (const file of filesToCopy) {
+    await fs.copyFile(
+      path.resolve(__dirname, '..', file),
+      path.resolve(webComponentDir, file)
+    );
+  }
 
 }
