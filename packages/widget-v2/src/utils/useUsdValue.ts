@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { skipAssetsAtom } from "@/state/skipClient";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { z } from "zod";
-import { getAssets } from "@/state/skipClient";
 
 type Args = {
   coingeckoID: string;
@@ -37,33 +38,23 @@ const priceResponseSchema = z.object({
 });
 
 export type Asset = {
-  chainID: string;
   denom: string;
-  coingeckoID?: string;
   value: string;
 };
 
-const getCoinGeckoId = (asset: Asset) => {
-  if (asset.coingeckoID) {
-    return asset.coingeckoID;
-  } else {
-    const assets = getAssets(asset.chainID);
-    const assetFound = assets.find((a) => a.base === asset.denom);
-    if (!assetFound?.coingecko_id) {
-      throw new Error(
-        `getUsdValue error: ${asset.denom} does not have a 'coingecko_id' in ${asset.chainID}`
-      );
-    }
-    return assetFound.coingecko_id;
-  }
-};
 
-async function getUsdValue(asset: Asset) {
-  const usd = await getUsdPrice({ coingeckoID: getCoinGeckoId(asset) });
+
+async function getUsdValue(asset: Asset, coingeckoID?: string) {
+  if (!coingeckoID) {
+    throw new Error(`getUsdValue error: ${asset.denom} does not have a 'coingeckoID'`);
+  }
+  const usd = await getUsdPrice({ coingeckoID });
   return parseFloat(asset.value) * usd;
 }
 
-export function useUsdValue(asset?: Partial<Asset>) {
+
+export function useUsdValue(asset?: Partial<Asset>): UseQueryResult<number | undefined, Error> {
+  const {data: assets} = useAtomValue(skipAssetsAtom)
   const queryKey = useMemo(() => ["USE_USD_VALUE", asset] as const, [asset]);
 
   const enabled = useMemo(() => {
@@ -78,7 +69,8 @@ export function useUsdValue(asset?: Partial<Asset>) {
       asset ? [key, ...Object.values(asset)].join("-") : key,
     queryFn: async ({ queryKey: [, asset] }) => {
       if (asset?.value) {
-        return getUsdValue(asset as Asset);
+        const coingeckoID = assets?.find((a) => a.denom === asset.denom)?.coingeckoID
+        return getUsdValue(asset as Asset, coingeckoID);
       }
     },
     staleTime: 1000 * 60, // 1 minute

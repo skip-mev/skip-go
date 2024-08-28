@@ -1,7 +1,7 @@
 import { RouteResponse } from "@skip-go/client";
 import { SmallText } from "@/components/Typography";
 import { useAtom } from "jotai";
-import { skipAssets, getChain, ClientAsset } from "@/state/skipClient";
+import { skipAssetsAtom, ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
 import { getFormattedAssetAmount } from "@/utils/crypto";
@@ -56,25 +56,22 @@ export const TransactionHistoryModalItem = ({
     timestamp,
     status,
   } = txHistoryItem;
-  const [{ data: assets }] = useAtom(skipAssets);
-  const sourceChain = getChain(sourceAssetChainID ?? "");
-  const sourceChainImage = sourceChain.images?.find(
-    (image) => image.svg ?? image.png
-  );
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom)
+  const sourceChain = chains?.find(c => c.chainID === sourceAssetChainID)
+  const sourceChainImage = sourceChain?.logoURI
   const source = {
     amount: amountIn,
     asset: assets?.find((asset) => asset.denom === sourceAssetDenom),
-    chainImage: sourceChainImage?.svg ?? sourceChainImage?.png ?? "",
+    chainImage: sourceChainImage ?? "",
   };
 
-  const destinationChain = getChain(destAssetChainID ?? "");
-  const destinationChainImage = destinationChain.images?.find(
-    (image) => image.svg ?? image.png
-  );
+  const destinationChain = chains?.find(c => c.chainID === destAssetChainID)
+  const destinationChainImage = destinationChain?.logoURI
   const destination = {
     amount: amountOut,
     asset: assets?.find((asset) => asset.denom === destAssetDenom),
-    chainImage: destinationChainImage?.svg ?? destinationChainImage?.png ?? "",
+    chainImage: destinationChainImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
@@ -119,7 +116,7 @@ export const TransactionHistoryModalItem = ({
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
           <SmallText normalTextColor>
-            on {destinationChain?.pretty_name ?? destinationChain?.chain_name}
+            on {destinationChain?.prettyName ?? destinationChain?.chainName}
           </SmallText>
         </Row>
         <Row align="center" gap={10}>
@@ -130,9 +127,9 @@ export const TransactionHistoryModalItem = ({
       {showDetails && (
         <TransactionHistoryModalItemDetails
           status={status}
-          sourceChainName={sourceChain?.pretty_name ?? sourceChain?.chain_name}
+          sourceChainName={sourceChain?.prettyName ?? sourceChain?.chainName ?? "--"}
           destinationChainName={
-            destinationChain?.pretty_name ?? destinationChain?.chain_name
+            destinationChain?.prettyName ?? destinationChain?.chainName ?? "--"
           }
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
@@ -144,7 +141,7 @@ export const TransactionHistoryModalItem = ({
   );
 };
 
-const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
+const StyledHistoryContainer = styled(Column) <{ showDetails?: boolean }>`
   background-color: ${({ theme, showDetails }) =>
     showDetails && theme.secondary.background.normal};
   &:hover {

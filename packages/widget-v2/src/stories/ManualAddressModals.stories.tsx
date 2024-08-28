@@ -4,7 +4,7 @@ import { Row } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
 import { useEffect, useState } from "react";
-import { skipAssets } from "@/state/skipClient";
+import { skipAssetsAtom } from "@/state/skipClient";
 import { destinationAssetAtom } from "@/state/swapPage";
 import { useAtom } from "jotai";
 
@@ -24,7 +24,7 @@ export const ManualAddressModalsExample = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [shouldRender, setShouldRender] = useState(false);
 
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
 
   const asset = assets?.find((asset) => asset.denom === "uatom");
 

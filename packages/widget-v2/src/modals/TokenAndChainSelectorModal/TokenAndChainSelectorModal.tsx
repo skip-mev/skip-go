@@ -1,16 +1,17 @@
 import { createModal, ModalProps, useModal } from "@/components/Modal";
 import { Column } from "@/components/Layout";
 import { styled } from "styled-components";
-import { useAtom } from "jotai";
-import { ChainWithAsset, ClientAsset, skipAssets } from "@/state/skipClient";
+import { useAtomValue } from "jotai";
+import { ChainWithAsset, ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { VirtualList } from "@/components/VirtualList";
 import {
-  isChainWithAsset,
   TokenAndChainSelectorModalRowItem,
   Skeleton,
+  isClientAsset,
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
+import { matchSorter } from "match-sorter";
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
@@ -22,37 +23,36 @@ export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect, chainsContainingAsset, asset } = modalProps;
-    const [{ data: assets, isPending }] = useAtom(skipAssets);
+    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
+    const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom)
+    const isLoading = isAssetsLoading || isChainsLoading
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     const filteredAssets = useMemo(() => {
-      if (!assets) return;
-      const filtered = assets.filter((asset) =>
-        asset.symbol?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      return filtered;
-    }, [searchQuery, assets]);
+      if (!assets) return
+      return matchSorter(assets, searchQuery, {
+        keys: ["recommendedSymbol", "symbol", "denom"],
+      });
+    }, [assets, searchQuery]);
 
     const filteredChains = useMemo(() => {
-      if (!chainsContainingAsset) return;
-      const filtered = chainsContainingAsset.filter(
-        (chain) =>
-          chain.chain_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          chain.pretty_name?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      return filtered;
-    }, [searchQuery, chainsContainingAsset]);
+      if (!chainsContainingAsset) return
+      return matchSorter(chainsContainingAsset, searchQuery, {
+        keys: ["chainID", "chainName", "prettyName"],
+      });
+    }, [chainsContainingAsset, searchQuery]);
+
 
     useEffect(() => {
-      if (!isPending && assets) {
+      if (!isLoading && assets) {
         const timer = setTimeout(() => {
           setShowSkeleton(false);
         }, 100);
         return () => clearTimeout(timer);
       }
-    }, [isPending, assets]);
+    }, [isLoading, assets]);
 
     useEffect(() => {
       setSearchQuery("");
@@ -93,13 +93,13 @@ export const TokenAndChainSelectorModal = createModal(
             listItems={filteredChains ?? filteredAssets ?? []}
             height={530}
             itemHeight={70}
-            renderItem={renderItem}
             itemKey={(item) => {
-              if (isChainWithAsset(item)) {
-                return `${item.chain_id}${item.chain_name}`;
+              if (isClientAsset(item)) {
+                return `${item.denom}-${item.chainID}-${item.recommendedSymbol}`
               }
-              return `${item.chainID}${item.denom}`;
+              return `${item.chainID}-${item.asset?.denom}`
             }}
+            renderItem={renderItem}
           />
         )}
       </StyledContainer>
