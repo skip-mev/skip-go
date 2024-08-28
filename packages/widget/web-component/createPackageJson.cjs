@@ -10,10 +10,11 @@ module.exports = async function createPackageJson() {
     "description": "Swap widget web component",
     "exports": {
       ".": {
-        "import": "./build/index.js"
+        "import": "./build/index.js",
+        "types": "./build/index.d.ts"
       }
     },
-    "types": "./types.d.ts",
+    "types": "./build/types.d.ts",
     "files": [
       "build",
       "README.md",

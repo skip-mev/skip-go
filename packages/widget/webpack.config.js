@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-
+import fs from 'fs/promises';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,6 +9,18 @@ import webpack from 'webpack';
 import createPackageJson from './web-component/createPackageJson.cjs';
 
 createPackageJson();
+
+// Custom plugin to copy index.d.ts after build
+class CopyIndexDtsPlugin {
+  apply(compiler) {
+    compiler.hooks.afterEmit.tapPromise('CopyIndexDtsPlugin', async (compilation) => {
+      const srcPath = resolve(__dirname, 'web-component/index.d.ts');
+      const destPath = resolve(__dirname, 'web-component/build/index.d.ts');
+      await fs.copyFile(srcPath, destPath);
+      console.log('index.d.ts has been copied to the build directory');
+    });
+  }
+}
 
 export default {
   entry: './src/web-component.tsx',
@@ -83,6 +95,7 @@ export default {
       'process.env.NODE_DEBUG': 'false',
     }),
     new NodePolyfillPlugin(),
+    new CopyIndexDtsPlugin(),
   ],
 
   optimization: {
