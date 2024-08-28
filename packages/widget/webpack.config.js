@@ -6,7 +6,7 @@ import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import webpack from 'webpack';
-import createPackageJson from './widget-web-component/createPackageJson.cjs';
+import createPackageJson from './web-component/createPackageJson.cjs';
 
 createPackageJson();
 
@@ -15,7 +15,7 @@ export default {
 
   // Output configuration
   output: {
-    path: resolve(__dirname, 'widget-web-component/build'),
+    path: resolve(__dirname, 'web-component/build'),
     filename: 'index.js',
     library: {
       type: 'module',

@@ -20,7 +20,7 @@ module.exports = async function createPackageJson() {
     ]
   };
 
-  const webComponentDir = path.resolve(__dirname, '../widget-web-component');
+  const webComponentDir = path.resolve(__dirname, '../web-component');
   
   // generate package.json file
   await fs.writeFile(

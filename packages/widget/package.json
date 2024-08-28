@@ -23,7 +23,7 @@
     "dev": "yarn build -w",
     "build": "rollup --config rollup.config.js",
     "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
-    "publish:web-component": "npm run build:web-component && cd widget-web-component && npm publish && cd ..",
+    "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
     "lint": "eslint src --ext .ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
