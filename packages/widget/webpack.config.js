@@ -80,7 +80,7 @@ export default {
 
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_DEBUG': JSON.stringify(false),
+      'process.env.NODE_DEBUG': 'false',
     }),
     new NodePolyfillPlugin(),
   ],
