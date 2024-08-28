@@ -6,10 +6,9 @@ import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import webpack from 'webpack';
-import createPackageJson from './scripts/create-web-component-package-json.cjs';
+import createPackageJson from './widget-web-component/createPackageJson.cjs';
 
-
-const packageJson = createPackageJson();
+createPackageJson();
 
 export default {
   entry: './src/web-component.tsx',
@@ -50,20 +49,6 @@ export default {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.jsx?$/, // Transpile JavaScript files
-      //   exclude: /node_modules/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: [
-      //         ['@babel/preset-env', { modules: false }],
-      //         '@babel/preset-react',
-      //       ],
-      //       plugins: ['@babel/plugin-transform-modules-commonjs'],
-      //     },
-      //   },
-      // },
       {
         test: /\.css$/i,
         use: [
@@ -96,7 +81,6 @@ export default {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_DEBUG': JSON.stringify(false),
-      'process.env.PACKAGE_JSON': JSON.stringify(packageJson),
     }),
     new NodePolyfillPlugin(),
   ],
