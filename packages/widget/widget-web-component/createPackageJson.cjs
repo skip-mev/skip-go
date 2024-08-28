@@ -13,6 +13,7 @@ module.exports = async function createPackageJson() {
         "import": "./build/index.js"
       }
     },
+    "types": "./build/web-component.d.ts",
     "scripts": {
       "publish": "npm publish widget-web-component --access public"
     },
