@@ -23,13 +23,14 @@
     "dev": "yarn build -w",
     "build": "rollup --config rollup.config.js",
     "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
+    "publish:web-component": "npm run build:web-component && cd widget-web-component && npm publish && cd ..",
     "lint": "eslint src --ext .ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
-    "post": "git checkout -- package.json"
+    "post": "git checkout -- package.json && npm run publish:web-component"
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
