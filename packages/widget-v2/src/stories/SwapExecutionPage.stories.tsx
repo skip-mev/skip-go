@@ -5,7 +5,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { destinationAssetAtom } from "@/state/swapPage";
 import { useAtom } from "jotai";
 import operations from "@/pages/SwapExecutionPage/operations.json";
-import { skipAssets } from "@/state/skipClient";
+import { skipAssetsAtom } from "@/state/skipClient";
 import { useEffect, useState } from "react";
 
 const meta = {
@@ -17,7 +17,7 @@ const meta = {
     const firstOperation = operations[0];
     const lastOperation = operations[operations.length - 1];
 
-    const [{ data: assets }] = useAtom(skipAssets);
+    const [{ data: assets }] = useAtom(skipAssetsAtom);
 
     const sourceAsset = assets?.find(
       (asset) => asset.denom === firstOperation.denomIn
