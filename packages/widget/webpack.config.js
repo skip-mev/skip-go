@@ -15,7 +15,7 @@ export default {
 
   // Output configuration
   output: {
-    path: resolve(__dirname, '/widget-web-component/build'),
+    path: resolve(__dirname, 'widget-web-component/build'),
     filename: 'index.js',
     library: {
       type: 'module',

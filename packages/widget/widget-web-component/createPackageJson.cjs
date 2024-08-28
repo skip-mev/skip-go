@@ -22,10 +22,9 @@ module.exports = async function createPackageJson() {
     ]
   };
 
-  // Prepare web component package
   const webComponentDir = path.resolve(__dirname, '../widget-web-component');
   
-  // Write web component package.json
+  // generate package.json file
   await fs.writeFile(
     path.resolve(webComponentDir, 'package.json'),
     JSON.stringify(mergedPackage, null, 2),
