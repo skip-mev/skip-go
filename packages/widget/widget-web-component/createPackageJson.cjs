@@ -5,8 +5,8 @@ module.exports = async function createPackageJson() {
   const basePackageJson = require('../package.json');
 
   const mergedPackage = {
-    ...basePackageJson,
     "name": "@skip-go/widget-web-component",
+    "version": basePackageJson.version,
     "description": "Swap widget web component",
     "exports": {
       ".": {
