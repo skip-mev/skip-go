@@ -6,9 +6,9 @@ import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import webpack from 'webpack';
-import createPackageJson from './web-component/createPackageJson.cjs';
+import syncVersion from './web-component/syncVersion.cjs';
 
-createPackageJson();
+syncVersion();
 
 // Custom plugin to copy index.d.ts after build
 class CopyIndexDtsPlugin {

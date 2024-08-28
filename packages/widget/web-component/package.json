@@ -8,7 +8,7 @@
       "types": "./build/index.d.ts"
     }
   },
-  "types": "./build/types.d.ts",
+  "types": "./build/index.d.ts",
   "files": [
     "build",
     "README.md"
