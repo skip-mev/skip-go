@@ -22,5 +22,6 @@ export function useSkipConfig() {
     apiURL: context.apiURL,
     endpointOptions: context.endpointOptions,
     makeDestinationWallets: context.makeDestinationWallets,
+    connectedWallet: context.connectedWallet,
   };
 }
