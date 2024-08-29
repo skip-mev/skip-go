@@ -1,4 +1,4 @@
-import { BridgeType } from "./unified";
+import { BridgeType } from './unified';
 
 export type IBCAddressJSON = {
   address: string;
@@ -211,6 +211,7 @@ export type CCTPTransferJSON = {
   denom_in: string;
   denom_out: string;
   smart_relay: boolean;
+  smart_relay_fee_quote: SmartRelayFeeQuoteJSON;
 };
 
 export type CCTPTransfer = {
@@ -221,6 +222,7 @@ export type CCTPTransfer = {
   denomIn: string;
   denomOut: string;
   smartRelay: boolean;
+  smartRelayFeeQuote: SmartRelayFeeQuote;
 };
 
 export type HyperlaneTransferJSON = {
@@ -267,6 +269,22 @@ export type OPInitTransfer = {
   opInitBridgeID: string;
   bridgeID: BridgeType;
   smartRelay: boolean;
+};
+
+export type SmartRelayFeeQuoteJSON = {
+  fee_amount: string;
+  fee_address?: string;
+  payment_contract_address?: string;
+  relayer_address: string;
+  expiration: Date;
+};
+
+export type SmartRelayFeeQuote = {
+  feeAmount: string;
+  feeAddress?: string;
+  paymentContractAddress?: string;
+  relayerAddress: string;
+  expiration: Date;
 };
 
 export type SwapVenueJSON = {
@@ -421,7 +439,7 @@ export type ChainAffiliates = {
   affiliates: Affiliate[];
 };
 
-export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
+export type Reason = 'UNKNOWN' | 'BASE_TOKEN' | 'MOST_LIQUID' | 'DIRECT';
 
 export type CosmWasmContractMsgJSON = {
   contract_address: string;
@@ -433,7 +451,7 @@ export type CosmWasmContractMsg = {
   msg: string;
 };
 
-export type AutopilotAction = "LIQUID_STAKE" | "CLAIM";
+export type AutopilotAction = 'LIQUID_STAKE' | 'CLAIM';
 
 export type AutopilotMsg = {
   receiver: string;
