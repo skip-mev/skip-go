@@ -12,8 +12,17 @@ function isJsonString(str: string) {
   return true;
 }
 
-const camelize = (inputString: string) =>
-  inputString.replace(/-./g, (x) => x[1].toUpperCase());
+const propMap = {
+  'api-url': 'apiURL',
+};
+
+const camelize = (inputString: string) => {
+  inputString = inputString.toLowerCase();
+  if (propMap[inputString]) {
+    return propMap[inputString];
+  }
+  return inputString.replace(/-./g, (x) => x[1].toUpperCase());
+};
 
 const WidgetWithProvider = (props: WebComponentProps) => {
   // @ts-ignore
