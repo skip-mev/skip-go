@@ -31,6 +31,9 @@ export default [
       typescript({
         useTsconfigDeclarationDir: true,
         exclude: 'node_modules/**',
+        tsconfigOverride: {
+          exclude: ['src/web-component.tsx']
+        }
       }),
     ],
   },
