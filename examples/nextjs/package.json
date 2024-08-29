@@ -21,7 +21,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "viem": "^2.7.16",
-    "vue": "^3.4.31",
     "wagmi": "^2.5.7"
   },
   "devDependencies": {
