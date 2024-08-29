@@ -5,7 +5,7 @@ export type ChainAddress = {
   chainID: string;
   chainType?: TrackWalletCtx;
   address?: string;
-  source?: 'input' | Wallet;
+  source?: 'input' | 'parent' | Wallet;
 };
 
 export type ChainAddresses = Record<number, ChainAddress | undefined>;
@@ -15,7 +15,7 @@ export interface SetChainAddressesParam {
   chainID: string;
   chainType: TrackWalletCtx;
   address: string;
-  source: 'input' | Wallet;
+  source: 'input' | 'parent' | Wallet;
 }
 export interface BroadcastedTx {
   chainID: string;

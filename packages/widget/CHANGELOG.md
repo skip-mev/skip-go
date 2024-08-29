@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.4
+
+### Patch Changes
+
+- 7079fe4: inject connected wallet from parent prop
+
 ## 2.4.3
 
 ### Patch Changes

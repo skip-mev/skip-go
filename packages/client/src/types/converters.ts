@@ -100,6 +100,8 @@ import {
   SwapExactCoinInJSON,
   SwapExactCoinOut,
   SwapExactCoinOutJSON,
+  SmartRelayFeeQuote,
+  SmartRelayFeeQuoteJSON,
   SmartSwapExactCoinIn,
   SmartSwapExactCoinInJSON,
   SwapJSON,
@@ -1520,6 +1522,30 @@ export function bankSendToJSON(value: BankSend): BankSendJSON {
   };
 }
 
+export function smartRelayFeeQuoteFromJSON(
+  value: SmartRelayFeeQuoteJSON
+): SmartRelayFeeQuote {
+  return {
+    feeAmount: value.fee_amount,
+    feeAddress: value.fee_address,
+    paymentContractAddress: value.payment_contract_address,
+    relayerAddress: value.relayer_address,
+    expiration: value.expiration,
+  };
+}
+
+export function smartRelayFeeQuoteToJSON(
+  value: SmartRelayFeeQuote
+): SmartRelayFeeQuoteJSON {
+  return {
+    fee_amount: value.feeAmount,
+    fee_address: value.feeAddress,
+    payment_contract_address: value.paymentContractAddress,
+    relayer_address: value.relayerAddress,
+    expiration: value.expiration,
+  };
+}
+
 export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
   return {
     fromChainID: value.from_chain_id,
@@ -1529,6 +1555,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     denomIn: value.denom_in,
     denomOut: value.denom_out,
     smartRelay: value.smart_relay,
+    smartRelayFeeQuote: smartRelayFeeQuoteFromJSON(value.smart_relay_fee_quote),
   };
 }
 
@@ -1541,6 +1568,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     denom_in: value.denomIn,
     denom_out: value.denomOut,
     smart_relay: value.smartRelay,
+    smart_relay_fee_quote: smartRelayFeeQuoteToJSON(value.smartRelayFeeQuote),
   };
 }
 
