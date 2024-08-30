@@ -29,9 +29,9 @@ export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [_, setSwapDirection] = useAtom(swapDirectionAtom);
   const { isLoading: isRouteLoading } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
