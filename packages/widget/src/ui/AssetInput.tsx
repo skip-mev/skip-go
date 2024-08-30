@@ -108,7 +108,7 @@ function AssetInput({
         'focus-within:border-neutral-300 focus-within:shadow-sm',
         'hover:border-neutral-300 hover:shadow-sm',
         !!isError &&
-          'border-red-400 focus-within:border-red-500 hover:border-red-500'
+        'border-red-400 focus-within:border-red-500 hover:border-red-500'
       )}
     >
       <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
@@ -212,9 +212,9 @@ function AssetInput({
             {amountUSD && Number(amountUSD) > 0 ? formatUSD(amountUSD) : null}
           </p>
           {amountUSD !== undefined &&
-          Number(amountUSD) > 0 &&
-          diffPercentage !== 0 &&
-          context === 'destination' ? (
+            Number(amountUSD) > 0 &&
+            diffPercentage !== 0 &&
+            context === 'destination' ? (
             <p
               className={cn(
                 'text-sm tabular-nums',
@@ -232,9 +232,8 @@ function AssetInput({
                 <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <SimpleTooltip
-                  label={`${parseFloat(selectedAssetBalance).toString()} ${
-                    asset.recommendedSymbol
-                  }`}
+                  label={`${parseFloat(selectedAssetBalance).toString()} ${asset.recommendedSymbol
+                    }`}
                 >
                   <div
                     className={cn(

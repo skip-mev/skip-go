@@ -9,6 +9,8 @@ import { useAtom } from "jotai";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
+import { BigNumber } from "bignumber.js";
+import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -19,7 +21,7 @@ export type AssetChainInputProps = {
 };
 
 export const AssetChainInput = ({
-  value = "0",
+  value,
   onChangeValue,
   selectedAssetDenom,
   handleChangeAsset,
@@ -39,6 +41,80 @@ export const AssetChainInput = ({
 
   const usdValue = useUsdValue({ ...selectedAsset, value });
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!onChangeValue) return;
+    let latest = e.target.value;
+
+    if (latest.match(/^[.,]/)) latest = `0.${latest}`; // Handle first character being a period or comma
+    latest = latest.replace(/^[0]{2,}/, "0"); // Remove leading zeros
+    latest = latest.replace(/[^\d.,]/g, ""); // Remove non-numeric and non-decimal characters
+    latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
+    latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
+    onChangeValue?.(formatNumberWithoutCommas(latest));
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!onChangeValue) return;
+
+    let value: BigNumber;
+
+    switch (event.key) {
+      case "Escape":
+        if (
+          event.currentTarget.selectionStart ===
+          event.currentTarget.selectionEnd
+        ) {
+          event.currentTarget.select();
+        }
+        return;
+
+      case "ArrowUp":
+        event.preventDefault();
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0"
+        );
+
+        if (event.shiftKey) {
+          value = value.plus(10);
+        } else if (event.altKey || event.ctrlKey || event.metaKey) {
+          value = value.plus(0.1);
+        } else {
+          value = value.plus(1);
+        }
+
+        if (value.isNegative()) {
+          value = new BigNumber(0);
+        }
+
+        onChangeValue(value.toString());
+        break;
+
+      case "ArrowDown":
+        event.preventDefault();
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0"
+        );
+
+        if (event.shiftKey) {
+          value = value.minus(10);
+        } else if (event.altKey || event.ctrlKey || event.metaKey) {
+          value = value.minus(0.1);
+        } else {
+          value = value.minus(1);
+        }
+
+        if (value.isNegative()) {
+          value = new BigNumber(0);
+        }
+
+        onChangeValue(value.toString());
+        break;
+
+      default:
+        return;
+    }
+  };
+
   return (
     <StyledAssetChainInputWrapper
       justify="space-between"
@@ -48,8 +124,11 @@ export const AssetChainInput = ({
       <Row justify="space-between">
         <StyledInput
           type="text"
-          value={value}
-          onChange={(e) => onChangeValue?.(e.target.value)}
+          value={formatNumberWithCommas(value || "")}
+          placeholder="0"
+          inputMode="numeric"
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
         <Button onClick={handleChangeAsset} gap={5}>
           {selectedAsset ? (

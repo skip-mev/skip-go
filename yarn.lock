@@ -21672,6 +21672,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai-effect@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "jotai-effect@npm:1.0.2"
+  peerDependencies:
+    jotai: ">=2.5.0"
+  checksum: 10674c03fa62c7aa74d37b67076436ad611e06e5660d8c15442f61c50ffa110a03deae18c42b351d8b28eeb08b8bc2e5f4fb1a34a1bead335b2b4b75ccfe4163
+  languageName: node
+  linkType: hard
+
 "jotai-tanstack-query@npm:^0.8.6":
   version: 0.8.6
   resolution: "jotai-tanstack-query@npm:0.8.6"
@@ -30481,6 +30490,7 @@ __metadata:
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.9.1
+    jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
     match-sorter: ^6.3.4
