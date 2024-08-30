@@ -1,17 +1,17 @@
-import { createModal, ModalProps } from '@/components/Modal';
-import { Column } from '@/components/Layout';
-import { styled } from 'styled-components';
-import { SwapPageHeader } from '@/pages/SwapPage/SwapPageHeader';
-import { SwapPageFooter } from '@/pages/SwapPage/SwapPageFooter';
-import { ICONS } from '@/icons';
-import { VirtualList } from '@/components/VirtualList';
+import { createModal, ModalProps } from "@/components/Modal";
+import { Column } from "@/components/Layout";
+import { styled } from "styled-components";
+import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
+import { ICONS } from "@/icons";
+import { VirtualList } from "@/components/VirtualList";
 import {
   TransactionHistoryModalItem,
   TxHistoryItem,
-} from './TransactionHistoryModalItem';
-import { useState } from 'react';
-import { HistoryIcon } from '@/icons/HistoryIcon';
-import { SmallText } from '@/components/Typography';
+} from "./TransactionHistoryModalItem";
+import { useState } from "react";
+import { HistoryIcon } from "@/icons/HistoryIcon";
+import { SmallText } from "@/components/Typography";
 
 const ITEM_HEIGHT = 40;
 const ITEM_GAP = 5;
@@ -29,9 +29,8 @@ export const TransactionHistoryModal = createModal(
       <>
         <SwapPageHeader
           leftButton={{
-            label: 'Back',
+            label: "Back",
             icon: ICONS.thinArrow,
-            onClick: () => {},
           }}
         />
         <StyledContainer>
@@ -65,7 +64,7 @@ export const TransactionHistoryModal = createModal(
                     }
                   }}
                   onClickTransactionID={() => {
-                    window.open(item.txStatus[0].explorerLink, '_blank');
+                    window.open(item.txStatus[0].explorerLink, "_blank");
                   }}
                 />
               )}

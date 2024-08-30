@@ -15,10 +15,12 @@ import {
 } from '../utils/wallet';
 import { useChainByID } from './use-chains';
 import { chainIdToName } from '../chains';
+import { useSkipConfig } from './use-skip-client';
 
 export function useAccount(chainID?: string) {
   const { data: chain } = useChainByID(chainID);
   const trackedWallet = useTrackWallet(chain?.chainType as TrackWalletCtx);
+  const { connectedWallet } = useSkipConfig();
 
   const { getWalletRepo } = useCosmosManager();
 
@@ -71,9 +73,74 @@ export function useAccount(chainID?: string) {
       !!cosmosWallet?.address,
   });
 
+  const { data: parentCosmosAddress } = useQuery({
+    queryKey: [
+      'parentCosmosAddress',
+      chain?.chainID,
+      connectedWallet?.cosmos?.getSigner,
+    ],
+    queryFn: async () => {
+      if (chain?.chainType === 'cosmos') {
+        const signer = await connectedWallet?.cosmos?.getSigner?.(
+          chain.chainID
+        );
+        const accounts = await signer?.getAccounts();
+        return accounts?.[0].address;
+      }
+    },
+    enabled:
+      chain?.chainType === 'cosmos' && !!connectedWallet?.cosmos?.getSigner,
+  });
+
+  const { data: parentEVMSAddress } = useQuery({
+    queryKey: [
+      'parentEVMSAddress',
+      chain?.chainID,
+      connectedWallet?.evm?.getSigner,
+    ],
+    queryFn: async () => {
+      if (chain?.chainType === 'evm') {
+        const signer = await connectedWallet?.evm?.getSigner?.(chain.chainID);
+        return signer?.account?.address;
+      }
+    },
+    enabled: chain?.chainType === 'evm' && !!connectedWallet?.evm?.getSigner,
+  });
+
+  const { data: parentSVMAddress } = useQuery({
+    queryKey: [
+      'parentSVMAddress',
+      chain?.chainID,
+      connectedWallet?.svm?.getSigner,
+    ],
+    queryFn: async () => {
+      if (chain?.chainType === 'svm') {
+        const signer = await connectedWallet?.svm?.getSigner?.();
+        return signer?.publicKey?.toBase58();
+      }
+    },
+    enabled: chain?.chainType === 'svm' && !!connectedWallet?.svm?.getSigner,
+  });
+
   const account = useMemo(() => {
-    trackedWallet;
     if (!chain) return;
+    if (chain.chainType === 'cosmos' && parentCosmosAddress && !cosmosWallet) {
+      return {
+        address: parentCosmosAddress,
+        isWalletConnected: true,
+        wallet: {
+          walletName: 'injected',
+          walletPrettyName: '',
+          walletInfo: {
+            logo: '',
+          },
+          isLedger: false,
+        },
+        chainType: chain.chainType,
+        connect: () => {},
+        disconnect: () => {},
+      };
+    }
     if (chain.chainType === 'cosmos' && cosmosWallet) {
       return {
         address: cosmosWallet.address,
@@ -107,6 +174,22 @@ export function useAccount(chainID?: string) {
       };
     }
     if (chain.chainType === 'evm') {
+      if (parentEVMSAddress && !wagmiAccount) {
+        return {
+          address: parentEVMSAddress,
+          isWalletConnected: true,
+          wallet: {
+            walletName: 'injected',
+            walletPrettyName: '',
+            walletInfo: {
+              logo: '',
+            },
+          },
+          chainType: chain.chainType,
+          connect: () => {},
+          disconnect: () => {},
+        };
+      }
       return {
         address: wagmiAccount.address,
         isWalletConnected: wagmiAccount.isConnected,
@@ -140,6 +223,23 @@ export function useAccount(chainID?: string) {
       const solanaWallet = wallets.find(
         (w) => w.adapter.name === trackedWallet?.walletName
       );
+      if (parentSVMAddress && !solanaWallet) {
+        return {
+          address: parentSVMAddress,
+          isWalletConnected: true,
+          wallet: {
+            walletName: 'injected',
+            walletPrettyName: '',
+            walletInfo: {
+              logo: '',
+            },
+          },
+          chainType: chain.chainType,
+          connect: () => {},
+          disconnect: () => {},
+        };
+      }
+
       return {
         address: solanaWallet?.adapter.publicKey?.toBase58(),
         isWalletConnected:
@@ -179,6 +279,9 @@ export function useAccount(chainID?: string) {
     wagmiAccount.isConnected,
     wagmiAccount.connector,
     wallets,
+    parentCosmosAddress,
+    parentEVMSAddress,
+    parentSVMAddress,
   ]);
   return account;
 }

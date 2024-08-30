@@ -1,6 +1,6 @@
-import { css, styled } from 'styled-components';
-import { Row } from '@/components/Layout';
-import { removeButtonStyles, Text } from '@/components/Typography';
+import { css, styled } from "styled-components";
+import { Row } from "@/components/Layout";
+import { removeButtonStyles, Text } from "@/components/Typography";
 
 export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
@@ -24,12 +24,12 @@ export const ModalRowItem = ({
       gap={16}
       style={style}
     >
-      {typeof leftContent === 'string' ? (
+      {typeof leftContent === "string" ? (
         <Text fontSize={20}>{leftContent}</Text>
       ) : (
         leftContent
       )}
-      {typeof rightContent === 'string' ? (
+      {typeof rightContent === "string" ? (
         <Text fontSize={20}>{rightContent}</Text>
       ) : (
         rightContent

@@ -4,8 +4,8 @@ type IconProps = {
 };
 
 export const PlusIcon = ({
-  color = 'currentColor',
-  backgroundColor = 'transparent',
+  color = "currentColor",
+  backgroundColor = "transparent",
 }: IconProps) => (
   <svg
     width="40"

@@ -1,14 +1,14 @@
-import { styled } from 'styled-components';
-import { Column, Row, Spacer } from '@/components/Layout';
-import { SmallText, Text } from '@/components/Typography';
-import { ChevronIcon } from '@/icons/ChevronIcon';
-import { useTheme } from 'styled-components';
-import { CogIcon } from '@/icons/CogIcon';
-import { Button, GhostButton } from '@/components/Button';
-import { useAtom } from 'jotai';
-import { skipAssets } from '@/state/skipClient';
-import { useUsdValue } from '@/utils/useUsdValue';
-import { formatUSD } from '@/utils/intl';
+import { styled } from "styled-components";
+import { Column, Row, Spacer } from "@/components/Layout";
+import { SmallText, Text } from "@/components/Typography";
+import { ChevronIcon } from "@/icons/ChevronIcon";
+import { useTheme } from "styled-components";
+import { CogIcon } from "@/icons/CogIcon";
+import { Button, GhostButton } from "@/components/Button";
+import { useAtom } from "jotai";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { useUsdValue } from "@/utils/useUsdValue";
+import { formatUSD } from "@/utils/intl";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -19,17 +19,22 @@ export type AssetChainInputProps = {
 };
 
 export const AssetChainInput = ({
-  value = '0',
+  value = "0",
   onChangeValue,
   selectedAssetDenom,
   handleChangeAsset,
   handleChangeChain,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom)
 
   const selectedAsset = assets?.find(
     (asset) => asset.denom === selectedAssetDenom
+  );
+
+  const selectedChain = chains?.find(
+    (chain) => chain.chainID === selectedAsset?.chainID
   );
 
   const usdValue = useUsdValue({ ...selectedAsset, value });
@@ -50,7 +55,7 @@ export const AssetChainInput = ({
           {selectedAsset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <img src={selectedAsset?.logoURI} width={23} />
-              <Text>{selectedAsset?.name}</Text>
+              <Text>{selectedAsset?.recommendedSymbol}</Text>
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
@@ -73,7 +78,7 @@ export const AssetChainInput = ({
             secondary
             gap={4}
           >
-            <SmallText>on {selectedAsset?.chainName}</SmallText>
+            <SmallText>on {selectedChain?.prettyName}</SmallText>
             <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (

@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { styled, useTheme } from 'styled-components';
-import { Row } from '@/components/Layout';
-import { SkipLogoIcon } from '@/icons/SkipLogoIcon';
-import { SmallText } from '@/components/Typography';
-import { SearchIcon } from '@/icons/SearchIcon';
-import { StyledAssetLabel } from '@/components/AssetChainInput';
-import { ClientAsset } from '@/state/skipClient';
-import { LeftArrowIcon } from '@/icons/ArrowIcon';
-import { Button } from '@/components/Button';
-import { Text } from '@/components/Typography';
-import { useModal } from '@/components/Modal';
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { styled, useTheme } from "styled-components";
+import { Row } from "@/components/Layout";
+import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
+import { SmallText } from "@/components/Typography";
+import { SearchIcon } from "@/icons/SearchIcon";
+import { StyledAssetLabel } from "@/components/AssetChainInput";
+import { ClientAsset } from "@/state/skipClient";
+import { LeftArrowIcon } from "@/icons/ArrowIcon";
+import { Button } from "@/components/Button";
+import { Text } from "@/components/Typography";
+import { useModal } from "@/components/Modal";
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
@@ -24,7 +24,7 @@ export const TokenAndChainSelectorModalSearchInput = ({
   const modal = useModal();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,13 +61,13 @@ export const TokenAndChainSelectorModalSearchInput = ({
         ref={inputRef}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder={asset ? 'Search networks' : 'Search asset or network'}
+        placeholder={asset ? "Search networks" : "Search asset or network"}
         value={searchTerm}
         onChange={handleSearch}
       />
 
       <Row align="center" gap={5}>
-        <SmallText style={{ textWrap: 'nowrap' }}> Powered by </SmallText>
+        <SmallText style={{ textWrap: "nowrap" }}> Powered by </SmallText>
         <SkipLogoIcon color={theme.primary.text.lowContrast} />
       </Row>
     </StyledSearchInputContainer>

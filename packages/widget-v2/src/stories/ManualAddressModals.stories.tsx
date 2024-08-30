@@ -1,18 +1,18 @@
-import type { Meta } from '@storybook/react';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Row } from '@/components/Layout';
-import { defaultTheme, lightTheme } from '@/widget/theme';
-import { ManualAddressModal } from '@/modals/ManualAddressModal/ManualAddressModal';
-import { useEffect, useState } from 'react';
-import { skipAssets } from '@/state/skipClient';
-import { destinationAssetAtom } from '@/state/swapPage';
-import { useAtom } from 'jotai';
+import type { Meta } from "@storybook/react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { Row } from "@/components/Layout";
+import { defaultTheme, lightTheme } from "@/widget/theme";
+import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import { useEffect, useState } from "react";
+import { skipAssetsAtom } from "@/state/skipClient";
+import { destinationAssetAtom } from "@/state/swapPage";
+import { useAtom } from "jotai";
 
 const meta = {
-  title: 'Modals/ManualAddressModal',
+  title: "Modals/ManualAddressModal",
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
   args: {},
 } satisfies Meta<typeof ManualAddressModal>;
@@ -24,9 +24,9 @@ export const ManualAddressModalsExample = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [shouldRender, setShouldRender] = useState(false);
 
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const asset = assets?.find((asset) => asset.denom === 'uatom');
+  const asset = assets?.find((asset) => asset.denom === "uatom");
 
   useEffect(() => {
     setDestinationAsset(asset);
@@ -34,7 +34,7 @@ export const ManualAddressModalsExample = () => {
     if (destinationAsset) {
       setShouldRender(true);
     }
-  }, [asset, destinationAsset]);
+  }, [asset, destinationAsset, setDestinationAsset]);
   if (shouldRender) {
     return (
       <NiceModal.Provider>

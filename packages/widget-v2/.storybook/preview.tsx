@@ -1,11 +1,11 @@
-import { Preview } from '@storybook/react';
-import React from 'react';
-import { ShadowDomAndProviders } from '../src/widget/ShadowDomAndProviders';
+import { Preview } from "@storybook/react";
+import React from "react";
+import { ShadowDomAndProviders } from "../src/widget/ShadowDomAndProviders";
 
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <div style={{ margin: '3em' }}>
+      <div style={{ margin: "3em" }}>
         <ShadowDomAndProviders>
           <Story />
         </ShadowDomAndProviders>
@@ -14,19 +14,19 @@ const preview: Preview = {
   ],
   parameters: {
     backgrounds: {
-      default: 'gray',
+      default: "gray",
       values: [
         {
-          name: 'gray',
-          value: 'gray',
+          name: "gray",
+          value: "gray",
         },
         {
-          name: 'white',
-          value: 'white',
+          name: "white",
+          value: "white",
         },
         {
-          name: 'black',
-          value: 'black',
+          name: "black",
+          value: "black",
         },
       ],
     },

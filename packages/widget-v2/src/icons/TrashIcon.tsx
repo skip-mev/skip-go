@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const TrashIcon = ({ color = 'currentColor' }: IconProps) => (
+export const TrashIcon = ({ color = "currentColor" }: IconProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="12"

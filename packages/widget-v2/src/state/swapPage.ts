@@ -1,6 +1,6 @@
-import { atom } from 'jotai';
-import { ClientAsset } from './skipClient';
-import { Wallet } from '@/components/RenderWalletList';
+import { atom } from "jotai";
+import { ClientAsset } from "./skipClient";
+import { Wallet } from "@/components/RenderWalletList";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;

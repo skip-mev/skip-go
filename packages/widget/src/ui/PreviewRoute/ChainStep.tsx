@@ -376,7 +376,8 @@ export const ChainStep = ({
                   }}
                   className="opacity-50"
                 >
-                  {chainAddress?.source !== 'input' ? (
+                  {chainAddress?.source !== 'input' &&
+                  chainAddress?.source !== 'parent' ? (
                     <img
                       height={16}
                       width={16}
@@ -391,6 +392,8 @@ export const ChainStep = ({
                         'https://api.dicebear.com/6.x/shapes/svg'
                       }
                     />
+                  ) : chainAddress?.source !== 'parent' ? (
+                    <FaKeyboard className="h-4 w-4 text-neutral-400" />
                   ) : (
                     <FaKeyboard className="h-4 w-4 text-neutral-400" />
                   )}
@@ -418,7 +421,8 @@ export const ChainStep = ({
           >
             {chainAddress?.address && !isIntermidiaryChain && (
               <>
-                {chainAddress?.source !== 'input' ? (
+                {chainAddress?.source !== 'input' &&
+                chainAddress?.source !== 'parent' ? (
                   <img
                     height={16}
                     width={16}

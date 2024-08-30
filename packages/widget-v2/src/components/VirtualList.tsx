@@ -1,6 +1,6 @@
-import List from 'rc-virtual-list';
-import { getHexColor, opacityToHex } from '@/utils/colors';
-import { useTheme } from 'styled-components';
+import List from "rc-virtual-list";
+import { getHexColor, opacityToHex } from "@/utils/colors";
+import { useTheme } from "styled-components";
 
 export type VirtualListProps<T> = {
   listItems: T[];
@@ -12,7 +12,7 @@ export type VirtualListProps<T> = {
   className?: string;
 };
 
-export const VirtualList = <T extends unknown>({
+export const VirtualList = <T,>({
   listItems,
   height,
   itemHeight,
@@ -32,8 +32,8 @@ export const VirtualList = <T extends unknown>({
       className={className}
       styles={{
         verticalScrollBar: {
-          backgroundColor: 'transparent',
-          visibility: 'visible',
+          backgroundColor: "transparent",
+          visibility: "visible",
         },
         verticalScrollBarThumb: {
           backgroundColor:

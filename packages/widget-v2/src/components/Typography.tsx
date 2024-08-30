@@ -1,9 +1,9 @@
-import { css, styled } from 'styled-components';
-import { getBrandButtonTextColor } from '@/utils/colors';
+import { css, styled } from "styled-components";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 type TextProps = {
   fontSize?: number;
-  fontWeight?: 'normal' | 'bold' | number;
+  fontWeight?: "normal" | "bold" | number;
   textAlign?: string;
   lineHeight?: string;
   color?: string;
@@ -30,7 +30,7 @@ export const textProps = css<TextProps>`
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
-  ${({ monospace }) => monospace && `font-family: 'ABCDiatype', monospace;`};
+  ${({ monospace }) => monospace && "font-family: 'ABCDiatype', monospace;"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
 `;
@@ -42,7 +42,7 @@ export const SmallText = styled.p<TextProps>`
   ${textProps}
 `;
 
-export const SmallTextButton = styled(SmallText).attrs({ as: 'button' })`
+export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
   ${removeButtonStyles}
   cursor: pointer;
 `;
@@ -54,7 +54,7 @@ export const Text = styled(SmallText)`
   ${textProps}
 `;
 
-export const TextButton = styled(Text).attrs({ as: 'button' })`
+export const TextButton = styled(Text).attrs({ as: "button" })`
   ${removeButtonStyles}
   cursor: pointer;
 `;

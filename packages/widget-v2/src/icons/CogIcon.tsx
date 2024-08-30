@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const CogIcon = ({ color = 'currentColor' }: IconProps) => (
+export const CogIcon = ({ color = "currentColor" }: IconProps) => (
   <svg
     width="10"
     height="10"

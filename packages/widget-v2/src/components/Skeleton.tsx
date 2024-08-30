@@ -1,5 +1,5 @@
-import { css, styled } from 'styled-components';
-import { getHexColor, opacityToHex } from '@/utils/colors';
+import { css, styled } from "styled-components";
+import { getHexColor, opacityToHex } from "@/utils/colors";
 
 export const SkeletonElement = styled.div<{
   width: number;
@@ -9,7 +9,7 @@ export const SkeletonElement = styled.div<{
     css`
       width: ${width}px;
       height: ${height}px;
-      background-color: ${getHexColor(theme.primary.text.normal ?? '') +
+      background-color: ${getHexColor(theme.primary.text.normal ?? "") +
       opacityToHex(10)};
     `};
 `;

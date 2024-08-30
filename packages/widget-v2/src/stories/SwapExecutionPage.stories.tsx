@@ -1,24 +1,23 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
-import { SwapExecutionPage } from '@/pages/SwapExecutionPage/SwapExecutionPage';
-import NiceModal from '@ebay/nice-modal-react';
-import { destinationAssetAtom } from '@/state/swapPage';
-import { useAtom } from 'jotai';
-import operations from '@/pages/SwapExecutionPage/operations.json';
-import { skipAssets } from '@/state/skipClient';
-import { useEffect, useState } from 'react';
+import type { Meta, StoryObj } from "@storybook/react";
+import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
+import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
+import NiceModal from "@ebay/nice-modal-react";
+import { destinationAssetAtom } from "@/state/swapPage";
+import { useAtom } from "jotai";
+import operations from "@/pages/SwapExecutionPage/operations.json";
+import { skipAssetsAtom } from "@/state/skipClient";
+import { useEffect, useState } from "react";
 
 const meta = {
-  title: 'Pages/SwapExecutionPage',
-  component: (props) => {
-    const [_sourceAsset, setSourceAsset] = useAtom(destinationAssetAtom);
-    const [_destinationAsset, setDestinationAsset] =
-      useAtom(destinationAssetAtom);
+  title: "Pages/SwapExecutionPage",
+  component: function SwapExecutionPageStory(props) {
+    const [, setSourceAsset] = useAtom(destinationAssetAtom);
+    const [, setDestinationAsset] = useAtom(destinationAssetAtom);
     const [shouldRender, setShouldRender] = useState(false);
     const firstOperation = operations[0];
     const lastOperation = operations[operations.length - 1];
 
-    const [{ data: assets }] = useAtom(skipAssets);
+    const [{ data: assets }] = useAtom(skipAssetsAtom);
 
     const sourceAsset = assets?.find(
       (asset) => asset.denom === firstOperation.denomIn
@@ -34,7 +33,7 @@ const meta = {
       if (sourceAsset && destinationAsset) {
         setShouldRender(true);
       }
-    }, [sourceAsset, destinationAsset]);
+    }, [sourceAsset, destinationAsset, setSourceAsset, setDestinationAsset]);
     if (shouldRender) {
       return renderLightAndDarkTheme(
         <NiceModal.Provider>
@@ -48,7 +47,7 @@ const meta = {
   },
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
 } satisfies Meta<typeof SwapExecutionPage>;
 type Story = StoryObj<typeof meta>;

@@ -1,12 +1,19 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import { Scope } from 'react-shadow-scope';
-import { defaultTheme, PartialTheme } from './theme';
-import { createGlobalStyle } from 'styled-components';
-import regular from '@/fonts/ABCDiatype-Regular.woff2';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { QueryClient } from '@tanstack/react-query';
-import isPropValid from '@emotion/is-prop-valid';
+import {
+  ComponentType,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { StyleSheetManager, ThemeProvider } from "styled-components";
+import { Scope } from "react-shadow-scope";
+import { defaultTheme, PartialTheme } from "./theme";
+import { createGlobalStyle } from "styled-components";
+import regular from "@/fonts/ABCDiatype-Regular.woff2";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import isPropValid from "@emotion/is-prop-valid";
 
 export const queryClient = new QueryClient();
 
@@ -24,8 +31,11 @@ export const GlobalStyles = createGlobalStyle`
   }
 `;
 
-function shouldForwardProp(propName: string, target: any) {
-  if (typeof target === 'string') {
+function shouldForwardProp(
+  propName: string,
+  target: string | ComponentType<unknown>
+) {
+  if (typeof target === "string") {
     return isPropValid(propName);
   }
   return true;
@@ -40,7 +50,7 @@ export const ShadowDomAndProviders = ({
 }) => {
   const [isClient, setIsClient] = useState<boolean>(false);
 
-  const [_shadowDom, setShadowDom] = useState<HTMLElement>();
+  const [, setShadowDom] = useState<HTMLElement>();
   const [styledComponentContainer, setStyledComponentContainer] =
     useState<HTMLElement>();
 
@@ -64,7 +74,7 @@ export const ShadowDomAndProviders = ({
       ...defaultTheme,
       ...theme,
     };
-  }, [defaultTheme, theme]);
+  }, [theme]);
 
   return isClient ? (
     <Scope ref={onShadowDomLoaded}>
@@ -75,7 +85,7 @@ export const ShadowDomAndProviders = ({
       >
         <ThemeProvider theme={mergedThemes}>
           <GlobalStyles />
-          <QueryClientProvider client={queryClient} key={'skip-widget'}>
+          <QueryClientProvider client={queryClient} key={"skip-widget"}>
             {children}
           </QueryClientProvider>
         </ThemeProvider>

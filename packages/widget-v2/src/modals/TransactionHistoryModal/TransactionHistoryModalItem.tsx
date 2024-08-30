@@ -1,31 +1,31 @@
-import { RouteResponse } from '@skip-go/client';
-import { SmallText } from '@/components/Typography';
-import { useAtom } from 'jotai';
-import { skipAssets, getChain, ClientAsset } from '@/state/skipClient';
-import { Column, Row } from '@/components/Layout';
-import styled, { useTheme } from 'styled-components';
-import { getFormattedAssetAmount } from '@/utils/crypto';
-import { XIcon } from '@/icons/XIcon';
-import { useMemo } from 'react';
-import { StyledAnimatedBorder } from '@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow';
-import { TransactionHistoryModalItemDetails } from './TransactionHistoryModalItemDetails';
-import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
+import { RouteResponse } from "@skip-go/client";
+import { SmallText } from "@/components/Typography";
+import { useAtom } from "jotai";
+import { skipAssetsAtom, ClientAsset, skipChainsAtom } from "@/state/skipClient";
+import { Column, Row } from "@/components/Layout";
+import styled, { useTheme } from "styled-components";
+import { getFormattedAssetAmount } from "@/utils/crypto";
+import { XIcon } from "@/icons/XIcon";
+import { useMemo } from "react";
+import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
+import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
+import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 
-export interface TxStatus {
+export type TxStatus = {
   chainId: string;
   txHash: string;
   explorerLink: string;
   axelarscanLink?: string;
 }
 
-export interface TxHistoryItem {
+export type TxHistoryItem = {
   route: RouteResponse;
   txStatus: TxStatus[];
   timestamp: string;
-  status: 'pending' | 'success' | 'failed';
+  status: "pending" | "success" | "failed";
 }
 
-export type TxHistoryItemInput = Pick<TxHistoryItem, 'route'>;
+export type TxHistoryItemInput = Pick<TxHistoryItem, "route">;
 
 export type TxHistoryState = Record<string, TxHistoryItem>;
 
@@ -56,30 +56,27 @@ export const TransactionHistoryModalItem = ({
     timestamp,
     status,
   } = txHistoryItem;
-  const [{ data: assets }] = useAtom(skipAssets);
-  const sourceChain = getChain(sourceAssetChainID ?? '');
-  const sourceChainImage = sourceChain.images?.find(
-    (image) => image.svg ?? image.png
-  );
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom)
+  const sourceChain = chains?.find(c => c.chainID === sourceAssetChainID)
+  const sourceChainImage = sourceChain?.logoURI
   const source = {
     amount: amountIn,
     asset: assets?.find((asset) => asset.denom === sourceAssetDenom),
-    chainImage: sourceChainImage?.svg ?? sourceChainImage?.png ?? '',
+    chainImage: sourceChainImage ?? "",
   };
 
-  const destinationChain = getChain(destAssetChainID ?? '');
-  const destinationChainImage = destinationChain.images?.find(
-    (image) => image.svg ?? image.png
-  );
+  const destinationChain = chains?.find(c => c.chainID === destAssetChainID)
+  const destinationChainImage = destinationChain?.logoURI
   const destination = {
     amount: amountOut,
     asset: assets?.find((asset) => asset.denom === destAssetDenom),
-    chainImage: destinationChainImage?.svg ?? destinationChainImage?.png ?? '',
+    chainImage: destinationChainImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
     switch (status) {
-      case 'pending':
+      case "pending":
         return (
           <StyledAnimatedBorder
             width={10}
@@ -88,12 +85,12 @@ export const TransactionHistoryModalItem = ({
             txState="broadcasted"
           />
         );
-      case 'success':
+      case "success":
         return <StyledGreenDot />;
-      case 'failed':
+      case "failed":
         return <XIcon color={theme.error.text} />;
     }
-  }, [status]);
+  }, [status, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
     return new Date(timestamp).toLocaleString();
@@ -101,11 +98,11 @@ export const TransactionHistoryModalItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (status === 'pending') {
-      return 'In Progress';
+    if (status === "pending") {
+      return "In Progress";
     }
-    return '5 mins ago';
-  }, [timestamp, status]);
+    return "5 mins ago";
+  }, [status]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -119,7 +116,7 @@ export const TransactionHistoryModalItem = ({
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
           <SmallText normalTextColor>
-            on {destinationChain?.pretty_name ?? destinationChain?.chain_name}
+            on {destinationChain?.prettyName ?? destinationChain?.chainName}
           </SmallText>
         </Row>
         <Row align="center" gap={10}>
@@ -130,22 +127,21 @@ export const TransactionHistoryModalItem = ({
       {showDetails && (
         <TransactionHistoryModalItemDetails
           status={status}
-          sourceChainName={sourceChain?.pretty_name ?? sourceChain?.chain_name}
+          sourceChainName={sourceChain?.prettyName ?? sourceChain?.chainName ?? "--"}
           destinationChainName={
-            destinationChain?.pretty_name ?? destinationChain?.chain_name
+            destinationChain?.prettyName ?? destinationChain?.chainName ?? "--"
           }
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
           transactionID={txStatus[0].txHash}
           onClickTransactionID={onClickTransactionID}
-          onClickDelete={() => {}}
         />
       )}
     </StyledHistoryContainer>
   );
 };
 
-const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
+const StyledHistoryContainer = styled(Column) <{ showDetails?: boolean }>`
   background-color: ${({ theme, showDetails }) =>
     showDetails && theme.secondary.background.normal};
   &:hover {

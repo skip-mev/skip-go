@@ -5,7 +5,7 @@ type IconProps = {
 };
 
 export const SignatureIcon = ({
-  backgroundColor = 'currentColor',
+  backgroundColor = "currentColor",
   className,
   ...props
 }: IconProps & React.SVGProps<SVGSVGElement>) => (

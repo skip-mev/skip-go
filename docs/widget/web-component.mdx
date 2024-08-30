@@ -4,64 +4,48 @@ title: 'Web Component'
 
 If your app is not using React, have no fear, the web component version of the Skip:Go Widget is here!
 
-In order to register the web-component, you must first call the `initializeSwapWidget` function:
+In order to use the web-component, you can either import it from `@skip-go/widget-web-component` or 
+use a script tag / cdn link.
+
+It is recommended to lazy load this javascript bundle as it comes pre-bundled with all of its dependencies,
+so it will take some time to load, especially if including it directly inside your bundle in a dev environment.
+
+If you're importing the package via npm you will need to make sure that node has enough memory allocated to it
+to be able to load it using something like this NODE_OPTIONS=--max-old-space-size=32384
 
 ```tsx
-import { initializeSwapWidget } from '@skip-go/widget';
-initializeSwapWidget();
+import('@skip-go/widget-web-component');
+```
+or 
+```html
+<body>
+  <!-- This is the recommended way to import it via script tag -->
+  <script
+    async
+    src="https://unpkg.com/@skip-go/widget-web-component/build/index.js"
+    type="module"
+  ></script>
+</body>
 ```
 
-## If you encounter errors such as `could not resolve "react/jsx-runtime"` after installing the widget, you may need to install the peer dependencies.
-
-Some package managers will install peer dependencies by default if they are missing, but others (like yarn) will not.
-
-Try installing the following packages and see if that resolves the issue:
-
-(example using yarn)
-
-```bash
-yarn add react react-dom styled-components
-```
-
-et voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`.
+voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`.
 The props for the web component are the same as `SwapWidgetProps` except that all props
 are passed to the web-component via attributes in kebab-case as strings or stringified objects. Example below:
 
 ```tsx
-<div
-  style={{
-    width: '450px',
-    height: '820px',
-  }}
->
-  <SwapWidget
-    className="test-class"
-    onlyTestnet={true}
-    theme={{
-      brandColor: '#FF4FFF',
-    }}
-    defaultRoute={{
-      srcChainID: 'osmosis-1',
-      srcAssetDenom:
-        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-    }}
-  />
-</div>
-```
-
-becomes
-
-```tsx
 <div style="width:450px;height:820px;">
   <swap-widget
-    class-name="test-class"
-    onlyTestnet="true"
-    theme='{"brandColor":"#FF4FFF"}'
-    default-route={JSON.stringify({
-      srcChainID: 'osmosis-1',
-      srcAssetDenom:
-        'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
-    })}
+    theme='{
+      "backgroundColor": "#191A1C",
+      "textColor": "#E6EAE9",
+      "borderColor": "#363B3F",
+      "brandColor": "#FF4FFF",
+      "highlightColor": "#1F2022"
+    }'
+    default-route='{
+      "srcChainID": "osmosis-1",
+      "srcAssetDenom": "ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4"
+    }'
   ></swap-widget>
 </div>
 ```

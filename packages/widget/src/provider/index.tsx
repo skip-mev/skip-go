@@ -34,6 +34,20 @@ export interface SkipAPIProviderProps {
   apiURL?: string;
   makeDestinationWallets?: (chainID: string) => MinimalWallet[];
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
+  connectedWallet?: {
+    cosmos?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: SkipClientOptions['getCosmosSigner'];
+    };
+    evm?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: SkipClientOptions['getEVMSigner'];
+    };
+    svm?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: SkipClientOptions['getSVMSigner'];
+    };
+  };
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({
@@ -57,6 +71,7 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
   apiURL = defaultApiURL,
   makeDestinationWallets,
   chainIDsToAffiliates,
+  connectedWallet,
 }) => {
   return (
     <SkipProvider
@@ -64,6 +79,7 @@ export const SkipAPIProvider: React.FC<SkipAPIProviderProps> = ({
       endpointOptions={endpointOptions}
       makeDestinationWallets={makeDestinationWallets}
       chainIDsToAffiliates={chainIDsToAffiliates}
+      connectedWallet={connectedWallet}
     >
       <AssetsProvider>{children}</AssetsProvider>
     </SkipProvider>

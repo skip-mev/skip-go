@@ -1,15 +1,15 @@
-import type { Meta } from '@storybook/react';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { TokenAndChainSelectorModal } from '@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
-import { Row } from '@/components/Layout';
-import { defaultTheme, lightTheme } from '@/widget/theme';
+import type { Meta } from "@storybook/react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
+import { Row } from "@/components/Layout";
+import { defaultTheme, lightTheme } from "@/widget/theme";
 
 const meta = {
-  title: 'Modals/TokenAndChainSelectorModal',
+  title: "Modals/TokenAndChainSelectorModal",
   component: () => <TokenAndChainSelectorModalExample />,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
 } satisfies Meta<typeof TokenAndChainSelectorModalExample>;
 

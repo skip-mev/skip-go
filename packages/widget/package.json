@@ -1,17 +1,13 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
       "import": "./build/index.es.js"
-    },
-    "./style.css": {
-      "import": "./build/style.css",
-      "default": "./build/style.css"
     }
   },
   "types": "./build/index.d.ts",
@@ -23,16 +19,18 @@
     "README.md"
   ],
   "scripts": {
-    "start": "rollup --config rollup.config.js -w",
-    "dev": "rollup --config rollup.config.js -w",
+    "start": "yarn dev",
+    "dev": "yarn build -w",
     "build": "rollup --config rollup.config.js",
+    "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
+    "publish:web-component": "npm run build:web-component && cd web-component && npm run publish && cd ..",
     "lint": "eslint src --ext .ts",
     "postpublish": "yarn run post",
     "prepublishOnly": "yarn run pre",
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
-    "post": "git checkout -- package.json"
+    "post": "git checkout -- package.json && npm run publish:web-component"
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
@@ -47,15 +45,22 @@
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
     "autoprefixer": "^10.4.19",
+    "node-polyfill-webpack-plugin": "^4.0.0",
     "postcss": "^8.4.38",
+    "postcss-loader": "^8.1.1",
     "postcss-prefixwrap": "^1.49.0",
+    "raw-loader": "^4.0.2",
     "rollup-plugin-copy": "^3.5.0",
     "styled-components": "^6.0.0",
     "stylis": "^4.0.0",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
+    "ts-loader": "^9.5.1",
     "typed-query-selector": "^2.11.2",
-    "typescript": "5.2.x"
+    "typescript": "5.2.x",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   },
   "resolutions": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",

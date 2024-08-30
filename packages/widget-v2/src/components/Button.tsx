@@ -1,13 +1,13 @@
-import { css, styled } from 'styled-components';
-import { FlexProps, flexProps } from '@/components/Layout';
-import { removeButtonStyles, SmallText } from '@/components/Typography';
+import { css, styled } from "styled-components";
+import { FlexProps, flexProps } from "@/components/Layout";
+import { removeButtonStyles, SmallText } from "@/components/Typography";
 
 export type GhostButtonProps = {
   secondary?: boolean;
 } & FlexProps;
 
 export const GhostButton = styled(SmallText).attrs({
-  as: 'button',
+  as: "button",
 })<GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;

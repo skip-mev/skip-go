@@ -4,8 +4,8 @@ type IconProps = {
 };
 
 export const WarningIcon = ({
-  color = 'currentColor',
-  backgroundColor = 'transparent',
+  color = "currentColor",
+  backgroundColor = "transparent",
 }: IconProps) => (
   <svg
     width="40"

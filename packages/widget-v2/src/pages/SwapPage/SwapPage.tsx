@@ -1,18 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useAtom } from 'jotai';
-import { AssetChainInput } from '@/components/AssetChainInput';
-import { Column } from '@/components/Layout';
-import { MainButton } from '@/components/MainButton';
-import { SmallText } from '@/components/Typography';
-import { ICONS } from '@/icons';
-import { skipAssets, getChainsContainingAsset } from '@/state/skipClient';
-import { sourceAssetAtom, destinationAssetAtom } from '@/state/swapPage';
-import { TokenAndChainSelectorModal } from '@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal';
-import { SwapPageSettings } from './SwapPageSettings';
-import { SwapPageFooter } from './SwapPageFooter';
-import { SwapPageBridge } from './SwapPageBridge';
-import { SwapPageHeader } from './SwapPageHeader';
-import { useModal } from '@/components/Modal';
+import { useCallback, useMemo, useState } from "react";
+import { useAtom } from "jotai";
+import { AssetChainInput } from "@/components/AssetChainInput";
+import { Column } from "@/components/Layout";
+import { MainButton } from "@/components/MainButton";
+import { SmallText } from "@/components/Typography";
+import { ICONS } from "@/icons";
+import { skipAssetsAtom, getChainsContainingAsset, skipChainsAtom } from "@/state/skipClient";
+import { sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
+import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
+import { SwapPageSettings } from "./SwapPageSettings";
+import { SwapPageFooter } from "./SwapPageFooter";
+import { SwapPageBridge } from "./SwapPageBridge";
+import { SwapPageHeader } from "./SwapPageHeader";
+import { useModal } from "@/components/Modal";
 
 const sourceAssetBalance = 125;
 
@@ -20,23 +20,24 @@ export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
-    if (!assets || !sourceAsset?.symbol) return;
-    const chains = getChainsContainingAsset(sourceAsset?.symbol, assets);
-    return chains;
-  }, [sourceAsset?.symbol]);
+    if (!chains || !assets || !sourceAsset?.symbol) return;
+    const result = getChainsContainingAsset(sourceAsset?.symbol, assets, chains);
+    return result;
+  }, [assets, sourceAsset?.symbol, chains]);
 
   const chainsContainingDestinationAsset = useMemo(() => {
-    if (!assets || !destinationAsset?.symbol) return;
-    const chains = getChainsContainingAsset(destinationAsset?.symbol, assets);
-    return chains;
-  }, [destinationAsset?.symbol]);
+    if (!chains || !assets || !destinationAsset?.symbol) return;
+    const result = getChainsContainingAsset(destinationAsset?.symbol, assets, chains);
+    return result;
+  }, [assets, destinationAsset?.symbol, chains]);
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
@@ -48,7 +49,7 @@ export const SwapPage = () => {
         tokenAndChainSelectorFlow.hide();
       },
     });
-  }, []);
+  }, [setSourceAsset, tokenAndChainSelectorFlow]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
@@ -59,14 +60,17 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-
-        console.log(asset);
         tokenAndChainSelectorFlow.hide();
       },
       chainsContainingAsset: chainsContainingSourceAsset,
       asset: sourceAsset,
     });
-  }, [chainsContainingSourceAsset, sourceAsset]);
+  }, [
+    chainsContainingSourceAsset,
+    setSourceAsset,
+    sourceAsset,
+    tokenAndChainSelectorFlow,
+  ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorFlow.show({
@@ -78,7 +82,7 @@ export const SwapPage = () => {
         tokenAndChainSelectorFlow.hide();
       },
     });
-  }, []);
+  }, [setDestinationAsset, tokenAndChainSelectorFlow]);
 
   const handleChangeDestinationChain = useCallback(() => {
     if (!chainsContainingDestinationAsset) return;
@@ -94,7 +98,12 @@ export const SwapPage = () => {
       chainsContainingAsset: chainsContainingDestinationAsset,
       asset: destinationAsset,
     });
-  }, [chainsContainingDestinationAsset, destinationAsset]);
+  }, [
+    chainsContainingDestinationAsset,
+    destinationAsset,
+    setDestinationAsset,
+    tokenAndChainSelectorFlow,
+  ]);
 
   return (
     <>
@@ -106,16 +115,14 @@ export const SwapPage = () => {
       >
         <SwapPageHeader
           leftButton={{
-            label: 'History',
+            label: "History",
             icon: ICONS.history,
-            onClick: () => {},
           }}
           rightButton={{
-            label: 'Max',
-            onClick: () => {},
+            label: "Max",
           }}
           rightContent={
-            !!sourceAssetBalance ? (
+            sourceAssetBalance ? (
               <SmallText> Balance: {sourceAssetBalance} </SmallText>
             ) : undefined
           }
@@ -125,7 +132,7 @@ export const SwapPage = () => {
             selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
-            value={sourceAsset?.amount ?? '0'}
+            value={sourceAsset?.amount ?? "0"}
             onChangeValue={(newValue) =>
               setSourceAsset((old) => ({ ...old, amount: newValue }))
             }
@@ -135,7 +142,7 @@ export const SwapPage = () => {
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
-            value={destinationAsset?.amount ?? '0'}
+            value={destinationAsset?.amount ?? "0"}
             onChangeValue={(newValue) =>
               setDestinationAsset((old) => ({ ...old, amount: newValue }))
             }

@@ -1,38 +1,36 @@
-import { createModal, ModalProps, useModal } from '@/components/Modal';
-import { Column, Row } from '@/components/Layout';
-import { css, styled } from 'styled-components';
-import { useCallback, useMemo, useState } from 'react';
-import { RightArrowIcon } from '@/icons/ArrowIcon';
+import { createModal, ModalProps, useModal } from "@/components/Modal";
+import { Column, Row } from "@/components/Layout";
+import { css, styled } from "styled-components";
+import { useCallback, useMemo, useState } from "react";
+import { RightArrowIcon } from "@/icons/ArrowIcon";
 import {
   RenderWalletList,
   RenderWalletListHeader,
   Wallet,
-} from '@/components/RenderWalletList';
-import { WALLET_LIST } from '@/modals/WalletSelectorModal/WalletSelectorFlow';
-import { Button } from '@/components/Button';
-import { SmallText, Text } from '@/components/Typography';
-import { destinationAssetAtom, destinationWalletAtom } from '@/state/swapPage';
-import { useAtom } from 'jotai';
-import { getChain } from '@/state/skipClient';
+} from "@/components/RenderWalletList";
+import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorFlow";
+import { Button } from "@/components/Button";
+import { SmallText, Text } from "@/components/Typography";
+import { destinationAssetAtom, destinationWalletAtom } from "@/state/swapPage";
+import { useAtom, useAtomValue } from "jotai";
+import { skipChainsAtom } from "@/state/skipClient";
 
 export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
   const modal = useModal();
   const [destinationAsset] = useAtom(destinationAssetAtom);
-  const [_destinationWallet, setDestinationWallet] = useAtom(
-    destinationWalletAtom
-  );
-  const chain = getChain(destinationAsset?.chainID ?? '');
-  const chainName = destinationAsset?.chainName;
-  const chainImage = chain.images?.find((image) => image.svg ?? image.png);
-  const chainLogo = chainImage?.svg ?? chainImage?.png;
+  const [, setDestinationWallet] = useAtom(destinationWalletAtom);
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const chain = chains?.find(c => c.chainID === destinationAsset?.chainID)
+  const chainName = chain?.prettyName
+  const chainLogo = chain?.logoURI
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
-  const [manualWalletAddress, setManualWalletAddress] = useState('');
+  const [manualWalletAddress, setManualWalletAddress] = useState("");
 
   const walletList: Wallet[] = [
     ...WALLET_LIST,
     {
-      name: 'Enter address manually',
+      name: "Enter address manually",
       onSelect: () => setShowManualAddressInput(true),
       rightContent: () => {
         return (
@@ -65,7 +63,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
       {showManualAddressInput ? (
         <StyledContainer gap={15}>
           <RenderWalletListHeader
-            title={`Enter a ${chainName} wallet address`}
+            title={`Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
             rightContent={() => (
               <StyledChainLogoContainerRow align="center" justify="center">
@@ -93,7 +91,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
             disabled={!addressIsValid}
             onClick={() => {
               setDestinationWallet({
-                name: 'manual wallet address',
+                name: "manual wallet address",
                 address: manualWalletAddress,
               });
               modal.remove();
@@ -157,8 +155,8 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
     validAddress === true
       ? `background-color: ${theme.success.text}`
       : validAddress === false
-      ? `background-color: ${theme.error.text}`
-      : ''};
+        ? `background-color: ${theme.error.text}`
+        : ""};
 
   top: calc(50% - 11px / 2);
   right: 20px;

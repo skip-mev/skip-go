@@ -1,9 +1,9 @@
-import type { Meta } from '@storybook/react';
-import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from '@/widget/Widget';
-import { defaultTheme, lightTheme, Theme } from '@/widget/theme';
-import NiceModal from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
-import { ReactElement } from 'react';
+import type { Meta } from "@storybook/react";
+import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from "@/widget/Widget";
+import { defaultTheme, lightTheme, Theme } from "@/widget/theme";
+import NiceModal from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
+import { ReactElement } from "react";
 
 type Props = SwapWidgetProps & { theme: Theme; button?: ReactElement };
 
@@ -28,7 +28,7 @@ const StyledCustomButton = styled.button`
 `;
 
 const meta = {
-  title: 'Widget',
+  title: "Widget",
   component: Widget,
   args: {
     theme: defaultTheme,
@@ -36,14 +36,14 @@ const meta = {
   },
   argTypes: {
     theme: {
-      options: ['defaultTheme', 'lightTheme'],
+      options: ["defaultTheme", "lightTheme"],
       mapping: {
         defaultTheme: defaultTheme,
         lightTheme: lightTheme,
       },
     },
     button: {
-      options: ['default', 'custom'],
+      options: ["default", "custom"],
       mapping: {
         default: undefined,
         custom: (

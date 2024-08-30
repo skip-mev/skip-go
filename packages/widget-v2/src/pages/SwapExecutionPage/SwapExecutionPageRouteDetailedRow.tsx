@@ -1,23 +1,23 @@
-import { useAtom } from 'jotai';
-import { Row } from '@/components/Layout';
-import { SmallText } from '@/components/Typography';
-import { getChain, skipAssets } from '@/state/skipClient';
-import { getFormattedAssetAmount } from '@/utils/crypto';
-import { css, styled, useTheme } from 'styled-components';
-import React from 'react';
-import { ChainIcon } from '@/icons/ChainIcon';
-import { Button } from '@/components/Button';
-import { ChainTransaction } from '@skip-go/client';
+import { useAtom } from "jotai";
+import { Row } from "@/components/Layout";
+import { SmallText } from "@/components/Typography";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { getFormattedAssetAmount } from "@/utils/crypto";
+import { css, styled, useTheme } from "styled-components";
+import React from "react";
+import { ChainIcon } from "@/icons/ChainIcon";
+import { Button } from "@/components/Button";
+import { ChainTransaction } from "@skip-go/client";
 
 type OperationType =
-  | 'swap'
-  | 'evmSwap'
-  | 'transfer'
-  | 'axelarTransfer'
-  | 'cctpTransfer'
-  | 'hyperlaneTransfer'
-  | 'opInitTransfer'
-  | 'bankSend';
+  | "swap"
+  | "evmSwap"
+  | "transfer"
+  | "axelarTransfer"
+  | "cctpTransfer"
+  | "hyperlaneTransfer"
+  | "opInitTransfer"
+  | "bankSend";
 
 export type Operation = {
   type: OperationType;
@@ -32,18 +32,18 @@ export type Operation = {
   amountOut: string;
   bridgeID?: string;
   swapVenues?: {
-    name: '';
-    chainID: '';
+    name: "";
+    chainID: "";
   }[];
 };
 
-export type txState = 'pending' | 'broadcasted' | 'confirmed' | 'failed';
+export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
-  denom: Operation['denomIn'] | Operation['denomOut'];
-  amount: Operation['amountIn'] | Operation['amountOut'];
-  chainID: Operation['fromChainID'] | Operation['chainID'];
-  explorerLink?: ChainTransaction['explorerLink'];
+  denom: Operation["denomIn"] | Operation["denomOut"];
+  amount: Operation["amountIn"] | Operation["amountOut"];
+  chainID: Operation["fromChainID"] | Operation["chainID"];
+  explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
 };
 
@@ -56,12 +56,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssets);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
 
   const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = getChain(chainID ?? '');
-  const chainImage = chain.images?.find((image) => image.svg ?? image.png);
+  const chain = chains?.find(c => c.chainID === chainID)
+  const chainImage = chain?.logoURI
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -75,7 +76,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <StyledChainImage
             height={30}
             width={30}
-            src={chainImage.svg ?? chainImage.png}
+            src={chainImage}
             state={txState}
           />
         </StyledAnimatedBorder>
@@ -84,12 +85,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
       <Row align="center" justify="space-between" style={{ flex: 1 }}>
         <Row gap={5}>
           <SmallText normalTextColor>
-            {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{' '}
+            {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
             {asset?.recommendedSymbol}
           </SmallText>
           <SmallText> on {asset?.chainName}</SmallText>
           {explorerLink && (
-            <Button onClick={() => window.open(explorerLink, '_blank')}>
+            <Button onClick={() => window.open(explorerLink, "_blank")}>
               <SmallText>
                 <ChainIcon />
               </SmallText>
@@ -151,7 +152,7 @@ export const StyledAnimatedBorder = ({
   </StyledLoadingContainer>
 );
 
-const StyledLoadingContainer = styled(Row)<{
+const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
@@ -164,13 +165,13 @@ const StyledLoadingContainer = styled(Row)<{
   width: ${({ width, borderSize }) => width + borderSize * 2}px;
   ${({ txState, borderSize, theme }) => {
     switch (txState) {
-      case 'confirmed':
+      case "confirmed":
         return `border: ${borderSize}px solid ${theme.success.text}`;
-      case 'failed':
+      case "failed":
         return `border: ${borderSize}px solid ${theme.error.text}`;
-      case 'broadcasted':
+      case "broadcasted":
       default:
-        return '';
+        return "";
     }
   }};
   border-radius: 50%;
@@ -178,11 +179,11 @@ const StyledLoadingContainer = styled(Row)<{
   &:before {
     content: '';
     position: absolute;
-    height: ${({ height }) => `${height + 20}px;`}
-    width: ${({ width }) => `${width + 20}px;`}
+    height: ${({ height }) => `${height + 20}px;`};
+    width: ${({ width }) => `${width + 20}px;`};
     ${({ txState, backgroundColor, theme }) =>
-      txState === 'broadcasted' &&
-      css`
+    txState === "broadcasted" &&
+    css`
         background-image: conic-gradient(
           transparent,
           transparent,
@@ -202,7 +203,7 @@ const StyledLoadingContainer = styled(Row)<{
   }
 `;
 
-const StyledLoadingOverlay = styled(Row)<{
+const StyledLoadingOverlay = styled(Row) <{
   backgroundColor?: string;
   width: number;
   height: number;

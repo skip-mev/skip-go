@@ -1,27 +1,27 @@
-import { SmallText } from '@/components/Typography';
-import { Column, Row } from '@/components/Layout';
-import styled, { useTheme } from 'styled-components';
-import { ChainIcon } from '@/icons/ChainIcon';
-import { Button } from '@/components/Button';
-import { TrashIcon } from '@/icons/TrashIcon';
-import { useMemo } from 'react';
-import { HistoryArrowIcon } from '@/icons/HistoryArrowIcon';
+import { SmallText } from "@/components/Typography";
+import { Column, Row } from "@/components/Layout";
+import styled, { useTheme } from "styled-components";
+import { ChainIcon } from "@/icons/ChainIcon";
+import { Button } from "@/components/Button";
+import { TrashIcon } from "@/icons/TrashIcon";
+import { useMemo } from "react";
+import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 
 type TransactionHistoryModalItemDetailsProps = {
-  status: 'pending' | 'success' | 'failed';
+  status: "pending" | "success" | "failed";
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
   relativeTimeString: string;
   transactionID: string;
   onClickTransactionID: () => void;
-  onClickDelete: () => void;
+  onClickDelete?: () => void;
 };
 
 const statusMap = {
-  pending: 'In Progress',
-  success: 'Completed',
-  failed: 'Failed',
+  pending: "In Progress",
+  success: "Completed",
+  failed: "Failed",
 };
 
 export const TransactionHistoryModalItemDetails = ({
@@ -37,9 +37,9 @@ export const TransactionHistoryModalItemDetails = ({
   const theme = useTheme();
 
   const statusColor = useMemo(() => {
-    if (status === 'failed') {
+    if (status === "failed") {
       return theme.error.text;
-    } else if (status === 'success') {
+    } else if (status === "success") {
       return theme.success.text;
     }
     return;
