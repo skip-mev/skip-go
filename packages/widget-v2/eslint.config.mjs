@@ -13,10 +13,20 @@ export default tseslint.config(
       "react-hooks": fixupPluginRules(reactHooks),
     },
     rules: {
+      ...reactHooks.configs.recommended.rules,
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "@typescript-eslint/no-unused-vars": ["error", {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }],
       "no-console": ["error", { allow: ["warn", "error"] }],
       "quotes": ["error", "double", { "avoidEscape": true }],
-      ...reactHooks.configs.recommended.rules,
+
     },
   }
 );

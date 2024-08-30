@@ -9,6 +9,8 @@ import { useAtom } from "jotai";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
+import { BigNumber } from "bignumber.js";
+import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -19,7 +21,7 @@ export type AssetChainInputProps = {
 };
 
 export const AssetChainInput = ({
-  value = "0",
+  value,
   onChangeValue,
   selectedAssetDenom,
   handleChangeAsset,
@@ -48,8 +50,62 @@ export const AssetChainInput = ({
       <Row justify="space-between">
         <StyledInput
           type="text"
-          value={value}
-          onChange={(e) => onChangeValue?.(e.target.value)}
+          value={formatNumberWithCommas(value || "")}
+          placeholder="0"
+          onChange={(e) => {
+            if (!onChangeValue) return;
+            let latest = e.target.value;
+
+            if (latest.match(/^[.,]/)) latest = `0.${latest}`; // Handle first character being a period or comma
+            latest = latest.replace(/^[0]{2,}/, "0"); // Remove leading zeros
+            latest = latest.replace(/[^\d.,]/g, ""); // Remove non-numeric and non-decimal characters
+            latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
+            latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
+            onChangeValue?.(formatNumberWithoutCommas(latest))
+          }} onKeyDown={(event) => {
+            if (!onChangeValue) return;
+
+            if (event.key === "Escape") {
+              if (
+                event.currentTarget.selectionStart ===
+                event.currentTarget.selectionEnd
+              ) {
+                event.currentTarget.select();
+              }
+              return;
+            }
+
+            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+              let value = new BigNumber(
+                formatNumberWithoutCommas(event.currentTarget.value) || "0"
+              );
+              if (event.key === "ArrowUp") {
+                event.preventDefault();
+                if (event.shiftKey) {
+                  value = value.plus(10);
+                } else if (event.altKey || event.ctrlKey || event.metaKey) {
+                  value = value.plus(0.1);
+                } else {
+                  value = value.plus(1);
+                }
+              }
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                if (event.shiftKey) {
+                  value = value.minus(10);
+                } else if (event.altKey || event.ctrlKey || event.metaKey) {
+                  value = value.minus(0.1);
+                } else {
+                  value = value.minus(1);
+                }
+              }
+              if (value.isNegative()) {
+                value = new BigNumber(0);
+              }
+              onChangeValue(value.toString());
+            }
+          }
+          }
         />
         <Button onClick={handleChangeAsset} gap={5}>
           {selectedAsset ? (

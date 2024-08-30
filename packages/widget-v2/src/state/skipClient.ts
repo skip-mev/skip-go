@@ -8,6 +8,8 @@ import {
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
+import { destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirectionAtom } from "./swapPage";
+import { getAmountWei } from "@/utils/number";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
@@ -93,11 +95,30 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
-export const skipRouteRequestAtom = atom<RouteRequest>();
+export const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  const direction = get(swapDirectionAtom);
+  if (!sourceAsset?.chainID || !sourceAsset.denom || !destinationAsset?.chainID || !destinationAsset.denom) {
+    return undefined;
+  }
+  const amount = direction === "swap-in"
+    ? { amountIn: getAmountWei(sourceAsset.amount, sourceAsset.decimals) || "0" }
+    : { amountOut: getAmountWei(destinationAsset.amount, destinationAsset.decimals) || "0" };
+
+  return {
+    ...amount,
+    sourceAssetChainID: sourceAsset.chainID,
+    sourceAssetDenom: sourceAsset.denom,
+    destAssetChainID: destinationAsset.chainID,
+    destAssetDenom: destinationAsset.denom,
+  };
+});
 
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
+  get(routeAmountEffect)
   return {
     queryKey: ["skipRoute", params],
     queryFn: async () => {
@@ -117,6 +138,7 @@ export const skipRouteAtom = atomWithQuery((get) => {
       });
     },
     enabled: !!params,
+    refetchInterval: 1000 * 10,
   };
 });
 

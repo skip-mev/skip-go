@@ -58,6 +58,7 @@
     "@tanstack/query-core": "^5.51.21",
     "chain-registry": "^1.63.43",
     "jotai": "^2.9.1",
+    "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
     "lodash.debounce": "^4.0.8",
     "match-sorter": "^6.3.4",

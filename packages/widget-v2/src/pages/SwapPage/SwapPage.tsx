@@ -5,8 +5,16 @@ import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { skipAssetsAtom, getChainsContainingAsset, skipChainsAtom } from "@/state/skipClient";
-import { sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
+import {
+  skipAssetsAtom,
+  getChainsContainingAsset,
+  skipChainsAtom,
+} from "@/state/skipClient";
+import {
+  sourceAssetAtom,
+  destinationAssetAtom,
+  swapDirectionAtom,
+} from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapPageSettings } from "./SwapPageSettings";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -23,19 +31,27 @@ export const SwapPage = () => {
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
-
+  const [_, setSwapDirection] = useAtom(swapDirectionAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
-    const result = getChainsContainingAsset(sourceAsset?.symbol, assets, chains);
+    const result = getChainsContainingAsset(
+      sourceAsset?.symbol,
+      assets,
+      chains
+    );
     return result;
   }, [assets, sourceAsset?.symbol, chains]);
 
   const chainsContainingDestinationAsset = useMemo(() => {
     if (!chains || !assets || !destinationAsset?.symbol) return;
-    const result = getChainsContainingAsset(destinationAsset?.symbol, assets, chains);
+    const result = getChainsContainingAsset(
+      destinationAsset?.symbol,
+      assets,
+      chains
+    );
     return result;
   }, [assets, destinationAsset?.symbol, chains]);
 
@@ -132,20 +148,22 @@ export const SwapPage = () => {
             selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
-            value={sourceAsset?.amount ?? "0"}
-            onChangeValue={(newValue) =>
-              setSourceAsset((old) => ({ ...old, amount: newValue }))
-            }
+            value={sourceAsset?.amount}
+            onChangeValue={(newValue) => {
+              setSourceAsset((old) => ({ ...old, amount: newValue }));
+              setSwapDirection("swap-in");
+            }}
           />
           <SwapPageBridge />
           <AssetChainInput
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
-            value={destinationAsset?.amount ?? "0"}
-            onChangeValue={(newValue) =>
-              setDestinationAsset((old) => ({ ...old, amount: newValue }))
-            }
+            value={destinationAsset?.amount}
+            onChangeValue={(newValue) => {
+              setDestinationAsset((old) => ({ ...old, amount: newValue }));
+              setSwapDirection("swap-out");
+            }}
           />
         </Column>
         <MainButton label="Connect Wallet" icon={ICONS.plus} />
