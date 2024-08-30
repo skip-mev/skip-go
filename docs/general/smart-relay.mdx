@@ -36,7 +36,7 @@ This document covers:
 
 ## Background
 
-Smart Relay is a**intent-aware**, **user-centric**, **universal** relayer with better performance guarantees than public relayers for all bridges and routes we support. We offer it at a small cost to the end-user and no cost to the developer/integrator. In short, Smart Relay helps users get to more destinations, in fewer transactions, and at faster speeds than via public relayers — no matter how many bridges or chains stand between them and their destination. 
+Smart Relay is a **intent-aware**, **user-centric**, **universal** relayer with better performance guarantees than public relayers for all bridges and routes we support. We offer it at a small cost to the end-user and no cost to the developer/integrator. In short, Smart Relay helps users get to more destinations, in fewer transactions, and at faster speeds than via public relayers — no matter how many bridges or chains stand between them and their destination. 
 
 Smart Relay is huge improvement over existing relaying systems, made possible by intelligent integration with Skip Go API's routing capabilities.: 
 
@@ -61,15 +61,17 @@ We are currently building out support for:
 * Hyperlane
 * Axelar
 
-For the bridges that Smart Relay does not support today, Skip Go API uses public or enshrined relayers — at whatever cost they’re typically made available to users. (These are free for IBC and have some fee associated with them for others.) All costs users will incur will always be made transparent in the relevant endpoint responses.
+For the bridges that Smart Relay does not support today, Skip Go API uses public or enshrined relayers — at whatever cost they’re typically made available to users. (These are free for IBC and have some fee associated with them for others). All costs users will incur will always be made transparent in the relevant endpoint responses.
 
 ## How to Use Smart Relay
 
 ### How to activate Smart Relay
 
 1. On `/route` or `/msgs_direct`, pass `smart_relay=true`
-2. Sign the transaction as usual, and submit the signed transaction to Skip Go API via `/track` or `/submit` as normal  
-   1. **NOTE: We HIGHLY recommend using `/submit` to submit Smart Relay transactions on chain to avoid any errors with submitting a transaction on chain but not sending to the `/track` endpoint.**
+2. If using `/msgs`, ensure that you are passing the `smart_relay_fee_quote` object provided in the `cctp_transfer` operation from the `/route` response into your `/msgs` request. 
+   - If you're using the @skip-go/client library, version 0.8.0 and above supports this automatically. If you're integrating the API directly and decoding the `/route` response operations before passing them back into `msgs`, simply ensure you're decoding this new field properly and passing it back through!
+3. Sign the transaction as usual, and submit the signed transaction to Skip Go API via `/track` or `/submit` as normal  
+   - **NOTE: We HIGHLY recommend using `/submit` to submit Smart Relay transactions on chain to avoid any errors with submitting a transaction on chain but not sending to the `/track` endpoint.**
 
 That’s it! Smart Relay will take care of executing your cross-chain actions across all bridges it currently supports.
 
