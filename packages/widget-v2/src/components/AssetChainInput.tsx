@@ -52,6 +52,7 @@ export const AssetChainInput = ({
           type="text"
           value={formatNumberWithCommas(value || "")}
           placeholder="0"
+          inputMode="numeric"
           onChange={(e) => {
             if (!onChangeValue) return;
             let latest = e.target.value;
