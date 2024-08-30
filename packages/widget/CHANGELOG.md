@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.5
+
+### Patch Changes
+
+- 9372c70: bump latest client
+
 ## 2.4.4
 
 ### Patch Changes
