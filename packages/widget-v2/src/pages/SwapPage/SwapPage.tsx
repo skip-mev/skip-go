@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -9,6 +9,7 @@ import {
   skipAssetsAtom,
   getChainsContainingAsset,
   skipChainsAtom,
+  skipRouteAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -32,6 +33,7 @@ export const SwapPage = () => {
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [_, setSwapDirection] = useAtom(swapDirectionAtom);
+  const { isLoading: isRouteLoading } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
@@ -166,7 +168,8 @@ export const SwapPage = () => {
             }}
           />
         </Column>
-        <MainButton label="Connect Wallet" icon={ICONS.plus} />
+        {!isRouteLoading && <MainButton label="Connect Wallet" icon={ICONS.plus} />}
+        {isRouteLoading && <MainButton label="Finding Best Route..." loading={true} />}
 
         <SwapPageFooter
           showRouteInfo
