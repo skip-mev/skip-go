@@ -166,22 +166,22 @@ function AssetInput({
           onKeyDown={(event) => {
             if (!onAmountChange) return;
 
-            let value = new BigNumber(
-              formatNumberWithoutCommas(event.currentTarget.value) || '0'
-            );
-            switch (event.key) {
-              case 'Escape':
-                if (
-                  event.currentTarget.selectionStart ===
-                  event.currentTarget.selectionEnd
-                ) {
-                  event.currentTarget.select();
-                }
-                return;
+            if (event.key === 'Escape') {
+              if (
+                event.currentTarget.selectionStart ===
+                event.currentTarget.selectionEnd
+              ) {
+                event.currentTarget.select();
+              }
+              return;
+            }
 
-              case 'ArrowUp':
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+              let value = new BigNumber(
+                formatNumberWithoutCommas(event.currentTarget.value) || '0'
+              );
+              if (event.key === 'ArrowUp') {
                 event.preventDefault();
-
                 if (event.shiftKey) {
                   value = value.plus(10);
                 } else if (event.altKey || event.ctrlKey || event.metaKey) {
@@ -189,10 +189,9 @@ function AssetInput({
                 } else {
                   value = value.plus(1);
                 }
-                break;
-              case 'ArrowDown':
+              }
+              if (event.key === 'ArrowDown') {
                 event.preventDefault();
-
                 if (event.shiftKey) {
                   value = value.minus(10);
                 } else if (event.altKey || event.ctrlKey || event.metaKey) {
@@ -200,14 +199,12 @@ function AssetInput({
                 } else {
                   value = value.minus(1);
                 }
-                break;
-              default:
-                break;
+              }
+              if (value.isNegative()) {
+                value = new BigNumber(0);
+              }
+              onAmountChange(value.toString());
             }
-            if (value.isNegative()) {
-              value = new BigNumber(0);
-            }
-            onAmountChange(value.toString());
           }}
         />
         <div className="flex h-8 items-center space-x-2 tabular-nums">
