@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -32,7 +32,7 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const [_, setSwapDirection] = useAtom(swapDirectionAtom);
+  const setSwapDirection = useSetAtom(swapDirectionAtom);
   const { isLoading: isRouteLoading } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
