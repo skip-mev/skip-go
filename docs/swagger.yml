@@ -2335,6 +2335,27 @@ components:
         axelar_transfer:
           $ref: '#/components/schemas/AxelarTransfer'
       type: object
+    SmartRelayFeeQuote:
+      description: Details about the fee paid for Smart Relaying
+      properties:
+        fee_amount:
+          description: The USDC fee amount
+          type: string
+        fee_address:
+          description: The address the fee should be sent to
+          type: string
+          nullable: true
+        payment_contract_address:
+          description: The address of the payment contract the fee should be submitted to
+          type: string
+          nullable: true
+        relayer_address:
+          description: Address of the relayer
+          type: string
+        expiration:
+          description: Expiration time of the fee quote
+          type: string
+      type: object
     CCTPTransfer:
       description: A transfer facilitated by the CCTP bridge
       properties:
@@ -2358,6 +2379,10 @@ components:
         smart_relay:
           type: boolean
           description: Indicates whether this transfer is relayed via Smart Relay
+        smart_relay_fee_quote:
+          allOf:
+            - $ref: '#/components/schemas/SmartRelayFeeQuote'
+          nullable: true
       type: object
     CCTPTransferInfo:
       properties:
