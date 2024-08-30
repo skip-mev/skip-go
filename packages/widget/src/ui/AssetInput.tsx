@@ -108,7 +108,7 @@ function AssetInput({
         'focus-within:border-neutral-300 focus-within:shadow-sm',
         'hover:border-neutral-300 hover:shadow-sm',
         !!isError &&
-          'border-red-400 focus-within:border-red-500 hover:border-red-500'
+        'border-red-400 focus-within:border-red-500 hover:border-red-500'
       )}
     >
       <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
@@ -166,22 +166,22 @@ function AssetInput({
           onKeyDown={(event) => {
             if (!onAmountChange) return;
 
-            if (event.key === 'Escape') {
-              if (
-                event.currentTarget.selectionStart ===
-                event.currentTarget.selectionEnd
-              ) {
-                event.currentTarget.select();
-              }
-              return;
-            }
+            let value = new BigNumber(
+              formatNumberWithoutCommas(event.currentTarget.value) || '0'
+            );
+            switch (event.key) {
+              case 'Escape':
+                if (
+                  event.currentTarget.selectionStart ===
+                  event.currentTarget.selectionEnd
+                ) {
+                  event.currentTarget.select();
+                }
+                return;
 
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-              let value = new BigNumber(
-                formatNumberWithoutCommas(event.currentTarget.value) || '0'
-              );
-              if (event.key === 'ArrowUp') {
+              case 'ArrowUp':
                 event.preventDefault();
+
                 if (event.shiftKey) {
                   value = value.plus(10);
                 } else if (event.altKey || event.ctrlKey || event.metaKey) {
@@ -189,9 +189,10 @@ function AssetInput({
                 } else {
                   value = value.plus(1);
                 }
-              }
-              if (event.key === 'ArrowDown') {
+                break;
+              case 'ArrowDown':
                 event.preventDefault();
+
                 if (event.shiftKey) {
                   value = value.minus(10);
                 } else if (event.altKey || event.ctrlKey || event.metaKey) {
@@ -199,12 +200,14 @@ function AssetInput({
                 } else {
                   value = value.minus(1);
                 }
-              }
-              if (value.isNegative()) {
-                value = new BigNumber(0);
-              }
-              onAmountChange(value.toString());
+                break;
+              default:
+                break;
             }
+            if (value.isNegative()) {
+              value = new BigNumber(0);
+            }
+            onAmountChange(value.toString());
           }}
         />
         <div className="flex h-8 items-center space-x-2 tabular-nums">
@@ -212,9 +215,9 @@ function AssetInput({
             {amountUSD && Number(amountUSD) > 0 ? formatUSD(amountUSD) : null}
           </p>
           {amountUSD !== undefined &&
-          Number(amountUSD) > 0 &&
-          diffPercentage !== 0 &&
-          context === 'destination' ? (
+            Number(amountUSD) > 0 &&
+            diffPercentage !== 0 &&
+            context === 'destination' ? (
             <p
               className={cn(
                 'text-sm tabular-nums',
@@ -232,9 +235,8 @@ function AssetInput({
                 <SpinnerIcon className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <SimpleTooltip
-                  label={`${parseFloat(selectedAssetBalance).toString()} ${
-                    asset.recommendedSymbol
-                  }`}
+                  label={`${parseFloat(selectedAssetBalance).toString()} ${asset.recommendedSymbol
+                    }`}
                 >
                   <div
                     className={cn(
