@@ -30,7 +30,7 @@
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
-    "post": "git checkout -- package.json && npm run publish:web-component"
+    "post": "git checkout -- package.json"
   },
   "peerDependencies": {
     "react": "17.x || 18.x",
