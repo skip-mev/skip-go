@@ -69,7 +69,7 @@ export default {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                config: resolve(__dirname, 'postcss.config.mjs'),
+                config: resolve(__dirname, 'postcss.config.cjs'),
               },
             },
           },
