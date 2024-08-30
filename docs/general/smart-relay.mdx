@@ -93,6 +93,39 @@ Smart Relay incurs a user cost because Smart Relay involves actually submitting 
 * **The cost of gas:** Most networks have dynamic fee markets, where the price of gas increases during times of high network load. Smart Relay takes this into account when generating a quote
 * **Token Exchange Rates:** The token the user pays their fee in and the token Smart Relaying pays gas fees in may differ, so exchange rates affect the price the end user experiences. (e.g. If the user pays in OSMO for a route that terminates on Ethereum mainnet, Smart Relay will need to pay fees in ETH, so the amount of OSMO the user pays will depend on the OSMO/ETH spot price.)
 
+### How to properly use the Smart Relay Fee Quote
+
+Skip Go API dynamically calculates the Smart Relay fee to be paid based on the underlying costs in real-time. 
+
+Although you should use the information in the `estimated_fees` array for display purposes, a new `smart_relay_fee_quote` object has been added to the `cctp_transfer`, providing necessary information for proper use of the dynamic relaying fee system. Specifically, the `smart_relay_fee_quote` object contains information about the smart relay fee to be paid and when the quote expires (after which the quoted amount may no longer be valid and the transaction may not be succesfully relayed). 
+
+If you're using the `/msgs` endpoint, ensure that you are passing the `smart_relay_fee_quote` object provided in the `cctp_transfer` operation from the `/route` response into your `/msgs` request. Version `0.8.0` and above of the `@skip-go/client` library supports this automatically. If you're integrating the API directly and decoding the `/route` response operations before passing them back into `/msgs`, simply ensure you're decoding this new field properly and passing it back through! The new object's fields are provided below:
+
+<CodeGroup>
+
+```text TypeScript
+export type SmartRelayFeeQuote = {
+  feeAmount: string;
+  feeDenom: string;
+  feePaymentAddress: string;
+  relayerAddress: string;
+  expiration: Date;
+}
+```
+
+```JSON JSON
+{
+  "smart_relay_fee_quote": {
+    "fee_amount": "100000",               // string
+    "fee_denom": "uusdc",                 // string
+    "fee_payment_address": "0x123",       // string
+    "relayer_address": "0x123",           // string
+    "expiration": "2024-08-30T05:28:05Z"  // string
+  }
+}
+```
+
+</CodeGroup>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**
