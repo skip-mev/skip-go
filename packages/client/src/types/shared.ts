@@ -273,18 +273,18 @@ export type OPInitTransfer = {
 
 export type SmartRelayFeeQuoteJSON = {
   fee_amount: string;
-  fee_address?: string;
-  payment_contract_address?: string;
   relayer_address: string;
   expiration: Date;
+  fee_payment_address: string;
+  fee_denom: string;
 };
 
 export type SmartRelayFeeQuote = {
   feeAmount: string;
-  feeAddress?: string;
-  paymentContractAddress?: string;
   relayerAddress: string;
   expiration: Date;
+  feePaymentAddress: string;
+  feeDenom: string;
 };
 
 export type SwapVenueJSON = {
