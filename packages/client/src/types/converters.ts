@@ -1527,10 +1527,10 @@ export function smartRelayFeeQuoteFromJSON(
 ): SmartRelayFeeQuote {
   return {
     feeAmount: value.fee_amount,
-    feeAddress: value.fee_address,
-    paymentContractAddress: value.payment_contract_address,
     relayerAddress: value.relayer_address,
     expiration: value.expiration,
+    feePaymentAddress: value.fee_payment_address,
+    feeDenom: value.fee_denom,
   };
 }
 
@@ -1539,10 +1539,10 @@ export function smartRelayFeeQuoteToJSON(
 ): SmartRelayFeeQuoteJSON {
   return {
     fee_amount: value.feeAmount,
-    fee_address: value.feeAddress,
-    payment_contract_address: value.paymentContractAddress,
     relayer_address: value.relayerAddress,
     expiration: value.expiration,
+    fee_payment_address: value.feePaymentAddress,
+    fee_denom: value.feeDenom,
   };
 }
 

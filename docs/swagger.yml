@@ -2341,12 +2341,11 @@ components:
         fee_amount:
           description: The USDC fee amount
           type: string
-        fee_address:
-          description: The address the fee should be sent to
+        fee_denom:
+          description: The fee asset denomination
           type: string
-          nullable: true
-        payment_contract_address:
-          description: The address of the payment contract the fee should be submitted to
+        fee_payment_address:
+          description: The address the fee should be sent to
           type: string
           nullable: true
         relayer_address:
