@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.8.0
+
+### Minor Changes
+
+- 89a201c: Adds SmartRelayFeeQuote object to the CCTPTransfer operation
+
 ## 0.7.0
 
 ### Minor Changes
