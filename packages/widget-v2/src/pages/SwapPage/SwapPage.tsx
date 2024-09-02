@@ -30,10 +30,10 @@ export const SwapPage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
+  const setSwapDirection = useSetAtom(swapDirectionAtom)
   const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
-  const setSwapDirection = useSetAtom(swapDirectionAtom);
-  const { isLoading: isRouteLoading } = useAtomValue(skipRouteAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);;
+  const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
 
@@ -168,9 +168,9 @@ export const SwapPage = () => {
             }}
           />
         </Column>
-        {!isRouteLoading && <MainButton label="Connect Wallet" icon={ICONS.plus} />}
+        {!isRouteLoading && !isRouteError && <MainButton label="Connect Wallet" icon={ICONS.plus} />}
         {isRouteLoading && <MainButton label="Finding Best Route..." loading={true} />}
-
+        {isRouteError && !isRouteLoading && <MainButton label={routeError.message} disabled={true} />}
         <SwapPageFooter
           showRouteInfo
           onClick={() =>
