@@ -70,9 +70,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
   const destinationChainIDs = filter?.destination
     ? Object.keys(filter.destination)
     : undefined;
-  const allChainIDs = useMemo(() => {
-    return [...(sourceChainIDs ?? []), ...(destinationChainIDs ?? [])];
-  }, [sourceChainIDs, destinationChainIDs]);
 
   const {
     assetsByChainID,
@@ -80,14 +77,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     isReady: isAssetsReady,
     getAsset,
   } = useAssets();
-  const { data: chains } = useChains({
-    select: (chains) => {
-      if (allChainIDs.length === 0) return chains;
-      return chains?.filter(({ chainID }) => {
-        return allChainIDs.includes(chainID);
-      });
-    },
-  });
+  const { data: chains } = useChains();
 
   const { getWalletRepo } = useCosmosManager();
   const { connector, chain: evmChain } = useWagmiAccount();

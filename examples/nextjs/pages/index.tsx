@@ -115,6 +115,7 @@ const Home: NextPage = () => {
             fontSize: '20px',
             color: 'black',
           }}
+          suppressContentEditableWarning={true}
         >
           {JSON.stringify(props, null, 2)}
         </pre>
