@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.6
+
+### Patch Changes
+
+- b048995: Fix filter bug
+
 ## 2.4.5
 
 ### Patch Changes
