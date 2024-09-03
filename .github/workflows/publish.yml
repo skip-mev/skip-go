@@ -42,8 +42,9 @@ jobs:
       - name: Publish web component
         if: steps.changesets.outputs.published == 'true'
         continue-on-error: true
+        working-directory: ./packages/widget
         run: |
           git pull origin main
-          yarn --cwd packages/widget publish:web-component
+          yarn publish:web-component
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
