@@ -14,6 +14,9 @@ import regular from "@/fonts/ABCDiatype-Regular.woff2";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
+import { CosmosProvider } from "./wallet/cosmos";
+import { EVMProvider } from "./wallet/evm";
+import { SolanaProvider } from "./wallet/solana";
 
 export const queryClient = new QueryClient();
 
@@ -85,9 +88,15 @@ export const ShadowDomAndProviders = ({
       >
         <ThemeProvider theme={mergedThemes}>
           <GlobalStyles />
-          <QueryClientProvider client={queryClient} key={"skip-widget"}>
-            {children}
-          </QueryClientProvider>
+          <SolanaProvider>
+            <CosmosProvider>
+              <EVMProvider>
+                <QueryClientProvider client={queryClient} key={"skip-widget"}>
+                  {children}
+                </QueryClientProvider>
+              </EVMProvider>
+            </CosmosProvider>
+          </SolanaProvider>
         </ThemeProvider>
       </StyleSheetManager>
     </Scope>
