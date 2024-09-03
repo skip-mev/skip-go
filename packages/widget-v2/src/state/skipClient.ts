@@ -137,8 +137,9 @@ export const skipRouteAtom = atomWithQuery((get) => {
         allowUnsafe: true,
       });
     },
-    enabled: !!params,
-    refetchInterval: 1000 * 10,
+    retry: 1,
+    enabled: !!params && ((Number(params.amountIn) > 0) || (Number(params.amountOut) > 0)),
+    refetchInterval: 1000 * 30,
   };
 });
 

@@ -107,7 +107,7 @@ export const LoadingButton = ({
 
 const StyledMainButton = styled(Row).attrs({
   as: "button",
-})<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
+}) <{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
   background-color: ${({ theme, backgroundColor }) =>
@@ -168,7 +168,7 @@ const StyledTimeRemaining = styled(Row)`
   border-radius: 10px;
 `;
 
-const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
+const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
   width: 476px;
