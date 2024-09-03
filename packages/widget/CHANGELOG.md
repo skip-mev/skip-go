@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.8
+
+### Patch Changes
+
+- e96fadb: Fix conversionRate calculation
+
 ## 2.4.7
 
 ### Patch Changes
