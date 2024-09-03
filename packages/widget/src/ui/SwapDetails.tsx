@@ -62,8 +62,9 @@ export const SwapDetails = ({
         maximumFractionDigits: 6,
       });
       return {
-        inAsset: `${computed} ${feeAsset.symbol}`,
-        inUSD: usdFeeAmount && `${formatUSD(usdFeeAmount)}`,
+        assetAmount: Number(computed),
+        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
+        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
       };
     }
     if (axelarTransferOperation) {
@@ -76,8 +77,9 @@ export const SwapDetails = ({
       });
 
       return {
-        inAsset: `${computed} ${feeAsset.symbol}`,
-        inUSD: `${formatUSD(usdFeeAmount)}`,
+        assetAmount: Number(computed),
+        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
+        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
       };
     }
   }, [axelarTransferOperation, hyperlaneTransferOperation]);
@@ -110,18 +112,15 @@ export const SwapDetails = ({
     });
 
     return {
-      amount: Number(inAsset),
-      inAsset: `${inAsset} ${fee[0].originAsset.symbol}`,
-      inUSD: `${formatUSD(computedUsd)}`,
+      assetAmount: Number(inAsset),
+      formattedAssetAmount: `${inAsset} ${fee[0].originAsset.symbol}`,
+      formattedUsdAmount: `${formatUSD(computedUsd)}`
     };
   }, [isSmartRelay, route.estimatedFees]);
 
   const totalAmountOut = useMemo(() => {
-    if (isSmartRelay) {
-      return String(parseFloat(amountOut) + (smartRelayFee?.amount || 0));
-    }
-    return amountOut;
-  }, [amountOut, isSmartRelay, smartRelayFee?.amount]);
+    return String(parseFloat(amountOut) + (smartRelayFee?.assetAmount ?? 0) + (bridgingFee?.assetAmount ?? 0));
+  }, [amountOut, smartRelayFee?.assetAmount, bridgingFee?.assetAmount]);
 
   if (!(sourceChain && sourceAsset && destinationChain && destinationAsset)) {
     return null;
@@ -262,9 +261,9 @@ export const SwapDetails = ({
             <>
               <dt>Bridging Fee</dt>
               <dd>
-                {bridgingFee?.inAsset ?? '-'}{' '}
+                {bridgingFee?.formattedAssetAmount ?? '-'}{' '}
                 <span className="text-sm tabular-nums text-neutral-400">
-                  {bridgingFee?.inUSD ?? '-'}
+                  {bridgingFee?.formattedUsdAmount ?? '-'}
                 </span>
               </dd>
             </>
@@ -273,9 +272,9 @@ export const SwapDetails = ({
             <>
               <dt>Relayer Fee</dt>
               <dd>
-                {smartRelayFee?.inAsset ?? '-'}{' '}
+                {smartRelayFee?.formattedAssetAmount ?? '-'}{' '}
                 <span className="text-sm tabular-nums text-neutral-400">
-                  {smartRelayFee?.inUSD ?? '-'}
+                  {smartRelayFee?.formattedUsdAmount ?? '-'}
                 </span>
               </dd>
             </>
