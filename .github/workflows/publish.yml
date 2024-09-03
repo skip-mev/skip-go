@@ -42,7 +42,7 @@ jobs:
       - name: Publish web component
         if: steps.changesets.outputs.published == 'true'
         continue-on-error: true
-        working-directory: packages/widget
+        working-directory: ./packages/widget
         run: |
           git pull origin main
           yarn publish:web-component
