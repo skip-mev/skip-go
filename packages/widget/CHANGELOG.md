@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.7
+
+### Patch Changes
+
+- 0519e17: Remove scrollStore and scrollTo in disclosures
+
 ## 2.4.6
 
 ### Patch Changes
