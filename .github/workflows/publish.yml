@@ -44,7 +44,6 @@ jobs:
         continue-on-error: true
         run: |
           git pull origin main
-          cd packages/widget
-          yarn publish:web-component
+          yarn --cwd packages/widget publish:web-component
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
