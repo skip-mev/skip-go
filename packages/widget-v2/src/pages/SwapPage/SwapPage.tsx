@@ -123,6 +123,18 @@ export const SwapPage = () => {
     tokenAndChainSelectorFlow,
   ]);
 
+  const swapButton = useMemo(() => {
+    if (isRouteLoading) {
+      return <MainButton label="Finding Best Route..." loading={true} />;
+    }
+
+    if (isRouteError) {
+      return <MainButton label={routeError.message} disabled={true} />;
+    }
+
+    return <MainButton label="Connect Wallet" icon={ICONS.plus} />;
+  }, [isRouteLoading, isRouteError, routeError]);
+
   return (
     <>
       <Column
@@ -168,9 +180,7 @@ export const SwapPage = () => {
             }}
           />
         </Column>
-        {!isRouteLoading && !isRouteError && <MainButton label="Connect Wallet" icon={ICONS.plus} />}
-        {isRouteLoading && <MainButton label="Finding Best Route..." loading={true} />}
-        {isRouteError && !isRouteLoading && <MainButton label={routeError.message} disabled={true} />}
+        {swapButton}
         <SwapPageFooter
           showRouteInfo
           onClick={() =>
