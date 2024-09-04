@@ -37,13 +37,13 @@ type CombinedOperation = {
 
 type OperationDetails = CombineAndMakeOptional<
   Transfer &
-    BankSend &
-    Swap &
-    AxelarTransfer &
-    CCTPTransfer &
-    HyperlaneTransfer &
-    EvmSwap &
-    OPInitTransfer
+  BankSend &
+  Swap &
+  AxelarTransfer &
+  CCTPTransfer &
+  HyperlaneTransfer &
+  EvmSwap &
+  OPInitTransfer
 >;
 
 export type ClientOperation = {
@@ -53,6 +53,7 @@ export type ClientOperation = {
   amountOut: string;
 } & OperationDetails;
 
+// find keys that are present in each type 
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
     ? T[Key] extends Record<Key, unknown>
@@ -61,7 +62,7 @@ type KeysPresentInAll<T> = keyof T extends infer Key
     : never
   : never;
 
-// Utility type to extract keys that are not present in all types
+// find keys that are not present in each type
 type KeysNotPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
     ? T[Key] extends Record<Key, unknown>
@@ -70,7 +71,7 @@ type KeysNotPresentInAll<T> = keyof T extends infer Key
     : never
   : never;
 
-// Main utility type to compute the desired output
+// combine multiple types properly and preserve details on if key is optional
 type CombineAndMakeOptional<T> = {
   [K in KeysPresentInAll<T>]: T[K];
 } & {
