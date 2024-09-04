@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SwapPage } from "@/pages/SwapPage/SwapPage";
-import { styled } from "styled-components";
 import { ErrorPage } from "@/pages/ErrorPage/ErrorPage";
 import { errorAtom, ErrorPageVariants, ErrorType } from "@/state/errorPage";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { RouteResponse } from "@skip-go/client";
+import { ClientOperation } from "@/utils/clientType";
 
 const meta = {
   title: "Pages/ErrorPage",
@@ -19,6 +18,21 @@ type Story = StoryObj<typeof meta>;
 
 export default meta;
 
+const route = {
+  amountIn: "50000000",
+  amountOut: "18185371517380425",
+  usdAmountIn: "50.05",
+  usdAmountOut: "44.66",
+  sourceAssetDenom: "uusdc",
+  destAssetDenom: "ethereum-native",
+} as RouteResponse;
+
+const revertedOperation = {
+  denom: "uatom",
+  amountIn: "50000000",
+  fromChainID: "noble-1"
+} as ClientOperation;
+
 const RenderExample = (props: ErrorPageVariants) => {
   const [error, setError] = useAtom(errorAtom);
   useEffect(() => {
@@ -31,19 +45,60 @@ const RenderExample = (props: ErrorPageVariants) => {
   return null;
 }
 
+export const AuthFailed: Story = {
+  args: {
+    errorType: ErrorType.AuthFailed,
+    onClickBack: () => alert("back"),
+  }
+};
+
+export const Timeout: Story = {
+  args: {
+    errorType: ErrorType.Timeout,
+    explorerUrl: "https://www.google.com",
+  }
+};
+
+export const AdditionalSigningRequired: Story = {
+  args: {
+    errorType: ErrorType.AdditionalSigningRequired,
+    onClickSign: () => alert("sign"),
+    route,
+  }
+};
+
 export const TradeWarning: Story = {
   args: {
     errorType: ErrorType.TradeWarning,
-    swapDifferencePercentage: "60%",
     onClickContinue: () => alert("continue"),
     onClickBack: () => alert("back"),
-    route: {
-      amountIn: "50000000",
-      amountOut: "18185371517380425",
-      usdAmountIn: "50.05",
-      usdAmountOut: "44.66",
-      sourceAssetDenom: "uusdc",
-      destAssetDenom: "ethereum-native",
-    } as RouteResponse
+    route,
+  }
+};
+
+export const TransactionFailed: Story = {
+  args: {
+    errorType: ErrorType.TransactionFailed,
+    transactionHash: "jalksdjfalksdf",
+    explorerUrl: "https://www.google.com",
+    onClickContactSupport: () => alert("contact support")
+  }
+};
+
+export const TransactionReverted: Story = {
+  args: {
+    errorType: ErrorType.TransactionReverted,
+    explorerUrl: "https://www.google.com",
+    revertedOperation,
+    recoveryAddress: "RECOVERY ADDRESS",
+    onClickContinueTransaction: () => alert("continue transaction")
+  }
+};
+
+
+export const Unexpected: Story = {
+  args: {
+    errorType: ErrorType.Unexpected,
+    error: new Error("unexpected error"),
   }
 };

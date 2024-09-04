@@ -3,24 +3,36 @@ import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
+import { calculatePercentageDifference } from "@/utils/number";
 import { RouteResponse } from "@skip-go/client/dist/types";
 import { useTheme } from "styled-components";
 
 export type ErrorPageTradeWarningProps = {
-  swapDifferencePercentage: string;
   onClickContinue: () => void;
   onClickBack: () => void;
   route: RouteResponse;
 };
 
 export const ErrorPageTradeWarning = ({
-  swapDifferencePercentage,
   onClickContinue,
   onClickBack,
   route,
 }: ErrorPageTradeWarningProps) => {
   const theme = useTheme();
-  const { amountIn, amountOut, usdAmountIn, usdAmountOut, sourceAssetDenom, destAssetDenom } = route;
+  const {
+    amountIn,
+    amountOut,
+    usdAmountIn,
+    usdAmountOut,
+    sourceAssetDenom,
+    destAssetDenom,
+  } = route;
+
+  const swapDifferencePercentage = `${calculatePercentageDifference(
+    usdAmountIn ?? 0,
+    usdAmountOut ?? 0,
+    true
+  )}%`;
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
@@ -40,11 +52,15 @@ export const ErrorPageTradeWarning = ({
         description={
           <>
             <SmallText color={theme.error.text} textAlign="center">
-              You will lose ~{swapDifferencePercentage} of your input value with this trade
+              You will lose ~{swapDifferencePercentage} of your input value with
+              this trade
               <br />
-              Input: {sourceDetails?.formattedAmount} {sourceDetails?.symbol} ({sourceDetails?.formattedUsdAmount})
+              Input: {sourceDetails?.formattedAmount} {sourceDetails?.symbol} (
+              {sourceDetails?.formattedUsdAmount})
               <br />
-              Estimated output: ~{destinationDetails?.formattedAmount} {destinationDetails?.symbol} ({destinationDetails?.formattedUsdAmount})
+              Estimated output: ~{destinationDetails?.formattedAmount}{" "}
+              {destinationDetails?.symbol} (
+              {destinationDetails?.formattedUsdAmount})
             </SmallText>
             <SmallTextButton
               onClick={onClickContinue}
@@ -58,7 +74,12 @@ export const ErrorPageTradeWarning = ({
         backgroundColor={theme.error.background}
         textColor={theme.error.text}
       />
-      <MainButton label="Back" leftIcon={ICONS.leftArrow} onClick={onClickBack} />
+      <MainButton
+        label="Back"
+        icon={ICONS.leftArrow}
+        onClick={onClickBack}
+        backgroundColor={theme.error.text}
+      />
     </>
   );
 };

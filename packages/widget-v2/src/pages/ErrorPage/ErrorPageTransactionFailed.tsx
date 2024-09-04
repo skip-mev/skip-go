@@ -25,7 +25,7 @@ export const ErrorPageTransactionFailed = ({
         title="Transaction failed"
         description={
           <>
-           <SmallText color={theme.error.text} textAlign="center">
+            <SmallText color={theme.error.text} textAlign="center">
               This transaction encountered a critical error. <br />
               Please contact our support team below.
             </SmallText>
@@ -44,7 +44,12 @@ export const ErrorPageTransactionFailed = ({
         backgroundColor={theme.error.background}
         textColor={theme.error.text}
       />
-      <MainButton label="Contact support" leftIcon={ICONS.rightArrow} onClick={onClickContactSupport} />
+      <MainButton
+        label="Contact support"
+        icon={ICONS.rightArrow}
+        onClick={onClickContactSupport}
+        backgroundColor={theme.error.text}
+      />
     </>
   );
 };

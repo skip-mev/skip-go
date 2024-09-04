@@ -21,7 +21,12 @@ export const ErrorPageAuthFailed = ({
         backgroundColor={theme.error.background}
         textColor={theme.error.text}
       />
-      <MainButton label="Back" leftIcon={ICONS.leftArrow} onClick={onClickBack} />
+      <MainButton
+        label="Back"
+        icon={ICONS.leftArrow}
+        onClick={onClickBack}
+        backgroundColor={theme.error.text}
+      />
     </>
   );
 };

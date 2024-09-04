@@ -6,14 +6,12 @@ import { ICONS } from "@/icons";
 import { RouteResponse } from "@skip-go/client/dist/types";
 
 export type ErrorPageTradeAdditionalSigningRequiredProps = {
-  swapDifferencePercentage: string;
-  onClickContinue: () => void;
-  onClickBack: () => void;
+  onClickSign: () => void;
   route: RouteResponse;
 };
 
 export const ErrorPageTradeAdditionalSigningRequired = ({
-  onClickBack,
+  onClickSign,
   route,
 }: ErrorPageTradeAdditionalSigningRequiredProps) => {
   const { amountIn, amountOut, sourceAssetDenom, destAssetDenom } = route;
@@ -46,9 +44,9 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
         icon={ICONS.signature}
       />
       <MainButton
-        label="Back"
-        leftIcon={ICONS.leftArrow}
-        onClick={onClickBack}
+        label="Authorize in wallet"
+        icon={ICONS.rightArrow}
+        onClick={onClickSign}
       />
     </>
   );

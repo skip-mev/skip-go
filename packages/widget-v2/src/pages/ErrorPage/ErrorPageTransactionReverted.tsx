@@ -23,12 +23,12 @@ export const ErrorPageTransactionReverted = ({
 }: ErrorPageTransactionRevertedProps) => {
   const theme = useTheme();
 
-  const assetDenom = (revertedOperation.denomIn ?? revertedOperation.denom);
+  const assetDenom = revertedOperation.denomIn ?? revertedOperation.denom;
 
   const assetDetails = useGetAssetDetails({
     assetDenom: assetDenom,
     amount: revertedOperation.amountIn,
-    chainId: revertedOperation?.fromChainID ?? revertedOperation.chainID
+    chainId: revertedOperation?.fromChainID ?? revertedOperation.chainID,
   });
 
   return (
@@ -46,7 +46,9 @@ export const ErrorPageTransactionReverted = ({
               color={theme.primary.text.lowContrast}
               textAlign="center"
             >
-              Current asset location: {assetDetails?.formattedAmount} {assetDetails?.symbol} on {assetDetails?.chainName} ({recoveryAddress})
+              Current asset location: {assetDetails?.formattedAmount}{" "}
+              {assetDetails?.symbol} on {assetDetails?.chainName} (
+              {recoveryAddress})
             </SmallText>
             <Row gap={25} justify="center">
               <Row
@@ -69,7 +71,7 @@ export const ErrorPageTransactionReverted = ({
       <MainButton
         label="Continue transaction"
         backgroundColor={theme.warning.text}
-        leftIcon={ICONS.rightArrow}
+        icon={ICONS.rightArrow}
         onClick={onClickContinueTransaction}
       />
     </>

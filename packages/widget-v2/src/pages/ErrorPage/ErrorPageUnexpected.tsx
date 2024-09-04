@@ -10,9 +10,7 @@ export type ErrorPageUnexpectedProps = {
   error?: Error;
 };
 
-export const ErrorPageUnexpected = ({
-  error,
-}: ErrorPageUnexpectedProps) => {
+export const ErrorPageUnexpected = ({ error }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
   const resetError = useResetAtom(errorAtom);
 
@@ -26,10 +24,7 @@ export const ErrorPageUnexpected = ({
         title="An unexpected error has occurred"
         description={
           <>
-            <SmallText
-              color={theme.error.text}
-              textAlign="center"
-            >
+            <SmallText color={theme.error.text} textAlign="center">
               {error?.message}
             </SmallText>
           </>
@@ -40,8 +35,9 @@ export const ErrorPageUnexpected = ({
       />
       <MainButton
         label="Retry"
-        leftIcon={ICONS.rightArrow}
+        icon={ICONS.rightArrow}
         onClick={onClickRetry}
+        backgroundColor={theme.error.text}
       />
     </>
   );
