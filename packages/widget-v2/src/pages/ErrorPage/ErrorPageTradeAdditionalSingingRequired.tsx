@@ -36,7 +36,7 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
           </Text>
         }
         description={
-          <SmallText normalTextColor>
+          <SmallText>
             {sourceDetails.formattedAmount} {sourceDetails.symbol} {" -> "}
             {destinationDetails.formattedAmount} {destinationDetails.symbol}
           </SmallText>
