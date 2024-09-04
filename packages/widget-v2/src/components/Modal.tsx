@@ -7,7 +7,7 @@ import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtom } from "jotai";
-import { errorAtom } from "@/state/errorPage";
+import { errorAtom, ErrorType } from "@/state/errorPage";
 import { numberOfModalsOpenAtom } from "@/state/modal";
 
 export type ModalProps = {
@@ -59,7 +59,7 @@ export const createModal = <T extends ModalProps>(
 
     return (
       <Modal {...props}>
-        <ErrorBoundary fallback={null} onError={(error) => setError(error)}>
+        <ErrorBoundary fallback={null} onError={(error) => setError({ errorType: ErrorType.Unexpected, error })}>
           <Component {...props} />
         </ErrorBoundary>
       </Modal>

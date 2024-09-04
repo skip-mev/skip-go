@@ -1,24 +1,25 @@
-import { errorAtom } from "@/state/errorPage";
-import { useResetAtom } from "jotai/utils";
+import { errorAtom, ErrorType } from "@/state/errorPage";
+import { useAtom } from "jotai";
+import { ErrorPageTradeWarning } from "./ErrorPageTradeWarning";
+import { ErrorPageAuthFailed } from "./ErrorPageAuthFailed";
+import { ErrorPageTransactionFailed } from "./ErrorPageTransactionFailed";
+import { ErrorPageUnexpected } from "./ErrorPageUnexpected";
 
-export const ErrorPage = ({
-  resetErrorBoundary,
-}: {
-  error?: Error;
-  componentStack?: string;
-  resetErrorBoundary?: () => void;
-}) => {
-  const resetError = useResetAtom(errorAtom);
+export const ErrorPage = () => {
+  const [error] = useAtom(errorAtom);
 
-  const handleReset = () => {
-    resetError();
-    resetErrorBoundary?.();
-  };
+  if (error?.errorType === undefined) return;
 
-  return (
-    <div>
-      error page
-      <button onClick={handleReset}>reset</button>
-    </div>
-  );
+  switch (error.errorType) {
+    case ErrorType.Timeout:
+      return <ErrorPageTradeWarning {...error} />;
+    case ErrorType.AuthFailed:
+      return <ErrorPageAuthFailed {...error} />;
+    case ErrorType.TransactionFailed: 
+      return <ErrorPageTransactionFailed {...error} />;
+    case ErrorType.Unexpected:
+      return <ErrorPageUnexpected error={error.error} />;
+    default:
+      return;
+  }
 };

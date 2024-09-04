@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
@@ -25,7 +25,7 @@ import { useModal } from "@/components/Modal";
 
 const sourceAssetBalance = 125;
 
-export const SwapPage = () => {
+export const SwapPage = () => {  
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
