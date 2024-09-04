@@ -35,7 +35,7 @@ type CombinedOperation = {
   opInitTransfer?: OPInitTransfer;
 };
 
-type OperationDetails = CombineAndMakeOptional<
+type OperationDetails = CombineObjectTypes<
   Transfer &
   BankSend &
   Swap &
@@ -72,7 +72,7 @@ type KeysNotPresentInAll<T> = keyof T extends infer Key
   : never;
 
 // combine multiple types properly and preserve details on if key is optional
-type CombineAndMakeOptional<T> = {
+type CombineObjectTypes<T> = {
   [K in KeysPresentInAll<T>]: T[K];
 } & {
   [K in KeysNotPresentInAll<T>]?: T[K];
