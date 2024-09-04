@@ -2,11 +2,9 @@ import type { Meta } from "@storybook/react";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Row } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
-import {
-  WalletSelectorModal,
-  WalletSelectorModalProps,
-} from "@/modals/WalletSelectorModal/WalletSelectorFlow";
+
 import { Wallet } from "@/components/RenderWalletList";
+import { WalletSelectorModal, WalletSelectorModalProps } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 const meta = {
   title: "Modals/WalletSelectorModal",

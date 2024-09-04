@@ -5,10 +5,15 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
+import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
 
 const meta = {
   title: "Pages/ErrorPage",
-  component: (props) => <RenderExample {...props} />,
+  component: (props) => renderLightAndDarkTheme(
+    <RenderExample {...props} />,
+    undefined,
+    true
+  ),
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",

@@ -12,12 +12,13 @@ import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
 import { withBoundProps } from "@/utils/misc";
-import { Operation, txState } from "./SwapExecutionPageRouteDetailedRow";
+import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { SmallText } from "@/components/Typography";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import operations from "./operations.json";
 import { useModal } from "@/components/Modal";
+import { ClientOperation } from "@/utils/clientType";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -149,7 +150,7 @@ export const SwapExecutionPage = () => {
       />
       <SwapExecutionPageRoute
         txStateMap={txStateMap}
-        operations={operations as Operation[]}
+        operations={operations as ClientOperation[]}
       />
       {renderMainButton}
       <SwapPageFooter

@@ -1,7 +1,6 @@
 import { RouteResponse } from "@skip-go/client";
 import { SmallText } from "@/components/Typography";
-import { useAtom } from "jotai";
-import { skipAssetsAtom, ClientAsset, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
 import { getFormattedAssetAmount } from "@/utils/crypto";

@@ -21,16 +21,19 @@ export type AssetDetails = {
 
 /**
  * @param {string} [params.assetDenom] - The denomination of the asset to retrieve details for.
- * @param {string} [params.amount] - Optional. The amount of the asset, used for formatting.
- * @param {string} [params.chainId] - Optional. The ID of the chain associated with the asset.
+ * @param {string} [params.amount] - The amount of the asset, used for formatting.
+ * @param {string} [params.amountUsd] - The total value of the asset in usd, used for formatting.
+ * @param {string} [params.chainId] - The id of the chain associated with the asset.
  *
  * @returns {AssetDetails} An object containing the following properties:
- * - `asset` (ClientAsset | undefined): The asset object corresponding to the provided denomination.
- * - `chain` (Chain | undefined): The chain object associated with the provided chain ID.
- * - `chainName` (string | undefined): The name of the chain, derived from the chain object.
- * - `symbol` (string | undefined): The symbol of the asset, derived from the asset object.
- * - `formattedAmount` (string | undefined): The formatted amount of the asset, if the amount is provided.
- * - `formattedUsdAmount` (string | undefined): The formatted usd amount of the asset, if the amountUsd is provided.
+ * - `asset` The asset object corresponding to the provided denomination.
+ * - `chain` The chain object associated with the provided chain id.
+ * - `symbol` The symbol of the asset, derived from the asset object.
+ * - `assetImage` The asset image url derived from the asset object.
+ * - `chainName` The name of the chain, derived from the chain object.
+ * - `chainImage` The chain image url, derived from the chain object.
+ * - `formattedAmount` The formatted amount of the asset, if the amount is provided.
+ * - `formattedUsdAmount` The formatted usd amount of the asset, if the amountUsd is provided.
  */
 export const useGetAssetDetails = ({
   assetDenom,

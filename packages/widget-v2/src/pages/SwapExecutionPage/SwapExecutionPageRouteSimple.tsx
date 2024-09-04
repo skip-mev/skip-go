@@ -6,8 +6,8 @@ import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleR
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { destinationWalletAtom } from "@/state/swapPage";
-import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorFlow";
 import { ClientOperation } from "@/utils/clientType";
+import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
