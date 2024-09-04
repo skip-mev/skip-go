@@ -49,16 +49,20 @@ export const useGetAssetDetails = ({
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
 
-  const asset = assets?.find((asset) => asset.denom === assetDenom);
+  const asset = assets?.find((asset) => {
+    if (chainId) {
+      return asset.denom === assetDenom && asset.chainID === chainId;
+    }
+    return asset.denom === assetDenom;
+  });
   const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
   const chain = chains?.find((chain) => {
     if (chainId) {
       return chain.chainID === chainId;
-    } else {
-      return chain.chainID === asset?.chainID;
     }
+    return chain.chainID === asset?.chainID;
   });
   const chainName = chain?.prettyName ?? chain?.chainName;
   const chainImage = chain?.logoURI;
