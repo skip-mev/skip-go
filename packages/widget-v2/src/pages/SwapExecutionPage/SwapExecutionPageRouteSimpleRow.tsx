@@ -17,6 +17,7 @@ import { useAtom } from "jotai";
 import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
 import { ChainIcon } from "@/icons/ChainIcon";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: Operation["denomIn"] | Operation["denomOut"];
@@ -45,21 +46,20 @@ export const SwapExecutionPageRouteSimpleRow = ({
     "mount";
   }, []);
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
-  const asset = assets?.find((asset) => asset.denom === denom);
 
-  const chain = chains?.find((chain) => chain.chainID === chainID);
-  const chainImage = chain?.logoURI
+  const assetDetails = useGetAssetDetails({
+    assetDenom: denom,
+    chainId: chainID,
+  });
 
-  if (!asset) {
+  if (!assetDetails?.asset) {
     throw new Error(`Asset not found for denom: ${denom}`);
   }
 
-  const normalizedAmount = Number(amount) / Math.pow(10, asset.decimals ?? 6);
+  const normalizedAmount = Number(amount) / Math.pow(10, assetDetails.asset.decimals ?? 6);
 
   const usdValue = useUsdValue({
-    ...asset,
+    ...assetDetails.asset,
     value: normalizedAmount.toString(),
   });
 
@@ -74,27 +74,27 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   return (
     <Row gap={25} align="center">
-      {chainImage && (
+      {assetDetails.chainImage && (
         <StyledAnimatedBorder
           width={50}
           height={50}
           backgroundColor={theme.success.text}
           txState={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={chainImage} />
+          <img height={50} width={50} src={assetDetails.chainImage} />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
-          {asset?.recommendedSymbol}
+          {assetDetails.formattedAmount}{" "}
+          {assetDetails?.symbol}
         </Text>
         <SmallText>
           {formatUSD(usdValue?.data ?? 0)}
           {destination && " after fees"}
         </SmallText>
         <Row align="center" gap={5}>
-          <SmallText normalTextColor>on {asset?.chainName}</SmallText>
+          <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
           {wallet && (
             <>
               {wallet.imageUrl && (

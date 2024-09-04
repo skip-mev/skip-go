@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type TxStatus = {
   chainId: string;
@@ -56,22 +57,27 @@ export const TransactionHistoryModalItem = ({
     timestamp,
     status,
   } = txHistoryItem;
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom)
-  const sourceChain = chains?.find(c => c.chainID === sourceAssetChainID)
-  const sourceChainImage = sourceChain?.logoURI
+
+  const sourceAssetDetails = useGetAssetDetails({
+    assetDenom: sourceAssetDenom,
+    chainId: sourceAssetChainID,
+  });
+
+  const destinationAssetDetails = useGetAssetDetails({
+    assetDenom: destAssetDenom,
+    chainId: destAssetChainID
+  });
+
   const source = {
     amount: amountIn,
-    asset: assets?.find((asset) => asset.denom === sourceAssetDenom),
-    chainImage: sourceChainImage ?? "",
+    asset: sourceAssetDetails.asset,
+    chainImage: sourceAssetDetails?.chainImage,
   };
 
-  const destinationChain = chains?.find(c => c.chainID === destAssetChainID)
-  const destinationChainImage = destinationChain?.logoURI
   const destination = {
     amount: amountOut,
-    asset: assets?.find((asset) => asset.denom === destAssetDenom),
-    chainImage: destinationChainImage ?? "",
+    asset: destinationAssetDetails.asset,
+    chainImage: destinationAssetDetails.chainImage,
   };
 
   const renderStatus = useMemo(() => {

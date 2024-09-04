@@ -11,6 +11,7 @@ import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
 import { BigNumber } from "bignumber.js";
 import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -28,18 +29,11 @@ export const AssetChainInput = ({
   handleChangeChain,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom)
+  const assetDetails = useGetAssetDetails({
+    assetDenom: selectedAssetDenom,
+  });
 
-  const selectedAsset = assets?.find(
-    (asset) => asset.denom === selectedAssetDenom
-  );
-
-  const selectedChain = chains?.find(
-    (chain) => chain.chainID === selectedAsset?.chainID
-  );
-
-  const usdValue = useUsdValue({ ...selectedAsset, value });
+  const usdValue = useUsdValue({ ...assetDetails.asset, value });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;

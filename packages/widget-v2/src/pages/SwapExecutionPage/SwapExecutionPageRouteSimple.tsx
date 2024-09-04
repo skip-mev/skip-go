@@ -1,15 +1,16 @@
 import styled, { useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
-import { Operation, txState } from "./SwapExecutionPageRouteDetailedRow";
+import {txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useAtom } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { destinationWalletAtom } from "@/state/swapPage";
 import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorFlow";
+import { ClientOperation } from "@/utils/clientType";
 
 export type SwapExecutionPageRouteSimpleProps = {
-  operations: Operation[];
+  operations: ClientOperation[];
   txStateMap: Record<number, txState>;
   onClickEditDestinationWallet?: () => void;
 };

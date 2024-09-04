@@ -1,12 +1,9 @@
 import { ErrorState } from "@/components/ErrorState";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
-import { skipAssetsAtom } from "@/state/skipClient";
-import { getFormattedAssetAmount } from "@/utils/crypto";
-import { formatUSD } from "@/utils/intl";
 import { RouteResponse } from "@skip-go/client/dist/types";
-import { useAtom } from "jotai";
 import { useTheme } from "styled-components";
 
 export type ErrorPageTradeWarningProps = {
@@ -23,13 +20,18 @@ export const ErrorPageTradeWarning = ({
   route,
 }: ErrorPageTradeWarningProps) => {
   const theme = useTheme();
-
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-
   const { amountIn, amountOut, usdAmountIn, usdAmountOut, sourceAssetDenom, destAssetDenom } = route;
 
-  const sourceAsset = assets?.find(asset => asset.denom === sourceAssetDenom);
-  const destinationAsset = assets?.find(asset => asset.denom === destAssetDenom);
+  const sourceDetails = useGetAssetDetails({
+    assetDenom: sourceAssetDenom,
+    amount: amountIn,
+    amountUsd: usdAmountIn,
+  });
+  const destinationDetails = useGetAssetDetails({
+    assetDenom: destAssetDenom,
+    amount: amountOut,
+    amountUsd: usdAmountOut,
+  });
 
   return (
     <>
@@ -40,9 +42,9 @@ export const ErrorPageTradeWarning = ({
             <SmallText color={theme.error.text} textAlign="center">
               You will lose ~{swapDifferencePercentage} of your input value with this trade
               <br />
-              Input: {getFormattedAssetAmount(amountIn, sourceAsset?.decimals)} {sourceAsset?.recommendedSymbol} {usdAmountIn && `(${formatUSD(usdAmountIn)})`}
+              Input: {sourceDetails?.formattedAmount} {sourceDetails?.symbol} ({sourceDetails?.formattedUsdAmount})
               <br />
-              Estimated output: ~{getFormattedAssetAmount(amountOut, destinationAsset?.decimals)} {destinationAsset?.recommendedSymbol} {usdAmountOut && `(${formatUSD(usdAmountOut)})`}
+              Estimated output: ~{destinationDetails?.formattedAmount} {destinationDetails?.symbol} ({destinationDetails?.formattedUsdAmount})
             </SmallText>
             <SmallTextButton
               onClick={onClickContinue}

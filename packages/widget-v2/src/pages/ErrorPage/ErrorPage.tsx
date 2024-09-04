@@ -11,7 +11,7 @@ export const ErrorPage = () => {
   if (error?.errorType === undefined) return;
 
   switch (error.errorType) {
-    case ErrorType.Timeout:
+    case ErrorType.TradeWarning:
       return <ErrorPageTradeWarning {...error} />;
     case ErrorType.AuthFailed:
       return <ErrorPageAuthFailed {...error} />;
