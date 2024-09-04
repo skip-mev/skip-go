@@ -5,8 +5,6 @@ import { ChevronIcon } from "@/icons/ChevronIcon";
 import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
-import { useAtom } from "jotai";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
 import { BigNumber } from "bignumber.js";
@@ -125,10 +123,10 @@ export const AssetChainInput = ({
           onKeyDown={handleKeyDown}
         />
         <Button onClick={handleChangeAsset} gap={5}>
-          {selectedAsset ? (
+          {assetDetails?.asset ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <img src={selectedAsset?.logoURI} width={23} />
-              <Text>{selectedAsset?.recommendedSymbol}</Text>
+              <img src={assetDetails.assetImage} width={23} />
+              <Text>{assetDetails.symbol}</Text>
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
@@ -144,14 +142,14 @@ export const AssetChainInput = ({
       </Row>
       <Row justify="space-between">
         <SmallText>{formatUSD(usdValue?.data ?? 0)}</SmallText>
-        {selectedAsset ? (
+        {assetDetails?.asset ? (
           <GhostButton
             onClick={handleChangeChain}
             align="center"
             secondary
             gap={4}
           >
-            <SmallText>on {selectedChain?.prettyName}</SmallText>
+            <SmallText>on {assetDetails?.chainName}</SmallText>
             <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (

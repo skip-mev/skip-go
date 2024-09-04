@@ -8,26 +8,22 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { ClientOperation } from "@/utils/clientType";
 import { useTheme } from "styled-components";
 
-export type ErrorPageAuthFailedProps = {
+export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
   revertedOperation: ClientOperation;
   recoveryAddress: string;
   onClickContinueTransaction: () => void;
 };
 
-export const ErrorPageAuthFailed = ({
+export const ErrorPageTransactionReverted = ({
   explorerUrl,
   revertedOperation,
   recoveryAddress,
   onClickContinueTransaction,
-}: ErrorPageAuthFailedProps) => {
+}: ErrorPageTransactionRevertedProps) => {
   const theme = useTheme();
 
   const assetDenom = (revertedOperation.denomIn ?? revertedOperation.denom);
-
-  if (!assetDenom) {
-    throw new Error("Denom for reverted operation was not found");
-  }
 
   const assetDetails = useGetAssetDetails({
     assetDenom: assetDenom,

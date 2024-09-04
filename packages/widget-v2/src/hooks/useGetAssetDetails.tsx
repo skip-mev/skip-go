@@ -10,8 +10,9 @@ import { useAtom } from "jotai";
 
 export type AssetDetails = {
   asset?: ClientAsset;
-  symbol?: string;
   chain?: Chain;
+  symbol?: string;
+  assetImage?: string;
   chainName?: string;
   chainImage?: string;
   formattedAmount?: string;
@@ -19,8 +20,7 @@ export type AssetDetails = {
 };
 
 /**
- * @param {Object} params - The parameters for fetching asset details.
- * @param {string} params.assetDenom - The denomination of the asset to retrieve details for.
+ * @param {string} [params.assetDenom] - The denomination of the asset to retrieve details for.
  * @param {string} [params.amount] - Optional. The amount of the asset, used for formatting.
  * @param {string} [params.chainId] - Optional. The ID of the chain associated with the asset.
  *
@@ -47,6 +47,7 @@ export const useGetAssetDetails = ({
   const [{ data: chains }] = useAtom(skipChainsAtom);
 
   const asset = assets?.find((asset) => asset.denom === assetDenom);
+  const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
   const chain = chains?.find((chain) => {
@@ -67,6 +68,7 @@ export const useGetAssetDetails = ({
   return {
     asset,
     chain,
+    assetImage,
     chainName,
     chainImage,
     symbol,
