@@ -14,9 +14,9 @@ import regular from "@/fonts/ABCDiatype-Regular.woff2";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
-import { CosmosProvider } from "./wallet/cosmos";
-import { EVMProvider } from "./wallet/evm";
-import { SolanaProvider } from "./wallet/solana";
+import { CosmosProvider } from "./wallet/CosmosProvider";
+import { EVMProvider } from "./wallet/EVMProvider";
+import { SolanaProvider } from "./wallet/SolanaProvider";
 
 export const queryClient = new QueryClient();
 
