@@ -8,15 +8,38 @@ import {
   chains as chainsInitiaRegistry,
   assets as assetsInitiaRegistry,
 } from "@initia/initia-registry";
+import { chainRegistryChainToKeplr } from "@chain-registry/keplr";
+import { ChainInfo } from "@keplr-wallet/types";
 
 export const chains = [
   ...chainsChainRegistry,
   ...chainsInitiaRegistry,
 ] as Chain[];
+
 export const assets = [
   ...assetsChainRegistry,
   ...assetsInitiaRegistry,
 ] as AssetList[];
+
+
+export const chainInfos = chains.map((chain) => {
+  try {
+    return chainRegistryChainToKeplr(chain, assets)
+  } catch (_error) {
+    return false
+  }
+}).filter(Boolean) as ChainInfo[]
+
+export const getChainInfo = (chainID: string) => {
+  const chain = chains.find((chain) => chain.chain_id === chainID)
+  if (!chain) return undefined
+  try {
+    return chainRegistryChainToKeplr(chain, assets)
+  } catch (_error) {
+    return undefined
+  }
+}
+
 
 export function getChain(chainId: string): Chain {
   const chain = chains.find((c) => c.chain_id === chainId);
