@@ -2,7 +2,7 @@ import { fromBech32 } from "@cosmjs/encoding";
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 
-type chainType = "cosmos" | "evm" | "svm";
+type chainType = "cosmos" | "evm" | "svm" | string;
 
 type isValidWalletAddressProps = {
   address: string;
