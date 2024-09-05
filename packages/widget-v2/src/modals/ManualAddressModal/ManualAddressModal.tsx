@@ -52,7 +52,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   );
 
   const addressIsValid = useMemo(() => {
-    if (!chain) return false;
+    if (!chain || manualWalletAddress.length === 0) return;
     const { chainType, bech32Prefix } = chain;
     return isValidWalletAddress({
       address: manualWalletAddress,

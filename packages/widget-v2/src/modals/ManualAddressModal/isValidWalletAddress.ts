@@ -2,13 +2,14 @@ import { fromBech32 } from "@cosmjs/encoding";
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 
-type chainType = "cosmos" | "evm" | "svm" | string;
+type chainType = "cosmos" | "evm" | "svm";
 
 type isValidWalletAddressProps = {
   address: string;
   chainType: chainType;
   bech32Prefix: string;
 }
+
 export const isValidWalletAddress = ({
   address,
   chainType,
@@ -35,6 +36,7 @@ export const isValidWalletAddress = ({
       } catch (_error) {
         return false;
       }
+    default:
+      return false;
   }
-  return false;
 };
