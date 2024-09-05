@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.9
+
+### Patch Changes
+
+- 27b2f23: finality time using api route response
+
 ## 2.4.8
 
 ### Patch Changes
