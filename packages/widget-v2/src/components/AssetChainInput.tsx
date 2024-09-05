@@ -120,7 +120,7 @@ export const AssetChainInput = ({
           onKeyDown={handleKeyDown}
         />
         <Button onClick={handleChangeAsset} gap={5}>
-          {assetDetails?.asset ? (
+          {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <img src={assetDetails.assetImage} width={23} />
               <Text>{assetDetails.symbol}</Text>
@@ -139,7 +139,7 @@ export const AssetChainInput = ({
       </Row>
       <Row justify="space-between">
         <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
-        {assetDetails?.asset ? (
+        {assetDetails?.chainName ? (
           <GhostButton
             onClick={handleChangeChain}
             align="center"
