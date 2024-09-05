@@ -4,7 +4,6 @@ import {
   ArrowTopRightOnSquareIcon,
   CheckCircleIcon,
   ChevronDownIcon,
-  EyeIcon,
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/20/solid';
@@ -21,7 +20,6 @@ import {
 import * as DescriptionList from './DescriptionList';
 import { RenderDate } from './RenderDate';
 import { txHistory, TxHistoryItem } from '../../store/tx-history';
-import { useFinalityTimeEstimate } from '../../hooks/use-finality-time-estimate';
 import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
 import { cn } from '../../utils/ui';
 import { ChainSymbol } from '../ChainSymbol';
@@ -29,6 +27,7 @@ import { AssetValue } from '../AssetValue';
 import { disclosure } from '../../store/disclosures';
 import { StyledHighlightButton } from '../StyledComponents/Buttons';
 import { StyledBorderDiv } from '../StyledComponents/Theme';
+import { convertSecondsToMinutesOrHours } from '../../utils/number';
 
 type RootProps = Omit<Accordion.AccordionSingleProps, 'type'>;
 
@@ -73,8 +72,6 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 ) {
   const { id, data, className, ...rest } = props;
   const headingRef = useRef<HTMLHeadingElement>(null);
-
-  const estimatedFinalityTime = useFinalityTimeEstimate(data.route);
   const {
     data: txsStatus,
     isLoading,
@@ -238,11 +235,9 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             </DescriptionList.Row>
           ))}
           <DescriptionList.Row>
-            <DescriptionList.Dt>Completion Time</DescriptionList.Dt>
+            <DescriptionList.Dt>Estimation Completion Time</DescriptionList.Dt>
             <DescriptionList.Dd>
-              {estimatedFinalityTime === ''
-                ? '2 minutes'
-                : estimatedFinalityTime}
+              ~{convertSecondsToMinutesOrHours(data.route.estimatedRouteDurationSeconds)}
             </DescriptionList.Dd>
           </DescriptionList.Row>
         </DescriptionList.Root>
