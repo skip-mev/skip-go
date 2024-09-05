@@ -70,13 +70,13 @@ export const TransactionHistoryModalItem = ({
   const source = {
     amount: amountIn,
     asset: sourceAssetDetails.asset,
-    chainImage: sourceAssetDetails?.chainImage,
+    chainImage: sourceAssetDetails?.chainImage ?? "",
   };
 
   const destination = {
     amount: amountOut,
     asset: destinationAssetDetails.asset,
-    chainImage: destinationAssetDetails.chainImage,
+    chainImage: destinationAssetDetails.chainImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
@@ -121,7 +121,7 @@ export const TransactionHistoryModalItem = ({
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
           <SmallText normalTextColor>
-            on {destinationChain?.prettyName ?? destinationChain?.chainName}
+            on {destinationAssetDetails.chainName}
           </SmallText>
         </Row>
         <Row align="center" gap={10}>
@@ -132,10 +132,8 @@ export const TransactionHistoryModalItem = ({
       {showDetails && (
         <TransactionHistoryModalItemDetails
           status={status}
-          sourceChainName={sourceChain?.prettyName ?? sourceChain?.chainName ?? "--"}
-          destinationChainName={
-            destinationChain?.prettyName ?? destinationChain?.chainName ?? "--"
-          }
+          sourceChainName={sourceAssetDetails.chainName ?? "--"}
+          destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
           transactionID={txStatus[0].txHash}

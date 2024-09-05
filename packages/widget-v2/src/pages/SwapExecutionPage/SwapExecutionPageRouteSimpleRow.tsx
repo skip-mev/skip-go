@@ -10,7 +10,6 @@ import {
   StyledAnimatedBorder,
   txState,
 } from "./SwapExecutionPageRouteDetailedRow";
-import { formatUSD } from "@/utils/intl";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation } from "@/utils/clientType";
@@ -48,10 +47,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId: chainID,
     amount,
   });
-
-  if (!assetDetails?.asset) {
-    throw new Error(`Asset not found for denom: ${denom}`);
-  }
 
   const txStateOfAnimatedBorder = useMemo(() => {
     if (destination && txState === "broadcasted") {
