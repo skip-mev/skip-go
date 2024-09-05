@@ -88,17 +88,27 @@ export const ShadowDomAndProviders = ({
       >
         <ThemeProvider theme={mergedThemes}>
           <GlobalStyles />
-          <SolanaProvider>
-            <CosmosProvider>
-              <EVMProvider>
-                <QueryClientProvider client={queryClient} key={"skip-widget"}>
-                  {children}
-                </QueryClientProvider>
-              </EVMProvider>
-            </CosmosProvider>
-          </SolanaProvider>
+          <WalletProvider>
+            <QueryClientProvider client={queryClient} key={"skip-widget"}>
+              {children}
+            </QueryClientProvider>
+          </WalletProvider>
         </ThemeProvider>
       </StyleSheetManager>
     </Scope>
   ) : null;
 };
+
+export const WalletProvider = (
+  { children }: { children: ReactNode }
+) => {
+  return (
+    <SolanaProvider>
+      <CosmosProvider>
+        <EVMProvider>
+          {children}
+        </EVMProvider>
+      </CosmosProvider>
+    </SolanaProvider>
+  )
+}
