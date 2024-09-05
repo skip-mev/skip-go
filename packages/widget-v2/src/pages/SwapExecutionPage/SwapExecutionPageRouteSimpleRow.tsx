@@ -10,7 +10,6 @@ import {
   StyledAnimatedBorder,
   txState,
 } from "./SwapExecutionPageRouteDetailedRow";
-import { useUsdValue } from "@/utils/useUsdValue";
 import { formatUSD } from "@/utils/intl";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -43,22 +42,16 @@ export const SwapExecutionPageRouteSimpleRow = ({
     "mount";
   }, []);
   const theme = useTheme();
-
+  
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
     chainId: chainID,
+    amount,
   });
 
   if (!assetDetails?.asset) {
     throw new Error(`Asset not found for denom: ${denom}`);
   }
-
-  const normalizedAmount = Number(amount) / Math.pow(10, assetDetails.asset.decimals ?? 6);
-
-  const usdValue = useUsdValue({
-    ...assetDetails.asset,
-    value: normalizedAmount.toString(),
-  });
 
   const txStateOfAnimatedBorder = useMemo(() => {
     if (destination && txState === "broadcasted") {
@@ -87,7 +80,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           {assetDetails?.symbol}
         </Text>
         <SmallText>
-          {formatUSD(usdValue?.data ?? 0)}
+          {assetDetails.formattedUsdAmount}
           {destination && " after fees"}
         </SmallText>
         <Row align="center" gap={5}>

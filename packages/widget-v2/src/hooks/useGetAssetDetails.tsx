@@ -5,8 +5,10 @@ import {
 } from "@/state/skipClient";
 import { getFormattedAssetAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
+import { useUsdValue } from "@/utils/useUsdValue";
 import { Chain } from "@skip-go/client";
 import { useAtom } from "jotai";
+import { useMemo } from "react";
 
 export type AssetDetails = {
   asset?: ClientAsset;
@@ -55,6 +57,7 @@ export const useGetAssetDetails = ({
     }
     return asset.denom === assetDenom;
   });
+  const { data: usdValue } = useUsdValue({...asset, value: amount});
   const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
@@ -70,7 +73,16 @@ export const useGetAssetDetails = ({
   const formattedAmount = amount
   ? getFormattedAssetAmount(amount, asset?.decimals)
   : undefined;
-  const formattedUsdAmount = amountUsd ? formatUSD(amountUsd) : undefined;
+
+  const formattedUsdAmount = useMemo(() => {
+    if (amountUsd) {
+      return formatUSD(amountUsd);
+    }
+    if (usdValue) {
+      return formatUSD(usdValue);
+    }
+    return;
+  }, [amountUsd, usdValue]);
 
   return {
     asset,

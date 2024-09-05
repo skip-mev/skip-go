@@ -5,8 +5,6 @@ import { ChevronIcon } from "@/icons/ChevronIcon";
 import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
-import { useUsdValue } from "@/utils/useUsdValue";
-import { formatUSD } from "@/utils/intl";
 import { BigNumber } from "bignumber.js";
 import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -29,9 +27,8 @@ export const AssetChainInput = ({
   const theme = useTheme();
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAssetDenom,
+    amount: value
   });
-
-  const usdValue = useUsdValue({ ...assetDetails.asset, value });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -141,7 +138,7 @@ export const AssetChainInput = ({
         </Button>
       </Row>
       <Row justify="space-between">
-        <SmallText>{formatUSD(usdValue?.data ?? 0)}</SmallText>
+        <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
         {assetDetails?.asset ? (
           <GhostButton
             onClick={handleChangeChain}
