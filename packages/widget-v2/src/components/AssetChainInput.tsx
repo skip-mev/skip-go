@@ -5,12 +5,9 @@ import { ChevronIcon } from "@/icons/ChevronIcon";
 import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
-import { useAtom } from "jotai";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { useUsdValue } from "@/utils/useUsdValue";
-import { formatUSD } from "@/utils/intl";
 import { BigNumber } from "bignumber.js";
 import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -28,18 +25,10 @@ export const AssetChainInput = ({
   handleChangeChain,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom)
-
-  const selectedAsset = assets?.find(
-    (asset) => asset.denom === selectedAssetDenom
-  );
-
-  const selectedChain = chains?.find(
-    (chain) => chain.chainID === selectedAsset?.chainID
-  );
-
-  const usdValue = useUsdValue({ ...selectedAsset, value });
+  const assetDetails = useGetAssetDetails({
+    assetDenom: selectedAssetDenom,
+    amount: value
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -131,10 +120,10 @@ export const AssetChainInput = ({
           onKeyDown={handleKeyDown}
         />
         <Button onClick={handleChangeAsset} gap={5}>
-          {selectedAsset ? (
+          {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <img src={selectedAsset?.logoURI} width={23} />
-              <Text>{selectedAsset?.recommendedSymbol}</Text>
+              <img src={assetDetails.assetImage} width={23} />
+              <Text>{assetDetails.symbol}</Text>
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
@@ -149,15 +138,15 @@ export const AssetChainInput = ({
         </Button>
       </Row>
       <Row justify="space-between">
-        <SmallText>{formatUSD(usdValue?.data ?? 0)}</SmallText>
-        {selectedAsset ? (
+        <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
+        {assetDetails?.chainName ? (
           <GhostButton
             onClick={handleChangeChain}
             align="center"
             secondary
             gap={4}
           >
-            <SmallText>on {selectedChain?.prettyName}</SmallText>
+            <SmallText>on {assetDetails?.chainName}</SmallText>
             <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (

@@ -1,7 +1,6 @@
 import { RouteResponse } from "@skip-go/client";
 import { SmallText } from "@/components/Typography";
-import { useAtom } from "jotai";
-import { skipAssetsAtom, ClientAsset, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
 import { getFormattedAssetAmount } from "@/utils/crypto";
@@ -10,6 +9,7 @@ import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type TxStatus = {
   chainId: string;
@@ -56,22 +56,27 @@ export const TransactionHistoryModalItem = ({
     timestamp,
     status,
   } = txHistoryItem;
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom)
-  const sourceChain = chains?.find(c => c.chainID === sourceAssetChainID)
-  const sourceChainImage = sourceChain?.logoURI
+
+  const sourceAssetDetails = useGetAssetDetails({
+    assetDenom: sourceAssetDenom,
+    chainId: sourceAssetChainID,
+  });
+
+  const destinationAssetDetails = useGetAssetDetails({
+    assetDenom: destAssetDenom,
+    chainId: destAssetChainID
+  });
+
   const source = {
     amount: amountIn,
-    asset: assets?.find((asset) => asset.denom === sourceAssetDenom),
-    chainImage: sourceChainImage ?? "",
+    asset: sourceAssetDetails.asset,
+    chainImage: sourceAssetDetails?.chainImage ?? "",
   };
 
-  const destinationChain = chains?.find(c => c.chainID === destAssetChainID)
-  const destinationChainImage = destinationChain?.logoURI
   const destination = {
     amount: amountOut,
-    asset: assets?.find((asset) => asset.denom === destAssetDenom),
-    chainImage: destinationChainImage ?? "",
+    asset: destinationAssetDetails.asset,
+    chainImage: destinationAssetDetails.chainImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
@@ -116,7 +121,7 @@ export const TransactionHistoryModalItem = ({
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
           <SmallText normalTextColor>
-            on {destinationChain?.prettyName ?? destinationChain?.chainName}
+            on {destinationAssetDetails.chainName}
           </SmallText>
         </Row>
         <Row align="center" gap={10}>
@@ -127,10 +132,8 @@ export const TransactionHistoryModalItem = ({
       {showDetails && (
         <TransactionHistoryModalItemDetails
           status={status}
-          sourceChainName={sourceChain?.prettyName ?? sourceChain?.chainName ?? "--"}
-          destinationChainName={
-            destinationChain?.prettyName ?? destinationChain?.chainName ?? "--"
-          }
+          sourceChainName={sourceAssetDetails.chainName ?? "--"}
+          destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
           transactionID={txStatus[0].txHash}

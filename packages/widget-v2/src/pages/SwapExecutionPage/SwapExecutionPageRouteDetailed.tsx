@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Column, Row } from "@/components/Layout";
 import {
-  Operation,
   SwapExecutionPageRouteDetailedRow,
   txState,
 } from "./SwapExecutionPageRouteDetailedRow";
@@ -10,9 +9,10 @@ import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
 import { useState } from "react";
 import { SmallText } from "@/components/Typography";
+import { ClientOperation } from "@/utils/clientType";
 
 export type SwapExecutionPageRouteDetailedProps = {
-  operations: Operation[];
+  operations: ClientOperation[];
   txStateMap: Record<number, txState>;
 };
 

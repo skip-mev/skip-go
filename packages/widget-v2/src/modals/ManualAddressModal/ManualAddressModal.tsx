@@ -8,12 +8,12 @@ import {
   RenderWalletListHeader,
   Wallet,
 } from "@/components/RenderWalletList";
-import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorFlow";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
 import { destinationAssetAtom, destinationWalletAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
+import { WALLET_LIST } from "../WalletSelectorModal/WalletSelectorModal";
 
 export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;

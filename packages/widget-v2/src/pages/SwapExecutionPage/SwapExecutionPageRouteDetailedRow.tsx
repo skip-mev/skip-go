@@ -1,48 +1,19 @@
-import { useAtom } from "jotai";
 import { Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { getFormattedAssetAmount } from "@/utils/crypto";
 import { css, styled, useTheme } from "styled-components";
 import React from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { Button } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
-
-type OperationType =
-  | "swap"
-  | "evmSwap"
-  | "transfer"
-  | "axelarTransfer"
-  | "cctpTransfer"
-  | "hyperlaneTransfer"
-  | "opInitTransfer"
-  | "bankSend";
-
-export type Operation = {
-  type: OperationType;
-  chainID: string;
-  fromChainID?: string;
-  toChainID?: string;
-  denom?: string;
-  denomIn?: string;
-  denomOut: string;
-  txIndex: number;
-  amountIn: string;
-  amountOut: string;
-  bridgeID?: string;
-  swapVenues?: {
-    name: "";
-    chainID: "";
-  }[];
-};
+import { ClientOperation } from "@/utils/clientType";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
-  denom: Operation["denomIn"] | Operation["denomOut"];
-  amount: Operation["amountIn"] | Operation["amountOut"];
-  chainID: Operation["fromChainID"] | Operation["chainID"];
+  denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
+  amount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
 };
@@ -56,17 +27,15 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
 
-  const asset = assets?.find((asset) => asset.denom === denom);
-
-  const chain = chains?.find(c => c.chainID === chainID)
-  const chainImage = chain?.logoURI
+  const assetDetails = useGetAssetDetails({
+    assetDenom: denom,
+    chainId: chainID,
+  });
 
   return (
     <Row gap={15} align="center" {...props}>
-      {chainImage && (
+      {assetDetails?.chainImage && (
         <StyledAnimatedBorder
           width={30}
           height={30}
@@ -76,7 +45,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <StyledChainImage
             height={30}
             width={30}
-            src={chainImage}
+            src={assetDetails.chainImage}
             state={txState}
           />
         </StyledAnimatedBorder>
@@ -85,10 +54,10 @@ export const SwapExecutionPageRouteDetailedRow = ({
       <Row align="center" justify="space-between" style={{ flex: 1 }}>
         <Row gap={5}>
           <SmallText normalTextColor>
-            {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
-            {asset?.recommendedSymbol}
+            {assetDetails?.formattedAmount}{" "}
+            {assetDetails?.symbol}
           </SmallText>
-          <SmallText> on {asset?.chainName}</SmallText>
+          <SmallText> on {assetDetails?.chainName}</SmallText>
           {explorerLink && (
             <Button onClick={() => window.open(explorerLink, "_blank")}>
               <SmallText>

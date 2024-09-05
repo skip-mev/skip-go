@@ -25,14 +25,14 @@ import { useModal } from "@/components/Modal";
 
 const sourceAssetBalance = 125;
 
-export const SwapPage = () => {
+export const SwapPage = () => {  
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom)
   const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);;
+  const [{ data: chains }] = useAtom(skipChainsAtom);
   const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);

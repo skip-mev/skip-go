@@ -28,3 +28,16 @@ export function parseAmountWei(amount?: string, decimals = 6) {
     return "0";
   }
 }
+
+export function calculatePercentageDifference (numberA: number | string, numberB: number | string, absoluteValue?: boolean) {
+  const bigNumberA = BigNumber(numberA);
+  const bigNumberB = BigNumber(numberB);
+
+  const percentageDifference = ((bigNumberB.minus(bigNumberA)).dividedBy(bigNumberA)).multipliedBy(100);
+
+  if (absoluteValue) {
+    return percentageDifference.absoluteValue().toFixed(0);
+  }
+
+  return percentageDifference.toFixed(0);
+}

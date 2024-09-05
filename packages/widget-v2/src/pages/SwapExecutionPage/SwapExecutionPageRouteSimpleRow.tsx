@@ -2,26 +2,22 @@ import { useTheme } from "styled-components";
 import { Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { getFormattedAssetAmount } from "@/utils/crypto";
 import { Wallet } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
 import { useEffect, useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import {
-  Operation,
   StyledAnimatedBorder,
   txState,
 } from "./SwapExecutionPageRouteDetailedRow";
-import { useAtom } from "jotai";
-import { useUsdValue } from "@/utils/useUsdValue";
-import { formatUSD } from "@/utils/intl";
 import { ChainIcon } from "@/icons/ChainIcon";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { ClientOperation } from "@/utils/clientType";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
-  denom: Operation["denomIn"] | Operation["denomOut"];
-  amount: Operation["amountIn"] | Operation["amountOut"];
-  chainID: Operation["fromChainID"] | Operation["chainID"];
+  denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
+  amount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
@@ -45,22 +41,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
     "mount";
   }, []);
   const theme = useTheme();
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
-  const asset = assets?.find((asset) => asset.denom === denom);
-
-  const chain = chains?.find((chain) => chain.chainID === chainID);
-  const chainImage = chain?.logoURI
-
-  if (!asset) {
-    throw new Error(`Asset not found for denom: ${denom}`);
-  }
-
-  const normalizedAmount = Number(amount) / Math.pow(10, asset.decimals ?? 6);
-
-  const usdValue = useUsdValue({
-    ...asset,
-    value: normalizedAmount.toString(),
+  
+  const assetDetails = useGetAssetDetails({
+    assetDenom: denom,
+    chainId: chainID,
+    amount,
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {
@@ -74,27 +59,27 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   return (
     <Row gap={25} align="center">
-      {chainImage && (
+      {assetDetails.chainImage && (
         <StyledAnimatedBorder
           width={50}
           height={50}
           backgroundColor={theme.success.text}
           txState={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={chainImage} />
+          <img height={50} width={50} src={assetDetails.chainImage} />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {getFormattedAssetAmount(amount ?? 0, asset?.decimals)}{" "}
-          {asset?.recommendedSymbol}
+          {assetDetails.formattedAmount}{" "}
+          {assetDetails?.symbol}
         </Text>
         <SmallText>
-          {formatUSD(usdValue?.data ?? 0)}
+          {assetDetails.formattedUsdAmount}
           {destination && " after fees"}
         </SmallText>
         <Row align="center" gap={5}>
-          <SmallText normalTextColor>on {asset?.chainName}</SmallText>
+          <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
           {wallet && (
             <>
               {wallet.imageUrl && (
