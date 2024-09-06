@@ -342,6 +342,7 @@ export type SwapExactCoinInJSON = {
   swap_operations: SwapOperationJSON[];
   swap_amount_in?: string;
   price_impact_percent?: string;
+  estimated_amount_out: string;
 };
 
 export type SwapExactCoinIn = {
@@ -349,6 +350,7 @@ export type SwapExactCoinIn = {
   swapOperations: SwapOperation[];
   swapAmountIn?: string;
   priceImpactPercent?: string;
+  estimatedAmountOut: string;
 };
 
 export type SwapRouteJSON = {
@@ -366,11 +368,13 @@ export type SwapRoute = {
 export type SmartSwapExactCoinInJSON = {
   swap_venue: SwapVenueJSON;
   swap_routes: SwapRouteJSON[];
+  estimated_amount_out: string;
 };
 
 export type SmartSwapExactCoinIn = {
   swapVenue: SwapVenue;
   swapRoutes: SwapRoute[];
+  estimatedAmountOut: string;
 };
 
 export type SwapJSON = (
