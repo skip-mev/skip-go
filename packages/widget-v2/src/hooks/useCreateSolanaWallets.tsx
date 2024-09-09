@@ -1,12 +1,13 @@
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useSetAtom } from "jotai";
+import { useCallback } from "react";
 
 
 export const useSolanaWallets = () => {
   const { wallets: solanaWallets } = useWallet();
   const setSvmWallet = useSetAtom(svmWalletAtom);
-  const createSolanaWallets = () => {
+  const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
     for (const wallet of solanaWallets) {
@@ -53,6 +54,7 @@ export const useSolanaWallets = () => {
       };
       wallets.push(minimalWallet);
     }
-  }
-  return createSolanaWallets
+    return wallets
+  }, [solanaWallets, setSvmWallet]);
+  return { createSolanaWallets }
 };

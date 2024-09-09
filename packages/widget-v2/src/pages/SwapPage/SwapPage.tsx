@@ -24,6 +24,7 @@ import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
+import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 const sourceAssetBalance = 125;
 
@@ -40,6 +41,7 @@ export const SwapPage = () => {
   const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
+  const selectWalletFlow = useModal(WalletSelectorModal);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -136,8 +138,16 @@ export const SwapPage = () => {
       return <MainButton label={routeError.message} disabled={true} />;
     }
 
-    return <MainButton label="Connect Wallet" icon={ICONS.plus} />;
-  }, [isRouteLoading, isRouteError, routeError]);
+    return <MainButton label="Connect Wallet" icon={ICONS.plus} onClick={() => {
+      selectWalletFlow.show({
+        chainID: sourceAsset?.chainID,
+        onSelect: (wallet) => {
+          console.log(wallet);
+          selectWalletFlow.hide();
+        }
+      });
+    }} />;
+  }, [isRouteLoading, isRouteError, routeError, sourceAsset?.chainID, selectWalletFlow]);
 
   return (
     <>

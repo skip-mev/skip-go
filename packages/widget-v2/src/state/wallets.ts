@@ -5,7 +5,7 @@ export type MinimalWallet = {
   walletPrettyName: string;
   walletChainType: "evm" | "cosmos" | "svm";
   walletInfo: {
-    logo?: string | { major: string; minor: string };
+    logo?: string
   };
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;

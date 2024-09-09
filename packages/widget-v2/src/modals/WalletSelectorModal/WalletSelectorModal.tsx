@@ -1,11 +1,13 @@
 import { createModal, ModalProps, useModal } from "@/components/Modal";
 import { RenderWalletList, Wallet } from "@/components/RenderWalletList";
+import { useCreateCosmosWallets } from "@/hooks/useCreateCosmosWallets";
 
 export type WalletSelectorModalProps = ModalProps & {
+  chainID?: string;
   onSelect: (wallet: Wallet) => void;
 };
 
-export const WALLET_LIST: Wallet[] = [
+export const WALLET_LIST = [
   {
     name: "Keplr",
     imageUrl:
@@ -27,13 +29,14 @@ export const WALLET_LIST: Wallet[] = [
 
 export const WalletSelectorModal = createModal(
   (modalProps: WalletSelectorModalProps) => {
-    const { onSelect } = modalProps;
+    const { onSelect, chainID } = modalProps;
     const modal = useModal();
-
+    const { createCosmosWallets } = useCreateCosmosWallets()
+    const cosmosWallets = chainID ? createCosmosWallets(chainID) : [];
     return (
       <RenderWalletList
         title="Connect wallet"
-        walletList={WALLET_LIST}
+        walletList={cosmosWallets}
         onSelect={onSelect}
         onClickBackButton={() => modal.remove()}
       />

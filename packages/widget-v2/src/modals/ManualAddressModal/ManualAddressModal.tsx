@@ -28,7 +28,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
 
-  const walletList: Wallet[] = [
+  const walletList = [
     ...WALLET_LIST,
     {
       name: "Enter address manually",

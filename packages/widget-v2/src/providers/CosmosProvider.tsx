@@ -13,9 +13,6 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
     <GrazProvider grazOptions={{
       chains: mainnetChains,
       autoReconnect: true,
-      onNotFound: () => {
-        console.warn("wallet not found")
-      },
       walletDefaultOptions: {
         sign: {
           preferNoSetFee: true,

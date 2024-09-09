@@ -6,19 +6,17 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { Text } from "@/components/Typography";
+import { MinimalWallet } from "@/state/wallets";
 
 export type RenderWalletListProps = {
   title: string;
-  walletList: Wallet[];
-  onSelect?: (wallet: Wallet) => void;
+  walletList: MinimalWallet[];
+  onSelect?: (wallet: MinimalWallet) => void;
   onClickBackButton: () => void;
 };
 
-export type Wallet = {
-  name: string;
-  address: string;
-  imageUrl?: string;
-  onSelect?: ((wallet: Wallet) => void) | (() => void);
+export type Wallet = MinimalWallet & {
+  onSelect?: ((wallet: MinimalWallet) => void) | (() => void);
   rightContent?: () => React.ReactNode;
 };
 
@@ -60,14 +58,15 @@ export const RenderWalletList = ({
   const renderItem = useCallback(
     (wallet: Wallet) => {
       const {
-        name,
-        imageUrl,
+        walletName,
+        walletPrettyName,
+        walletInfo: { logo: imageUrl },
         rightContent,
         onSelect: onSelectOverride,
       } = wallet;
       return (
         <ModalRowItem
-          key={name}
+          key={walletName}
           onClick={() => {
             if (onSelectOverride) {
               onSelectOverride(wallet);
@@ -83,12 +82,12 @@ export const RenderWalletList = ({
                   height={35}
                   width={35}
                   style={{ objectFit: "cover" }}
-                  src={imageUrl}
-                  alt={`${name} logo`}
+                  src={imageUrl ?? "https"}
+                  alt={`${walletPrettyName} logo`}
                 />
               )}
 
-              <Text>{name}</Text>
+              <Text>{walletPrettyName}</Text>
             </Row>
           }
           rightContent={rightContent?.()}
@@ -113,7 +112,7 @@ export const RenderWalletList = ({
         height={height}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
-        itemKey={(item) => item.address}
+        itemKey={(item) => item.walletName}
       />
     </StyledContainer>
   );

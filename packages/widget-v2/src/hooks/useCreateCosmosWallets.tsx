@@ -7,11 +7,12 @@ import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
 import { getWalletInfo } from "@/constants/graz";
+import { useCallback } from "react";
 
 export const useCreateCosmosWallets = () => {
   const setCosmosWallet = useSetAtom(cosmosWalletAtom)
   const _availableWallets = getAvailableWallets()
-  const comsosWallets = Object.entries(_availableWallets).filter(([_, value]) => value).map(([key]) => key) as WalletType[]
+  const cosmosWallets = Object.entries(_availableWallets).filter(([_, value]) => value).map(([key]) => key) as WalletType[]
   const { walletType: currentWallet } = useActiveWalletType()
   const { suggestAndConnectAsync } = useSuggestChainAndConnect()
   const { data: accounts, isConnected } = useAccount({
@@ -19,7 +20,8 @@ export const useCreateCosmosWallets = () => {
   })
   const { disconnectAsync } = useDisconnect()
 
-  const createCosmosWallets = (chainID: string) => {
+
+  const createCosmosWallets = useCallback((chainID: string) => {
     const isPenumbra = chainID.includes("penumbra")
     if (isPenumbra) {
       const praxWallet: MinimalWallet = {
@@ -69,8 +71,7 @@ export const useCreateCosmosWallets = () => {
     const currentAddress = accounts?.[chainID]?.bech32Address
     const chainInfo = getChainInfo(chainID)
 
-    for (const wallet of comsosWallets) {
-
+    for (const wallet of cosmosWallets) {
       const getAddress = async ({ signRequired }: { signRequired?: boolean; context?: "recovery" | "destination" }) => {
         if (wallet !== currentWallet) {
           if (!chainInfo) throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`)
@@ -111,8 +112,10 @@ export const useCreateCosmosWallets = () => {
       }
       wallets.push(minimalWallet)
     }
-  }
-  return createCosmosWallets
+    return wallets
+  }, [accounts, cosmosWallets, currentWallet, disconnectAsync, isConnected, setCosmosWallet, suggestAndConnectAsync])
+
+  return { createCosmosWallets }
 }
 
 const penumbraBech32ChainIDs = ["noble-1", "grand-1"];

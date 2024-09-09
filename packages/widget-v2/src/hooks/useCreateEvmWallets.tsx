@@ -1,6 +1,7 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
 import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
 import { useSetAtom } from "jotai";
+import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount as useEvmAccount, useDisconnect as useEvmDisconnect, useConnect as useEvmConnect } from "wagmi";
@@ -14,7 +15,7 @@ export const useCreateEvmWallets = () => {
   const { disconnectAsync } = useEvmDisconnect();
   const { connectors, connectAsync } = useEvmConnect();
 
-  const createEvmWallets = (chainID: string) => {
+  const createEvmWallets = useCallback((chainID: string) => {
     const isSei = chainID === "pacific-1";
 
     const wallets: MinimalWallet[] = [];
@@ -87,7 +88,7 @@ export const useCreateEvmWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  };
+  }, [connectAsync, connectors, currentEvmConnector, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
 
-  return createEvmWallets;
+  return { createEvmWallets }
 };
