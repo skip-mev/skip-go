@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.8.1
+
+### Patch Changes
+
+- 218728e: Add estimated amount out to swap operations
+
 ## 0.8.0
 
 ### Minor Changes
