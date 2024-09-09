@@ -46,7 +46,6 @@ export const useCreateEvmWallets = () => {
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);
-            throw error;
           }
         },
         getAddress: async ({ signRequired, context }) => {
