@@ -3,22 +3,47 @@ import { chains as _testnetChains, assets as _testnetAssets } from "chain-regist
 import { chainRegistryChainToKeplr } from "@chain-registry/keplr";
 import { ChainInfo } from "@keplr-wallet/types";
 import { WalletType } from "graz";
+import { Chain, AssetList } from "@chain-registry/types";
+import {
+  chains as chainsInitiaRegistry,
+  assets as assetsInitiaRegistry,
+} from "@initia/initia-registry";
 
-export const mainnetChains = _mainnetChains.map((chain) => {
-  try {
-    return chainRegistryChainToKeplr(chain, _mainnetAssets)
-  } catch (_error) {
-    return false
-  }
-}).filter(Boolean) as ChainInfo[]
+const _mainnetAndInitiaChains = [
+  ..._mainnetChains,
+  ...chainsInitiaRegistry,
+] as Chain[];
 
-export const testnetChains = _testnetChains.map((chain) => {
+const _mainnetAndInitiaAssets = [
+  ..._mainnetAssets,
+  ...assetsInitiaRegistry,
+] as AssetList[];
+
+const _testnetAndInitiaChains = [
+  ..._mainnetChains,
+  ...chainsInitiaRegistry,
+] as Chain[];
+
+const _testnetAndInitiaAssets = [
+  ..._mainnetAssets,
+  ...assetsInitiaRegistry,
+] as AssetList[];
+
+export const mainnetChains = _mainnetAndInitiaChains.map((chain) => {
   try {
-    return chainRegistryChainToKeplr(chain, _testnetAssets)
+    return chainRegistryChainToKeplr(chain, _mainnetAndInitiaAssets)
   } catch (_error) {
-    return false
+    return undefined
   }
-}).filter(Boolean) as ChainInfo[]
+}).filter(chainInfo => chainInfo) as ChainInfo[]
+
+export const testnetChains = _testnetAndInitiaChains.map((chain) => {
+  try {
+    return chainRegistryChainToKeplr(chain, _testnetAndInitiaAssets)
+  } catch (_error) {
+    return undefined
+  }
+}).filter(chainInfo => chainInfo) as ChainInfo[]
 
 export const walletInfo: Record<string, {
   name: string;
