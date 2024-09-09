@@ -14,9 +14,9 @@ import regular from "@/fonts/ABCDiatype-Regular.woff2";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
-import { CosmosProvider } from "./wallet/cosmos";
-import { EVMProvider } from "./wallet/evm";
-import { SolanaProvider } from "./wallet/solana";
+import { CosmosProvider } from "./wallet/CosmosProvider";
+import { EVMProvider } from "./wallet/EVMProvider";
+import { SolanaProvider } from "./wallet/SolanaProvider";
 
 export const queryClient = new QueryClient();
 
@@ -88,17 +88,27 @@ export const ShadowDomAndProviders = ({
       >
         <ThemeProvider theme={mergedThemes}>
           <GlobalStyles />
-          <SolanaProvider>
-            <CosmosProvider>
-              <EVMProvider>
-                <QueryClientProvider client={queryClient} key={"skip-widget"}>
-                  {children}
-                </QueryClientProvider>
-              </EVMProvider>
-            </CosmosProvider>
-          </SolanaProvider>
+          <WalletProvider>
+            <QueryClientProvider client={queryClient} key={"skip-widget"}>
+              {children}
+            </QueryClientProvider>
+          </WalletProvider>
         </ThemeProvider>
       </StyleSheetManager>
     </Scope>
   ) : null;
 };
+
+export const WalletProvider = (
+  { children }: { children: ReactNode }
+) => {
+  return (
+    <SolanaProvider>
+      <CosmosProvider>
+        <EVMProvider>
+          {children}
+        </EVMProvider>
+      </CosmosProvider>
+    </SolanaProvider>
+  )
+}

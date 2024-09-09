@@ -6816,7 +6816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/bech32m@npm:7.0.0":
+"@penumbra-zone/bech32m@npm:7.0.0, @penumbra-zone/bech32m@npm:^7.0.0":
   version: 7.0.0
   resolution: "@penumbra-zone/bech32m@npm:7.0.0"
   dependencies:
@@ -6838,7 +6838,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/protobuf@npm:6.0.0":
+"@penumbra-zone/client@npm:^18.1.0":
+  version: 18.1.0
+  resolution: "@penumbra-zone/client@npm:18.1.0"
+  peerDependencies:
+    "@bufbuild/protobuf": ^1.10.0
+    "@connectrpc/connect": ^1.4.0
+    "@penumbra-zone/protobuf": 6.0.0
+    "@penumbra-zone/transport-dom": 7.5.0
+  checksum: 90532ad9236db5ddefc8b53d9c05a8f6822366ed5f520cd2bf2bd6cf6fe19185bcb9da0bd10acfc6cbf4774142178d26bdfa6dd82ab9892c0a2cc63323d28b1f
+  languageName: node
+  linkType: hard
+
+"@penumbra-zone/protobuf@npm:6.0.0, @penumbra-zone/protobuf@npm:^6.0.0":
   version: 6.0.0
   resolution: "@penumbra-zone/protobuf@npm:6.0.0"
   peerDependencies:
@@ -6847,7 +6859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/transport-dom@npm:7.5.0":
+"@penumbra-zone/transport-dom@npm:7.5.0, @penumbra-zone/transport-dom@npm:^7.5.0":
   version: 7.5.0
   resolution: "@penumbra-zone/transport-dom@npm:7.5.0"
   dependencies:
@@ -31072,6 +31084,10 @@ __metadata:
     "@eslint/js": ^9.9.0
     "@initia/initia-registry": ^0.1.16
     "@keplr-wallet/types": ^0.12.125
+    "@penumbra-zone/bech32m": ^7.0.0
+    "@penumbra-zone/client": ^18.1.0
+    "@penumbra-zone/protobuf": ^6.0.0
+    "@penumbra-zone/transport-dom": ^7.5.0
     "@radix-ui/react-dialog": ^1.1.1
     "@skip-go/client": "workspace:^"
     "@skip-go/widget": "workspace:packages/widget"
