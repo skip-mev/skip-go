@@ -1,5 +1,5 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
-import { evmWaletAtom, MinimalWallet } from "@/state/wallets";
+import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
 import { useSetAtom } from "jotai";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
@@ -7,7 +7,7 @@ import { useAccount as useEvmAccount, useDisconnect as useEvmDisconnect, useConn
 
 
 export const useCreateEvmWallets = () => {
-  const setEvmWallet = useSetAtom(evmWaletAtom);
+  const setEvmWallet = useSetAtom(evmWalletAtom);
   const {
     connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected,
   } = useEvmAccount();

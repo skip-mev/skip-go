@@ -1,11 +1,11 @@
-import { MinimalWallet, svmWaletAtom } from "@/state/wallets";
+import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useSetAtom } from "jotai";
 
 
 export const useSolanaWallets = () => {
   const { wallets: solanaWallets } = useWallet();
-  const setSvmWallet = useSetAtom(svmWaletAtom);
+  const setSvmWallet = useSetAtom(svmWalletAtom);
   const createSolanaWallets = () => {
     const wallets: MinimalWallet[] = [];
 

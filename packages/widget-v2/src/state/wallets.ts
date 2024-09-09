@@ -26,14 +26,14 @@ type WalletState = {
   chainType: string;
 }
 
-export const evmWaletAtom = atom<WalletState>()
-export const cosmosWaletAtom = atom<WalletState>()
-export const svmWaletAtom = atom<WalletState>()
+export const evmWalletAtom = atom<WalletState>()
+export const cosmosWalletAtom = atom<WalletState>()
+export const svmWalletAtom = atom<WalletState>()
 
 export const walletsAtom = atom((get) => {
   return {
-    evm: get(evmWaletAtom),
-    cosmos: get(cosmosWaletAtom),
-    svm: get(svmWaletAtom),
+    evm: get(evmWalletAtom),
+    cosmos: get(cosmosWalletAtom),
+    svm: get(svmWalletAtom),
   }
 })

@@ -1,5 +1,5 @@
 import { getChainInfo } from "@/state/chains";
-import { cosmosWaletAtom, MinimalWallet } from "@/state/wallets";
+import { cosmosWalletAtom, MinimalWallet } from "@/state/wallets";
 import { getAvailableWallets, useAccount, useActiveWalletType, useDisconnect, useSuggestChainAndConnect, WalletType } from "graz";
 import { useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -9,7 +9,7 @@ import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
 import { getWalletInfo } from "@/constants/graz";
 
 export const useCreateCosmosWallets = () => {
-  const setCosmosWallet = useSetAtom(cosmosWaletAtom)
+  const setCosmosWallet = useSetAtom(cosmosWalletAtom)
   const _availableWallets = getAvailableWallets()
   const comsosWallets = Object.entries(_availableWallets).filter(([_, value]) => value).map(([key]) => key) as WalletType[]
   const { walletType: currentWallet } = useActiveWalletType()
