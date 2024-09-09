@@ -14,6 +14,7 @@ import { destinationAssetAtom, destinationWalletAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { WALLET_LIST } from "../WalletSelectorModal/WalletSelectorModal";
+import { isValidWalletAddress } from "./isValidWalletAddress";
 
 export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
@@ -51,12 +52,14 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   );
 
   const addressIsValid = useMemo(() => {
-    // TODO: implement logic to actually validate addresses
-    if (manualWalletAddress.length < 10) {
-      return;
-    }
-    return manualWalletAddress.length === 10;
-  }, [manualWalletAddress]);
+    if (!chain || manualWalletAddress.length === 0) return;
+    const { chainType, bech32Prefix } = chain;
+    return isValidWalletAddress({
+      address: manualWalletAddress,
+      bech32Prefix,
+      chainType,
+    });
+  }, [chain, manualWalletAddress]);
 
   return (
     <>
