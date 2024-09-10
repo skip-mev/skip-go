@@ -5,9 +5,9 @@ description: "This page covers how integrators can earn affiliate fees on swaps.
 
 ### Overview
 
-Many teams use Skip Go API as a source of a revenue for their project by charging fees on swaps. (Charging fees on transfers will be possible in the future!). We refer to these fees throughout the product and documentation as "affiliate fees"
+Many teams use Skip Go as a source of a revenue for their project by charging fees on swaps. (Charging fees on transfers will be possible in the future!). We refer to these fees throughout the product and documentation as "affiliate fees"
 
-Skip Go API's affiliate fee functionality is simple but flexible -- supporting a large variety of bespoke fee collection scenarios:
+Skip Go's affiliate fee functionality is simple but flexible -- supporting a large variety of bespoke fee collection scenarios:
 
 * Set your desired fee level on each swap (so you can offer lower fees to your most loyal users)
 * Set the account that receives the fee on each swap (so you can account for funds easily & separate revenue into different tranches)
@@ -16,16 +16,16 @@ Skip Go API's affiliate fee functionality is simple but flexible -- supporting a
 ### Affiliate Fees Work
 
 1. **At this time, affiliate fees can only be collected on swaps**. We do not support collecting affiliate fees on routes that only consist of transfers (e.g. CCTP transfers, IBC transfers, etc...) even when there are multi-hop transfers. Please contact us if charging fees on transfers is important to you
-2. **Affiliate fees are collected on the chain where the last swap takes place**: Skip Go API aggregates over swap venues (DEXes, orderbooks, liquid staking protocols, etc...) on many different chains. Some routes even contain multiple swaps. For each individual cross-chain or single chain swap where you collect a fee, the fee is applied on the last swap and sent to an address you specify on the chain where the last swap takes place.
-3. **Affiliate fees are collected/denominated in the output token of each swap**: For example, if a user swaps OSMO to ATOM, your fee collection address will earn a fee in ATOM.
-4. **Affiliate fees are calculated using the minimum output amount, which is set based on our estimated execution price after accounting for the user's slippage tolerance** : For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap.
+2. **Affiliate fees are collected on the chain where the last swap takes place**: Skip Go aggregates over swap venues (DEXes, orderbooks, liquid staking protocols, etc...) on many different chains. Some routes even contain multiple swaps. For each individual cross-chain or single chain swap where you collect a fee, the fee is applied on the last swap and sent to an address you specify on the chain where the last swap takes place
+3. **Affiliate fees are collected/denominated in the output token of each swap**: For example, if a user swaps OSMO to ATOM, your fee collection address will earn a fee in ATOM
+4. **Affiliate fees are calculated using the minimum output amount, which is set based on our estimated execution price after accounting for the user's slippage tolerance** : For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap
 
 ### How to Use Affiliate Fees
 
 There are two simple steps involved in using affiliate fees: 
 
-1. **Incorporate the fee into the quote** : You need to request the route & quote with the total fee amount (in basis points) you will collect, so Skip Go API can deduct this automatically from the estimated `amount_out` it returns to the user. This ensures the quote you show the user already accounts for your fee, and they won't receive any unexpectedly low amount.
-2. **Set the address(es) to receive the fee**: You also need to tell Skip Go API the exact address(es) to send the fee revenue to. You need to pass a list of addresses and specify a fee amount (in basis points) for each to collect.
+1. **Incorporate the fee into the quote** : You need to request the route & quote with the total fee amount (in basis points) you will collect, so Skip Go can deduct this automatically from the estimated `amount_out` it returns to the user. This ensures the quote you show the user already accounts for the fee, and they won't receive any unexpectedly low amount.
+2. **Set the address(es) to receive the fee**: You also need to tell Skip Go the exact address(es) to send the fee revenue to. You need to pass a list of addresses and specify a fee amount (in basis points) for each to collect.
 
 #### Fees with /route and /msgs
 
@@ -38,18 +38,18 @@ When using `/route` and `/msgs`, you incorporate the fee into the quote when you
    1. The sum of `basis_points_fee` values across all affiliates should equal `cumulative_affiliate_fee_bps`  
    2. If you pass any addresses that are not valid on the chain where the swap will take place, the request will return a `400` error
 
-#### Fees with /msgs\_direct
+#### Fees with `/msgs_direct`
 
 
  <Info>
- **/route and /msgs recommended over /msgs\_direct**
+ **`/route` and `/msgs` recommended over `/msgs_direct`**
  
  We generally recommend integrators use `/route` and `/msgs` rather than `/msgs_direct`. The complexity you must manage below is part of the reason for this recommendation.
 </Info>
 
-1. Set `affiliates`to a list of\` `Affiliate` objects, where each corresponds to an address that will receive a portion of the fees if the swap takes place on the chain where that address is located. ( Within an `Affiliate` object, `address` gives the address, and `basis_points_fee` gives the fee amount).  
-   1. You should pass a set of affiliate addresses for every chain where the swap _might_ take place. (You can get this list by querying the `/v2/fungible/swap_venues` endpoint for the list of all `swap_venues` and grabbing the `chain_id` for each). This is required because `/msgs_direct` is determining the route, so we don't know which chain the swap will take place on when calling it.  
-   2. You should ensure that the sums of `basis_points_fee` for the sets of addresses you pass for each chain are equivalent. (For example, if you pass osmo1... addresses and neutron1... addresses, the sum of the `basis_points_fee` values for the osmo1... addresses must be the same as the sum for the neutron1... addresses.) You will receive an error if your fee sums are non-equivalent. (The error is necessary because we don't know which fee amount to simulate with.)
+1. Set `affiliates`to a list of\` `Affiliate` objects, where each corresponds to an address that will receive a portion of the fees if the swap takes place on the chain where that address is located. (Within an `Affiliate` object, `address` gives the address, and `basis_points_fee` gives the fee amount).  
+   1. You should pass a set of affiliate addresses for every chain where the swap _might_ take place. (You can get this list by querying the `/v2/fungible/swap_venues` endpoint for the list of all `swap_venues` and grabbing the `chain_id` for each). This is required because `/msgs_direct` determines the route, so we don't know which chain the swap will take place on when calling it.  
+   2. You should ensure that the sums of `basis_points_fee` for the sets of addresses you pass for each chain are equivalent. (For example, if you pass osmo1... addresses and neutron1... addresses, the sum of the `basis_points_fee` values for the osmo1... addresses must be the same as the sum for the neutron1... addresses.) You will receive an error if your fee sums aren't equivalent. (The error is necessary because we don't know which fee amount to simulate with.)
 
 <Check>
  **Want to help us get better? Have questions or feedback?**

@@ -87,7 +87,7 @@ This field in `ExecuteRouteOptions` allows you to override our default gas price
 
 `getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;`
 
-The argument is a function that takes in a chain id and returns a gas price for that chain as a `GasPrice` object from CosmJS
+The argument is a function that takes in a chain ID and returns a gas price for that chain as a `GasPrice` object from CosmJS
 
 ```text JavaScript
 type GasPrice = {
@@ -100,7 +100,7 @@ If you provide a function that only returns a price for a subset of chains, the 
 
 ### `ExecuteRouteOptions.gasAmountMultiplier`
 
-This field in `ExecuteRouteOptions` allows you to override the default gas multiplier used in the SDK by default. (The default value is 1.5). Increases this value gives you higher confidence that your transaction will not run out of gas while executing, but increases the fee for the end user.
+This field in `ExecuteRouteOptions` allows you to override the default gas multiplier used by default in the SDK. The default value is 1.5. Increasing this value providers higher confidence that transactions will not run out of gas while executing, but increases the fee for the end user.
 
 The gas multiplier increases a transaction's `gasAmount` multiplicatively. To get a final gas amount, the router:
 

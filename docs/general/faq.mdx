@@ -4,20 +4,20 @@ title: "FAQ"
 
 ### General / Background
 
-#### How can I get help using the Skip Go API?
+#### How can I get help using Skip Go?
 
-You can reach us easily at support@skip.build or in [our developer support channel on TG](https://t.me/+3y5biSyZRPIwZWIx)
+You can reach us easily at support@skip.build or in [our developer support channel on Telegram](https://t.me/+3y5biSyZRPIwZWIx)
 
-#### Who uses the Skip Go API?
+#### Who uses Skip Go?
 
-Many teams use the Skip Go API to make it easier for them to build multi-chain flows, including: 
+Many teams use Skip Go to make it easier for them to build multi-chain flows, including: 
 
 * Every major interchain wallet (Keplr, Leap, IBC wallet, Terra Station, all the metamask snap teams)
 * Osmosis asset deposit page
 * Many major interchain dapps (e.g. Stargaze, Stride, Astroport, Cosmos Millions)
 * Many interchain defi frontends (e.g. Coinhall, fortytwo.money)
 * TrustWallet
-* Our own swapping frontend ([https://go.skip.build](https://go.skip.build))
+* Our own frontend ([https://go.skip.build](https://go.skip.build))
 * ...and many more
 
 #### How many chains does Skip Go API support?
@@ -31,7 +31,7 @@ More than 70+. We support:
 
 ...with more coming soon!
 
-#### Which bridges and message passing protocols does Skip Go API support?
+#### Which bridges and message passing protocols does Skip Go support?
 
 * IBC
 * Hyperlane
@@ -41,7 +41,7 @@ More than 70+. We support:
 
 ...with more coming soon!
 
-#### What DEXes does the Skip Go API support?
+#### What DEXes does the Skip Go support?
 
 * Osmosis
 * Astroport across Terra, Neutron, Sei, and Injective
@@ -49,29 +49,29 @@ More than 70+. We support:
 
 ...with many more coming soon 
 
-#### How do I get the Skip Go API to support my chain
+#### How do I get Skip Go API to support my chain?
 
-Please see the [Chain Support Requirements](/chain-support-requirements) document to ensure your chain meets the necessary requirements and submit the chain support request form linked in that doc. 
+Please see the [Chain Support Requirements](/support-requirements/chain-support-requirements) document to ensure your chain meets the necessary requirements and submit the chain support request form linked in that doc. 
 
 #### How do I get the Skip Go API to support my token?
 
-Please complete the necessary steps detailed in the [Token & Route Support Requirements](/token-support-requirements) doc. 
+Please complete the necessary steps detailed in the [Token & Route Support Requirements](/support-requirements/token-support-requirements) doc. 
 
 #### How do I get the Skip Go API to support a route for a particular token to a remote chain?
 
-Please complete the necessary steps detailed in the [Token & Route Support Requirements](/token-support-requirements) doc for the destination chain + token in question. 
+Please complete the necessary steps detailed in the [Token & Route Support Requirements](/support-requirements/token-support-requirements) doc for the destination chain and token in question. 
 
-#### How do I get the Skip Go API to route swaps to my swapping venue / DEX?
+#### How do I get the Skip Go API to route swaps to my swap venue or DEX?
 
-Please see the [Swap Venue Requirements](/skip-api-swap-venue-requirements) page to ensure your DEX meets the necessary requirements then submit the swap venue request form linked in that doc. 
+Please see the [Swap Venue Requirements](/support-requirements/swap-venue-requirements) page to ensure your DEX meets the necessary requirements then submit the swap venue request form linked in that doc. 
 
-#### How long does it take to build an application with Skip Go API?
+#### How long does it take to build an application with Skip Go?
 
 15-30 minutes
 
 #### Why do I keep getting rate limited?
 
-You need to request an API key from the core team to use Skip Go API without limitations. 
+You need to request an API key from the core team to use Skip Go without limitations. 
 
 Pass your API key into all requests with the `client_id` parameter. 
 
@@ -82,9 +82,9 @@ No, not at this time. We offer unlimited usage at zero cost.
 In the future we will introduce two pricing plans: 
 
 1. **Fee revenue sharing, unlimited usage**: For customers who use Skip Go API's fee functionality to charge their end-users fees on swaps, we will collect a portion of the fee revenue that you earn. Higher volume users will unlock lower fee tiers.
-2. **API Usage Pricing**: For customers who do not charge fees, we will offer monthly and annual plans that allow usage of the API up to some number of requests per month. We will offer several pricing tiers, where higher tiers support higher rate limits and more monthly requests (e.g like coingecko, infura, etc..)
+2. **API Usage Pricing**: For customers who do not charge fees, we will offer monthly and annual plans that allow usage of the API up to some number of requests per month. We will offer several pricing tiers, where higher tiers support higher rate limits and more monthly requests (similar to coingecko, infura, etc..)
 
-#### I have questions, comments, or concerns about the API. How can I get in touch with you?
+#### I have questions, comments, or concerns about Skip Go. How can I get in touch with you?
 
 You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
 
@@ -97,20 +97,20 @@ You can reach us easily by joining [our Discord](https://skip.build/discord) and
 Users are responsible for the transactions they sign in all cases: 
 
 1. **If our smart contracts behave as expected (i.e. amount\_out exceeds min\_amount\_out signed by the user or amount\_in is less than max\_amount\_in signed), Skip will not offer users refunds, slippage rebates, or any other form of compensation for any reason**. Skip does not accept or bare any financial, legal, or practical responsibility for lost funds in the event a user or integrator believes a particular route is inadequate, bad, supoptimal, low liquidity, or otherwise not performant enough.
-2. **If the smart contracts the Skip Go API depends on do not behave as expected, users who encounter and suffer bugs may report them in exchange for a bug bounty payment**. See the section on our bug bounty policy below
+2. **If the smart contracts Skip Go depends on do not behave as expected, users who encounter and suffer bugs may report them in exchange for a bug bounty payment**. See the section on our bug bounty policy below.
 
 Integrators are solely and completely responsible for building UIs that maximally protect users from harming themselves by swapping or transferring at unfavorable prices. To help facilitate this goal, we provide: 
 
 * Detailed information about quote quality, on-chain liquidity, fees, and price estimates in our API response objects (e.g. estimates of the USD value of amount in and amount out, on-chain price impact, etc...)
-* Extensive guidance about how to build S.A.F.E. interfaces in our docs: [SAFE Swapping: How to protect users from harming themselves](/safe-swapping-how-to-protect-users-from-harming-themselves)
-* Hand-on interface design feedback based on years of working with dozens of top interfaces
+* Extensive guidance about how to build S.A.F.E. interfaces in our docs: [SAFE Swapping: How to protect users from harming themselves](/advanced-swapping/safe-swapping-how-to-protect-users-from-harming-themselves)
+* Hands-on interface design feedback based on years of working with dozens of top interfaces
 
 #### Does Skip provide refunds to users if an interface created an transaction that called a Skip contract incorrectly?
 
 **No**
 
 1. If an integrator or end user misuses one of our contracts intentionally or by accident (e.g. calls the contract with incorrect call data, sends tokens to a contract not designed to receive tokens), Skip bares no financial, legal, or operational responsibility for funds that may be lost as a result.
-2. Skip and its affiliates do not have the ability to upgrade contracts to receive or "unstick" lost funds even if we wanted to. We do not own or control the contracts in the Skip Go API any more than you do.
+2. Skip and its affiliates do not have the ability to upgrade contracts to receive or "unstick" lost funds even if we wanted to. We do not own or control the contracts in Skip Go any more than you do.
 
 #### Are there any circumstances under which Skip would offer a refund to an end user for any reason?
 
@@ -122,7 +122,7 @@ Even in the event a user lost funds as a result of a bug, Skip does not claim an
 
 ### Bug Bounty Policy
 
-#### Does Skip Go API offer a bug bounty?
+#### Does Skip Go offer bug bounties?
 
  Skip may provide a financial bug bounty of up to $25,000 as compensation to users who report a reproducible catastrophic failure of a smart contract or other piece of software that the Skip team developed. Examples of catastrophic failures include: 
 
@@ -152,11 +152,11 @@ You can find the Swagger page here: [https://api-swagger.skip.build.](https://ap
 
 * 5 minutes
 
-#### What technologies does Skip Go API use under the hood?
+#### What technologies does Skip Go use under the hood?
 
 * IBC and...  
-   * `ibc-hooks`: Enables the Skip Go API swap contracts to be executed as callbacks of IBC transfers, which enables constructing transactions that can transfer tokens to a chain with a swap venue, perform a swap, and transfer them out -- without multiple signing events / transactions.  
-         * Skip Go API likely will not support DEXes on any chains that do not have `ibc-hooks` or equivalent functionality  
+   * `ibc-hooks`: Enables the Skip Go swap contracts to be executed as callbacks of IBC transfers, which enables constructing transactions that can transfer tokens to a chain with a swap venue, perform a swap, and transfer them out -- without multiple signing events / transactions.  
+         * Skip Go will likely not support DEXes on any chains that do not have `ibc-hooks` or equivalent functionality  
    * `Packet-forward-middleware`(PFM): Enables incoming IBC transfers from one chain to atomically initiate outgoing transfers to other chains. This allows the chain with PFM to function as the intermediate chain on a multi-hop route. This is especially valuable for chains that issue assets for use throughout the interchain (e.g. Stride + stATOM, Noble + USDC, Axelar + axlUSDC)  
    * (This [article we wrote](https://ideas.skip.build/t/how-to-give-ibc-superpowers/81) goes into more detail about both technologies and how to adopt them on your chain)
 * [Axelar](https://axelar.network/): A cross-chain messaging protocol that supports a wide variety of EVM chains and connects to Cosmos
@@ -165,31 +165,31 @@ You can find the Swagger page here: [https://api-swagger.skip.build.](https://ap
 
 #### How do affiliate fees work?
 
-* Affiliate fees are fees developers using our API charge their end-users on swaps. We support multiple parties taking and sharing fees. For example, if a defi frontend uses a swap widget a wallet team builds and distributes, the makers of the widget and the users of the widget can separately charge affiliate fees.
+* Affiliate fees are fees developers using Skip Go charge their end-users on swaps. We support multiple parties taking and sharing fees. For example, if a defi frontend uses a swap widget a wallet team builds and distributes, the makers of the widget and the users of the widget can separately charge affiliate fees.
 * Fees are calculated in basis points or "bps". One basis point equals one one-hundredth of a percent. So 100 bps = 1% fee
 * **Affiliate fees are calculated based off the minimum amount out and are taken/denominated in the output token.** For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap.
-* **When performing a swap with an exact amount in, affiliate fees are accounted for in the `amount_out` returned by `/route`**. More plainly, the Skip Go API subtracts off expected affiliate fees prior to the `amount_out` calculation, so that it represents an accurate estimate of what the user will receive at the end of the swap, net of fees. To be exact, the user will probably receive more than the amount out because the actual fee is not known at the time of this calculation / estimate. It's not known until later when slippage is set. So the user will end up paying `slippage_percent`\*`amount_out` less than the API predicts. This is good for the user because the estimated out
+* **When performing a swap with an exact amount in, affiliate fees are accounted for in the `amount_out` returned by `/route`**. More plainly, the Skip Go API subtracts off expected affiliate fees prior to the `amount_out` calculation, so that it represents an accurate estimate of what the user will receive at the end of the swap, net of fees. To be exact, the user will probably receive more than the amount out because the actual fee is not known at the time of this calculation / estimate. It's not known until later when slippage is set. So the user will end up paying `slippage_percent`\*`amount_out` less than the API predicts. This is good for the user because the estimated amount out will likely be lower than the actual amount they receive, offering a buffer that protects the user from the effects of slippage.
 
 #### Why does `/assets_from_source` only return assets that are reachable via transfers but not swaps?
 
 We're considering adding support for swappable destinations to `/assets_from_source`, but we're not prioritizing it because almost every asset is reachable via swapping from every other asset. So for 99.99% of use cases, this endpoint would just return a massive amount of fairly uninformative data, if we added destinations reachable via swaps. 
 
-#### Why does Skip Go API sometimes say a route doesn't exist when it should (e.g. transferring ATOM to Stargaze)?
+#### Why does the Skip Go API sometimes say a route doesn't exist when it should (e.g. transferring ATOM to Stargaze)?
 
 There are two common reasons Skip Go API is missing a route that a user thinks might exist: 
 
 1. **No one has ever used it:** By default, the Skip Go API does not recommend channels that have never been used or denoms that it has not seen. For example, if no one has transferred Neutron to Stargaze, the Skip Go API will not recommend a route to do so -- even if a direct connection exists between the two chains.
-2. **Expired clients:** Frequently, existing connections between chains expire when they're not used for a period of time that exceeds the "light client trusting period. Skip Go API indexes all chains every couple of hours to identify these cases and prevent users from accidentally attempting transfers.
+2. **Expired clients:** Frequently, existing connections between chains expire when they're not used for a period of time that exceeds the "light client trusting period. The Skip Go API indexes all chains every couple of hours to identify these cases and prevent users from accidentally attempting transfers.
 
-_A common gotcha:_ `/assets_from_source` only returns assets reachable in a single transaction by default. If you'd like to have access to routes that require multiple transactions, set the `allow_multi_tx` flag to `True` in the input. 
+_A common gotcha:_ `/assets_from_source` only returns assets reachable in a single transaction by default. If you'd like to have access to routes that require multiple transactions, set the `allow_multi_tx` flag to `true` in the input. 
 
 #### How long does relaying an IBC packet take?
 
-This is a great question and the best answer that exists is: It depends on many factors, including how many relayers are covering a particular channel, block times, the time-to-finality of the source chain, whether relayers are live, how many packets relayers are waiting to batch together, and much more...
+It depends on many factors, including how many relayers are covering a particular channel, block times, the time-to-finality of the source chain, whether relayers are live, how many packets relayers are waiting to batch together, and much more...
 
 **In short, it can range from several seconds to minutes (or never) in the worst case.** After a timeout window, a packet won't be valid on the destination chain when it gets relayed. This timeout is set to 5 minutes for all packets created via the Skip Go API. It's important to understand what happens to user tokens in the event of timeouts. You can read about that in [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases)
 
-For now, we recommend making a small warning or disclaimer to users on your application, including some variant of the following: 
+For now, we recommend making a small warning or disclaimer to users on your application, similar to the following: 
 
 > This swap contains at least one IBC transfer.
 > 
@@ -323,25 +323,23 @@ We recommend setting Cosmos chain gas prices using the chainapsis keplr-chain-re
 * Transactions almost always make it on chain
 * Gas prices are very cheap -- so overestimation is not costly
 
-(Gas price is actually decided on a per validator basis for most chains. It's not a 
-
-Shortly, the Skip Go API will surface recommended gas price too, and we will release a client-side library that will abstract away this area of concern. 
+Soon, the Skip Go API will surface recommended gas price too, and we will release a client-side library that will abstract away this area of concern. 
 
 #### How should I set gas amount for Cosmos transactions?
 
-We recommend using the [Gas and Fee Tooling](/gas-and-fee-tooling) available in the [Skip Go Client TypeScript Package](https://www.npmjs.com/package/@skip-go/client). 
+We recommend using the [Gas and Fee Tooling](/client/gas-and-fee-tooling) available in the [Skip Go Client TypeScript Package](https://www.npmjs.com/package/@skip-go/client). 
 
 #### What does it mean when the docs say an endpoint is in "ALPHA" or "BETA"?
 
-This means we may make API breaking changes to them at any time. 
+This means we may make breaking changes to them at any time. 
 
 #### What does `cumulative_fee_bps` in `/route` mean?
 
 This is where you specify the fee amount in bps aka "bips". (1 bp = 1 / 100th of a percent; 100 bps = 1%)
 
-By specifying it in route, the API can adjust the quote that it gives back to you, so that it shows output token estimate net of fees. This ensures the amount the end user gets out of the swap is always in-line with their expectations. 
+By specifying it in route, the Skip Go API can adjust the quote that it gives back to you, so that it shows output token estimate net of fees. This ensures the amount the end user gets out of the swap always aligns with their expectations. 
 
-The parameter uses the word "cumulative" (i.e. summing over a set) because the API supports multiple partners charging affiliate fees. This parameter should be set to the sum of all of those component fees. (For example, if a widget provider charges a 5 bp fee, and the frontend developer integrating that widget charges a 10 bp fee, `cumulative_fee_bps=15`
+The parameter uses the word "cumulative" (i.e. summing over a set) because the API supports multiple partners charging affiliate fees. This parameter should be set to the sum of all of those component fees. (For example, if a widget provider charges a 5 bp fee, and the frontend developer integrating that widget charges a 10 bp fee, `cumulative_fee_bps=15`)
 
 ### Misc
 
@@ -355,5 +353,5 @@ The parameter uses the word "cumulative" (i.e. summing over a set) because the A
 
 **Want to help us get better? Have questions or feedback?**
 
-You can reach us easily at support@skip.build or in [our developer support channel on TG](https://t.me/+3y5biSyZRPIwZWIx)
+You can reach us easily at support@skip.build or in [our developer support channel on Telegram](https://t.me/+3y5biSyZRPIwZWIx)
 </Check>

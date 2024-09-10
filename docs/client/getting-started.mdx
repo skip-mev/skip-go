@@ -109,7 +109,7 @@ const chains = await client.chains({
 });
 ```
 
-#### Get a map of assets by chain id
+#### Get a map of assets by chain ID
 
 Return type will be `Record<string, Asset[]>`
 
@@ -121,7 +121,7 @@ const assets = await client.assets({
   includeSvmAssets: true,
 });
 
-// get assets filtered by chain id
+// get assets filtered by chain ID
 const assets = await client.assets({
   chainID: 'cosmoshub-4'
   includeEvmAssets: true,
