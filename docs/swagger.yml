@@ -3119,6 +3119,7 @@ components:
         type:
           $ref: '#/components/schemas/StatusErrorType'
       type: object
+      nullable: true
     StatusErrorType:
       description:
         'Packet error type: <br/> * STATUS_ERROR_UNKNOWN - Unknown error <br/>
@@ -3473,7 +3474,6 @@ components:
         error:
           allOf:
             - $ref: '#/components/schemas/StatusError'
-          nullable: true
         next_blocking_transfer:
           description:
             Indicates which entry in the `transfer_sequence` field that the
