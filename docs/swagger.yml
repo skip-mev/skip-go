@@ -3473,7 +3473,7 @@ components:
         error:
           allOf:
             - $ref: '#/components/schemas/StatusError'
-          nullable: true
+              nullable: true
         next_blocking_transfer:
           description:
             Indicates which entry in the `transfer_sequence` field that the
