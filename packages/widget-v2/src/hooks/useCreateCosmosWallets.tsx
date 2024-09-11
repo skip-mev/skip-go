@@ -42,7 +42,7 @@ export const useCreateCosmosWallets = () => {
             await client.connect();
 
             const viewService = client.service(ViewService);
-            const address = await viewService.addressByIndex({
+            const address = await viewService.ephemeralAddress({
               addressIndex: {
                 account: penumbraWalletIndex ? penumbraWalletIndex : 0,
               },
