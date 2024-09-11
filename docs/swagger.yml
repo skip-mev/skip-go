@@ -36,10 +36,10 @@ paths:
               type: string
           description: Chain IDs to limit the response to, defaults to all chains if not provided
           examples:
-            all:
+            All:
               value:
               summary: Get all chains
-            osmosis_and_cosmoshub:
+            Osmosis and Cosmos Hub:
               value: [osmosis-1, cosmoshub-4]
               summary: Get Osmosis and Cosmos Hub
         - in: query
@@ -203,10 +203,10 @@ paths:
               type: string
           description: Chain IDs to limit the response to, defaults to all chains if not provided
           examples:
-            all:
+            All:
               value:
               summary: Get assets across all chains
-            osmosis_and_cosmoshub:
+            Osmosis and Cosmos Hub:
               value: [osmosis-1, cosmoshub-4]
               summary: Get assets on Osmosis and Cosmos Hub
         - in: query
@@ -348,13 +348,13 @@ paths:
         content:
           application/json:
             examples:
-              uusdc_from_axelar:
+              USDC From Axelar:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: axelar-dojo-1
                   allow_multi_tx: false
                 summary: 'Get transfer assets that can be reached from USDC on Axelar'
-              astro_from_terra:
+              ASTRO from Terra:
                 value:
                   source_asset_denom: cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26
                   source_asset_chain_id: phoenix-1
@@ -451,7 +451,7 @@ paths:
         content:
           application/json:
             examples:
-              swap_usdc_to_atom:
+              Swap USDC to ATOM:
                 value:
                   amount_in: '1000000'
                   source_asset_denom: uusdc
@@ -461,7 +461,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Swap 1 USDC on Axelar to ATOM on the Hub'
-              swap_astro_to_luna:
+              Swap Astro to LUNA:
                 value:
                   amount_in: '1000000'
                   source_asset_denom: cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26
@@ -471,7 +471,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Swap 1 ASTRO on Terra to LUNA on Terra'
-              transfer_statom_from_osomosis_to_hub:
+              Transfer stATOM from Osmosis to Cosmos Hub:
                 value:
                   amount_in: '1000000'
                   source_asset_denom: ibc/C140AFD542AE77BD7DCC83F13FDD8C5E5BB8C4929785E6EC2F4C636F98F17901
@@ -481,7 +481,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Transfer 1 stATOM from Osmosis to the Hub'
-              transfer_matic_to_osmosis:
+              Transfer Matic to Osmosis:
                 value:
                   amount_in: '3000000000000000000'
                   source_asset_denom: 'polygon-native'
@@ -491,7 +491,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Transfer 3 MATIC from Polygon to Osmosis'
-              transfer_usdc_in_from_noble_to_osmosis:
+              Transfer USDC in from Noble to Osmosis:
                 value:
                   amount_in: '1000000'
                   source_asset_denom: uusdc
@@ -501,7 +501,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Transfer 1 USDC in from Noble to Osmosis'
-              transfer_usdc_from_noble_to_eth_via_cctp:
+              Transfer USDC from Noble to Eth via CCTP:
                 value:
                   amount_in: '200000000'
                   source_asset_denom: uusdc
@@ -513,7 +513,7 @@ paths:
                   bridges:
                     - CCTP
                 summary: 'Transfer 1 USDC from Noble to Ethereum via CCTP'
-              transfer_tia_from_celestia_to_manta_pacific_via_hyperlane:
+              Transfer TIA from Celestia to Manta Pacific via Hyperlane:
                 value:
                   amount_in: '10000000'
                   source_asset_denom: utia
@@ -526,7 +526,7 @@ paths:
                     - HYPERLANE
                     - IBC
                 summary: 'Transfer 10 TIA from Celestia to Manta Pacific via Hyperlane'
-              receive_usdc_out_from_noble_on_osmosis:
+              Receive USDC out from Noble on Osmosis:
                 value:
                   amount_out: '1000000'
                   source_asset_denom: uusdc
@@ -536,7 +536,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Receive 1 USDC from Noble on Osmosis'
-              swap_usdc_in_from_noble_to_osmosis:
+              Swap USDC in from Noble to Osmosis :
                 value:
                   amount_in: '1000000'
                   source_asset_denom: uusdc
@@ -546,7 +546,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Swap 1 USDC in from Noble to OSMO on Osmosis'
-              transfer_usdc_from_neutron_to_solana:
+              Transfer USDC from Neutron to Solana:
                 value:
                   amount_in: '100000000'
                   source_asset_denom: ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81
@@ -557,7 +557,7 @@ paths:
                   allow_multi_tx: true
                   smart_relay: true
                 summary: 'Transfer 100 USDC from Neutron to Solana'
-              swap_usdc_out_from_noble_to_osmosis:
+              Swap USDC out from Noble to Osmosis:
                 value:
                   amount_out: '1000000'
                   source_asset_denom: uusdc
@@ -567,7 +567,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Receive 1 OSMO on Osmosis from USDC on Noble'
-              swap_usdc_out_from_osmosis_to_cosmoshub:
+              Swap USDC out from Osmosis to Cosmos Hub:
                 value:
                   amount_out: '1000000'
                   source_asset_denom: uosmo
@@ -577,7 +577,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   allow_multi_tx: true
                 summary: 'Receive 1 Noble USDC on Cosmos Hub from OSMO on Osmosis'
-              swap_with_allow_unsafe_false:
+              Swap with allow_unsafe false:
                 value:
                   amount_in: '100000000000000'
                   source_asset_denom: uusdc
@@ -588,7 +588,7 @@ paths:
                   allow_multi_tx: true
                   allow_unsafe: false
                 summary: 'High price impact swap with allow_unsafe=false'
-              smart_relay:
+              Smart Relay:
                 value:
                   amount_in: '1500000000'
                   source_asset_denom: 'uusdc'
@@ -598,7 +598,7 @@ paths:
                   cumulative_affiliate_fee_bps: '0'
                   smart_relay: true
                 summary: 'CCTP transfer with Smart Relay'
-              split_routes:
+              Split Routes:
                 value:
                   amount_in: '10000000000'
                   source_asset_denom: uosmo
@@ -611,7 +611,7 @@ paths:
                   smart_swap_options:
                     split_routes: true
                 summary: 'Split Routes vis Osmosis SQS'
-              evm_swap:
+              EVM Swap:
                 value:
                   amount_in: '10000000000000000000'
                   source_asset_denom: 'arbitrum-native'
@@ -792,7 +792,7 @@ paths:
         content:
           application/json:
             examples:
-              swap_usdc_to_atom:
+              Swap USDC to ATOM:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: axelar-dojo-1
@@ -842,7 +842,7 @@ paths:
                   slippage_tolerance_percent: '1'
                   chain_ids_to_affiliates: {}
                 summary: 'Swap 1 USDC on Axelar to ATOM on the Hub'
-              transfer_matic_to_osmosis:
+              Transfer Matic from Polygon to Osmosis:
                 value:
                   source_asset_denom: 'polygon-native'
                   source_asset_chain_id: '137'
@@ -869,7 +869,7 @@ paths:
                     - '0x00b40F326Ab76189170cA2FfeCfa4B34b43949dA'
                     - 'osmo1tsmt8ezjrp7w0mls5p4rv8gcaz4yx5lzqyww8m'
                 summary: 'Transfer 3 MATIC from Polygon to Osmosis'
-              cctp_transfer_noble_to_ethereum:
+              Transfer Noble to Ethereum via CCTP:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: 'noble-1'
@@ -890,7 +890,7 @@ paths:
                     - 'noble13vjmklxq8nkdmv2a0w5m887t38jz9na30vl8g6'
                     - '0x8EB49E3D65d74967CC0Fe987FA2d015ae816352E'
                 summary: 'Transfer 200 USDC from Noble to Ethereum via CCTP'
-              cctp_transfer_noble_to_ethereum_with_smart_relay:
+              Transfer USDC from Noble to Etherum with Smart Relay via CCTP Transfer:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: 'noble-1'
@@ -912,7 +912,7 @@ paths:
                     - 'noble13vjmklxq8nkdmv2a0w5m887t38jz9na30vl8g6'
                     - '0x8EB49E3D65d74967CC0Fe987FA2d015ae816352E'
                 summary: 'CCTP Transfer with Smart Relay'
-              op_init_transfer_initia_to_minimove:
+              Transfer Init from Intia to Birdee via OPInit:
                 value:
                   source_asset_denom: uinit
                   source_asset_chain_id: initiation-1
@@ -1052,7 +1052,7 @@ paths:
         content:
           application/json:
             examples:
-              swap_usdc_to_atom:
+              Swap USDC to ATOM:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: axelar-dojo-1
@@ -1066,7 +1066,7 @@ paths:
                   slippage_tolerance_percent: '3'
                   allow_multi_tx: true
                 summary: 'Swap 1 USDC on Axelar to ATOM on the Hub'
-              swap_astro_to_luna:
+              Swap ASTRO to LUNA:
                 value:
                   source_asset_denom: cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26
                   source_asset_chain_id: phoenix-1
@@ -1078,7 +1078,7 @@ paths:
                   slippage_tolerance_percent: '3'
                   allow_multi_tx: true
                 summary: 'Swap 1 ASTRO on Terra to LUNA on Terra'
-              transfer_matic_to_osmosis:
+              Transfer Matic to Osmosis:
                 value:
                   amount_in: '3000000000000000000'
                   source_asset_denom: 'polygon-native'
@@ -1091,7 +1091,7 @@ paths:
                   slippage_tolerance_percent: '3'
                   allow_multi_tx: true
                 summary: 'Transfer 3 MATIC from Polygon to Osmosis'
-              transfer_usdc_from_eth_to_noble_via_cctp:
+              Transfer USDC from Ethereum to Noble via CCTP:
                 value:
                   amount_in: '100000000'
                   source_asset_denom: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
@@ -1106,7 +1106,7 @@ paths:
                   bridges:
                     - CCTP
                 summary: 'Transfer USDC from Ethereum to Noble via CCTP'
-              swap_tia_from_manta_pacific_to_osmo_on_osmosis:
+              Swap TIA from Manta Pacific to OSMO on Osmosis via CCTP:
                 value:
                   amount_in: '10000000'
                   source_asset_denom: '0x6Fae4D9935E2fcb11fC79a64e917fb2BF14DaFaa'
@@ -1124,7 +1124,7 @@ paths:
                     - HYPERLANE
                     - IBC
                 summary: 'Swap 10 TIA from Manta Pacific to OSMO on Osmosis'
-              swap_with_allow_unsafe_false:
+              Swap with allow_unsafe false:
                 value:
                   source_asset_denom: uusdc
                   source_asset_chain_id: axelar-dojo-1
@@ -1139,7 +1139,7 @@ paths:
                   allow_unsafe: false
                   allow_multi_tx: true
                 summary: 'High price impact swap with allow_unsafe=false'
-              cctp_transfer_noble_to_ethereum_smart_relay:
+              CCTP Transfer with Smart Relay:
                 value:
                   amount_in: '1500000000'
                   source_asset_denom: 'uusdc'
@@ -1153,7 +1153,7 @@ paths:
                   allow_multi_tx: true
                   smart_relay: true
                 summary: 'CCTP Transfer with Smart Relay'
-              swap_usdc_from_solana_to_osmo_on_osmosis:
+              Swap USDC from Solana to OSMO on Osmosis:
                 value:
                   amount_in: '100000000'
                   source_asset_denom: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
@@ -1168,7 +1168,7 @@ paths:
                   allow_multi_tx: true
                   smart_relay: true
                 summary: 'Swap 100 USDC from Solana to OSMO on Osmosis'
-              coinhall_swap:
+              Swap Archway Astrovault via Hallswap Routing:
                 value:
                   amount_in: '1000000000000000000'
                   source_asset_denom: 'aarch'
@@ -1186,7 +1186,7 @@ paths:
                     - name: 'archway-astrovault'
                       chain_id: 'archway-1'
                 summary: 'Swap Archway Astrovault via Hallswap Routing'
-              evm_swap:
+              EVM Swap:
                 value:
                   amount_in: '10000000000000000000'
                   source_asset_denom: 'arbitrum-native'
@@ -1863,13 +1863,13 @@ paths:
         content:
           application/json:
             examples:
-              one_asset:
+              Single Asset:
                 value:
                   assets:
                     - denom: ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC
                       chain_id: cosmoshub-4
                 summary: Request origin asset for a single asset
-              multiple_assets:
+              Multi-Asset:
                 summary: Request origin asset for several assets
                 value:
                   assets:
@@ -1949,12 +1949,12 @@ paths:
         content:
           application/json:
             examples:
-              cosmos_to_cosmos:
+              Cosmos to Cosmos:
                 value:
                   source_chain_id: cosmoshub-4
                   dest_chain_id: osmosis-1
                 summary: 'Get assets between Cosmos Hub and Osmosis'
-              evm_to_cosmos:
+              EVM to Cosmos:
                 value:
                   source_chain_id: '1'
                   dest_chain_id: cosmoshub-4
@@ -1998,7 +1998,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/AssetBetweenChains'
               examples:
-                cosmos_to_cosmos:
+                Cosmos to Cosmos:
                   value:
                     assets_between_chains:
                       - asset_on_source:
@@ -2034,7 +2034,7 @@ paths:
                         txs_required: 1
                         bridges:
                           - IBC
-                evm_to_cosmos:
+                EVM to Cosmos:
                   value:
                     assets_between_chains:
                       - asset_on_source:
@@ -3473,7 +3473,6 @@ components:
         error:
           allOf:
             - $ref: '#/components/schemas/StatusError'
-          nullable: true
         next_blocking_transfer:
           description:
             Indicates which entry in the `transfer_sequence` field that the
