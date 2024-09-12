@@ -10,6 +10,8 @@ import { atomWithQuery } from "jotai-tanstack-query";
 import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
 import { destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirectionAtom } from "./swapPage";
 import { getAmountWei } from "@/utils/number";
+import { atomWithDebounce } from "@/utils/atomWithDebounce";
+import { atomEffect } from "jotai-effect";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
@@ -95,7 +97,14 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
-export const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
+const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
+
+export const { debouncedValueAtom: debouncedSkipRouteRequestAtom } = atomWithDebounce<RouteRequest | undefined>(
+  undefined,
+  ROUTE_REQUEST_DEBOUNCE_DELAY,
+);
+
+const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
@@ -115,10 +124,19 @@ export const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   };
 });
 
+export const debouncedRouteRequestEffect = atomEffect((get, set) => {
+  const routeRequest = get(skipRouteRequestAtom);
+  set(debouncedSkipRouteRequestAtom, routeRequest);
+})
+
+
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
-  const params = get(skipRouteRequestAtom);
-  get(routeAmountEffect)
+  const params = get(debouncedSkipRouteRequestAtom);
+
+  get(routeAmountEffect);
+  get(debouncedRouteRequestEffect);
+
   return {
     queryKey: ["skipRoute", params],
     queryFn: async () => {
