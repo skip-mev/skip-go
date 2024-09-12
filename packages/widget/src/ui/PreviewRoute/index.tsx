@@ -481,6 +481,15 @@ export const PreviewRoute = ({
             )
           )}
         </StyledBorderDiv>
+        {route.estimatedRouteDurationSeconds && (
+          <div className='flex flex-row items-center justify-end space-x-2'>
+            <span className='font-semibold text-gray-400'>Estimated Time</span>
+            <div className='flex flex-row space-x-1 items-center'>
+              <FaStopwatch className="h-4 w-4 text-gray-400" />
+              <span className='font-semibold text-gray-400'> ~{convertSecondsToMinutesOrHours(route.estimatedRouteDurationSeconds)}{' '}</span>
+            </div>
+          </div>
+        )}
         <div className="flex-1 space-y-4">
           {statusData?.isSuccess && submitMutation.isSuccess ? (
             <div className="flex flex-row items-center space-x-2 font-semibold">
@@ -567,15 +576,7 @@ export const PreviewRoute = ({
               ) : null}
             </div>
           )}
-          {route.estimatedRouteDurationSeconds && (
-            <div className='flex flex-row items-center justify-end space-x-2'>
-              <span className='font-semibold'>Estimated Time</span>
-              <div className='flex flex-row space-x-1 items-center'>
-                <FaStopwatch className="h-4 w-4" />
-                <span className='font-semibold'> ~{convertSecondsToMinutesOrHours(route.estimatedRouteDurationSeconds)}{' '}</span>
-              </div>
-            </div>
-          )}
+
           {submitMutation.isPending || submitMutation.isSuccess ? (
             <StyledBrandDiv
               as="button"
