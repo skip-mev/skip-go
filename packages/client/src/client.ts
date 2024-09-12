@@ -272,7 +272,7 @@ export class SkipClient {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
       getFallbackGasAmount,
     } = options;
-    let gasTokenRecord: Record<string, Coin> | undefined;
+    let gasTokenRecord: Record<number, Coin> | undefined;
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
       gasTokenRecord = await this.validateGasBalances({
