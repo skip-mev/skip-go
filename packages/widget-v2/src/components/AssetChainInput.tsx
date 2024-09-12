@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Column, Row, Spacer } from "@/components/Layout";
-import { SmallText, Text } from "@/components/Typography";
+import { SmallText, SmallTextButton, Text } from "@/components/Typography";
 import { ChevronIcon } from "@/icons/ChevronIcon";
 import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
@@ -12,7 +12,7 @@ import {
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -32,6 +32,8 @@ export const AssetChainInput = ({
   priceChangePercentage,
 }: AssetChainInputProps) => {
   const theme = useTheme();
+  const [showPriceChangePercentage, setShowPriceChangePercentage] =
+    useState(false);
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAssetDenom,
     amount: value,
@@ -119,7 +121,12 @@ export const AssetChainInput = ({
       return theme.success.text;
     }
     return theme.error.text;
-  }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
+  }, [
+    priceChangePercentage,
+    theme.error.text,
+    theme.primary.text.normal,
+    theme.success.text,
+  ]);
 
   return (
     <StyledAssetChainInputWrapper
@@ -157,16 +164,25 @@ export const AssetChainInput = ({
       <Row justify="space-between">
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
-            <SmallText>
+            <SmallTextButton
+              onMouseEnter={() => setShowPriceChangePercentage(true)}
+              onMouseLeave={() => setShowPriceChangePercentage(false)}
+            >
               {assetDetails.formattedUsdAmount ?? 0}
-            </SmallText>
-            <TinyTriangleIcon color={priceChangeColor} />
-            <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+            </SmallTextButton>
+            <TinyTriangleIcon
+              color={priceChangeColor}
+              direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
+              style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
+            />
+            {showPriceChangePercentage && (
+              <SmallText color={priceChangeColor}>
+                {priceChangePercentage}%
+              </SmallText>
+            )}
           </Row>
         ) : (
-          <SmallText>
-            {assetDetails.formattedUsdAmount ?? 0}
-          </SmallText>
+          <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton

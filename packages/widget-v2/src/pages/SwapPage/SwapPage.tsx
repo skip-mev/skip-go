@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
@@ -10,6 +10,7 @@ import {
   getChainsContainingAsset,
   skipChainsAtom,
   skipRouteAtom,
+  isWaitingForNewRouteRequestAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -34,9 +35,17 @@ export const SwapPage = () => {
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const { isFetching, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
+  const { isLoading: isRouteLoading, isError: isRouteError, error: routeError, dataUpdatedAt } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
+  const [isWaitingForNewRouteRequest, setIsWaitingForNewRouteRequest] = useAtom(isWaitingForNewRouteRequestAtom);
+
+  // useEffect(() => {
+  //   if (dataUpdatedAt) {
+  //     console.log(dataUpdatedAt);
+  //     setIsWaitingForNewRouteRequest(false);
+  //   }
+  // }, [dataUpdatedAt, setIsWaitingForNewRouteRequest]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -135,7 +144,7 @@ export const SwapPage = () => {
   ]);
 
   const swapButton = useMemo(() => {
-    if (isFetching) {
+    if (isRouteLoading) {
       return <MainButton label="Finding Best Route..." loading={true} />;
     }
 
@@ -144,7 +153,7 @@ export const SwapPage = () => {
     }
 
     return <MainButton label="Connect Wallet" icon={ICONS.plus} />;
-  }, [isFetching, isRouteError, routeError]);
+  }, [isRouteLoading, isRouteError, routeError]);
 
   const priceChangePercentage = useMemo(() => {
     if (!sourceDetails.usdAmount || !destinationDetails.usdAmount) return;

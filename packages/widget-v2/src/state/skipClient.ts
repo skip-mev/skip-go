@@ -104,6 +104,8 @@ export const { debouncedValueAtom: debouncedSkipRouteRequestAtom } = atomWithDeb
   ROUTE_REQUEST_DEBOUNCE_DELAY,
 );
 
+export const isWaitingForNewRouteRequestAtom = atom(false);
+
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
@@ -126,9 +128,9 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 
 export const debouncedRouteRequestEffect = atomEffect((get, set) => {
   const routeRequest = get(skipRouteRequestAtom);
+  set(isWaitingForNewRouteRequestAtom, true);
   set(debouncedSkipRouteRequestAtom, routeRequest);
-})
-
+});
 
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
