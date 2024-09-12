@@ -272,10 +272,10 @@ export class SkipClient {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
       getFallbackGasAmount,
     } = options;
-    let gasTokensUsed: Record<string, Coin> | undefined;
+    let gasTokenRecord: Record<string, Coin> | undefined;
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      gasTokensUsed = await this.validateGasBalances({
+      gasTokenRecord = await this.validateGasBalances({
         txs,
         userAddresses,
         getOfflineSigner: options.getCosmosSigner,
@@ -287,7 +287,7 @@ export class SkipClient {
 
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
-      let gasTokenUsed = gasTokensUsed?.[i];
+      let gasTokenUsed = gasTokenRecord?.[i];
       if (!tx) {
         raise(`executeRoute error: invalid message at index ${i}`);
       }
