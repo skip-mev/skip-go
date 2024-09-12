@@ -1,6 +1,6 @@
 import { getChainInfo } from "@/state/chains";
 import { cosmosWalletAtom, MinimalWallet } from "@/state/wallets";
-import { getAvailableWallets, useAccount, useActiveWalletType, useDisconnect, useSuggestChainAndConnect, WalletType } from "graz";
+import { getAvailableWallets, getWallet, useAccount, useActiveWalletType, useDisconnect, WalletType } from "graz";
 import { useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
@@ -14,12 +14,11 @@ export const useCreateCosmosWallets = () => {
   const _availableWallets = getAvailableWallets();
   const cosmosWallets = Object.entries(_availableWallets).filter(([_, value]) => value).map(([key]) => key) as WalletType[];
   const { walletType: currentWallet } = useActiveWalletType();
-  const { suggestAndConnectAsync } = useSuggestChainAndConnect();
+
   const { data: accounts, isConnected } = useAccount({
     multiChain: true,
   });
   const { disconnectAsync } = useDisconnect();
-
 
   const createCosmosWallets = useCallback((chainID: string) => {
     const isPenumbra = chainID.includes("penumbra");
@@ -75,7 +74,8 @@ export const useCreateCosmosWallets = () => {
       const getAddress = async ({ signRequired }: { signRequired?: boolean; context?: "recovery" | "destination" }) => {
         if (wallet !== currentWallet) {
           if (!chainInfo) throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
-          await suggestAndConnectAsync({ walletType: wallet, chainInfo });
+          await getWallet(wallet).experimentalSuggestChain(chainInfo);
+          await getWallet(wallet).enable(chainID);
           setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
         } else if (currentAddress && isConnected && signRequired) {
           setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
@@ -94,7 +94,8 @@ export const useCreateCosmosWallets = () => {
           if (wallet === currentWallet) return;
           try {
             if (!chainInfo) throw new Error(`connect: Chain info not found for chainID: ${chainID}`);
-            await suggestAndConnectAsync({ walletType: wallet, chainInfo });
+            await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            await getWallet(wallet).enable(chainID);
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
             // TODO: onWalletConnected
           } catch (error) {
@@ -113,7 +114,7 @@ export const useCreateCosmosWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [accounts, cosmosWallets, currentWallet, disconnectAsync, isConnected, setCosmosWallet, suggestAndConnectAsync]);
+  }, [accounts, cosmosWallets, currentWallet, disconnectAsync, isConnected, setCosmosWallet]);
 
   return { createCosmosWallets };
 };

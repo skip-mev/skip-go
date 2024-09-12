@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
@@ -8,7 +8,7 @@ import { VirtualList } from "./VirtualList";
 import { Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
-import { useMutation, useMutationState } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export type RenderWalletListProps = {
   title: string;
@@ -55,7 +55,6 @@ export const RenderWalletList = ({
   onClickBackButton,
 }: RenderWalletListProps) => {
   const theme = useTheme();
-  const [error, setError] = useState<Error | undefined>();
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
@@ -153,13 +152,13 @@ export const RenderWalletList = ({
         />;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectMutation, height, walletList, error]);
+  }, [connectMutation, height, walletList]);
 
   return (
     <StyledContainer gap={15}>
       <RenderWalletListHeader
         title={title}
-        onClickBackButton={onClickBackButton}
+        onClickBackButton={connectMutation.isPending ? connectMutation.reset : onClickBackButton}
       />
       {container}
     </StyledContainer>
