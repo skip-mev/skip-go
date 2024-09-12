@@ -1777,7 +1777,7 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
     // tx index -> gas token used
-    let gasTokenUsed: Record<number, Coin> = {}
+    let gasTokenRecord: Record<number, Coin> = {}
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -1825,10 +1825,10 @@ export class SkipClient {
           gasAmountMultiplier,
           getFallbackGasAmount,
         });
-        gasTokenUsed[i] = coinUsed;
+        gasTokenRecord[i] = coinUsed;
       }
     }
-    return gasTokenUsed;
+    return gasTokenRecord;
   }
 
   async validateCosmosGasBalance({
