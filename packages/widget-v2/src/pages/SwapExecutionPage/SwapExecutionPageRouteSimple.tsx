@@ -1,13 +1,12 @@
 import styled, { useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
-import {txState } from "./SwapExecutionPageRouteDetailedRow";
+import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useAtom } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { destinationWalletAtom } from "@/state/swapPage";
 import { ClientOperation } from "@/utils/clientType";
-import { WALLET_LIST } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
@@ -45,7 +44,7 @@ export const SwapExecutionPageRouteSimple = ({
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        wallet={WALLET_LIST[0]}
+        wallet={destinationWallet}
         txState={overallSwapState}
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />

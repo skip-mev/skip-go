@@ -138,13 +138,9 @@ export const SwapPage = () => {
       return <MainButton label={routeError.message} disabled={true} />;
     }
 
-    return <MainButton label="Connect Wallet" icon={ICONS.plus} onClick={() => {
+    return <MainButton disabled={!sourceAsset?.chainID} label="Connect Wallet" icon={ICONS.plus} onClick={() => {
       selectWalletFlow.show({
         chainID: sourceAsset?.chainID,
-        onSelect: (wallet) => {
-          console.log(wallet);
-          selectWalletFlow.hide();
-        }
       });
     }} />;
   }, [isRouteLoading, isRouteError, routeError, sourceAsset?.chainID, selectWalletFlow]);

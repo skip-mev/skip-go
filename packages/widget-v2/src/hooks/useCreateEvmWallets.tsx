@@ -47,6 +47,7 @@ export const useCreateEvmWallets = () => {
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         getAddress: async ({ signRequired, context }) => {
@@ -90,5 +91,5 @@ export const useCreateEvmWallets = () => {
     return wallets;
   }, [connectAsync, connectors, currentEvmConnector, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
 
-  return { createEvmWallets }
+  return { createEvmWallets };
 };

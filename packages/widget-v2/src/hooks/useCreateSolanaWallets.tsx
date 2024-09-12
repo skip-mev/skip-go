@@ -4,7 +4,7 @@ import { useSetAtom } from "jotai";
 import { useCallback } from "react";
 
 
-export const useSolanaWallets = () => {
+export const useCreateSolanaWallets = () => {
   const { wallets: solanaWallets } = useWallet();
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const createSolanaWallets = useCallback(() => {
@@ -25,6 +25,7 @@ export const useSolanaWallets = () => {
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         getAddress: async ({ signRequired }) => {
@@ -54,7 +55,7 @@ export const useSolanaWallets = () => {
       };
       wallets.push(minimalWallet);
     }
-    return wallets
+    return wallets;
   }, [solanaWallets, setSvmWallet]);
-  return { createSolanaWallets }
+  return { createSolanaWallets };
 };

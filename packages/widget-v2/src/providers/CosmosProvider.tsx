@@ -18,9 +18,6 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
           preferNoSetFee: true,
         }
       },
-      onNotFound: () => {
-        console.warn("wallet not found");
-      },
     }}>
       {children}
     </GrazProvider>
