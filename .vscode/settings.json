@@ -8,6 +8,12 @@
   },
   "eslint.format.enable": true,
   "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }
