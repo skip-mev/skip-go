@@ -19,6 +19,7 @@ export type AssetDetails = {
   chainImage?: string;
   formattedAmount?: string;
   formattedUsdAmount?: string;
+  usdAmount?: number;
 };
 
 /**
@@ -57,7 +58,7 @@ export const useGetAssetDetails = ({
     }
     return asset.denom === assetDenom;
   });
-  const { data: usdValue } = useUsdValue({...asset, value: amount});
+  const { data: usdValue } = useUsdValue({ ...asset, value: amount });
   const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
@@ -71,18 +72,25 @@ export const useGetAssetDetails = ({
   const chainImage = chain?.logoURI;
 
   const formattedAmount = amount
-  ? getFormattedAssetAmount(amount, asset?.decimals)
-  : undefined;
+    ? getFormattedAssetAmount(amount, asset?.decimals)
+    : undefined;
 
-  const formattedUsdAmount = useMemo(() => {
+  const usdAmount = useMemo(() => {
     if (amountUsd) {
-      return formatUSD(amountUsd);
+      return Number(amountUsd);
     }
     if (usdValue) {
-      return formatUSD(usdValue);
+      return usdValue;
     }
     return;
   }, [amountUsd, usdValue]);
+
+  const formattedUsdAmount = useMemo(() => {
+    if (usdAmount) {
+      return formatUSD(usdAmount);
+    }
+    return;
+  }, [usdAmount]);
 
   return {
     asset,
@@ -93,5 +101,6 @@ export const useGetAssetDetails = ({
     symbol,
     formattedAmount,
     formattedUsdAmount,
+    usdAmount,
   };
 };

@@ -6,8 +6,13 @@ import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
 import { BigNumber } from "bignumber.js";
-import { formatNumberWithCommas, formatNumberWithoutCommas } from "@/utils/number";
+import {
+  formatNumberWithCommas,
+  formatNumberWithoutCommas,
+} from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
+import { useMemo } from "react";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -15,6 +20,7 @@ export type AssetChainInputProps = {
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
   selectedAssetDenom?: string;
+  priceChangePercentage?: number;
 };
 
 export const AssetChainInput = ({
@@ -23,11 +29,12 @@ export const AssetChainInput = ({
   selectedAssetDenom,
   handleChangeAsset,
   handleChangeChain,
+  priceChangePercentage,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAssetDenom,
-    amount: value
+    amount: value,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +111,16 @@ export const AssetChainInput = ({
     }
   };
 
+  const priceChangeColor = useMemo(() => {
+    if (!priceChangePercentage) {
+      return theme.primary.text.normal;
+    }
+    if (priceChangePercentage > 0) {
+      return theme.success.text;
+    }
+    return theme.error.text;
+  }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
+
   return (
     <StyledAssetChainInputWrapper
       justify="space-between"
@@ -138,7 +155,19 @@ export const AssetChainInput = ({
         </Button>
       </Row>
       <Row justify="space-between">
-        <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
+        {priceChangePercentage ? (
+          <Row align="center" gap={6}>
+            <SmallText>
+              {assetDetails.formattedUsdAmount ?? 0}
+            </SmallText>
+            <TinyTriangleIcon color={priceChangeColor} />
+            <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+          </Row>
+        ) : (
+          <SmallText>
+            {assetDetails.formattedUsdAmount ?? 0}
+          </SmallText>
+        )}
         {assetDetails?.chainName ? (
           <GhostButton
             onClick={handleChangeChain}
