@@ -1,15 +1,11 @@
 ---
 title: 'Getting Started'
-description: 'Basic documentation for Skip Go Client, a TypeScript Package (@skip-go/client) that simplifies the process of interacting with the Skip Go API'
+description: 'Basic documentation for `@skip-go/client`, a TypeScript package that simplifies interaction with the Skip Go API'
 ---
-
-## Background
-
-This document covers the [Typescript Package](https://www.npmjs.com/package/@skip-go/client) Skip provides to wrap the functionality of the Skip Go API and make it even easier for developers to build applications with it.
 
 ## Set up the Library
 
-Install the library:
+Install the library in your TypeScript project using npm or yarn:
 
 ```Shell Shell
 npm install @skip-go/client
@@ -17,49 +13,49 @@ npm install @skip-go/client
 
 ## Initialize Client
 
-All integrations start by initializing a SkipClient client (`@skip-go/client.SkipClient`).
+To start your integration, initialize a client (`@skip-go/client.SkipClient`).
 
-This helper objects wraps interactions with the API and provides useful helper methods for a variety of common actions that depend on inputs or outputs of the API (e.g. querying for assets and chains, constructing a route, constructing + signing a transaction from a message returned by the API)
+This client helper objects wraps interactions with the API and provides useful helper methods for a variety of common actions. You can query assets and chains, construct a route, construct + sign a transaction from a message.
 
 ```TypeScript TypeScript
-import { SkipClient, SKIP_API_URL } from "@skip-go/client";
+import { SkipClient } from "@skip-go/client";
 
+// Initialize the client with default values and no signers
 const client = new SkipClient();
 ```
 
-The client constructor takes several _optional_ inputs provided together by the `SkipClientOptions` object
+The client constructor takes an _optional_ config provided by `SkipClientOptions`:
 
-- `apiURL?: string;`: A URL for interacting with the Skip Go API (Defaults to the production URL)
-- `getEVMSigner?: (chainID: string) => Promise<WalletClient>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing an EVM transaction. (`WalletClient` is defined in `viem` and other popular EVM client libraries)
-- `getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing a Cosmos transaction. (`OfflineSigner` is defined in `@cosmjs/proto-signing`)
-- `getSVMSigner?: () => Promise<Adapter>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing a Solana transaction. (`Adapter` is defined in `@solana/wallet-adapter-base`)
+- `apiURL?: string`: Override the default production URL for interacting with the Skip Go API
+- `getEVMSigner?: (chainID: string) => Promise<WalletClient>`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing an EVM transaction. (`WalletClient` is defined in `viem` and other popular EVM client libraries)
+- `getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing a Cosmos transaction. (`OfflineSigner` is defined in `@cosmjs/proto-signing`)
+- `getSVMSigner?: () => Promise<Adapter>`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing Solana transactions. (`Adapter` is defined in `@solana/wallet-adapter-base`)
 - `endpointOptions`:
-  - `endpoints?: Record<string, clientTypes.EndpointOptions>;`: A map of `chainID`s to their respective endpoints.
-    _ `clientTypes.EndpointOptions` has `rpc` and `rest` fields
-    _ If you implement this, you do not need to implement the two functions below
-  - `getRpcEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the RPC endpoint for a given `chainID`
-  - `getRestEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the REST endpoint for a given `chainID`
-- `aminoTypes?: AminoConverters;`: additional amino types to be used in the router.
-- `registryTypes?: Iterable<[string, GeneratedType]>;`: additional registry types to be used in the router
+  - `endpoints?: Record<string, clientTypes.EndpointOptions>`: A map of `chainIDs` to their respective endpoints.
+     `clientTypes.EndpointOptions` includes `rpc` and `rest` fields. Note: if you implement this, you do not need to implement the two getter functions below
+  - `getRpcEndpointForChain?: (chainID: string) => Promise<string>`: A function that returns the RPC endpoint for a given `chainID`
+  - `getRestEndpointForChain?: (chainID: string) => Promise<string>`: A function that returns the REST endpoint for a given `chainID`
+- `aminoTypes?: AminoConverters`: additional amino types to be used in the router
+- `registryTypes?: Iterable<[string, GeneratedType]>`: additional registry types to be used in the router
 
 ## Setup Signers
 
-Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
+Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems. This is required for executing transactions.   
 
-For EVM transactions, you need to install the `viem` package:
+For EVM transactions, install the `viem` package:
 
 ```Shell shell
 npm i viem
 ```
 
-For SVM transactions, you can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
-For this example, we are going to use Phantom wallet:
+For SVM transactions, select a wallet adapter from [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
+This example uses the Phantom wallet adapter:
 
 ```Shell shell
 npm i @solana/wallet-adapter-phantom
 ```
 
-Now, let's create the SkipClient instance with the signers for each ecosystem!
+Now, let's create the `SkipClient` instance with the signers from each ecosystem!
 
 We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
 
@@ -70,6 +66,7 @@ import { createWalletClient } from 'viem';
 
 const skipClient = new SkipClient({
   getCosmosSigner: async (chainID) => {
+    // get Keplr signer from window object
     const offlineSigner = window.keplr?.getOfflineSigner(chainID);
     if (!offlineSigner) throw new Error('Keplr not installed');
     return offlineSigner;
@@ -94,9 +91,9 @@ const skipClient = new SkipClient({
 
 Now that your client is initialized, you can use it to query basic information about chains & assets to populate your user interface.
 
-For example:
+#### Get a list of chains
 
-#### Get list of chains
+Return type of `client.chains` will be `Chain[]`
 
 ```ts
 // get a Chain[] of all supported cosmos chains
@@ -109,9 +106,9 @@ const chains = await client.chains({
 });
 ```
 
-#### Get a map of assets by chain id
+#### Get a map of assets by chain ID
 
-Return type will be `Record<string, Asset[]>`
+Return type of `client.assets` will be `Record<string, Asset[]>`
 
 ```ts
 // get all chains assets
@@ -121,7 +118,7 @@ const assets = await client.assets({
   includeSvmAssets: true,
 });
 
-// get assets filtered by chain id
+// get assets filtered by chain ID
 const assets = await client.assets({
   chainID: 'cosmoshub-4'
   includeEvmAssets: true,
@@ -130,27 +127,26 @@ const assets = await client.assets({
 })
 ```
 
-For more functions documentation please check
+## Get a Recommended Asset
 
-## Get a Recommended Route
-
-After querying basic information about chains and assets, you can utilize the `recommendAssets` method to find the best routes for moving assets between chains. This feature is particularly useful for obtaining recommendations on which unique asset should be received on the destination chain for an optimal user experience. These recommendations are based on factors like liquidity pools, token denominations, and the unique characteristics of each IBC transfer route.
+Use the `recommendAssets` method to identify the best routes for transferring assets between chains. This method is particularly useful for determining the best asset to receive on the destination chain. These recommendations are based on factors such as liquidity, token denominations, and the unique properties of each IBC transfer route.
 
 Usage example:
 
 ```ts
+// Pass a single object or an array of objects
 const request = [
-  {
-    source_asset_denom: 'uusdc',
-    source_asset_chain_id: 'axelar-dojo-1',
-    dest_chain_id: 'cosmoshub-4',
-  },
-  {
-    source_asset_denom: 'uusdc',
-    source_asset_chain_id: 'axelar-dojo-1',
-    dest_chain_id: 'osmosis-1',
-  },
-];
+    {
+      sourceAssetDenom: 'uusdc',
+      sourceAssetChainID: 'axelar-dojo-1',
+      destChainID: 'cosmoshub-4',
+    },
+    {
+      sourceAssetDenom: 'uusdc',
+      sourceAssetChainID: 'axelar-dojo-1',
+      destChainID: 'osmosis-1',
+    },
+]
 
 const recommendations = await client.recommendAssets(request);
 ```
@@ -158,57 +154,56 @@ const recommendations = await client.recommendAssets(request);
 Response example:
 
 ```ts
-{
-  "recommendations": [],
-  "recommendation_entries": [
-    {
-      "recommendations": [
-        {
-          "asset": {
-            "denom": "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
-            "chain_id": "cosmoshub-4",
-            "origin_denom": "uusdc",
-            "origin_chain_id": "axelar-dojo-1",
-            "trace": "transfer/channel-293",
-            "is_cw20": false,
-            "is_evm": false,
-            "symbol": "USDC",
-            "name": "USDC",
-            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-            "decimals": 6,
-            "description": "Circle's stablecoin on Axelar",
-            "coingecko_id": "axlusdc",
-            "recommended_symbol": "USDC.axl"
-          },
-          "reason": "MOST_LIQUID"
-        }
-      ]
-    },
-    {
-      "recommendations": [
-        {
-          "asset": {
-            "denom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
-            "chain_id": "osmosis-1",
-            "origin_denom": "uusdc",
-            "origin_chain_id": "axelar-dojo-1",
-            "trace": "transfer/channel-208",
-            "is_cw20": false,
-            "is_evm": false,
-            "symbol": "USDC",
-            "name": "USDC",
-            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-            "decimals": 6,
-            "description": "Circle's stablecoin on Axelar",
-            "coingecko_id": "axlusdc",
-            "recommended_symbol": "USDC.axl"
-          },
-          "reason": "MOST_LIQUID"
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "recommendations": [
+      {
+        "asset": {
+          "denom": "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
+          "chainID": "cosmoshub-4",
+          "originDenom": "uusdc",
+          "originChainID": "axelar-dojo-1",
+          "trace": "transfer/channel-293",
+          "isCW20": false,
+          "isEVM": false,
+          "isSVM": false,
+          "symbol": "USDC",
+          "name": "USDC",
+          "logoURI": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
+          "decimals": 6,
+          "description": "Circle's stablecoin on Axelar",
+          "coingeckoID": "axlusdc",
+          "recommendedSymbol": "USDC.axl"
+        },
+        "reason": "MOST_LIQUID"
+      }
+    ]
+  },
+  {
+    "recommendations": [
+      {
+        "asset": {
+          "denom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
+          "chainID": "osmosis-1",
+          "originDenom": "uusdc",
+          "originChainID": "axelar-dojo-1",
+          "trace": "transfer/channel-208",
+          "isCW20": false,
+          "isEVM": false,
+          "isSVM": false,
+          "symbol": "USDC",
+          "name": "USDC",
+          "logoURI": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
+          "decimals": 6,
+          "description": "Circle's stablecoin on Axelar",
+          "coingeckoID": "axlusdc",
+          "recommendedSymbol": "USDC.axl"
+        },
+        "reason": "MOST_LIQUID"
+      }
+    ]
+  }
+]
 ```
 
 ## Get a Route
@@ -217,11 +212,11 @@ Once your user has selected source and destination tokens and chains, you can us
 
 ```ts
 const route = await client.route({
-  amountIn: AMOUNT_IN,
-  sourceAssetDenom: SOURCE_DENOM,
-  sourceAssetChainID: SOURCE_CHAIN_ID,
-  destAssetDenom: DEST_DENOM,
-  destAssetChainID: DEST_CHAIN_ID,
+  amountIn: "1000000",
+  sourceAssetDenom: "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
+  sourceAssetChainID: "axelar-dojo-1",
+  destAssetDenom: "uosmo",
+  destAssetChainID: "osmosis-1",
   cumulativeAffiliateFeeBPS: '0',
 });
 ```
