@@ -24,6 +24,7 @@ export default tseslint.config(
         "varsIgnorePattern": "^_",
         "ignoreRestSiblings": true
       }],
+      "semi": ["error", "always"],
       "no-console": ["error", { allow: ["warn", "error"] }],
       "quotes": ["error", "double", { "avoidEscape": true }],
 
