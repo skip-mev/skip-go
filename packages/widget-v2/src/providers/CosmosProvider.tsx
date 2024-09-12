@@ -1,5 +1,5 @@
 import { mainnetChains } from "@/constants/graz";
-import { GrazProvider } from "graz"
+import { GrazProvider } from "graz";
 
 
 type CosmosProviderProps = {
@@ -17,7 +17,10 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
         sign: {
           preferNoSetFee: true,
         }
-      }
+      },
+      onNotFound: () => {
+        console.warn("wallet not found");
+      },
     }}>
       {children}
     </GrazProvider>

@@ -82,7 +82,7 @@ export const RenderWalletList = ({
                   height={35}
                   width={35}
                   style={{ objectFit: "cover" }}
-                  src={imageUrl ?? "https"}
+                  src={imageUrl}
                   alt={`${walletPrettyName} logo`}
                 />
               )}
