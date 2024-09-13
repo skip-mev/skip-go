@@ -1,5 +1,17 @@
 # @skip-go/widget
 
+## 2.4.11
+
+### Patch Changes
+
+- 226db04: adjust estimated time text
+
+## 2.4.10
+
+### Patch Changes
+
+- e1681f0: use penumbra ephemeral address
+
 ## 2.4.9
 
 ### Patch Changes

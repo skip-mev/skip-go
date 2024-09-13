@@ -235,7 +235,7 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             </DescriptionList.Row>
           ))}
           <DescriptionList.Row>
-            <DescriptionList.Dt>Estimation Completion Time</DescriptionList.Dt>
+            <DescriptionList.Dt>Estimated Completion Time</DescriptionList.Dt>
             <DescriptionList.Dd>
               ~{convertSecondsToMinutesOrHours(data.route.estimatedRouteDurationSeconds)}
             </DescriptionList.Dd>

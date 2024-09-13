@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.8.2
+
+### Patch Changes
+
+- f8ebffe: fix validate gas balance checking
+
 ## 0.8.1
 
 ### Patch Changes
