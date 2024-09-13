@@ -1,19 +1,15 @@
 import { useTheme, styled } from "styled-components";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { BridgeIcon } from "@/icons/BridgeIcon";
-import { destinationAssetAtom, sourceAssetAtom, swapDirectionAtom } from "@/state/swapPage";
-import { useAtom, useSetAtom } from "jotai";
+import { invertSwapAtom } from "@/state/swapPage";
+import { useSetAtom } from "jotai";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
-  const setSwapDirection = useSetAtom(swapDirectionAtom)
+  const invertSwap = useSetAtom(invertSwapAtom);
   const onInvertSwap = () => {
-    setSwapDirection("swap-out");
-    setSourceAsset(destinationAsset);
-    setDestinationAsset(sourceAsset);
-  }
+    invertSwap("swap-out");
+  };
 
   return (
     <div style={{ position: "relative", cursor: "pointer" }} onClick={onInvertSwap}>

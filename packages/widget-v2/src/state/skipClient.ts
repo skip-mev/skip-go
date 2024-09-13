@@ -12,6 +12,7 @@ import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
   destinationAssetAtom,
+  isInvertingSwapAtom,
   routeAmountEffect,
   sourceAssetAtom,
   swapDirectionAtom,
@@ -108,12 +109,14 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
 
   if (
     !sourceAsset?.chainID ||
     !sourceAsset.denom ||
     !destinationAsset?.chainID ||
-    !destinationAsset.denom
+    !destinationAsset.denom ||
+    isInvertingSwap
   ) {
     return undefined;
   }

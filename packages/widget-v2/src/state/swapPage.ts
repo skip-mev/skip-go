@@ -61,7 +61,31 @@ export const destinationAssetAmountAtom = atom(
   },
 );
 
-export const swapDirectionAtom = atom<"swap-in" | "swap-out">("swap-in");
+export type SwapDirection = "swap-in" | "swap-out";
+
+export const swapDirectionAtom = atom<SwapDirection>("swap-in");
+
+export const isInvertingSwapAtom = atom(false);
+
+export const invertSwapAtom = atom(null, (get, set, swapDirection: SwapDirection) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  set(isInvertingSwapAtom, true);
+
+  set(swapDirectionAtom, swapDirection);
+
+  set(sourceAssetAtom, destinationAsset);
+  if (destinationAsset?.amount) {
+    set(sourceAssetAmountAtom, destinationAsset?.amount);
+  }
+
+  set(destinationAssetAtom, sourceAsset);
+  if (sourceAsset?.amount) {
+    set(destinationAssetAmountAtom, sourceAsset?.amount);
+  }
+
+  set(isInvertingSwapAtom, false);
+});
 
 export const connectedWalletAtom = atom<Wallet>();
 
