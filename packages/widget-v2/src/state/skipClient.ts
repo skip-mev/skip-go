@@ -127,7 +127,7 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 export const debouncedRouteRequestEffect = atomEffect((get, set) => {
   const routeRequest = get(skipRouteRequestAtom);
   set(debouncedSkipRouteRequestAtom, routeRequest);
-})
+});
 
 
 export const skipRouteAtom = atomWithQuery((get) => {
