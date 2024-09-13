@@ -20,8 +20,11 @@ This client helper objects wraps interactions with the API and provides useful h
 ```TypeScript TypeScript
 import { SkipClient } from "@skip-go/client";
 
-// Initialize the client with default values and no signers
-const client = new SkipClient();
+// See options and signers setup below
+const client = new SkipClient({
+  ...config, // optional config 
+  ...signers // signers required for executing transactions
+});
 ```
 
 The client constructor takes an _optional_ config provided by `SkipClientOptions`:
@@ -57,7 +60,7 @@ npm i @solana/wallet-adapter-phantom
 
 Now, let's create the `SkipClient` instance with the signers from each ecosystem!
 
-We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
+We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions. Note that some signers require access to the window browswer object.
 
 ```ts
 import { SkipClient } from '@skip-router/client';
@@ -66,7 +69,6 @@ import { createWalletClient } from 'viem';
 
 const skipClient = new SkipClient({
   getCosmosSigner: async (chainID) => {
-    // get Keplr signer from window object
     const offlineSigner = window.keplr?.getOfflineSigner(chainID);
     if (!offlineSigner) throw new Error('Keplr not installed');
     return offlineSigner;
@@ -89,181 +91,103 @@ const skipClient = new SkipClient({
 
 ## Query Basic Info
 
-Now that your client is initialized, you can use it to query basic information about chains & assets to populate your user interface.
+Now that your client is initialized, you can use it to query chains & assets supported by Skip Go.
 
-#### Get a list of chains
-
-Return type of `client.chains` will be `Chain[]`
+#### Get a List of Chains
 
 ```ts
-// get a Chain[] of all supported cosmos chains
-const chains = await client.chains();
-// include EVM, SVM and testnets chains
-const chains = await client.chains({
+// returns a Chain[] of all supported Cosmos mainnet chains
+const cosmosChains = await client.chains();
+
+// include EVM and SVM chains
+const allChains = await client.chains({
   includeEVM: true,
   includeSVM: true,
-  includeTestnets: true,
+});
+
+// only show testnet chains
+const testnetChains = await client.chains({
+  onlyTestnets: true
 });
 ```
 
-#### Get a map of assets by chain ID
-
-Return type of `client.assets` will be `Record<string, Asset[]>`
+#### Get a Map of assets by Chain ID
 
 ```ts
-// get all chains assets
+// returns `Record<string, Asset[]>
 const assets = await client.assets({
   includeEvmAssets: true,
-  includeCW20Assets: true,
   includeSvmAssets: true,
 });
 
-// get assets filtered by chain ID
-const assets = await client.assets({
-  chainID: 'cosmoshub-4'
-  includeEvmAssets: true,
+// filter assets by chain ID
+const hubAssets = await client.assets({
+  chainID: 'cosmoshub-4',
   includeCW20Assets: true,
-  includeSvmAssets: true,
 })
-```
-
-## Get a Recommended Asset
-
-Use the `recommendAssets` method to identify the best routes for transferring assets between chains. This method is particularly useful for determining the best asset to receive on the destination chain. These recommendations are based on factors such as liquidity, token denominations, and the unique properties of each IBC transfer route.
-
-Usage example:
-
-```ts
-// Pass a single object or an array of objects
-const request = [
-    {
-      sourceAssetDenom: 'uusdc',
-      sourceAssetChainID: 'axelar-dojo-1',
-      destChainID: 'cosmoshub-4',
-    },
-    {
-      sourceAssetDenom: 'uusdc',
-      sourceAssetChainID: 'axelar-dojo-1',
-      destChainID: 'osmosis-1',
-    },
-]
-
-const recommendations = await client.recommendAssets(request);
-```
-
-Response example:
-
-```ts
-[
-  {
-    "recommendations": [
-      {
-        "asset": {
-          "denom": "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
-          "chainID": "cosmoshub-4",
-          "originDenom": "uusdc",
-          "originChainID": "axelar-dojo-1",
-          "trace": "transfer/channel-293",
-          "isCW20": false,
-          "isEVM": false,
-          "isSVM": false,
-          "symbol": "USDC",
-          "name": "USDC",
-          "logoURI": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-          "decimals": 6,
-          "description": "Circle's stablecoin on Axelar",
-          "coingeckoID": "axlusdc",
-          "recommendedSymbol": "USDC.axl"
-        },
-        "reason": "MOST_LIQUID"
-      }
-    ]
-  },
-  {
-    "recommendations": [
-      {
-        "asset": {
-          "denom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
-          "chainID": "osmosis-1",
-          "originDenom": "uusdc",
-          "originChainID": "axelar-dojo-1",
-          "trace": "transfer/channel-208",
-          "isCW20": false,
-          "isEVM": false,
-          "isSVM": false,
-          "symbol": "USDC",
-          "name": "USDC",
-          "logoURI": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-          "decimals": 6,
-          "description": "Circle's stablecoin on Axelar",
-          "coingeckoID": "axlusdc",
-          "recommendedSymbol": "USDC.axl"
-        },
-        "reason": "MOST_LIQUID"
-      }
-    ]
-  }
-]
 ```
 
 ## Get a Route
 
-Once your user has selected source and destination tokens and chains, you can use the client to generate a route and quote:
+Once you've established source/destination chains and tokens, you can use the client to generate a route and quote. You can specify either `amountIn` or `amountOut` but not both:
 
 ```ts
+// 1 ATOM on Cosmos Hub to OSMO on Osmosis
 const route = await client.route({
   amountIn: "1000000",
-  sourceAssetDenom: "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
-  sourceAssetChainID: "axelar-dojo-1",
+  sourceAssetDenom: "uatom",
+  sourceAssetChainID: "cosmoshub-4",
   destAssetDenom: "uosmo",
   destAssetChainID: "osmosis-1",
   cumulativeAffiliateFeeBPS: '0',
 });
+
+// ETH on Ethereum to 1 TIA on Celestia
+const route = await client.route({
+  amountOut: "1000000",
+  sourceAssetDenom: "ethereum-native",
+  sourceAssetChainID: "1",
+  destAssetDenom: "utia",
+  destAssetChainID: "celestia",
+  smartRelay: true,
+});
 ```
 
+<Info>
+  Read more about [affiliate fees](../general/affiliate-fees) and [Smart Relay](../general/smart-relay).
+</Info>
+
 ## Get Required Addresses
-
-Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route.
-
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipClient.executeRoute` method.
-
-The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use.
+Now that we have the route, we can use the signer to obtain the receiver addresses for required execution. We'll populate `userAddresses` with these addresses when executing the route using the `SkipClient.executeRoute` method. The chainIDs we need addresses for are provided in the `requiredChainAddresses` field of the route output.
 
  <Warning>
- **Use addresses your user can sign with**
-
-Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). So you must be sure your user can sign for each address you provide.
-
-See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address.
-
-(Rest assured that `SkipClient.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
-
+ **Only use addresses your user can sign for**
+Funds could get stuck in any address you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). Ensure your user can sign for each address you provide.
+See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on cases when assets may get end up in an intermediate address.
+Rest assured that `SkipClient.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.
 </Warning>
 
-It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
-
+It's recommended to write a function that takes a chainID and returns the address.
 Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry:
 
-```Javascript
-// get user addresses for each requiredChainAddress
-    const userAddresses = await Promise.all(route.requiredChainAddresses.map(async (chainID) => {
-        return {
-            chainID: chainID,
-            address: await getAddress(chainID)
-        }
-    }))
+```ts
+// get user addresses for each requiredChainAddress to execute the route
+  const userAddresses = route.requiredChainAddresses.map((chainID) => {
+    return {
+        chainID: chainID,
+        address: getAddress(chainID)
+    }
+  })
 ```
 
 ## Execute a Route
 
-Once you have a route, you can execute it in a single function call (passing in the route, the user addresses for at least the chains the route includes, and an optional callback function.
-
-For example:
+Once you have a route, you can execute it in a single function call (passing in the route, the user addresses for at least the chains the route includes, and an optional callback function:
 
 ```ts
 await client.executeRoute({
-  route,
-  userAddresses: USER_ADDRESSES,
+  route: route,
+  userAddresses: userAddresses,
   onTransactionSuccess: async (chainID, txHash, success) => {
     console.log(txHash);
   },
@@ -283,7 +207,7 @@ Once the user has signed a transaction to execute a cross-chain action, you can 
 
 After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `SkipClient.transactionStatus`.
 
-We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`
+We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`.
 
  <Check>
  **Want to help us get better? Have questions or feedback?**
