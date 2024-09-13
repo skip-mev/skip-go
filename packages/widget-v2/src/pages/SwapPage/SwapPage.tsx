@@ -15,6 +15,8 @@ import {
   sourceAssetAtom,
   destinationAssetAtom,
   swapDirectionAtom,
+  sourceAssetAmount,
+  destinationAssetAmount,
 } from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapPageSettings } from "./SwapPageSettings";
@@ -25,12 +27,14 @@ import { useModal } from "@/components/Modal";
 
 const sourceAssetBalance = 125;
 
-export const SwapPage = () => {  
+export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmount);
+  const setDestinationAssetAmount = useSetAtom(destinationAssetAmount);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
-  const setSwapDirection = useSetAtom(swapDirectionAtom)
+  const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
@@ -164,7 +168,7 @@ export const SwapPage = () => {
             handleChangeChain={handleChangeSourceChain}
             value={sourceAsset?.amount}
             onChangeValue={(newValue) => {
-              setSourceAsset((old) => ({ ...old, amount: newValue }));
+              setSourceAssetAmount(newValue);
               setSwapDirection("swap-in");
             }}
           />
@@ -175,7 +179,7 @@ export const SwapPage = () => {
             handleChangeChain={handleChangeDestinationChain}
             value={destinationAsset?.amount}
             onChangeValue={(newValue) => {
-              setDestinationAsset((old) => ({ ...old, amount: newValue }));
+              setDestinationAssetAmount(newValue);
               setSwapDirection("swap-out");
             }}
           />
