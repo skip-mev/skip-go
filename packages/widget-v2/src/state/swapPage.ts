@@ -20,27 +20,31 @@ export const destinationWalletAtom = atom<Wallet>();
 
 
 export const routeAmountEffect = atomEffect((get, set) => {
-  const route = get(skipRouteAtom)
-  const direction = get(swapDirectionAtom)
-  const sourceAsset = get(sourceAssetAtom)
-  const destinationAsset = get(destinationAssetAtom)
+  const route = get(skipRouteAtom);
+  const direction = get(swapDirectionAtom);
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
 
   const isSwapIn = direction === "swap-in";
 
-  if (!route.data || !sourceAsset || !destinationAsset) return
+  if (!route.data || !sourceAsset || !destinationAsset) return;
 
   if (isSwapIn) {
-    const amount = parseAmountWei(route.data.amountOut, destinationAsset.decimals)
+    const amount = parseAmountWei(route.data.amountOut, destinationAsset.decimals);
+    if (amount === destinationAsset.amount) return;
+
     set(destinationAssetAtom, (old) => ({
       ...old,
       amount,
-    }))
+    }));
   }
   else {
-    const amount = parseAmountWei(route.data.amountIn, sourceAsset.decimals)
+    const amount = parseAmountWei(route.data.amountIn, sourceAsset.decimals);
+    if (amount === sourceAsset.amount) return;
+
     set(sourceAssetAtom, (old) => ({
       ...old,
       amount,
-    }))
+    }));
   }
-})
+});
