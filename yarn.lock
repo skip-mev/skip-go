@@ -23039,7 +23039,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isequal@npm:4.5.0, lodash.isequal@npm:^4.5.0":
+"lodash.isequal@npm:4.5.0":
   version: 4.5.0
   resolution: "lodash.isequal@npm:4.5.0"
   checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
@@ -31129,7 +31129,6 @@ __metadata:
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
-    lodash.isequal: ^4.5.0
     match-sorter: ^6.3.4
     pluralize: ^8.0.0
     rc-virtual-list: ^3.14.5

@@ -10,7 +10,6 @@ import { atomWithQuery } from "jotai-tanstack-query";
 import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
 import { debouncedDestinationAssetAmount, debouncedSourceAssetAmount, destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirectionAtom } from "./swapPage";
 import { getAmountWei } from "@/utils/number";
-import { atomWithDebounce } from "@/utils/atomWithDebounce";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
