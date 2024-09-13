@@ -106,56 +106,58 @@ export const RenderWalletList = ({
   }, [walletList]);
 
   const container = useMemo(() => {
-    switch (true) {
-      case !!connectMutation.isError:
-        return (
-          <StyledInnerContainer height={height}>
-            <StyledLoadingContainer>
-              <StyledAnimatedBorder
-                width={80}
-                height={80}
-                backgroundColor={theme.primary.text.normal}
-                txState="failed"
-                borderSize={8}
-              >
-                <img
-                  style={{ objectFit: "cover" }}
-                  src={connectMutation.variables?.walletInfo.logo}
-                  alt={`${connectMutation.variables?.walletPrettyName} logo`} />
-              </StyledAnimatedBorder>
-              <Text color={theme.primary.text.lowContrast}>Failed to connect to {connectMutation.variables?.walletPrettyName}</Text>
-            </StyledLoadingContainer>
-          </StyledInnerContainer>
-        );
-      case !!connectMutation.isPending:
-        return (
-          <StyledInnerContainer height={height}>
-            <StyledLoadingContainer>
-              <StyledAnimatedBorder
-                width={80}
-                height={80}
-                backgroundColor={theme.primary.text.normal}
-                txState="broadcasted"
-                borderSize={8}
-              >
-                <img
-                  style={{ objectFit: "cover" }}
-                  src={connectMutation.variables?.walletInfo.logo}
-                  alt={`${connectMutation.variables?.walletPrettyName} logo`} />
-              </StyledAnimatedBorder>
-              <Text color={theme.primary.text.lowContrast}>Connecting to {connectMutation.variables?.walletPrettyName}</Text>
-            </StyledLoadingContainer>
-          </StyledInnerContainer>
-        );
-      default:
-        return <VirtualList
-          listItems={walletList}
-          height={height}
-          itemHeight={ITEM_HEIGHT + ITEM_GAP}
-          renderItem={renderItem}
-          itemKey={(item) => item.walletName}
-        />;
+    if (connectMutation.isError) {
+      return (
+        <StyledInnerContainer height={height} >
+          <StyledLoadingContainer>
+            <StyledAnimatedBorder
+              width={80}
+              height={80}
+              backgroundColor={theme.primary.text.normal}
+              txState="failed"
+              borderSize={8}
+            >
+              <img
+                style={{ objectFit: "cover" }}
+                src={connectMutation.variables?.walletInfo.logo}
+                alt={`${connectMutation.variables?.walletPrettyName} logo`} />
+            </StyledAnimatedBorder>
+            <Text color={theme.primary.text.lowContrast}>Failed to connect to {connectMutation.variables?.walletPrettyName}</Text>
+          </StyledLoadingContainer>
+        </StyledInnerContainer >
+      );
     }
+
+    if (connectMutation.isPending) {
+      return (
+        <StyledInnerContainer height={height}>
+          <StyledLoadingContainer>
+            <StyledAnimatedBorder
+              width={80}
+              height={80}
+              backgroundColor={theme.primary.text.normal}
+              txState="broadcasted"
+              borderSize={8}
+            >
+              <img
+                style={{ objectFit: "cover" }}
+                src={connectMutation.variables?.walletInfo.logo}
+                alt={`${connectMutation.variables?.walletPrettyName} logo`} />
+            </StyledAnimatedBorder>
+            <Text color={theme.primary.text.lowContrast}>Connecting to {connectMutation.variables?.walletPrettyName}</Text>
+          </StyledLoadingContainer>
+        </StyledInnerContainer>
+      );
+    }
+
+    return <VirtualList
+      listItems={walletList}
+      height={height}
+      itemHeight={ITEM_HEIGHT + ITEM_GAP}
+      renderItem={renderItem}
+      itemKey={(item) => item.walletName}
+    />;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectMutation, height, walletList]);
 
