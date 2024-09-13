@@ -21,6 +21,7 @@ export type AssetChainInputProps = {
   handleChangeChain?: () => void;
   selectedAssetDenom?: string;
   priceChangePercentage?: number;
+  isWaitingToUpdateInputValue?: boolean;
 };
 
 export const AssetChainInput = ({
@@ -30,6 +31,7 @@ export const AssetChainInput = ({
   handleChangeAsset,
   handleChangeChain,
   priceChangePercentage,
+  isWaitingToUpdateInputValue,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const [showPriceChangePercentage, setShowPriceChangePercentage] =
@@ -142,6 +144,7 @@ export const AssetChainInput = ({
           inputMode="numeric"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
         />
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
@@ -161,7 +164,7 @@ export const AssetChainInput = ({
           />
         </Button>
       </Row>
-      <Row justify="space-between">
+      <Row justify="space-between" align="center">
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
             <SmallTextButton
@@ -208,13 +211,26 @@ const StyledAssetChainInputWrapper = styled(Column)`
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.input <{ isWaitingToUpdateInputValue?: boolean }>`
   all: unset;
   font-size: 38px;
   font-weight: 300;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
+
+  ${(props) => props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+  @keyframes pulse {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
 `;
 
 export const StyledAssetLabel = styled(Row).attrs({
