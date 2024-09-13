@@ -16,6 +16,8 @@ import {
   sourceAssetAtom,
   destinationAssetAtom,
   swapDirectionAtom,
+  sourceAssetAmount,
+  destinationAssetAmount,
 } from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapPageSettings } from "./SwapPageSettings";
@@ -31,6 +33,8 @@ export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmount);
+  const setDestinationAssetAmount = useSetAtom(destinationAssetAmount);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
@@ -193,7 +197,7 @@ export const SwapPage = () => {
             handleChangeChain={handleChangeSourceChain}
             value={sourceAsset?.amount}
             onChangeValue={(newValue) => {
-              setSourceAsset((old) => ({ ...old, amount: newValue }));
+              setSourceAssetAmount(newValue);
               setSwapDirection("swap-in");
             }}
           />
@@ -205,7 +209,7 @@ export const SwapPage = () => {
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
             onChangeValue={(newValue) => {
-              setDestinationAsset((old) => ({ ...old, amount: newValue }));
+              setDestinationAssetAmount(newValue);
               setSwapDirection("swap-out");
             }}
           />

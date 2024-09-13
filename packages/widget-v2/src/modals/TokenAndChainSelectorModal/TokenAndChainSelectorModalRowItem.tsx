@@ -6,6 +6,7 @@ import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
 import { Chain } from "@skip-go/client";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
@@ -32,30 +33,19 @@ export const TokenAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
 }: TokenAndChainSelectorModalRowItemProps) => {
-  const { isLoading: isChainsLoading, data: chains } = useAtomValue(skipChainsAtom)
+  const { isLoading: isChainsLoading, data: chains } = useAtomValue(skipChainsAtom);
 
   if (!item || isChainsLoading) return skeleton;
 
   if (isClientAsset(item)) {
-    const chain = chains?.find((chain) => chain.chainID === item.chainID)
+    const chain = chains?.find((chain) => chain.chainID === item.chainID);
     return (
       <ModalRowItem
         key={`${index}${item.denom}`}
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <Row align="center" gap={10}>
-            <StyledAssetImage
-              height={35}
-              width={35}
-              src={item.logoURI}
-              alt={`${item.symbol} logo`}
-            />
-            <Text>{item.symbol}</Text>
-            <SmallText>
-              {chain?.prettyName}
-            </SmallText>
-          </Row>
+          <TokenAndChainSelectorModalRowItemLeftContent asset={item} chain={chain} />
         }
       />
     );
@@ -63,7 +53,7 @@ export const TokenAndChainSelectorModalRowItem = ({
 
   if (isChainWithAsset(item)) {
 
-    const chain = chains?.find((chain) => chain.chainID === item.chainID)
+    const chain = chains?.find((chain) => chain.chainID === item.chainID);
     return (
       <ModalRowItem
         key={item.chainID}
@@ -84,6 +74,27 @@ export const TokenAndChainSelectorModalRowItem = ({
       />
     );
   }
+};
+
+const TokenAndChainSelectorModalRowItemLeftContent = ({ asset, chain }: { asset: ClientAsset, chain?: Chain }) => {
+  const assetDetails = useGetAssetDetails({
+    assetDenom: asset.denom,
+    chainId: asset.chainID,
+  });
+  return (
+    <Row align="center" gap={10}>
+      <StyledAssetImage
+        height={35}
+        width={35}
+        src={assetDetails.assetImage}
+        alt={`${assetDetails.symbol} logo`}
+      />
+      <Text>{assetDetails.symbol}</Text>
+      <SmallText>
+        {chain?.prettyName}
+      </SmallText>
+    </Row>
+  );
 };
 
 const StyledAssetImage = styled.img`

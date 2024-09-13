@@ -8,10 +8,8 @@ import {
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
-import { destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirectionAtom } from "./swapPage";
+import { debouncedDestinationAssetAmount, debouncedSourceAssetAmount, destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirectionAtom } from "./swapPage";
 import { getAmountWei } from "@/utils/number";
-import { atomWithDebounce } from "@/utils/atomWithDebounce";
-import { atomEffect } from "jotai-effect";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
@@ -97,25 +95,19 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
-const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
-
-export const { debouncedValueAtom: debouncedSkipRouteRequestAtom } = atomWithDebounce<RouteRequest | undefined>(
-  undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY,
-);
-
-export const isWaitingForNewRouteRequestAtom = atom(false);
-
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
+  const sourceAssetAmount = get(debouncedSourceAssetAmount);
+  const destinationAssetAmount = get(debouncedDestinationAssetAmount);
+
   if (!sourceAsset?.chainID || !sourceAsset.denom || !destinationAsset?.chainID || !destinationAsset.denom) {
     return undefined;
   }
   const amount = direction === "swap-in"
-    ? { amountIn: getAmountWei(sourceAsset.amount, sourceAsset.decimals) || "0" }
-    : { amountOut: getAmountWei(destinationAsset.amount, destinationAsset.decimals) || "0" };
+    ? { amountIn: getAmountWei(sourceAssetAmount, sourceAsset.decimals) || "0" }
+    : { amountOut: getAmountWei(destinationAssetAmount, destinationAsset.decimals) || "0" };
 
   return {
     ...amount,
@@ -126,18 +118,11 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   };
 });
 
-export const debouncedRouteRequestEffect = atomEffect((get, set) => {
-  const routeRequest = get(skipRouteRequestAtom);
-  set(isWaitingForNewRouteRequestAtom, true);
-  set(debouncedSkipRouteRequestAtom, routeRequest);
-});
-
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
-  const params = get(debouncedSkipRouteRequestAtom);
+  const params = get(skipRouteRequestAtom);
 
   get(routeAmountEffect);
-  get(debouncedRouteRequestEffect);
 
   return {
     queryKey: ["skipRoute", params],

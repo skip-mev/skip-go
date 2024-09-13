@@ -1,6 +1,7 @@
-import List from "rc-virtual-list";
+import List, { ListRef } from "rc-virtual-list";
 import { getHexColor, opacityToHex } from "@/utils/colors";
 import { useTheme } from "styled-components";
+import { useEffect, useRef, useState } from "react";
 
 export type VirtualListProps<T> = {
   listItems: T[];
@@ -21,9 +22,49 @@ export const VirtualList = <T,>({
   className,
 }: VirtualListProps<T>) => {
   const theme = useTheme();
+  const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
+
+  const listRef = useRef<ListRef>(null);
+
+  useEffect(() => {
+    const listElement = listRef.current?.nativeElement;
+    const onFocus = (e) => {
+      setCurrentlyFocusedElement(e?.target);
+    };
+    listElement?.addEventListener("focusin", onFocus);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const nextElement = currentlyFocusedElement?.nextElementSibling as HTMLElement;
+        if (nextElement) {
+          nextElement.focus();
+          setCurrentlyFocusedElement(nextElement);
+        }
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const prevElement = currentlyFocusedElement?.previousElementSibling as HTMLElement;
+        if (prevElement) {
+          prevElement.focus();
+          setCurrentlyFocusedElement(prevElement);
+        }
+      }
+    };
+
+    if (listElement) {
+      listElement.focus(); // Focus the list for keyboard events
+      listElement.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      if (listElement) {
+        listElement.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+  }, [currentlyFocusedElement, listItems.length]);
 
   return (
     <List
+      ref={listRef}
       data={listItems}
       height={height}
       itemHeight={itemHeight}
