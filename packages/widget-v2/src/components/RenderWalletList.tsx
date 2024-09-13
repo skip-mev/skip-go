@@ -9,6 +9,7 @@ import { Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
+import { useModal } from "@ebay/nice-modal-react";
 
 export type RenderWalletListProps = {
   title: string;
@@ -55,11 +56,15 @@ export const RenderWalletList = ({
   onClickBackButton,
 }: RenderWalletListProps) => {
   const theme = useTheme();
+  const modal = useModal();
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
       return await wallet.connect();
     },
+    onSuccess: () => {
+      modal.remove();
+    }
   });
 
   const renderItem = (wallet: Wallet) => {
@@ -158,7 +163,7 @@ export const RenderWalletList = ({
     <StyledContainer gap={15}>
       <RenderWalletListHeader
         title={title}
-        onClickBackButton={connectMutation.isPending ? connectMutation.reset : onClickBackButton}
+        onClickBackButton={(connectMutation.isPending || connectMutation.isError) ? connectMutation.reset : onClickBackButton}
       />
       {container}
     </StyledContainer>

@@ -20,7 +20,7 @@ export const useWalletList = (chainID?: string) => {
         return createCosmosWallets(chainID);
       case "evm":
         return createEvmWallets(chainID);
-      case "solana":
+      case "svm":
         return createSolanaWallets();
       default:
         return [];
@@ -30,6 +30,7 @@ export const useWalletList = (chainID?: string) => {
   return walletList;
 };
 
+// WIP
 export const useDestinationWalletList = (chainID?: string) => {
 
   const { createCosmosWallets } = useCreateCosmosWallets();
@@ -53,7 +54,7 @@ export const useDestinationWalletList = (chainID?: string) => {
         return createCosmosWallets(chainID);
       case chainType === "evm":
         return createEvmWallets(chainID);
-      case chainType === "solana":
+      case chainType === "svm":
         return createSolanaWallets();
       default:
         return [];

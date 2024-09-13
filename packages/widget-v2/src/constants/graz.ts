@@ -115,6 +115,6 @@ export const walletInfo: Record<string, {
   },
 };
 
-export const getWalletInfo = (walletType: WalletType) => {
+export const getCosmosWalletInfo = (walletType: WalletType) => {
   return walletInfo[walletType];
 };

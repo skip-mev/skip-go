@@ -25,6 +25,7 @@ import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
+import { useAccount } from "@/hooks/useAccount";
 
 const sourceAssetBalance = 125;
 
@@ -38,10 +39,12 @@ export const SwapPage = () => {
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
+  const { data: route, isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
-  const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
-  const selectWalletFlow = useModal(WalletSelectorModal);
+  const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
+  const selectWalletmodal = useModal(WalletSelectorModal);
+
+  const sourceAccount = useAccount(sourceAsset?.chainID);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -64,27 +67,27 @@ export const SwapPage = () => {
   }, [assets, destinationAsset?.symbol, chains]);
 
   const handleChangeSourceAsset = useCallback(() => {
-    tokenAndChainSelectorFlow.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorFlow.hide();
+        tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setSourceAsset, tokenAndChainSelectorFlow]);
+  }, [setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
 
-    return tokenAndChainSelectorFlow.show({
+    return tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorFlow.hide();
+        tokenAndChainSelectorModal.hide();
       },
       chainsContainingAsset: chainsContainingSourceAsset,
       asset: sourceAsset,
@@ -93,31 +96,31 @@ export const SwapPage = () => {
     chainsContainingSourceAsset,
     setSourceAsset,
     sourceAsset,
-    tokenAndChainSelectorFlow,
+    tokenAndChainSelectorModal,
   ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
-    tokenAndChainSelectorFlow.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorFlow.hide();
+        tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setDestinationAsset, tokenAndChainSelectorFlow]);
+  }, [setDestinationAsset, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationChain = useCallback(() => {
     if (!chainsContainingDestinationAsset) return;
 
-    return tokenAndChainSelectorFlow.show({
+    return tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorFlow.hide();
+        tokenAndChainSelectorModal.hide();
       },
       chainsContainingAsset: chainsContainingDestinationAsset,
       asset: destinationAsset,
@@ -126,7 +129,7 @@ export const SwapPage = () => {
     chainsContainingDestinationAsset,
     destinationAsset,
     setDestinationAsset,
-    tokenAndChainSelectorFlow,
+    tokenAndChainSelectorModal,
   ]);
 
   const swapButton = useMemo(() => {
@@ -138,12 +141,16 @@ export const SwapPage = () => {
       return <MainButton label={routeError.message} disabled={true} />;
     }
 
+    if (sourceAccount?.address) {
+      return <MainButton label="Swap" icon={ICONS.swap} disabled={!route} />;
+    }
+
     return <MainButton disabled={!sourceAsset?.chainID} label="Connect Wallet" icon={ICONS.plus} onClick={() => {
-      selectWalletFlow.show({
+      selectWalletmodal.show({
         chainID: sourceAsset?.chainID,
       });
     }} />;
-  }, [isRouteLoading, isRouteError, routeError, sourceAsset?.chainID, selectWalletFlow]);
+  }, [isRouteLoading, isRouteError, sourceAccount?.address, sourceAsset?.chainID, routeError?.message, route, selectWalletmodal]);
 
   return (
     <>
