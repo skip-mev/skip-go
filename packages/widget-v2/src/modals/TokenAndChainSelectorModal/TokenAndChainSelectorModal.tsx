@@ -24,21 +24,21 @@ export const TokenAndChainSelectorModal = createModal(
     const modal = useModal();
     const { onSelect, chainsContainingAsset, asset } = modalProps;
     const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
-    const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom)
-    const isLoading = isAssetsLoading || isChainsLoading
+    const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
+    const isLoading = isAssetsLoading || isChainsLoading;
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     const filteredAssets = useMemo(() => {
-      if (!assets) return
+      if (!assets) return;
       return matchSorter(assets, searchQuery, {
         keys: ["recommendedSymbol", "symbol", "denom"],
       });
     }, [assets, searchQuery]);
 
     const filteredChains = useMemo(() => {
-      if (!chainsContainingAsset) return
+      if (!chainsContainingAsset) return;
       return matchSorter(chainsContainingAsset, searchQuery, {
         keys: ["chainID", "chainName", "prettyName"],
       });
@@ -95,9 +95,9 @@ export const TokenAndChainSelectorModal = createModal(
             itemHeight={70}
             itemKey={(item) => {
               if (isClientAsset(item)) {
-                return `${item.denom}-${item.chainID}-${item.recommendedSymbol}`
+                return `${item.denom}-${item.chainID}-${item.recommendedSymbol}`;
               }
-              return `${item.chainID}-${item.asset?.denom}`
+              return `${item.chainID}-${item.asset?.denom}`;
             }}
             renderItem={renderItem}
           />
