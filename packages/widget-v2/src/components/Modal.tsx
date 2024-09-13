@@ -73,7 +73,6 @@ export const useModal = <T extends ModalProps>(
   modal?: FC<T>,
   initialArgs?: Partial<T>
 ) => {
-  const theme = useTheme();
   const [numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
     numberOfModalsOpenAtom
   );
@@ -85,7 +84,6 @@ export const useModal = <T extends ModalProps>(
       ...modalInstance,
       show: (showArgs?: Partial<T & ModalProps>) => {
         modalInstance.show({
-          theme,
           stackedModal: numberOfModalsOpen > 0,
           ...showArgs,
         } as Partial<T>);
@@ -100,11 +98,11 @@ export const useModal = <T extends ModalProps>(
         modalInstance.hide();
       },
     }),
-    [modalInstance, setNumberOfModalsOpen, theme, numberOfModalsOpen]
+    [modalInstance, setNumberOfModalsOpen, numberOfModalsOpen]
   );
 };
 
-const StyledOverlay = styled(Dialog.Overlay)<{
+const StyledOverlay = styled(Dialog.Overlay) <{
   drawer?: boolean;
   invisible?: boolean;
 }>`
