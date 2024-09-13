@@ -12146,6 +12146,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.isequal@npm:^4.5.8":
+  version: 4.5.8
+  resolution: "@types/lodash.isequal@npm:4.5.8"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: f3180c2d2925514fff1908a1303c11468c9f39b47fd7b053416aad3f1447f8e4a9894dd0460187ac9ac19387e25aec8dd8214d13a50a0967e0dc9cca8e4c5353
+  languageName: node
+  linkType: hard
+
 "@types/lodash.values@npm:^4.3.6":
   version: 4.3.9
   resolution: "@types/lodash.values@npm:4.3.9"
@@ -23030,7 +23039,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isequal@npm:4.5.0":
+"lodash.isequal@npm:4.5.0, lodash.isequal@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.isequal@npm:4.5.0"
   checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
@@ -31105,6 +31114,7 @@ __metadata:
     "@storybook/test": ^8.2.6
     "@tanstack/query-core": ^5.51.21
     "@types/eslint__js": ^8.42.3
+    "@types/lodash.isequal": ^4.5.8
     "@types/pluralize": ^0.0.33
     "@types/react": ^18.3.3
     "@types/react-dom": ^18.3.0
@@ -31119,6 +31129,7 @@ __metadata:
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
+    lodash.isequal: ^4.5.0
     match-sorter: ^6.3.4
     pluralize: ^8.0.0
     rc-virtual-list: ^3.14.5

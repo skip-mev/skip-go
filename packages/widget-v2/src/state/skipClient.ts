@@ -12,6 +12,7 @@ import { destinationAssetAtom, routeAmountEffect, sourceAssetAtom, swapDirection
 import { getAmountWei } from "@/utils/number";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomEffect } from "jotai-effect";
+import isEqual from "lodash.isequal";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
@@ -125,10 +126,13 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 });
 
 export const debouncedRouteRequestEffect = atomEffect((get, set) => {
-  const routeRequest = get(skipRouteRequestAtom);
-  set(debouncedSkipRouteRequestAtom, routeRequest);
-})
+  const previousRouteRequest = get(debouncedSkipRouteRequestAtom);
+  const newRouteRequest = get(skipRouteRequestAtom);
 
+  if (!isEqual(previousRouteRequest, newRouteRequest)) {
+    set(debouncedSkipRouteRequestAtom, newRouteRequest);
+  }
+});
 
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
