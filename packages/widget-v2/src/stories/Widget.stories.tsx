@@ -4,15 +4,17 @@ import { defaultTheme, lightTheme, Theme } from "@/widget/theme";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { ReactElement, useEffect } from "react";
-import { destinationAssetAtom, sourceAssetAtom } from "@/state/swapPage";
-import { useAtom } from "jotai";
+import { destinationAssetAtom, sourceAssetAmount, sourceAssetAtom } from "@/state/swapPage";
+import { useAtom, useSetAtom } from "jotai";
 import { skipAssetsAtom } from "@/state/skipClient";
 
 type Props = SwapWidgetProps & { theme: Theme; button?: ReactElement };
 
 export const Widget = (props: Props) => {
-  const [, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [, setDestinationAsset] = useAtom(destinationAssetAtom);
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setDestinationAsset = useSetAtom(destinationAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmount);
+
 
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
@@ -24,7 +26,8 @@ export const Widget = (props: Props) => {
   useEffect(() => {
     setSourceAsset(sourceAsset);
     setDestinationAsset(destinationAsset);
-  }, [destinationAsset, setDestinationAsset, setSourceAsset, sourceAsset]);
+    setSourceAssetAmount("1");
+  }, [destinationAsset, setDestinationAsset, setSourceAsset, setSourceAssetAmount, sourceAsset]);
 
   return <SwapWidget {...props} key={props.theme.primary.background.normal} />;
 };

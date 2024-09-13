@@ -39,17 +39,9 @@ export const SwapPage = () => {
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const { isLoading: isRouteLoading, isError: isRouteError, error: routeError, dataUpdatedAt } = useAtomValue(skipRouteAtom);
+  const { isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorFlow = useModal(TokenAndChainSelectorModal);
-  const [isWaitingForNewRouteRequest, setIsWaitingForNewRouteRequest] = useAtom(isWaitingForNewRouteRequestAtom);
-
-  // useEffect(() => {
-  //   if (dataUpdatedAt) {
-  //     console.log(dataUpdatedAt);
-  //     setIsWaitingForNewRouteRequest(false);
-  //   }
-  // }, [dataUpdatedAt, setIsWaitingForNewRouteRequest]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
