@@ -1,7 +1,7 @@
 import { getCosmosWalletInfo } from "@/constants/graz";
+import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
 import { walletsAtom } from "@/state/wallets";
-import { useWallet as useSolanaWallet } from "@solana/wallet-adapter-react";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
@@ -21,8 +21,11 @@ export const useAccount = (chainID?: string) => {
     return cosmosAccounts[chainID];
   }, [cosmosAccounts, chainID]);
 
+  const solanaWallet = solanaWallets.find(
+    (w) => w.name === wallet.svm?.walletName
+  );
+
   const evmAccount = useEvmAccount();
-  const { wallets: solanaWallets } = useSolanaWallet();
   const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":
@@ -57,24 +60,21 @@ export const useAccount = (chainID?: string) => {
         };
       case "svm":
         {
-          const solanaWallet = solanaWallets.find(
-            (w) => w.adapter.name === wallet.svm?.walletName
-          );
-          if (!solanaWallet?.adapter.publicKey) return;
+          if (!solanaWallet?.publicKey) return;
           return {
-            address: solanaWallet.adapter.publicKey.toBase58(),
+            address: solanaWallet.publicKey.toBase58(),
             chainType,
             wallet: {
-              name: solanaWallet.adapter.name as string,
-              prettyName: solanaWallet.adapter.name as string,
-              logo: solanaWallet.adapter.icon,
+              name: solanaWallet.name as string,
+              prettyName: solanaWallet.name as string,
+              logo: solanaWallet.icon,
             }
           };
         }
       default:
         return undefined;
     }
-  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, wallet.svm?.walletName, solanaWallets]);
+  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
 
   return account;
 };

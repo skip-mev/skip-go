@@ -9890,6 +9890,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@solana/wallet-adapter-backpack@npm:^0.1.14":
+  version: 0.1.14
+  resolution: "@solana/wallet-adapter-backpack@npm:0.1.14"
+  dependencies:
+    "@solana/wallet-adapter-base": ^0.9.23
+  peerDependencies:
+    "@solana/web3.js": ^1.77.3
+  checksum: fce0ee0ca813fcdcd825b0e242ec84be432f82c871e10c72c6bac37d51d548225f161a1be48a8b4c29e9abaf52086e0dbf2ff155c2b31acac5dffdaf0d706b4c
+  languageName: node
+  linkType: hard
+
 "@solana/wallet-adapter-base@npm:^0.9.17, @solana/wallet-adapter-base@npm:^0.9.23":
   version: 0.9.23
   resolution: "@solana/wallet-adapter-base@npm:0.9.23"
@@ -11208,6 +11219,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.56.2":
+  version: 5.56.2
+  resolution: "@tanstack/query-core@npm:5.56.2"
+  checksum: e78430464de89fd2543155449391415983c7cdcd1ff2bb86da019414204b6800e2405e341db88000b36a101d3619ee7e94e90da1fa5497b2e021c5765924a64c
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:^5.51.21":
   version: 5.51.21
   resolution: "@tanstack/query-core@npm:5.51.21"
@@ -11242,6 +11260,17 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: 31bfe3318dd0699868e896ec598ed8e60cdaa6e035ff1515afaeb85c484f91b16cad8a4de153d383622e5d2e990f02226926a5bd6632788b6ceb415a23e6687a
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.51.21":
+  version: 5.56.2
+  resolution: "@tanstack/react-query@npm:5.56.2"
+  dependencies:
+    "@tanstack/query-core": 5.56.2
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 7819a3a316c95df41844bd6e3435511594c3762320c21ee1ef2205ede18a87faae4556ff84d52b36ba17c99540b9554e72a5acf0c225481bdaf107ea79ace815
   languageName: node
   linkType: hard
 
@@ -20215,7 +20244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graz@npm:0.1.19, graz@npm:^0.1.19":
+"graz@npm:0.1.19":
   version: 0.1.19
   resolution: "graz@npm:0.1.19"
   dependencies:
@@ -20246,6 +20275,40 @@ __metadata:
   bin:
     graz: dist/cli.js
   checksum: 8701ceb1cecbf800e5ec1139cc608676bbabab8ee0da1adfab167daeb27dba03b48a06aef1b282038cf4cb9affc4236e68411820b6b61be858183eaca785fd84
+  languageName: node
+  linkType: hard
+
+"graz@npm:^0.1.20":
+  version: 0.1.20
+  resolution: "graz@npm:0.1.20"
+  dependencies:
+    "@cosmsnap/snapper": ^0.1.29
+    "@dao-dao/cosmiframe": ^0.1.0
+    "@keplr-wallet/cosmos": ^0.12.20
+    "@keplr-wallet/types": ^0.12.23
+    "@metamask/providers": ^12.0.0
+    "@tanstack/react-query": ^4.35.0
+    "@terra-money/station-connector": ^1.1.0
+    "@vectis/extension-client": ^0.7.2
+    "@walletconnect/sign-client": ^2.10.0
+    "@walletconnect/types": ^2.10.0
+    "@walletconnect/utils": ^2.10.0
+    "@web3modal/standalone": ^2.4.3
+    cosmos-directory-client: 0.0.6
+    long: 4
+    zustand: ^4.5.2
+  peerDependencies:
+    "@cosmjs/amino": "*"
+    "@cosmjs/cosmwasm-stargate": "*"
+    "@cosmjs/launchpad": "*"
+    "@cosmjs/proto-signing": "*"
+    "@cosmjs/stargate": "*"
+    "@cosmjs/tendermint-rpc": "*"
+    "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.39
+    react: ">=17"
+  bin:
+    graz: dist/cli.js
+  checksum: 2d42cac5edcc602fb96bdc67052e3019190253951ad75654626a47b06c07595acd3fe95d0283981ce2278452c38d6660418aa575ecc3eb30c48c49955c4b3c03
   languageName: node
   linkType: hard
 
@@ -31092,8 +31155,13 @@ __metadata:
     "@skip-go/client": "workspace:^"
     "@skip-go/widget": "workspace:packages/widget"
     "@solana/spl-token": ^0.4.8
+    "@solana/wallet-adapter-backpack": ^0.1.14
+    "@solana/wallet-adapter-coinbase": ^0.1.19
+    "@solana/wallet-adapter-ledger": ^0.9.25
+    "@solana/wallet-adapter-phantom": ^0.9.24
     "@solana/wallet-adapter-react": ^0.15.35
-    "@solana/wallet-adapter-wallets": ^0.19.32
+    "@solana/wallet-adapter-solflare": ^0.6.28
+    "@solana/wallet-adapter-trust": ^0.1.13
     "@solana/web3.js": ^1.95.3
     "@storybook/addon-essentials": ^8.2.6
     "@storybook/addon-interactions": ^8.2.6
@@ -31104,6 +31172,7 @@ __metadata:
     "@storybook/react-vite": ^8.2.6
     "@storybook/test": ^8.2.6
     "@tanstack/query-core": ^5.51.21
+    "@tanstack/react-query": ^5.51.21
     "@types/eslint__js": ^8.42.3
     "@types/pluralize": ^0.0.33
     "@types/react": ^18.3.3
@@ -31114,7 +31183,7 @@ __metadata:
     chain-registry: ^1.63.43
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
-    graz: ^0.1.19
+    graz: ^0.1.20
     jotai: ^2.9.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
