@@ -1857,7 +1857,7 @@ paths:
       operationId: getOriginAssets
       tags:
         - 'Fungible'
-      description: Get origin assets from a given list of denoms and chain ids.
+      description: Get origin assets from a given list of denoms and chain IDs.
       requestBody:
         required: true
         content:
@@ -1894,7 +1894,7 @@ paths:
                         description: Chain-id of the asset
       responses:
         '200':
-          description: The origin assets of the specified denoms and chain ids.
+          description: The origin assets of the specified denoms and chain IDs.
           content:
             application/json:
               example:
@@ -1943,7 +1943,7 @@ paths:
     post:
       tags:
         - 'Fungible'
-      description: 'Given 2 chain ids, returns a list of equivalent assets that can be transferred'
+      description: 'Given 2 chain IDs, returns a list of equivalent assets that can be transferred'
       requestBody:
         required: true
         content:
@@ -2071,7 +2071,7 @@ paths:
                         bridges:
                           - AXELAR
         '404':
-          description: One of the chain ids was not found
+          description: One of the chain IDs was not found
           content:
             application/json:
               example:
@@ -2304,14 +2304,13 @@ components:
           type: object
       type: object
     AxelarTransferState:
-      description:
-        'Axelar transfer state: <br/> * AXELAR_TRANSFER_UNKNOWN - Unknown error
-        <br/> * AXELAR_TRANSFER_PENDING_CONFIRMATION - Axelar transfer is pending confirmation
-        <br/> * AXELAR_TRANSFER_PENDING_RECEIPT - Axelar transfer is pending receipt at
-        destination <br/> * AXELAR_TRANSFER_SUCCESS - Axelar transfer succeeded and assets
-        have been received <br/> * AXELAR_TRANSFER_FAILURE - Axelar transfer failed <br/>
-
-        '
+      description: |
+        Axelar transfer state: 
+        * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
+        * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
+        * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination 
+        * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
+        * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
       enum:
         - AXELAR_TRANSFER_UNKNOWN
         - AXELAR_TRANSFER_PENDING_CONFIRMATION
@@ -2320,12 +2319,10 @@ components:
         - AXELAR_TRANSFER_FAILURE
       type: string
     AxelarTransferType:
-      description:
-        'Axelar transfer type: <br/> * AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN
-        - GMP contract call with token transfer type <br/> * AXELAR_TRANSFER_SEND_TOKEN
-        - Send token transfer type <br/>
-
-        '
+      description: |
+        Axelar transfer type:
+        * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
+        * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type 
       enum:
         - AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN
         - AXELAR_TRANSFER_SEND_TOKEN
@@ -2411,13 +2408,13 @@ components:
           nullable: true
       type: object
     CCTPTransferState:
-      description:
-        'CCTP transfer state: <br/> * CCTP_TRANSFER_UNKNOWN - Unknown error
-        <br/> * CCTP_TRANSFER_SENT - The burn transaction on the source chain has executed
-        <br/> * CCTP_TRANSFER_PENDING_CONFIRMATION - CCTP transfer is pending confirmation by the cctp attestation api
-        <br/> * CCTP_TRANSFER_CONFIRMED - CCTP transfer has been confirmed by the cctp attestation api
-        <br/> * CCTP_TRANSFER_RECEIVED - CCTP transfer has been received at the destination chain
-        '
+      description: |
+        CCTP transfer state:  
+        * `CCTP_TRANSFER_UNKNOWN` - Unknown error
+        * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
+        * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
+        * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
+        * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
       enum:
         - CCTP_TRANSFER_UNKNOWN
         - CCTP_TRANSFER_SENT
@@ -2456,11 +2453,12 @@ components:
           type: string
       type: object
     BridgeType:
-      description: 'Bridge Type: <br/> * IBC - IBC Bridge
-        <br/> * AXELAR - Axelar Bridge
-        <br/> * CCTP - CCTP Bridge
-        <br/> * HYPERLANE - Hyperlane Bridge
-        '
+      description: | 
+        Bridge Type: 
+        * `IBC` - IBC Bridge
+        * `AXELAR` - Axelar Bridge
+        * `CCTP` - CCTP Bridge
+        * `HYPERLANE` - Hyperlane Bridge
       enum:
         - IBC
         - AXELAR
@@ -2524,11 +2522,9 @@ components:
           $ref: '#/components/schemas/ContractCallWithTokenErrorType'
       type: object
     ContractCallWithTokenErrorType:
-      description:
-        'ContractCallWithToken errors: <br/> * CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR
-        - Error occurred during the execute transaction <br/>
-
-        '
+      description: |
+        ContractCallWithToken errors:
+        * `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
       enum:
         - CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR
       type: string
@@ -2590,10 +2586,10 @@ components:
       type: object
       properties:
         reason:
-          description:
-            'Error detail: <br/> * LOW_INFO_ERROR - Not enough asset pricing information to determine the price safety of the route.
-            <br/> * BAD_PRICE_ERROR - The execution price of the route deviates significantly from the current market price.
-            '
+          description: |
+            Error detail: 
+            * `LOW_INFO_ERROR` - Not enough asset pricing information to determine the price safety of the route.
+            * `BAD_PRICE_ERROR` - The execution price of the route deviates significantly from the current market price.
           enum:
             - LOW_INFO_ERROR
             - BAD_PRICE_ERROR
@@ -2802,12 +2798,12 @@ components:
           type: object
       type: object
     HyperlaneTransferState:
-      description:
-        'Hyperlane transfer state: <br/> * HYPERLANE_TRANSFER_UNKNOWN - Unknown error
-        <br/> * HYPERLANE_TRANSFER_SENT - The Hyperlane transfer transaction on the source chain has executed
-        <br/> * HYPERLANE_TRANSFER_FAILED - The Hyperlane transfer failed
-        <br/> * HYPERLANE_TRANSFER_RECEIVED - The Hyperlane transfer has been received at the destination chain
-        '
+      description: |
+        Hyperlane transfer state:
+        * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
+        * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
+        * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
+        * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
       enum:
         - HYPERLANE_TRANSFER_UNKNOWN
         - HYPERLANE_TRANSFER_SENT
@@ -2940,12 +2936,11 @@ components:
           $ref: '#/components/schemas/PacketErrorType'
       type: object
     PacketErrorType:
-      description:
-        'Packet error type: <br/> * PACKET_ERROR_UNKNOWN - Unknown error <br/>
-        * PACKET_ERROR_ACKNOWLEDGEMENT - Packet acknowledgement error <br/> * PACKET_ERROR_TIMEOUT
-        - Packet timed out <br/>
-
-        '
+      description: |
+        Packet error type: 
+        * `PACKET_ERROR_UNKNOWN` - Unknown error
+        * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error 
+        * `PACKET_ERROR_TIMEOUT` - Packet timed out
       enum:
         - PACKET_ERROR_UNKNOWN
         - PACKET_ERROR_ACKNOWLEDGEMENT
@@ -2968,14 +2963,12 @@ components:
         - $ref: '#/components/schemas/CosmWasmContractMsgWrapper'
         - $ref: '#/components/schemas/AutopilotMsgWrapper'
     Reason:
-      description:
-        'Recommendation reason: <br/> * UNKNOWN - Unknown recommendation reason.
-        <br/> * MOST_LIQUID - Highest liquidity form of the transferred token on the destination
-        chain. <br/> * BASE_TOKEN - The base token if the destination chain is the origin
-        chain of the source token. <br/> * DIRECT - The token resulting from the least
-        amount of transfers to the destination chain.
-
-        '
+      description: |
+        Recommendation reason:
+        * `UNKNOWN` - Unknown recommendation reason.
+        * `MOST_LIQUID` - Highest liquidity form of the transferred token on the destination chain.
+        * `BASE_TOKEN` - The base token if the destination chain is the origin chain of the source token.
+        * `DIRECT` - The token resulting from the least amount of transfers to the destination chain.
       enum:
         - UNKNOWN
         - MOST_LIQUID
@@ -2983,10 +2976,10 @@ components:
         - DIRECT
       type: string
     RoutePriceWarningType:
-      description:
-        'Recommendation reason: <br/> * LOW_INFO_WARNING - Not enough asset pricing information to determine the price safety of the route.
-        <br/> * BAD_PRICE_WARNING - The execution price of the route deviates significantly from the current market price.
-        '
+      description: |
+        Recommendation reason: 
+        * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
+        * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
       enum:
         - LOW_INFO_WARNING
         - BAD_PRICE_WARNING
@@ -3080,11 +3073,9 @@ components:
           $ref: '#/components/schemas/SendTokenErrorType'
       type: object
     SendTokenErrorType:
-      description:
-        'SendToken error types: <br/> * SEND_TOKEN_EXECUTION_ERROR - Error
-        occurred during the execute transaction <br/>
-
-        '
+      description: |
+        SendToken error types: 
+        * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
       enum:
         - SEND_TOKEN_EXECUTION_ERROR
       type: string
@@ -3120,14 +3111,12 @@ components:
           $ref: '#/components/schemas/StatusErrorType'
       type: object
     StatusErrorType:
-      description:
-        'Packet error type: <br/> * STATUS_ERROR_UNKNOWN - Unknown error <br/>
-        * STATUS_ERROR_TRANSACTION_EXECUTION - Error was encountered during transaction
-        execution <br/> * STATUS_ERROR_INDEXING - Error was encountered while indexing
-        the transaction and packet data <br/> * STATUS_ERROR_TRANSFER - The transfer failed
-        to complete successfully <br/>
-
-        '
+      description: |
+        Packet error types: 
+        * `STATUS_ERROR_UNKNOWN` - Unknown error 
+        * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
+        * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data 
+        * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
       enum:
         - STATUS_ERROR_UNKNOWN
         - STATUS_ERROR_TRANSACTION_EXECUTION
@@ -3144,10 +3133,10 @@ components:
           description: Estimated total affiliate fee generated by the swap
           type: string
         chain_id:
-          description: Chain id that the swap will be executed on
+          description: Chain ID that the swap will be executed on
           type: string
         from_chain_id:
-          description: Chain id that the swap will be executed on (alias for chain_id)
+          description: Chain ID that the swap will be executed on (alias for chain_id)
           type: string
         denom_in:
           description: Input denom of the swap
@@ -3271,7 +3260,7 @@ components:
       description: A venue on which swaps can be exceuted
       properties:
         chain_id:
-          description: Chain-id of the swap venue
+          description: Chain ID of the swap venue
           type: string
         name:
           description: Name of the swap venue
@@ -3292,22 +3281,15 @@ components:
           type: string
       type: object
     TransactionState:
-      description:
-        'Transaction state: <br/> * STATE_SUBMITTED - The initial transaction
-        has been submitted to Skip Go API but not observed on chain yet. <br/>
-        * STATE_PENDING - The initial transaction has been observed on chain, and there are
-        still pending actions. <br/>
-        * STATE_COMPLETED_SUCCESS - The route has completed successfully and the user has
-        their tokens on the destination. (indicated by `transfer_asset_release`) <br/>
-        * STATE_COMPLETED_ERROR - The route errored somewhere and the user has their tokens
-        unlocked in one of their wallets. Their tokens are either on the source chain,
-        an intermediate chain, or the destination chain but as the wrong asset.
-        (Again, `transfer_asset_release` indicates where the tokens are) <br/>
-        * STATE_ABANDONED - Tracking for the transaction has been abandoned. This
-        happens if the cross-chain  sequence of actions stalls for more than 10 minutes
-        or if the initial transaction does not get observed in a block for 5 minutes. <br/>
-        * STATE_PENDING_ERROR - The overall transaction will fail, pending error propagation.
-        '
+      description: |
+        Transaction state: 
+        * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
+        * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
+        * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
+        * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
+        (Again, `transfer_asset_release` indicates where the tokens are) 
+        * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes. 
+        * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
       enum:
         - STATE_SUBMITTED
         - STATE_PENDING
@@ -3372,11 +3354,11 @@ components:
           nullable: true
       type: object
     OPInitTransferState:
-      description:
-        'OPInit transfer state: <br/> * OPINIT_TRANSFER_UNKNOWN - Unknown error
-        <br/> * OPINIT_TRANSFER_SENT - The deposit transaction on the source chain has executed
-        <br/> * OPINIT_TRANSFER_RECEIVED - OPInit transfer has been received at the destination chain
-        '
+      description: |
+        OPInit transfer state:
+        * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
+        * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
+        * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
       enum:
         - CCTP_TRANSFER_UNKNOWN
         - CCTP_TRANSFER_SENT
@@ -3453,14 +3435,13 @@ components:
           $ref: '#/components/schemas/TransferState'
       type: object
     TransferState:
-      description:
-        "Transfer state: <br/> * TRANSFER_UNKNOWN - Transfer state is not known.\
-        \ <br/> * TRANSFER_PENDING - The send packet for the transfer has been committed\
-        \ and the transfer is pending. <br/> * TRANSFER_RECEIVED - The transfer packet\
-        \ has been received by the destination chain. It can still fail and revert if\
-        \ it is part  of a multi-hop PFM transfer. <br/> * TRANSFER_SUCCESS - The transfer\
-        \ has been successfully completed and will not revert. <br/> * TRANSFER_FAILURE\
-        \ - The transfer has failed. \n"
+      description: |
+        Transfer state:
+        * `TRANSFER_UNKNOWN` - Transfer state is not known.
+        * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+        * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer. 
+        * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+        * `TRANSFER_FAILURE`- The transfer has failed.
       enum:
         - TRANSFER_UNKNOWN
         - TRANSFER_PENDING
@@ -3555,7 +3536,9 @@ components:
           description: Whether the autopilot module is supported
           type: boolean
     FeeType:
-      description: 'Fee type: <br/> * SMART_RELAY - Fees for Smart relaying services.'
+      description: |
+       Fee type: 
+       * SMART_RELAY - Fees for Smart relaying services.'
       enum:
         - SMART_RELAY
       type: string
