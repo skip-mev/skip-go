@@ -1,25 +1,31 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
 import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
 import { useSetAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount as useEvmAccount, useDisconnect as useEvmDisconnect, useConnect as useEvmConnect } from "wagmi";
+import { useAccount, useDisconnect, useConnect, } from "wagmi";
 
 
 export const useCreateEvmWallets = () => {
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const {
-    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected,
-  } = useEvmAccount();
-  const { disconnectAsync } = useEvmDisconnect();
-  const { connectors, connectAsync } = useEvmConnect();
+    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId
+  } = useAccount();
+  const { disconnectAsync } = useDisconnect();
+  const { connectors, connectAsync } = useConnect();
 
   const createEvmWallets = useCallback((chainID: string) => {
     const isSei = chainID === "pacific-1";
-
     const wallets: MinimalWallet[] = [];
     for (const connector of connectors) {
+      if (
+        wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
+        -1
+      ) {
+        continue;
+      }
+
       const evmGetAddress: MinimalWallet["getAddress"] = async ({
         signRequired,
       }) => {
@@ -40,7 +46,12 @@ export const useCreateEvmWallets = () => {
           logo: connector.icon,
         },
         connect: async () => {
-          if (connector.id === currentEvmConnector?.id) return;
+          if (isEvmConnected && (chainId !== Number(chainID)) && connector.id === currentEvmConnector?.id) {
+            await connector?.switchChain?.({
+              chainId: Number(chainID),
+            });
+            return;
+          }
           try {
             await connectAsync({ connector, chainId: Number(chainID) });
             setEvmWallet({ walletName: connector.id, chainType: "evm" });
@@ -89,7 +100,7 @@ export const useCreateEvmWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [connectAsync, connectors, currentEvmConnector, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
+  }, [chainId, connectAsync, connectors, currentEvmConnector?.id, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
 
   return { createEvmWallets };
 };

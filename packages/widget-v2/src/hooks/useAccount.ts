@@ -23,7 +23,6 @@ export const useAccount = (chainID?: string) => {
 
   const evmAccount = useEvmAccount();
   const { wallets: solanaWallets } = useSolanaWallet();
-
   const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":
@@ -44,6 +43,7 @@ export const useAccount = (chainID?: string) => {
           };
         }
       case "evm":
+        if (evmAccount.chainId !== Number(chainID)) return;
         if (!evmAccount.address) return;
         if (!evmAccount.connector) return;
         return {
@@ -74,7 +74,7 @@ export const useAccount = (chainID?: string) => {
       default:
         return undefined;
     }
-  }, [chainType, cosmosAccount, evmAccount.address, evmAccount.connector, solanaWallets, wallet.cosmos, wallet.svm?.walletName]);
+  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, wallet.svm?.walletName, solanaWallets]);
 
   return account;
 };

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
@@ -67,7 +67,7 @@ export const RenderWalletList = ({
     }
   });
 
-  const renderItem = (wallet: Wallet) => {
+  const renderItem = useCallback((wallet: Wallet) => {
     const {
       walletName,
       walletPrettyName,
@@ -99,14 +99,15 @@ export const RenderWalletList = ({
         rightContent={rightContent?.()}
       />
     );
-  };
+  }, [connectMutation]);
 
   const height = useMemo(() => {
     return Math.min(530, walletList.length * (ITEM_HEIGHT + ITEM_GAP));
   }, [walletList]);
 
   const container = useMemo(() => {
-    if (connectMutation.isError) {
+    if (connectMutation.isError || connectMutation.isPending) {
+      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
       return (
         <StyledInnerContainer height={height} >
           <StyledLoadingContainer>
@@ -114,7 +115,7 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              txState="failed"
+              txState={connectMutation.isError ? "failed" : "broadcasted"}
               borderSize={8}
             >
               <img
@@ -122,31 +123,10 @@ export const RenderWalletList = ({
                 src={connectMutation.variables?.walletInfo.logo}
                 alt={`${connectMutation.variables?.walletPrettyName} logo`} />
             </StyledAnimatedBorder>
-            <Text color={theme.primary.text.lowContrast}>Failed to connect to {connectMutation.variables?.walletPrettyName}</Text>
+            <Text color={theme.primary.text.lowContrast}>{titleText} {connectMutation.variables?.walletPrettyName}</Text>
+            {connectMutation.error && <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>{connectMutation.error.message}</Text>}
           </StyledLoadingContainer>
         </StyledInnerContainer >
-      );
-    }
-
-    if (connectMutation.isPending) {
-      return (
-        <StyledInnerContainer height={height}>
-          <StyledLoadingContainer>
-            <StyledAnimatedBorder
-              width={80}
-              height={80}
-              backgroundColor={theme.primary.text.normal}
-              txState="broadcasted"
-              borderSize={8}
-            >
-              <img
-                style={{ objectFit: "cover" }}
-                src={connectMutation.variables?.walletInfo.logo}
-                alt={`${connectMutation.variables?.walletPrettyName} logo`} />
-            </StyledAnimatedBorder>
-            <Text color={theme.primary.text.lowContrast}>Connecting to {connectMutation.variables?.walletPrettyName}</Text>
-          </StyledLoadingContainer>
-        </StyledInnerContainer>
       );
     }
 
@@ -158,8 +138,7 @@ export const RenderWalletList = ({
       itemKey={(item) => item.walletName}
     />;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectMutation, height, walletList]);
+  }, [connectMutation.error, connectMutation.isError, connectMutation.isPending, connectMutation.variables?.walletInfo.logo, connectMutation.variables?.walletPrettyName, height, renderItem, theme.primary.text.lowContrast, theme.primary.text.normal, walletList]);
 
   return (
     <StyledContainer gap={15}>

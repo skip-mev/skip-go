@@ -26,7 +26,6 @@ export const useWalletList = (chainID?: string) => {
         return [];
     }
   }, [chainID, chainType, createCosmosWallets, createEvmWallets, createSolanaWallets]);
-
   return walletList;
 };
 
@@ -39,27 +38,34 @@ export const useDestinationWalletList = (chainID?: string) => {
 
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainType = chains?.find(c => c.chainID === chainID)?.chainType;
+
+
+  let walletType = chainType;
   const isSei = chainID === "pacific-1";
+  if (isSei) {
+    walletType = "sei";
+  }
+
 
   const walletList = useMemo(() => {
     if (!chainID) return [];
-    switch (true) {
-      case isSei:
+    switch (walletType) {
+      case "sei":
         {
           const cosmos = createCosmosWallets(chainID);
           const evm = createEvmWallets(chainID);
           return [...cosmos, ...evm];
         }
-      case chainType === "cosmos":
+      case "cosmos":
         return createCosmosWallets(chainID);
-      case chainType === "evm":
+      case "evm":
         return createEvmWallets(chainID);
-      case chainType === "svm":
+      case "svm":
         return createSolanaWallets();
       default:
         return [];
     }
-  }, [chainID, chainType, createCosmosWallets, createEvmWallets, createSolanaWallets, isSei]);
+  }, [chainID, createCosmosWallets, createEvmWallets, createSolanaWallets, walletType]);
 
   return walletList;
 };
