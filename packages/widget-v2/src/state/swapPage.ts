@@ -25,26 +25,22 @@ export const routeAmountEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
 
-  const isSwapIn = direction === "swap-in";
-
   if (!route.data || !sourceAsset || !destinationAsset) return;
 
-  if (isSwapIn) {
-    const amount = parseAmountWei(route.data.amountOut, destinationAsset.decimals);
-    if (amount === destinationAsset.amount) return;
+  const swapInAmount = parseAmountWei(route.data.amountOut, destinationAsset.decimals);
+  const swapOutAmount = parseAmountWei(route.data.amountIn, sourceAsset.decimals);
+  const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
+  const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
 
+  if (direction === "swap-in" && swapInAmountChanged) {
     set(destinationAssetAtom, (old) => ({
       ...old,
-      amount,
+      amount: swapInAmount,
     }));
-  }
-  else {
-    const amount = parseAmountWei(route.data.amountIn, sourceAsset.decimals);
-    if (amount === sourceAsset.amount) return;
-
+  } else if (direction === "swap-out" && swapOutAmountChanged) {
     set(sourceAssetAtom, (old) => ({
       ...old,
-      amount,
+      amount: swapOutAmount,
     }));
   }
 });
