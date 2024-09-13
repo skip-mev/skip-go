@@ -9,7 +9,7 @@ import { Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
-import { useModal } from "@ebay/nice-modal-react";
+import { useModal } from "./Modal";
 
 export type RenderWalletListProps = {
   title: string;
