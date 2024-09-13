@@ -117,7 +117,7 @@ The most basic outputs you will need are:
 - `amountOut`: The estimated amount your user will receive after their swap / transfer takes place -- net of fees (e.g. bridge fees, swap fees, etc..) and price impact.
 - `requiredChainAddresses`: These are the chainIDs for which you will need to pass a valid user address when generating the transaction.
 - `operations`: The set of steps that take place to get the user from their source chain & token to their destination chain & token
-  </Info>
+</Info>
 
  <Note>
 **Adding a fee for yourself**
@@ -208,7 +208,7 @@ These callbacks include:
 - `onTransactionBroadcast(txInfo {txHash, chainID})`: Executes after the transaction that the user signs gets broadcast on chain.
 - `onTransactionTracked(txInfo, {txHash, chainID})`: Executes after the transaction that the user signs is successfully registered for tracking.
 - `onTransactionCompleted(chainID, txHash, status)`: Executes after all of the operations triggered by a user's signature complete. For example, in this case, it executed after the transfer to Celestia completed. (For multi-tx routes that require multiple user signatures, this will be called once for each tx)
-  </Info>
+</Info>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**
