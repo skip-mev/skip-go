@@ -1,4 +1,4 @@
-import { css, styled, useTheme } from "styled-components";
+import { css, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
