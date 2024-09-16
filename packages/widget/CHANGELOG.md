@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.4.12
+
+### Patch Changes
+
+- 8498a06: fix zero appeared in tx preview
+
 ## 2.4.11
 
 ### Patch Changes
