@@ -3,7 +3,6 @@ import { SmallText } from "@/components/Typography";
 import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { XIcon } from "@/icons/XIcon";
 import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
