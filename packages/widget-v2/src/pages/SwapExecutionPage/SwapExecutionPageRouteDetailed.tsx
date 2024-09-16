@@ -21,6 +21,7 @@ type operationTypeToIcon = Record<string, JSX.Element>;
 const operationTypeToIcon: operationTypeToIcon = {
   axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
   swap: <SwapExecutionSwapIcon width={34} />,
+  evmSwap: <SwapExecutionSwapIcon width={34} />,
   transfer: <SwapExecutionSendIcon width={34} />,
 };
 
@@ -66,24 +67,23 @@ export const SwapExecutionPageRouteDetailed = ({
           operationTypeToSimpleOperationType[operation.type];
 
         const getBridgeSwapVenue = () => {
+          const swapVenueName = operation.swapVenues?.[0]?.name;
           const bridgeID = operation.bridgeID;
-          const swapID = operation.swapVenues?.[0]?.chainID;
 
-          // return the name, not the ID
-          return bridgeID ?? swapID;
+          return swapVenueName ?? bridgeID;
         };
 
         const asset = lastIndex
           ? {
-              amount: operation.amountOut,
-              denom: operation.denomOut ?? operation.denom,
-              chainID: operation.toChainID ?? operation.chainID,
-            }
+            amount: operation.amountOut,
+            denom: operation.denomOut ?? operation.denom,
+            chainID: operation.toChainID ?? operation.chainID,
+          }
           : {
-              amount: operation.amountIn,
-              denom: operation.denomIn ?? operation.denom,
-              chainID: operation.fromChainID ?? operation.chainID,
-            };
+            amount: operation.amountIn,
+            denom: operation.denomIn ?? operation.denom,
+            chainID: operation.fromChainID ?? operation.chainID,
+          };
         return (
           <>
             <SwapExecutionPageRouteDetailedRow
