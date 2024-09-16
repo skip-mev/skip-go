@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
+import { getClientOperations, OperationType } from "@/utils/clientType";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
@@ -19,37 +20,24 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
   }, [route, chains]);
 
-  const axelarTransferOperation = useMemo(() => {
-    if (!route) return;
-    for (const op of route.operations) {
-      if ("axelarTransfer" in op) return op;
-    }
-  }, [route]);
-  const hyperlaneTransferOperation = useMemo(() => {
-    if (!route) return;
-    for (const op of route.operations) {
-      if ("hyperlaneTransfer" in op) return op;
-    }
-  }, [route]);
+  const clientOperations = route && getClientOperations(route.operations);
 
-  const bridgingFee = useMemo(() => {
-    if (hyperlaneTransferOperation) {
-      const { feeAmount, feeAsset, usdFeeAmount } =
-        hyperlaneTransferOperation.hyperlaneTransfer;
-      const computed = (
-        +feeAmount / Math.pow(10, feeAsset.decimals || 6)
-      ).toLocaleString("en-US", {
-        maximumFractionDigits: 6,
-      });
-      return {
-        assetAmount: Number(computed),
-        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
-      };
-    }
+
+  const axelarTransferOperation = useMemo(() => {
+    if (!clientOperations) return;
+    return clientOperations?.find((item) => item.type === OperationType.axelarTransfer);
+  }, [clientOperations]);
+
+  const hyperlaneTransferOperation = useMemo(() => {
+    if (!clientOperations) return;
+    return clientOperations?.find((item) => item.type === OperationType.hyperlaneTransfer);
+  }, [clientOperations]);
+
+  const axelarFee = useMemo(() => {
     if (axelarTransferOperation) {
       const { feeAmount, feeAsset, usdFeeAmount } =
-        axelarTransferOperation.axelarTransfer;
+        axelarTransferOperation;
+      if (!feeAmount || !feeAsset) return;
       const computed = (
         +feeAmount / Math.pow(10, feeAsset.decimals || 18)
       ).toLocaleString("en-US", {
@@ -62,7 +50,26 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
       };
     }
-  }, [axelarTransferOperation, hyperlaneTransferOperation]);
+  }, [axelarTransferOperation]);
+
+  const hyperlaneFee = useMemo(() => {
+    if (hyperlaneTransferOperation) {
+      const { feeAmount, feeAsset, usdFeeAmount } =
+        hyperlaneTransferOperation;
+      if (!feeAmount || !feeAsset) return;
+      const computed = (
+        +feeAmount / Math.pow(10, feeAsset.decimals || 6)
+      ).toLocaleString("en-US", {
+        maximumFractionDigits: 6,
+      });
+      return {
+        assetAmount: Number(computed),
+        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
+        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
+      };
+    }
+  }, [hyperlaneTransferOperation]);
+
 
   const isSmartRelay = route?.estimatedFees?.some(
     (fee) => fee.feeType === "SMART_RELAY"
@@ -142,12 +149,18 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         </Row>
       </Column>
       {
-        (bridgingFee || smartRelayFee) && (
+        (axelarFee || hyperlaneFee || smartRelayFee) && (
           <Column gap={10}>
-            {bridgingFee && (
+            {axelarFee && (
               <Row justify="space-between">
-                <SwapDetailText>Bridging Fee</SwapDetailText>
-                <SwapDetailText monospace>{bridgingFee.formattedAssetAmount} ({bridgingFee.formattedUsdAmount})</SwapDetailText>
+                <SwapDetailText>Axelar Bridging Fee</SwapDetailText>
+                <SwapDetailText monospace>{axelarFee.formattedAssetAmount} ({axelarFee.formattedUsdAmount})</SwapDetailText>
+              </Row>
+            )}
+            {hyperlaneFee && (
+              <Row justify="space-between">
+                <SwapDetailText>Hyperlane Bridging Fee</SwapDetailText>
+                <SwapDetailText monospace>{hyperlaneFee.formattedAssetAmount} ({hyperlaneFee.formattedUsdAmount})</SwapDetailText>
               </Row>
             )}
             {smartRelayFee && (
