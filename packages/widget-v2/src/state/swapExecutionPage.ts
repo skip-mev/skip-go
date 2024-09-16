@@ -1,12 +1,12 @@
 import { atomWithMutation } from "jotai-tanstack-query";
 import { skipClient, skipRouteAtom } from "./skipClient";
-import { walletsAtom } from "./wallets";
+import { accountsAtom, walletsAtom } from "./wallets";
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { data: route } = get(skipRouteAtom);
-  const wallets = get(walletsAtom);
-  // console.log(wallets);
+  const accounts = get(accountsAtom);
+  console.log(accounts);
 
   return {
     gcTime: Infinity,
@@ -20,30 +20,25 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           route,
           userAddresses,
           validateGasBalance: route.sourceAssetChainID !== "984122",
-          getFallbackGasAmount: async (chainID, chainType) => {
-            if (chainType === "cosmos") {
-              return Number(useSettingsStore.getState().customGasAmount);
-            }
-          },
-          slippageTolerancePercent: useSettingsStore.getState().slippage,
+          // getFallbackGasAmount: async (chainID, chainType) => {
+          //   if (chainType === "cosmos") {
+          //     return Number(useSettingsStore.getState().customGasAmount);
+          //   }
+          // },
           onTransactionTracked: async (txStatus) => {
-            txHistory.addStatus(historyId, route, {
-              chainId: txStatus.chainID,
-              txHash: txStatus.txHash,
-              explorerLink: txStatus.explorerLink,
-            });
+            console.log(txStatus);
 
-            setBroadcastedTxs((v) => {
-              const txs = [
-                ...v,
-                {
-                  chainID: txStatus.chainID,
-                  txHash: txStatus.txHash,
-                  explorerLink: txStatus.explorerLink,
-                },
-              ];
-              return txs;
-            });
+            // setBroadcastedTxs((v) => {
+            //   const txs = [
+            //     ...v,
+            //     {
+            //       chainID: txStatus.chainID,
+            //       txHash: txStatus.txHash,
+            //       explorerLink: txStatus.explorerLink,
+            //     },
+            //   ];
+            //   return txs;
+            // });
           },
         });
       } catch (error) {
@@ -52,7 +47,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       return null;
     },
     onMutate: () => {
-
+      console.log("mutated");
     },
     onError: (err: unknown) => {
       // handle errors;
