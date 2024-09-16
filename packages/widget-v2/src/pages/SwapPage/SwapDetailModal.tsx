@@ -23,7 +23,6 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
 
   const clientOperations = route && getClientOperations(route.operations);
 
-
   const axelarTransferOperation = useMemo(() => {
     if (!clientOperations) return;
     return clientOperations?.find((item) => item.type === OperationType.axelarTransfer);
@@ -62,7 +61,6 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     }
   }, [hyperlaneTransferOperation]);
 
-
   const isSmartRelay = route?.estimatedFees?.some(
     (fee) => fee.feeType === "SMART_RELAY"
   );
@@ -97,6 +95,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
       formattedUsdAmount: `${formatUSD(computedUsd)}`
     };
   }, [isSmartRelay, route?.estimatedFees]);
+
   return (
     <StyledSwapPageSettings gap={20}>
       <Column gap={10}>
