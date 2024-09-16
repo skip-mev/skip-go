@@ -11,6 +11,7 @@ import { swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
@@ -37,13 +38,8 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     if (axelarTransferOperation) {
       const { feeAmount, feeAsset, usdFeeAmount } =
         axelarTransferOperation;
-      if (!feeAmount || !feeAsset) return;
-      const computed = (
-        +feeAmount / Math.pow(10, feeAsset.decimals || 18)
-      ).toLocaleString("en-US", {
-        maximumFractionDigits: 6,
-      });
-
+      if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
+      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
@@ -56,12 +52,8 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     if (hyperlaneTransferOperation) {
       const { feeAmount, feeAsset, usdFeeAmount } =
         hyperlaneTransferOperation;
-      if (!feeAmount || !feeAsset) return;
-      const computed = (
-        +feeAmount / Math.pow(10, feeAsset.decimals || 6)
-      ).toLocaleString("en-US", {
-        maximumFractionDigits: 6,
-      });
+      if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
+      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
