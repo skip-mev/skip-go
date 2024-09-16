@@ -37,9 +37,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
   wallet,
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
-  useEffect(() => {
-    "mount";
-  }, []);
   const theme = useTheme();
 
   const assetDetails = useGetAssetDetails({

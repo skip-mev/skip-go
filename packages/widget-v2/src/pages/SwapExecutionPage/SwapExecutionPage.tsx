@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
 import styled, { useTheme } from "styled-components";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { destinationWalletAtom } from "@/state/swapPage";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
@@ -16,9 +16,10 @@ import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { SmallText } from "@/components/Typography";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
-import operations from "./operations.json";
 import { useModal } from "@/components/Modal";
-import { ClientOperation } from "@/utils/clientType";
+import { currentPageAtom, Routes } from "@/state/router";
+import { skipRouteAtom } from "@/state/skipClient";
+import { ClientOperation, getClientOperations } from "@/utils/clientType";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -32,6 +33,13 @@ const TX_DELAY_MS = 5_000; // 5 seconds
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
+  const setCurrentPage = useSetAtom(currentPageAtom);
+  const { data: route } = useAtomValue(skipRouteAtom);
+
+  const clientOperations = useMemo(() => {
+    if (!route?.operations) return [] as ClientOperation[];
+    return getClientOperations(route.operations);
+  }, [route?.operations]);
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
   const [swapExecutionState, setSwapExecutionState] = useState(
@@ -111,9 +119,8 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString={`${
-              (operations.length * TX_DELAY_MS) / 1000
-            } secs.`}
+            loadingTimeString={`${(clientOperations.length * TX_DELAY_MS) / 1000
+              } secs.`}
           />
         );
       case SwapExecutionState.confirmed:
@@ -125,15 +132,18 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [modal, swapExecutionState, theme.success.text]);
+  }, [clientOperations.length, modal, swapExecutionState, theme.success.text]);
 
-  const SwapExecutionPageRoute = simpleRoute
-    ? withBoundProps(SwapExecutionPageRouteSimple, {
+  const SwapExecutionPageRoute = useMemo(() => {
+    if (simpleRoute) {
+      return withBoundProps(SwapExecutionPageRouteSimple, {
         onClickEditDestinationWallet: () => {
           modal.show();
         },
-      })
-    : SwapExecutionPageRouteDetailed;
+      });
+    }
+    return SwapExecutionPageRouteDetailed;
+  }, [modal, simpleRoute]);
 
   return (
     <Column gap={5}>
@@ -141,6 +151,7 @@ export const SwapExecutionPage = () => {
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
+          onClick: () => setCurrentPage(Routes.SwapPage)
         }}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
@@ -150,7 +161,7 @@ export const SwapExecutionPage = () => {
       />
       <SwapExecutionPageRoute
         txStateMap={txStateMap}
-        operations={operations as ClientOperation[]}
+        operations={clientOperations}
       />
       {renderMainButton}
       <SwapPageFooter

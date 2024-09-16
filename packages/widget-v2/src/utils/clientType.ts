@@ -56,19 +56,19 @@ export type ClientOperation = {
 // find keys that are present in each type 
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? Key
-      : never
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? Key
+  : never
+  : never
   : never;
 
 // find keys that are not present in each type
 type KeysNotPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? never
-      : Key
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? never
+  : Key
+  : never
   : never;
 
 // combine multiple types properly and preserve details on if key is optional
@@ -97,13 +97,15 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
   return returnValue;
 }
 
-export function getClientOperation(operation: SkipClientOperation) {
-  const { details, type } = getOperationDetailsAndType(operation);
-  return {
-    type,
-    ...details,
-    txIndex: operation.txIndex,
-    amountIn: operation.amountIn,
-    amountOut: operation.amountOut,
-  };
+export function getClientOperations(operations: SkipClientOperation[]) {
+  return operations.map((operation) => {
+    const { details, type } = getOperationDetailsAndType(operation);
+    return {
+      type,
+      ...details,
+      txIndex: operation.txIndex,
+      amountIn: operation.amountIn,
+      amountOut: operation.amountOut,
+    };
+  }) as ClientOperation[];
 }

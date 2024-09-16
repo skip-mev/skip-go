@@ -29,6 +29,8 @@ export const SwapExecutionPageRouteSimple = ({
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
 
+  console.log(operations);
+
   const source = {
     denom: sourceDenom,
     amount: firstOperation.amountIn,
