@@ -20,6 +20,7 @@ import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { skipRouteAtom } from "@/state/skipClient";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
+import { walletsAtom } from "@/state/wallets";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -35,6 +36,7 @@ export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { data: route, dataUpdatedAt } = useAtomValue(skipRouteAtom);
+  const wallets = useAtomValue(walletsAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];

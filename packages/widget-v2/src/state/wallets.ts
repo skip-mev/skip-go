@@ -37,3 +37,18 @@ export const walletsAtom = atom((get) => {
     svm: get(svmWalletAtom),
   };
 });
+
+type ChainType = "cosmos" | "evm" | "svm";
+
+export type Account = {
+  address: string;
+  chainType: ChainType;
+  wallet: {
+    name: WalletState;
+    prettyName: string;
+    logo: string;
+    isLedger: boolean;
+  }
+}
+
+export const accountsAtom = atom<Account[] | undefined>();

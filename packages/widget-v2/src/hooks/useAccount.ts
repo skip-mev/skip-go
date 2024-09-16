@@ -1,80 +1,100 @@
 import { getCosmosWalletInfo } from "@/constants/graz";
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
-import { walletsAtom } from "@/state/wallets";
+import { Account, accountsAtom, walletsAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 
-
-export const useAccount = (chainID?: string) => {
+export const useAccount = () => {
   const wallet = useAtomValue(walletsAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainType = chains?.find((c) => c.chainID === chainID)?.chainType;
+  const setAccounts = useSetAtom(accountsAtom);
+  const chainTypes = chains?.map((c) => c.chainType);
 
   const { data: cosmosAccounts } = useCosmosAccount({
-    multiChain: true
+    multiChain: true,
   });
-  const cosmosAccount = useMemo(() => {
-    if (!cosmosAccounts || !chainID) return;
-    return cosmosAccounts[chainID];
-  }, [cosmosAccounts, chainID]);
 
   const solanaWallet = solanaWallets.find(
     (w) => w.name === wallet.svm?.walletName
   );
 
   const evmAccount = useEvmAccount();
-  const account = useMemo(() => {
-    switch (chainType) {
-      case "cosmos":
-        {
-          if (!cosmosAccount) return;
-          if (!wallet.cosmos) return;
-          const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
-          return {
-            address: cosmosAccount.bech32Address,
-            chainType,
-            wallet: {
-              name: wallet.cosmos,
-              prettyName: walletInfo.name,
-              logo: walletInfo.imgSrc,
-              isLedger: cosmosAccount.isNanoLedger,
-            }
-          };
-        }
-      case "evm":
-        if (evmAccount.chainId !== Number(chainID)) return;
-        if (!evmAccount.address) return;
-        if (!evmAccount.connector) return;
-        return {
-          address: evmAccount.address as string,
-          chainType,
-          wallet: {
-            name: evmAccount.connector.id,
-            prettyName: evmAccount.connector.name,
-            logo: evmAccount.connector.icon,
-          }
-        };
-      case "svm":
-        {
-          if (!solanaWallet?.publicKey) return;
-          return {
-            address: solanaWallet.publicKey.toBase58(),
-            chainType,
-            wallet: {
-              name: solanaWallet.name as string,
-              prettyName: solanaWallet.name as string,
-              logo: solanaWallet.icon,
-            }
-          };
-        }
-      default:
-        return undefined;
-    }
-  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
+  const cosmosAccountArrayWithType = Object.values(cosmosAccounts ?? {}).map(account => ({ ...account, type: "cosmos" }));
+  const solanaAccountArrayWithType = solanaWallets.map(wallet => ({ ...wallet, type: "svm" }));
+  const evmAccountWithType = { ...evmAccount, type: "evm" };
 
-  return account;
+
+  const allAccounts = [...cosmosAccountArrayWithType, ...solanaAccountArrayWithType, evmAccountWithType];
+
+  console.log(allAccounts);
+
+  // const accounts = useMemo(() => {
+  //   return allAccounts?.map((account: any) => {
+  //     switch (account.type) {
+  //       case "cosmos": {
+  //         if (!cosmosAccounts) return;
+  //         if (!wallet.cosmos) return;
+  //         const walletInfo = getCosmosWalletInfo(
+  //           wallet.cosmos.walletName as WalletType
+  //         );
+
+  //         return {
+  //           address: account.bech32Address,
+  //           chainType: type,
+  //           wallet: {
+  //             name: wallet.cosmos,
+  //             prettyName: walletInfo.name,
+  //             logo: walletInfo.imgSrc,
+  //             isLedger: cosmosAccount.isNanoLedger,
+  //           },
+  //         };
+  //       }
+  //       case "evm":
+  //         if (evmAccount.chainId !== Number(chainIDs)) return;
+  //         if (!evmAccount.address) return;
+  //         if (!evmAccount.connector) return;
+  //         return {
+  //           address: evmAccount.address as string,
+  //           chainType: type,
+  //           wallet: {
+  //             name: evmAccount.connector.id,
+  //             prettyName: evmAccount.connector.name,
+  //             logo: evmAccount.connector.icon,
+  //           },
+  //         };
+  //       case "svm": {
+  //         if (!solanaWallet?.publicKey) return;
+  //         return {
+  //           address: solanaWallet.publicKey.toBase58(),
+  //           chainType: type,
+  //           wallet: {
+  //             name: solanaWallet.name as string,
+  //             prettyName: solanaWallet.name as string,
+  //             logo: solanaWallet.icon,
+  //           },
+  //         };
+  //       }
+  //       default:
+  //         return;
+  //     }
+  //   }).filter(account => account) as Account[];
+  // }, [
+  //   chainIDs,
+  //   chainTypes,
+  //   cosmosAccount,
+  //   evmAccount.address,
+  //   evmAccount.chainId,
+  //   evmAccount.connector,
+  //   solanaWallet?.icon,
+  //   solanaWallet?.name,
+  //   solanaWallet?.publicKey,
+  //   wallet.cosmos,
+  // ]);
+  // setAccounts(accounts);
+  // return accounts;
+  return [];
 };

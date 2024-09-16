@@ -1,15 +1,20 @@
 import { atomWithMutation } from "jotai-tanstack-query";
 import { skipClient, skipRouteAtom } from "./skipClient";
+import { walletsAtom } from "./wallets";
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { data: route } = get(skipRouteAtom);
-  if (!route) return;
+  const wallets = get(walletsAtom);
+  // console.log(wallets);
 
   return {
     gcTime: Infinity,
     mutationFn: async () => {
       // handle checking that all chains have an address associated
+
+      if (!route) return;
+
       try {
         await skip.executeRoute({
           route,

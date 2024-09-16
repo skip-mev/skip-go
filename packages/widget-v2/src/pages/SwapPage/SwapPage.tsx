@@ -54,7 +54,7 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
-  const sourceAccount = useAccount(sourceAsset?.chainID);
+  const [sourceAccount] = useAccount();
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
