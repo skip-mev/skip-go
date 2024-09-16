@@ -78,8 +78,6 @@ const formaTestnet = defineChain({
   testnet: true,
 });
 
-
-// Update EVM_CHAINS in src/constants/wagmi.ts as well
 export const config: Config = createConfig({
   chains: [
     arbitrum,
