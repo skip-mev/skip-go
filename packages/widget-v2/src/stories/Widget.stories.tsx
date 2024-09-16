@@ -3,13 +3,34 @@ import { ShowSwapWidget, SwapWidget, SwapWidgetProps } from "@/widget/Widget";
 import { defaultTheme, lightTheme, Theme } from "@/widget/theme";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
+import { destinationAssetAtom, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { useAtom, useSetAtom } from "jotai";
+import { skipAssetsAtom } from "@/state/skipClient";
 
 type Props = SwapWidgetProps & { theme: Theme; button?: ReactElement };
 
-export const Widget = (props: Props) => (
-  <SwapWidget {...props} key={props.theme.primary.background.normal} />
-);
+export const Widget = (props: Props) => {
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setDestinationAsset = useSetAtom(destinationAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
+
+
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+
+  const sourceAsset = assets?.find(
+    (asset) => asset.denom === "ethereum-native"
+  );
+  const destinationAsset = assets?.find((asset) => asset.denom === "uatom");
+
+  useEffect(() => {
+    setSourceAsset(sourceAsset);
+    setDestinationAsset(destinationAsset);
+    setSourceAssetAmount("1");
+  }, [destinationAsset, setDestinationAsset, setSourceAsset, setSourceAssetAmount, sourceAsset]);
+
+  return <SwapWidget {...props} key={props.theme.primary.background.normal} />;
+};
 
 export const Modal = (props: Props) => {
   return (

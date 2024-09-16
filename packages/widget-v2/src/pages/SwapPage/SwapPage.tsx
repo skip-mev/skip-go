@@ -15,8 +15,9 @@ import {
   sourceAssetAtom,
   destinationAssetAtom,
   swapDirectionAtom,
-  sourceAssetAmount,
-  destinationAssetAmount,
+  sourceAssetAmountAtom,
+  destinationAssetAmountAtom,
+  isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapPageSettings } from "./SwapPageSettings";
@@ -24,6 +25,7 @@ import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { useAccount } from "@/hooks/useAccount";
 
@@ -33,18 +35,30 @@ export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const setSourceAssetAmount = useSetAtom(sourceAssetAmount);
-  const setDestinationAssetAmount = useSetAtom(destinationAssetAmount);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
+  const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
+  const [isWaitingForNewRoute] = useAtom(isWaitingForNewRouteAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
+  const [swapDirection] = useAtom(swapDirectionAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const { data: route, isLoading: isRouteLoading, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
+  const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapFlowSettings = useModal(SwapPageSettings);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
+
+  const sourceDetails = useGetAssetDetails({
+    assetDenom: sourceAsset?.denom,
+    amount: sourceAsset?.amount,
+  });
+
+  const destinationDetails = useGetAssetDetails({
+    assetDenom: destinationAsset?.denom,
+    amount: destinationAsset?.amount,
+  });
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -133,7 +147,7 @@ export const SwapPage = () => {
   ]);
 
   const swapButton = useMemo(() => {
-    if (isRouteLoading) {
+    if (isWaitingForNewRoute) {
       return <MainButton label="Finding Best Route..." loading={true} />;
     }
 
@@ -150,7 +164,16 @@ export const SwapPage = () => {
         chainID: sourceAsset?.chainID,
       });
     }} />;
-  }, [isRouteLoading, isRouteError, sourceAccount?.address, sourceAsset?.chainID, routeError?.message, route, selectWalletmodal]);
+  }, [isWaitingForNewRoute, isRouteError, sourceAccount?.address, sourceAsset?.chainID, routeError?.message, route, selectWalletmodal]);
+
+  const priceChangePercentage = useMemo(() => {
+    if (!sourceDetails.usdAmount || !destinationDetails.usdAmount || isWaitingForNewRoute) return;
+    const difference = destinationDetails.usdAmount - sourceDetails.usdAmount;
+    const average = (sourceDetails.usdAmount + destinationDetails.usdAmount) / 2;
+    const percentageDifference = (difference / average) * 100;
+
+    return parseFloat(percentageDifference.toFixed(2));
+  }, [destinationDetails.usdAmount, isWaitingForNewRoute, sourceDetails.usdAmount]);
 
   return (
     <>
@@ -179,6 +202,7 @@ export const SwapPage = () => {
             selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
+            isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
             value={sourceAsset?.amount}
             onChangeValue={(newValue) => {
               setSourceAssetAmount(newValue);
@@ -190,7 +214,9 @@ export const SwapPage = () => {
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
+            isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
             value={destinationAsset?.amount}
+            priceChangePercentage={priceChangePercentage}
             onChangeValue={(newValue) => {
               setDestinationAssetAmount(newValue);
               setSwapDirection("swap-out");
@@ -212,7 +238,11 @@ export const SwapPage = () => {
       </Column>
       <div
         id="swap-flow-settings-container"
-        ref={(element) => element && setContainer(element)}
+        ref={(element) => {
+          if (element && container === undefined) {
+            setContainer(element);
+          }
+        }}
       ></div>
     </>
   );
