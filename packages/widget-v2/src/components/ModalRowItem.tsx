@@ -38,7 +38,7 @@ export const ModalRowItem = ({
   );
 };
 
-const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
+const StyledModalRowItemContainer = styled(Row) <{ onClick?: () => void }>`
   ${removeButtonStyles};
   width: 100%;
   height: 60px;
@@ -49,7 +49,7 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   ${({ onClick, theme }) =>
     onClick &&
     css`
-      &:hover {
+      &:hover, &:focus {
         background-color: ${theme.secondary.background.hover};
         cursor: pointer;
       }

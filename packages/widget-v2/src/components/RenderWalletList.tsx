@@ -6,19 +6,18 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { Text } from "@/components/Typography";
+import { MinimalWallet } from "@/state/wallets";
+import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
+import { useMutation } from "@tanstack/react-query";
+import { useModal } from "./Modal";
 
 export type RenderWalletListProps = {
   title: string;
-  walletList: Wallet[];
-  onSelect?: (wallet: Wallet) => void;
+  walletList: MinimalWallet[];
   onClickBackButton: () => void;
 };
 
-export type Wallet = {
-  name: string;
-  address: string;
-  imageUrl?: string;
-  onSelect?: ((wallet: Wallet) => void) | (() => void);
+export type Wallet = MinimalWallet & {
   rightContent?: () => React.ReactNode;
 };
 
@@ -54,70 +53,110 @@ export const RenderWalletListHeader = ({
 export const RenderWalletList = ({
   title,
   walletList,
-  onSelect,
   onClickBackButton,
 }: RenderWalletListProps) => {
-  const renderItem = useCallback(
-    (wallet: Wallet) => {
-      const {
-        name,
-        imageUrl,
-        rightContent,
-        onSelect: onSelectOverride,
-      } = wallet;
-      return (
-        <ModalRowItem
-          key={name}
-          onClick={() => {
-            if (onSelectOverride) {
-              onSelectOverride(wallet);
-            } else if (onSelect) {
-              onSelect(wallet);
-            }
-          }}
-          style={{ marginTop: ITEM_GAP }}
-          leftContent={
-            <Row align="center" gap={10}>
-              {imageUrl && (
-                <img
-                  height={35}
-                  width={35}
-                  style={{ objectFit: "cover" }}
-                  src={imageUrl}
-                  alt={`${name} logo`}
-                />
-              )}
-
-              <Text>{name}</Text>
-            </Row>
-          }
-          rightContent={rightContent?.()}
-        />
-      );
+  const theme = useTheme();
+  const modal = useModal();
+  const connectMutation = useMutation({
+    mutationKey: ["connectWallet"],
+    mutationFn: async (wallet: MinimalWallet) => {
+      return await wallet.connect();
     },
-    [onSelect]
-  );
+    onSuccess: () => {
+      modal.remove();
+    }
+  });
+
+  const renderItem = useCallback((wallet: Wallet) => {
+    const {
+      walletName,
+      walletPrettyName,
+      walletInfo: { logo: imageUrl },
+      rightContent,
+    } = wallet;
+    return (
+      <ModalRowItem
+        key={walletName}
+        onClick={() => {
+          connectMutation.mutate(wallet);
+        }}
+        style={{ marginTop: ITEM_GAP }}
+        leftContent={
+          <Row align="center" gap={10}>
+            {imageUrl && (
+              <img
+                height={35}
+                width={35}
+                style={{ objectFit: "cover" }}
+                src={imageUrl}
+                alt={`${walletPrettyName} logo`}
+              />
+            )}
+
+            <Text>{walletPrettyName}</Text>
+          </Row>
+        }
+        rightContent={rightContent?.()}
+      />
+    );
+  }, [connectMutation]);
 
   const height = useMemo(() => {
     return Math.min(530, walletList.length * (ITEM_HEIGHT + ITEM_GAP));
   }, [walletList]);
 
+  const renderWalletListOrWalletConnectionStatus = useMemo(() => {
+    if (connectMutation.isError || connectMutation.isPending) {
+      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
+      return (
+        <StyledInnerContainer height={height} >
+          <StyledLoadingContainer>
+            <StyledAnimatedBorder
+              width={80}
+              height={80}
+              backgroundColor={theme.primary.text.normal}
+              txState={connectMutation.isError ? "failed" : "broadcasted"}
+              borderSize={8}
+            >
+              <img
+                style={{ objectFit: "cover" }}
+                src={connectMutation.variables?.walletInfo.logo}
+                alt={`${connectMutation.variables?.walletPrettyName} logo`} />
+            </StyledAnimatedBorder>
+            <Text color={theme.primary.text.lowContrast}>{titleText} {connectMutation.variables?.walletPrettyName}</Text>
+            {connectMutation.error && <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>{connectMutation.error.message}</Text>}
+          </StyledLoadingContainer>
+        </StyledInnerContainer >
+      );
+    }
+
+    return <VirtualList
+      listItems={walletList}
+      height={height}
+      itemHeight={ITEM_HEIGHT + ITEM_GAP}
+      renderItem={renderItem}
+      itemKey={(item) => item.walletName}
+    />;
+
+  }, [connectMutation.error, connectMutation.isError, connectMutation.isPending, connectMutation.variables?.walletInfo.logo, connectMutation.variables?.walletPrettyName, height, renderItem, theme.primary.text.lowContrast, theme.primary.text.normal, walletList]);
+
   return (
     <StyledContainer gap={15}>
       <RenderWalletListHeader
         title={title}
-        onClickBackButton={onClickBackButton}
+        onClickBackButton={(connectMutation.isPending || connectMutation.isError) ? connectMutation.reset : onClickBackButton}
       />
-      <VirtualList
-        listItems={walletList}
-        height={height}
-        itemHeight={ITEM_HEIGHT + ITEM_GAP}
-        renderItem={renderItem}
-        itemKey={(item) => item.address}
-      />
+      {renderWalletListOrWalletConnectionStatus}
     </StyledContainer>
   );
 };
+
+const StyledLoadingContainer = styled(Column)`
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 10px;
+`;
 
 const StyledCenteredTitle = styled(Text)`
   position: absolute;
@@ -140,6 +179,15 @@ export const StyledContainer = styled(Column)`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
+`;
+
+const StyledInnerContainer = styled(Column) <{
+  height: number;
+}>`
+  height: ${({ height }) => height}px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`

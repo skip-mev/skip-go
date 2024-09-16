@@ -1,42 +1,43 @@
+import { solanaWallets } from "@/constants/solana";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { useSetAtom } from "jotai";
+import { useCallback } from "react";
 
 
-export const useSolanaWallets = () => {
-  const { wallets: solanaWallets } = useWallet();
+export const useCreateSolanaWallets = () => {
   const setSvmWallet = useSetAtom(svmWalletAtom);
-  const createSolanaWallets = () => {
+  const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
     for (const wallet of solanaWallets) {
       const minimalWallet: MinimalWallet = {
-        walletName: wallet.adapter.name,
-        walletPrettyName: wallet.adapter.name,
+        walletName: wallet.name,
+        walletPrettyName: wallet.name,
         walletChainType: "svm",
         walletInfo: {
-          logo: wallet.adapter.icon,
+          logo: wallet.icon,
         },
         connect: async () => {
           try {
-            await wallet.adapter.connect();
-            setSvmWallet({ walletName: wallet.adapter.name, chainType: "svm" });
+            await wallet.connect();
+            setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         getAddress: async ({ signRequired }) => {
           try {
-            const isConnected = wallet.adapter.connected;
+            const isConnected = wallet.connected;
             if (!isConnected) {
-              await wallet.adapter.connect();
-              setSvmWallet({ walletName: wallet.adapter.name, chainType: "svm" });
+              await wallet.connect();
+              setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             }
-            const address = wallet.adapter.publicKey;
+            const address = wallet.publicKey;
             if (!address) throw new Error("No address found");
             if (signRequired) {
-              setSvmWallet({ walletName: wallet.adapter.name, chainType: "svm" });
+              setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             }
             return address.toBase58();
           } catch (error) {
@@ -44,15 +45,16 @@ export const useSolanaWallets = () => {
           }
         },
         disconnect: async () => {
-          await wallet.adapter.disconnect();
+          await wallet.disconnect();
           setSvmWallet(undefined);
           // TODO: onWalletDisconnected
         },
-        isWalletConnected: wallet.adapter.connected,
+        isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
       };
       wallets.push(minimalWallet);
     }
-  }
-  return createSolanaWallets
+    return wallets;
+  }, [setSvmWallet]);
+  return { createSolanaWallets };
 };
