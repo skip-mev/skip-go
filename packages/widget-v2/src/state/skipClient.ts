@@ -95,6 +95,39 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
+type SkipTransactionStatusProps = {
+  txsRequired: number;
+  txs: { chainID: string; txHash: string }[] | undefined;
+}
+
+export const skipTransactionStatusPropsAtom = atom<SkipTransactionStatusProps>({
+  txsRequired: 0,
+  txs: undefined,
+});
+
+export const skipTransactionStatus = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  const { txs, txsRequired } = get(skipTransactionStatusPropsAtom);
+
+  return {
+    queryKey: ["skipTxStatus", txs, txsRequired],
+    queryFn: async () => {
+      if (!txs) return;
+
+      return Promise.all(
+        txs.map(async (tx) => {
+          return skip.transactionStatus({
+            chainID: tx.chainID,
+            txHash: tx.txHash,
+          });
+        })
+      );
+    },
+    refetchInterval: 1000 * 2,
+    keepPreviousData: true,
+  };
+});
+
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
