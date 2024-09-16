@@ -6,9 +6,9 @@ title: "Supported Ecosystems"
 <Info>
  **Activate Smart Relay (`smart_relay=true`) for global coverage of all chains, bridges, and routes**
  
- There are many routes that will return a RouteNotFound error if `smart_relay=false` because there are not public relayers that support them. This includes all routes to and from Solana, as well as CCTP routes to & from Polygon, Base, and several other L2s. 
+ There are many routes that will return a RouteNotFound error if `smart_relay=false` because there are not public relayers that support them. This includes all routes to and from Solana, as well as CCTP routes to and from Polygon, Base, and several other L2s. 
  
- As a result, if you want your users to be able to transfer their tokens over all routes, we recommend using Smart Relay. You can read more about Smart Relay here: [Smart Relay](/smart-relay)
+ As a result, if you want your users to be able to transfer their tokens over all routes, we recommend using [Smart Relay](/general/smart-relay).
 </Info>
 
 Skip Go API is a universal interoperability platform. It can be used to swap and transfer tokens within and between all major ecosystems in crypto over many major bridges. We're constantly adding new bridges, new chains, new routes on already-supported bridges, and new multi-hop routes by composing multiple bridges together. 
@@ -46,11 +46,11 @@ The very short summary is that our Cosmos ecosystem support is most mature, foll
 
 
  <Warning>
- **Never attempt to derive Cosmos Addresses from Ethereum Addresses (or Vice Versa)**
+ **Never attempt to derive Cosmos Addresses from Ethereum Addresses (or vice versa)**
  
  Whenever you need an address on a chain for a user, please request it from the corresponding wallet. 
  
- If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for and cannot use. 
+ If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for or use. 
  
  So don't ever try to derive one address from another -- even for intermediate addresses. (Intermediate addresses may be used for fund recovery if there is some kind of failure on an intermediate chain. Failures could include a timeout, a swap exceeding slippage tolerance, or any other unexpected execution path. We assume users can sign for intermediate addresses, even if they shouldn't have to.)
 </Warning>

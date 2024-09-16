@@ -1543,7 +1543,7 @@ paths:
             application/json:
               example:
                 code: 5
-                message: chain id not supported
+                message: chain ID not supported
                 details: []
               schema:
                 $ref: '#/components/schemas/Error'
@@ -1611,7 +1611,7 @@ paths:
             application/json:
               example:
                 code: 5
-                message: chain id not supported
+                message: chain ID not supported
                 details: []
               schema:
                 $ref: '#/components/schemas/Error'
