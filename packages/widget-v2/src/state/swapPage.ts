@@ -116,3 +116,7 @@ export const routeAmountEffect = atomEffect((get, set) => {
     }));
   }
 });
+
+export const swapSettingsAtom = atom({
+  slippage: 3,
+});

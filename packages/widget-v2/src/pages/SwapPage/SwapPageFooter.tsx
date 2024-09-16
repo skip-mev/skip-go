@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
-import { GasIcon } from "@/icons/GasIcon";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SpeedometerIcon } from "@/icons/SpeedometerIcon";
-import { formatUSD } from "@/utils/intl";
-
-const estimatedGas = "0.03";
-const estimatedTime = "1min";
+import { useAtomValue } from "jotai";
+import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { skipRouteAtom } from "@/state/skipClient";
+import { SkeletonElement } from "@/components/Skeleton";
+import { FingerPrintIcon } from "@/icons/FingerPrintIcon";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
@@ -18,22 +18,24 @@ export const SwapPageFooterItems = ({
   rightContent = null,
   showRouteInfo,
 }: SwapPageFooterItemsProps) => {
+  const { data: route, isLoading } = useAtomValue(skipRouteAtom);
+  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
+
   const renderRightContent = useMemo(() => {
-    if (showRouteInfo && estimatedGas && estimatedTime) {
+    if (showRouteInfo && route) {
       return (
         <Row align="center" gap={8}>
-          <Row gap={2} align="flex-end">
-            <GasIcon />~{formatUSD(estimatedGas)}
+          <Row gap={4} align="center">
+            {isLoading ? <SkeletonElement width={40} height={16} /> : <><FingerPrintIcon />{route?.txsRequired} tx required</>}
           </Row>
-          <Row gap={2} align="flex-end">
-            <SpeedometerIcon />
-            {estimatedTime}
+          <Row gap={4} align="center">
+            {isLoading ? <SkeletonElement width={80} height={16} /> : estimatedTime ? <><SpeedometerIcon />{estimatedTime}</> : null}
           </Row>
         </Row>
       );
     }
     return rightContent;
-  }, [rightContent, showRouteInfo]);
+  }, [estimatedTime, isLoading, rightContent, route, showRouteInfo]);
 
   return (
     <>
