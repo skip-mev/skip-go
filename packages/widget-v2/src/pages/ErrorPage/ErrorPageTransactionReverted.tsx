@@ -27,7 +27,7 @@ export const ErrorPageTransactionReverted = ({
 
   const assetDetails = useGetAssetDetails({
     assetDenom: assetDenom,
-    amount: revertedOperation.amountIn,
+    tokenAmount: revertedOperation.amountIn,
     chainId: revertedOperation?.fromChainID ?? revertedOperation.chainID,
   });
 
@@ -46,7 +46,7 @@ export const ErrorPageTransactionReverted = ({
               color={theme.primary.text.lowContrast}
               textAlign="center"
             >
-              Current asset location: {assetDetails?.formattedAmount}{" "}
+              Current asset location: {assetDetails?.amount}{" "}
               {assetDetails?.symbol} on {assetDetails?.chainName} (
               {recoveryAddress})
             </SmallText>

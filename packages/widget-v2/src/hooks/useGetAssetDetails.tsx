@@ -3,7 +3,7 @@ import {
   skipAssetsAtom,
   skipChainsAtom,
 } from "@/state/skipClient";
-import { getFormattedAssetAmount } from "@/utils/crypto";
+import { convertTokenAmountToHumanReadableAmount, convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { useUsdValue } from "@/utils/useUsdValue";
 import { Chain } from "@skip-go/client";
@@ -17,14 +17,15 @@ export type AssetDetails = {
   assetImage?: string;
   chainName?: string;
   chainImage?: string;
-  formattedAmount?: string;
+  amount?: string;
+  tokenAmount?: string;
   formattedUsdAmount?: string;
   usdAmount?: number;
 };
 
 /**
  * @param {string} [params.assetDenom] - The denomination of the asset to retrieve details for
- * @param {string} [params.amount] - The decimal/human-readable amount amount of the asset
+ * @param {string} [params.amount] - The human-readable amount amount of the asset
  * @param {string} [params.tokenAmount] - The token/raw amount of the asset
  * @param {string} [params.amountUsd] - The total value of the asset in usd, used for formatting
  * @param {string} [params.chainId] - The id of the chain associated with the asset
@@ -36,8 +37,9 @@ export type AssetDetails = {
  * - `assetImage` The asset image url derived from the asset object
  * - `chainName` The name of the chain, derived from the chain object
  * - `chainImage` The chain image url, derived from the chain object
- * - `formattedAmount` The formatted amount of the asset, if the amount is provided
- * - `formattedUsdAmount` The formatted usd amount of the asset, if the amountUsd is provided
+ * - `amount` The human-readable amount of the asset
+ * - `tokenAmount` The token/raw amount of the asset
+ * - `formattedUsdAmount` The formatted usd amount of the asset
  */
 export const useGetAssetDetails = ({
   assetDenom,
@@ -61,11 +63,16 @@ export const useGetAssetDetails = ({
     }
     return asset.denom === assetDenom;
   });
+
+  if (!amount && tokenAmount) {
+    amount = convertTokenAmountToHumanReadableAmount(tokenAmount, asset?.decimals);
+  } else if (!tokenAmount && amount) {
+    tokenAmount = convertHumanReadableAmountToCryptoAmount(amount, asset?.decimals);
+  }
+
   const { data: usdValue } = useUsdValue({
     ...asset,
-    value: tokenAmount
-      ? getFormattedAssetAmount(tokenAmount, asset?.decimals)
-      : amount,
+    value: amount,
   });
   const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
@@ -78,10 +85,6 @@ export const useGetAssetDetails = ({
   });
   const chainName = chain?.prettyName ?? chain?.chainName;
   const chainImage = chain?.logoURI;
-
-  const formattedAmount = amount
-    ? getFormattedAssetAmount(amount, asset?.decimals)
-    : undefined;
 
   const usdAmount = useMemo(() => {
     if (amountUsd) {
@@ -107,7 +110,8 @@ export const useGetAssetDetails = ({
     chainName,
     chainImage,
     symbol,
-    formattedAmount,
+    amount,
+    tokenAmount,
     formattedUsdAmount,
     usdAmount,
   };
