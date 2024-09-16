@@ -128,8 +128,12 @@ interface SwapWidgetProps {
 
 ### `defaultRoute`
 
+<<<<<<< chore/upd-go-widget-docs
 `defaultRoute` allows you to customize the first route that appears on the widget on page load. Use this to direct your users to the most important route you expect them to be interested in when they arrive to your dApp. 
 You can query supported assets using the Skip Go API `/assets` [endpoint](https://docs.skip.build/go/api-reference/prod/fungible/get-v2fungibleassets).
+=======
+`defaultRoute` allows you to customize the first route that appears on the widget on page load. Use this to direct your users to the most important route you expect them to be interested in when they arrive to your dApp. [JEREMY TODO: Show them how to use the API to get the defaultRoute params (chain ID, denoms)]
+>>>>>>> main
 
 - `amountIn` (number): The amount in to be preset on the default route, resulting in a swap/transfer/bridge exact amount in request.
 - `amountOut` (number): The amount out to be preset on the default route, resulting in a swap/transfer/bridge exact amount out request. If both `amountIn` and `amountOut` are specified, only the `amountIn` will be used, as you cannot specify both an exact amount in and exact amount out.

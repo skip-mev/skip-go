@@ -13,8 +13,8 @@ import { SmallText, Text } from "@/components/Typography";
 import { destinationAssetAtom, destinationWalletAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { WALLET_LIST } from "../WalletSelectorModal/WalletSelectorModal";
 import { isValidWalletAddress } from "./isValidWalletAddress";
+import { useWalletList } from "@/hooks/useWalletList";
 
 export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
@@ -22,16 +22,17 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const [destinationAsset] = useAtom(destinationAssetAtom);
   const [, setDestinationWallet] = useAtom(destinationWalletAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find(c => c.chainID === destinationAsset?.chainID)
-  const chainName = chain?.prettyName
-  const chainLogo = chain?.logoURI
+  const chain = chains?.find(c => c.chainID === destinationAsset?.chainID);
+  const chainName = chain?.prettyName;
+  const chainLogo = chain?.logoURI;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
+  const _walletList = useWalletList(destinationAsset?.chainID);
 
-  const walletList: Wallet[] = [
-    ...WALLET_LIST,
+  const walletList = [
+    ..._walletList,
     {
-      name: "Enter address manually",
+      walletName: "Enter address manually",
       onSelect: () => setShowManualAddressInput(true),
       rightContent: () => {
         return (
@@ -93,10 +94,10 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
             justify="center"
             disabled={!addressIsValid}
             onClick={() => {
-              setDestinationWallet({
-                name: "manual wallet address",
-                address: manualWalletAddress,
-              });
+              // setDestinationWallet({
+              //   walletName: "manual wallet address",
+              //   address: manualWalletAddress,
+              // });
               modal.remove();
             }}
           >

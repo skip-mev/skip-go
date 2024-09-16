@@ -5,7 +5,7 @@ export type MinimalWallet = {
   walletPrettyName: string;
   walletChainType: "evm" | "cosmos" | "svm";
   walletInfo: {
-    logo?: string | { major: string; minor: string };
+    logo?: string
   };
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
@@ -26,14 +26,14 @@ type WalletState = {
   chainType: string;
 }
 
-export const evmWalletAtom = atom<WalletState>()
-export const cosmosWalletAtom = atom<WalletState>()
-export const svmWalletAtom = atom<WalletState>()
+export const evmWalletAtom = atom<WalletState>();
+export const cosmosWalletAtom = atom<WalletState>();
+export const svmWalletAtom = atom<WalletState>();
 
 export const walletsAtom = atom((get) => {
   return {
     evm: get(evmWalletAtom),
     cosmos: get(cosmosWalletAtom),
     svm: get(svmWalletAtom),
-  }
-})
+  };
+});

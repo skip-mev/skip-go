@@ -1,4 +1,4 @@
-import { css, styled, useTheme } from "styled-components";
+import { css, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
@@ -73,7 +73,6 @@ export const useModal = <T extends ModalProps>(
   modal?: FC<T>,
   initialArgs?: Partial<T>
 ) => {
-  const theme = useTheme();
   const [numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
     numberOfModalsOpenAtom
   );
@@ -85,7 +84,6 @@ export const useModal = <T extends ModalProps>(
       ...modalInstance,
       show: (showArgs?: Partial<T & ModalProps>) => {
         modalInstance.show({
-          theme,
           stackedModal: numberOfModalsOpen > 0,
           ...showArgs,
         } as Partial<T>);
@@ -100,11 +98,11 @@ export const useModal = <T extends ModalProps>(
         modalInstance.hide();
       },
     }),
-    [modalInstance, setNumberOfModalsOpen, theme, numberOfModalsOpen]
+    [modalInstance, setNumberOfModalsOpen, numberOfModalsOpen]
   );
 };
 
-const StyledOverlay = styled(Dialog.Overlay)<{
+const StyledOverlay = styled(Dialog.Overlay) <{
   drawer?: boolean;
   invisible?: boolean;
 }>`
