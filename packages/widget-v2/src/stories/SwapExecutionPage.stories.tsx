@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
 import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
-import { destinationAssetAtom } from "@/state/swapPage";
+import { destinationAssetAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom } from "jotai";
 import operations from "@/pages/SwapExecutionPage/operations.json";
 import { skipAssetsAtom } from "@/state/skipClient";
@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 const meta = {
   title: "Pages/SwapExecutionPage",
   component: function SwapExecutionPageStory(props) {
-    const [, setSourceAsset] = useAtom(destinationAssetAtom);
+    const [, setSourceAsset] = useAtom(sourceAssetAtom);
     const [, setDestinationAsset] = useAtom(destinationAssetAtom);
     const [shouldRender, setShouldRender] = useState(false);
     const firstOperation = operations[0];

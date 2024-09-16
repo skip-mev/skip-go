@@ -11,39 +11,81 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
 
-export const { debouncedValueAtom: debouncedSourceAssetAmount } = atomWithDebounce<string | undefined>(
+export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } = atomWithDebounce<string | undefined>(
   undefined,
   ROUTE_REQUEST_DEBOUNCE_DELAY,
 );
 
-export const { debouncedValueAtom: debouncedDestinationAssetAmount } = atomWithDebounce<string | undefined>(
+export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } = atomWithDebounce<string | undefined>(
   undefined,
   ROUTE_REQUEST_DEBOUNCE_DELAY,
 );
 
 export const sourceAssetAtom = atom<AssetAtom>();
 
-export const sourceAssetAmount = atom(
+export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount,
   (get, set, newAmount: string) => {
     const oldSourceAsset = get(sourceAssetAtom);
     set(sourceAssetAtom, { ...oldSourceAsset, amount: newAmount });
-    set(debouncedSourceAssetAmount, newAmount);
+    set(debouncedSourceAssetAmountAtom, newAmount);
   },
 );
 
 export const destinationAssetAtom = atom<AssetAtom>();
 
-export const destinationAssetAmount = atom(
+export const isWaitingForNewRouteAtom = atom(
+  (get) => {
+    const sourceAmount = get(sourceAssetAmountAtom);
+    const destinationAmount = get(destinationAssetAmountAtom);
+    const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
+    const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
+
+    const { isLoading } = get(skipRouteAtom);
+    const direction = get(swapDirectionAtom);
+
+    if (direction === "swap-in") {
+      return (sourceAmount !== debouncedSourceAmount) || isLoading;
+    } else if (direction === "swap-out") {
+      return (destinationAmount !== debouncedDestinationAmount) || isLoading;
+    }
+  }
+);
+
+export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
   (get, set, newAmount: string) => {
     const oldDestinationAsset = get(destinationAssetAtom);
     set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
-    set(debouncedDestinationAssetAmount, newAmount);
+    set(debouncedDestinationAssetAmountAtom, newAmount);
   },
 );
 
-export const swapDirectionAtom = atom<"swap-in" | "swap-out">("swap-in");
+export type SwapDirection = "swap-in" | "swap-out";
+
+export const swapDirectionAtom = atom<SwapDirection>("swap-in");
+
+export const isInvertingSwapAtom = atom(false);
+
+export const invertSwapAtom = atom(null, (get, set, swapDirection: SwapDirection) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  set(isInvertingSwapAtom, true);
+
+  set(swapDirectionAtom, swapDirection);
+
+  set(sourceAssetAtom, destinationAsset);
+  if (destinationAsset?.amount) {
+    set(sourceAssetAmountAtom, destinationAsset?.amount);
+  }
+
+  set(destinationAssetAtom, sourceAsset);
+  if (sourceAsset?.amount) {
+    set(destinationAssetAmountAtom, sourceAsset?.amount);
+  }
+
+  set(isInvertingSwapAtom, false);
+});
 
 export const connectedWalletAtom = atom<Wallet>();
 
