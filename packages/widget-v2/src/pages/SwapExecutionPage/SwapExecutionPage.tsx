@@ -34,11 +34,13 @@ const TX_DELAY_MS = 5_000; // 5 seconds
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { data: route } = useAtomValue(skipRouteAtom);
+  const { data: route, dataUpdatedAt } = useAtomValue(skipRouteAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
-    return getClientOperations(route.operations);
+    const data = getClientOperations(route.operations);
+    console.log(data);
+    return data;
   }, [route?.operations]);
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
@@ -160,6 +162,7 @@ export const SwapExecutionPage = () => {
         }}
       />
       <SwapExecutionPageRoute
+        key={dataUpdatedAt}
         txStateMap={txStateMap}
         operations={clientOperations}
       />

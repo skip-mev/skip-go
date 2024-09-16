@@ -16,7 +16,7 @@ import { ClientOperation } from "@/utils/clientType";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
-  amount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
@@ -28,7 +28,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
 
 export const SwapExecutionPageRouteSimpleRow = ({
   denom,
-  amount,
+  tokenAmount,
   chainID,
   txState,
   destination,
@@ -42,7 +42,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
     chainId: chainID,
-    amount,
+    tokenAmount,
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {

@@ -4,7 +4,7 @@ import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { destinationAssetAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom } from "jotai";
-import operations from "@/pages/SwapExecutionPage/operations.json";
+import operations from "./exampleOperations.json";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { useEffect, useState } from "react";
 
@@ -13,6 +13,7 @@ const meta = {
   component: function SwapExecutionPageStory(props) {
     const [, setSourceAsset] = useAtom(sourceAssetAtom);
     const [, setDestinationAsset] = useAtom(destinationAssetAtom);
+
     const [shouldRender, setShouldRender] = useState(false);
     const firstOperation = operations[0];
     const lastOperation = operations[operations.length - 1];
