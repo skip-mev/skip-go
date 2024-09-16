@@ -33,8 +33,11 @@ const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
   transform: translate(-50%, -50%);
 
   @keyframes spin {
-    50% {
-      transform: translate(-50%, -50%) rotate(180deg);
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
     }
   }
 
