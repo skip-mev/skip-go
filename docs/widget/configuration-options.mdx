@@ -1,10 +1,8 @@
 ---
-title: "Configuration Options"
+  title: "Configuration Options"
+  description: "This page lists and describes all of the Widget's components and props to allow you to customize the widget to fit your exact user experience needs!"
 ---
 
-# Summary
-
-This page lists and describes all of the Widget's components and props to allow you to customize the widget to fit your exact user experience needs!
 
 # Component Props
 
@@ -130,7 +128,7 @@ interface SwapWidgetProps {
 
 ### `defaultRoute`
 
-`defaultRoute` allows you to customize the first route that appears on the widget on page load. Use this to direct your users to the most important route you expect them to be interested in when they arrive to your dApp. [JEREMY TODO: Show them how to use the API to get the defaultRoute params (chain ID, denoms)]
+`defaultRoute` allows you to customize the first route that appears on the widget on page load. Use this to direct your users to the most important route for your use case. You can query supported assets using the Skip Go API `/assets` [endpoint](https://docs.skip.build/go/api-reference/prod/fungible/get-v2fungibleassets).
 
 - `amountIn` (number): The amount in to be preset on the default route, resulting in a swap/transfer/bridge exact amount in request.
 - `amountOut` (number): The amount out to be preset on the default route, resulting in a swap/transfer/bridge exact amount out request. If both `amountIn` and `amountOut` are specified, only the `amountIn` will be used, as you cannot specify both an exact amount in and exact amount out.
@@ -182,18 +180,18 @@ interface SwapWidgetProps {
   };
 ```
 
-### `settings`:
+### `settings`
 
 `settings` allows you to set defaults for user customizable settings in the settings tab on the widget.
 
 - `customGasAmount` (number): Set gas amount CosmosSDK chain transactions use for validation. Defaults to 200_000.
 - `slippage` (number): Set default slippage percentage for CosmosSDK chain swaps between 0-100. Defaults to 3.
 
-### `onlyTestnet` boolean
+### `onlyTestnet`
 
-`onlyTestnet` configures the widget to only show testnet data when set to true. Defaults to false, which only shows mainnet data.
+`onlyTestnet` (boolean) configures the widget to only show testnet data when set to true. Defaults to false, which only shows mainnet data.
 
-### `toasterProps`: 
+### `toasterProps`
 
 Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
 
@@ -210,7 +208,7 @@ Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast
   };
   ```
 
-### `endpointOptions`:
+### `endpointOptions`
 
 Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
@@ -223,11 +221,11 @@ Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Plea
     };
   ```
 
-### `apiURL` (string) 
+### `apiURL`
 
-Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+`apiURL` (string) lets you override the default Skip Go API proxied endpoints. Please reach out to us first if you want to be whitelisted.
 
-### `theme`:
+### `theme`
 
 `theme` allows you to customize the look of the widget to fit your brand and application's aesthetics.
 
@@ -241,7 +239,7 @@ Custom API URL to override Skip Go API endpoint. Defaults to Skip proxied endpoi
   };
 ```
 
-### `callback functions`:
+### `callbacks`
 
 Pass in callback functions to handle events in the widget.
 
@@ -273,11 +271,11 @@ Pass in callback functions to handle events in the widget.
   }) => void;
 ```
 
-### `chainIDsToAffiliates`:
+### `chainIDsToAffiliates`
 
-Use chainIDsToAffiliates to define fees per chain and which addresses should receive the fees
+Use `chainIDsToAffiliates` to define fees per chain and which addresses should receive the fees.
 
-The basisPointsFee of each affiliate must add up to the same amount across each chain, or an error will be thrown.
+The `basisPointsFee` of each affiliate must sum to the same amount across each chain, or an error will be thrown.
 The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
 
 ```ts
@@ -301,6 +299,8 @@ The address of each affiliate must be a valid address for that chain, or there w
   }
 ```
 
-### `className` string
+### `className` 
+`className` (string) to apply custom CSS classes to the widget.
 
-### `style` React.CSSProperties
+### `style` 
+`style` (React.CSSProperties) to apply custom inline styles to the widget.
