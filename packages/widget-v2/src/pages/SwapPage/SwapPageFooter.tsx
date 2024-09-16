@@ -7,7 +7,7 @@ import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/skipClient";
 import { SkeletonElement } from "@/components/Skeleton";
-import { FingerPrintIcon } from "@/icons/FingerPrintIcon";
+import { SignatureIcon } from "@/icons/SignatureIcon";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
@@ -26,7 +26,7 @@ export const SwapPageFooterItems = ({
       return (
         <Row align="center" gap={8}>
           <Row gap={4} align="center">
-            {isLoading ? <SkeletonElement width={40} height={16} /> : <><FingerPrintIcon />{route?.txsRequired} tx required</>}
+            {isLoading ? <SkeletonElement width={40} height={16} /> : <><SignatureIcon />{route?.txsRequired} tx required</>}
           </Row>
           <Row gap={4} align="center">
             {isLoading ? <SkeletonElement width={80} height={16} /> : estimatedTime ? <><SpeedometerIcon />{estimatedTime}</> : null}
