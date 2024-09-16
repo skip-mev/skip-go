@@ -1,5 +1,5 @@
-import { chains as _mainnetChains, assets as _mainnetAssets } from "chain-registry/mainnet"
-import { chains as _testnetChains, assets as _testnetAssets } from "chain-registry/testnet"
+import { chains as _mainnetChains, assets as _mainnetAssets } from "chain-registry/mainnet";
+import { chains as _testnetChains, assets as _testnetAssets } from "chain-registry/testnet";
 import { chainRegistryChainToKeplr } from "@chain-registry/keplr";
 import { ChainInfo } from "@keplr-wallet/types";
 import { WalletType } from "graz";
@@ -31,19 +31,19 @@ const _testnetAndInitiaAssets = [
 
 export const mainnetChains = _mainnetAndInitiaChains.map((chain) => {
   try {
-    return chainRegistryChainToKeplr(chain, _mainnetAndInitiaAssets)
+    return chainRegistryChainToKeplr(chain, _mainnetAndInitiaAssets);
   } catch (_error) {
-    return undefined
+    return undefined;
   }
-}).filter(chainInfo => chainInfo) as ChainInfo[]
+}).filter(chainInfo => chainInfo) as ChainInfo[];
 
 export const testnetChains = _testnetAndInitiaChains.map((chain) => {
   try {
-    return chainRegistryChainToKeplr(chain, _testnetAndInitiaAssets)
+    return chainRegistryChainToKeplr(chain, _testnetAndInitiaAssets);
   } catch (_error) {
-    return undefined
+    return undefined;
   }
-}).filter(chainInfo => chainInfo) as ChainInfo[]
+}).filter(chainInfo => chainInfo) as ChainInfo[];
 
 export const walletInfo: Record<string, {
   name: string;
@@ -113,8 +113,8 @@ export const walletInfo: Record<string, {
     name: "Compass",
     imgSrc: "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-compass.png",
   },
-}
+};
 
-export const getWalletInfo = (walletType: WalletType) => {
+export const getCosmosWalletInfo = (walletType: WalletType) => {
   return walletInfo[walletType];
-}
+};

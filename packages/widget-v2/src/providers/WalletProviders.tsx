@@ -1,18 +1,15 @@
-import { ReactNode } from "react"
-import { CosmosProvider } from "./CosmosProvider"
-import { EVMProvider } from "./EVMProvider"
-import { SolanaProvider } from "./SolanaProvider"
+import { ReactNode } from "react";
+import { CosmosProvider } from "./CosmosProvider";
+import { EVMProvider } from "./EVMProvider";
 
 export const WalletProviders = (
   { children }: { children: ReactNode }
 ) => {
   return (
-    <SolanaProvider>
-      <CosmosProvider>
-        <EVMProvider>
-          {children}
-        </EVMProvider>
-      </CosmosProvider>
-    </SolanaProvider>
-  )
-}
+    <CosmosProvider>
+      <EVMProvider>
+        {children}
+      </EVMProvider>
+    </CosmosProvider>
+  );
+};

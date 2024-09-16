@@ -481,7 +481,7 @@ export const PreviewRoute = ({
             )
           )}
         </StyledBorderDiv>
-        {route.estimatedRouteDurationSeconds && (
+        {Boolean(route.estimatedRouteDurationSeconds) && (
           <div className='flex flex-row items-center justify-end space-x-2'>
             <span className='font-semibold text-gray-400'>Estimated Time</span>
             <div className='flex flex-row space-x-1 items-center'>

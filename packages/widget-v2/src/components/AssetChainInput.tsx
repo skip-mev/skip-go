@@ -138,7 +138,7 @@ export const AssetChainInput = ({
         </Button>
       </Row>
       <Row justify="space-between">
-        <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
+        <SmallText>{assetDetails.formattedUsdAmount}</SmallText>
         {assetDetails?.chainName ? (
           <GhostButton
             onClick={handleChangeChain}
