@@ -37,8 +37,8 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
         }
         description={
           <SmallText>
-            {sourceDetails.formattedAmount} {sourceDetails.symbol} {" -> "}
-            {destinationDetails.formattedAmount} {destinationDetails.symbol}
+            {sourceDetails.amount} {sourceDetails.symbol} {" -> "}
+            {destinationDetails.amount} {destinationDetails.symbol}
           </SmallText>
         }
         icon={ICONS.signature}
