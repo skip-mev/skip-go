@@ -71,7 +71,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.formattedAmount}{" "}
+          {assetDetails.amount}{" "}
           {assetDetails?.symbol}
         </Text>
         <SmallText>
