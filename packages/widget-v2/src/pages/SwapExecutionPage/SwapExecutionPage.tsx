@@ -38,23 +38,14 @@ export const SwapExecutionPage = () => {
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
-    const data = getClientOperations(route.operations);
-    console.log(data);
-    return data;
+    return getClientOperations(route.operations);
   }, [route?.operations]);
 
   const [destinationWallet] = useAtom(destinationWalletAtom);
   const [swapExecutionState, setSwapExecutionState] = useState(
-    destinationWallet
-      ? SwapExecutionState.unconfirmed
-      : SwapExecutionState.destinationAddressUnset
+    SwapExecutionState.unconfirmed
   );
 
-  useEffect(() => {
-    if (destinationWallet) {
-      setSwapExecutionState(SwapExecutionState.unconfirmed);
-    }
-  }, [destinationWallet]);
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
 
@@ -63,38 +54,6 @@ export const SwapExecutionPage = () => {
     1: "pending",
     2: "pending",
   });
-
-  const tempBeginSwap = () => {
-    // for testing/demo
-    setSwapExecutionState(SwapExecutionState.broadcasted);
-    setTxStateMap({
-      0: "broadcasted",
-      1: "pending",
-      2: "pending",
-    });
-    setTimeout(() => {
-      setTxStateMap({
-        0: "confirmed",
-        1: "broadcasted",
-        2: "pending",
-      });
-      setTimeout(() => {
-        setTxStateMap({
-          0: "confirmed",
-          1: "confirmed",
-          2: "broadcasted",
-        });
-        setTimeout(() => {
-          setTxStateMap({
-            0: "confirmed",
-            1: "confirmed",
-            2: "confirmed",
-          });
-          setSwapExecutionState(SwapExecutionState.confirmed);
-        }, TX_DELAY_MS);
-      }, TX_DELAY_MS);
-    }, TX_DELAY_MS);
-  };
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {

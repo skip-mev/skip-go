@@ -4,7 +4,7 @@ import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { Wallet } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import {
   StyledAnimatedBorder,

@@ -97,15 +97,17 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
   return returnValue;
 }
 
+export function getClientOperation(operation: SkipClientOperation) {
+  const { details, type } = getOperationDetailsAndType(operation);
+  return {
+    type,
+    ...details,
+    txIndex: operation.txIndex,
+    amountIn: operation.amountIn,
+    amountOut: operation.amountOut,
+  } as ClientOperation;
+}
+
 export function getClientOperations(operations: SkipClientOperation[]) {
-  return operations.map((operation) => {
-    const { details, type } = getOperationDetailsAndType(operation);
-    return {
-      type,
-      ...details,
-      txIndex: operation.txIndex,
-      amountIn: operation.amountIn,
-      amountOut: operation.amountOut,
-    };
-  }) as ClientOperation[];
+  return operations.map((operation) => getClientOperation(operation));
 }
