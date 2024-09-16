@@ -19,10 +19,9 @@ export const useCreateEvmWallets = () => {
     const isSei = chainID === "pacific-1";
     const wallets: MinimalWallet[] = [];
     for (const connector of connectors) {
-      if (
-        wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
-        -1
-      ) {
+      const isWalletFound = wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
+        -1;
+      if (isWalletFound) {
         continue;
       }
 

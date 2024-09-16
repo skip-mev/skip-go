@@ -105,7 +105,7 @@ export const RenderWalletList = ({
     return Math.min(530, walletList.length * (ITEM_HEIGHT + ITEM_GAP));
   }, [walletList]);
 
-  const container = useMemo(() => {
+  const renderWalletListOrWalletConnectionStatus = useMemo(() => {
     if (connectMutation.isError || connectMutation.isPending) {
       const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
       return (
@@ -146,7 +146,7 @@ export const RenderWalletList = ({
         title={title}
         onClickBackButton={(connectMutation.isPending || connectMutation.isError) ? connectMutation.reset : onClickBackButton}
       />
-      {container}
+      {renderWalletListOrWalletConnectionStatus}
     </StyledContainer>
   );
 };
