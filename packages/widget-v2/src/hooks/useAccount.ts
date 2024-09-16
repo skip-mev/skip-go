@@ -2,11 +2,10 @@ import { getCosmosWalletInfo } from "@/constants/graz";
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
 import { walletsAtom } from "@/state/wallets";
-import { useAccount as useCosmosAccount, WalletType } from "graz";
+import { useAccount as useCosmosAccount, WalletType, } from "graz";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { useAccount as useEvmAccount } from "wagmi";
-
+import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 
 export const useAccount = (chainID?: string) => {
   const wallet = useAtomValue(walletsAtom);
@@ -26,6 +25,8 @@ export const useAccount = (chainID?: string) => {
   );
 
   const evmAccount = useEvmAccount();
+  const connectors = useConnectors();
+
   const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":
@@ -38,7 +39,7 @@ export const useAccount = (chainID?: string) => {
             address: cosmosAccount.bech32Address,
             chainType,
             wallet: {
-              name: wallet.cosmos,
+              name: wallet.cosmos.walletName,
               prettyName: walletInfo.name,
               logo: walletInfo.imgSrc,
               isLedger: cosmosAccount.isNanoLedger,
@@ -55,7 +56,7 @@ export const useAccount = (chainID?: string) => {
           wallet: {
             name: evmAccount.connector.id,
             prettyName: evmAccount.connector.name,
-            logo: evmAccount.connector.icon,
+            logo: connectors.find(item => item.id === evmAccount.connector?.id)?.icon,
           }
         };
       case "svm":
@@ -74,7 +75,7 @@ export const useAccount = (chainID?: string) => {
       default:
         return undefined;
     }
-  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
+  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, connectors, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
 
   return account;
 };

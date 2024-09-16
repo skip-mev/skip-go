@@ -8,22 +8,53 @@ export type GhostButtonProps = {
 
 export const GhostButton = styled(SmallText).attrs({
   as: "button",
-})<GhostButtonProps>`
+}) <GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
   &:hover {
     ${({ theme, onClick, secondary, disabled }) =>
-      onClick &&
-      !disabled &&
-      css`
+    onClick &&
+    !disabled &&
+    css`
         background-color: ${secondary
-          ? theme.secondary.background.normal
-          : theme.primary.ghostButtonHover};
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
         color: ${theme.primary.text.normal};
         cursor: pointer;
       `};
   }
   padding: 9px 16px;
+  border-radius: 90px;
+  ${flexProps};
+`;
+
+export const TransparentButton = styled(SmallText).attrs({
+  as: "button",
+}) <GhostButtonProps>`
+  ${removeButtonStyles};
+  line-height: 13px;
+  ${({ theme, onClick, secondary, disabled }) =>
+    onClick &&
+    !disabled &&
+    css`
+      background-color: ${secondary
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
+      cursor: pointer;
+    `};
+  &:hover {
+    ${({ theme, onClick, secondary, disabled }) =>
+    onClick &&
+    !disabled &&
+    css`
+        background-color: ${secondary
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
+        color: ${theme.primary.text.normal};
+        cursor: pointer;
+      `};
+  }
+  padding: 10px 13px;
   border-radius: 90px;
   ${flexProps};
 `;

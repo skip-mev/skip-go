@@ -1,7 +1,5 @@
 import { useCallback, useMemo } from "react";
 import styled, { useTheme } from "styled-components";
-import { LeftArrowIcon } from "@/icons/ArrowIcon";
-import { Button } from "@/components/Button";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
@@ -10,6 +8,7 @@ import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { useModal } from "./Modal";
+import { ModalHeader, StyledModalContainer, StyledModalInnerContainer, } from "./ModalHeader";
 
 export type RenderWalletListProps = {
   title: string;
@@ -38,31 +37,6 @@ export const isMinimalWallet = (
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 
-type RenderWalletListHeaderProps = {
-  title: string;
-  onClickBackButton: () => void;
-  rightContent?: () => React.ReactNode;
-};
-
-export const RenderWalletListHeader = ({
-  title,
-  onClickBackButton,
-  rightContent,
-}: RenderWalletListHeaderProps) => {
-  const theme = useTheme();
-  return (
-    <StyledHeader align="center" justify="space-between">
-      <Button onClick={() => onClickBackButton()}>
-        <StyledLeftArrowIcon
-          color={theme?.primary.background.normal}
-          backgroundColor={theme?.primary.text.normal}
-        />
-      </Button>
-      <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
-      {rightContent?.()}
-    </StyledHeader>
-  );
-};
 
 export const RenderWalletList = ({
   title,
@@ -131,7 +105,7 @@ export const RenderWalletList = ({
         ? "Failed to connect"
         : "Connecting to";
       return (
-        <StyledInnerContainer height={height}>
+        <StyledModalInnerContainer height={height}>
           <StyledLoadingContainer>
             <StyledAnimatedBorder
               width={80}
@@ -159,7 +133,7 @@ export const RenderWalletList = ({
               </Text>
             )}
           </StyledLoadingContainer>
-        </StyledInnerContainer>
+        </StyledModalInnerContainer>
       );
     }
 
@@ -186,8 +160,8 @@ export const RenderWalletList = ({
   ]);
 
   return (
-    <StyledContainer gap={15}>
-      <RenderWalletListHeader
+    <StyledModalContainer gap={15}>
+      <ModalHeader
         title={title}
         onClickBackButton={
           connectMutation.isPending || connectMutation.isError
@@ -196,7 +170,7 @@ export const RenderWalletList = ({
         }
       />
       {renderWalletListOrWalletConnectionStatus}
-    </StyledContainer>
+    </StyledModalContainer>
   );
 };
 
@@ -205,40 +179,4 @@ const StyledLoadingContainer = styled(Column)`
   justify-content: center;
   gap: 10px;
   padding-bottom: 10px;
-`;
-
-const StyledCenteredTitle = styled(Text)`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-`;
-
-export const StyledHeader = styled(Row)`
-  height: 40px;
-  margin-top: 10px;
-  padding: 0 12px;
-`;
-
-export const StyledContainer = styled(Column)`
-  position: relative;
-  padding: 10px;
-  gap: 10px;
-  width: 580px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
-`;
-
-const StyledInnerContainer = styled(Column) <{
-  height: number;
-}>`
-  height: ${({ height }) => height}px;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledLeftArrowIcon = styled(LeftArrowIcon)`
-  opacity: 0.2;
 `;

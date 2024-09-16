@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import {
   RenderWalletList,
-  RenderWalletListHeader,
   ManualWalletEntry,
 } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
@@ -15,6 +14,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
+import { ModalHeader } from "@/components/ModalHeader";
 
 export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
@@ -32,7 +32,6 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
     ..._walletList,
     {
       walletName: "Enter address manually",
-      onSelect: () => setShowManualAddressInput(true),
       rightContent: () => {
         return (
           <RightArrowIcon
@@ -65,7 +64,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
     <>
       {showManualAddressInput ? (
         <StyledContainer gap={15}>
-          <RenderWalletListHeader
+          <ModalHeader
             title={`Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
             rightContent={() => (
