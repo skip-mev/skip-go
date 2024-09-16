@@ -100,7 +100,7 @@ If you provide a function that only returns a price for a subset of chains, the 
 
 ### `ExecuteRouteOptions.gasAmountMultiplier`
 
-This field in `ExecuteRouteOptions` allows you to override the default gas multiplier used by default in the SDK. The default value is 1.5. Increasing this value providers higher confidence that transactions will not run out of gas while executing, but increases the fee for the end user.
+This field in `ExecuteRouteOptions` allows you to override the default gas multiplier used by default in the SDK. The default value is 1.5. Increasing this value provides higher confidence that transactions will not run out of gas while executing, but increases the fee for the end user.
 
 The gas multiplier increases a transaction's `gasAmount` multiplicatively. To get a final gas amount, the router:
 
