@@ -1,7 +1,7 @@
 import { GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { createModal, ModalProps, useModal } from "@/components/Modal";
-import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "@/components/ModalInner";
+import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "@/components/ModalHeader";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text } from "@/components/Typography";
 import { useAccount } from "@/hooks/useAccount";
