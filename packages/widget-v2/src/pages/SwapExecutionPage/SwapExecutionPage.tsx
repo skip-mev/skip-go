@@ -111,9 +111,8 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString={`${
-              (operations.length * TX_DELAY_MS) / 1000
-            } secs.`}
+            loadingTimeString={`${(operations.length * TX_DELAY_MS) / 1000
+              } secs.`}
           />
         );
       case SwapExecutionState.confirmed:
@@ -129,10 +128,10 @@ export const SwapExecutionPage = () => {
 
   const SwapExecutionPageRoute = simpleRoute
     ? withBoundProps(SwapExecutionPageRouteSimple, {
-        onClickEditDestinationWallet: () => {
-          modal.show();
-        },
-      })
+      onClickEditDestinationWallet: () => {
+        modal.show();
+      },
+    })
     : SwapExecutionPageRouteDetailed;
 
   return (
@@ -156,11 +155,9 @@ export const SwapExecutionPage = () => {
       <SwapPageFooter
         rightContent={
           SIGNATURES_REQUIRED && (
-            <Row align="center">
+            <Row align="center" gap={8}>
               <SignatureIcon
                 backgroundColor={theme.warning.text}
-                width={20}
-                height={20}
               />
               <StyledSignatureRequired>
                 {SIGNATURES_REQUIRED}{" "}

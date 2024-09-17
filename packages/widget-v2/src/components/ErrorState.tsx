@@ -31,7 +31,7 @@ export const ErrorState = ({
       backgroundColor={backgroundColor}
       gap={16}
     >
-      <Icon backgroundColor={textColor} color={backgroundColor} />
+      <Icon backgroundColor={textColor} color={backgroundColor} height={40} width={40} />
       {typeof title === "string" ? (
         <Text fontSize={20} color={textColor}>
           {title}
@@ -50,7 +50,7 @@ export const ErrorState = ({
   );
 };
 
-const StyledErrorStateContainer = styled(Column)<{ backgroundColor?: string }>`
+const StyledErrorStateContainer = styled(Column) <{ backgroundColor?: string }>`
   width: 480px;
   height: 225px;
   border-radius: 25px;
