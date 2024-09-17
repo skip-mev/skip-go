@@ -51,7 +51,7 @@ export const SwapPage = () => {
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
-  const swapFlowSettings = useModal(SwapDetailModal);
+  const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -294,7 +294,7 @@ export const SwapPage = () => {
         <SwapPageFooter
           showRouteInfo
           onClick={() =>
-            swapFlowSettings.show({
+            swapDetailsModal.show({
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
