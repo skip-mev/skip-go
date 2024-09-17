@@ -10,7 +10,7 @@ import { useAccount, useConnect, useConnectors, } from "wagmi";
 export const useCreateEvmWallets = () => {
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const {
-    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId
+    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId,
   } = useAccount();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
@@ -50,6 +50,9 @@ export const useCreateEvmWallets = () => {
               chainId: Number(chainID),
             });
             return;
+          }
+          if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
+            await currentConnector?.disconnect();
           }
           try {
             await connectAsync({ connector, chainId: Number(chainID) });

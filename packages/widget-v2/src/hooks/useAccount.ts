@@ -1,18 +1,21 @@
 import { getCosmosWalletInfo } from "@/constants/graz";
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
-import { walletsAtom } from "@/state/wallets";
+import { cosmosWalletAtom, evmWalletAtom, svmWalletAtom, walletsAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType, } from "graz";
-import { useAtomValue } from "jotai";
-import { useMemo } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect, useMemo } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 
 export const useAccount = (chainID?: string) => {
   const wallet = useAtomValue(walletsAtom);
+  const setEvmWallet = useSetAtom(evmWalletAtom);
+  const setCosmosWalelt = useSetAtom(cosmosWalletAtom);
+  const setSvmWallet = useSetAtom(svmWalletAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainType = chains?.find((c) => c.chainID === chainID)?.chainType;
 
-  const { data: cosmosAccounts } = useCosmosAccount({
+  const { data: cosmosAccounts, walletType } = useCosmosAccount({
     multiChain: true
   });
   const cosmosAccount = useMemo(() => {
@@ -26,6 +29,37 @@ export const useAccount = (chainID?: string) => {
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
+
+  useEffect(() => {
+    switch (chainType) {
+      case "cosmos":
+        if (walletType) {
+          setCosmosWalelt({
+            walletName: walletType,
+            chainType: "cosmos",
+          });
+        }
+        break;
+      case "svm":
+        if (solanaWallet) {
+          setSvmWallet({
+            walletName: solanaWallet.name,
+            chainType: "svm",
+          });
+        }
+        break;
+      case "evm":
+        if (evmAccount.connector) {
+          setEvmWallet({
+            walletName: evmAccount.connector.id,
+            chainType: "evm",
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  }, [chainType, evmAccount.connector, setCosmosWalelt, setEvmWallet, setSvmWallet, solanaWallet, walletType]);
 
   const account = useMemo(() => {
     switch (chainType) {
