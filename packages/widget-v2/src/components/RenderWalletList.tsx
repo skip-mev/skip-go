@@ -8,11 +8,7 @@ import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { useModal } from "./Modal";
-<<<<<<< HEAD
-import { ModalHeader, StyledModalContainer, StyledModalInnerContainer, } from "./ModalHeader";
-=======
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
->>>>>>> 2cf7360 (rename ModalHeader)
 
 export type RenderWalletListProps = {
   title: string;
