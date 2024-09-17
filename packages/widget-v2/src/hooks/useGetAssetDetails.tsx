@@ -57,6 +57,21 @@ export const useGetAssetDetails = ({
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
 
+  if (!chainId) {
+    return {
+      asset: undefined,
+      chain: undefined,
+      assetImage: undefined,
+      chainName: undefined,
+      chainImage: undefined,
+      symbol: undefined,
+      amount: undefined,
+      tokenAmount: undefined,
+      formattedUsdAmount: undefined,
+      usdAmount: undefined,
+    };
+  }
+
   const asset = assets?.find((asset) => {
     if (chainId) {
       return asset.denom === assetDenom && asset.chainID === chainId;
