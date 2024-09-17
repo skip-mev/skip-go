@@ -84,7 +84,7 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString={`${(clientOperations.length * TX_DELAY_MS) / 1000
+            loadingTimeString={`${(operations.length * TX_DELAY_MS) / 1000
               } secs.`}
           />
         );
@@ -97,7 +97,7 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [clientOperations.length, modal, swapExecutionState, theme.success.text]);
+  }, [modal, swapExecutionState, theme.success.text]);
 
   const SwapExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {
@@ -133,11 +133,9 @@ export const SwapExecutionPage = () => {
       <SwapPageFooter
         rightContent={
           SIGNATURES_REQUIRED && (
-            <Row align="center">
+            <Row align="center" gap={8}>
               <SignatureIcon
                 backgroundColor={theme.warning.text}
-                width={20}
-                height={20}
               />
               <StyledSignatureRequired>
                 {SIGNATURES_REQUIRED}{" "}

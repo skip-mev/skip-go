@@ -20,7 +20,7 @@ import {
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
-import { SwapPageSettings } from "./SwapPageSettings";
+import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
@@ -44,12 +44,8 @@ export const SwapPage = () => {
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const {
-    data: route,
-    isError: isRouteError,
-    error: routeError,
-  } = useAtomValue(skipRouteAtom);
-  const swapFlowSettings = useModal(SwapPageSettings);
+  const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
+  const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -270,7 +266,7 @@ export const SwapPage = () => {
         <SwapPageFooter
           showRouteInfo
           onClick={() =>
-            swapFlowSettings.show({
+            swapDetailsModal.show({
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>

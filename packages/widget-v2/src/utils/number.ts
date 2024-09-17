@@ -29,7 +29,7 @@ export function parseAmountWei(amount?: string, decimals = 6) {
   }
 }
 
-export function calculatePercentageDifference (numberA: number | string, numberB: number | string, absoluteValue?: boolean) {
+export function calculatePercentageDifference(numberA: number | string, numberB: number | string, absoluteValue?: boolean) {
   const bigNumberA = BigNumber(numberA);
   const bigNumberB = BigNumber(numberB);
 
@@ -41,3 +41,16 @@ export function calculatePercentageDifference (numberA: number | string, numberB
 
   return percentageDifference.toFixed(0);
 }
+
+export const convertSecondsToMinutesOrHours = (seconds?: number) => {
+  if (!seconds) {
+    return;
+  }
+  if (seconds < 60) {
+    return `${seconds} seconds`;
+  } else if (seconds < 3600) {
+    return `${Math.round(seconds / 60)} minutes`;
+  } else {
+    return `${Math.round(seconds / 3600)} hours`;
+  }
+};
