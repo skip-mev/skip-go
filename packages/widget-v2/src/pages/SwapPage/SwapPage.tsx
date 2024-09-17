@@ -27,9 +27,8 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useGetAccount } from "@/hooks/useGetAccount";
+import { useAccount } from "@/hooks/useAccount";
 import { currentPageAtom, Routes } from "@/state/router";
-import { addAccountsAtom, userAccountsAtom } from "@/state/wallets";
 
 const sourceAssetBalance = 125;
 
@@ -43,7 +42,6 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom);
-
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
@@ -56,10 +54,7 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
-  const addAccounts = useSetAtom(addAccountsAtom);
-  const getAccount = useGetAccount();
-  const [userAccounts] = useAtom(userAccountsAtom);
-  const sourceAccount = sourceAsset?.chainID ? userAccounts?.[sourceAsset?.chainID] : undefined;
+  const sourceAccount = useAccount(sourceAsset?.chainID);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -98,15 +93,10 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        const account = getAccount(asset?.chainID);
-        addAccounts([{
-          chainId: asset?.chainID,
-          account,
-        }]);
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [addAccounts, getAccount, setSourceAsset, tokenAndChainSelectorModal]);
+  }, [setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
@@ -189,18 +179,7 @@ export const SwapPage = () => {
         icon={ICONS.plus}
         onClick={() => {
           selectWalletmodal.show({
-            chainId: sourceAsset?.chainID,
-            onWalletConnected: () => {
-              const sourceAccount = getAccount(sourceAsset?.chainID);
-              const destinationAccount = getAccount(destinationAsset?.chainID);
-              addAccounts([{
-                chainId: sourceAsset?.chainID,
-                account: sourceAccount,
-              }, {
-                chainId: destinationAsset?.chainID,
-                account: destinationAccount,
-              }]);
-            }
+            chainID: sourceAsset?.chainID,
           });
         }}
       />
@@ -209,14 +188,11 @@ export const SwapPage = () => {
     isWaitingForNewRoute,
     isRouteError,
     sourceAccount?.address,
+    sourceAsset?.chainID,
     routeError?.message,
     route,
     setCurrentPage,
     selectWalletmodal,
-    addAccounts,
-    getAccount,
-    sourceAsset?.chainID,
-    destinationAsset?.chainID,
   ]);
 
   const priceChangePercentage = useMemo(() => {

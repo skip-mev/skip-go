@@ -1,30 +1,31 @@
 import { getCosmosWalletInfo } from "@/constants/graz";
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
-import { Account, walletsAtom } from "@/state/wallets";
+import { walletsAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtomValue } from "jotai";
+import { useMemo } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 
-export const useGetAccount = () => {
+export const useAccount = (chainID?: string) => {
   const wallet = useAtomValue(walletsAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const chainType = chains?.find((c) => c.chainID === chainID)?.chainType;
 
   const { data: cosmosAccounts } = useCosmosAccount({
     multiChain: true
   });
+  const cosmosAccount = useMemo(() => {
+    if (!cosmosAccounts || !chainID) return;
+    return cosmosAccounts[chainID];
+  }, [cosmosAccounts, chainID]);
+
+  const solanaWallet = solanaWallets.find(
+    (w) => w.name === wallet.svm?.walletName
+  );
 
   const evmAccount = useEvmAccount();
-
-  const getAccount = (chainId?: string) => {
-    const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
-
-    const cosmosAccount = chainId ? cosmosAccounts?.[chainId] : undefined;
-
-    const solanaWallet = solanaWallets.find(
-      (w) => w.name === wallet.svm?.walletName
-    );
-
+  const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":
         {
@@ -36,7 +37,7 @@ export const useGetAccount = () => {
             address: cosmosAccount.bech32Address,
             chainType,
             wallet: {
-              name: wallet.cosmos.walletName,
+              name: wallet.cosmos,
               prettyName: walletInfo.name,
               logo: walletInfo.imgSrc,
               isLedger: cosmosAccount.isNanoLedger,
@@ -44,7 +45,7 @@ export const useGetAccount = () => {
           };
         }
       case "evm":
-        if (evmAccount.chainId !== Number(chainId)) return;
+        if (evmAccount.chainId !== Number(chainID)) return;
         if (!evmAccount.address) return;
         if (!evmAccount.connector) return;
         return {
@@ -72,7 +73,7 @@ export const useGetAccount = () => {
       default:
         return undefined;
     }
-  };
+  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
 
-  return getAccount;
+  return account;
 };
