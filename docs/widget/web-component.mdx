@@ -5,13 +5,13 @@ title: 'Web Component'
 If your app is not using React, have no fear, the web component version of the Skip:Go Widget is here!
 
 In order to use the web-component, you can either import it from `@skip-go/widget-web-component` or 
-use a script tag / cdn link.
+use a script tag or cdn link.
 
-It is recommended to lazy load this javascript bundle as it comes pre-bundled with all of its dependencies,
-so it will take some time to load, especially if including it directly inside your bundle in a dev environment.
+It is recommended to lazy load this javascript bundle as it comes pre-bundled with all of its dependencies. This means it'll
+take some time to load, especially if including it directly inside your bundle in a dev environment.
 
 If you're importing the package via npm you will need to make sure that node has enough memory allocated to it
-to be able to load it using something like this NODE_OPTIONS=--max-old-space-size=32384
+to be able to load it using something like this `NODE_OPTIONS=--max-old-space-size=32384`
 
 ```tsx
 import('@skip-go/widget-web-component');
@@ -28,7 +28,7 @@ or
 </body>
 ```
 
-voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`.
+Voilà! you can now use the `swap-widget` web-component as `<swap-widget></swap-widget>`.
 The props for the web component are the same as `SwapWidgetProps` except that all props
 are passed to the web-component via attributes in kebab-case as strings or stringified objects. Example below:
 

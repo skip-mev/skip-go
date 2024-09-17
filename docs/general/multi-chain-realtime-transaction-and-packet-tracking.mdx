@@ -1,13 +1,13 @@
 ---
 title: "Transaction Tracking"
-description: "This document covers the tooling provided in Skip Go API for tracking transaction status across multiple chains and bridge hops."
+description: "This document covers the tooling provided in Skip Go for tracking transaction status across multiple chains and bridge hops."
 ---
 
 ## Background
 
-The `/v2/tx` endpoints include unified APIs that broadcast transactions and provide insight into the status of transactions and their subsequent cross-chain actions over all the bridges we support. 
+The `/v2/tx` endpoints include unified APIs that broadcast transactions and provide insight into the status of transactions and their subsequent cross-chain actions. 
 
-You can use the `/v2/tx` endpoints to track the progress of a cross-chain transfer or swap, no matter how many chains or bridges the transfer touches, in realtime. (For more advanced use cases, the endpoints support tracking multiple distinct transfers initiated in a single transaction) 
+You can use the `/v2/tx` endpoints to track the progress of a cross-chain transfer or swap in realtime -- no matter how many chains or bridges the transfer touches. (For more advanced use cases, the endpoints support tracking multiple distinct transfers initiated in a single transaction).
 
 You can also use it to identify failure cases (e.g. a swap that fails due to slippage, an IBC transfer that fails due to inactive relayers) and determine where the user's tokens will become available. 
 
@@ -19,41 +19,40 @@ For example, if one of your end users initiates a swap that begins with ATOM on 
 
 At a high-level, the transaction tracking works in two stages: 
 
-1. You must inform our tracking engine that you want a particular transaction tracked by submitting it to the chain via `/v2/tx/submit` or submitting it to your own Node RPC then calling `/v2/tx/track`
-2. Query status at some regular interval to get updates on the progress of the transaction
+1. Inform our tracking engine that you want to track a particular transaction by submitting it to the chain via `/v2/tx/submit` or submitting it to your own Node RPC then calling `/v2/tx/track`
+2. Query the transaction status at some regular interval to get updates on it's progress
 
 <Info>
  **Tracking Multiple Independent Routes**
  
- (You can use the endpoint to track multiple transfers initiated in a single transaction, where the status of transfer `i` is given by entry `i` in the `transfers` array. For example, I could transfer ATOM to the Cosmos Hub and OSMO to Osmosis in a single transaction and track them with `transfers[0]` and `transfers[1]` respectively)
+ You can use the endpoint to track multiple transfers initiated in a single transaction, where the status of transfer `i` is given by entry `i` in the `transfers` array. For example, I could transfer ATOM to the Cosmos Hub and OSMO to Osmosis in a single transaction and track them with `transfers[0]` and `transfers[1]` respectively.
  
  For a single transfer that has multiple hops (e.g. transferring ATOM to the Cosmos Hub then to Osmosis), you can track the status of each hop using the entries of `transfers[i].transfer_sequence`
 </Info>
-The status endpoint provides a mixture of high-level fields to keep track of the basic progress of your route and low-level fields to drill all the way into the individual transactions that make up a single transfer. 
-
+The status endpoint provides a mixture of high-level fields to keep track of the basic progress of your route and low-level fields to provide high visbility into the individual transactions that make up a single transfer. 
 
 ### Important high-level `/v2/tx/status` fields
 
 Each entry in the `transfers` array corresponds to a single route that may contain many steps, and each entry in `transfer_sequence` will contain very detailed information about each step in that route. 
 
-But there a a few high-level fields in each `transfers` entry that you'll find useful no matter what your route does or what bridges it involves: 
+But there a few high-level fields in each `transfers` entry that you'll find useful no matter what your route does or what bridges it involves: 
 
 * `state`: The basic status of your route. **This lets you report the basic state of the route to the user (e.g. in progress, failed, etc...)**  
    * `STATE_SUBMITTED`: Indicates the transaction has been accepted for tracking but no on chain evidence has been found yet.  
    * `STATE_ABANDONED`: Tracking has stopped after 30 minutes without progress. There is likely a relayer outage, an undetected out of gas error, or some other problem.  
    * `STATE_PENDING`: The route is in progress and no errors have occurred yet  
-   * `STATE_PENDING_ERROR`: The route is in progress and an error has occurred somewhere, but the error is currently propagating, so the user doesn't have their tokens returned yet. (This state will only occur for protocols that require an "acknowledgement" on the source chain to process an error. IBC only at this time)  
+   * `STATE_PENDING_ERROR`: The route is in progress and an error has occurred somewhere, but the error is currently propagating, so the user doesn't have their tokens returned yet. (This state will only occur for protocols that require an _acknowledgement_ on the source chain to process an error. IBC only at this time)  
    * `STATE_COMPLETED_SUCCESS`: The route has completed successfully and the user has their tokens on the destination (indicated by `transfer_asset_release`)  
-   * `STATE_COMPLETED_ERROR`: The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset. (Again, `transfer_asset_release` indicates where the tokens are)
+   * `STATE_COMPLETED_ERROR`: The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but in the wrong asset. ( `transfer_asset_release` indicates where the tokens are)
 * `next_blocking_transfer`: Gives the index of the entry in `transfer_sequence` that corresponds to the currently propagating transfer that is immediately blocking the release of the user's tokens -- `next_blocking_transfer.transfer_sequence_index` (it could be propagating forward or it could be propagating an error ack backward). **This lets you tell the user exactly which operation is pending at a given time**
 * `transfer_asset_release`: Info about where the users tokens will be released when the route completes. This populates on `STATE_PENDING_ERROR`, `STATE_COMPLETED_SUCCESS`, or `STATE_COMPLETED_ERROR`. **This lets you tell the user where to recover their funds in the event of a success or failure** _(If you want to better understand how to predict this or where funds might end up, see [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases))_  
-   * `transfer_asset_release.released`: Boolean given whether the funds are currently available (If state is`STATE_PENDING_ERROR` , this will be `false`  
-   * `transfer_asset_release.chain_id`: Chain where the assets are released or will be released.  
-   * `transfer_asset_release.denom`: Denom of the tokens the user will have.
+   * `transfer_asset_release.released`: Boolean given whether the funds are currently available (if the state is`STATE_PENDING_ERROR` , this will be `false`)
+   * `transfer_asset_release.chain_id`: Chain where the assets are released or will be released
+   * `transfer_asset_release.denom`: Denom of the tokens the user will have
 
 ### Detailed Info: Using`transfer_sequence`
 
-The `transfer_sequence` array consists of `TransferEvent` objects, which give detailed information about an individual transfer operation. The object acts as a wrapper around one details object for each bridge we support 
+The `transfer_sequence` array consists of `TransferEvent` objects, which give detailed information about an individual transfer operation. The object acts as a wrapper around one details object for each bridge we support: 
 
 * `CCTPTransferInfo`
 * `IBCTransferInfo`
@@ -61,48 +60,47 @@ The `transfer_sequence` array consists of `TransferEvent` objects, which give de
 * `HyperlaneTransferInfo`
 
 Each one contains slightly different data and statuses corresponding to the details of their bridge, but they all contain some standard info: 
-
 * `from_chain_id`
 * `to_chain_id`
-* Transactions and block explorer links for all of the significant events in the transfer (send tx, receive tx, and sometimes ack tx)
+* Transactions and block explorer links for all of the significant events in the transfer (send tx, receive tx, and sometimes acknowledge tx)
 * A status field giving the status of the transfer, which can vary based on bridge
 
 #### IBC Transfer Data
 
 The `state` field in the `IBCTransferInfo` entries in the `transfer_sequence` array have the following meanings:
 
-* `TRANSFER_UNKNOWN`: The transfer state is unknown.
-* `TRANSFER_PENDING` \- The send packet for the transfer has been committed and the transfer is pending.
+* `TRANSFER_UNKNOWN`: The transfer state is unknown
+* `TRANSFER_PENDING` \- The send packet for the transfer has been committed and the transfer is pending
 * `TRANSFER_PENDING_ERROR` \- There has been a problem with the transfer (e.g. the packet has timed out) but the user doesn't have their funds unlocked yet because the error is still propagating
-* `TRANSFER_RECEIVED`\- The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
-* `TRANSFER_SUCCESS` \- The transfer has been successfully completed and will not revert.
-* `TRANSFER_FAILURE` \- The transfer has failed.
+* `TRANSFER_RECEIVED`\- The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer
+* `TRANSFER_SUCCESS` \- The transfer has been successfully completed and will not revert
+* `TRANSFER_FAILURE` \- The transfer 
 
-`packet_txs` contain transaction hashes, chain IDs, and block explorer links for potentially 4 transactions: 
+`packet_txs` contain transaction hashes, chain IDs, and block explorer links for up to 4 transactions: 
 
 * `send_tx`: The packet being sent from the source chain
 * `receive_tx`: The packet being received on the destination chain
-* `timeout_tx`: The packet has being timed out on the destination chain
+* `timeout_tx`: The packet being timed out on the destination chain
 * `acknowledge_tx`: The successful or failed acknowledgement of the packet on the source chain
 
 #### Axelar Transfer Data
 
 When one of the transfers is an Axelar transfer, the `transfer_sequence` array will give an `axelar_transfer` (`AxelarTransferInfo`), instead of an `ibc_transfer`, which contains different data because: 
 
-* Skip Go API may utilize send\_token or contract\_call\_with\_token (two underlying Axelar protocols) depending on which is cheaper and which is required to execute the user's intent
+* The Skip Go API may utilize send\_token or contract\_call\_with\_token (two underlying Axelar protocols) depending on which is cheaper and which is required to execute the user's intent
 * Axelar does not have a notion of packets or acks, like IBC does
 * Axelar provides a nice high level UI (Axelarscan) to track the status of their transfers
 
 More precise details about all the fields are below: 
 
-* `type` : an enum of `AXELAR_TRANSFER_SEND_TOKEN` and `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN`, which indicate whether the Axelar transfer is a \[Send Token\]([https://docs.axelar.dev/dev/send-tokens/overview](https://docs.axelar.dev/dev/send-tokens/overview)) or a \[Contract Call With Token\]([https://docs.axelar.dev/dev/general-message-passing/gmp-tokens-with-messages](https://docs.axelar.dev/dev/general-message-passing/gmp-tokens-with-messages)) transfer respectively.
+* `type` : an enum of `AXELAR_TRANSFER_SEND_TOKEN` and `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` which indicate whether the Axelar transfer is a [Send Token](https://docs.axelar.dev/dev/send-tokens/overview) or a [Contract Call With Token](https://docs.axelar.dev/dev/general-message-passing/gmp-tokens-with-messages) transfer respectively.
 * `axelar_scan_link`: Gives the link to Axelar's bridge explorer (which can help track down and unstick transactions)
 * `state` field indicates the current state of the Axelar transfer using the following values:  
-   * `AXELAR_TRANSFER_UNKNOWN` \- The transfer state is unknown.  
-   * `AXELAR_TRANSFER_PENDING_CONFIRMATION` \- The transfer has been initiated is pending confirmation by the Axelar network.  
-   * `AXELAR_TRANSFER_PENDING_RECEIPT` \- The transfer has been confirmed by the Axelar network and is pending receipt at the destination.  
-   * `AXELAR_TRANSFER_SUCCESS` \- The transfer has been completed successfully and assets have been received at the destination.  
-   * `AXELAR_TRANSFER_FAILURE` \- The transfer has failed.
+   * `AXELAR_TRANSFER_UNKNOWN` \- The transfer state is unknown
+   * `AXELAR_TRANSFER_PENDING_CONFIRMATION` \- The transfer has been initiated but is pending confirmation by the Axelar network
+   * `AXELAR_TRANSFER_PENDING_RECEIPT` \- The transfer has been confirmed by the Axelar network and is pending receipt at the destination
+   * `AXELAR_TRANSFER_SUCCESS` \- The transfer has been completed successfully and assets have been received at the destination
+   * `AXELAR_TRANSFER_FAILURE` \- The transfer has failed
 * `txs` field schema depends on the `type` of the transfer  
    * If `type` is `AXELAR_TRANSFER_SEND_TOKEN`, there are 3 txs:  
          * `send_tx` (initiating the transfer)  
@@ -175,7 +173,7 @@ This will walk through an example of how a developer would use the api to track 
 
 In this particular example, we'll cover a simple 2-hop IBC transfer from axelar to the cosmoshub through osmosis.
 
-_(Usage is similar for tracking Axelar transfers or transfers that include multiple hops over distinct bridges but the data structures change slightly depending on what underlying bridge is being used)_
+_Usage is similar for tracking Axelar transfers or transfers that include multiple hops over distinct bridges but the data structures change slightly depending on what underlying bridge is being used_
 
 ### 1\. Call `/tx/submit` to broadcast a transaction
 
