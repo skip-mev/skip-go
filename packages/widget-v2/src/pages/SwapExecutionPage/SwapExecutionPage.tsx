@@ -1,11 +1,11 @@
-import { Column, Row } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
-import styled, { useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { destinationWalletAtom } from "@/state/swapPage";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -13,9 +13,6 @@ import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed
 
 import { withBoundProps } from "@/utils/misc";
 import { txState } from "./SwapExecutionPageRouteDetailedRow";
-import { SmallText } from "@/components/Typography";
-import { SignatureIcon } from "@/icons/SignatureIcon";
-import pluralize from "pluralize";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
@@ -28,7 +25,6 @@ enum SwapExecutionState {
   confirmed,
 }
 
-const SIGNATURES_REQUIRED = 2;
 const TX_DELAY_MS = 5_000;
 
 export const SwapExecutionPage = () => {
