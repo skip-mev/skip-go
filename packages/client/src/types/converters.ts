@@ -2488,6 +2488,8 @@ export function balanceResponseDenomEntryFromJSON(
     amount: value.amount,
     decimals: value.decimals,
     formattedAmount: value.formatted_amount,
+    price: value.price,
+    valueUSD: value.value_usd,
     error: value.error,
   };
 }
@@ -2499,6 +2501,8 @@ export function balanceResponseDenomEntryToJSON(
     amount: value.amount,
     decimals: value.decimals,
     formatted_amount: value.formattedAmount,
+    price: value.price,
+    value_usd: value.valueUSD,
     error: value.error,
   };
 }

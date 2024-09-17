@@ -592,6 +592,8 @@ export type BalanceResponseDenomEntryJSON = {
   amount: string;
   decimals?: number;
   formatted_amount: string;
+  price?: string;
+  value_usd?: string;
   error?: ApiError;
 };
 
@@ -599,6 +601,8 @@ export type BalanceResponseDenomEntry = {
   amount: string;
   decimals?: number;
   formattedAmount: string;
+  price?: string;
+  valueUSD?: string;
   error?: ApiError;
 };
 
