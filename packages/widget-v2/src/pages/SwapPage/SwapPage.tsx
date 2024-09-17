@@ -45,7 +45,11 @@ export const SwapPage = () => {
   const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
+  const {
+    data: route,
+    isError: isRouteError,
+    error: routeError,
+  } = useAtomValue(skipRouteAtom);
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
@@ -193,6 +197,7 @@ export const SwapPage = () => {
     routeError?.message,
     route,
     setCurrentPage,
+    setSwapExecutionState,
     selectWalletmodal,
   ]);
 
