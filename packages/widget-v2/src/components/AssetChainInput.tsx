@@ -13,13 +13,14 @@ import {
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
+import { AssetAtom } from "@/state/swapPage";
 
 export type AssetChainInputProps = {
   value?: string;
   onChangeValue?: (value: string) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
-  selectedAssetDenom?: string;
+  selectedAsset?: AssetAtom;
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
 };
@@ -27,7 +28,7 @@ export type AssetChainInputProps = {
 export const AssetChainInput = ({
   value,
   onChangeValue,
-  selectedAssetDenom,
+  selectedAsset,
   handleChangeAsset,
   handleChangeChain,
   priceChangePercentage,
@@ -37,8 +38,9 @@ export const AssetChainInput = ({
   const [showPriceChangePercentage, setShowPriceChangePercentage] =
     useState(false);
   const assetDetails = useGetAssetDetails({
-    assetDenom: selectedAssetDenom,
+    assetDenom: selectedAsset?.denom,
     amount: value,
+    chainId: selectedAsset?.chainID,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
