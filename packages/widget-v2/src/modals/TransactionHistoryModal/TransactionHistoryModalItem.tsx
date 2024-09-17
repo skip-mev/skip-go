@@ -3,7 +3,6 @@ import { SmallText } from "@/components/Typography";
 import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
-import { getFormattedAssetAmount } from "@/utils/crypto";
 import { XIcon } from "@/icons/XIcon";
 import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
@@ -60,21 +59,23 @@ export const TransactionHistoryModalItem = ({
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
     chainId: sourceAssetChainID,
+    tokenAmount: amountIn,
   });
 
   const destinationAssetDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainID
+    chainId: destAssetChainID,
+    tokenAmount: amountOut,
   });
 
   const source = {
-    amount: amountIn,
+    amount: sourceAssetDetails.amount,
     asset: sourceAssetDetails.asset,
     chainImage: sourceAssetDetails?.chainImage ?? "",
   };
 
   const destination = {
-    amount: amountOut,
+    amount: destinationAssetDetails.amount,
     asset: destinationAssetDetails.asset,
     chainImage: destinationAssetDetails.chainImage ?? "",
   };
@@ -173,15 +174,15 @@ const RenderAssetAmount = ({
   asset,
   chainImage,
 }: {
-  amount: string;
-  asset: ClientAsset | undefined;
+  amount?: string;
+  asset?: ClientAsset;
   chainImage: string;
 }) => {
   return (
     <>
       <img height={20} width={20} src={chainImage} />
       <SmallText normalTextColor>
-        {getFormattedAssetAmount(amount, asset?.decimals)}
+        {amount}
       </SmallText>
       <SmallText normalTextColor>
         {asset?.recommendedSymbol ?? asset?.symbol}

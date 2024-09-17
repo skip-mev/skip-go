@@ -41,7 +41,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
     "mount";
   }, []);
   const theme = useTheme();
-  
+
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
     chainId: chainID,
@@ -71,7 +71,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.formattedAmount}{" "}
+          {assetDetails.amount}{" "}
           {assetDetails?.symbol}
         </Text>
         <SmallText>
@@ -82,10 +82,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
           {wallet && (
             <>
-              {wallet.imageUrl && (
-                <img height={10} width={10} src={wallet.imageUrl} />
+              {wallet.walletInfo.logo && (
+                <img height={10} width={10} src={wallet.walletInfo.logo} />
               )}
-              <SmallText>{wallet.address}</SmallText>
+              <SmallText>
+                {/* {wallet.address} */}
+              </SmallText>
 
               {explorerLink ? (
                 <Button onClick={() => window.open(explorerLink, "_blank")}>

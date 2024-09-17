@@ -46,7 +46,7 @@ export const ErrorPageTransactionReverted = ({
               color={theme.primary.text.lowContrast}
               textAlign="center"
             >
-              Current asset location: {assetDetails?.formattedAmount}{" "}
+              Current asset location: {assetDetails?.amount}{" "}
               {assetDetails?.symbol} on {assetDetails?.chainName} (
               {recoveryAddress})
             </SmallText>

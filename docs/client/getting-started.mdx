@@ -129,7 +129,9 @@ const testnetChains = await skipClient.chains({
 });
 ```
 
-### Get a Map of assets by Chain ID
+#### Get a map of assets by chain ID
+
+Return type will be `Record<string, Asset[]>`
 
 ```ts
 // returns `Record<string, Asset[]>
@@ -138,9 +140,9 @@ const assets = await skipClient.assets({
   includeSvmAssets: true,
 });
 
-// filter assets by chain ID
-const hubAssets = await skipClient.assets({
-  chainID: 'cosmoshub-4',
+// get assets filtered by chain ID
+const assets = await client.assets({
+  chainID: 'cosmoshub-4'
   includeCW20Assets: true,
 })
 ```

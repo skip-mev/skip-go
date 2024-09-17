@@ -91,7 +91,7 @@ const skipClient = new SkipClient({
 
 Now, we can use the `SkipClient.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia.
 
-Just add the following line after the line where you initialized the skipClient:
+After initializing your `skipClient` add the following::
 
 ```ts
 const route = await skipClient.route({
@@ -104,6 +104,7 @@ const route = await skipClient.route({
     splitRoutes: true,
   },
 });
+
 ```
 
 <Info>
@@ -129,7 +130,7 @@ Learn more about [setting affilate fees](/affiliate-fees)
 </Note>
 ### 4\. Get Required Addresses
 
-Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route.
+With the route response available, we can now use our signer to retrieve the list of chains where user or receiver addresses are required to execute the route.
 
 We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipClient.executeRoute` method.
 
@@ -162,9 +163,9 @@ const userAddresses = route.requiredChainAddresses.map(chainID => {
 <Warning>
  **Never attempt to derive an address on one chain from an address on another chain**
 
-Whenever you need a user address, please request it from the corresponding wallet / signer. Do not attempt to use bech32 cross-chain derivation.
+Whenever you need a user address, please request it from the corresponding wallet or signer. Do not attempt to use bech32 cross-chain derivation.
 
-If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for and cannot use.
+If you attempt to derive an address on one chain from an address on another chain, you may derive an address that the user cannot actually sign for if the two chains have different address-derivation processes. For example, if you derive a Cosmos address from an Ethereum address, you will get an address that the user cannot sign for and thus risk lost tokens.
 
 </Warning>
 

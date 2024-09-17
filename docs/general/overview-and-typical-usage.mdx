@@ -4,8 +4,9 @@ title: 'Overview & Common Usage Patterns'
 
 ## Summary
 
-This doc provides a high-level overview of the different kinds of methods available in the Skip Go API & describes how integrators typically use them in combination to create a cross-chain swapping frontend like [go.skip.build](https://go.skip.build)
+This doc provides a high-level overview of the different kinds of methods available in the Skip Go API & describes how integrators typically use them in combination to create a cross-chain swapping frontend like [go.skip.build](https://go.skip.build).
 
+See the [API reference](/api-reference/prod) for more information on each endpoint.
 ## Overview of Methods
 
 ### `/info` methods: Functionality for Retrieving General Purpose Info
@@ -17,6 +18,7 @@ The most important `info` methods include:
 - `/v2/info/chains` (`SkipClient.chains`): Get info about all supported chains, including capabilities, address type, logo, etc...
 - `/v2/info/bridges`: Get basic info about all supported bridges, including logo and name
 
+
 ### `/fungible` methods: Functionality for fungible token swaps and transfers
 
 The `/v2/fungible` endpoints & their counterparts in `SkipClient` provide APIs for cross-chain swaps and transfers of fungible tokens.
@@ -25,7 +27,7 @@ In the background, the API provides automatic DEX aggregation, bridge routing, d
 
 The most important `fungible` methods include :
 
-- `/v2/fungible/route` (`SkipClient.route`): Get a swap/transfer route and quote between a pair of tokens & chains (You can customize this request significantly to only consider particular DEXes, bridges; to add route splitting for better prices; and much more...)
+- `/v2/fungible/route` (`SkipClient.route`): Get a swap/transfer route and quote between a pair of tokens & chains. You can customize this request significantly to only consider particular DEXes, bridges; to add route splitting for better prices; and much more.
 - `/v2/fungible/msgs` (`SkipClient.msgs` ): Generates the transaction data for the transaction(s) the user must sign to execute a given route
 - `/v2/fungible/msgs_direct` (`SkipClient.msgsDirect`) : Generates a route, quote, and associated transaction data at the same time
 - `/v2/fungible/venues`(`SkipClient.venues`): Get metadata for all supported swapping venues (DEXes, liquid staking protocols, etc...), including name and logo.
@@ -41,6 +43,8 @@ The most important `tx` methods include:
 - `/v2/tx/submit`(`SkipClient.submitTransaction`): Submits a transaction on chain through Skip's nodes and registers the transaction for tracking with Skip Go API _(Recommended especially for Solana and other high congestion networks where successfully submitting a transaction can be tricky)_
 - `/v2/tx/track`(`SkipClient.trackTransaction`): Registers a transaction for tracking with Skip Go API (Often used instead of `/submit` when an integrator has their own chain nodes for submitting)
 - `/v2/tx/status` (`SkipClient.transactionStatus`) : Get the current status of a multi-hop transaction
+
+[`/tx` API reference](https://docs.skip.build/go/api-reference/prod/transaction/post-v2txsubmit)
 
 ## Typical Usage in Cross-chain Swapping Frontend
 
@@ -60,7 +64,7 @@ On a cross-chain swapping and transferring frontend, integrators typically:
 
 4. Use `/tx/track`(`SkipClient.trackTransaction`) to register the transaction for tracking (or `/tx/submit` to register and submit it on-chain)
 
-5. Use `/status` (`SkipClient.transactionStatus`) to get the real-time status of the transaction as it progresses through multiple bridges/chains.
+5. Use `/status` (`SkipClient.transactionStatus`) to get the real-time status of the transaction as it progresses across bridges and/or chains.
    <Frame>![](/images/a83beaf-CleanShot_2024-05-23_at_15.59.452x.png)</Frame>
 
  <Check>

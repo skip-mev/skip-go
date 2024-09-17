@@ -2,9 +2,9 @@
 [![npm/dt](https://badgen.net/npm/dt/@skip-go/client?)](https://www.npmjs.com/package/@skip-go/client)
 [![stars](https://badgen.net/github/stars/skip-mev/skip-go?)](https://github.com/skip-mev/skip-go)
 
-# @skip-go/client
+# `@skip-go/client`
 
-JavaScript SDK for Skip Go API
+TypeScript library that streamlines interaction with the Skip Go API, enabling cross-chain swaps and transfers across multiple ecosystems.
 
 ## Install
 
@@ -14,7 +14,7 @@ npm install @skip-go/client
 
 ## Usage
 
-Read more at Skip Go API docs website on [Getting Started: TypeScript SDK](https://docs.skip.build/go/general/getting-started).
+Follow the [Getting Started](https://docs.skip.build/go/client/getting-started) guide to begin your integration.
 
 ## Development
 
@@ -35,6 +35,7 @@ npm -w @skip-go/client run watch
 # build packages
 npm run build
 ```
+
 
 ## Unit Tests
 

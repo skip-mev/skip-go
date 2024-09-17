@@ -54,7 +54,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
       <Row align="center" justify="space-between" style={{ flex: 1 }}>
         <Row gap={5}>
           <SmallText normalTextColor>
-            {assetDetails?.formattedAmount}{" "}
+            {assetDetails?.amount}{" "}
             {assetDetails?.symbol}
           </SmallText>
           <SmallText> on {assetDetails?.chainName}</SmallText>

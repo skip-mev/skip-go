@@ -55,10 +55,10 @@ export const ErrorPageTradeWarning = ({
               You will lose ~{swapDifferencePercentage} of your input value with
               this trade
               <br />
-              Input: {sourceDetails?.formattedAmount} {sourceDetails?.symbol} (
+              Input: {sourceDetails?.amount} {sourceDetails?.symbol} (
               {sourceDetails?.formattedUsdAmount})
               <br />
-              Estimated output: ~{destinationDetails?.formattedAmount}{" "}
+              Estimated output: ~{destinationDetails?.amount}{" "}
               {destinationDetails?.symbol} (
               {destinationDetails?.formattedUsdAmount})
             </SmallText>

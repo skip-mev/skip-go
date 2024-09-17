@@ -27,13 +27,13 @@ Technically, you can access most of the basic functionality of the Skip Go API w
 - **No rate limit**: Integrators that do not pass a valid API key in their requests will be subject to a restrictive global rate limit, shared with all other unauthenticated users.
 - **Improved fee revenue share pricing**: Unauthenticated integrators will be subject to a 25% revenue share on their fee revenue by default. Authenticated integrators who use API keys will be subject to a cheaper 20% revenue share by default.
 - **Access to privileged features:** Integrators who authenticate with an API key will receive access to premium features that we cannot offer to the general public (e.g. Gas estimation APIs, universal balance query APIs, etc...)
-- **Metrics on your volume and revenue:** Authenticated integrators will receive access to monthly statistics regarding their total swap and transfer volume and the amount of fee revenue they've earned. They will also receive transaction data for taxes annually.
+- **Metrics on your volume and revenue:** Authenticated integrators will receive access to monthly statistics regarding their total swap and transfer volume and the amount of fee revenue they've earned. They will also receive annual transaction data for taxes.
 
 ## How to get an API Key
 
 ### 1\. Request an API Key
 
-Open a support ticket on our [Discord](https://skip.build/discord) and tell our customer support that you'd like an API key. \*\*
+Open a support ticket on our [Discord](https://skip.build/discord) and tell our customer support that you'd like an API key.
 
 Please provide the following information in your request to help us get to know your project:
 
@@ -47,7 +47,7 @@ The customer support team member at Skip will establish an official channel of c
 
 **You should store the API key immediately when you create it. We do not store your raw API key in our server for security reasons, so we will not be able to access it for you if you lose it.**
 
-It is important to keep your API key private: Anyone with your API key can make requests to the Skip Go API as you, getting access to your rate limit, privileged features, and affecting your revenue and volume statistics.
+It is important to keep your API key private. Anyone with your API key can make requests to the Skip Go API as you, getting access to your rate limit, privileged features, and affecting your revenue and volume statistics.
 
 ## How to use an API key
 
@@ -92,7 +92,7 @@ const client = new SkipClient({
 
 ### Setup a Proxy to Receive Skip Go API Requests and Add the API Key
 
-To keep your API key secure and private, we recommend that you proxy the API requests from the frontend to your own backend--where you can add your API key in the header before forwarding the request to Skip Go API.
+To keep your API key secure and private, we recommend that you proxy the API requests from the frontend to your own backend--where you can add your API key in the header before forwarding the request to the Skip Go API.
 
 The snippets below show you how to use Next.js/Vercel for this kind of proxying. It only takes a moment to set up.
 
@@ -175,7 +175,7 @@ SKIP_API_KEY=<YOUR API KEY>
 
 ## How to Request Volume & Revenue Statistics
 
-Just return to your official communication channel with Skip (probably a Telegram channel) and request the data. We will be able to share monthly reports. Eventually, we will create a customer portal and dashboards, so you'll have access to all the data you need continuously in a self-service manner.
+Just return to your official communication channel with Skip (probably a Telegram channel) and request the data. We can share monthly reports. Eventually, we will create a customer portal with dashboards, so you'll have access to all the data you need in a self-service manner.
 
  <Check>
  **Have questions or feedback? Help us get better!**
