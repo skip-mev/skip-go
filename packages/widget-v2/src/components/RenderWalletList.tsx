@@ -13,12 +13,26 @@ import { useModal } from "./Modal";
 
 export type RenderWalletListProps = {
   title: string;
-  walletList: MinimalWallet[];
+  walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
 };
 
-export type Wallet = MinimalWallet & {
+export type ManualWalletEntry = {
+  walletName: string;
+  onSelect: () => void;
   rightContent?: () => React.ReactNode;
+};
+
+export const isManualWalletEntry = (
+  wallet: ManualWalletEntry | MinimalWallet
+): wallet is ManualWalletEntry => {
+  return (wallet as ManualWalletEntry).onSelect !== undefined;
+};
+
+export const isMinimalWallet = (
+  wallet: ManualWalletEntry | MinimalWallet
+): wallet is MinimalWallet => {
+  return (wallet as MinimalWallet).connect !== undefined;
 };
 
 const ITEM_HEIGHT = 60;
@@ -57,6 +71,7 @@ export const RenderWalletList = ({
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
+
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
@@ -64,42 +79,47 @@ export const RenderWalletList = ({
     },
     onSuccess: () => {
       modal.remove();
-    }
+    },
   });
 
-  const renderItem = useCallback((wallet: Wallet) => {
-    const {
-      walletName,
-      walletPrettyName,
-      walletInfo: { logo: imageUrl },
-      rightContent,
-    } = wallet;
-    return (
-      <ModalRowItem
-        key={walletName}
-        onClick={() => {
-          connectMutation.mutate(wallet);
-        }}
-        style={{ marginTop: ITEM_GAP }}
-        leftContent={
-          <Row align="center" gap={10}>
-            {imageUrl && (
-              <img
-                height={35}
-                width={35}
-                style={{ objectFit: "cover" }}
-                src={imageUrl}
-                alt={`${walletPrettyName} logo`}
-              />
-            )}
+  const renderItem = useCallback(
+    (wallet: ManualWalletEntry | MinimalWallet) => {
+      const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName;
+      const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
+      const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
 
-            <Text>{walletPrettyName}</Text>
-          </Row>
-        }
-        rightContent={rightContent?.()}
-      />
-    );
-  }, [connectMutation]);
+      return (
+        <ModalRowItem
+          key={name}
+          onClick={() => {
+            if (isMinimalWallet(wallet)) {
+              connectMutation.mutate(wallet);
+            } else {
+              wallet.onSelect();
+            };
+          }}
+          style={{ marginTop: ITEM_GAP }}
+          leftContent={
+            <Row align="center" gap={10}>
+              {imageUrl && (
+                <img
+                  height={35}
+                  width={35}
+                  style={{ objectFit: "cover" }}
+                  src={imageUrl}
+                  alt={`${name} logo`}
+                />
+              )}
+
+              <Text>{name}</Text>
+            </Row>
+          }
+          rightContent={rightContent?.()}
+        />
+      );
+    },
+    [connectMutation]
+  );
 
   const height = useMemo(() => {
     return Math.min(530, walletList.length * (ITEM_HEIGHT + ITEM_GAP));
@@ -107,9 +127,11 @@ export const RenderWalletList = ({
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
     if (connectMutation.isError || connectMutation.isPending) {
-      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
+      const titleText = connectMutation.isError
+        ? "Failed to connect"
+        : "Connecting to";
       return (
-        <StyledInnerContainer height={height} >
+        <StyledInnerContainer height={height}>
           <StyledLoadingContainer>
             <StyledAnimatedBorder
               width={80}
@@ -121,30 +143,57 @@ export const RenderWalletList = ({
               <img
                 style={{ objectFit: "cover" }}
                 src={connectMutation.variables?.walletInfo.logo}
-                alt={`${connectMutation.variables?.walletPrettyName} logo`} />
+                alt={`${connectMutation.variables?.walletPrettyName} logo`}
+              />
             </StyledAnimatedBorder>
-            <Text color={theme.primary.text.lowContrast}>{titleText} {connectMutation.variables?.walletPrettyName}</Text>
-            {connectMutation.error && <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>{connectMutation.error.message}</Text>}
+            <Text color={theme.primary.text.lowContrast}>
+              {titleText} {connectMutation.variables?.walletPrettyName}
+            </Text>
+            {connectMutation.error && (
+              <Text
+                textAlign="center"
+                fontSize={14}
+                color={theme.primary.text.lowContrast}
+              >
+                {connectMutation.error.message}
+              </Text>
+            )}
           </StyledLoadingContainer>
-        </StyledInnerContainer >
+        </StyledInnerContainer>
       );
     }
 
-    return <VirtualList
-      listItems={walletList}
-      height={height}
-      itemHeight={ITEM_HEIGHT + ITEM_GAP}
-      renderItem={renderItem}
-      itemKey={(item) => item.walletName}
-    />;
-
-  }, [connectMutation.error, connectMutation.isError, connectMutation.isPending, connectMutation.variables?.walletInfo.logo, connectMutation.variables?.walletPrettyName, height, renderItem, theme.primary.text.lowContrast, theme.primary.text.normal, walletList]);
+    return (
+      <VirtualList
+        listItems={walletList}
+        height={height}
+        itemHeight={ITEM_HEIGHT + ITEM_GAP}
+        renderItem={renderItem}
+        itemKey={(item) => item.walletName}
+      />
+    );
+  }, [
+    connectMutation.error,
+    connectMutation.isError,
+    connectMutation.isPending,
+    connectMutation.variables?.walletInfo.logo,
+    connectMutation.variables?.walletPrettyName,
+    height,
+    renderItem,
+    theme.primary.text.lowContrast,
+    theme.primary.text.normal,
+    walletList,
+  ]);
 
   return (
     <StyledContainer gap={15}>
       <RenderWalletListHeader
         title={title}
-        onClickBackButton={(connectMutation.isPending || connectMutation.isError) ? connectMutation.reset : onClickBackButton}
+        onClickBackButton={
+          connectMutation.isPending || connectMutation.isError
+            ? connectMutation.reset
+            : onClickBackButton
+        }
       />
       {renderWalletListOrWalletConnectionStatus}
     </StyledContainer>

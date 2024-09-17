@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 import { ClientAsset, skipRouteAtom } from "./skipClient";
-import { Wallet } from "@/components/RenderWalletList";
 import { atomEffect } from "jotai-effect";
 import { parseAmountWei } from "@/utils/number";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
+import { MinimalWallet } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -87,9 +87,9 @@ export const invertSwapAtom = atom(null, (get, set, swapDirection: SwapDirection
   set(isInvertingSwapAtom, false);
 });
 
-export const connectedWalletAtom = atom<Wallet>();
+export const connectedWalletAtom = atom<MinimalWallet>();
 
-export const destinationWalletAtom = atom<Wallet>();
+export const destinationWalletAtom = atom<MinimalWallet>();
 
 export const routeAmountEffect = atomEffect((get, set) => {
   const route = get(skipRouteAtom);

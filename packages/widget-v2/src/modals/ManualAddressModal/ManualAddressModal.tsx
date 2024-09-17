@@ -6,7 +6,7 @@ import { RightArrowIcon } from "@/icons/ArrowIcon";
 import {
   RenderWalletList,
   RenderWalletListHeader,
-  Wallet,
+  ManualWalletEntry,
 } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
@@ -42,7 +42,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
           />
         );
       },
-    } as Wallet,
+    } as ManualWalletEntry,
   ];
 
   const handleChangeAddress = useCallback(

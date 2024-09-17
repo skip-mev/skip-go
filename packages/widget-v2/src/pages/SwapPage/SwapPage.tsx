@@ -161,7 +161,7 @@ export const SwapPage = () => {
 
     return <MainButton disabled={!sourceAsset?.chainID} label="Connect Wallet" icon={ICONS.plus} onClick={() => {
       selectWalletmodal.show({
-        chainID: sourceAsset?.chainID,
+        chainId: sourceAsset?.chainID,
       });
     }} />;
   }, [isWaitingForNewRoute, isRouteError, sourceAccount?.address, sourceAsset?.chainID, routeError?.message, route, selectWalletmodal]);
