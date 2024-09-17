@@ -19,6 +19,7 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -48,6 +49,7 @@ export const SwapPage = () => {
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
+  const setSwapExecutionState = useSetAtom(swapExecutionStateAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
@@ -163,7 +165,10 @@ export const SwapPage = () => {
           label="Swap"
           icon={ICONS.swap}
           disabled={!route}
-          onClick={() => setCurrentPage(Routes.SwapExecutionPage)}
+          onClick={() => {
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState({ userAddresses: [], route });
+          }}
         />
       );
     }

@@ -20,6 +20,7 @@ import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { skipRouteAtom } from "@/state/skipClient";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -34,7 +35,7 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { data: route, dataUpdatedAt } = useAtomValue(skipRouteAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -118,7 +119,6 @@ export const SwapExecutionPage = () => {
         }}
       />
       <SwapExecutionPageRoute
-        key={dataUpdatedAt}
         txStateMap={txStateMap}
         operations={clientOperations}
       />

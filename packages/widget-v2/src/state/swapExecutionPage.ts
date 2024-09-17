@@ -1,9 +1,21 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipClient, skipRouteAtom } from "./skipClient";
+import { skipClient } from "./skipClient";
+import { atom } from "jotai";
+import { RouteResponse, UserAddress } from "@skip-go/client";
+
+type SwapExecutionState = {
+  userAddresses: UserAddress[];
+  route?: RouteResponse;
+}
+
+export const swapExecutionStateAtom = atom<SwapExecutionState>({
+  route: undefined,
+  userAddresses: [],
+});
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
-  const { data: route } = get(skipRouteAtom);
+  const { route, userAddresses } = get(swapExecutionStateAtom);
 
   return {
     gcTime: Infinity,
@@ -24,18 +36,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           // },
           onTransactionTracked: async (txStatus) => {
             console.log(txStatus);
-
-            // setBroadcastedTxs((v) => {
-            //   const txs = [
-            //     ...v,
-            //     {
-            //       chainID: txStatus.chainID,
-            //       txHash: txStatus.txHash,
-            //       explorerLink: txStatus.explorerLink,
-            //     },
-            //   ];
-            //   return txs;
-            // });
           },
         });
       } catch (error) {
