@@ -4,7 +4,7 @@ import { useSetAtom } from "jotai";
 import { useCallback, } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount, useDisconnect, useConnect, } from "wagmi";
+import { useAccount, useConnect, useConnectors, } from "wagmi";
 
 
 export const useCreateEvmWallets = () => {
@@ -12,9 +12,9 @@ export const useCreateEvmWallets = () => {
   const {
     connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId
   } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-  const { connectors, connectAsync } = useConnect();
-
+  const { connectAsync } = useConnect();
+  const connectors = useConnectors();
+  const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
   const createEvmWallets = useCallback((chainID: string) => {
     const isSei = chainID === "pacific-1";
     const wallets: MinimalWallet[] = [];
@@ -69,7 +69,7 @@ export const useCreateEvmWallets = () => {
           }
         },
         disconnect: async () => {
-          await disconnectAsync();
+          await currentConnector?.disconnect();
           setEvmWallet(undefined);
           // TODO: onWalletDisconnected
         },
@@ -99,7 +99,7 @@ export const useCreateEvmWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [chainId, connectAsync, connectors, currentEvmConnector?.id, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
+  }, [chainId, connectAsync, connectors, currentConnector, currentEvmConnector?.id, evmAddress, isEvmConnected, setEvmWallet]);
 
   return { createEvmWallets };
 };

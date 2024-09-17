@@ -47,6 +47,7 @@ export const useAccount = (chainID?: string) => {
           };
         }
       case "evm":
+        if (!wallet.evm) return;
         if (evmAccount.chainId !== Number(chainID)) return;
         if (!evmAccount.address) return;
         if (!evmAccount.connector) return;
@@ -61,6 +62,7 @@ export const useAccount = (chainID?: string) => {
         };
       case "svm":
         {
+          if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
           return {
             address: solanaWallet.publicKey.toBase58(),
@@ -75,7 +77,7 @@ export const useAccount = (chainID?: string) => {
       default:
         return undefined;
     }
-  }, [chainType, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, connectors, cosmosAccount, wallet.cosmos, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
+  }, [chainType, wallet.evm, wallet.cosmos, wallet.svm, evmAccount.chainId, evmAccount.address, evmAccount.connector, chainID, connectors, cosmosAccount, solanaWallet?.publicKey, solanaWallet?.name, solanaWallet?.icon]);
 
   return account;
 };

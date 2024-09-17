@@ -133,5 +133,5 @@ export const config: Config = createConfig({
     [formaTestnet.id]: http(),
     [sei.id]: http(),
   },
-  ssr: true,
+  ssr: false,
 });
