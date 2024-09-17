@@ -4,20 +4,21 @@ title: 'Quickstart Guide'
 
 ## Summary
 
-This walkthrough demonstrates how to perform a swap of USDC on Noble to TIA on Celestia using the Skip Go Client .
+This walkthrough demonstrates how to perform a swap of USDC on Noble to TIA on Celestia using the Skip Go Client in a browser environment.
+
+## Prerequisites
+
+- **Node.js and npm** installed on your machine.
+- Basic knowledge of **TypeScript**.
+- Familiarity with **Cosmos wallets**, specifically **Keplr**.
 
  <Note>
  **Having trouble? Get in touch!**
 
-Please reach out if you believe the client does not support your desired user experience or are unsure of how to use it.
+Please reach out if Skip Go doesn't support your desired user experience or are unsure of how to use it.
 Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role.
 
 </Note>
-
-
-## Example using @skip-go/client package
-
-This example is for browser environments.
 
 ### 1\. Install @skip-go/client
 
@@ -28,11 +29,9 @@ npm i @skip-go/client
 ```
 
 <Info>
- **Additional dependencies and steps will be required for EVM & SVM Transactions**
+ **EVM and SVM transactions**
 
-This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go API supports all major EVM chains & Solana. (See [Supported Ecosystems](/supported-ecosystems-and-bridges) for more info about which chains, routes, and tokens we support)
-
-If you'd like to perform a cross-chain swap that starts or ends on Solana or an EVM chain, you'll need to import additional dependencies and configure additional tx signers. After going through this tutorial, check out [EVM Transactions Intro](/evm-transactions) and [SVM Transactions Intro](/svm-transaction-details) if you need.
+This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go supports all major EVM chains & Solana. See [Supported Ecosystems](./supported-ecosystems-and-bridges), [EVM Transactions](../advanced-transfer/evm-transactions) and [SVM Transactions](../advanced-transfer/svm-transaction-details) for more information.
 
 </Info>
 
@@ -53,14 +52,16 @@ For this example, we are going to use Phantom wallet:
 npm i @solana/wallet-adapter-phantom
 ```
 
-Now, let's create the SkipClient instance with the signers for each ecosystem!
+Now, let's create the `SkipClient` instance with signers for each ecosystem!
 
-We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions. Note that only a Cosmos signer is required for this example.
+We're going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions. 
+Note that only a Cosmos signer is required for this example.
 
 ```ts
 import { SkipClient } from "@skip-router/client";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { createWalletClient } from "viem";
+import { mainnet } from "viem/chains";
 
 const skipClient = new SkipClient({
     getCosmosSigner: async (chainID) => {
@@ -73,12 +74,12 @@ const skipClient = new SkipClient({
         const ethereum = window.ethereum;
         if (!ethereum) throw new Error("MetaMask not installed");
         const client = createWalletClient({
-        chain: mainnet,
-        transport: custom(window.ethereum),
+          chain: mainnet,
+          transport: custom(window.ethereum),
         });
         return client;
     },
-      // optional for this example
+    // optional for this example
     getSVMSigner: async () => {
         const phantom = new PhantomWalletAdapter();
         return phantom;
@@ -88,7 +89,7 @@ const skipClient = new SkipClient({
 
 ### 3\. Request a Quote
 
-Now, we can use the `SkipClient.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia:
+Now, we can use the `SkipClient.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia.
 
 Just add the following line after the line where you initialized the skipClient:
 
@@ -143,7 +144,7 @@ For more details on handling cross-chain failures, see [Cross-chain Failure Case
 </Warning>
 
 
-It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
+We recommend storing the user's addresses and creating a function like getAddress that retrieves the address based on the chain ID.
 
 Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry:
 
