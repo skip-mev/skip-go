@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
-import { Column } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
-import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import {
   skipAssetsAtom,
@@ -30,8 +29,9 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { useAccount } from "@/hooks/useAccount";
 import { currentPageAtom, Routes } from "@/state/router";
-
-const sourceAssetBalance = 125;
+import { GhostButton, GhostButtonProps } from "@/components/Button";
+import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
+import styled, { css } from "styled-components";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -55,9 +55,9 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setSwapExecutionState = useSetAtom(swapExecutionStateAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
-
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
@@ -233,13 +233,31 @@ export const SwapPage = () => {
             label: "History",
             icon: ICONS.history,
           }}
-          rightButton={{
-            label: "Max",
-          }}
           rightContent={
-            sourceAssetBalance ? (
-              <SmallText> Balance: {sourceAssetBalance} </SmallText>
-            ) : undefined
+            sourceAccount && (
+              <Row gap={6} style={{
+                paddingRight: 13
+              }}>
+                <TransparentButton onClick={() => {
+                  connectedWalletModal.show();
+                }} style={{
+                  padding: "8px 13px",
+                  alignItems: "center",
+                  gap: 8
+                }}>
+                  {sourceAccount && <img style={{ objectFit: "cover" }} src={sourceAccount?.wallet.logo} height={16} width={16} />}
+                  125 ATOM
+                </TransparentButton>
+                <TransparentButton onClick={() => {
+                  connectedWalletModal.show();
+                }} style={{
+                  padding: "8px 13px",
+                  alignItems: "center",
+                }}>
+                  Max
+                </TransparentButton>
+              </Row>
+            )
           }
         />
         <Column align="center">
@@ -284,7 +302,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column>
+      </Column >
       <div
         id="swap-flow-settings-container"
         ref={(element) => {
@@ -296,3 +314,19 @@ export const SwapPage = () => {
     </>
   );
 };
+
+const TransparentButton = styled(GhostButton).attrs({
+  as: "button",
+}) <GhostButtonProps>`
+  ${({ theme, onClick, secondary, disabled }) =>
+    onClick &&
+    !disabled &&
+    css`
+      background-color: ${secondary
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
+      cursor: pointer;
+    `};
+  padding: 10px 13px;
+  border-radius: 90px;
+`;
