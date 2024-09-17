@@ -15,7 +15,6 @@ export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
-  onWalletConnected?: () => void;
 };
 
 export type ManualWalletEntry = {
