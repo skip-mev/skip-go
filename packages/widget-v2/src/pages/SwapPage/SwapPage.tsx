@@ -175,7 +175,7 @@ export const SwapPage = () => {
         icon={ICONS.plus}
         onClick={() => {
           selectWalletmodal.show({
-            chainID: sourceAsset?.chainID,
+            chainId: sourceAsset?.chainID,
           });
         }}
       />
