@@ -122,25 +122,7 @@ export const SwapExecutionPage = () => {
         operations={clientOperations}
       />
       {renderMainButton}
-      <SwapPageFooter
-        rightContent={
-          SIGNATURES_REQUIRED && (
-            <Row align="center" gap={8}>
-              <SignatureIcon
-                backgroundColor={theme.warning.text}
-              />
-              <StyledSignatureRequired>
-                {SIGNATURES_REQUIRED}{" "}
-                {pluralize("signature", SIGNATURES_REQUIRED)} still required
-              </StyledSignatureRequired>
-            </Row>
-          )
-        }
-      />
+      <SwapPageFooter showRouteInfo />
     </Column>
   );
 };
-
-const StyledSignatureRequired = styled(SmallText)`
-  color: ${({ theme }) => theme.warning.text};
-`;
