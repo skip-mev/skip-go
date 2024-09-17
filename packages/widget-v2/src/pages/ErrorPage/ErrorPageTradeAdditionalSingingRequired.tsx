@@ -18,11 +18,11 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    amount: amountIn,
+    tokenAmount: amountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    amount: amountOut,
+    tokenAmount: amountOut,
   });
 
   return (

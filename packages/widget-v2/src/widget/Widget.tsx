@@ -15,7 +15,7 @@ export type SwapWidgetProps = {
   theme?: PartialTheme;
 } & SkipClientOptions;
 
-export const SwapWidget = ({theme, ...skipClientConfig}: SwapWidgetProps) => {
+export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   useEffect(() => {
     setSkipClientConfig(skipClientConfig);
@@ -32,9 +32,9 @@ export const SwapWidget = ({theme, ...skipClientConfig}: SwapWidgetProps) => {
   );
 };
 
-const SwapWidgetWithoutNiceModalProvider = ({theme, ...skipClientConfig}: SwapWidgetProps) => {
+const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-    useEffect(() => {
+  useEffect(() => {
     setSkipClientConfig(skipClientConfig);
   }, [setSkipClientConfig, skipClientConfig]);
 

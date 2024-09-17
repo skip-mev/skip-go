@@ -7,12 +7,13 @@ import {
   OPInitTransfer,
   Operation as SkipClientOperation,
   Swap,
+  SwapVenue,
   Transfer,
 } from "@skip-go/client";
 
 export enum OperationType {
   swap = "swap",
-  evmpSwap = "evmSwap",
+  evmSwap = "evmSwap",
   transfer = "transfer",
   axelarTransfer = "axelarTransfer",
   cctpTransfer = "cctpTransfer",
@@ -44,7 +45,14 @@ type OperationDetails = CombineObjectTypes<
   HyperlaneTransfer &
   EvmSwap &
   OPInitTransfer
->;
+> & {
+  swapIn?: {
+    swapVenue: SwapVenue;
+  };
+  swapOut?: {
+    swapVenue: SwapVenue;
+  };
+};
 
 export type ClientOperation = {
   type: OperationType;
@@ -53,7 +61,7 @@ export type ClientOperation = {
   amountOut: string;
 } & OperationDetails;
 
-// find keys that are present in each type 
+// find keys that are present in each type
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
   ? T[Key] extends Record<Key, unknown>
@@ -86,7 +94,14 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
   };
   Object.values(OperationType).find((type) => {
     const operationDetails = combinedOperation?.[type];
+
     if (operationDetails) {
+      switch (type) {
+        case OperationType.evmSwap:
+          (operationDetails as Transfer).toChainID = (operationDetails as EvmSwap).fromChainID;
+          break;
+        default:
+      }
       returnValue = {
         details: operationDetails,
         type,
@@ -105,6 +120,11 @@ export function getClientOperation(operation: SkipClientOperation) {
     txIndex: operation.txIndex,
     amountIn: operation.amountIn,
     amountOut: operation.amountOut,
+    swapVenues: [
+      ...(details.swapVenues ?? []),
+      ...(details?.swapIn ? [details?.swapIn.swapVenue] : []),
+      ...(details?.swapOut ? [details?.swapOut.swapVenue] : []),
+    ],
   } as ClientOperation;
 }
 

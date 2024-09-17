@@ -2,9 +2,8 @@ import { useTheme } from "styled-components";
 import { Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { Wallet } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import {
   StyledAnimatedBorder,
@@ -13,22 +12,23 @@ import {
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation } from "@/utils/clientType";
+import { MinimalWallet } from "@/state/wallets";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
-  amount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
-  wallet?: Wallet;
+  wallet?: MinimalWallet;
   icon?: ICONS;
 };
 
 export const SwapExecutionPageRouteSimpleRow = ({
   denom,
-  amount,
+  tokenAmount,
   chainID,
   txState,
   destination,
@@ -37,15 +37,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
   wallet,
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
-  useEffect(() => {
-    "mount";
-  }, []);
   const theme = useTheme();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
     chainId: chainID,
-    amount,
+    tokenAmount,
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {

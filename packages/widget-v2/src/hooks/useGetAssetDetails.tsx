@@ -10,7 +10,7 @@ import { Chain } from "@skip-go/client";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 
-export type AssetDetails = {
+export type AssetDetailsProps = {
   asset?: ClientAsset;
   chain?: Chain;
   symbol?: string;
@@ -53,7 +53,7 @@ export const useGetAssetDetails = ({
   tokenAmount?: string;
   amountUsd?: string;
   chainId?: string;
-}): AssetDetails => {
+}): AssetDetailsProps => {
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
 
@@ -102,6 +102,21 @@ export const useGetAssetDetails = ({
     }
     return;
   }, [usdAmount]);
+
+  if (!chainId) {
+    return {
+      asset: undefined,
+      chain: undefined,
+      assetImage: undefined,
+      chainName: undefined,
+      chainImage: undefined,
+      symbol: undefined,
+      amount: undefined,
+      tokenAmount: undefined,
+      formattedUsdAmount: undefined,
+      usdAmount: undefined,
+    };
+  }
 
   return {
     asset,

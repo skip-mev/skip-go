@@ -12,7 +12,7 @@ export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
-  amount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
@@ -20,7 +20,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
 
 export const SwapExecutionPageRouteDetailedRow = ({
   denom,
-  amount,
+  tokenAmount,
   chainID,
   txState,
   explorerLink,
@@ -31,6 +31,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
     chainId: chainID,
+    tokenAmount,
   });
 
   return (

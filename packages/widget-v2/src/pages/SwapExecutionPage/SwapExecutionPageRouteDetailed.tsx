@@ -9,19 +9,27 @@ import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
 import { useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation } from "@/utils/clientType";
+import { ClientOperation, OperationType } from "@/utils/clientType";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
   txStateMap: Record<number, txState>;
 };
 
-type operationTypeToIcon = Record<string, JSX.Element>;
+type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
 const operationTypeToIcon: operationTypeToIcon = {
-  axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
-  swap: <SwapExecutionSwapIcon width={34} />,
-  transfer: <SwapExecutionSendIcon width={34} />,
+  // swap icon
+  [OperationType.swap]: <SwapExecutionSwapIcon width={34} />,
+  [OperationType.evmSwap]: <SwapExecutionSwapIcon width={34} />,
+  // bridge icon
+  [OperationType.transfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.axelarTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.cctpTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.hyperlaneTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.opInitTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  // send icon
+  [OperationType.bankSend]: <SwapExecutionSendIcon width={34} />,
 };
 
 const operationTypeToSimpleOperationType = {
@@ -57,35 +65,50 @@ export const SwapExecutionPageRouteDetailed = ({
     }));
   };
 
+  const firstOperation = operations[0];
+
   return (
     <StyledSwapExecutionPageRoute justify="space-between">
+      <SwapExecutionPageRouteDetailedRow
+        tokenAmount={firstOperation.amountIn}
+        denom={firstOperation.denomIn}
+        chainID={firstOperation.fromChainID}
+        txState={"pending"}
+        key={`first-row-${firstOperation?.denomIn}`}
+      />
       {operations.map((operation, index) => {
-        const lastIndex = index === operations.length - 1;
-
         const simpleOperationType =
           operationTypeToSimpleOperationType[operation.type];
 
         const getBridgeSwapVenue = () => {
-          const bridgeID = operation.bridgeID;
-          const swapID = operation.swapVenues?.[0]?.chainID;
-
-          // return the name, not the ID
-          return bridgeID ?? swapID;
+          const swapVenueName = operation.swapVenues?.[0]?.name;
+          const bridgeId = operation.bridgeID;
+          return bridgeId || swapVenueName;
         };
 
-        const asset = lastIndex
-          ? {
-              amount: operation.amountOut,
-              denom: operation.denomOut ?? operation.denom,
-              chainID: operation.toChainID ?? operation.chainID,
-            }
-          : {
-              amount: operation.amountIn,
-              denom: operation.denomIn ?? operation.denom,
-              chainID: operation.fromChainID ?? operation.chainID,
-            };
+        const asset = {
+          tokenAmount: operation.amountOut,
+          denom: operation.denomOut,
+          chainID: operation.toChainID ?? operation.chainID,
+        };
+
         return (
           <>
+            <Row key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px" }} align="center">
+              <OperationTypeIconContainer
+                onMouseEnter={() => handleMouseEnterOperationType(index)}
+                onMouseLeave={() => handleMouseLeaveOperationType(index)}
+                justify="center"
+                key={`operation-${asset?.denom}-${index}`}
+              >
+                {operationTypeToIcon[operation.type]}
+              </OperationTypeIconContainer>
+              {tooltipMap?.[index] && (
+                <Tooltip>
+                  {simpleOperationType} with {getBridgeSwapVenue()}
+                </Tooltip>
+              )}
+            </Row>
             <SwapExecutionPageRouteDetailedRow
               {...asset}
               txState={txStateMap[index]}
@@ -96,23 +119,6 @@ export const SwapExecutionPageRouteDetailed = ({
               }
               key={`row-${asset?.denom}-${index}`}
             />
-            {operation !== operations[operations.length - 1] && (
-              <Row style={{ height: "25px" }} align="center">
-                <OperationTypeIconContainer
-                  onMouseEnter={() => handleMouseEnterOperationType(index)}
-                  onMouseLeave={() => handleMouseLeaveOperationType(index)}
-                  justify="center"
-                  key={`operation-${asset?.denom}-${index}`}
-                >
-                  {operationTypeToIcon[operation.type]}
-                </OperationTypeIconContainer>
-                {tooltipMap?.[index] && (
-                  <Tooltip>
-                    {simpleOperationType} with {getBridgeSwapVenue()}
-                  </Tooltip>
-                )}
-              </Row>
-            )}
           </>
         );
       })}

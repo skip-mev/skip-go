@@ -27,7 +27,7 @@ export const ErrorPageTransactionReverted = ({
 
   const assetDetails = useGetAssetDetails({
     assetDenom: assetDenom,
-    amount: revertedOperation.amountIn,
+    tokenAmount: revertedOperation.amountIn,
     chainId: revertedOperation?.fromChainID ?? revertedOperation.chainID,
   });
 

@@ -36,12 +36,12 @@ export const ErrorPageTradeWarning = ({
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    amount: amountIn,
+    tokenAmount: amountIn,
     amountUsd: usdAmountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    amount: amountOut,
+    tokenAmount: amountOut,
     amountUsd: usdAmountOut,
   });
 
