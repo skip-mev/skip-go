@@ -75,12 +75,12 @@ export const SwapExecutionPageRouteDetailed = ({
 
         const asset = lastIndex
           ? {
-            amount: operation.amountOut,
+            tokenAmount: operation.amountOut,
             denom: operation.denomOut ?? operation.denom,
             chainID: operation.toChainID ?? operation.chainID,
           }
           : {
-            amount: operation.amountIn,
+            tokenAmount: operation.amountIn,
             denom: operation.denomIn ?? operation.denom,
             chainID: operation.fromChainID ?? operation.chainID,
           };
