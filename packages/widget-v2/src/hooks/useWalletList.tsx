@@ -13,39 +13,12 @@ export const useWalletList = (chainID?: string) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainType = chains?.find(c => c.chainID === chainID)?.chainType;
 
-  const walletList = useMemo(() => {
-    if (!chainID) return [];
-    switch (chainType) {
-      case "cosmos":
-        return createCosmosWallets(chainID);
-      case "evm":
-        return createEvmWallets(chainID);
-      case "svm":
-        return createSolanaWallets();
-      default:
-        return [];
-    }
-  }, [chainID, chainType, createCosmosWallets, createEvmWallets, createSolanaWallets]);
-  return walletList;
-};
-
-// WIP
-export const useDestinationWalletList = (chainID?: string) => {
-
-  const { createCosmosWallets } = useCreateCosmosWallets();
-  const { createEvmWallets } = useCreateEvmWallets();
-  const { createSolanaWallets } = useCreateSolanaWallets();
-
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainType = chains?.find(c => c.chainID === chainID)?.chainType;
-
 
   let walletType = chainType;
   const isSei = chainID === "pacific-1";
   if (isSei) {
     walletType = "sei";
   }
-
 
   const walletList = useMemo(() => {
     if (!chainID) return [];
