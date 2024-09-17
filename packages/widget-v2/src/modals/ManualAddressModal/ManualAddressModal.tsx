@@ -116,6 +116,10 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
         <RenderWalletList
           title="Destination wallet"
           walletList={walletList}
+          onSelect={(wallet) => {
+            setDestinationWallet(wallet);
+            modal.remove();
+          }}
           onClickBackButton={() => modal.remove()}
         />
       )}

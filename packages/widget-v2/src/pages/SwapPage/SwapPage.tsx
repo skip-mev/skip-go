@@ -27,9 +27,7 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useGetAccount } from "@/hooks/useGetAccount";
-import { currentPageAtom, Routes } from "@/state/router";
-import { addAccountsAtom, userAccountsAtom } from "@/state/wallets";
+import { useAccount } from "@/hooks/useAccount";
 
 const sourceAssetBalance = 125;
 
@@ -43,23 +41,14 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom);
-
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const {
-    data: route,
-    isError: isRouteError,
-    error: routeError,
-  } = useAtomValue(skipRouteAtom);
+  const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
-  const setCurrentPage = useSetAtom(currentPageAtom);
 
-  const addAccounts = useSetAtom(addAccountsAtom);
-  const getAccount = useGetAccount();
-  const [userAccounts] = useAtom(userAccountsAtom);
-  const sourceAccount = sourceAsset?.chainID ? userAccounts?.[sourceAsset?.chainID] : undefined;
+  const sourceAccount = useAccount(sourceAsset?.chainID);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -98,15 +87,10 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        const account = getAccount(asset?.chainID);
-        addAccounts([{
-          chainId: asset?.chainID,
-          account,
-        }]);
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [addAccounts, getAccount, setSourceAsset, tokenAndChainSelectorModal]);
+  }, [setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
@@ -172,71 +156,24 @@ export const SwapPage = () => {
     }
 
     if (sourceAccount?.address) {
-      return (
-        <MainButton
-          label="Swap"
-          icon={ICONS.swap}
-          disabled={!route}
-          onClick={() => setCurrentPage(Routes.SwapExecutionPage)}
-        />
-      );
+      return <MainButton label="Swap" icon={ICONS.swap} disabled={!route} />;
     }
 
-    return (
-      <MainButton
-        disabled={!sourceAsset?.chainID}
-        label="Connect Wallet"
-        icon={ICONS.plus}
-        onClick={() => {
-          selectWalletmodal.show({
-            chainId: sourceAsset?.chainID,
-            onWalletConnected: () => {
-              const sourceAccount = getAccount(sourceAsset?.chainID);
-              const destinationAccount = getAccount(destinationAsset?.chainID);
-              addAccounts([{
-                chainId: sourceAsset?.chainID,
-                account: sourceAccount,
-              }, {
-                chainId: destinationAsset?.chainID,
-                account: destinationAccount,
-              }]);
-            }
-          });
-        }}
-      />
-    );
-  }, [
-    isWaitingForNewRoute,
-    isRouteError,
-    sourceAccount?.address,
-    routeError?.message,
-    route,
-    setCurrentPage,
-    selectWalletmodal,
-    addAccounts,
-    getAccount,
-    sourceAsset?.chainID,
-    destinationAsset?.chainID,
-  ]);
+    return <MainButton disabled={!sourceAsset?.chainID} label="Connect Wallet" icon={ICONS.plus} onClick={() => {
+      selectWalletmodal.show({
+        chainId: sourceAsset?.chainID,
+      });
+    }} />;
+  }, [isWaitingForNewRoute, isRouteError, sourceAccount?.address, sourceAsset?.chainID, routeError?.message, route, selectWalletmodal]);
 
   const priceChangePercentage = useMemo(() => {
-    if (
-      !sourceDetails.usdAmount ||
-      !destinationDetails.usdAmount ||
-      isWaitingForNewRoute
-    )
-      return;
+    if (!sourceDetails.usdAmount || !destinationDetails.usdAmount || isWaitingForNewRoute) return;
     const difference = destinationDetails.usdAmount - sourceDetails.usdAmount;
-    const average =
-      (sourceDetails.usdAmount + destinationDetails.usdAmount) / 2;
+    const average = (sourceDetails.usdAmount + destinationDetails.usdAmount) / 2;
     const percentageDifference = (difference / average) * 100;
 
     return parseFloat(percentageDifference.toFixed(2));
-  }, [
-    destinationDetails.usdAmount,
-    isWaitingForNewRoute,
-    sourceDetails.usdAmount,
-  ]);
+  }, [destinationDetails.usdAmount, isWaitingForNewRoute, sourceDetails.usdAmount]);
 
   return (
     <>
@@ -265,9 +202,7 @@ export const SwapPage = () => {
             selectedAssetDenom={sourceAsset?.denom}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
-            isWaitingToUpdateInputValue={
-              swapDirection === "swap-out" && isWaitingForNewRoute
-            }
+            isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
             value={sourceAsset?.amount}
             onChangeValue={(newValue) => {
               setSourceAssetAmount(newValue);
@@ -279,9 +214,7 @@ export const SwapPage = () => {
             selectedAssetDenom={destinationAsset?.denom}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
-            isWaitingToUpdateInputValue={
-              swapDirection === "swap-in" && isWaitingForNewRoute
-            }
+            isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
             onChangeValue={(newValue) => {
