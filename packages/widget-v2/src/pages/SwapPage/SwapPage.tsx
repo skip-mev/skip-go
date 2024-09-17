@@ -61,11 +61,13 @@ export const SwapPage = () => {
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
+    chainId: sourceAsset?.chainID,
   });
 
   const destinationDetails = useGetAssetDetails({
     assetDenom: destinationAsset?.denom,
     amount: destinationAsset?.amount,
+    chainId: destinationAsset?.chainID,
   });
 
   const chainsContainingSourceAsset = useMemo(() => {
@@ -262,7 +264,7 @@ export const SwapPage = () => {
         />
         <Column align="center">
           <AssetChainInput
-            selectedAssetDenom={sourceAsset?.denom}
+            selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
             isWaitingToUpdateInputValue={
@@ -276,7 +278,7 @@ export const SwapPage = () => {
           />
           <SwapPageBridge />
           <AssetChainInput
-            selectedAssetDenom={destinationAsset?.denom}
+            selectedAsset={destinationAsset}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
             isWaitingToUpdateInputValue={
