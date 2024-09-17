@@ -34,8 +34,8 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           //     return Number(useSettingsStore.getState().customGasAmount);
           //   }
           // },
-          onTransactionTracked: async (txStatus) => {
-            console.log(txStatus);
+          onTransactionTracked: async (_txStatus) => {
+            // console.log(txStatus);
           },
         });
       } catch (error) {
@@ -44,7 +44,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       return null;
     },
     onMutate: () => {
-      console.log("mutated");
+      // console.log("mutated");
     },
     onError: (err: unknown) => {
       // handle errors;

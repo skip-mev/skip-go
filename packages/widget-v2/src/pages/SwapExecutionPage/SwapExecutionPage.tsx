@@ -18,7 +18,6 @@ import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
-import { skipRouteAtom } from "@/state/skipClient";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
@@ -42,15 +41,15 @@ export const SwapExecutionPage = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const [destinationWallet] = useAtom(destinationWalletAtom);
-  const [swapExecutionState, setSwapExecutionState] = useState(
+  const [_destinationWallet] = useAtom(destinationWalletAtom);
+  const [swapExecutionState, _setSwapExecutionState] = useState(
     SwapExecutionState.unconfirmed
   );
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
 
-  const [txStateMap, setTxStateMap] = useState<Record<number, txState>>({
+  const [txStateMap, _setTxStateMap] = useState<Record<number, txState>>({
     0: "pending",
     1: "pending",
     2: "pending",

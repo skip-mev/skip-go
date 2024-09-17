@@ -20,7 +20,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
   const modal = useModal();
   const [destinationAsset] = useAtom(destinationAssetAtom);
-  const [, setDestinationWallet] = useAtom(destinationWalletAtom);
+  const [, _setDestinationWallet] = useAtom(destinationWalletAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === destinationAsset?.chainID);
   const chainName = chain?.prettyName;
