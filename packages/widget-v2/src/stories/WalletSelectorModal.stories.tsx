@@ -3,7 +3,6 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Row } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 
-import { Wallet } from "@/components/RenderWalletList";
 import { WalletSelectorModal, WalletSelectorModalProps } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 const meta = {
@@ -12,11 +11,6 @@ const meta = {
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",
-  },
-  args: {
-    onSelect: (wallet: Wallet) => {
-      alert(`selected ${wallet.name}`);
-    },
   },
 } satisfies Meta<typeof WalletSelectorModal>;
 

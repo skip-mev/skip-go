@@ -2,7 +2,7 @@ import { Column, Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
 import styled, { useTheme } from "styled-components";
@@ -20,7 +20,6 @@ import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { skipRouteAtom } from "@/state/skipClient";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
-import { walletsAtom } from "@/state/wallets";
 
 enum SwapExecutionState {
   destinationAddressUnset,
@@ -36,7 +35,10 @@ export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { data: route, dataUpdatedAt } = useAtomValue(skipRouteAtom);
-  const wallets = useAtomValue(walletsAtom);
+
+  console.log(route);
+
+  // useAccount();
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];

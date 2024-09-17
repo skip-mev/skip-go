@@ -10,7 +10,6 @@ import { numberOfModalsOpenAtom } from "@/state/modal";
 import { useSetAtom } from "jotai";
 import { skipClientConfigAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
-import { useAccount } from "@/hooks/useAccount";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
@@ -18,7 +17,6 @@ export type SwapWidgetProps = {
 
 export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-  useAccount();
   useEffect(() => {
     setSkipClientConfig(skipClientConfig);
   }, [setSkipClientConfig, skipClientConfig]);
@@ -36,7 +34,6 @@ export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
 
 const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-  useAccount();
   useEffect(() => {
     setSkipClientConfig(skipClientConfig);
   }, [setSkipClientConfig, skipClientConfig]);

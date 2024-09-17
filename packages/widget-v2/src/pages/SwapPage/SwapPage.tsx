@@ -27,8 +27,9 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useAccount } from "@/hooks/useAccount";
+import { useGetAccount } from "@/hooks/useGetAccount";
 import { currentPageAtom, Routes } from "@/state/router";
+import { addAccountAtom, userAccountsAtom } from "@/state/wallets";
 
 const sourceAssetBalance = 125;
 
@@ -42,6 +43,7 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const setSwapDirection = useSetAtom(swapDirectionAtom);
+
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
@@ -54,7 +56,10 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
-  const sourceAccount = useAccount(sourceAsset?.chainID);
+  const addAccount = useSetAtom(addAccountAtom);
+  const getAccount = useGetAccount();
+  const [userAccounts] = useAtom(userAccountsAtom);
+  const sourceAccount = sourceAsset?.chainID ? userAccounts?.[sourceAsset?.chainID] : undefined;
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -93,10 +98,15 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        const account = getAccount(asset?.chainID);
+        addAccount({
+          chainId: asset?.chainID,
+          account,
+        });
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setSourceAsset, tokenAndChainSelectorModal]);
+  }, [addAccount, getAccount, setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;

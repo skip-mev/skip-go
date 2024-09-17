@@ -2,7 +2,7 @@ import { useTheme } from "styled-components";
 import { Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { Wallet } from "@/components/RenderWalletList";
+import { ManualWalletEntry } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
@@ -22,7 +22,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
-  wallet?: Wallet;
+  wallet?: ManualWalletEntry;
   icon?: ICONS;
 };
 
