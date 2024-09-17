@@ -37,7 +37,6 @@ export const isMinimalWallet = (
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 
-
 export const RenderWalletList = ({
   title,
   walletList,

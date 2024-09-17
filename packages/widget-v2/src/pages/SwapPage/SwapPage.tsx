@@ -29,8 +29,9 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { useAccount } from "@/hooks/useAccount";
 import { currentPageAtom, Routes } from "@/state/router";
-import { TransparentButton } from "@/components/Button";
+import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
+import styled, { css } from "styled-components";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -313,3 +314,19 @@ export const SwapPage = () => {
     </>
   );
 };
+
+const TransparentButton = styled(GhostButton).attrs({
+  as: "button",
+}) <GhostButtonProps>`
+  ${({ theme, onClick, secondary, disabled }) =>
+    onClick &&
+    !disabled &&
+    css`
+      background-color: ${secondary
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
+      cursor: pointer;
+    `};
+  padding: 10px 13px;
+  border-radius: 90px;
+`;

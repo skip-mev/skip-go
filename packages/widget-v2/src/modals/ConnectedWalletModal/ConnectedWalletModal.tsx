@@ -1,7 +1,7 @@
 import { GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { createModal, ModalProps, useModal } from "@/components/Modal";
-import { ModalInnerHeader, StyledContainer, StyledInnerContainer } from "@/components/ModalInner";
+import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "@/components/ModalInner";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text } from "@/components/Typography";
 import { useAccount } from "@/hooks/useAccount";
@@ -31,15 +31,15 @@ export const ConnectedWalletModal = createModal(
     const selectWalletmodal = useModal(WalletSelectorModal);
 
     return (
-      <StyledContainer gap={15}>
-        <ModalInnerHeader title="Connected Wallet" onClickBackButton={modal.remove}
+      <StyledModalContainer gap={15}>
+        <ModalHeader title="Connected Wallet" onClickBackButton={modal.remove}
           rightContent={() => {
             return (
               <img src={chainImage} height={36} width={36} />
             );
           }}
         />
-        <StyledInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 1} >
+        <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 1} >
           <ModalRowItem
             style={{ marginTop: ITEM_GAP }}
             onClick={() => {
@@ -73,8 +73,8 @@ export const ConnectedWalletModal = createModal(
               </GhostButton>
             }
           />
-        </StyledInnerContainer>
-      </StyledContainer>
+        </StyledModalInnerContainer>
+      </StyledModalContainer>
     );
   }
 );
