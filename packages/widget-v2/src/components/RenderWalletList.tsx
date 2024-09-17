@@ -69,7 +69,6 @@ export const RenderWalletList = ({
   title,
   walletList,
   onClickBackButton,
-  onWalletConnected,
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
@@ -80,7 +79,6 @@ export const RenderWalletList = ({
       return await wallet.connect();
     },
     onSuccess: () => {
-      onWalletConnected();
       modal.remove();
     },
   });

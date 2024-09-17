@@ -7,6 +7,7 @@ import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 
+
 export const useAccount = (chainID?: string) => {
   const wallet = useAtomValue(walletsAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);

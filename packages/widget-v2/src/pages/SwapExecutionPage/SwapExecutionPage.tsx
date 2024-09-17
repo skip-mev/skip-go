@@ -29,16 +29,12 @@ enum SwapExecutionState {
 }
 
 const SIGNATURES_REQUIRED = 2;
-const TX_DELAY_MS = 5_000; // 5 seconds
+const TX_DELAY_MS = 5_000;
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { data: route, dataUpdatedAt } = useAtomValue(skipRouteAtom);
-
-  console.log(route);
-
-  // useAccount();
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -74,9 +70,6 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Confirm swap"
             icon={ICONS.rightArrow}
-            onClick={() => {
-              tempBeginSwap();
-            }}
           />
         );
       case SwapExecutionState.broadcasted:
@@ -84,7 +77,7 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString={`${(operations.length * TX_DELAY_MS) / 1000
+            loadingTimeString={`${(clientOperations.length * TX_DELAY_MS) / 1000
               } secs.`}
           />
         );
@@ -97,7 +90,7 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [modal, swapExecutionState, theme.success.text]);
+  }, [clientOperations.length, modal, swapExecutionState, theme.success.text]);
 
   const SwapExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {

@@ -2,7 +2,6 @@ import { useTheme } from "styled-components";
 import { Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { ManualWalletEntry } from "@/components/RenderWalletList";
 import { iconMap, ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
@@ -13,6 +12,7 @@ import {
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation } from "@/utils/clientType";
+import { MinimalWallet } from "@/state/wallets";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -22,7 +22,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
-  wallet?: ManualWalletEntry;
+  wallet?: MinimalWallet;
   icon?: ICONS;
 };
 
