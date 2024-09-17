@@ -10,7 +10,7 @@ import {
 } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
-import { destinationAssetAtom, destinationWalletAtom } from "@/state/swapPage";
+import { destinationAssetAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
@@ -20,7 +20,6 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
   const { theme } = modalProps;
   const modal = useModal();
   const [destinationAsset] = useAtom(destinationAssetAtom);
-  const [, _setDestinationWallet] = useAtom(destinationWalletAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === destinationAsset?.chainID);
   const chainName = chain?.prettyName;
