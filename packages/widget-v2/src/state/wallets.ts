@@ -51,21 +51,24 @@ export type Account = {
   }
 }
 
-export const userAccountsAtom = atom<Record<string, Account>>();
+export const userAccountsAtom = atom<Record<string, Account>>({});
 
-type AddAccountAtomProps = {
+type AccountAndChainId = {
   chainId?: string;
   account?: Account;
-}
-export const addAccountAtom = atom(null, (get, set, { chainId, account }: AddAccountAtomProps) => {
-  if (!chainId || !account) return;
+};
 
+export const addAccountsAtom = atom(null, (get, set, accountsProps: AccountAndChainId[]) => {
   const userAccounts = get(userAccountsAtom);
+  const newUserAccounts = userAccounts;
 
-  if (userAccounts) {
-    const newUserAccounts = userAccounts;
+  accountsProps.forEach(({ chainId, account }) => {
+    if (chainId === undefined || account === undefined) return;
+    console.log(account);
     newUserAccounts[chainId] = account;
-    set(userAccountsAtom, newUserAccounts);
-  }
+  });
+
+  set(userAccountsAtom, newUserAccounts);
+  console.log(newUserAccounts);
 
 });

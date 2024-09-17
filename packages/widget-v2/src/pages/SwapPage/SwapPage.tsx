@@ -29,7 +29,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { currentPageAtom, Routes } from "@/state/router";
-import { addAccountAtom, userAccountsAtom } from "@/state/wallets";
+import { addAccountsAtom, userAccountsAtom } from "@/state/wallets";
 
 const sourceAssetBalance = 125;
 
@@ -56,7 +56,7 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
-  const addAccount = useSetAtom(addAccountAtom);
+  const addAccounts = useSetAtom(addAccountsAtom);
   const getAccount = useGetAccount();
   const [userAccounts] = useAtom(userAccountsAtom);
   const sourceAccount = sourceAsset?.chainID ? userAccounts?.[sourceAsset?.chainID] : undefined;
@@ -99,14 +99,14 @@ export const SwapPage = () => {
           ...asset,
         }));
         const account = getAccount(asset?.chainID);
-        addAccount({
+        addAccounts([{
           chainId: asset?.chainID,
           account,
-        });
+        }]);
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [addAccount, getAccount, setSourceAsset, tokenAndChainSelectorModal]);
+  }, [addAccounts, getAccount, setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     if (!chainsContainingSourceAsset) return;
@@ -189,7 +189,18 @@ export const SwapPage = () => {
         icon={ICONS.plus}
         onClick={() => {
           selectWalletmodal.show({
-            chainID: sourceAsset?.chainID,
+            chainId: sourceAsset?.chainID,
+            onWalletConnected: () => {
+              const sourceAccount = getAccount(sourceAsset?.chainID);
+              const destinationAccount = getAccount(destinationAsset?.chainID);
+              addAccounts([{
+                chainId: sourceAsset?.chainID,
+                account: sourceAccount,
+              }, {
+                chainId: destinationAsset?.chainID,
+                account: destinationAccount,
+              }]);
+            }
           });
         }}
       />
@@ -198,11 +209,14 @@ export const SwapPage = () => {
     isWaitingForNewRoute,
     isRouteError,
     sourceAccount?.address,
-    sourceAsset?.chainID,
     routeError?.message,
     route,
     setCurrentPage,
     selectWalletmodal,
+    addAccounts,
+    getAccount,
+    sourceAsset?.chainID,
+    destinationAsset?.chainID,
   ]);
 
   const priceChangePercentage = useMemo(() => {

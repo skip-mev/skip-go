@@ -15,6 +15,7 @@ export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
+  onWalletConnected?: () => void;
 };
 
 export type ManualWalletEntry = {
@@ -68,15 +69,18 @@ export const RenderWalletList = ({
   title,
   walletList,
   onClickBackButton,
+  onWalletConnected,
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
+
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
       return await wallet.connect();
     },
     onSuccess: () => {
+      onWalletConnected();
       modal.remove();
     },
   });
