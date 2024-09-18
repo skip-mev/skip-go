@@ -108,7 +108,7 @@ export const SwapPage = () => {
 
   const formattedBalance = useMemo(() => {
     const amount = sourceBalance?.amount;
-    let formattedBalanceAmount = sourceBalance?.formattedAmount;
+    let formattedBalanceAmount = sourceBalance?.formattedAmount ?? "";
 
     if (amount === "0") {
       formattedBalanceAmount = amount;
@@ -318,6 +318,7 @@ export const SwapPage = () => {
                   {formattedBalance}
                 </TransparentButton>
                 <TransparentButton
+                  disabled={!sourceBalance || sourceBalance?.amount === "0"}
                   onClick={handleMaxButton}
                   style={{
                     padding: "8px 13px",
