@@ -56,14 +56,14 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   return (
     <Row gap={25} align="center">
-      {assetDetails.chainImage && (
+      {assetDetails.assetImage && (
         <StyledAnimatedBorder
           width={50}
           height={50}
           backgroundColor={theme.success.text}
           txState={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={assetDetails.chainImage} />
+          <img height={50} width={50} src={assetDetails.assetImage} />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
