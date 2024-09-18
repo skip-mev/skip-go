@@ -36,7 +36,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.chainImage && (
+      {assetDetails?.assetImage && (
         <StyledAnimatedBorder
           width={30}
           height={30}
@@ -46,7 +46,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <StyledChainImage
             height={30}
             width={30}
-            src={assetDetails.chainImage}
+            src={assetDetails.assetImage}
             state={txState}
           />
         </StyledAnimatedBorder>
