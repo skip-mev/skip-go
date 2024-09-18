@@ -2,14 +2,14 @@ type IconProps = {
   color?: string;
 };
 
-export const BridgeIcon = ({ color = 'black' }: IconProps) => (
+export const BridgeIcon = ({ color = "currentColor" }: IconProps) => (
   <svg
     width="47"
     height="7"
     viewBox="0 0 47 7"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
   >
     <path
       fillRule="evenodd"

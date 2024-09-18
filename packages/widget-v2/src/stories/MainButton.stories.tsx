@@ -1,21 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { MainButton, MainButtonProps } from '../components/MainButton';
-import { ICONS } from '../icons';
-import { useTheme } from 'styled-components';
-import { defaultTheme, lightTheme, Theme } from '../widget/theme';
-import { renderLightAndDarkTheme } from './renderLightAndDarkTheme';
+import type { Meta, StoryObj } from "@storybook/react";
+import { MainButton, MainButtonProps } from "@/components/MainButton";
+import { ICONS } from "@/icons";
+import { useTheme } from "styled-components";
+import { defaultTheme, lightTheme, Theme } from "@/widget/theme";
+import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
 
 type Props = MainButtonProps & { theme: Theme };
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: 'Components/MainButton',
+  title: "Components/MainButton",
   component: (props) => renderLightAndDarkTheme(<MainButton {...props} />),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
-    layout: 'centered',
+    layout: "centered",
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
   args: {
@@ -23,7 +23,7 @@ const meta = {
   },
   argTypes: {
     theme: {
-      options: ['defaultTheme', 'lightTheme'],
+      options: ["defaultTheme", "lightTheme"],
       mapping: {
         defaultTheme: defaultTheme,
         lightTheme: lightTheme,
@@ -39,86 +39,89 @@ type Story = StoryObj<typeof meta>;
 
 export const ConnectWallet: Story = {
   args: {
-    label: 'Connect Wallet',
+    label: "Connect Wallet",
     icon: ICONS.plus,
-    onClick: () => alert('connect wallet'),
+    onClick: () => alert("connect wallet"),
   },
 };
 
 export const Swap: Story = {
   args: {
-    label: 'Swap',
+    label: "Swap",
     icon: ICONS.swap,
-    onClick: () => alert('should trigger alert'),
+    onClick: () => alert("should trigger alert"),
   },
 };
 
 export const SwapWarning: Story = {
   args: {
-    label: 'Swap',
+    label: "Swap",
     icon: ICONS.warning,
-    onClick: () => alert('should trigger alert'),
+    onClick: () => alert("should trigger alert"),
   },
 };
 
 export const InsufficientBalance: Story = {
   args: {
-    label: 'Insufficient Balance',
+    label: "Insufficient Balance",
     disabled: true,
     icon: ICONS.swap,
-    onClick: () => alert('should not trigger'),
+    onClick: () => alert("should not trigger"),
   },
 };
 
 export const Connecting: Story = {
   args: {
-    label: 'Connecting',
+    label: "Connecting",
     loading: true,
-    onClick: () => alert('should not trigger'),
+    onClick: () => alert("should not trigger"),
   },
 };
 
 export const SwapInProgress: Story = {
   args: {
-    label: 'Swap in progress...',
+    label: "Swap in progress...",
     loading: true,
-    loadingTimeString: '2 mins.',
-    onClick: () => alert('should not trigger'),
+    loadingTimeString: "2 mins.",
+    onClick: () => alert("should not trigger"),
   },
 };
 
 export const SwapComplete: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function SwapComplete(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().success.text} />
-    ),
+    );
+  },
   args: {
-    label: 'Swap Complete',
+    label: "Swap Complete",
     icon: ICONS.checkmark,
-    onClick: () => alert('should trigger'),
+    onClick: () => alert("should trigger"),
   },
 };
 
 export const ContinueTransaction: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function ContinueTransaction(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().warning.text} />
-    ),
+    );
+  },
   args: {
-    label: 'Continue Transaction',
+    label: "Continue Transaction",
     icon: ICONS.rightArrow,
-    onClick: () => alert('should trigger'),
+    onClick: () => alert("should trigger"),
   },
 };
 
 export const GoBack: Story = {
-  render: (props) =>
-    renderLightAndDarkTheme(
+  render: function GoBack(props) {
+    return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().error.text} />
-    ),
+    );
+  },
   args: {
-    label: 'Go Back',
+    label: "Go Back",
     leftIcon: ICONS.leftArrow,
-    onClick: () => alert('should trigger'),
+    onClick: () => alert("should trigger"),
   },
 };

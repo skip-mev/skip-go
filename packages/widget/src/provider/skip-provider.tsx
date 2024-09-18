@@ -23,6 +23,20 @@ export const SkipContext = createContext<
       endpointOptions?: SkipClientOptions['endpointOptions'];
       makeDestinationWallets?: (chainID: string) => MinimalWallet[];
       chainIDsToAffiliates?: Record<string, ChainAffiliates>;
+      connectedWallet?: {
+        cosmos?: {
+          getAddress: (chainID: string) => Promise<string>;
+          getSigner: SkipClientOptions['getCosmosSigner'];
+        };
+        evm?: {
+          getAddress: (chainID: string) => Promise<string>;
+          getSigner: SkipClientOptions['getEVMSigner'];
+        };
+        svm?: {
+          getAddress: (chainID: string) => Promise<string>;
+          getSigner: SkipClientOptions['getSVMSigner'];
+        };
+      };
     }
   | undefined
 >(undefined);
@@ -33,6 +47,7 @@ export function SkipProvider({
   endpointOptions,
   makeDestinationWallets,
   chainIDsToAffiliates,
+  connectedWallet,
 }: SkipAPIProviderProps) {
   const { getWalletRepo } = useManager();
   const { wallets } = useWallet();
@@ -55,6 +70,12 @@ export function SkipProvider({
       });
 
       if (!wallet) {
+        if (!!connectedWallet?.cosmos?.getSigner) {
+          const signer = await connectedWallet.cosmos.getSigner(chainID);
+          if (signer) {
+            return signer;
+          }
+        }
         throw new Error(
           `getCosmosSigner error: unable to find wallets connected to '${chainID}'`
         );
@@ -85,6 +106,12 @@ export function SkipProvider({
       })) as WalletClient;
 
       if (!evmWalletClient) {
+        if (!!connectedWallet?.evm?.getSigner) {
+          const signer = await connectedWallet.evm.getSigner(chainID);
+          if (signer) {
+            return signer;
+          }
+        }
         throw new Error(
           `getEVMSigner error: no wallet client available for chain ${chainID}`
         );
@@ -100,6 +127,12 @@ export function SkipProvider({
       const solanaWallet = wallets.find((w) => w.adapter.name === walletName);
 
       if (!solanaWallet?.adapter) {
+        if (!!connectedWallet?.svm?.getSigner) {
+          const signer = await connectedWallet.svm.getSigner();
+          if (signer) {
+            return signer;
+          }
+        }
         throw new Error(`getSVMSigner error: no wallet client available`);
       }
 
@@ -116,6 +149,7 @@ export function SkipProvider({
         apiURL,
         endpointOptions,
         makeDestinationWallets,
+        connectedWallet,
       }}
     >
       {children}

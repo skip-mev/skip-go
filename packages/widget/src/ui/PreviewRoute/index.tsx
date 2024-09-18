@@ -26,7 +26,6 @@ import { useAssets } from '../../provider/assets';
 import { useChains } from '../../hooks/use-chains';
 import { useMakeWallets } from '../../hooks/use-make-wallets';
 import { useBroadcastedTxsStatus } from '../../hooks/use-broadcasted-txs';
-import { useFinalityTimeEstimate } from '../../hooks/use-finality-time-estimate';
 import { randomId } from '../../utils/random';
 import { useSettingsStore } from '../../store/settings';
 import { txHistory } from '../../store/tx-history';
@@ -42,17 +41,19 @@ import {
 } from '../StyledComponents/Theme';
 import { StyledThemedButton } from '../StyledComponents/Buttons';
 import { useCallbackStore } from '../../store/callbacks';
+import { convertSecondsToMinutesOrHours } from '../../utils/number';
+import { FaStopwatch } from 'react-icons/fa';
 
 export interface Wallet {
   walletName: string;
   walletPrettyName: string;
   walletInfo: {
     logo?:
-      | string
-      | {
-          major: string;
-          minor: string;
-        };
+    | string
+    | {
+      major: string;
+      minor: string;
+    };
   };
   isLedger?: boolean | null;
 }
@@ -149,11 +150,11 @@ export const PreviewRoute = ({
   const isSignRequired = useMemo(() => {
     return Boolean(
       enabledSetAddressIndex &&
-        chainIDsWithAction[enabledSetAddressIndex]?.transferAction
-          ?.signRequired &&
-        enabledSetAddressIndex !== 0 &&
-        chainIDsWithAction[enabledSetAddressIndex].transferAction?.id !==
-          chainIDsWithAction[enabledSetAddressIndex - 1].transferAction?.id
+      chainIDsWithAction[enabledSetAddressIndex]?.transferAction
+        ?.signRequired &&
+      enabledSetAddressIndex !== 0 &&
+      chainIDsWithAction[enabledSetAddressIndex].transferAction?.id !==
+      chainIDsWithAction[enabledSetAddressIndex - 1].transferAction?.id
     );
   }, [chainIDsWithAction, enabledSetAddressIndex]);
 
@@ -180,7 +181,6 @@ export const PreviewRoute = ({
   });
   const showLedgerWarning =
     _showLedgerWarning.cctp || _showLedgerWarning.ethermint;
-  const estimatedFinalityTime = useFinalityTimeEstimate(route);
 
   async function onSubmit() {
     if (!allAddressFilled) throw new Error('All addresses must be filled');
@@ -377,10 +377,10 @@ export const PreviewRoute = ({
                 chain.chainType === 'cosmos'
                   ? cosmos
                   : chain.chainType === 'evm'
-                  ? evm
-                  : chain.chainType === 'svm'
-                  ? svm
-                  : undefined;
+                    ? evm
+                    : chain.chainType === 'svm'
+                      ? svm
+                      : undefined;
 
               const wallets = makeWallets(chain?.chainID);
               if (trackedWallet) {
@@ -416,11 +416,11 @@ export const PreviewRoute = ({
         }}
       >
         {enabledSetAddressIndex === Object.values(chainAddresses).length - 1 &&
-        !isSignRequired
+          !isSignRequired
           ? 'Set Destination Address'
           : isSignRequired
-          ? 'Connect Wallet'
-          : 'Set Recovery Address'}
+            ? 'Connect Wallet'
+            : 'Set Recovery Address'}
       </StyledBrandDiv>
     );
   };
@@ -481,29 +481,33 @@ export const PreviewRoute = ({
             )
           )}
         </StyledBorderDiv>
+        {Boolean(route.estimatedRouteDurationSeconds) && (
+          <div className='flex flex-row items-center justify-end space-x-2'>
+            <span className='font-semibold text-gray-400'>Estimated Time</span>
+            <div className='flex flex-row space-x-1 items-center'>
+              <FaStopwatch className="h-4 w-4 text-gray-400" />
+              <span className='font-semibold text-gray-400'> ~{convertSecondsToMinutesOrHours(route.estimatedRouteDurationSeconds)}{' '}</span>
+            </div>
+          </div>
+        )}
         <div className="flex-1 space-y-4">
           {statusData?.isSuccess && submitMutation.isSuccess ? (
             <div className="flex flex-row items-center space-x-2 font-semibold">
               <CheckCircleIcon className="h-8 w-8 text-green-500" />
               <p>
                 {route.doesSwap &&
-                  `Successfully swapped ${
-                    getAsset(route.sourceAssetDenom, route.sourceAssetChainID)
-                      ?.recommendedSymbol ?? route.sourceAssetDenom
-                  } for ${
-                    getAsset(route.destAssetDenom, route.destAssetChainID)
-                      ?.recommendedSymbol ?? route.destAssetDenom
+                  `Successfully swapped ${getAsset(route.sourceAssetDenom, route.sourceAssetChainID)
+                    ?.recommendedSymbol ?? route.sourceAssetDenom
+                  } for ${getAsset(route.destAssetDenom, route.destAssetChainID)
+                    ?.recommendedSymbol ?? route.destAssetDenom
                   }`}
                 {!route.doesSwap &&
-                  `Successfully transfered ${
-                    getAsset(route.sourceAssetDenom, route.sourceAssetChainID)
-                      ?.recommendedSymbol ?? route.sourceAssetDenom
-                  } from ${
-                    chains?.find((c) => c.chainID === route.sourceAssetChainID)
-                      ?.prettyName
-                  } to ${
-                    chains?.find((c) => c.chainID === route.destAssetChainID)
-                      ?.prettyName
+                  `Successfully transfered ${getAsset(route.sourceAssetDenom, route.sourceAssetChainID)
+                    ?.recommendedSymbol ?? route.sourceAssetDenom
+                  } from ${chains?.find((c) => c.chainID === route.sourceAssetChainID)
+                    ?.prettyName
+                  } to ${chains?.find((c) => c.chainID === route.destAssetChainID)
+                    ?.prettyName
                   }`}
               </p>
             </div>
@@ -517,28 +521,7 @@ export const PreviewRoute = ({
             </div>
           ) : null}
 
-          {estimatedFinalityTime !== '' && (
-            <AlertCollapse.Root type="info">
-              <AlertCollapse.Trigger>
-                EVM bridging finality time is {estimatedFinalityTime}
-              </AlertCollapse.Trigger>
-              <AlertCollapse.Content>
-                <p>
-                  This swap contains at least one EVM chain, so it might take
-                  longer. Read more about{' '}
-                  <a
-                    href={HREF_COMMON_FINALITY_TIMES}
-                    className="underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    common finality times
-                  </a>
-                  .
-                </p>
-              </AlertCollapse.Content>
-            </AlertCollapse.Root>
-          )}
+
           {_showLedgerWarning.cctp && (
             <AlertCollapse.Root type="warning" initialOpen={true}>
               <AlertCollapse.Content>
@@ -579,7 +562,7 @@ export const PreviewRoute = ({
           {!submitMutation.isError && !submitMutation.isSuccess && (
             <div className="flex w-full items-center justify-center space-x-2 text-sm font-medium">
               {route.txsRequired > 1 &&
-              route.txsRequired - broadcastedTxs.length !== 0 ? (
+                route.txsRequired - broadcastedTxs.length !== 0 ? (
                 <>
                   <div className="relative rounded-full bg-[#FF486E] p-[4px]">
                     <div className="absolute h-6 w-6 animate-ping rounded-full bg-[#FF486E]" />
@@ -607,7 +590,7 @@ export const PreviewRoute = ({
               disabled={route.txsRequired !== broadcastedTxs.length}
             >
               {route.txsRequired !== broadcastedTxs.length &&
-              !submitMutation.isSuccess ? (
+                !submitMutation.isSuccess ? (
                 <svg
                   className="inline-block h-4 w-4 animate-spin text-white"
                   xmlns="http://www.w3.org/2000/svg"

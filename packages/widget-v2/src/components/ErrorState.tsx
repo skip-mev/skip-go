@@ -1,7 +1,7 @@
-import { styled, useTheme } from 'styled-components';
-import { Column } from './Layout';
-import { iconMap, ICONS } from '../icons';
-import { SmallText, Text } from './Typography';
+import { styled, useTheme } from "styled-components";
+import { Column } from "@/components/Layout";
+import { iconMap, ICONS } from "@/icons";
+import { SmallText, Text } from "@/components/Typography";
 
 export type ErrorStateProps = {
   icon?: ICONS;
@@ -31,15 +31,15 @@ export const ErrorState = ({
       backgroundColor={backgroundColor}
       gap={16}
     >
-      <Icon backgroundColor={textColor} color={backgroundColor} />
-      {typeof title === 'string' ? (
+      <Icon backgroundColor={textColor} color={backgroundColor} height={40} width={40} />
+      {typeof title === "string" ? (
         <Text fontSize={20} color={textColor}>
           {title}
         </Text>
       ) : (
         title
       )}
-      {typeof description === 'string' ? (
+      {typeof description === "string" ? (
         <SmallText color={textColor} textAlign="center">
           {description}
         </SmallText>
@@ -50,7 +50,7 @@ export const ErrorState = ({
   );
 };
 
-const StyledErrorStateContainer = styled(Column)<{ backgroundColor?: string }>`
+const StyledErrorStateContainer = styled(Column) <{ backgroundColor?: string }>`
   width: 480px;
   height: 225px;
   border-radius: 25px;

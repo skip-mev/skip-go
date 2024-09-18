@@ -24,6 +24,14 @@ const Home: NextPage = () => {
               srcAssetDenom:
                 'ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4',
             }}
+            filter={{
+              destination: {
+                'cosmoshub-4': [
+                  'uatom',
+                'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86',
+              ],
+              }
+            }}
             persistSwapWidgetState={false}
             onWalletConnected={(data) => console.log('connected', data)}
             onWalletDisconnected={({ chainType }) =>

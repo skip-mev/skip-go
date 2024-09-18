@@ -282,10 +282,10 @@ export class SkipClient {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
       getFallbackGasAmount,
     } = options;
-    let gasTokenUsed: Coin | undefined;
+    let gasTokenRecord: Record<number, Coin> | undefined;
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      gasTokenUsed = await this.validateGasBalances({
+      gasTokenRecord = await this.validateGasBalances({
         txs,
         userAddresses,
         getOfflineSigner: options.getCosmosSigner,
@@ -297,6 +297,7 @@ export class SkipClient {
 
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
+      let gasTokenUsed = gasTokenRecord?.[i];
       if (!tx) {
         raise(`executeRoute error: invalid message at index ${i}`);
       }
@@ -580,16 +581,14 @@ export class SkipClient {
           );
           if (!fallbackGasAmount) {
             raise(
-              `executeRoute error: unable to estimate gas for message(s) ${
-                messages || encodedMsgs
+              `executeRoute error: unable to estimate gas for message(s) ${messages || encodedMsgs
               }`
             );
           }
           return String(fallbackGasAmount);
         }
         raise(
-          `executeRoute error: unable to estimate gas for message(s) ${
-            messages || encodedMsgs
+          `executeRoute error: unable to estimate gas for message(s) ${messages || encodedMsgs
           }`
         );
       }
@@ -657,8 +656,7 @@ export class SkipClient {
 
     if (!fee) {
       raise(
-        `executeRoute error: unable to get fee for message(s) ${
-          messages || encodedMsgs
+        `executeRoute error: unable to get fee for message(s) ${messages || encodedMsgs
         }`
       );
     }
@@ -1788,6 +1786,8 @@ export class SkipClient {
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
+    // tx index -> gas token used
+    let gasTokenRecord: Record<number, Coin> = {}
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -1826,8 +1826,7 @@ export class SkipClient {
           raise(
             `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`
           );
-
-        return await this.validateCosmosGasBalance({
+        const coinUsed = await this.validateCosmosGasBalance({
           client,
           signerAddress: currentAddress,
           chainID: tx.cosmosTx.chainID,
@@ -1836,8 +1835,10 @@ export class SkipClient {
           gasAmountMultiplier,
           getFallbackGasAmount,
         });
+        gasTokenRecord[i] = coinUsed;
       }
     }
+    return gasTokenRecord;
   }
 
   async validateCosmosGasBalance({
@@ -1896,11 +1897,9 @@ export class SkipClient {
           const formattedAmount =
             Number(amount.amount) / Math.pow(10, asset.decimals);
           return {
-            errMessage: `Insufficient fee token to initiate transfer on ${chainID}. Need ${formattedAmount} ${
-              asset.recommendedSymbol || amount.denom
-            }, but only have ${formattedBalance} ${
-              asset.recommendedSymbol || amount.denom
-            }.`,
+            errMessage: `Insufficient fee token to initiate transfer on ${chainID}. Need ${formattedAmount} ${asset.recommendedSymbol || amount.denom
+              }, but only have ${formattedBalance} ${asset.recommendedSymbol || amount.denom
+              }.`,
             amount,
           };
         }
@@ -1916,12 +1915,12 @@ export class SkipClient {
       if (result.length > 1) {
         throw new Error(
           result[0]?.errMessage ||
-            `Insufficient fee token to initiate transfer on ${chainID}.`
+          `Insufficient fee token to initiate transfer on ${chainID}.`
         );
       }
       throw new Error(
         result[0]?.errMessage ||
-          `Insufficient fee token to initiate transfer on ${chainID}.`
+        `Insufficient fee token to initiate transfer on ${chainID}.`
       );
     }
     return successful.amount;
@@ -1969,7 +1968,7 @@ function validateChainIDsToAffiliates(
 /**
  * @deprecated SkipRouter is deprecated please use SkipClient instead
  */
-export class SkipRouter extends SkipClient {}
+export class SkipRouter extends SkipClient { }
 
 function raise(message?: string, options?: ErrorOptions): never {
   throw new Error(message, options);

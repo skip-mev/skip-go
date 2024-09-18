@@ -1,32 +1,47 @@
-import { ShadowDomAndProviders } from './ShadowDomAndProviders';
-import { PartialTheme } from './theme';
-import { SwapFlow } from './SwapFlow/SwapFlow';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
-import { Modal } from '../components/Modal';
-import { cloneElement, ReactElement } from 'react';
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
+import { createModal, useModal } from "@/components/Modal";
+import { cloneElement, ReactElement, useEffect } from "react";
+import { PartialTheme } from "./theme";
+import { Router } from "./Router";
+import { useResetAtom } from "jotai/utils";
+import { numberOfModalsOpenAtom } from "@/state/modal";
+import { useSetAtom } from "jotai";
+import { skipClientConfigAtom } from "@/state/skipClient";
+import { SkipClientOptions } from "@skip-go/client";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
-};
+} & SkipClientOptions;
 
-export const SwapWidget = (props: SwapWidgetProps) => {
+export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  useEffect(() => {
+    setSkipClientConfig(skipClientConfig);
+  }, [setSkipClientConfig, skipClientConfig]);
+
   return (
     <NiceModal.Provider>
-      <ShadowDomAndProviders {...props}>
+      <ShadowDomAndProviders theme={theme}>
         <WidgetContainer>
-          <SwapFlow />
+          <Router />
         </WidgetContainer>
       </ShadowDomAndProviders>
     </NiceModal.Provider>
   );
 };
 
-const SwapWidgetWithoutNiceModalProvider = (props: SwapWidgetProps) => {
+const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  useEffect(() => {
+    setSkipClientConfig(skipClientConfig);
+  }, [setSkipClientConfig, skipClientConfig]);
+
   return (
-    <ShadowDomAndProviders {...props}>
+    <ShadowDomAndProviders theme={theme}>
       <WidgetContainer>
-        <SwapFlow />
+        <Router />
       </WidgetContainer>
     </ShadowDomAndProviders>
   );
@@ -40,11 +55,15 @@ export const ShowSwapWidget = ({
   button = <button>show widget</button>,
   ...props
 }: ShowSwapWidget) => {
-  const modal = useModal(NiceModal.create(Modal));
+  const modal = useModal(
+    createModal(() => <SwapWidgetWithoutNiceModalProvider {...props} />)
+  );
+  const resetNumberOfModalsOpen = useResetAtom(numberOfModalsOpenAtom);
 
   const handleClick = () => {
+    resetNumberOfModalsOpen();
     modal.show({
-      children: <SwapWidgetWithoutNiceModalProvider {...props} />,
+      stackedModal: false,
     });
   };
 

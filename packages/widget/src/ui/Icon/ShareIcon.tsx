@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export const ShareIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg

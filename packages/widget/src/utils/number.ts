@@ -28,3 +28,13 @@ export function parseAmountWei(amount?: string, decimals = 6) {
     return "0";
   }
 }
+
+export const convertSecondsToMinutesOrHours = (seconds: number) => {
+  if (seconds < 60) {
+    return `${seconds} seconds`;
+  } else if (seconds < 3600) {
+    return `${Math.round(seconds / 60)} minutes`;
+  } else {
+    return `${Math.round(seconds / 3600)} hours`;
+  }
+}

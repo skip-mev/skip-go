@@ -1,9 +1,9 @@
-import { styled } from 'styled-components';
-import { Row } from './Layout';
-import { SmallText, Text } from './Typography';
-import { useTheme } from 'styled-components';
-import { ICONS, iconMap } from '../icons';
-import { getBrandButtonTextColor } from '../utils/colors';
+import { styled } from "styled-components";
+import { Row } from "@/components/Layout";
+import { SmallText, Text } from "@/components/Typography";
+import { useTheme } from "styled-components";
+import { ICONS, iconMap } from "@/icons";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 export type MainButtonProps = {
   label: string;
@@ -106,8 +106,8 @@ export const LoadingButton = ({
 );
 
 const StyledMainButton = styled(Row).attrs({
-  as: 'button',
-})<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
+  as: "button",
+}) <{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
   background-color: ${({ theme, backgroundColor }) =>
@@ -168,7 +168,7 @@ const StyledTimeRemaining = styled(Row)`
   border-radius: 10px;
 `;
 
-const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
+const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
   width: 476px;

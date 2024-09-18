@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const GasIcon = ({ color = 'gray' }: IconProps) => (
+export const GasIcon = ({ color = "currentColor" }: IconProps) => (
   <svg
     width="16"
     height="15"

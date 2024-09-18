@@ -2,7 +2,7 @@ type IconProps = {
   color?: string;
 };
 
-export const SpeedometerIcon = ({ color = 'gray' }: IconProps) => (
+export const SpeedometerIcon = ({ color = "currentColor" }: IconProps) => (
   <svg
     width="15"
     height="15"

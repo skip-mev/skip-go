@@ -3,13 +3,13 @@ title: "Smart Relay"
 description: "This page covers Smart Relay -- Skip Go API's universal cross-chain data & token delivery service"
 ---
 
-This document introduces Skip Go API’s Smart Relay functionality — the fastest & most reliable way to get your users where they’re going over any bridge Skip Go API supports. Smart Relay is an alternative to public bridge relayers, which we've designed to enable users to access more swap and transfer routes in fewer transactions more quickly & reliably.
+This document introduces Skip Go API’s Smart Relay functionality — the fastest & most reliable way to get your users where they’re going over any bridge supported by Skip Go. Smart Relay is an alternative to public bridge relayers. It's designed to enable users to access more swap and transfer routes in fewer transactions with greater speed and reliability.
 
 
  <Warning>
  **We strongly advise all integrators who want to offer top-notch user experiences to activate Smart Relay.**
  
- **If you do not use Smart Relay, you will suffer worse performance in a variety of ways:** 
+ **If you do not use Smart Relay, your performance will suffer:** 
  
  * Many routes will not be available (e.g. Bridging Solana to Base, Solana to any Cosmos chain)
  * Many routes will require more transactions (e.g. Bridging USDC from Ethereum to Osmosis will require 2 transactions, instead of 1)
@@ -36,18 +36,18 @@ This document covers:
 
 ## Background
 
-Smart Relay is a**intent-aware**, **user-centric**, **universal** relayer with better performance guarantees than public relayers for all bridges and routes we support. We offer it at a small cost to the end-user and no cost to the developer/integrator. In short, Smart Relay helps users get to more destinations, in fewer transactions, and at faster speeds than via public relayers — no matter how many bridges or chains stand between them and their destination. 
+Smart Relay is a **intent-aware**, **user-centric**, **universal** relayer with better performance guarantees than public relayers for all bridges and routes we support. We offer it at a small cost to the end-user and no cost to the developer/integrator. In short, Smart Relay helps users get to more destinations, in fewer transactions, and at faster speeds than via public relayers — no matter how many bridges or chains stand between them and their destination. 
 
-Smart Relay is huge improvement over existing relaying systems, made possible by intelligent integration with Skip Go API's routing capabilities.: 
+Smart Relay is huge improvement over existing relaying systems, made possible by intelligent integration with Skip Go's routing capabilities.: 
 
-* **Intent-aware**: Traditional relayers are unaware of what the user is trying to accomplish beyond performing 1 single hop of a transfer, but usually transfers are a part of a broader sequence of swaps, transfers, and actions. Smart Relayer has the context of the user's end-to-end cross-chain intent, and it can use information to optimize its execution plan.  
+* **Intent-aware**: Traditional relayers are unaware of what the user is trying to accomplish beyond the first hop of a transfer, but usually transfers are a part of a broader sequence of swaps, transfers, and actions. Smart Relayer has the context of the user's end-to-end cross-chain intent, and it can use this information to optimize its execution plan.  
    * For example, Smart Relay can reduce the number of transactions a user must sign in a route by automatically triggering the second bridge in a route when delivering the packet for the first bridge (e.g. Triggering IBC from CCTP).  
    * It can also use this information to prepare the user's destination address to receive the transfer (e.g. Dust it with gas even if there's no way to perform an atomic swap, or initialize a token account on Solana, etc...).
-* **User-centric**: Traditional relayers are "channel" or "bridge" centric. They just try to move all of the packets for a single route of a bridge from one chain to another, then they view their job as done. Smart Relayer is built around users, not bridges. This means that it instead of moving all of the packets in 1 bridge until that bridge is cleared, it moves all of the packets for 1 user across multiple bridges/hops -- until that user reaches their destination.  
-   * It also offers a deeply simplified payment experience for users thats designed for multi-hop: pay once in the source chain, in the token you're transferring, and receive high quality relaying at every leg of the route after.
-* **Universal**: Traditional relayers support 1 or 2 chains or ecosystems at a time for a single bridge. Cross-ecosystem transfers are fraught as a result. Many routes have no relayers or just spotty coverage. Smart Relay was designed to support all ecosystems and all bridges from the start. It already supports EVM, Solana/SVM, Cosmos, and modular -- with more chains, bridges, and routes coming shortly.
+* **User-centric**: Traditional relayers are focused on specific "channels" or "bridges," simply transferring all packets for a single bridge route from one chain to another. Once that task is complete, they consider their job done. In contrast, Smart Relayers prioritize the user, not the bridge. Instead of clearing packets on one bridge at a time, they transfer all packets associated with a specific user across multiple bridges or hops, ensuring the user reaches their destination efficiently.
+   * It also offers a deeply simplified payment experience for users that's designed for multi-hop: pay once in the source chain, in the token you're transferring, and receive high quality relaying at every leg of the route thereafter.
+* **Universal**: Traditional relayers only support 1 or 2 chains or ecosystems at a time for a single bridge, making cross-ecosystem transfers fraught. Many routes have no relayers or just spotty coverage. Smart Relay was designed to support all ecosystems and all bridges from the start. It already supports EVM, Solana/SVM, Cosmos, and modular -- with more chains, bridges, and routes routinely added.
 
-The cost of Smart Relay is determined dynamically based on several factors covered below gas prices on every chain and bridge fees involved in the route.
+The cost of Smart Relay is determined dynamically based on the factors covered below. The gas prices and bridge fees involved in a route are the principal determinants of that cost.
 
 ## State of Smart Relay
 
@@ -61,36 +61,71 @@ We are currently building out support for:
 * Hyperlane
 * Axelar
 
-For the bridges that Smart Relay does not support today, Skip Go API uses public or enshrined relayers — at whatever cost they’re typically made available to users. (These are free for IBC and have some fee associated with them for others.) All costs users will incur will always be made transparent in the relevant endpoint responses.
+For the bridges that Smart Relay does not support today, Skip Go uses public or enshrined relayers — at whatever cost they’re typically made available to users. (These are free for IBC and have some fee associated with them for others). All costs users will incur will always be made transparent in the relevant endpoint responses.
 
 ## How to Use Smart Relay
 
 ### How to activate Smart Relay
 
 1. On `/route` or `/msgs_direct`, pass `smart_relay=true`
-2. Sign the transaction as usual, and submit the signed transaction to Skip Go API via `/track` or `/submit` as normal  
-   1. **NOTE: We HIGHLY recommend using `/submit` to submit Smart Relay transactions on chain to avoid any errors with submitting a transaction on chain but not sending to the `/track` endpoint.**
+2. If using `/msgs`, ensure that you are passing the `smart_relay_fee_quote` object provided in the `cctp_transfer` operation from the `/route` response into your `/msgs` request. 
+   - If you're using the @skip-go/client library, version 0.8.0 and above supports this automatically. If you're integrating the API directly and decoding the `/route` response operations before passing them back into `msgs`, simply ensure you're decoding this new field properly and passing it back through!
+3. Sign the transaction as usual, and submit the signed transaction to the Skip Go API via `/track` or `/submit` as normal  
+   - **NOTE: We HIGHLY recommend using `/submit` to submit Smart Relay transactions on chain to avoid issues incurred by submitting a transaction on chain but not sending it to the `/track` endpoint.**
 
 That’s it! Smart Relay will take care of executing your cross-chain actions across all bridges it currently supports.
 
 ### How to determine what Smart Relay will cost the user
 
-In the response to `/route` , `/msgs_direct` and `/msgs`, the cost of Smart Relay will appear in the `estimated_fees` array with `fee_type` set to `SMART_RELAY`. See [Getting Fees](/fe-info) for more info about `estimated_fees`
+In the response to `/route` , `/msgs_direct` and `/msgs`, the cost of Smart Relay will appear in the `estimated_fees` array with `fee_type` set to `SMART_RELAY`. See [Getting Fee Info](./fee-info) for more info about `estimated_fees`
 
 For multi-tx routes, the user may pay up to 1 Smart Relay fee per transaction. 
 
-The fee for each transaction pays for all Smart Relay operations in that particular transaction. This prevents Smart Relay from accepting payment prematurely to perform operations for the latter transactions, since the latter transactions might not get signed / executed. 
+The fee for each transaction pays for all Smart Relay operations in that particular transaction. This prevents Smart Relay from accepting payment prematurely to perform operations for the latter transactions, since the latter transactions may not get signed or executed. 
 
 You can use the `tx_index` attribute on the `estimated_fees` entries to identify which Smart Relay fee corresponds to which transaction in the route. (e.g. `tx_index=0` indicates this is the fee for the first transaction in the route)
 
 ### What Determines the Cost of Smart Relaying
 
-Smart Relay incurs a user cost because Smart Relay involves actually submitting transactions to various chains and incurring transaction fee costs as a result. 
+Smart Relay incurs a user cost because Smart Relay involves actually submitting transactions to various chains and incurring transaction fees as a result. 
 
-* **Operations**: The cost of relaying a route depends on the operations in the route, since these affect the amount of gas Smart Relay consumes (e.g. Routes that include swaps will require higher gas amounts & involve more expensive relaying)
-* **The cost of gas:** Most networks have dynamic fee markets, where the price of gas increases during times of high network load. Smart Relay takes this into account when generating a quote
+* **Operations**: The cost of relaying a route depends on the operations in the route, since these affect the amount of gas Smart Relay consumes (e.g. routes that include swaps will require higher gas amounts & involve more expensive relaying)
+* **The cost of gas:** Most networks have dynamic fee markets, where the price of gas increases during periods of high network load. Smart Relay takes this into account when generating a quote
 * **Token Exchange Rates:** The token the user pays their fee in and the token Smart Relaying pays gas fees in may differ, so exchange rates affect the price the end user experiences. (e.g. If the user pays in OSMO for a route that terminates on Ethereum mainnet, Smart Relay will need to pay fees in ETH, so the amount of OSMO the user pays will depend on the OSMO/ETH spot price.)
 
+### How to properly use the Smart Relay Fee Quote
+
+Skip Go dynamically calculates the Smart Relay fee to be paid based on the underlying costs in real-time. 
+
+Although you should use the information in the `estimated_fees` array for display purposes, `cctp_transfer` includes a `smart_relay_fee_quote`, providing necessary information for proper use of the dynamic relaying fee system. Specifically, the `smart_relay_fee_quote` object contains information about the smart relay fee to be paid and when the quote expires (after which the quoted amount may no longer be valid and the transaction may not be succesfully relayed). 
+
+If you're using the `/msgs` endpoint, ensure that you are passing the `smart_relay_fee_quote` object provided in the `cctp_transfer` operation from the `/route` response into your `/msgs` request. This is necessary to ensure the transaction generated by the API matches the fee quoted in the `/route` request. If the quote is not passed back into the `/msgs` request, a new quote will be generated in the `/msgs` call that may be different than what was quoted previously in the `/route` request. Version `0.8.0` and above of the `@skip-go/client` library supports this automatically. If you're integrating the API directly and decoding the `/route` response operations before passing them back into `/msgs`, simply ensure you're decoding this new field properly and passing it back through!  See the `SmartRelayFeeQuote` below:
+
+<CodeGroup>
+
+```text TypeScript
+export type SmartRelayFeeQuote = {
+  feeAmount: string;
+  feeDenom: string;
+  feePaymentAddress: string;
+  relayerAddress: string;
+  expiration: Date;
+}
+```
+
+```JSON JSON
+{
+  "smart_relay_fee_quote": {
+    "fee_amount": "100000",               // string
+    "fee_denom": "uusdc",                 // string
+    "fee_payment_address": "0x123",       // string
+    "relayer_address": "0x123",           // string
+    "expiration": "2024-08-30T05:28:05Z"  // string
+  }
+}
+```
+
+</CodeGroup>
 
  <Check>
 **Want to help us get better? Have questions or feedback?**

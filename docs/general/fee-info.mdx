@@ -1,0 +1,45 @@
+---
+title: "Getting Fee Info"
+description: "Understand how Skip Go handles user-facing fees"
+---
+
+## Background
+
+This doc describes functionality in Skip Go for accessing standardized information about the various fees that a user can incur while swapping or transferring. Common fees include: 
+
+* Affiliate fees (e.g. fees you charge the user for swapping on your frontend)
+* Bridge and relayer fees
+* Smart Relayer fees
+* Gas fees
+
+## Understanding incurred fees from all sources: `estimated_fees`
+
+`estimated_fees` in the response of `/route` and `/msgs_direct` provides a `Fee` array where each entry gives information about a particular fee. 
+
+Each `Fee` object in the array will have the following attributes: 
+
+* `fee_type`: Enum giving the kind of fee — `SMART_RELAY` , `SWAP` , `BRIDGE`, `RELAY` , `GAS`
+* `bridge_id` : If the fee is a relayer fee (`RELAY`) or a bridge fee (`BRIDGE`), this gives the ID of the bridge charging the fee (or the bridge where the relayer is providing a service)
+* `amount` : The amount of the fee (expressed in the token the fee will be charged in)
+* `usd_amount`: Estimated USD value of the fee
+* `origin_asset` : An `Asset` object containing useful metadata for displaying and identifying the token in which the fee is denominated
+* `chain_id` : Chain ID where the fee will be collected
+* `denom` : Denom of the token in which the fee is denominated
+* `tx_index`: The zero-indexed identifier of the transaction where the user will incur this fee (For multi-transaction routes, fees may be incurred after the first transaction)
+* `operation_index`: The zero-indexed entry in the operations array where the user will incur this fee
+
+
+ <Warning>
+ **Development in Progress - Only a subset of fees supported today**
+ 
+ For now, only the Smart Relay fee will appear in the `estimated_fees` array. 
+ 
+ We will add other kinds of fees (e.g. swap fees, bridge fees, public relayer fees) over time. For now, these can be found in the `operations` field attached to the `operation` where they're incurred.
+</Warning>
+
+  
+<Check>
+ **Want to help us get better? Have questions or feedback?**
+ 
+ You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+ </Check>

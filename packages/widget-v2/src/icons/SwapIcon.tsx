@@ -4,8 +4,8 @@ type IconProps = {
 };
 
 export const SwapIcon = ({
-  color = 'black',
-  backgroundColor = 'white',
+  color = "currentColor",
+  backgroundColor = "transparent",
 }: IconProps) => (
   <svg
     width="40"

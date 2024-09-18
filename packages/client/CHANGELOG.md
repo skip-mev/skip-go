@@ -1,5 +1,23 @@
 # @skip-go/client
 
+## 0.8.2
+
+### Patch Changes
+
+- f8ebffe: fix validate gas balance checking
+
+## 0.8.1
+
+### Patch Changes
+
+- 218728e: Add estimated amount out to swap operations
+
+## 0.8.0
+
+### Minor Changes
+
+- 89a201c: Adds SmartRelayFeeQuote object to the CCTPTransfer operation
+
 ## 0.7.0
 
 ### Minor Changes

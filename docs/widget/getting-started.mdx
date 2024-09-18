@@ -1,12 +1,12 @@
 ---
-title: "Getting Started"
+title: 'Getting Started'
 ---
 
 # Overview
 
-Skip Go Widget is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality, in an easy to integrate React/Web Component. 
+Skip Go Widget is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React/Web component.
 
-Purpose built with customizability, extensibility, and contributor friendliness in mind, the Skip Go Widget is fully open-sourced designed to fit your exact user experience needs. If there's any functionality or configurations you'd like to see in the widget, we'd love for you to contribute by opening up an issue/pull request in [the repository](https://discord.com/invite/hFeHVAE26P)  or by joining [our Discord](https://discord.com/invite/hFeHVAE26P) and giving us a shout!
+Purpose-built with customizability, extensibility, and contributor friendliness in mind, the Skip Go Widget is fully open-sourced and designed to fit your exact user experience needs. If there's any functionality or configurations you'd like to see in the widget, we'd love for you to contribute by opening up an issue/pull request in [the repository](https://github.com/skip-mev/skip-go/tree/main/packages/widget) or by joining [our Discord](https://skip.build/discord) and giving us a shout!
 
 # Useful Links
 
@@ -19,10 +19,17 @@ This guide will walk you though how to easily install and add the Skip Go Widget
 
 ## 1. Installation
 
-The `@skip-go/widget` package is an npm package providing a React component for a fully customizable swapping, transferring, and bridging interface using the [Skip Go API](https://skip.build/). To install the package, run the following command:
+@skip-go/widget is an npm package that offers a React component for creating a fully customizable interface for swapping, transferring, and bridging, all powered by the [Skip Go API](https://skip.build/). To install the package, run the following command:
 
 ```bash
 npm install @skip-go/widget
+```
+
+If you're using yarn (or some other package manager that doesn't install peer dependencies by default)
+you may need to install these peer dependencies as well:
+
+```bash
+yarn add react react-dom styled-components
 ```
 
 ## 2. Use the `SwapWidget` Component

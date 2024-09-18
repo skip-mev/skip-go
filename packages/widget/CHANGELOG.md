@@ -1,5 +1,59 @@
 # @skip-go/widget
 
+## 2.4.12
+
+### Patch Changes
+
+- 8498a06: fix zero appeared in tx preview
+
+## 2.4.11
+
+### Patch Changes
+
+- 226db04: adjust estimated time text
+
+## 2.4.10
+
+### Patch Changes
+
+- e1681f0: use penumbra ephemeral address
+
+## 2.4.9
+
+### Patch Changes
+
+- 27b2f23: finality time using api route response
+
+## 2.4.8
+
+### Patch Changes
+
+- e96fadb: Fix conversionRate calculation
+
+## 2.4.7
+
+### Patch Changes
+
+- 0519e17: Remove scrollStore and scrollTo in disclosures
+
+## 2.4.6
+
+### Patch Changes
+
+- b048995: Fix filter bug
+
+## 2.4.5
+
+### Patch Changes
+
+- 9372c70: bump latest client
+
+## 2.4.4
+
+### Patch Changes
+
+- 7079fe4: inject connected wallet from parent prop
+
 ## 2.4.3
 
 ### Patch Changes
