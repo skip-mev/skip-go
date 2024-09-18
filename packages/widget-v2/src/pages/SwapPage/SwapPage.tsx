@@ -59,8 +59,7 @@ export const SwapPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
-  const { data: skipBalances, error: skipBalancesError } = useAtomValue(skipBalancesAtom);
-  console.log(skipBalances);
+  const { data: skipBalances } = useAtomValue(skipBalancesAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -71,18 +70,21 @@ export const SwapPage = () => {
     if (!denom) return;
 
     if (chainID && address) {
-      console.log("update skip balances request");
-      console.log(chainID, address, denom);
       setSkipBalancesRequest({
         chains: {
           [chainID]: {
             address,
-            denoms: [denom]
-          }
-        }
+            denoms: [denom],
+          },
+        },
       });
     }
-  }, [setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
+  }, [
+    setSkipBalancesRequest,
+    sourceAccount,
+    sourceAsset,
+    sourceAsset?.chainID,
+  ]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -95,6 +97,25 @@ export const SwapPage = () => {
     amount: destinationAsset?.amount,
     chainId: destinationAsset?.chainID,
   });
+
+  const sourceBalance = useMemo(() => {
+    if (!sourceAsset || !sourceAccount || !skipBalances) return;
+    const { chainID, denom } = sourceAsset;
+    if (!denom || !chainID) return;
+
+    return skipBalances?.chains?.[chainID]?.denoms?.[denom];
+  }, [skipBalances, sourceAccount, sourceAsset]);
+
+  const formattedBalance = useMemo(() => {
+    const amount = sourceBalance?.amount;
+    let formattedBalanceAmount = sourceBalance?.formattedAmount;
+
+    if (amount === "0") {
+      formattedBalanceAmount = amount;
+    }
+
+    return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
+  }, [sourceBalance?.amount, sourceBalance?.formattedAmount, sourceDetails?.symbol]);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -248,6 +269,13 @@ export const SwapPage = () => {
     sourceDetails.usdAmount,
   ]);
 
+  const handleMaxButton = useCallback(() => {
+    if (sourceBalance?.formattedAmount) {
+      setSourceAssetAmount(sourceBalance.formattedAmount);
+      setSwapDirection("swap-in");
+    }
+  }, [setSourceAssetAmount, setSwapDirection, sourceBalance?.formattedAmount]);
+
   return (
     <>
       <Column
@@ -263,25 +291,39 @@ export const SwapPage = () => {
           }}
           rightContent={
             sourceAccount && (
-              <Row gap={6} style={{
-                paddingRight: 13
-              }}>
-                <TransparentButton onClick={() => {
-                  connectedWalletModal.show();
-                }} style={{
-                  padding: "8px 13px",
-                  alignItems: "center",
-                  gap: 8
-                }}>
-                  {sourceAccount && <img style={{ objectFit: "cover" }} src={sourceAccount?.wallet.logo} height={16} width={16} />}
-                  125 ATOM
+              <Row
+                gap={6}
+                style={{
+                  paddingRight: 13,
+                }}
+              >
+                <TransparentButton
+                  onClick={() => {
+                    connectedWalletModal.show();
+                  }}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  {sourceAccount && (
+                    <img
+                      style={{ objectFit: "cover" }}
+                      src={sourceAccount?.wallet.logo}
+                      height={16}
+                      width={16}
+                    />
+                  )}
+                  {formattedBalance}
                 </TransparentButton>
-                <TransparentButton onClick={() => {
-                  connectedWalletModal.show();
-                }} style={{
-                  padding: "8px 13px",
-                  alignItems: "center",
-                }}>
+                <TransparentButton
+                  onClick={handleMaxButton}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                  }}
+                >
                   Max
                 </TransparentButton>
               </Row>
@@ -312,6 +354,7 @@ export const SwapPage = () => {
             }
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
+            badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={(newValue) => {
               setDestinationAssetAmount(newValue);
               setSwapDirection("swap-out");
@@ -330,7 +373,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column >
+      </Column>
       <div
         id="swap-flow-settings-container"
         ref={(element) => {
