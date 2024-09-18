@@ -210,17 +210,17 @@ await skipClient.executeRoute({
   userAddresses,
   // Executes after all of the operations triggered by a user's signature complete.
   // For multi-tx routes that require multiple user signatures, this will be called once for each tx in sequence
-  onTransactionCompleted: (chainID, txHash, status) => {
+  onTransactionCompleted: async (chainID, txHash, status) => {
     console.log(
       `Route completed with tx hash: ${txHash} & status: ${status.state}`
     );
   },
   // called after the transaction that the user signs gets broadcast on chain
-  onTransactionBroadcast: ({ txHash, chainID }) => {
+  onTransactionBroadcast: async ({ txHash, chainID }) => {
     console.log(`Transaction broadcasted with tx hash: ${txHash}`);
   },
   // called after the transaction that the user signs is successfully registered for tracking
-  onTransactionTracked: ({ txHash, chainID }) => {
+  onTransactionTracked: async ({ txHash, chainID }) => {
     console.log(`Transaction tracked with tx hash: ${txHash}`);
   },
 });
