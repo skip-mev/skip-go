@@ -5,9 +5,10 @@ import {
   Chain,
   RouteRequest,
   SkipClientOptions,
+  BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
+import { apiURL, devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
@@ -20,13 +21,19 @@ import {
 import { getAmountWei } from "@/utils/number";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL,
+  apiURL: devApiUrl,
   endpointOptions,
 });
 
-export const skipClient = atom((get) => {
+let skipClientInstance: SkipClient | null = null;
+
+export const skipClient = atom<SkipClient>((get) => {
   const options = get(skipClientConfigAtom);
-  return new SkipClient(options);
+  skipClientInstance = new SkipClient(options);
+  console.log(skipClientInstance.chains);
+  console.log(skipClientInstance.bridges);
+  console.log(skipClientInstance.balances);
+  return skipClientInstance;
 });
 
 export type ClientAsset = Asset & {
@@ -99,6 +106,25 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
     queryKey: ["skipSwapVenue"],
     queryFn: async () => {
       return skip.venues();
+    },
+  };
+});
+
+export const skipBalancesRequestAtom = atom<BalanceRequest | undefined>();
+
+export const skipBalancesAtom = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  const params = get(skipBalancesRequestAtom);
+
+
+  return {
+    queryKey: ["skipBalances", params],
+    queryFn: async () => {
+      if (!params) {
+        throw new Error("No balance request provided");
+      }
+
+      return skip.balances(params);
     },
   };
 });

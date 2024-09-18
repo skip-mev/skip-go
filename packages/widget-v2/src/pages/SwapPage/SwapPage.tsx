@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column, Row } from "@/components/Layout";
@@ -9,6 +9,8 @@ import {
   getChainsContainingAsset,
   skipChainsAtom,
   skipRouteAtom,
+  skipBalancesRequestAtom,
+  skipBalancesAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -55,9 +57,32 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setSwapExecutionState = useSetAtom(swapExecutionStateAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
+  const { data: skipBalances, error: skipBalancesError } = useAtomValue(skipBalancesAtom);
+  // console.log(skipBalances);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
+
+  useEffect(() => {
+    if (!sourceAsset || !sourceAccount) return;
+    const { chainID, denom } = sourceAsset;
+    const { address } = sourceAccount;
+    if (!denom) return;
+
+    if (chainID && address) {
+      // console.log("update skip balances request");
+      setSkipBalancesRequest({
+        chains: {
+          [chainID]: {
+            address,
+            denoms: [denom]
+          }
+        }
+      });
+    }
+  }, [setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
+
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
