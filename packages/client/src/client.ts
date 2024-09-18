@@ -220,6 +220,16 @@ export class SkipClient {
     return response.chains.map((chain) => types.chainFromJSON(chain));
   }
 
+  async balances(
+    request: types.BalanceRequest
+  ): Promise<types.BalanceResponse> {
+    const response = await this.requestClient.get<types.BalanceResponseJSON>(
+      '/v2/info/balances',
+      types.balanceRequestToJSON(request)
+    );
+    return types.balanceResponseFromJSON(response);
+  }
+
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const { route, userAddresses } = options;
 
