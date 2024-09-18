@@ -25,15 +25,9 @@ export const skipClientConfigAtom = atom<SkipClientOptions>({
   endpointOptions,
 });
 
-let skipClientInstance: SkipClient | null = null;
-
 export const skipClient = atom<SkipClient>((get) => {
   const options = get(skipClientConfigAtom);
-  skipClientInstance = new SkipClient(options);
-  console.log(skipClientInstance.chains);
-  console.log(skipClientInstance.bridges);
-  console.log(skipClientInstance.balances);
-  return skipClientInstance;
+  return new SkipClient(options);
 });
 
 export type ClientAsset = Asset & {
@@ -126,6 +120,7 @@ export const skipBalancesAtom = atomWithQuery((get) => {
 
       return skip.balances(params);
     },
+    retry: 1,
   };
 });
 

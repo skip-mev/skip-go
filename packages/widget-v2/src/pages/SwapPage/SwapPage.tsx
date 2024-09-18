@@ -60,7 +60,7 @@ export const SwapPage = () => {
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
   const { data: skipBalances, error: skipBalancesError } = useAtomValue(skipBalancesAtom);
-  // console.log(skipBalances);
+  console.log(skipBalances);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -71,7 +71,8 @@ export const SwapPage = () => {
     if (!denom) return;
 
     if (chainID && address) {
-      // console.log("update skip balances request");
+      console.log("update skip balances request");
+      console.log(chainID, address, denom);
       setSkipBalancesRequest({
         chains: {
           [chainID]: {
