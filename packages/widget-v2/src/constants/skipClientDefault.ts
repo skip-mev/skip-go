@@ -11,4 +11,4 @@ export const endpointOptions = {
 
 export const devApiUrl = "https://api.dev.skip.build";
 
-export const apiURL = `${appUrl}/api/widget/skip`;
+export const prodApiUrl = `${appUrl}/api/widget/skip`;

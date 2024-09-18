@@ -8,7 +8,7 @@ import {
   BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { apiURL, devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
+import { devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
