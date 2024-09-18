@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.9.1
+
+### Patch Changes
+
+- 950e8ee: Use POST method for balance endpoint
+
 ## 0.9.0
 
 ### Minor Changes
