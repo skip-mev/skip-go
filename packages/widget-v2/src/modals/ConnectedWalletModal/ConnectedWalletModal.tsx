@@ -44,7 +44,7 @@ export const ConnectedWalletModal = createModal(
             style={{ marginTop: ITEM_GAP }}
             onClick={() => {
               selectWalletmodal.show({
-                chainID: sourceAsset?.chainID,
+                chainId: sourceAsset?.chainID,
               });
             }}
             leftContent={

@@ -137,6 +137,16 @@ import {
   AssetsFromSourceRequestJSON,
   AssetsRequest,
   AssetsRequestJSON,
+  BalanceRequest,
+  BalanceRequestChainEntry,
+  BalanceRequestChainEntryJSON,
+  BalanceRequestJSON,
+  BalanceResponse,
+  BalanceResponseChainEntry,
+  BalanceResponseChainEntryJSON,
+  BalanceResponseDenomEntry,
+  BalanceResponseDenomEntryJSON,
+  BalanceResponseJSON,
   Bridge,
   BridgeJSON,
   BridgesResponse,
@@ -2477,4 +2487,118 @@ export function chainAffiliatesToJSON(
   return {
     affiliates: value.affiliates.map(affiliateToJSON),
   };
+}
+
+export function balanceRequestChainEntryFromJSON(
+  value: BalanceRequestChainEntryJSON
+): BalanceRequestChainEntry {
+  return value;
+}
+
+export function balanceRequestChainEntryToJSON(
+  value: BalanceRequestChainEntry
+): BalanceRequestChainEntryJSON {
+  return value;
+}
+
+export function balanceRequestFromJSON(
+  value: BalanceRequestJSON
+): BalanceRequest {
+  return value;
+}
+
+export function balanceRequestToJSON(
+  value: BalanceRequest
+): BalanceRequestJSON {
+  return value;
+}
+
+export function balanceResponseDenomEntryFromJSON(
+  value: BalanceResponseDenomEntryJSON
+): BalanceResponseDenomEntry {
+  return {
+    amount: value.amount,
+    decimals: value.decimals,
+    formattedAmount: value.formatted_amount,
+    price: value.price,
+    valueUSD: value.value_usd,
+    error: value.error,
+  };
+}
+
+export function balanceResponseDenomEntryToJSON(
+  value: BalanceResponseDenomEntry
+): BalanceResponseDenomEntryJSON {
+  return {
+    amount: value.amount,
+    decimals: value.decimals,
+    formatted_amount: value.formattedAmount,
+    price: value.price,
+    value_usd: value.valueUSD,
+    error: value.error,
+  };
+}
+
+export function balanceResponseChainEntryFromJSON(
+  value: BalanceResponseChainEntryJSON
+): BalanceResponseChainEntry {
+  const result: BalanceResponseChainEntry = {
+    denoms: {},
+  };
+  for (const key of Object.keys(value.denoms)) {
+    const entry = value.denoms[key];
+    if (entry === undefined) {
+      continue;
+    }
+    result.denoms[key] = balanceResponseDenomEntryFromJSON(entry);
+  }
+  return result;
+}
+
+export function balanceResponseChainEntryToJSON(
+  value: BalanceResponseChainEntry
+): BalanceResponseChainEntryJSON {
+  const result: BalanceResponseChainEntryJSON = {
+    denoms: {},
+  };
+  for (const key of Object.keys(value.denoms)) {
+    const entry = value.denoms[key];
+    if (entry === undefined) {
+      continue;
+    }
+    result.denoms[key] = balanceResponseDenomEntryToJSON(entry);
+  }
+  return result;
+}
+
+export function balanceResponseFromJSON(
+  value: BalanceResponseJSON
+): BalanceResponse {
+  const result: BalanceResponse = {
+    chains: {},
+  };
+  for (const key of Object.keys(value.chains)) {
+    const entry = value.chains[key];
+    if (entry === undefined) {
+      continue;
+    }
+    result.chains[key] = balanceResponseChainEntryFromJSON(entry);
+  }
+  return result;
+}
+
+export function balanceResponseToJSON(
+  value: BalanceResponse
+): BalanceResponseJSON {
+  const result: BalanceResponseJSON = {
+    chains: {},
+  };
+  for (const key of Object.keys(value.chains)) {
+    const entry = value.chains[key];
+    if (entry === undefined) {
+      continue;
+    }
+    result.chains[key] = balanceResponseChainEntryToJSON(entry);
+  }
+  return result;
 }
