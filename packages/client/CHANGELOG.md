@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.9.0
+
+### Minor Changes
+
+- ceda056: Add balance query endpoint
+
 ## 0.8.2
 
 ### Patch Changes
