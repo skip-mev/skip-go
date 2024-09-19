@@ -353,6 +353,7 @@ export const SwapPage = () => {
         {swapButton}
         <SwapPageFooter
           showRouteInfo
+          disabled={isRouteError}
           onClick={() =>
             swapDetailsModal.show({
               drawer: true,
