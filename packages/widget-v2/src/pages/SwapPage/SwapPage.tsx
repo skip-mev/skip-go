@@ -33,7 +33,11 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import styled, { css } from "styled-components";
-import { useSetMaxAmount } from "./useSetMaxAmount";
+import {
+  useInsufficientSourceBalance,
+  useMaxAmountTokenMinusFees,
+  useSetMaxAmount,
+} from "./useSetMaxAmount";
 import { useSourceBalance } from "./useSourceBalance";
 
 export const SwapPage = () => {
@@ -60,6 +64,7 @@ export const SwapPage = () => {
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
   const sourceBalance = useSourceBalance();
+  const insufficientBalance = useInsufficientSourceBalance();
 
   const handleMaxButton = useSetMaxAmount();
 
@@ -201,14 +206,19 @@ export const SwapPage = () => {
 
   const swapButton = useMemo(() => {
     if (isWaitingForNewRoute) {
-      return <MainButton label="Finding Best Route..." loading={true} />;
+      return <MainButton label="Finding Best Route..." loading />;
     }
 
     if (isRouteError) {
-      return <MainButton label={routeError.message} disabled={true} />;
+      return <MainButton label={routeError.message} disabled />;
     }
 
     if (sourceAccount?.address) {
+      if (insufficientBalance) {
+        return (
+          <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
+        );
+      }
       return (
         <MainButton
           label="Swap"
@@ -237,6 +247,7 @@ export const SwapPage = () => {
   }, [
     isWaitingForNewRoute,
     isRouteError,
+    insufficientBalance,
     sourceAccount?.address,
     sourceAsset?.chainID,
     routeError?.message,
@@ -353,7 +364,7 @@ export const SwapPage = () => {
         {swapButton}
         <SwapPageFooter
           showRouteInfo
-          disabled={isRouteError}
+          disabled={isRouteError || isWaitingForNewRoute}
           onClick={() =>
             swapDetailsModal.show({
               drawer: true,
