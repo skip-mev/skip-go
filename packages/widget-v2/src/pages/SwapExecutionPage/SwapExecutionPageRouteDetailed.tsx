@@ -10,6 +10,8 @@ import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
 import { useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { ClientOperation, OperationType } from "@/utils/clientType";
+import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
+import { useAtom } from "jotai";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
@@ -49,6 +51,8 @@ export const SwapExecutionPageRouteDetailed = ({
   operations,
   txStateMap,
 }: SwapExecutionPageRouteDetailedProps) => {
+  const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
+  const [{ data: bridges }] = useAtom(skipBridgesAtom);
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
   const handleMouseEnterOperationType = (index: number) => {
@@ -81,10 +85,21 @@ export const SwapExecutionPageRouteDetailed = ({
           operationTypeToSimpleOperationType[operation.type];
 
         const getBridgeSwapVenue = () => {
-          const swapVenueName = operation.swapVenues?.[0]?.name;
+          const swapVenueId = operation.swapVenues?.[0]?.chainID;
           const bridgeId = operation.bridgeID;
-          return bridgeId || swapVenueName;
+
+          const bridge = bridges?.find(bridge => bridge.id === bridgeId);
+          const swapVenue = swapVenues?.find(swapVenue => swapVenue.chainID === swapVenueId);
+
+          const bridgeOrSwapVenue = {
+            name: bridge?.name ?? swapVenue?.name,
+            image: bridge?.logoURI ?? swapVenue?.logoUri,
+          };
+
+          return bridgeOrSwapVenue;
         };
+
+        const bridgeOrSwapVenue = getBridgeSwapVenue();
 
         const asset = {
           tokenAmount: operation.amountOut,
@@ -105,7 +120,8 @@ export const SwapExecutionPageRouteDetailed = ({
               </OperationTypeIconContainer>
               {tooltipMap?.[index] && (
                 <Tooltip>
-                  {simpleOperationType} with {getBridgeSwapVenue()}
+                  {simpleOperationType} with {bridgeOrSwapVenue.name}
+                  <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
                 </Tooltip>
               )}
             </Row>
@@ -150,4 +166,11 @@ const StyledSwapExecutionPageRoute = styled(Column)`
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;
+`;
+
+const StyledSwapVenueOrBridgeImage = styled.img`
+  margin-left: 5px;
+  object-fit: contain;
+  width: 10px;
+  height: 10px;
 `;
