@@ -28,7 +28,9 @@ export const useCreateEvmWallets = () => {
       const evmGetAddress: MinimalWallet["getAddress"] = async ({
         signRequired,
       }) => {
-        if (connector.id !== currentEvmConnector?.id) {
+        console.log("evmGetAddress", connector.id, currentEvmConnector?.id, isEvmConnected);
+        if (connector.id !== currentEvmConnector?.id || !isEvmConnected) {
+          console.log("connector.id", connector.id);
           await connectAsync({ connector, chainId: Number(chainID) });
           setEvmWallet({ walletName: connector.id, chainType: "evm" });
         } else if (evmAddress && isEvmConnected && signRequired) {
