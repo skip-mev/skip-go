@@ -63,6 +63,7 @@ export const SwapPage = () => {
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
   useEffect(() => {
+    if (isWaitingForNewRoute) return;
     if (!sourceAsset || !sourceAccount) return;
     const { chainID, denom } = sourceAsset;
     const { address } = sourceAccount;
@@ -77,6 +78,7 @@ export const SwapPage = () => {
       },
     });
   }, [
+    isWaitingForNewRoute,
     setSkipBalancesRequest,
     sourceAccount,
     sourceAsset,
