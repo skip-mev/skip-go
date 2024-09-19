@@ -58,10 +58,21 @@ export function atomWithDebounce<T>(
     set(isDebouncingAtom, false);
   });
 
+  const forceUpdateAtom = atom(null, (get, set, update: SetStateAction<T>) => {
+    const nextValue =
+      typeof update === "function"
+        ? (update as (prev: T) => T)(get(_currentValueAtom))
+        : update;
+
+    set(_currentValueAtom, nextValue);
+    set(debouncedValueAtom, nextValue); // Update debounced value immediately
+  });
+
   return {
     currentValueAtom: atom((get) => get(_currentValueAtom)),
     isDebouncingAtom,
     clearTimeoutAtom,
     debouncedValueAtom,
+    forceUpdateAtom,
   };
 }

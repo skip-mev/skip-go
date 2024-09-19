@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 import { ClientAsset, skipRouteAtom } from "./skipClient";
 import { atomEffect } from "jotai-effect";
-import { parseAmountWei } from "@/utils/number";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { MinimalWallet } from "./wallets";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -11,14 +11,20 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
 
-export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } = atomWithDebounce<string | undefined>(
+export const {
+  debouncedValueAtom: debouncedSourceAssetAmountAtom,
+  forceUpdateAtom: forceUpdateSourceAssetAmountAtom,
+} = atomWithDebounce<string | undefined>(
   undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY,
+  ROUTE_REQUEST_DEBOUNCE_DELAY
 );
 
-export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } = atomWithDebounce<string | undefined>(
+export const {
+  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
+  forceUpdateAtom: forceUpdateDestinationAssetAmountAtom,
+} = atomWithDebounce<string | undefined>(
   undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY,
+  ROUTE_REQUEST_DEBOUNCE_DELAY
 );
 
 export const sourceAssetAtom = atom<AssetAtom>();
@@ -30,7 +36,7 @@ export const sourceAssetAmountAtom = atom(
     set(sourceAssetAtom, { ...oldSourceAsset, amount: newAmount });
     set(debouncedSourceAssetAmountAtom, newAmount);
     set(swapDirectionAtom, "swap-in");
-  },
+  }
 );
 
 export const destinationAssetAtom = atom<AssetAtom>();
@@ -42,26 +48,24 @@ export const destinationAssetAmountAtom = atom(
     set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
     set(debouncedDestinationAssetAmountAtom, newAmount);
     set(swapDirectionAtom, "swap-out");
-  },
-);
-
-export const isWaitingForNewRouteAtom = atom(
-  (get) => {
-    const sourceAmount = get(sourceAssetAmountAtom);
-    const destinationAmount = get(destinationAssetAmountAtom);
-    const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
-    const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
-
-    const { isLoading } = get(skipRouteAtom);
-    const direction = get(swapDirectionAtom);
-
-    if (direction === "swap-in") {
-      return (sourceAmount !== debouncedSourceAmount) || isLoading;
-    } else if (direction === "swap-out") {
-      return (destinationAmount !== debouncedDestinationAmount) || isLoading;
-    }
   }
 );
+
+export const isWaitingForNewRouteAtom = atom((get) => {
+  const sourceAmount = get(sourceAssetAmountAtom);
+  const destinationAmount = get(destinationAssetAmountAtom);
+  const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
+  const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
+
+  const { isLoading } = get(skipRouteAtom);
+  const direction = get(swapDirectionAtom);
+
+  if (direction === "swap-in") {
+    return sourceAmount !== debouncedSourceAmount || isLoading;
+  } else if (direction === "swap-out") {
+    return destinationAmount !== debouncedDestinationAmount || isLoading;
+  }
+});
 
 export type SwapDirection = "swap-in" | "swap-out";
 
@@ -73,20 +77,20 @@ export const invertSwapAtom = atom(null, (get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const swapDirection = get(swapDirectionAtom);
-  const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
   set(isInvertingSwapAtom, true);
-  set(swapDirectionAtom, newSwapDirection);
 
   set(sourceAssetAtom, destinationAsset);
   if (destinationAsset?.amount) {
-    set(sourceAssetAmountAtom, destinationAsset?.amount);
+    set(forceUpdateSourceAssetAmountAtom, destinationAsset?.amount);
   }
 
   set(destinationAssetAtom, sourceAsset);
   if (sourceAsset?.amount) {
-    set(destinationAssetAmountAtom, sourceAsset?.amount);
+    set(forceUpdateDestinationAssetAmountAtom, sourceAsset?.amount);
   }
 
+  const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
+  set(swapDirectionAtom, newSwapDirection);
   set(isInvertingSwapAtom, false);
 });
 
@@ -102,8 +106,14 @@ export const routeAmountEffect = atomEffect((get, set) => {
 
   if (!route.data || !sourceAsset || !destinationAsset) return;
 
-  const swapInAmount = parseAmountWei(route.data.amountOut, destinationAsset.decimals);
-  const swapOutAmount = parseAmountWei(route.data.amountIn, sourceAsset.decimals);
+  const swapInAmount = convertTokenAmountToHumanReadableAmount(
+    route.data.amountOut,
+    destinationAsset.decimals
+  );
+  const swapOutAmount = convertTokenAmountToHumanReadableAmount(
+    route.data.amountIn,
+    sourceAsset.decimals
+  );
   const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
   const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
 

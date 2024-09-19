@@ -18,8 +18,8 @@ import {
   sourceAssetAtom,
   swapDirectionAtom,
 } from "./swapPage";
-import { getAmountWei } from "@/utils/number";
 import { currentPageAtom, Routes } from "./router";
+import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL: devApiUrl,
@@ -163,14 +163,12 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
 
   if (
     !sourceAsset?.chainID ||
     !sourceAsset.denom ||
     !destinationAsset?.chainID ||
-    !destinationAsset.denom ||
-    isInvertingSwap
+    !destinationAsset.denom
   ) {
     return undefined;
   }
@@ -178,12 +176,11 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
     direction === "swap-in"
       ? {
         amountIn:
-          getAmountWei(sourceAssetAmount, sourceAsset.decimals) || "0",
+          convertHumanReadableAmountToCryptoAmount(sourceAssetAmount ?? "0", sourceAsset.decimals),
       }
       : {
         amountOut:
-          getAmountWei(destinationAssetAmount, destinationAsset.decimals) ||
-          "0",
+          convertHumanReadableAmountToCryptoAmount(destinationAssetAmount ?? "0", destinationAsset.decimals),
       };
 
   return {
@@ -199,12 +196,14 @@ export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
 
   get(routeAmountEffect);
 
   const queryEnabled =
     params !== undefined &&
     (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
+    !isInvertingSwap &&
     currentPage === Routes.SwapPage;
 
   return {

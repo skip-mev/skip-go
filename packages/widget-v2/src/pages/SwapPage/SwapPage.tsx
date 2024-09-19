@@ -66,18 +66,16 @@ export const SwapPage = () => {
     if (!sourceAsset || !sourceAccount) return;
     const { chainID, denom } = sourceAsset;
     const { address } = sourceAccount;
-    if (!denom) return;
+    if (!denom || !chainID || !address) return;
 
-    if (chainID && address) {
-      setSkipBalancesRequest({
-        chains: {
-          [chainID]: {
-            address,
-            denoms: [denom],
-          },
+    setSkipBalancesRequest({
+      chains: {
+        [chainID]: {
+          address,
+          denoms: [denom],
         },
-      });
-    }
+      },
+    });
   }, [
     setSkipBalancesRequest,
     sourceAccount,
