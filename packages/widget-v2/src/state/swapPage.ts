@@ -11,21 +11,11 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
 
-export const {
-  debouncedValueAtom: debouncedSourceAssetAmountAtom,
-  forceUpdateAtom: forceUpdateSourceAssetAmountAtom,
-} = atomWithDebounce<string | undefined>(
-  undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY
-);
+export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
+  atomWithDebounce<string | undefined>(undefined, ROUTE_REQUEST_DEBOUNCE_DELAY);
 
-export const {
-  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
-  forceUpdateAtom: forceUpdateDestinationAssetAmountAtom,
-} = atomWithDebounce<string | undefined>(
-  undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY
-);
+export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
+  atomWithDebounce<string | undefined>(undefined, ROUTE_REQUEST_DEBOUNCE_DELAY);
 
 export const sourceAssetAtom = atom<AssetAtom>();
 
@@ -88,11 +78,11 @@ export const invertSwapAtom = atom(null, (get, set) => {
   set(destinationAssetAtom, sourceAsset);
   if (sourceAsset?.amount) {
     set(destinationAssetAmountAtom, sourceAsset?.amount, () => {
-      const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
+      const newSwapDirection =
+        swapDirection === "swap-in" ? "swap-out" : "swap-in";
       set(swapDirectionAtom, newSwapDirection);
     });
   }
-
 });
 
 export const connectedWalletAtom = atom<MinimalWallet>();
