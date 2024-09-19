@@ -34,6 +34,8 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import styled, { css } from "styled-components";
+import { getClientOperations } from "@/utils/clientType";
+import { getGasFee } from "./getGasFee";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -271,10 +273,10 @@ export const SwapPage = () => {
   ]);
 
   const handleMaxButton = useCallback(() => {
-    if (sourceBalance?.formattedAmount) {
-      setSourceAssetAmount(sourceBalance.formattedAmount);
-    }
-  }, [setSourceAssetAmount, sourceBalance?.formattedAmount]);
+    if (!sourceBalance?.formattedAmount || !sourceDetails?.chain?.chainType || !route) return;
+    const gasFee = getGasFee(sourceDetails.chain.chainType, route);
+    setSourceAssetAmount(sourceBalance.formattedAmount);
+  }, [route, setSourceAssetAmount, sourceBalance?.formattedAmount, sourceDetails?.chain?.chainType]);
 
   return (
     <>
@@ -298,38 +300,40 @@ export const SwapPage = () => {
                 }}
               >
                 {formattedBalance && (
-                  <TransparentButton
-                    onClick={() => {
-                      connectedWalletModal.show();
-                    }}
-                    style={{
-                      padding: "8px 13px",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    {sourceAccount && (
-                      <img
-                        style={{ objectFit: "cover" }}
-                        src={sourceAccount?.wallet.logo}
-                        height={16}
-                        width={16}
-                      />
-                    )}
-                    {formattedBalance}
-                  </TransparentButton>
-                )}
+                  <>
+                    <TransparentButton
+                      onClick={() => {
+                        connectedWalletModal.show();
+                      }}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      {sourceAccount && (
+                        <img
+                          style={{ objectFit: "cover" }}
+                          src={sourceAccount?.wallet.logo}
+                          height={16}
+                          width={16}
+                        />
+                      )}
+                      {formattedBalance}
+                    </TransparentButton>
 
-                <TransparentButton
-                  disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                  onClick={handleMaxButton}
-                  style={{
-                    padding: "8px 13px",
-                    alignItems: "center",
-                  }}
-                >
-                  Max
-                </TransparentButton>
+                    <TransparentButton
+                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                      onClick={handleMaxButton}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                      }}
+                    >
+                      Max
+                    </TransparentButton>
+                  </>
+                )}
               </Row>
             )
           }

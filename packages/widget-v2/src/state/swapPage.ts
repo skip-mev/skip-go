@@ -81,6 +81,7 @@ export const invertSwapAtom = atom(null, (get, set) => {
       const newSwapDirection =
         swapDirection === "swap-in" ? "swap-out" : "swap-in";
       set(swapDirectionAtom, newSwapDirection);
+      set(isInvertingSwapAtom, false);
     });
   }
 });
