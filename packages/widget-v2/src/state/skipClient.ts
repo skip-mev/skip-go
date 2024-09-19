@@ -18,11 +18,14 @@ import {
   swapDirectionAtom,
 } from "./swapPage";
 import { getAmountWei } from "@/utils/number";
+import { defaultTheme, Theme } from "@/widget/theme";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
   endpointOptions,
 });
+
+export const themeAtom = atom<Theme>(defaultTheme);
 
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
