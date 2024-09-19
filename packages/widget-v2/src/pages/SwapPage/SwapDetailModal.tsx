@@ -1,4 +1,4 @@
-import { css, styled } from "styled-components";
+import { css, styled, useTheme } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
@@ -14,6 +14,7 @@ import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
+  const theme = useTheme();
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [swapSettings, setSwapSettings] = useAtom(swapSettingsAtom);
@@ -22,6 +23,10 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   }, [route, chains]);
 
   const clientOperations = route && getClientOperations(route.operations);
+
+  const usesEvmInOperations = useMemo(() => {
+    return clientOperations?.find(operation => operation.toChainID === "1");
+  }, [clientOperations]);
 
   const axelarTransferOperation = useMemo(() => {
     if (!clientOperations) return;
@@ -164,6 +169,15 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         )
       }
 
+      {
+        usesEvmInOperations && <StyledEvmWarningMessage>
+          <SwapDetailText color={theme.warning.text}>
+            This swap contains at least one EVM chain, so it might take longer.
+            <br /> Read more about common finality times.
+          </SwapDetailText>
+        </StyledEvmWarningMessage>
+      }
+
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>
@@ -201,4 +215,10 @@ const SwapDetailText = styled(Row).attrs({
   normalTextColor: true,
 })`
   letter-spacing: 0.26px;
+`;
+
+const StyledEvmWarningMessage = styled.div`
+  padding: 12px;
+  border-radius: 5px;
+  background-color: ${({ theme }) => theme.warning.background};
 `;

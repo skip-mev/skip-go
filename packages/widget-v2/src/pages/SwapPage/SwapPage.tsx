@@ -35,7 +35,6 @@ import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWal
 import styled, { css } from "styled-components";
 import {
   useInsufficientSourceBalance,
-  useMaxAmountTokenMinusFees,
   useSetMaxAmount,
 } from "./useSetMaxAmount";
 import { useSourceBalance } from "./useSourceBalance";
