@@ -16,14 +16,18 @@ import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
-import { chainAddressesAtom, skipSubmitSwapExecutionAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  chainAddressesAtom,
+  skipSubmitSwapExecutionAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
   destinationAddressUnset,
   ready,
-  broadcasted,
+  pending,
   confirmed,
 }
 
@@ -53,7 +57,9 @@ export const SwapExecutionPage = () => {
     2: "pending",
   });
 
-  const { mutate, isPending, isSuccess } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const { mutate, isPending, isSuccess } = useAtomValue(
+    skipSubmitSwapExecutionAtom
+  );
 
   const swapExecutionState = useMemo(() => {
     if (!chainAddresses) return;
@@ -62,8 +68,8 @@ export const SwapExecutionPage = () => {
     const allAddressesSet = requiredChainAddresses.every(
       (_chainId, index) => chainAddresses[index]?.address
     );
-
-    const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
+    const lastChainAddress =
+      chainAddresses[requiredChainAddresses.length - 1]?.address;
 
     if (!isPending) {
       if (allAddressesSet) {
@@ -77,7 +83,7 @@ export const SwapExecutionPage = () => {
     if (isSuccess) {
       return SwapExecutionState.confirmed;
     }
-    return SwapExecutionState.broadcasted;
+    return SwapExecutionState.pending;
   }, [chainAddresses, isPending, isSuccess, route?.requiredChainAddresses]);
 
   const renderMainButton = useMemo(() => {
@@ -106,7 +112,7 @@ export const SwapExecutionPage = () => {
             onClick={mutate}
           />
         );
-      case SwapExecutionState.broadcasted:
+      case SwapExecutionState.pending:
         return (
           <MainButton
             label="Swap in progress"
@@ -124,7 +130,14 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [clientOperations.length, connectRequiredChains, modal, mutate, swapExecutionState, theme.success.text]);
+  }, [
+    clientOperations.length,
+    connectRequiredChains,
+    modal,
+    mutate,
+    swapExecutionState,
+    theme.success.text,
+  ]);
 
   const SwapExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {
@@ -143,7 +156,7 @@ export const SwapExecutionPage = () => {
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: () => setCurrentPage(Routes.SwapPage)
+          onClick: () => setCurrentPage(Routes.SwapPage),
         }}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",

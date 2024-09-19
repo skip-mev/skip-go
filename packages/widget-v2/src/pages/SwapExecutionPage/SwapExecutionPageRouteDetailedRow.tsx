@@ -19,13 +19,13 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
-  isSignRequired?: boolean,
+  isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
   account?: {
     address: string;
-    image?: string
-  }
+    image?: string;
+  };
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -56,28 +56,38 @@ export const SwapExecutionPageRouteDetailedRow = ({
       case "source":
         return {
           address: account?.address,
-          image: account?.wallet.logo
+          image: account?.wallet.logo,
         };
-      case "intermediary":
-        {
-          const selected = Object.values(chainAddresses).find((chainAddress) => chainAddress.chainID === chainID);
-          return {
-            address: selected?.address,
-            image: selected?.source === "wallet" && selected.wallet.walletInfo.logo || undefined
-          };
-        }
-
+      case "intermediary": {
+        const selected = Object.values(chainAddresses).find(
+          (chainAddress) => chainAddress.chainID === chainID
+        );
+        return {
+          address: selected?.address,
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
+        };
+      }
       case "destination": {
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
           address: selected?.address,
-          image: selected?.source === "wallet" && selected.wallet.walletInfo.logo || undefined
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
         };
       }
     }
-  }, [account?.address, account?.wallet.logo, chainAddresses, chainID, context]);
-
-
+  }, [
+    account?.address,
+    account?.wallet.logo,
+    chainAddresses,
+    chainID,
+    context,
+  ]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -97,15 +107,16 @@ export const SwapExecutionPageRouteDetailedRow = ({
         </StyledAnimatedBorder>
       )}
 
-      <Column style={{
-        flex: 1,
-        justifyContent: "space-between"
-      }}>
+      <Column
+        style={{
+          flex: 1,
+        }}
+        justify="space-between"
+      >
         <Row align="center" justify="space-between">
           <Row gap={5}>
             <SmallText normalTextColor>
-              {assetDetails?.amount}{" "}
-              {assetDetails?.symbol}
+              {assetDetails?.amount} {assetDetails?.symbol}
             </SmallText>
             <SmallText> on {assetDetails?.chainName}</SmallText>
             {explorerLink && (
@@ -118,14 +129,24 @@ export const SwapExecutionPageRouteDetailedRow = ({
           </Row>
           {source.address && (
             <StyledButton>
-              {source.image && <img src={source.image} style={{
-                height: "100%"
-              }} />}
-              <StyledWalletAddress monospace>{`${source.address.slice(0, 9)}…${source.address.slice(-5)}`}</StyledWalletAddress>
+              {source.image && (
+                <img
+                  src={source.image}
+                  style={{
+                    height: "100%",
+                  }}
+                />
+              )}
+              <StyledWalletAddress monospace>{`${source.address.slice(
+                0,
+                9
+              )}…${source.address.slice(-5)}`}</StyledWalletAddress>
             </StyledButton>
           )}
         </Row>
-        {isSignRequired && <SmallText color={theme.warning.text}>Sign required</SmallText>}
+        {isSignRequired && (
+          <SmallText color={theme.warning.text}>Signature required</SmallText>
+        )}
       </Column>
     </Row>
   );
@@ -145,10 +166,7 @@ const StyledChainImage = styled.img<{ state?: txState }>`
   box-sizing: content-box;
 `;
 
-const StyledWalletAddress = styled(SmallText)`
-
-
-`;
+const StyledWalletAddress = styled(SmallText)``;
 
 export const StyledAnimatedBorder = ({
   backgroundColor,
