@@ -21,15 +21,15 @@ export const useGasFeeTokenAmount = () => {
     chainId: sourceAsset?.chainID,
   });
 
-
   const feeAsset = chains?.find(chain => chain.chainID === sourceAsset?.chainID)?.feeAssets?.[0];
+
   const chainType = sourceDetails?.chain?.chainType;
 
   switch (chainType) {
     case "evm":
       return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE));
     case "cosmos":
-      if (!feeAsset?.gasPrice?.average) return 0;
+      if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
       return Number(feeAsset.gasPrice.average) * (COSMOS_GAS_FEE);
     case "svm":
     default:
