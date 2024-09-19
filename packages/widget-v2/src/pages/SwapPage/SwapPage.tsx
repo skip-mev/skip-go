@@ -44,7 +44,6 @@ export const SwapPage = () => {
   const [isWaitingForNewRoute] = useAtom(isWaitingForNewRouteAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
-  const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
@@ -107,15 +106,17 @@ export const SwapPage = () => {
   }, [skipBalances, sourceAccount, sourceAsset]);
 
   const formattedBalance = useMemo(() => {
+    if (sourceBalance === undefined) return "";
+
     const amount = sourceBalance?.amount;
-    let formattedBalanceAmount = sourceBalance?.formattedAmount ?? "";
+    let formattedBalanceAmount = sourceBalance?.formattedAmount;
 
     if (amount === "0") {
       formattedBalanceAmount = amount;
     }
 
     return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
-  }, [sourceBalance?.amount, sourceBalance?.formattedAmount, sourceDetails?.symbol]);
+  }, [sourceBalance, sourceDetails?.symbol]);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -272,9 +273,8 @@ export const SwapPage = () => {
   const handleMaxButton = useCallback(() => {
     if (sourceBalance?.formattedAmount) {
       setSourceAssetAmount(sourceBalance.formattedAmount);
-      setSwapDirection("swap-in");
     }
-  }, [setSourceAssetAmount, setSwapDirection, sourceBalance?.formattedAmount]);
+  }, [setSourceAssetAmount, sourceBalance?.formattedAmount]);
 
   return (
     <>
@@ -297,26 +297,29 @@ export const SwapPage = () => {
                   paddingRight: 13,
                 }}
               >
-                <TransparentButton
-                  onClick={() => {
-                    connectedWalletModal.show();
-                  }}
-                  style={{
-                    padding: "8px 13px",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
-                  {sourceAccount && (
-                    <img
-                      style={{ objectFit: "cover" }}
-                      src={sourceAccount?.wallet.logo}
-                      height={16}
-                      width={16}
-                    />
-                  )}
-                  {formattedBalance}
-                </TransparentButton>
+                {formattedBalance && (
+                  <TransparentButton
+                    onClick={() => {
+                      connectedWalletModal.show();
+                    }}
+                    style={{
+                      padding: "8px 13px",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    {sourceAccount && (
+                      <img
+                        style={{ objectFit: "cover" }}
+                        src={sourceAccount?.wallet.logo}
+                        height={16}
+                        width={16}
+                      />
+                    )}
+                    {formattedBalance}
+                  </TransparentButton>
+                )}
+
                 <TransparentButton
                   disabled={!sourceBalance || sourceBalance?.amount === "0"}
                   onClick={handleMaxButton}
@@ -340,10 +343,7 @@ export const SwapPage = () => {
               swapDirection === "swap-out" && isWaitingForNewRoute
             }
             value={sourceAsset?.amount}
-            onChangeValue={(newValue) => {
-              setSourceAssetAmount(newValue);
-              setSwapDirection("swap-in");
-            }}
+            onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
           <AssetChainInput
@@ -356,10 +356,7 @@ export const SwapPage = () => {
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
-            onChangeValue={(newValue) => {
-              setDestinationAssetAmount(newValue);
-              setSwapDirection("swap-out");
-            }}
+            onChangeValue={setDestinationAssetAmount}
           />
         </Column>
         {swapButton}
