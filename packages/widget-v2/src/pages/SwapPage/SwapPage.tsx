@@ -10,7 +10,6 @@ import {
   skipChainsAtom,
   skipRouteAtom,
   skipBalancesRequestAtom,
-  skipBalancesAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -34,8 +33,8 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import styled, { css } from "styled-components";
-import { getClientOperations } from "@/utils/clientType";
-import { getGasFee } from "./getGasFee";
+import { useSetMaxAmount } from "./useSetMaxAmount";
+import { useSourceBalance } from "./useSourceBalance";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -60,7 +59,9 @@ export const SwapPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
-  const { data: skipBalances } = useAtomValue(skipBalancesAtom);
+  const sourceBalance = useSourceBalance();
+
+  const handleMaxButton = useSetMaxAmount();
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -98,14 +99,6 @@ export const SwapPage = () => {
     amount: destinationAsset?.amount,
     chainId: destinationAsset?.chainID,
   });
-
-  const sourceBalance = useMemo(() => {
-    if (!sourceAsset || !sourceAccount || !skipBalances) return;
-    const { chainID, denom } = sourceAsset;
-    if (!denom || !chainID) return;
-
-    return skipBalances?.chains?.[chainID]?.denoms?.[denom];
-  }, [skipBalances, sourceAccount, sourceAsset]);
 
   const formattedBalance = useMemo(() => {
     if (sourceBalance === undefined) return "";
@@ -271,12 +264,6 @@ export const SwapPage = () => {
     isWaitingForNewRoute,
     sourceDetails.usdAmount,
   ]);
-
-  const handleMaxButton = useCallback(() => {
-    if (!sourceBalance?.formattedAmount || !sourceDetails?.chain?.chainType || !route) return;
-    const gasFee = getGasFee(sourceDetails.chain.chainType, route);
-    setSourceAssetAmount(sourceBalance.formattedAmount);
-  }, [route, setSourceAssetAmount, sourceBalance?.formattedAmount, sourceDetails?.chain?.chainType]);
 
   return (
     <>
