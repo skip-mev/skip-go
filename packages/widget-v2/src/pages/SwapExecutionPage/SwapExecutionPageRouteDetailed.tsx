@@ -12,6 +12,7 @@ import { SmallText } from "@/components/Typography";
 import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
+import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
@@ -79,6 +80,8 @@ export const SwapExecutionPageRouteDetailed = ({
         chainID={firstOperation.fromChainID}
         txState={"pending"}
         key={`first-row-${firstOperation?.denomIn}`}
+        context="source"
+        index={0}
       />
       {operations.map((operation, index) => {
         const simpleOperationType =
@@ -100,6 +103,8 @@ export const SwapExecutionPageRouteDetailed = ({
         };
 
         const bridgeOrSwapVenue = getBridgeSwapVenue();
+        const nextOperation = operations[index + 1];
+        const isSignRequired = getIsOperationSignRequired(index, operations, nextOperation, operation);
 
         const asset = {
           tokenAmount: operation.amountOut,
@@ -127,6 +132,9 @@ export const SwapExecutionPageRouteDetailed = ({
             </Row>
             <SwapExecutionPageRouteDetailedRow
               {...asset}
+              index={index}
+              context={index === operations.length - 1 ? "destination" : "intermediary"}
+              isSignRequired={isSignRequired}
               txState={txStateMap[index]}
               explorerLink={
                 txStateMap[index] !== "pending"

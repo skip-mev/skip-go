@@ -16,12 +16,18 @@ import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  chainAddressesAtom,
+  skipSubmitSwapExecutionAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
+import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 
 enum SwapExecutionState {
+  recoveryAddressUnset,
   destinationAddressUnset,
-  unconfirmed,
-  broadcasted,
+  ready,
+  pending,
   confirmed,
 }
 
@@ -31,6 +37,9 @@ export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
+  const chainAddresses = useAtomValue(chainAddressesAtom);
+
+  const { connectRequiredChains } = useAutoSetAddress();
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -38,9 +47,6 @@ export const SwapExecutionPage = () => {
   }, [route?.operations]);
 
   const [_destinationWallet] = useAtom(destinationWalletAtom);
-  const [swapExecutionState, _setSwapExecutionState] = useState(
-    SwapExecutionState.unconfirmed
-  );
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
@@ -51,8 +57,45 @@ export const SwapExecutionPage = () => {
     2: "pending",
   });
 
+  const { mutate, isPending, isSuccess } = useAtomValue(
+    skipSubmitSwapExecutionAtom
+  );
+
+  const swapExecutionState = useMemo(() => {
+    if (!chainAddresses) return;
+    const requiredChainAddresses = route?.requiredChainAddresses;
+    if (!requiredChainAddresses) return;
+    const allAddressesSet = requiredChainAddresses.every(
+      (_chainId, index) => chainAddresses[index]?.address
+    );
+    const lastChainAddress =
+      chainAddresses[requiredChainAddresses.length - 1]?.address;
+
+    if (!isPending) {
+      if (allAddressesSet) {
+        return SwapExecutionState.ready;
+      }
+      if (!lastChainAddress) {
+        return SwapExecutionState.destinationAddressUnset;
+      }
+      return SwapExecutionState.recoveryAddressUnset;
+    }
+    if (isSuccess) {
+      return SwapExecutionState.confirmed;
+    }
+    return SwapExecutionState.pending;
+  }, [chainAddresses, isPending, isSuccess, route?.requiredChainAddresses]);
+
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
+      case SwapExecutionState.recoveryAddressUnset:
+        return (
+          <MainButton
+            label="Set recovery address"
+            icon={ICONS.rightArrow}
+            onClick={connectRequiredChains}
+          />
+        );
       case SwapExecutionState.destinationAddressUnset:
         return (
           <MainButton
@@ -61,14 +104,15 @@ export const SwapExecutionPage = () => {
             onClick={() => modal.show()}
           />
         );
-      case SwapExecutionState.unconfirmed:
+      case SwapExecutionState.ready:
         return (
           <MainButton
             label="Confirm swap"
             icon={ICONS.rightArrow}
+            onClick={mutate}
           />
         );
-      case SwapExecutionState.broadcasted:
+      case SwapExecutionState.pending:
         return (
           <MainButton
             label="Swap in progress"
@@ -86,7 +130,14 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [clientOperations.length, modal, swapExecutionState, theme.success.text]);
+  }, [
+    clientOperations.length,
+    connectRequiredChains,
+    modal,
+    mutate,
+    swapExecutionState,
+    theme.success.text,
+  ]);
 
   const SwapExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {
@@ -105,7 +156,7 @@ export const SwapExecutionPage = () => {
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: () => setCurrentPage(Routes.SwapPage)
+          onClick: () => setCurrentPage(Routes.SwapPage),
         }}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
