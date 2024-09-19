@@ -8,7 +8,7 @@ import { useSourceBalance } from "./useSourceBalance";
 import { BigNumber } from "bignumber.js";
 
 
-const ETH_GAS_FEE = 0.1;
+const ETH_GAS_FEE = 0.01;
 const COSMOS_GAS_FEE = 2_000_000;
 
 export const useGasFeeTokenAmount = () => {
@@ -21,13 +21,18 @@ export const useGasFeeTokenAmount = () => {
     chainId: sourceAsset?.chainID,
   });
 
+  const ethDetails = useGetAssetDetails({
+    assetDenom: "ethereum-native",
+    chainId: "1"
+  });
+
   const feeAsset = chains?.find(chain => chain.chainID === sourceAsset?.chainID)?.feeAssets?.[0];
 
   const chainType = sourceDetails?.chain?.chainType;
 
   switch (chainType) {
     case "evm":
-      return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE));
+      return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, ethDetails.asset?.decimals));
     case "cosmos":
       if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
       return Number(feeAsset.gasPrice.average) * (COSMOS_GAS_FEE);
