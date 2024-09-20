@@ -27,7 +27,7 @@ export const useGasFeeTokenAmount = () => {
 
   switch (chainType) {
     case "evm":
-      return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE));
+      return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, sourceDetails.asset?.decimals));
     case "cosmos":
       if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
       return Number(feeAsset.gasPrice.average) * (COSMOS_GAS_FEE);
