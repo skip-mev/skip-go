@@ -5,9 +5,10 @@ import {
   Chain,
   RouteRequest,
   SkipClientOptions,
+  BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
+import { devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
@@ -17,7 +18,8 @@ import {
   sourceAssetAtom,
   swapDirectionAtom,
 } from "./swapPage";
-import { getAmountWei } from "@/utils/number";
+import { currentPageAtom, Routes } from "./router";
+import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
@@ -28,7 +30,7 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL,
+  apiURL: devApiUrl,
   endpointOptions,
 });
 
@@ -145,10 +147,29 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
+export const skipBalancesRequestAtom = atom<BalanceRequest | undefined>();
+
+export const skipBalancesAtom = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  const params = get(skipBalancesRequestAtom);
+
+  return {
+    queryKey: ["skipBalances", params],
+    queryFn: async () => {
+      if (!params) {
+        throw new Error("No balance request provided");
+      }
+
+      return skip.balances(params);
+    },
+    retry: 1,
+  };
+});
+
 type SkipTransactionStatusProps = {
   txsRequired: number;
   txs: { chainID: string; txHash: string }[] | undefined;
-}
+};
 
 export const skipTransactionStatusPropsAtom = atom<SkipTransactionStatusProps>({
   txsRequired: 0,
@@ -184,14 +205,12 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
 
   if (
     !sourceAsset?.chainID ||
     !sourceAsset.denom ||
     !destinationAsset?.chainID ||
-    !destinationAsset.denom ||
-    isInvertingSwap
+    !destinationAsset.denom
   ) {
     return undefined;
   }
@@ -199,12 +218,11 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
     direction === "swap-in"
       ? {
         amountIn:
-          getAmountWei(sourceAssetAmount, sourceAsset.decimals) || "0",
+          convertHumanReadableAmountToCryptoAmount(sourceAssetAmount ?? "0", sourceAsset.decimals),
       }
       : {
         amountOut:
-          getAmountWei(destinationAssetAmount, destinationAsset.decimals) ||
-          "0",
+          convertHumanReadableAmountToCryptoAmount(destinationAssetAmount ?? "0", destinationAsset.decimals),
       };
 
   return {
@@ -219,8 +237,16 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
+  const currentPage = get(currentPageAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
 
   get(routeAmountEffect);
+
+  const queryEnabled =
+    params !== undefined &&
+    (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
+    !isInvertingSwap &&
+    currentPage === Routes.SwapPage;
 
   return {
     queryKey: ["skipRoute", params],
@@ -241,8 +267,7 @@ export const skipRouteAtom = atomWithQuery((get) => {
       });
     },
     retry: 1,
-    enabled:
-      !!params && (Number(params.amountIn) > 0 || Number(params.amountOut) > 0),
+    enabled: queryEnabled,
     refetchInterval: 1000 * 30,
   };
 });

@@ -1,9 +1,9 @@
 import { atom } from "jotai";
 import { ClientAsset, skipRouteAtom } from "./skipClient";
 import { atomEffect } from "jotai-effect";
-import { parseAmountWei } from "@/utils/number";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { MinimalWallet } from "./wallets";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -11,15 +11,11 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 const ROUTE_REQUEST_DEBOUNCE_DELAY = 500;
 
-export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } = atomWithDebounce<string | undefined>(
-  undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY,
-);
+export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
+  atomWithDebounce<string | undefined>(undefined, ROUTE_REQUEST_DEBOUNCE_DELAY);
 
-export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } = atomWithDebounce<string | undefined>(
-  undefined,
-  ROUTE_REQUEST_DEBOUNCE_DELAY,
-);
+export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
+  atomWithDebounce<string | undefined>(undefined, ROUTE_REQUEST_DEBOUNCE_DELAY);
 
 export const sourceAssetAtom = atom<AssetAtom>();
 
@@ -29,37 +25,38 @@ export const sourceAssetAmountAtom = atom(
     const oldSourceAsset = get(sourceAssetAtom);
     set(sourceAssetAtom, { ...oldSourceAsset, amount: newAmount });
     set(debouncedSourceAssetAmountAtom, newAmount);
-  },
+    set(swapDirectionAtom, "swap-in");
+  }
 );
 
 export const destinationAssetAtom = atom<AssetAtom>();
 
-export const isWaitingForNewRouteAtom = atom(
-  (get) => {
-    const sourceAmount = get(sourceAssetAmountAtom);
-    const destinationAmount = get(destinationAssetAmountAtom);
-    const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
-    const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
-
-    const { isLoading } = get(skipRouteAtom);
-    const direction = get(swapDirectionAtom);
-
-    if (direction === "swap-in") {
-      return (sourceAmount !== debouncedSourceAmount) || isLoading;
-    } else if (direction === "swap-out") {
-      return (destinationAmount !== debouncedDestinationAmount) || isLoading;
-    }
-  }
-);
-
 export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
-  (get, set, newAmount: string) => {
+  (get, set, newAmount: string, callback?: () => void) => {
     const oldDestinationAsset = get(destinationAssetAtom);
     set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
     set(debouncedDestinationAssetAmountAtom, newAmount);
-  },
+    set(swapDirectionAtom, "swap-out");
+    callback?.();
+  }
 );
+
+export const isWaitingForNewRouteAtom = atom((get) => {
+  const sourceAmount = get(sourceAssetAmountAtom);
+  const destinationAmount = get(destinationAssetAmountAtom);
+  const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
+  const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
+
+  const { isLoading } = get(skipRouteAtom);
+  const direction = get(swapDirectionAtom);
+
+  if (direction === "swap-in") {
+    return sourceAmount !== debouncedSourceAmount || isLoading;
+  } else if (direction === "swap-out") {
+    return destinationAmount !== debouncedDestinationAmount || isLoading;
+  }
+});
 
 export type SwapDirection = "swap-in" | "swap-out";
 
@@ -67,12 +64,11 @@ export const swapDirectionAtom = atom<SwapDirection>("swap-in");
 
 export const isInvertingSwapAtom = atom(false);
 
-export const invertSwapAtom = atom(null, (get, set, swapDirection: SwapDirection) => {
+export const invertSwapAtom = atom(null, (get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const swapDirection = get(swapDirectionAtom);
   set(isInvertingSwapAtom, true);
-
-  set(swapDirectionAtom, swapDirection);
 
   set(sourceAssetAtom, destinationAsset);
   if (destinationAsset?.amount) {
@@ -81,10 +77,13 @@ export const invertSwapAtom = atom(null, (get, set, swapDirection: SwapDirection
 
   set(destinationAssetAtom, sourceAsset);
   if (sourceAsset?.amount) {
-    set(destinationAssetAmountAtom, sourceAsset?.amount);
+    set(destinationAssetAmountAtom, sourceAsset?.amount, () => {
+      const newSwapDirection =
+        swapDirection === "swap-in" ? "swap-out" : "swap-in";
+      set(swapDirectionAtom, newSwapDirection);
+      set(isInvertingSwapAtom, false);
+    });
   }
-
-  set(isInvertingSwapAtom, false);
 });
 
 export const connectedWalletAtom = atom<MinimalWallet>();
@@ -99,8 +98,14 @@ export const routeAmountEffect = atomEffect((get, set) => {
 
   if (!route.data || !sourceAsset || !destinationAsset) return;
 
-  const swapInAmount = parseAmountWei(route.data.amountOut, destinationAsset.decimals);
-  const swapOutAmount = parseAmountWei(route.data.amountIn, sourceAsset.decimals);
+  const swapInAmount = convertTokenAmountToHumanReadableAmount(
+    route.data.amountOut,
+    destinationAsset.decimals
+  );
+  const swapOutAmount = convertTokenAmountToHumanReadableAmount(
+    route.data.amountIn,
+    sourceAsset.decimals
+  );
   const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
   const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
 
