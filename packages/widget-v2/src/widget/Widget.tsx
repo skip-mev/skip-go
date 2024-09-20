@@ -3,26 +3,25 @@ import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useEffect } from "react";
-import { PartialTheme } from "./theme";
+import { defaultTheme, PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useAtom } from "jotai";
-import { skipClientConfigAtom } from "@/state/skipClient";
+import { useSetAtom } from "jotai";
+import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
 } & SkipClientOptions;
 
-export const SwapWidget = ({ theme, ...config }: SwapWidgetProps) => {
-  const [skipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
+export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
-    setSkipClientConfig({
-      ...skipClientConfig,
-      ...config,
-    });
-  }, [config, setSkipClientConfig, skipClientConfig]);
+    setSkipClientConfig(skipClientConfig);
+    setTheme({ ...defaultTheme, ...theme });
+  }, [setSkipClientConfig, setTheme, skipClientConfig, theme]);
 
   return (
     <NiceModal.Provider>
@@ -35,14 +34,13 @@ export const SwapWidget = ({ theme, ...config }: SwapWidgetProps) => {
   );
 };
 
-const SwapWidgetWithoutNiceModalProvider = ({ theme, ...config }: SwapWidgetProps) => {
-  const [skipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
+const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
-    setSkipClientConfig({
-      ...skipClientConfig,
-      ...config,
-    });
-  }, [config, setSkipClientConfig, skipClientConfig]);
+    setSkipClientConfig(skipClientConfig);
+    setTheme({ ...defaultTheme, ...theme });
+  }, [setSkipClientConfig, setTheme, skipClientConfig, theme]);
 
   return (
     <ShadowDomAndProviders theme={theme}>

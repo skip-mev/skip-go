@@ -1,12 +1,15 @@
-import { Row } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { Button } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { useAtomValue } from "jotai";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useAccount } from "@/hooks/useAccount";
 
 export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
@@ -16,6 +19,13 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
   txState?: txState;
+  isSignRequired?: boolean;
+  index: number;
+  context: "source" | "destination" | "intermediary";
+  account?: {
+    address: string;
+    image?: string;
+  };
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -24,6 +34,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
   chainID,
   txState,
   explorerLink,
+  isSignRequired,
+  index,
+  context,
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
@@ -33,6 +46,48 @@ export const SwapExecutionPageRouteDetailedRow = ({
     chainId: chainID,
     tokenAmount,
   });
+
+  const chainAddresses = useAtomValue(chainAddressesAtom);
+  const account = useAccount(chainID);
+
+  const source = useMemo(() => {
+    const chainAddressArray = Object.values(chainAddresses);
+    switch (context) {
+      case "source":
+        return {
+          address: account?.address,
+          image: account?.wallet.logo,
+        };
+      case "intermediary": {
+        const selected = Object.values(chainAddresses).find(
+          (chainAddress) => chainAddress.chainID === chainID
+        );
+        return {
+          address: selected?.address,
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
+        };
+      }
+      case "destination": {
+        const selected = chainAddressArray[chainAddressArray.length - 1];
+        return {
+          address: selected?.address,
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
+        };
+      }
+    }
+  }, [
+    account?.address,
+    account?.wallet.logo,
+    chainAddresses,
+    chainID,
+    context,
+  ]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -52,39 +107,66 @@ export const SwapExecutionPageRouteDetailedRow = ({
         </StyledAnimatedBorder>
       )}
 
-      <Row align="center" justify="space-between" style={{ flex: 1 }}>
-        <Row gap={5}>
-          <SmallText normalTextColor>
-            {assetDetails?.amount}{" "}
-            {assetDetails?.symbol}
-          </SmallText>
-          <SmallText> on {assetDetails?.chainName}</SmallText>
-          {explorerLink && (
-            <Button onClick={() => window.open(explorerLink, "_blank")}>
-              <SmallText>
-                <ChainIcon />
-              </SmallText>
-            </Button>
+      <Column
+        style={{
+          flex: 1,
+        }}
+        justify="space-between"
+      >
+        <Row align="center" justify="space-between">
+          <Row gap={5}>
+            <SmallText normalTextColor>
+              {assetDetails?.amount} {assetDetails?.symbol}
+            </SmallText>
+            <SmallText> on {assetDetails?.chainName}</SmallText>
+            {explorerLink && (
+              <Button onClick={() => window.open(explorerLink, "_blank")}>
+                <SmallText>
+                  <ChainIcon />
+                </SmallText>
+              </Button>
+            )}
+          </Row>
+          {source.address && (
+            <StyledButton>
+              {source.image && (
+                <img
+                  src={source.image}
+                  style={{
+                    height: "100%",
+                  }}
+                />
+              )}
+              <StyledWalletAddress monospace>{`${source.address.slice(
+                0,
+                9
+              )}…${source.address.slice(-5)}`}</StyledWalletAddress>
+            </StyledButton>
           )}
         </Row>
-        <StyledWalletAddress>cosmos17...zha0v</StyledWalletAddress>
-      </Row>
+        {isSignRequired && (
+          <SmallText color={theme.warning.text}>Signature required</SmallText>
+        )}
+      </Column>
     </Row>
   );
 };
+
+const StyledButton = styled(Button)`
+  padding: 5px 8px;
+  height: 28px;
+  border-radius: 30px;
+  box-sizing: border-box;
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  gap: 4px;
+`;
 
 const StyledChainImage = styled.img<{ state?: txState }>`
   border-radius: 50%;
   box-sizing: content-box;
 `;
 
-const StyledWalletAddress = styled(SmallText)`
-  padding: 5px 8px;
-  height: 28px;
-  border-radius: 30px;
-  box-sizing: border-box;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
-`;
+const StyledWalletAddress = styled(SmallText)``;
 
 export const StyledAnimatedBorder = ({
   backgroundColor,
