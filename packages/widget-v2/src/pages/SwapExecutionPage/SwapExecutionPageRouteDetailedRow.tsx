@@ -47,8 +47,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
     tokenAmount,
   });
 
-  console.log(explorerLink);
-
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const account = useAccount(chainID);
 

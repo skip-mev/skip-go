@@ -134,16 +134,23 @@ export const SwapExecutionPage = () => {
     theme.success.text,
   ]);
 
-  const SwapExecutionPageRoute = useMemo(() => {
+  const renderExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {
-      return withBoundProps(SwapExecutionPageRouteSimple, {
-        onClickEditDestinationWallet: () => {
-          modal.show();
-        },
-      });
+      return (
+        <SwapExecutionPageRouteSimple
+          onClickEditDestinationWallet={() => modal.show()}
+          operations={clientOperations}
+          operationExecutionDetails={operationExecutionDetailsArray}
+        />
+      );
     }
-    return SwapExecutionPageRouteDetailed;
-  }, [modal, simpleRoute]);
+    return (
+      <SwapExecutionPageRouteDetailed
+        operations={clientOperations}
+        operationExecutionDetails={operationExecutionDetailsArray}
+      />
+    );
+  }, [clientOperations, modal, operationExecutionDetailsArray, simpleRoute]);
 
   return (
     <Column gap={5}>
@@ -159,10 +166,7 @@ export const SwapExecutionPage = () => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      <SwapExecutionPageRoute
-        operations={clientOperations}
-        operationExecutionDetails={operationExecutionDetailsArray}
-      />
+      {renderExecutionPageRoute}
       {renderMainButton}
       <SwapPageFooter showRouteInfo />
     </Column>

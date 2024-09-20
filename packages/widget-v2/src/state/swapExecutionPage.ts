@@ -61,11 +61,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setOperationExecutionDetailsAtom, {
         transactionIndex,
         newOperationExecutionDetails: {
-          txIndex: transactionIndex,
           status: "broadcasted",
-          chainId: transactionExecutionDetails.chainID,
-          explorerLink: transactionExecutionDetails.explorerLink,
-          txHash: transactionExecutionDetails.txHash,
+          txIndex: transactionIndex,
+          ...transactionExecutionDetails,
         }
       });
     },
@@ -73,11 +71,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setOperationExecutionDetailsAtom, {
         transactionIndex,
         newOperationExecutionDetails: {
-          txIndex: transactionIndex,
           status: "pending",
-          chainId: transactionExecutionDetails.chainID,
-          explorerLink: transactionExecutionDetails.explorerLink,
-          txHash: transactionExecutionDetails.txHash,
+          txIndex: transactionIndex,
+          ...transactionExecutionDetails,
         }
       });
     },
@@ -112,8 +108,9 @@ export const setOperationExecutionDetailsAtom = atom(
       newOperationExecutionDetails: Partial<OperationExecutionDetails>
     },
   ) => {
-    const { newOperationExecutionDetails, transactionHash } = props;
-    let { transactionIndex } = props;
+    const { transactionHash } = props;
+    let { transactionIndex, newOperationExecutionDetails } = props;
+    console.log(newOperationExecutionDetails);
 
     const swapExecutionState = get(swapExecutionStateAtom);
     const { transactionDetailsArray, operationExecutionDetailsArray } = swapExecutionState;
@@ -121,6 +118,7 @@ export const setOperationExecutionDetailsAtom = atom(
 
     if (!transactionIndex) {
       const operationExecutionDetails = operationExecutionDetailsArray.find(operation => operation.txHash === transactionHash);
+      newOperationExecutionDetails = { ...operationExecutionDetails, ...newOperationExecutionDetails };
       if (!operationExecutionDetails) return;
       transactionIndex = operationExecutionDetails?.txIndex;
     }
@@ -139,7 +137,6 @@ export const setOperationExecutionDetailsAtom = atom(
     transactionDetailsArray[transactionIndex] = {
       ...transactionDetailsArray,
       ...newOperationExecutionDetails,
-      chainID: newOperationExecutionDetails.chainId,
     } as TransactionExecutionDetails;
 
     set(swapExecutionStateAtom, {
@@ -175,7 +172,7 @@ export type OperationExecutionDetails = {
   status: ClientTransactionStatus;
   txIndex: number;
   txHash: string;
-  chainId: string;
+  chainID: string;
   explorerLink?: string;
 };
 
@@ -238,7 +235,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           onTransactionBroadcast: async (
             transactionExecutionDetails: TransactionExecutionDetails
           ) => {
-            console.log(submitSwapExecutionCallbacks, "broadcast");
+            console.log("broadcast", transactionExecutionDetails);
             submitSwapExecutionCallbacks?.onTransactionBroadcast?.(
               transactionBroadcastCount,
               transactionExecutionDetails
@@ -248,7 +245,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           onTransactionTracked: async (
             transactionExecutionDetails: TransactionExecutionDetails
           ) => {
-            console.log(submitSwapExecutionCallbacks, "tracked");
+            console.log("tracked", transactionExecutionDetails);
             submitSwapExecutionCallbacks?.onTransactionTracked?.(
               transactionTrackedCount,
               transactionExecutionDetails
