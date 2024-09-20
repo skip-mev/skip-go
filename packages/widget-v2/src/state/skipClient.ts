@@ -8,7 +8,7 @@ import {
   BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
+import { devApiUrl, endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
@@ -30,7 +30,7 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: devApiUrl,
+  apiURL: prodApiUrl,
   endpointOptions,
 });
 
@@ -163,39 +163,6 @@ export const skipBalancesAtom = atomWithQuery((get) => {
       return skip.balances(params);
     },
     retry: 1,
-  };
-});
-
-type SkipTransactionStatusProps = {
-  txsRequired: number;
-  txs: { chainID: string; txHash: string }[] | undefined;
-};
-
-export const skipTransactionStatusPropsAtom = atom<SkipTransactionStatusProps>({
-  txsRequired: 0,
-  txs: undefined,
-});
-
-export const skipTransactionStatus = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { txs, txsRequired } = get(skipTransactionStatusPropsAtom);
-
-  return {
-    queryKey: ["skipTxStatus", txs, txsRequired],
-    queryFn: async () => {
-      if (!txs) return;
-
-      return Promise.all(
-        txs.map(async (tx) => {
-          return skip.transactionStatus({
-            chainID: tx.chainID,
-            txHash: tx.txHash,
-          });
-        })
-      );
-    },
-    refetchInterval: 1000 * 2,
-    keepPreviousData: true,
   };
 });
 

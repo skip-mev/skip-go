@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { Column, Row } from "@/components/Layout";
 import {
   SwapExecutionPageRouteDetailedRow,
-  txState,
 } from "./SwapExecutionPageRouteDetailedRow";
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
@@ -13,10 +12,11 @@ import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
 import { getIsOperationSignRequired } from "@/utils/operations";
+import { OperationExecutionDetails } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  txStateMap: Record<number, txState>;
+  operationExecutionDetails: OperationExecutionDetails[];
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -50,7 +50,7 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  txStateMap,
+  operationExecutionDetails,
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
@@ -78,7 +78,8 @@ export const SwapExecutionPageRouteDetailed = ({
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
         chainID={firstOperation.fromChainID}
-        txState={"pending"}
+        explorerLink={operationExecutionDetails[0]?.explorerLink}
+        txState={operationExecutionDetails[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -135,12 +136,8 @@ export const SwapExecutionPageRouteDetailed = ({
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={isSignRequired}
-              txState={txStateMap[index]}
-              explorerLink={
-                txStateMap[index] !== "pending"
-                  ? "https://www.google.com/"
-                  : undefined
-              }
+              txState={operationExecutionDetails[index]?.status}
+              explorerLink={operationExecutionDetails[index]?.explorerLink}
               key={`row-${asset?.denom}-${index}`}
             />
           </>

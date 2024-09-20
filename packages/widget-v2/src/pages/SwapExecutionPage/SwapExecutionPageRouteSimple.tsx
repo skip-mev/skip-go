@@ -1,22 +1,22 @@
 import styled, { useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
-import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useAtom } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { destinationWalletAtom } from "@/state/swapPage";
 import { ClientOperation } from "@/utils/clientType";
+import { OperationExecutionDetails } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
-  txStateMap: Record<number, txState>;
+  operationExecutionDetails: OperationExecutionDetails[];
   onClickEditDestinationWallet?: () => void;
 };
 
 export const SwapExecutionPageRouteSimple = ({
   operations,
-  txStateMap,
+  operationExecutionDetails,
   onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
@@ -24,7 +24,7 @@ export const SwapExecutionPageRouteSimple = ({
   const [destinationWallet] = useAtom(destinationWalletAtom);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(txStateMap);
+  const overallSwapState = getOverallSwapState(operationExecutionDetails);
   const lastOperation = operations[operations.length - 1];
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
@@ -55,24 +55,20 @@ export const SwapExecutionPageRouteSimple = ({
         icon={ICONS.pen}
         txState={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
-        explorerLink={
-          overallSwapState !== "pending" ? "https://www.google.com/" : undefined
-        }
+        explorerLink={operationExecutionDetails[operationExecutionDetails.length - 1]?.explorerLink}
       />
     </StyledSwapExecutionPageRoute>
   );
 };
 
-const getOverallSwapState = (txStateMap: Record<number, txState>) => {
-  const txStateArray = Object.values(txStateMap);
-
-  if (txStateArray.find((state) => state === "failed")) {
+const getOverallSwapState = (operationExecutionDetails: OperationExecutionDetails[]) => {
+  if (operationExecutionDetails.find((state) => state.status === "failed")) {
     return "failed";
-  } else if (txStateArray.find((state) => state === "broadcasted")) {
+  } else if (operationExecutionDetails.find((state) => state.status === "broadcasted")) {
     return "broadcasted";
-  } else if (txStateArray.every((state) => state === "pending")) {
+  } else if (operationExecutionDetails.every((state) => state.status === "pending")) {
     return "pending";
-  } else if (txStateArray.every((state) => state === "confirmed")) {
+  } else if (operationExecutionDetails.every((state) => state.status === "confirmed")) {
     return "confirmed";
   }
 };

@@ -19,14 +19,14 @@ export const Widget = (props: Props) => {
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
   const sourceAsset = assets?.find(
-    (asset) => asset.denom === "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E" && asset.chainID === "axelar-dojo-1"
+    (asset) => asset.denom === "uatom" && asset.chainID === "cosmoshub-4"
   );
-  const destinationAsset = assets?.find((asset) => asset.denom === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" && asset.chainID === "solana");
+  const destinationAsset = assets?.find((asset) => asset.denom === "uusdc" && asset.chainID === "noble-1");
 
   useEffect(() => {
     setSourceAsset(sourceAsset);
     setDestinationAsset(destinationAsset);
-    setSourceAssetAmount("1");
+    setSourceAssetAmount("0.2");
   }, [destinationAsset, setDestinationAsset, setSourceAsset, setSourceAssetAmount, sourceAsset]);
 
   return useMemo(() => {

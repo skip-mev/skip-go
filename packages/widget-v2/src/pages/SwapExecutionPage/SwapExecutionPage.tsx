@@ -12,7 +12,6 @@ import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
 import { withBoundProps } from "@/utils/misc";
-import { txState } from "./SwapExecutionPageRouteDetailedRow";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
@@ -36,10 +35,12 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route } = useAtomValue(swapExecutionStateAtom);
+  const { route, operationExecutionDetailsArray } = useAtomValue(
+    swapExecutionStateAtom
+  );
   const chainAddresses = useAtomValue(chainAddressesAtom);
-
   const { connectRequiredChains } = useAutoSetAddress();
+  // const [{ data: transactionStatus }] = useAtom(skipTransactionStatus);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -50,12 +51,6 @@ export const SwapExecutionPage = () => {
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
-
-  const [txStateMap, _setTxStateMap] = useState<Record<number, txState>>({
-    0: "pending",
-    1: "pending",
-    2: "pending",
-  });
 
   const { mutate, isPending, isSuccess } = useAtomValue(
     skipSubmitSwapExecutionAtom
@@ -71,19 +66,19 @@ export const SwapExecutionPage = () => {
     const lastChainAddress =
       chainAddresses[requiredChainAddresses.length - 1]?.address;
 
-    if (!isPending) {
-      if (allAddressesSet) {
-        return SwapExecutionState.ready;
-      }
-      if (!lastChainAddress) {
-        return SwapExecutionState.destinationAddressUnset;
-      }
-      return SwapExecutionState.recoveryAddressUnset;
-    }
     if (isSuccess) {
       return SwapExecutionState.confirmed;
     }
-    return SwapExecutionState.pending;
+    if (isPending) {
+      return SwapExecutionState.pending;
+    }
+    if (!lastChainAddress) {
+      return SwapExecutionState.destinationAddressUnset;
+    }
+    if (!allAddressesSet) {
+      return SwapExecutionState.recoveryAddressUnset;
+    }
+    return SwapExecutionState.ready;
   }, [chainAddresses, isPending, isSuccess, route?.requiredChainAddresses]);
 
   const renderMainButton = useMemo(() => {
@@ -165,8 +160,8 @@ export const SwapExecutionPage = () => {
         }}
       />
       <SwapExecutionPageRoute
-        txStateMap={txStateMap}
         operations={clientOperations}
+        operationExecutionDetails={operationExecutionDetailsArray}
       />
       {renderMainButton}
       <SwapPageFooter showRouteInfo />
