@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column, Row } from "@/components/Layout";
@@ -9,6 +9,7 @@ import {
   getChainsContainingAsset,
   skipChainsAtom,
   skipRouteAtom,
+  skipBalancesRequestAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -32,6 +33,11 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import styled, { css } from "styled-components";
+import {
+  useInsufficientSourceBalance,
+  useSetMaxAmount,
+} from "./useSetMaxAmount";
+import { useSourceBalance } from "./useSourceBalance";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -42,7 +48,6 @@ export const SwapPage = () => {
   const [isWaitingForNewRoute] = useAtom(isWaitingForNewRouteAtom);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
-  const setSwapDirection = useSetAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
@@ -55,9 +60,38 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setSwapExecutionState = useSetAtom(swapExecutionStateAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
+  const sourceBalance = useSourceBalance();
+  const insufficientBalance = useInsufficientSourceBalance();
+
+  const handleMaxButton = useSetMaxAmount();
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
+
+  useEffect(() => {
+    if (isWaitingForNewRoute) return;
+    if (!sourceAsset || !sourceAccount) return;
+    const { chainID, denom } = sourceAsset;
+    const { address } = sourceAccount;
+    if (!denom || !chainID || !address) return;
+
+    setSkipBalancesRequest({
+      chains: {
+        [chainID]: {
+          address,
+          denoms: [denom],
+        },
+      },
+    });
+  }, [
+    isWaitingForNewRoute,
+    setSkipBalancesRequest,
+    sourceAccount,
+    sourceAsset,
+    sourceAsset?.chainID,
+  ]);
+
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
@@ -69,6 +103,19 @@ export const SwapPage = () => {
     amount: destinationAsset?.amount,
     chainId: destinationAsset?.chainID,
   });
+
+  const formattedBalance = useMemo(() => {
+    if (sourceBalance === undefined) return "";
+
+    const amount = sourceBalance?.amount;
+    let formattedBalanceAmount = sourceBalance?.formattedAmount;
+
+    if (amount === "0") {
+      formattedBalanceAmount = amount;
+    }
+
+    return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
+  }, [sourceBalance, sourceDetails?.symbol]);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -158,14 +205,19 @@ export const SwapPage = () => {
 
   const swapButton = useMemo(() => {
     if (isWaitingForNewRoute) {
-      return <MainButton label="Finding Best Route..." loading={true} />;
+      return <MainButton label="Finding Best Route..." loading />;
     }
 
     if (isRouteError) {
-      return <MainButton label={routeError.message} disabled={true} />;
+      return <MainButton label={routeError.message} disabled />;
     }
 
     if (sourceAccount?.address) {
+      if (insufficientBalance) {
+        return (
+          <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
+        );
+      }
       return (
         <MainButton
           label="Swap"
@@ -194,6 +246,7 @@ export const SwapPage = () => {
   }, [
     isWaitingForNewRoute,
     isRouteError,
+    insufficientBalance,
     sourceAccount?.address,
     sourceAsset?.chainID,
     routeError?.message,
@@ -237,27 +290,47 @@ export const SwapPage = () => {
           }}
           rightContent={
             sourceAccount && (
-              <Row gap={6} style={{
-                paddingRight: 13
-              }}>
-                <TransparentButton onClick={() => {
-                  connectedWalletModal.show();
-                }} style={{
-                  padding: "8px 13px",
-                  alignItems: "center",
-                  gap: 8
-                }}>
-                  {sourceAccount && <img style={{ objectFit: "cover" }} src={sourceAccount?.wallet.logo} height={16} width={16} />}
-                  125 ATOM
-                </TransparentButton>
-                <TransparentButton onClick={() => {
-                  connectedWalletModal.show();
-                }} style={{
-                  padding: "8px 13px",
-                  alignItems: "center",
-                }}>
-                  Max
-                </TransparentButton>
+              <Row
+                gap={6}
+                style={{
+                  paddingRight: 13,
+                }}
+              >
+                {formattedBalance && (
+                  <>
+                    <TransparentButton
+                      onClick={() => {
+                        connectedWalletModal.show();
+                      }}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      {sourceAccount && (
+                        <img
+                          style={{ objectFit: "cover" }}
+                          src={sourceAccount?.wallet.logo}
+                          height={16}
+                          width={16}
+                        />
+                      )}
+                      {formattedBalance}
+                    </TransparentButton>
+
+                    <TransparentButton
+                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                      onClick={handleMaxButton}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                      }}
+                    >
+                      Max
+                    </TransparentButton>
+                  </>
+                )}
               </Row>
             )
           }
@@ -271,10 +344,7 @@ export const SwapPage = () => {
               swapDirection === "swap-out" && isWaitingForNewRoute
             }
             value={sourceAsset?.amount}
-            onChangeValue={(newValue) => {
-              setSourceAssetAmount(newValue);
-              setSwapDirection("swap-in");
-            }}
+            onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
           <AssetChainInput
@@ -286,15 +356,14 @@ export const SwapPage = () => {
             }
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
-            onChangeValue={(newValue) => {
-              setDestinationAssetAmount(newValue);
-              setSwapDirection("swap-out");
-            }}
+            badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
+            onChangeValue={setDestinationAssetAmount}
           />
         </Column>
         {swapButton}
         <SwapPageFooter
           showRouteInfo
+          disabled={isRouteError || isWaitingForNewRoute}
           onClick={() =>
             swapDetailsModal.show({
               drawer: true,
@@ -304,7 +373,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column >
+      </Column>
       <div
         id="swap-flow-settings-container"
         ref={(element) => {

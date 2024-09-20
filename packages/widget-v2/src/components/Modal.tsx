@@ -9,6 +9,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { numberOfModalsOpenAtom } from "@/state/modal";
+import { themeAtom } from "@/state/skipClient";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -73,6 +74,7 @@ export const useModal = <T extends ModalProps>(
   modal?: FC<T>,
   initialArgs?: Partial<T>
 ) => {
+  const [theme] = useAtom(themeAtom);
   const [numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
     numberOfModalsOpenAtom
   );
@@ -86,6 +88,7 @@ export const useModal = <T extends ModalProps>(
         modalInstance.show({
           stackedModal: numberOfModalsOpen > 0,
           ...showArgs,
+          theme,
         } as Partial<T>);
         setNumberOfModalsOpen((prev) => prev + 1);
       },
@@ -98,7 +101,7 @@ export const useModal = <T extends ModalProps>(
         modalInstance.hide();
       },
     }),
-    [modalInstance, setNumberOfModalsOpen, numberOfModalsOpen]
+    [modalInstance, theme, numberOfModalsOpen, setNumberOfModalsOpen]
   );
 };
 

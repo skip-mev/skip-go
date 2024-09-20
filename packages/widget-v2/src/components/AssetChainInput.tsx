@@ -23,6 +23,7 @@ export type AssetChainInputProps = {
   selectedAsset?: AssetAtom;
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
+  badPriceWarning?: boolean;
 };
 
 export const AssetChainInput = ({
@@ -33,10 +34,13 @@ export const AssetChainInput = ({
   handleChangeChain,
   priceChangePercentage,
   isWaitingToUpdateInputValue,
+  badPriceWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [showPriceChangePercentage, setShowPriceChangePercentage] =
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
     useState(false);
+
+  const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
@@ -170,6 +174,7 @@ export const AssetChainInput = ({
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
             <SmallTextButton
+              color={badPriceWarning ? theme.error.text : undefined}
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
@@ -180,14 +185,16 @@ export const AssetChainInput = ({
               direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
-            {showPriceChangePercentage && (
+            {(showPriceChangePercentage) && (
               <SmallText color={priceChangeColor}>
                 {priceChangePercentage}%
               </SmallText>
             )}
           </Row>
         ) : (
-          <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
+          <SmallText color={badPriceWarning ? theme.error.text : undefined}>
+            {assetDetails.formattedUsdAmount ?? 0}
+          </SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton
@@ -213,7 +220,7 @@ const StyledAssetChainInputWrapper = styled(Column)`
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
-const StyledInput = styled.input <{ isWaitingToUpdateInputValue?: boolean }>`
+const StyledInput = styled.input<{ isWaitingToUpdateInputValue?: boolean }>`
   all: unset;
   font-size: 38px;
   font-weight: 300;
@@ -221,7 +228,9 @@ const StyledInput = styled.input <{ isWaitingToUpdateInputValue?: boolean }>`
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
 
-  ${(props) => props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+  ${(props) =>
+    props.isWaitingToUpdateInputValue &&
+    "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
   @keyframes pulse {
     0% {
       opacity: 0.5;
