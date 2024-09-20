@@ -18,6 +18,13 @@ import {
   swapDirectionAtom,
 } from "./swapPage";
 import { getAmountWei } from "@/utils/number";
+import { walletsAtom } from "./wallets";
+import { getWallet, WalletType } from "graz";
+import { getWalletClient } from "@wagmi/core";
+import { config } from "@/constants/wagmi";
+import { WalletClient } from "viem";
+import { solanaWallets } from "@/constants/solana";
+import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
@@ -29,7 +36,39 @@ export const themeAtom = atom<Theme>(defaultTheme);
 
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
-  return new SkipClient(options);
+  const wallets = get(walletsAtom);
+
+  return new SkipClient({
+    ...options,
+    getCosmosSigner: async (chainID) => {
+      if (!wallets.cosmos) {
+        throw new Error("getCosmosSigner error: no cosmos wallet");
+      }
+      const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+      if (!wallet) {
+        throw new Error("getCosmosSigner error: wallet not found");
+      }
+      const key = await wallet.getKey(chainID);
+
+      return key.isNanoLedger ? wallet.getOfflineSignerOnlyAmino(chainID) : wallet.getOfflineSigner(chainID);
+    },
+    // @ts-expect-error having a different viem version
+    getEVMSigner: async (chainID) => {
+      const evmWalletClient = (await getWalletClient(config, {
+        chainId: parseInt(chainID),
+      })) as WalletClient;
+
+      return evmWalletClient;
+    },
+    // @ts-expect-error solanaWallet is not a merged Adapter
+    getSVMSigner: async () => {
+      const walletName = wallets.svm?.walletName;
+      if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
+      const solanaWallet = solanaWallets.find((w) => w.name === walletName);
+      if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
+      return solanaWallet as Adapter;
+    }
+  });
 });
 
 export type ClientAsset = Asset & {

@@ -12,6 +12,7 @@ import { SmallText } from "@/components/Typography";
 import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
+import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
@@ -79,6 +80,8 @@ export const SwapExecutionPageRouteDetailed = ({
         chainID={firstOperation.fromChainID}
         txState={"pending"}
         key={`first-row-${firstOperation?.denomIn}`}
+        context="source"
+        index={0}
       />
       {operations.map((operation, index) => {
         const simpleOperationType =
@@ -100,6 +103,8 @@ export const SwapExecutionPageRouteDetailed = ({
         };
 
         const bridgeOrSwapVenue = getBridgeSwapVenue();
+        const nextOperation = operations[index + 1];
+        const isSignRequired = getIsOperationSignRequired(index, operations, nextOperation, operation);
 
         const asset = {
           tokenAmount: operation.amountOut,
@@ -109,7 +114,7 @@ export const SwapExecutionPageRouteDetailed = ({
 
         return (
           <>
-            <Row key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px" }} align="center">
+            <StyledOperationTypeAndTooltipContainer key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px", position: "relative" }} align="center">
               <OperationTypeIconContainer
                 onMouseEnter={() => handleMouseEnterOperationType(index)}
                 onMouseLeave={() => handleMouseLeaveOperationType(index)}
@@ -124,9 +129,12 @@ export const SwapExecutionPageRouteDetailed = ({
                   <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
                 </Tooltip>
               )}
-            </Row>
+            </StyledOperationTypeAndTooltipContainer>
             <SwapExecutionPageRouteDetailedRow
               {...asset}
+              index={index}
+              context={index === operations.length - 1 ? "destination" : "intermediary"}
+              isSignRequired={isSignRequired}
               txState={txStateMap[index]}
               explorerLink={
                 txStateMap[index] !== "pending"
@@ -145,11 +153,14 @@ export const SwapExecutionPageRouteDetailed = ({
 const Tooltip = styled(SmallText).attrs({
   normalTextColor: true,
 })`
+  position: absolute;
+  left: 30px;
   padding: 10px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
   background-color: ${({ theme }) => theme.secondary.background.normal};
   box-sizing: border-box;
+  z-index: 1;
 `;
 
 const OperationTypeIconContainer = styled(Column).attrs({
@@ -173,4 +184,9 @@ const StyledSwapVenueOrBridgeImage = styled.img`
   object-fit: contain;
   width: 10px;
   height: 10px;
+`;
+
+const StyledOperationTypeAndTooltipContainer = styled(Row)`
+  position: relative;
+  height: 25px;
 `;

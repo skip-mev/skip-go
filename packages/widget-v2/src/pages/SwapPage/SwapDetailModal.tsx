@@ -1,23 +1,25 @@
 import { css, styled } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
-import { Column, Row } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { SwapPageFooterItems } from "./SwapPageFooter";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom, skipRouteAtom } from "@/state/skipClient";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getBrandButtonTextColor } from "@/utils/colors";
+import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [swapSettings, setSwapSettings] = useAtom(swapSettingsAtom);
+  const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const chainsRoute = useMemo(() => {
     return route?.chainIDs.map((chainID) =>
       chains?.find((chain) => chain.chainID === chainID)
@@ -138,7 +140,20 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           </Row>
         )}
         <Row justify="space-between">
-          <SwapDetailText>Max Slippage</SwapDetailText>
+          <SwapDetailText>
+            Max Slippage
+            <Spacer width={5} />
+            <QuestionMarkIcon
+              onMouseEnter={() => setShowMaxSlippageTooltip(true)}
+              onMouseLeave={() => setShowMaxSlippageTooltip(false)}
+            />
+            {showMaxSlippageTooltip && (
+              <Tooltip>
+                If price changes unfavorably during the transaction by more than
+                this amount, the transaction will revert
+              </Tooltip>
+            )}
+          </SwapDetailText>
           <Row gap={4}>
             {SLIPPAGE_OPTIONS.map((val) => (
               <StyledSlippageOptionLabel
@@ -223,5 +238,20 @@ const SwapDetailText = styled(Row).attrs({
   as: SmallText,
   normalTextColor: true,
 })`
+  position: relative;
   letter-spacing: 0.26px;
+`;
+
+const Tooltip = styled(SmallText).attrs({
+  normalTextColor: true,
+})`
+  position: absolute;
+  padding: 13px;
+  border-radius: 13px;
+  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  top: -30px;
+  left: 110px;
+  width: 250px;
+  z-index: 1;
 `;
