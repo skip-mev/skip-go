@@ -1,62 +1,78 @@
 import { css, styled } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
-import { Column, Row } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { SwapPageFooterItems } from "./SwapPageFooter";
 import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom, skipRouteAtom } from "@/state/skipClient";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [swapSettings, setSwapSettings] = useAtom(swapSettingsAtom);
+  const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
+    return route?.chainIDs.map((chainID) =>
+      chains?.find((chain) => chain.chainID === chainID)
+    );
   }, [route, chains]);
 
   const clientOperations = route && getClientOperations(route.operations);
 
   const axelarTransferOperation = useMemo(() => {
     if (!clientOperations) return;
-    return clientOperations?.find((item) => item.type === OperationType.axelarTransfer);
+    return clientOperations?.find(
+      (item) => item.type === OperationType.axelarTransfer
+    );
   }, [clientOperations]);
 
   const hyperlaneTransferOperation = useMemo(() => {
     if (!clientOperations) return;
-    return clientOperations?.find((item) => item.type === OperationType.hyperlaneTransfer);
+    return clientOperations?.find(
+      (item) => item.type === OperationType.hyperlaneTransfer
+    );
   }, [clientOperations]);
 
   const axelarFee = useMemo(() => {
     if (axelarTransferOperation) {
-      const { feeAmount, feeAsset, usdFeeAmount } =
-        axelarTransferOperation;
+      const { feeAmount, feeAsset, usdFeeAmount } = axelarTransferOperation;
       if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
-      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
+      const computed = convertTokenAmountToHumanReadableAmount(
+        feeAmount,
+        feeAsset.decimals
+      );
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
+        formattedUsdAmount: usdFeeAmount
+          ? `${formatUSD(usdFeeAmount)}`
+          : undefined,
       };
     }
   }, [axelarTransferOperation]);
 
   const hyperlaneFee = useMemo(() => {
     if (hyperlaneTransferOperation) {
-      const { feeAmount, feeAsset, usdFeeAmount } =
-        hyperlaneTransferOperation;
+      const { feeAmount, feeAsset, usdFeeAmount } = hyperlaneTransferOperation;
       if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
-      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
+      const computed = convertTokenAmountToHumanReadableAmount(
+        feeAmount,
+        feeAsset.decimals
+      );
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount ? `${formatUSD(usdFeeAmount)}` : undefined
+        formattedUsdAmount: usdFeeAmount
+          ? `${formatUSD(usdFeeAmount)}`
+          : undefined,
       };
     }
   }, [hyperlaneTransferOperation]);
@@ -92,7 +108,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     return {
       assetAmount: Number(inAsset),
       formattedAssetAmount: `${inAsset} ${fee[0].originAsset.symbol}`,
-      formattedUsdAmount: `${formatUSD(computedUsd)}`
+      formattedUsdAmount: `${formatUSD(computedUsd)}`,
     };
   }, [isSmartRelay, route?.estimatedFees]);
 
@@ -104,11 +120,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
               <>
-                <img
-                  width="20"
-                  height="20"
-                  src={chain?.logoURI}
-                />
+                <img width="20" height="20" src={chain?.logoURI} />
                 {index !== chainsRoute.length - 1 && (
                   <RouteArrow color={modalProps.theme?.primary?.text.normal} />
                 )}
@@ -120,12 +132,27 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           <Row justify="space-between">
             <SwapDetailText>Price Impact</SwapDetailText>
             <Row align="center" gap={5}>
-              <SwapDetailText monospace>{route?.swapPriceImpactPercent}%</SwapDetailText>
+              <SwapDetailText monospace>
+                {route?.swapPriceImpactPercent}%
+              </SwapDetailText>
             </Row>
           </Row>
         )}
         <Row justify="space-between">
-          <SwapDetailText>Max Slippage</SwapDetailText>
+          <SwapDetailText>
+            Max Slippage
+            <Spacer width={5} />
+            <QuestionMarkIcon
+              onMouseEnter={() => setShowMaxSlippageTooltip(true)}
+              onMouseLeave={() => setShowMaxSlippageTooltip(false)}
+            />
+            {showMaxSlippageTooltip && (
+              <Tooltip>
+                If price changes unfavorably during the transaction by more than
+                this amount, the transaction will revert
+              </Tooltip>
+            )}
+          </SwapDetailText>
           <Row gap={4}>
             {SLIPPAGE_OPTIONS.map((val) => (
               <StyledSlippageOptionLabel
@@ -139,30 +166,37 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           </Row>
         </Row>
       </Column>
-      {
-        (axelarFee || hyperlaneFee || smartRelayFee) && (
-          <Column gap={10}>
-            {axelarFee && (
-              <Row justify="space-between">
-                <SwapDetailText>Axelar Bridging Fee</SwapDetailText>
-                <SwapDetailText monospace>{axelarFee.formattedAssetAmount} ({axelarFee.formattedUsdAmount})</SwapDetailText>
-              </Row>
-            )}
-            {hyperlaneFee && (
-              <Row justify="space-between">
-                <SwapDetailText>Hyperlane Bridging Fee</SwapDetailText>
-                <SwapDetailText monospace>{hyperlaneFee.formattedAssetAmount} ({hyperlaneFee.formattedUsdAmount})</SwapDetailText>
-              </Row>
-            )}
-            {smartRelayFee && (
-              <Row justify="space-between">
-                <SwapDetailText>Relayer Fee</SwapDetailText>
-                <SwapDetailText monospace>{smartRelayFee.formattedAssetAmount} ({smartRelayFee.formattedUsdAmount})</SwapDetailText>
-              </Row>
-            )}
-          </Column>
-        )
-      }
+      {(axelarFee || hyperlaneFee || smartRelayFee) && (
+        <Column gap={10}>
+          {axelarFee && (
+            <Row justify="space-between">
+              <SwapDetailText>Axelar Bridging Fee</SwapDetailText>
+              <SwapDetailText monospace>
+                {axelarFee.formattedAssetAmount} ({axelarFee.formattedUsdAmount}
+                )
+              </SwapDetailText>
+            </Row>
+          )}
+          {hyperlaneFee && (
+            <Row justify="space-between">
+              <SwapDetailText>Hyperlane Bridging Fee</SwapDetailText>
+              <SwapDetailText monospace>
+                {hyperlaneFee.formattedAssetAmount} (
+                {hyperlaneFee.formattedUsdAmount})
+              </SwapDetailText>
+            </Row>
+          )}
+          {smartRelayFee && (
+            <Row justify="space-between">
+              <SwapDetailText>Relayer Fee</SwapDetailText>
+              <SwapDetailText monospace>
+                {smartRelayFee.formattedAssetAmount} (
+                {smartRelayFee.formattedUsdAmount})
+              </SwapDetailText>
+            </Row>
+          )}
+        </Column>
+      )}
 
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
@@ -184,7 +218,7 @@ const StyledSlippageOptionLabel = styled(SmallText) <{ selected?: boolean }>`
   white-space: nowrap;
   color: ${(props) => props.theme.primary.text.normal};
   &:hover {
-    box-shadow:inset 0px 0px 0px 1px ${(props) => props.theme.brandColor};
+    box-shadow: inset 0px 0px 0px 1px ${(props) => props.theme.brandColor};
     opacity: 1;
     cursor: pointer;
   }
@@ -200,5 +234,20 @@ const SwapDetailText = styled(Row).attrs({
   as: SmallText,
   normalTextColor: true,
 })`
+  position: relative;
   letter-spacing: 0.26px;
+`;
+
+const Tooltip = styled(SmallText).attrs({
+  normalTextColor: true,
+})`
+  position: absolute;
+  padding: 13px;
+  border-radius: 13px;
+  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  top: -30px;
+  left: 110px;
+  width: 250px;
+  z-index: 1;
 `;
