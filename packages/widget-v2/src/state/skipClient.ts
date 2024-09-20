@@ -25,11 +25,14 @@ import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { Adapter } from "@solana/wallet-adapter-base";
+import { defaultTheme, Theme } from "@/widget/theme";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL,
   endpointOptions,
 });
+
+export const themeAtom = atom<Theme>(defaultTheme);
 
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);

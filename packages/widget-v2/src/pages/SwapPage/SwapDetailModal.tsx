@@ -12,6 +12,7 @@ import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { getBrandButtonTextColor } from "@/utils/colors";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
@@ -216,7 +217,10 @@ const StyledSlippageOptionLabel = styled(SmallText) <{ selected?: boolean }>`
   border-radius: 7px;
   padding: 4px 7px;
   white-space: nowrap;
-  color: ${(props) => props.theme.primary.text.normal};
+  color: ${({ selected, theme }) =>
+    selected
+      ? getBrandButtonTextColor(theme.brandColor)
+      : theme.primary.text.normal};
   &:hover {
     box-shadow: inset 0px 0px 0px 1px ${(props) => props.theme.brandColor};
     opacity: 1;
