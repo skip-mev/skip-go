@@ -309,10 +309,9 @@ const SOLANA_CHAIN = {
   pretty_name: 'Solana',
   network_type: 'mainnet',
   website: 'https://solana.com',
-  bech32_prefix: '', // Not applicable for Solana
+  bech32_prefix: '',
   daemon_name: '', // Not applicable for Solana
   node_home: '',   // Not applicable for Solana
-  key_algos: ['ed25519'],
   codebase: {
     git_repo: 'https://github.com/solana-labs/solana',
   },
@@ -358,9 +357,9 @@ const SOLANA_CHAIN = {
 
 export function chains(): Chain[] {
   const registryChains = chainRegistry.chains;
-  const additionalChains = [DYDX_CHAIN, CELESTIA_CHAIN, SOLANA_CHAIN];
+  const additionalChains = [DYDX_CHAIN, CELESTIA_CHAIN, SOLANA_CHAIN] as Chain[];
 
-  const existingChainIds = new Set(registryChains.map((chain: Chain) => chain.chain_id));
+  const existingChainIds = new Set(registryChains.map((chain) => chain.chain_id));
 
   const newChains = additionalChains.filter(
     (chain) => !existingChainIds.has(chain.chain_id)
