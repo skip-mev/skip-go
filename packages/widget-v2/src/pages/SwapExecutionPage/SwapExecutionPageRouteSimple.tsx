@@ -52,18 +52,18 @@ export const SwapExecutionPageRouteSimple = ({
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        wallet={destinationWallet}
         status={overallSwapState}
+        context="source"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
         {...destination}
-        wallet={destinationWallet}
         destination
         icon={ICONS.pen}
         status={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={getExplorerLink(lastOperation.txIndex)}
+        context="destination"
       />
     </StyledSwapExecutionPageRoute>
   );
