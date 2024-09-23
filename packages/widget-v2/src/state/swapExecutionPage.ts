@@ -57,12 +57,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionExecutionDetails) => {
-      set(setOperationExecutionDetailsAtom, transactionExecutionDetails);
+      set(setTransactionDetailsArrayAtom, transactionExecutionDetails);
     },
   });
 });
 
-export const setOperationExecutionDetailsAtom = atom(
+export const setTransactionDetailsArrayAtom = atom(
   null,
   (get, set, transactionExecutionDetails: TransactionExecutionDetails) => {
     const swapExecutionState = get(swapExecutionStateAtom);
