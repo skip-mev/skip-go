@@ -8,7 +8,7 @@ import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressMod
 import { useTheme } from "styled-components";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { destinationWalletAtom } from "@/state/swapPage";
-import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
+import { getOverallSwapState, SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
 import { useModal } from "@/components/Modal";
@@ -34,6 +34,7 @@ enum SwapExecutionState {
   destinationAddressUnset,
   ready,
   pending,
+  waitingForSigning,
   confirmed,
 }
 
@@ -66,7 +67,7 @@ export const SwapExecutionPage = () => {
     }).filter(transferEvent => transferEvent) as ClientTransferEvent[];
   }, [clientOperations, transactionStatus]);
 
-  const [_destinationWallet] = useAtom(destinationWalletAtom);
+  const overallSwapState = getOverallSwapState(operationTransferEvents);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
@@ -85,11 +86,14 @@ export const SwapExecutionPage = () => {
     const lastChainAddress =
       chainAddresses[requiredChainAddresses.length - 1]?.address;
 
-    if (isSuccess) {
+    if (overallSwapState === "completed") {
       return SwapExecutionState.confirmed;
     }
-    if (isPending) {
+    if (overallSwapState === "pending") {
       return SwapExecutionState.pending;
+    }
+    if (isPending) {
+      return SwapExecutionState.waitingForSigning;
     }
     if (!lastChainAddress) {
       return SwapExecutionState.destinationAddressUnset;
@@ -98,12 +102,7 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [
-    chainAddresses,
-    isPending,
-    isSuccess,
-    route?.requiredChainAddresses,
-  ]);
+  }, [chainAddresses, isPending, overallSwapState, route?.requiredChainAddresses]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -129,6 +128,14 @@ export const SwapExecutionPage = () => {
             label="Confirm swap"
             icon={ICONS.rightArrow}
             onClick={mutate}
+          />
+        );
+      case SwapExecutionState.waitingForSigning:
+        return (
+          <MainButton
+            label="Confirm swap"
+            icon={ICONS.rightArrow}
+            loading
           />
         );
       case SwapExecutionState.pending:
