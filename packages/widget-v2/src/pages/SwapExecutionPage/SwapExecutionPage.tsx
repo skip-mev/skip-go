@@ -45,6 +45,7 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
+  // const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -65,7 +66,10 @@ export const SwapExecutionPage = () => {
     return getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations);
   }, [clientOperations, transactionDetailsArray, transactionStatus]);
 
-  const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
+  const overallSwapState = useMemo(() => {
+    // setTransactionHistory();
+    return getOverallSwapState(operationToTransferEventsMap);
+  }, [operationToTransferEventsMap]);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);

@@ -5,10 +5,11 @@ import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
+import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
-  route?: RouteResponse;
+  route: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
 };
 export type ChainAddress = {
@@ -36,7 +37,7 @@ export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
   "swapExecutionState",
   {
-    route: undefined,
+    route: {} as RouteResponse,
     userAddresses: [],
     transactionDetailsArray: [],
   }
@@ -44,6 +45,7 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
+  const transactionHistory = get(transactionHistoryAtom);
 
   if (!route) return;
 
@@ -53,18 +55,20 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     route,
   });
 
+  const transactionHistoryIndex = transactionHistory.length;
+
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, transactionDetails);
+      set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
   });
 });
 
 export const setTransactionDetailsArrayAtom = atom(
   null,
-  (get, set, transactionDetails: TransactionDetails) => {
+  (get, set, transactionDetails: TransactionDetails, transactionHistoryIndex: number) => {
     const swapExecutionState = get(swapExecutionStateAtom);
-    const { transactionDetailsArray } = swapExecutionState;
+    const { transactionDetailsArray, route } = swapExecutionState;
 
     const newTransactionDetailsArray = transactionDetailsArray;
 
@@ -83,6 +87,14 @@ export const setTransactionDetailsArrayAtom = atom(
     set(swapExecutionStateAtom, {
       ...swapExecutionState,
       transactionDetailsArray: newTransactionDetailsArray,
+    });
+
+
+    set(setTransactionHistoryAtom, transactionHistoryIndex, {
+      route,
+      transactionDetails: newTransactionDetailsArray,
+      timestamp: Date.now(),
+      status: "broadcasted",
     });
   }
 );

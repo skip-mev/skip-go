@@ -14,7 +14,6 @@ export type TxStatus = {
   chainId: string;
   txHash: string;
   explorerLink: string;
-  axelarscanLink?: string;
 }
 
 export type TxHistoryItem = {
