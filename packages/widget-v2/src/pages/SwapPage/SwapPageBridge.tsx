@@ -10,7 +10,7 @@ export const SwapPageBridge = () => {
   const [spin, setSpin] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
   const onInvertSwap = () => {
-    invertSwap("swap-out");
+    invertSwap();
 
     let spinTimeout = undefined;
     clearTimeout(spinTimeout);
