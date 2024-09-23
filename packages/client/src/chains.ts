@@ -325,12 +325,8 @@ const SOLANA_CHAIN = {
         provider: 'Solana Foundation',
       },
       {
-        address: 'https://rpc.ankr.com/solana',
-        provider: 'Ankr',
-      },
-      {
-        address: 'https://solana-mainnet.rpcpool.com',
-        provider: 'RPCPool',
+        address: 'https://mainnet.helius-rpc.com/?api-key=6cadbc95-3333-488f-a187-21ffd0c5fef3',
+        provider: 'Helius',
       },
     ],
   },
