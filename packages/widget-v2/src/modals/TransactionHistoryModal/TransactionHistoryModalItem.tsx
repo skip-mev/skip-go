@@ -14,14 +14,12 @@ type TransactionHistoryModalItemProps = {
   txHistoryItem: TransactionHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
-  onClickTransactionID: () => void;
 };
 
 export const TransactionHistoryModalItem = ({
   txHistoryItem,
   showDetails,
   onClickRow,
-  onClickTransactionID,
 }: TransactionHistoryModalItemProps) => {
   const theme = useTheme();
   const {
@@ -35,6 +33,10 @@ export const TransactionHistoryModalItem = ({
     },
     timestamp,
     status,
+    transactionDetails: [{
+      txHash,
+      explorerLink,
+    }]
   } = txHistoryItem;
 
   const sourceAssetDetails = useGetAssetDetails({
@@ -52,13 +54,13 @@ export const TransactionHistoryModalItem = ({
   const source = {
     amount: sourceAssetDetails.amount,
     asset: sourceAssetDetails.asset,
-    chainImage: sourceAssetDetails?.chainImage ?? "",
+    assetImage: sourceAssetDetails.assetImage ?? "",
   };
 
   const destination = {
     amount: destinationAssetDetails.amount,
     asset: destinationAssetDetails.asset,
-    chainImage: destinationAssetDetails.chainImage ?? "",
+    assetImage: destinationAssetDetails.assetImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
@@ -118,8 +120,8 @@ export const TransactionHistoryModalItem = ({
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
-          transactionID={"transaction id"}
-          onClickTransactionID={onClickTransactionID}
+          transactionHash={txHash}
+          onClickTransactionID={() => window.open(explorerLink, "_blank")}
         />
       )}
     </StyledHistoryContainer>
@@ -153,15 +155,15 @@ const StyledGreenDot = styled.div`
 const RenderAssetAmount = ({
   amount,
   asset,
-  chainImage,
+  assetImage,
 }: {
   amount?: string;
   asset?: ClientAsset;
-  chainImage: string;
+  assetImage: string;
 }) => {
   return (
     <>
-      <img height={20} width={20} src={chainImage} />
+      <img height={20} width={20} src={assetImage} />
       <SmallText normalTextColor>
         {amount}
       </SmallText>

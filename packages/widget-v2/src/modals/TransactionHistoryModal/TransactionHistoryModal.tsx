@@ -63,9 +63,6 @@ export const TransactionHistoryModal = createModal(
                       setItemIndexToShowDetail(undefined);
                     }
                   }}
-                  onClickTransactionID={() => {
-                    window.open("https://google.com", "_blank");
-                  }}
                 />
               )}
               itemKey={(item) => item.timestamp.toString()}

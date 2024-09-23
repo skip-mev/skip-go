@@ -7,6 +7,7 @@ import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 type TransactionHistoryModalItemDetailsProps = {
   status: SimpleStatus;
@@ -14,7 +15,7 @@ type TransactionHistoryModalItemDetailsProps = {
   destinationChainName: string;
   absoluteTimeString: string;
   relativeTimeString: string;
-  transactionID: string;
+  transactionHash: string;
   onClickTransactionID: () => void;
   onClickDelete?: () => void;
 };
@@ -32,7 +33,7 @@ export const TransactionHistoryModalItemDetails = ({
   destinationChainName,
   absoluteTimeString,
   relativeTimeString,
-  transactionID,
+  transactionHash,
   onClickTransactionID,
   onClickDelete,
 }: TransactionHistoryModalItemDetailsProps) => {
@@ -73,7 +74,7 @@ export const TransactionHistoryModalItemDetails = ({
       <Row align="center">
         <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
         <Button onClick={onClickTransactionID} gap={5}>
-          <SmallText normalTextColor>{transactionID}</SmallText>
+          <SmallText normalTextColor>{getTruncatedAddress(transactionHash)}</SmallText>
           <SmallText>
             <ChainIcon />
           </SmallText>

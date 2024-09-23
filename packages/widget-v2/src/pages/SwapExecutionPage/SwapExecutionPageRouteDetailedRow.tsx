@@ -10,6 +10,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAccount } from "@/hooks/useAccount";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -134,10 +135,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <SmallText monospace>{`${source.address.slice(
-                0,
-                9
-              )}…${source.address.slice(-5)}`}</SmallText>
+              <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
             </StyledButton>
           )}
         </Row>
