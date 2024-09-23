@@ -9,7 +9,7 @@ import { atomWithStorage } from "jotai/utils";
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
-  transactionDetailsArray: TransactionExecutionDetails[];
+  transactionDetailsArray: TransactionDetails[];
 };
 export type ChainAddress = {
   chainID: string;
@@ -54,30 +54,30 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
 
   set(submitSwapExecutionCallbacksAtom, {
-    onTransactionUpdated: (transactionExecutionDetails) => {
-      set(setTransactionDetailsArrayAtom, transactionExecutionDetails);
+    onTransactionUpdated: (transactionDetails) => {
+      set(setTransactionDetailsArrayAtom, transactionDetails);
     },
   });
 });
 
 export const setTransactionDetailsArrayAtom = atom(
   null,
-  (get, set, transactionExecutionDetails: TransactionExecutionDetails) => {
+  (get, set, transactionDetails: TransactionDetails) => {
     const swapExecutionState = get(swapExecutionStateAtom);
     const { transactionDetailsArray } = swapExecutionState;
 
     const newTransactionDetailsArray = transactionDetailsArray;
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
-      (transaction) => transaction.txHash === transactionExecutionDetails.txHash
+      (transaction) => transaction.txHash === transactionDetails.txHash
     );
     if (transactionIndexFound !== -1) {
       newTransactionDetailsArray[transactionIndexFound] = {
         ...newTransactionDetailsArray[transactionIndexFound],
-        ...transactionExecutionDetails,
+        ...transactionDetails,
       };
     } else {
-      newTransactionDetailsArray.push(transactionExecutionDetails);
+      newTransactionDetailsArray.push(transactionDetails);
     }
 
     set(swapExecutionStateAtom, {
@@ -108,15 +108,7 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
   }));
 });
 
-export type OperationExecutionDetails = {
-  status: ClientTransactionStatus;
-  txIndex: number;
-  txHash?: string;
-  chainID?: string;
-  explorerLink?: string;
-};
-
-export type TransactionExecutionDetails = {
+export type TransactionDetails = {
   txHash: string;
   chainID: string;
   explorerLink?: string;
@@ -131,7 +123,7 @@ export type ClientTransactionStatus =
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (
-    transactionExecutionDetails: TransactionExecutionDetails
+    transactionDetails: TransactionDetails
   ) => void;
 };
 
@@ -161,17 +153,17 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           //   }
           // },
           onTransactionBroadcast: async (
-            transactionExecutionDetails: TransactionExecutionDetails
+            transactionDetails: TransactionDetails
           ) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionExecutionDetails
+              transactionDetails
             );
           },
           onTransactionTracked: async (
-            transactionExecutionDetails: TransactionExecutionDetails
+            transactionDetails: TransactionDetails
           ) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionExecutionDetails
+              transactionDetails
             );
           },
           onTransactionCompleted: async (chainID, txHash, status) => {
