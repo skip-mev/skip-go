@@ -27,6 +27,7 @@ import {
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { setTransactionHistoryAtom } from "@/state/history";
+import { errorAtom, ErrorType } from "@/state/errorPage";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -47,6 +48,7 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const setError = useSetAtom(errorAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -70,14 +72,20 @@ export const SwapExecutionPage = () => {
   const overallSwapState = useMemo(() => {
     const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
     if (overallSwapState) {
-      console.log(overallSwapState);
       setTransactionHistory(transactionHistoryIndex, {
         status: overallSwapState,
         timestamp: Date.now(),
       });
     }
+    if (overallSwapState === "failed") {
+      setError({
+        errorType: ErrorType.TransactionFailed,
+        transactionHash: transactionDetailsArray[0]?.txHash,
+        explorerLink: transactionDetailsArray[0]?.explorerLink,
+      });
+    }
     return overallSwapState;
-  }, [operationToTransferEventsMap, setTransactionHistory, transactionHistoryIndex]);
+  }, [operationToTransferEventsMap, setError, setTransactionHistory, transactionDetailsArray, transactionHistoryIndex]);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);

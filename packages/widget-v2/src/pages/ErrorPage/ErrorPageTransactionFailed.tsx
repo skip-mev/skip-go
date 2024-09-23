@@ -7,14 +7,14 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 
 export type ErrorPageTransactionFailedProps = {
-  transactionHash: string;
-  explorerUrl: string;
-  onClickContactSupport: () => void;
+  transactionHash?: string;
+  explorerLink?: string;
+  onClickContactSupport?: () => void;
 };
 
 export const ErrorPageTransactionFailed = ({
   transactionHash,
-  explorerUrl,
+  explorerLink,
   onClickContactSupport,
 }: ErrorPageTransactionFailedProps) => {
   const theme = useTheme();
@@ -32,7 +32,7 @@ export const ErrorPageTransactionFailed = ({
             <Row
               as={SmallTextButton}
               gap={5}
-              onClick={() => window.open(explorerUrl, "_blank")}
+              onClick={() => window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               Transaction: <u>{transactionHash}</u>
