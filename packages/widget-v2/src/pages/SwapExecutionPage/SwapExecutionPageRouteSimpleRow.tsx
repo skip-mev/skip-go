@@ -5,13 +5,14 @@ import { SmallText, Text } from "@/components/Typography";
 import { iconMap, ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
-import {
-  StyledAnimatedBorder,
-} from "./SwapExecutionPageRouteDetailedRow";
+import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { MinimalWallet } from "@/state/wallets";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useAtomValue } from "jotai";
+import { useAccount } from "@/hooks/useAccount";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -21,8 +22,8 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
-  wallet?: MinimalWallet;
   icon?: ICONS;
+  context: "source" | "destination";
 };
 
 export const SwapExecutionPageRouteSimpleRow = ({
@@ -33,11 +34,10 @@ export const SwapExecutionPageRouteSimpleRow = ({
   destination,
   onClickEditDestinationWallet,
   explorerLink,
-  wallet,
+  context,
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
-  console.log(explorerLink);
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -54,6 +54,30 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   const Icon = iconMap[icon];
 
+  const chainAddresses = useAtomValue(chainAddressesAtom);
+  const account = useAccount(chainID);
+
+  const source = useMemo(() => {
+    const chainAddressArray = Object.values(chainAddresses);
+    switch (context) {
+      case "source":
+        return {
+          address: account?.address,
+          image: account?.wallet.logo,
+        };
+      case "destination": {
+        const selected = chainAddressArray[chainAddressArray.length - 1];
+        return {
+          address: selected?.address,
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
+        };
+      }
+    }
+  }, [account?.address, account?.wallet.logo, chainAddresses, context]);
+
   return (
     <Row gap={25} align="center">
       {assetDetails.assetImage && (
@@ -68,8 +92,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.amount}{" "}
-          {assetDetails?.symbol}
+          {assetDetails.amount} {assetDetails?.symbol}
         </Text>
         <SmallText>
           {assetDetails.formattedUsdAmount}
@@ -77,31 +100,29 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </SmallText>
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
-          {wallet && (
-            <>
-              {wallet.walletInfo.logo && (
-                <img height={10} width={10} src={wallet.walletInfo.logo} />
-              )}
-              <SmallText>
-                {/* {wallet.address} */}
-              </SmallText>
 
-              {explorerLink ? (
-                <Button onClick={() => window.open(explorerLink, "_blank")}>
-                  <SmallText>
-                    <ChainIcon />
-                  </SmallText>
-                </Button>
-              ) : (
-                <Button align="center" onClick={onClickEditDestinationWallet}>
-                  <Icon
-                    width={10}
-                    height={10}
-                    color={theme.primary.text.lowContrast}
-                  />
-                </Button>
-              )}
-            </>
+          {source.image && <img height={10} width={10} src={source.image} />}
+          {source.address && (
+            <SmallText monospace>{`${source.address.slice(
+              0,
+              9
+            )}…${source.address.slice(-5)}`}</SmallText>
+          )}
+
+          {explorerLink ? (
+            <Button onClick={() => window.open(explorerLink, "_blank")}>
+              <SmallText>
+                <ChainIcon />
+              </SmallText>
+            </Button>
+          ) : (
+            <Button align="center" onClick={onClickEditDestinationWallet}>
+              <Icon
+                width={10}
+                height={10}
+                color={theme.primary.text.lowContrast}
+              />
+            </Button>
           )}
         </Row>
       </Column>

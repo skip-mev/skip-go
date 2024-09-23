@@ -4,7 +4,6 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { destinationWalletAtom } from "@/state/swapPage";
 import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useCallback } from "react";
@@ -21,12 +20,9 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
-
-  const destinationWallet = useAtomValue(destinationWalletAtom);
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
   const getExplorerLink = useCallback((index: number) => {
-    console.log(transactionDetailsArray[index]?.explorerLink);
     return transactionDetailsArray[index]?.explorerLink;
   }, [transactionDetailsArray]);
 
@@ -52,18 +48,18 @@ export const SwapExecutionPageRouteSimple = ({
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        wallet={destinationWallet}
         status={overallSwapState}
+        context="source"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
         {...destination}
-        wallet={destinationWallet}
         destination
         icon={ICONS.pen}
         status={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={getExplorerLink(lastOperation.txIndex)}
+        context="destination"
       />
     </StyledSwapExecutionPageRoute>
   );

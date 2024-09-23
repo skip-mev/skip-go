@@ -42,7 +42,7 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
@@ -65,8 +65,6 @@ export const SwapExecutionPage = () => {
       return transferEvent;
     }).filter(transferEvent => transferEvent) as ClientTransferEvent[];
   }, [clientOperations, transactionStatus]);
-
-  console.log(transactionDetailsArray);
 
   const [_destinationWallet] = useAtom(destinationWalletAtom);
 
