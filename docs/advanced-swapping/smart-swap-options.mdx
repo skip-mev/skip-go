@@ -5,56 +5,44 @@ description: 'This page introduces the Smart Swap functionality provided by the 
 
 ## Introduction
 
-Smart Swap refers to a broad range of functionality we're building out to improve swap speed, price, and customization.
+Smart Swap refers to a feature set that improves swap speed, price, and control.
 
-At this time, the main use case for smart swap is improving trade execution price by enabling third-party routers (e.g. Hallswap) and trade splitting. But much more is on the way!
-
-This doc covers:
-
-- All the different features Smart Swap enables
-- Describes how to use each of them
+It currently allows for:
+- [External routers](#feature-use-external-routers-to-improve-price-execution) (e.g. Hallswap and Osmosis SQS) for better price execution
+- [Route splitting](#feature-route-splitting) for better price execution
+- [EVM swaps](#feature-evm-swaps)
 
  <Warning>
- **`@skip-router` 4.0.0+ required**
+If you're using the deprecated `@skip-router` library, you must use version v4.0.0+ to enable Smart Swap.
 
-If you're using the deprecated `@skip-router` library, you must use v4.0.0 or later to use Smart Swap.
-
-We advise all integators to use the new `@skip-go/client` [TypeScript Package](https://www.npmjs.com/package/@skip-go/client), which is being actively maintained and developed.
+We strongly reccomend using the `@skip-go/client` [TypeScript package](https://www.npmjs.com/package/@skip-go/client), which is actively maintained.
 
 </Warning>
 
-## How to Use Smart Swap
+The rest of this document will show you how to use Smart Swap with the `@skip-go/client` library. The only changes you'll notice between this context and the REST API are naming conventions.
 
-All Smart Swap features are controlled with a single configuration object:
+# Smart Swap Features
 
-1. `@skip-go/client` Package: `smartSwapOptions` object passed in`SkipClient.route` options `SkipClient.msgsDirect` options
-2. REST API: `smart_swap_options` parameter passed in `/v2/fungible/route` and `/v2/fungible/msgs_direct`
+Set your Smart Swap settings in your `skipClient` function call or REST API request body.
 
-Read on for more info about the individual features and how to use each of them.
+## Feature: Use External Routers to Improve Price Execution
 
-(For the rest of this doc, examples will show how to use Smart Swap with the `@skip-go/client` library by configuring it on `SkipClient.route`. The only changes you'll notice between this context and the REST API is naming conventions)
+The Skip Go API considers multiple internal and external routers to find the route with the best price execution.
 
-## Smart Swap Features
-
-### Feature: Use 3rd-party routers to improve price
-
-#### What is it
-
-The Skip Go API searches over multiple 1st and 3rd-party routers to find the route that gives you best execution. This has a chance of improving the price at which your user's swap executes.
-
-The swap routers currently supported are:
+Currently supported external swap routers:
 
 1. Skip Go API's in-house Router
 2. Hallswap's Dex Aggregator
 3. Osmosis's Sidecar Query Service (SQS) (Used in the Osmosis frontend)
 
-#### How to use it
+### Usage
 
-Just pass the `smartSwapOptions` object into your route request. You're not required to activate a particular flag.
+Pass an empty `smartSwapOptions` object into your route request. 
 
-```text TypeScript
+<CodeGroup>
+```ts TypeScript (Client)
 const route = await skipClient.route({
-  smartSwapOptions: {}, // smart swap object
+  smartSwapOptions: {}, // You're not required to activate a particular flag for this feature
   sourceAssetDenom: "uusdc",
   sourceAssetChainID: "noble-1",
   destAssetDenom: "utia",
@@ -63,20 +51,32 @@ const route = await skipClient.route({
   cumulativeAffiliateFeeBPS: "0"
 }
 ```
+```JSON JSON (REST API)
+{ 
+  "amount_in": "1000000",
+  "source_asset_denom": "uusdc",
+  "source_asset_chain_id": "noble-1",
+  "dest_asset_denom": "utia",
+  "dest_asset_chain_id": "celestia",
+  "cumulative_affiliate_fee_bps": "0",
+  "allow_multi_tx": true,
+  "smart_swap_options": {}
+}
+```
+</CodeGroup>
 
-That's it! Skip Go API will now consider all routers we have available and give your user the best one.
+That's it! Skip Go API will now consider supported external routers and return the best available option.
 
-### Feature: Route Splitting
+## Feature: Route Splitting
 
-#### What is it
+Route splitting involves dividing a user's trade into multiple parts and swapping them through different pools. This reduces price impact and can increase the user's output compared to using a single route. It works especially well when one or both tokens being swapped are commonly paired with other assets on a DEX (e.g., OSMO on Osmosis).
 
-Route splitting is a technique in swap optimization where a user's trade is split into several parts and swapped through separate pools. It can help lower price impact and increase output for the user, compared to swapping with a single route. This technique is especially effective when one or both of the tokens the user is swapping is a commonly paired asset on a DEX (e.g. OSMO is paired with almost everything on Osmosis).
+### Usage
 
-#### How to use it
+Pass the `splitRoutes` flag in the `smartSwapOptions` object.
 
-Just pass the `splitRoutes` flag in the `smartSwapOptions` object.
-
-```text TypeScript
+<CodeGroup>
+```ts TypeScript (Client)
 const route = await skipClient.route({
   smartSwapOptions: {
     splitRoutes: true
@@ -90,30 +90,64 @@ const route = await skipClient.route({
 }
 ```
 
-### Feature: EVM Swaps
+```JSON JSON (REST API)
+{ 
+  "amount_in": "1000000",
+  "source_asset_denom": "uusdc",
+  "source_asset_chain_id": "noble-1",
+  "dest_asset_denom": "utia",
+  "dest_asset_chain_id": "celestia",
+  "cumulative_affiliate_fee_bps": "0",
+  "allow_multi_tx": true,
+  "smart_swap_options": {
+    "split_routes": true
+  }
+}
+```
 
-#### What is it
+</CodeGroup>
 
-The API supports swapping on an EVM chain, followed by a CCTP/Axelar transfer over to the Cosmos ecosystem. This allows a user to onboard on to your IBC connected chain in 1 transaction from a broad range of EVM assets, including the memecoins retail loves to hold!
+### Response Changes when using Split Routes
 
-Currently, the API supports swapping on official Uniswap V3 deployments on the following chains (and their respective chain IDs):
+We've added a new `swapType` called `SmartSwapExactCoinIn` that's returned in the `routeResponse` and `msgsDirectResponse` when the provided route is a split route. This new `swapType` has fields that allow for multiple routes, across multiple swap venues.
 
-1. Ethereum (1)
-2. Polygon (137)
-3. Optimism (10)
-4. Arbitrum One (42161)
-5. Base (8453)
-6. BNB Chain (56)
-7. Avalanche (43114)
-8. Blast (81457)
-9. Celo (42220) - SOON
+```ts
+export type SmartSwapExactCoinIn = {
+  swapVenue: SwapVenue;
+  swapRoutes: SwapRoute[];
+};
 
-#### How to use it
+export type SwapRoute = {
+  swapAmountIn: string;
+  denomIn: string;
+  swapOperations: SwapOperation[];
+};
+```
 
-Just set the `evmSwaps` flag to true in the `smartSwapOptions` object. If using the deprecated `@skip-router` library, you must be on version 5.1.0 or above (we advise you migrate over to `@skip-go/client` as soon as possible).
+## Feature: EVM Swaps
+
+Smart Swap supports bidrectional EVM swaps: go from any asset on an EVM chain to any asset on a Cosmos chain and back again. With EVM swaps, users can onboard to your IBC connected chain in 1 transaction from a broad range of EVM assets, including the memecoins retail loves to hold!
+
+Currently, the API supports swapping on official Uniswap V3 deployments on the following chains:
+
+| Network       | Chain ID |
+|---------------|----------|
+| Ethereum      | 1        |
+| Polygon       | 137      |
+| Optimism      | 10       |
+| Arbitrum One  | 42161    |
+| Base          | 8453     |
+| BNB Chain     | 56       |
+| Avalanche     | 43114    |
+| Blast         | 81457    |
+| Celo          | 42220    |
+
+### Usage
+
+Set the `evmSwaps` flag to true in the `smartSwapOptions` object. If using the deprecated `@skip-router` library, you must be on v5.1.0+ (we strongly recommend migrating to `@skip-go/client` as soon as possible).
 
 <CodeGroup>
-```Typescript TypeScript
+```ts TypeScript (Client)
 const route = await skipClient.route({
   sourceAssetDenom: "arbitrum-native",
   sourceAssetChainID: "42161",
@@ -128,8 +162,8 @@ const route = await skipClient.route({
 }
 ```
 
-```JSON JSON
-{
+```JSON JSON (REST API)
+{ // rest API request body example
   "amount_in": "10000000000000000000",
   "source_asset_denom": "arbitrum-native",
   "source_asset_chain_id": "42161",
@@ -146,13 +180,19 @@ const route = await skipClient.route({
 
 </CodeGroup>
 
-#### What to expect from the route response
+### How do EVM Swaps Change the `route` Response?
 
-When an EVM swap occurs in a route, a new operation type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` responses. If your API usage follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you are on the latest [Skip Go Client version](https://www.npmjs.com/package/@skip-go/client) and/or are decoding the operation properly. The `evm_swap` operation type is as follows:
+When an EVM swap occurs in a route, a new operation of type `evm_swap` is returned in the array of `operations` in the `v2/route` and `v2/msgs_direct` response. 
+
+<Warning>
+If your API use follows the `v2/route` then `v2/msgs` call pattern, this new operation type must be passed to the `v2/msgs` endpoint, so make sure you use the latest [Skip Go Client version](https://www.npmjs.com/package/@skip-go/client) and decode the operation properly. 
+</Warning>
+
+The `evm_swap` operation type is as follows:
 
 <CodeGroup>
 
-```text TypeScript
+```ts TypeScript
 export type EvmSwap = {
   inputToken: string;
   amountIn: string;
@@ -182,28 +222,10 @@ export type EvmSwap = {
 
 </CodeGroup>
 
-#### What to expect differently from the /msgs and /status responses
+### How does this Change the `/msgs` and `/status` Response?
 
-Nothing new in particular! The `msg_type` used for EVM swaps is the same `evm_tx` type used for all of our EVM transactions. Similarly, there is no new `transfer_event` type to be aware of, since the swap is atomic with the bridging action (Axelar or CCTP), the same types are used (`axelar_transfer_info` and `cctp_transfer_info` respectively).
+Nothing new in particular! The `msg_type` used for EVM swaps is the same `evm_tx` type used for all of our EVM transactions. Similarly, there is no new `transfer_event` type; the swap is atomic with the bridging action (Axelar or CCTP), so the same types are used (`axelar_transfer_info` and `cctp_transfer_info` respectively).
 
-### Response Changes using Smart Swap
-
-We've added a new `swapType` called `SmartSwapExactCoinIn` you can expect to be returned in the `routeResponse` and `msgsDirectResponse` to take advantage of the new capabilities Smart Swaps offers! This new swap type has fields that allow for multiple routes, across multiple swap venues.
-
-- **Note:** this new `SmartSwapExactCoinIn` type will currently only be returned if the route provided back is a split route.
-
-```type type
-export type SmartSwapExactCoinIn = {
-  swapVenue: SwapVenue;
-  swapRoutes: SwapRoute[];
-};
-
-export type SwapRoute = {
-  swapAmountIn: string;
-  denomIn: string;
-  swapOperations: SwapOperation[];
-};
-```
 
   <Check>
  **Want to help us get better? Have questions or feedback?**
