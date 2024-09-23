@@ -10,7 +10,6 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@skip-go/widget-web-component": "^2.4.12",
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
