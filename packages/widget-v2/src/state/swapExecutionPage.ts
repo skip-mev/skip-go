@@ -5,7 +5,6 @@ import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
-import { ClientTransferEvent, getClientOperations, getSimpleStatus, getTransferEventsFromTxStatusResponse } from "@/utils/clientType";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
