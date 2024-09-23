@@ -18,15 +18,15 @@ export const Widget = (props: Props) => {
 
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const sourceAsset = assets?.find(
+  const destinationAsset = assets?.find(
     (asset) => asset.denom === "uatom" && asset.chainID === "cosmoshub-4"
   );
-  const destinationAsset = assets?.find((asset) => asset.denom === "uusdc" && asset.chainID === "noble-1");
+  const sourceAsset = assets?.find((asset) => asset.denom === "uusdc" && asset.chainID === "noble-1");
 
   useEffect(() => {
     setSourceAsset(sourceAsset);
     setDestinationAsset(destinationAsset);
-    setSourceAssetAmount("0.2");
+    setSourceAssetAmount("0.1");
   }, [destinationAsset, setDestinationAsset, setSourceAsset, setSourceAssetAmount, sourceAsset]);
 
   return useMemo(() => {

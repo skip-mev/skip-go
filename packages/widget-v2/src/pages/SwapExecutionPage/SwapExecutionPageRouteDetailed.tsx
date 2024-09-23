@@ -6,17 +6,17 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation, OperationType } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { getIsOperationSignRequired } from "@/utils/operations";
-import { OperationExecutionDetails } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  operationExecutionDetails: OperationExecutionDetails[];
+  operationTransferEvents: ClientTransferEvent[];
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -50,11 +50,17 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  operationExecutionDetails,
+  operationTransferEvents,
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
+  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
+
+  const getExplorerLink = useCallback((index: number) => {
+    return transactionDetailsArray[index]?.explorerLink;
+  }, [transactionDetailsArray]);
 
   const handleMouseEnterOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -78,8 +84,8 @@ export const SwapExecutionPageRouteDetailed = ({
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
         chainID={firstOperation.fromChainID}
-        explorerLink={operationExecutionDetails[0]?.explorerLink}
-        txState={operationExecutionDetails[0]?.status}
+        explorerLink={getExplorerLink(0)}
+        status={operationTransferEvents[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -136,8 +142,8 @@ export const SwapExecutionPageRouteDetailed = ({
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={isSignRequired}
-              txState={operationExecutionDetails[index]?.status}
-              explorerLink={operationExecutionDetails[index]?.explorerLink}
+              status={operationTransferEvents[index]?.status}
+              explorerLink={getExplorerLink(operations[index]?.txIndex)}
               key={`row-${asset?.denom}-${index}`}
             />
           </>

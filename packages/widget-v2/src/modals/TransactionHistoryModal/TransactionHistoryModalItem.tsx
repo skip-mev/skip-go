@@ -88,7 +88,7 @@ export const TransactionHistoryModalItem = ({
             width={10}
             height={10}
             backgroundColor={theme.primary.text.normal}
-            txState="broadcasted"
+            status="broadcasted"
           />
         );
       case "success":

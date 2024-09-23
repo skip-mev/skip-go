@@ -15,8 +15,11 @@ import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   ClientOperation,
+  ClientTransferEvent,
   getClientOperations,
   getClientTransferEventArray,
+  getSimpleStatus,
+  getTransferEventsFromTxStatusResponse,
 } from "@/utils/clientType";
 import {
   chainAddressesAtom,
@@ -39,25 +42,31 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, operationExecutionDetailsArray } = useAtomValue(
-    swapExecutionStateAtom
-  );
-  console.log(operationExecutionDetailsArray);
+  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
-
-  if (transactionStatus?.[0]?.transferSequence) {
-    const clientTransferEvent = getClientTransferEventArray(
-      transactionStatus?.[0]?.transferSequence
-    );
-    console.log(clientTransferEvent);
-  }
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);
   }, [route?.operations]);
+
+  const operationTransferEvents = useMemo(() => {
+    const transferEvents =
+      getTransferEventsFromTxStatusResponse(transactionStatus);
+    if (!clientOperations) return [];
+    return clientOperations.map((operation) => {
+      const transferEvent = transferEvents?.find(
+        (transferEvent) => transferEvent.fromChainID === operation.fromChainID
+      );
+      if (!transferEvent) return;
+      transferEvent.status = getSimpleStatus(transferEvent?.state);
+      return transferEvent;
+    }).filter(transferEvent => transferEvent) as ClientTransferEvent[];
+  }, [clientOperations, transactionStatus]);
+
+  console.log(transactionDetailsArray);
 
   const [_destinationWallet] = useAtom(destinationWalletAtom);
 
@@ -91,7 +100,12 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [chainAddresses, isPending, isSuccess, route?.requiredChainAddresses]);
+  }, [
+    chainAddresses,
+    isPending,
+    isSuccess,
+    route?.requiredChainAddresses,
+  ]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -164,12 +178,12 @@ export const SwapExecutionPage = () => {
         <SwapExecutionPageRouteSimple
           onClickEditDestinationWallet={() => modal.show()}
           operations={clientOperations}
-          operationExecutionDetails={operationExecutionDetailsArray}
+          operationTransferEvents={operationTransferEvents}
         />
       ) : (
         <SwapExecutionPageRouteDetailed
           operations={clientOperations}
-          operationExecutionDetails={operationExecutionDetailsArray}
+          operationTransferEvents={operationTransferEvents}
         />
       )}
       {renderMainButton}

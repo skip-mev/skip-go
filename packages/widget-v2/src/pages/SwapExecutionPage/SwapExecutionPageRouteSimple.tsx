@@ -1,30 +1,37 @@
 import styled, { useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { destinationWalletAtom } from "@/state/swapPage";
-import { ClientOperation } from "@/utils/clientType";
-import { OperationExecutionDetails } from "@/state/swapExecutionPage";
+import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { useCallback } from "react";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
-  operationExecutionDetails: OperationExecutionDetails[];
+  operationTransferEvents: ClientTransferEvent[];
   onClickEditDestinationWallet?: () => void;
 };
 
 export const SwapExecutionPageRouteSimple = ({
   operations,
-  operationExecutionDetails,
+  operationTransferEvents,
   onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
 
-  const [destinationWallet] = useAtom(destinationWalletAtom);
+  const destinationWallet = useAtomValue(destinationWalletAtom);
+  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+
+  const getExplorerLink = useCallback((index: number) => {
+    console.log(transactionDetailsArray[index]?.explorerLink);
+    return transactionDetailsArray[index]?.explorerLink;
+  }, [transactionDetailsArray]);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(operationExecutionDetails);
+  const overallSwapState = getOverallSwapState(operationTransferEvents);
   const lastOperation = operations[operations.length - 1];
 
   const sourceDenom = firstOperation.denomIn;
@@ -46,7 +53,7 @@ export const SwapExecutionPageRouteSimple = ({
       <SwapExecutionPageRouteSimpleRow
         {...source}
         wallet={destinationWallet}
-        txState={overallSwapState}
+        status={overallSwapState}
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
@@ -54,23 +61,23 @@ export const SwapExecutionPageRouteSimple = ({
         wallet={destinationWallet}
         destination
         icon={ICONS.pen}
-        txState={overallSwapState}
+        status={overallSwapState}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
-        explorerLink={operationExecutionDetails[operationExecutionDetails.length - 1]?.explorerLink}
+        explorerLink={getExplorerLink(lastOperation.txIndex)}
       />
     </StyledSwapExecutionPageRoute>
   );
 };
 
-const getOverallSwapState = (operationExecutionDetails: OperationExecutionDetails[]) => {
-  if (operationExecutionDetails.find((state) => state.status === "failed")) {
+const getOverallSwapState = (operationTransferEvents: ClientTransferEvent[]) => {
+  if (operationTransferEvents.find((state) => state.status === "failed")) {
     return "failed";
-  } else if (operationExecutionDetails.find((state) => state.status === "broadcasted")) {
-    return "broadcasted";
-  } else if (operationExecutionDetails.every((state) => state.status === "pending")) {
+  } else if (operationTransferEvents.find((state) => state.status === "pending")) {
     return "pending";
-  } else if (operationExecutionDetails.every((state) => state.status === "confirmed")) {
-    return "confirmed";
+  } else if (operationTransferEvents.every((state) => state.status === "broadcasted")) {
+    return "broadcasted";
+  } else if (operationTransferEvents.every((state) => state.status === "completed")) {
+    return "completed";
   }
 };
 

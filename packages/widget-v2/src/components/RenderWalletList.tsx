@@ -110,7 +110,7 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              txState={connectMutation.isError ? "failed" : "broadcasted"}
+              status={connectMutation.isError ? "failed" : "broadcasted"}
               borderSize={8}
             >
               <img

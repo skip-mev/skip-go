@@ -7,11 +7,10 @@ import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import {
   StyledAnimatedBorder,
-  txState,
 } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { ClientOperation } from "@/utils/clientType";
+import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { MinimalWallet } from "@/state/wallets";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
@@ -21,7 +20,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  txState?: txState;
+  status?: SimpleStatus;
   wallet?: MinimalWallet;
   icon?: ICONS;
 };
@@ -30,7 +29,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   tokenAmount,
   chainID,
-  txState,
+  status,
   destination,
   onClickEditDestinationWallet,
   explorerLink,
@@ -38,6 +37,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
+  console.log(explorerLink);
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -46,11 +46,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {
-    if (destination && txState === "broadcasted") {
+    if (destination && status === "broadcasted") {
       return;
     }
-    return txState;
-  }, [txState, destination]);
+    return status;
+  }, [status, destination]);
 
   const Icon = iconMap[icon];
 
@@ -61,7 +61,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           width={50}
           height={50}
           backgroundColor={theme.success.text}
-          txState={txStateOfAnimatedBorder}
+          status={txStateOfAnimatedBorder}
         >
           <img height={50} width={50} src={assetDetails.assetImage} />
         </StyledAnimatedBorder>

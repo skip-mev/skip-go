@@ -9,7 +9,6 @@ import { atomWithStorage } from "jotai/utils";
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
-  operationExecutionDetailsArray: OperationExecutionDetails[];
   transactionDetailsArray: TransactionExecutionDetails[];
 };
 export type ChainAddress = {
@@ -34,118 +33,58 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>("swapExecutionState", {
-  route: undefined,
-  userAddresses: [],
-  operationExecutionDetailsArray: [],
-  transactionDetailsArray: [],
-});
+export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
+  "swapExecutionState",
+  {
+    route: undefined,
+    userAddresses: [],
+    transactionDetailsArray: [],
+  }
+);
+
+export const transferEventsAtom = atom();
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
 
   if (!route) return;
 
-  const operationExecutionDetailsArray = route.operations.map(
-    (operation) =>
-    ({
-      txIndex: operation.txIndex,
-      explorerLink: undefined,
-    } as OperationExecutionDetails)
-  );
-
   set(swapExecutionStateAtom, {
     userAddresses: [],
     transactionDetailsArray: [],
     route,
-    operationExecutionDetailsArray,
   });
 
   set(submitSwapExecutionCallbacksAtom, {
-    onTransactionBroadcast: (
-      transactionIndex,
-      transactionExecutionDetails
-    ) => {
-      console.log("broadcasted");
-      set(setOperationExecutionDetailsAtom, {
-        transactionIndex,
-        status: "broadcasted",
-        transactionExecutionDetails
-      });
+    onTransactionUpdated: (transactionExecutionDetails) => {
+      set(setOperationExecutionDetailsAtom, transactionExecutionDetails);
     },
-    onTransactionTracked: (transactionIndex, transactionExecutionDetails) => {
-      console.log("tracked");
-      set(setOperationExecutionDetailsAtom, {
-        transactionIndex,
-        status: "pending",
-        transactionExecutionDetails
-      });
-    },
-    onTransactionCompleted: (_chainID: string, txHash: string, status: TxStatusResponse) => {
-      console.log(txHash, status);
-      if (status.status === "STATE_COMPLETED") {
-        console.log("transaction completed");
-        set(setOperationExecutionDetailsAtom, {
-          transactionHash: txHash,
-          status: "confirmed",
-        });
-      }
-    }
   });
 });
 
 export const setOperationExecutionDetailsAtom = atom(
   null,
-  (
-    get,
-    set,
-    props: {
-      status: ClientTransactionStatus,
-      transactionIndex?: number,
-      transactionHash?: string,
-      transactionExecutionDetails?: Partial<TransactionExecutionDetails>
-    },
-  ) => {
+  (get, set, transactionExecutionDetails: TransactionExecutionDetails) => {
     const swapExecutionState = get(swapExecutionStateAtom);
-    const { transactionDetailsArray, operationExecutionDetailsArray } = swapExecutionState;
-    const { transactionHash, transactionExecutionDetails, status } = props;
-    const { transactionIndex } = props;
+    const { transactionDetailsArray } = swapExecutionState;
 
-    const newOperationExecutionDetailsArray = operationExecutionDetailsArray.map(operationExecutionDetails => {
-      if (operationExecutionDetails.txIndex === transactionIndex || operationExecutionDetails.txHash === transactionHash) {
-        operationExecutionDetails.status = status;
-        switch (status) {
-          case "pending":
-          case "broadcasted":
-            operationExecutionDetails.txHash = transactionExecutionDetails?.txHash;
-            operationExecutionDetails.chainID = transactionExecutionDetails?.chainID;
-            operationExecutionDetails.explorerLink = transactionExecutionDetails?.explorerLink;
-            break;
-          case "confirmed":
-          default:
-            break;
-        }
-      }
+    const newTransactionDetailsArray = transactionDetailsArray;
 
-      return operationExecutionDetails;
-    });
+    const transactionIndexFound = newTransactionDetailsArray.findIndex(
+      (transaction) => transaction.txHash === transactionExecutionDetails.txHash
+    );
+    if (transactionIndexFound !== -1) {
+      newTransactionDetailsArray[transactionIndexFound] = {
+        ...newTransactionDetailsArray[transactionIndexFound],
+        ...transactionExecutionDetails,
+      };
+    } else {
+      newTransactionDetailsArray.push(transactionExecutionDetails);
+    }
 
-
-    // if (!transactionIndex) {
-    //   const operationExecutionDetails = operationExecutionDetailsArray.find(operation => operation.txHash === transactionHash);
-    //   if (operationExecutionDetails?.txIndex) {
-    //     transactionDetailsArray[operationExecutionDetails?.txIndex] = {
-    //       ...transactionDetailsArray[operationExecutionDetails?.txIndex],
-    //       ...transactionExecutionDetails,
-    //     } as TransactionExecutionDetails;
-    //   }
-    // }
-
-    console.log(newOperationExecutionDetailsArray, transactionDetailsArray);
     set(swapExecutionStateAtom, {
       ...swapExecutionState,
-      transactionDetailsArray: transactionDetailsArray,
-      operationExecutionDetailsArray: newOperationExecutionDetailsArray,
+      transactionDetailsArray: newTransactionDetailsArray,
     });
   }
 );
@@ -183,27 +122,18 @@ export type TransactionExecutionDetails = {
   txHash: string;
   chainID: string;
   explorerLink?: string;
+  status?: TxStatusResponse;
 };
 
 export type ClientTransactionStatus =
   | "pending"
   | "broadcasted"
-  | "confirmed"
+  | "completed"
   | "failed";
 
 type SubmitSwapExecutionCallbacks = {
-  onTransactionBroadcast?: (
-    transactionIndex: number,
+  onTransactionUpdated?: (
     transactionExecutionDetails: TransactionExecutionDetails
-  ) => void;
-  onTransactionTracked?: (
-    transactionIndex: number,
-    transactionExecutionDetails: TransactionExecutionDetails
-  ) => void;
-  onTransactionCompleted?: (
-    chainID: string,
-    txHash: string,
-    status: TxStatusResponse
   ) => void;
 };
 
@@ -222,9 +152,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       if (!route) return;
       if (!userAddresses.length) return;
 
-      let transactionBroadcastCount = 0;
-      let transactionTrackedCount = 0;
-
       try {
         await skip.executeRoute({
           route,
@@ -238,23 +165,23 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           onTransactionBroadcast: async (
             transactionExecutionDetails: TransactionExecutionDetails
           ) => {
-            submitSwapExecutionCallbacks?.onTransactionBroadcast?.(
-              transactionBroadcastCount,
+            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
               transactionExecutionDetails
             );
-            transactionBroadcastCount++;
           },
           onTransactionTracked: async (
             transactionExecutionDetails: TransactionExecutionDetails
           ) => {
-            submitSwapExecutionCallbacks?.onTransactionTracked?.(
-              transactionTrackedCount,
+            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
               transactionExecutionDetails
             );
-            transactionTrackedCount++;
           },
-          onTransactionCompleted: async (...props) => {
-            submitSwapExecutionCallbacks?.onTransactionCompleted?.(...props);
+          onTransactionCompleted: async (chainID, txHash, status) => {
+            submitSwapExecutionCallbacks?.onTransactionUpdated?.({
+              chainID,
+              txHash,
+              status,
+            });
           },
         });
       } catch (error) {
