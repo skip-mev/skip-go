@@ -1,14 +1,21 @@
 import {
   AxelarTransfer,
+  AxelarTransferInfo,
   BankSend,
   CCTPTransfer,
+  CCTPTransferInfo,
   EvmSwap,
   HyperlaneTransfer,
+  HyperlaneTransferInfo,
   OPInitTransfer,
+  OPInitTransferInfo,
   Operation as SkipClientOperation,
   Swap,
   SwapVenue,
   Transfer,
+  TransferEvent,
+  TransferInfo,
+  TransferState,
 } from "@skip-go/client";
 
 export enum OperationType {
@@ -100,6 +107,10 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
         case OperationType.evmSwap:
           (operationDetails as Transfer).toChainID = (operationDetails as EvmSwap).fromChainID;
           break;
+        case OperationType.bankSend:
+          (operationDetails as Transfer).denomIn = (operationDetails as BankSend).denom;
+          (operationDetails as Transfer).denomOut = (operationDetails as BankSend).denom;
+          break;
         default:
       }
       returnValue = {
@@ -131,3 +142,51 @@ export function getClientOperation(operation: SkipClientOperation) {
 export function getClientOperations(operations: SkipClientOperation[]) {
   return operations.map((operation) => getClientOperation(operation));
 }
+
+function getClientTransferEvent(transferEvent: TransferEvent) {
+  const combinedTransferEvent = transferEvent as CombinedTransferEvent;
+
+  const axelarTransfer = combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
+  const ibcTransfer = combinedTransferEvent?.ibcTransfer as TransferInfo;
+  const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
+  const hyperlaneTransfer = combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
+  const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
+
+  return {
+    ...ibcTransfer,
+    ...axelarTransfer,
+    ...cctpTransfer,
+    ...hyperlaneTransfer,
+    ...opInitTransfer,
+  };
+}
+
+export function getClientTransferEventArray(transferEventArray: TransferEvent[]) {
+  return transferEventArray.map((transferEvent) => getClientTransferEvent(transferEvent));
+}
+
+type CombinedTransferEvent = {
+  ibcTransfer: TransferInfo;
+  axelarTransfer: AxelarTransferInfo;
+  cctpTransfer: CCTPTransferInfo;
+  hyperlaneTransfer: HyperlaneTransferInfo;
+  opInitTransfer: OPInitTransferInfo;
+};
+
+type ClientTransferEvent = CombineObjectTypes<
+  TransferInfo &
+  AxelarTransferInfo &
+  CCTPTransferInfo &
+  HyperlaneTransferInfo &
+  OPInitTransferInfo
+>;
+
+// type TxStatusResponse = {
+//   status: StatusState;
+//   transferSequence: TransferEvent[];
+//   nextBlockingTransfer: NextBlockingTransfer | null;
+//   transferAssetRelease: TransferAssetRelease | null;
+//   error: StatusError | null;
+//   state: StatusState;
+//   transfers: TransferStatus[];
+// };

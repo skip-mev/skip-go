@@ -234,7 +234,7 @@ const StyledLoadingContainer = styled(Row) <{
     height: ${({ height }) => `${height + 20}px;`};
     width: ${({ width }) => `${width + 20}px;`};
     ${({ txState, backgroundColor, theme }) =>
-    txState === "broadcasted" &&
+    txState === "pending" &&
     css`
         background-image: conic-gradient(
           transparent,

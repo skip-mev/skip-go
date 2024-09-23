@@ -73,7 +73,7 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
 
   return (
-    <StyledSwapExecutionPageRoute justify="space-between">
+    <StyledSwapExecutionPageRoute>
       <SwapExecutionPageRouteDetailedRow
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}

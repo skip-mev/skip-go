@@ -105,7 +105,7 @@ export const SwapPage = () => {
   });
 
   const formattedBalance = useMemo(() => {
-    if (sourceBalance === undefined) return "";
+    if (sourceBalance === undefined || sourceBalance.error?.message) return "";
 
     const amount = sourceBalance?.amount;
     let formattedBalanceAmount = sourceBalance?.formattedAmount;
@@ -296,41 +296,38 @@ export const SwapPage = () => {
                   paddingRight: 13,
                 }}
               >
-                {formattedBalance && (
-                  <>
-                    <TransparentButton
-                      onClick={() => {
-                        connectedWalletModal.show();
-                      }}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                        gap: 8,
-                      }}
-                    >
-                      {sourceAccount && (
-                        <img
-                          style={{ objectFit: "cover" }}
-                          src={sourceAccount?.wallet.logo}
-                          height={16}
-                          width={16}
-                        />
-                      )}
-                      {formattedBalance}
-                    </TransparentButton>
+                <TransparentButton
+                  onClick={() => {
+                    connectedWalletModal.show();
+                  }}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  {sourceAccount && (
+                    <img
+                      style={{ objectFit: "cover" }}
+                      src={sourceAccount?.wallet.logo}
+                      height={16}
+                      width={16}
+                    />
+                  )}
+                  {formattedBalance}
+                </TransparentButton>
 
-                    <TransparentButton
-                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                      onClick={handleMaxButton}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                      }}
-                    >
-                      Max
-                    </TransparentButton>
-                  </>
-                )}
+                <TransparentButton
+                  disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                  onClick={handleMaxButton}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                  }}
+                >
+                  Max
+                </TransparentButton>
+
               </Row>
             )
           }

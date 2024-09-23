@@ -11,13 +11,17 @@ import { destinationWalletAtom } from "@/state/swapPage";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
-import { withBoundProps } from "@/utils/misc";
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
-import { ClientOperation, getClientOperations } from "@/utils/clientType";
+import {
+  ClientOperation,
+  getClientOperations,
+  getClientTransferEventArray,
+} from "@/utils/clientType";
 import {
   chainAddressesAtom,
   skipSubmitSwapExecutionAtom,
+  skipTransactionStatusAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
@@ -38,9 +42,17 @@ export const SwapExecutionPage = () => {
   const { route, operationExecutionDetailsArray } = useAtomValue(
     swapExecutionStateAtom
   );
+  console.log(operationExecutionDetailsArray);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
-  // const [{ data: transactionStatus }] = useAtom(skipTransactionStatus);
+  const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
+
+  if (transactionStatus?.[0]?.transferSequence) {
+    const clientTransferEvent = getClientTransferEventArray(
+      transactionStatus?.[0]?.transferSequence
+    );
+    console.log(clientTransferEvent);
+  }
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -134,24 +146,6 @@ export const SwapExecutionPage = () => {
     theme.success.text,
   ]);
 
-  const renderExecutionPageRoute = useMemo(() => {
-    if (simpleRoute) {
-      return (
-        <SwapExecutionPageRouteSimple
-          onClickEditDestinationWallet={() => modal.show()}
-          operations={clientOperations}
-          operationExecutionDetails={operationExecutionDetailsArray}
-        />
-      );
-    }
-    return (
-      <SwapExecutionPageRouteDetailed
-        operations={clientOperations}
-        operationExecutionDetails={operationExecutionDetailsArray}
-      />
-    );
-  }, [clientOperations, modal, operationExecutionDetailsArray, simpleRoute]);
-
   return (
     <Column gap={5}>
       <SwapPageHeader
@@ -166,7 +160,18 @@ export const SwapExecutionPage = () => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      {renderExecutionPageRoute}
+      {simpleRoute ? (
+        <SwapExecutionPageRouteSimple
+          onClickEditDestinationWallet={() => modal.show()}
+          operations={clientOperations}
+          operationExecutionDetails={operationExecutionDetailsArray}
+        />
+      ) : (
+        <SwapExecutionPageRouteDetailed
+          operations={clientOperations}
+          operationExecutionDetails={operationExecutionDetailsArray}
+        />
+      )}
       {renderMainButton}
       <SwapPageFooter showRouteInfo />
     </Column>

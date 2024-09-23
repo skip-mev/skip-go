@@ -26,6 +26,7 @@ export const SwapExecutionPageRouteSimple = ({
   const firstOperation = operations[0];
   const overallSwapState = getOverallSwapState(operationExecutionDetails);
   const lastOperation = operations[operations.length - 1];
+
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
 
