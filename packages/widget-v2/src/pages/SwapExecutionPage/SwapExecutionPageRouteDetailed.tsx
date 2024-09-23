@@ -6,7 +6,7 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";

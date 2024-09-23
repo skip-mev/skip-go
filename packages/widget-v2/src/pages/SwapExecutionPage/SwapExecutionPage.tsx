@@ -7,7 +7,6 @@ import { ICONS } from "@/icons";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
 import { useTheme } from "styled-components";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { destinationWalletAtom } from "@/state/swapPage";
 import { getOverallSwapState, SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
@@ -17,7 +16,6 @@ import {
   ClientOperation,
   ClientTransferEvent,
   getClientOperations,
-  getClientTransferEventArray,
   getSimpleStatus,
   getTransferEventsFromTxStatusResponse,
 } from "@/utils/clientType";
@@ -72,7 +70,7 @@ export const SwapExecutionPage = () => {
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
 
-  const { mutate, isPending, isSuccess } = useAtomValue(
+  const { mutate, isPending } = useAtomValue(
     skipSubmitSwapExecutionAtom
   );
 
