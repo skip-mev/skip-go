@@ -1,4 +1,3 @@
-import { RouteResponse } from "@skip-go/client";
 import { SmallText } from "@/components/Typography";
 import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
@@ -9,26 +8,10 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-
-export type TxStatus = {
-  chainId: string;
-  txHash: string;
-  explorerLink: string;
-}
-
-export type TxHistoryItem = {
-  route: RouteResponse;
-  txStatus: TxStatus[];
-  timestamp: string;
-  status: "pending" | "success" | "failed";
-}
-
-export type TxHistoryItemInput = Pick<TxHistoryItem, "route">;
-
-export type TxHistoryState = Record<string, TxHistoryItem>;
+import { TransactionHistoryItem } from "@/state/history";
 
 type TransactionHistoryModalItemProps = {
-  txHistoryItem: TxHistoryItem;
+  txHistoryItem: TransactionHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
   onClickTransactionID: () => void;
@@ -50,7 +33,6 @@ export const TransactionHistoryModalItem = ({
       destAssetDenom,
       destAssetChainID,
     },
-    txStatus,
     timestamp,
     status,
   } = txHistoryItem;
@@ -90,7 +72,7 @@ export const TransactionHistoryModalItem = ({
             status="broadcasted"
           />
         );
-      case "success":
+      case "completed":
         return <StyledGreenDot />;
       case "failed":
         return <XIcon color={theme.error.text} />;
@@ -136,7 +118,7 @@ export const TransactionHistoryModalItem = ({
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
-          transactionID={txStatus[0].txHash}
+          transactionID={"transaction id"}
           onClickTransactionID={onClickTransactionID}
         />
       )}

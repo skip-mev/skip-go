@@ -67,6 +67,7 @@ export const SwapExecutionPageRouteSimple = ({
 
 export const getOverallSwapState = (operationToTransferEventsMap: Record<number, ClientTransferEvent>) => {
   const operationTransferEventsArray = Object.values(operationToTransferEventsMap);
+  if (operationTransferEventsArray.length === 0) return;
   if (operationTransferEventsArray.find((state) => state.status === "failed")) {
     return "failed";
   } else if (operationTransferEventsArray.find((state) => state.status === "pending")) {

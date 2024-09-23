@@ -18,9 +18,12 @@ export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
 
 export const setTransactionHistoryAtom = atom(
   null,
-  (get, set, index: number, item: TransactionHistoryItem) => {
+  (get, set, index: number, historyItem: Partial<TransactionHistoryItem>) => {
     const history = get(transactionHistoryAtom);
-    history[index] = item;
-    set(transactionHistoryAtom, history);
+    const oldHistoryItem = history?.[index] ?? {};
+    const newHistory = history;
+
+    newHistory[index] = { ...oldHistoryItem, ...historyItem };
+    set(transactionHistoryAtom, newHistory);
   }
 );

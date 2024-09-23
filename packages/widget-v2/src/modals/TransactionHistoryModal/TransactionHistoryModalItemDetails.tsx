@@ -6,9 +6,10 @@ import { Button } from "@/components/Button";
 import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
+import { SimpleStatus } from "@/utils/clientType";
 
 type TransactionHistoryModalItemDetailsProps = {
-  status: "pending" | "success" | "failed";
+  status: SimpleStatus;
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
@@ -19,8 +20,9 @@ type TransactionHistoryModalItemDetailsProps = {
 };
 
 const statusMap = {
+  broadcasted: "In Progress",
   pending: "In Progress",
-  success: "Completed",
+  completed: "Completed",
   failed: "Failed",
 };
 
@@ -39,7 +41,7 @@ export const TransactionHistoryModalItemDetails = ({
   const statusColor = useMemo(() => {
     if (status === "failed") {
       return theme.error.text;
-    } else if (status === "success") {
+    } else if (status === "completed") {
       return theme.success.text;
     }
     return;

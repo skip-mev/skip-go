@@ -26,6 +26,7 @@ import {
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
+import { setTransactionHistoryAtom } from "@/state/history";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -41,11 +42,11 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray, transactionHistoryIndex } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
-  // const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -67,9 +68,16 @@ export const SwapExecutionPage = () => {
   }, [clientOperations, transactionDetailsArray, transactionStatus]);
 
   const overallSwapState = useMemo(() => {
-    // setTransactionHistory();
-    return getOverallSwapState(operationToTransferEventsMap);
-  }, [operationToTransferEventsMap]);
+    const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
+    if (overallSwapState) {
+      console.log(overallSwapState);
+      setTransactionHistory(transactionHistoryIndex, {
+        status: overallSwapState,
+        timestamp: Date.now(),
+      });
+    }
+    return overallSwapState;
+  }, [operationToTransferEventsMap, setTransactionHistory, transactionHistoryIndex]);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);

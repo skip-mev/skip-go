@@ -11,6 +11,7 @@ type SwapExecutionState = {
   userAddresses: UserAddress[];
   route: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
+  transactionHistoryIndex: number;
 };
 export type ChainAddress = {
   chainID: string;
@@ -40,12 +41,14 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     route: {} as RouteResponse,
     userAddresses: [],
     transactionDetailsArray: [],
+    transactionHistoryIndex: 0,
   }
 );
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const transactionHistory = get(transactionHistoryAtom);
+  const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
 
@@ -53,9 +56,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     userAddresses: [],
     transactionDetailsArray: [],
     route,
+    transactionHistoryIndex,
   });
-
-  const transactionHistoryIndex = transactionHistory.length;
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
@@ -88,7 +90,6 @@ export const setTransactionDetailsArrayAtom = atom(
       ...swapExecutionState,
       transactionDetailsArray: newTransactionDetailsArray,
     });
-
 
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
       route,

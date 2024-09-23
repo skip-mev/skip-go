@@ -1,4 +1,4 @@
-import { createModal, ModalProps } from "@/components/Modal";
+import { createModal, ModalProps, useModal } from "@/components/Modal";
 import { Column } from "@/components/Layout";
 import { styled } from "styled-components";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
@@ -7,30 +7,30 @@ import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
 import {
   TransactionHistoryModalItem,
-  TxHistoryItem,
 } from "./TransactionHistoryModalItem";
 import { useState } from "react";
 import { HistoryIcon } from "@/icons/HistoryIcon";
 import { SmallText } from "@/components/Typography";
+import { useAtomValue } from "jotai";
+import { transactionHistoryAtom } from "@/state/history";
 
 const ITEM_HEIGHT = 40;
 const ITEM_GAP = 5;
 
-export type TransactionHistoryModalProps = ModalProps & {
-  txHistory: TxHistoryItem[];
-};
-
 export const TransactionHistoryModal = createModal(
-  ({ txHistory, ...modalProps }: TransactionHistoryModalProps) => {
+  ({ ...modalProps }: ModalProps) => {
+    const modal = useModal();
     const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
       number | undefined
     >();
+    const txHistory = useAtomValue(transactionHistoryAtom);
     return (
       <>
         <SwapPageHeader
           leftButton={{
             label: "Back",
             icon: ICONS.thinArrow,
+            onClick: () => modal.remove(),
           }}
         />
         <StyledContainer>
@@ -64,11 +64,11 @@ export const TransactionHistoryModal = createModal(
                     }
                   }}
                   onClickTransactionID={() => {
-                    window.open(item.txStatus[0].explorerLink, "_blank");
+                    window.open("https://google.com", "_blank");
                   }}
                 />
               )}
-              itemKey={(item) => item.timestamp}
+              itemKey={(item) => item.timestamp.toString()}
             />
           )}
         </StyledContainer>

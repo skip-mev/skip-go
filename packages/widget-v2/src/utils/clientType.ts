@@ -174,6 +174,7 @@ export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatu
 
 export function getOperationToTransferEventsMap(txStatusResponse: TxStatusResponse[], clientOperations: ClientOperation[]) {
   const operationToTransferEventsMap = {} as Record<number, ClientTransferEvent>;
+  if (!txStatusResponse) return operationToTransferEventsMap;
   const transferEvents = getTransferEventsFromTxStatusResponse(txStatusResponse);
 
   clientOperations.forEach((operation, index) => {

@@ -38,6 +38,7 @@ import {
   useSetMaxAmount,
 } from "./useSetMaxAmount";
 import { useSourceBalance } from "./useSourceBalance";
+import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -61,6 +62,7 @@ export const SwapPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
+  const historyModal = useModal(TransactionHistoryModal);
   const sourceBalance = useSourceBalance();
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
@@ -287,6 +289,7 @@ export const SwapPage = () => {
           leftButton={{
             label: "History",
             icon: ICONS.history,
+            onClick: () => historyModal.show()
           }}
           rightContent={
             sourceAccount && (
