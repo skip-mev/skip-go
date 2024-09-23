@@ -168,7 +168,25 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
 }
 
 export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatusResponse[]) {
+  if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => txStatus.transferSequence.map((transferEvent) => getClientTransferEvent(transferEvent)));
+}
+
+export function getOperationToTransferEventsMap(txStatusResponse: TxStatusResponse[], clientOperations: ClientOperation[]) {
+  const operationToTransferEventsMap = {} as Record<number, ClientTransferEvent>;
+  const transferEvents = getTransferEventsFromTxStatusResponse(txStatusResponse);
+
+  clientOperations.forEach((operation, index) => {
+    const foundTransferEventMatchingOperation = transferEvents?.find(
+      (transferEvent) => transferEvent.fromChainID === operation.fromChainID
+    );
+    if (foundTransferEventMatchingOperation && !operationToTransferEventsMap[index]) {
+      foundTransferEventMatchingOperation.status = getSimpleStatus(foundTransferEventMatchingOperation?.state);
+      operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
+    }
+  });
+
+  return operationToTransferEventsMap;
 }
 
 export function getSimpleStatus(state: TransferState | AxelarTransferState | CCTPTransferState | HyperlaneTransferState | OPInitTransferState) {

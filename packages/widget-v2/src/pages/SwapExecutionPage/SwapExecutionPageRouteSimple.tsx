@@ -10,13 +10,13 @@ import { useCallback } from "react";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
-  operationTransferEvents: ClientTransferEvent[];
+  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
   onClickEditDestinationWallet?: () => void;
 };
 
 export const SwapExecutionPageRouteSimple = ({
   operations,
-  operationTransferEvents,
+  operationToTransferEventsMap,
   onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
@@ -27,7 +27,7 @@ export const SwapExecutionPageRouteSimple = ({
   }, [transactionDetailsArray]);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(operationTransferEvents);
+  const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
   const lastOperation = operations[operations.length - 1];
 
   const sourceDenom = firstOperation.denomIn;
@@ -65,14 +65,15 @@ export const SwapExecutionPageRouteSimple = ({
   );
 };
 
-export const getOverallSwapState = (operationTransferEvents: ClientTransferEvent[]) => {
-  if (operationTransferEvents.find((state) => state.status === "failed")) {
+export const getOverallSwapState = (operationToTransferEventsMap: Record<number, ClientTransferEvent>) => {
+  const operationTransferEventsArray = Object.values(operationToTransferEventsMap);
+  if (operationTransferEventsArray.find((state) => state.status === "failed")) {
     return "failed";
-  } else if (operationTransferEvents.find((state) => state.status === "pending")) {
+  } else if (operationTransferEventsArray.find((state) => state.status === "pending")) {
     return "pending";
-  } else if (operationTransferEvents.every((state) => state.status === "broadcasted")) {
+  } else if (operationTransferEventsArray.every((state) => state.status === "broadcasted")) {
     return "broadcasted";
-  } else if (operationTransferEvents.every((state) => state.status === "completed")) {
+  } else if (operationTransferEventsArray.every((state) => state.status === "completed")) {
     return "completed";
   }
 };

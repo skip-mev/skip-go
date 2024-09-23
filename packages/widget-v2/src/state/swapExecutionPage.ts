@@ -5,6 +5,7 @@ import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
+import { ClientTransferEvent, getClientOperations, getSimpleStatus, getTransferEventsFromTxStatusResponse } from "@/utils/clientType";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
@@ -41,8 +42,6 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     transactionDetailsArray: [],
   }
 );
-
-export const transferEventsAtom = atom();
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
@@ -212,7 +211,7 @@ export const skipTransactionStatusAtom = atomWithQuery((get) => {
         })
       );
     },
-    enabled: true,
+    enabled: transactionDetailsArray.length > 0,
     refetchInterval: 1000 * 2,
     keepPreviousData: true,
   };

@@ -16,7 +16,7 @@ import {
   ClientOperation,
   ClientTransferEvent,
   getClientOperations,
-  getSimpleStatus,
+  getOperationToTransferEventsMap,
   getTransferEventsFromTxStatusResponse,
 } from "@/utils/clientType";
 import {
@@ -41,7 +41,7 @@ const TX_DELAY_MS = 5_000;
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
@@ -51,21 +51,21 @@ export const SwapExecutionPage = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const operationTransferEvents = useMemo(() => {
+  const operationToTransferEventsMap: Record<number, ClientTransferEvent> = useMemo(() => {
     const transferEvents =
       getTransferEventsFromTxStatusResponse(transactionStatus);
-    if (!clientOperations) return [];
-    return clientOperations.map((operation) => {
-      const transferEvent = transferEvents?.find(
-        (transferEvent) => transferEvent.fromChainID === operation.fromChainID
-      );
-      if (!transferEvent) return;
-      transferEvent.status = getSimpleStatus(transferEvent?.state);
-      return transferEvent;
-    }).filter(transferEvent => transferEvent) as ClientTransferEvent[];
-  }, [clientOperations, transactionStatus]);
 
-  const overallSwapState = getOverallSwapState(operationTransferEvents);
+    if (transactionDetailsArray.length > 0 && transferEvents.length === 0) {
+      return {
+        0: {
+          status: "pending",
+        } as ClientTransferEvent
+      };
+    }
+    return getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations);
+  }, [clientOperations, transactionDetailsArray, transactionStatus]);
+
+  const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
   const modal = useModal(ManualAddressModal);
@@ -181,12 +181,12 @@ export const SwapExecutionPage = () => {
         <SwapExecutionPageRouteSimple
           onClickEditDestinationWallet={() => modal.show()}
           operations={clientOperations}
-          operationTransferEvents={operationTransferEvents}
+          operationToTransferEventsMap={operationToTransferEventsMap}
         />
       ) : (
         <SwapExecutionPageRouteDetailed
           operations={clientOperations}
-          operationTransferEvents={operationTransferEvents}
+          operationToTransferEventsMap={operationToTransferEventsMap}
         />
       )}
       {renderMainButton}

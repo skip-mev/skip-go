@@ -16,7 +16,7 @@ import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  operationTransferEvents: ClientTransferEvent[];
+  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -50,7 +50,7 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  operationTransferEvents,
+  operationToTransferEventsMap,
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
@@ -85,7 +85,7 @@ export const SwapExecutionPageRouteDetailed = ({
         denom={firstOperation.denomIn}
         chainID={firstOperation.fromChainID}
         explorerLink={getExplorerLink(0)}
-        status={operationTransferEvents[0]?.status}
+        status={operationToTransferEventsMap[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -142,7 +142,7 @@ export const SwapExecutionPageRouteDetailed = ({
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={isSignRequired}
-              status={operationTransferEvents[index]?.status}
+              status={operationToTransferEventsMap[index]?.status}
               explorerLink={getExplorerLink(operations[index]?.txIndex)}
               key={`row-${asset?.denom}-${index}`}
             />
