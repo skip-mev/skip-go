@@ -5,11 +5,13 @@ import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
+import { SimpleStatus } from "@/utils/clientType";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
+  overallStatus?: SimpleStatus;
 };
 export type ChainAddress = {
   chainID: string;
@@ -39,8 +41,13 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     route: undefined,
     userAddresses: [],
     transactionDetailsArray: [],
+    overallStatus: undefined,
   }
 );
+
+export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
+  set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
+});
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
@@ -122,9 +129,7 @@ export type ClientTransactionStatus =
   | "failed";
 
 type SubmitSwapExecutionCallbacks = {
-  onTransactionUpdated?: (
-    transactionDetails: TransactionDetails
-  ) => void;
+  onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -188,7 +193,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
 export const skipTransactionStatusAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
-  const { transactionDetailsArray } = get(swapExecutionStateAtom);
+  const { transactionDetailsArray, overallStatus } = get(swapExecutionStateAtom);
 
   return {
     queryKey: ["skipTxStatus", transactionDetailsArray],
@@ -202,7 +207,7 @@ export const skipTransactionStatusAtom = atomWithQuery((get) => {
         })
       );
     },
-    enabled: transactionDetailsArray.length > 0,
+    enabled: overallStatus !== "completed" && overallStatus !== "failed",
     refetchInterval: 1000 * 2,
     keepPreviousData: true,
   };

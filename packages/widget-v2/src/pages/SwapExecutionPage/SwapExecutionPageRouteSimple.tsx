@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent, SimpleStatus } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useCallback } from "react";
 
@@ -27,8 +27,9 @@ export const SwapExecutionPageRouteSimple = ({
   }, [transactionDetailsArray]);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
   const lastOperation = operations[operations.length - 1];
+  const sourceStatus = operationToTransferEventsMap?.[0]?.status;
+  const destinationStatus = operationToTransferEventsMap?.[operations.length - 1]?.status;
 
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
@@ -48,7 +49,7 @@ export const SwapExecutionPageRouteSimple = ({
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        status={overallSwapState}
+        status={sourceStatus}
         context="source"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
@@ -56,26 +57,13 @@ export const SwapExecutionPageRouteSimple = ({
         {...destination}
         destination
         icon={ICONS.pen}
-        status={overallSwapState}
+        status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={getExplorerLink(lastOperation.txIndex)}
         context="destination"
       />
     </StyledSwapExecutionPageRoute>
   );
-};
-
-export const getOverallSwapState = (operationToTransferEventsMap: Record<number, ClientTransferEvent>) => {
-  const operationTransferEventsArray = Object.values(operationToTransferEventsMap);
-  if (operationTransferEventsArray.find((state) => state.status === "failed")) {
-    return "failed";
-  } else if (operationTransferEventsArray.find((state) => state.status === "pending")) {
-    return "pending";
-  } else if (operationTransferEventsArray.every((state) => state.status === "broadcasted")) {
-    return "broadcasted";
-  } else if (operationTransferEventsArray.every((state) => state.status === "completed")) {
-    return "completed";
-  }
 };
 
 const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`

@@ -180,7 +180,8 @@ export function getOperationToTransferEventsMap(txStatusResponse: TxStatusRespon
     const foundTransferEventMatchingOperation = transferEvents?.find(
       (transferEvent) => transferEvent.fromChainID === operation.fromChainID
     );
-    if (foundTransferEventMatchingOperation && !operationToTransferEventsMap[index]) {
+
+    if (foundTransferEventMatchingOperation) {
       foundTransferEventMatchingOperation.status = getSimpleStatus(foundTransferEventMatchingOperation?.state);
       operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
     }
