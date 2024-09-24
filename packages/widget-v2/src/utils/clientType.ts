@@ -196,12 +196,13 @@ export function getSimpleStatus(state: TransferState | AxelarTransferState | CCT
     case "AXELAR_TRANSFER_PENDING_RECEIPT":
     case "CCTP_TRANSFER_SENT":
     case "CCTP_TRANSFER_PENDING_CONFIRMATION":
+    case "CCTP_TRANSFER_CONFIRMED":
     case "HYPERLANE_TRANSFER_SENT":
     case "OPINIT_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
-    case "CCTP_TRANSFER_CONFIRMED":
+    case "CCTP_TRANSFER_RECEIVED":
     case "HYPERLANE_TRANSFER_RECEIVED":
     case "OPINIT_TRANSFER_RECEIVED":
       return "completed";
