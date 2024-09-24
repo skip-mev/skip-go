@@ -302,48 +302,46 @@ export const SwapPage = () => {
                   paddingRight: 13,
                 }}
               >
-                {
-                  formattedBalance && (
-                    <>
-                      <TransparentButton
-                        onClick={() => {
-                          connectedWalletModal.show();
-                        }}
-                        style={{
-                          padding: "8px 13px",
-                          alignItems: "center",
-                          gap: 8,
-                        }}
-                      >
-                        {sourceAccount && (
-                          <img
-                            style={{ objectFit: "cover" }}
-                            src={sourceAccount?.wallet.logo}
-                            height={16}
-                            width={16}
-                          />
-                        )}
-                        {formattedBalance}
-                      </TransparentButton>
+                {formattedBalance && (
+                  <>
+                    <TransparentButton
+                      onClick={() => {
+                        connectedWalletModal.show();
+                      }}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      {sourceAccount && (
+                        <img
+                          style={{ objectFit: "cover" }}
+                          src={sourceAccount?.wallet.logo}
+                          height={16}
+                          width={16}
+                        />
+                      )}
+                      {formattedBalance}
+                    </TransparentButton>
 
-                      <TransparentButton
-                        disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                        onClick={handleMaxButton}
-                        style={{
-                          padding: "8px 13px",
-                          alignItems: "center",
-                        }}
-                      >
-                        Max
-                      </TransparentButton>
-                    </>
-                  )
-                }
-              </Row >
+                    <TransparentButton
+                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                      onClick={handleMaxButton}
+                      style={{
+                        padding: "8px 13px",
+                        alignItems: "center",
+                      }}
+                    >
+                      Max
+                    </TransparentButton>
+                  </>
+                )}
+              </Row>
             )
           }
         />
-        < Column align="center" >
+        <Column align="center">
           <AssetChainInput
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
@@ -367,9 +365,9 @@ export const SwapPage = () => {
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={setDestinationAssetAmount}
           />
-        </Column >
+        </Column>
         {swapButton}
-        < SwapPageFooter
+        <SwapPageFooter
           showRouteInfo
           disabled={isRouteError || isWaitingForNewRoute}
           onClick={() =>
@@ -381,7 +379,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column >
+      </Column>
       <div
         id="swap-flow-settings-container"
         ref={(element) => {
