@@ -27,3 +27,19 @@ export const setTransactionHistoryAtom = atom(
     set(transactionHistoryAtom, newHistory);
   }
 );
+
+
+export const removeTransactionHistoryItemAtom = atom(
+  null,
+  (get, set, index: number) => {
+    const history = get(transactionHistoryAtom);
+    if (!history) return;
+    if (index < 0) return;
+    if (index >= history.length) return;
+
+    const newHistory = history;
+    newHistory.splice(index, 1);
+
+    set(transactionHistoryAtom, newHistory);
+  }
+);

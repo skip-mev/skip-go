@@ -49,11 +49,13 @@ export const TransactionHistoryModal = createModal(
             </StyledNoTransactionHistoryContainer>
           ) : (
             <VirtualList
+              key={txHistory.length}
               listItems={txHistory}
               height={300}
               itemHeight={ITEM_HEIGHT + ITEM_GAP}
               renderItem={(item, index) => (
                 <TransactionHistoryModalItem
+                  index={index}
                   txHistoryItem={item}
                   showDetails={index === itemIndexToShowDetail}
                   onClickRow={() => {
