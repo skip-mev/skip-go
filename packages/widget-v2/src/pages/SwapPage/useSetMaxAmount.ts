@@ -2,7 +2,7 @@
 import { convertHumanReadableAmountToCryptoAmount, convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useSourceBalance } from "./useSourceBalance";
 import { BigNumber } from "bignumber.js";
@@ -10,7 +10,6 @@ import { BigNumber } from "bignumber.js";
 
 const ETH_GAS_FEE = 0.01;
 const COSMOS_GAS_FEE = 2_000_000;
-
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
@@ -42,12 +41,7 @@ export const useMaxAmountTokenMinusFees = () => {
   const gasFeeTokenAmount = useGasFeeTokenAmount();
   const maxTokenAmount = sourceBalance?.amount;
 
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const sourceAsset = useAtomValue(sourceAssetAtom);
-  const chain = chains?.find(chain => chain.chainID === sourceAsset?.chainID);
-  const feeAsset = chain?.feeAssets?.map(asset => asset.denom).includes(sourceAsset?.denom || "");
-
-  if (gasFeeTokenAmount && maxTokenAmount && feeAsset) {
+  if (gasFeeTokenAmount && maxTokenAmount) {
     const maxTokenAmountMinusGasFees = BigNumber(maxTokenAmount).minus(gasFeeTokenAmount).toString();
     const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees);
 
