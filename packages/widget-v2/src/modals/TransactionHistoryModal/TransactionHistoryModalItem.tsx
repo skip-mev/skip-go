@@ -8,20 +8,24 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { TransactionHistoryItem } from "@/state/history";
+import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
+import { useSetAtom } from "jotai";
 
 type TransactionHistoryModalItemProps = {
+  index: number;
   txHistoryItem: TransactionHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
 };
 
 export const TransactionHistoryModalItem = ({
+  index,
   txHistoryItem,
   showDetails,
   onClickRow,
 }: TransactionHistoryModalItemProps) => {
   const theme = useTheme();
+  const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
   const {
     route: {
       amountIn,
@@ -122,6 +126,7 @@ export const TransactionHistoryModalItem = ({
           relativeTimeString={relativeTime}
           transactionHash={txHash}
           onClickTransactionID={() => window.open(explorerLink, "_blank")}
+          onClickDelete={() => removeTransactionHistoryItem(index)}
         />
       )}
     </StyledHistoryContainer>
