@@ -46,3 +46,7 @@ export const Button = styled.button<FlexProps>`
 
   ${flexProps};
 `;
+
+export const Link = styled(Button).attrs({
+  as: "a"
+})``;

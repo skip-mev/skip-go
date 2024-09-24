@@ -6,7 +6,8 @@ import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { ClientOperation, ClientTransferEvent, SimpleStatus } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
@@ -17,10 +18,10 @@ export type SwapExecutionPageRouteSimpleProps = {
 export const SwapExecutionPageRouteSimple = ({
   operations,
   operationToTransferEventsMap,
-  onClickEditDestinationWallet,
+  onClickEditDestinationWallet: _onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
-  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
 
   const getExplorerLink = useCallback((index: number) => {
     return transactionDetailsArray[index]?.explorerLink;
@@ -44,6 +45,16 @@ export const SwapExecutionPageRouteSimple = ({
     tokenAmount: lastOperation.amountOut,
     chainID: lastOperation.toChainID ?? lastOperation.chainID,
   };
+
+  const operationIndexBeforeLastOperation = operations.length - 2;
+
+  const isSignRequired = getIsOperationSignRequired(operationIndexBeforeLastOperation, operations, firstOperation, lastOperation);
+
+  const onClickEditDestinationWallet = useMemo(() => {
+    if (isSignRequired) return;
+    if (overallStatus) return;
+    return _onClickEditDestinationWallet;
+  }, [isSignRequired, overallStatus, _onClickEditDestinationWallet]);
 
   return (
     <StyledSwapExecutionPageRoute justify="space-between">

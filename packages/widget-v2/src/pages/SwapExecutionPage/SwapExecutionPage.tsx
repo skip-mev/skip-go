@@ -48,6 +48,10 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
+  const [simpleRoute, setSimpleRoute] = useState(true);
+  const modal = useModal(ManualAddressModal);
+
+  const { mutate, isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
   const [operationToTransferEventsMap, setOperationToTransferEventsMap] =
     useState<Record<number, ClientTransferEvent>>({});
 
@@ -62,12 +66,15 @@ export const SwapExecutionPage = () => {
     );
 
     if (operationTransferEventsArray.length === 0) {
+      if (isPending) {
+        setOverallStatus("signing");
+      }
       return;
     }
 
     if (
       operationTransferEventsArray.every(
-        (state) => state.status === "completed"
+        ({ status }) => status === "completed"
       )
     ) {
       if (operationTransferEventsArray.length === route?.operations.length) {
@@ -77,12 +84,12 @@ export const SwapExecutionPage = () => {
     }
 
     if (
-      operationTransferEventsArray.find((state) => state.status === "failed")
+      operationTransferEventsArray.find(({ status }) => status === "failed")
     ) {
       return "failed";
     }
     if (
-      operationTransferEventsArray.find((state) => state.status === "pending")
+      operationTransferEventsArray.find(({ status }) => status === "pending")
     ) {
       return "pending";
     }
@@ -93,7 +100,7 @@ export const SwapExecutionPage = () => {
     ) {
       return "broadcasted";
     }
-  }, [operationToTransferEventsMap, route?.operations.length]);
+  }, [isPending, operationToTransferEventsMap, route?.operations.length, setOverallStatus]);
 
   useEffect(() => {
     if (overallStatus === "completed" || overallStatus === "failed") return;
@@ -131,11 +138,6 @@ export const SwapExecutionPage = () => {
     transactionStatus,
   ]);
 
-  const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useModal(ManualAddressModal);
-
-  const { mutate, isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
-
   const swapExecutionState = useMemo(() => {
     if (!chainAddresses) return;
     const requiredChainAddresses = route?.requiredChainAddresses;
@@ -152,7 +154,7 @@ export const SwapExecutionPage = () => {
     if (overallStatus === "pending") {
       return SwapExecutionState.pending;
     }
-    if (isPending) {
+    if (overallStatus === "signing") {
       return SwapExecutionState.waitingForSigning;
     }
     if (!lastChainAddress) {
@@ -162,7 +164,7 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [chainAddresses, isPending, overallStatus, route?.requiredChainAddresses]);
+  }, [chainAddresses, overallStatus, route?.requiredChainAddresses]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {

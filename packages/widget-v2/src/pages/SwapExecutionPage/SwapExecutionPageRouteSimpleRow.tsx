@@ -1,5 +1,5 @@
 import { useTheme } from "styled-components";
-import { Button } from "@/components/Button";
+import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { iconMap, ICONS } from "@/icons";
@@ -109,12 +109,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
           )}
 
           {explorerLink ? (
-            <Button onClick={() => window.open(explorerLink, "_blank")}>
+            <Link href={explorerLink} target="_blank">
               <SmallText>
                 <ChainIcon />
               </SmallText>
-            </Button>
-          ) : (
+            </Link>
+          ) : onClickEditDestinationWallet ? (
             <Button align="center" onClick={onClickEditDestinationWallet}>
               <Icon
                 width={10}
@@ -122,7 +122,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
                 color={theme.primary.text.lowContrast}
               />
             </Button>
-          )}
+          ) : null}
         </Row>
       </Column>
     </Row>
