@@ -36,7 +36,7 @@ npm i @skip-go/client
 
 This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go API supports all major EVM chains & Solana (see [Supported Ecosystems](/general/supported-ecosystems-and-bridges) for more info about which chains, routes, and tokens we support).
 
-To perform cross-chain swaps involving Solana or an EVM chain, you'll need to import extra dependencies and configure additional transaction signers. Once you've completed this tutorial, feel free to red the [EVM Transactions](/advanced/transfer/evm-transactions) and [SVM Transactions](/advanced-transfer/svm-transaction-details) docs for more details.
+To perform cross-chain swaps involving Solana or an EVM chain, you'll need to import extra dependencies and configure additional transaction signers. Once you've completed this tutorial, feel free to red the [EVM Transactions](/advanced-transfer/evm-transactions) and [SVM Transactions](/advanced-transfer/svm-transaction-details) docs for more details.
 
 </Info>
 
@@ -128,7 +128,7 @@ You can your set your own swap fee into the quote by setting `cumulativeAffiliat
 You can find more info about setting fees in [Setting Affiliate Fees](/general/affiliate-fees)
 
 </Note>
-### 5\. Get Required Addresses
+### 4\. Get Required Addresses
 
 With the route response available, we can now use our signer to retrieve the list of chains where user or receiver addresses are required to execute the route.
 
@@ -177,7 +177,7 @@ If you attempt to derive an address on one chain from an address on another chai
 
 </Warning>
 
-### 4\. Execute the route!
+### 5\. Execute the route!
 
 Finally, just use the `SkipClient.executeRoute` method to create, sign, submit, and track the transaction for you.
 
