@@ -24,6 +24,7 @@ export const TransactionHistoryModal = createModal(
       number | undefined
     >();
     const txHistory = useAtomValue(transactionHistoryAtom);
+    console.log(txHistory);
     return (
       <>
         <SwapPageHeader

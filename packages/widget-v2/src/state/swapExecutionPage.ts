@@ -220,3 +220,27 @@ export const skipTransactionStatusAtom = atomWithQuery((get) => {
     keepPreviousData: true,
   };
 });
+
+export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  const transactionHistory = get(transactionHistoryAtom);
+
+  const pendingTransactionHistoryItems = transactionHistory.filter(transactionHistoryItem => transactionHistoryItem.status === "pending");
+
+  return {
+    queryKey: ["skipPendingTxHistoryStatus", pendingTransactionHistoryItems],
+    queryFn: async () => {
+      return Promise.all(
+        pendingTransactionHistoryItems.map(async (transactionHistoryItem) => {
+          return skip.transactionStatus({
+            chainID: transactionHistoryItem.transactionDetails[0].chainID,
+            txHash: transactionHistoryItem.transactionDetails[0].txHash,
+          });
+        })
+      );
+    },
+    enabled: pendingTransactionHistoryItems.length > 0,
+    refetchInterval: 1000 * 2,
+    keepPreviousData: true,
+  };
+});
