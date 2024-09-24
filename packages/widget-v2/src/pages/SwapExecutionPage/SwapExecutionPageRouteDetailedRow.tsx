@@ -137,10 +137,10 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <StyledWalletAddress monospace>{`${source.address.slice(
+              <SmallText monospace>{`${source.address.slice(
                 0,
                 9
-              )}…${source.address.slice(-5)}`}</StyledWalletAddress>
+              )}…${source.address.slice(-5)}`}</SmallText>
             </StyledButton>
           )}
         </Row>
@@ -159,6 +159,7 @@ const StyledButton = styled(Button)`
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.secondary.background.normal};
   gap: 4px;
+  align-items: center;
 `;
 
 const StyledChainImage = styled.img<{ state?: txState }>`
@@ -166,7 +167,6 @@ const StyledChainImage = styled.img<{ state?: txState }>`
   box-sizing: content-box;
 `;
 
-const StyledWalletAddress = styled(SmallText)``;
 
 export const StyledAnimatedBorder = ({
   backgroundColor,

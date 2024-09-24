@@ -4,7 +4,7 @@ import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { destinationWalletAtom } from "@/state/swapPage";
@@ -22,6 +22,7 @@ import {
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
+import { getSignRequiredChainIds } from "@/utils/operations";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -46,10 +47,15 @@ export const SwapExecutionPage = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
+  const signRequiredChains = useMemo(() => {
+    const signRequiredChains = getSignRequiredChainIds(clientOperations);
+    return signRequiredChains;
+  }, [clientOperations]);
+
   const [_destinationWallet] = useAtom(destinationWalletAtom);
 
   const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useModal(ManualAddressModal);
+  const setManualAddressModal = useModal(SetAddressModal);
 
   const [txStateMap, _setTxStateMap] = useState<Record<number, txState>>({
     0: "pending",
@@ -93,7 +99,9 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Set recovery address"
             icon={ICONS.rightArrow}
-            onClick={connectRequiredChains}
+            onClick={() => {
+              connectRequiredChains(true);
+            }}
           />
         );
       case SwapExecutionState.destinationAddressUnset:
@@ -101,7 +109,16 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Set destination address"
             icon={ICONS.rightArrow}
-            onClick={() => modal.show()}
+            onClick={() => {
+              const destinationChainID = route?.destAssetChainID;
+              if (!destinationChainID) return;
+              setManualAddressModal.show({
+                signRequired: signRequiredChains.includes(
+                  destinationChainID
+                ),
+                chainId: destinationChainID,
+              });
+            }}
           />
         );
       case SwapExecutionState.ready:
@@ -130,25 +147,18 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [
-    clientOperations.length,
-    connectRequiredChains,
-    modal,
-    mutate,
-    swapExecutionState,
-    theme.success.text,
-  ]);
+  }, [swapExecutionState, mutate, clientOperations.length, theme.success.text, connectRequiredChains, route?.destAssetChainID, setManualAddressModal, signRequiredChains]);
 
   const SwapExecutionPageRoute = useMemo(() => {
     if (simpleRoute) {
       return withBoundProps(SwapExecutionPageRouteSimple, {
         onClickEditDestinationWallet: () => {
-          modal.show();
+          setManualAddressModal.show();
         },
       });
     }
     return SwapExecutionPageRouteDetailed;
-  }, [modal, simpleRoute]);
+  }, [setManualAddressModal, simpleRoute]);
 
   return (
     <Column gap={5}>

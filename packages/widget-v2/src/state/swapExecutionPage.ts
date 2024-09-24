@@ -11,7 +11,6 @@ type SwapExecutionState = {
 }
 export type ChainAddress = {
   chainID: string;
-  operationIndex?: number;
   chainType?: "evm" | "cosmos" | "svm";
   address?: string;
 } & (

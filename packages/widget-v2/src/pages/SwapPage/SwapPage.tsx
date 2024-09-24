@@ -19,7 +19,10 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  chainAddressesAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -66,6 +69,7 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
 
   const handleMaxButton = useSetMaxAmount();
+  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -224,6 +228,7 @@ export const SwapPage = () => {
           icon={ICONS.swap}
           disabled={!route}
           onClick={() => {
+            setChainAddresses({});
             setCurrentPage(Routes.SwapExecutionPage);
             setSwapExecutionState({ userAddresses: [], route });
           }}
@@ -251,6 +256,7 @@ export const SwapPage = () => {
     sourceAsset?.chainID,
     routeError?.message,
     route,
+    setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     selectWalletmodal,
@@ -296,46 +302,48 @@ export const SwapPage = () => {
                   paddingRight: 13,
                 }}
               >
-                {formattedBalance && (
-                  <>
-                    <TransparentButton
-                      onClick={() => {
-                        connectedWalletModal.show();
-                      }}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                        gap: 8,
-                      }}
-                    >
-                      {sourceAccount && (
-                        <img
-                          style={{ objectFit: "cover" }}
-                          src={sourceAccount?.wallet.logo}
-                          height={16}
-                          width={16}
-                        />
-                      )}
-                      {formattedBalance}
-                    </TransparentButton>
+                {
+                  formattedBalance && (
+                    <>
+                      <TransparentButton
+                        onClick={() => {
+                          connectedWalletModal.show();
+                        }}
+                        style={{
+                          padding: "8px 13px",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
+                        {sourceAccount && (
+                          <img
+                            style={{ objectFit: "cover" }}
+                            src={sourceAccount?.wallet.logo}
+                            height={16}
+                            width={16}
+                          />
+                        )}
+                        {formattedBalance}
+                      </TransparentButton>
 
-                    <TransparentButton
-                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                      onClick={handleMaxButton}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                      }}
-                    >
-                      Max
-                    </TransparentButton>
-                  </>
-                )}
-              </Row>
+                      <TransparentButton
+                        disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                        onClick={handleMaxButton}
+                        style={{
+                          padding: "8px 13px",
+                          alignItems: "center",
+                        }}
+                      >
+                        Max
+                      </TransparentButton>
+                    </>
+                  )
+                }
+              </Row >
             )
           }
         />
-        <Column align="center">
+        < Column align="center" >
           <AssetChainInput
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
@@ -359,9 +367,9 @@ export const SwapPage = () => {
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={setDestinationAssetAmount}
           />
-        </Column>
+        </Column >
         {swapButton}
-        <SwapPageFooter
+        < SwapPageFooter
           showRouteInfo
           disabled={isRouteError || isWaitingForNewRoute}
           onClick={() =>
@@ -373,7 +381,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column>
+      </Column >
       <div
         id="swap-flow-settings-container"
         ref={(element) => {
