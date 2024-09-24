@@ -19,7 +19,10 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  chainAddressesAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -66,6 +69,7 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
 
   const handleMaxButton = useSetMaxAmount();
+  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -224,6 +228,7 @@ export const SwapPage = () => {
           icon={ICONS.swap}
           disabled={!route}
           onClick={() => {
+            setChainAddresses({});
             setCurrentPage(Routes.SwapExecutionPage);
             setSwapExecutionState({ userAddresses: [], route });
           }}
@@ -251,6 +256,7 @@ export const SwapPage = () => {
     sourceAsset?.chainID,
     routeError?.message,
     route,
+    setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     selectWalletmodal,

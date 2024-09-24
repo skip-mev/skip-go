@@ -10,7 +10,6 @@ import { BigNumber } from "bignumber.js";
 
 const ETH_GAS_FEE = 0.01;
 const COSMOS_GAS_FEE = 2_000_000;
-
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
@@ -48,6 +47,7 @@ export const useMaxAmountTokenMinusFees = () => {
 
     return maxAmountMinusGasFees;
   }
+  return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount));
 };
 
 export const useSetMaxAmount = () => {

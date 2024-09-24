@@ -178,7 +178,7 @@ export const AssetChainInput = ({
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
-              {assetDetails.formattedUsdAmount ?? 0}
+              {assetDetails.formattedUsdAmount ?? "--"}
             </SmallTextButton>
             <TinyTriangleIcon
               color={priceChangeColor}
@@ -192,9 +192,7 @@ export const AssetChainInput = ({
             )}
           </Row>
         ) : (
-          <SmallText color={badPriceWarning ? theme.error.text : undefined}>
-            {assetDetails.formattedUsdAmount ?? 0}
-          </SmallText>
+          <SmallText>{assetDetails.formattedUsdAmount ?? "--"}</SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton
