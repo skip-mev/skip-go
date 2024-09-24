@@ -220,7 +220,7 @@ type CombinedTransferEvent = {
   opInitTransfer: OPInitTransferInfo;
 };
 
-export type SimpleStatus = "pending" | "broadcasted" | "completed" | "failed";
+export type SimpleStatus = "pending" | "broadcasted" | "completed" | "failed" | "signing";
 
 export type ClientTransferEvent = {
   fromChainID: string;
