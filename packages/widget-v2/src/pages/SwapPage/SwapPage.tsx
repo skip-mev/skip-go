@@ -38,6 +38,7 @@ import {
   useSetMaxAmount,
 } from "./useSetMaxAmount";
 import { useSourceBalance } from "./useSourceBalance";
+import { errorAtom, ErrorType } from "@/state/errorPage";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -64,6 +65,7 @@ export const SwapPage = () => {
   const sourceBalance = useSourceBalance();
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
+  const setError = useSetAtom(errorAtom);
 
   const handleMaxButton = useSetMaxAmount();
 
@@ -224,8 +226,23 @@ export const SwapPage = () => {
           icon={ICONS.swap}
           disabled={!route}
           onClick={() => {
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            if (route?.warning?.type === "BAD_PRICE_WARNING") {
+              setError({
+                errorType: ErrorType.TradeWarning,
+                onClickContinue: () => {
+                  setError(undefined);
+                  setCurrentPage(Routes.SwapExecutionPage);
+                  setSwapExecutionState();
+                },
+                onClickBack: () => {
+                  setError(undefined);
+                },
+                route: { ...route },
+              });
+            } else {
+              setCurrentPage(Routes.SwapExecutionPage);
+              setSwapExecutionState();
+            }
           }}
         />
       );
@@ -246,11 +263,12 @@ export const SwapPage = () => {
   }, [
     isWaitingForNewRoute,
     isRouteError,
-    insufficientBalance,
     sourceAccount?.address,
     sourceAsset?.chainID,
     routeError?.message,
+    insufficientBalance,
     route,
+    setError,
     setCurrentPage,
     setSwapExecutionState,
     selectWalletmodal,
@@ -327,7 +345,6 @@ export const SwapPage = () => {
                 >
                   Max
                 </TransparentButton>
-
               </Row>
             )
           }

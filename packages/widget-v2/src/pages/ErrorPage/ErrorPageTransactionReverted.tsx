@@ -7,12 +7,14 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { ClientOperation } from "@/utils/clientType";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
   revertedOperation: ClientOperation;
   recoveryAddress: string;
   onClickContinueTransaction: () => void;
+  onClickBack: () => void;
 };
 
 export const ErrorPageTransactionReverted = ({
@@ -20,6 +22,7 @@ export const ErrorPageTransactionReverted = ({
   revertedOperation,
   recoveryAddress,
   onClickContinueTransaction,
+  onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
   const theme = useTheme();
 
@@ -33,6 +36,13 @@ export const ErrorPageTransactionReverted = ({
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="Action Required"
         description={

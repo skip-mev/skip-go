@@ -2,6 +2,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageAuthFailedProps = {
   onClickBack: () => void;
@@ -14,6 +15,13 @@ export const ErrorPageAuthFailed = ({
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="Transaction failed"
         description="User rejected authentication request"

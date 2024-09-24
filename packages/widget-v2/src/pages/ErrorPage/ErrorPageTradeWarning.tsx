@@ -6,6 +6,7 @@ import { ICONS } from "@/icons";
 import { calculatePercentageDifference } from "@/utils/number";
 import { RouteResponse } from "@skip-go/client/dist/types";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTradeWarningProps = {
   onClickContinue: () => void;
@@ -25,7 +26,9 @@ export const ErrorPageTradeWarning = ({
     usdAmountIn,
     usdAmountOut,
     sourceAssetDenom,
+    sourceAssetChainID,
     destAssetDenom,
+    destAssetChainID,
   } = route;
 
   const swapDifferencePercentage = `${calculatePercentageDifference(
@@ -36,17 +39,26 @@ export const ErrorPageTradeWarning = ({
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
+    chainId: sourceAssetChainID,
     tokenAmount: amountIn,
     amountUsd: usdAmountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
+    chainId: destAssetChainID,
     tokenAmount: amountOut,
     amountUsd: usdAmountOut,
   });
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title={`Warning: Bad trade (-${swapDifferencePercentage})`}
         description={
