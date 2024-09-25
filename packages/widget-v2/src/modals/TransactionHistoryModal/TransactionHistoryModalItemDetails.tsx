@@ -2,12 +2,13 @@ import { SmallText } from "@/components/Typography";
 import { Column, Row } from "@/components/Layout";
 import styled, { useTheme } from "styled-components";
 import { ChainIcon } from "@/icons/ChainIcon";
-import { Button } from "@/components/Button";
+import { Button, Link } from "@/components/Button";
 import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { TransactionDetails } from "@/state/swapExecutionPage";
 
 type TransactionHistoryModalItemDetailsProps = {
   status: SimpleStatus;
@@ -15,12 +16,12 @@ type TransactionHistoryModalItemDetailsProps = {
   destinationChainName: string;
   absoluteTimeString: string;
   relativeTimeString: string;
-  transactionHash: string;
-  onClickTransactionID: () => void;
+  transactionDetails: TransactionDetails[];
   onClickDelete?: () => void;
 };
 
 const statusMap = {
+  signing: "In Progress",
   broadcasted: "In Progress",
   pending: "In Progress",
   completed: "Completed",
@@ -33,8 +34,7 @@ export const TransactionHistoryModalItemDetails = ({
   destinationChainName,
   absoluteTimeString,
   relativeTimeString,
-  transactionHash,
-  onClickTransactionID,
+  transactionDetails,
   onClickDelete,
 }: TransactionHistoryModalItemDetailsProps) => {
   const theme = useTheme();
@@ -50,7 +50,7 @@ export const TransactionHistoryModalItemDetails = ({
 
   return (
     <Column padding={10} gap={10}>
-      <Row align="center">
+      <Row align="center" gap={10}>
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor color={statusColor}>
@@ -59,7 +59,7 @@ export const TransactionHistoryModalItemDetails = ({
           <SmallText>at {absoluteTimeString}</SmallText>
         </Row>
       </Row>
-      <Row align="center">
+      <Row align="center" gap={10}>
         <StyledDetailsLabel>Chain route</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor>{sourceChainName}</SmallText>
@@ -67,19 +67,50 @@ export const TransactionHistoryModalItemDetails = ({
           <SmallText normalTextColor>{destinationChainName}</SmallText>
         </Row>
       </Row>
-      <Row align="center">
+      <Row align="center" gap={10}>
         <StyledDetailsLabel>Time</StyledDetailsLabel>
         <SmallText normalTextColor>{relativeTimeString}</SmallText>
       </Row>
-      <Row align="center">
-        <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
-        <Button onClick={onClickTransactionID} gap={5}>
-          <SmallText normalTextColor>{getTruncatedAddress(transactionHash)}</SmallText>
-          <SmallText>
-            <ChainIcon />
-          </SmallText>
-        </Button>
-      </Row>
+
+      {transactionDetails.length === 1 ? (
+        <Row align="center" gap={10}>
+          <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
+          <Link href={transactionDetails?.[0]?.explorerLink} target="_blank" gap={5}>
+            <SmallText normalTextColor>
+              {getTruncatedAddress(transactionDetails?.[0]?.txHash)}
+            </SmallText>
+            <SmallText>
+              <ChainIcon />
+            </SmallText>
+          </Link>
+        </Row>
+      ) : (
+        transactionDetails.map((transactionDetail, index) => {
+          const getTransactionIdLabel = () => {
+            if (index === 0) {
+              return "Initial transaction";
+            }
+            if (index === transactionDetails.length - 1) {
+              return "Final transaction";
+            }
+            return "Transaction";
+          };
+          return (
+            <Row align="center" gap={10}>
+              <StyledDetailsLabel key={transactionDetail.txHash}>{getTransactionIdLabel()}</StyledDetailsLabel>
+              <Link key={transactionDetail.txHash} href={transactionDetail.explorerLink} target="_blank" gap={5}>
+                <SmallText normalTextColor>
+                  {getTruncatedAddress(transactionDetail.txHash)}
+                </SmallText>
+                <SmallText>
+                  <ChainIcon />
+                </SmallText>
+              </Link>
+            </Row>
+          );
+        })
+      )}
+
       <Row align="center" style={{ marginTop: 10 }}>
         <Button onClick={onClickDelete} gap={5} align="center">
           <SmallText color={theme.error.text}>Delete</SmallText>

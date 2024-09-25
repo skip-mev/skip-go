@@ -37,10 +37,7 @@ export const TransactionHistoryModalItem = ({
     },
     timestamp,
     status,
-    transactionDetails: [{
-      txHash,
-      explorerLink,
-    }]
+    transactionDetails,
   } = txHistoryItem;
 
   const sourceAssetDetails = useGetAssetDetails({
@@ -69,13 +66,14 @@ export const TransactionHistoryModalItem = ({
 
   const renderStatus = useMemo(() => {
     switch (status) {
+      case "broadcasted":
       case "pending":
         return (
           <StyledAnimatedBorder
             width={10}
             height={10}
             backgroundColor={theme.primary.text.normal}
-            status="broadcasted"
+            status="pending"
           />
         );
       case "completed":
@@ -124,8 +122,7 @@ export const TransactionHistoryModalItem = ({
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
-          transactionHash={txHash}
-          onClickTransactionID={() => window.open(explorerLink, "_blank")}
+          transactionDetails={transactionDetails}
           onClickDelete={() => removeTransactionHistoryItem(index)}
         />
       )}

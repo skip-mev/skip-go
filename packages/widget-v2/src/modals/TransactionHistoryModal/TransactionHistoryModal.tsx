@@ -24,7 +24,6 @@ export const TransactionHistoryModal = createModal(
       number | undefined
     >();
     const txHistory = useAtomValue(transactionHistoryAtom);
-    console.log(txHistory);
     return (
       <>
         <SwapPageHeader
@@ -86,7 +85,6 @@ const StyledNoTransactionHistoryContainer = styled(Column)`
 const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
-  height: 300px;
   width: 480px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
