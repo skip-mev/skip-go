@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.9.2
+
+### Patch Changes
+
+- 4d51d49: Update balances API url
+
 ## 0.9.1
 
 ### Patch Changes
