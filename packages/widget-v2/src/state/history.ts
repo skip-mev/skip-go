@@ -2,8 +2,6 @@ import { RouteResponse, TxStatusResponse } from "@skip-go/client";
 import { atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import {
-  getSimpleStatus,
-  getTransferEventsFromTxStatusResponse,
   SimpleStatus,
 } from "@/utils/clientType";
 import { atom } from "jotai";
@@ -28,7 +26,6 @@ export const setTransactionHistoryAtom = atom(
     const history = get(transactionHistoryAtom);
     const oldHistoryItem = history?.[index] ?? {};
     const newHistory = history;
-    console.log(oldHistoryItem, historyItem);
 
     newHistory[index] = { ...oldHistoryItem, ...historyItem };
     set(transactionHistoryAtom, newHistory);
