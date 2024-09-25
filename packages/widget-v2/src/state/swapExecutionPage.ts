@@ -6,6 +6,7 @@ import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
 import { SimpleStatus } from "@/utils/clientType";
+import { errorAtom, ErrorType } from "./errorPage";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
@@ -45,7 +46,7 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
   }
 );
 
-export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
+export const setOverallStatusAtom = atom(null, (_get, set, status?: SimpleStatus) => {
   set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
 });
 
@@ -64,6 +65,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails);
     },
+    onError: (error: unknown) => {
+      if ((error as Error).message === "Request rejected") {
+        set(errorAtom, {
+          errorType: ErrorType.AuthFailed,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          }
+        });
+      }
+    }
   });
 });
 
@@ -130,6 +142,7 @@ export type ClientTransactionStatus =
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
+  onError: (error: unknown) => void;
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -179,14 +192,15 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             });
           },
         });
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(error);
+        submitSwapExecutionCallbacks?.onError?.(error);
       }
       return null;
     },
-    onError: (err: unknown) => {
-      // handle errors;
-      console.error(err);
+    onError: (error: unknown) => {
+      console.error(error);
+      submitSwapExecutionCallbacks?.onError?.(error);
     },
   };
 });
