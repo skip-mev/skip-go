@@ -48,6 +48,9 @@ export const useMaxAmountTokenMinusFees = () => {
 
     return maxAmountMinusGasFees;
   }
+  if (maxTokenAmount) {
+    return convertTokenAmountToHumanReadableAmount(maxTokenAmount);
+  }
 };
 
 export const useSetMaxAmount = () => {

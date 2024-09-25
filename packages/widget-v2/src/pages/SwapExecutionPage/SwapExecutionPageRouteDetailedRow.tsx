@@ -3,7 +3,7 @@ import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
-import { Button } from "@/components/Button";
+import { Button, Link } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -118,11 +118,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
             </SmallText>
             <SmallText> on {assetDetails?.chainName}</SmallText>
             {explorerLink && (
-              <Button onClick={() => window.open(explorerLink, "_blank")}>
+              <Link href={explorerLink} target="_blank">
                 <SmallText>
                   <ChainIcon />
                 </SmallText>
-              </Button>
+              </Link>
             )}
           </Row>
           {source.address && (
@@ -139,11 +139,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
             </StyledButton>
           )}
         </Row>
-        {isSignRequired && (
-          <SmallText color={theme.warning.text}>Signature required</SmallText>
-        )}
-      </Column>
-    </Row>
+        {
+          isSignRequired && (
+            <SmallText color={theme.warning.text}>Signature required</SmallText>
+          )
+        }
+      </Column >
+    </Row >
   );
 };
 

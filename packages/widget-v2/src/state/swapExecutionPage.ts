@@ -6,12 +6,15 @@ import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
+import { SimpleStatus } from "@/utils/clientType";
+import { errorAtom, ErrorType } from "./errorPage";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
+  overallStatus?: SimpleStatus;
 };
 export type ChainAddress = {
   chainID: string;
@@ -42,8 +45,13 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
+    overallStatus: undefined,
   }
 );
+
+export const setOverallStatusAtom = atom(null, (_get, set, status?: SimpleStatus) => {
+  set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
+});
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
@@ -63,6 +71,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
+    onError: (error: unknown) => {
+      if ((error as Error).message === "Request rejected") {
+        set(errorAtom, {
+          errorType: ErrorType.AuthFailed,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          }
+        });
+      }
+    }
   });
 });
 
@@ -135,9 +154,8 @@ export type ClientTransactionStatus =
   | "failed";
 
 type SubmitSwapExecutionCallbacks = {
-  onTransactionUpdated?: (
-    transactionDetails: TransactionDetails
-  ) => void;
+  onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
+  onError: (error: unknown) => void;
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -187,21 +205,22 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             });
           },
         });
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(error);
+        submitSwapExecutionCallbacks?.onError?.(error);
       }
       return null;
     },
-    onError: (err: unknown) => {
-      // handle errors;
-      console.error(err);
+    onError: (error: unknown) => {
+      console.error(error);
+      submitSwapExecutionCallbacks?.onError?.(error);
     },
   };
 });
 
 export const skipTransactionStatusAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
-  const { transactionDetailsArray } = get(swapExecutionStateAtom);
+  const { transactionDetailsArray, overallStatus } = get(swapExecutionStateAtom);
 
   return {
     queryKey: ["skipTxStatus", transactionDetailsArray],
@@ -215,7 +234,7 @@ export const skipTransactionStatusAtom = atomWithQuery((get) => {
         })
       );
     },
-    enabled: transactionDetailsArray.length > 0,
+    enabled: overallStatus !== "completed" && overallStatus !== "failed",
     refetchInterval: 1000 * 2,
     keepPreviousData: true,
   };

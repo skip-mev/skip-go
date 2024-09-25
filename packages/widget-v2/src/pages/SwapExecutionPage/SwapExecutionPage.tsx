@@ -2,12 +2,12 @@ import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
 import { useTheme } from "styled-components";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { getOverallSwapState, SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
+import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
 import { useModal } from "@/components/Modal";
@@ -21,13 +21,13 @@ import {
 } from "@/utils/clientType";
 import {
   chainAddressesAtom,
+  setOverallStatusAtom,
   skipSubmitSwapExecutionAtom,
   skipTransactionStatusAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
-import { setTransactionHistoryAtom } from "@/state/history";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { convertSecondsToMinutesOrHours } from "@/utils/number";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -38,61 +38,105 @@ enum SwapExecutionState {
   confirmed,
 }
 
-const TX_DELAY_MS = 5_000;
-
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, transactionDetailsArray, transactionHistoryIndex } = useAtomValue(swapExecutionStateAtom);
+  const setOverallStatus = useSetAtom(setOverallStatusAtom);
+  const { route, transactionDetailsArray, overallStatus } = useAtomValue(
+    swapExecutionStateAtom
+  );
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
-  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
-  const setError = useSetAtom(errorAtom);
+  const [simpleRoute, setSimpleRoute] = useState(true);
+  const modal = useModal(ManualAddressModal);
+
+  const { mutate, isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const [operationToTransferEventsMap, setOperationToTransferEventsMap] =
+    useState<Record<number, ClientTransferEvent>>({});
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const operationToTransferEventsMap: Record<number, ClientTransferEvent> = useMemo(() => {
+  const computedSwapStatus = useMemo(() => {
+    const operationTransferEventsArray = Object.values(
+      operationToTransferEventsMap
+    );
+
+    if (operationTransferEventsArray.length === 0) {
+      if (isPending) {
+        setOverallStatus("signing");
+      }
+      return;
+    }
+
+    if (
+      operationTransferEventsArray.every(
+        ({ status }) => status === "completed"
+      )
+    ) {
+      if (operationTransferEventsArray.length === route?.operations.length) {
+        return "completed";
+      }
+      return "pending";
+    }
+
+    if (
+      operationTransferEventsArray.find(({ status }) => status === "failed")
+    ) {
+      return "failed";
+    }
+    if (
+      operationTransferEventsArray.find(({ status }) => status === "pending")
+    ) {
+      return "pending";
+    }
+    if (
+      operationTransferEventsArray.every(
+        (state) => state.status === "broadcasted"
+      )
+    ) {
+      return "broadcasted";
+    }
+  }, [isPending, operationToTransferEventsMap, route?.operations.length, setOverallStatus]);
+
+  useEffect(() => {
+    if (overallStatus === "completed" || overallStatus === "failed") return;
+
     const transferEvents =
       getTransferEventsFromTxStatusResponse(transactionStatus);
+    const operationToTransferEventsMap = getOperationToTransferEventsMap(
+      transactionStatus ?? [],
+      clientOperations
+    );
+    const operationTransferEventsArray = Object.values(
+      operationToTransferEventsMap
+    );
 
-    if (transactionDetailsArray.length > 0 && transferEvents.length === 0) {
-      return {
+    if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
+      setOperationToTransferEventsMap({
         0: {
           status: "pending",
-        } as ClientTransferEvent
-      };
-    }
-    return getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations);
-  }, [clientOperations, transactionDetailsArray, transactionStatus]);
-
-  const overallSwapState = useMemo(() => {
-    const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
-    if (overallSwapState) {
-      setTransactionHistory(transactionHistoryIndex, {
-        status: overallSwapState,
-        timestamp: Date.now(),
+        } as ClientTransferEvent,
       });
     }
-    if (overallSwapState === "failed") {
-      setError({
-        errorType: ErrorType.TransactionFailed,
-        transactionHash: transactionDetailsArray[0]?.txHash,
-        explorerLink: transactionDetailsArray[0]?.explorerLink,
-      });
+    if (operationTransferEventsArray.length > 0) {
+      setOperationToTransferEventsMap(operationToTransferEventsMap);
     }
-    return overallSwapState;
-  }, [operationToTransferEventsMap, setError, setTransactionHistory, transactionDetailsArray, transactionHistoryIndex]);
 
-  const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useModal(ManualAddressModal);
-
-  const { mutate, isPending } = useAtomValue(
-    skipSubmitSwapExecutionAtom
-  );
+    if (computedSwapStatus) {
+      setOverallStatus(computedSwapStatus);
+    }
+  }, [
+    clientOperations,
+    overallStatus,
+    computedSwapStatus,
+    setOverallStatus,
+    transactionDetailsArray.length,
+    transactionStatus,
+  ]);
 
   const swapExecutionState = useMemo(() => {
     if (!chainAddresses) return;
@@ -104,13 +148,13 @@ export const SwapExecutionPage = () => {
     const lastChainAddress =
       chainAddresses[requiredChainAddresses.length - 1]?.address;
 
-    if (overallSwapState === "completed") {
+    if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
     }
-    if (overallSwapState === "pending") {
+    if (overallStatus === "pending") {
       return SwapExecutionState.pending;
     }
-    if (isPending) {
+    if (overallStatus === "signing") {
       return SwapExecutionState.waitingForSigning;
     }
     if (!lastChainAddress) {
@@ -120,7 +164,7 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [chainAddresses, isPending, overallSwapState, route?.requiredChainAddresses]);
+  }, [chainAddresses, overallStatus, route?.requiredChainAddresses]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -150,19 +194,16 @@ export const SwapExecutionPage = () => {
         );
       case SwapExecutionState.waitingForSigning:
         return (
-          <MainButton
-            label="Confirm swap"
-            icon={ICONS.rightArrow}
-            loading
-          />
+          <MainButton label="Confirm swap" icon={ICONS.rightArrow} loading />
         );
       case SwapExecutionState.pending:
         return (
           <MainButton
             label="Swap in progress"
             loading
-            loadingTimeString={`${(clientOperations.length * TX_DELAY_MS) / 1000
-              } secs.`}
+            loadingTimeString={convertSecondsToMinutesOrHours(
+              route?.estimatedRouteDurationSeconds
+            )}
           />
         );
       case SwapExecutionState.confirmed:
@@ -175,10 +216,10 @@ export const SwapExecutionPage = () => {
         );
     }
   }, [
-    clientOperations.length,
     connectRequiredChains,
     modal,
     mutate,
+    route?.estimatedRouteDurationSeconds,
     swapExecutionState,
     theme.success.text,
   ]);

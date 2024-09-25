@@ -6,7 +6,8 @@ import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
@@ -17,18 +18,19 @@ export type SwapExecutionPageRouteSimpleProps = {
 export const SwapExecutionPageRouteSimple = ({
   operations,
   operationToTransferEventsMap,
-  onClickEditDestinationWallet,
+  onClickEditDestinationWallet: _onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
-  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
 
   const getExplorerLink = useCallback((index: number) => {
     return transactionDetailsArray[index]?.explorerLink;
   }, [transactionDetailsArray]);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(operationToTransferEventsMap);
   const lastOperation = operations[operations.length - 1];
+  const sourceStatus = operationToTransferEventsMap?.[0]?.status;
+  const destinationStatus = operationToTransferEventsMap?.[operations.length - 1]?.status;
 
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
@@ -44,11 +46,21 @@ export const SwapExecutionPageRouteSimple = ({
     chainID: lastOperation.toChainID ?? lastOperation.chainID,
   };
 
+  const operationIndexBeforeLastOperation = operations.length - 2;
+
+  const isSignRequired = getIsOperationSignRequired(operationIndexBeforeLastOperation, operations, firstOperation, lastOperation);
+
+  const onClickEditDestinationWallet = useMemo(() => {
+    if (isSignRequired) return;
+    if (overallStatus) return;
+    return _onClickEditDestinationWallet;
+  }, [isSignRequired, overallStatus, _onClickEditDestinationWallet]);
+
   return (
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        status={overallSwapState}
+        status={sourceStatus}
         context="source"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
@@ -56,27 +68,13 @@ export const SwapExecutionPageRouteSimple = ({
         {...destination}
         destination
         icon={ICONS.pen}
-        status={overallSwapState}
+        status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={getExplorerLink(lastOperation.txIndex)}
         context="destination"
       />
     </StyledSwapExecutionPageRoute>
   );
-};
-
-export const getOverallSwapState = (operationToTransferEventsMap: Record<number, ClientTransferEvent>) => {
-  const operationTransferEventsArray = Object.values(operationToTransferEventsMap);
-  if (operationTransferEventsArray.length === 0) return;
-  if (operationTransferEventsArray.find((state) => state.status === "failed")) {
-    return "failed";
-  } else if (operationTransferEventsArray.find((state) => state.status === "pending")) {
-    return "pending";
-  } else if (operationTransferEventsArray.every((state) => state.status === "broadcasted")) {
-    return "broadcasted";
-  } else if (operationTransferEventsArray.every((state) => state.status === "completed")) {
-    return "completed";
-  }
 };
 
 const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`

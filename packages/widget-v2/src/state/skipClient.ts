@@ -28,6 +28,7 @@ import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { errorAtom } from "./errorPage";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL: prodApiUrl,
@@ -52,7 +53,9 @@ export const skipClient = atom((get) => {
       }
       const key = await wallet.getKey(chainID);
 
-      return key.isNanoLedger ? wallet.getOfflineSignerOnlyAmino(chainID) : wallet.getOfflineSigner(chainID);
+      return key.isNanoLedger
+        ? wallet.getOfflineSignerOnlyAmino(chainID)
+        : wallet.getOfflineSigner(chainID);
     },
     // @ts-expect-error having a different viem version
     getEVMSigner: async (chainID) => {
@@ -67,9 +70,10 @@ export const skipClient = atom((get) => {
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-      if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
+      if (!solanaWallet)
+        throw new Error("getSVMSigner error: wallet not found");
       return solanaWallet as Adapter;
-    }
+    },
   });
 });
 
@@ -184,12 +188,16 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-        amountIn:
-          convertHumanReadableAmountToCryptoAmount(sourceAssetAmount ?? "0", sourceAsset.decimals),
+        amountIn: convertHumanReadableAmountToCryptoAmount(
+          sourceAssetAmount ?? "0",
+          sourceAsset.decimals
+        ),
       }
       : {
-        amountOut:
-          convertHumanReadableAmountToCryptoAmount(destinationAssetAmount ?? "0", destinationAsset.decimals),
+        amountOut: convertHumanReadableAmountToCryptoAmount(
+          destinationAssetAmount ?? "0",
+          destinationAsset.decimals
+        ),
       };
 
   return {
@@ -206,6 +214,7 @@ export const skipRouteAtom = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
+  const error = get(errorAtom);
 
   get(routeAmountEffect);
 
@@ -213,7 +222,8 @@ export const skipRouteAtom = atomWithQuery((get) => {
     params !== undefined &&
     (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
     !isInvertingSwap &&
-    currentPage === Routes.SwapPage;
+    currentPage === Routes.SwapPage &&
+    error === undefined;
 
   return {
     queryKey: ["skipRoute", params],
