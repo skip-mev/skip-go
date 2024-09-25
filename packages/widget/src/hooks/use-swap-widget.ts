@@ -29,6 +29,8 @@ import { getAmountWei, parseAmountWei } from '../utils/number';
 import { gracefullyConnect } from '../utils/wallet';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { chainIdToName } from '../chains';
+import { COSMOS_GAS_AMOUNT, ETH_GAS_FEE } from '../constants/defaults';
+import { convertHumanReadableAmountToCryptoAmount, convertTokenAmountToHumanReadableAmount } from '../utils/crypto';
 
 const PRICE_IMPACT_THRESHOLD = 0.1;
 
@@ -154,6 +156,37 @@ export function useSwapWidget(persistSwapWidgetState = true) {
 
   // #region -- variables
 
+  const feeAsset = chains?.find(c => c.chainID === srcChain?.chainID)?.feeAssets?.[0];
+  const sourceChainType = srcChain?.chainType;
+
+  const gasFeeTokenAmount = useMemo(() => {
+    if (!srcAsset) return 0;
+
+    switch (sourceChainType) {
+      case 'evm':
+        const isFeeAsset = srcAsset.denom.includes('-native') && srcAsset.originChainID === srcChain?.chainID;
+        return isFeeAsset ? Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, srcAsset.decimals)) : 0;
+      case 'cosmos':
+        if (!feeAsset || !feeAsset.gasPrice?.average || feeAsset.denom !== srcAsset.denom) return 0;
+        return Number(feeAsset.gasPrice.average) * COSMOS_GAS_AMOUNT;
+      case 'svm':
+        return 0
+      default:
+        return 0;
+    }
+  }, [srcAsset, feeAsset, sourceChainType, srcChain?.chainID]);
+
+  const maxTokenAmountMinusFees = useMemo(() => {
+    if (!balances || !srcAsset) return;
+    const maxTokenAmount = balances[srcAsset.denom]
+    if (gasFeeTokenAmount && maxTokenAmount) {
+      const maxTokenAmountMinusGasFees = BigNumber(maxTokenAmount).minus(gasFeeTokenAmount).toString();
+      const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees, srcAsset.decimals);
+      return maxAmountMinusGasFees;
+    }
+    return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount), srcAsset.decimals);
+  }, [balances, srcAsset, gasFeeTokenAmount]);
+
   const errorMessage = useMemo(() => {
     if (!routeError) return '';
     if (routeError instanceof Error) {
@@ -174,6 +207,13 @@ export function useSwapWidget(persistSwapWidgetState = true) {
 
     if (parsedAmount.isGreaterThan(parsedBalance)) {
       return `Insufficient balance.`;
+    }
+
+    if (!maxTokenAmountMinusFees) return false
+
+    const parsedMaxAmountMinusFees = BigNumber(maxTokenAmountMinusFees);
+    if (parsedAmount.isGreaterThan(parsedMaxAmountMinusFees)) {
+      return `Insufficient balance after estimated fees.`;
     }
 
     return false;
@@ -419,28 +459,16 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         });
         return;
       }
-
-      const isNotCosmos = srcChain.chainType !== 'cosmos';
-
       /**
-       * override to max balances on these cases:
-       * - shift key is pressed
-       * - fee asset is different from source asset
-       * - source chain is not cosmos
+       * compensate gas fees if source asset is same as fee asset
        */
-      if (event.shiftKey || isNotCosmos) {
-        const newAmountIn = formatUnits(BigInt(balance), decimals);
+      if (maxTokenAmountMinusFees) {
         useSwapWidgetStore.setState({
-          amountIn: newAmountIn,
+          amountIn: Number(maxTokenAmountMinusFees) > 0 ? maxTokenAmountMinusFees : "0",
           direction: 'swap-in',
         });
         return;
       }
-
-      /**
-       * compensate gas fees if source asset is same as fee asset
-       */
-      //  TODO compensate gas fees
 
       // otherwise, max balance
       const newAmountIn = formatUnits(BigInt(balance), decimals);
