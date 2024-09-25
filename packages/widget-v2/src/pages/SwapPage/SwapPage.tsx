@@ -22,7 +22,6 @@ import {
 import {
   setSwapExecutionStateAtom,
   chainAddressesAtom,
-  swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
