@@ -52,8 +52,6 @@ export const SwapExecutionPage = () => {
   const [simpleRoute, setSimpleRoute] = useState(true);
   const setManualAddressModal = useModal(SetAddressModal);
 
-  const [_destinationWallet] = useAtom(destinationWalletAtom);
-
   const { mutate, isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
   const [operationToTransferEventsMap, setOperationToTransferEventsMap] =
     useState<Record<number, ClientTransferEvent>>({});
