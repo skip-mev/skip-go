@@ -3,22 +3,20 @@ import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
-import { Button } from "@/components/Button";
+import { Button, Link } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
-import { ClientOperation } from "@/utils/clientType";
+import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAccount } from "@/hooks/useAccount";
-
-export type txState = "pending" | "broadcasted" | "confirmed" | "failed";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
-  txState?: txState;
+  status?: SimpleStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -32,7 +30,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   denom,
   tokenAmount,
   chainID,
-  txState,
+  status,
   explorerLink,
   isSignRequired,
   index,
@@ -96,13 +94,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
           width={30}
           height={30}
           backgroundColor={theme.success.text}
-          txState={txState}
+          status={status}
         >
           <StyledChainImage
             height={30}
             width={30}
             src={assetDetails.assetImage}
-            state={txState}
           />
         </StyledAnimatedBorder>
       )}
@@ -120,11 +117,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
             </SmallText>
             <SmallText> on {assetDetails?.chainName}</SmallText>
             {explorerLink && (
-              <Button onClick={() => window.open(explorerLink, "_blank")}>
+              <Link href={explorerLink} target="_blank">
                 <SmallText>
                   <ChainIcon />
                 </SmallText>
-              </Button>
+              </Link>
             )}
           </Row>
           {source.address && (
@@ -144,11 +141,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
             </StyledButton>
           )}
         </Row>
-        {isSignRequired && (
-          <SmallText color={theme.warning.text}>Signature required</SmallText>
-        )}
-      </Column>
-    </Row>
+        {
+          isSignRequired && (
+            <SmallText color={theme.warning.text}>Signature required</SmallText>
+          )
+        }
+      </Column >
+    </Row >
   );
 };
 
@@ -162,11 +161,10 @@ const StyledButton = styled(Button)`
   align-items: center;
 `;
 
-const StyledChainImage = styled.img<{ state?: txState }>`
+const StyledChainImage = styled.img`
   border-radius: 50%;
   box-sizing: content-box;
 `;
-
 
 export const StyledAnimatedBorder = ({
   backgroundColor,
@@ -174,14 +172,14 @@ export const StyledAnimatedBorder = ({
   width,
   height,
   borderSize = 2,
-  txState,
+  status,
 }: {
   backgroundColor: string;
   children?: React.ReactNode;
   width: number;
   height: number;
   borderSize?: number;
-  txState?: txState;
+  status?: SimpleStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -189,7 +187,7 @@ export const StyledAnimatedBorder = ({
     width={width}
     height={height}
     borderSize={borderSize}
-    txState={txState}
+    status={status}
     backgroundColor={backgroundColor}
   >
     <StyledLoadingOverlay
@@ -208,16 +206,16 @@ const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
-  txState?: txState;
+  status?: SimpleStatus;
   backgroundColor?: string;
 }>`
   position: relative;
   overflow: hidden;
   height: ${({ height, borderSize }) => height + borderSize * 2}px;
   width: ${({ width, borderSize }) => width + borderSize * 2}px;
-  ${({ txState, borderSize, theme }) => {
-    switch (txState) {
-      case "confirmed":
+  ${({ status, borderSize, theme }) => {
+    switch (status) {
+      case "completed":
         return `border: ${borderSize}px solid ${theme.success.text}`;
       case "failed":
         return `border: ${borderSize}px solid ${theme.error.text}`;
@@ -233,8 +231,8 @@ const StyledLoadingContainer = styled(Row) <{
     position: absolute;
     height: ${({ height }) => `${height + 20}px;`};
     width: ${({ width }) => `${width + 20}px;`};
-    ${({ txState, backgroundColor, theme }) =>
-    txState === "broadcasted" &&
+    ${({ status, backgroundColor, theme }) =>
+    status === "pending" &&
     css`
         background-image: conic-gradient(
           transparent,

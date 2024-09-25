@@ -39,11 +39,11 @@ export const SmallText = styled.p<TextProps>`
   color: ${({ theme }) => theme.primary.text.lowContrast};
   margin: 0;
   font-size: 13px;
-  line-height: 13px;
   ${textProps}
 `;
 
 export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
+  line-height: 15px;
   ${removeButtonStyles}
   cursor: pointer;
 `;
@@ -51,7 +51,6 @@ export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
 export const Text = styled(SmallText)`
   color: ${(props) => props.theme.primary.text.normal};
   font-size: 20px;
-  line-height: 20px;
   font-weight: 500;
   ${textProps}
 `;

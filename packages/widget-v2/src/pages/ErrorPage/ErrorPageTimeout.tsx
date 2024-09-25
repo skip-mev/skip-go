@@ -5,18 +5,28 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTimeoutProps = {
-  explorerUrl: string;
+  explorerLink: string;
+  onClickBack: () => void;
 };
 
 export const ErrorPageTimeout = ({
-  explorerUrl,
+  explorerLink,
+  onClickBack,
 }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="This transaction is taking longer than usual."
         description={
@@ -32,7 +42,7 @@ export const ErrorPageTimeout = ({
               gap={5}
               align="center"
               as={SmallTextButton}
-              onClick={() => window.open(explorerUrl, "_blank")}
+              onClick={() => window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />

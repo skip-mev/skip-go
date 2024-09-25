@@ -20,8 +20,8 @@ import {
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
 import {
+  setSwapExecutionStateAtom,
   chainAddressesAtom,
-  swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
@@ -41,6 +41,7 @@ import {
   useSetMaxAmount,
 } from "./useSetMaxAmount";
 import { useSourceBalance } from "./useSourceBalance";
+import { errorAtom, ErrorType } from "@/state/errorPage";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -61,12 +62,13 @@ export const SwapPage = () => {
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
-  const setSwapExecutionState = useSetAtom(swapExecutionStateAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const connectedWalletModal = useModal(ConnectedWalletModal);
   const sourceBalance = useSourceBalance();
   const insufficientBalance = useInsufficientSourceBalance();
+  const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
+  const setError = useSetAtom(errorAtom);
 
   const handleMaxButton = useSetMaxAmount();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
@@ -109,7 +111,7 @@ export const SwapPage = () => {
   });
 
   const formattedBalance = useMemo(() => {
-    if (sourceBalance === undefined) return "";
+    if (sourceBalance === undefined || sourceBalance.error?.message) return "";
 
     const amount = sourceBalance?.amount;
     let formattedBalanceAmount = sourceBalance?.formattedAmount;
@@ -216,27 +218,7 @@ export const SwapPage = () => {
       return <MainButton label={routeError.message} disabled />;
     }
 
-    if (sourceAccount?.address) {
-      if (insufficientBalance) {
-        return (
-          <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
-        );
-      }
-      return (
-        <MainButton
-          label="Swap"
-          icon={ICONS.swap}
-          disabled={!route}
-          onClick={() => {
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState({ userAddresses: [], route });
-          }}
-        />
-      );
-    }
-
-    return (
+    if (!sourceAccount?.address) {
       <MainButton
         disabled={!sourceAsset?.chainID}
         label="Connect Wallet"
@@ -246,16 +228,50 @@ export const SwapPage = () => {
             chainId: sourceAsset?.chainID,
           });
         }}
+      />;
+    }
+    if (insufficientBalance) {
+      return (
+        <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
+      );
+    }
+    return (
+      <MainButton
+        label="Swap"
+        icon={ICONS.swap}
+        disabled={!route}
+        onClick={() => {
+          if (route?.warning?.type === "BAD_PRICE_WARNING") {
+            setError({
+              errorType: ErrorType.TradeWarning,
+              onClickContinue: () => {
+                setError(undefined);
+                setChainAddresses({});
+                setCurrentPage(Routes.SwapExecutionPage);
+                setSwapExecutionState();
+              },
+              onClickBack: () => {
+                setError(undefined);
+              },
+              route: { ...route },
+            });
+            return;
+          }
+          setChainAddresses({});
+          setCurrentPage(Routes.SwapExecutionPage);
+          setSwapExecutionState();
+        }}
       />
     );
   }, [
     isWaitingForNewRoute,
     isRouteError,
-    insufficientBalance,
     sourceAccount?.address,
     sourceAsset?.chainID,
     routeError?.message,
+    insufficientBalance,
     route,
+    setError,
     setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
@@ -302,41 +318,37 @@ export const SwapPage = () => {
                   paddingRight: 13,
                 }}
               >
-                {formattedBalance && (
-                  <>
-                    <TransparentButton
-                      onClick={() => {
-                        connectedWalletModal.show();
-                      }}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                        gap: 8,
-                      }}
-                    >
-                      {sourceAccount && (
-                        <img
-                          style={{ objectFit: "cover" }}
-                          src={sourceAccount?.wallet.logo}
-                          height={16}
-                          width={16}
-                        />
-                      )}
-                      {formattedBalance}
-                    </TransparentButton>
+                <TransparentButton
+                  onClick={() => {
+                    connectedWalletModal.show();
+                  }}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  {sourceAccount && (
+                    <img
+                      style={{ objectFit: "cover" }}
+                      src={sourceAccount?.wallet.logo}
+                      height={16}
+                      width={16}
+                    />
+                  )}
+                  {formattedBalance}
+                </TransparentButton>
 
-                    <TransparentButton
-                      disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                      onClick={handleMaxButton}
-                      style={{
-                        padding: "8px 13px",
-                        alignItems: "center",
-                      }}
-                    >
-                      Max
-                    </TransparentButton>
-                  </>
-                )}
+                <TransparentButton
+                  disabled={!sourceBalance || sourceBalance?.amount === "0"}
+                  onClick={handleMaxButton}
+                  style={{
+                    padding: "8px 13px",
+                    alignItems: "center",
+                  }}
+                >
+                  Max
+                </TransparentButton>
               </Row>
             )
           }

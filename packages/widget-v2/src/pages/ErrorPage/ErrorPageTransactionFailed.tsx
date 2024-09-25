@@ -5,22 +5,32 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTransactionFailedProps = {
   transactionHash: string;
   explorerUrl: string;
   onClickContactSupport: () => void;
+  onClickBack: () => void;
 };
 
 export const ErrorPageTransactionFailed = ({
   transactionHash,
   explorerUrl,
   onClickContactSupport,
+  onClickBack,
 }: ErrorPageTransactionFailedProps) => {
   const theme = useTheme();
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="Transaction failed"
         description={

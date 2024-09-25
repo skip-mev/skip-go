@@ -8,7 +8,7 @@ import {
   BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { devApiUrl, endpointOptions } from "@/constants/skipClientDefault";
+import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
@@ -28,9 +28,10 @@ import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { errorAtom } from "./errorPage";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: devApiUrl,
+  apiURL: prodApiUrl,
   endpointOptions,
 });
 
@@ -52,7 +53,9 @@ export const skipClient = atom((get) => {
       }
       const key = await wallet.getKey(chainID);
 
-      return key.isNanoLedger ? wallet.getOfflineSignerOnlyAmino(chainID) : wallet.getOfflineSigner(chainID);
+      return key.isNanoLedger
+        ? wallet.getOfflineSignerOnlyAmino(chainID)
+        : wallet.getOfflineSigner(chainID);
     },
     // @ts-expect-error having a different viem version
     getEVMSigner: async (chainID) => {
@@ -67,9 +70,10 @@ export const skipClient = atom((get) => {
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-      if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
+      if (!solanaWallet)
+        throw new Error("getSVMSigner error: wallet not found");
       return solanaWallet as Adapter;
-    }
+    },
   });
 });
 
@@ -166,39 +170,6 @@ export const skipBalancesAtom = atomWithQuery((get) => {
   };
 });
 
-type SkipTransactionStatusProps = {
-  txsRequired: number;
-  txs: { chainID: string; txHash: string }[] | undefined;
-};
-
-export const skipTransactionStatusPropsAtom = atom<SkipTransactionStatusProps>({
-  txsRequired: 0,
-  txs: undefined,
-});
-
-export const skipTransactionStatus = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { txs, txsRequired } = get(skipTransactionStatusPropsAtom);
-
-  return {
-    queryKey: ["skipTxStatus", txs, txsRequired],
-    queryFn: async () => {
-      if (!txs) return;
-
-      return Promise.all(
-        txs.map(async (tx) => {
-          return skip.transactionStatus({
-            chainID: tx.chainID,
-            txHash: tx.txHash,
-          });
-        })
-      );
-    },
-    refetchInterval: 1000 * 2,
-    keepPreviousData: true,
-  };
-});
-
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
@@ -217,12 +188,16 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-        amountIn:
-          convertHumanReadableAmountToCryptoAmount(sourceAssetAmount ?? "0", sourceAsset.decimals),
+        amountIn: convertHumanReadableAmountToCryptoAmount(
+          sourceAssetAmount ?? "0",
+          sourceAsset.decimals
+        ),
       }
       : {
-        amountOut:
-          convertHumanReadableAmountToCryptoAmount(destinationAssetAmount ?? "0", destinationAsset.decimals),
+        amountOut: convertHumanReadableAmountToCryptoAmount(
+          destinationAssetAmount ?? "0",
+          destinationAsset.decimals
+        ),
       };
 
   return {
@@ -239,6 +214,7 @@ export const skipRouteAtom = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
+  const error = get(errorAtom);
 
   get(routeAmountEffect);
 
@@ -246,7 +222,8 @@ export const skipRouteAtom = atomWithQuery((get) => {
     params !== undefined &&
     (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
     !isInvertingSwap &&
-    currentPage === Routes.SwapPage;
+    currentPage === Routes.SwapPage &&
+    error === undefined;
 
   return {
     queryKey: ["skipRoute", params],

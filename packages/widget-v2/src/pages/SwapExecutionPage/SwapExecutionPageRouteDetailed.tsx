@@ -2,21 +2,21 @@ import styled from "styled-components";
 import { Column, Row } from "@/components/Layout";
 import {
   SwapExecutionPageRouteDetailedRow,
-  txState,
 } from "./SwapExecutionPageRouteDetailedRow";
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation, OperationType } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { getIsOperationSignRequired } from "@/utils/operations";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  txStateMap: Record<number, txState>;
+  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -50,11 +50,17 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  txStateMap,
+  operationToTransferEventsMap,
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
+  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
+
+  const getExplorerLink = useCallback((index: number) => {
+    return transactionDetailsArray[index]?.explorerLink;
+  }, [transactionDetailsArray]);
 
   const handleMouseEnterOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -73,12 +79,13 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
 
   return (
-    <StyledSwapExecutionPageRoute justify="space-between">
+    <StyledSwapExecutionPageRoute>
       <SwapExecutionPageRouteDetailedRow
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
         chainID={firstOperation.fromChainID}
-        txState={"pending"}
+        explorerLink={getExplorerLink(0)}
+        status={operationToTransferEventsMap[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -135,12 +142,8 @@ export const SwapExecutionPageRouteDetailed = ({
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={isSignRequired}
-              txState={txStateMap[index]}
-              explorerLink={
-                txStateMap[index] !== "pending"
-                  ? "https://www.google.com/"
-                  : undefined
-              }
+              status={operationToTransferEventsMap[index]?.status}
+              explorerLink={getExplorerLink(operations[index]?.txIndex)}
               key={`row-${asset?.denom}-${index}`}
             />
           </>
