@@ -123,6 +123,73 @@ paths:
                     items:
                       $ref: '#/components/schemas/Chain'
                     description: Array of supported chain-ids
+  /v2/info/balances:
+    post:
+      operationId: getBalances
+      tags:
+        - 'Info'
+      description: Get the balances of a given set of assets on a given chain and wallet address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chains:
+                  type: object
+                  additionalProperties:
+                    $ref: '#/components/schemas/BalanceRequestChainEntry'
+            example:
+              chains:
+                137:
+                  address: '0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5'
+                  denoms:
+                    - 'polygon-native'
+                    - '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'
+                osmosis-1:
+                  address: osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc
+                  denoms:
+                    - uosmo
+      responses:
+        '200':
+          description: The balances of the assets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chains:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/BalanceResponseChainEntry'
+              example:
+                chains:
+                  137:
+                    address: '0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5'
+                    denoms:
+                      polygon-native:
+                          amount: '58477097336215771549'
+                          decimals: 18
+                          formatted_amount: '58.477097336215771549'
+                          price: '0.406894'
+                          value_usd: '23.793980'
+                      '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359':
+                          amount: '100000000'
+                          decimals: 6
+                          formatted_amount: '100.000000'
+                          price: '0.581495'
+                          value_usd: '58.1495'
+                  osmosis-1:
+                    address: osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc
+                    denoms:
+                      uosmo:
+                          amount: '100000000'
+                          decimals: 6
+                          formatted_amount: '100.000000'
+                          price: '0.581495'
+                          value_usd: '58.1495'
+
   /v2/info/bridges:
     get:
       operationId: getBridges
@@ -2427,6 +2494,43 @@ components:
         cctp_transfer:
           $ref: '#/components/schemas/CCTPTransfer'
       type: object
+    BalanceRequestChainEntry:
+      properties:
+        address:
+          type: string
+          description: Address of the wallet that the balance is requested for
+        denoms:
+          type: array
+          description: Denoms of the assets to get the balance for
+          items:
+            type: string
+    BalanceResponseDenomEntry:
+      type: object
+      properties:
+        amount:
+          type: string
+        decimals:
+          type: integer
+          format: int32
+          nullable: true
+        formatted_amount:
+          type: string
+        price:
+          type: string
+          nullable: true
+        value_usd:
+          type: string
+          nullable: true
+        error:
+          $ref: '#/components/schemas/ApiError'
+          nullable: true
+    BalanceResponseChainEntry:
+      type: object
+      properties:
+        denoms:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BalanceResponseDenomEntry'
     BankSend:
       type: object
       properties:

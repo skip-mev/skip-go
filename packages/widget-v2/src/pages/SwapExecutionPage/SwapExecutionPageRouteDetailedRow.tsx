@@ -158,6 +158,7 @@ const StyledButton = styled(Button)`
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.secondary.background.normal};
   gap: 4px;
+  align-items: center;
 `;
 
 const StyledChainImage = styled.img`

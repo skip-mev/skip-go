@@ -19,7 +19,11 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
-import { setSwapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  setSwapExecutionStateAtom,
+  chainAddressesAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -68,6 +72,7 @@ export const SwapPage = () => {
   const setError = useSetAtom(errorAtom);
 
   const handleMaxButton = useSetMaxAmount();
+  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
@@ -214,41 +219,7 @@ export const SwapPage = () => {
       return <MainButton label={routeError.message} disabled />;
     }
 
-    if (sourceAccount?.address) {
-      if (insufficientBalance) {
-        return (
-          <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
-        );
-      }
-      return (
-        <MainButton
-          label="Swap"
-          icon={ICONS.swap}
-          disabled={!route}
-          onClick={() => {
-            if (route?.warning?.type === "BAD_PRICE_WARNING") {
-              setError({
-                errorType: ErrorType.TradeWarning,
-                onClickContinue: () => {
-                  setError(undefined);
-                  setCurrentPage(Routes.SwapExecutionPage);
-                  setSwapExecutionState();
-                },
-                onClickBack: () => {
-                  setError(undefined);
-                },
-                route: { ...route },
-              });
-            } else {
-              setCurrentPage(Routes.SwapExecutionPage);
-              setSwapExecutionState();
-            }
-          }}
-        />
-      );
-    }
-
-    return (
+    if (!sourceAccount?.address) {
       <MainButton
         disabled={!sourceAsset?.chainID}
         label="Connect Wallet"
@@ -257,6 +228,39 @@ export const SwapPage = () => {
           selectWalletmodal.show({
             chainId: sourceAsset?.chainID,
           });
+        }}
+      />;
+    }
+    if (insufficientBalance) {
+      return (
+        <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
+      );
+    }
+    return (
+      <MainButton
+        label="Swap"
+        icon={ICONS.swap}
+        disabled={!route}
+        onClick={() => {
+          if (route?.warning?.type === "BAD_PRICE_WARNING") {
+            setError({
+              errorType: ErrorType.TradeWarning,
+              onClickContinue: () => {
+                setError(undefined);
+                setChainAddresses({});
+                setCurrentPage(Routes.SwapExecutionPage);
+                setSwapExecutionState();
+              },
+              onClickBack: () => {
+                setError(undefined);
+              },
+              route: { ...route },
+            });
+            return;
+          }
+          setChainAddresses({});
+          setCurrentPage(Routes.SwapExecutionPage);
+          setSwapExecutionState();
         }}
       />
     );
@@ -269,6 +273,7 @@ export const SwapPage = () => {
     insufficientBalance,
     route,
     setError,
+    setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     selectWalletmodal,
