@@ -1,3 +1,4 @@
+import { setTransactionHistoryAtom } from "@/state/history";
 import { setOverallStatusAtom, swapExecutionStateAtom, skipTransactionStatusAtom, skipSubmitSwapExecutionAtom } from "@/state/swapExecutionPage";
 import { ClientTransferEvent, getTransferEventsFromTxStatusResponse, getOperationToTransferEventsMap, getClientOperations, ClientOperation } from "@/utils/clientType";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
@@ -9,8 +10,10 @@ export const useFetchTransactionStatus = () => {
     route,
     transactionDetailsArray,
     overallStatus,
+    transactionHistoryIndex,
   } = useAtomValue(swapExecutionStateAtom);
   const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
+  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
   const [operationToTransferEventsMap, setOperationToTransferEventsMap] =
@@ -91,6 +94,9 @@ export const useFetchTransactionStatus = () => {
     }
 
     if (computedSwapStatus) {
+      setTransactionHistory(transactionHistoryIndex, {
+        status: computedSwapStatus,
+      });
       setOverallStatus(computedSwapStatus);
     }
   }, [
@@ -100,6 +106,8 @@ export const useFetchTransactionStatus = () => {
     setOverallStatus,
     transactionDetailsArray.length,
     transactionStatus,
+    setTransactionHistory,
+    transactionHistoryIndex,
   ]);
 
   return operationToTransferEventsMap;

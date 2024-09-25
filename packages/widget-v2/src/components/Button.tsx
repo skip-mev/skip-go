@@ -49,4 +49,6 @@ export const Button = styled.button<FlexProps>`
 
 export const Link = styled(Button).attrs({
   as: "a"
-})``;
+})`
+  text-decoration: none;
+`;

@@ -1,4 +1,3 @@
-import { RouteResponse } from "@skip-go/client";
 import { SmallText } from "@/components/Typography";
 import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
@@ -9,39 +8,24 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-
-export type TxStatus = {
-  chainId: string;
-  txHash: string;
-  explorerLink: string;
-  axelarscanLink?: string;
-}
-
-export type TxHistoryItem = {
-  route: RouteResponse;
-  txStatus: TxStatus[];
-  timestamp: string;
-  status: "pending" | "success" | "failed";
-}
-
-export type TxHistoryItemInput = Pick<TxHistoryItem, "route">;
-
-export type TxHistoryState = Record<string, TxHistoryItem>;
+import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
+import { useSetAtom } from "jotai";
 
 type TransactionHistoryModalItemProps = {
-  txHistoryItem: TxHistoryItem;
+  index: number;
+  txHistoryItem: TransactionHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
-  onClickTransactionID: () => void;
 };
 
 export const TransactionHistoryModalItem = ({
+  index,
   txHistoryItem,
   showDetails,
   onClickRow,
-  onClickTransactionID,
 }: TransactionHistoryModalItemProps) => {
   const theme = useTheme();
+  const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
   const {
     route: {
       amountIn,
@@ -51,9 +35,9 @@ export const TransactionHistoryModalItem = ({
       destAssetDenom,
       destAssetChainID,
     },
-    txStatus,
     timestamp,
     status,
+    transactionDetails,
   } = txHistoryItem;
 
   const sourceAssetDetails = useGetAssetDetails({
@@ -71,27 +55,28 @@ export const TransactionHistoryModalItem = ({
   const source = {
     amount: sourceAssetDetails.amount,
     asset: sourceAssetDetails.asset,
-    chainImage: sourceAssetDetails?.chainImage ?? "",
+    assetImage: sourceAssetDetails.assetImage ?? "",
   };
 
   const destination = {
     amount: destinationAssetDetails.amount,
     asset: destinationAssetDetails.asset,
-    chainImage: destinationAssetDetails.chainImage ?? "",
+    assetImage: destinationAssetDetails.assetImage ?? "",
   };
 
   const renderStatus = useMemo(() => {
     switch (status) {
+      case "broadcasted":
       case "pending":
         return (
           <StyledAnimatedBorder
             width={10}
             height={10}
             backgroundColor={theme.primary.text.normal}
-            status="broadcasted"
+            status="pending"
           />
         );
-      case "success":
+      case "completed":
         return <StyledGreenDot />;
       case "failed":
         return <XIcon color={theme.error.text} />;
@@ -137,8 +122,8 @@ export const TransactionHistoryModalItem = ({
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           relativeTimeString={relativeTime}
-          transactionID={txStatus[0].txHash}
-          onClickTransactionID={onClickTransactionID}
+          transactionDetails={transactionDetails}
+          onClickDelete={() => removeTransactionHistoryItem(index)}
         />
       )}
     </StyledHistoryContainer>
@@ -172,15 +157,15 @@ const StyledGreenDot = styled.div`
 const RenderAssetAmount = ({
   amount,
   asset,
-  chainImage,
+  assetImage,
 }: {
   amount?: string;
   asset?: ClientAsset;
-  chainImage: string;
+  assetImage: string;
 }) => {
   return (
     <>
-      <img height={20} width={20} src={chainImage} />
+      <img height={20} width={20} src={assetImage} />
       <SmallText normalTextColor>
         {amount}
       </SmallText>

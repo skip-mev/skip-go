@@ -5,6 +5,7 @@ import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
+import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 
@@ -12,6 +13,7 @@ type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
+  transactionHistoryIndex: number;
   overallStatus?: SimpleStatus;
 };
 export type ChainAddress = {
@@ -41,6 +43,7 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     route: undefined,
     userAddresses: [],
     transactionDetailsArray: [],
+    transactionHistoryIndex: 0,
     overallStatus: undefined,
   }
 );
@@ -51,6 +54,8 @@ export const setOverallStatusAtom = atom(null, (_get, set, status?: SimpleStatus
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
+  const transactionHistory = get(transactionHistoryAtom);
+  const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
 
@@ -58,11 +63,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     userAddresses: [],
     transactionDetailsArray: [],
     route,
+    transactionHistoryIndex,
   });
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, transactionDetails);
+      set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
     onError: (error: unknown) => {
       if ((error as Error).message === "Request rejected") {
@@ -80,9 +86,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
 export const setTransactionDetailsArrayAtom = atom(
   null,
-  (get, set, transactionDetails: TransactionDetails) => {
+  (get, set, transactionDetails: TransactionDetails, transactionHistoryIndex: number) => {
     const swapExecutionState = get(swapExecutionStateAtom);
-    const { transactionDetailsArray } = swapExecutionState;
+    const { transactionDetailsArray, route } = swapExecutionState;
 
     const newTransactionDetailsArray = transactionDetailsArray;
 
@@ -101,6 +107,13 @@ export const setTransactionDetailsArrayAtom = atom(
     set(swapExecutionStateAtom, {
       ...swapExecutionState,
       transactionDetailsArray: newTransactionDetailsArray,
+    });
+
+    set(setTransactionHistoryAtom, transactionHistoryIndex, {
+      route,
+      transactionDetails: newTransactionDetailsArray,
+      timestamp: Date.now(),
+      status: "broadcasted",
     });
   }
 );

@@ -14,6 +14,7 @@ import {
   OPInitTransferInfo,
   OPInitTransferState,
   Operation as SkipClientOperation,
+  StatusState,
   Swap,
   SwapVenue,
   Transfer,
@@ -173,6 +174,7 @@ export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatu
 }
 
 export function getOperationToTransferEventsMap(txStatusResponse: TxStatusResponse[], clientOperations: ClientOperation[]) {
+  if (!txStatusResponse) return {};
   const operationToTransferEventsMap = {} as Record<number, ClientTransferEvent>;
   const transferEvents = getTransferEventsFromTxStatusResponse(txStatusResponse);
 
@@ -188,6 +190,20 @@ export function getOperationToTransferEventsMap(txStatusResponse: TxStatusRespon
   });
 
   return operationToTransferEventsMap;
+}
+
+export function getSimpleOverallStatus(state: StatusState) {
+  switch (state) {
+    case "STATE_SUBMITTED":
+    case "STATE_PENDING":
+      return "pending";
+    case "STATE_COMPLETED_SUCCESS":
+      return "completed";
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
+    default:
+      return "failed";
+  }
 }
 
 export function getSimpleStatus(state: TransferState | AxelarTransferState | CCTPTransferState | HyperlaneTransferState | OPInitTransferState) {

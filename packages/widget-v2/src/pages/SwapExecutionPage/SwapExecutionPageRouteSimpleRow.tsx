@@ -12,6 +12,7 @@ import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { useAccount } from "@/hooks/useAccount";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -102,10 +103,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           {source.image && <img height={10} width={10} src={source.image} />}
           {source.address && (
-            <SmallText monospace>{`${source.address.slice(
-              0,
-              9
-            )}…${source.address.slice(-5)}`}</SmallText>
+            <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
           )}
 
           {explorerLink ? (
