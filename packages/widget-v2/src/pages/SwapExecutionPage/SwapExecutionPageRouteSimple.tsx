@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { ClientOperation, ClientTransferEvent, SimpleStatus } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useCallback, useMemo } from "react";
 import { getIsOperationSignRequired } from "@/utils/operations";
