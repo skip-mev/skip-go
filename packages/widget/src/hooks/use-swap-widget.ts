@@ -1,4 +1,3 @@
-import { GasPrice } from '@cosmjs/stargate';
 import { useManager as useCosmosManager } from '@cosmos-kit/react';
 import { Asset, BridgeType } from '@skip-go/client';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -18,10 +17,8 @@ import {
 } from 'zustand/middleware';
 import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn as create } from 'zustand/traditional';
-import { EVMOS_GAS_AMOUNT, isChainIdEvmos } from '../constants/gas';
 import { useAssets } from '../provider/assets';
 import { useAnyDisclosureOpen } from '../store/disclosures';
-import { useSettingsStore } from '../store/settings';
 import { trackWallet } from '../store/track-wallet';
 import { useAccount } from './use-account';
 import { Chain, useChains } from './use-chains';
@@ -32,8 +29,9 @@ import { getAmountWei, parseAmountWei } from '../utils/number';
 import { gracefullyConnect } from '../utils/wallet';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { chainIdToName } from '../chains';
+import { COSMOS_GAS_AMOUNT, ETH_GAS_FEE } from '../constants/defaults';
+import { convertHumanReadableAmountToCryptoAmount, convertTokenAmountToHumanReadableAmount } from '../utils/crypto';
 
-const DEFAULT_SRC_CHAIN_ID = 'cosmoshub-4';
 const PRICE_IMPACT_THRESHOLD = 0.1;
 
 export interface DefaultRouteConfig {
@@ -73,7 +71,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
 
   const {
     assetsByChainID,
-    getFeeAsset,
     isReady: isAssetsReady,
     getAsset,
   } = useAssets();
@@ -100,10 +97,8 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     destinationAsset: dstAsset,
     destinationChain: dstChain,
     direction,
-    gasRequired,
     sourceAsset: srcAsset,
     sourceChain: srcChain,
-    sourceFeeAsset: srcFeeAsset,
   } = useSwapWidgetStore();
 
   const srcAccount = useAccount(srcChain?.chainID);
@@ -155,13 +150,42 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     enabled: !isAnyDisclosureOpen,
   });
 
-  const customGasAmount = useSettingsStore((state) => state.customGasAmount);
-
   // #endregion
 
   /////////////////////////////////////////////////////////////////////////////
 
   // #region -- variables
+
+  const feeAsset = chains?.find(c => c.chainID === srcChain?.chainID)?.feeAssets?.[0];
+  const sourceChainType = srcChain?.chainType;
+
+  const gasFeeTokenAmount = useMemo(() => {
+    if (!srcAsset) return 0;
+
+    switch (sourceChainType) {
+      case 'evm':
+        const isFeeAsset = srcAsset.denom.includes('-native') && srcAsset.originChainID === srcChain?.chainID;
+        return isFeeAsset ? Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, srcAsset.decimals)) : 0;
+      case 'cosmos':
+        if (!feeAsset || !feeAsset.gasPrice?.average || feeAsset.denom !== srcAsset.denom) return 0;
+        return Number(feeAsset.gasPrice.average) * COSMOS_GAS_AMOUNT;
+      case 'svm':
+        return 0
+      default:
+        return 0;
+    }
+  }, [srcAsset, feeAsset, sourceChainType, srcChain?.chainID]);
+
+  const maxTokenAmountMinusFees = useMemo(() => {
+    if (!balances || !srcAsset) return;
+    const maxTokenAmount = balances[srcAsset.denom]
+    if (gasFeeTokenAmount && maxTokenAmount) {
+      const maxTokenAmountMinusGasFees = BigNumber(maxTokenAmount).minus(gasFeeTokenAmount).toString();
+      const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees, srcAsset.decimals);
+      return maxAmountMinusGasFees;
+    }
+    return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount), srcAsset.decimals);
+  }, [balances, srcAsset, gasFeeTokenAmount]);
 
   const errorMessage = useMemo(() => {
     if (!routeError) return '';
@@ -181,76 +205,24 @@ export function useSwapWidget(persistSwapWidgetState = true) {
       -(srcAsset.decimals ?? 6)
     );
 
-    if (srcFeeAsset) {
-      const parsedFeeBalance = BigNumber(
-        balances[srcFeeAsset.denom] ?? '0'
-      ).shiftedBy(-(srcFeeAsset.decimals ?? 6));
-      const parsedGasRequired = BigNumber(gasRequired || '0');
-
-      if (srcChain?.chainID === 'stride-1') {
-        const tiaIbcToken =
-          'ibc/BF3B4F53F3694B66E13C23107C84B6485BD2B96296BB7EC680EA77BBA75B4801';
-        const tiaOnStride = getAsset(tiaIbcToken, 'stride-1');
-        const parsedTiaOnStrideBalance = BigNumber(
-          balances[tiaIbcToken] ?? '0'
-        ).shiftedBy(-(tiaOnStride?.decimals ?? 6));
-
-        const needTia = parsedTiaOnStrideBalance
-          .minus(parsedGasRequired)
-          .isLessThanOrEqualTo(0);
-        const needFeeToken = parsedFeeBalance
-          .minus(parsedGasRequired)
-          .isLessThanOrEqualTo(0);
-        const assetIsFeeDenom = srcFeeAsset.denom === srcAsset.denom;
-        const assetIsTiaDenom = srcAsset.denom === tiaIbcToken;
-
-        if (
-          parsedGasRequired.gt(0) &&
-          (assetIsFeeDenom
-            ? parsedAmount.isGreaterThan(
-                parsedBalance.minus(parsedGasRequired)
-              ) && needTia
-            : assetIsTiaDenom
-            ? parsedAmount.isGreaterThan(
-                parsedTiaOnStrideBalance.minus(parsedGasRequired)
-              ) && needFeeToken
-            : needFeeToken
-            ? needTia
-            : needTia
-            ? needFeeToken
-            : false)
-        ) {
-          if (parsedAmount.isGreaterThan(parsedBalance)) {
-            return `Insufficient balance.`;
-          }
-          return `Insufficient balance. You need ≈${gasRequired} ${srcFeeAsset.recommendedSymbol} or ${tiaOnStride?.recommendedSymbol} to accomodate gas fees.`;
-        }
-      }
-
-      if (
-        srcChain?.chainID !== 'stride-1' &&
-        parsedGasRequired.gt(0) &&
-        (srcFeeAsset.denom === srcAsset.denom
-          ? parsedAmount.isGreaterThan(parsedBalance.minus(parsedGasRequired))
-          : parsedFeeBalance.minus(parsedGasRequired).isLessThanOrEqualTo(0))
-      ) {
-        return `Insufficient balance. You need ≈${gasRequired} ${srcFeeAsset.recommendedSymbol} to accomodate gas fees.`;
-      }
-    }
-
     if (parsedAmount.isGreaterThan(parsedBalance)) {
       return `Insufficient balance.`;
+    }
+
+    if (!maxTokenAmountMinusFees) return false
+
+    const parsedMaxAmountMinusFees = BigNumber(maxTokenAmountMinusFees);
+    if (parsedAmount.isGreaterThan(parsedMaxAmountMinusFees)) {
+      return `Insufficient balance after estimated fees.`;
     }
 
     return false;
   }, [
     amountIn,
     balances,
-    gasRequired,
     getAsset,
     srcAsset,
     srcChain?.chainID,
-    srcFeeAsset,
   ]);
 
   const swapPriceImpactPercent = useMemo(() => {
@@ -319,12 +291,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
    */
   const onSourceChainChange = useCallback(
     async (chain: Chain, injectAsset?: Asset) => {
-      let feeAsset: Asset | undefined = undefined;
-      if (chain.chainType === 'cosmos' && !filter?.source?.[chain.chainID]) {
-        feeAsset = await getFeeAsset(chain.chainID);
-      }
-
-      let asset = feeAsset;
+      let asset;
       if (!asset) {
         const assets = assetsByChainID(
           chain.chainID,
@@ -352,12 +319,9 @@ export function useSwapWidget(persistSwapWidgetState = true) {
       useSwapWidgetStore.setState({
         sourceChain: chain,
         sourceAsset: injectAsset ? injectAsset : asset,
-        sourceFeeAsset: feeAsset,
-        sourceGasPrice: undefined,
-        gasRequired: undefined,
       });
     },
-    [assetsByChainID, getFeeAsset]
+    [assetsByChainID]
   );
 
   /**
@@ -366,8 +330,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
   const onSourceAssetChange = useCallback((asset: Asset) => {
     useSwapWidgetStore.setState({
       sourceAsset: asset,
-      sourceGasPrice: undefined,
-      gasRequired: undefined,
     });
   }, []);
 
@@ -393,15 +355,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         filter?.destination?.[chain.chainID]
       );
 
-      let feeAsset: Asset | undefined = undefined;
-      if (
-        chain.chainType === 'cosmos' &&
-        !filter?.destination?.[chain.chainID]
-      ) {
-        feeAsset = await getFeeAsset(chain.chainID);
-      }
-
-      let asset = feeAsset;
+      let asset;
       if (!asset) {
         const assets = assetsByChainID(
           chain.chainID,
@@ -431,7 +385,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
       });
     },
 
-    [assetsByChainID, getFeeAsset, userTouchedDstAsset]
+    [assetsByChainID, userTouchedDstAsset]
   );
 
   /**
@@ -473,11 +427,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     const { destinationChain } = useSwapWidgetStore.getState();
     if (!destinationChain) return;
 
-    let sourceFeeAsset: Asset | undefined = undefined;
-    if (destinationChain.chainType === 'cosmos') {
-      sourceFeeAsset = await getFeeAsset(destinationChain.chainID);
-    }
-
     useSwapWidgetStore.setState((prev) => ({
       sourceChain: prev.destinationChain,
       sourceAsset: prev.destinationAsset,
@@ -486,11 +435,8 @@ export function useSwapWidget(persistSwapWidgetState = true) {
       amountIn: prev.amountOut,
       amountOut: prev.amountIn,
       direction: prev.direction === 'swap-in' ? 'swap-out' : 'swap-in',
-      sourceFeeAsset,
-      sourceGasPrice: undefined,
-      gasRequired: undefined,
     }));
-  }, [getFeeAsset]);
+  }, []);
 
   /**
    * Handle maxing amount in
@@ -513,36 +459,12 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         });
         return;
       }
-
-      const isDifferentAsset =
-        srcFeeAsset && srcFeeAsset.denom !== srcAsset.denom;
-      const isNotCosmos = srcChain.chainType !== 'cosmos';
-
-      /**
-       * override to max balances on these cases:
-       * - shift key is pressed
-       * - fee asset is different from source asset
-       * - source chain is not cosmos
-       */
-      if (event.shiftKey || isDifferentAsset || isNotCosmos) {
-        const newAmountIn = formatUnits(BigInt(balance), decimals);
-        useSwapWidgetStore.setState({
-          amountIn: newAmountIn,
-          direction: 'swap-in',
-        });
-        return;
-      }
-
       /**
        * compensate gas fees if source asset is same as fee asset
        */
-      if (gasRequired && srcFeeAsset && srcFeeAsset.denom === srcAsset.denom) {
-        let newAmountIn = BigNumber(balance)
-          .shiftedBy(-decimals)
-          .minus(gasRequired);
-        newAmountIn = newAmountIn.isNegative() ? BigNumber(0) : newAmountIn;
+      if (maxTokenAmountMinusFees) {
         useSwapWidgetStore.setState({
-          amountIn: newAmountIn.toFixed(decimals),
+          amountIn: Number(maxTokenAmountMinusFees) > 0 ? maxTokenAmountMinusFees : "0",
           direction: 'swap-in',
         });
         return;
@@ -555,7 +477,7 @@ export function useSwapWidget(persistSwapWidgetState = true) {
         direction: 'swap-in',
       });
     },
-    [balances, gasRequired, srcAsset, srcChain, srcFeeAsset]
+    [balances, srcAsset, srcChain]
   );
 
   /**
@@ -575,97 +497,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
 
   // #region -- side effects
 
-  /**
-   * compute gas amount on source chain change
-   */
-  useEffect(() => {
-    return useSwapWidgetStore.subscribe(
-      (state) =>
-        [state.sourceChain, state.sourceAsset, state.sourceFeeAsset] as const,
-      async ([srcChain, srcAsset, srcFeeAsset]) => {
-        if (!(srcChain?.chainType === 'cosmos' && srcAsset)) return;
-        if (srcChain?.chainID.includes('penumbra')) return;
-        const feeAsset = srcChain.feeAssets?.[0];
-        const gas = `${feeAsset?.gasPrice?.average}${feeAsset.denom}`;
-        const gasPrice = (() => {
-          try {
-            return GasPrice.fromString(gas);
-          } catch (error) {
-            console.error('Unable to parse gas price asset');
-            return undefined;
-          }
-        })();
-
-        let srcGasPrice = feeAsset?.gasPrice && gasPrice;
-
-        if (!srcFeeAsset || srcFeeAsset.chainID !== srcChain.chainID) {
-          if (srcGasPrice) {
-            srcFeeAsset = getAsset(srcGasPrice!.denom, srcChain.chainID);
-          } else {
-            srcFeeAsset = await getFeeAsset(srcChain.chainID);
-          }
-        }
-        if (!srcFeeAsset) {
-          toast.error(`Unable to find gas asset for ${srcChain.chainName}`);
-          return;
-        }
-
-        const decimals = srcFeeAsset.decimals ?? 6;
-
-        let selectedGasPrice: BigNumber;
-        const actualGasAmount = isChainIdEvmos(srcChain.chainID)
-          ? EVMOS_GAS_AMOUNT
-          : customGasAmount;
-
-        if (srcGasPrice) {
-          selectedGasPrice = BigNumber(srcGasPrice.amount.toString());
-        } else {
-          let feeDenomPrices = srcChain.feeAssets.find(({ denom }) => {
-            return denom === srcFeeAsset?.denom;
-          });
-
-          if (!feeDenomPrices || !feeDenomPrices.gasPrice) {
-            toast.error(
-              `Unable to find gas prices for ${srcFeeAsset.denom} on ${srcChain.chainName}`
-            );
-            return;
-          }
-          const _gasPrice = (() => {
-            try {
-              return GasPrice.fromString(
-                `${feeDenomPrices.gasPrice.average}${feeDenomPrices.denom}`
-              );
-            } catch (error) {
-              return undefined;
-            }
-          })();
-          if (!_gasPrice) {
-            console.error(
-              `Unable to parse gas price for ${srcFeeAsset.denom} on ${srcChain.chainName}`
-            );
-            return;
-          }
-          srcGasPrice = _gasPrice;
-          selectedGasPrice = BigNumber(feeDenomPrices.gasPrice.average);
-        }
-
-        const gasRequired = selectedGasPrice
-          .multipliedBy(actualGasAmount)
-          .shiftedBy(-decimals)
-          .toString();
-
-        useSwapWidgetStore.setState({
-          gasRequired,
-          sourceFeeAsset: srcFeeAsset,
-          sourceGasPrice: srcGasPrice,
-        });
-      },
-      {
-        equalityFn: shallow,
-        fireImmediately: true,
-      }
-    );
-  }, [assetsByChainID, customGasAmount, getFeeAsset, skipClient]);
 
   /**
    * sync either amount in or out depending on {@link direction}
@@ -963,8 +794,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     routeWarningTitle,
     sourceAsset: srcAsset,
     sourceChain: srcChain,
-    sourceFeeAmount: gasRequired,
-    sourceFeeAsset: srcFeeAsset,
     swapPriceImpactPercent,
     usdDiffPercent,
     shareable,
@@ -980,12 +809,9 @@ export interface SwapWidgetStore {
   amountOut: string;
   sourceChain?: Chain;
   sourceAsset?: Asset;
-  sourceFeeAsset?: Asset;
-  sourceGasPrice?: GasPrice;
   destinationChain?: Chain;
   destinationAsset?: Asset;
   direction: 'swap-in' | 'swap-out';
-  gasRequired?: string;
   bridges: BridgeType[];
 }
 

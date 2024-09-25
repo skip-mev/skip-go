@@ -26,7 +26,10 @@ export const useGasFeeTokenAmount = () => {
 
   switch (chainType) {
     case "evm":
-      return Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, sourceDetails.asset?.decimals));
+      {
+        const isFeeAsset = sourceAsset?.denom?.includes("-native") && sourceAsset?.originChainID === sourceAsset?.chainID;
+        return isFeeAsset ? Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, sourceDetails.asset?.decimals)) : 0;
+      }
     case "cosmos":
       if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
       return Number(feeAsset.gasPrice.average) * (COSMOS_GAS_FEE);
@@ -43,11 +46,11 @@ export const useMaxAmountTokenMinusFees = () => {
 
   if (gasFeeTokenAmount && maxTokenAmount) {
     const maxTokenAmountMinusGasFees = BigNumber(maxTokenAmount).minus(gasFeeTokenAmount).toString();
-    const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees);
+    const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees, sourceBalance?.decimals);
 
     return maxAmountMinusGasFees;
   }
-  return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount));
+  return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount), sourceBalance?.decimals);
 };
 
 export const useSetMaxAmount = () => {
