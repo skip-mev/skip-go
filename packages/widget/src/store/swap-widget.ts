@@ -74,11 +74,6 @@ export const useSwapWidgetUIStore = create(
 export interface ConfigureSwapWidgetArgs {
   settings?: {
     /**
-     * gas amount for validation
-     * @default 200_000
-     */
-    customGasAmount?: number;
-    /**
      * percentage of slippage 0-100
      * @default 3
      */
@@ -125,8 +120,6 @@ export const configureSwapWidget = (args: ConfigureSwapWidgetArgs) => {
     filter: args.filter || prev.filter,
   }));
   useSettingsStore.setState((prev) => ({
-    customGasAmount:
-      args.settings?.customGasAmount?.toString() || prev.customGasAmount,
     slippage: args.settings?.slippage?.toString() || prev.slippage,
   }));
 };
