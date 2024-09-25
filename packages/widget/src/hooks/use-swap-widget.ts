@@ -1,4 +1,3 @@
-import { GasPrice } from '@cosmjs/stargate';
 import { useManager as useCosmosManager } from '@cosmos-kit/react';
 import { Asset, BridgeType } from '@skip-go/client';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -18,10 +17,8 @@ import {
 } from 'zustand/middleware';
 import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn as create } from 'zustand/traditional';
-import { EVMOS_GAS_AMOUNT, isChainIdEvmos } from '../constants/gas';
 import { useAssets } from '../provider/assets';
 import { useAnyDisclosureOpen } from '../store/disclosures';
-import { useSettingsStore } from '../store/settings';
 import { trackWallet } from '../store/track-wallet';
 import { useAccount } from './use-account';
 import { Chain, useChains } from './use-chains';
@@ -33,7 +30,6 @@ import { gracefullyConnect } from '../utils/wallet';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
 import { chainIdToName } from '../chains';
 
-const DEFAULT_SRC_CHAIN_ID = 'cosmoshub-4';
 const PRICE_IMPACT_THRESHOLD = 0.1;
 
 export interface DefaultRouteConfig {
@@ -151,8 +147,6 @@ export function useSwapWidget(persistSwapWidgetState = true) {
     assets: srcAssets,
     enabled: !isAnyDisclosureOpen,
   });
-
-  const customGasAmount = useSettingsStore((state) => state.customGasAmount);
 
   // #endregion
 
