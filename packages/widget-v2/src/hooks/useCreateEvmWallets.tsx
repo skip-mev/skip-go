@@ -6,7 +6,6 @@ import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors, } from "wagmi";
 
-
 export const useCreateEvmWallets = () => {
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const {
@@ -17,6 +16,9 @@ export const useCreateEvmWallets = () => {
   const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
   const createEvmWallets = useCallback((chainID: string) => {
     const isSei = chainID === "pacific-1";
+    if (isSei) {
+      chainID = sei.id.toString();
+    }
     const wallets: MinimalWallet[] = [];
     for (const connector of connectors) {
       const isWalletFound = wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
@@ -28,6 +30,12 @@ export const useCreateEvmWallets = () => {
       const evmGetAddress: MinimalWallet["getAddress"] = async ({
         signRequired,
       }) => {
+        if (isEvmConnected && (chainId !== Number(chainID)) && connector.id === currentEvmConnector?.id) {
+          await connector?.switchChain?.({
+            chainId: Number(chainID),
+          });
+          return evmAddress;
+        }
         if (connector.id !== currentEvmConnector?.id || !isEvmConnected) {
           await connectAsync({ connector, chainId: Number(chainID) });
           setEvmWallet({ walletName: connector.id, chainType: "evm" });
@@ -69,6 +77,7 @@ export const useCreateEvmWallets = () => {
             return address;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         disconnect: async () => {
@@ -96,6 +105,7 @@ export const useCreateEvmWallets = () => {
             return seiAddress;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         };
       }

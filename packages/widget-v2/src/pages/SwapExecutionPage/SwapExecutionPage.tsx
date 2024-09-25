@@ -4,7 +4,7 @@ import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -24,6 +24,7 @@ import {
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
+import { getSignRequiredChainIds } from "@/utils/operations";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -44,7 +45,9 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
-  const modal = useModal(ManualAddressModal);
+  const setManualAddressModal = useModal(SetAddressModal);
+
+  const [_destinationWallet] = useAtom(destinationWalletAtom);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
   const operationToTransferEventsMap = useFetchTransactionStatus();
@@ -53,6 +56,11 @@ export const SwapExecutionPage = () => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);
   }, [route?.operations]);
+
+  const signRequiredChains = useMemo(() => {
+    const signRequiredChains = getSignRequiredChainIds(clientOperations);
+    return signRequiredChains;
+  }, [clientOperations]);
 
   const swapExecutionState = useMemo(() => {
     if (!chainAddresses) return;
@@ -89,7 +97,9 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Set recovery address"
             icon={ICONS.rightArrow}
-            onClick={connectRequiredChains}
+            onClick={() => {
+              connectRequiredChains(true);
+            }}
           />
         );
       case SwapExecutionState.destinationAddressUnset:
@@ -97,7 +107,14 @@ export const SwapExecutionPage = () => {
           <MainButton
             label="Set destination address"
             icon={ICONS.rightArrow}
-            onClick={() => modal.show()}
+            onClick={() => {
+              const destinationChainID = route?.destAssetChainID;
+              if (!destinationChainID) return;
+              setManualAddressModal.show({
+                signRequired: signRequiredChains.includes(destinationChainID),
+                chainId: destinationChainID,
+              });
+            }}
           />
         );
       case SwapExecutionState.ready:
@@ -133,9 +150,11 @@ export const SwapExecutionPage = () => {
     }
   }, [
     connectRequiredChains,
-    modal,
     mutate,
+    route?.destAssetChainID,
     route?.estimatedRouteDurationSeconds,
+    setManualAddressModal,
+    signRequiredChains,
     swapExecutionState,
     theme.success.text,
   ]);
@@ -156,7 +175,7 @@ export const SwapExecutionPage = () => {
       />
       {simpleRoute ? (
         <SwapExecutionPageRouteSimple
-          onClickEditDestinationWallet={() => modal.show()}
+          onClickEditDestinationWallet={() => setManualAddressModal.show()}
           operations={clientOperations}
           operationToTransferEventsMap={operationToTransferEventsMap}
         />

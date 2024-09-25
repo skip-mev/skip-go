@@ -60,7 +60,6 @@ export const useAccount = (chainID?: string) => {
         break;
     }
   }, [chainType, evmAccount.connector, setCosmosWalelt, setEvmWallet, setSvmWallet, solanaWallet, walletType]);
-
   const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":
