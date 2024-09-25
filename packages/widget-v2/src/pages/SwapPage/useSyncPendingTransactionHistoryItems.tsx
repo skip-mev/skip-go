@@ -41,6 +41,7 @@ export const useSyncPendingTransactionHistoryItems = () => {
 
       setTransactionHistory(index, {
         status: getOverallStatus(),
+        timestamp: Date.now(),
       });
     });
   }, [setTransactionHistory, transactionHistory, transactionStatusArray]);
