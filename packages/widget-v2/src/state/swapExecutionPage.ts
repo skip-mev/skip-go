@@ -11,7 +11,7 @@ import { errorAtom, ErrorType } from "./errorPage";
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
-  route: RouteResponse;
+  route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
   overallStatus?: SimpleStatus;
@@ -40,7 +40,7 @@ export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
   "swapExecutionState",
   {
-    route: {} as RouteResponse,
+    route: undefined,
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
