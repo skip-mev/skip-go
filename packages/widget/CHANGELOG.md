@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.5.0
+
+### Minor Changes
+
+- 7496c3d: fix max button/gas calculation and remove gas amoun in settings
+
 ## 2.4.12
 
 ### Patch Changes

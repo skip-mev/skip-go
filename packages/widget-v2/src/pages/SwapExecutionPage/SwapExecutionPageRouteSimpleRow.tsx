@@ -1,18 +1,18 @@
 import { useTheme } from "styled-components";
-import { Button } from "@/components/Button";
+import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { iconMap, ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
-import {
-  StyledAnimatedBorder,
-  txState,
-} from "./SwapExecutionPageRouteDetailedRow";
+import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { ClientOperation } from "@/utils/clientType";
-import { MinimalWallet } from "@/state/wallets";
+import { ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useAtomValue } from "jotai";
+import { useAccount } from "@/hooks/useAccount";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -21,20 +21,20 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  txState?: txState;
-  wallet?: MinimalWallet;
+  status?: SimpleStatus;
   icon?: ICONS;
+  context: "source" | "destination";
 };
 
 export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   tokenAmount,
   chainID,
-  txState,
+  status,
   destination,
   onClickEditDestinationWallet,
   explorerLink,
-  wallet,
+  context,
   icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
@@ -46,13 +46,37 @@ export const SwapExecutionPageRouteSimpleRow = ({
   });
 
   const txStateOfAnimatedBorder = useMemo(() => {
-    if (destination && txState === "broadcasted") {
+    if (destination && status === "broadcasted") {
       return;
     }
-    return txState;
-  }, [txState, destination]);
+    return status;
+  }, [status, destination]);
 
   const Icon = iconMap[icon];
+
+  const chainAddresses = useAtomValue(chainAddressesAtom);
+  const account = useAccount(chainID);
+
+  const source = useMemo(() => {
+    const chainAddressArray = Object.values(chainAddresses);
+    switch (context) {
+      case "source":
+        return {
+          address: account?.address,
+          image: account?.wallet.logo,
+        };
+      case "destination": {
+        const selected = chainAddressArray[chainAddressArray.length - 1];
+        return {
+          address: selected?.address,
+          image:
+            (selected?.source === "wallet" &&
+              selected.wallet.walletInfo.logo) ||
+            undefined,
+        };
+      }
+    }
+  }, [account?.address, account?.wallet.logo, chainAddresses, context]);
 
   return (
     <Row gap={25} align="center">
@@ -61,15 +85,14 @@ export const SwapExecutionPageRouteSimpleRow = ({
           width={50}
           height={50}
           backgroundColor={theme.success.text}
-          txState={txStateOfAnimatedBorder}
+          status={txStateOfAnimatedBorder}
         >
           <img height={50} width={50} src={assetDetails.assetImage} />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.amount}{" "}
-          {assetDetails?.symbol}
+          {assetDetails.amount} {assetDetails?.symbol}
         </Text>
         <SmallText>
           {assetDetails.formattedUsdAmount}
@@ -77,32 +100,27 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </SmallText>
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
-          {wallet && (
-            <>
-              {wallet.walletInfo.logo && (
-                <img height={10} width={10} src={wallet.walletInfo.logo} />
-              )}
-              <SmallText>
-                {/* {wallet.address} */}
-              </SmallText>
 
-              {explorerLink ? (
-                <Button onClick={() => window.open(explorerLink, "_blank")}>
-                  <SmallText>
-                    <ChainIcon />
-                  </SmallText>
-                </Button>
-              ) : (
-                <Button align="center" onClick={onClickEditDestinationWallet}>
-                  <Icon
-                    width={10}
-                    height={10}
-                    color={theme.primary.text.lowContrast}
-                  />
-                </Button>
-              )}
-            </>
+          {source.image && <img height={10} width={10} src={source.image} />}
+          {source.address && (
+            <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
           )}
+
+          {explorerLink ? (
+            <Link href={explorerLink} target="_blank">
+              <SmallText>
+                <ChainIcon />
+              </SmallText>
+            </Link>
+          ) : onClickEditDestinationWallet ? (
+            <Button align="center" onClick={onClickEditDestinationWallet}>
+              <Icon
+                width={10}
+                height={10}
+                color={theme.primary.text.lowContrast}
+              />
+            </Button>
+          ) : null}
         </Row>
       </Column>
     </Row>

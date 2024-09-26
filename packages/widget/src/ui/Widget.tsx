@@ -1,6 +1,6 @@
 import { ArrowsUpDownIcon, FingerPrintIcon } from '@heroicons/react/20/solid';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import type {} from 'typed-query-selector';
+import type { } from 'typed-query-selector';
 import { ElementRef, useEffect, useRef } from 'react';
 import { useSwapWidget } from '../hooks/use-swap-widget';
 import { disclosure } from '../store/disclosures';
@@ -102,8 +102,6 @@ export const SwapWidgetUI = ({
     routeWarningTitle,
     sourceAsset,
     sourceChain,
-    sourceFeeAmount,
-    sourceFeeAsset,
     swapPriceImpactPercent,
     usdDiffPercent,
     shareable,
@@ -157,7 +155,7 @@ export const SwapWidgetUI = ({
                         ? typeof srcAccount.wallet.walletInfo.logo === 'string'
                           ? srcAccount.wallet.walletInfo.logo
                           : srcAccount.wallet.walletInfo.logo?.major ||
-                            srcAccount.wallet.walletInfo.logo?.minor
+                          srcAccount.wallet.walletInfo.logo?.minor
                         : ''
                     }
                     className="animate-slide-left-and-fade"
@@ -228,13 +226,11 @@ export const SwapWidgetUI = ({
                 destinationAsset={destinationAsset}
                 destinationChain={destinationChain}
                 direction={direction}
-                gasRequired={sourceFeeAmount}
                 onBridgesChange={onBridgeChange}
                 priceImpactPercent={swapPriceImpactPercent ?? 0}
                 priceImpactThresholdReached={priceImpactThresholdReached}
                 route={route}
                 sourceAsset={sourceAsset}
-                sourceFeeAsset={sourceFeeAsset}
                 sourceChain={sourceChain}
               />
             )}

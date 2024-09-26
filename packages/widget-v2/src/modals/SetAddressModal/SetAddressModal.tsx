@@ -9,33 +9,39 @@ import {
 } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
-import { destinationAssetAtom } from "@/state/swapPage";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader } from "@/components/ModalHeader";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
-export const ManualAddressModal = createModal((modalProps: ModalProps) => {
-  const { theme } = modalProps;
+export type SetAddressModalProps = ModalProps & {
+  signRequired?: boolean;
+  chainId: string
+};
+
+export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
+  const { theme, signRequired, chainId } = modalProps;
   const modal = useModal();
-  const [destinationAsset] = useAtom(destinationAssetAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find(c => c.chainID === destinationAsset?.chainID);
+  const chain = chains?.find(c => c.chainID === chainId);
   const chainName = chain?.prettyName;
   const chainLogo = chain?.logoURI;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
-  const _walletList = useWalletList(destinationAsset?.chainID);
+  const _walletList = useWalletList(chainId, true);
+  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const walletList = [
     ..._walletList,
     {
+      onSelect: () => setShowManualAddressInput(true),
       walletName: "Enter address manually",
       rightContent: () => {
         return (
           <RightArrowIcon
-            color={theme?.primary?.background.normal}
+            color={theme?.primary?.text.normal}
             backgroundColor={theme?.primary?.text.normal}
           />
         );
@@ -60,6 +66,39 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
     });
   }, [chain, manualWalletAddress]);
 
+  const placeholder = useMemo(() => {
+    if (!chain) return "Enter address...";
+    const { chainType, bech32Prefix } = chain;
+
+    switch (chainType) {
+      case "cosmos":
+        return `${bech32Prefix}1...`;
+      case "evm":
+        return "0x...";
+      case "svm":
+        return "Enter solana address...";
+      default:
+        return "Enter address...";
+    }
+  }, [chain]);
+
+  const onConfirmSetManualAddress = () => {
+    const chainType = chain?.chainType;
+    if (!chainId || !chainType) return;
+    setChainAddresses((prev) => {
+      const destinationIndex = Object.values(prev).length - 1;
+      return {
+        ...prev,
+        [destinationIndex]: {
+          chainID: chainId,
+          chainType: chainType as "evm" | "cosmos" | "svm",
+          address: manualWalletAddress,
+          source: "input",
+        },
+      };
+    });
+    modal.remove();
+  };
   return (
     <>
       {showManualAddressInput ? (
@@ -75,7 +114,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
           />
           <StyledInputContainer>
             <StyledInput
-              placeholder="0xABCDEFG..."
+              placeholder={placeholder}
               value={manualWalletAddress}
               onChange={handleChangeAddress}
               validAddress={addressIsValid}
@@ -91,13 +130,7 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
             align="center"
             justify="center"
             disabled={!addressIsValid}
-            onClick={() => {
-              // setDestinationWallet({
-              //   walletName: "manual wallet address",
-              //   address: manualWalletAddress,
-              // });
-              modal.remove();
-            }}
+            onClick={onConfirmSetManualAddress}
           >
             <Text
               mainButtonColor={
@@ -113,8 +146,11 @@ export const ManualAddressModal = createModal((modalProps: ModalProps) => {
       ) : (
         <RenderWalletList
           title="Destination wallet"
-          walletList={walletList}
+          walletList={signRequired ? _walletList : walletList}
           onClickBackButton={() => modal.remove()}
+          chainId={chainId}
+          chainType={chain?.chainType}
+          isDestinationAddress
         />
       )}
     </>

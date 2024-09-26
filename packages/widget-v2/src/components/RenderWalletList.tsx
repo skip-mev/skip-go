@@ -9,11 +9,16 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { useMutation } from "@tanstack/react-query";
 import { useModal } from "./Modal";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
+import { useSetAtom } from "jotai";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
 export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
+  isDestinationAddress?: boolean;
+  chainId?: string;
+  chainType?: string;
 };
 
 export type ManualWalletEntry = {
@@ -41,13 +46,34 @@ export const RenderWalletList = ({
   title,
   walletList,
   onClickBackButton,
+  isDestinationAddress,
+  chainId,
+  chainType,
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
+  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
+      if (isDestinationAddress) {
+        if (!chainId || !chainType) return;
+        const address = await wallet.getAddress?.({});
+        setChainAddresses((prev) => {
+          const destinationIndex = Object.values(prev).length - 1;
+          return {
+            ...prev,
+            [destinationIndex]: {
+              chainID: chainId,
+              chainType: chainType as "evm" | "cosmos" | "svm",
+              address: address,
+              source: "input",
+            },
+          };
+        });
+        return null;
+      }
       return await wallet.connect();
     },
     onSuccess: () => {
@@ -60,6 +86,38 @@ export const RenderWalletList = ({
       const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName;
       const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
       const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
+
+      if (wallet.walletName === "prax") {
+        return (
+          <ModalRowItem
+            key={name}
+            onClick={() => {
+              if (isMinimalWallet(wallet)) {
+                connectMutation.mutate(wallet);
+              } else {
+                wallet.onSelect();
+              };
+            }}
+            style={{ marginTop: ITEM_GAP }}
+            leftContent={
+              <Row align="center" gap={10}>
+                {imageUrl && (
+                  <img
+                    height={35}
+                    width={35}
+                    style={{ objectFit: "cover" }}
+                    src={imageUrl}
+                    alt={`${name} logo`}
+                  />
+                )}
+
+                <Text>{name}</Text>
+              </Row>
+            }
+            rightContent={rightContent?.()}
+          />
+        );
+      }
 
       return (
         <ModalRowItem
@@ -110,7 +168,7 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              txState={connectMutation.isError ? "failed" : "broadcasted"}
+              status={connectMutation.isError ? "failed" : "broadcasted"}
               borderSize={8}
             >
               <img

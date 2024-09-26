@@ -54,7 +54,7 @@ async function getUsdValue(asset: Asset, coingeckoID?: string) {
 
 
 export function useUsdValue(asset?: Partial<Asset>): UseQueryResult<number | undefined, Error> {
-  const {data: assets} = useAtomValue(skipAssetsAtom)
+  const { data: assets } = useAtomValue(skipAssetsAtom);
   const queryKey = useMemo(() => ["USE_USD_VALUE", asset] as const, [asset]);
 
   const enabled = useMemo(() => {
@@ -69,7 +69,7 @@ export function useUsdValue(asset?: Partial<Asset>): UseQueryResult<number | und
       asset ? [key, ...Object.values(asset)].join("-") : key,
     queryFn: async ({ queryKey: [, asset] }) => {
       if (asset?.value) {
-        const coingeckoID = assets?.find((a) => a.denom === asset.denom)?.coingeckoID
+        const coingeckoID = assets?.find((a) => a.denom === asset.denom)?.coingeckoID;
         return getUsdValue(asset as Asset, coingeckoID);
       }
     },

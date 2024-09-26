@@ -7,7 +7,7 @@ import { defaultTheme, PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 
@@ -16,12 +16,15 @@ export type SwapWidgetProps = {
 } & SkipClientOptions;
 
 export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
-    setSkipClientConfig(skipClientConfig);
+    setSkipClientConfig({
+      ...defaultSkipClientConfig,
+      ...skipClientConfig,
+    });
     setTheme({ ...defaultTheme, ...theme });
-  }, [setSkipClientConfig, setTheme, skipClientConfig, theme]);
+  }, [defaultSkipClientConfig, setSkipClientConfig, setTheme, skipClientConfig, theme]);
 
   return (
     <NiceModal.Provider>
@@ -35,12 +38,15 @@ export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
 };
 
 const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
-    setSkipClientConfig(skipClientConfig);
+    setSkipClientConfig({
+      ...defaultSkipClientConfig,
+      ...skipClientConfig,
+    });
     setTheme({ ...defaultTheme, ...theme });
-  }, [setSkipClientConfig, setTheme, skipClientConfig, theme]);
+  }, [defaultSkipClientConfig, setSkipClientConfig, setTheme, skipClientConfig, theme]);
 
   return (
     <ShadowDomAndProviders theme={theme}>

@@ -5,22 +5,32 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTransactionFailedProps = {
   transactionHash: string;
-  explorerUrl: string;
+  explorerLink: string;
   onClickContactSupport: () => void;
+  onClickBack: () => void;
 };
 
 export const ErrorPageTransactionFailed = ({
   transactionHash,
-  explorerUrl,
+  explorerLink,
   onClickContactSupport,
+  onClickBack,
 }: ErrorPageTransactionFailedProps) => {
   const theme = useTheme();
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="Transaction failed"
         description={
@@ -32,7 +42,7 @@ export const ErrorPageTransactionFailed = ({
             <Row
               as={SmallTextButton}
               gap={5}
-              onClick={() => window.open(explorerUrl, "_blank")}
+              onClick={() => window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               Transaction: <u>{transactionHash}</u>

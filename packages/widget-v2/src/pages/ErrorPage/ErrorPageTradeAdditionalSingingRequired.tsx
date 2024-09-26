@@ -4,15 +4,18 @@ import { SmallText, Text } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { RouteResponse } from "@skip-go/client/dist/types";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTradeAdditionalSigningRequiredProps = {
   onClickSign: () => void;
+  onClickBack: () => void;
   route: RouteResponse;
 };
 
 export const ErrorPageTradeAdditionalSigningRequired = ({
   onClickSign,
   route,
+  onClickBack,
 }: ErrorPageTradeAdditionalSigningRequiredProps) => {
   const { amountIn, amountOut, sourceAssetDenom, destAssetDenom } = route;
 
@@ -27,6 +30,13 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title={
           <Text>

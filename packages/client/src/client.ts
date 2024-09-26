@@ -224,7 +224,7 @@ export class SkipClient {
     request: types.BalanceRequest
   ): Promise<types.BalanceResponse> {
     const response = await this.requestClient.post<types.BalanceResponseJSON>(
-      '/v2/info/balance',
+      '/v2/info/balances',
       types.balanceRequestToJSON(request)
     );
     return types.balanceResponseFromJSON(response);

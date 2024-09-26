@@ -57,6 +57,7 @@ export const useCreateCosmosWallets = () => {
             return bech32Address;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         disconnect: async () => {
@@ -112,9 +113,7 @@ export const useCreateCosmosWallets = () => {
         },
         getAddress,
         disconnect: async () => {
-          await disconnectAsync({
-            chainId: chainID
-          });
+          await disconnectAsync();
         },
         isWalletConnected: currentWallet === wallet
       };
