@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.9.3
+
+### Patch Changes
+
+- b114667: update client to include solana support via public RPC and show warning when public infrastructure is not overriden
+
 ## 0.9.2
 
 ### Patch Changes
