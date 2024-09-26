@@ -9,17 +9,24 @@ export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
-  atomWithDebounce<string | undefined>({
-    initialValue: undefined,
-  });
+export const {
+  debouncedValueAtom: debouncedSourceAssetAmountAtom,
+  instantUpdateAtom: instantlyUpdateDebouncedSourceAssetAmountAtom,
+} = atomWithDebounce<string | undefined>({
+  initialValue: undefined,
+});
 
-export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
-  atomWithDebounce<string | undefined>({
-    initialValue: undefined,
-  });
+export const {
+  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
+  instantUpdateAtom: instantlyUpdateDebouncedDestinationAssetAmountAtom,
+} = atomWithDebounce<string | undefined>({
+  initialValue: undefined,
+});
 
-export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>("sourceAsset", undefined);
+export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>(
+  "sourceAsset",
+  undefined
+);
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount,
@@ -31,7 +38,10 @@ export const sourceAssetAmountAtom = atom(
   }
 );
 
-export const destinationAssetAtom = atomWithStorage<AssetAtom | undefined>("destinationAsset", undefined);
+export const destinationAssetAtom = atomWithStorage<AssetAtom | undefined>(
+  "destinationAsset",
+  undefined
+);
 
 export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
@@ -62,7 +72,10 @@ export const isWaitingForNewRouteAtom = atom((get) => {
 
 export type SwapDirection = "swap-in" | "swap-out";
 
-export const swapDirectionAtom = atomWithStorage<SwapDirection>("swapDirection", "swap-in");
+export const swapDirectionAtom = atomWithStorage<SwapDirection>(
+  "swapDirection",
+  "swap-in"
+);
 
 export const isInvertingSwapAtom = atom(false);
 
