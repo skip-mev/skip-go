@@ -5,7 +5,6 @@ import {
   Chain,
   RouteRequest,
   SkipClientOptions,
-  BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";

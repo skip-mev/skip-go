@@ -12,7 +12,6 @@ import {
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
 import { matchSorter } from "match-sorter";
-import { skipBalancesAtom } from "@/state/balances";
 import { useGetBalance } from "@/hooks/useGetBalance";
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
