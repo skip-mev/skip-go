@@ -15,6 +15,7 @@ import {
   destinationAssetAtom,
   isInvertingSwapAtom,
   routeAmountEffect,
+  setInitialDebouncedAmountsEffect,
   sourceAssetAtom,
   swapDirectionAtom,
 } from "./swapPage";
@@ -176,6 +177,8 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
+
+  get(setInitialDebouncedAmountsEffect);
 
   if (
     !sourceAsset?.chainID ||
