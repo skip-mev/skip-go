@@ -88,6 +88,21 @@ export const invertSwapAtom = atom(null, (get, set) => {
   }
 });
 
+export const setInitialDebouncedAmountsEffect = atomEffect((get, set) => {
+  const direction = get(swapDirectionAtom);
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
+  const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
+
+  if (direction === "swap-in" && debouncedSourceAmount === undefined && sourceAsset?.amount) {
+    set(debouncedSourceAssetAmountAtom, sourceAsset?.amount);
+  } else if (direction === "swap-out" && debouncedDestinationAmount === undefined && destinationAsset?.amount) {
+    set(debouncedDestinationAssetAmountAtom, destinationAsset?.amount);
+  }
+});
+
+
 export const routeAmountEffect = atomEffect((get, set) => {
   const route = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);

@@ -6,7 +6,7 @@ export function atomWithDebounce<T>({
   delayMilliseconds = 500,
   shouldDebounceOnReset = false,
 }: {
-  initialValue: T,
+  initialValue: T;
   delayMilliseconds?: number;
   shouldDebounceOnReset?: boolean;
 }) {
