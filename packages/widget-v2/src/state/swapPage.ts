@@ -12,13 +12,11 @@ export type AssetAtom = Partial<ClientAsset> & {
 export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
   atomWithDebounce<string | undefined>({
     initialValue: undefined,
-    localStorageKey: "debouncedSourceAssetAmount",
   });
 
 export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
   atomWithDebounce<string | undefined>({
     initialValue: undefined,
-    localStorageKey: "debouncedDestinationAssetAmount"
   });
 
 export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>("sourceAsset", undefined);
