@@ -191,7 +191,9 @@ export const SwapExecutionPage = () => {
       />
       {simpleRoute ? (
         <SwapExecutionPageRouteSimple
-          onClickEditDestinationWallet={() => setManualAddressModal.show()}
+          onClickEditDestinationWallet={() => setManualAddressModal.show({
+            chainId: route?.destAssetChainID
+          })}
           operations={clientOperations}
           operationToTransferEventsMap={operationToTransferEventsMap}
         />
