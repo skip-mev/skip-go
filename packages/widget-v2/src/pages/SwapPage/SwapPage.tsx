@@ -221,18 +221,19 @@ export const SwapPage = () => {
     if (isRouteError) {
       return <MainButton label={routeError.message} disabled />;
     }
-
     if (!sourceAccount?.address) {
-      <MainButton
-        disabled={!sourceAsset?.chainID}
-        label="Connect Wallet"
-        icon={ICONS.plus}
-        onClick={() => {
-          selectWalletmodal.show({
-            chainId: sourceAsset?.chainID,
-          });
-        }}
-      />;
+      return (
+        <MainButton
+          disabled={!sourceAsset?.chainID}
+          label="Connect Wallet"
+          icon={ICONS.plus}
+          onClick={() => {
+            selectWalletmodal.show({
+              chainId: sourceAsset?.chainID,
+            });
+          }}
+        />
+      );
     }
     if (insufficientBalance) {
       return (
