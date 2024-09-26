@@ -93,10 +93,6 @@ export const invertSwapAtom = atom(null, (get, set) => {
   }
 });
 
-export const connectedWalletAtom = atomWithStorage<MinimalWallet | undefined>("connectedWallet", undefined);
-
-export const destinationWalletAtom = atomWithStorage<MinimalWallet | undefined>("destinationWallet", undefined);
-
 export const routeAmountEffect = atomEffect((get, set) => {
   const route = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
