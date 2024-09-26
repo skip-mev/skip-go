@@ -41,7 +41,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       rightContent: () => {
         return (
           <RightArrowIcon
-            color={theme?.primary?.text.normal}
+            color={theme?.primary?.background.normal}
             backgroundColor={theme?.primary?.text.normal}
           />
         );

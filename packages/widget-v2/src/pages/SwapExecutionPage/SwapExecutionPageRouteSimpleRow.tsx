@@ -101,10 +101,16 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
 
-          {source.image && <img height={10} width={10} src={source.image} />}
-          {source.address && (
-            <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
-          )}
+          <Button align="center" onClick={() => {
+            if (source.address) {
+              navigator.clipboard.writeText(source.address);
+            }
+          }}>
+            {source.image && <img height={10} width={10} src={source.image} />}
+            {source.address && (
+              <SmallText monospace title={source.address}>{getTruncatedAddress(source.address)}</SmallText>
+            )}
+          </Button>
 
           {explorerLink ? (
             <Link href={explorerLink} target="_blank">
