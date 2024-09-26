@@ -1,97 +1,54 @@
 ---
 title: 'Quickstart Guide'
+description: 'This guide walks you through the process of setting up and using the Skip Go Client to perform a cross-chain from USDC on Noble to TIA on Celestia.'
 ---
 
-## Summary
-
-This walkthrough demonstrates how to perform a swap of USDC on Noble to TIA on Celestia using the Skip Go Client in a browser environment.
+<Info>
+  Want to dive deeper? See the [detailed walkthrough](../client/getting-started) that includes Solana and EVM transactions.
+</Info>
 
 ## Prerequisites
 
-- **Node.js and npm** installed on your machine.
-- Basic knowledge of **TypeScript**.
-- Familiarity with **Cosmos wallets**, specifically **Keplr**.
+- **Node.js** and **npm** 
+- Browser environment setup (`create-next-app` is recommended) with **Keplr** installed
 
- <Note>
- **Having trouble? Get in touch!**
 
-Please reach out if Skip Go doesn't support your desired user experience or are unsure of how to use it.
-Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role.
+<Steps>
+<Step title="Install Library">
 
-</Note>
+Install the library using npm or yarn:
 
-### 1\. Install @skip-go/client
-
-In your command line terminal, install the `@skip-go/client` package:
-
-```Shell shell
-npm i @skip-go/client
+<CodeGroup>
+```Shell npm
+npm install @skip-go/client
 ```
-
-<Info>
- **EVM and SVM transactions**
-
-This example constructs a cross-chain swap between 2 Cosmos chains, but Skip Go supports all major EVM chains & Solana. See [Supported Ecosystems](./supported-ecosystems-and-bridges), [EVM Transactions](../advanced-transfer/evm-transactions) and [SVM Transactions](../advanced-transfer/svm-transaction-details) for more information.
-
-</Info>
-
-### 2\. Setup Signers
-
-Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
-
-For EVM transactions, You need to install the `viem` package:
-
-```Shell shell
-npm i viem
+```Shell yarn
+yarn add @skip-go/client
 ```
+</CodeGroup>
 
-For SVM transactions, You can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
-For this example, we are going to use Phantom wallet:
 
-```Shell shell
-npm i @solana/wallet-adapter-phantom
-```
+</Step> <Step title="Initialize Client">
 
-Now, let's create the `SkipClient` instance with signers for each ecosystem!
+To start integrating with the Skip Go API, initialize a `SkipClient` instance. This `skipClient` provides helper methods for common actions such as querying assets and chains, constructing routes, and executing transactions.
 
-We're going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions. 
-Note that only a Cosmos signer is required for this example.
+
 
 ```ts
 import { SkipClient } from "@skip-router/client";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-import { createWalletClient } from "viem";
-import { mainnet } from "viem/chains";
-
 const skipClient = new SkipClient({
-    getCosmosSigner: async (chainID) => {
-        const offlineSigner = window.keplr?.getOfflineSigner(chainID);
-        if (!offlineSigner) throw new Error("Keplr not installed");
-        return offlineSigner;
-    },
-    // optional for this example
-    getEVMSigner: async () => {
-        const ethereum = window.ethereum;
-        if (!ethereum) throw new Error("MetaMask not installed");
-        const client = createWalletClient({
-          chain: mainnet,
-          transport: custom(window.ethereum),
-        });
-        return client;
-    },
-    // optional for this example
-    getSVMSigner: async () => {
-        const phantom = new PhantomWalletAdapter();
-        return phantom;
-    }
+  getCosmosSigner: async (chainID) => {
+    const offlineSigner = window.keplr?.getOfflineSigner(chainID);
+    if (!offlineSigner) throw new Error("Keplr not installed");
+    return offlineSigner;
+  }
 });
 ```
+</Step>
 
-### 3\. Request a Quote
+<Step title="Get a Route">
 
-Now, we can use the `SkipClient.route` function to request a quote & route to swap USDC on Noble to TIA on Celestia.
-
-After initializing your `skipClient` add the following::
+Now, we can use the `SkipClient.route` function to request a quote and route to swap USDC on Noble to TIA on Celestia.
 
 ```ts
 const route = await skipClient.route({
@@ -100,64 +57,43 @@ const route = await skipClient.route({
   destAssetDenom: 'utia',
   destAssetChainID: 'celestia',
   amountIn: '1000000', // 1 uusdc
-  smartSwapOptions: {
-    splitRoutes: true,
-  },
+  smartRelay: true
 });
-
 ```
 
 <Info>
  **Understanding the Route Response**
 
-The route response contains important information about the swap process. Key outputs include:
+The route response contains important information about the swap process:
 
 - **`amountOut`**: The estimated amount the user will receive after the swap, net of all fees and price impact
 - **`requiredChainAddresses`**: Chain IDs where you need to provide user addresses when generating the transaction
 - **`operations`**: Steps involved in moving from the source to the destination token
 
-For more details, see the [/v2/fungible/route](/api-reference/getroutev2) reference docs.
+For more details, see the [/route](/api-reference/prod/fungible/post-v2fungibleroute) endpoint reference.
 
 </Info>
 
- <Note>
-**Adding a fee for yourself**
+</Step> <Step title="Get Required Addresses">
 
-You can your set your own swap fee by setting `cumulativeAffiliateFeeBPS` to the total fee amount you want to collect from the user, measured in hundredths of a percent (aka "bips").
+After generating a route, you need to provide user addresses for the required chains. The `route.requiredChainAddresses` array lists the chain IDs for which addresses are needed.
 
-Learn more about [setting affilate fees](/affiliate-fees)
-
-</Note>
-### 4\. Get Required Addresses
-
-With the route response available, we can now use our signer to retrieve the list of chains where user or receiver addresses are required to execute the route.
-
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipClient.executeRoute` method.
-
-The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use.
-
-<Warning>
-**Do Not Derive Addresses Across Chains**
-
-Always request the user address from the corresponding wallet or signer for each chain. Do not attempt to derive an address on one chain from an address on another chain. This can result in addresses the user cannot sign for, especially if the chains use different address derivation methods.
-
-For more details on handling cross-chain failures, see [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases).
+ <Warning>
+ **Only use addresses your user can sign for.**
+ Funds could get stuck in any address you provide, including intermediate chains in certain failure conditions. Ensure your user can sign for each address you provide. 
+See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details.
 </Warning>
 
-
-We recommend storing the user's addresses and creating a function like getAddress that retrieves the address based on the chain ID.
-
-Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry:
+We recommend storing the user's addresses and creating a function like `getAddress` that retrieves the address based on the chain ID (see an example [here](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99)). 
 
 ```ts
-const userAddresses = route.requiredChainAddresses.map(chainID => {
-  // The userAddresses array must have the same order and length as requiredChainAddresses
-  return {
-    chainID: chainID,
-    address: getAddress(chainID),
-  };
-});
-
+// get user addresses for each requiredChainAddress to execute the route
+  const userAddresses = await Promise.all(
+  route.requiredChainAddresses.map(async (chainID) => ({
+    chainID,
+    address: await getAddress(chainID),
+  }))
+);
 ```
 
 <Warning>
@@ -169,29 +105,24 @@ If you attempt to derive an address on one chain from an address on another chai
 
 </Warning>
 
-### 5\. Execute the route!
+</Step> <Step title="Execute the Route">
 
-Finally, use the `SkipClient.executeRoute` method to create, sign, submit, and track the transaction.
-
-Include optional callbacks on broadcast, track and completion to update your UI as the transaction progresses.
+Once you have a route, you can execute it in a single function call by passing in the route, the user addresses for at least the chains the route includes, and optional callback functions. This also registers the transaction for tracking.
 
 ```ts
 await skipClient.executeRoute({
   route,
   userAddresses,
   // Executes after all of the operations triggered by a user's signature complete.
-  // For multi-tx routes that require multiple user signatures, this will be called once for each tx in sequence
-  onTransactionCompleted: (chainID, txHash, status) => {
+  onTransactionCompleted: async (chainID, txHash, status) => {
     console.log(
       `Route completed with tx hash: ${txHash} & status: ${status.state}`
     );
   },
-  // called after the transaction that the user signs gets broadcast on chain
-  onTransactionBroadcast: ({ txHash, chainID }) => {
+  onTransactionBroadcast: async ({ txHash, chainID }) => {
     console.log(`Transaction broadcasted with tx hash: ${txHash}`);
   },
-  // called after the transaction that the user signs is successfully registered for tracking
-  onTransactionTracked: ({ txHash, chainID }) => {
+  onTransactionTracked: async ({ txHash, chainID }) => {
     console.log(`Transaction tracked with tx hash: ${txHash}`);
   },
 });
@@ -199,9 +130,11 @@ await skipClient.executeRoute({
 
 Once the transaction is complete, you'll have new TIA in your Celestia address!
 
- <Check>
+<Info>
 **Need Help or Have Feedback?**
 
 Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
 
- </Check>
+</Info>
+
+</Step> </Steps>

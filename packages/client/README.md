@@ -12,6 +12,10 @@ TypeScript library that streamlines interaction with the Skip Go API, enabling c
 npm install @skip-go/client
 ```
 
+```bash
+yarn add @skip-go/client
+```
+
 ## Usage
 
 Follow the [Getting Started](https://docs.skip.build/go/client/getting-started) guide to begin your integration.
