@@ -118,10 +118,6 @@ export class SkipClient {
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
 
-    if (!Object.keys(this.endpointOptions).length) {
-      console.warn('Warning: You are using unreliable public endpoints. We strongly reccomend overriding them via endpointOptions for use beyond development settings.');
-    }
-
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
         options.chainIDsToAffiliates
@@ -1488,6 +1484,8 @@ export class SkipClient {
         return endpointOptions.rpc;
       }
     }
+
+    console.warn('Warning: You are using unreliable public endpoints. We strongly reccomend overriding them via endpointOptions for use beyond development settings.');
 
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
