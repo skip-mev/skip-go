@@ -20,7 +20,7 @@ export const ConnectedWalletModal = createModal(
   (_modalProps: ModalProps) => {
     const modal = useModal();
     const sourceAsset = useAtomValue(sourceAssetAtom);
-    const { chainImage } = useGetAssetDetails({
+    const { chainImage, chainName } = useGetAssetDetails({
       assetDenom: sourceAsset?.denom,
       chainId: sourceAsset?.chainID,
     });
@@ -36,7 +36,7 @@ export const ConnectedWalletModal = createModal(
         <ModalHeader title="Connected Wallet" onClickBackButton={modal.remove}
           rightContent={() => {
             return (
-              <img src={chainImage} height={36} width={36} />
+              <img src={chainImage} height={36} width={36} title={chainName} />
             );
           }}
         />
@@ -57,6 +57,7 @@ export const ConnectedWalletModal = createModal(
                     style={{ objectFit: "cover" }}
                     src={sourceAccount?.wallet.logo}
                     alt={`${sourceAccount?.wallet.prettyName} logo`}
+                    title={sourceAccount?.wallet.prettyName}
                   />
                 )}
 

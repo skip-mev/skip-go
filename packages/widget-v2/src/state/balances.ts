@@ -18,6 +18,7 @@ export const skipBalancesAtom = atomWithQuery((get) => {
 
       return skip.balances(params);
     },
+    refetchInterval: 1000 * 60,
     retry: 1,
   };
 });

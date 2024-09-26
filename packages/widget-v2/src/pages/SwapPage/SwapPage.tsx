@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
@@ -30,7 +30,6 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useGetAccount } from "@/hooks/useGetAccount";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   useInsufficientSourceBalance,
@@ -38,7 +37,7 @@ import {
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { skipBalancesRequestAtom } from "@/state/balances";
+import { useSourceAccount } from "@/hooks/useSourceAccount";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -60,7 +59,6 @@ export const SwapPage = () => {
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const historyModal = useModal(TransactionHistoryModal);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
@@ -68,30 +66,7 @@ export const SwapPage = () => {
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
-  const getAccount = useGetAccount();
-
-  const sourceAccount = getAccount(sourceAsset?.chainID);
-
-  useEffect(() => {
-    const allBalancesRequest = assets?.reduce((acc, asset) => {
-      const address = getAccount(asset.chainID)?.address;
-      if (address) {
-        if (acc[asset.chainID]?.denoms) {
-          acc[asset.chainID].denoms.push(asset.denom);
-        } else {
-          acc[asset.chainID] = {
-            address: address,
-            denoms: [asset.denom],
-          };
-        }
-      }
-      return acc;
-    }, {} as Record<string, { address: string, denoms: string[] }>);
-
-    setSkipBalancesRequest({
-      chains: allBalancesRequest || {}
-    });
-  }, [assets, chains, getAccount, isWaitingForNewRoute, setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
+  const sourceAccount = useSourceAccount();
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
