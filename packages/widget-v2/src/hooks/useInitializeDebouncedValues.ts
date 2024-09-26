@@ -2,7 +2,7 @@ import { sourceAssetAtom, debouncedSourceAssetAmountAtom, debouncedDestinationAs
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
-export const useInitialize = () => {
+export const useInitializeDebouncedValues = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const destinationAsset = useAtomValue(destinationAssetAtom);
   const direction = useAtomValue(swapDirectionAtom);
