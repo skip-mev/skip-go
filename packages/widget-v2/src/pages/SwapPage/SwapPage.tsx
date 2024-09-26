@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
-import { Column, Row } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
@@ -33,16 +33,12 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { useAccount } from "@/hooks/useAccount";
 import { currentPageAtom, Routes } from "@/state/router";
-import { GhostButton, GhostButtonProps } from "@/components/Button";
-import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
-import styled, { css } from "styled-components";
 import {
   useInsufficientSourceBalance,
-  useSetMaxAmount,
 } from "./useSetMaxAmount";
-import { useSourceBalance } from "./useSourceBalance";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
+import { ConnectedWalletContent } from "./ConnectedWalletContent";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -65,14 +61,11 @@ export const SwapPage = () => {
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
-  const connectedWalletModal = useModal(ConnectedWalletModal);
   const historyModal = useModal(TransactionHistoryModal);
-  const sourceBalance = useSourceBalance();
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
 
-  const handleMaxButton = useSetMaxAmount();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const sourceAccount = useAccount(sourceAsset?.chainID);
@@ -112,18 +105,7 @@ export const SwapPage = () => {
     chainId: destinationAsset?.chainID,
   });
 
-  const formattedBalance = useMemo(() => {
-    if (sourceBalance === undefined || sourceBalance.error?.message) return "";
 
-    const amount = sourceBalance?.amount;
-    let formattedBalanceAmount = sourceBalance?.formattedAmount;
-
-    if (amount === "0") {
-      formattedBalanceAmount = amount;
-    }
-
-    return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
-  }, [sourceBalance, sourceDetails?.symbol]);
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -315,46 +297,7 @@ export const SwapPage = () => {
             onClick: () => historyModal.show()
           }}
           rightContent={
-            sourceAccount && (
-              <Row
-                gap={6}
-                style={{
-                  paddingRight: 13,
-                }}
-              >
-                <TransparentButton
-                  onClick={() => {
-                    connectedWalletModal.show();
-                  }}
-                  style={{
-                    padding: "8px 13px",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
-                  {sourceAccount && (
-                    <img
-                      style={{ objectFit: "cover" }}
-                      src={sourceAccount?.wallet.logo}
-                      height={16}
-                      width={16}
-                    />
-                  )}
-                  {formattedBalance}
-                </TransparentButton>
-
-                <TransparentButton
-                  disabled={!sourceBalance || sourceBalance?.amount === "0"}
-                  onClick={handleMaxButton}
-                  style={{
-                    padding: "8px 13px",
-                    alignItems: "center",
-                  }}
-                >
-                  Max
-                </TransparentButton>
-              </Row>
-            )
+            <ConnectedWalletContent />
           }
         />
         <Column align="center">
@@ -408,19 +351,3 @@ export const SwapPage = () => {
     </>
   );
 };
-
-const TransparentButton = styled(GhostButton).attrs({
-  as: "button",
-}) <GhostButtonProps>`
-  ${({ theme, onClick, secondary, disabled }) =>
-    onClick &&
-    !disabled &&
-    css`
-      background-color: ${secondary
-        ? theme.secondary.background.normal
-        : theme.primary.ghostButtonHover};
-      cursor: pointer;
-    `};
-  padding: 10px 13px;
-  border-radius: 90px;
-`;

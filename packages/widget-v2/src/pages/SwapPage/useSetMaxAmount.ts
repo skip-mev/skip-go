@@ -40,7 +40,7 @@ export const useGasFeeTokenAmount = () => {
 };
 
 export const useMaxAmountTokenMinusFees = () => {
-  const sourceBalance = useSourceBalance();
+  const { data: sourceBalance } = useSourceBalance();
   const gasFeeTokenAmount = useGasFeeTokenAmount();
   const maxTokenAmount = sourceBalance?.amount;
 
