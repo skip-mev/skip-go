@@ -10,12 +10,14 @@ import { numberOfModalsOpenAtom } from "@/state/modal";
 import { useAtom, useSetAtom } from "jotai";
 import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
+import { useInitialize } from "@/hooks/useInitialize";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
 } & SkipClientOptions;
 
 export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  useInitialize();
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
@@ -38,6 +40,7 @@ export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
 };
 
 const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+  useInitialize();
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
