@@ -1,6 +1,9 @@
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
-import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
+import {
+  StyledSignatureRequiredContainer,
+  SwapPageFooter,
+} from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
@@ -12,10 +15,7 @@ import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed
 
 import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
-import {
-  ClientOperation,
-  getClientOperations,
-} from "@/utils/clientType";
+import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import {
   chainAddressesAtom,
   skipSubmitSwapExecutionAtom,
@@ -25,6 +25,8 @@ import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
 import { getSignRequiredChainIds } from "@/utils/operations";
+import { SignatureIcon } from "@/icons/SignatureIcon";
+import pluralize from "pluralize";
 
 enum SwapExecutionState {
   recoveryAddressUnset,
@@ -38,10 +40,9 @@ enum SwapExecutionState {
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const {
-    route,
-    overallStatus,
-  } = useAtomValue(swapExecutionStateAtom);
+  const { route, overallStatus, transactionDetailsArray } = useAtomValue(
+    swapExecutionStateAtom
+  );
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
@@ -87,6 +88,23 @@ export const SwapExecutionPage = () => {
     }
     return SwapExecutionState.ready;
   }, [chainAddresses, overallStatus, route?.requiredChainAddresses]);
+
+  const renderSignaturesStillRequired = useMemo(() => {
+    const signaturesRemaining =
+      (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
+    if (
+      (overallStatus === "pending" || overallStatus === "signing") &&
+      signaturesRemaining > 0
+    ) {
+      return (
+        <StyledSignatureRequiredContainer gap={5} align="center">
+          <SignatureIcon />
+          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)}{" "}
+          still required
+        </StyledSignatureRequiredContainer>
+      );
+    }
+  }, [overallStatus, route?.txsRequired, transactionDetailsArray?.length]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -184,7 +202,10 @@ export const SwapExecutionPage = () => {
         />
       )}
       {renderMainButton}
-      <SwapPageFooter showRouteInfo />
+      <SwapPageFooter
+        showRouteInfo={overallStatus === undefined}
+        rightContent={renderSignaturesStillRequired}
+      />
     </Column>
   );
 };

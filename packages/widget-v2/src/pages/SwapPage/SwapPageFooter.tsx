@@ -27,6 +27,7 @@ export const SwapPageFooterItems = ({
   );
 
   const renderRightContent = useMemo(() => {
+    if (rightContent) return rightContent;
     if (isLoading) return;
     if (showRouteInfo && route) {
       return (
@@ -48,7 +49,6 @@ export const SwapPageFooterItems = ({
         </Row>
       );
     }
-    return rightContent;
   }, [estimatedTime, isLoading, rightContent, route, showEstimatedTime, showRouteInfo]);
 
   return (
@@ -88,6 +88,6 @@ export const SwapPageFooter = ({
   );
 };
 
-const StyledSignatureRequiredContainer = styled(Row)`
+export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
 `;
