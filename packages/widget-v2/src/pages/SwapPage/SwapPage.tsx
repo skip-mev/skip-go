@@ -68,7 +68,9 @@ export const SwapPage = () => {
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
-  const sourceAccount = useAccount(sourceAsset?.chainID);
+  const getAccount = useAccount();
+
+  const sourceAccount = getAccount(sourceAsset?.chainID);
 
   useEffect(() => {
     console.log(assets, chains);
@@ -78,15 +80,21 @@ export const SwapPage = () => {
     const { address } = sourceAccount;
     if (!denom || !chainID || !address) return;
 
+    const allBalancesRequest = assets?.reduce((acc, chain) => {
+      const address = getAccount(chain.chainID)?.address;
+      if (address) {
+        acc[chain.chainID] = {
+          address: address,
+          denoms: assets.map(asset => asset.denom),
+        };
+      }
+      return acc;
+    }, {} as Record<string, { address: string, denoms: string[] }>);
+
     setSkipBalancesRequest({
-      chains: {
-        [chainID]: {
-          address,
-          denoms: [denom],
-        },
-      },
+      chains: allBalancesRequest || {}
     });
-  }, [assets, chains, isWaitingForNewRoute, setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
+  }, [assets, chains, getAccount, isWaitingForNewRoute, setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
