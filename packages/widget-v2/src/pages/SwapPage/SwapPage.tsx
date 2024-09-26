@@ -30,7 +30,7 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useAccount } from "@/hooks/useAccount";
+import { useGetAccount } from "@/hooks/useGetAccount";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   useInsufficientSourceBalance,
@@ -68,25 +68,22 @@ export const SwapPage = () => {
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
-  const getAccount = useAccount();
+  const getAccount = useGetAccount();
 
   const sourceAccount = getAccount(sourceAsset?.chainID);
 
   useEffect(() => {
-    console.log(assets, chains);
-    if (isWaitingForNewRoute) return;
-    if (!sourceAsset || !sourceAccount) return;
-    const { chainID, denom } = sourceAsset;
-    const { address } = sourceAccount;
-    if (!denom || !chainID || !address) return;
-
-    const allBalancesRequest = assets?.reduce((acc, chain) => {
-      const address = getAccount(chain.chainID)?.address;
+    const allBalancesRequest = assets?.reduce((acc, asset) => {
+      const address = getAccount(asset.chainID)?.address;
       if (address) {
-        acc[chain.chainID] = {
-          address: address,
-          denoms: assets.map(asset => asset.denom),
-        };
+        if (acc[asset.chainID]?.denoms) {
+          acc[asset.chainID].denoms.push(asset.denom);
+        } else {
+          acc[asset.chainID] = {
+            address: address,
+            denoms: [asset.denom],
+          };
+        }
       }
       return acc;
     }, {} as Record<string, { address: string, denoms: string[] }>);

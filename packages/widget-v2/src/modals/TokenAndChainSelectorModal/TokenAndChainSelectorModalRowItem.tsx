@@ -1,12 +1,19 @@
-import { Row } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { SmallText, Text } from "@/components/Typography";
-import { ChainWithAsset, ClientAsset, skipChainsAtom } from "@/state/skipClient";
+import {
+  ChainWithAsset,
+  ClientAsset,
+  skipChainsAtom,
+} from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
 import { Chain } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { useGetBalance } from "@/hooks/useGetBalance";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { formatUSD } from "@/utils/intl";
 
 export const isClientAsset = (
   item: ClientAsset | ChainWithAsset
@@ -33,26 +40,44 @@ export const TokenAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
 }: TokenAndChainSelectorModalRowItemProps) => {
-  const { isLoading: isChainsLoading, data: chains } = useAtomValue(skipChainsAtom);
+  const { isLoading: isChainsLoading, data: chains } =
+    useAtomValue(skipChainsAtom);
+  const getBalance = useGetBalance();
 
   if (!item || isChainsLoading) return skeleton;
 
   if (isClientAsset(item)) {
     const chain = chains?.find((chain) => chain.chainID === item.chainID);
+    const { data: balance } = getBalance(item.chainID, item.denom);
     return (
       <ModalRowItem
         key={`${index}${item.denom}`}
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <TokenAndChainSelectorModalRowItemLeftContent asset={item} chain={chain} />
+          <TokenAndChainSelectorModalRowItemLeftContent
+            asset={item}
+            chain={chain}
+          />
+        }
+        rightContent={
+          balance && (
+            <Column>
+              <SmallText normalTextColor>
+                {convertTokenAmountToHumanReadableAmount(
+                  balance.amount,
+                  balance.decimals
+                )}
+              </SmallText>
+              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            </Column>
+          )
         }
       />
     );
   }
 
   if (isChainWithAsset(item)) {
-
     const chain = chains?.find((chain) => chain.chainID === item.chainID);
     return (
       <ModalRowItem
@@ -76,7 +101,13 @@ export const TokenAndChainSelectorModalRowItem = ({
   }
 };
 
-const TokenAndChainSelectorModalRowItemLeftContent = ({ asset, chain }: { asset: ClientAsset, chain?: Chain }) => {
+const TokenAndChainSelectorModalRowItemLeftContent = ({
+  asset,
+  chain,
+}: {
+  asset: ClientAsset;
+  chain?: Chain;
+}) => {
   const assetDetails = useGetAssetDetails({
     assetDenom: asset.denom,
     chainId: asset.chainID,
@@ -90,9 +121,7 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({ asset, chain }: { asset:
         alt={`${assetDetails.symbol} logo`}
       />
       <Text>{assetDetails.symbol}</Text>
-      <SmallText>
-        {chain?.prettyName}
-      </SmallText>
+      <SmallText>{chain?.prettyName}</SmallText>
     </Row>
   );
 };

@@ -1,12 +1,12 @@
-import { useAccount } from "@/hooks/useAccount";
 import { skipBalancesAtom } from "@/state/balances";
+import { useSourceAccount } from "@/hooks/useSourceAccount";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 
 export const useSourceBalance = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
-  const sourceAccount = useAccount(sourceAsset?.chainID);
+  const sourceAccount = useSourceAccount();
   const { data: skipBalances, isLoading, refetch } = useAtomValue(skipBalancesAtom);
 
   const data = useMemo(() => {

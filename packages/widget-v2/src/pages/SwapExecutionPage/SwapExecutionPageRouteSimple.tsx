@@ -38,12 +38,12 @@ export const SwapExecutionPageRouteSimple = ({
   const source = {
     denom: sourceDenom,
     tokenAmount: firstOperation.amountIn,
-    chainID: firstOperation.fromChainID ?? firstOperation.chainID,
+    chainId: firstOperation.fromChainID ?? firstOperation.chainID,
   };
   const destination = {
     denom: destinationDenom,
     tokenAmount: lastOperation.amountOut,
-    chainID: lastOperation.toChainID ?? lastOperation.chainID,
+    chainId: lastOperation.toChainID ?? lastOperation.chainID,
   };
 
   const operationIndexBeforeLastOperation = operations.length - 2;

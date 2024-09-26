@@ -9,13 +9,13 @@ import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
-import { useAccount } from "@/hooks/useAccount";
+import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
-  chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
   isSignRequired?: boolean;
@@ -30,7 +30,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
 export const SwapExecutionPageRouteDetailedRow = ({
   denom,
   tokenAmount,
-  chainID,
+  chainId,
   status,
   explorerLink,
   isSignRequired,
@@ -42,12 +42,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
-    chainId: chainID,
+    chainId,
     tokenAmount,
   });
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const account = useAccount(chainID);
+  const getAccount = useGetAccount();
+  const account = getAccount(chainId);
 
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
@@ -59,7 +60,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         };
       case "intermediary": {
         const selected = Object.values(chainAddresses).find(
-          (chainAddress) => chainAddress.chainID === chainID
+          (chainAddress) => chainAddress.chainID === chainId
         );
         return {
           address: selected?.address,
@@ -80,13 +81,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         };
       }
     }
-  }, [
-    account?.address,
-    account?.wallet.logo,
-    chainAddresses,
-    chainID,
-    context,
-  ]);
+  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -116,10 +111,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
             <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
               {assetDetails?.amount}
             </StyledAssetAmount>
-            <SmallText normalTextColor>
-              {assetDetails?.symbol}
-            </SmallText>
-            <StyledChainName title={assetDetails?.chainName}> on {assetDetails?.chainName}</StyledChainName>
+            <SmallText normalTextColor>{assetDetails?.symbol}</SmallText>
+            <StyledChainName title={assetDetails?.chainName}>
+              {" "}
+              on {assetDetails?.chainName}
+            </StyledChainName>
             {explorerLink && (
               <Link href={explorerLink} target="_blank">
                 <SmallText>
@@ -129,11 +125,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
             )}
           </Row>
           {source.address && (
-            <StyledButton onClick={() => {
-              if (source.address) {
-                navigator.clipboard.writeText(source.address);
-              }
-            }}>
+            <StyledButton
+              onClick={() => {
+                if (source.address) {
+                  navigator.clipboard.writeText(source.address);
+                }
+              }}
+            >
               {source.image && (
                 <img
                   src={source.image}
@@ -142,17 +140,17 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <SmallText monospace title={source.address}>{getTruncatedAddress(source.address)}</SmallText>
+              <SmallText monospace title={source.address}>
+                {getTruncatedAddress(source.address)}
+              </SmallText>
             </StyledButton>
           )}
         </Row>
-        {
-          isSignRequired && (
-            <SmallText color={theme.warning.text}>Signature required</SmallText>
-          )
-        }
-      </Column >
-    </Row >
+        {isSignRequired && (
+          <SmallText color={theme.warning.text}>Signature required</SmallText>
+        )}
+      </Column>
+    </Row>
   );
 };
 

@@ -11,13 +11,13 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
-import { useAccount } from "@/hooks/useAccount";
+import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
-  chainID: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
@@ -29,7 +29,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
 export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   tokenAmount,
-  chainID,
+  chainId,
   status,
   destination,
   onClickEditDestinationWallet,
@@ -41,7 +41,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
-    chainId: chainID,
+    chainId,
     tokenAmount,
   });
 
@@ -55,7 +55,8 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const Icon = iconMap[icon];
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const account = useAccount(chainID);
+  const getAccount = useGetAccount();
+  const account = getAccount(chainId);
 
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);

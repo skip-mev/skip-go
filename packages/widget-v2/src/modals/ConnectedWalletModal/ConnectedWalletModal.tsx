@@ -4,12 +4,13 @@ import { createModal, ModalProps, useModal } from "@/components/Modal";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "@/components/ModalHeader";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text } from "@/components/Typography";
-import { useAccount } from "@/hooks/useAccount";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
 import { WalletSelectorModal } from "../WalletSelectorModal/WalletSelectorModal";
+import { useSourceAccount } from "@/hooks/useSourceAccount";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -23,8 +24,8 @@ export const ConnectedWalletModal = createModal(
       assetDenom: sourceAsset?.denom,
       chainId: sourceAsset?.chainID,
     });
-    const sourceAccount = useAccount(sourceAsset?.chainID);
-    const address = `${sourceAccount?.address.slice(0, 9)}...${sourceAccount?.address.slice(-5)}`;
+    const sourceAccount = useSourceAccount();
+    const address = getTruncatedAddress(sourceAccount?.address);
     const wallets = useWalletList(sourceAsset?.chainID);
     const connectedWallet = wallets.find((wallet) => wallet.walletName === sourceAccount?.wallet.name);
 
