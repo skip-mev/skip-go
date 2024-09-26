@@ -6134,6 +6134,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@keplr-wallet/types@npm:^0.12":
+  version: 0.12.129
+  resolution: "@keplr-wallet/types@npm:0.12.129"
+  dependencies:
+    long: ^4.0.0
+  checksum: a6612f10b231fddc49207eebfe14ec90291b8b4fc4940ebf79bdbc1a17a36b1673edcfab6196798442929fb03414fdb31db535f61842f28347776740d3a46123
+  languageName: node
+  linkType: hard
+
 "@keplr-wallet/types@npm:^0.12.125":
   version: 0.12.125
   resolution: "@keplr-wallet/types@npm:0.12.125"
@@ -6476,6 +6485,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/json-rpc-engine@npm:^9.0.1, @metamask/json-rpc-engine@npm:^9.0.3":
+  version: 9.0.3
+  resolution: "@metamask/json-rpc-engine@npm:9.0.3"
+  dependencies:
+    "@metamask/rpc-errors": ^6.3.1
+    "@metamask/safe-event-emitter": ^3.0.0
+    "@metamask/utils": ^9.1.0
+  checksum: 519680dccba47bde30b1d8733765d4ebeb489e950b24b09d885b394eacd8e8a29d76c601be72021491c38bd0fc188d76eddcfaf81835ea053c1696f2367865ab
+  languageName: node
+  linkType: hard
+
 "@metamask/json-rpc-middleware-stream@npm:^6.0.2":
   version: 6.0.2
   resolution: "@metamask/json-rpc-middleware-stream@npm:6.0.2"
@@ -6497,6 +6517,18 @@ __metadata:
     "@metamask/utils": ^8.3.0
     readable-stream: ^3.6.2
   checksum: ff11ad3ff0ec27530efc53c4e6543661648f437dacdd58797449307e20dbc428b479cd8d1e9767797268b98d0445bd6f1986820a8c855faeef01d5c03b55323b
+  languageName: node
+  linkType: hard
+
+"@metamask/json-rpc-middleware-stream@npm:^8.0.1":
+  version: 8.0.3
+  resolution: "@metamask/json-rpc-middleware-stream@npm:8.0.3"
+  dependencies:
+    "@metamask/json-rpc-engine": ^9.0.3
+    "@metamask/safe-event-emitter": ^3.0.0
+    "@metamask/utils": ^9.1.0
+    readable-stream: ^3.6.2
+  checksum: d396bedc119259b6507449d52df30f62be131f42d85f6bfb556ea920cbd92711f9dd94f20c9a8600f0f0d385dfdf7c4c0f71cdd896fb8c3463ee48689ee51ce4
   languageName: node
   linkType: hard
 
@@ -6590,6 +6622,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/providers@npm:^17.2":
+  version: 17.2.0
+  resolution: "@metamask/providers@npm:17.2.0"
+  dependencies:
+    "@metamask/json-rpc-engine": ^9.0.1
+    "@metamask/json-rpc-middleware-stream": ^8.0.1
+    "@metamask/object-multiplex": ^2.0.0
+    "@metamask/rpc-errors": ^6.3.1
+    "@metamask/safe-event-emitter": ^3.1.1
+    "@metamask/utils": ^9.0.0
+    detect-browser: ^5.2.0
+    extension-port-stream: ^4.1.0
+    fast-deep-equal: ^3.1.3
+    is-stream: ^2.0.0
+    readable-stream: ^3.6.2
+  peerDependencies:
+    webextension-polyfill: ^0.10.0 || ^0.11.0 || ^0.12.0
+  checksum: 56e5a974b91699b2d0c5541a61fc6672c34e93eac838cd157ad979847e8885210d90034c25b06856d65d2be6cf42e8047b15a50945fe39e84caadc1b206c1bf4
+  languageName: node
+  linkType: hard
+
 "@metamask/rpc-errors@npm:^5.1.1":
   version: 5.1.1
   resolution: "@metamask/rpc-errors@npm:5.1.1"
@@ -6600,7 +6653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/rpc-errors@npm:^6.0.0":
+"@metamask/rpc-errors@npm:^6.0.0, @metamask/rpc-errors@npm:^6.3.1":
   version: 6.3.1
   resolution: "@metamask/rpc-errors@npm:6.3.1"
   dependencies:
@@ -6842,6 +6895,23 @@ __metadata:
     semver: ^7.5.4
     uuid: ^9.0.1
   checksum: 01f2c71a8f06158d5335bfe96bfd2f3aa39ec6b2323c5d0ff1d3136071a3e8ff7c1804d640ba1d4e07f96f3e68a95ff7729ddfcd34b373e5fefd86d6ef12d034
+  languageName: node
+  linkType: hard
+
+"@metamask/utils@npm:^9.1.0":
+  version: 9.2.1
+  resolution: "@metamask/utils@npm:9.2.1"
+  dependencies:
+    "@ethereumjs/tx": ^4.2.0
+    "@metamask/superstruct": ^3.1.0
+    "@noble/hashes": ^1.3.1
+    "@scure/base": ^1.1.3
+    "@types/debug": ^4.1.7
+    debug: ^4.3.4
+    pony-cause: ^2.1.10
+    semver: ^7.5.4
+    uuid: ^9.0.1
+  checksum: 1a0c842d6fe490bb068c74c6c0684a3e5fabdadcf653b1c83bc69832e9e515fbae5809be20ddfc5c31715cd3d90cf18b73088d9c81f99028ff7b2c7160358c4e
   languageName: node
   linkType: hard
 
@@ -10553,6 +10623,8 @@ __metadata:
     "@initia/initia-registry": latest
     "@injectivelabs/utils": 1.14.6
     "@interchain-ui/react": ^1.23.13
+    "@keplr-wallet/types": ^0.12
+    "@metamask/providers": ^17.2
     "@penumbra-zone/bech32m": 7.0.0
     "@penumbra-zone/client": 18.0.0
     "@penumbra-zone/protobuf": 6.0.0
@@ -10577,6 +10649,7 @@ __metadata:
     "@types/qrcode": ^1.4.2
     "@types/react": ^18.0.6
     "@types/react-dom": ^18.0.2
+    "@vectis/extension-client": ^0.7
     autoprefixer: ^10.4.19
     chain-registry: latest
     clsx: ^2.1.1
@@ -14239,7 +14312,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vectis/extension-client@npm:^0.7.2":
+"@vectis/extension-client@npm:^0.7, @vectis/extension-client@npm:^0.7.2":
   version: 0.7.2
   resolution: "@vectis/extension-client@npm:0.7.2"
   checksum: 2539f7d6d4661245ffc4c507ae67246c8d89123840ce69e6f56fec67e8fc596098024cb90bf32a30a61fc77cc86ffb6af19b82d81afe72751b1bfafb208f4947
@@ -21475,6 +21548,17 @@ __metadata:
     readable-stream: ^3.6.2 || ^4.4.2
     webextension-polyfill: ">=0.10.0 <1.0"
   checksum: 4f51d2258a96154c2d916a8a5425636a2b0817763e9277f7dc378d08b6f050c90d185dbde4313d27cf66ad99d4b3116479f9f699c40358c64cccfa524d2b55bf
+  languageName: node
+  linkType: hard
+
+"extension-port-stream@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "extension-port-stream@npm:4.2.0"
+  dependencies:
+    readable-stream: ^3.6.2 || ^4.4.2
+  peerDependencies:
+    webextension-polyfill: ^0.10.0 || ^0.11.0 || ^0.12.0
+  checksum: 85559c82e3f3aa21462e234b30b7d53872708893664cd03f2f848af556cf0730cf2243b089efc9d40bbe9a4f73bd8fd19684db5a985329b0c4402b4f2fe26358
   languageName: node
   linkType: hard
 
