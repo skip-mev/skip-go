@@ -43,10 +43,8 @@ import {
 import { useSourceBalance } from "./useSourceBalance";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { useSyncPendingTransactionHistoryItems } from "./useSyncPendingTransactionHistoryItems";
 
 export const SwapPage = () => {
-  useSyncPendingTransactionHistoryItems();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);

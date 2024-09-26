@@ -67,7 +67,7 @@ export const TransactionHistoryModal = createModal(
                   }}
                 />
               )}
-              itemKey={(item) => item.timestamp.toString()}
+              itemKey={(item) => item.transactionDetails[0].txHash}
             />
           )}
         </StyledContainer>
