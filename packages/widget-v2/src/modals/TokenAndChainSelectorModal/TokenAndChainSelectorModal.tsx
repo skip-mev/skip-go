@@ -12,6 +12,8 @@ import {
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
 import { matchSorter } from "match-sorter";
+import { skipBalancesAtom } from "@/state/balances";
+import { useGetBalance } from "@/hooks/useGetBalance";
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
@@ -26,6 +28,7 @@ export const TokenAndChainSelectorModal = createModal(
     const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
+    const getBalance = useGetBalance();
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -34,8 +37,21 @@ export const TokenAndChainSelectorModal = createModal(
       if (!assets) return;
       return matchSorter(assets, searchQuery, {
         keys: ["recommendedSymbol", "symbol", "denom", "chainName"],
+      }).sort((assetA, assetB) => {
+        const { data: balanceA } = getBalance(assetA.chainID, assetA.denom);
+        const { data: balanceB } = getBalance(assetB.chainID, assetB.denom);
+
+        if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
+          return 1;
+        }
+
+        if (Number(balanceA?.valueUSD ?? 0) > Number(balanceB?.valueUSD ?? 0)) {
+          return -1;
+        }
+
+        return 0;
       });
-    }, [assets, searchQuery]);
+    }, [assets, getBalance, searchQuery]);
 
     const filteredChains = useMemo(() => {
       if (!chainsContainingAsset) return;
