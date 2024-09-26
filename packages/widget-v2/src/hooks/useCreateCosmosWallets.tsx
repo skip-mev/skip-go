@@ -57,6 +57,7 @@ export const useCreateCosmosWallets = () => {
             return bech32Address;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         disconnect: async () => {
@@ -73,7 +74,7 @@ export const useCreateCosmosWallets = () => {
 
     for (const wallet of cosmosWallets) {
       const getAddress = async ({ signRequired }: { signRequired?: boolean; context?: "recovery" | "destination" }) => {
-        if (wallet !== currentWallet) {
+        if (wallet !== currentWallet || !currentAddress) {
           if (!chainInfo) throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
           await getWallet(wallet).experimentalSuggestChain(chainInfo);
           await connect({
@@ -84,7 +85,8 @@ export const useCreateCosmosWallets = () => {
         } else if (currentAddress && isConnected && signRequired) {
           setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
         }
-        return currentAddress;
+        const address = (await getWallet(wallet).getKey(chainID)).bech32Address;
+        return address;
       };
       const walletInfo = getCosmosWalletInfo(wallet);
       const minimalWallet: MinimalWallet = {
@@ -111,9 +113,7 @@ export const useCreateCosmosWallets = () => {
         },
         getAddress,
         disconnect: async () => {
-          await disconnectAsync({
-            chainId: chainID
-          });
+          await disconnectAsync();
         },
         isWalletConnected: currentWallet === wallet
       };

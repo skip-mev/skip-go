@@ -570,6 +570,58 @@ export type AssetsBetweenChainsResponse = {
   assetsBetweenChains: AssetBetweenChains[];
 };
 
+export type BalanceRequestChainEntryJSON = {
+  address: string;
+  denoms: string[];
+};
+
+export type BalanceRequestChainEntry = {
+  address: string;
+  denoms: string[];
+};
+
+export type BalanceRequestJSON = {
+  chains: { [chain: string]: BalanceRequestChainEntryJSON };
+};
+
+export type BalanceRequest = {
+  chains: { [chain: string]: BalanceRequestChainEntry };
+};
+
+export type BalanceResponseDenomEntryJSON = {
+  amount: string;
+  decimals?: number;
+  formatted_amount: string;
+  price?: string;
+  value_usd?: string;
+  error?: ApiError;
+};
+
+export type BalanceResponseDenomEntry = {
+  amount: string;
+  decimals?: number;
+  formattedAmount: string;
+  price?: string;
+  valueUSD?: string;
+  error?: ApiError;
+};
+
+export type BalanceResponseChainEntryJSON = {
+  denoms: { [denom: string]: BalanceResponseDenomEntryJSON };
+};
+
+export type BalanceResponseChainEntry = {
+  denoms: { [denom: string]: BalanceResponseDenomEntry };
+};
+
+export type BalanceResponseJSON = {
+  chains: { [chain: string]: BalanceResponseChainEntryJSON };
+};
+
+export type BalanceResponse = {
+  chains: { [chain: string]: BalanceResponseChainEntry };
+};
+
 export type BridgesResponseJSON = {
   bridges: BridgeJSON[];
 };

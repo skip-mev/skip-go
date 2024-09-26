@@ -5,9 +5,10 @@ import {
   Chain,
   RouteRequest,
   SkipClientOptions,
+  BalanceRequest,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { apiURL, endpointOptions } from "@/constants/skipClientDefault";
+import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import {
   debouncedDestinationAssetAmountAtom,
   debouncedSourceAssetAmountAtom,
@@ -17,16 +18,63 @@ import {
   sourceAssetAtom,
   swapDirectionAtom,
 } from "./swapPage";
-import { getAmountWei } from "@/utils/number";
+import { currentPageAtom, Routes } from "./router";
+import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
+import { walletsAtom } from "./wallets";
+import { getWallet, WalletType } from "graz";
+import { getWalletClient } from "@wagmi/core";
+import { config } from "@/constants/wagmi";
+import { WalletClient } from "viem";
+import { solanaWallets } from "@/constants/solana";
+import { Adapter } from "@solana/wallet-adapter-base";
+import { defaultTheme, Theme } from "@/widget/theme";
+import { errorAtom } from "./errorPage";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL,
+  apiURL: prodApiUrl,
   endpointOptions,
 });
 
+export const themeAtom = atom<Theme>(defaultTheme);
+
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
-  return new SkipClient(options);
+  const wallets = get(walletsAtom);
+
+  return new SkipClient({
+    ...options,
+    getCosmosSigner: async (chainID) => {
+      if (!wallets.cosmos) {
+        throw new Error("getCosmosSigner error: no cosmos wallet");
+      }
+      const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+      if (!wallet) {
+        throw new Error("getCosmosSigner error: wallet not found");
+      }
+      const key = await wallet.getKey(chainID);
+
+      return key.isNanoLedger
+        ? wallet.getOfflineSignerOnlyAmino(chainID)
+        : wallet.getOfflineSigner(chainID);
+    },
+    // @ts-expect-error having a different viem version
+    getEVMSigner: async (chainID) => {
+      const evmWalletClient = (await getWalletClient(config, {
+        chainId: parseInt(chainID),
+      })) as WalletClient;
+
+      return evmWalletClient;
+    },
+    // @ts-expect-error solanaWallet is not a merged Adapter
+    getSVMSigner: async () => {
+      const walletName = wallets.svm?.walletName;
+      if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
+      const solanaWallet = solanaWallets.find((w) => w.name === walletName);
+      if (!solanaWallet)
+        throw new Error("getSVMSigner error: wallet not found");
+      return solanaWallet as Adapter;
+    },
+  });
 });
 
 export type ClientAsset = Asset & {
@@ -103,33 +151,53 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
+export const skipBalancesRequestAtom = atom<BalanceRequest | undefined>();
+
+export const skipBalancesAtom = atomWithQuery((get) => {
+  const skip = get(skipClient);
+  const params = get(skipBalancesRequestAtom);
+
+  return {
+    queryKey: ["skipBalances", params],
+    queryFn: async () => {
+      if (!params) {
+        throw new Error("No balance request provided");
+      }
+
+      return skip.balances(params);
+    },
+    retry: 1,
+  };
+});
+
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
 
   if (
     !sourceAsset?.chainID ||
     !sourceAsset.denom ||
     !destinationAsset?.chainID ||
-    !destinationAsset.denom ||
-    isInvertingSwap
+    !destinationAsset.denom
   ) {
     return undefined;
   }
   const amount =
     direction === "swap-in"
       ? {
-        amountIn:
-          getAmountWei(sourceAssetAmount, sourceAsset.decimals) || "0",
+        amountIn: convertHumanReadableAmountToCryptoAmount(
+          sourceAssetAmount ?? "0",
+          sourceAsset.decimals
+        ),
       }
       : {
-        amountOut:
-          getAmountWei(destinationAssetAmount, destinationAsset.decimals) ||
-          "0",
+        amountOut: convertHumanReadableAmountToCryptoAmount(
+          destinationAssetAmount ?? "0",
+          destinationAsset.decimals
+        ),
       };
 
   return {
@@ -144,8 +212,18 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 export const skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
+  const currentPage = get(currentPageAtom);
+  const isInvertingSwap = get(isInvertingSwapAtom);
+  const error = get(errorAtom);
 
   get(routeAmountEffect);
+
+  const queryEnabled =
+    params !== undefined &&
+    (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
+    !isInvertingSwap &&
+    currentPage === Routes.SwapPage &&
+    error === undefined;
 
   return {
     queryKey: ["skipRoute", params],
@@ -166,8 +244,7 @@ export const skipRouteAtom = atomWithQuery((get) => {
       });
     },
     retry: 1,
-    enabled:
-      !!params && (Number(params.amountIn) > 0 || Number(params.amountOut) > 0),
+    enabled: queryEnabled,
     refetchInterval: 1000 * 30,
   };
 });

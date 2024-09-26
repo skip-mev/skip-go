@@ -28,14 +28,12 @@ export const SwapDetails = ({
   // bridges: selectedBridges,
   destinationAsset,
   destinationChain,
-  gasRequired,
   // onBridgesChange,
   priceImpactPercent,
   priceImpactThresholdReached,
   route,
   sourceAsset,
-  sourceChain,
-  sourceFeeAsset,
+  sourceChain
 }: Props) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
@@ -229,34 +227,7 @@ export const SwapDetails = ({
             </SimpleTooltip>
             {slippage}%
           </dd>
-          {sourceFeeAsset && (
-            <>
-              <dt>Estimated Transaction Fee</dt>
-              {sourceChain.chainID !== 'stride-1' ? (
-                <dd>
-                  {gasRequired ?? '-'} {sourceFeeAsset.recommendedSymbol}
-                </dd>
-              ) : (
-                <dd>--</dd>
-              )}
-            </>
-          )}
-          {/* <dt>Gas Amount</dt>
-          <dd>
-            <SimpleTooltip label="Click to change gas multiplier">
-              <button
-                className={cn(
-                  "mr-1 inline-flex items-center gap-1 p-1 text-xs transition-colors",
-                  "text-red-500 hover:bg-neutral-100",
-                  "rounded",
-                )}
-                onClick={() => disclosure.open("settingsDialog")}
-              >
-                <PencilSquareIcon className="h-3 w-3" />
-              </button>
-            </SimpleTooltip>
-            {parseFloat(gasAmount).toLocaleString()}
-          </dd> */}
+
           {bridgingFee && (
             <>
               <dt>Bridging Fee</dt>

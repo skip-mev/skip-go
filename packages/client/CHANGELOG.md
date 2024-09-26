@@ -1,5 +1,29 @@
 # @skip-go/client
 
+## 0.9.3
+
+### Patch Changes
+
+- b114667: update client to include solana support via public RPC and show warning when public infrastructure is not overriden
+
+## 0.9.2
+
+### Patch Changes
+
+- 4d51d49: Update balances API url
+
+## 0.9.1
+
+### Patch Changes
+
+- 950e8ee: Use POST method for balance endpoint
+
+## 0.9.0
+
+### Minor Changes
+
+- ceda056: Add balance query endpoint
+
 ## 0.8.2
 
 ### Patch Changes

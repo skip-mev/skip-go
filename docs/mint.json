@@ -116,7 +116,8 @@
           "group": "Info",
           "pages": [
             "api-reference/prod/info/get-v2infochains",
-            "api-reference/prod/info/get-v2infobridges"
+            "api-reference/prod/info/get-v2infobridges",
+            "api-reference/prod/info/post-v2infobalances"
           ]
         },
         {

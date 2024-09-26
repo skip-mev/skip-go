@@ -4,19 +4,21 @@ import { useSetAtom } from "jotai";
 import { useCallback, } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount, useDisconnect, useConnect, } from "wagmi";
-
+import { useAccount, useConnect, useConnectors, } from "wagmi";
 
 export const useCreateEvmWallets = () => {
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const {
-    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId
+    connector: currentEvmConnector, address: evmAddress, isConnected: isEvmConnected, chainId,
   } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-  const { connectors, connectAsync } = useConnect();
-
+  const { connectAsync } = useConnect();
+  const connectors = useConnectors();
+  const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
   const createEvmWallets = useCallback((chainID: string) => {
     const isSei = chainID === "pacific-1";
+    if (isSei) {
+      chainID = sei.id.toString();
+    }
     const wallets: MinimalWallet[] = [];
     for (const connector of connectors) {
       const isWalletFound = wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
@@ -28,7 +30,13 @@ export const useCreateEvmWallets = () => {
       const evmGetAddress: MinimalWallet["getAddress"] = async ({
         signRequired,
       }) => {
-        if (connector.id !== currentEvmConnector?.id) {
+        if (isEvmConnected && (chainId !== Number(chainID)) && connector.id === currentEvmConnector?.id) {
+          await connector?.switchChain?.({
+            chainId: Number(chainID),
+          });
+          return evmAddress;
+        }
+        if (connector.id !== currentEvmConnector?.id || !isEvmConnected) {
           await connectAsync({ connector, chainId: Number(chainID) });
           setEvmWallet({ walletName: connector.id, chainType: "evm" });
         } else if (evmAddress && isEvmConnected && signRequired) {
@@ -51,6 +59,9 @@ export const useCreateEvmWallets = () => {
             });
             return;
           }
+          if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
+            await currentConnector?.disconnect();
+          }
           try {
             await connectAsync({ connector, chainId: Number(chainID) });
             setEvmWallet({ walletName: connector.id, chainType: "evm" });
@@ -66,10 +77,11 @@ export const useCreateEvmWallets = () => {
             return address;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         },
         disconnect: async () => {
-          await disconnectAsync();
+          await currentConnector?.disconnect();
           setEvmWallet(undefined);
           // TODO: onWalletDisconnected
         },
@@ -93,13 +105,14 @@ export const useCreateEvmWallets = () => {
             return seiAddress;
           } catch (error) {
             console.error(error);
+            throw error;
           }
         };
       }
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [chainId, connectAsync, connectors, currentEvmConnector?.id, disconnectAsync, evmAddress, isEvmConnected, setEvmWallet]);
+  }, [chainId, connectAsync, connectors, currentConnector, currentEvmConnector?.id, evmAddress, isEvmConnected, setEvmWallet]);
 
   return { createEvmWallets };
 };

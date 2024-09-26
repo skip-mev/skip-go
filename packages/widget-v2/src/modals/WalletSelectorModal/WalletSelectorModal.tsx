@@ -3,14 +3,14 @@ import { RenderWalletList } from "@/components/RenderWalletList";
 import { useWalletList } from "@/hooks/useWalletList";
 
 export type WalletSelectorModalProps = ModalProps & {
-  chainID?: string;
+  chainId?: string;
 };
 
 export const WalletSelectorModal = createModal(
   (modalProps: WalletSelectorModalProps) => {
-    const { chainID } = modalProps;
+    const { chainId } = modalProps;
     const modal = useModal();
-    const walletList = useWalletList(chainID);
+    const walletList = useWalletList(chainId);
 
     return (
       <RenderWalletList

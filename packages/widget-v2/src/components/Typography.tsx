@@ -43,6 +43,7 @@ export const SmallText = styled.p<TextProps>`
 `;
 
 export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
+  line-height: 15px;
   ${removeButtonStyles}
   cursor: pointer;
 `;

@@ -1,80 +1,80 @@
 import styled, { useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
-import { txState } from "./SwapExecutionPageRouteDetailedRow";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { destinationWalletAtom } from "@/state/swapPage";
-import { ClientOperation } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { useCallback, useMemo } from "react";
+import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteSimpleProps = {
   operations: ClientOperation[];
-  txStateMap: Record<number, txState>;
+  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
   onClickEditDestinationWallet?: () => void;
 };
 
 export const SwapExecutionPageRouteSimple = ({
   operations,
-  txStateMap,
-  onClickEditDestinationWallet,
+  operationToTransferEventsMap,
+  onClickEditDestinationWallet: _onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
+  const { transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
 
-  const [destinationWallet] = useAtom(destinationWalletAtom);
+  const getExplorerLink = useCallback((index: number) => {
+    return transactionDetailsArray[index]?.explorerLink;
+  }, [transactionDetailsArray]);
 
   const firstOperation = operations[0];
-  const overallSwapState = getOverallSwapState(txStateMap);
   const lastOperation = operations[operations.length - 1];
+  const sourceStatus = operationToTransferEventsMap?.[0]?.status;
+  const destinationStatus = operationToTransferEventsMap?.[operations.length - 1]?.status;
+
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
 
   const source = {
     denom: sourceDenom,
-    amount: firstOperation.amountIn,
+    tokenAmount: firstOperation.amountIn,
     chainID: firstOperation.fromChainID ?? firstOperation.chainID,
   };
   const destination = {
     denom: destinationDenom,
-    amount: lastOperation.amountOut,
+    tokenAmount: lastOperation.amountOut,
     chainID: lastOperation.toChainID ?? lastOperation.chainID,
   };
+
+  const operationIndexBeforeLastOperation = operations.length - 2;
+
+  const isSignRequired = getIsOperationSignRequired(operationIndexBeforeLastOperation, operations, firstOperation, lastOperation);
+
+  const onClickEditDestinationWallet = useMemo(() => {
+    if (isSignRequired) return;
+    if (overallStatus) return;
+    return _onClickEditDestinationWallet;
+  }, [isSignRequired, overallStatus, _onClickEditDestinationWallet]);
 
   return (
     <StyledSwapExecutionPageRoute justify="space-between">
       <SwapExecutionPageRouteSimpleRow
         {...source}
-        wallet={destinationWallet}
-        txState={overallSwapState}
+        status={sourceStatus}
+        context="source"
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
         {...destination}
-        wallet={destinationWallet}
         destination
         icon={ICONS.pen}
-        txState={overallSwapState}
+        status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
-        explorerLink={
-          overallSwapState !== "pending" ? "https://www.google.com/" : undefined
-        }
+        explorerLink={getExplorerLink(lastOperation.txIndex)}
+        context="destination"
       />
     </StyledSwapExecutionPageRoute>
   );
-};
-
-const getOverallSwapState = (txStateMap: Record<number, txState>) => {
-  const txStateArray = Object.values(txStateMap);
-
-  if (txStateArray.find((state) => state === "failed")) {
-    return "failed";
-  } else if (txStateArray.find((state) => state === "broadcasted")) {
-    return "broadcasted";
-  } else if (txStateArray.every((state) => state === "pending")) {
-    return "pending";
-  } else if (txStateArray.every((state) => state === "confirmed")) {
-    return "confirmed";
-  }
 };
 
 const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`

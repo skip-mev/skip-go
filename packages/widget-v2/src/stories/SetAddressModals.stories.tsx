@@ -2,25 +2,25 @@ import type { Meta } from "@storybook/react";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Row } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
-import { ManualAddressModal } from "@/modals/ManualAddressModal/ManualAddressModal";
+import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useEffect, useState } from "react";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { destinationAssetAtom } from "@/state/swapPage";
 import { useAtom } from "jotai";
 
 const meta = {
-  title: "Modals/ManualAddressModal",
+  title: "Modals/SetAddressModal",
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",
   },
   args: {},
-} satisfies Meta<typeof ManualAddressModal>;
+} satisfies Meta<typeof SetAddressModal>;
 
 export default meta;
 
-export const ManualAddressModalsExample = () => {
-  const modal = useModal(ManualAddressModal);
+export const SetAddressModalsExample = () => {
+  const modal = useModal(SetAddressModal);
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [shouldRender, setShouldRender] = useState(false);
 

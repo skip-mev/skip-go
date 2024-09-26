@@ -8,17 +8,17 @@ export type GhostButtonProps = {
 
 export const GhostButton = styled(SmallText).attrs({
   as: "button",
-})<GhostButtonProps>`
+}) <GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
   &:hover {
     ${({ theme, onClick, secondary, disabled }) =>
-      onClick &&
-      !disabled &&
-      css`
+    onClick &&
+    !disabled &&
+    css`
         background-color: ${secondary
-          ? theme.secondary.background.normal
-          : theme.primary.ghostButtonHover};
+        ? theme.secondary.background.normal
+        : theme.primary.ghostButtonHover};
         color: ${theme.primary.text.normal};
         cursor: pointer;
       `};
@@ -31,7 +31,6 @@ export const GhostButton = styled(SmallText).attrs({
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
   line-height: initial;
-
   ${({ disabled }) =>
     disabled
       ? css`
@@ -46,4 +45,10 @@ export const Button = styled.button<FlexProps>`
         `}
 
   ${flexProps};
+`;
+
+export const Link = styled(Button).attrs({
+  as: "a"
+})`
+  text-decoration: none;
 `;

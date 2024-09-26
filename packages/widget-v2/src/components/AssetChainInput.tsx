@@ -13,32 +13,38 @@ import {
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
+import { AssetAtom } from "@/state/swapPage";
 
 export type AssetChainInputProps = {
   value?: string;
   onChangeValue?: (value: string) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
-  selectedAssetDenom?: string;
+  selectedAsset?: AssetAtom;
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
+  badPriceWarning?: boolean;
 };
 
 export const AssetChainInput = ({
   value,
   onChangeValue,
-  selectedAssetDenom,
+  selectedAsset,
   handleChangeAsset,
   handleChangeChain,
   priceChangePercentage,
   isWaitingToUpdateInputValue,
+  badPriceWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [showPriceChangePercentage, setShowPriceChangePercentage] =
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
     useState(false);
+
+  const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
-    assetDenom: selectedAssetDenom,
+    assetDenom: selectedAsset?.denom,
     amount: value,
+    chainId: selectedAsset?.chainID,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,24 +174,25 @@ export const AssetChainInput = ({
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
             <SmallTextButton
+              color={badPriceWarning ? theme.error.text : undefined}
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
-              {assetDetails.formattedUsdAmount ?? 0}
+              {assetDetails.formattedUsdAmount ?? "--"}
             </SmallTextButton>
             <TinyTriangleIcon
               color={priceChangeColor}
               direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
-            {showPriceChangePercentage && (
+            {(showPriceChangePercentage) && (
               <SmallText color={priceChangeColor}>
                 {priceChangePercentage}%
               </SmallText>
             )}
           </Row>
         ) : (
-          <SmallText>{assetDetails.formattedUsdAmount ?? 0}</SmallText>
+          <SmallText>{assetDetails.formattedUsdAmount ?? "--"}</SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton
@@ -211,7 +218,7 @@ const StyledAssetChainInputWrapper = styled(Column)`
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
-const StyledInput = styled.input <{ isWaitingToUpdateInputValue?: boolean }>`
+const StyledInput = styled.input<{ isWaitingToUpdateInputValue?: boolean }>`
   all: unset;
   font-size: 38px;
   font-weight: 300;
@@ -219,7 +226,9 @@ const StyledInput = styled.input <{ isWaitingToUpdateInputValue?: boolean }>`
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
 
-  ${(props) => props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+  ${(props) =>
+    props.isWaitingToUpdateInputValue &&
+    "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
   @keyframes pulse {
     0% {
       opacity: 0.5;

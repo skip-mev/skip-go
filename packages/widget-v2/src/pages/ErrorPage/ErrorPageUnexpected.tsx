@@ -3,6 +3,8 @@ import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { errorAtom } from "@/state/errorPage";
+import { currentPageAtom, Routes } from "@/state/router";
+import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useTheme } from "styled-components";
 
@@ -13,9 +15,11 @@ export type ErrorPageUnexpectedProps = {
 export const ErrorPageUnexpected = ({ error }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
   const resetError = useResetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
 
   const onClickRetry = () => {
     resetError();
+    setCurrentPage(Routes.SwapPage);
   };
 
   return (

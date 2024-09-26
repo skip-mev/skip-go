@@ -2,26 +2,37 @@ import styled from "styled-components";
 import { Column, Row } from "@/components/Layout";
 import {
   SwapExecutionPageRouteDetailedRow,
-  txState,
 } from "./SwapExecutionPageRouteDetailedRow";
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation } from "@/utils/clientType";
+import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
+import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
+import { useAtom, useAtomValue } from "jotai";
+import { getIsOperationSignRequired } from "@/utils/operations";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  txStateMap: Record<number, txState>;
+  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
 };
 
-type operationTypeToIcon = Record<string, JSX.Element>;
+type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
 const operationTypeToIcon: operationTypeToIcon = {
-  axelarTransfer: <SwapExecutionBridgeIcon width={34} />,
-  swap: <SwapExecutionSwapIcon width={34} />,
-  transfer: <SwapExecutionSendIcon width={34} />,
+  // swap icon
+  [OperationType.swap]: <SwapExecutionSwapIcon width={34} />,
+  [OperationType.evmSwap]: <SwapExecutionSwapIcon width={34} />,
+  // bridge icon
+  [OperationType.transfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.axelarTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.cctpTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.hyperlaneTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.opInitTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  // send icon
+  [OperationType.bankSend]: <SwapExecutionSendIcon width={34} />,
 };
 
 const operationTypeToSimpleOperationType = {
@@ -39,9 +50,17 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  txStateMap,
+  operationToTransferEventsMap,
 }: SwapExecutionPageRouteDetailedProps) => {
+  const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
+  const [{ data: bridges }] = useAtom(skipBridgesAtom);
+  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
+
+  const getExplorerLink = useCallback((index: number) => {
+    return transactionDetailsArray[index]?.explorerLink;
+  }, [transactionDetailsArray]);
 
   const handleMouseEnterOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -57,62 +76,76 @@ export const SwapExecutionPageRouteDetailed = ({
     }));
   };
 
-  return (
-    <StyledSwapExecutionPageRoute justify="space-between">
-      {operations.map((operation, index) => {
-        const lastIndex = index === operations.length - 1;
+  const firstOperation = operations[0];
 
+  return (
+    <StyledSwapExecutionPageRoute>
+      <SwapExecutionPageRouteDetailedRow
+        tokenAmount={firstOperation.amountIn}
+        denom={firstOperation.denomIn}
+        chainID={firstOperation.fromChainID}
+        explorerLink={getExplorerLink(0)}
+        status={operationToTransferEventsMap[0]?.status}
+        key={`first-row-${firstOperation?.denomIn}`}
+        context="source"
+        index={0}
+      />
+      {operations.map((operation, index) => {
         const simpleOperationType =
           operationTypeToSimpleOperationType[operation.type];
 
         const getBridgeSwapVenue = () => {
-          const bridgeID = operation.bridgeID;
-          const swapID = operation.swapVenues?.[0]?.chainID;
+          const swapVenueId = operation.swapVenues?.[0]?.chainID;
+          const bridgeId = operation.bridgeID;
 
-          // return the name, not the ID
-          return bridgeID ?? swapID;
+          const bridge = bridges?.find(bridge => bridge.id === bridgeId);
+          const swapVenue = swapVenues?.find(swapVenue => swapVenue.chainID === swapVenueId);
+
+          const bridgeOrSwapVenue = {
+            name: bridge?.name ?? swapVenue?.name,
+            image: bridge?.logoURI ?? swapVenue?.logoUri,
+          };
+
+          return bridgeOrSwapVenue;
         };
 
-        const asset = lastIndex
-          ? {
-              amount: operation.amountOut,
-              denom: operation.denomOut ?? operation.denom,
-              chainID: operation.toChainID ?? operation.chainID,
-            }
-          : {
-              amount: operation.amountIn,
-              denom: operation.denomIn ?? operation.denom,
-              chainID: operation.fromChainID ?? operation.chainID,
-            };
+        const bridgeOrSwapVenue = getBridgeSwapVenue();
+        const nextOperation = operations[index + 1];
+        const isSignRequired = getIsOperationSignRequired(index, operations, nextOperation, operation);
+
+        const asset = {
+          tokenAmount: operation.amountOut,
+          denom: operation.denomOut,
+          chainID: operation.toChainID ?? operation.chainID,
+        };
+
         return (
           <>
+            <StyledOperationTypeAndTooltipContainer key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px", position: "relative" }} align="center">
+              <OperationTypeIconContainer
+                onMouseEnter={() => handleMouseEnterOperationType(index)}
+                onMouseLeave={() => handleMouseLeaveOperationType(index)}
+                justify="center"
+                key={`operation-${asset?.denom}-${index}`}
+              >
+                {operationTypeToIcon[operation.type]}
+              </OperationTypeIconContainer>
+              {tooltipMap?.[index] && (
+                <Tooltip>
+                  {simpleOperationType} with {bridgeOrSwapVenue.name}
+                  <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
+                </Tooltip>
+              )}
+            </StyledOperationTypeAndTooltipContainer>
             <SwapExecutionPageRouteDetailedRow
               {...asset}
-              txState={txStateMap[index]}
-              explorerLink={
-                txStateMap[index] !== "pending"
-                  ? "https://www.google.com/"
-                  : undefined
-              }
+              index={index}
+              context={index === operations.length - 1 ? "destination" : "intermediary"}
+              isSignRequired={isSignRequired}
+              status={operationToTransferEventsMap[index]?.status}
+              explorerLink={getExplorerLink(operations[index]?.txIndex)}
               key={`row-${asset?.denom}-${index}`}
             />
-            {operation !== operations[operations.length - 1] && (
-              <Row style={{ height: "25px" }} align="center">
-                <OperationTypeIconContainer
-                  onMouseEnter={() => handleMouseEnterOperationType(index)}
-                  onMouseLeave={() => handleMouseLeaveOperationType(index)}
-                  justify="center"
-                  key={`operation-${asset?.denom}-${index}`}
-                >
-                  {operationTypeToIcon[operation.type]}
-                </OperationTypeIconContainer>
-                {tooltipMap?.[index] && (
-                  <Tooltip>
-                    {simpleOperationType} with {getBridgeSwapVenue()}
-                  </Tooltip>
-                )}
-              </Row>
-            )}
           </>
         );
       })}
@@ -123,11 +156,14 @@ export const SwapExecutionPageRouteDetailed = ({
 const Tooltip = styled(SmallText).attrs({
   normalTextColor: true,
 })`
+  position: absolute;
+  left: 30px;
   padding: 10px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
   background-color: ${({ theme }) => theme.secondary.background.normal};
   box-sizing: border-box;
+  z-index: 1;
 `;
 
 const OperationTypeIconContainer = styled(Column).attrs({
@@ -144,4 +180,16 @@ const StyledSwapExecutionPageRoute = styled(Column)`
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;
+`;
+
+const StyledSwapVenueOrBridgeImage = styled.img`
+  margin-left: 5px;
+  object-fit: contain;
+  width: 10px;
+  height: 10px;
+`;
+
+const StyledOperationTypeAndTooltipContainer = styled(Row)`
+  position: relative;
+  height: 25px;
 `;

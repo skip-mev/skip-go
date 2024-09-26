@@ -5,33 +5,7 @@ import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 
-export const useWalletList = (chainID?: string) => {
-  const { createCosmosWallets } = useCreateCosmosWallets();
-  const { createEvmWallets } = useCreateEvmWallets();
-  const { createSolanaWallets } = useCreateSolanaWallets();
-
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainType = chains?.find(c => c.chainID === chainID)?.chainType;
-
-  const walletList = useMemo(() => {
-    if (!chainID) return [];
-    switch (chainType) {
-      case "cosmos":
-        return createCosmosWallets(chainID);
-      case "evm":
-        return createEvmWallets(chainID);
-      case "svm":
-        return createSolanaWallets();
-      default:
-        return [];
-    }
-  }, [chainID, chainType, createCosmosWallets, createEvmWallets, createSolanaWallets]);
-  return walletList;
-};
-
-// WIP
-export const useDestinationWalletList = (chainID?: string) => {
-
+export const useWalletList = (chainID?: string, destinationWalletList?: boolean) => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
@@ -42,10 +16,11 @@ export const useDestinationWalletList = (chainID?: string) => {
 
   let walletType = chainType;
   const isSei = chainID === "pacific-1";
-  if (isSei) {
-    walletType = "sei";
+  if (destinationWalletList) {
+    if (isSei) {
+      walletType = "sei";
+    }
   }
-
 
   const walletList = useMemo(() => {
     if (!chainID) return [];
