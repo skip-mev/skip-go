@@ -1,5 +1,5 @@
 import { useAccount } from "@/hooks/useAccount";
-import { skipBalancesAtom } from "@/state/skipClient";
+import { skipBalancesAtom } from "@/state/balances";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";

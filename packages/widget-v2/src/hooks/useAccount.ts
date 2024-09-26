@@ -10,7 +10,7 @@ import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 export const useAccount = (chainID?: string) => {
   const wallet = useAtomValue(walletsAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
-  const setCosmosWalelt = useSetAtom(cosmosWalletAtom);
+  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainType = chains?.find((c) => c.chainID === chainID)?.chainType;
@@ -34,7 +34,7 @@ export const useAccount = (chainID?: string) => {
     switch (chainType) {
       case "cosmos":
         if (walletType) {
-          setCosmosWalelt({
+          setCosmosWallet({
             walletName: walletType,
             chainType: "cosmos",
           });
@@ -59,7 +59,7 @@ export const useAccount = (chainID?: string) => {
       default:
         break;
     }
-  }, [chainType, evmAccount.connector, setCosmosWalelt, setEvmWallet, setSvmWallet, solanaWallet, walletType]);
+  }, [chainType, evmAccount.connector, setCosmosWallet, setEvmWallet, setSvmWallet, solanaWallet, walletType]);
   const account = useMemo(() => {
     switch (chainType) {
       case "cosmos":

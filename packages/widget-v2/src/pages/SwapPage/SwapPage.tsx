@@ -9,7 +9,6 @@ import {
   getChainsContainingAsset,
   skipChainsAtom,
   skipRouteAtom,
-  skipBalancesRequestAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -39,6 +38,7 @@ import {
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
+import { skipBalancesRequestAtom } from "@/state/balances";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -71,6 +71,7 @@ export const SwapPage = () => {
   const sourceAccount = useAccount(sourceAsset?.chainID);
 
   useEffect(() => {
+    console.log(assets, chains);
     if (isWaitingForNewRoute) return;
     if (!sourceAsset || !sourceAccount) return;
     const { chainID, denom } = sourceAsset;
@@ -85,13 +86,7 @@ export const SwapPage = () => {
         },
       },
     });
-  }, [
-    isWaitingForNewRoute,
-    setSkipBalancesRequest,
-    sourceAccount,
-    sourceAsset,
-    sourceAsset?.chainID,
-  ]);
+  }, [assets, chains, isWaitingForNewRoute, setSkipBalancesRequest, sourceAccount, sourceAsset, sourceAsset?.chainID]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,

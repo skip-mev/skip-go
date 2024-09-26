@@ -151,25 +151,6 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
   };
 });
 
-export const skipBalancesRequestAtom = atom<BalanceRequest | undefined>();
-
-export const skipBalancesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const params = get(skipBalancesRequestAtom);
-
-  return {
-    queryKey: ["skipBalances", params],
-    queryFn: async () => {
-      if (!params) {
-        throw new Error("No balance request provided");
-      }
-
-      return skip.balances(params);
-    },
-    retry: 1,
-  };
-});
-
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
