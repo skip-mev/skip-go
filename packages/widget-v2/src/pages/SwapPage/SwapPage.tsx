@@ -388,6 +388,7 @@ export const SwapPage = () => {
         <SwapPageFooter
           showRouteInfo
           disabled={isRouteError || isWaitingForNewRoute}
+          showEstimatedTime
           onClick={() =>
             swapDetailsModal.show({
               drawer: true,

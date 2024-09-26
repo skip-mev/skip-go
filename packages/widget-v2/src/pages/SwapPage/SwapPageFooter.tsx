@@ -6,17 +6,20 @@ import { SpeedometerIcon } from "@/icons/SpeedometerIcon";
 import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/skipClient";
-import { SkeletonElement } from "@/components/Skeleton";
 import { SignatureIcon } from "@/icons/SignatureIcon";
+import pluralize from "pluralize";
+import styled from "styled-components";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
   showRouteInfo?: boolean;
+  showEstimatedTime?: boolean;
 };
 
 export const SwapPageFooterItems = ({
   rightContent = null,
   showRouteInfo,
+  showEstimatedTime,
 }: SwapPageFooterItemsProps) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const estimatedTime = convertSecondsToMinutesOrHours(
@@ -24,34 +27,29 @@ export const SwapPageFooterItems = ({
   );
 
   const renderRightContent = useMemo(() => {
+    if (isLoading) return;
     if (showRouteInfo && route) {
       return (
         <Row align="center" gap={8}>
           <Row gap={4} align="center">
-            {isLoading ? (
-              <SkeletonElement width={40} height={16} />
-            ) : (
-              <>
-                <SignatureIcon />
-                {route?.txsRequired} tx required
-              </>
-            )}
+            <StyledSignatureRequiredContainer gap={5} align="center">
+              <SignatureIcon />
+              {route?.txsRequired}{" "}
+              {pluralize("Signature", route?.txsRequired)} required
+            </StyledSignatureRequiredContainer>
           </Row>
-          <Row gap={4} align="center">
-            {isLoading ? (
-              <SkeletonElement width={80} height={16} />
-            ) : estimatedTime ? (
-              <>
-                <SpeedometerIcon />
-                {estimatedTime}
-              </>
-            ) : null}
-          </Row>
+
+          {showEstimatedTime && estimatedTime && (
+            <Row gap={4} align="center">
+              <SpeedometerIcon />
+              {estimatedTime}
+            </Row>
+          )}
         </Row>
       );
     }
     return rightContent;
-  }, [estimatedTime, isLoading, rightContent, route, showRouteInfo]);
+  }, [estimatedTime, isLoading, rightContent, route, showEstimatedTime, showRouteInfo]);
 
   return (
     <>
@@ -67,10 +65,12 @@ export const SwapPageFooter = ({
   onClick,
   rightContent,
   showRouteInfo,
+  showEstimatedTime,
   ...props
 }: {
   onClick?: () => void;
-} & SwapPageFooterItemsProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+} & SwapPageFooterItemsProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <GhostButton
       gap={5}
@@ -82,7 +82,12 @@ export const SwapPageFooter = ({
       <SwapPageFooterItems
         rightContent={rightContent}
         showRouteInfo={showRouteInfo}
+        showEstimatedTime={showEstimatedTime}
       />
     </GhostButton>
   );
 };
+
+const StyledSignatureRequiredContainer = styled(Row)`
+  ${({ theme }) => `color: ${theme.warning.text}`};
+`;

@@ -126,7 +126,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
             )}
           </Row>
           {source.address && (
-            <StyledButton>
+            <StyledButton onClick={() => {
+              if (source.address) {
+                navigator.clipboard.writeText(source.address);
+              }
+            }}>
               {source.image && (
                 <img
                   src={source.image}
@@ -135,7 +139,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
+              <SmallText monospace title={source.address}>{getTruncatedAddress(source.address)}</SmallText>
             </StyledButton>
           )}
         </Row>

@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import pluralize from "pluralize";
 
 export function formatNumberWithCommas(str: string | number) {
   const parts = str.toString().split(".");
@@ -28,10 +29,10 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
     return;
   }
   if (seconds < 60) {
-    return `${seconds} seconds`;
+    return `${seconds} ${pluralize("second", seconds)}`;
   } else if (seconds < 3600) {
-    return `${Math.round(seconds / 60)} minutes`;
+    return `${Math.round(seconds / 60)} ${pluralize("minute", Math.round(seconds / 60))}`;
   } else {
-    return `${Math.round(seconds / 3600)} hours`;
+    return `${Math.round(seconds / 3600)} ${pluralize("hour", Math.round(seconds / 3600))}`;
   }
 };

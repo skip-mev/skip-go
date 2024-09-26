@@ -68,7 +68,9 @@ export const useInsufficientSourceBalance = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const [sourceAsset] = useAtom(sourceAssetAtom);
 
-  if (!maxAmountTokenMinusFees || !sourceAsset?.amount) return true;
+  if (!sourceAsset?.amount) return false;
+
+  if (!maxAmountTokenMinusFees) return true;
 
   if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
     return false;
