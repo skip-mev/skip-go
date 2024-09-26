@@ -43,10 +43,9 @@ To execute transactions, you need to set up signers for the ecosystems you plan 
 
 ### Signer Setup
 <CodeGroup>
-For Cosmos transactions, we'll use the **Keplr** wallet.
 
 ```ts Cosmos Signer
-// Ensure Keplr is installed and accessible
+// For Cosmos transactions, we'll use Keplr wallet from the window object
 const getCosmosSigner = async (chainID: string) => {
   const offlineSigner = await window.keplr?.getOfflineSigner(chainID);
   if (!offlineSigner) throw new Error("Keplr not installed or chain not added");
