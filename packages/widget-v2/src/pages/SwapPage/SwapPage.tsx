@@ -38,11 +38,9 @@ import {
 } from "./useSetMaxAmount";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { useSyncPendingTransactionHistoryItems } from "./useSyncPendingTransactionHistoryItems";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 
 export const SwapPage = () => {
-  useSyncPendingTransactionHistoryItems();
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
@@ -331,6 +329,7 @@ export const SwapPage = () => {
         <SwapPageFooter
           showRouteInfo
           disabled={isRouteError || isWaitingForNewRoute}
+          showEstimatedTime
           onClick={() =>
             swapDetailsModal.show({
               drawer: true,

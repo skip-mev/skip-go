@@ -20,6 +20,7 @@
     "dev:client": "yarn workspace @skip-go/client run watch",
     "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
+    "build:widgetv2": "yarn workspace widget-v2 run build",
     "build:nextjs": "yarn workspace nextjs build",
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",

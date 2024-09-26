@@ -126,7 +126,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
               <>
-                <img width="20" height="20" src={chain?.logoURI} />
+                <img width="20" height="20" src={chain?.logoURI} alt={chain?.prettyName} title={chain?.prettyName} />
                 {index !== chainsRoute.length - 1 && (
                   <RouteArrow color={modalProps.theme?.primary?.text.normal} />
                 )}

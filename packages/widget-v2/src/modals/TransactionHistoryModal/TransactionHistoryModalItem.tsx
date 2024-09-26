@@ -106,9 +106,9 @@ export const TransactionHistoryModalItem = ({
           <RenderAssetAmount {...source} />
           <HistoryArrowIcon color={theme.primary.text.lowContrast} />
           <RenderAssetAmount {...destination} />
-          <SmallText normalTextColor>
+          <StyledChainName normalTextColor title={destinationAssetDetails.chainName}>
             on {destinationAssetDetails.chainName}
-          </SmallText>
+          </StyledChainName>
         </Row>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
@@ -166,12 +166,25 @@ const RenderAssetAmount = ({
   return (
     <>
       <img height={20} width={20} src={assetImage} />
-      <SmallText normalTextColor>
+      <StyledAssetAmount normalTextColor title={amount}>
         {amount}
-      </SmallText>
+      </StyledAssetAmount>
       <SmallText normalTextColor>
         {asset?.recommendedSymbol ?? asset?.symbol}
       </SmallText>
     </>
   );
 };
+
+const StyledAssetAmount = styled(SmallText)`
+  max-width: 40px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
+const StyledChainName = styled(SmallText)`
+  max-width: 95px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+`;

@@ -113,10 +113,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
       >
         <Row align="center" justify="space-between">
           <Row gap={5}>
+            <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
+              {assetDetails?.amount}
+            </StyledAssetAmount>
             <SmallText normalTextColor>
-              {assetDetails?.amount} {assetDetails?.symbol}
+              {assetDetails?.symbol}
             </SmallText>
-            <SmallText> on {assetDetails?.chainName}</SmallText>
+            <StyledChainName title={assetDetails?.chainName}> on {assetDetails?.chainName}</StyledChainName>
             {explorerLink && (
               <Link href={explorerLink} target="_blank">
                 <SmallText>
@@ -126,7 +129,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
             )}
           </Row>
           {source.address && (
-            <StyledButton>
+            <StyledButton onClick={() => {
+              if (source.address) {
+                navigator.clipboard.writeText(source.address);
+              }
+            }}>
               {source.image && (
                 <img
                   src={source.image}
@@ -135,7 +142,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <SmallText monospace>{getTruncatedAddress(source.address)}</SmallText>
+              <SmallText monospace title={source.address}>{getTruncatedAddress(source.address)}</SmallText>
             </StyledButton>
           )}
         </Row>
@@ -261,4 +268,17 @@ const StyledLoadingOverlay = styled(Row) <{
   position: absolute;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.primary.background.normal};
+`;
+
+const StyledAssetAmount = styled(SmallText)`
+  max-width: 90px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
+const StyledChainName = styled(SmallText)`
+  max-width: 95px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;

@@ -1,11 +1,15 @@
 import { atom } from "jotai";
 import { SetStateAction } from "react";
 
-export function atomWithDebounce<T>(
-  initialValue: T,
+export function atomWithDebounce<T>({
+  initialValue,
   delayMilliseconds = 500,
   shouldDebounceOnReset = false,
-) {
+}: {
+  initialValue: T;
+  delayMilliseconds?: number;
+  shouldDebounceOnReset?: boolean;
+}) {
   const prevTimeoutAtom = atom<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );

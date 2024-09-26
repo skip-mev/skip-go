@@ -1,6 +1,7 @@
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { iconMap, ICONS } from "@/icons";
+import styled from "styled-components";
 
 export type SwapPageHeaderItemButton = {
   label: React.ReactNode;
@@ -22,7 +23,7 @@ export const SwapPageHeader = ({
   const LeftIcon = iconMap[leftButton?.icon || ICONS.none];
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
   return (
-    <Row justify="space-between">
+    <StyledSwapPageHeaderContainer justify="space-between">
       {leftButton && (
         <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
           <LeftIcon />
@@ -39,6 +40,10 @@ export const SwapPageHeader = ({
           </GhostButton>
         )}
       </Row>
-    </Row>
+    </StyledSwapPageHeaderContainer>
   );
 };
+
+const StyledSwapPageHeaderContainer = styled(Row)`
+  height: 32px;
+`;
