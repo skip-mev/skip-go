@@ -303,21 +303,66 @@ const CELESTIA_CHAIN = {
   ],
 };
 
-/** @deprecated */
+const SOLANA_CHAIN = {
+  chain_name: 'solana',
+  chain_id: 'solana',
+  pretty_name: 'Solana',
+  network_type: 'mainnet',
+  website: 'https://solana.com',
+  bech32_prefix: '',
+  daemon_name: '', // Not applicable for Solana
+  node_home: '',   // Not applicable for Solana
+  codebase: {
+    git_repo: 'https://github.com/solana-labs/solana',
+  },
+  logo_URIs: {
+    png: 'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/solana/asset/sol.png',
+  },
+  apis: {
+    rpc: [
+      {
+        address: 'https://api.mainnet-beta.solana.com',
+        provider: 'Solana Foundation',
+      },
+      {
+        address: 'https://mainnet.helius-rpc.com/?api-key=6cadbc95-3333-488f-a187-21ffd0c5fef3',
+        provider: 'Helius',
+      },
+    ],
+  },
+  explorers: [
+    {
+      kind: 'blockchain',
+      url: 'https://explorer.solana.com',
+      tx_page: 'https://explorer.solana.com/tx/${txHash}',
+      account_page: 'https://explorer.solana.com/address/${accountAddress}',
+    },
+    {
+      kind: 'Solscan',
+      url: 'https://solscan.io',
+      tx_page: 'https://solscan.io/tx/${txHash}',
+      account_page: 'https://solscan.io/account/${accountAddress}',
+    },
+  ],
+  images: [
+    {
+      png: 'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/solana/asset/sol.png',
+    },
+  ],
+};
+
 export function chains(): Chain[] {
-  const chains = chainRegistry.chains;
+  const registryChains = chainRegistry.chains;
+  const additionalChains = [DYDX_CHAIN, CELESTIA_CHAIN, SOLANA_CHAIN] as Chain[];
 
-  if (chains.findIndex((chain) => chain.chain_id === 'dydx-mainnet-1') === -1) {
-    chains.push(DYDX_CHAIN);
-  }
+  const existingChainIds = new Set(registryChains.map((chain) => chain.chain_id));
 
-  if (chains.findIndex((chain) => chain.chain_id === 'celestia') === -1) {
-    chains.push(CELESTIA_CHAIN);
-  }
+  const newChains = additionalChains.filter(
+    (chain) => !existingChainIds.has(chain.chain_id)
+  );
 
-  return chains;
+  return [...registryChains, ...newChains];
 }
-
 export function initiaChains(): Chain[] {
   const chains = initiaRegistry.chains as Chain[];
 

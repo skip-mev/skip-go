@@ -1485,6 +1485,8 @@ export class SkipClient {
       }
     }
 
+    console.warn('Warning: You are using unreliable public endpoints. We strongly reccomend overriding them via endpointOptions for use beyond development settings.');
+
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
