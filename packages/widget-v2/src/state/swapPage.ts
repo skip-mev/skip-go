@@ -2,7 +2,6 @@ import { atom } from "jotai";
 import { ClientAsset, skipRouteAtom } from "./skipClient";
 import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
-import { MinimalWallet } from "./wallets";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { atomWithStorage } from "jotai/utils";
 import { getLocalStorageValue } from "@/utils/misc";
