@@ -1,12 +1,15 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { SetStateAction } from "react";
 
 export function atomWithDebounce<T>({
   initialValue,
+  localStorageKey,
   delayMilliseconds = 500,
   shouldDebounceOnReset = false,
 }: {
-  initialValue: T;
+  initialValue: T,
+  localStorageKey: string;
   delayMilliseconds?: number;
   shouldDebounceOnReset?: boolean;
 }) {
@@ -16,7 +19,7 @@ export function atomWithDebounce<T>({
 
   // DO NOT EXPORT currentValueAtom as using this atom to set state can cause
   // inconsistent state between currentValueAtom and debouncedValueAtom
-  const _currentValueAtom = atom(initialValue);
+  const _currentValueAtom = atomWithStorage(localStorageKey, initialValue);
   const isDebouncingAtom = atom(false);
 
   const debouncedValueAtom = atom(

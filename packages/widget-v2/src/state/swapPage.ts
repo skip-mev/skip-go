@@ -4,23 +4,21 @@ import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { atomWithStorage } from "jotai/utils";
-import { getLocalStorageValue } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-const initialSourceAssetAmount = getLocalStorageValue<string | undefined>("sourceAsset", "amount");
-const initialDestinationAssetAmount = getLocalStorageValue<string | undefined>("destinationAsset", "amount");
-
 export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
   atomWithDebounce<string | undefined>({
-    initialValue: initialSourceAssetAmount,
+    initialValue: undefined,
+    localStorageKey: "debouncedSourceAssetAmount",
   });
 
 export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
   atomWithDebounce<string | undefined>({
-    initialValue: initialDestinationAssetAmount,
+    initialValue: undefined,
+    localStorageKey: "debouncedDestinationAssetAmount"
   });
 
 export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>("sourceAsset", undefined);
