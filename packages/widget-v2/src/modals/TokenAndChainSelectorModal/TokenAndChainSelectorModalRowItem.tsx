@@ -61,15 +61,17 @@ export const TokenAndChainSelectorModalRowItem = ({
           />
         }
         rightContent={
-          balance && (
-            <Column>
+          balance && Number(balance.amount) > 0 && (
+            <Column align="flex-end">
               <SmallText normalTextColor>
                 {convertTokenAmountToHumanReadableAmount(
                   balance.amount,
                   balance.decimals
                 )}
               </SmallText>
-              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+              {
+                balance.valueUSD && <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+              }
             </Column>
           )
         }

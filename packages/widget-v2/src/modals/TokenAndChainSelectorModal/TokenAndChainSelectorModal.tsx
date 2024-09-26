@@ -33,7 +33,7 @@ export const TokenAndChainSelectorModal = createModal(
     const filteredAssets = useMemo(() => {
       if (!assets) return;
       return matchSorter(assets, searchQuery, {
-        keys: ["recommendedSymbol", "symbol", "denom"],
+        keys: ["recommendedSymbol", "symbol", "denom", "chainName"],
       });
     }, [assets, searchQuery]);
 
