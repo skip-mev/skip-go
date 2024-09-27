@@ -21,7 +21,7 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
-  const { transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
 
   const getExplorerLink = useCallback((index: number) => {
     return transactionDetailsArray[index]?.explorerLink;
@@ -39,11 +39,13 @@ export const SwapExecutionPageRouteSimple = ({
     denom: sourceDenom,
     tokenAmount: firstOperation.amountIn,
     chainId: firstOperation.fromChainID ?? firstOperation.chainID,
+    usdValue: route?.usdAmountIn,
   };
   const destination = {
     denom: destinationDenom,
     tokenAmount: lastOperation.amountOut,
     chainId: lastOperation.toChainID ?? lastOperation.chainID,
+    usdValue: route?.usdAmountOut,
   };
 
   const operationIndexBeforeLastOperation = operations.length - 2;
