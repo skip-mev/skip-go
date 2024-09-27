@@ -5,7 +5,6 @@
   "private": true,
   "workspaces": [
     "packages/client",
-    "packages/widget",
     "packages/widget-v2",
     "examples/*",
     "vendor/"
@@ -14,13 +13,11 @@
     "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client",
     "dev:https": "yarn run dev:widget & yarn run dev:nextjs-https & yarn run dev:client",
     "dev:widget": "yarn workspace @skip-go/widget run dev",
-    "dev:widgetv2": "yarn workspace widget-v2 run dev",
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:nextjs-https": "yarn workspace nextjs run dev:https",
     "dev:client": "yarn workspace @skip-go/client run watch",
     "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
-    "build:widgetv2": "yarn workspace widget-v2 run build",
     "build:nextjs": "yarn workspace nextjs build",
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",

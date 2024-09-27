@@ -1,7 +1,8 @@
 {
-  "name": "widget-v2",
-  "private": true,
-  "version": "0.0.15",
+  "name": "@skip-go/widget",
+  "description": "Swap widget",
+  "version": "3.0.0-alpha.0",
+  "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
@@ -24,7 +25,6 @@
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
     "@keplr-wallet/types": "^0.12.125",
-    "@skip-go/widget": "workspace:packages/widget",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
