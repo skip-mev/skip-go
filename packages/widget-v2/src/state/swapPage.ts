@@ -4,26 +4,29 @@ import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { atomWithStorage } from "jotai/utils";
-import { getLocalStorageValue } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-const initialSourceAssetAmount = getLocalStorageValue<string | undefined>("sourceAsset", "amount");
-const initialDestinationAssetAmount = getLocalStorageValue<string | undefined>("destinationAsset", "amount");
+export const {
+  debouncedValueAtom: debouncedSourceAssetAmountAtom,
+  instantUpdateAtom: instantlyUpdateDebouncedSourceAssetAmountAtom,
+} = atomWithDebounce<string | undefined>({
+  initialValue: undefined,
+});
 
-export const { debouncedValueAtom: debouncedSourceAssetAmountAtom } =
-  atomWithDebounce<string | undefined>({
-    initialValue: initialSourceAssetAmount,
-  });
+export const {
+  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
+  instantUpdateAtom: instantlyUpdateDebouncedDestinationAssetAmountAtom,
+} = atomWithDebounce<string | undefined>({
+  initialValue: undefined,
+});
 
-export const { debouncedValueAtom: debouncedDestinationAssetAmountAtom } =
-  atomWithDebounce<string | undefined>({
-    initialValue: initialDestinationAssetAmount,
-  });
-
-export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>("sourceAsset", undefined);
+export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>(
+  "sourceAsset",
+  undefined
+);
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount,
@@ -35,7 +38,10 @@ export const sourceAssetAmountAtom = atom(
   }
 );
 
-export const destinationAssetAtom = atomWithStorage<AssetAtom | undefined>("destinationAsset", undefined);
+export const destinationAssetAtom = atomWithStorage<AssetAtom | undefined>(
+  "destinationAsset",
+  undefined
+);
 
 export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
@@ -66,7 +72,10 @@ export const isWaitingForNewRouteAtom = atom((get) => {
 
 export type SwapDirection = "swap-in" | "swap-out";
 
-export const swapDirectionAtom = atomWithStorage<SwapDirection>("swapDirection", "swap-in");
+export const swapDirectionAtom = atomWithStorage<SwapDirection>(
+  "swapDirection",
+  "swap-in"
+);
 
 export const isInvertingSwapAtom = atom(false);
 

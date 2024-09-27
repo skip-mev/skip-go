@@ -88,7 +88,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
           backgroundColor={theme.success.text}
           status={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={assetDetails.assetImage} />
+          <img
+            height={50}
+            width={50}
+            src={assetDetails.assetImage}
+            title={assetDetails?.asset?.name}
+          />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
@@ -102,14 +107,19 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
 
-          <Button align="center" onClick={() => {
-            if (source.address) {
-              navigator.clipboard.writeText(source.address);
-            }
-          }}>
+          <Button
+            align="center"
+            onClick={() => {
+              if (source.address) {
+                navigator.clipboard.writeText(source.address);
+              }
+            }}
+          >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
-              <SmallText monospace title={source.address}>{getTruncatedAddress(source.address)}</SmallText>
+              <SmallText monospace title={source.address}>
+                {getTruncatedAddress(source.address)}
+              </SmallText>
             )}
           </Button>
 
