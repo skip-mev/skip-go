@@ -1,22 +1,41 @@
 ---
-title: 'Gas and Transaction Fee Tooling'
-description: 'This doc describes the gas and fee tooling in @skip-go/client (our typescript library)'
+title: 'Token Balances, Gas and Transaction Fee Utilities'
+description: 'This page describes the token balance, gas and transaction fee utility functions in the `@skip-go/client` TypeScript package.'
 ---
 
-## Background
+## Getting token balances
 
-`@skip-go/client` \-- the Typescript Package we build to abstract away the complexity of calling Skip Go API directly -- provides additional functionality for building transactions. Since we've heard setting gas amount, fee amount, and gas price well is really tricky, we try hard to use reasonable, reliable defaults for these values. But we also expose a lot of functionality that lets folks override these defaults and customize fees (e.g. use non-default tokens for fees) and gas.
+To query token balances, you can use the `balances` function on your `SkipClient` instance. You can query asset names  This function takes an object with the following structure:
 
-This doc describes all the tooling we've built into the library to get information about gas & fees, and customize how they're set on your transactions.
+```ts
+const balances = await skipClient.balances({
+  "chains": {
+    "137": { // chainID
+      address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5", // user address
+      denoms: [
+        "polygon-native", // denoms
+        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
+      ]
+    },
+    "osmosis-1": {
+      address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
+      denoms: [
+        "uosmo"
+      ]
+    }
+  }
+});
+```
+
+## Getting info about gas and fees
+
 
  <Info>
  **Video Overview**
 
-Here's a [video overview](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c) for folks who are more visual.
+Here's a [video overview](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c) of our gas and transaction fee tooling.
 
 </Info>
-
-## `SkipClient` functions for getting info about gas and fees
 
 These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button).
 

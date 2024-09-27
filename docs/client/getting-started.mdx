@@ -135,10 +135,11 @@ const assets = await client.assets({
 })
 ```
 
-```ts Map of User Balances
+```ts Map of Token Balances
 // returns a map of assets by chain ID
 const balances = await skipClient.balances({
-  "137": {
+  "chains": {
+    "137": {
       address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
       denoms: [
         "polygon-native",
@@ -151,7 +152,8 @@ const balances = await skipClient.balances({
         "uosmo"
       ]
     }
-  });
+  }
+});
 ```
 </CodeGroup>
 
