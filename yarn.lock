@@ -7799,7 +7799,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@skip-go/widget@3.0.0-alpha.0, @skip-go/widget@workspace:packages/widget-v2":
+"@skip-go/widget@3.0.0-alpha.1, @skip-go/widget@workspace:packages/widget-v2":
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget-v2"
   dependencies:
@@ -21909,7 +21909,7 @@ __metadata:
   dependencies:
     "@chain-registry/keplr": 1.68.68
     "@leapwallet/cosmos-social-login-capsule-provider": 0.0.40
-    "@skip-go/widget": 3.0.0-alpha.0
+    "@skip-go/widget": 3.0.0-alpha.1
     "@solana/wallet-adapter-phantom": 0.9.24
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3
