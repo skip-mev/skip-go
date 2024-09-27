@@ -1,10 +1,7 @@
 import { Column, Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { SmallText, Text } from "@/components/Typography";
-import {
-  ClientAsset,
-  skipChainsAtom,
-} from "@/state/skipClient";
+import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
@@ -32,20 +29,30 @@ export const TokenAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
 }: TokenAndChainSelectorModalRowItemProps) => {
-  const { isLoading: isChainsLoading } =
-    useAtomValue(skipChainsAtom);
+  const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
   if (!item || isChainsLoading) return skeleton;
 
   if (isGroupedAsset(item)) {
-
     return (
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <TokenAndChainSelectorModalRowItemLeftContent asset={item} />
+          <TokenAndChainSelectorModalRowItemLeftContent item={item} />
+        }
+        rightContent={
+          Number(item.totalAmount) > 0 && (
+            <Column align="flex-end">
+              <SmallText normalTextColor>
+                {parseFloat(item.totalAmount.toFixed(8))}
+              </SmallText>
+              {item.totalUsd && (
+                <SmallText>{formatUSD(item.totalUsd)}</SmallText>
+              )}
+            </Column>
+          )
         }
       />
     );
@@ -69,7 +76,8 @@ export const TokenAndChainSelectorModalRowItem = ({
         </Row>
       }
       rightContent={
-        balance && Number(balance.amount) > 0 && (
+        balance &&
+        Number(balance.amount) > 0 && (
           <Column align="flex-end">
             <SmallText normalTextColor>
               {convertTokenAmountToHumanReadableAmount(
@@ -77,54 +85,49 @@ export const TokenAndChainSelectorModalRowItem = ({
                 balance.decimals
               )}
             </SmallText>
-            {
-              balance.valueUSD && <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
-            }
+            {balance.valueUSD && (
+              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            )}
           </Column>
         )
       }
     />
   );
-
-
 };
 
 const TokenAndChainSelectorModalRowItemLeftContent = ({
-  asset,
+  item,
 }: {
-  asset: GroupedAsset;
+  item: GroupedAsset;
 }) => {
-  const { data: chains } =
-    useAtomValue(skipChainsAtom);
-  const chainList = (
-    asset.chains.map((chain) => {
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const chainList = item.chains
+    .map((chain) => {
       const _chain = chains?.find((c) => c.chainID === chain.chainID);
       return {
         chainName: _chain?.prettyName || chain.chainID,
       };
     })
-  ).sort((a, b) => a.chainName.localeCompare(b.chainName));
+    .sort((a, b) => a.chainName.localeCompare(b.chainName));
 
   return (
     <Row align="center" gap={6}>
       <StyledAssetImage
         height={35}
         width={35}
-        src={asset.assets[0].logoURI}
-        alt={`${asset.assets[0].recommendedSymbol} logo`}
+        src={item.assets[0].logoURI}
+        alt={`${item.assets[0].recommendedSymbol} logo`}
       />
-      <Text>{asset.assets[0].recommendedSymbol}</Text>
+      <Text>{item.assets[0].recommendedSymbol}</Text>
       {chainList.length > 1 ? (
         <SmallText>{`${chainList.length} networks`}</SmallText>
-      ) : chainList.map((chain, index) => (
-        <Row key={index} align="center" gap={6}>
-          {
-            <SmallText>
-              {chain.chainName}
-            </SmallText>
-          }
-        </Row>
-      ))}
+      ) : (
+        chainList.map((chain, index) => (
+          <Row key={index} align="center" gap={6}>
+            {<SmallText>{chain.chainName}</SmallText>}
+          </Row>
+        ))
+      )}
     </Row>
   );
 };
