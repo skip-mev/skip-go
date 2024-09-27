@@ -83,7 +83,7 @@ export const SwapExecutionPageRouteDetailed = ({
       <SwapExecutionPageRouteDetailedRow
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
-        chainID={firstOperation.fromChainID}
+        chainId={firstOperation.fromChainID}
         explorerLink={getExplorerLink(0)}
         status={operationToTransferEventsMap[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
@@ -116,7 +116,7 @@ export const SwapExecutionPageRouteDetailed = ({
         const asset = {
           tokenAmount: operation.amountOut,
           denom: operation.denomOut,
-          chainID: operation.toChainID ?? operation.chainID,
+          chainId: operation.toChainID ?? operation.chainID,
         };
 
         return (

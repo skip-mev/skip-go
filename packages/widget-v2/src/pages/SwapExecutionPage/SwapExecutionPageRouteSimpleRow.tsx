@@ -91,7 +91,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
           backgroundColor={theme.success.text}
           status={txStateOfAnimatedBorder}
         >
-          <img height={50} width={50} src={assetDetails.assetImage} />
+          <img
+            height={50}
+            width={50}
+            src={assetDetails.assetImage}
+            title={assetDetails?.asset?.name}
+          />
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>

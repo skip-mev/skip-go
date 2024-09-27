@@ -81,7 +81,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
         };
       }
     }
-  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
+  }, [
+    account?.address,
+    account?.wallet.logo,
+    chainAddresses,
+    chainId,
+    context,
+  ]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -96,6 +102,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
             height={30}
             width={30}
             src={assetDetails.assetImage}
+            title={assetDetails?.asset?.name}
           />
         </StyledAnimatedBorder>
       )}
