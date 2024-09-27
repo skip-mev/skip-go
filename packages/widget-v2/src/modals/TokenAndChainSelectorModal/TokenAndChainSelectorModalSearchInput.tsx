@@ -1,30 +1,34 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { styled, useTheme } from "styled-components";
 import { Row } from "@/components/Layout";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SmallText } from "@/components/Typography";
 import { SearchIcon } from "@/icons/SearchIcon";
 import { StyledAssetLabel } from "@/components/AssetChainInput";
-import { ClientAsset } from "@/state/skipClient";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
 import { useModal } from "@/components/Modal";
+import { Asset } from "@skip-go/client";
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
-  asset?: Partial<ClientAsset>;
+  asset?: Asset;
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  networkSelection?: boolean;
 };
 
 export const TokenAndChainSelectorModalSearchInput = ({
-  onSearch,
   asset,
+  onSearch,
+  searchTerm,
+  setSearchTerm,
+  networkSelection,
 }: TokenAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const modal = useModal();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +36,7 @@ export const TokenAndChainSelectorModalSearchInput = ({
       setSearchTerm(term);
       onSearch(term);
     },
-    [onSearch]
+    [onSearch, setSearchTerm]
   );
 
   useEffect(() => {
@@ -61,7 +65,11 @@ export const TokenAndChainSelectorModalSearchInput = ({
         ref={inputRef}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder={asset ? "Search networks" : "Search asset or network"}
+        placeholder={
+          asset && networkSelection
+            ? "Search networks"
+            : "Search asset or network"
+        }
         value={searchTerm}
         onChange={handleSearch}
       />

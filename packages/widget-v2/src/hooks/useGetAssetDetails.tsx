@@ -4,11 +4,8 @@ import {
   skipChainsAtom,
 } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount, convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
-import { formatUSD } from "@/utils/intl";
-import { useUsdValue } from "@/utils/useUsdValue";
 import { Chain } from "@skip-go/client";
 import { useAtom } from "jotai";
-import { useMemo } from "react";
 
 export type AssetDetailsProps = {
   asset?: ClientAsset;
@@ -19,15 +16,12 @@ export type AssetDetailsProps = {
   chainImage?: string;
   amount?: string;
   tokenAmount?: string;
-  formattedUsdAmount?: string;
-  usdAmount?: number;
 };
 
 /**
  * @param {string} [params.assetDenom] - The denomination of the asset to retrieve details for
  * @param {string} [params.amount] - The human-readable amount amount of the asset
  * @param {string} [params.tokenAmount] - The token/raw amount of the asset
- * @param {string} [params.amountUsd] - The total value of the asset in usd, used for formatting
  * @param {string} [params.chainId] - The id of the chain associated with the asset
  *
  * @returns {AssetDetails} An object containing the following properties:
@@ -39,19 +33,16 @@ export type AssetDetailsProps = {
  * - `chainImage` The chain image url, derived from the chain object
  * - `amount` The human-readable amount of the asset
  * - `tokenAmount` The token/raw amount of the asset
- * - `formattedUsdAmount` The formatted usd amount of the asset
  */
 export const useGetAssetDetails = ({
   assetDenom,
   amount,
   tokenAmount,
-  amountUsd,
   chainId,
 }: {
   assetDenom?: string;
   amount?: string;
   tokenAmount?: string;
-  amountUsd?: string;
   chainId?: string;
 }): AssetDetailsProps => {
   const [{ data: assets }] = useAtom(skipAssetsAtom);
@@ -70,10 +61,6 @@ export const useGetAssetDetails = ({
     tokenAmount = convertHumanReadableAmountToCryptoAmount(amount, asset?.decimals);
   }
 
-  const { data: usdValue } = useUsdValue({
-    ...asset,
-    value: amount,
-  });
   const assetImage = asset?.logoURI;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
@@ -86,23 +73,6 @@ export const useGetAssetDetails = ({
   const chainName = chain?.prettyName ?? chain?.chainName;
   const chainImage = chain?.logoURI;
 
-  const usdAmount = useMemo(() => {
-    if (amountUsd) {
-      return Number(amountUsd);
-    }
-    if (usdValue) {
-      return usdValue;
-    }
-    return;
-  }, [amountUsd, usdValue]);
-
-  const formattedUsdAmount = useMemo(() => {
-    if (usdAmount) {
-      return formatUSD(usdAmount);
-    }
-    return;
-  }, [usdAmount]);
-
   if (!chainId) {
     return {
       asset: undefined,
@@ -113,8 +83,6 @@ export const useGetAssetDetails = ({
       symbol: undefined,
       amount: undefined,
       tokenAmount: undefined,
-      formattedUsdAmount: undefined,
-      usdAmount: undefined,
     };
   }
 
@@ -127,7 +95,5 @@ export const useGetAssetDetails = ({
     symbol,
     amount,
     tokenAmount,
-    formattedUsdAmount,
-    usdAmount,
   };
 };

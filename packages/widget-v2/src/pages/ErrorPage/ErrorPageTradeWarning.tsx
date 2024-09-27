@@ -41,13 +41,11 @@ export const ErrorPageTradeWarning = ({
     assetDenom: sourceAssetDenom,
     chainId: sourceAssetChainID,
     tokenAmount: amountIn,
-    amountUsd: usdAmountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
     chainId: destAssetChainID,
     tokenAmount: amountOut,
-    amountUsd: usdAmountOut,
   });
 
   return (
@@ -67,12 +65,10 @@ export const ErrorPageTradeWarning = ({
               You will lose ~{swapDifferencePercentage} of your input value with
               this trade
               <br />
-              Input: {sourceDetails?.amount} {sourceDetails?.symbol} (
-              {sourceDetails?.formattedUsdAmount})
+              Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
               <br />
               Estimated output: ~{destinationDetails?.amount}{" "}
-              {destinationDetails?.symbol} (
-              {destinationDetails?.formattedUsdAmount})
+              {destinationDetails?.symbol} ({usdAmountOut})
             </SmallText>
             <SmallTextButton
               onClick={onClickContinue}

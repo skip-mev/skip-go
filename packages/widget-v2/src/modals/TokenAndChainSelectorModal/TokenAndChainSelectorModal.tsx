@@ -2,43 +2,161 @@ import { createModal, ModalProps, useModal } from "@/components/Modal";
 import { Column } from "@/components/Layout";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
-import { ChainWithAsset, ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import {
+  ClientAsset,
+  skipAssetsAtom,
+  skipChainsAtom,
+} from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { VirtualList } from "@/components/VirtualList";
 import {
   TokenAndChainSelectorModalRowItem,
   Skeleton,
-  isClientAsset,
+  isGroupedAsset,
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
 import { matchSorter } from "match-sorter";
 import { useGetBalance } from "@/hooks/useGetBalance";
+import { Chain } from "@skip-go/client";
+
+export type GroupedAsset = {
+  id: string;
+  chains: {
+    chainID: string;
+    chainName: string;
+    originChainID: string;
+  }[];
+  assets: ClientAsset[];
+};
+
+export type ChainWithAsset = Chain & {
+  asset: ClientAsset;
+};
 
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
-  chainsContainingAsset?: ChainWithAsset[];
-  asset?: Partial<ClientAsset>;
+  selectedAsset?: ClientAsset;
+  networkSelection?: boolean;
 };
 
 export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
-    const { onSelect, chainsContainingAsset, asset } = modalProps;
-    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
+    const { onSelect: _onSelect, selectedAsset, networkSelection } = modalProps;
+    const { data: assets, isLoading: isAssetsLoading } =
+      useAtomValue(skipAssetsAtom);
+    const { data: chains } = useAtomValue(skipChainsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
     const getBalance = useGetBalance();
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [groupedAssetSelected, setGroupedAssetSelected] =
+      useState<GroupedAsset | null>(null);
+
+    const resetInput = () => {
+      setSearchQuery("");
+    };
+
+    const onSelect = useCallback(
+      (input: GroupedAsset | ClientAsset | null) => {
+        if (!input) return;
+        if (isGroupedAsset(input)) {
+          if (input.assets.length === 1) {
+            _onSelect(input.assets[0]);
+          } else {
+            setGroupedAssetSelected(input);
+          }
+          resetInput();
+          return;
+        }
+        _onSelect(input);
+        resetInput();
+      },
+      [_onSelect]
+    );
+
+    const groupingAssetsByRecommendedSymbol = useMemo(() => {
+      if (!assets) return;
+      const groupedAssets: GroupedAsset[] = [];
+
+      assets.forEach((asset) => {
+        const foundGroup = groupedAssets.find(
+          (group) => group.id === asset.recommendedSymbol
+        );
+        if (foundGroup) {
+          foundGroup.assets.push(asset);
+          foundGroup.chains.push({
+            chainID: asset.chainID,
+            chainName: asset.chainName,
+            originChainID: asset.originChainID,
+          });
+        } else {
+          groupedAssets.push({
+            id: asset.recommendedSymbol || asset.symbol || asset.denom,
+            chains: [
+              {
+                chainID: asset.chainID,
+                chainName: asset.chainName,
+                originChainID: asset.originChainID,
+              },
+            ],
+            assets: [asset],
+          });
+        }
+      });
+      return groupedAssets;
+    }, [assets]);
+
+    const selectedGroup = useMemo(() => {
+      const asset = groupedAssetSelected?.assets[0] || selectedAsset;
+      if (!asset) return;
+      return groupingAssetsByRecommendedSymbol?.find(
+        (group) => group.id === asset.recommendedSymbol
+      );
+    }, [
+      groupedAssetSelected?.assets,
+      selectedAsset,
+      groupingAssetsByRecommendedSymbol,
+    ]);
 
     const filteredAssets = useMemo(() => {
-      if (!assets) return;
-      return matchSorter(assets, searchQuery, {
-        keys: ["recommendedSymbol", "symbol", "denom", "chainName"],
+      if (!groupingAssetsByRecommendedSymbol) return;
+      return matchSorter(groupingAssetsByRecommendedSymbol, searchQuery, {
+        keys: [
+          "id",
+          "assets.*.symbol",
+          "assets.*.denom",
+          "chains.*.chainName",
+          "chains.*.originChainID",
+          "chains.*.chainID",
+        ],
+      });
+    }, [groupingAssetsByRecommendedSymbol, searchQuery]);
+
+    const filteredChains = useMemo(() => {
+      if (!selectedGroup || !chains) return;
+      const resChains = selectedGroup.assets
+        .map((asset) => {
+          const c = chains.find((c) => c.chainID === asset.chainID);
+          return {
+            ...c,
+            asset,
+          };
+        })
+        .filter((c) => c) as ChainWithAsset[];
+      return matchSorter(resChains, searchQuery, {
+        keys: ["prettyName", "chainName", "chainID"],
       }).sort((assetA, assetB) => {
-        const { data: balanceA } = getBalance(assetA.chainID, assetA.denom);
-        const { data: balanceB } = getBalance(assetB.chainID, assetB.denom);
+        const { data: balanceA } = getBalance(
+          assetA.chainID,
+          assetA.asset.denom
+        );
+        const { data: balanceB } = getBalance(
+          assetB.chainID,
+          assetB.asset.denom
+        );
 
         if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
           return 1;
@@ -50,15 +168,7 @@ export const TokenAndChainSelectorModal = createModal(
 
         return 0;
       });
-    }, [assets, getBalance, searchQuery]);
-
-    const filteredChains = useMemo(() => {
-      if (!chainsContainingAsset) return;
-      return matchSorter(chainsContainingAsset, searchQuery, {
-        keys: ["chainID", "chainName", "prettyName"],
-      });
-    }, [chainsContainingAsset, searchQuery]);
-
+    }, [chains, getBalance, searchQuery, selectedGroup]);
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -78,10 +188,10 @@ export const TokenAndChainSelectorModal = createModal(
     };
 
     const renderItem = useCallback(
-      (asset: ClientAsset | ChainWithAsset, index: number) => {
+      (item: GroupedAsset | ChainWithAsset, index: number) => {
         return (
           <TokenAndChainSelectorModalRowItem
-            item={asset}
+            item={item}
             index={index}
             onSelect={onSelect}
             skeleton={<Skeleton />}
@@ -91,11 +201,28 @@ export const TokenAndChainSelectorModal = createModal(
       [onSelect]
     );
 
+    const list = useMemo(() => {
+      if (!networkSelection) {
+        if (groupedAssetSelected) {
+          return filteredChains;
+        }
+        return filteredAssets;
+      }
+      return filteredChains;
+    }, [
+      filteredAssets,
+      filteredChains,
+      groupedAssetSelected,
+      networkSelection,
+    ]);
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput
           onSearch={handleSearch}
-          asset={asset}
+          asset={groupedAssetSelected?.assets[0] || selectedAsset}
+          searchTerm={searchQuery}
+          setSearchTerm={setSearchQuery}
+          networkSelection={networkSelection}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <Column>
@@ -105,14 +232,14 @@ export const TokenAndChainSelectorModal = createModal(
           </Column>
         ) : (
           <VirtualList
-            listItems={filteredChains ?? filteredAssets ?? []}
+            listItems={list ?? []}
             height={530}
             itemHeight={70}
             itemKey={(item) => {
-              if (isClientAsset(item)) {
-                return `${item.denom}-${item.chainID}-${item.recommendedSymbol}`;
+              if (isGroupedAsset(item)) {
+                return `${item.id}`;
               }
-              return `${item.chainID}-${item.asset?.denom}`;
+              return `${item.chainID}-${item.asset.denom}`;
             }}
             renderItem={renderItem}
           />

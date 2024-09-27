@@ -6,8 +6,6 @@ import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
   skipAssetsAtom,
-  getChainsContainingAsset,
-  skipChainsAtom,
   skipRouteAtom,
 } from "@/state/skipClient";
 import {
@@ -28,7 +26,6 @@ import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
-import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
@@ -48,7 +45,6 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
     data: route,
     isError: isRouteError,
@@ -68,37 +64,14 @@ export const SwapPage = () => {
 
   const sourceAccount = useSourceAccount();
 
-  const sourceDetails = useGetAssetDetails({
-    assetDenom: sourceAsset?.denom,
-    amount: sourceAsset?.amount,
-    chainId: sourceAsset?.chainID,
-  });
-
-  const destinationDetails = useGetAssetDetails({
-    assetDenom: destinationAsset?.denom,
-    amount: destinationAsset?.amount,
-    chainId: destinationAsset?.chainID,
-  });
-
-  const chainsContainingSourceAsset = useMemo(() => {
-    if (!chains || !assets || !sourceAsset?.symbol) return;
-    const result = getChainsContainingAsset(
-      sourceAsset?.symbol,
-      assets,
-      chains
-    );
-    return result;
-  }, [assets, sourceAsset?.symbol, chains]);
-
-  const chainsContainingDestinationAsset = useMemo(() => {
-    if (!chains || !assets || !destinationAsset?.symbol) return;
-    const result = getChainsContainingAsset(
-      destinationAsset?.symbol,
-      assets,
-      chains
-    );
-    return result;
-  }, [assets, destinationAsset?.symbol, chains]);
+  const getClientAsset = useCallback(
+    (denom?: string, chainId?: string) => {
+      if (!denom || !chainId) return;
+      if (!assets) return;
+      return assets.find((a) => a.denom === denom && a.chainID === chainId);
+    },
+    [assets]
+  );
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -113,9 +86,7 @@ export const SwapPage = () => {
   }, [setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
-    if (!chainsContainingSourceAsset) return;
-
-    return tokenAndChainSelectorModal.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -123,13 +94,14 @@ export const SwapPage = () => {
         }));
         tokenAndChainSelectorModal.hide();
       },
-      chainsContainingAsset: chainsContainingSourceAsset,
-      asset: sourceAsset,
+      selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
+      networkSelection: true,
     });
   }, [
-    chainsContainingSourceAsset,
+    getClientAsset,
     setSourceAsset,
-    sourceAsset,
+    sourceAsset?.chainID,
+    sourceAsset?.denom,
     tokenAndChainSelectorModal,
   ]);
 
@@ -146,9 +118,7 @@ export const SwapPage = () => {
   }, [setDestinationAsset, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationChain = useCallback(() => {
-    if (!chainsContainingDestinationAsset) return;
-
-    return tokenAndChainSelectorModal.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -156,12 +126,16 @@ export const SwapPage = () => {
         }));
         tokenAndChainSelectorModal.hide();
       },
-      chainsContainingAsset: chainsContainingDestinationAsset,
-      asset: destinationAsset,
+      selectedAsset: getClientAsset(
+        destinationAsset?.denom,
+        destinationAsset?.chainID
+      ),
+      networkSelection: true,
     });
   }, [
-    chainsContainingDestinationAsset,
-    destinationAsset,
+    destinationAsset?.chainID,
+    destinationAsset?.denom,
+    getClientAsset,
     setDestinationAsset,
     tokenAndChainSelectorModal,
   ]);
@@ -241,23 +215,17 @@ export const SwapPage = () => {
   ]);
 
   const priceChangePercentage = useMemo(() => {
-    if (
-      !sourceDetails.usdAmount ||
-      !destinationDetails.usdAmount ||
-      isWaitingForNewRoute
-    )
+    if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
       return;
-    const difference = destinationDetails.usdAmount - sourceDetails.usdAmount;
+    }
+
+    const difference = Number(route.usdAmountOut) - Number(route.usdAmountIn);
     const average =
-      (sourceDetails.usdAmount + destinationDetails.usdAmount) / 2;
+      (Number(route.usdAmountIn) + Number(route.usdAmountOut)) / 2;
     const percentageDifference = (difference / average) * 100;
 
     return parseFloat(percentageDifference.toFixed(2));
-  }, [
-    destinationDetails.usdAmount,
-    isWaitingForNewRoute,
-    sourceDetails.usdAmount,
-  ]);
+  }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
     <>
@@ -284,6 +252,7 @@ export const SwapPage = () => {
               swapDirection === "swap-out" && isWaitingForNewRoute
             }
             value={sourceAsset?.amount}
+            usdValue={route?.usdAmountIn}
             onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
@@ -294,6 +263,7 @@ export const SwapPage = () => {
             isWaitingToUpdateInputValue={
               swapDirection === "swap-in" && isWaitingForNewRoute
             }
+            usdValue={route?.usdAmountOut}
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
