@@ -3,25 +3,21 @@
   "description": "Swap widget",
   "version": "3.0.0-alpha.1",
   "repository": "https://github.com/skip-mev/widget",
-  "type": "module",
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
+    "build": "rollup --config rollup.config.js",
     "lint": "eslint . --fix",
     "preview": "vite preview",
     "build-storybook": "storybook build"
   },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "import": "./build/index.js"
+      "import": "./build/index.es.js"
     }
   },
   "types": "./build/index.d.ts",
-  "files": [
-    "build",
-    "README.md"
-  ],
   "peerDependencies": {
     "react": "17.x || 18.x",
     "react-dom": "17.x || 18.x",
@@ -31,6 +27,7 @@
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
     "@keplr-wallet/types": "^0.12.125",
+    "@rollup/plugin-url": "^8.0.2",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",

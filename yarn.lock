@@ -7248,6 +7248,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/plugin-url@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@rollup/plugin-url@npm:8.0.2"
+  dependencies:
+    "@rollup/pluginutils": ^5.0.1
+    make-dir: ^3.1.0
+    mime: ^3.0.0
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 181cddda6a08ac9199ef3ac345ae01c4a27e456d501e180891d5f05d6eb86ce5dabd9b50c2280604258d2d8dc6581a98f9134d1631a1c8ca5d521494bdf80fbb
+  languageName: node
+  linkType: hard
+
 "@rollup/pluginutils@npm:^3.1.0":
   version: 3.1.0
   resolution: "@rollup/pluginutils@npm:3.1.0"
@@ -7799,7 +7815,54 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@skip-go/widget@3.0.0-alpha.1, @skip-go/widget@workspace:packages/widget-v2":
+"@skip-go/widget@file:./skip-go-widget-3.0.0-alpha.1.tgz::locator=nextjs%40workspace%3Aexamples%2Fnextjs":
+  version: 3.0.0-alpha.1
+  resolution: "@skip-go/widget@file:./skip-go-widget-3.0.0-alpha.1.tgz::locator=nextjs%40workspace%3Aexamples%2Fnextjs"
+  dependencies:
+    "@chain-registry/keplr": ^1.68.79
+    "@ebay/nice-modal-react": ^1.2.13
+    "@eslint/compat": ^1.1.1
+    "@initia/initia-registry": ^0.1.16
+    "@penumbra-zone/bech32m": ^7.0.0
+    "@penumbra-zone/client": ^18.1.0
+    "@penumbra-zone/protobuf": ^6.0.0
+    "@penumbra-zone/transport-dom": ^7.5.0
+    "@radix-ui/react-dialog": ^1.1.1
+    "@skip-go/client": "workspace:^"
+    "@solana/spl-token": ^0.4.8
+    "@solana/wallet-adapter-backpack": ^0.1.14
+    "@solana/wallet-adapter-coinbase": ^0.1.19
+    "@solana/wallet-adapter-ledger": ^0.9.25
+    "@solana/wallet-adapter-phantom": ^0.9.24
+    "@solana/wallet-adapter-react": ^0.15.35
+    "@solana/wallet-adapter-solflare": ^0.6.28
+    "@solana/wallet-adapter-trust": ^0.1.13
+    "@solana/web3.js": ^1.95.3
+    "@tanstack/query-core": ^5.51.21
+    "@tanstack/react-query": ^5.51.21
+    chain-registry: ^1.63.43
+    graz: ^0.1.20
+    jotai: ^2.9.1
+    jotai-effect: ^1.0.2
+    jotai-tanstack-query: ^0.8.6
+    lodash.debounce: ^4.0.8
+    match-sorter: ^6.3.4
+    pluralize: ^8.0.0
+    rc-virtual-list: ^3.14.5
+    react-error-boundary: ^4.0.13
+    react-shadow-scope: ^1.0.5
+    viem: ^2.21.1
+    wagmi: ^2.12.8
+    zod: ^3.23.8
+  peerDependencies:
+    react: 17.x || 18.x
+    react-dom: 17.x || 18.x
+    styled-components: ^6.0.0
+  checksum: 4d635ea849371797f4bb95e5cda1740beda36e6c67ff5bf27b120855680ee569f3c66fb13c32f5b7cb7de3e849d9e308201254388a5f5ee24dce6e58e74f3aef
+  languageName: node
+  linkType: hard
+
+"@skip-go/widget@workspace:packages/widget-v2":
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget-v2"
   dependencies:
@@ -7815,6 +7878,7 @@ __metadata:
     "@penumbra-zone/protobuf": ^6.0.0
     "@penumbra-zone/transport-dom": ^7.5.0
     "@radix-ui/react-dialog": ^1.1.1
+    "@rollup/plugin-url": ^8.0.2
     "@skip-go/client": "workspace:^"
     "@solana/spl-token": ^0.4.8
     "@solana/wallet-adapter-backpack": ^0.1.14
@@ -21909,7 +21973,7 @@ __metadata:
   dependencies:
     "@chain-registry/keplr": 1.68.68
     "@leapwallet/cosmos-social-login-capsule-provider": 0.0.40
-    "@skip-go/widget": 3.0.0-alpha.1
+    "@skip-go/widget": "file:./skip-go-widget-3.0.0-alpha.1.tgz"
     "@solana/wallet-adapter-phantom": 0.9.24
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3

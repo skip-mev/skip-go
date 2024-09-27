@@ -28,7 +28,6 @@ export const VirtualList = <T,>({
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement;
-    //@ts-expect-error ignore typescript error
     const onFocus = (e) => {
       setCurrentlyFocusedElement(e?.target);
     };

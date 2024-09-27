@@ -64,7 +64,6 @@ export const skipClient = atom((get) => {
 
       return evmWalletClient;
     },
-    // @ts-expect-error solanaWallet is not a merged Adapter
     getSVMSigner: async () => {
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");

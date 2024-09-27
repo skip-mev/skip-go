@@ -3,8 +3,14 @@ import { useSourceAccount } from "@/hooks/useSourceAccount";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
+import { BalanceResponseDenomEntry, BalanceResponse } from "@skip-go/client";
+import { RefetchOptions, QueryObserverResult } from "@tanstack/query-core";
 
-export const useSourceBalance = () => {
+export const useSourceBalance = (): {
+  data: BalanceResponseDenomEntry | undefined;
+  isLoading: boolean;
+  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<BalanceResponse, Error>>
+} => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const sourceAccount = useSourceAccount();
   const { data: skipBalances, isLoading, refetch } = useAtomValue(skipBalancesAtom);

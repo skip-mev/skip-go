@@ -16,36 +16,37 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      rollupTypes: true,
       outDir: "build",
       tsconfigPath: "./tsconfig.app.json",
+      exclude: ["**/*.stories.ts", "src/test", "**/*.test.tsx"]
     }),
-    nodePolyfills(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+      },
+      exclude: [""]
+    }),
   ],
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, "src/index.tsx"),
+      entry: resolve(__dirname, "src/index.ts"),
       formats: ["es"],
-      name: "widget-v2",
     },
-    sourcemap: true,
     rollupOptions: {
       external: [
         "react",
         "react-dom",
         "react/jsx-runtime",
         "@r2wc/react-to-web-component",
-        "**/*.stories.*",
-        "**/storybook/**",
       ],
-      input: {
-        main: "src/index.tsx",
-      },
       output: {
         dir: "build",
         entryFileNames: "[name].js",
       },
     },
+    esbuild: {
+      minify: true
+    }
   },
 });

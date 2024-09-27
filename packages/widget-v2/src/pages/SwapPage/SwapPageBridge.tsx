@@ -12,7 +12,7 @@ export const SwapPageBridge = () => {
   const onInvertSwap = () => {
     invertSwap();
 
-    let spinTimeout = undefined;
+    let spinTimeout: NodeJS.Timeout | undefined = undefined;
     clearTimeout(spinTimeout);
     setSpin(true);
     spinTimeout = setTimeout(() => setSpin(false), 500);
