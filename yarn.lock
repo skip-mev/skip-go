@@ -7799,7 +7799,54 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@skip-go/widget@3.0.0-alpha.1, @skip-go/widget@workspace:packages/widget-v2":
+"@skip-go/widget@file:./skip-go-widget-3.0.0-alpha.1.tgz::locator=nextjs%40workspace%3Aexamples%2Fnextjs":
+  version: 3.0.0-alpha.1
+  resolution: "@skip-go/widget@file:./skip-go-widget-3.0.0-alpha.1.tgz::locator=nextjs%40workspace%3Aexamples%2Fnextjs"
+  dependencies:
+    "@chain-registry/keplr": ^1.68.79
+    "@ebay/nice-modal-react": ^1.2.13
+    "@eslint/compat": ^1.1.1
+    "@initia/initia-registry": ^0.1.16
+    "@penumbra-zone/bech32m": ^7.0.0
+    "@penumbra-zone/client": ^18.1.0
+    "@penumbra-zone/protobuf": ^6.0.0
+    "@penumbra-zone/transport-dom": ^7.5.0
+    "@radix-ui/react-dialog": ^1.1.1
+    "@skip-go/client": "workspace:^"
+    "@solana/spl-token": ^0.4.8
+    "@solana/wallet-adapter-backpack": ^0.1.14
+    "@solana/wallet-adapter-coinbase": ^0.1.19
+    "@solana/wallet-adapter-ledger": ^0.9.25
+    "@solana/wallet-adapter-phantom": ^0.9.24
+    "@solana/wallet-adapter-react": ^0.15.35
+    "@solana/wallet-adapter-solflare": ^0.6.28
+    "@solana/wallet-adapter-trust": ^0.1.13
+    "@solana/web3.js": ^1.95.3
+    "@tanstack/query-core": ^5.51.21
+    "@tanstack/react-query": ^5.51.21
+    chain-registry: ^1.63.43
+    graz: ^0.1.20
+    jotai: ^2.9.1
+    jotai-effect: ^1.0.2
+    jotai-tanstack-query: ^0.8.6
+    lodash.debounce: ^4.0.8
+    match-sorter: ^6.3.4
+    pluralize: ^8.0.0
+    rc-virtual-list: ^3.14.5
+    react-error-boundary: ^4.0.13
+    react-shadow-scope: ^1.0.5
+    viem: ^2.21.1
+    wagmi: ^2.12.8
+    zod: ^3.23.8
+  peerDependencies:
+    react: 17.x || 18.x
+    react-dom: 17.x || 18.x
+    styled-components: ^6.0.0
+  checksum: 732c5fd99fc5cceee6316b46ff29d827e2c4ee297803c9871b6c6b254fd7db7d3189aedc4246181c65990d33b51aa568934fd5c377ce1247c12b1caa2d44be31
+  languageName: node
+  linkType: hard
+
+"@skip-go/widget@workspace:packages/widget-v2":
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget-v2"
   dependencies:
@@ -21909,7 +21956,7 @@ __metadata:
   dependencies:
     "@chain-registry/keplr": 1.68.68
     "@leapwallet/cosmos-social-login-capsule-provider": 0.0.40
-    "@skip-go/widget": 3.0.0-alpha.1
+    "@skip-go/widget": ./skip-go-widget-3.0.0-alpha.1.tgz
     "@solana/wallet-adapter-phantom": 0.9.24
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3

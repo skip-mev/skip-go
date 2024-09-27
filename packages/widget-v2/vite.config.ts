@@ -19,6 +19,7 @@ export default defineConfig({
       rollupTypes: true,
       outDir: "build",
       tsconfigPath: "./tsconfig.app.json",
+      exclude: ["node_modules", "build", ".storybook"],
     }),
     nodePolyfills(),
   ],
@@ -38,6 +39,7 @@ export default defineConfig({
         "@r2wc/react-to-web-component",
         "**/*.stories.*",
         "**/storybook/**",
+        "node_modules/*"
       ],
       input: {
         main: "src/index.tsx",
