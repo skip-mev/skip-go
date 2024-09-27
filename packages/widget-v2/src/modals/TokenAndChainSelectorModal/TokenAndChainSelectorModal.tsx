@@ -51,15 +51,11 @@ export const TokenAndChainSelectorModal = createModal(
     const getBalance = useGetBalance();
 
     const [showSkeleton, setShowSkeleton] = useState(true);
-
-    const [searchTerm, setSearchTerm] = useState("");
     const [searchQuery, setSearchQuery] = useState<string>("");
-
     const [groupedAssetSelected, setGroupedAssetSelected] =
       useState<GroupedAsset | null>(null);
 
     const resetInput = () => {
-      setSearchTerm("");
       setSearchQuery("");
     };
 
@@ -153,8 +149,14 @@ export const TokenAndChainSelectorModal = createModal(
       return matchSorter(resChains, searchQuery, {
         keys: ["prettyName", "chainName", "chainID"],
       }).sort((assetA, assetB) => {
-        const { data: balanceA } = getBalance(assetA.chainID, assetA.asset.denom);
-        const { data: balanceB } = getBalance(assetB.chainID, assetB.asset.denom);
+        const { data: balanceA } = getBalance(
+          assetA.chainID,
+          assetA.asset.denom
+        );
+        const { data: balanceB } = getBalance(
+          assetB.chainID,
+          assetB.asset.denom
+        );
 
         if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
           return 1;
@@ -218,8 +220,8 @@ export const TokenAndChainSelectorModal = createModal(
         <TokenAndChainSelectorModalSearchInput
           onSearch={handleSearch}
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          searchTerm={searchQuery}
+          setSearchTerm={setSearchQuery}
           networkSelection={networkSelection}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
