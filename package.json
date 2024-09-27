@@ -29,7 +29,8 @@
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
     "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
-    "swagger": "npx open-swagger-ui --open docs/swagger.yml"
+    "swagger": "npx open-swagger-ui --open docs/swagger.yml",
+    "build-storybook-v2": "yarn workspace widget-v2 run build-storybook"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
