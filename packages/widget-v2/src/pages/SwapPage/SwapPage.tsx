@@ -31,9 +31,7 @@ import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
-import {
-  useInsufficientSourceBalance,
-} from "./useSetMaxAmount";
+import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
@@ -81,8 +79,6 @@ export const SwapPage = () => {
     amount: destinationAsset?.amount,
     chainId: destinationAsset?.chainID,
   });
-
-
 
   const chainsContainingSourceAsset = useMemo(() => {
     if (!chains || !assets || !sourceAsset?.symbol) return;
@@ -193,9 +189,7 @@ export const SwapPage = () => {
       );
     }
     if (isLoadingBalances) {
-      return (
-        <MainButton label="Fetching balances" loading icon={ICONS.swap} />
-      );
+      return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
     }
     if (insufficientBalance) {
       return (
@@ -234,15 +228,16 @@ export const SwapPage = () => {
     isWaitingForNewRoute,
     isRouteError,
     sourceAccount?.address,
-    sourceAsset?.chainID,
-    routeError?.message,
+    isLoadingBalances,
     insufficientBalance,
     route,
-    setError,
+    routeError?.message,
+    sourceAsset?.chainID,
+    selectWalletmodal,
     setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
-    selectWalletmodal,
+    setError,
   ]);
 
   const priceChangePercentage = useMemo(() => {
@@ -276,11 +271,9 @@ export const SwapPage = () => {
           leftButton={{
             label: "History",
             icon: ICONS.history,
-            onClick: () => historyModal.show()
+            onClick: () => historyModal.show(),
           }}
-          rightContent={
-            <ConnectedWalletContent />
-          }
+          rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
           <AssetChainInput
