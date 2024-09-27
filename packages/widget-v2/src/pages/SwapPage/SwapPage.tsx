@@ -6,8 +6,6 @@ import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
   skipAssetsAtom,
-  getChainsContainingAsset,
-  skipChainsAtom,
   skipRouteAtom,
 } from "@/state/skipClient";
 import {
@@ -31,9 +29,7 @@ import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
-import {
-  useInsufficientSourceBalance,
-} from "./useSetMaxAmount";
+import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
@@ -49,7 +45,6 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
   const {
     data: route,
     isError: isRouteError,
@@ -80,27 +75,14 @@ export const SwapPage = () => {
     chainId: destinationAsset?.chainID,
   });
 
-
-
-  const chainsContainingSourceAsset = useMemo(() => {
-    if (!chains || !assets || !sourceAsset?.symbol) return;
-    const result = getChainsContainingAsset(
-      sourceAsset?.symbol,
-      assets,
-      chains
-    );
-    return result;
-  }, [assets, sourceAsset?.symbol, chains]);
-
-  const chainsContainingDestinationAsset = useMemo(() => {
-    if (!chains || !assets || !destinationAsset?.symbol) return;
-    const result = getChainsContainingAsset(
-      destinationAsset?.symbol,
-      assets,
-      chains
-    );
-    return result;
-  }, [assets, destinationAsset?.symbol, chains]);
+  const getClientAsset = useCallback(
+    (denom?: string, chainId?: string) => {
+      if (!denom || !chainId) return;
+      if (!assets) return;
+      return assets.find((a) => a.denom === denom && a.chainID === chainId);
+    },
+    [assets]
+  );
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -115,9 +97,7 @@ export const SwapPage = () => {
   }, [setSourceAsset, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
-    if (!chainsContainingSourceAsset) return;
-
-    return tokenAndChainSelectorModal.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -125,13 +105,14 @@ export const SwapPage = () => {
         }));
         tokenAndChainSelectorModal.hide();
       },
-      chainsContainingAsset: chainsContainingSourceAsset,
-      asset: sourceAsset,
+      selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
+      networkSelection: true,
     });
   }, [
-    chainsContainingSourceAsset,
+    getClientAsset,
     setSourceAsset,
-    sourceAsset,
+    sourceAsset?.chainID,
+    sourceAsset?.denom,
     tokenAndChainSelectorModal,
   ]);
 
@@ -148,9 +129,7 @@ export const SwapPage = () => {
   }, [setDestinationAsset, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationChain = useCallback(() => {
-    if (!chainsContainingDestinationAsset) return;
-
-    return tokenAndChainSelectorModal.show({
+    tokenAndChainSelectorModal.show({
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -158,12 +137,16 @@ export const SwapPage = () => {
         }));
         tokenAndChainSelectorModal.hide();
       },
-      chainsContainingAsset: chainsContainingDestinationAsset,
-      asset: destinationAsset,
+      selectedAsset: getClientAsset(
+        destinationAsset?.denom,
+        destinationAsset?.chainID
+      ),
+      networkSelection: true,
     });
   }, [
-    chainsContainingDestinationAsset,
-    destinationAsset,
+    destinationAsset?.chainID,
+    destinationAsset?.denom,
+    getClientAsset,
     setDestinationAsset,
     tokenAndChainSelectorModal,
   ]);
@@ -269,11 +252,9 @@ export const SwapPage = () => {
           leftButton={{
             label: "History",
             icon: ICONS.history,
-            onClick: () => historyModal.show()
+            onClick: () => historyModal.show(),
           }}
-          rightContent={
-            <ConnectedWalletContent />
-          }
+          rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
           <AssetChainInput
