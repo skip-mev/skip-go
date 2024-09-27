@@ -41,9 +41,6 @@ export default defineConfig({
         "**/storybook/**",
         "node_modules/*"
       ],
-      input: {
-        main: "src/index.tsx",
-      },
       output: {
         dir: "build",
         entryFileNames: "[name].js",
