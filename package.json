@@ -16,7 +16,7 @@
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:nextjs-https": "yarn workspace nextjs run dev:https",
     "dev:client": "yarn workspace @skip-go/client run watch",
-    "build": "yarn run build:client && yarn run build:widget && yarn run build:nextjs",
+    "build": "yarn run build:client && yarn run build:nextjs",
     "build:widget": "yarn workspace @skip-go/widget run build",
     "build:nextjs": "yarn workspace nextjs build",
     "build:client": "yarn workspace @skip-go/client build",
