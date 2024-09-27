@@ -1,10 +1,7 @@
 import { Column, Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { SmallText, Text } from "@/components/Typography";
-import {
-  ClientAsset,
-  skipChainsAtom,
-} from "@/state/skipClient";
+import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
@@ -32,18 +29,21 @@ export const TokenAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
 }: TokenAndChainSelectorModalRowItemProps) => {
-  const { isLoading: isChainsLoading } =
-    useAtomValue(skipChainsAtom);
+  const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
   if (!item || isChainsLoading) return skeleton;
 
   if (isGroupedAsset(item)) {
-
     const balanceSummary = item.assets.reduce(
       (acc, asset) => {
         const { data: balance } = getBalance(asset.chainID, asset.denom);
         if (balance) {
-          acc.totalAmount += Number(convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals));
+          acc.totalAmount += Number(
+            convertTokenAmountToHumanReadableAmount(
+              balance.amount,
+              balance.decimals
+            )
+          );
           acc.totalUSD += Number(balance.valueUSD);
         }
         return acc;
@@ -59,14 +59,16 @@ export const TokenAndChainSelectorModalRowItem = ({
           <TokenAndChainSelectorModalRowItemLeftContent item={item} />
         }
         rightContent={
-          Number(balanceSummary.totalAmount) > 0 && <Column align="flex-end">
-            <SmallText normalTextColor>
-              {balanceSummary.totalAmount.toFixed(2)}
-            </SmallText>
-            {
-              Number(balanceSummary.totalUSD) > 0 && <SmallText>{formatUSD(balanceSummary.totalUSD)}</SmallText>
-            }
-          </Column>
+          Number(balanceSummary.totalAmount) > 0 && (
+            <Column align="flex-end">
+              <SmallText normalTextColor>
+                {balanceSummary.totalAmount.toFixed(2)}
+              </SmallText>
+              {Number(balanceSummary.totalUSD) > 0 && (
+                <SmallText>{formatUSD(balanceSummary.totalUSD)}</SmallText>
+              )}
+            </Column>
+          )
         }
       />
     );
@@ -90,7 +92,8 @@ export const TokenAndChainSelectorModalRowItem = ({
         </Row>
       }
       rightContent={
-        balance && Number(balance.amount) > 0 && (
+        balance &&
+        Number(balance.amount) > 0 && (
           <Column align="flex-end">
             <SmallText normalTextColor>
               {convertTokenAmountToHumanReadableAmount(
@@ -98,16 +101,14 @@ export const TokenAndChainSelectorModalRowItem = ({
                 balance.decimals
               )}
             </SmallText>
-            {
-              balance.valueUSD && <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
-            }
+            {balance.valueUSD && (
+              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            )}
           </Column>
         )
       }
     />
   );
-
-
 };
 
 const TokenAndChainSelectorModalRowItemLeftContent = ({
@@ -115,17 +116,15 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
 }: {
   item: GroupedAsset;
 }) => {
-  const { data: chains } =
-    useAtomValue(skipChainsAtom);
-  const chainList = (
-    item.chains.map((chain) => {
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const chainList = item.chains
+    .map((chain) => {
       const _chain = chains?.find((c) => c.chainID === chain.chainID);
       return {
         chainName: _chain?.prettyName || chain.chainID,
       };
     })
-  ).sort((a, b) => a.chainName.localeCompare(b.chainName));
-
+    .sort((a, b) => a.chainName.localeCompare(b.chainName));
 
   return (
     <Row align="center" gap={6}>
@@ -138,15 +137,13 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
       <Text>{item.assets[0].recommendedSymbol}</Text>
       {chainList.length > 1 ? (
         <SmallText>{`${chainList.length} networks`}</SmallText>
-      ) : chainList.map((chain, index) => (
-        <Row key={index} align="center" gap={6}>
-          {
-            <SmallText>
-              {chain.chainName}
-            </SmallText>
-          }
-        </Row>
-      ))}
+      ) : (
+        chainList.map((chain, index) => (
+          <Row key={index} align="center" gap={6}>
+            {<SmallText>{chain.chainName}</SmallText>}
+          </Row>
+        ))
+      )}
     </Row>
   );
 };
