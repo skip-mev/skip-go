@@ -13,6 +13,7 @@ export const convertTokenAmountToHumanReadableAmount = (
   tokenAmount: number | string,
   decimals = 6
 ): string => {
+  if (tokenAmount === "") return "";
   if (typeof tokenAmount === "string") {
     tokenAmount = parseFloat(tokenAmount);
   }
@@ -20,7 +21,8 @@ export const convertTokenAmountToHumanReadableAmount = (
   return humanReadableAmount.toFixed(decimals).replace(/(\.\d*?[1-9])0+|\.0*$/, "$1");
 };
 
-export const getTruncatedAddress = (address: string): string => {
+export const getTruncatedAddress = (address?: string): string => {
+  if (!address) return "";
   return `${address.slice(
     0,
     9

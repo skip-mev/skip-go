@@ -1,9 +1,9 @@
 import { Row } from "@/components/Layout";
-import { useAccount } from "@/hooks/useAccount";
+import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useMemo } from "react";
-import { useSetMaxAmount } from "./useSetMaxAmount";
-import { useSourceBalance } from "./useSourceBalance";
+import { useMaxAmountTokenMinusFees, useSetMaxAmount } from "./useSetMaxAmount";
+import { useSourceBalance } from "@/hooks/useSourceBalance";
 import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
@@ -14,7 +14,8 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  const sourceAccount = useAccount(sourceAsset?.chainID);
+  const getAccount = useGetAccount();
+  const sourceAccount = getAccount(sourceAsset?.chainID);
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
@@ -23,6 +24,7 @@ export const ConnectedWalletContent = () => {
 
   const { data: sourceBalance, isLoading } = useSourceBalance();
   const handleMaxButton = useSetMaxAmount();
+  const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const formattedBalance = useMemo(() => {
@@ -86,7 +88,7 @@ export const ConnectedWalletContent = () => {
       </TransparentButton>
 
       <TransparentButton
-        disabled={!sourceBalance || sourceBalance?.amount === "0"}
+        disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
         onClick={handleMaxButton}
         style={{
           padding: "8px 13px",

@@ -4,7 +4,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { useSourceBalance } from "./useSourceBalance";
+import { useSourceBalance } from "@/hooks/useSourceBalance";
 import { BigNumber } from "bignumber.js";
 
 
@@ -48,7 +48,11 @@ export const useMaxAmountTokenMinusFees = () => {
     const maxTokenAmountMinusGasFees = BigNumber(maxTokenAmount).minus(gasFeeTokenAmount).toString();
     const maxAmountMinusGasFees = convertTokenAmountToHumanReadableAmount(maxTokenAmountMinusGasFees, sourceBalance?.decimals);
 
-    return maxAmountMinusGasFees;
+    if (Number(maxAmountMinusGasFees) > 0) {
+      return maxAmountMinusGasFees;
+    } else {
+      return "0";
+    }
   }
   return maxTokenAmount && convertTokenAmountToHumanReadableAmount(String(maxTokenAmount), sourceBalance?.decimals);
 };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
@@ -9,7 +9,6 @@ import {
   getChainsContainingAsset,
   skipChainsAtom,
   skipRouteAtom,
-  skipBalancesRequestAtom,
 } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -31,7 +30,6 @@ import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
-import { useAccount } from "@/hooks/useAccount";
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   useInsufficientSourceBalance,
@@ -39,6 +37,7 @@ import {
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
+import { useSourceAccount } from "@/hooks/useSourceAccount";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -60,7 +59,6 @@ export const SwapPage = () => {
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
   const historyModal = useModal(TransactionHistoryModal);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
@@ -68,30 +66,7 @@ export const SwapPage = () => {
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
-  const sourceAccount = useAccount(sourceAsset?.chainID);
-
-  useEffect(() => {
-    if (isWaitingForNewRoute) return;
-    if (!sourceAsset || !sourceAccount) return;
-    const { chainID, denom } = sourceAsset;
-    const { address } = sourceAccount;
-    if (!denom || !chainID || !address) return;
-
-    setSkipBalancesRequest({
-      chains: {
-        [chainID]: {
-          address,
-          denoms: [denom],
-        },
-      },
-    });
-  }, [
-    isWaitingForNewRoute,
-    setSkipBalancesRequest,
-    sourceAccount,
-    sourceAsset,
-    sourceAsset?.chainID,
-  ]);
+  const sourceAccount = useSourceAccount();
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
