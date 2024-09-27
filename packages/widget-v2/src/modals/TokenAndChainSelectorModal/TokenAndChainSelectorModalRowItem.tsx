@@ -34,22 +34,6 @@ export const TokenAndChainSelectorModalRowItem = ({
   if (!item || isChainsLoading) return skeleton;
 
   if (isGroupedAsset(item)) {
-    const balanceSummary = item.assets.reduce(
-      (acc, asset) => {
-        const { data: balance } = getBalance(asset.chainID, asset.denom);
-        if (balance) {
-          acc.totalAmount += Number(
-            convertTokenAmountToHumanReadableAmount(
-              balance.amount,
-              balance.decimals
-            )
-          );
-          acc.totalUSD += Number(balance.valueUSD);
-        }
-        return acc;
-      },
-      { totalAmount: 0, totalUSD: 0 }
-    );
     return (
       <ModalRowItem
         key={`${index}${item.id}`}
@@ -59,13 +43,13 @@ export const TokenAndChainSelectorModalRowItem = ({
           <TokenAndChainSelectorModalRowItemLeftContent item={item} />
         }
         rightContent={
-          Number(balanceSummary.totalAmount) > 0 && (
+          Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
               <SmallText normalTextColor>
-                {balanceSummary.totalAmount.toFixed(2)}
+                {parseFloat(item.totalAmount.toFixed(8))}
               </SmallText>
-              {Number(balanceSummary.totalUSD) > 0 && (
-                <SmallText>{formatUSD(balanceSummary.totalUSD)}</SmallText>
+              {item.totalUsd && (
+                <SmallText>{formatUSD(item.totalUsd)}</SmallText>
               )}
             </Column>
           )

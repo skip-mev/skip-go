@@ -28,6 +28,8 @@ export type GroupedAsset = {
     originChainID: string;
   }[];
   assets: ClientAsset[];
+  totalAmount: number;
+  totalUsd: number;
 };
 
 export type ChainWithAsset = Chain & {
@@ -78,9 +80,30 @@ export const TokenAndChainSelectorModal = createModal(
       [_onSelect]
     );
 
-    const groupingAssetsByRecommendedSymbol = useMemo(() => {
+    const groupedAssetsByRecommendedSymbol = useMemo(() => {
       if (!assets) return;
       const groupedAssets: GroupedAsset[] = [];
+
+      const calculateBalanceSummary = (assets: ClientAsset[]) => {
+        return assets.reduce(
+          (accumulator, asset) => {
+            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            if (balance) {
+              accumulator.totalAmount += Number(
+                convertTokenAmountToHumanReadableAmount(
+                  balance.amount,
+                  balance.decimals
+                )
+              );
+              if (Number(balance.valueUSD)) {
+                accumulator.totalUsd += Number(balance.valueUSD);
+              }
+            }
+            return accumulator;
+          },
+          { totalAmount: 0, totalUsd: 0 }
+        );
+      };
 
       assets.forEach((asset) => {
         const foundGroup = groupedAssets.find(
@@ -104,27 +127,36 @@ export const TokenAndChainSelectorModal = createModal(
               },
             ],
             assets: [asset],
+            totalAmount: 0,
+            totalUsd: 0,
           });
         }
       });
+
+      groupedAssets.forEach((group) => {
+        const balanceSummary = calculateBalanceSummary(group.assets);
+        group.totalAmount = balanceSummary.totalAmount;
+        group.totalUsd = balanceSummary.totalUsd;
+      });
+
       return groupedAssets;
-    }, [assets]);
+    }, [assets, getBalance]);
 
     const selectedGroup = useMemo(() => {
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
       if (!asset) return;
-      return groupingAssetsByRecommendedSymbol?.find(
+      return groupedAssetsByRecommendedSymbol?.find(
         (group) => group.id === asset.recommendedSymbol
       );
     }, [
       groupedAssetSelected?.assets,
       selectedAsset,
-      groupingAssetsByRecommendedSymbol,
+      groupedAssetsByRecommendedSymbol,
     ]);
 
     const filteredAssets = useMemo(() => {
-      if (!groupingAssetsByRecommendedSymbol) return;
-      return matchSorter(groupingAssetsByRecommendedSymbol, searchQuery, {
+      if (!groupedAssetsByRecommendedSymbol) return;
+      return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
         keys: [
           "id",
           "assets.*.symbol",
@@ -134,65 +166,15 @@ export const TokenAndChainSelectorModal = createModal(
           "chains.*.chainID",
         ],
       }).sort((itemA, itemB) => {
-        const balanceSummaryA = itemA.assets.reduce(
-          (acc, asset) => {
-            const { data: balance } = getBalance(asset.chainID, asset.denom);
-            if (balance) {
-              acc.totalAmount += Number(
-                convertTokenAmountToHumanReadableAmount(
-                  balance.amount,
-                  balance.decimals
-                )
-              );
-              if (Number(balance.valueUSD)) {
-                acc.totalUSD += Number(balance.valueUSD);
-              }
-            }
-            return acc;
-          },
-          { totalAmount: 0, totalUSD: 0 }
-        );
-
-        const balanceSummaryB = itemB.assets.reduce(
-          (acc, asset) => {
-            const { data: balance } = getBalance(asset.chainID, asset.denom);
-            if (balance) {
-              acc.totalAmount += Number(
-                convertTokenAmountToHumanReadableAmount(
-                  balance.amount,
-                  balance.decimals
-                )
-              );
-              if (Number(balance.valueUSD)) {
-                acc.totalUSD += Number(balance.valueUSD);
-              }
-            }
-            return acc;
-          },
-          { totalAmount: 0, totalUSD: 0 }
-        );
-
-        if (balanceSummaryA?.totalUSD && balanceSummaryB?.totalUSD) {
-          if (Number(balanceSummaryA?.totalUSD) < Number(balanceSummaryB?.totalUSD)) {
-            return 1;
-          }
-          if (Number(balanceSummaryA?.totalUSD) > Number(balanceSummaryB?.totalUSD)) {
-            return -1;
-          }
-          return 0;
-        } else {
-          if (Number(balanceSummaryA?.totalAmount) < Number(balanceSummaryB?.totalAmount)) {
-            return 1;
-          }
-          if (Number(balanceSummaryA?.totalAmount) > Number(balanceSummaryB?.totalAmount)) {
-            return -1;
-          }
-          return 0;
+        if (itemA.totalUsd < itemB.totalUsd) {
+          return 1;
         }
-
-
+        if (itemA.totalUsd > itemB.totalUsd) {
+          return -1;
+        }
+        return 0;
       });
-    }, [groupingAssetsByRecommendedSymbol, getBalance, searchQuery]);
+    }, [groupedAssetsByRecommendedSymbol, searchQuery]);
 
     const filteredChains = useMemo(() => {
       if (!selectedGroup || !chains) return;
