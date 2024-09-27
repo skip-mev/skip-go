@@ -256,10 +256,19 @@ export const TokenAndChainSelectorModal = createModal(
       groupedAssetSelected,
       networkSelection,
     ]);
+
+    const onClickBack = () => {
+      if (groupedAssetSelected === null) {
+        modal.remove();
+      } else {
+        setGroupedAssetSelected(null);
+      }
+    };
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput
           onSearch={handleSearch}
+          onClickBack={onClickBack}
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}

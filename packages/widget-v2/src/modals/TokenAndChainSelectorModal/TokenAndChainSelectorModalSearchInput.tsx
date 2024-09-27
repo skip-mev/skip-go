@@ -13,6 +13,7 @@ import { Asset } from "@skip-go/client";
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
+  onClickBack: () => void;
   asset?: Asset;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
@@ -22,12 +23,12 @@ type TokenAndChainSelectorModalSearchInputProps = {
 export const TokenAndChainSelectorModalSearchInput = ({
   asset,
   onSearch,
+  onClickBack,
   searchTerm,
   setSearchTerm,
   networkSelection,
 }: TokenAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
-  const modal = useModal();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = useCallback(
@@ -49,7 +50,7 @@ export const TokenAndChainSelectorModalSearchInput = ({
     <StyledSearchInputContainer align="center" gap={5}>
       {asset ? (
         <>
-          <Button onClick={() => modal.remove()}>
+          <Button onClick={onClickBack}>
             <StyledLeftArrowIcon color={theme.primary.text.normal} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
