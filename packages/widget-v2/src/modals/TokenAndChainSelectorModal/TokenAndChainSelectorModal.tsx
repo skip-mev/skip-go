@@ -18,6 +18,7 @@ import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorMo
 import { matchSorter } from "match-sorter";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { Chain } from "@skip-go/client";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export type GroupedAsset = {
   id: string;
@@ -132,8 +133,66 @@ export const TokenAndChainSelectorModal = createModal(
           "chains.*.originChainID",
           "chains.*.chainID",
         ],
+      }).sort((itemA, itemB) => {
+        const balanceSummaryA = itemA.assets.reduce(
+          (acc, asset) => {
+            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            if (balance) {
+              acc.totalAmount += Number(
+                convertTokenAmountToHumanReadableAmount(
+                  balance.amount,
+                  balance.decimals
+                )
+              );
+              if (Number(balance.valueUSD)) {
+                acc.totalUSD += Number(balance.valueUSD);
+              }
+            }
+            return acc;
+          },
+          { totalAmount: 0, totalUSD: 0 }
+        );
+
+        const balanceSummaryB = itemB.assets.reduce(
+          (acc, asset) => {
+            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            if (balance) {
+              acc.totalAmount += Number(
+                convertTokenAmountToHumanReadableAmount(
+                  balance.amount,
+                  balance.decimals
+                )
+              );
+              if (Number(balance.valueUSD)) {
+                acc.totalUSD += Number(balance.valueUSD);
+              }
+            }
+            return acc;
+          },
+          { totalAmount: 0, totalUSD: 0 }
+        );
+
+        if (balanceSummaryA?.totalUSD && balanceSummaryB?.totalUSD) {
+          if (Number(balanceSummaryA?.totalUSD) < Number(balanceSummaryB?.totalUSD)) {
+            return 1;
+          }
+          if (Number(balanceSummaryA?.totalUSD) > Number(balanceSummaryB?.totalUSD)) {
+            return -1;
+          }
+          return 0;
+        } else {
+          if (Number(balanceSummaryA?.totalAmount) < Number(balanceSummaryB?.totalAmount)) {
+            return 1;
+          }
+          if (Number(balanceSummaryA?.totalAmount) > Number(balanceSummaryB?.totalAmount)) {
+            return -1;
+          }
+          return 0;
+        }
+
+
       });
-    }, [groupingAssetsByRecommendedSymbol, searchQuery]);
+    }, [groupingAssetsByRecommendedSymbol, getBalance, searchQuery]);
 
     const filteredChains = useMemo(() => {
       if (!selectedGroup || !chains) return;
