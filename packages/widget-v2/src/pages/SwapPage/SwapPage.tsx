@@ -38,6 +38,7 @@ import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/Transa
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { useSourceAccount } from "@/hooks/useSourceAccount";
+import { skipBalancesAtom } from "@/state/balances";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -63,6 +64,7 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
+  const { isLoading: isLoadingBalances } = useAtomValue(skipBalancesAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
@@ -188,6 +190,11 @@ export const SwapPage = () => {
             });
           }}
         />
+      );
+    }
+    if (isLoadingBalances) {
+      return (
+        <MainButton label="Fetching balances" loading icon={ICONS.swap} />
       );
     }
     if (insufficientBalance) {
