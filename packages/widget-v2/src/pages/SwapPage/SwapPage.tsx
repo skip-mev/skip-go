@@ -26,7 +26,6 @@ import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useModal } from "@/components/Modal";
-import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
@@ -62,18 +61,6 @@ export const SwapPage = () => {
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const sourceAccount = useSourceAccount();
-
-  const sourceDetails = useGetAssetDetails({
-    assetDenom: sourceAsset?.denom,
-    amount: sourceAsset?.amount,
-    chainId: sourceAsset?.chainID,
-  });
-
-  const destinationDetails = useGetAssetDetails({
-    assetDenom: destinationAsset?.denom,
-    amount: destinationAsset?.amount,
-    chainId: destinationAsset?.chainID,
-  });
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -222,23 +209,17 @@ export const SwapPage = () => {
   ]);
 
   const priceChangePercentage = useMemo(() => {
-    if (
-      !sourceDetails.usdAmount ||
-      !destinationDetails.usdAmount ||
-      isWaitingForNewRoute
-    )
+    if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
       return;
-    const difference = destinationDetails.usdAmount - sourceDetails.usdAmount;
+    }
+
+    const difference = Number(route.usdAmountOut) - Number(route.usdAmountIn);
     const average =
-      (sourceDetails.usdAmount + destinationDetails.usdAmount) / 2;
+      (Number(route.usdAmountIn) + Number(route.usdAmountOut)) / 2;
     const percentageDifference = (difference / average) * 100;
 
     return parseFloat(percentageDifference.toFixed(2));
-  }, [
-    destinationDetails.usdAmount,
-    isWaitingForNewRoute,
-    sourceDetails.usdAmount,
-  ]);
+  }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
     <>
@@ -265,6 +246,7 @@ export const SwapPage = () => {
               swapDirection === "swap-out" && isWaitingForNewRoute
             }
             value={sourceAsset?.amount}
+            usdValue={route?.usdAmountIn}
             onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
@@ -275,6 +257,7 @@ export const SwapPage = () => {
             isWaitingToUpdateInputValue={
               swapDirection === "swap-in" && isWaitingForNewRoute
             }
+            usdValue={route?.usdAmountOut}
             value={destinationAsset?.amount}
             priceChangePercentage={priceChangePercentage}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}

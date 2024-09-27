@@ -13,10 +13,12 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { formatUSD } from "@/utils/intl";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
+  usdValue?: string;
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   destination?: boolean;
   onClickEditDestinationWallet?: () => void;
@@ -29,6 +31,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
 export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   tokenAmount,
+  usdValue,
   chainId,
   status,
   destination,
@@ -100,10 +103,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <Text fontSize={24}>
           {assetDetails.amount} {assetDetails?.symbol}
         </Text>
-        <SmallText>
-          {assetDetails.formattedUsdAmount}
-          {destination && " after fees"}
-        </SmallText>
+        {usdValue && (
+          <SmallText>
+            {formatUSD(usdValue)}
+            {destination && " after fees"}
+          </SmallText>
+        )}
+
         <Row align="center" gap={5}>
           <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
 

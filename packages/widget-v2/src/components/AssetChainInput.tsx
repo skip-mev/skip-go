@@ -14,9 +14,11 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
+import { formatUSD } from "@/utils/intl";
 
 export type AssetChainInputProps = {
   value?: string;
+  usdValue?: string;
   onChangeValue?: (value: string) => void;
   handleChangeAsset?: () => void;
   handleChangeChain?: () => void;
@@ -28,6 +30,7 @@ export type AssetChainInputProps = {
 
 export const AssetChainInput = ({
   value,
+  usdValue,
   onChangeValue,
   selectedAsset,
   handleChangeAsset,
@@ -36,6 +39,7 @@ export const AssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
 }: AssetChainInputProps) => {
+
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] =
     useState(false);
@@ -178,7 +182,7 @@ export const AssetChainInput = ({
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
-              {assetDetails.formattedUsdAmount ?? "--"}
+              {(usdValue && formatUSD(usdValue)) ?? "--"}
             </SmallTextButton>
             <TinyTriangleIcon
               color={priceChangeColor}
@@ -192,7 +196,7 @@ export const AssetChainInput = ({
             )}
           </Row>
         ) : (
-          <SmallText>{assetDetails.formattedUsdAmount ?? "--"}</SmallText>
+          <SmallText>{(usdValue && formatUSD(usdValue)) ?? "--"}</SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton
