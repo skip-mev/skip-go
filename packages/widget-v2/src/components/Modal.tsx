@@ -86,7 +86,6 @@ export const useModal = <T extends ModalProps>(
       ...modalInstance,
       show: (showArgs?: Partial<T & ModalProps>) => {
         modalInstance.show({
-          stackedModal: numberOfModalsOpen > 0,
           ...showArgs,
           theme,
         } as Partial<T>);

@@ -85,6 +85,7 @@ const StyledNoTransactionHistoryContainer = styled(Column)`
 const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
+  min-height: 300px;
   width: 480px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
