@@ -1,12 +1,11 @@
 ---
-title: 'Router SDK Migration Guide'
+title: 'Skip Go Client Migration Guide'
 ---
 
 <Warning>
   Both the Skip Router SDK `@skip-router/core` and Skip Go Core `@skip-go/core`
   are deprecated. Please migrate to Skip Go Client `@skip-go/client`, our
-  actively maintained and developed [TypeScript
-  Package](https://www.npmjs.com/package/@skip-go/client).
+  actively maintained [TypeScript package](https://www.npmjs.com/package/@skip-go/client).
 </Warning>
 
 ### 4.0.0 Breaking changes
@@ -38,7 +37,7 @@ export interface UserAddress {
 
 - Removed Method: `SkipClient.executeMultiChainMessage`
 - Renamed Method: `SkipClient.getGasAmountForMessage` \-> `SkipClient.getCosmosGasAmountForMessage`
-- Renamed Method: `SkipClient.getFeeForMessage`\-> \`SkipClient.getCosmosFeeForMe
+- Renamed Method: `SkipClient.getFeeForMessage` \-> `SkipClient.getCosmosFeeForMe`
 - Renamed Type: `MultiChainMsg` \-> `CosmosMsg`
 - Renamed Method & Params changed: `SkipClient.executeMultiChainMsgs`\-> `SkipClient.executeTxs`
 

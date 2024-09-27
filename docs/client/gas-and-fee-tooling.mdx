@@ -12,25 +12,25 @@ This doc describes all the tooling we've built into the library to get informati
  <Info>
  **Video Overview**
 
-Here's a [video overview for folks](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c) who are more visual.
+Here's a [video overview](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c) for folks who are more visual.
 
 </Info>
 
 ## `SkipClient` functions for getting info about gas and fees
 
-These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button)
+These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button).
 
 ### `SkipClient.getRecommendedGasPrice`
 
 This returns the gas price (i.e. the price of a single unit of gas) the API recommends you use for transactions on a particular chain.
 
-```JavaScript JavaScript
+```ts
 async getRecommendedGasPrice(chainID: string) -> GasPrice
 ```
 
 `GasPrice` is a [cosmjs](https://cosmos.github.io/cosmjs/latest/stargate/classes/GasPrice.html) type giving the recommended fee denom and recommend price amount (fee/gas):
 
-```JavaScript JavaScript
+```ts
 type GasPrice = {
   denom: string;
   amount: Decimal
@@ -41,7 +41,7 @@ type GasPrice = {
 
 This will return high, medium, and low gas prices for a particular chain, given by `chainID`, along with the default fee denom as a `FeeAsset` object:
 
-```JavaScript JavaScript
+```ts
 type FeeAsset = {
   denom: string;
   gasPrice: GasPriceInfo;
@@ -60,7 +60,7 @@ An undefined response indicates that the API cannot find up-to-date gas price in
 
 This will give you the estimated fee and gas for a particular multichainMsg returned by the API.
 
-```JavaScript JavaScript
+```ts
 async getFeeForMessage(
     msg: MultiChainMsg,
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
@@ -89,7 +89,7 @@ This field in `ExecuteRouteOptions` allows you to override our default gas price
 
 The argument is a function that takes in a chain ID and returns a gas price for that chain as a `GasPrice` object from CosmJS
 
-```text JavaScript
+```ts
 type GasPrice = {
   denom: string;
   amount: Decimal
