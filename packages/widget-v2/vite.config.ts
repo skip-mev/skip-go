@@ -36,7 +36,12 @@ export default defineConfig({
         "react-dom",
         "react/jsx-runtime",
         "@r2wc/react-to-web-component",
+        "**/*.stories.*",
+        "**/storybook/**",
       ],
+      input: {
+        main: "src/index.tsx",
+      },
       output: {
         dir: "build",
         entryFileNames: "[name].js",
