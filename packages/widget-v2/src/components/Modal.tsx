@@ -75,7 +75,7 @@ export const useModal = <T extends ModalProps>(
   initialArgs?: Partial<T>
 ) => {
   const [theme] = useAtom(themeAtom);
-  const [numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
+  const [_numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
     numberOfModalsOpenAtom
   );
 
@@ -86,7 +86,6 @@ export const useModal = <T extends ModalProps>(
       ...modalInstance,
       show: (showArgs?: Partial<T & ModalProps>) => {
         modalInstance.show({
-          stackedModal: numberOfModalsOpen > 0,
           ...showArgs,
           theme,
         } as Partial<T>);
@@ -101,7 +100,7 @@ export const useModal = <T extends ModalProps>(
         modalInstance.hide();
       },
     }),
-    [modalInstance, theme, numberOfModalsOpen, setNumberOfModalsOpen]
+    [modalInstance, theme, setNumberOfModalsOpen]
   );
 };
 

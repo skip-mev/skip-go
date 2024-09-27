@@ -10,20 +10,15 @@ import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
 import { createGlobalStyle } from "styled-components";
-import regular from "@/fonts/ABCDiatype-Regular.woff2";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
 import { WalletProviders } from "@/providers/WalletProviders";
+import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 
 export const queryClient = new QueryClient();
 
 export const GlobalStyles = createGlobalStyle`
-  @font-face {
-    font-family: ABCDiatype;
-    src: url(${regular}) format(woff2);
-  }
-
   * {
     font-family: 'ABCDiatype', sans-serif;
   }
@@ -49,6 +44,7 @@ export const ShadowDomAndProviders = ({
   children: ReactNode;
   theme?: PartialTheme;
 }) => {
+  useInjectFontsToDocumentHead();
   const [isClient, setIsClient] = useState<boolean>(false);
 
   const [, setShadowDom] = useState<HTMLElement>();
