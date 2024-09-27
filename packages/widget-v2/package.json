@@ -59,7 +59,7 @@
     "@penumbra-zone/protobuf": "^6.0.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@radix-ui/react-dialog": "^1.1.1",
-    "@skip-go/client": "workspace:^",
+    "@skip-go/client": "0.9.3",
     "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-backpack": "^0.1.14",
     "@solana/wallet-adapter-coinbase": "^0.1.19",
