@@ -14,6 +14,7 @@ const externalDeps = [
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
+    preserveSymlinks: true,
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
