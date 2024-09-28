@@ -11,12 +11,6 @@ const externalDeps = [
   ...Object.keys(peerDependencies || {}),
 ];
 
-import { dependencies, peerDependencies } from "./package.json";
-const externalDeps = [
-  ...Object.keys(dependencies || {}),
-  ...Object.keys(peerDependencies || {}),
-];
-
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
