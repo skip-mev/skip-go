@@ -33,7 +33,7 @@ export const renderLightAndDarkThemeSeperateProps = <
     </StyledWrapper>
   );
 };
-export const StyledWrapper = styled(Column) <{ row?: boolean }>`
+export const StyledWrapper = styled(Column)<{ row?: boolean }>`
   ${({ row }) => row && "flex-direction: row;"}
   padding: 20px;
 `;
