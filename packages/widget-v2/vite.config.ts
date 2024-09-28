@@ -33,7 +33,6 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),
-      formats: ["es"],
       name: "widget-v2",
     },
     sourcemap: true,
