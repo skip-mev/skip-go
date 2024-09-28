@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
 import { ModalRowItem, ModalRowItemProps } from "@/components/ModalRowItem";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { SmallText, Text } from "@/components/Typography";
 import { Column, Row } from "@/components/Layout";
