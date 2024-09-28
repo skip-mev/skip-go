@@ -29,5 +29,6 @@
       "@/*": ["src/*"]
     }
   },
+  "exclude": ["build", "src/stories"],
   "include": ["src"]
 }

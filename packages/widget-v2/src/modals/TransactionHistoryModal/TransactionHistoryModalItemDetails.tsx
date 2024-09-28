@@ -1,6 +1,6 @@
 import { SmallText } from "@/components/Typography";
 import { Column, Row } from "@/components/Layout";
-import { styled, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { Button, Link } from "@/components/Button";
 import { TrashIcon } from "@/icons/TrashIcon";
