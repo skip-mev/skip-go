@@ -8,7 +8,7 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/skipClient";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;

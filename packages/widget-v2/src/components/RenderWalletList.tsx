@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { styled, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";

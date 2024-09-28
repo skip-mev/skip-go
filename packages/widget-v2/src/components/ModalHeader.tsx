@@ -1,4 +1,4 @@
-import { styled, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Column, Row } from "./Layout";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Text } from "./Typography";
