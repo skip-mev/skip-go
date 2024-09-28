@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:https": "next dev --experimental-https",
-    "build": "NODE_OPTIONS=--max-old-space-size=16384 next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
