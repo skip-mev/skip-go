@@ -49,7 +49,7 @@
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "storybook": "^8.2.6",
-    "styled-components": "^6.1.13",
+    "styled-components": "6.0.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
     "vite": "^5.3.4",
