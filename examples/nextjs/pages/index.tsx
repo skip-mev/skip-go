@@ -1,8 +1,6 @@
-import { NextPage } from 'next';
-import React from 'react';
 import { SwapWidget } from '@skip-go/widget';
 
-const Home: NextPage = () => {
+const Home = () => {
   return (
     <div
       style={{
