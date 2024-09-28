@@ -11,10 +11,15 @@ const externalDeps = [
   ...Object.keys(peerDependencies || {}),
 ];
 
+import { dependencies, peerDependencies } from "./package.json";
+const externalDeps = [
+  ...Object.keys(dependencies || {}),
+  ...Object.keys(peerDependencies || {}),
+];
+
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    preserveSymlinks: true,
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
@@ -25,7 +30,7 @@ export default defineConfig({
       rollupTypes: true,
       outDir: "build",
       tsconfigPath: "./tsconfig.app.json",
-      exclude: ["node_modules", "build", ".storybook"],
+      exclude: ["node_modules/**", "build/**", ".storybook/**"],
     }),
     nodePolyfills(),
   ],

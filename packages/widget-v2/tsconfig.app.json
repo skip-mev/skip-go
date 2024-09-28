@@ -29,6 +29,5 @@
       "@/*": ["src/*"]
     }
   },
-  "exclude": ["node_modules", "build", ".storybook"],
   "include": ["src"]
 }
