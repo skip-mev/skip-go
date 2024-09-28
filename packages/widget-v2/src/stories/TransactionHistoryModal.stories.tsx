@@ -13,7 +13,7 @@ const meta = {
   title: "Modals/TransactionHistoryModal",
   component: (props) => <TransactionHistoryModalExample {...props} />,
   parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout	
+    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",
   },
   args: {

@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 const meta = {
   title: "Modals/SetAddressModal",
   parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout	
+    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",
   },
   args: {},

@@ -48,7 +48,7 @@ const RenderExample = (props: ErrorPageVariants) => {
     return <ErrorPage />;
   }
   return null;
-};
+}
 
 export const AuthFailed: Story = {
   args: {
