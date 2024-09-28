@@ -7853,8 +7853,6 @@ __metadata:
     match-sorter: ^6.3.4
     pluralize: ^8.0.0
     rc-virtual-list: ^3.14.5
-    react: ^18.3.1
-    react-dom: ^18.3.1
     react-error-boundary: ^4.0.13
     react-shadow-scope: ^1.0.5
     storybook: ^8.2.6
@@ -7867,6 +7865,9 @@ __metadata:
     vite-plugin-node-polyfills: ^0.22.0
     wagmi: ^2.12.8
     zod: ^3.23.8
+  peerDependencies:
+    react: 17.x || 18.x
+    react-dom: 17.x || 18.x
   languageName: unknown
   linkType: soft
 
@@ -24586,7 +24587,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react-dom@npm:^18.0.0, react-dom@npm:^18.2.0, react-dom@npm:^18.3.1":
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react-dom@npm:^18.0.0, react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -24733,7 +24734,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.0.0, react@npm:^18.2.0, react@npm:^18.3.1":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.0.0, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
