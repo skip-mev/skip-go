@@ -4,6 +4,12 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
+import { dependencies, peerDependencies } from "./package.json";
+
+const externalDeps = [
+  ...Object.keys(dependencies || {}),
+  ...Object.keys(peerDependencies || {}),
+];
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,15 +38,7 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: [
-        "react",
-        "react-dom",
-        "react/jsx-runtime",
-        "@r2wc/react-to-web-component",
-        "**/*.stories.*",
-        "**/storybook/**",
-        "node_modules/*"
-      ],
+      external: externalDeps,
       output: {
         dir: "build",
         entryFileNames: "[name].js",

@@ -5,14 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "dev:https": "next dev --experimental-https",
-    "build": "next build",
+    "build": "NODE_OPTIONS=--max-old-space-size=16384 next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@chain-registry/keplr": "1.68.68",
     "@leapwallet/cosmos-social-login-capsule-provider": "0.0.40",
-    "@skip-go/widget": "file:./skip-go-widget-3.0.0-alpha.1.tgz",
+    "@skip-go/widget": "workspace:^",
     "@solana/wallet-adapter-phantom": "0.9.24",
     "@tanstack/react-query": "^5.17.15",
     "chain-registry": "1.63.68",
