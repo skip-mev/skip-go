@@ -297,6 +297,13 @@ export function useSwapWidget(persistSwapWidgetState = true) {
           chain.chainID,
           filter?.source?.[chain.chainID]
         );
+        if (chain.chainType === "cosmos") {
+          const feeAsset = chains?.find(c => c.chainID === chain.chainID)?.feeAssets?.[0];
+          asset = assets.find((x) => x.denom === feeAsset?.denom);
+          if (!asset) {
+            asset = assets.find((x) => x.recommendedSymbol?.toLowerCase() === 'usdc');
+          }
+        }
         if (chain.chainType === 'evm') {
           asset = assets.find(
             (x) =>
@@ -361,12 +368,27 @@ export function useSwapWidget(persistSwapWidgetState = true) {
           chain.chainID,
           filter?.destination?.[chain.chainID]
         );
+        if (chain.chainType === "cosmos") {
+          const feeAsset = chains?.find(c => c.chainID === chain.chainID)?.feeAssets?.[0];
+          asset = assets.find((x) => x.denom === feeAsset?.denom);
+          if (!asset) {
+            asset = assets.find((x) => x.recommendedSymbol?.toLowerCase() === 'usdc');
+          }
+        }
         if (chain.chainType === 'evm') {
           asset = assets.find(
             (x) =>
               x.denom.endsWith('-native') ||
               x.name?.toLowerCase() === chain.chainName.toLowerCase() ||
               x.recommendedSymbol?.toLowerCase() === 'usdc'
+          );
+        }
+        if (chain.chainType === 'svm') {
+          asset = assets.find(
+            (x) =>
+              // default to usdc
+              x.denom.toLowerCase() ===
+              'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'.toLowerCase()
           );
         }
         asset ??= assets[0];
