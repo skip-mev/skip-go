@@ -1,36 +1,70 @@
 ---
-title: 'Gas and Transaction Fee Tooling'
-description: 'This doc describes the gas and fee tooling in @skip-go/client (our typescript library)'
+title: 'Balances, Gas and Transaction Fee Utilities'
+description: 'This page describes the token balance, gas and transaction fee utility functions in the `@skip-go/client` TypeScript package.'
 ---
 
-## Background
+## Getting token balances
 
-`@skip-go/client` \-- the Typescript Package we build to abstract away the complexity of calling Skip Go API directly -- provides additional functionality for building transactions. Since we've heard setting gas amount, fee amount, and gas price well is really tricky, we try hard to use reasonable, reliable defaults for these values. But we also expose a lot of functionality that lets folks override these defaults and customize fees (e.g. use non-default tokens for fees) and gas.
+To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You can query a set of specified denoms or leave the array empty to fetch all denoms for an address. Learn how to setup your `SkipClient` instance in the [Getting Started](../client/getting-started.mdx) guide.
 
-This doc describes all the tooling we've built into the library to get information about gas & fees, and customize how they're set on your transactions.
+<CodeGroup>
+```ts TypeScript (Client)
+const balances = await skipClient.balances({
+  chains: {
+  "noble-1": {
+    address: noble.address, // noblef8js...
+    denoms: ["uusdc"]
+  },
+  "osmosis-1": {
+    address: osmosis.address, // osmois8fo...
+    denoms: [] // Fetch all denoms for address
+  }
+}
+});
+```
+```JSON JSON (REST API)
+// POST /v2/info/balances
+{
+  "chains": {
+    "137": {
+      "address": "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
+      "denoms": [
+        "polygon-native",
+        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
+      ]
+    },
+    "osmosis-1": {
+      "address": "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
+      "denoms": [] // Fetch all denoms for address
+    }
+  }
+}
+```
+
+</CodeGroup>
+## Getting info about gas and fees
+
 
  <Info>
  **Video Overview**
 
-Here's a video overview for folks who are more visual: [https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c)
+Here's a [video overview](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf9be2c) of our gas and transaction fee tooling.
 
 </Info>
 
-## `SkipClient` functions for getting info about gas and fees
-
-These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button)
+These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button).
 
 ### `SkipClient.getRecommendedGasPrice`
 
 This returns the gas price (i.e. the price of a single unit of gas) the API recommends you use for transactions on a particular chain.
 
-```JavaScript JavaScript
+```ts
 async getRecommendedGasPrice(chainID: string) -> GasPrice
 ```
 
 `GasPrice` is a [cosmjs](https://cosmos.github.io/cosmjs/latest/stargate/classes/GasPrice.html) type giving the recommended fee denom and recommend price amount (fee/gas):
 
-```JavaScript JavaScript
+```ts
 type GasPrice = {
   denom: string;
   amount: Decimal
@@ -41,7 +75,7 @@ type GasPrice = {
 
 This will return high, medium, and low gas prices for a particular chain, given by `chainID`, along with the default fee denom as a `FeeAsset` object:
 
-```JavaScript JavaScript
+```ts
 type FeeAsset = {
   denom: string;
   gasPrice: GasPriceInfo;
@@ -60,7 +94,7 @@ An undefined response indicates that the API cannot find up-to-date gas price in
 
 This will give you the estimated fee and gas for a particular multichainMsg returned by the API.
 
-```JavaScript JavaScript
+```ts
 async getFeeForMessage(
     msg: MultiChainMsg,
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
@@ -89,7 +123,7 @@ This field in `ExecuteRouteOptions` allows you to override our default gas price
 
 The argument is a function that takes in a chain ID and returns a gas price for that chain as a `GasPrice` object from CosmJS
 
-```text JavaScript
+```ts
 type GasPrice = {
   denom: string;
   amount: Decimal

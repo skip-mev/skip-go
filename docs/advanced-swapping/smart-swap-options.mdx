@@ -52,6 +52,7 @@ const route = await skipClient.route({
 }
 ```
 ```JSON JSON (REST API)
+// POST /v2/fungible/route
 { 
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
@@ -91,6 +92,7 @@ const route = await skipClient.route({
 ```
 
 ```JSON JSON (REST API)
+// POST /v2/fungible/route
 { 
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
@@ -163,7 +165,7 @@ const route = await skipClient.route({
 ```
 
 ```JSON JSON (REST API)
-{ // rest API request body example
+{ // POST /v2/fungible/route
   "amount_in": "10000000000000000000",
   "source_asset_denom": "arbitrum-native",
   "source_asset_chain_id": "42161",
@@ -227,9 +229,9 @@ export type EvmSwap = {
 Nothing new in particular! The `msg_type` used for EVM swaps is the same `evm_tx` type used for all of our EVM transactions. Similarly, there is no new `transfer_event` type; the swap is atomic with the bridging action (Axelar or CCTP), so the same types are used (`axelar_transfer_info` and `cctp_transfer_info` respectively).
 
 
-  <Check>
- **Want to help us get better? Have questions or feedback?**
+ <Info>
+ **Have questions or feedback? Help us get better!**
 
-You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
 
- </Check>
+</Info>

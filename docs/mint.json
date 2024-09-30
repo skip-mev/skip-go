@@ -70,7 +70,7 @@
       "group": "Skip Go Client",
       "pages": [
         "client/getting-started",
-        "client/gas-and-fee-tooling",
+        "client/balance-gas-and-fee-tooling",
         "client/migration-guide"
       ]
     },
@@ -129,7 +129,6 @@
             "api-reference/prod/fungible/post-v2fungibleroute",
             "api-reference/prod/fungible/post-v2fungiblemsgs",
             "api-reference/prod/fungible/post-v2fungiblemsgs_direct",
-            "api-reference/prod/fungible/post-v2fungiblerecommend_assets",
             "api-reference/prod/fungible/post-v2fungibleibc_origin_assets",
             "api-reference/prod/fungible/post-v2fungibleassets_between_chains"
           ]

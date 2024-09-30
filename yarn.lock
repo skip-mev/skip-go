@@ -29576,6 +29576,80 @@ __metadata:
   languageName: node
   linkType: hard
 
+"widget-v2@workspace:packages/widget-v2":
+  version: 0.0.0-use.local
+  resolution: "widget-v2@workspace:packages/widget-v2"
+  dependencies:
+    "@chain-registry/keplr": ^1.68.79
+    "@chromatic-com/storybook": ^1.6.1
+    "@ebay/nice-modal-react": ^1.2.13
+    "@eslint/compat": ^1.1.1
+    "@eslint/js": ^9.9.0
+    "@initia/initia-registry": ^0.1.16
+    "@keplr-wallet/types": ^0.12.125
+    "@penumbra-zone/bech32m": ^7.0.0
+    "@penumbra-zone/client": ^18.1.0
+    "@penumbra-zone/protobuf": ^6.0.0
+    "@penumbra-zone/transport-dom": ^7.5.0
+    "@radix-ui/react-dialog": ^1.1.1
+    "@skip-go/client": "workspace:^"
+    "@skip-go/widget": "workspace:packages/widget"
+    "@solana/spl-token": ^0.4.8
+    "@solana/wallet-adapter-backpack": ^0.1.14
+    "@solana/wallet-adapter-coinbase": ^0.1.19
+    "@solana/wallet-adapter-ledger": ^0.9.25
+    "@solana/wallet-adapter-phantom": ^0.9.24
+    "@solana/wallet-adapter-react": ^0.15.35
+    "@solana/wallet-adapter-solflare": ^0.6.28
+    "@solana/wallet-adapter-trust": ^0.1.13
+    "@solana/web3.js": ^1.95.3
+    "@storybook/addon-essentials": ^8.2.6
+    "@storybook/addon-interactions": ^8.2.6
+    "@storybook/addon-links": ^8.2.6
+    "@storybook/addon-onboarding": ^8.2.6
+    "@storybook/blocks": ^8.2.6
+    "@storybook/react": ^8.2.6
+    "@storybook/react-vite": ^8.2.6
+    "@storybook/test": ^8.2.6
+    "@tanstack/query-core": ^5.51.21
+    "@tanstack/react-query": ^5.51.21
+    "@types/eslint__js": ^8.42.3
+    "@types/pluralize": ^0.0.33
+    "@types/react": ^18.3.3
+    "@types/react-dom": ^18.3.0
+    "@typescript-eslint/eslint-plugin": ^7.15.0
+    "@typescript-eslint/parser": ^7.15.0
+    "@vitejs/plugin-react": ^4.3.1
+    chain-registry: ^1.63.43
+    eslint: ^9.9.0
+    eslint-plugin-react-hooks: ^4.6.2
+    graz: ^0.1.20
+    jotai: ^2.9.1
+    jotai-effect: ^1.0.2
+    jotai-tanstack-query: ^0.8.6
+    lodash.debounce: ^4.0.8
+    match-sorter: ^6.3.4
+    pluralize: ^8.0.0
+    rc-virtual-list: ^3.14.5
+    react-error-boundary: ^4.0.13
+    react-shadow-scope: ^1.0.5
+    storybook: ^8.2.6
+    styled-components: ^6.0.0
+    typescript: ^5.5.4
+    typescript-eslint: ^8.2.0
+    viem: ^2.21.1
+    vite: ^5.3.4
+    vite-plugin-dts: ^4.0.0-beta.1
+    vite-plugin-node-polyfills: ^0.22.0
+    wagmi: ^2.12.8
+    zod: ^3.23.8
+  peerDependencies:
+    react: 17.x || 18.x
+    react-dom: 17.x || 18.x
+    styled-components: ^6.0.0
+  languageName: unknown
+  linkType: soft
+
 "wif@npm:^2.0.6":
   version: 2.0.6
   resolution: "wif@npm:2.0.6"
