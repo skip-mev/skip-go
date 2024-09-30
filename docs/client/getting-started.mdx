@@ -1,298 +1,279 @@
 ---
 title: 'Getting Started'
-description: 'Basic documentation for Skip Go Client, a TypeScript Package (@skip-go/client) that simplifies the process of interacting with the Skip Go API'
+description: '@skip-go/client is a TypeScript library that streamlines interaction with the Skip Go API, enabling cross-chain swaps and transfers across multiple ecosystems.'
 ---
+<Info>
+Anxious to get started? See a live example of this [code](https://github.com/skip-mev/skip-go-example) in our [example app](https://skip-next-simple-example.vercel.app/). 
+</Info>
+<Steps> 
+<Step title="Install Library">
 
-## Background
+Install the library using npm or yarn:
 
-This document covers the [Typescript Package](https://www.npmjs.com/package/@skip-go/client) Skip provides to wrap the functionality of the Skip Go API and make it even easier for developers to build applications with it.
-
-## Set up the Library
-
-Install the library:
-
-```Shell Shell
+<CodeGroup>
+```Shell npm
 npm install @skip-go/client
 ```
-
-## Initialize Client
-
-All integrations start by initializing a SkipClient client (`@skip-go/client.SkipClient`).
-
-This helper objects wraps interactions with the API and provides useful helper methods for a variety of common actions that depend on inputs or outputs of the API (e.g. querying for assets and chains, constructing a route, constructing + signing a transaction from a message returned by the API)
-
-```TypeScript TypeScript
-import { SkipClient, SKIP_API_URL } from "@skip-go/client";
-
-const client = new SkipClient();
+```Shell yarn
+yarn add @skip-go/client
 ```
+</CodeGroup>
+</Step> <Step title="Initialize Client">
 
-The client constructor takes several _optional_ inputs provided together by the `SkipClientOptions` object
-
-- `apiURL?: string;`: A URL for interacting with the Skip Go API (Defaults to the production URL)
-- `getEVMSigner?: (chainID: string) => Promise<WalletClient>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing an EVM transaction. (`WalletClient` is defined in `viem` and other popular EVM client libraries)
-- `getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing a Cosmos transaction. (`OfflineSigner` is defined in `@cosmjs/proto-signing`)
-- `getSVMSigner?: () => Promise<Adapter>;`: Method that `SkipClient` calls internally whenever it needs a client for constructing and signing a Solana transaction. (`Adapter` is defined in `@solana/wallet-adapter-base`)
-- `endpointOptions`:
-  - `endpoints?: Record<string, clientTypes.EndpointOptions>;`: A map of `chainID`s to their respective endpoints.
-    _ `clientTypes.EndpointOptions` has `rpc` and `rest` fields
-    _ If you implement this, you do not need to implement the two functions below
-  - `getRpcEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the RPC endpoint for a given `chainID`
-  - `getRestEndpointForChain?: (chainID: string) => Promise<string>;`: A function that returns the REST endpoint for a given `chainID`
-- `aminoTypes?: AminoConverters;`: additional amino types to be used in the router.
-- `registryTypes?: Iterable<[string, GeneratedType]>;`: additional registry types to be used in the router
-
-## Setup Signers
-
-Optionally, you can set up a signer for each EVM, SVM, or Cosmos SDK ecosystems.
-
-For EVM transactions, you need to install the `viem` package:
-
-```Shell shell
-npm i viem
-```
-
-For SVM transactions, you can pick which wallets you want to use in [@solana/wallet-adapter-wallets](https://github.com/anza-xyz/wallet-adapter/blob/master/PACKAGES.md#wallets).
-For this example, we are going to use Phantom wallet:
-
-```Shell shell
-npm i @solana/wallet-adapter-phantom
-```
-
-Now, let's create the SkipClient instance with the signers for each ecosystem!
-
-We are going to use Keplr for Cosmos transactions, MetaMask for EVM transactions, and Phantom for Solana transactions.
+To start integrating with the Skip Go API, initialize a `SkipClient` instance. This `skipClient` provides helper methods for common actions such as querying assets and chains, constructing routes, and executing transactions.
 
 ```ts
-import { SkipClient } from '@skip-router/client';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import { createWalletClient } from 'viem';
+import { SkipClient } from "@skip-go/client";
 
 const skipClient = new SkipClient({
-  getCosmosSigner: async (chainID) => {
-    const offlineSigner = window.keplr?.getOfflineSigner(chainID);
-    if (!offlineSigner) throw new Error('Keplr not installed');
-    return offlineSigner;
-  },
-  getEVMSigner: async () => {
-    const ethereum = window.ethereum;
-    if (!ethereum) throw new Error('MetaMask not installed');
-    const client = createWalletClient({
-      chain: mainnet,
-      transport: custom(window.ethereum),
-    });
-    return client;
-  },
-  getSVMSigner: async () => {
-    const phantom = new PhantomWalletAdapter();
-    return phantom;
-  },
+  // Signers will be set up in the following section
 });
 ```
 
-## Query Basic Info
+The SkipClient constructor accepts an optional configuration object of type `SkipClientOptions`. Here's a brief overview:
 
-Now that your client is initialized, you can use it to query basic information about chains & assets to populate your user interface.
+- `apiURL?: string`: Override the default API URL
+- `endpointOptions?: EndpointOptions`: Provide RPC and REST endpoints for specific chains
+- `aminoTypes?: AminoConverters`: Additional amino types to be for message encoding
+- `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types 
 
-For example:
+</Step> <Step title="Setup Signers">
 
-#### Get list of chains
+To execute transactions, you need to set up signers for the ecosystems you plan to interact with. Below are examples for Cosmos SDK, EVM, and Solana (SVM). Note that for EVM and SVM, you'll need to install additional libraries.
+
+### Signer Setup
+<CodeGroup>
+
+```ts Cosmos Signer
+// For Cosmos transactions, we'll use Keplr wallet from the window object
+const getCosmosSigner = async (chainID: string) => {
+  const offlineSigner = await window.keplr?.getOfflineSigner(chainID);
+  if (!offlineSigner) throw new Error("Keplr not installed or chain not added");
+  return offlineSigner;
+};
+
+```
+
+```ts EVM Signer
+// For EVM transactions, we'll use MetaMask and viem
+// npm install viem
+import { createWalletClient, custom, Account } from "viem";
+import { mainnet } from 'viem/chains';
+
+const getEVMSigner = async () => {
+  const ethereum = window.ethereum;
+  if (!ethereum) throw new Error("MetaMask not installed");
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as Account[];
+  const account = accounts?.[0] 
+  if (!account) throw new Error('No accounts found');
+  const client = createWalletClient({
+    account,
+    chain: mainnet,
+    transport: custom(window.ethereum),
+  });
+  return client;
+}
+```
+
+```ts SVM Signer
+// For Solana transactions, we'll use the Phantom wallet adapter
+// npm install @solana/wallet-adapter-phantom
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+
+const getSVMSigner = async () => {
+  const phantom = new PhantomWalletAdapter();
+  await phantom.connect();
+  return phantom;
+};
+```
+</CodeGroup>
+
+### Finalizing the Client Initialization
+Now, pass the signers and your optional configuration options into your `SkipClient` instance:
 
 ```ts
-// get a Chain[] of all supported cosmos chains
-const chains = await client.chains();
-// include EVM, SVM and testnets chains
-const chains = await client.chains({
+const skipClient = new SkipClient({
+  getCosmosSigner,
+  getEVMSigner,
+  getSVMSigner,
+  // ...configOptions,
+});
+```
+</Step> <Step title="Query Basic Info">
+
+With your client initialized, you can query balances, supported chains and assets.
+
+<CodeGroup>
+
+```ts List of Supported Chains
+// returns a Chain[] of all supported Cosmos mainnet chains
+const cosmosChains = await skipClient.chains();
+
+// include EVM and SVM chains
+const allChains = await skipClient.chains({
   includeEVM: true,
   includeSVM: true,
-  includeTestnets: true,
+});
+
+// only show testnet chains
+const testnetChains = await skipClient.chains({
+  onlyTestnets: true
 });
 ```
 
-#### Get a map of assets by chain ID
-
-Return type will be `Record<string, Asset[]>`
-
-```ts
-// get all chains assets
-const assets = await client.assets({
+```ts Map of Supported Assets
+// returns `Record<string, Asset[]>
+const assets = await skipClient.assets({
   includeEvmAssets: true,
-  includeCW20Assets: true,
   includeSvmAssets: true,
 });
 
 // get assets filtered by chain ID
 const assets = await client.assets({
   chainID: 'cosmoshub-4'
-  includeEvmAssets: true,
   includeCW20Assets: true,
-  includeSvmAssets: true,
 })
 ```
 
-For more functions documentation please check
-
-## Get a Recommended Route
-
-After querying basic information about chains and assets, you can utilize the `recommendAssets` method to find the best routes for moving assets between chains. This feature is particularly useful for obtaining recommendations on which unique asset should be received on the destination chain for an optimal user experience. These recommendations are based on factors like liquidity pools, token denominations, and the unique characteristics of each IBC transfer route.
-
-Usage example:
-
-```ts
-const request = [
-  {
-    source_asset_denom: 'uusdc',
-    source_asset_chain_id: 'axelar-dojo-1',
-    dest_chain_id: 'cosmoshub-4',
-  },
-  {
-    source_asset_denom: 'uusdc',
-    source_asset_chain_id: 'axelar-dojo-1',
-    dest_chain_id: 'osmosis-1',
-  },
-];
-
-const recommendations = await client.recommendAssets(request);
-```
-
-Response example:
-
-```ts
-{
-  "recommendations": [],
-  "recommendation_entries": [
-    {
-      "recommendations": [
-        {
-          "asset": {
-            "denom": "ibc/932D6003DA334ECBC5B23A071B4287D0A5CC97331197FE9F1C0689BA002A8421",
-            "chain_id": "cosmoshub-4",
-            "origin_denom": "uusdc",
-            "origin_chain_id": "axelar-dojo-1",
-            "trace": "transfer/channel-293",
-            "is_cw20": false,
-            "is_evm": false,
-            "symbol": "USDC",
-            "name": "USDC",
-            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-            "decimals": 6,
-            "description": "Circle's stablecoin on Axelar",
-            "coingecko_id": "axlusdc",
-            "recommended_symbol": "USDC.axl"
-          },
-          "reason": "MOST_LIQUID"
-        }
+```ts Map of Token Balances
+// returns a map of assets by chain ID
+const balances = await skipClient.balances({
+  "chains": {
+    "137": {
+      address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
+      denoms: [
+        "polygon-native",
+        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
       ]
     },
-    {
-      "recommendations": [
-        {
-          "asset": {
-            "denom": "ibc/D189335C6E4A68B513C10AB227BF1C1D38C746766278BA3EEB4FB14124F1D858",
-            "chain_id": "osmosis-1",
-            "origin_denom": "uusdc",
-            "origin_chain_id": "axelar-dojo-1",
-            "trace": "transfer/channel-208",
-            "is_cw20": false,
-            "is_evm": false,
-            "symbol": "USDC",
-            "name": "USDC",
-            "logo_uri": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
-            "decimals": 6,
-            "description": "Circle's stablecoin on Axelar",
-            "coingecko_id": "axlusdc",
-            "recommended_symbol": "USDC.axl"
-          },
-          "reason": "MOST_LIQUID"
-        }
+    "osmosis-1": {
+      address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
+      denoms: [
+        "uosmo"
       ]
     }
-  ]
-}
+  }
+});
 ```
+</CodeGroup>
 
-## Get a Route
 
-Once your user has selected source and destination tokens and chains, you can use the client to generate a route and quote:
+</Step> <Step title="Get a Route">
 
-```ts
-const route = await client.route({
-  amountIn: AMOUNT_IN,
-  sourceAssetDenom: SOURCE_DENOM,
-  sourceAssetChainID: SOURCE_CHAIN_ID,
-  destAssetDenom: DEST_DENOM,
-  destAssetChainID: DEST_CHAIN_ID,
+Once you've selected your source and destination chains and tokens, you can generate a route and get a quote.
+
+<CodeGroup>
+```ts Swap ATOM for OSMO
+const route = await skipClient.route({
+  amountIn: "1000000", // Desired amount in smallest denomination (e.g., uatom)
+  sourceAssetDenom: "uatom",
+  sourceAssetChainID: "cosmoshub-4",
+  destAssetDenom: "uosmo",
+  destAssetChainID: "osmosis-1",
   cumulativeAffiliateFeeBPS: '0',
 });
 ```
+```ts Swap ETH for TIA
+const route = await skipClient.route({
+  amountOut: "1000000", // Desired amount out
+  sourceAssetDenom: "ethereum-native",
+  sourceAssetChainID: "1", // Ethereum mainnet chain ID
+  destAssetDenom: "utia",
+  destAssetChainID: "celestia",
+  smartRelay: true,
+  smartSwapOptions: {
+    splitRoutes: true,
+    evmSwaps: true
+  },
+});
+```
+```ts Transfer USDC from Solana to Noble
+const route = await skipClient.route({
+  sourceAssetDenom: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  sourceAssetChainID: "solana",
+  destAssetDenom: "uusdc",
+  destAssetChainID: "noble-1",
+  amountIn: "1000000",
+  smartRelay: true
+});
+      ```
+</CodeGroup>
 
-## Get Required Addresses
+<Info>
+  Read more about [affiliate fees](../general/affiliate-fees), [Smart Relay](../general/smart-relay) and [EVM Swaps](../advanced-swapping/smart-swap-options#feature-evm-swaps).
+</Info>
 
-Now that we have the route response, we can use our signer to get the list of chains where the user or reeceiver addresses are required for executing the route.
+</Step> <Step title="Get Required Addresses">
 
-We'll use these addresses in the next step to populate `userAddresses` when executing the route with the `SkipClient.executeRoute` method.
-
-The `requiredChainAddresses` field in the output of `route` gives the chainIDs we need to use.
+After generating a route, you need to provide user addresses for the required chains. The `route.requiredChainAddresses` array lists the chain IDs for which addresses are needed.
 
  <Warning>
- **Use addresses your user can sign with**
-
-Funds could end up in any of the addresses you provide -- including intermediate chains in certain failure conditions (e.g. an IBC tranfer timesout after a swap). So you must be sure your user can sign for each address you provide.
-
-See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details on when funds might end up in an intermediate address.
-
-(Rest assured that `SkipClient.transactionStatus` will tell you where your users funds end up even if they don't make it to their final destination.)
-
+ **Only use addresses your user can sign for.**
+ Funds could get stuck in any address you provide, including intermediate chains in certain failure conditions. Ensure your user can sign for each address you provide. 
+See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details.
 </Warning>
 
-It's recommended you keep the address somewhere and have function to get the address from the chainID. In this example we have a function called `getAddress` that takes the chainID and returns the address.
-
-Add the following snippet to your script after getting the route to retrieve the address associated with each `requiredChainAddresses` entry:
-
-```Javascript
-// get user addresses for each requiredChainAddress
-    const userAddresses = await Promise.all(route.requiredChainAddresses.map(async (chainID) => {
-        return {
-            chainID: chainID,
-            address: await getAddress(chainID)
-        }
-    }))
-```
-
-## Execute a Route
-
-Once you have a route, you can execute it in a single function call (passing in the route, the user addresses for at least the chains the route includes, and an optional callback function.
-
-For example:
+We recommend storing the user's addresses and creating a function like `getAddress` that retrieves the address based on the chain ID (see an example [here](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99)). 
 
 ```ts
-await client.executeRoute({
+// get user addresses for each requiredChainAddress to execute the route
+  const userAddresses = await Promise.all(
+  route.requiredChainAddresses.map(async (chainID) => ({
+    chainID,
+    address: await getAddress(chainID),
+  }))
+);
+```
+
+</Step> <Step title="Execute the Route">
+
+Once you have a route, you can execute it in a single function call by passing in the route, the user addresses for at least the chains the route includes, and optional callback functions. This also registers the transaction for tracking.
+
+```ts
+await skipClient.executeRoute({
   route,
-  userAddresses: USER_ADDRESSES,
-  onTransactionSuccess: async (chainID, txHash, success) => {
-    console.log(txHash);
+  userAddresses,
+  // Executes after all of the operations triggered by a user's signature complete.
+  // For multi-tx routes that require multiple user signatures, this will be called once for each tx in sequence
+  onTransactionCompleted: async (chainID, txHash, status) => {
+    console.log(
+      `Route completed with tx hash: ${txHash} & status: ${status.state}`
+    );
+  },
+  // called after the transaction that the user signs gets broadcast on chain
+  onTransactionBroadcast: async ({ txHash, chainID }) => {
+    console.log(`Transaction broadcasted with tx hash: ${txHash}`);
+  },
+  // called after the transaction that the user signs is successfully registered for tracking
+  onTransactionTracked: async ({ txHash, chainID }) => {
+    console.log(`Transaction tracked with tx hash: ${txHash}`);
   },
 });
 ```
 
 For routes that consist of multiple transactions, this will monitor each transaction until it completes, then generate the transaction for the next step and prompt the user to sign it.
 
-_Alternatively, you can use the route to generate, sign, and submit the messages separately -- or use your own solutions for any/all of these steps if you like. See `SkipClient.messages`, `SkipClient.signMultiChainMessageDirect`, and `SkipClient.submitTransaction` for details on these lower-level functions_
+<Info>
+Alternatively, you can use the route to generate, sign, and submit the messages separately -- or use your own solutions for any/all of these steps if you like. See `skipClient.messages`, `skipClient.signMultiChainMessageDirect`, and `skipClient.submitTransaction` for details on these lower-level functions.
+</Info>
 
-## Cross-chain Transaction Tracking
 
-Once the user has signed a transaction to execute a cross-chain action, you can track it using the `SkipClient` functions:
+</Step><Step title="Transaction Tracking">
 
-- `SkipClient.trackTransaction`: Requests tracking for a that's already been submitted to the network through an RPC, using the transaction hash
-- `SkipClient.submitTransaction`: Publishes the signed transaction to the network & begins tracking the cross-chain actions this transaction produces
+Once the user has signed a transaction to execute a cross-chain action, you can track it with:
 
-After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `SkipClient.transactionStatus`.
+- `skipClient.trackTransaction`: Requests tracking for a that's already been submitted to the network through an RPC, using the transaction hash
+- `skipClient.submitTransaction`: Publishes the signed transaction to the network & begins tracking the cross-chain actions this transaction produces
 
-We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`
+After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `skipClient.transactionStatus`.
 
- <Check>
- **Want to help us get better? Have questions or feedback?**
+We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`.
 
-You can reach us easily by joining [our Discord](https://skip.build/discord) and grabbing the "Skip Go Developer" role.
+</Step></Steps>
 
- </Check>
+<Info>
+ **Have questions or feedback? Help us get better!**
+
+Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
+
+</Info>
