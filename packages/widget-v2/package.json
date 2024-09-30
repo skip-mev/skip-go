@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:storybook": "storybook dev -p 6006",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
     "preview": "vite preview"
@@ -52,16 +53,14 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
     "vite": "^5.3.4",
-    "vite-plugin-dts": "^4.0.0-beta.1"
+    "vite-plugin-dts": "^4.0.0-beta.1",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "dependencies": {
     "@chain-registry/keplr": "^1.68.79",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@initia/initia-registry": "^0.1.16",
-    "@linaria/core": "^6.2.0",
-    "@linaria/react": "^6.2.1",
-    "@linaria/vite": "^5.0.4",
     "@penumbra-zone/bech32m": "^7.0.0",
     "@penumbra-zone/client": "^18.1.0",
     "@penumbra-zone/protobuf": "^6.0.0",
@@ -92,7 +91,6 @@
     "react-shadow-scope": "^1.0.5",
     "styled-components": "^6.1.13",
     "viem": "^2.21.1",
-    "vite-plugin-linaria": "^1.0.1",
     "wagmi": "^2.12.8",
     "zod": "^3.23.8"
   }

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import path from "path";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 import { dependencies, peerDependencies } from "./package.json";
 
@@ -27,6 +28,7 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.app.json",
       exclude: ["node_modules/**", "build/**", ".storybook/**"],
     }),
+    nodePolyfills(),
   ],
   build: {
     lib: {
