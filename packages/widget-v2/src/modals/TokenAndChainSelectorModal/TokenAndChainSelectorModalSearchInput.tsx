@@ -8,7 +8,6 @@ import { StyledAssetLabel } from "@/components/AssetChainInput";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
-import { useModal } from "@/components/Modal";
 import { Asset } from "@skip-go/client";
 
 type TokenAndChainSelectorModalSearchInputProps = {

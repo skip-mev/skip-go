@@ -4,7 +4,7 @@
   "version": "0.0.15",
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "vite",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
     "preview": "vite preview",
@@ -40,6 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "buffer": "^6.0.3",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "storybook": "^8.2.6",
