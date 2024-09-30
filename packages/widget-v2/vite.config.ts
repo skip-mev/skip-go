@@ -28,6 +28,7 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.app.json",
       exclude: ["node_modules/**", "build/**", ".storybook/**"],
     }),
+    nodePolyfills(),
   ],
   build: {
     lib: {
