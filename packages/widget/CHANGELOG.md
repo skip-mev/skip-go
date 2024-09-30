@@ -1,5 +1,11 @@
 # @skip-go/widget
 
+## 2.5.1
+
+### Patch Changes
+
+- b4c4d5e: on chain change to fee asset default
+
 ## 2.5.0
 
 ### Minor Changes

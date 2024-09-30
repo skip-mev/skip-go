@@ -18,6 +18,7 @@ import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorMo
 import { matchSorter } from "match-sorter";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { Chain } from "@skip-go/client";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 
 export type GroupedAsset = {
   id: string;
@@ -27,6 +28,8 @@ export type GroupedAsset = {
     originChainID: string;
   }[];
   assets: ClientAsset[];
+  totalAmount: number;
+  totalUsd: number;
 };
 
 export type ChainWithAsset = Chain & {
@@ -77,9 +80,30 @@ export const TokenAndChainSelectorModal = createModal(
       [_onSelect]
     );
 
-    const groupingAssetsByRecommendedSymbol = useMemo(() => {
+    const groupedAssetsByRecommendedSymbol = useMemo(() => {
       if (!assets) return;
       const groupedAssets: GroupedAsset[] = [];
+
+      const calculateBalanceSummary = (assets: ClientAsset[]) => {
+        return assets.reduce(
+          (accumulator, asset) => {
+            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            if (balance) {
+              accumulator.totalAmount += Number(
+                convertTokenAmountToHumanReadableAmount(
+                  balance.amount,
+                  balance.decimals
+                )
+              );
+              if (Number(balance.valueUSD)) {
+                accumulator.totalUsd += Number(balance.valueUSD);
+              }
+            }
+            return accumulator;
+          },
+          { totalAmount: 0, totalUsd: 0 }
+        );
+      };
 
       assets.forEach((asset) => {
         const foundGroup = groupedAssets.find(
@@ -103,27 +127,36 @@ export const TokenAndChainSelectorModal = createModal(
               },
             ],
             assets: [asset],
+            totalAmount: 0,
+            totalUsd: 0,
           });
         }
       });
+
+      groupedAssets.forEach((group) => {
+        const balanceSummary = calculateBalanceSummary(group.assets);
+        group.totalAmount = balanceSummary.totalAmount;
+        group.totalUsd = balanceSummary.totalUsd;
+      });
+
       return groupedAssets;
-    }, [assets]);
+    }, [assets, getBalance]);
 
     const selectedGroup = useMemo(() => {
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
       if (!asset) return;
-      return groupingAssetsByRecommendedSymbol?.find(
+      return groupedAssetsByRecommendedSymbol?.find(
         (group) => group.id === asset.recommendedSymbol
       );
     }, [
       groupedAssetSelected?.assets,
       selectedAsset,
-      groupingAssetsByRecommendedSymbol,
+      groupedAssetsByRecommendedSymbol,
     ]);
 
     const filteredAssets = useMemo(() => {
-      if (!groupingAssetsByRecommendedSymbol) return;
-      return matchSorter(groupingAssetsByRecommendedSymbol, searchQuery, {
+      if (!groupedAssetsByRecommendedSymbol) return;
+      return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
         keys: [
           "id",
           "assets.*.symbol",
@@ -132,8 +165,16 @@ export const TokenAndChainSelectorModal = createModal(
           "chains.*.originChainID",
           "chains.*.chainID",
         ],
+      }).sort((itemA, itemB) => {
+        if (itemA.totalUsd < itemB.totalUsd) {
+          return 1;
+        }
+        if (itemA.totalUsd > itemB.totalUsd) {
+          return -1;
+        }
+        return 0;
       });
-    }, [groupingAssetsByRecommendedSymbol, searchQuery]);
+    }, [groupedAssetsByRecommendedSymbol, searchQuery]);
 
     const filteredChains = useMemo(() => {
       if (!selectedGroup || !chains) return;
@@ -215,10 +256,19 @@ export const TokenAndChainSelectorModal = createModal(
       groupedAssetSelected,
       networkSelection,
     ]);
+
+    const onClickBack = () => {
+      if (groupedAssetSelected === null) {
+        modal.remove();
+      } else {
+        setGroupedAssetSelected(null);
+      }
+    };
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput
           onSearch={handleSearch}
+          onClickBack={onClickBack}
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
