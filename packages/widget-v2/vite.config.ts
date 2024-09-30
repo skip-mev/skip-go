@@ -4,11 +4,10 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
-import { dependencies, peerDependencies } from "./package.json";
+import { dependencies } from "./package.json";
 
 const externalDeps = [
   ...Object.keys(dependencies || {}),
-  ...Object.keys(peerDependencies || {}),
 ];
 
 // https://vitejs.dev/config/
