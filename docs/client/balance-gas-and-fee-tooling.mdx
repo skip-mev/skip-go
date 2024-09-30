@@ -5,25 +5,20 @@ description: 'This page describes the token balance, gas and transaction fee uti
 
 ## Getting token balances
 
-To query token balances, you can use the `balances` function on your `SkipClient` instance. You can query asset names  This function takes an object with the following structure:
+To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You can query a set of specified denoms or leave the array empty to fetch all denoms for an address.
 
 ```ts
 const balances = await skipClient.balances({
-  "chains": {
-    "137": { // chainID
-      address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5", // user address
-      denoms: [
-        "polygon-native", // denoms
-        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
-      ]
-    },
-    "osmosis-1": {
-      address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
-      denoms: [
-        "uosmo"
-      ]
-    }
+  chains: {
+  "noble-1": {
+    address: noble.address, // noblef8js...
+    denoms: ["uusdc"]
+  },
+  "osmosis-1": {
+    address: osmosis.address, // osmois8fo...
+    denoms: [] // Fetch all denoms for address
   }
+}
 });
 ```
 
