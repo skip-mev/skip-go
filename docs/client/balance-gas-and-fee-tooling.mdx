@@ -1,5 +1,5 @@
 ---
-title: 'Token Balances, Gas and Transaction Fee Utilities'
+title: 'Balances, Gas and Transaction Fee Utilities'
 description: 'This page describes the token balance, gas and transaction fee utility functions in the `@skip-go/client` TypeScript package.'
 ---
 
@@ -7,7 +7,8 @@ description: 'This page describes the token balance, gas and transaction fee uti
 
 To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You can query a set of specified denoms or leave the array empty to fetch all denoms for an address.
 
-```ts
+<CodeGroup>
+```ts TypeScript (Client)
 const balances = await skipClient.balances({
   chains: {
   "noble-1": {
@@ -21,7 +22,26 @@ const balances = await skipClient.balances({
 }
 });
 ```
+```JSON JSON (REST API)
+// POST /v2/info/balances
+{
+  "chains": {
+    "137": {
+      "address": "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
+      "denoms": [
+        "polygon-native",
+        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
+      ]
+    },
+    "osmosis-1": {
+      "address": "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
+      "denoms": [] // Fetch all denoms for address
+    }
+  }
+}
+```
 
+</CodeGroup>
 ## Getting info about gas and fees
 
 

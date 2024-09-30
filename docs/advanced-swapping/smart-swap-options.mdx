@@ -52,6 +52,7 @@ const route = await skipClient.route({
 }
 ```
 ```JSON JSON (REST API)
+// POST /v2/fungible/route
 { 
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
@@ -91,6 +92,7 @@ const route = await skipClient.route({
 ```
 
 ```JSON JSON (REST API)
+// POST /v2/fungible/route
 { 
   "amount_in": "1000000",
   "source_asset_denom": "uusdc",
@@ -163,7 +165,7 @@ const route = await skipClient.route({
 ```
 
 ```JSON JSON (REST API)
-{ // rest API request body example
+{ // POST /v2/fungible/route
   "amount_in": "10000000000000000000",
   "source_asset_denom": "arbitrum-native",
   "source_asset_chain_id": "42161",
