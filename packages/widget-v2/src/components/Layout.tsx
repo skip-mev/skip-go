@@ -1,4 +1,4 @@
-import { styled } from "@linaria/react";
+import { css, styled } from "styled-components";
 
 export type FlexProps = {
   align?: string;
@@ -8,17 +8,17 @@ export type FlexProps = {
   borderRadius?: number;
 };
 
-export const flexProps = ({ align, justify, gap, padding, borderRadius }: FlexProps) => `
+export const flexProps = css<FlexProps>`
   display: flex;
-  ${align ? `align-items: ${align};` : ""}
-  ${justify ? `justify-content: ${justify};` : ""}
-  ${gap ? `gap: ${gap}px;` : ""}
-  ${padding ? `padding: ${padding}px;` : ""}
-  ${borderRadius ? `border-radius: ${borderRadius}px;` : ""}
+  ${({ align }) => align && `align-items: ${align}`};
+  ${({ justify }) => justify && `justify-content: ${justify}`};
+  ${({ gap }) => gap && `gap: ${gap}px`};
+  ${({ padding }) => padding && `padding: ${padding}px`};
+  ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius}px`};
 `;
 
 export const Row = styled.div<FlexProps>`
-  ${(props) => flexProps(props)};
+  ${flexProps};
   flex-direction: row;
 `;
 
@@ -27,8 +27,8 @@ export const Column = styled(Row)`
 `;
 
 export const Spacer = styled.div<SpacerProps>`
-  ${({ width }) => width ? `width: ${width}px` : ""};
-  ${({ height }) => height ? `height: ${height}px` : ""};
+  ${({ width }) => width && `width: ${width}px`};
+  ${({ height }) => height && `height: ${height}px`};
   flex-shrink: 0;
   flex-grow: 0;
 `;
