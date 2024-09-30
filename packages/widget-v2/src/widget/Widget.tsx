@@ -1,7 +1,8 @@
 import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useEffect, createElement } from "react";
+import { cloneElement, ReactElement, useEffect } from "react";
 import { defaultTheme, PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
@@ -10,7 +11,6 @@ import { useAtom, useSetAtom } from "jotai";
 import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitializeDebouncedValues } from "@/hooks/useInitializeDebouncedValues";
-import { setup, styled } from "goober";
 
 export type SwapWidgetProps = {
   theme?: PartialTheme;
@@ -27,10 +27,6 @@ export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
     });
     setTheme({ ...defaultTheme, ...theme });
   }, [defaultSkipClientConfig, setSkipClientConfig, setTheme, skipClientConfig, theme]);
-
-  useEffect(() => {
-    setup(createElement, undefined, () => ({ ...defaultTheme, ...theme }));
-  }, [theme]);
 
   return (
     <NiceModal.Provider>
@@ -54,10 +50,6 @@ const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: Swap
     });
     setTheme({ ...defaultTheme, ...theme });
   }, [defaultSkipClientConfig, setSkipClientConfig, setTheme, skipClientConfig, theme]);
-
-  useEffect(() => {
-    setup(createElement, undefined, () => ({ ...defaultTheme, ...theme }));
-  }, [theme]);
 
   return (
     <ShadowDomAndProviders theme={theme}>
@@ -93,7 +85,7 @@ export const ShowSwapWidget = ({
   return <>{Element}</>;
 };
 
-const WidgetContainer = styled("div")`
+const WidgetContainer = styled.div`
   width: 480px;
   position: relative;
 `;
