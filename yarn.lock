@@ -8783,6 +8783,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     "@wyw-in-js/vite": ^0.5.4
+    buffer: ^6.0.3
     chain-registry: ^1.63.43
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2

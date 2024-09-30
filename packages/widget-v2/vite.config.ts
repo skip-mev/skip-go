@@ -6,7 +6,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 // import VitePluginLinaria from "vite-plugin-linaria";
 import wyw from "@wyw-in-js/vite";
-import VitePluginLinaria from "@linaria/vite";
+// import VitePluginLinaria from "@linaria/vite";
 
 import { dependencies, peerDependencies } from "./package.json";
 
@@ -24,11 +24,13 @@ export default defineConfig({
     },
   },
   plugins: [
-    nodePolyfills({
-      include: ["buffer"]
-    }),
     react(),
-    VitePluginLinaria(),
+    wyw({
+      include: ["**/*.{ts,tsx}"],
+      babelOptions: {
+        presets: ["@babel/preset-typescript", "@babel/preset-react"],
+      },
+    }),
     dts({
       rollupTypes: true,
       outDir: "build",
