@@ -3,9 +3,6 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import path from "path";
-// import VitePluginLinaria from "vite-plugin-linaria";
-// import wyw from "@wyw-in-js/vite";
-// import VitePluginLinaria from "@linaria/vite";
 
 import { dependencies, peerDependencies } from "./package.json";
 
