@@ -5,6 +5,7 @@ import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 import { dependencies } from "./package.json";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
 
 const externalDeps = [
   ...Object.keys(dependencies || {}),
@@ -42,6 +43,9 @@ export default defineConfig({
         dir: "build",
         entryFileNames: "[name].js",
       },
+      plugins: [
+        peerDepsExternal()
+      ]
     },
   },
 });
