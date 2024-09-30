@@ -4,13 +4,12 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
-import { dependencies } from "./package.json";
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import { dependencies, peerDependencies } from "./package.json";
 
 const externalDeps = [
   ...Object.keys(dependencies || {}),
-];
-
+  ...Object.keys(peerDependencies || {}),
+].filter((dep) => dep !== "styled-components");
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
@@ -43,9 +42,6 @@ export default defineConfig({
         dir: "build",
         entryFileNames: "[name].js",
       },
-      plugins: [
-        peerDepsExternal()
-      ]
     },
   },
 });

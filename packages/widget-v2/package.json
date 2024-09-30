@@ -24,8 +24,7 @@
   ],
   "peerDependencies": {
     "react": "17.x || 18.x",
-    "react-dom": "17.x || 18.x",
-    "styled-components": "^6.0.0"
+    "react-dom": "17.x || 18.x"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
@@ -89,6 +88,7 @@
     "rc-virtual-list": "^3.14.5",
     "react-error-boundary": "^4.0.13",
     "react-shadow-scope": "^1.0.5",
+    "styled-components": "^6.0.0",
     "viem": "^2.21.1",
     "wagmi": "^2.12.8",
     "zod": "^3.23.8"
