@@ -8503,6 +8503,7 @@ __metadata:
     chain-registry: ^1.63.43
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
+    goober: ^2.1.14
     graz: ^0.1.20
     jotai: ^2.9.1
     jotai-effect: ^1.0.2
@@ -18692,6 +18693,15 @@ __metadata:
     slash: ^5.1.0
     unicorn-magic: ^0.1.0
   checksum: 2cee79efefca4383a825fc2fcbdb37e5706728f2d39d4b63851927c128fff62e6334ef7d4d467949d411409ad62767dc2d214e0f837a0f6d4b7290b6711d485c
+  languageName: node
+  linkType: hard
+
+"goober@npm:^2.1.14":
+  version: 2.1.14
+  resolution: "goober@npm:2.1.14"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 78978b7192d6a1af5cfbf1fd64b661b5f53ee6c733554b1f1b2ad3e1e2c979847fc080434390647640bb8358c0b193895d0007432c0886d12001f02f8f56b5e6
   languageName: node
   linkType: hard
 

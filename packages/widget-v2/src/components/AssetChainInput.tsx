@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText, SmallTextButton, Text } from "@/components/Typography";
 import { ChevronIcon } from "@/icons/ChevronIcon";
-import { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
 import { BigNumber } from "bignumber.js";
@@ -15,6 +14,7 @@ import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
+import { themeAtom } from "@/state/skipClient";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -39,8 +39,7 @@ export const AssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
 }: AssetChainInputProps) => {
-
-  const theme = useTheme();
+  const theme = useAtomValue(themeAtom);
   const [_showPriceChangePercentage, setShowPriceChangePercentage] =
     useState(false);
 

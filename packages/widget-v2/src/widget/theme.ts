@@ -1,5 +1,6 @@
 import "styled-components";
 import { opacityToHex } from "@/utils/colors";
+import { createContext, useContext } from "react";
 
 export const defaultTheme = {
   brandColor: "#ff66ff",
@@ -68,6 +69,10 @@ export const lightTheme = {
     text: "#ef1e1e",
   },
 };
+
+const theme = defaultTheme;
+const ThemeContext = createContext(theme);
+export const useTheme = () => useContext(ThemeContext);
 
 export type PartialTheme = Partial<Theme> | undefined;
 
