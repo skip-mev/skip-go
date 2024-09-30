@@ -4,7 +4,9 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
-import VitePluginLinaria from "vite-plugin-linaria";
+// import VitePluginLinaria from "vite-plugin-linaria";
+import wyw from "@wyw-in-js/vite";
+import VitePluginLinaria from "@linaria/vite";
 
 import { dependencies, peerDependencies } from "./package.json";
 
@@ -22,18 +24,16 @@ export default defineConfig({
     },
   },
   plugins: [
+    nodePolyfills({
+      include: ["buffer"]
+    }),
     react(),
+    VitePluginLinaria(),
     dts({
       rollupTypes: true,
       outDir: "build",
       tsconfigPath: "./tsconfig.app.json",
       exclude: ["node_modules/**", "build/**", ".storybook/**"],
-    }),
-    VitePluginLinaria(),
-    nodePolyfills({
-      globals: {
-        Buffer: true,
-      },
     }),
   ],
   build: {

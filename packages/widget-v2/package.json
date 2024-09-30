@@ -5,11 +5,10 @@
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "vite",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
-    "preview": "vite preview",
-    "build-storybook": "NODE_OPTIONS=--max-old-space-size=16384 storybook build"
+    "preview": "vite preview"
   },
   "exports": {
     ".": {
@@ -64,6 +63,7 @@
     "@initia/initia-registry": "^0.1.16",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
+    "@linaria/vite": "^5.0.4",
     "@penumbra-zone/bech32m": "^7.0.0",
     "@penumbra-zone/client": "^18.1.0",
     "@penumbra-zone/protobuf": "^6.0.0",
