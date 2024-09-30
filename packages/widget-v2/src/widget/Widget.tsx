@@ -1,6 +1,6 @@
 import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
-import { styled } from "styled-components";
+import { styled } from "@linaria/react";
 import { createModal, useModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useEffect } from "react";
 import { defaultTheme, PartialTheme } from "./theme";

@@ -4,6 +4,8 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
+import VitePluginLinaria from "vite-plugin-linaria";
+
 import { dependencies, peerDependencies } from "./package.json";
 
 const externalDeps = [
@@ -27,7 +29,12 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.app.json",
       exclude: ["node_modules/**", "build/**", ".storybook/**"],
     }),
-    nodePolyfills(),
+    VitePluginLinaria(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+      },
+    }),
   ],
   build: {
     lib: {
