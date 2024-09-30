@@ -4,7 +4,7 @@
   "version": "0.0.15",
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "vite",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
     "preview": "vite preview",
