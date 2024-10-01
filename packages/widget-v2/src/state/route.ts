@@ -1,6 +1,6 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { RouteRequest, RouteResponse } from "@skip-go/client";
-import { atom, Atom } from "jotai";
+import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { errorAtom } from "./errorPage";
 import { currentPageAtom, Routes } from "./router";
