@@ -1,5 +1,6 @@
 import { atom } from "jotai";
-import { ClientAsset, skipRouteAtom } from "./skipClient";
+import { ClientAsset } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";

@@ -3,22 +3,10 @@ import {
   Asset,
   SkipClient,
   Chain,
-  RouteRequest,
   SkipClientOptions,
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
-import {
-  debouncedDestinationAssetAmountAtom,
-  debouncedSourceAssetAmountAtom,
-  destinationAssetAtom,
-  isInvertingSwapAtom,
-  routeAmountEffect,
-  sourceAssetAtom,
-  swapDirectionAtom,
-} from "./swapPage";
-import { currentPageAtom, Routes } from "./router";
-import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
@@ -27,7 +15,6 @@ import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
-import { errorAtom } from "./errorPage";
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL: prodApiUrl,
@@ -147,85 +134,6 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
     queryFn: async () => {
       return skip.venues();
     },
-  };
-});
-
-const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
-  const direction = get(swapDirectionAtom);
-  const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
-  const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
-
-  if (
-    !sourceAsset?.chainID ||
-    !sourceAsset.denom ||
-    !destinationAsset?.chainID ||
-    !destinationAsset.denom
-  ) {
-    return undefined;
-  }
-  const amount =
-    direction === "swap-in"
-      ? {
-        amountIn: convertHumanReadableAmountToCryptoAmount(
-          sourceAssetAmount ?? "0",
-          sourceAsset.decimals
-        ),
-      }
-      : {
-        amountOut: convertHumanReadableAmountToCryptoAmount(
-          destinationAssetAmount ?? "0",
-          destinationAsset.decimals
-        ),
-      };
-
-  return {
-    ...amount,
-    sourceAssetChainID: sourceAsset.chainID,
-    sourceAssetDenom: sourceAsset.denom,
-    destAssetChainID: destinationAsset.chainID,
-    destAssetDenom: destinationAsset.denom,
-  };
-});
-
-export const skipRouteAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const params = get(skipRouteRequestAtom);
-  const currentPage = get(currentPageAtom);
-  const isInvertingSwap = get(isInvertingSwapAtom);
-  const error = get(errorAtom);
-
-  get(routeAmountEffect);
-
-  const queryEnabled =
-    params !== undefined &&
-    (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
-    !isInvertingSwap &&
-    currentPage === Routes.SwapPage &&
-    error === undefined;
-
-  return {
-    queryKey: ["skipRoute", params],
-    queryFn: async () => {
-      if (!params) {
-        throw new Error("No route request provided");
-      }
-      return skip.route({
-        ...params,
-        smartRelay: true,
-        smartSwapOptions: {
-          splitRoutes: true,
-          evmSwaps: true,
-        },
-        experimentalFeatures: ["hyperlane"],
-        allowMultiTx: true,
-        allowUnsafe: true,
-      });
-    },
-    retry: 1,
-    enabled: queryEnabled,
-    refetchInterval: 1000 * 30,
   };
 });
 
