@@ -1,4 +1,4 @@
-import styled, { useTheme } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
 import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";

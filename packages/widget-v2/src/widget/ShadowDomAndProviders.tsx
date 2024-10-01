@@ -15,7 +15,6 @@ import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
-
 export const queryClient = new QueryClient();
 
 export const GlobalStyles = createGlobalStyle`
