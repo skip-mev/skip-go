@@ -1,4 +1,4 @@
-import { atom, Getter, Setter } from "jotai";
+import { atom } from "jotai";
 import { ClientAsset, skipRouteAtom } from "./skipClient";
 import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
