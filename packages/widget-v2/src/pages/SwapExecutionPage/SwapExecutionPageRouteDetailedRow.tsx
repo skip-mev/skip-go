@@ -134,7 +134,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           </Row>
           {source.address && (
             <StyledButton
-              onClick={copyToClipboard(source.address)}
+              onClick={() => copyToClipboard(source.address)}
             >
               {source.image && (
                 <img
