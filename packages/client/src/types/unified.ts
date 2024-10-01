@@ -572,12 +572,12 @@ export type AssetsBetweenChainsResponse = {
 
 export type BalanceRequestChainEntryJSON = {
   address: string;
-  denoms: string[];
+  denoms?: string[];
 };
 
 export type BalanceRequestChainEntry = {
   address: string;
-  denoms: string[];
+  denoms?: string[];
 };
 
 export type BalanceRequestJSON = {
