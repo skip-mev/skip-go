@@ -9,6 +9,7 @@ import { BigNumber } from "bignumber.js";
 import {
   formatNumberWithCommas,
   formatNumberWithoutCommas,
+  limitDecimalsDisplayed,
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
@@ -28,7 +29,7 @@ export type AssetChainInputProps = {
   badPriceWarning?: boolean;
 };
 
-export const AssetChainInput = ({
+export const SwapPageAssetChainInput = ({
   value,
   usdValue,
   onChangeValue,
@@ -60,7 +61,8 @@ export const AssetChainInput = ({
     latest = latest.replace(/[^\d.,]/g, ""); // Remove non-numeric and non-decimal characters
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
-    onChangeValue?.(formatNumberWithoutCommas(latest));
+
+    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest)));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
