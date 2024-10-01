@@ -5,7 +5,7 @@ import { skipAllBalancesRequestAtom, skipBalancesAtom } from "@/state/balances";
 import { useEffect } from "react";
 import { skipAssetsAtom } from "@/state/skipClient";
 
-export const useFetchBalances = () => {
+export const useFetchAllBalances = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const getAccount = useGetAccount();
   const { data: assets } = useAtomValue(skipAssetsAtom);

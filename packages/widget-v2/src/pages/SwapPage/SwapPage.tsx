@@ -34,7 +34,7 @@ import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { useFetchSourceBalance } from "@/hooks/useFetchSourceBalance";
 import { skipSourceBalanceAtom } from "@/state/balances";
-import { useFetchBalances } from "@/hooks/useFetchBalances";
+import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -62,7 +62,7 @@ export const SwapPage = () => {
   const { isLoading: isLoadingBalances } = useAtomValue(skipSourceBalanceAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-  useFetchBalances();
+  useFetchAllBalances();
   const sourceAccount = useFetchSourceBalance();
 
   const getClientAsset = useCallback(
