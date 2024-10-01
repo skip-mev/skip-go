@@ -161,6 +161,7 @@ export const SwapExecutionPage = () => {
             label="Swap Complete"
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
+            onClick={() => setCurrentPage(Routes.SwapPage)}
           />
         );
     }
@@ -169,6 +170,7 @@ export const SwapExecutionPage = () => {
     mutate,
     route?.destAssetChainID,
     route?.estimatedRouteDurationSeconds,
+    setCurrentPage,
     setManualAddressModal,
     signRequiredChains,
     swapExecutionState,
@@ -191,9 +193,11 @@ export const SwapExecutionPage = () => {
       />
       {simpleRoute ? (
         <SwapExecutionPageRouteSimple
-          onClickEditDestinationWallet={() => setManualAddressModal.show({
-            chainId: route?.destAssetChainID
-          })}
+          onClickEditDestinationWallet={() =>
+            setManualAddressModal.show({
+              chainId: route?.destAssetChainID,
+            })
+          }
           operations={clientOperations}
           operationToTransferEventsMap={operationToTransferEventsMap}
         />
