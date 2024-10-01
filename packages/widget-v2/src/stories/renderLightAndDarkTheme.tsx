@@ -1,5 +1,5 @@
 import { cloneElement, ComponentProps, CSSProperties, ReactNode } from "react";
-import styled, { ThemeProvider } from "styled-components";
+import { styled, ThemeProvider } from "styled-components";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { Column } from "@/components/Layout";
 import React from "react";
