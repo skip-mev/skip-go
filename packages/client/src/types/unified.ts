@@ -254,83 +254,83 @@ export type EstimatedFeeJSON = {
 
 export type OperationJSON =
   | {
-      transfer: TransferJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    transfer: TransferJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | {
-      bank_send: BankSendJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    bank_send: BankSendJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | { swap: SwapJSON; tx_index: number; amount_in: string; amount_out: string }
   | {
-      axelar_transfer: AxelarTransferJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    axelar_transfer: AxelarTransferJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | {
-      cctp_transfer: CCTPTransferJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    cctp_transfer: CCTPTransferJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | {
-      hyperlane_transfer: HyperlaneTransferJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    hyperlane_transfer: HyperlaneTransferJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | {
-      evm_swap: EvmSwapJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    }
+    evm_swap: EvmSwapJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  }
   | {
-      op_init_transfer: OPInitTransferJSON;
-      tx_index: number;
-      amount_in: string;
-      amount_out: string;
-    };
+    op_init_transfer: OPInitTransferJSON;
+    tx_index: number;
+    amount_in: string;
+    amount_out: string;
+  };
 
 export type Operation =
   | { transfer: Transfer; txIndex: number; amountIn: string; amountOut: string }
   | { bankSend: BankSend; txIndex: number; amountIn: string; amountOut: string }
   | { swap: Swap; txIndex: number; amountIn: string; amountOut: string }
   | {
-      axelarTransfer: AxelarTransfer;
-      txIndex: number;
-      amountIn: string;
-      amountOut: string;
-    }
+    axelarTransfer: AxelarTransfer;
+    txIndex: number;
+    amountIn: string;
+    amountOut: string;
+  }
   | {
-      cctpTransfer: CCTPTransfer;
-      txIndex: number;
-      amountIn: string;
-      amountOut: string;
-    }
+    cctpTransfer: CCTPTransfer;
+    txIndex: number;
+    amountIn: string;
+    amountOut: string;
+  }
   | {
-      hyperlaneTransfer: HyperlaneTransfer;
-      txIndex: number;
-      amountIn: string;
-      amountOut: string;
-    }
+    hyperlaneTransfer: HyperlaneTransfer;
+    txIndex: number;
+    amountIn: string;
+    amountOut: string;
+  }
   | {
-      evmSwap: EvmSwap;
-      txIndex: number;
-      amountIn: string;
-      amountOut: string;
-    }
+    evmSwap: EvmSwap;
+    txIndex: number;
+    amountIn: string;
+    amountOut: string;
+  }
   | {
-      opInitTransfer: OPInitTransfer;
-      txIndex: number;
-      amountIn: string;
-      amountOut: string;
-    };
+    opInitTransfer: OPInitTransfer;
+    txIndex: number;
+    amountIn: string;
+    amountOut: string;
+  };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -427,14 +427,11 @@ export type MsgsRequest = {
 
   enableGasWarnings?: boolean;
 };
-
-export type MsgsDirectRequestJSON = {
+export type MsgsDirectRequestBaseJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
   dest_asset_denom: string;
   dest_asset_chain_id: string;
-  amount_in: string;
-  amount_out: string;
   chain_ids_to_addresses: {
     [key: string]: string;
   };
@@ -458,13 +455,26 @@ export type MsgsDirectRequestJSON = {
   enable_gas_warnings?: boolean;
 };
 
-export type MsgsDirectRequest = {
+export type MsgsDirectRequestGivenInJSON = MsgsDirectRequestBaseJSON & {
+  amount_in: string;
+  amount_out?: never;
+};
+
+export type MsgsDirectRequestGivenOutJSON = MsgsDirectRequestBaseJSON & {
+  amount_in?: never;
+  amount_out: string;
+};
+
+export type MsgsDirectRequestJSON =
+  | MsgsDirectRequestGivenInJSON
+  | MsgsDirectRequestGivenOutJSON;
+
+
+export type MsgsDirectRequestBase = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   destAssetDenom: string;
   destAssetChainID: string;
-  amountIn: string;
-  amountOut: string;
   chainIdsToAddresses: {
     [key: string]: string;
   };
@@ -486,6 +496,20 @@ export type MsgsDirectRequest = {
   allowSwaps?: boolean;
   enableGasWarnings?: boolean;
 };
+
+export type MsgsDirectRequestGivenIn = MsgsDirectRequestBase & {
+  amountIn: string;
+  amountOut?: never;
+};
+
+export type MsgsDirectRequestGivenOut = MsgsDirectRequestBase & {
+  amountIn?: never;
+  amountOut: string;
+};
+
+export type MsgsDirectRequest =
+  | MsgsDirectRequestGivenIn
+  | MsgsDirectRequestGivenOut;
 
 export type MsgJSON =
   | { multi_chain_msg: MultiChainMsgJSON }
