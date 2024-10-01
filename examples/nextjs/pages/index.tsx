@@ -1,4 +1,3 @@
-'use client'
 import { SwapWidget } from '@skip-go/widget';
 
 const Home = () => {
