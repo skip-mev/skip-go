@@ -1,15 +1,15 @@
-import { BalanceRequest, BalanceResponse } from "@skip-go/client";
+import { BalanceRequest } from "@skip-go/client";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "./skipClient";
 
-export const skipBalancesRequestAtom = atom<BalanceRequest | undefined>();
+export const skipAllBalancesRequestAtom = atom<BalanceRequest | undefined>();
 
-export const skipBalancesResponse = atom<BalanceResponse | undefined>();
-
-export const skipBalancesAtom = atomWithQuery((get) => {
+export const skipAllBalancesAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
-  const params = get(skipBalancesRequestAtom);
+  const params = get(skipAllBalancesRequestAtom);
+
+  const enabled = Object.values(params ?? {}).length > 0;
 
   return {
     queryKey: ["skipBalances", params],
@@ -20,6 +20,7 @@ export const skipBalancesAtom = atomWithQuery((get) => {
 
       return skip.balances(params);
     },
+    enabled,
     refetchInterval: 1000 * 60,
     retry: 1,
   };
@@ -31,6 +32,8 @@ export const skipSourceBalanceAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipSourceBalanceRequestAtom);
 
+  const enabled = Object.values(params ?? {}).length > 0;
+
   return {
     queryKey: ["skipSourceBalance", params],
     queryFn: async () => {
@@ -40,7 +43,25 @@ export const skipSourceBalanceAtom = atomWithQuery((get) => {
 
       return skip.balances(params);
     },
-    refetchInterval: 1000 * 60,
+    refetchInterval: 1000 * 30,
+    enabled,
     retry: 1,
+  };
+});
+
+export const skipBalancesAtom = atom((get) => {
+  const { data: sourceBalance } = get(skipSourceBalanceAtom);
+  const { data: balances } = get(skipAllBalancesAtom);
+
+  const sourceBalanceChain = Object.keys(sourceBalance?.chains ?? {})?.[0];
+  return {
+    ...(balances?.chains ?? {}),
+    ...(sourceBalance?.chains ?? {}),
+    ...(sourceBalanceChain ? {
+      [sourceBalanceChain]: {
+        ...(balances?.chains?.[sourceBalanceChain] ?? {}),
+        ...(sourceBalance?.chains?.[sourceBalanceChain]),
+      }
+    } : {}),
   };
 });

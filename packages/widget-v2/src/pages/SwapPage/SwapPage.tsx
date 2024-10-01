@@ -32,8 +32,9 @@ import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { useSourceAccount } from "@/hooks/useSourceAccount";
-import { skipBalancesAtom } from "@/state/balances";
+import { useFetchSourceBalance } from "@/hooks/useFetchSourceBalance";
+import { skipSourceBalanceAtom } from "@/state/balances";
+import { useFetchBalances } from "@/hooks/useFetchBalances";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -58,11 +59,11 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
-  const { isLoading: isLoadingBalances } = useAtomValue(skipBalancesAtom);
+  const { isLoading: isLoadingBalances } = useAtomValue(skipSourceBalanceAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-
-  const sourceAccount = useSourceAccount();
+  useFetchBalances();
+  const sourceAccount = useFetchSourceBalance();
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {

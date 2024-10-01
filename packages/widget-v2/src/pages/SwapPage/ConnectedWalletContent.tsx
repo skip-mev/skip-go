@@ -3,7 +3,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees, useSetMaxAmount } from "./useSetMaxAmount";
-import { useSourceBalance } from "@/hooks/useSourceBalance";
+import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
@@ -22,7 +22,7 @@ export const ConnectedWalletContent = () => {
     chainId: sourceAsset?.chainID,
   });
 
-  const { data: sourceBalance, isLoading } = useSourceBalance();
+  const { data: sourceBalance, isLoading } = useGetSourceBalance();
   const handleMaxButton = useSetMaxAmount();
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const connectedWalletModal = useModal(ConnectedWalletModal);

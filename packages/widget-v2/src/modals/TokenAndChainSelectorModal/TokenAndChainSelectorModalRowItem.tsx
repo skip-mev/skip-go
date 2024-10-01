@@ -57,7 +57,7 @@ export const TokenAndChainSelectorModalRowItem = ({
       />
     );
   }
-  const { data: balance } = getBalance(item.asset.chainID, item.asset.denom);
+  const balance = getBalance(item.asset.chainID, item.asset.denom);
   return (
     <ModalRowItem
       key={item.chainID}

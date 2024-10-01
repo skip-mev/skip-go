@@ -87,7 +87,7 @@ export const TokenAndChainSelectorModal = createModal(
       const calculateBalanceSummary = (assets: ClientAsset[]) => {
         return assets.reduce(
           (accumulator, asset) => {
-            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            const balance = getBalance(asset.chainID, asset.denom);
             if (balance) {
               accumulator.totalAmount += Number(
                 convertTokenAmountToHumanReadableAmount(
@@ -190,11 +190,11 @@ export const TokenAndChainSelectorModal = createModal(
       return matchSorter(resChains, searchQuery, {
         keys: ["prettyName", "chainName", "chainID"],
       }).sort((assetA, assetB) => {
-        const { data: balanceA } = getBalance(
+        const balanceA = getBalance(
           assetA.chainID,
           assetA.asset.denom
         );
-        const { data: balanceB } = getBalance(
+        const balanceB = getBalance(
           assetB.chainID,
           assetB.asset.denom
         );
