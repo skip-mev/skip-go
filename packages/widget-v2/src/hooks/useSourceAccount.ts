@@ -12,6 +12,21 @@ export const useSourceAccount = () => {
   const setSkipBalancesRequest = useSetAtom(skipBalancesRequestAtom);
 
   useEffect(() => {
+    const chainId = sourceAsset?.chainID;
+    const denom = sourceAsset?.denom;
+    const address = getAccount(chainId)?.address;
+    if (!sourceAsset || !denom || !address) return;
+    const sourceAssetBalanceRequest = {
+      chains: {
+        [chainId]: {
+          address: address,
+          denoms: [denom],
+        },
+      },
+    };
+
+    setSkipBalancesRequest(sourceAssetBalanceRequest);
+
     const allBalancesRequest = assets?.reduce((acc, asset) => {
       const address = getAccount(asset.chainID)?.address;
       if (address) {
@@ -32,7 +47,7 @@ export const useSourceAccount = () => {
         chains: allBalancesRequest || {}
       });
     }
-  }, [assets, getAccount, setSkipBalancesRequest]);
+  }, [assets, getAccount, setSkipBalancesRequest, sourceAsset]);
 
   return getAccount(sourceAsset?.chainID);
 };
