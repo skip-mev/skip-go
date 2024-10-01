@@ -386,35 +386,11 @@ export type RouteResponse = {
   estimatedRouteDurationSeconds: number;
 };
 
-export type MsgsRequestJSON = {
-  source_asset_denom: string;
-  source_asset_chain_id: string;
-  dest_asset_denom: string;
-  dest_asset_chain_id: string;
-  amount_in: string;
-  amount_out: string;
-  address_list: string[];
-  operations: OperationJSON[];
-
-  estimated_amount_out?: string;
-  slippage_tolerance_percent?: string;
-  affiliates?: AffiliateJSON[];
-  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJSON>;
-  post_route_handler?: PostHandlerJSON;
-
-  enable_gas_warnings?: boolean;
-};
-
-export type MsgsRequest = {
+export type MsgsRequestBase = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   destAssetDenom: string;
   destAssetChainID: string;
-  amountIn: string;
-  amountOut: string;
-  /**
-   * addresses should be in the same order with the `chainIDs` in the `route`
-   */
   addressList: string[];
   operations: Operation[];
 
@@ -422,19 +398,27 @@ export type MsgsRequest = {
   slippageTolerancePercent?: string;
   affiliates?: Affiliate[];
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
-
   postRouteHandler?: PostHandler;
-
   enableGasWarnings?: boolean;
 };
 
-export type MsgsDirectRequestJSON = {
+export type MsgsRequestGivenIn = MsgsRequestBase & {
+  amountIn: string;
+  amountOut?: never;
+};
+
+export type MsgsRequestGivenOut = MsgsRequestBase & {
+  amountIn?: never;
+  amountOut: string;
+};
+
+export type MsgsRequest = MsgsRequestGivenIn | MsgsRequestGivenOut;
+
+export type MsgsDirectRequestBaseJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
   dest_asset_denom: string;
   dest_asset_chain_id: string;
-  amount_in: string;
-  amount_out: string;
   chain_ids_to_addresses: {
     [key: string]: string;
   };
@@ -458,13 +442,26 @@ export type MsgsDirectRequestJSON = {
   enable_gas_warnings?: boolean;
 };
 
-export type MsgsDirectRequest = {
+export type MsgsDirectRequestGivenInJSON = MsgsDirectRequestBaseJSON & {
+  amount_in: string;
+  amount_out?: never;
+};
+
+export type MsgsDirectRequestGivenOutJSON = MsgsDirectRequestBaseJSON & {
+  amount_in?: never;
+  amount_out: string;
+};
+
+export type MsgsDirectRequestJSON =
+  | MsgsDirectRequestGivenInJSON
+  | MsgsDirectRequestGivenOutJSON;
+
+
+export type MsgsDirectRequestBase = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   destAssetDenom: string;
   destAssetChainID: string;
-  amountIn: string;
-  amountOut: string;
   chainIdsToAddresses: {
     [key: string]: string;
   };
@@ -486,6 +483,21 @@ export type MsgsDirectRequest = {
   allowSwaps?: boolean;
   enableGasWarnings?: boolean;
 };
+
+export type MsgsDirectRequestGivenIn = MsgsDirectRequestBase & {
+  amountIn: string;
+  amountOut?: never;
+};
+
+export type MsgsDirectRequestGivenOut = MsgsDirectRequestBase & {
+  amountIn?: never;
+  amountOut: string;
+};
+
+export type MsgsDirectRequest =
+  | MsgsDirectRequestGivenIn
+  | MsgsDirectRequestGivenOut;
+  
 
 export type MsgJSON =
   | { multi_chain_msg: MultiChainMsgJSON }
@@ -641,3 +653,32 @@ export type Bridge = {
   name: string;
   logoURI: string;
 };
+
+export type MsgsRequestBaseJSON = {
+  source_asset_denom: string;
+  source_asset_chain_id: string;
+  dest_asset_denom: string;
+  dest_asset_chain_id: string;
+  address_list: string[];
+  operations: OperationJSON[];
+
+  estimated_amount_out?: string;
+  slippage_tolerance_percent?: string;
+  affiliates?: AffiliateJSON[];
+  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJSON>;
+  post_route_handler?: PostHandlerJSON;
+  enable_gas_warnings?: boolean;
+};
+
+export type MsgsRequestGivenInJSON = MsgsRequestBaseJSON & {
+  amount_in: string;
+  amount_out?: never;
+};
+
+export type MsgsRequestGivenOutJSON = MsgsRequestBaseJSON & {
+  amount_in?: never;
+  amount_out: string;
+};
+
+export type MsgsRequestJSON = MsgsRequestGivenInJSON | MsgsRequestGivenOutJSON;
+

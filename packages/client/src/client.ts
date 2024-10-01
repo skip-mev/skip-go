@@ -229,10 +229,9 @@ export class SkipClient {
     );
     return types.balanceResponseFromJSON(response);
   }
-
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const { route, userAddresses } = options;
-
+  
     let addressList: string[] = [];
     let i = 0;
     for (let j = 0; j < userAddresses.length; j++) {
@@ -243,33 +242,49 @@ export class SkipClient {
       addressList.push(userAddresses[j]!.address!);
       i++;
     }
-
+  
     if (addressList.length !== route.requiredChainAddresses.length) {
       addressList = userAddresses.map((x) => x.address);
     }
-
+  
     const validLength =
       addressList.length === route.requiredChainAddresses.length ||
       addressList.length === route.chainIDs.length;
-
+  
     if (!validLength) {
-      raise('executeRoute error: invalid address list');
+      throw new Error('executeRoute error: invalid address list');
     }
-
-    const messages = await this.messages({
+  
+    const baseRequest = {
       sourceAssetDenom: route.sourceAssetDenom,
       sourceAssetChainID: route.sourceAssetChainID,
       destAssetDenom: route.destAssetDenom,
       destAssetChainID: route.destAssetChainID,
-      amountIn: route.amountIn,
-      amountOut: route.estimatedAmountOut || '0',
       addressList: addressList,
       operations: route.operations,
       chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
-    });
+    };
+  
+    let msgsRequest: types.MsgsRequest;
+    if (route.amountIn !== undefined) {
+      msgsRequest = {
+        ...baseRequest,
+        amountIn: route.amountIn,
+      };
+    } else if (route.estimatedAmountOut !== undefined) {
+      msgsRequest = {
+        ...baseRequest,
+        amountOut: route.estimatedAmountOut,
+      };
+    } else {
+      throw new Error('executeRoute error: either amountIn or amountOut must be defined');
+    }
+  
+    const messages = await this.messages(msgsRequest);
     await this.executeTxs({ ...options, txs: messages.txs });
   }
+  
 
   async executeTxs(
     options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] }
