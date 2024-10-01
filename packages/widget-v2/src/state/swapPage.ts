@@ -9,19 +9,36 @@ export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-export const {
-  debouncedValueAtom: debouncedSourceAssetAmountAtom,
-  instantUpdateAtom: instantlyUpdateDebouncedSourceAssetAmountAtom,
-} = atomWithDebounce<string | undefined>({
-  initialValue: undefined,
-});
+export const { debouncedValueAtom: _debouncedSourceAssetAmountAtom } =
+  atomWithDebounce<string | undefined>({
+    initialValue: undefined,
+  });
 
-export const {
-  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
-  instantUpdateAtom: instantlyUpdateDebouncedDestinationAssetAmountAtom,
-} = atomWithDebounce<string | undefined>({
-  initialValue: undefined,
-});
+export const { debouncedValueAtom: _debouncedDestinationAssetAmountAtom } =
+  atomWithDebounce<string | undefined>({
+    initialValue: undefined,
+  });
+
+export const debouncedSourceAssetAmountAtom = atom(
+  (get) => {
+    return get(_debouncedSourceAssetAmountAtom) ?? get(sourceAssetAtom)?.amount;
+  },
+  (_get, set, newAmount: string) => {
+    set(_debouncedSourceAssetAmountAtom, newAmount);
+  }
+);
+
+export const debouncedDestinationAssetAmountAtom = atom(
+  (get) => {
+    return (
+      get(_debouncedDestinationAssetAmountAtom) ??
+      get(destinationAssetAtom)?.amount
+    );
+  },
+  (_get, set, newAmount: string) => {
+    set(_debouncedDestinationAssetAmountAtom, newAmount);
+  }
+);
 
 export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>(
   "sourceAsset",
