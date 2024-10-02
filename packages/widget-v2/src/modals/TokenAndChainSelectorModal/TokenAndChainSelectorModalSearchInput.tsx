@@ -43,7 +43,7 @@ export const TokenAndChainSelectorModalSearchInput = ({
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
-  }, []);
+  }, [asset]);
 
   return (
     <StyledSearchInputContainer align="center" gap={5}>
