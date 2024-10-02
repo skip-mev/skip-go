@@ -562,6 +562,22 @@ export class SkipClient {
     encodedMsgs?: EncodeObject[];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
+    const gasPrice =
+      (getGasPrice
+        ? await getGasPrice(chainID, 'cosmos')
+        : await this.getRecommendedGasPrice(chainID)) ||
+      raise(
+        `executeRoute error: unable to get gas prices for chain '${chainID}'`
+      );
+
+    if (chainID === "noble-1") {
+      const fee = calculateFee(
+        200000,
+        gasPrice
+      );
+      return fee;
+    }
+
     const estimatedGasAmount = await (async () => {
       try {
         const estimatedGas = await getCosmosGasAmountForMessage(
@@ -593,14 +609,6 @@ export class SkipClient {
         );
       }
     })();
-
-    const gasPrice =
-      (getGasPrice
-        ? await getGasPrice(chainID, 'cosmos')
-        : await this.getRecommendedGasPrice(chainID)) ||
-      raise(
-        `executeRoute error: unable to get gas prices for chain '${chainID}'`
-      );
 
     const fee = calculateFee(
       Math.ceil(parseFloat(estimatedGasAmount)),
@@ -1800,7 +1808,6 @@ export class SkipClient {
         if (!msgs) {
           raise(`validateGasBalances error: invalid msgs ${msgs}`);
         }
-
         getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
         if (!getOfflineSigner) {
           throw new Error(
@@ -1875,6 +1882,10 @@ export class SkipClient {
         `validateCosmosGasBalance error: unable to get fee amount`
       );
     }
+    if (chainID === "noble-1") {
+      return fee.amount[0];
+    }
+
     const mainnetAssets = await this.assets();
     const testnetAssets = await this.assets({ onlyTestnets: true });
     const assets = { ...mainnetAssets, ...testnetAssets };
