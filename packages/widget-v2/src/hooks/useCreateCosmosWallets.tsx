@@ -76,6 +76,7 @@ export const useCreateCosmosWallets = () => {
       const getAddress = async ({ signRequired }: { signRequired?: boolean; context?: "recovery" | "destination" }) => {
         if (wallet !== currentWallet || !currentAddress) {
           if (!chainInfo) throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
+          // @ts-expect-error mismatch keplr types version
           await getWallet(wallet).experimentalSuggestChain(chainInfo);
           await connect({
             chainId: chainID,
@@ -99,6 +100,7 @@ export const useCreateCosmosWallets = () => {
         connect: async () => {
           try {
             if (!chainInfo) throw new Error(`connect: Chain info not found for chainID: ${chainID}`);
+            // @ts-expect-error mismatch keplr types version
             await getWallet(wallet).experimentalSuggestChain(chainInfo);
             await connect({
               chainId: chainID,
