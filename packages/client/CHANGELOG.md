@@ -1,5 +1,15 @@
 # @skip-go/client
 
+## 0.10.0
+
+### Minor Changes
+
+- 560c395: added: onTransactionSigned and onValidateGasBalance
+
+### Patch Changes
+
+- 71ae53e: hardcoded noble gas amount
+
 ## 0.9.4
 
 ### Patch Changes
