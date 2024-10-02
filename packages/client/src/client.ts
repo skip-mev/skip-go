@@ -612,10 +612,7 @@ export class SkipClient {
           }
           return String(fallbackGasAmount);
         }
-        raise(
-          `executeRoute error: unable to estimate gas for message(s) ${messages || encodedMsgs
-          }`
-        );
+        throw error;
       }
     })();
 
