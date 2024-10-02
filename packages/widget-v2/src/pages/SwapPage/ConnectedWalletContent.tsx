@@ -47,15 +47,13 @@ export const ConnectedWalletContent = () => {
         paddingRight: 13,
       }}
     >
-      <TransparentButton
+      <GhostButton
         onClick={() => {
           connectedWalletModal.show();
         }}
-        style={{
-          padding: "8px 13px",
-          alignItems: "center",
-          gap: 8,
-        }}
+        align="center"
+        gap={8}
+        alwaysShowBackground
       >
         {sourceAccount && (
           <img
@@ -85,34 +83,16 @@ export const ConnectedWalletContent = () => {
         ) : (
           formattedBalance
         )}
-      </TransparentButton>
+      </GhostButton>
 
-      <TransparentButton
+      <GhostButton
         disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
         onClick={handleMaxButton}
-        style={{
-          padding: "8px 13px",
-          alignItems: "center",
-        }}
+        align="center"
+        alwaysShowBackground
       >
         Max
-      </TransparentButton>
+      </GhostButton>
     </Row>
   );
 };
-
-const TransparentButton = styled(GhostButton).attrs({
-  as: "button",
-}) <GhostButtonProps>`
-  ${({ theme, onClick, secondary, disabled }) =>
-    onClick &&
-    !disabled &&
-    css`
-      background-color: ${secondary
-        ? theme.secondary.background.normal
-        : theme.primary.ghostButtonHover};
-      cursor: pointer;
-    `};
-  padding: 10px 13px;
-  border-radius: 90px;
-`;
