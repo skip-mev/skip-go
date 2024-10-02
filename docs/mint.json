@@ -35,6 +35,10 @@
     {
     "name": "API Reference",
     "url": "api-reference"
+    },
+    {
+    "name": "Release Notes",
+    "url": "release-notes"
     }
     ],
   "navigation": [
@@ -142,6 +146,14 @@
           ]
         }
       ]
+    },
+    {
+      "group": "Release Notes",
+      "pages": [
+            "release-notes/overview",
+            "release-notes/typescript-client",
+            "release-notes/swap-widget"
+          ]
     }
   ], 
   "footerSocials": {
