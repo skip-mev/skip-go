@@ -1,0 +1,277 @@
+---
+  title: "Configuration"
+  description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
+---
+
+
+# Component Props
+
+## SwapWidget
+
+The `SwapWidget` component accepts the following props:
+
+```typescript
+interface SwapWidgetProps {
+  defaultRoute?: { 
+    amountIn?: number;
+    amountOut?: number;
+    srcChainID?: string;
+    srcAssetDenom?: string;
+    destChainID?: string;
+    destAssetDenom?: string;
+  };
+  routeConfig?: {
+    experimentalFeatures?: ['hyperlane'];
+    allowMultiTx?: boolean;
+    allowUnsafe?: boolean;
+    bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE')[];
+    swapVenues?: {
+      name: string;
+      chainID: string;
+    }[];
+  };
+  filter?: {
+    source?: Record<string, string[] | undefined>;
+    destination?: Record<string, string[] | undefined>;
+  };
+  className?: string;
+  style?: React.CSSProperties;
+  settings?: {
+    customGasAmount?: number; // custom gas amount for validation defaults to 200_000
+    slippage?: number; //percentage of slippage 0-100. defaults to 3
+  };
+  onlyTestnet?: boolean; // Only show testnet chains
+  toasterProps?: {
+    // Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`
+    position?: ToastPosition;
+    toastOptions?: DefaultToastOptions;
+    reverseOrder?: boolean;
+    gutter?: number;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
+    children?: (toast: Toast) => JSX.Element;
+  };
+  endpointOptions?: {
+    // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+    endpoints?: Record<string, EndpointOptions>;
+    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+  };
+  apiURL?: string; // Custom API URL to override Skip API endpoint. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+  theme?: {
+    backgroundColor: string; // background color
+    textColor: string; // text color
+    borderColor: string; // border color
+    brandColor: string; // color used for confirmation buttons
+    highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
+  };
+  persistSwapWidgetState?: boolean; // whether or not swap widget state should persist after refresh. Defaults to true
+
+  // Pass in callback functions to handle events in the widget.
+  onWalletConnected?: ({ walletName: string, chainId: string, address?: string }) => void;
+  onWalletDisconnected?: ({ chainType?: string }) => void;
+  onTransactionBroadcasted?: ({ txHash: string, chainId: string, explorerLink: string }) => void;
+  onTransactionComplete?: ({ txHash: string, chainId: string, explorerLink: string }) => void;
+  onTransactionFailed?: ({ error: string }) => void;
+
+  chainIDsToAffiliates: // Record<string, ChainAffiliates>
+
+  connectedWallet?: {
+    cosmos?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: (chainID: string) => Promise<OfflineSigner>
+    };
+    evm?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: (chainID: string) => Promise<WalletClient>;
+    };
+    svm?: {
+      getAddress: (chainID: string) => Promise<string>;
+      getSigner: () => Promise<Adapter>;
+    };
+  };
+}
+```
+
+### `defaultRoute`
+
+`defaultRoute` allows you to customize the first route that appears on the widget on page load. Use this to direct your users to the most important route for your use case. You can query supported assets using the Skip Go API `/assets` [endpoint](https://docs.skip.build/go/api-reference/prod/fungible/get-v2fungibleassets).
+
+- `amountIn` (number): The amount in to be preset on the default route, resulting in a swap/transfer/bridge exact amount in request.
+- `amountOut` (number): The amount out to be preset on the default route, resulting in a swap/transfer/bridge exact amount out request. If both `amountIn` and `amountOut` are specified, only the `amountIn` will be used, as you cannot specify both an exact amount in and exact amount out.
+- `srcChainID` (string): The chain ID of the source chain to be preset on the default route.
+- `srcAssetDenom` (string): The asset denom on the source chain to be preset on the default route.
+- `destChainID` (string): The chain ID of the destination chain to be preset on the default route.
+- `destAssetDenom` (string): The asset denom on the destination chain to be preset on the default route.
+
+### `routeConfig`
+
+`routeConfig` allows you to fully customize the types of routes enabled when using the widget.
+
+- `allowMultiTx` (boolean): Whether or not to allow for routes that require multiple signing transactions from the user. Defaulted to true.
+- `allowUnsafe` (boolean): Whether or not to allow unsafe routes to be returned, see https://api-docs.skip.build/docs/allow_unsafe-preventing-handling-bad-execution for more info on what an unsafe route is. Defaulted to false.
+- `bridges` (array): Set of bridges to restrict routing across. Defaults to an empty array, allowing for all bridges to be considered.
+- `swapVenues` (array): Set of swap venues to restrict routing across. Defaults to an empty array, allowing for all swap venues to be considered.
+- `smartSwapOptions` (SmartSwapOptions): Parameter to specify advanced swapping features, see https://api-docs.skip.build/docs/smart-swap-options for more info on all the features possible including split trade routes and EVM swaps.
+
+### `filter`
+
+`filter` allows you to limit the source and destination chains and assets that appear in the widget. Use this to make your onboarding/offboarding experience specifc to your chain or protocol!
+
+```ts
+  /**
+   * Filter chains and assets in selection
+   *
+   * Record<chainID, assetDenoms>
+   * if assetDenoms is undefined, all assets are allowed
+   * @example
+   * ```ts
+   * source: {
+   *   'noble-1': undefined,
+   * },
+   * destination: {
+   *   'cosmoshub-4': [
+   *     'uatom',
+   *     'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86',
+   *   ],
+   *   'agoric-3': [
+   *     'ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9',
+   *   ],
+   *   'osmosis-1': undefined,
+   * }
+   * ```
+   */
+  filter?: {
+    source?: Record<string, string[] | undefined>;
+    destination?: Record<string, string[] | undefined>;
+  };
+```
+
+### `settings`
+
+`settings` allows you to set defaults for user customizable settings in the settings tab on the widget.
+
+- `customGasAmount` (number): Set gas amount CosmosSDK chain transactions use for validation. Defaults to 200_000.
+- `slippage` (number): Set default slippage percentage for CosmosSDK chain swaps between 0-100. Defaults to 3.
+
+### `onlyTestnet`
+
+`onlyTestnet` (boolean) configures the widget to only show testnet data when set to true. Defaults to false, which only shows mainnet data.
+
+### `toasterProps`
+
+Props for the toaster component. Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`.
+
+  ```ts
+  toasterProps?: {
+    // Refer to [ToasterProps](https://react-hot-toast.com/docs/toast-options) for more details. Defaults to `{ position: 'top-right' }`
+    position?: ToastPosition;
+    toastOptions?: DefaultToastOptions;
+    reverseOrder?: boolean;
+    gutter?: number;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
+    children?: (toast: Toast) => JSX.Element;
+  };
+  ```
+
+### `endpointOptions`
+
+Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+
+  ```ts
+  endpointOptions?: {
+      // Endpoint options to override endpoints. Defaults to Skip proxied endpoints. Please reach out to us first if you want to be whitelisted.
+      endpoints?: Record<string, EndpointOptions>;
+      getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+      getRestEndpointForChain?: (chainID: string) => Promise<string>;
+    };
+  ```
+
+### `apiURL`
+
+`apiURL` (string) lets you override the default Skip Go API proxied endpoints. Please reach out to us first if you want to be whitelisted.
+
+### `theme`
+
+`theme` allows you to customize the look of the widget to fit your brand and application's aesthetics.
+
+```ts
+  theme?: {
+    backgroundColor: string; // background color
+    textColor: string; // text color
+    borderColor: string; // border color
+    brandColor: string; // color used for confirmation buttons
+    highlightColor: string; // color used when hovering over buttons, and in select chain/asset dropdown
+  };
+```
+
+### `callbacks`
+
+Pass in callback functions to handle events in the widget.
+
+```ts
+  onWalletConnected?: ({
+    walletName: string,
+    chainId: string,
+    address?: string,
+  }) => void;
+
+  onWalletDisconnected?: ({
+    chainType?: string
+  }) => void;
+
+  onTransactionBroadcasted?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionComplete?: ({
+    txHash: string,
+    chainId: string,
+    explorerLink: string,
+  }) => void;
+
+  onTransactionFailed?: ({
+  error: string;
+  }) => void;
+```
+
+### `connectedWallet`
+
+
+
+### `chainIDsToAffiliates`
+
+Use `chainIDsToAffiliates` to define fees per chain and which addresses should receive the fees.
+
+The `basisPointsFee` of each affiliate must sum to the same amount across each chain, or an error will be thrown.
+The address of each affiliate must be a valid address for that chain, or there will be an error when submitting a swap.
+
+```ts
+  chainIDsToAffiliates: {
+    'noble-1': {
+      affiliates: [{
+        basisPointsFee: '100', // 1% fee
+        address: 'test', // address to receive fee
+      },
+      {
+        basisPointsFee: '100', // 1% fee
+        address: 'test2', // address to receive fee
+      }]
+    },
+    'osmosis-1': {
+      affiliates: [{
+        basisPointsFee: '200', // 2% fee
+        address: 'test', // address to receive fee
+      },]
+    }
+  }
+```
+
+### `className` 
+`className` (string) to apply custom CSS classes to the widget.
+
+### `style` 
+`style` (React.CSSProperties) to apply custom inline styles to the widget.
