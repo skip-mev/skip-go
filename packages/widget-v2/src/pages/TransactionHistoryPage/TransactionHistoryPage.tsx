@@ -31,7 +31,7 @@ export const TransactionHistoryPage = () => {
           onClick: () => setCurrentPage(Routes.SwapPage),
         }}
       />
-      <StyledContainer gap={5}>
+      <StyledContainer gap={5} justify="center">
         {txHistory.length === 0 ? (
           <StyledNoTransactionHistoryContainer
             align="center"
@@ -83,6 +83,7 @@ const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
   width: 480px;
+  min-height: 302px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

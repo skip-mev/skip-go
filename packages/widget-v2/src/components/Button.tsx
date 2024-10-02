@@ -4,6 +4,7 @@ import { removeButtonStyles, SmallText } from "@/components/Typography";
 
 export type GhostButtonProps = {
   secondary?: boolean;
+  alwaysShowBackground?: boolean;
 } & FlexProps;
 
 export const GhostButton = styled(SmallText).attrs({
@@ -11,19 +12,33 @@ export const GhostButton = styled(SmallText).attrs({
 }) <GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
-  &:hover {
-    ${({ theme, onClick, secondary, disabled }) =>
-    onClick &&
-    !disabled &&
-    css`
+  height: 30px;
+
+  ${({ alwaysShowBackground, theme, secondary }) => {
+    if (alwaysShowBackground) {
+      return (css`
         background-color: ${secondary
-        ? theme.secondary.background.normal
-        : theme.primary.ghostButtonHover};
-        color: ${theme.primary.text.normal};
-        cursor: pointer;
-      `};
-  }
-  padding: 9px 16px;
+          ? theme.secondary.background.normal
+          : theme.primary.ghostButtonHover};
+      `);
+    }
+  }}
+
+  ${({ onClick, disabled, secondary, theme }) => {
+    if (onClick && !disabled) {
+      return css`
+          &:hover {
+            background-color: ${secondary
+          ? theme.secondary.background.normal
+          : theme.primary.ghostButtonHover};
+            color: ${theme.primary.text.normal};
+            cursor: pointer;
+          }
+        `;
+    }
+  }}
+ 
+  padding: 8px 16px;
   border-radius: 90px;
   ${flexProps};
 `;
@@ -48,7 +63,7 @@ export const Button = styled.button<FlexProps>`
 `;
 
 export const Link = styled(Button).attrs({
-  as: "a"
+  as: "a",
 })`
   text-decoration: none;
 `;
