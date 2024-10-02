@@ -51,6 +51,10 @@ export type ExecuteRouteOptions = {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;
+  onTransactionSigned?: (txInfo: {
+    txHash: string;
+    chainID: string;
+  }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {
     txHash: string;
     chainID: string;
@@ -65,6 +69,11 @@ export type ExecuteRouteOptions = {
     txHash: string,
     status: types.TxStatusResponse
   ) => Promise<void>;
+  onValidateGasBalance?: (value: {
+    chainID?: string;
+    txIndex?: number;
+    status: "success" | "error" | "pending" | "completed"
+  }) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
   /**
@@ -100,6 +109,7 @@ export type ExecuteCosmosMessage = {
   messages: types.CosmosMsg[];
   gasAmountMultiplier?: number;
   gasTokenUsed?: Coin;
+  onTransactionSigned?: ExecuteRouteOptions['onTransactionSigned'];
 };
 
 export type SignCosmosMessageDirectOptions = {

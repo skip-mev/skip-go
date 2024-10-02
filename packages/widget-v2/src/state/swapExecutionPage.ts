@@ -1,7 +1,7 @@
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { skipClient, skipRouteAtom } from "./skipClient";
 import { atom } from "jotai";
-import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
+import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { atomWithStorage } from "jotai/utils";
@@ -9,13 +9,22 @@ import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 
+type ValidatingGasBalanceData = {
+  chainID?: string;
+  txIndex?: number;
+  status: "success" | "error" | "pending" | "completed"
+}
+
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
   overallStatus?: SimpleStatus;
+  isValidatingGasBalance?: ValidatingGasBalanceData
 };
+
+
 export type ChainAddress = {
   chainID: string;
   chainType?: "evm" | "cosmos" | "svm";
@@ -45,6 +54,7 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
     overallStatus: undefined,
+    isValidatingGasBalance: undefined,
   }
 );
 
@@ -64,6 +74,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
+    isValidatingGasBalance: undefined,
   });
 
   set(submitSwapExecutionCallbacksAtom, {
@@ -80,8 +91,18 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           }
         });
       }
-    }
+    },
+    onTransactionSigned: async (transactionDetails) => {
+      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
+    },
+    onValidateGasBalance: async (props) => {
+      set(setValidatingGasBalanceAtom, props);
+    },
   });
+});
+
+export const setValidatingGasBalanceAtom = atom(null, (_get, set, isValidatingGasBalance: ValidatingGasBalanceData) => {
+  set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
 });
 
 export const setTransactionDetailsArrayAtom = atom(
@@ -155,6 +176,8 @@ export type ClientTransactionStatus =
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
   onError: (error: unknown) => void;
+  onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
+  onTransactionSigned?: ExecuteRouteOptions["onTransactionSigned"];
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -182,6 +205,16 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           //     return Number(useSettingsStore.getState().customGasAmount);
           //   }
           // },
+          onValidateGasBalance: async (props) => {
+            submitSwapExecutionCallbacks?.onValidateGasBalance?.(
+              props
+            );
+          },
+          onTransactionSigned: async (props) => {
+            submitSwapExecutionCallbacks?.onTransactionSigned?.(
+              props
+            );
+          },
           onTransactionBroadcast: async (
             transactionDetails: TransactionDetails
           ) => {

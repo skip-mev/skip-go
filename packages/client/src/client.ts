@@ -1,6 +1,6 @@
 import { Coin, makeSignDoc as makeSignDocAmino } from '@cosmjs/amino';
 import { createWasmAminoConverters } from '@cosmjs/cosmwasm-stargate';
-import { fromBase64 } from '@cosmjs/encoding';
+import { fromBase64, toHex } from '@cosmjs/encoding';
 import { Int53 } from '@cosmjs/math';
 import { Decimal } from '@cosmjs/math';
 import { makePubkeyAnyFromAccount } from './proto-signing/pubkey';
@@ -41,7 +41,7 @@ import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
 
 import { accountParser } from './parser';
-import { maxUint256, publicActions, WalletClient } from 'viem';
+import { publicActions, WalletClient } from 'viem';
 
 import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
 import {
@@ -68,6 +68,8 @@ import { msgsDirectRequestToJSON } from './types/converters';
 import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
+import { sha256 } from "@cosmjs/crypto"
+import bs58 from "bs58"
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -292,6 +294,7 @@ export class SkipClient {
         getGasPrice,
         gasAmountMultiplier,
         getFallbackGasAmount,
+        onValidateGasBalance: options.onValidateGasBalance,
       });
     }
 
@@ -360,6 +363,7 @@ export class SkipClient {
           signerAddress: currentUserAddress,
           getFallbackGasAmount,
           gasTokenUsed,
+          onTransactionSigned: options.onTransactionSigned,
         });
 
         txResult = {
@@ -385,6 +389,7 @@ export class SkipClient {
         const txReceipt = await this.executeSVMTransaction({
           signer: svmSigner,
           message: svmTx,
+          onTransactionSigned: options.onTransactionSigned,
         });
 
         txResult = {
@@ -430,6 +435,7 @@ export class SkipClient {
     return await this.executeEVMTransaction({
       message: evmTx,
       signer: evmSigner,
+      onTransactionSigned: options.onTransactionSigned,
     });
   }
 
@@ -443,8 +449,8 @@ export class SkipClient {
       gasAmountMultiplier,
       getFallbackGasAmount,
       gasTokenUsed,
+      onTransactionSigned
     } = options;
-
     const getOfflineSigner =
       this.getCosmosSigner ||
       getCosmosSigner ||
@@ -538,8 +544,12 @@ export class SkipClient {
 
     const txBytes = TxRaw.encode(rawTx).finish();
 
+    const txHash = toHex(sha256(txBytes))
+    onTransactionSigned?.({
+      chainID,
+      txHash,
+    });
     const tx = await stargateClient.broadcastTx(txBytes);
-
     return tx;
   }
 
@@ -666,9 +676,11 @@ export class SkipClient {
   async executeEVMTransaction({
     message,
     signer,
+    onTransactionSigned,
   }: {
     message: types.EvmTx;
     signer: WalletClient;
+    onTransactionSigned?: clientTypes.ExecuteRouteOptions['onTransactionSigned'];
   }) {
     if (!signer.account) {
       throw new Error(
@@ -705,7 +717,10 @@ export class SkipClient {
         ],
         chain: signer.chain,
       });
-
+      onTransactionSigned?.({
+        chainID: message.chainID,
+        txHash,
+      });
       const receipt = await extendedSigner.waitForTransactionReceipt({
         hash: txHash,
       });
@@ -736,9 +751,11 @@ export class SkipClient {
   async executeSVMTransaction({
     signer,
     message,
+    onTransactionSigned,
   }: {
     signer: Adapter;
     message: types.SvmTx;
+    onTransactionSigned?: clientTypes.ExecuteRouteOptions['onTransactionSigned'];
   }) {
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
@@ -752,6 +769,12 @@ export class SkipClient {
       await this.submitTransaction({
         chainID: message.chainID,
         tx: Buffer.from(serializedTx).toString('base64'),
+      }).then((res) => {
+        onTransactionSigned?.({
+          chainID: message.chainID,
+          txHash: res.txHash,
+        });
+        signature = res.txHash;
       });
 
       const sig = await connection.sendRawTransaction(serializedTx, {
@@ -775,6 +798,7 @@ export class SkipClient {
           searchTransactionHistory: true,
         });
         if (result?.value?.confirmationStatus === 'confirmed') {
+          console.log("sol2 sig", signature)
           return signature;
         } else if (getStatusCount > 12) {
           await wait(3000);
@@ -1780,6 +1804,7 @@ export class SkipClient {
     getGasPrice,
     gasAmountMultiplier,
     getFallbackGasAmount,
+    onValidateGasBalance
   }: {
     txs: types.Tx[];
     userAddresses: clientTypes.UserAddress[];
@@ -1787,6 +1812,7 @@ export class SkipClient {
     getGasPrice?: clientTypes.GetGasPrice;
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+    onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
   }) {
     // tx index -> gas token used
     let gasTokenRecord: Record<number, Coin> = {}
@@ -1796,6 +1822,11 @@ export class SkipClient {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ('cosmosTx' in tx) {
+        onValidateGasBalance?.({
+          chainID: tx.cosmosTx.chainID,
+          txIndex: i,
+          status: 'pending',
+        });
         const msgs = tx.cosmosTx.msgs;
         if (!msgs) {
           raise(`validateGasBalances error: invalid msgs ${msgs}`);
@@ -1828,18 +1859,38 @@ export class SkipClient {
           raise(
             `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`
           );
-        const coinUsed = await this.validateCosmosGasBalance({
-          client,
-          signerAddress: currentAddress,
-          chainID: tx.cosmosTx.chainID,
-          messages: msgs,
-          getGasPrice,
-          gasAmountMultiplier,
-          getFallbackGasAmount,
-        });
-        gasTokenRecord[i] = coinUsed;
+        try {
+          const coinUsed = await this.validateCosmosGasBalance({
+            client,
+            signerAddress: currentAddress,
+            chainID: tx.cosmosTx.chainID,
+            messages: msgs,
+            getGasPrice,
+            gasAmountMultiplier,
+            getFallbackGasAmount,
+          });
+          gasTokenRecord[i] = coinUsed;
+          onValidateGasBalance?.({
+            chainID: tx.cosmosTx.chainID,
+            txIndex: i,
+            status: 'success',
+          });
+        } catch (e) {
+          const error = e as Error;
+          onValidateGasBalance?.({
+            chainID: tx.cosmosTx.chainID,
+            txIndex: i,
+            status: 'error',
+          });
+          throw new Error(
+            `validateGasBalances error: ${error.message}`
+          );
+        }
       }
     }
+    onValidateGasBalance?.({
+      status: 'completed'
+    });
     return gasTokenRecord;
   }
 

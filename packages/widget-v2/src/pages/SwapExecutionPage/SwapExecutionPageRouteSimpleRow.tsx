@@ -106,7 +106,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
         {usdValue && (
           <SmallText>
             {formatUSD(usdValue)}
-            {destination && " after fees"}
           </SmallText>
         )}
 
@@ -120,6 +119,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
                 navigator.clipboard.writeText(source.address);
               }
             }}
+            gap={2}
           >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
