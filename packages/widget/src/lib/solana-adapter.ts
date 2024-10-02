@@ -1,3 +1,4 @@
+import { Adapter } from '@solana/wallet-adapter-base';
 import {
   CoinbaseWalletAdapter,
   LedgerWalletAdapter,
@@ -12,4 +13,4 @@ export const solanaWallets = [
   new CoinbaseWalletAdapter(),
   new TrustWalletAdapter(),
   new LedgerWalletAdapter(),
-];
+] as Adapter[];

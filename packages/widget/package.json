@@ -1,7 +1,7 @@
 {
-  "name": "@skip-go/widget-v1",
+  "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "exports": {
@@ -18,49 +18,11 @@
     "build",
     "README.md"
   ],
-  "scripts": {
-    "start": "yarn dev",
-    "dev": "yarn build -w",
-    "build": "rollup --config rollup.config.js",
-    "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
-    "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
-    "lint": "eslint src --ext .ts",
-    "postpublish": "yarn run post",
-    "prepublishOnly": "yarn run pre",
-    "prepack": "yarn run pre",
-    "postpack": "yarn run post",
-    "pre": "npm run build && node scripts/prepublish.cjs",
-    "post": "git checkout -- package.json"
-  },
   "peerDependencies": {
     "react": "17.x || 18.x",
     "react-dom": "17.x || 18.x",
     "styled-components": "^6.0.0",
     "stylis": "^4.0.0"
-  },
-  "devDependencies": {
-    "@rollup/plugin-url": "^8.0.2",
-    "@types/node": "18.7.18",
-    "@types/qrcode": "^1.4.2",
-    "@types/react": "^18.0.6",
-    "@types/react-dom": "^18.0.2",
-    "autoprefixer": "^10.4.19",
-    "node-polyfill-webpack-plugin": "^4.0.0",
-    "postcss": "^8.4.38",
-    "postcss-loader": "^8.1.1",
-    "postcss-prefixwrap": "^1.49.0",
-    "raw-loader": "^4.0.2",
-    "rollup-plugin-copy": "^3.5.0",
-    "styled-components": "^6.0.0",
-    "stylis": "^4.0.0",
-    "tailwindcss": "^3.4.3",
-    "tailwindcss-animate": "^1.0.7",
-    "ts-loader": "^9.5.1",
-    "typed-query-selector": "^2.11.2",
-    "typescript": "5.2.x",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.94.0",
-    "webpack-cli": "^5.1.4"
   },
   "resolutions": {
     "@cosmos-kit/cosmostation-extension": "^2.7.10",
@@ -100,7 +62,7 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@skip-go/client": "workspace:packages/client",
+    "@skip-go/client": "0.10.0",
     "@solana/spl-token": "^0.4.6",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",

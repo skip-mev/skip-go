@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "packages/client",
-    "packages/widget-v2",
+    "packages/widget",
     "examples/*",
     "vendor/"
   ],
@@ -25,7 +25,7 @@
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
-    "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
+    "release": "yarn run build && yarn workspace @skip-go/widget run pre && yarn workspace @skip-go/widget npm publish",
     "swagger": "npx open-swagger-ui --open docs/swagger.yml"
   },
   "devDependencies": {
