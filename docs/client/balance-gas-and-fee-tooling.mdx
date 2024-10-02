@@ -1,11 +1,20 @@
 ---
 title: 'Balances, Gas and Transaction Fee Utilities'
-description: 'This page describes the token balance, gas and transaction fee utility functions in the `@skip-go/client` TypeScript package.'
+description: 'This page details the utility functions for token balances, gas calculations, and transaction fees in Skip Go.'
 ---
 
 ## Getting token balances
 
-To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You can query a set of specified denoms or leave the array empty to fetch all denoms for an address. Learn how to setup your `SkipClient` instance in the [Getting Started](../client/getting-started) guide.
+To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You have the option to specify a set of token denoms to query or leave the array empty to fetch balances for all denoms associated with an address.
+
+- **When no denoms are specified**: The response will include only the denoms for which you have a balance.
+- **When denoms are specified**: The response will include balances for all the specified denoms. If you have no balance for a given denom, it will be included with a balance of zero.
+
+If there is an error fetching a given denom (e.g. the chain is down), the response will include an error message for that denom.
+
+<Info>
+Learn how to setup your `SkipClient` instance in the [Getting Started](../client/getting-started) guide.
+</Info>
 
 <CodeGroup>
 ```ts TypeScript (Client)
