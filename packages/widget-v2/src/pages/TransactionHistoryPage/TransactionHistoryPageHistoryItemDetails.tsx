@@ -10,7 +10,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { TransactionDetails } from "@/state/swapExecutionPage";
 
-type TransactionHistoryModalItemDetailsProps = {
+type TransactionHistoryPageHistoryItemDetailsProps = {
   status: SimpleStatus;
   sourceChainName: string;
   destinationChainName: string;
@@ -28,7 +28,7 @@ const statusMap = {
   failed: "Failed",
 };
 
-export const TransactionHistoryModalItemDetails = ({
+export const TransactionHistoryPageHistoryItemDetails = ({
   status,
   sourceChainName,
   destinationChainName,
@@ -36,7 +36,7 @@ export const TransactionHistoryModalItemDetails = ({
   relativeTimeString,
   transactionDetails,
   onClickDelete,
-}: TransactionHistoryModalItemDetailsProps) => {
+}: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
   const statusColor = useMemo(() => {

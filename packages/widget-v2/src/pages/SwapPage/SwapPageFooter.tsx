@@ -74,7 +74,6 @@ export const SwapPageFooter = ({
   return (
     <GhostButton
       gap={5}
-      align="center"
       justify="space-between"
       onClick={onClick}
       {...props}
