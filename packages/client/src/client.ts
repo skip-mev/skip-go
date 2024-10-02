@@ -69,7 +69,6 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
-import bs58 from "bs58"
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
