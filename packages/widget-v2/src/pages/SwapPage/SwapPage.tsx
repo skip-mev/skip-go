@@ -200,7 +200,7 @@ export const SwapPage = () => {
     }
     return (
       <MainButton
-        label={"Swap"}
+        label="Swap"
         icon={ICONS.swap}
         disabled={!route}
         onClick={() => {
