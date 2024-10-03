@@ -142,14 +142,14 @@ interface SwapWidgetProps {
 `routeConfig` allows you to fully customize the types of routes enabled when using the widget.
 
 - `allowMultiTx` (boolean): Whether or not to allow for routes that require multiple signing transactions from the user. Defaulted to true.
-- `allowUnsafe` (boolean): Whether or not to allow unsafe routes to be returned, see https://api-docs.skip.build/docs/allow_unsafe-preventing-handling-bad-execution for more info on what an unsafe route is. Defaulted to false.
+- `allowUnsafe` (boolean): Whether or not to allow unsafe routes to be returned, see [this page](../advanced-swapping/allow_unsafe-preventing-handling-bad-execution) for more info on what an unsafe route is. Defaulted to false.
 - `bridges` (array): Set of bridges to restrict routing across. Defaults to an empty array, allowing for all bridges to be considered.
 - `swapVenues` (array): Set of swap venues to restrict routing across. Defaults to an empty array, allowing for all swap venues to be considered.
-- `smartSwapOptions` (SmartSwapOptions): Parameter to specify advanced swapping features, see https://api-docs.skip.build/docs/smart-swap-options for more info on all the features possible including split trade routes and EVM swaps.
+- `smartSwapOptions` (SmartSwapOptions): Parameter to specify advanced swapping features, see [this page](../advanced-swapping/smart-swap-options) for more info on all the features possible including split trade routes and EVM swaps.
 
 ### `filter`
 
-`filter` allows you to limit the source and destination chains and assets that appear in the widget. Use this to make your onboarding/offboarding experience specifc to your chain or protocol!
+`filter` allows you to limit the source and destination chains and assets that appear in the widget. Use this to make your onboarding/offboarding experience specific to your chain or protocol!
 
 ```ts
   /**

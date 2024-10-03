@@ -11,11 +11,33 @@ export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
 }
 
-export function calculatePercentageDifference(numberA: number | string, numberB: number | string, absoluteValue?: boolean) {
+export function limitDecimalsDisplayed(number: string | number) {
+  const DECIMAL_PlACES_TO_DISPLAY = 6;
+  if (typeof number === "string") {
+    number = Number(number);
+  }
+  if (isNaN(number)) return "";
+
+  const decimalScalingFactor = Math.pow(10, DECIMAL_PlACES_TO_DISPLAY);
+
+  const flooredAndLimitedDecimalPlacesNumber =
+    Math.floor(number * decimalScalingFactor) / decimalScalingFactor;
+
+  return flooredAndLimitedDecimalPlacesNumber.toString();
+}
+
+export function calculatePercentageDifference(
+  numberA: number | string,
+  numberB: number | string,
+  absoluteValue?: boolean
+) {
   const bigNumberA = BigNumber(numberA);
   const bigNumberB = BigNumber(numberB);
 
-  const percentageDifference = ((bigNumberB.minus(bigNumberA)).dividedBy(bigNumberA)).multipliedBy(100);
+  const percentageDifference = bigNumberB
+    .minus(bigNumberA)
+    .dividedBy(bigNumberA)
+    .multipliedBy(100);
 
   if (absoluteValue) {
     return percentageDifference.absoluteValue().toFixed(0);
@@ -31,8 +53,14 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
   if (seconds < 60) {
     return `${seconds} ${pluralize("second", seconds)}`;
   } else if (seconds < 3600) {
-    return `${Math.round(seconds / 60)} ${pluralize("minute", Math.round(seconds / 60))}`;
+    return `${Math.round(seconds / 60)} ${pluralize(
+      "minute",
+      Math.round(seconds / 60)
+    )}`;
   } else {
-    return `${Math.round(seconds / 3600)} ${pluralize("hour", Math.round(seconds / 3600))}`;
+    return `${Math.round(seconds / 3600)} ${pluralize(
+      "hour",
+      Math.round(seconds / 3600)
+    )}`;
   }
 };

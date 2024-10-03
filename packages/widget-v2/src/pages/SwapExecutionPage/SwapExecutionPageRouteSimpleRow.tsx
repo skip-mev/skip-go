@@ -106,7 +106,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
         {usdValue && (
           <SmallText>
             {formatUSD(usdValue)}
-            {destination && " after fees"}
           </SmallText>
         )}
 
@@ -115,7 +114,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           <Button
             align="center"
-            onClick={() => copyToClipboard(source.address)} 
+            onClick={() => copyToClipboard(source.address)}
           >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
