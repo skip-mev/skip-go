@@ -172,11 +172,6 @@ export const SwapPage = () => {
       return <MainButton label="Finding Best Route..." loading />;
     }
 
-    if (isRouteError) {
-      return (
-        <MainButton label={routeError?.message ?? "no routes found"} disabled />
-      );
-    }
     if (!sourceAccount?.address) {
       return (
         <MainButton
@@ -190,6 +185,13 @@ export const SwapPage = () => {
         />
       );
     }
+
+    if (isRouteError) {
+      return (
+        <MainButton label={routeError?.message ?? "no routes found"} disabled />
+      );
+    }
+
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
     }
