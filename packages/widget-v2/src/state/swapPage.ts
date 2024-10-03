@@ -4,8 +4,8 @@ import { skipRouteAtom } from "@/state/route";
 import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { atomWithStorage } from "jotai/utils";
 import { limitDecimalsDisplayed } from "@/utils/number";
+import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -51,9 +51,9 @@ export const debouncedDestinationAssetAmountAtom = atom(
   }
 );
 
-export const sourceAssetAtom = atomWithStorage<AssetAtom | undefined>(
+export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
-  undefined
+  undefined,
 );
 
 export const sourceAssetAmountAtom = atom(
@@ -66,7 +66,7 @@ export const sourceAssetAmountAtom = atom(
   }
 );
 
-export const destinationAssetAtom = atomWithStorage<AssetAtom | undefined>(
+export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "destinationAsset",
   undefined
 );
@@ -99,7 +99,7 @@ export const isWaitingForNewRouteAtom = atom((get) => {
 
 export type SwapDirection = "swap-in" | "swap-out";
 
-export const swapDirectionAtom = atomWithStorage<SwapDirection>(
+export const swapDirectionAtom = atomWithStorageNoCrossTabSync<SwapDirection>(
   "swapDirection",
   "swap-in"
 );
@@ -160,6 +160,6 @@ export const routeAmountEffect = atomEffect((get, set) => {
   }
 });
 
-export const swapSettingsAtom = atomWithStorage("swapSettingsAtom", {
+export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", {
   slippage: 3,
 });
