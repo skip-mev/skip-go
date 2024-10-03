@@ -114,12 +114,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           <Button
             align="center"
-            onClick={() => {
-              if (source.address) {
-                navigator.clipboard.writeText(source.address);
-              }
-            }}
-            gap={2}
+            onClick={() => copyToClipboard(source.address)}
           >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (

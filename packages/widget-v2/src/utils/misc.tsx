@@ -10,3 +10,9 @@ export const withBoundProps = <P extends object>(
     return <WrappedComponent {...combinedProps} />;
   };
 };
+
+export const copyToClipboard = (string?: string) => {
+  if (string) {
+    navigator.clipboard.writeText(string);
+  }
+};
