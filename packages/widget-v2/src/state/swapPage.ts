@@ -112,12 +112,12 @@ export const invertSwapAtom = atom(null, (get, set) => {
   const swapDirection = get(swapDirectionAtom);
   set(isInvertingSwapAtom, true);
 
-  set(sourceAssetAtom, destinationAsset);
+  set(sourceAssetAtom, { ...destinationAsset });
   if (destinationAsset?.amount) {
     set(sourceAssetAmountAtom, destinationAsset?.amount);
   }
 
-  set(destinationAssetAtom, sourceAsset);
+  set(destinationAssetAtom, { ...sourceAsset });
   if (sourceAsset?.amount) {
     set(destinationAssetAmountAtom, sourceAsset?.amount, () => {
       const newSwapDirection =

@@ -4,25 +4,30 @@ import { BridgeIcon } from "@/icons/BridgeIcon";
 import { invertSwapAtom } from "@/state/swapPage";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
+import { Button } from "@/components/Button";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
-  const [spin, setSpin] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
   const onInvertSwap = () => {
     invertSwap();
 
     let spinTimeout = undefined;
     clearTimeout(spinTimeout);
-    setSpin(true);
-    spinTimeout = setTimeout(() => setSpin(false), 500);
+    setIsSpinning(true);
+    spinTimeout = setTimeout(() => setIsSpinning(false), 500);
   };
 
   return (
-    <div style={{ position: "relative", cursor: "pointer" }} onClick={onInvertSwap}>
+    <Button
+      style={{ position: "relative", cursor: "pointer" }}
+      onClick={onInvertSwap}
+      disabled={isSpinning}
+    >
       <BridgeIcon color={theme.primary.background.normal} />
-      <StyledBridgeArrow spin={spin} color={theme.primary.text.normal} />
-    </div>
+      <StyledBridgeArrow spin={isSpinning} color={theme.primary.text.normal} />
+    </Button>
   );
 };
 
@@ -41,5 +46,6 @@ const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
     }
   }
 
-  ${({ spin }) => spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
+  ${({ spin }) =>
+    spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
 `;
