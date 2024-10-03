@@ -45,5 +45,5 @@ export const SwapPageHeader = ({
 };
 
 const StyledSwapPageHeaderContainer = styled(Row)`
-  height: 32px;
+  height: 30px;
 `;
