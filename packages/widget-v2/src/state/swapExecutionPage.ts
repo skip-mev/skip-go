@@ -5,10 +5,10 @@ import { atom } from "jotai";
 import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { atomWithStorage } from "jotai/utils";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
+import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -47,7 +47,7 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
+export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
   {
     route: undefined,
