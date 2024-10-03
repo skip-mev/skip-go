@@ -25,9 +25,12 @@ export const useFetchTransactionStatus = () => {
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
+    if (!route?.operations) return;
     const operationTransferEventsArray = Object.values(
       operationToTransferEventsMap
     );
+
+    const lastOperationIndex = route?.operations?.length - 1;
 
     if (operationTransferEventsArray.length === 0) {
       if (isPending) {
@@ -37,12 +40,9 @@ export const useFetchTransactionStatus = () => {
     }
 
     if (
-      operationTransferEventsArray.every(({ status }) => status === "completed")
+      operationToTransferEventsMap[lastOperationIndex]?.status === "completed"
     ) {
-      if (operationTransferEventsArray.length === route?.operations.length) {
-        return "completed";
-      }
-      return "pending";
+      return "completed";
     }
 
     if (
@@ -62,12 +62,7 @@ export const useFetchTransactionStatus = () => {
     ) {
       return "broadcasted";
     }
-  }, [
-    isPending,
-    operationToTransferEventsMap,
-    route?.operations.length,
-    setOverallStatus,
-  ]);
+  }, [isPending, operationToTransferEventsMap, route?.operations, setOverallStatus]);
 
   useEffect(() => {
     if (overallStatus === "completed" || overallStatus === "failed") return;

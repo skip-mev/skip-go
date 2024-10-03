@@ -82,7 +82,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
-    onError: (error: unknown) => {
+    onError: (error: unknown, transactionDetailsArray) => {
+      const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
+
       if ((error as Error).message === "Request rejected") {
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
@@ -90,6 +92,28 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             set(errorAtom, undefined);
             set(setOverallStatusAtom, undefined);
           }
+        });
+      } else if (lastTransaction?.explorerLink) {
+        set(errorAtom, {
+          errorType: ErrorType.TransactionFailed,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
+          explorerLink: lastTransaction?.explorerLink ?? "",
+          transactionHash: lastTransaction?.txHash ?? "",
+          onClickContactSupport: () => {
+            window.open("https://skip.build/discord", "_blank");
+          }
+        });
+      } else {
+        set(errorAtom, {
+          errorType: ErrorType.Unexpected,
+          error: error as Error,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
         });
       }
     },
@@ -176,7 +200,7 @@ export type ClientTransactionStatus =
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
-  onError: (error: unknown) => void;
+  onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
   onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
   onTransactionSigned?: ExecuteRouteOptions["onTransactionSigned"];
 };
@@ -187,7 +211,7 @@ export const submitSwapExecutionCallbacksAtom = atom<
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
-  const { route, userAddresses } = get(swapExecutionStateAtom);
+  const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
 
   return {
@@ -240,13 +264,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         });
       } catch (error: unknown) {
         console.error(error);
-        submitSwapExecutionCallbacks?.onError?.(error);
+        submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
       }
       return null;
     },
     onError: (error: unknown) => {
       console.error(error);
-      submitSwapExecutionCallbacks?.onError?.(error);
+      submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
     },
   };
 });

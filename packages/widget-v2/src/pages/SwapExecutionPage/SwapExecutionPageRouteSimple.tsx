@@ -6,7 +6,7 @@ import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { ClientOperation, ClientTransferEvent } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { getIsOperationSignRequired } from "@/utils/operations";
 
 export type SwapExecutionPageRouteSimpleProps = {
@@ -21,11 +21,7 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
 }: SwapExecutionPageRouteSimpleProps) => {
   const theme = useTheme();
-  const { route, transactionDetailsArray, overallStatus } = useAtomValue(swapExecutionStateAtom);
-
-  const getExplorerLink = useCallback((index: number) => {
-    return transactionDetailsArray[index]?.explorerLink;
-  }, [transactionDetailsArray]);
+  const { route, overallStatus } = useAtomValue(swapExecutionStateAtom);
 
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
@@ -52,6 +48,8 @@ export const SwapExecutionPageRouteSimple = ({
 
   const isSignRequired = getIsOperationSignRequired(operationIndexBeforeLastOperation, operations, firstOperation, lastOperation);
 
+  const explorerLink = operationToTransferEventsMap?.[operations.length - 1]?.toExplorerLink;
+
   const onClickEditDestinationWallet = useMemo(() => {
     if (isSignRequired) return;
     if (overallStatus) return;
@@ -72,7 +70,7 @@ export const SwapExecutionPageRouteSimple = ({
         icon={ICONS.pen}
         status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
-        explorerLink={getExplorerLink(lastOperation.txIndex)}
+        explorerLink={explorerLink}
         context="destination"
       />
     </StyledSwapExecutionPageRoute>
