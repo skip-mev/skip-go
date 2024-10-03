@@ -1,8 +1,8 @@
 import { atom } from "jotai";
 import { SetStateAction } from "react";
 
-export function atomWithDebounce<T>(delayMilliseconds?: number) {
-  const prevTimeoutAtom = atom<number | undefined>(
+export function atomWithDebounce<T>(delayMilliseconds = 500) {
+  const prevTimeoutAtom = atom<NodeJS.Timeout | undefined>(
     undefined
   );
 
@@ -15,7 +15,7 @@ export function atomWithDebounce<T>(delayMilliseconds?: number) {
   // Atom for debounced value
   const debouncedValueAtom = atom(
     undefined,
-    (get, set, update: SetStateAction<T>) => {
+    (get, set, update: SetStateAction<T>, callback?: () => void) => {
       clearTimeout(get(prevTimeoutAtom));
 
       const prevValue = get(_currentValueAtom);
@@ -33,6 +33,7 @@ export function atomWithDebounce<T>(delayMilliseconds?: number) {
       const onDebounceEnd = () => {
         set(debouncedValueAtom, nextValue);
         set(isDebouncingAtom, false);
+        callback?.();
       };
 
       onDebounceStart();

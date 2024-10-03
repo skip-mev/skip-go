@@ -165,7 +165,7 @@ export const SwapPageAssetChainInput = ({
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <img src={assetDetails.assetImage} width={23} />
+              <img key={assetDetails.asset?.denom} src={assetDetails.assetImage} width={23} />
               <Text>{assetDetails.symbol}</Text>
             </StyledAssetLabel>
           ) : (

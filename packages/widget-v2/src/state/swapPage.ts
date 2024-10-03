@@ -25,6 +25,7 @@ export const debouncedSourceAssetAmountAtom = atom(
   (get) => {
     const initialized = get(debouncedSourceAssetAmountValueInitializedAtom);
     const debouncedValue = get(_debouncedSourceAssetAmountAtom);
+
     if (initialized === false && !debouncedValue) {
       return get(sourceAssetAtom)?.amount;
     }
@@ -39,13 +40,14 @@ export const debouncedDestinationAssetAmountAtom = atom(
   (get) => {
     const initialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
     const debouncedValue = get(_debouncedDestinationAssetAmountAtom);
+
     if (initialized === false && !debouncedValue) {
       return get(destinationAssetAtom)?.amount;
     }
     return debouncedValue;
   },
-  (_get, set, newAmount: string) => {
-    set(_debouncedDestinationAssetAmountAtom, newAmount);
+  (_get, set, newAmount: string, callback?: () => void) => {
+    set(_debouncedDestinationAssetAmountAtom, newAmount, callback);
   }
 );
 
@@ -74,9 +76,8 @@ export const destinationAssetAmountAtom = atom(
   (get, set, newAmount: string, callback?: () => void) => {
     const oldDestinationAsset = get(destinationAssetAtom);
     set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
-    set(debouncedDestinationAssetAmountAtom, newAmount);
+    set(debouncedDestinationAssetAmountAtom, newAmount, callback);
     set(swapDirectionAtom, "swap-out");
-    callback?.();
   }
 );
 
