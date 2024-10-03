@@ -1,13 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
   skipAssetsAtom,
-  skipRouteAtom,
 } from "@/state/skipClient";
+import {
+  skipRouteAtom
+} from "@/state/route";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -35,6 +36,7 @@ import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { useFetchSourceBalance } from "@/hooks/useFetchSourceBalance";
 import { skipSourceBalanceAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
+import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -147,7 +149,7 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      return <MainButton label={routeError.message} disabled />;
+      return <MainButton label={routeError?.message ?? "no routes found"} disabled />;
     }
     if (!sourceAccount?.address) {
       return (
@@ -245,7 +247,7 @@ export const SwapPage = () => {
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
@@ -257,7 +259,7 @@ export const SwapPage = () => {
             onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={destinationAsset}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}

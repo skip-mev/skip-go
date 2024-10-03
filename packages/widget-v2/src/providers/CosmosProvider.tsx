@@ -11,6 +11,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
 }) => {
   return (
     <GrazProvider grazOptions={{
+      // @ts-expect-error mismatch keplr types version
       chains: mainnetChains,
       autoReconnect: true,
       walletDefaultOptions: {

@@ -11,6 +11,7 @@ import { GhostButton, GhostButtonProps } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { styled, css } from "styled-components";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
+import { limitDecimalsDisplayed } from "@/utils/number";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -37,7 +38,7 @@ export const ConnectedWalletContent = () => {
       formattedBalanceAmount = amount;
     }
 
-    return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
+    return `${limitDecimalsDisplayed(formattedBalanceAmount)} ${sourceDetails?.symbol}`;
   }, [sourceBalance, sourceDetails?.symbol]);
   if (!sourceAccount) return null;
   return (
