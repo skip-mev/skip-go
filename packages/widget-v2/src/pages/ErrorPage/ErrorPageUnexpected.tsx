@@ -7,12 +7,14 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 import { useTheme } from "styled-components";
+import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageUnexpectedProps = {
   error?: Error;
+  onClickBack?: () => void;
 };
 
-export const ErrorPageUnexpected = ({ error }: ErrorPageUnexpectedProps) => {
+export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
   const resetError = useResetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -24,6 +26,13 @@ export const ErrorPageUnexpected = ({ error }: ErrorPageUnexpectedProps) => {
 
   return (
     <>
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: onClickBack,
+        }}
+      />
       <ErrorState
         title="An unexpected error has occurred"
         description={

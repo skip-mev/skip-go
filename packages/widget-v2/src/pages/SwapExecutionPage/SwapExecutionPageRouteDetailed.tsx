@@ -54,13 +54,8 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
-  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
-
-  const getExplorerLink = useCallback((index: number) => {
-    return transactionDetailsArray[index]?.explorerLink;
-  }, [transactionDetailsArray]);
 
   const handleMouseEnterOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -84,7 +79,7 @@ export const SwapExecutionPageRouteDetailed = ({
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
         chainId={firstOperation.fromChainID}
-        explorerLink={getExplorerLink(0)}
+        explorerLink={operationToTransferEventsMap[0]?.fromExplorerLink}
         status={operationToTransferEventsMap[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
@@ -143,8 +138,8 @@ export const SwapExecutionPageRouteDetailed = ({
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={isSignRequired}
               status={operationToTransferEventsMap[index]?.status}
-              explorerLink={getExplorerLink(operations[index]?.txIndex)}
-              key={`row-${asset?.denom}-${index}`}
+              explorerLink={operationToTransferEventsMap[index]?.explorerLink}
+              key={`row-${operation.toChainID}-${index}`}
             />
           </>
         );

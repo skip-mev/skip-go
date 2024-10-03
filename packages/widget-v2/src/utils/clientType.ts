@@ -112,11 +112,17 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
       switch (type) {
         case OperationType.swap:
         case OperationType.evmSwap:
-          (operationDetails as Transfer).toChainID = (operationDetails as EvmSwap).fromChainID;
+          (operationDetails as Transfer).toChainID = (
+            operationDetails as EvmSwap
+          ).fromChainID;
           break;
         case OperationType.bankSend:
-          (operationDetails as Transfer).denomIn = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).denomOut = (operationDetails as BankSend).denom;
+          (operationDetails as Transfer).denomIn = (
+            operationDetails as BankSend
+          ).denom;
+          (operationDetails as Transfer).denomOut = (
+            operationDetails as BankSend
+          ).denom;
           break;
         default:
       }
@@ -153,11 +159,50 @@ export function getClientOperations(operations: SkipClientOperation[]) {
 function getClientTransferEvent(transferEvent: TransferEvent) {
   const combinedTransferEvent = transferEvent as CombinedTransferEvent;
 
-  const axelarTransfer = combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
+  const axelarTransfer =
+    combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
   const ibcTransfer = combinedTransferEvent?.ibcTransfer as TransferInfo;
   const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
-  const hyperlaneTransfer = combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
-  const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
+  const hyperlaneTransfer =
+    combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
+  const opInitTransfer =
+    combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
+
+  let transferType = "" as TransferType;
+  if (axelarTransfer) {
+    transferType = TransferType.axelarTransfer;
+  } else if (ibcTransfer) {
+    transferType = TransferType.ibcTransfer;
+  } else if (cctpTransfer) {
+    transferType = TransferType.cctpTransfer;
+  } else if (hyperlaneTransfer) {
+    transferType = TransferType.hyperlaneTransfer;
+  } else if (opInitTransfer) {
+    transferType = TransferType.opInitTransfer;
+  }
+
+  const getExplorerLink = (type: "send" | "receive") => {
+    switch (transferType) {
+      case TransferType.ibcTransfer:
+        if (type === "send") {
+          return ibcTransfer.packetTXs.sendTx?.explorerLink;
+        }
+        return ibcTransfer.packetTXs.receiveTx?.explorerLink;
+      case TransferType.axelarTransfer:
+        return axelarTransfer.axelarScanLink;
+      default:
+        type RemainingTransferTypes =
+          | CCTPTransferInfo
+          | HyperlaneTransferInfo
+          | OPInitTransferInfo;
+        if (type === "send") {
+          return (combinedTransferEvent[transferType] as RemainingTransferTypes)
+            ?.txs.sendTx?.explorerLink;
+        }
+        return (combinedTransferEvent[transferType] as RemainingTransferTypes)
+          ?.txs.receiveTx?.explorerLink;
+    }
+  };
 
   return {
     ...ibcTransfer,
@@ -165,27 +210,58 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...cctpTransfer,
     ...hyperlaneTransfer,
     ...opInitTransfer,
+    fromExplorerLink: getExplorerLink("send"),
+    toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
 }
 
-export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatusResponse[]) {
+export function getTransferEventsFromTxStatusResponse(
+  txStatusResponse?: TxStatusResponse[]
+) {
   if (!txStatusResponse) return [];
-  return txStatusResponse?.flatMap((txStatus) => txStatus.transferSequence.map((transferEvent) => getClientTransferEvent(transferEvent)));
+  return txStatusResponse?.flatMap((txStatus) =>
+    txStatus.transferSequence.map((transferEvent) =>
+      getClientTransferEvent(transferEvent)
+    )
+  );
 }
 
-export function getOperationToTransferEventsMap(txStatusResponse: TxStatusResponse[], clientOperations: ClientOperation[]) {
+export function getOperationToTransferEventsMap(
+  txStatusResponse: TxStatusResponse[],
+  clientOperations: ClientOperation[]
+) {
   if (!txStatusResponse) return {};
-  const operationToTransferEventsMap = {} as Record<number, ClientTransferEvent>;
-  const transferEvents = getTransferEventsFromTxStatusResponse(txStatusResponse);
+  const operationToTransferEventsMap = {} as Record<
+    number,
+    ClientTransferEvent
+  >;
+  const transferEvents =
+    getTransferEventsFromTxStatusResponse(txStatusResponse);
 
   clientOperations.forEach((operation, index) => {
     const foundTransferEventMatchingOperation = transferEvents?.find(
-      (transferEvent) => transferEvent.fromChainID === operation.fromChainID
+      (transferEvent) =>
+        transferEvent.fromChainID === operation.fromChainID && transferEvent.toChainID === operation.toChainID
+    );
+
+    const foundTransferEventWithTheSameFromChainId = transferEvents?.find(
+      (transferEvent) =>
+        transferEvent.fromChainID === operation.fromChainID
     );
 
     if (foundTransferEventMatchingOperation) {
-      foundTransferEventMatchingOperation.status = getSimpleStatus(foundTransferEventMatchingOperation?.state);
+      foundTransferEventMatchingOperation.status = getSimpleStatus(
+        foundTransferEventMatchingOperation?.state
+      );
       operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
+      operationToTransferEventsMap[index].explorerLink = foundTransferEventMatchingOperation.toExplorerLink;
+
+    } else if (foundTransferEventWithTheSameFromChainId) {
+      foundTransferEventWithTheSameFromChainId.status = getSimpleStatus(
+        foundTransferEventWithTheSameFromChainId?.state
+      );
+      operationToTransferEventsMap[index] = { ...foundTransferEventWithTheSameFromChainId };
+      operationToTransferEventsMap[index].explorerLink = foundTransferEventWithTheSameFromChainId.fromExplorerLink;
     }
   });
 
@@ -206,7 +282,14 @@ export function getSimpleOverallStatus(state: StatusState) {
   }
 }
 
-export function getSimpleStatus(state: TransferState | AxelarTransferState | CCTPTransferState | HyperlaneTransferState | OPInitTransferState) {
+export function getSimpleStatus(
+  state:
+    | TransferState
+    | AxelarTransferState
+    | CCTPTransferState
+    | HyperlaneTransferState
+    | OPInitTransferState
+) {
   switch (state) {
     case "TRANSFER_PENDING":
     case "AXELAR_TRANSFER_PENDING_CONFIRMATION":
@@ -229,18 +312,39 @@ export function getSimpleStatus(state: TransferState | AxelarTransferState | CCT
 }
 
 type CombinedTransferEvent = {
-  ibcTransfer: TransferInfo;
-  axelarTransfer: AxelarTransferInfo;
-  cctpTransfer: CCTPTransferInfo;
-  hyperlaneTransfer: HyperlaneTransferInfo;
-  opInitTransfer: OPInitTransferInfo;
+  [TransferType.ibcTransfer]: TransferInfo;
+  [TransferType.axelarTransfer]: AxelarTransferInfo;
+  [TransferType.cctpTransfer]: CCTPTransferInfo;
+  [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
+  [TransferType.opInitTransfer]: OPInitTransferInfo;
 };
 
-export type SimpleStatus = "pending" | "broadcasted" | "completed" | "failed" | "signing";
+export enum TransferType {
+  ibcTransfer = "ibcTransfer",
+  axelarTransfer = "axelarTransfer",
+  cctpTransfer = "cctpTransfer",
+  hyperlaneTransfer = "hyperlaneTransfer",
+  opInitTransfer = "opInitTransfer",
+}
+
+export type SimpleStatus =
+  | "pending"
+  | "broadcasted"
+  | "completed"
+  | "failed"
+  | "signing";
 
 export type ClientTransferEvent = {
   fromChainID: string;
   toChainID: string;
-  state: TransferState | AxelarTransferState | CCTPTransferState | HyperlaneTransferState | OPInitTransferState;
+  state:
+  | TransferState
+  | AxelarTransferState
+  | CCTPTransferState
+  | HyperlaneTransferState
+  | OPInitTransferState;
   status?: SimpleStatus;
-}
+  fromExplorerLink?: string;
+  toExplorerLink?: string;
+  explorerLink?: string;
+};
