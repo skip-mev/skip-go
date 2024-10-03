@@ -188,7 +188,7 @@ export const SwapPageAssetChainInput = ({
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
-              {(usdValue && formatUSD(usdValue)) ?? "--"}
+              {(usdValue && formatUSD(usdValue))}
             </SmallTextButton>
             <TinyTriangleIcon
               color={priceChangeColor}
@@ -202,7 +202,7 @@ export const SwapPageAssetChainInput = ({
             )}
           </Row>
         ) : (
-          <SmallText>{(usdValue && formatUSD(usdValue)) ?? "--"}</SmallText>
+          <SmallText>{(usdValue && formatUSD(usdValue))}</SmallText>
         )}
         {assetDetails?.chainName ? (
           <GhostButton
