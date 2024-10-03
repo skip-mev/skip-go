@@ -62,12 +62,13 @@ export const MainButton = ({
             fontSize={24}
             color={textColor}
             mainButtonColor={backgroundColor}
+            capitalize
           >
             {label}
           </Text>
         </Row>
       ) : (
-        <Text fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
+        <Text capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
           {label}
         </Text>
       )}

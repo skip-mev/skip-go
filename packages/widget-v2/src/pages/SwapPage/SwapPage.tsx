@@ -169,13 +169,13 @@ export const SwapPage = () => {
     }
 
     if (isWaitingForNewRoute) {
-      return <MainButton label="Finding Best Route..." loading />;
+      return <MainButton label="Finding best route..." loading />;
     }
 
     if (!sourceAccount?.address) {
       return (
         <MainButton
-          label="Connect Wallet"
+          label="Connect wallet"
           icon={ICONS.plus}
           onClick={() => {
             selectWalletmodal.show({
@@ -188,10 +188,9 @@ export const SwapPage = () => {
 
     if (isRouteError) {
       return (
-        <MainButton label={routeError?.message ?? "no routes found"} disabled />
+        <MainButton label={routeError?.message ?? "No routes found"} disabled />
       );
     }
-
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
     }
