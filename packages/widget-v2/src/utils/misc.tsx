@@ -24,12 +24,12 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
   const defaultStorage: SyncStorage<T> = {
     getItem: (key) => {
       const storedValue = localStorage.getItem(key);
-      if (!storedValue) return;
+      if (!storedValue) return initialValue;
 
       try {
         return JSON.parse(storedValue);
       } catch (_error) {
-        return;
+        return initialValue;
       }
     },
     setItem: (key, newValue) => {
