@@ -5,25 +5,25 @@ import { styled, useTheme } from "styled-components";
 import { XIcon } from "@/icons/XIcon";
 import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
-import { TransactionHistoryModalItemDetails } from "./TransactionHistoryModalItemDetails";
+import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
 import { useSetAtom } from "jotai";
 
-type TransactionHistoryModalItemProps = {
+type TransactionHistoryPageHistoryItemProps = {
   index: number;
   txHistoryItem: TransactionHistoryItem;
   showDetails?: boolean;
   onClickRow?: () => void;
 };
 
-export const TransactionHistoryModalItem = ({
+export const TransactionHistoryPageHistoryItem = ({
   index,
   txHistoryItem,
   showDetails,
   onClickRow,
-}: TransactionHistoryModalItemProps) => {
+}: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
   const {
@@ -116,7 +116,7 @@ export const TransactionHistoryModalItem = ({
         </Row>
       </StyledHistoryItemRow>
       {showDetails && (
-        <TransactionHistoryModalItemDetails
+        <TransactionHistoryPageHistoryItemDetails
           status={status}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}

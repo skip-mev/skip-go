@@ -30,7 +30,6 @@ import { useModal } from "@/components/Modal";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
-import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { useFetchSourceBalance } from "@/hooks/useFetchSourceBalance";
@@ -57,7 +56,6 @@ export const SwapPage = () => {
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const historyModal = useModal(TransactionHistoryModal);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
@@ -242,7 +240,7 @@ export const SwapPage = () => {
           leftButton={{
             label: "History",
             icon: ICONS.history,
-            onClick: () => historyModal.show(),
+            onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
           }}
           rightContent={<ConnectedWalletContent />}
         />
