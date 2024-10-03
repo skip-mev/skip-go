@@ -69,12 +69,10 @@ export const useFetchTransactionStatus = () => {
 
     const transferEvents =
       getTransferEventsFromTxStatusResponse(transactionStatus);
-    console.log(transferEvents);
     const operationToTransferEventsMap = getOperationToTransferEventsMap(
       transactionStatus ?? [],
       clientOperations
     );
-    console.log(operationToTransferEventsMap);
     const operationTransferEventsArray = Object.values(
       operationToTransferEventsMap
     );

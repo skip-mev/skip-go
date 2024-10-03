@@ -6,13 +6,12 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { getIsOperationSignRequired } from "@/utils/operations";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
