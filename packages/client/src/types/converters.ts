@@ -2359,24 +2359,21 @@ export function opInitTransferInfoToJSON(
     txs: value.txs && opInitTransferTransactionsToJSON(value.txs),
   };
 }
-
 export function msgsDirectRequestFromJSON(
   msgDirectRequestJSON: MsgsDirectRequestJSON
 ): MsgsDirectRequest {
-  return {
+  const baseRequest = {
     sourceAssetDenom: msgDirectRequestJSON.source_asset_denom,
     sourceAssetChainID: msgDirectRequestJSON.source_asset_chain_id,
     destAssetDenom: msgDirectRequestJSON.dest_asset_denom,
     destAssetChainID: msgDirectRequestJSON.dest_asset_chain_id,
-    amountIn: msgDirectRequestJSON.amount_in,
-    amountOut: msgDirectRequestJSON.amount_out,
     chainIdsToAddresses: msgDirectRequestJSON.chain_ids_to_addresses,
     slippageTolerancePercent: msgDirectRequestJSON.slippage_tolerance_percent,
     affiliates: msgDirectRequestJSON.affiliates?.map(affiliateFromJSON),
     chainIDsToAffiliates: msgDirectRequestJSON.chain_ids_to_affiliates
       ? chainIDsToAffiliatesMapFromJSON(
-          msgDirectRequestJSON.chain_ids_to_affiliates
-        )
+        msgDirectRequestJSON.chain_ids_to_affiliates
+      )
       : undefined,
     timeoutSeconds: msgDirectRequestJSON.timeout_seconds,
     postRouteHandler:
@@ -2394,19 +2391,32 @@ export function msgsDirectRequestFromJSON(
       : undefined,
     allowSwaps: msgDirectRequestJSON.allow_swaps,
     enableGasWarnings: msgDirectRequestJSON.enable_gas_warnings,
+    allowMultiTx: msgDirectRequestJSON.allow_multi_tx,
+    allowUnsafe: msgDirectRequestJSON.allow_unsafe,
+    bridges: msgDirectRequestJSON.bridges,
+    experimentalFeatures: msgDirectRequestJSON.experimental_features,
   };
-}
 
+  if (msgDirectRequestJSON.amount_in !== undefined) {
+    return {
+      ...baseRequest,
+      amountIn: msgDirectRequestJSON.amount_in,
+    };
+  } else {
+    return {
+      ...baseRequest,
+      amountOut: msgDirectRequestJSON.amount_out!,
+    };
+  }
+}
 export function msgsDirectRequestToJSON(
   msgDirectRequest: MsgsDirectRequest
 ): MsgsDirectRequestJSON {
-  return {
+  const baseRequest = {
     source_asset_denom: msgDirectRequest.sourceAssetDenom,
     source_asset_chain_id: msgDirectRequest.sourceAssetChainID,
     dest_asset_denom: msgDirectRequest.destAssetDenom,
     dest_asset_chain_id: msgDirectRequest.destAssetChainID,
-    amount_in: msgDirectRequest.amountIn,
-    amount_out: msgDirectRequest.amountOut,
     chain_ids_to_addresses: msgDirectRequest.chainIdsToAddresses,
     slippage_tolerance_percent: msgDirectRequest.slippageTolerancePercent,
     affiliates: msgDirectRequest.affiliates?.map(affiliateToJSON),
@@ -2433,6 +2443,18 @@ export function msgsDirectRequestToJSON(
     allow_swaps: msgDirectRequest.allowSwaps,
     enable_gas_warnings: msgDirectRequest.enableGasWarnings,
   };
+
+  if (msgDirectRequest.amountIn !== undefined) {
+    return {
+      ...baseRequest,
+      amount_in: msgDirectRequest.amountIn,
+    };
+  } else {
+    return {
+      ...baseRequest,
+      amount_out: msgDirectRequest.amountOut!,
+    };
+  }
 }
 
 export function smartSwapOptionsFromJSON(
