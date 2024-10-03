@@ -12,9 +12,6 @@ import { transactionHistoryAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
 
-const ITEM_HEIGHT = 40;
-const ITEM_GAP = 5;
-
 export const TransactionHistoryPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);

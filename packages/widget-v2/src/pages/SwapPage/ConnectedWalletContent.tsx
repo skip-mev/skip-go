@@ -7,9 +7,8 @@ import { useSourceBalance } from "@/hooks/useSourceBalance";
 import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { GhostButton, GhostButtonProps } from "@/components/Button";
+import { GhostButton } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { styled, css } from "styled-components";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 
 export const ConnectedWalletContent = () => {
