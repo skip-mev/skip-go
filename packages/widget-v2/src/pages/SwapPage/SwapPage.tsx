@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
@@ -36,6 +35,7 @@ import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { useSourceAccount } from "@/hooks/useSourceAccount";
 import { skipBalancesAtom } from "@/state/balances";
+import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -246,7 +246,7 @@ export const SwapPage = () => {
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
@@ -258,7 +258,7 @@ export const SwapPage = () => {
             onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={destinationAsset}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}

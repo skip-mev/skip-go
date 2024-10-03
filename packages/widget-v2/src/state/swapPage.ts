@@ -5,6 +5,7 @@ import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { atomWithStorage } from "jotai/utils";
+import { limitDecimalsDisplayed } from "@/utils/number";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -141,12 +142,12 @@ export const routeAmountEffect = atomEffect((get, set) => {
   if (direction === "swap-in" && swapInAmountChanged) {
     set(destinationAssetAtom, (old) => ({
       ...old,
-      amount: swapInAmount,
+      amount: limitDecimalsDisplayed(swapInAmount),
     }));
   } else if (direction === "swap-out" && swapOutAmountChanged) {
     set(sourceAssetAtom, (old) => ({
       ...old,
-      amount: swapOutAmount,
+      amount: limitDecimalsDisplayed(swapOutAmount),
     }));
   }
 });
