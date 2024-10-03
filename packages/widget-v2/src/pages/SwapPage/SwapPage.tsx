@@ -6,8 +6,10 @@ import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
   skipAssetsAtom,
-  skipRouteAtom,
 } from "@/state/skipClient";
+import {
+  skipRouteAtom
+} from "@/state/route";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -146,7 +148,7 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      return <MainButton label={routeError.message} disabled />;
+      return <MainButton label={routeError?.message ?? "no routes found"} disabled />;
     }
     if (!sourceAccount?.address) {
       return (

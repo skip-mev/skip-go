@@ -1,5 +1,6 @@
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
-import { skipClient, skipRouteAtom } from "./skipClient";
+import { skipClient } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
