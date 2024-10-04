@@ -244,9 +244,19 @@ export function getOperationToTransferEventsMap(
         transferEvent.fromChainID === operation.fromChainID && transferEvent.toChainID === operation.toChainID
     );
 
-    const foundTransferEventWithTheSameFromChainId = transferEvents?.find(
-      (transferEvent) =>
-        transferEvent.fromChainID === operation.fromChainID
+    const foundSwapTransferEvent = transferEvents?.find(
+      (transferEvent) => {
+        const isSwapType = ["evmSwap", "swap"].includes(operation.type);
+        if (!isSwapType) return false;
+
+        const operationStaysOnTheSameChain = operation.fromChainID === operation.toChainID;
+        const fromChainMatches = transferEvent.fromChainID === operation.fromChainID;
+        const toChainMatches = transferEvent.toChainID === operation.toChainID;
+
+        return operationStaysOnTheSameChain
+          ? fromChainMatches || toChainMatches
+          : fromChainMatches && toChainMatches;
+      }
     );
 
     if (foundTransferEventMatchingOperation) {
@@ -256,12 +266,12 @@ export function getOperationToTransferEventsMap(
       operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
       operationToTransferEventsMap[index].explorerLink = foundTransferEventMatchingOperation.toExplorerLink;
 
-    } else if (foundTransferEventWithTheSameFromChainId) {
-      foundTransferEventWithTheSameFromChainId.status = getSimpleStatus(
-        foundTransferEventWithTheSameFromChainId?.state
+    } else if (foundSwapTransferEvent) {
+      foundSwapTransferEvent.status = getSimpleStatus(
+        foundSwapTransferEvent?.state
       );
-      operationToTransferEventsMap[index] = { ...foundTransferEventWithTheSameFromChainId };
-      operationToTransferEventsMap[index].explorerLink = foundTransferEventWithTheSameFromChainId.fromExplorerLink;
+      operationToTransferEventsMap[index] = { ...foundSwapTransferEvent };
+      operationToTransferEventsMap[index].explorerLink = foundSwapTransferEvent.fromExplorerLink;
     }
   });
 
