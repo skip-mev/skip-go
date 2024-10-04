@@ -120,7 +120,7 @@ export const SwapExecutionPageRouteDetailed = ({
                 onMouseEnter={() => handleMouseEnterOperationType(index)}
                 onMouseLeave={() => handleMouseLeaveOperationType(index)}
                 justify="center"
-                key={`operation-${asset?.denom}-${index}`}
+                key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
               >
                 {operationTypeToIcon[operation.type]}
               </OperationTypeIconContainer>
@@ -138,7 +138,7 @@ export const SwapExecutionPageRouteDetailed = ({
               isSignRequired={isSignRequired}
               status={operationToTransferEventsMap[index]?.status}
               explorerLink={operationToTransferEventsMap[index]?.explorerLink}
-              key={`row-${operation.toChainID}-${index}`}
+              key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
             />
           </>
         );
