@@ -17,17 +17,14 @@ export const useFetchAllBalances = () => {
       const address = getAccount(asset.chainID)?.address;
       if (address) {
         if (asset.denom === sourceAsset?.denom) return acc;
-        if (acc[asset.chainID]?.denoms) {
-          acc[asset.chainID].denoms.push(asset.denom);
-        } else {
+        if (!acc[asset.chainID]) {
           acc[asset.chainID] = {
             address: address,
-            denoms: [asset.denom],
           };
         }
       }
       return acc;
-    }, {} as Record<string, { address: string, denoms: string[] }>);
+    }, {} as Record<string, { address: string }>);
 
     if (allBalancesRequest) {
       setSkipAllBalancesRequest({
