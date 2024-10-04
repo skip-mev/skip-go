@@ -338,11 +338,11 @@ export enum TransferType {
 }
 
 export type SimpleStatus =
+  | ""
+  | "signing"
   | "pending"
-  | "broadcasted"
   | "completed"
   | "failed"
-  | "signing";
 
 export type ClientTransferEvent = {
   fromChainID: string;

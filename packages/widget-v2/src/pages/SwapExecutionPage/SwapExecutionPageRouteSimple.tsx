@@ -25,8 +25,8 @@ export const SwapExecutionPageRouteSimple = ({
 
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
-  const sourceStatus = operationToTransferEventsMap?.[0]?.status;
-  const destinationStatus = operationToTransferEventsMap?.[operations.length - 1]?.status;
+  const sourceStatus = operationToTransferEventsMap?.[0]?.status ?? "";
+  const destinationStatus = operationToTransferEventsMap?.[operations.length - 1]?.status ?? "";
 
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
@@ -66,7 +66,6 @@ export const SwapExecutionPageRouteSimple = ({
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
         {...destination}
-        destination
         icon={ICONS.pen}
         status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}

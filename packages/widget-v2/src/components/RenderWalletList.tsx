@@ -168,7 +168,7 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              status={connectMutation.isError ? "failed" : "broadcasted"}
+              status={connectMutation.isError ? "failed" : ""}
               borderSize={8}
             >
               <img

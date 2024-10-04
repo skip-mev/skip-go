@@ -66,7 +66,7 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const renderStatus = useMemo(() => {
     switch (status) {
-      case "broadcasted":
+      case "":
       case "pending":
         return (
           <StyledAnimatedBorder

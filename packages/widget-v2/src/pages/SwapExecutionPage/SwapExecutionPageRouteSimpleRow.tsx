@@ -21,10 +21,9 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   usdValue?: string;
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
-  destination?: boolean;
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: SimpleStatus;
+  status: SimpleStatus;
   icon?: ICONS;
   context: "source" | "destination";
 };
@@ -35,7 +34,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
   usdValue,
   chainId,
   status,
-  destination,
   onClickEditDestinationWallet,
   explorerLink,
   context,
@@ -48,13 +46,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId,
     tokenAmount,
   });
-
-  const txStateOfAnimatedBorder = useMemo(() => {
-    if (destination && status === "broadcasted") {
-      return;
-    }
-    return status;
-  }, [status, destination]);
 
   const Icon = iconMap[icon];
 
@@ -90,7 +81,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           width={50}
           height={50}
           backgroundColor={theme.success.text}
-          status={txStateOfAnimatedBorder}
+          status={status}
         >
           <img
             height={50}

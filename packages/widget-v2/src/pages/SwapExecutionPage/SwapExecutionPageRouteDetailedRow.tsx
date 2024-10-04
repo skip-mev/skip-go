@@ -186,7 +186,7 @@ export const StyledAnimatedBorder = ({
   width: number;
   height: number;
   borderSize?: number;
-  status?: SimpleStatus;
+  status: SimpleStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -213,7 +213,7 @@ const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
-  status?: SimpleStatus;
+  status: SimpleStatus;
   backgroundColor?: string;
 }>`
   position: relative;
@@ -226,7 +226,6 @@ const StyledLoadingContainer = styled(Row) <{
         return `border: ${borderSize}px solid ${theme.success.text}`;
       case "failed":
         return `border: ${borderSize}px solid ${theme.error.text}`;
-      case "broadcasted":
       default:
         return "";
     }

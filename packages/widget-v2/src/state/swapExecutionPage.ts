@@ -21,7 +21,7 @@ type SwapExecutionState = {
   route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
-  overallStatus?: SimpleStatus;
+  overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData
 };
 
@@ -54,12 +54,12 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
-    overallStatus: undefined,
+    overallStatus: "",
     isValidatingGasBalance: undefined,
   }
 );
 
-export const setOverallStatusAtom = atom(null, (_get, set, status?: SimpleStatus) => {
+export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
   set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
 });
 
@@ -75,6 +75,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
+    overallStatus: "",
     isValidatingGasBalance: undefined,
   });
 
@@ -90,7 +91,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "");
           }
         });
       } else if (lastTransaction?.explorerLink) {
@@ -98,7 +99,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
           transactionHash: lastTransaction?.txHash ?? "",
@@ -112,7 +113,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           error: error as Error,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "");
           },
         });
       }
@@ -159,7 +160,7 @@ export const setTransactionDetailsArrayAtom = atom(
       route,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
-      status: "broadcasted",
+      status: "",
     });
   }
 );
@@ -191,12 +192,6 @@ export type TransactionDetails = {
   explorerLink?: string;
   status?: TxStatusResponse;
 };
-
-export type ClientTransactionStatus =
-  | "pending"
-  | "broadcasted"
-  | "completed"
-  | "failed";
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
