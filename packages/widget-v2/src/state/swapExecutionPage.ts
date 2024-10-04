@@ -54,7 +54,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
-    overallStatus: "",
+    overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
   }
 );
@@ -75,7 +75,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
-    overallStatus: "",
+    overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
   });
 
@@ -91,7 +91,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, "");
+            set(setOverallStatusAtom, "unconfirmed");
           }
         });
       } else if (lastTransaction?.explorerLink) {
@@ -99,7 +99,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, "");
+            set(setOverallStatusAtom, "unconfirmed");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
           transactionHash: lastTransaction?.txHash ?? "",
@@ -113,7 +113,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           error: error as Error,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, "");
+            set(setOverallStatusAtom, "unconfirmed");
           },
         });
       }
@@ -160,7 +160,7 @@ export const setTransactionDetailsArrayAtom = atom(
       route,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
-      status: "",
+      status: "unconfirmed",
     });
   }
 );

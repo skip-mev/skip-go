@@ -338,7 +338,7 @@ export enum TransferType {
 }
 
 export type SimpleStatus =
-  | ""
+  | "unconfirmed"
   | "signing"
   | "pending"
   | "completed"
