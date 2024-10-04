@@ -15,6 +15,7 @@ export type ErrorPageUnexpectedProps = {
 };
 
 export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedProps) => {
+  console.log(error);
   const theme = useTheme();
   const resetError = useResetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
