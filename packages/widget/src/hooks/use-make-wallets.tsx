@@ -126,7 +126,7 @@ export const useMakeWallets = () => {
       }
       const chainName = chainIdToName(chainID);
       const walletRepo = getWalletRepo(chainName);
-      wallets = walletRepo.wallets.map((wallet) => ({
+      wallets = walletRepo.wallets.filter(wallet => wallet).map((wallet) => ({
         walletName: wallet.walletName,
         walletPrettyName: wallet.walletPrettyName,
         walletChainType: 'cosmos',
