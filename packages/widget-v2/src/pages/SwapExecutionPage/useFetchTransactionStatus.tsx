@@ -76,15 +76,9 @@ export const useFetchTransactionStatus = () => {
       // but no transfer events (ie. swaps that remain on chain)
       if (["completed", "failed"].includes(simpleOverallStatus)) {
         const derivedOperationToTransferEventsMap = clientOperations.reduce(
-          (accumulator, operation, index) => {
+          (accumulator, _operation, index) => {
             accumulator[index] = {
               status: simpleOverallStatus,
-              state:
-                simpleOverallStatus === "completed"
-                  ? "TRANSFER_SUCCESS"
-                  : "TRANSFER_FAILURE",
-              toChainID: operation.toChainID,
-              fromChainID: operation.fromChainID,
             } as ClientTransferEvent;
 
             return accumulator;
