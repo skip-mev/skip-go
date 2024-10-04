@@ -1826,6 +1826,7 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
   }) {
+    console.log('txs', txs)
     // tx index -> gas token used
     let gasTokenRecord: Record<number, Coin> = {}
     for (let i = 0; i < txs.length; i++) {
@@ -1834,6 +1835,7 @@ export class SkipClient {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ('cosmosTx' in tx) {
+        console.log('tx', tx)
         onValidateGasBalance?.({
           chainID: tx.cosmosTx.chainID,
           txIndex: i,
