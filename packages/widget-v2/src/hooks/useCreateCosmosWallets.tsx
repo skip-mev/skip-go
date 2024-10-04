@@ -92,10 +92,10 @@ export const useCreateCosmosWallets = () => {
       const walletInfo = getCosmosWalletInfo(wallet);
       const minimalWallet: MinimalWallet = {
         walletName: wallet,
-        walletPrettyName: walletInfo.name,
+        walletPrettyName: walletInfo?.name,
         walletChainType: "cosmos",
         walletInfo: {
-          logo: walletInfo.imgSrc
+          logo: walletInfo?.imgSrc
         },
         connect: async () => {
           try {
