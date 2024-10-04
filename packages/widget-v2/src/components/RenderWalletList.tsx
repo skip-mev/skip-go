@@ -83,7 +83,7 @@ export const RenderWalletList = ({
 
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
-      const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName;
+      const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName ?? "";
       const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
       const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
 
