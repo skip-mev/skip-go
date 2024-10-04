@@ -274,15 +274,10 @@ export class SkipClient {
 
     if (options.additionalTx) {
       const { tx: additionalTx, position } = options.additionalTx;
-      if (position === 'before') {
-        txs = [additionalTx, ...txs];
-      } else {
-        txs = [...txs, additionalTx];
-      }
+      txs = position === 'before' ? [additionalTx, ...txs] : [...txs, additionalTx];
     }
 
     await this.executeTxs({ ...options, txs });
-
   }
 
   async executeTxs(

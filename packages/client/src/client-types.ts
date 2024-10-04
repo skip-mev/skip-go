@@ -85,7 +85,6 @@ export type ExecuteRouteOptions = {
    */
   getFallbackGasAmount?: GetFallbackGasAmount;
   gasAmountMultiplier?: number;
-
   /**
  * Arbitrary Tx to be executed before or after route msgs
  */
