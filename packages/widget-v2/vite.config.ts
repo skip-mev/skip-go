@@ -17,7 +17,7 @@ export default defineConfig({
   resolve: {
     preserveSymlinks: true,
     alias: {
-      "@": resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   plugins: [
@@ -32,6 +32,7 @@ export default defineConfig({
   ],
   build: {
     lib: {
+      // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),
       formats: ["es"],
       name: "widget-v2",
@@ -42,11 +43,6 @@ export default defineConfig({
       output: {
         dir: "build",
         entryFileNames: "[name].js",
-      },
-    },
-    terserOptions: {
-      compress: {
-        drop_console: false,
       },
     },
   },
