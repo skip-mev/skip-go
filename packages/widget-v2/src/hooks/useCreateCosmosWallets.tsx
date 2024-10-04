@@ -90,12 +90,13 @@ export const useCreateCosmosWallets = () => {
         return address;
       };
       const walletInfo = getCosmosWalletInfo(wallet);
+      if (!walletInfo) continue;
       const minimalWallet: MinimalWallet = {
         walletName: wallet,
-        walletPrettyName: walletInfo.name,
+        walletPrettyName: walletInfo?.name,
         walletChainType: "cosmos",
         walletInfo: {
-          logo: walletInfo.imgSrc
+          logo: walletInfo?.imgSrc
         },
         connect: async () => {
           try {
