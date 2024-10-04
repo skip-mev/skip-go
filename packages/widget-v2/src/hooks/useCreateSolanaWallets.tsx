@@ -1,10 +1,15 @@
 import { solanaWallets } from "@/constants/solana";
+import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { sourceAssetAtom } from "@/state/swapPage";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 
 
 export const useCreateSolanaWallets = () => {
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const { data: assets } = useAtomValue(skipAssetsAtom);
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -21,6 +26,24 @@ export const useCreateSolanaWallets = () => {
           try {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: "svm" });
+            // TODO: onWalletConnected
+          } catch (error) {
+            console.error(error);
+            throw error;
+          }
+        },
+        connectEco: async () => {
+          try {
+            await wallet.connect();
+            setSvmWallet({ walletName: wallet.name, chainType: "svm" });
+            const chain = chains?.find((x) => x.chainID === "solana");
+            const asset = assets?.find((x) => x.denom.toLowerCase() ===
+              "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase());
+            setSourceAsset({
+              chainID: chain?.chainID,
+              chainName: chain?.chainName,
+              ...asset
+            });
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);

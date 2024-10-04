@@ -5,13 +5,13 @@ import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 
-export const useWalletList = (chainID?: string, destinationWalletList?: boolean) => {
+export const useWalletList = ({ chainID, destinationWalletList, chainType: _chainType }: { chainID?: string, destinationWalletList?: boolean, chainType?: "cosmos" | "evm" | "svm" }) => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
 
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainType = chains?.find(c => c.chainID === chainID)?.chainType;
+  const chainType = chainID ? chains?.find(c => c.chainID === chainID)?.chainType : _chainType;
 
 
   let walletType = chainType;
@@ -23,7 +23,6 @@ export const useWalletList = (chainID?: string, destinationWalletList?: boolean)
   }
 
   const walletList = useMemo(() => {
-    if (!chainID) return [];
     switch (walletType) {
       case "sei":
         {
