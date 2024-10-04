@@ -30,7 +30,14 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            resetError();
+            if (onClickBack) {
+              onClickBack();
+            } else {
+              setCurrentPage(Routes.SwapPage);
+            }
+          }
         }}
       />
       <ErrorState

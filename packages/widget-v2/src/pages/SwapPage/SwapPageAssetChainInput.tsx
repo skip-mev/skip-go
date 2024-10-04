@@ -170,7 +170,7 @@ export const SwapPageAssetChainInput = ({
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel>
-              <Text mainButtonColor={theme.brandColor}>Select token</Text>
+              <Text mainButtonColor={theme.brandColor}>Select asset</Text>
             </StyledSelectTokenLabel>
           )}
 

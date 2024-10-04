@@ -3,12 +3,8 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import {
-  skipAssetsAtom,
-} from "@/state/skipClient";
-import {
-  skipRouteAtom
-} from "@/state/route";
+import { skipAssetsAtom } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -142,18 +138,44 @@ export const SwapPage = () => {
   ]);
 
   const swapButton = useMemo(() => {
-    if (isWaitingForNewRoute) {
-      return <MainButton label="Finding Best Route..." loading />;
+    if (!sourceAsset?.chainID) {
+      return (
+        <MainButton
+          label="Please select a source asset"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
     }
 
-    if (isRouteError) {
-      return <MainButton label={routeError?.message ?? "no routes found"} disabled />;
+    if (!destinationAsset?.chainID) {
+      return (
+        <MainButton
+          label="Please select a destination asset"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
     }
+
+    if (!sourceAsset?.amount || !destinationAsset?.amount) {
+      return (
+        <MainButton
+          label="Please enter a valid amount"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
+    }
+
+    if (isWaitingForNewRoute) {
+      return <MainButton label="Finding best route..." loading />;
+    }
+
     if (!sourceAccount?.address) {
       return (
         <MainButton
-          disabled={!sourceAsset?.chainID}
-          label="Connect Wallet"
+          label="Connect wallet"
           icon={ICONS.plus}
           onClick={() => {
             selectWalletmodal.show({
@@ -161,6 +183,12 @@ export const SwapPage = () => {
             });
           }}
         />
+      );
+    }
+
+    if (isRouteError) {
+      return (
+        <MainButton label={routeError?.message ?? "No routes found"} disabled />
       );
     }
     if (isLoadingBalances) {
@@ -200,6 +228,10 @@ export const SwapPage = () => {
       />
     );
   }, [
+    sourceAsset?.chainID,
+    sourceAsset?.amount,
+    destinationAsset?.chainID,
+    destinationAsset?.amount,
     isWaitingForNewRoute,
     isRouteError,
     sourceAccount?.address,
@@ -207,7 +239,6 @@ export const SwapPage = () => {
     insufficientBalance,
     route,
     routeError?.message,
-    sourceAsset?.chainID,
     selectWalletmodal,
     setChainAddresses,
     setCurrentPage,
