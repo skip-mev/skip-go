@@ -55,7 +55,7 @@ export const testnetChains = _testnetAndInitiaChains
   })
   .filter((chainInfo) => chainInfo) as ChainInfo[];
 
-export const mainnetChainIdsInitialConnect = [
+export const keplrMainnetChainIdsInitialConnect = [
   "90u-4",
   "FUND-MainNet-2",
   "HICKORY",
@@ -264,6 +264,20 @@ export const mainnetChainIdsInitialConnect = [
   "xion-testnet-1",
   "yulei-2.1",
   "zetachain_7000-1"
+];
+
+export const walletMainnetChainIdsInitialConnect = [
+  "cosmoshub-4",
+  "injective-1",
+  "migaloo-1",
+  "archway-1",
+  "pacific-1",
+  "noble-1",
+  "osmosis-1",
+  "neutron-1",
+  "pryzm-1",
+  "axelar-dojo-1",
+  "chihuahua-1",
 ];
 
 export const walletInfo: Record<

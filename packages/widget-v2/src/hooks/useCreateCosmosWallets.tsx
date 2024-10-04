@@ -16,7 +16,8 @@ import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
 import {
   getCosmosWalletInfo,
-  mainnetChainIdsInitialConnect,
+  keplrMainnetChainIdsInitialConnect,
+  walletMainnetChainIdsInitialConnect,
   mainnetChains,
 } from "@/constants/graz";
 import { useCallback } from "react";
@@ -128,12 +129,19 @@ export const useCreateCosmosWallets = () => {
           walletPrettyName: walletInfo?.name,
           walletChainType: "cosmos",
           walletInfo: {
-            logo: walletInfo?.imgSrc
+            logo: walletInfo?.imgSrc,
           },
           connectEco: async () => {
-            const chainIds = mainnetChainIdsInitialConnect.filter(
+            const chainIds = (
+              wallet === WalletType.KEPLR
+                ? keplrMainnetChainIdsInitialConnect
+                : walletMainnetChainIdsInitialConnect
+            ).filter(
               (x) =>
-                chains?.filter(z => z.chainType === "cosmos").map((y) => y.chainID).includes(x) &&
+                chains
+                  ?.filter((z) => z.chainType === "cosmos")
+                  .map((y) => y.chainID)
+                  .includes(x) &&
                 mainnetChains.map((c) => c.chainId).includes(x)
             );
             const promises = chainIds.map(
@@ -150,7 +158,7 @@ export const useCreateCosmosWallets = () => {
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
-              ...asset
+              ...asset,
             });
             return Promise.resolve();
           },
@@ -186,7 +194,17 @@ export const useCreateCosmosWallets = () => {
       }
       return wallets;
     },
-    [accounts, assets, chains, cosmosWallets, currentWallet, disconnectAsync, isConnected, setCosmosWallet, setSourceAsset]
+    [
+      accounts,
+      assets,
+      chains,
+      cosmosWallets,
+      currentWallet,
+      disconnectAsync,
+      isConnected,
+      setCosmosWallet,
+      setSourceAsset,
+    ]
   );
 
   return { createCosmosWallets };
