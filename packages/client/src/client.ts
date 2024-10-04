@@ -269,7 +269,20 @@ export class SkipClient {
       chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
-    await this.executeTxs({ ...options, txs: messages.txs });
+
+    let txs = messages.txs;
+
+    if (options.additionalTx) {
+      const { tx: additionalTx, position } = options.additionalTx;
+      if (position === 'before') {
+        txs = [additionalTx, ...txs];
+      } else {
+        txs = [...txs, additionalTx];
+      }
+    }
+
+    await this.executeTxs({ ...options, txs });
+
   }
 
   async executeTxs(
