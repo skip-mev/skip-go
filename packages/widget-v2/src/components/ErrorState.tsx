@@ -29,7 +29,8 @@ export const ErrorState = ({
       align="center"
       justify="center"
       backgroundColor={backgroundColor}
-      gap={16}
+      gap={12}
+      padding={16}
     >
       <Icon backgroundColor={textColor} color={backgroundColor} height={40} width={40} />
       {typeof title === "string" ? (
@@ -40,9 +41,13 @@ export const ErrorState = ({
         title
       )}
       {typeof description === "string" ? (
-        <SmallText color={textColor} textAlign="center">
-          {description}
-        </SmallText>
+        <StyledErrorTextInnerContainer>
+          <SmallText color={textColor} textAlign="center" style={{
+            wordWrap: "break-word",
+          }}>
+            {description}
+          </SmallText>
+        </StyledErrorTextInnerContainer>
       ) : (
         description
       )}
@@ -56,4 +61,25 @@ const StyledErrorStateContainer = styled(Column) <{ backgroundColor?: string }>`
   border-radius: 25px;
   ${({ backgroundColor }) =>
     backgroundColor && `background-color: ${backgroundColor}`};
+`;
+
+const StyledErrorTextInnerContainer = styled(Column)`
+  padding: 8px;
+  max-height: 100px;
+  overflow-y: auto;
+  width: 100%;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.primary.text.ultraLowContrast};
+    border-radius: 16px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 16px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;

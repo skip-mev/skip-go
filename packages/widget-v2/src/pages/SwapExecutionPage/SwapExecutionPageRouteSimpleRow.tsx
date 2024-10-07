@@ -115,6 +115,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           <Button
             align="center"
+            gap={3}
             onClick={() => copyToClipboard(source.address)}
           >
             {source.image && <img height={10} width={10} src={source.image} />}
