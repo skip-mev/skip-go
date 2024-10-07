@@ -155,7 +155,19 @@ onWalletDisconnected?: ({ chainType?: string }) => void;
 onTransactionBroadcasted?: ({ txHash: string, chainId: string, explorerLink: string }) => void;
 onTransactionComplete?: ({ txHash: string, chainId: string, explorerLink: string }) => void;
 onTransactionFailed?: ({ error: string }) => void;
+onValidateGasBalance?: (value: {
+    chainID?: string;
+    txIndex?: number;
+    status: "success" | "error" | "pending" | "completed"
+  }) => Promise<void>;
 ```
+
+- `onWalletConnected`: Called when a wallet is connected.
+- `onWalletDisconnected`: Called when a wallet is disconnected.
+- `onTransactionBroadcasted`: Called when a transaction is broadcasted. This is called multiple times for multi-transaction routes. 
+- `onTransactionComplete`: Triggered when a transaction is completed.
+- `onTransactionFailed`: Triggered when a transaction fails.
+- `onValidateGasBalance`: Triggered when validating gas balance.
 
 ### `connectedWallet`
 
