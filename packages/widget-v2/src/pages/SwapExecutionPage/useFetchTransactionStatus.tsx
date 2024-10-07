@@ -48,7 +48,7 @@ export const useFetchTransactionStatus = () => {
     if (operationTransferEventsArray.length === 0 && isPending) {
       return "signing";
     }
-    if (!overallState) return "";
+    if (!overallState) return "unconfirmed";
 
     return getSimpleOverallStatus(overallState);
   }, [isPending, operationTransferEventsArray.length, transactionStatus]);
