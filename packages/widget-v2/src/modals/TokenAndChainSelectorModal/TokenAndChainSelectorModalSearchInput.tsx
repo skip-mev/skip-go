@@ -67,8 +67,8 @@ export const TokenAndChainSelectorModalSearchInput = ({
         type="text"
         placeholder={
           asset && networkSelection
-            ? "Search networks"
-            : "Search asset or network"
+            ? "Search network"
+            : "Search asset"
         }
         value={searchTerm}
         onChange={handleSearch}
