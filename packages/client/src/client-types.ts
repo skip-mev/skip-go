@@ -15,6 +15,7 @@ import { WalletClient } from 'viem';
 
 import * as types from './types';
 import { Adapter } from '@solana/wallet-adapter-base';
+import { TransactionCallbacks } from 'types';
 
 /** Common Types */
 export interface UserAddress {
@@ -34,17 +35,16 @@ interface SignerGetters {
   getSVMSigner?: () => Promise<Adapter>;
 }
 
-export type ChainType = 'evm' | 'cosmos' | 'svm';
 
 /** Gas Options */
 export type GetFallbackGasAmount = (
   chainID: string,
-  chainType: ChainType
+  chainType: types.ChainType
 ) => Promise<number | undefined>;
 
 export type GetGasPrice = (
   chainID: string,
-  chainType: ChainType
+  chainType: types.ChainType
 ) => Promise<GasPrice | undefined>;
 
 interface GasOptions {
@@ -59,32 +59,6 @@ interface GasOptions {
   gasAmountMultiplier?: number;
 }
 
-/** Transaction Callbacks */
-export interface TransactionCallbacks {
-  onTransactionSigned?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionBroadcast?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionTracked?: (txInfo: {
-    txHash: string;
-    chainID: string;
-    explorerLink: string;
-  }) => Promise<void>;
-  onTransactionCompleted?: (
-    chainID: string,
-    txHash: string,
-    status: types.TxStatusResponse
-  ) => Promise<void>;
-  onValidateGasBalance?: (value: {
-    chainID?: string;
-    txIndex?: number;
-    status: 'success' | 'error' | 'pending' | 'completed';
-  }) => Promise<void>;
-}
 
 /** Skip Client Options */
 export interface SkipClientOptions extends SignerGetters {
@@ -103,7 +77,7 @@ export interface SkipClientOptions extends SignerGetters {
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
   GasOptions &
-  TransactionCallbacks & {
+  types.TransactionCallbacks & {
     route: types.RouteResponse;
     /**
      * Addresses should be in the same order with the `chainIDs` in the `route`
@@ -113,7 +87,6 @@ export type ExecuteRouteOptions = SignerGetters &
     slippageTolerancePercent?: string;
   };
 
-/** Execute Cosmos Message Options */
 export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
   signer: OfflineSigner;
@@ -121,21 +94,15 @@ export type ExecuteCosmosMessageOptions = {
   fee: StdFee;
 };
 
-/** Execute Cosmos Message */
-export type ExecuteCosmosMessage = GasOptions &
-  Partial<TransactionCallbacks> & {
-    signerAddress: string;
-    getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-    chainID: string;
-    messages: types.CosmosMsg[];
-    gasTokenUsed?: Coin;
-    onTransactionSigned?: (txInfo: {
-      txHash: string;
-      chainID: string;
-    }) => Promise<void>;
-  };
+export type ExecuteCosmosMessage = GasOptions & {
+  signerAddress: string;
+  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  chainID: string;
+  messages: types.CosmosMsg[];
+  gasTokenUsed?: Coin;
+  onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
+};
 
-/** Sign Cosmos Message Options Base */
 interface SignCosmosMessageOptionsBase {
   signerAddress: string;
   chainID: string;
@@ -144,13 +111,11 @@ interface SignCosmosMessageOptionsBase {
   signerData: SignerData;
 }
 
-/** Sign Cosmos Message Direct Options */
 export type SignCosmosMessageDirectOptions =
   SignCosmosMessageOptionsBase & {
     signer: OfflineDirectSigner;
   };
 
-/** Sign Cosmos Message Amino Options */
 export type SignCosmosMessageAminoOptions =
   SignCosmosMessageOptionsBase & {
     signer: OfflineAminoSigner;
