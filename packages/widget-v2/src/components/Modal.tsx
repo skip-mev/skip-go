@@ -144,9 +144,15 @@ const StyledOverlay = styled(Dialog.Overlay) <{
   overflow-y: auto;
   z-index: 10;
   animation: ${fadeIn} 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* For Chrome */
   &::-webkit-scrollbar{
     display: none;
   }
+  /* For Firefox */
+  scrollbar-width: none;
+  /* For Internet Explorer and Edge */
+  -ms-overflow-style: none;
+
   ${(props) =>
     props.drawer &&
     css`
@@ -154,9 +160,14 @@ const StyledOverlay = styled(Dialog.Overlay) <{
       position: absolute;
       background: unset;
       animation: ${fadeIn} 1s cubic-bezier(0.16, 1, 0.3, 1);
+      /* For Chrome */
       &::-webkit-scrollbar{
         display: none;
       }
+      /* For Firefox */
+      scrollbar-width: none;
+      /* For Internet Explorer and Edge */
+      -ms-overflow-style: none;
     `};
 `;
 
