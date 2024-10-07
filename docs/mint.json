@@ -61,7 +61,6 @@
         "widget/getting-started",
         "widget/configuration",
         "widget/web-component",
-        "widget/experimental-features",
         "widget/faq"
       ]
     },

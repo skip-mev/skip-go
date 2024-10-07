@@ -4,7 +4,9 @@ title: 'Getting Started'
 
 # Overview
 
-The Skip Go `SwapWidget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or Web component.It's fully open-sourced and designed to fit your exact user experience needs. If there's any functionality or configurations you'd like to see in the widget, we'd love for you to contribute by opening up an issue or pull request in [the repository](https://github.com/skip-mev/skip-go/tree/main/packages/widget) or by joining [our Discord](https://skip.build/discord) and giving us a shout!
+The Skip Go `SwapWidget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or [Web component](./web-component.mdx). 
+
+It's fully open-sourced and designed to fit your exact user experience needs. If there's any functionality or configurations you'd like to see in the widget, we'd love for you to contribute by opening up an issue or pull request in [the repository](https://github.com/skip-mev/skip-go/tree/main/packages/widget) or by joining [our Discord](https://skip.build/discord) and giving us a shout!
 
 # Useful Links
 
@@ -19,7 +21,8 @@ This guide will walk you though how to Skip Go `SwapWidget` directly to your Rea
 Starting from scratch? It's recommended to use a React framework like [Next.js](https://nextjs.org/docs/getting-started/installation) or [Create React App](https://create-react-app.dev/docs/getting-started) to get up and running quickly.
 </Info>
 
-## 1. Installation
+<Steps>
+<Step title="Installation">
 
 <CodeGroup>
 ```shell NPM
@@ -39,7 +42,7 @@ yarn add react react-dom styled-components
 ```
 </Info>
 
-## 2. Import the `SwapWidget` Component
+</Step><Step title="Import the SwapWidget Component">
 
 Next, use the `SwapWidget` component to render the swap interface:
 
@@ -64,6 +67,10 @@ const SwapPage = () => {
 };
 ```
 
-## 3. Configure to Your Needs
+</Step><Step title="Configuration">
 
 Now that you have the widget integrated, it's time to configure the user experience. Find more details on widget configuration [here](./configuration).
+
+</Step></Steps>
+
+
