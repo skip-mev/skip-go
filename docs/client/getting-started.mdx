@@ -248,6 +248,14 @@ await skipClient.executeRoute({
   onTransactionTracked: async ({ txHash, chainID }) => {
     console.log(`Transaction tracked with tx hash: ${txHash}`);
   },
+  // called after the user signs a transaction
+  onTransactionSigned: async ({ txHash, chainID }) => {
+    console.log(`Transaction signed with tx hash: ${txHash}`);
+  },
+  // validate gas balance on each chain
+  onValidateGasBalance: async ({ chainID, txIndex, status }) => {
+    console.log(`Validating gas balance for chain ${chainID}...`);
+  },
 });
 ```
 
