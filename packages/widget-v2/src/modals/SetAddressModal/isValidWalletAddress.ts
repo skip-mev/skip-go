@@ -3,10 +3,9 @@ import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 import { ChainType } from "@skip-go/client";
 
-
 type isValidWalletAddressProps = {
   address: string;
-  chainType: ChainType;
+  chainType: ChainType | string;
   bech32Prefix: string;
 }
 

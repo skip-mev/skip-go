@@ -15,7 +15,7 @@ import { WalletClient } from 'viem';
 
 import * as types from './types';
 import { Adapter } from '@solana/wallet-adapter-base';
-import { TransactionCallbacks } from 'types';
+import { TransactionCallbacks } from './types';
 
 /** Common Types */
 export interface UserAddress {
@@ -29,12 +29,11 @@ export type EndpointOptions = {
 };
 
 /** Signer Getters */
-interface SignerGetters {
+export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;
 }
-
 
 /** Gas Options */
 export type GetFallbackGasAmount = (
@@ -58,7 +57,6 @@ interface GasOptions {
   getFallbackGasAmount?: GetFallbackGasAmount;
   gasAmountMultiplier?: number;
 }
-
 
 /** Skip Client Options */
 export interface SkipClientOptions extends SignerGetters {
@@ -96,7 +94,7 @@ export type ExecuteCosmosMessageOptions = {
 
 export type ExecuteCosmosMessage = GasOptions & {
   signerAddress: string;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getCosmosSigner?: SignerGetters['getCosmosSigner'];
   chainID: string;
   messages: types.CosmosMsg[];
   gasTokenUsed?: Coin;
