@@ -302,6 +302,7 @@ export function getSimpleStatus(
 ) {
   switch (state) {
     case "TRANSFER_PENDING":
+    case "TRANSFER_RECEIVED":
     case "AXELAR_TRANSFER_PENDING_CONFIRMATION":
     case "AXELAR_TRANSFER_PENDING_RECEIPT":
     case "CCTP_TRANSFER_SENT":

@@ -36,11 +36,15 @@ export const useFetchTransactionStatus = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
+  const operationToTransferEventsMapFromTransactionStatusAndClientOperations = useMemo(() => {
+    return getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations);
+  }, [clientOperations, transactionStatus]);
+
   const operationTransferEventsArray = useMemo(() => {
     return Object.values(
-      getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations)
+      operationToTransferEventsMapFromTransactionStatusAndClientOperations
     );
-  }, [clientOperations, transactionStatus]);
+  }, [operationToTransferEventsMapFromTransactionStatusAndClientOperations]);
 
   const simpleOverallStatus = useMemo(() => {
     const overallState = transactionStatus?.[0]?.state;
@@ -57,7 +61,22 @@ export const useFetchTransactionStatus = () => {
     const transferEvents =
       getTransferEventsFromTxStatusResponse(transactionStatus);
 
-    if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
+    if (["completed", "failed"].includes(simpleOverallStatus)) {
+      // manually creating and setting operationToTransferEventsMap for
+      // the case that we have an overallStatus completed or failed
+      // but no transfer events (ie. swaps that remain on chain)
+      const derivedOperationToTransferEventsMap = clientOperations.reduce(
+        (accumulator, _operation, index) => {
+          accumulator[index] = {
+            status: simpleOverallStatus,
+          } as ClientTransferEvent;
+
+          return accumulator;
+        },
+        {} as Record<number, ClientTransferEvent>
+      );
+      setOperationToTransferEventsMap(derivedOperationToTransferEventsMap);
+    } else if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
       // temporarily setting operationToTransferEventsMap to have the first
       // operation pending before the API returns any transfer events
       // so that the UX is nicer
@@ -69,37 +88,13 @@ export const useFetchTransactionStatus = () => {
     } else if (operationTransferEventsArray.length > 0) {
       // setting operationToTransferEventsMap if operationToTransferEventsMap
       // is retrieved properly from getOperationToTransferEventsMap
-      setOperationToTransferEventsMap(operationToTransferEventsMap);
-    } else if (simpleOverallStatus) {
-      // manually creating and setting operationToTransferEventsMap for
-      // the case that we have an overallStatus completed or failed
-      // but no transfer events (ie. swaps that remain on chain)
-      if (["completed", "failed"].includes(simpleOverallStatus)) {
-        const derivedOperationToTransferEventsMap = clientOperations.reduce(
-          (accumulator, _operation, index) => {
-            accumulator[index] = {
-              status: simpleOverallStatus,
-            } as ClientTransferEvent;
 
-            return accumulator;
-          },
-          {} as Record<number, ClientTransferEvent>
-        );
-        setOperationToTransferEventsMap(derivedOperationToTransferEventsMap);
-      }
+      setOperationToTransferEventsMap(operationToTransferEventsMapFromTransactionStatusAndClientOperations);
     }
-  }, [
-    clientOperations,
-    operationToTransferEventsMap,
-    operationTransferEventsArray.length,
-    simpleOverallStatus,
-    transactionDetailsArray.length,
-    transactionStatus,
-  ]);
+  }, [clientOperations, operationToTransferEventsMapFromTransactionStatusAndClientOperations, operationTransferEventsArray.length, simpleOverallStatus, transactionDetailsArray.length, transactionStatus]);
 
   useEffect(() => {
     if (["completed", "failed"].includes(overallStatus)) return;
-
     updateOperationToTransferEventsMap();
 
     if (simpleOverallStatus !== overallStatus) {
