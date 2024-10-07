@@ -1,4 +1,4 @@
-import { css, styled } from "styled-components";
+import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
@@ -60,7 +60,12 @@ export const createModal = <T extends ModalProps>(
 
     return (
       <Modal {...props}>
-        <ErrorBoundary fallback={null} onError={(error) => setError({ errorType: ErrorType.Unexpected, error })}>
+        <ErrorBoundary
+          fallback={null}
+          onError={(error) =>
+            setError({ errorType: ErrorType.Unexpected, error })
+          }
+        >
           <Component {...props} />
         </ErrorBoundary>
       </Modal>
@@ -104,6 +109,26 @@ export const useModal = <T extends ModalProps>(
   );
 };
 
+const fadeIn = keyframes`
+  from {
+      opacity: 0;
+    }
+    to {
+    opacity: 1;
+    }
+`;
+
+const fadeInAndSlideUp = keyframes`
+  from {
+      opacity: 0;
+    transform: translateY(100%);
+    }
+    to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+`;
+
 const StyledOverlay = styled(Dialog.Overlay) <{
   drawer?: boolean;
   invisible?: boolean;
@@ -118,13 +143,20 @@ const StyledOverlay = styled(Dialog.Overlay) <{
   place-items: center;
   overflow-y: auto;
   z-index: 10;
-
+  animation: ${fadeIn} 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  &::-webkit-scrollbar{
+    display: none;
+  }
   ${(props) =>
     props.drawer &&
     css`
       align-items: flex-end;
       position: absolute;
       background: unset;
+      animation: ${fadeIn} 1s cubic-bezier(0.16, 1, 0.3, 1);
+      &::-webkit-scrollbar{
+        display: none;
+      }
     `};
 `;
 
@@ -132,4 +164,5 @@ const StyledContent = styled(Dialog.Content)`
   min-width: 300px;
   border-radius: 4px;
   z-index: 100;
+  animation: ${fadeInAndSlideUp} 450ms cubic-bezier(0.16, 1, 0.3, 1);
 `;
