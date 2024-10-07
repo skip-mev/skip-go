@@ -35,12 +35,13 @@ enum SwapExecutionState {
   pending,
   waitingForSigning,
   confirmed,
+  validatingGasBalance
 }
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray } = useAtomValue(
+  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } = useAtomValue(
     swapExecutionStateAtom
   );
   const chainAddresses = useAtomValue(chainAddressesAtom);
@@ -77,6 +78,9 @@ export const SwapExecutionPage = () => {
     if (overallStatus === "pending") {
       return SwapExecutionState.pending;
     }
+    if (isValidatingGasBalance?.status !== "completed" && !!isValidatingGasBalance) {
+      return SwapExecutionState.validatingGasBalance;
+    }
     if (overallStatus === "signing") {
       return SwapExecutionState.waitingForSigning;
     }
@@ -87,13 +91,12 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [chainAddresses, overallStatus, route?.requiredChainAddresses]);
+  }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
 
   const renderSignaturesStillRequired = useMemo(() => {
     const signaturesRemaining =
       (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
     if (
-      (overallStatus === "pending" || overallStatus === "signing") &&
       signaturesRemaining > 0
     ) {
       return (
@@ -104,7 +107,7 @@ export const SwapExecutionPage = () => {
         </StyledSignatureRequiredContainer>
       );
     }
-  }, [overallStatus, route?.txsRequired, transactionDetailsArray?.length]);
+  }, [route?.txsRequired, transactionDetailsArray?.length]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -140,6 +143,10 @@ export const SwapExecutionPage = () => {
             icon={ICONS.rightArrow}
             onClick={mutate}
           />
+        );
+      case SwapExecutionState.validatingGasBalance:
+        return (
+          <MainButton label="Validating gas and balance" icon={ICONS.rightArrow} loading />
         );
       case SwapExecutionState.waitingForSigning:
         return (

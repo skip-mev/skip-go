@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.9.4
+
+### Patch Changes
+
+- a9e979d: Update BalanceRequestChainEntry denom to be optional
+
 ## 0.9.3
 
 ### Patch Changes

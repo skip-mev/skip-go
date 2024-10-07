@@ -3,14 +3,14 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees, useSetMaxAmount } from "./useSetMaxAmount";
-import { useSourceBalance } from "@/hooks/useSourceBalance";
+import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { GhostButton, GhostButtonProps } from "@/components/Button";
+import { GhostButton } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { styled, css } from "styled-components";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
+import { limitDecimalsDisplayed } from "@/utils/number";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -22,7 +22,7 @@ export const ConnectedWalletContent = () => {
     chainId: sourceAsset?.chainID,
   });
 
-  const { data: sourceBalance, isLoading } = useSourceBalance();
+  const { data: sourceBalance, isLoading } = useGetSourceBalance();
   const handleMaxButton = useSetMaxAmount();
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const connectedWalletModal = useModal(ConnectedWalletModal);
@@ -37,7 +37,7 @@ export const ConnectedWalletContent = () => {
       formattedBalanceAmount = amount;
     }
 
-    return `${formattedBalanceAmount} ${sourceDetails?.symbol}`;
+    return `${limitDecimalsDisplayed(formattedBalanceAmount)} ${sourceDetails?.symbol}`;
   }, [sourceBalance, sourceDetails?.symbol]);
   if (!sourceAccount) return null;
   return (
@@ -47,15 +47,13 @@ export const ConnectedWalletContent = () => {
         paddingRight: 13,
       }}
     >
-      <TransparentButton
+      <GhostButton
         onClick={() => {
           connectedWalletModal.show();
         }}
-        style={{
-          padding: "8px 13px",
-          alignItems: "center",
-          gap: 8,
-        }}
+        align="center"
+        gap={8}
+        alwaysShowBackground
       >
         {sourceAccount && (
           <img
@@ -85,34 +83,16 @@ export const ConnectedWalletContent = () => {
         ) : (
           formattedBalance
         )}
-      </TransparentButton>
+      </GhostButton>
 
-      <TransparentButton
+      <GhostButton
         disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
         onClick={handleMaxButton}
-        style={{
-          padding: "8px 13px",
-          alignItems: "center",
-        }}
+        align="center"
+        alwaysShowBackground
       >
         Max
-      </TransparentButton>
+      </GhostButton>
     </Row>
   );
 };
-
-const TransparentButton = styled(GhostButton).attrs({
-  as: "button",
-}) <GhostButtonProps>`
-  ${({ theme, onClick, secondary, disabled }) =>
-    onClick &&
-    !disabled &&
-    css`
-      background-color: ${secondary
-        ? theme.secondary.background.normal
-        : theme.primary.ghostButtonHover};
-      cursor: pointer;
-    `};
-  padding: 10px 13px;
-  border-radius: 90px;
-`;

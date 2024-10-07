@@ -1,6 +1,7 @@
 import { ErrorPage } from "@/pages/ErrorPage/ErrorPage";
 import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
 import { SwapPage } from "@/pages/SwapPage/SwapPage";
+import { TransactionHistoryPage } from "@/pages/TransactionHistoryPage/TransactionHistoryPage";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { Routes, currentPageAtom } from "@/state/router";
 import { useAtom } from "jotai";
@@ -35,6 +36,17 @@ export const Router = () => {
           }
         >
           <SwapExecutionPage />
+        </ErrorBoundary>
+      );
+    case Routes.TransactionHistoryPage:
+      return (
+        <ErrorBoundary
+          fallback={null}
+          onError={(error) =>
+            setError({ errorType: ErrorType.Unexpected, error })
+          }
+        >
+          <TransactionHistoryPage />
         </ErrorBoundary>
       );
   }

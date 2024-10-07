@@ -11,6 +11,7 @@ import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { copyToClipboard } from "@/utils/misc";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -133,11 +134,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           </Row>
           {source.address && (
             <StyledButton
-              onClick={() => {
-                if (source.address) {
-                  navigator.clipboard.writeText(source.address);
-                }
-              }}
+              onClick={() => copyToClipboard(source.address)}
             >
               {source.image && (
                 <img

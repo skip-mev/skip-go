@@ -5,7 +5,7 @@ import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SpeedometerIcon } from "@/icons/SpeedometerIcon";
 import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { skipRouteAtom } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { styled } from "styled-components";
@@ -74,7 +74,6 @@ export const SwapPageFooter = ({
   return (
     <GhostButton
       gap={5}
-      align="center"
       justify="space-between"
       onClick={onClick}
       {...props}

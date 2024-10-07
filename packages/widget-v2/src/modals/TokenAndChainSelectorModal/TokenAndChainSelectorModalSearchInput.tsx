@@ -4,11 +4,11 @@ import { Row } from "@/components/Layout";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SmallText } from "@/components/Typography";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { StyledAssetLabel } from "@/components/AssetChainInput";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
 import { Asset } from "@skip-go/client";
+import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
@@ -67,8 +67,8 @@ export const TokenAndChainSelectorModalSearchInput = ({
         type="text"
         placeholder={
           asset && networkSelection
-            ? "Search networks"
-            : "Search asset or network"
+            ? "Search network"
+            : "Search asset"
         }
         value={searchTerm}
         onChange={handleSearch}

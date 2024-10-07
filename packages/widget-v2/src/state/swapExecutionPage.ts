@@ -1,13 +1,21 @@
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
-import { skipClient, skipRouteAtom } from "./skipClient";
+import { skipClient } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
+import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { atomWithStorage } from "jotai/utils";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
+import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { isUserRejectedRequestError } from "@/utils/error";
+
+type ValidatingGasBalanceData = {
+  chainID?: string;
+  txIndex?: number;
+  status: "success" | "error" | "pending" | "completed"
+}
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
@@ -15,7 +23,10 @@ type SwapExecutionState = {
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
   overallStatus?: SimpleStatus;
+  isValidatingGasBalance?: ValidatingGasBalanceData
 };
+
+
 export type ChainAddress = {
   chainID: string;
   chainType?: "evm" | "cosmos" | "svm";
@@ -37,7 +48,7 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
+export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
   {
     route: undefined,
@@ -45,6 +56,7 @@ export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
     overallStatus: undefined,
+    isValidatingGasBalance: undefined,
   }
 );
 
@@ -64,14 +76,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
+    isValidatingGasBalance: undefined,
   });
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
-    onError: (error: unknown) => {
-      if ((error as Error).message === "Request rejected") {
+    onError: (error: unknown, transactionDetailsArray) => {
+      const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
+
+      if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
@@ -79,9 +94,41 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             set(setOverallStatusAtom, undefined);
           }
         });
+      } else if (lastTransaction?.explorerLink) {
+        set(errorAtom, {
+          errorType: ErrorType.TransactionFailed,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
+          explorerLink: lastTransaction?.explorerLink ?? "",
+          transactionHash: lastTransaction?.txHash ?? "",
+          onClickContactSupport: () => {
+            window.open("https://skip.build/discord", "_blank");
+          }
+        });
+      } else {
+        set(errorAtom, {
+          errorType: ErrorType.Unexpected,
+          error: error as Error,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
+        });
       }
-    }
+    },
+    onTransactionSigned: async (transactionDetails) => {
+      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
+    },
+    onValidateGasBalance: async (props) => {
+      set(setValidatingGasBalanceAtom, props);
+    },
   });
+});
+
+export const setValidatingGasBalanceAtom = atom(null, (_get, set, isValidatingGasBalance: ValidatingGasBalanceData) => {
+  set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
 });
 
 export const setTransactionDetailsArrayAtom = atom(
@@ -154,7 +201,9 @@ export type ClientTransactionStatus =
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
-  onError: (error: unknown) => void;
+  onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
+  onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
+  onTransactionSigned?: ExecuteRouteOptions["onTransactionSigned"];
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -163,7 +212,7 @@ export const submitSwapExecutionCallbacksAtom = atom<
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
-  const { route, userAddresses } = get(swapExecutionStateAtom);
+  const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
 
   return {
@@ -182,6 +231,16 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           //     return Number(useSettingsStore.getState().customGasAmount);
           //   }
           // },
+          onValidateGasBalance: async (props) => {
+            submitSwapExecutionCallbacks?.onValidateGasBalance?.(
+              props
+            );
+          },
+          onTransactionSigned: async (props) => {
+            submitSwapExecutionCallbacks?.onTransactionSigned?.(
+              props
+            );
+          },
           onTransactionBroadcast: async (
             transactionDetails: TransactionDetails
           ) => {
@@ -206,13 +265,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         });
       } catch (error: unknown) {
         console.error(error);
-        submitSwapExecutionCallbacks?.onError?.(error);
+        submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
       }
       return null;
     },
     onError: (error: unknown) => {
       console.error(error);
-      submitSwapExecutionCallbacks?.onError?.(error);
+      submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
     },
   };
 });

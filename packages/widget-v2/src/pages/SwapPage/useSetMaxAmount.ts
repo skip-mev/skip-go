@@ -4,7 +4,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { useSourceBalance } from "@/hooks/useSourceBalance";
+import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
 
 
@@ -40,7 +40,7 @@ export const useGasFeeTokenAmount = () => {
 };
 
 export const useMaxAmountTokenMinusFees = () => {
-  const { data: sourceBalance } = useSourceBalance();
+  const { data: sourceBalance } = useGetSourceBalance();
   const gasFeeTokenAmount = useGasFeeTokenAmount();
   const maxTokenAmount = sourceBalance?.amount;
 

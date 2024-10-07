@@ -11,6 +11,7 @@ type TextProps = {
   monospace?: boolean;
   mainButtonColor?: string;
   normalTextColor?: boolean;
+  capitalize?: boolean;
 };
 
 export const removeButtonStyles = css`
@@ -33,6 +34,13 @@ export const textProps = css<TextProps>`
   ${({ monospace }) => monospace && "font-family: 'ABCDiatype', monospace;"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
+  ${({ capitalize }) =>
+    capitalize &&
+    css`
+      &::first-letter {
+        text-transform: capitalize;
+      }
+    `};
 `;
 
 export const SmallText = styled.p<TextProps>`
