@@ -63,6 +63,12 @@ export const VirtualList = <T,>({
     };
   }, [currentlyFocusedElement, listItems.length]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      listRef.current?.scrollTo(0);
+    }, 0);
+  }, [listItems.length]);
+
   return (
     <List
       ref={listRef}
