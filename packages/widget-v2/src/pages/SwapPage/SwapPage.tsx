@@ -77,10 +77,12 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        setSourceAssetAmount("");
+        setDestinationAssetAmount("");
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setSourceAsset, tokenAndChainSelectorModal]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -94,13 +96,7 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       networkSelection: true,
     });
-  }, [
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-    tokenAndChainSelectorModal,
-  ]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
