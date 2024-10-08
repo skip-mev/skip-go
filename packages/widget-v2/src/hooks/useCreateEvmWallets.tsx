@@ -143,7 +143,7 @@ export const useCreateEvmWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [chainId, connectAsync, connectors, currentConnector, currentEvmConnector?.id, evmAddress, isEvmConnected, setEvmWallet]);
+  }, [assets, chainId, chains, connectAsync, connectors, currentConnector, currentEvmConnector?.id, evmAddress, isEvmConnected, setEvmWallet, setSourceAsset]);
 
   return { createEvmWallets };
 };

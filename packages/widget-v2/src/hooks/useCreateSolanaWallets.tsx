@@ -78,6 +78,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet]);
+  }, [assets, chains, setSourceAsset, setSvmWallet]);
   return { createSolanaWallets };
 };
