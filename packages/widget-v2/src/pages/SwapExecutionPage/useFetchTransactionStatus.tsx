@@ -47,7 +47,9 @@ export const useFetchTransactionStatus = () => {
   }, [operationToTransferEventsMapFromTransactionStatusAndClientOperations]);
 
   const simpleOverallStatus = useMemo(() => {
-    const overallState = transactionStatus?.[0]?.state;
+    if (!route?.txsRequired) return;
+    const lastTransactionIndex = route.txsRequired - 1;
+    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
 
     if (operationTransferEventsArray.length === 0 && isPending) {
       return "signing";
@@ -55,7 +57,7 @@ export const useFetchTransactionStatus = () => {
     if (!overallState) return "unconfirmed";
 
     return getSimpleOverallStatus(overallState);
-  }, [isPending, operationTransferEventsArray.length, transactionStatus]);
+  }, [isPending, operationTransferEventsArray.length, route?.txsRequired, transactionStatus]);
 
   const updateOperationToTransferEventsMap = useCallback(() => {
     const transferEvents =
