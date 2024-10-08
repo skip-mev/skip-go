@@ -66,7 +66,6 @@ export const useFetchTransactionStatus = () => {
     const lastTransactionIndex = route.txsRequired - 1;
     const overallState = transactionStatus?.[lastTransactionIndex]?.state;
     if (!overallState) return "pending";
-    console.log(getSimpleOverallStatus(overallState));
     return getSimpleOverallStatus(overallState);
   }, [
     isPending,
