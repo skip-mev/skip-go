@@ -207,6 +207,14 @@ export const TokenAndChainSelectorModal = createModal(
           return -1;
         }
 
+        if (assetB.asset.originChainID === assetB.chainID) {
+          return 1;
+        }
+
+        if (assetA.asset.originChainID === assetA.chainID) {
+          return -1;
+        }
+
         return 0;
       });
     }, [chains, getBalance, searchQuery, selectedGroup]);
@@ -227,6 +235,7 @@ export const TokenAndChainSelectorModal = createModal(
     const handleSearch = (term: string) => {
       setSearchQuery(term);
     };
+
 
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
@@ -257,6 +266,7 @@ export const TokenAndChainSelectorModal = createModal(
       networkSelection,
     ]);
 
+
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
         modal.remove();
@@ -264,6 +274,13 @@ export const TokenAndChainSelectorModal = createModal(
         setGroupedAssetSelected(null);
       }
     };
+
+    const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
+        setGroupedAssetSelected(null);
+      }
+    };
+
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput
@@ -272,7 +289,7 @@ export const TokenAndChainSelectorModal = createModal(
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
-          networkSelection={networkSelection}
+          onKeyDown={onKeyDown}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <Column>

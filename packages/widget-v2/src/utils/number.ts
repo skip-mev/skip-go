@@ -11,17 +11,25 @@ export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
 }
 
-export function limitDecimalsDisplayed(number: string | number) {
-  const DECIMAL_PlACES_TO_DISPLAY = 6;
-  if (typeof number === "string") {
-    number = Number(number);
-  }
-  if (isNaN(number)) return "";
+export function limitDecimalsDisplayed(input: string | number) {
+  const DECIMAL_PLACES_TO_DISPLAY = 6;
 
-  const decimalScalingFactor = Math.pow(10, DECIMAL_PlACES_TO_DISPLAY);
+  if (typeof input === "string") {
+    const [integer, decimal] = input.split(".");
+
+    if (decimal === undefined || decimal.length <= DECIMAL_PLACES_TO_DISPLAY) {
+      return input;
+    }
+
+    return integer + "." + decimal.slice(0, DECIMAL_PLACES_TO_DISPLAY);
+  }
+
+  if (isNaN(input)) return "";
+
+  const decimalScalingFactor = Math.pow(10, DECIMAL_PLACES_TO_DISPLAY);
 
   const flooredAndLimitedDecimalPlacesNumber =
-    Math.floor(number * decimalScalingFactor) / decimalScalingFactor;
+    Math.floor((input) * decimalScalingFactor) / decimalScalingFactor;
 
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
@@ -51,15 +59,15 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
     return;
   }
   if (seconds < 60) {
-    return `${seconds} ${pluralize("second", seconds)}`;
+    return `${seconds} ${pluralize("sec", seconds)}`;
   } else if (seconds < 3600) {
     return `${Math.round(seconds / 60)} ${pluralize(
-      "minute",
+      "min",
       Math.round(seconds / 60)
     )}`;
   } else {
     return `${Math.round(seconds / 3600)} ${pluralize(
-      "hour",
+      "hr",
       Math.round(seconds / 3600)
     )}`;
   }

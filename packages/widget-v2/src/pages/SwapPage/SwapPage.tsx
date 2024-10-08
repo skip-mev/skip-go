@@ -28,14 +28,16 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { useFetchSourceBalance } from "@/hooks/useFetchSourceBalance";
-import { skipSourceBalanceAtom } from "@/state/balances";
+import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
+import { useGetAccount } from "@/hooks/useGetAccount";
+import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -43,23 +45,26 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
+  const insufficientBalance = useInsufficientSourceBalance();
+  const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
+  const setError = useSetAtom(errorAtom);
+  const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
   const {
     data: route,
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
+
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
-  const setCurrentPage = useSetAtom(currentPageAtom);
-  const insufficientBalance = useInsufficientSourceBalance();
-  const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
-  const { isLoading: isLoadingBalances } = useAtomValue(skipSourceBalanceAtom);
+  const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
-  const sourceAccount = useFetchSourceBalance();
+  const getAccount = useGetAccount();
+  const sourceAccount = getAccount(sourceAsset?.chainID);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -77,10 +82,12 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        setSourceAssetAmount("");
+        setDestinationAssetAmount("");
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setSourceAsset, tokenAndChainSelectorModal]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -94,13 +101,7 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       networkSelection: true,
     });
-  }, [
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-    tokenAndChainSelectorModal,
-  ]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -138,6 +139,24 @@ export const SwapPage = () => {
   ]);
 
   const swapButton = useMemo(() => {
+    if (!sourceAccount?.address) {
+      return (
+        <MainButton
+          label="Connect Wallet"
+          icon={ICONS.plus}
+          onClick={() => {
+            if (!sourceAsset?.chainID) {
+              connectedWalletModal.show();
+            } else {
+              selectWalletmodal.show({
+                chainId: sourceAsset?.chainID,
+              });
+            }
+          }}
+        />
+      );
+    }
+
     if (!sourceAsset?.chainID) {
       return (
         <MainButton
@@ -172,19 +191,7 @@ export const SwapPage = () => {
       return <MainButton label="Finding best route..." loading />;
     }
 
-    if (!sourceAccount?.address) {
-      return (
-        <MainButton
-          label="Connect wallet"
-          icon={ICONS.plus}
-          onClick={() => {
-            selectWalletmodal.show({
-              chainId: sourceAsset?.chainID,
-            });
-          }}
-        />
-      );
-    }
+
 
     if (isRouteError) {
       return (
@@ -227,24 +234,7 @@ export const SwapPage = () => {
         }}
       />
     );
-  }, [
-    sourceAsset?.chainID,
-    sourceAsset?.amount,
-    destinationAsset?.chainID,
-    destinationAsset?.amount,
-    isWaitingForNewRoute,
-    isRouteError,
-    sourceAccount?.address,
-    isLoadingBalances,
-    insufficientBalance,
-    route,
-    routeError?.message,
-    selectWalletmodal,
-    setChainAddresses,
-    setCurrentPage,
-    setSwapExecutionState,
-    setError,
-  ]);
+  }, [sourceAsset?.chainID, sourceAsset?.amount, destinationAsset?.chainID, destinationAsset?.amount, isWaitingForNewRoute, sourceAccount?.address, isRouteError, isLoadingBalances, insufficientBalance, route, connectedWalletModal, selectWalletmodal, routeError?.message, setChainAddresses, setCurrentPage, setSwapExecutionState, setError]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {

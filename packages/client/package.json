@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,16 +46,6 @@
     "keccak256": "1.x",
     "kujira.js": "0.9.x",
     "viem": "2.x"
-  },
-  "devDependencies": {
-    "@cosmjs/faucet": "0.32.3",
-    "@cosmjs/faucet-client": "0.32.3",
-    "@cosmology/telescope": "1.8.3",
-    "@protobufs/gogoproto": "0.0.10",
-    "@protobufs/google": "0.0.10",
-    "minimatch": "^9.0.3",
-    "proxy-from-env": "^1.1.0",
-    "vitest": "^1.2.2"
   },
   "publishConfig": {
     "access": "public"

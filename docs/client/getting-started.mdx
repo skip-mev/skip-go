@@ -160,7 +160,7 @@ const balances = await skipClient.balances({
 
 </Step> <Step title="Get a Route">
 
-Once you've selected your source and destination chains and tokens, you can generate a route and get a quote.
+Once you've selected your source and destination chains and tokens, you can generate a route and get a quote. See it in context [here](https://github.com/skip-mev/skip-go-example/blob/d68ec668ebaa230325ad31658b547bd27c42ac49/pages/index.tsx#L46).
 
 <CodeGroup>
 ```ts Swap ATOM for OSMO
@@ -213,7 +213,7 @@ After generating a route, you need to provide user addresses for the required ch
 See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failure-cases) for more details.
 </Warning>
 
-We recommend storing the user's addresses and creating a function like `getAddress` that retrieves the address based on the chain ID (see an example [here](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99)). 
+We recommend storing the user's addresses and creating a function like [`getAddress`](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99) that retrieves the address based on the chain ID. 
 
 ```ts
 // get user addresses for each requiredChainAddress to execute the route
@@ -248,13 +248,21 @@ await skipClient.executeRoute({
   onTransactionTracked: async ({ txHash, chainID }) => {
     console.log(`Transaction tracked with tx hash: ${txHash}`);
   },
+  // called after the user signs a transaction
+  onTransactionSigned: async ({ txHash, chainID }) => {
+    console.log(`Transaction signed with tx hash: ${txHash}`);
+  },
+  // validate gas balance on each chain
+  onValidateGasBalance: async ({ chainID, txIndex, status }) => {
+    console.log(`Validating gas balance for chain ${chainID}...`);
+  },
 });
 ```
 
 For routes that consist of multiple transactions, this will monitor each transaction until it completes, then generate the transaction for the next step and prompt the user to sign it.
 
 <Info>
-Alternatively, you can use the route to generate, sign, and submit the messages separately -- or use your own solutions for any/all of these steps if you like. See `skipClient.messages`, `skipClient.signMultiChainMessageDirect`, and `skipClient.submitTransaction` for details on these lower-level functions.
+Alternatively, the route object allows you to generate, sign, and submit messages individually. You can also implement your own solutions for any or all of these steps. For more details on these lower-level functions, refer to `skipClient.messages`, `skipClient.signMultiChainMessageDirect`, and `skipClient.submitTransaction`.
 </Info>
 
 
@@ -262,7 +270,7 @@ Alternatively, you can use the route to generate, sign, and submit the messages 
 
 Once the user has signed a transaction to execute a cross-chain action, you can track it with:
 
-- `skipClient.trackTransaction`: Requests tracking for a that's already been submitted to the network through an RPC, using the transaction hash
+- `skipClient.trackTransaction`: Requests tracking for a transaction that's already been submitted to the network through an RPC, using the transaction hash
 - `skipClient.submitTransaction`: Publishes the signed transaction to the network & begins tracking the cross-chain actions this transaction produces
 
 After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `skipClient.transactionStatus`.

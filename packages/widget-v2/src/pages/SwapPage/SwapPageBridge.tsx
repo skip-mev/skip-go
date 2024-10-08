@@ -21,7 +21,8 @@ export const SwapPageBridge = () => {
 
   return (
     <Button
-      style={{ position: "relative", cursor: "pointer" }}
+      style={{ position: "relative", cursor: "pointer", height: 5 }}
+      align="center"
       onClick={onInvertSwap}
       disabled={isSpinning}
     >

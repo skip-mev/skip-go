@@ -97,7 +97,7 @@ export const SwapExecutionPage = () => {
     const signaturesRemaining =
       (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
     if (
-      signaturesRemaining > 0
+      signaturesRemaining > 1
     ) {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
