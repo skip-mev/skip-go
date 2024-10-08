@@ -30,7 +30,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const chainLogo = chain?.logoURI;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
-  const _walletList = useWalletList(chainId, true);
+  const _walletList = useWalletList({ chainID: chainId, destinationWalletList: true });
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const walletList = [
