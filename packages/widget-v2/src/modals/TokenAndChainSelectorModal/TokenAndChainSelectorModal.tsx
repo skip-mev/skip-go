@@ -207,6 +207,14 @@ export const TokenAndChainSelectorModal = createModal(
           return -1;
         }
 
+        if (assetB.asset.originChainID === assetB.chainID) {
+          return 1;
+        }
+
+        if (assetA.asset.originChainID === assetA.chainID) {
+          return -1;
+        }
+
         return 0;
       });
     }, [chains, getBalance, searchQuery, selectedGroup]);
