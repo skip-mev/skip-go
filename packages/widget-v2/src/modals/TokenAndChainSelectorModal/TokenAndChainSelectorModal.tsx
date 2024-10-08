@@ -228,6 +228,7 @@ export const TokenAndChainSelectorModal = createModal(
       setSearchQuery(term);
     };
 
+
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         return (
@@ -257,6 +258,7 @@ export const TokenAndChainSelectorModal = createModal(
       networkSelection,
     ]);
 
+
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
         modal.remove();
@@ -272,7 +274,6 @@ export const TokenAndChainSelectorModal = createModal(
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
-          networkSelection={networkSelection}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <Column>
