@@ -3,6 +3,7 @@ import { createWasmAminoConverters } from '@cosmjs/cosmwasm-stargate';
 import { fromBase64, toHex } from '@cosmjs/encoding';
 import { Int53 } from '@cosmjs/math';
 import { Decimal } from '@cosmjs/math';
+import { MsgWithdrawFromSubaccount } from '@dydxprotocol/v4-client-js'
 import { makePubkeyAnyFromAccount } from './proto-signing/pubkey';
 import {
   EncodeObject,
@@ -109,6 +110,7 @@ export class SkipClient {
       ['/cosmwasm.wasm.v1.MsgExecuteContract', MsgExecuteContract],
       ['/initia.move.v1.MsgExecute', MsgExecute],
       ['/opinit.ophost.v1.MsgInitiateTokenDeposit', MsgInitiateTokenDeposit],
+      ['/dydxprotocol.sending.MsgWithdrawFromSubaccount', MsgWithdrawFromSubaccount],
       ...circleProtoRegistry,
       ...evmosProtoRegistry,
       ...(options.registryTypes ?? []),

@@ -233,21 +233,25 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       if (!route) return;
       if (!userAddresses.length) return;
 
-      const signerAddress = userAddresses.find(
-        (address) => address.chainID === 'cosmoshub-4'
-      )?.address;
+      const dydxAddress = "dydx1l8rnlvl2zu9mnxz29r6mrd4c69s4rz8gplxvvu";
 
-      const msgSend = JSON.stringify({
-        from_address: signerAddress,
-        to_address: signerAddress,
-        amount: [{ denom: 'uatom', amount: '1' }],
+      userAddresses.push({ address: dydxAddress, chainID: "dydx-mainnet-1" });
+
+      const withdraw = JSON.stringify({
+        sender: {
+          owner: dydxAddress,
+          number: 0,
+        },
+        recipient: dydxAddress,
+        assetId: 0,
+        quantums: "1"
       });
 
       const additionalTx: Tx = {
         cosmosTx: {
-          chainID: "cosmoshub-4",
-          msgs: [{ msg: msgSend, msgTypeURL: '/cosmos.bank.v1beta1.MsgSend' }],
-          signerAddress: signerAddress ?? "",
+          chainID: "dydx-mainnet-1",
+          msgs: [{ msg: withdraw, msgTypeURL: '/dydxprotocol.sending.MsgWithdrawFromSubaccount' }],
+          signerAddress: dydxAddress ?? "",
         },
         operationsIndices: [0],
       };
