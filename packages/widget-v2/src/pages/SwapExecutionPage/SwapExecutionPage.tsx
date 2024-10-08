@@ -75,14 +75,12 @@ export const SwapExecutionPage = () => {
     if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
     }
-    if (isValidatingGasBalance?.status !== "completed" && !!isValidatingGasBalance) {
-      return SwapExecutionState.validatingGasBalance;
-    }
-
     if (overallStatus === "pending") {
       return SwapExecutionState.pending;
     }
-
+    if (isValidatingGasBalance?.status !== "completed" && !!isValidatingGasBalance) {
+      return SwapExecutionState.validatingGasBalance;
+    }
     if (overallStatus === "signing") {
       return SwapExecutionState.waitingForSigning;
     }
