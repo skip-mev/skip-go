@@ -7,7 +7,7 @@ import {
   StyledModalInnerContainer,
 } from "@/components/ModalHeader";
 import { ModalRowItem } from "@/components/ModalRowItem";
-import { TextButton } from "@/components/Typography";
+import { Text, TextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
@@ -19,6 +19,7 @@ import { copyToClipboard } from "@/utils/misc";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { useMemo } from "react";
 import { useTheme } from "styled-components";
+import { skipChainsAtom } from "@/state/skipClient";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -66,11 +67,16 @@ const ConnectEco = ({
     chainId: sourceAsset?.chainID,
   });
   const account = useMemo(() => {
-    return getAccount(
-      chainType === "cosmos" && chain?.chainType === "cosmos"
-        ? sourceAsset?.chainID
-        : chainID
-    );
+    const _chainID = (() => {
+      if (chainType === "cosmos" && chain?.chainType === "cosmos")
+        return sourceAsset?.chainID;
+      if (chainType === "evm" && chain?.chainType === "evm")
+        return sourceAsset?.chainID;
+      if (chainType === "svm" && chain?.chainType === "svm")
+        return sourceAsset?.chainID;
+      return chainID;
+    })();
+    return getAccount(_chainID, true);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
   const truncatedAddress = getTruncatedAddress(account?.address);
@@ -102,16 +108,20 @@ const ConnectEco = ({
                 title={account?.wallet.prettyName}
               />
             }
-
-            <TextButton
-              title={account?.address}
-              onClick={(e) => {
-                e.stopPropagation();
-                copyToClipboard(account?.address);
-              }}
-            >
-              {truncatedAddress}
-            </TextButton>
+            <Row align="end" gap={8}>
+              <TextButton
+                title={account?.address}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyToClipboard(account?.address);
+                }}
+              >
+                {truncatedAddress}
+              </TextButton>
+              {chainType === "evm" && (
+                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
+              )}
+            </Row>
           </Row>
         ) : (
           <TextButton>
@@ -142,5 +152,16 @@ const ConnectEco = ({
         )
       }
     />
+  );
+};
+
+const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
+  const theme = useTheme();
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const chain = chains?.find((chain) => chain.chainID === chainId);
+  return (
+    <Text fontSize={12} color={theme.primary.text.lowContrast}>
+      {chain?.prettyName}
+    </Text>
   );
 };
