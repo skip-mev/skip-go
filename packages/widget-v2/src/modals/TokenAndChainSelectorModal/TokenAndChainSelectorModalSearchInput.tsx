@@ -16,7 +16,6 @@ type TokenAndChainSelectorModalSearchInputProps = {
   asset?: Asset;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  networkSelection?: boolean;
 };
 
 export const TokenAndChainSelectorModalSearchInput = ({
@@ -25,7 +24,6 @@ export const TokenAndChainSelectorModalSearchInput = ({
   onClickBack,
   searchTerm,
   setSearchTerm,
-  networkSelection,
 }: TokenAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,9 +64,9 @@ export const TokenAndChainSelectorModalSearchInput = ({
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
         placeholder={
-          asset && networkSelection
-            ? "Search networks"
-            : "Search asset or network"
+          asset
+            ? "Search network"
+            : "Search asset"
         }
         value={searchTerm}
         onChange={handleSearch}

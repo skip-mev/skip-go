@@ -181,7 +181,7 @@ Post a signed user transaction (that you can form using `/fungible` endpoints) t
 
 A successful response looks like the following: 
 
-```response response
+```JSON
 {
   "tx_hash": "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9"
 }
@@ -193,7 +193,7 @@ The transaction is broadcast using `BROADCAST_MODE_SYNC` and in the event that a
 
 
 
-```response response
+```JSON
 {
     "code": 3,
     "message": "insufficient fees; got: 0uosmo which converts to 0uosmo. required: 2000uosmo: insufficient fee",
@@ -219,9 +219,9 @@ It will initially yield a response that looks like the following:
 
 
 
-```response response
+```JSON
 {
-  transfers: [
+  "transfers": [
     {
       "state": "STATE_SUBMITTED",
       "transfer_sequence": [],
@@ -245,7 +245,7 @@ Once indexing for the transaction has begun, the `state` will change to `STATE_P
 
 
 
-```response response
+```JSON
 {
   "transfers": [
     {
@@ -284,9 +284,9 @@ The transfer assets will be released before all expected acknowledgements have b
 
 
 
-```response response
+```JSON
 {
-  transfers: [
+  "transfers": [
     {
       "state": "STATE_COMPLETED_SUCCESS",
       "transfer_sequence": [
@@ -353,7 +353,7 @@ Once it has been determined that all packets along the transfer sequence have ei
 
 
 
-```response response
+```JSON
 {
   "transfers": [ 
     {
@@ -428,7 +428,7 @@ Any packet acknowledgement errors will be surfaced in the error field for the re
 
 
 
-```response response
+```JSON
 {
   "transfers": [
   	{
@@ -482,7 +482,7 @@ Any execution errors for the initial transaction will be surfaced in the error f
 
 
 
-```response response
+```JSON
  {
   "transfers": [
     {

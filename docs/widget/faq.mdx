@@ -1,0 +1,17 @@
+---
+title: 'FAQ'
+---
+
+## How do I fix the "Buffer is not defined" error?
+
+If you see a 'Buffer is not defined' error when using @skip-go/widget, it's likely because the widget depends on Node.js modules that aren't available in the browser. To fix this, you'll need to add polyfills for those modules.
+Here are some polyfill plugins for common environments:
+
+- [Webpack](https://www.npmjs.com/package/node-polyfill-webpack-plugin)
+- [Rollup](https://www.npmjs.com/package/rollup-plugin-polyfill-node)
+- [Vite](https://www.npmjs.com/package/vite-plugin-node-polyfills)
+- [ESBuild](https://www.npmjs.com/package/esbuild-plugins-node-modules-polyfill)
+
+## Should I put the widget inside a container with a fixed size?
+
+It is recommended to wrap the widget with a container element that has a fixed size. This helps to prevent layout shifting as the widget uses the shadow-dom (which needs to be rendered client-side). We recommend a height of `640px` and a width of `450px`. 

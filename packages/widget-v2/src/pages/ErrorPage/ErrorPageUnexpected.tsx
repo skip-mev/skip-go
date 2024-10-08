@@ -1,6 +1,5 @@
 import { ErrorState } from "@/components/ErrorState";
 import { MainButton } from "@/components/MainButton";
-import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
@@ -42,13 +41,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
       />
       <ErrorState
         title="An unexpected error has occurred"
-        description={
-          <>
-            <SmallText color={theme.error.text} textAlign="center">
-              {error?.message}
-            </SmallText>
-          </>
-        }
+        description={error?.message}
         icon={ICONS.triangleWarning}
         backgroundColor={theme.error.background}
         textColor={theme.error.text}
