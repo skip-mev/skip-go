@@ -99,7 +99,7 @@ export const LoadingButton = ({
       </Text>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
-          <SmallText>{loadingTimeString}</SmallText>
+          <SmallText>{loadingTimeString}.</SmallText>
         </StyledTimeRemaining>
       )}
     </StyledOverlay>

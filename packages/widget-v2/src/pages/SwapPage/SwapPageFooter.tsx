@@ -43,7 +43,7 @@ export const SwapPageFooterItems = ({
           {showEstimatedTime && estimatedTime && (
             <Row gap={4} align="center">
               <SpeedometerIcon />
-              {estimatedTime}
+              {estimatedTime}.
             </Row>
           )}
         </Row>
