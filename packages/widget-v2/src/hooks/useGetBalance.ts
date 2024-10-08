@@ -1,13 +1,13 @@
 
 import { useCallback } from "react";
-import { skipBalancesAtom } from "@/state/balances";
+import { skipAllBalancesAtom } from "@/state/balances";
 import { useAtomValue } from "jotai";
 
 export const useGetBalance = () => {
-  const skipBalances = useAtomValue(skipBalancesAtom);
+  const { data: skipBalances } = useAtomValue(skipAllBalancesAtom);
 
   const getBalance = useCallback((chainId: string, denom: string) => {
-    return skipBalances?.[chainId]?.denoms?.[denom];
+    return skipBalances?.chains?.[chainId]?.denoms?.[denom];
   }, [skipBalances]);
 
   return getBalance;
