@@ -53,7 +53,7 @@ export const useFetchTransactionStatus = () => {
     const lastTransactionIndex = route?.txsRequired - 1;
 
     const lastTransactionStatus = getSimpleOverallStatus(
-      transactionStatus[lastTransactionIndex].state
+      transactionStatus?.[lastTransactionIndex]?.state
     );
 
     if (lastTransactionStatus === "completed") {
