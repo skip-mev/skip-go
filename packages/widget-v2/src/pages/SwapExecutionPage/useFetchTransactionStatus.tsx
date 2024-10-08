@@ -12,10 +12,9 @@ import {
   getClientOperations,
   ClientOperation,
   getSimpleOverallStatus,
-  getSimpleStatus,
 } from "@/utils/clientType";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 export const useFetchTransactionStatus = () => {
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
@@ -37,113 +36,114 @@ export const useFetchTransactionStatus = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const operationToTransferEventsMapFromTransactionStatusAndClientOperations =
-    useMemo(() => {
-      return getOperationToTransferEventsMap(
-        transactionStatus ?? [],
-        clientOperations
-      );
-    }, [clientOperations, transactionStatus]);
-
-  const operationTransferEventsArray = useMemo(() => {
-    return Object.values(
-      operationToTransferEventsMapFromTransactionStatusAndClientOperations
+  const computedSwapStatus = useMemo(() => {
+    if (!route?.operations || !route?.txsRequired) return;
+    const operationTransferEventsArray = Object.values(
+      operationToTransferEventsMap
     );
-  }, [operationToTransferEventsMapFromTransactionStatusAndClientOperations]);
 
-  const simpleOverallStatus = useMemo(() => {
-    const pendingOperationTransferEventsArray =
-      operationTransferEventsArray.filter(
-        (transferEvent) => getSimpleStatus(transferEvent.state) === "pending"
-      );
-
-    if (pendingOperationTransferEventsArray.length === 0 && isPending) {
-      return "signing";
+    if (operationTransferEventsArray.length === 0) {
+      if (isPending) {
+        setOverallStatus("signing");
+      }
+      return;
     }
 
-    if (!route?.txsRequired || !isPending) return "unconfirmed";
+    if (!transactionStatus) return;
+    const lastTransactionIndex = route?.txsRequired - 1;
 
-    const lastTransactionIndex = route.txsRequired - 1;
-    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
-    if (!overallState) return "pending";
-    return getSimpleOverallStatus(overallState);
+    const lastTransactionStatus = getSimpleOverallStatus(
+      transactionStatus[lastTransactionIndex].state
+    );
+
+    if (lastTransactionStatus === "completed") {
+      return "completed";
+    }
+
+    if (
+      operationTransferEventsArray.find(({ status }) => status === "failed")
+    ) {
+      return "failed";
+    }
+    if (
+      operationTransferEventsArray.find(({ status }) => status === "pending")
+    ) {
+      return "pending";
+    }
+    if (
+      operationTransferEventsArray.every(
+        ({ status }) => status === "unconfirmed"
+      )
+    ) {
+      return "unconfirmed";
+    }
   }, [
     isPending,
-    operationTransferEventsArray,
+    operationToTransferEventsMap,
+    route?.operations,
     route?.txsRequired,
+    setOverallStatus,
     transactionStatus,
   ]);
 
-  const updateOperationToTransferEventsMap = useCallback(() => {
+  useEffect(() => {
+    if (overallStatus === "completed" || overallStatus === "failed") return;
+
     const transferEvents =
       getTransferEventsFromTxStatusResponse(transactionStatus);
+    const operationToTransferEventsMap = getOperationToTransferEventsMap(
+      transactionStatus ?? [],
+      clientOperations
+    );
+    const operationTransferEventsArray = Object.values(
+      operationToTransferEventsMap
+    );
 
-    if (["completed", "failed"].includes(simpleOverallStatus)) {
-      // manually creating and setting operationToTransferEventsMap for
-      // the case that we have an overallStatus completed or failed
-      // but no transfer events (ie. swaps that remain on chain)
-      const derivedOperationToTransferEventsMap = clientOperations.reduce(
-        (accumulator, _operation, index) => {
-          accumulator[index] = {
-            status: simpleOverallStatus,
-          } as ClientTransferEvent;
-
-          return accumulator;
-        },
-        {} as Record<number, ClientTransferEvent>
-      );
-      setOperationToTransferEventsMap(derivedOperationToTransferEventsMap);
-    } else if (
-      transactionDetailsArray.length === 1 &&
-      transferEvents.length === 0
-    ) {
-      // temporarily setting operationToTransferEventsMap to have the first
-      // operation pending before the API returns any transfer events
-      // so that the UX is nicer
+    if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
       setOperationToTransferEventsMap({
         0: {
           status: "pending",
         } as ClientTransferEvent,
       });
-    } else if (operationTransferEventsArray.length > 0) {
-      // setting operationToTransferEventsMap if operationToTransferEventsMap
-      // is retrieved properly from getOperationToTransferEventsMap
-
-      setOperationToTransferEventsMap(
-        operationToTransferEventsMapFromTransactionStatusAndClientOperations
-      );
     }
-  }, [
-    clientOperations,
-    operationToTransferEventsMapFromTransactionStatusAndClientOperations,
-    operationTransferEventsArray.length,
-    simpleOverallStatus,
-    transactionDetailsArray.length,
-    transactionStatus,
-  ]);
+    if (operationTransferEventsArray.length > 0) {
+      setOperationToTransferEventsMap(operationToTransferEventsMap);
+    }
 
-  useEffect(() => {
-    if (["completed", "failed"].includes(overallStatus)) return;
-    updateOperationToTransferEventsMap();
-
-    if (simpleOverallStatus !== overallStatus) {
+    if (computedSwapStatus) {
       setTransactionHistory(transactionHistoryIndex, {
-        status: simpleOverallStatus,
+        status: computedSwapStatus,
       });
-      setOverallStatus(simpleOverallStatus);
+      setOverallStatus(computedSwapStatus);
+      if (
+        ["completed", "failed"].includes(computedSwapStatus) &&
+        operationTransferEventsArray.length === 0
+      ) {
+        // manually creating and setting operationToTransferEventsMap for
+        // the case that we have an overallStatus completed or failed
+        // but no transfer events (ie. swaps that remain on chain)
+        const derivedOperationToTransferEventsMap = clientOperations.reduce(
+          (accumulator, _operation, index) => {
+            accumulator[index] = {
+              status: computedSwapStatus,
+            } as ClientTransferEvent;
+
+            return accumulator;
+          },
+          {} as Record<number, ClientTransferEvent>
+        );
+        setOperationToTransferEventsMap(derivedOperationToTransferEventsMap);
+      }
     }
   }, [
     clientOperations,
     overallStatus,
+    computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
     transactionStatus,
     setTransactionHistory,
     transactionHistoryIndex,
-    isPending,
-    operationTransferEventsArray.length,
-    updateOperationToTransferEventsMap,
-    simpleOverallStatus,
   ]);
 
   return operationToTransferEventsMap;

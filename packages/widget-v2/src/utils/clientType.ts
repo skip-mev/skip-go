@@ -249,13 +249,7 @@ export function getOperationToTransferEventsMap(
         const isSwapType = ["evmSwap", "swap"].includes(operation.type);
         if (!isSwapType) return false;
 
-        const operationStaysOnTheSameChain = operation.fromChainID === operation.toChainID;
-        const fromChainMatches = transferEvent.fromChainID === operation.fromChainID;
-        const toChainMatches = transferEvent.toChainID === operation.toChainID;
-
-        return operationStaysOnTheSameChain
-          ? fromChainMatches || toChainMatches
-          : fromChainMatches && toChainMatches;
+        return transferEvent.fromChainID === operation.fromChainID;
       }
     );
 
