@@ -47,14 +47,15 @@ export const useFetchTransactionStatus = () => {
   }, [operationToTransferEventsMapFromTransactionStatusAndClientOperations]);
 
   const simpleOverallStatus = useMemo(() => {
-    if (!route?.txsRequired) return;
-    const lastTransactionIndex = route.txsRequired - 1;
-    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
+    if (!route?.txsRequired || !isPending) return "unconfirmed";
 
     if (operationTransferEventsArray.length === 0 && isPending) {
       return "signing";
     }
-    if (!overallState) return "unconfirmed";
+
+    const lastTransactionIndex = route.txsRequired - 1;
+    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
+    if (!overallState) return "pending";
 
     return getSimpleOverallStatus(overallState);
   }, [isPending, operationTransferEventsArray.length, route?.txsRequired, transactionStatus]);
