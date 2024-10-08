@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "yarn run dev:widget & yarn run dev:nextjs & yarn run dev:client",
     "dev:https": "yarn run dev:widget & yarn run dev:nextjs-https & yarn run dev:client",
-    "dev:widget": "yarn workspace @skip-go/widget run dev",
+    "dev:widget": "yarn workspace @skip-go/widget run dev --force",
     "dev:nextjs": "yarn workspace nextjs run dev",
     "dev:nextjs-https": "yarn workspace nextjs run dev:https",
     "dev:client": "yarn workspace @skip-go/client run watch",

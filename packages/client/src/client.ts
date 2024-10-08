@@ -270,12 +270,11 @@ export class SkipClient {
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
 
-    let txs = messages.txs;
-
-    if (options.additionalTx) {
-      const { tx: additionalTx, position } = options.additionalTx;
-      txs = position === 'before' ? [additionalTx, ...txs] : [...txs, additionalTx];
-    }
+    const txs = [
+      ...(options.beforeTx ? [options.beforeTx] : []),
+      ...messages.txs,
+      ...(options.afterTx ? [options.afterTx] : [])
+    ];
 
     await this.executeTxs({ ...options, txs });
   }
@@ -579,6 +578,7 @@ export class SkipClient {
     encodedMsgs?: EncodeObject[];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
+    console.log('INSIDE estimateGasForMessage')
     const gasPrice =
       (getGasPrice
         ? await getGasPrice(chainID, 'cosmos')
@@ -587,6 +587,8 @@ export class SkipClient {
         `executeRoute error: unable to get gas prices for chain '${chainID}'`
       );
 
+    console.log('gasPrice in estimateGasForMessage', gasPrice)
+
     if (chainID === "noble-1") {
       const fee = calculateFee(
         200000,
@@ -594,6 +596,14 @@ export class SkipClient {
       );
       return fee;
     }
+    console.log({
+      stargateClient,
+      signerAddress,
+      chainID,
+      messages,
+      encodedMsgs,
+      gasAmountMultiplier
+    })
 
     const estimatedGasAmount = await (async () => {
       try {
@@ -607,6 +617,7 @@ export class SkipClient {
         );
         return estimatedGas;
       } catch (error) {
+        console.log('THIS IS WHERE THE ERROR IS', error)
         if (getFallbackGasAmount) {
           const fallbackGasAmount = await getFallbackGasAmount(
             chainID,
@@ -1826,7 +1837,6 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
   }) {
-    console.log('txs', txs)
     // tx index -> gas token used
     let gasTokenRecord: Record<number, Coin> = {}
     for (let i = 0; i < txs.length; i++) {
@@ -1835,7 +1845,6 @@ export class SkipClient {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ('cosmosTx' in tx) {
-        console.log('tx', tx)
         onValidateGasBalance?.({
           chainID: tx.cosmosTx.chainID,
           txIndex: i,
@@ -1924,6 +1933,7 @@ export class SkipClient {
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
+    console.log('messages in validateCosmosGasBalance', messages)
     const fee = await this.estimateGasForMessage({
       stargateClient: client,
       chainID,
@@ -1933,6 +1943,18 @@ export class SkipClient {
       messages,
       getFallbackGasAmount,
     });
+
+    console.log({
+      stargateClient: client,
+      chainID,
+      signerAddress,
+      gasAmountMultiplier,
+      getGasPrice,
+      messages,
+      getFallbackGasAmount,
+    })
+
+    console.log('fee', fee)
 
     if (!fee.amount[0]) {
       throw new Error(

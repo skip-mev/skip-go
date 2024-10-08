@@ -2,15 +2,13 @@ import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { CosmosMsg, CosmosTx, ExecuteRouteOptions, RouteResponse, Tx, TxStatusResponse, UserAddress } from "@skip-go/client";
+import { ExecuteRouteOptions, RouteResponse, Tx, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
-import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
-
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
@@ -238,56 +236,27 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         (address) => address.chainID === 'cosmoshub-4'
       )?.address;
 
-      console.log('signerAddress', signerAddress)
-
-      const receiverAddress = userAddresses.find(
-        (address) => address.chainID === 'neutron-1'
-      )?.address;
-
-      console.log('receiverAddress', receiverAddress)
-
-      const msgTransfer = MsgTransfer.fromPartial({
-        sourcePort: "transfer",
-        sourceChannel: "channel-141", // Replace with actual channel ID
-        token: { denom: "uatom", amount: "1" },
-        sender: signerAddress,
-        receiver: receiverAddress,
-        timeoutHeight: undefined,
-        timeoutTimestamp: '2000000000000000000',
+      const msgSend = JSON.stringify({
+        from_address: signerAddress,
+        to_address: signerAddress,
+        amount: [{ denom: 'uatom', amount: '1' }],
       });
 
-      const msgAny = {
-        typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
-        value: MsgTransfer.encode(msgTransfer).finish(),
-      };
-
-      const msgBase64 = Buffer.from(msgAny.value).toString("base64");
-
-      const cosmosMsg: CosmosMsg = {
-        msgTypeURL: msgAny.typeUrl,
-        msg: msgBase64,
-      };
-
-      const additionalCosmosTx: CosmosTx = {
-        chainID: "cosmoshub-4",
-        msgs: [cosmosMsg],
-        signerAddress: signerAddress ?? "",
-      };
-
       const additionalTx: Tx = {
-        cosmosTx: additionalCosmosTx,
-        operationsIndices: [],
+        cosmosTx: {
+          chainID: "cosmoshub-4",
+          msgs: [{ msg: msgSend, msgTypeURL: '/cosmos.bank.v1beta1.MsgSend' }],
+          signerAddress: signerAddress ?? "",
+        },
+        operationsIndices: [0],
       };
-      console.log('additionalTx', additionalTx);
 
       try {
         await skip.executeRoute({
           route,
           userAddresses,
-          additionalTx: {
-            position: 'before',
-            tx: additionalTx,
-          },
+          beforeTx: additionalTx,
+          afterTx: additionalTx,
           validateGasBalance: route.sourceAssetChainID !== "984122",
           // getFallbackGasAmount: async (chainID, chainType) => {
           //   if (chainType === "cosmos") {

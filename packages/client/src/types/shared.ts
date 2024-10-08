@@ -191,14 +191,14 @@ export type CosmosMsg = {
 
 export type CosmosTxJSON = {
   chain_id: string;
-  path: string[];
+  path?: string[];
   msgs: CosmosMsgJSON[];
   signer_address: string;
 };
 
 export type CosmosTx = {
   chainID: string;
-  path: string[];
+  path?: string[];
   msgs: CosmosMsg[];
   signerAddress: string;
 };
