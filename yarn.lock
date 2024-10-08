@@ -7877,19 +7877,14 @@ __metadata:
     "@cosmjs/amino": 0.32.4
     "@cosmjs/cosmwasm-stargate": 0.32.4
     "@cosmjs/encoding": 0.32.4
-    "@cosmjs/faucet": 0.32.3
-    "@cosmjs/faucet-client": 0.32.3
     "@cosmjs/math": 0.32.4
     "@cosmjs/proto-signing": 0.32.4
     "@cosmjs/stargate": 0.32.4
     "@cosmjs/tendermint-rpc": 0.32.4
-    "@cosmology/telescope": 1.8.3
     "@initia/initia-registry": latest
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.67
-    "@protobufs/gogoproto": 0.0.10
-    "@protobufs/google": 0.0.10
     "@solana/wallet-adapter-base": ^0.9.23
     "@solana/web3.js": ^1.91.1
     axios: 1.x
@@ -7897,10 +7892,7 @@ __metadata:
     cosmjs-types: 0.8.0
     keccak256: 1.x
     kujira.js: 0.9.x
-    minimatch: ^9.0.3
-    proxy-from-env: ^1.1.0
     viem: 2.x
-    vitest: ^1.2.2
   languageName: unknown
   linkType: soft
 
