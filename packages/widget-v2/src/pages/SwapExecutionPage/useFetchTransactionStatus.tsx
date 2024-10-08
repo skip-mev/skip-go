@@ -105,6 +105,7 @@ export const useFetchTransactionStatus = () => {
           status: "pending",
         } as ClientTransferEvent,
       });
+      setOverallStatus("pending");
     }
     if (operationTransferEventsArray.length > 0) {
       setOperationToTransferEventsMap(operationToTransferEventsMap);
