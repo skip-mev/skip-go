@@ -32,13 +32,16 @@ export const SwapPageFooterItems = ({
     if (showRouteInfo && route) {
       return (
         <Row align="center" gap={8}>
-          <Row gap={4} align="center">
-            <StyledSignatureRequiredContainer gap={5} align="center">
-              <SignatureIcon />
-              {route?.txsRequired}{" "}
-              {pluralize("Signature", route?.txsRequired)} required
-            </StyledSignatureRequiredContainer>
-          </Row>
+          {
+            route?.txsRequired > 1 && <Row gap={4} align="center">
+              <StyledSignatureRequiredContainer gap={5} align="center">
+                <SignatureIcon />
+                {route?.txsRequired}{" "}
+                {pluralize("Signature", route?.txsRequired)} required
+              </StyledSignatureRequiredContainer>
+            </Row>
+          }
+
 
           {showEstimatedTime && estimatedTime && (
             <Row gap={4} align="center">
