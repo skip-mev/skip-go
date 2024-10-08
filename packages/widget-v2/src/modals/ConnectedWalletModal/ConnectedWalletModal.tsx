@@ -18,6 +18,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { copyToClipboard } from "@/utils/misc";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { useMemo } from "react";
+import { useTheme } from "styled-components";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -57,6 +58,7 @@ const ConnectEco = ({
   chainType: "cosmos" | "svm" | "evm";
   chainID: string;
 }) => {
+  const theme = useTheme();
   const getAccount = useGetAccount();
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { chain } = useGetAssetDetails({
@@ -133,7 +135,10 @@ const ConnectEco = ({
             Disconnect
           </GhostButton>
         ) : (
-          <RightArrowIcon />
+          <RightArrowIcon
+            color={theme?.primary?.background.normal}
+            backgroundColor={theme.primary.text.normal}
+          />
         )
       }
     />
