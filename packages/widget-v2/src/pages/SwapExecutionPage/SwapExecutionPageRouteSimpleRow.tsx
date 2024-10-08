@@ -23,7 +23,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status: SimpleStatus;
+  status?: SimpleStatus;
   icon?: ICONS;
   context: "source" | "destination";
 };

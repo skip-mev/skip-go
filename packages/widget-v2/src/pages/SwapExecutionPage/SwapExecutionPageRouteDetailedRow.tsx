@@ -186,7 +186,7 @@ export const StyledAnimatedBorder = ({
   width: number;
   height: number;
   borderSize?: number;
-  status: SimpleStatus;
+  status?: SimpleStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
