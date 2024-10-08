@@ -27,15 +27,17 @@ export const VirtualList = <T,>({
   const listRef = useRef<ListRef>(null);
 
   useEffect(() => {
-    const listElement = listRef.current?.nativeElement;
-    //@ts-expect-error ignore typescript error
-    const onFocus = (e) => {
-      setCurrentlyFocusedElement(e?.target);
-    };
-    listElement?.addEventListener("focusin", onFocus);
+    const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
+    const firstElementInList = (listElement?.firstChild as HTMLElement);
 
     const handleKeyDown = (event: KeyboardEvent) => {
+
       if (event.key === "ArrowDown") {
+        if (firstElementInList) {
+          firstElementInList.focus();
+          setCurrentlyFocusedElement(firstElementInList);
+        }
+
         event.preventDefault();
         const nextElement = currentlyFocusedElement?.nextElementSibling as HTMLElement;
         if (nextElement) {
@@ -43,6 +45,7 @@ export const VirtualList = <T,>({
           setCurrentlyFocusedElement(nextElement);
         }
       } else if (event.key === "ArrowUp") {
+
         event.preventDefault();
         const prevElement = currentlyFocusedElement?.previousElementSibling as HTMLElement;
         if (prevElement) {
@@ -52,14 +55,9 @@ export const VirtualList = <T,>({
       }
     };
 
-    if (listElement) {
-      listElement.focus(); // Focus the list for keyboard events
-      listElement.addEventListener("keydown", handleKeyDown);
-    }
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      if (listElement) {
-        listElement.removeEventListener("keydown", handleKeyDown);
-      }
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [currentlyFocusedElement, listItems.length]);
 
