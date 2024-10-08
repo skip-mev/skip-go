@@ -578,7 +578,6 @@ export class SkipClient {
     encodedMsgs?: EncodeObject[];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
-    console.log('INSIDE estimateGasForMessage')
     const gasPrice =
       (getGasPrice
         ? await getGasPrice(chainID, 'cosmos')
@@ -587,8 +586,6 @@ export class SkipClient {
         `executeRoute error: unable to get gas prices for chain '${chainID}'`
       );
 
-    console.log('gasPrice in estimateGasForMessage', gasPrice)
-
     if (chainID === "noble-1") {
       const fee = calculateFee(
         200000,
@@ -596,14 +593,6 @@ export class SkipClient {
       );
       return fee;
     }
-    console.log({
-      stargateClient,
-      signerAddress,
-      chainID,
-      messages,
-      encodedMsgs,
-      gasAmountMultiplier
-    })
 
     const estimatedGasAmount = await (async () => {
       try {
@@ -617,7 +606,6 @@ export class SkipClient {
         );
         return estimatedGas;
       } catch (error) {
-        console.log('THIS IS WHERE THE ERROR IS', error)
         if (getFallbackGasAmount) {
           const fallbackGasAmount = await getFallbackGasAmount(
             chainID,
@@ -1932,7 +1920,6 @@ export class SkipClient {
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
-    console.log('messages in validateCosmosGasBalance', messages)
     const fee = await this.estimateGasForMessage({
       stargateClient: client,
       chainID,
@@ -1942,18 +1929,6 @@ export class SkipClient {
       messages,
       getFallbackGasAmount,
     });
-
-    console.log({
-      stargateClient: client,
-      chainID,
-      signerAddress,
-      gasAmountMultiplier,
-      getGasPrice,
-      messages,
-      getFallbackGasAmount,
-    })
-
-    console.log('fee', fee)
 
     if (!fee.amount[0]) {
       throw new Error(
