@@ -12,6 +12,7 @@ import {
   getClientOperations,
   ClientOperation,
   getSimpleOverallStatus,
+  getSimpleStatus,
 } from "@/utils/clientType";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
 import { useState, useMemo, useEffect, useCallback } from "react";
@@ -36,9 +37,13 @@ export const useFetchTransactionStatus = () => {
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const operationToTransferEventsMapFromTransactionStatusAndClientOperations = useMemo(() => {
-    return getOperationToTransferEventsMap(transactionStatus ?? [], clientOperations);
-  }, [clientOperations, transactionStatus]);
+  const operationToTransferEventsMapFromTransactionStatusAndClientOperations =
+    useMemo(() => {
+      return getOperationToTransferEventsMap(
+        transactionStatus ?? [],
+        clientOperations
+      );
+    }, [clientOperations, transactionStatus]);
 
   const operationTransferEventsArray = useMemo(() => {
     return Object.values(
@@ -47,17 +52,28 @@ export const useFetchTransactionStatus = () => {
   }, [operationToTransferEventsMapFromTransactionStatusAndClientOperations]);
 
   const simpleOverallStatus = useMemo(() => {
-    if (!route?.txsRequired) return;
-    const lastTransactionIndex = route.txsRequired - 1;
-    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
+    const pendingOperationTransferEventsArray =
+      operationTransferEventsArray.filter(
+        (transferEvent) => getSimpleStatus(transferEvent.state) === "pending"
+      );
 
-    if (operationTransferEventsArray.length === 0 && isPending) {
+    if (pendingOperationTransferEventsArray.length === 0 && isPending) {
       return "signing";
     }
-    if (!overallState) return "unconfirmed";
 
+    if (!route?.txsRequired || !isPending) return "unconfirmed";
+
+    const lastTransactionIndex = route.txsRequired - 1;
+    const overallState = transactionStatus?.[lastTransactionIndex]?.state;
+    if (!overallState) return "pending";
+    console.log(getSimpleOverallStatus(overallState));
     return getSimpleOverallStatus(overallState);
-  }, [isPending, operationTransferEventsArray.length, route?.txsRequired, transactionStatus]);
+  }, [
+    isPending,
+    operationTransferEventsArray,
+    route?.txsRequired,
+    transactionStatus,
+  ]);
 
   const updateOperationToTransferEventsMap = useCallback(() => {
     const transferEvents =
@@ -78,7 +94,10 @@ export const useFetchTransactionStatus = () => {
         {} as Record<number, ClientTransferEvent>
       );
       setOperationToTransferEventsMap(derivedOperationToTransferEventsMap);
-    } else if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
+    } else if (
+      transactionDetailsArray.length === 1 &&
+      transferEvents.length === 0
+    ) {
       // temporarily setting operationToTransferEventsMap to have the first
       // operation pending before the API returns any transfer events
       // so that the UX is nicer
@@ -91,9 +110,18 @@ export const useFetchTransactionStatus = () => {
       // setting operationToTransferEventsMap if operationToTransferEventsMap
       // is retrieved properly from getOperationToTransferEventsMap
 
-      setOperationToTransferEventsMap(operationToTransferEventsMapFromTransactionStatusAndClientOperations);
+      setOperationToTransferEventsMap(
+        operationToTransferEventsMapFromTransactionStatusAndClientOperations
+      );
     }
-  }, [clientOperations, operationToTransferEventsMapFromTransactionStatusAndClientOperations, operationTransferEventsArray.length, simpleOverallStatus, transactionDetailsArray.length, transactionStatus]);
+  }, [
+    clientOperations,
+    operationToTransferEventsMapFromTransactionStatusAndClientOperations,
+    operationTransferEventsArray.length,
+    simpleOverallStatus,
+    transactionDetailsArray.length,
+    transactionStatus,
+  ]);
 
   useEffect(() => {
     if (["completed", "failed"].includes(overallStatus)) return;
