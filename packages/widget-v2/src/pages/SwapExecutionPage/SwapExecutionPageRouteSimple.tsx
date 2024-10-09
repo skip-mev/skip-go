@@ -66,7 +66,6 @@ export const SwapExecutionPageRouteSimple = ({
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
         {...destination}
-        destination
         icon={ICONS.pen}
         status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}

@@ -249,13 +249,7 @@ export function getOperationToTransferEventsMap(
         const isSwapType = ["evmSwap", "swap"].includes(operation.type);
         if (!isSwapType) return false;
 
-        const operationStaysOnTheSameChain = operation.fromChainID === operation.toChainID;
-        const fromChainMatches = transferEvent.fromChainID === operation.fromChainID;
-        const toChainMatches = transferEvent.toChainID === operation.toChainID;
-
-        return operationStaysOnTheSameChain
-          ? fromChainMatches || toChainMatches
-          : fromChainMatches && toChainMatches;
+        return transferEvent.fromChainID === operation.fromChainID;
       }
     );
 
@@ -302,6 +296,7 @@ export function getSimpleStatus(
 ) {
   switch (state) {
     case "TRANSFER_PENDING":
+    case "TRANSFER_RECEIVED":
     case "AXELAR_TRANSFER_PENDING_CONFIRMATION":
     case "AXELAR_TRANSFER_PENDING_RECEIPT":
     case "CCTP_TRANSFER_SENT":
@@ -338,11 +333,11 @@ export enum TransferType {
 }
 
 export type SimpleStatus =
+  | "unconfirmed"
+  | "signing"
   | "pending"
-  | "broadcasted"
   | "completed"
   | "failed"
-  | "signing";
 
 export type ClientTransferEvent = {
   fromChainID: string;

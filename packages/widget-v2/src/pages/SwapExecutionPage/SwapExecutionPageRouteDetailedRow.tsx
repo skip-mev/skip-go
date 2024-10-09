@@ -18,7 +18,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: SimpleStatus;
+  status: SimpleStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -213,7 +213,7 @@ const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
-  status?: SimpleStatus;
+  status: SimpleStatus;
   backgroundColor?: string;
 }>`
   position: relative;
@@ -226,7 +226,6 @@ const StyledLoadingContainer = styled(Row) <{
         return `border: ${borderSize}px solid ${theme.success.text}`;
       case "failed":
         return `border: ${borderSize}px solid ${theme.error.text}`;
-      case "broadcasted":
       default:
         return "";
     }
