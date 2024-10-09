@@ -7,6 +7,7 @@ import { lightTheme } from "@/widget/theme";
 createRoot(document.getElementById("root") as HTMLElement)?.render(
   <StrictMode>
     <Row gap={20}>
+      <SwapWidget />
       <SwapWidget theme={lightTheme} />
     </Row>
   </StrictMode>,
