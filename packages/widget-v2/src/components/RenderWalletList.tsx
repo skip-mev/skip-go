@@ -19,6 +19,7 @@ export type RenderWalletListProps = {
   isDestinationAddress?: boolean;
   chainId?: string;
   chainType?: string;
+  isConnectEco?: boolean;
 };
 
 export type ManualWalletEntry = {
@@ -49,6 +50,7 @@ export const RenderWalletList = ({
   isDestinationAddress,
   chainId,
   chainType,
+  isConnectEco
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
@@ -73,6 +75,9 @@ export const RenderWalletList = ({
           };
         });
         return null;
+      }
+      if (isConnectEco) {
+        return await wallet.connectEco();
       }
       return await wallet.connect();
     },
@@ -168,7 +173,7 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              status={connectMutation.isError ? "failed" : "broadcasted"}
+              status={connectMutation.isError ? "failed" : "pending"}
               borderSize={8}
             >
               <img

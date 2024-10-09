@@ -62,11 +62,8 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
-    if (latest.endsWith(".")) {
-      onChangeValue?.(formatNumberWithoutCommas(latest));
-    } else {
-      onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest)));
-    }
+
+    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest)));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

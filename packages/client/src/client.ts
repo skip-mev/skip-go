@@ -802,7 +802,6 @@ export class SkipClient {
           searchTransactionHistory: true,
         });
         if (result?.value?.confirmationStatus === 'confirmed') {
-          console.log("sol2 sig", signature)
           return signature;
         } else if (getStatusCount > 12) {
           await wait(3000);
