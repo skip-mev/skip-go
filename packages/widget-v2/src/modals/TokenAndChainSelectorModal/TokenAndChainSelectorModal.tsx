@@ -161,9 +161,7 @@ export const TokenAndChainSelectorModal = createModal(
           "id",
           "assets.*.symbol",
           "assets.*.denom",
-          "chains.*.chainName",
           "chains.*.originChainID",
-          "chains.*.chainID",
         ],
       }).sort((itemA, itemB) => {
         const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
