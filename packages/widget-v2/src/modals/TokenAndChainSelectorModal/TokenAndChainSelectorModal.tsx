@@ -161,7 +161,6 @@ export const TokenAndChainSelectorModal = createModal(
           "id",
           "assets.*.symbol",
           "assets.*.denom",
-          "chains.*.chainName",
           "chains.*.originChainID",
           "chains.*.chainID",
         ],
