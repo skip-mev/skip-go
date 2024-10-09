@@ -1,5 +1,5 @@
 import { SwapWidget } from '@skip-go/widget';
-import { defaultTheme, lightTheme } from '@skip-go/widget/src/widget/theme';
+import { defaultTheme, lightTheme } from '@skip-go/widget';
 import { useState } from 'react';
 
 const Home = () => {
