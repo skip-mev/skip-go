@@ -69,7 +69,6 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
-import { MsgWithdrawFromSubaccount } from '@dydxprotocol/v4-client-js';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -110,7 +109,6 @@ export class SkipClient {
       ['/cosmwasm.wasm.v1.MsgExecuteContract', MsgExecuteContract],
       ['/initia.move.v1.MsgExecute', MsgExecute],
       ['/opinit.ophost.v1.MsgInitiateTokenDeposit', MsgInitiateTokenDeposit],
-      ['/dydxprotocol.sending.MsgWithdrawFromSubaccount', MsgWithdrawFromSubaccount],
       ...circleProtoRegistry,
       ...evmosProtoRegistry,
       ...(options.registryTypes ?? []),

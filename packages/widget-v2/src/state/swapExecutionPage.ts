@@ -214,45 +214,16 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
 
-  // export type CosmosMsg = {
-  //   msg: string;
-  //   msgTypeURL: string;
-  // };
-
-
-  // export type CosmosTx = {
-  //   chainID: string;
-  //   path: string[];
-  //   msgs: CosmosMsg[];
-  //   signerAddress: string;
-  // };
-
   return {
     gcTime: Infinity,
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
 
-      const dydxAddress = "dydx1l8rnlvl2zu9mnxz29r6mrd4c69s4rz8gplxvvu";
-
-      const withdraw = JSON.stringify({
-        sender: {
-          owner: dydxAddress,
-          number: 0,
-        },
-        recipient: dydxAddress,
-        assetId: 0,
-        quantums: "1"
-      });
-
-      const beforeMsg = { msg: withdraw, msgTypeURL: '/dydxprotocol.sending.MsgWithdrawFromSubaccount' }
-
       try {
         await skip.executeRoute({
           route,
           userAddresses,
-          beforeMsg: beforeMsg,
-          afterMsg: beforeMsg,
           validateGasBalance: route.sourceAssetChainID !== "984122",
           // getFallbackGasAmount: async (chainID, chainType) => {
           //   if (chainType === "cosmos") {
