@@ -87,7 +87,7 @@ export const TokenAndChainSelectorModal = createModal(
       const calculateBalanceSummary = (assets: ClientAsset[]) => {
         return assets.reduce(
           (accumulator, asset) => {
-            const { data: balance } = getBalance(asset.chainID, asset.denom);
+            const balance = getBalance(asset.chainID, asset.denom);
             if (balance) {
               accumulator.totalAmount += Number(
                 convertTokenAmountToHumanReadableAmount(
@@ -161,11 +161,22 @@ export const TokenAndChainSelectorModal = createModal(
           "id",
           "assets.*.symbol",
           "assets.*.denom",
-          "chains.*.chainName",
           "chains.*.originChainID",
-          "chains.*.chainID",
         ],
       }).sort((itemA, itemB) => {
+        const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
+        if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {
+          const indexA = PRIVILEGED_ASSETS.indexOf(itemA.id);
+          const indexB = PRIVILEGED_ASSETS.indexOf(itemB.id);
+
+          if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB;
+          }
+
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+        }
+
         if (itemA.totalUsd < itemB.totalUsd) {
           return 1;
         }
@@ -190,11 +201,11 @@ export const TokenAndChainSelectorModal = createModal(
       return matchSorter(resChains, searchQuery, {
         keys: ["prettyName", "chainName", "chainID"],
       }).sort((assetA, assetB) => {
-        const { data: balanceA } = getBalance(
+        const balanceA = getBalance(
           assetA.chainID,
           assetA.asset.denom
         );
-        const { data: balanceB } = getBalance(
+        const balanceB = getBalance(
           assetB.chainID,
           assetB.asset.denom
         );
@@ -204,6 +215,14 @@ export const TokenAndChainSelectorModal = createModal(
         }
 
         if (Number(balanceA?.valueUSD ?? 0) > Number(balanceB?.valueUSD ?? 0)) {
+          return -1;
+        }
+
+        if (assetB.asset.originChainID === assetB.chainID) {
+          return 1;
+        }
+
+        if (assetA.asset.originChainID === assetA.chainID) {
           return -1;
         }
 
@@ -227,6 +246,7 @@ export const TokenAndChainSelectorModal = createModal(
     const handleSearch = (term: string) => {
       setSearchQuery(term);
     };
+
 
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
@@ -257,6 +277,7 @@ export const TokenAndChainSelectorModal = createModal(
       networkSelection,
     ]);
 
+
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
         modal.remove();
@@ -264,6 +285,13 @@ export const TokenAndChainSelectorModal = createModal(
         setGroupedAssetSelected(null);
       }
     };
+
+    const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
+        setGroupedAssetSelected(null);
+      }
+    };
+
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput
@@ -272,7 +300,7 @@ export const TokenAndChainSelectorModal = createModal(
           asset={groupedAssetSelected?.assets[0] || selectedAsset}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
-          networkSelection={networkSelection}
+          onKeyDown={onKeyDown}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
           <Column>

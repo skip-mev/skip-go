@@ -14,6 +14,7 @@ import { useAtomValue } from "jotai";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
+import { copyToClipboard } from "@/utils/misc";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -114,12 +115,8 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           <Button
             align="center"
-            onClick={() => {
-              if (source.address) {
-                navigator.clipboard.writeText(source.address);
-              }
-            }}
-            gap={2}
+            gap={3}
+            onClick={() => copyToClipboard(source.address)}
           >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (

@@ -1,13 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { AssetChainInput } from "@/components/AssetChainInput";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import {
-  skipAssetsAtom,
-  skipRouteAtom,
-} from "@/state/skipClient";
+import { skipAssetsAtom } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -29,15 +26,18 @@ import { useModal } from "@/components/Modal";
 import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
-import { TransactionHistoryModal } from "@/modals/TransactionHistoryModal/TransactionHistoryModal";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { useSourceAccount } from "@/hooks/useSourceAccount";
-import { skipBalancesAtom } from "@/state/balances";
+import { skipAllBalancesAtom } from "@/state/balances";
+import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
+import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
+import { useGetAccount } from "@/hooks/useGetAccount";
+import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -45,24 +45,26 @@ export const SwapPage = () => {
   const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
+  const insufficientBalance = useInsufficientSourceBalance();
+  const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
+  const setError = useSetAtom(errorAtom);
+  const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
   const {
     data: route,
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
+
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
-  const setCurrentPage = useSetAtom(currentPageAtom);
-  const historyModal = useModal(TransactionHistoryModal);
-  const insufficientBalance = useInsufficientSourceBalance();
-  const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
-  const { isLoading: isLoadingBalances } = useAtomValue(skipBalancesAtom);
+  const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-
-  const sourceAccount = useSourceAccount();
+  useFetchAllBalances();
+  const getAccount = useGetAccount();
+  const sourceAccount = getAccount(sourceAsset?.chainID);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -80,10 +82,12 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        setSourceAssetAmount("");
+        setDestinationAssetAmount("");
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setSourceAsset, tokenAndChainSelectorModal]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -97,13 +101,7 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       networkSelection: true,
     });
-  }, [
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-    tokenAndChainSelectorModal,
-  ]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -141,25 +139,63 @@ export const SwapPage = () => {
   ]);
 
   const swapButton = useMemo(() => {
-    if (isWaitingForNewRoute) {
-      return <MainButton label="Finding Best Route..." loading />;
-    }
-
-    if (isRouteError) {
-      return <MainButton label={routeError.message} disabled />;
-    }
     if (!sourceAccount?.address) {
       return (
         <MainButton
-          disabled={!sourceAsset?.chainID}
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
-            selectWalletmodal.show({
-              chainId: sourceAsset?.chainID,
-            });
+            if (!sourceAsset?.chainID) {
+              connectedWalletModal.show();
+            } else {
+              selectWalletmodal.show({
+                chainId: sourceAsset?.chainID,
+              });
+            }
           }}
         />
+      );
+    }
+
+    if (!sourceAsset?.chainID) {
+      return (
+        <MainButton
+          label="Please select a source asset"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
+    }
+
+    if (!destinationAsset?.chainID) {
+      return (
+        <MainButton
+          label="Please select a destination asset"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
+    }
+
+    if (!sourceAsset?.amount || !destinationAsset?.amount) {
+      return (
+        <MainButton
+          label="Please enter a valid amount"
+          icon={ICONS.swap}
+          disabled
+        />
+      );
+    }
+
+    if (isWaitingForNewRoute) {
+      return <MainButton label="Finding best route..." loading />;
+    }
+
+
+
+    if (isRouteError) {
+      return (
+        <MainButton label={routeError?.message ?? "No routes found"} disabled />
       );
     }
     if (isLoadingBalances) {
@@ -198,21 +234,7 @@ export const SwapPage = () => {
         }}
       />
     );
-  }, [
-    isWaitingForNewRoute,
-    isRouteError,
-    sourceAccount?.address,
-    isLoadingBalances,
-    insufficientBalance,
-    route,
-    routeError?.message,
-    sourceAsset?.chainID,
-    selectWalletmodal,
-    setChainAddresses,
-    setCurrentPage,
-    setSwapExecutionState,
-    setError,
-  ]);
+  }, [sourceAsset?.chainID, sourceAsset?.amount, destinationAsset?.chainID, destinationAsset?.amount, isWaitingForNewRoute, sourceAccount?.address, isRouteError, isLoadingBalances, insufficientBalance, route, connectedWalletModal, selectWalletmodal, routeError?.message, setChainAddresses, setCurrentPage, setSwapExecutionState, setError]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
@@ -239,12 +261,12 @@ export const SwapPage = () => {
           leftButton={{
             label: "History",
             icon: ICONS.history,
-            onClick: () => historyModal.show(),
+            onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
           }}
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
@@ -256,7 +278,7 @@ export const SwapPage = () => {
             onChangeValue={setSourceAssetAmount}
           />
           <SwapPageBridge />
-          <AssetChainInput
+          <SwapPageAssetChainInput
             selectedAsset={destinationAsset}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}

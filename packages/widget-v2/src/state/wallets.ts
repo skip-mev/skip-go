@@ -7,6 +7,7 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string
   };
+  connectEco: () => Promise<void>;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;

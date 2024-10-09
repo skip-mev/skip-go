@@ -31,7 +31,8 @@ export const useGetAccount = () => {
   const connectors = useConnectors();
 
   const getAccount = useCallback(
-    (chainId?: string) => {
+    // if checkChainType is true, it only check wallet connected no chainId is dependent
+    (chainId?: string, checkChainType?: boolean) => {
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       switch (chainType) {
         case "cosmos":
@@ -64,6 +65,13 @@ export const useGetAccount = () => {
 
       const getCosmosAccount = () => {
         if (!cosmosAccounts || !chainId) return;
+        if (checkChainType) {
+          const cosmosHub = cosmosAccounts["cosmoshub-4"];
+          if (cosmosHub) {
+            return cosmosHub;
+          }
+          return Object.values(cosmosAccounts).find(key => key?.bech32Address);
+        }
         return cosmosAccounts[chainId];
       };
       const cosmosAccount = getCosmosAccount();
@@ -89,11 +97,12 @@ export const useGetAccount = () => {
         }
         case "evm":
           if (!wallet.evm) return;
-          if (evmAccount.chainId !== Number(chainId)) return;
+          if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
           if (!evmAccount.connector) return;
           return {
             address: evmAccount.address as string,
+            currentConnectedEVMChainId: String(evmAccount.chainId),
             chainType,
             wallet: {
               name: evmAccount.connector.id,

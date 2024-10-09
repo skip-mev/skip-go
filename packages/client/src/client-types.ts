@@ -85,6 +85,11 @@ export type ExecuteRouteOptions = {
    */
   getFallbackGasAmount?: GetFallbackGasAmount;
   gasAmountMultiplier?: number;
+  /**
+ * Arbitrary Tx to be executed before or after route msgs
+ */
+  beforeMsg?: types.CosmosMsg;
+  afterMsg?: types.CosmosMsg;
 };
 
 export type ExecuteCosmosMessageOptions = {

@@ -63,11 +63,9 @@
       "group": "Skip Go Widget",
       "pages": [
         "widget/getting-started",
-        "widget/configuration-options",
+        "widget/configuration",
         "widget/web-component",
-        "widget/experimental-features",
-        "widget/common-questions",
-        "widget/recommendations"
+        "widget/faq"
       ]
     },
     {

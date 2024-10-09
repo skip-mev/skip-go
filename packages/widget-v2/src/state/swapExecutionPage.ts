@@ -1,14 +1,15 @@
 import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
-import { skipClient, skipRouteAtom } from "./skipClient";
+import { skipClient } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { atomWithStorage } from "jotai/utils";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
-
+import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { isUserRejectedRequestError } from "@/utils/error";
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
@@ -46,7 +47,7 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const swapExecutionStateAtom = atomWithStorage<SwapExecutionState>(
+export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
   {
     route: undefined,
@@ -81,14 +82,38 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
-    onError: (error: unknown) => {
-      if ((error as Error).message === "Request rejected") {
+    onError: (error: unknown, transactionDetailsArray) => {
+      const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
+
+      if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
             set(setOverallStatusAtom, undefined);
           }
+        });
+      } else if (lastTransaction?.explorerLink) {
+        set(errorAtom, {
+          errorType: ErrorType.TransactionFailed,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
+          explorerLink: lastTransaction?.explorerLink ?? "",
+          transactionHash: lastTransaction?.txHash ?? "",
+          onClickContactSupport: () => {
+            window.open("https://skip.build/discord", "_blank");
+          }
+        });
+      } else {
+        set(errorAtom, {
+          errorType: ErrorType.Unexpected,
+          error: error as Error,
+          onClickBack: () => {
+            set(errorAtom, undefined);
+            set(setOverallStatusAtom, undefined);
+          },
         });
       }
     },
@@ -175,7 +200,7 @@ export type ClientTransactionStatus =
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
-  onError: (error: unknown) => void;
+  onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
   onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
   onTransactionSigned?: ExecuteRouteOptions["onTransactionSigned"];
 };
@@ -186,7 +211,7 @@ export const submitSwapExecutionCallbacksAtom = atom<
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
-  const { route, userAddresses } = get(swapExecutionStateAtom);
+  const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
 
   return {
@@ -239,13 +264,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         });
       } catch (error: unknown) {
         console.error(error);
-        submitSwapExecutionCallbacks?.onError?.(error);
+        submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
       }
       return null;
     },
     onError: (error: unknown) => {
       console.error(error);
-      submitSwapExecutionCallbacks?.onError?.(error);
+      submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
     },
   };
 });

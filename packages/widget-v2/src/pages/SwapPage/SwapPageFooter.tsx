@@ -5,7 +5,7 @@ import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SpeedometerIcon } from "@/icons/SpeedometerIcon";
 import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { skipRouteAtom } from "@/state/skipClient";
+import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { styled } from "styled-components";
@@ -32,18 +32,21 @@ export const SwapPageFooterItems = ({
     if (showRouteInfo && route) {
       return (
         <Row align="center" gap={8}>
-          <Row gap={4} align="center">
-            <StyledSignatureRequiredContainer gap={5} align="center">
-              <SignatureIcon />
-              {route?.txsRequired}{" "}
-              {pluralize("Signature", route?.txsRequired)} required
-            </StyledSignatureRequiredContainer>
-          </Row>
+          {
+            route?.txsRequired > 1 && <Row gap={4} align="center">
+              <StyledSignatureRequiredContainer gap={5} align="center">
+                <SignatureIcon />
+                {route?.txsRequired}{" "}
+                {pluralize("Signature", route?.txsRequired)} required
+              </StyledSignatureRequiredContainer>
+            </Row>
+          }
+
 
           {showEstimatedTime && estimatedTime && (
             <Row gap={4} align="center">
               <SpeedometerIcon />
-              {estimatedTime}
+              {estimatedTime}.
             </Row>
           )}
         </Row>
@@ -74,7 +77,6 @@ export const SwapPageFooter = ({
   return (
     <GhostButton
       gap={5}
-      align="center"
       justify="space-between"
       onClick={onClick}
       {...props}

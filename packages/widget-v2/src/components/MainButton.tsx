@@ -59,15 +59,17 @@ export const MainButton = ({
         <Row align="center" gap={10}>
           <LeftIcon backgroundColor={textColor} color={backgroundColor} />
           <Text
+            fontWeight="bold"
             fontSize={24}
             color={textColor}
             mainButtonColor={backgroundColor}
+            capitalize
           >
             {label}
           </Text>
         </Row>
       ) : (
-        <Text fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
+        <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
           {label}
         </Text>
       )}
@@ -93,12 +95,12 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <Text fontSize={24} style={{ opacity: 0.5 }}>
+      <Text fontWeight="bold" fontSize={24} style={{ opacity: 0.5 }}>
         {label}
       </Text>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
-          <SmallText>{loadingTimeString}</SmallText>
+          <SmallText>{loadingTimeString}.</SmallText>
         </StyledTimeRemaining>
       )}
     </StyledOverlay>

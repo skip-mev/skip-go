@@ -4,11 +4,11 @@ import { Row } from "@/components/Layout";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SmallText } from "@/components/Typography";
 import { SearchIcon } from "@/icons/SearchIcon";
-import { StyledAssetLabel } from "@/components/AssetChainInput";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
 import { Asset } from "@skip-go/client";
+import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 
 type TokenAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
@@ -16,7 +16,7 @@ type TokenAndChainSelectorModalSearchInputProps = {
   asset?: Asset;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  networkSelection?: boolean;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const TokenAndChainSelectorModalSearchInput = ({
@@ -25,7 +25,7 @@ export const TokenAndChainSelectorModalSearchInput = ({
   onClickBack,
   searchTerm,
   setSearchTerm,
-  networkSelection,
+  onKeyDown,
 }: TokenAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,12 +66,13 @@ export const TokenAndChainSelectorModalSearchInput = ({
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
         placeholder={
-          asset && networkSelection
-            ? "Search networks"
-            : "Search asset or network"
+          asset
+            ? "Search network"
+            : "Search asset"
         }
         value={searchTerm}
         onChange={handleSearch}
+        onKeyDown={onKeyDown}
       />
 
       <Row align="center" gap={5}>

@@ -57,22 +57,23 @@ export const TokenAndChainSelectorModalRowItem = ({
       />
     );
   }
-  const { data: balance } = getBalance(item.asset.chainID, item.asset.denom);
+  const balance = getBalance(item.asset.chainID, item.asset.denom);
   return (
     <ModalRowItem
       key={item.chainID}
       onClick={() => onSelect(item.asset)}
       style={{ margin: "5px 0" }}
       leftContent={
-        <Row align="center" gap={10}>
+        <Row align="center" gap={8}>
           <StyledAssetImage
             height={35}
             width={35}
             src={item?.logoURI}
             alt={`${item.chainID} logo`}
           />
-          <Text>{item.prettyName}</Text>
-          <SmallText>{item.chainID}</SmallText>
+          <Row align="end" gap={8}>
+            <Text>{item.prettyName}</Text>
+            <SmallText>{item.chainID}</SmallText></Row>
         </Row>
       }
       rightContent={
@@ -111,23 +112,25 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
     .sort((a, b) => a.chainName.localeCompare(b.chainName));
 
   return (
-    <Row align="center" gap={6}>
+    <Row align="center" gap={8}>
       <StyledAssetImage
         height={35}
         width={35}
         src={item.assets[0].logoURI}
         alt={`${item.assets[0].recommendedSymbol} logo`}
       />
-      <Text>{item.assets[0].recommendedSymbol}</Text>
-      {chainList.length > 1 ? (
-        <SmallText>{`${chainList.length} networks`}</SmallText>
-      ) : (
-        chainList.map((chain, index) => (
-          <Row key={index} align="center" gap={6}>
-            {<SmallText>{chain.chainName}</SmallText>}
-          </Row>
-        ))
-      )}
+      <Row align="end" gap={8}>
+        <Text>{item.assets[0].recommendedSymbol}</Text>
+        {chainList.length > 1 ? (
+          <SmallText>{`${chainList.length} networks`}</SmallText>
+        ) : (
+          chainList.map((chain, index) => (
+            <Row key={index} align="center" gap={6}>
+              {<SmallText>{chain.chainName}</SmallText>}
+            </Row>
+          ))
+        )}
+      </Row>
     </Row>
   );
 };
