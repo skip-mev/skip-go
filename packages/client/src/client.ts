@@ -3,7 +3,6 @@ import { createWasmAminoConverters } from '@cosmjs/cosmwasm-stargate';
 import { fromBase64, toHex } from '@cosmjs/encoding';
 import { Int53 } from '@cosmjs/math';
 import { Decimal } from '@cosmjs/math';
-import { MsgWithdrawFromSubaccount } from '@dydxprotocol/v4-client-js'
 import { makePubkeyAnyFromAccount } from './proto-signing/pubkey';
 import {
   EncodeObject,
@@ -70,6 +69,7 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
+import { MsgWithdrawFromSubaccount } from '@dydxprotocol/v4-client-js';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -234,7 +234,7 @@ export class SkipClient {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const { route, userAddresses } = options;
+    const { route, userAddresses, beforeMsg, afterMsg } = options;
 
     let addressList: string[] = [];
     let i = 0;
@@ -272,13 +272,26 @@ export class SkipClient {
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
 
-    const txs = [
-      ...(options.beforeTx ? [options.beforeTx] : []),
-      ...messages.txs,
-      ...(options.afterTx ? [options.afterTx] : [])
-    ];
+    console.log({ beforeMsg, afterMsg })
 
-    await this.executeTxs({ ...options, txs });
+    if (beforeMsg && messages.txs.length > 0) {
+      const firstTx = messages.txs[0];
+      console.log({ firstTx })
+      if (firstTx && 'cosmosTx' in firstTx) {
+        firstTx.cosmosTx.msgs.unshift(beforeMsg);
+      }
+    }
+
+    if (afterMsg && messages.txs.length > 0) {
+
+      const lastTx = messages.txs[messages.txs.length - 1];
+      console.log({ lastTx })
+      if (lastTx && 'cosmosTx' in lastTx) {
+        lastTx.cosmosTx.msgs.push(afterMsg);
+      }
+    }
+
+    await this.executeTxs({ ...options, txs: messages.txs });
   }
 
   async executeTxs(

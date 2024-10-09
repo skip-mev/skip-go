@@ -88,8 +88,8 @@ export type ExecuteRouteOptions = {
   /**
  * Arbitrary Tx to be executed before or after route msgs
  */
-  beforeTx?: types.Tx;
-  afterTx?: types.Tx;
+  beforeMsg?: types.CosmosMsg;
+  afterMsg?: types.CosmosMsg;
 };
 
 export type ExecuteCosmosMessageOptions = {

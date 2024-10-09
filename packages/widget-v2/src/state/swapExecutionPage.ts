@@ -2,7 +2,7 @@ import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { ExecuteRouteOptions, RouteResponse, Tx, TxStatusResponse, UserAddress } from "@skip-go/client";
+import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
@@ -235,8 +235,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
       const dydxAddress = "dydx1l8rnlvl2zu9mnxz29r6mrd4c69s4rz8gplxvvu";
 
-      userAddresses.push({ address: dydxAddress, chainID: "dydx-mainnet-1" });
-
       const withdraw = JSON.stringify({
         sender: {
           owner: dydxAddress,
@@ -247,21 +245,14 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         quantums: "1"
       });
 
-      const additionalTx: Tx = {
-        cosmosTx: {
-          chainID: "dydx-mainnet-1",
-          msgs: [{ msg: withdraw, msgTypeURL: '/dydxprotocol.sending.MsgWithdrawFromSubaccount' }],
-          signerAddress: dydxAddress ?? "",
-        },
-        operationsIndices: [0],
-      };
+      const beforeMsg = { msg: withdraw, msgTypeURL: '/dydxprotocol.sending.MsgWithdrawFromSubaccount' }
 
       try {
         await skip.executeRoute({
           route,
           userAddresses,
-          beforeTx: additionalTx,
-          afterTx: additionalTx,
+          beforeMsg: beforeMsg,
+          afterMsg: beforeMsg,
           validateGasBalance: route.sourceAssetChainID !== "984122",
           // getFallbackGasAmount: async (chainID, chainType) => {
           //   if (chainType === "cosmos") {
