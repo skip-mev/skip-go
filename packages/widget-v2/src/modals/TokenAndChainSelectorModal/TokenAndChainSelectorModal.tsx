@@ -162,7 +162,6 @@ export const TokenAndChainSelectorModal = createModal(
           "assets.*.symbol",
           "assets.*.denom",
           "chains.*.originChainID",
-          "chains.*.chainID",
         ],
       }).sort((itemA, itemB) => {
         if (itemA.totalUsd < itemB.totalUsd) {
