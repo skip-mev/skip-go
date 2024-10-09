@@ -270,20 +270,15 @@ export class SkipClient {
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
 
-    console.log({ beforeMsg, afterMsg })
-
     if (beforeMsg && messages.txs.length > 0) {
       const firstTx = messages.txs[0];
-      console.log({ firstTx })
       if (firstTx && 'cosmosTx' in firstTx) {
         firstTx.cosmosTx.msgs.unshift(beforeMsg);
       }
     }
 
     if (afterMsg && messages.txs.length > 0) {
-
       const lastTx = messages.txs[messages.txs.length - 1];
-      console.log({ lastTx })
       if (lastTx && 'cosmosTx' in lastTx) {
         lastTx.cosmosTx.msgs.push(afterMsg);
       }
