@@ -161,11 +161,22 @@ export const TokenAndChainSelectorModal = createModal(
           "id",
           "assets.*.symbol",
           "assets.*.denom",
-          "chains.*.chainName",
           "chains.*.originChainID",
-          "chains.*.chainID",
         ],
       }).sort((itemA, itemB) => {
+        const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
+        if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {
+          const indexA = PRIVILEGED_ASSETS.indexOf(itemA.id);
+          const indexB = PRIVILEGED_ASSETS.indexOf(itemB.id);
+
+          if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB;
+          }
+
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+        }
+
         if (itemA.totalUsd < itemB.totalUsd) {
           return 1;
         }
