@@ -166,6 +166,7 @@ export async function getCosmosGasAmountForMessage(
     getEncodeObjectFromCosmosMessage(message)
   );
   encodedMsgs = encodedMsgs || _encodedMsgs;
+
   if (!encodedMsgs) {
     throw new Error('Either message or encodedMsg must be provided');
   }

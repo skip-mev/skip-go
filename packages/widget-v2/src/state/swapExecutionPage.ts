@@ -10,7 +10,6 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
