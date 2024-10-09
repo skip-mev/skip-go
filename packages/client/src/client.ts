@@ -84,10 +84,10 @@ export class SkipClient {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  protected getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  protected getSVMSigner?: () => Promise<Adapter>;
-  protected chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
+  protected getCosmosSigner?: clientTypes.SignerGetters['getCosmosSigner'];
+  protected getEVMSigner?: clientTypes.SignerGetters['getEVMSigner'];
+  protected getSVMSigner?: clientTypes.SignerGetters['getSVMSigner'];
+  protected chainIDsToAffiliates?: clientTypes.SkipClientOptions['chainIDsToAffiliates'];
   protected cumulativeAffiliateFeeBPS?: string = '0';
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
@@ -759,7 +759,7 @@ export class SkipClient {
   }: {
     signer: Adapter;
     message: types.SvmTx;
-    onTransactionSigned?: clientTypes.ExecuteRouteOptions['onTransactionSigned'];
+    onTransactionSigned?: types.TransactionCallbacks['onTransactionSigned'];
   }) {
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);

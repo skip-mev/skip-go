@@ -1,12 +1,11 @@
 import { fromBech32 } from "@cosmjs/encoding";
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
-
-type chainType = "cosmos" | "evm" | "svm" | string;
+import { ChainType } from "@skip-go/client";
 
 type isValidWalletAddressProps = {
   address: string;
-  chainType: chainType;
+  chainType: ChainType | string;
   bech32Prefix: string;
 }
 
