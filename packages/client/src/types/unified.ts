@@ -550,7 +550,7 @@ export type MsgsResponse = {
 
 export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';
 
-export type ChainType = 'cosmos' | 'evm' | 'svm' | 'sei';
+export type ChainType = 'cosmos' | 'evm' | 'svm';
 
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;
