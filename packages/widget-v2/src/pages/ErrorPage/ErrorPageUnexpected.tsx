@@ -21,6 +21,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
   const onClickRetry = () => {
     resetError();
     setCurrentPage(Routes.SwapPage);
+    console.error("on click retry");
   };
 
   return (
@@ -35,6 +36,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
               onClickBack();
             }
             setCurrentPage(Routes.SwapPage);
+            console.error("on click back");
           }
         }}
       />
