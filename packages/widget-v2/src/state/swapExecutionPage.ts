@@ -84,6 +84,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      console.error("on error callback");
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
