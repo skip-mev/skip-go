@@ -43,10 +43,11 @@ export const useBroadcastedTxsStatus = ({
       console.log("results", results);
       const transferEvents = getTransferEventsFromTxStatusResponse(results);
       console.log("transferEvents", transferEvents);
-      const _isSettled = transferEvents.every((tx) => {
+      const _isSettled = results.every((tx) => {
         return (
-          tx.status === "completed" ||
-          tx.status === "failed"
+          tx.state === "STATE_COMPLETED_SUCCESS" ||
+          tx.state === "STATE_COMPLETED_ERROR" ||
+          tx.state === "STATE_ABANDONED"
         );
       });
 
