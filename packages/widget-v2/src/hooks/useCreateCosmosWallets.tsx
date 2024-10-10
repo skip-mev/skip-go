@@ -1,7 +1,6 @@
 import { getChainInfo } from "@/state/chains";
 import { cosmosWalletAtom, MinimalWallet } from "@/state/wallets";
 import {
-  getAvailableWallets,
   getWallet,
   useAccount,
   useActiveWalletType,
@@ -29,10 +28,6 @@ export const useCreateCosmosWallets = () => {
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setCosmosWallet = useSetAtom(cosmosWalletAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
-  const _availableWallets = getAvailableWallets();
-  const cosmosWallets = Object.entries(_availableWallets)
-    .filter(([_, value]) => value)
-    .map(([key]) => key) as WalletType[];
   const { walletType: currentWallet } = useActiveWalletType();
 
   const { data: accounts, isConnected } = useAccount({
@@ -43,6 +38,8 @@ export const useCreateCosmosWallets = () => {
 
   const createCosmosWallets = useCallback(
     (chainID?: string) => {
+      const cosmosWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS];
+
       const isPenumbra = chainID?.includes("penumbra");
       if (isPenumbra) {
         const praxWallet: MinimalWallet = {
@@ -189,22 +186,20 @@ export const useCreateCosmosWallets = () => {
             await disconnectAsync();
           },
           isWalletConnected: currentWallet === wallet,
+          isAvailable: (() => {
+            try {
+              const w = getWallet(wallet);
+              return Boolean(w);
+            } catch (_error) {
+              return false;
+            }
+          })()
         };
         wallets.push(minimalWallet);
       }
       return wallets;
     },
-    [
-      accounts,
-      assets,
-      chains,
-      cosmosWallets,
-      currentWallet,
-      disconnectAsync,
-      isConnected,
-      setCosmosWallet,
-      setSourceAsset,
-    ]
+    [accounts, assets, chains, currentWallet, disconnectAsync, isConnected, setCosmosWallet, setSourceAsset]
   );
 
   return { createCosmosWallets };

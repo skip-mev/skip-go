@@ -65,13 +65,6 @@ export const useGetAccount = () => {
 
       const getCosmosAccount = () => {
         if (!cosmosAccounts || !chainId) return;
-        if (checkChainType) {
-          const cosmosHub = cosmosAccounts["cosmoshub-4"];
-          if (cosmosHub) {
-            return cosmosHub;
-          }
-          return Object.values(cosmosAccounts).find(key => key?.bech32Address);
-        }
         return cosmosAccounts[chainId];
       };
       const cosmosAccount = getCosmosAccount();

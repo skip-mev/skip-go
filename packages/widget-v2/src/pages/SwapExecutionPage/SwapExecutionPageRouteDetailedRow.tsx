@@ -18,7 +18,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
-  status: SimpleStatus;
+  status?: SimpleStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -115,27 +115,32 @@ export const SwapExecutionPageRouteDetailedRow = ({
         justify="space-between"
       >
         <Row align="center" justify="space-between">
-          <Row gap={5}>
-            <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
-              {assetDetails?.amount}
-            </StyledAssetAmount>
-            <SmallText normalTextColor>{assetDetails?.symbol}</SmallText>
-            <StyledChainName title={assetDetails?.chainName}>
-              {" "}
-              on {assetDetails?.chainName}
-            </StyledChainName>
-            {explorerLink && (
-              <Link href={explorerLink} target="_blank">
-                <SmallText>
-                  <ChainIcon />
-                </SmallText>
-              </Link>
+          <Column>
+            <Row gap={5}>
+              <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
+                {assetDetails?.amount}
+              </StyledAssetAmount>
+              <SmallText normalTextColor>{assetDetails?.symbol}</SmallText>
+              <StyledChainName title={assetDetails?.chainName}>
+                {" "}
+                on {assetDetails?.chainName}
+              </StyledChainName>
+              {explorerLink && (
+                <Link href={explorerLink} target="_blank">
+                  <SmallText>
+                    <ChainIcon />
+                  </SmallText>
+                </Link>
+              )}
+            </Row>{" "}
+            {isSignRequired && (
+              <SmallText color={theme.warning.text}>
+                Signature required
+              </SmallText>
             )}
-          </Row>
+          </Column>
           {source.address && (
-            <StyledButton
-              onClick={() => copyToClipboard(source.address)}
-            >
+            <StyledButton onClick={() => copyToClipboard(source.address)}>
               {source.image && (
                 <img
                   src={source.image}
@@ -144,19 +149,21 @@ export const SwapExecutionPageRouteDetailedRow = ({
                   }}
                 />
               )}
-              <SmallText monospace title={source.address}>
+              <AddressText title={source.address}>
                 {getTruncatedAddress(source.address)}
-              </SmallText>
+              </AddressText>
             </StyledButton>
           )}
         </Row>
-        {isSignRequired && (
-          <SmallText color={theme.warning.text}>Signature required</SmallText>
-        )}
       </Column>
     </Row>
   );
 };
+
+const AddressText = styled(SmallText)`
+  font-family: monospace;
+  text-transform: lowercase;
+`;
 
 const StyledButton = styled(Button)`
   padding: 5px 8px;
@@ -213,7 +220,7 @@ const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
-  status: SimpleStatus;
+  status?: SimpleStatus;
   backgroundColor?: string;
 }>`
   position: relative;
