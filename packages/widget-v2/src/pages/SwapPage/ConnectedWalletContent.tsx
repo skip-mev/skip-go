@@ -27,8 +27,6 @@ export const ConnectedWalletContent = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const connectedWalletModal = useModal(ConnectedWalletModal);
 
-  const maxButtonIsDisabled = !sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0";
-
   const formattedBalance = useMemo(() => {
     if (sourceBalance === undefined || sourceBalance.error?.message) return "";
 
@@ -55,6 +53,7 @@ export const ConnectedWalletContent = () => {
         }}
         align="center"
         gap={8}
+        alwaysShowBackground
       >
         {sourceAccount && (
           <img
@@ -87,9 +86,10 @@ export const ConnectedWalletContent = () => {
       </GhostButton>
 
       <GhostButton
-        disabled={maxButtonIsDisabled}
+        disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
         onClick={handleMaxButton}
         align="center"
+        alwaysShowBackground
       >
         Max
       </GhostButton>
