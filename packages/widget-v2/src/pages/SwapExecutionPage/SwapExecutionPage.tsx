@@ -28,7 +28,7 @@ import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 
-enum SwapExecutionState {
+export enum SwapExecutionState {
   recoveryAddressUnset,
   destinationAddressUnset,
   ready,
@@ -201,11 +201,13 @@ export const SwapExecutionPage = () => {
           }
           operations={clientOperations}
           statusData={statusData}
+          swapExecutionState={swapExecutionState}
         />
       ) : (
         <SwapExecutionPageRouteDetailed
           operations={clientOperations}
           statusData={statusData}
+          swapExecutionState={swapExecutionState}
         />
       )}
       {renderMainButton}

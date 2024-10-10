@@ -12,10 +12,12 @@ import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
 import { TxsStatus } from "./useBroadcastedTxs";
+import { SwapExecutionState } from "./SwapExecutionPage";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
   statusData?: TxsStatus
+  swapExecutionState?: SwapExecutionState;
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
