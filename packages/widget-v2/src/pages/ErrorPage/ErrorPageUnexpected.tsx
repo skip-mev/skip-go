@@ -33,9 +33,8 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
             resetError();
             if (onClickBack) {
               onClickBack();
-            } else {
-              setCurrentPage(Routes.SwapPage);
             }
+            setCurrentPage(Routes.SwapPage);
           }
         }}
       />

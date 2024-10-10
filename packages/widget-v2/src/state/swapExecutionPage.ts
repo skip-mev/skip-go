@@ -10,6 +10,8 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
+import { currentPageAtom, Routes } from "./router";
+
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
@@ -84,7 +86,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
-
       if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,

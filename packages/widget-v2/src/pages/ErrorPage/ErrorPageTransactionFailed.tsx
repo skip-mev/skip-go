@@ -6,6 +6,10 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { useResetAtom } from "jotai/utils";
+import { errorAtom } from "@/state/errorPage";
+import { currentPageAtom, Routes } from "@/state/router";
+import { useSetAtom } from "jotai";
 
 export type ErrorPageTransactionFailedProps = {
   transactionHash: string;
@@ -21,6 +25,8 @@ export const ErrorPageTransactionFailed = ({
   onClickBack,
 }: ErrorPageTransactionFailedProps) => {
   const theme = useTheme();
+  const resetError = useResetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
     <>
@@ -28,7 +34,13 @@ export const ErrorPageTransactionFailed = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            resetError();
+            if (onClickBack) {
+              onClickBack();
+            }
+            setCurrentPage(Routes.SwapPage);
+          }
         }}
       />
       <ErrorState
