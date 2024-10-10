@@ -8,6 +8,9 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { ClientOperation } from "@/utils/clientType";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { currentPageAtom, Routes } from "@/state/router";
+import { errorAtom } from "@/state/errorPage";
+import { useSetAtom } from "jotai";
 
 export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
@@ -24,6 +27,8 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
+  const setErrorAtom = useSetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
 
   const assetDenom = revertedOperation.denomIn ?? revertedOperation.denom;
@@ -40,7 +45,13 @@ export const ErrorPageTransactionReverted = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            setErrorAtom(undefined);
+            if (onClickBack) {
+              onClickBack();
+            }
+            setCurrentPage(Routes.SwapPage);
+          }
         }}
       />
       <ErrorState

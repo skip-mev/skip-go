@@ -84,13 +84,11 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
     onError: (error: unknown, transactionDetailsArray) => {
-      console.error("on error callback", error, transactionDetailsArray);
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
-            set(errorAtom, undefined);
             set(setOverallStatusAtom, undefined);
           }
         });
@@ -98,7 +96,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
-            set(errorAtom, undefined);
             set(setOverallStatusAtom, undefined);
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
@@ -112,7 +109,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.Unexpected,
           error: error as Error,
           onClickBack: () => {
-            set(errorAtom, undefined);
             set(setOverallStatusAtom, undefined);
           },
         });

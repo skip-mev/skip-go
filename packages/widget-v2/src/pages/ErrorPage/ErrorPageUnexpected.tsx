@@ -4,7 +4,6 @@ import { ICONS } from "@/icons";
 import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
-import { useResetAtom } from "jotai/utils";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
@@ -15,14 +14,12 @@ export type ErrorPageUnexpectedProps = {
 
 export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
-  const resetError = useResetAtom(errorAtom);
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   const onClickRetry = () => {
     setErrorAtom(undefined);
     setCurrentPage(Routes.SwapPage);
-    console.error("on click retry");
   };
 
   return (
@@ -37,7 +34,6 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
               onClickBack();
             }
             setCurrentPage(Routes.SwapPage);
-            console.error("on click back");
           }
         }}
       />

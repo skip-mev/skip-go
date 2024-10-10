@@ -9,7 +9,6 @@ import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
-import { useResetAtom } from "jotai/utils";
 
 export type ErrorPageTimeoutProps = {
   explorerLink: string;
@@ -21,7 +20,7 @@ export const ErrorPageTimeout = ({
   onClickBack,
 }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
-  const resetError = useResetAtom(errorAtom);
+  const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
@@ -31,7 +30,7 @@ export const ErrorPageTimeout = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            resetError();
+            setErrorAtom(undefined);
             if (onClickBack) {
               onClickBack();
             }
