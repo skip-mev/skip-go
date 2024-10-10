@@ -18,7 +18,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
   explorerLink?: ChainTransaction["explorerLink"];
-  status: SimpleStatus;
+  status?: SimpleStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -213,7 +213,7 @@ const StyledLoadingContainer = styled(Row) <{
   height: number;
   width: number;
   borderSize: number;
-  status: SimpleStatus;
+  status?: SimpleStatus;
   backgroundColor?: string;
 }>`
   position: relative;

@@ -6,16 +6,16 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation, ClientTransferEvent, OperationType } from "@/utils/clientType";
+import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
-import { getIsOperationSignRequired } from "@/utils/operations";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export type SwapExecutionPageRouteDetailedProps = {
   operations: ClientOperation[];
-  operationToTransferEventsMap: Record<number, ClientTransferEvent>;
+  statusData?: TxsStatus
 };
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -49,7 +49,7 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  operationToTransferEventsMap,
+  statusData
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
@@ -62,6 +62,9 @@ export const SwapExecutionPageRouteDetailed = ({
       [index]: true,
     }));
   };
+  useEffect(() => {
+    console.log("sd", statusData);
+  }, [statusData]);
 
   const handleMouseLeaveOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -71,15 +74,15 @@ export const SwapExecutionPageRouteDetailed = ({
   };
 
   const firstOperation = operations[0];
-
+  const status = statusData?.transferEvents;
   return (
     <StyledSwapExecutionPageRoute>
       <SwapExecutionPageRouteDetailedRow
         tokenAmount={firstOperation.amountIn}
         denom={firstOperation.denomIn}
         chainId={firstOperation.fromChainID}
-        explorerLink={operationToTransferEventsMap[0]?.fromExplorerLink}
-        status={operationToTransferEventsMap[0]?.status}
+        explorerLink={status?.[0]?.fromExplorerLink}
+        status={status?.[0]?.status}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -105,13 +108,14 @@ export const SwapExecutionPageRouteDetailed = ({
 
         const bridgeOrSwapVenue = getBridgeSwapVenue();
         const nextOperation = operations[index + 1];
-        const isSignRequired = getIsOperationSignRequired(index, operations, nextOperation, operation);
 
         const asset = {
           tokenAmount: operation.amountOut,
           denom: operation.denomOut,
           chainId: operation.toChainID ?? operation.chainID,
         };
+
+        const explorerLink = operation.isSwap ? status?.[operation.transferIndex]?.fromExplorerLink : status?.[operation.transferIndex]?.toExplorerLink;
 
         return (
           <>
@@ -135,9 +139,9 @@ export const SwapExecutionPageRouteDetailed = ({
               {...asset}
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
-              isSignRequired={isSignRequired}
-              status={operationToTransferEventsMap[index]?.status}
-              explorerLink={operationToTransferEventsMap[index]?.explorerLink}
+              isSignRequired={nextOperation?.signRequired}
+              status={status?.[operation.transferIndex]?.status}
+              explorerLink={explorerLink}
               key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
             />
           </>
