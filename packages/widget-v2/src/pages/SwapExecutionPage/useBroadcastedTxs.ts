@@ -40,9 +40,7 @@ export const useBroadcastedTxsStatus = ({
           });
           return _res;
         }));
-      console.log("results", results);
       const transferEvents = getTransferEventsFromTxStatusResponse(results);
-      console.log("transferEvents", transferEvents);
       const _isSettled = results.every((tx) => {
         return (
           tx.state === "STATE_COMPLETED_SUCCESS" ||
@@ -70,7 +68,7 @@ export const useBroadcastedTxsStatus = ({
     enabled:
       !isSettled &&
       (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
-    refetchInterval: 1000 * 2,
+    refetchInterval: 500,
     // to make the data persist when query key changed
     initialData: prevData,
   });

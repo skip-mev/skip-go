@@ -262,52 +262,6 @@ export function getTransferEventsFromTxStatusResponse(
   });
 }
 
-export function getOperationToTransferEventsMap(
-  txStatusResponse: TxStatusResponse[],
-  clientOperations: ClientOperation[]
-) {
-  if (!txStatusResponse) return {};
-  const operationToTransferEventsMap = {} as Record<
-    number,
-    ClientTransferEvent
-  >;
-  const transferEvents =
-    getTransferEventsFromTxStatusResponse(txStatusResponse);
-
-  clientOperations.forEach((operation, index) => {
-    const foundTransferEventMatchingOperation = transferEvents?.find(
-      (transferEvent) =>
-        transferEvent.fromChainID === operation.fromChainID &&
-        transferEvent.toChainID === operation.toChainID
-    );
-
-    const foundSwapTransferEvent = transferEvents?.find((transferEvent) => {
-      const isSwapType = ["evmSwap", "swap"].includes(operation.type);
-      if (!isSwapType) return false;
-
-      return transferEvent.fromChainID === operation.fromChainID;
-    });
-
-    if (foundTransferEventMatchingOperation) {
-      foundTransferEventMatchingOperation.status = getSimpleStatus(
-        foundTransferEventMatchingOperation?.state
-      );
-      operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
-      operationToTransferEventsMap[index].explorerLink =
-        foundTransferEventMatchingOperation.toExplorerLink;
-    } else if (foundSwapTransferEvent) {
-      foundSwapTransferEvent.status = getSimpleStatus(
-        foundSwapTransferEvent?.state
-      );
-      operationToTransferEventsMap[index] = { ...foundSwapTransferEvent };
-      operationToTransferEventsMap[index].explorerLink =
-        foundSwapTransferEvent.fromExplorerLink;
-    }
-  });
-
-  return operationToTransferEventsMap;
-}
-
 export function getSimpleOverallStatus(state: StatusState) {
   switch (state) {
     case "STATE_SUBMITTED":

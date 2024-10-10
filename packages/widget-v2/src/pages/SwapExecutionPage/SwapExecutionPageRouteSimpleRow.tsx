@@ -86,6 +86,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           <img
             height={50}
             width={50}
+            style={{ borderRadius: 50, }}
             src={assetDetails.assetImage}
             title={assetDetails?.asset?.name}
           />

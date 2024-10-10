@@ -5,7 +5,7 @@ import {
   SwapPageFooter,
 } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
@@ -23,10 +23,10 @@ import {
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
+import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -50,15 +50,16 @@ export const SwapExecutionPage = () => {
   const setManualAddressModal = useModal(SetAddressModal);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
-  const operationToTransferEventsMap = useFetchTransactionStatus();
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
     txs: transactionDetailsArray,
   });
-  useEffect(() => {
-    console.log("txd", transactionDetailsArray);
-  }, [transactionDetailsArray]);
+
+  useFetchTransactionStatus({
+    transferEvents: statusData?.transferEvents,
+  });
+
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);

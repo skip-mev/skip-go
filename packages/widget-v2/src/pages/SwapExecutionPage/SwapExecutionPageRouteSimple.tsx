@@ -29,8 +29,8 @@ export const SwapExecutionPageRouteSimple = ({
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
   const status = statusData?.transferEvents;
-  const sourceStatus = status?.[firstOperation.transferIndex]?.status;
-  const destinationStatus = status?.[lastOperation.transferIndex]?.status;
+  const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOperation.transferIndex]?.status;
+  const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOperation.transferIndex]?.status;
 
   const sourceDenom = firstOperation.denomIn;
   const destinationDenom = lastOperation.denomOut;
@@ -57,6 +57,8 @@ export const SwapExecutionPageRouteSimple = ({
     if (swapExecutionState !== SwapExecutionState.ready) return;
     return _onClickEditDestinationWallet;
   }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
+
+
 
   return (
     <StyledSwapExecutionPageRoute justify="space-between">

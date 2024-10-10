@@ -6,7 +6,7 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
@@ -51,7 +51,8 @@ type tooltipMap = Record<number, boolean>;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
-  statusData
+  statusData,
+  swapExecutionState
 }: SwapExecutionPageRouteDetailedProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
@@ -64,9 +65,6 @@ export const SwapExecutionPageRouteDetailed = ({
       [index]: true,
     }));
   };
-  useEffect(() => {
-    console.log("sd", statusData);
-  }, [statusData]);
 
   const handleMouseLeaveOperationType = (index: number) => {
     setTooltipMap((old) => ({
@@ -77,6 +75,7 @@ export const SwapExecutionPageRouteDetailed = ({
 
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
+  const firstOpStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
   return (
     <StyledSwapExecutionPageRoute>
       <SwapExecutionPageRouteDetailedRow
@@ -84,7 +83,7 @@ export const SwapExecutionPageRouteDetailed = ({
         denom={firstOperation.denomIn}
         chainId={firstOperation.fromChainID}
         explorerLink={status?.[0]?.fromExplorerLink}
-        status={status?.[0]?.status}
+        status={firstOpStatus}
         key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
@@ -118,7 +117,7 @@ export const SwapExecutionPageRouteDetailed = ({
         };
 
         const explorerLink = operation.isSwap ? status?.[operation.transferIndex]?.fromExplorerLink : status?.[operation.transferIndex]?.toExplorerLink;
-
+        const opStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[operation.transferIndex]?.status;
         return (
           <>
             <StyledOperationTypeAndTooltipContainer key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px", position: "relative" }} align="center">
@@ -142,7 +141,7 @@ export const SwapExecutionPageRouteDetailed = ({
               index={index}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={nextOperation?.signRequired}
-              status={status?.[operation.transferIndex]?.status}
+              status={opStatus}
               explorerLink={explorerLink}
               key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
             />
