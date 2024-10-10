@@ -16,10 +16,11 @@ export type ErrorPageUnexpectedProps = {
 export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
   const resetError = useResetAtom(errorAtom);
+  const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   const onClickRetry = () => {
-    resetError();
+    setErrorAtom(undefined);
     setCurrentPage(Routes.SwapPage);
     console.error("on click retry");
   };
@@ -31,7 +32,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            resetError();
+            setErrorAtom(undefined);
             if (onClickBack) {
               onClickBack();
             }

@@ -23,9 +23,9 @@ export const ErrorPage = () => {
         return <ErrorPageTradeAdditionalSigningRequired {...error} />;
       case ErrorType.TradeWarning:
         return <ErrorPageTradeWarning {...error} />;
-      case ErrorType.TransactionFailed: 
+      case ErrorType.TransactionFailed:
         return <ErrorPageTransactionFailed {...error} />;
-      case ErrorType.TransactionReverted: 
+      case ErrorType.TransactionReverted:
         return <ErrorPageTransactionReverted {...error} />;
       case ErrorType.Unexpected:
         return <ErrorPageUnexpected error={error.error} />;
@@ -36,5 +36,5 @@ export const ErrorPage = () => {
 
   if (error?.errorType === undefined) return;
 
-  return <Column gap={5}>{renderErrorVariant}</Column>
+  return <Column gap={5}>{renderErrorVariant}</Column>;
 };
