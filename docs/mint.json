@@ -19,11 +19,6 @@
         "name": "Support",
         "icon": "headset",
         "url": "https://discord.com/channels/1010553709987639406/1210022796797677589"
-    },
-    {
-        "name": "Content",
-        "icon": "pencil",
-        "url": "content"
     }
   ],
   "topbarLinks": [
