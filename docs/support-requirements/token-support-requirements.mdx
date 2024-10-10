@@ -30,7 +30,7 @@ and we will help guide you through it to the extent we can.
    1. Use the `/info/chains` endpoint to query a list of actively supported chains: [/v2/info/chains](/api-reference/prod/info/get-v2infochains)  
    2. If the chain is not already supported, follow the instructions in [Chain Support Requirements](./chain-support-requirements) to request support  
    3. **_This is a pre-requisite_**
-3. Token metadata is available in a commonly used chain registry (e.g. [https://github.com/cosmos/chain-registry](https://github.com/cosmos/chain-registry)) . Metadata should include at least:  
+3. Token metadata is available in a commonly used chain registry (e.g. [Cosmos Chain Registry](https://github.com/cosmos/chain-registry)) . Metadata should include at least:  
    1. Denom (programmatic string identifier)  
    2. Symbol (aka "ticker")  
    3. Asset name (human readable denom)  
@@ -100,10 +100,3 @@ After you've let enough time pass, you can verify that Skip Go API supports the 
 1. To add a CW20 token, you should first make sure its usable (either has ibc20-cw20 converter contracts deployed to IBC transfer the token or source-chain swappable on a swap venue used by Skip Go).
 2. Once confirmed usable, you must add the CW20 token's metadata to a registry we support indexing from. The easiest one is likely the [Cosmos Chain Registry](https://github.com/cosmos/chain-registry), you can check out an example of a CW20 token entry here in [Archway's assetlist.json](https://github.com/cosmos/chain-registry/blob/master/archway/assetlist.json).
 3. Once the PR is merged into a registry, our indexing will add it to the API on our next indexing run (hourly).
-
-
-<Info>
- **Have questions or feedback? Help us get better!**
- 
- You can reach us easily at [support@skip.build](support@skip.build) or in [our developer support channel on TG](https://t.me/+3y5biSyZRPIwZWIx)
-</Info>

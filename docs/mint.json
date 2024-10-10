@@ -14,6 +14,18 @@
       "dark": "#151617"
     }
   },
+  "anchors": [
+    {
+        "name": "Support",
+        "icon": "headset",
+        "url": "https://discord.com/channels/1010553709987639406/1210022796797677589"
+    },
+    {
+        "name": "Content",
+        "icon": "pencil",
+        "url": "content"
+    }
+  ],
   "topbarLinks": [
     {
       "name": "Skip:Connect",
@@ -60,7 +72,7 @@
       ]
     },
     {
-      "group": "Skip Go Widget",
+      "group": "Skip Go Swap Widget",
       "pages": [
         "widget/getting-started",
         "widget/configuration",
@@ -149,8 +161,9 @@
       "group": "Release Notes",
       "pages": [
             "release-notes/overview",
-            "release-notes/typescript-client",
-            "release-notes/swap-widget"
+            "release-notes/client",
+            "release-notes/swap-widget",
+            "release-notes/api"
           ]
     }
   ], 
