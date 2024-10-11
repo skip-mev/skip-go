@@ -5,7 +5,7 @@ import {
   SwapPageFooter,
 } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
@@ -27,6 +27,7 @@ import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
+import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -97,6 +98,8 @@ export const SwapExecutionPage = () => {
     }
     return SwapExecutionState.ready;
   }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
+
+  useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
     const signaturesRemaining =
