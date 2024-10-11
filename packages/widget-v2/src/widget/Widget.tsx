@@ -11,11 +11,11 @@ import { useAtom, useSetAtom } from "jotai";
 import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 
-export type SwapWidgetProps = {
+export type WidgetProps = {
   theme?: PartialTheme;
 } & SkipClientOptions;
 
-export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+export const Widget = ({ theme, ...skipClientConfig }: WidgetProps) => {
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
@@ -37,7 +37,7 @@ export const SwapWidget = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   );
 };
 
-const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+const WidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
@@ -59,14 +59,14 @@ const SwapWidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: Swap
 
 export type ShowSwapWidget = {
   button?: ReactElement;
-} & SwapWidgetProps;
+} & WidgetProps;
 
-export const ShowSwapWidget = ({
+export const ShowWidget = ({
   button = <button>show widget</button>,
   ...props
 }: ShowSwapWidget) => {
   const modal = useModal(
-    createModal(() => <SwapWidgetWithoutNiceModalProvider {...props} />)
+    createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
   );
   const resetNumberOfModalsOpen = useResetAtom(numberOfModalsOpenAtom);
 
