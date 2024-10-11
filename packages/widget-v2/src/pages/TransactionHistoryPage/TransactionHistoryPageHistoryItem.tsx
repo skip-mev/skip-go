@@ -10,6 +10,9 @@ import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
 import { useSetAtom } from "jotai";
+import { formatDistanceStrict } from "date-fns";
+import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
+import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -25,6 +28,20 @@ export const TransactionHistoryPageHistoryItem = ({
   onClickRow,
 }: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
+
+  const { data: statusData } = useBroadcastedTxsStatus({
+    txsRequired: txHistoryItem?.route.txsRequired,
+    txs: txHistoryItem.transactionDetails.map(tx => ({
+      chainID: tx.chainID,
+      txHash: tx.txHash,
+    })),
+  });
+
+  useSyncTxStatus({
+    statusData,
+    historyIndex: index,
+  });
+
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
   const {
     route: {
@@ -92,8 +109,8 @@ export const TransactionHistoryPageHistoryItem = ({
     if (status === "pending") {
       return "In Progress";
     }
-    return "5 mins ago";
-  }, [status]);
+    return formatDistanceStrict(new Date(timestamp), new Date(), { addSuffix: true });
+  }, [status, timestamp]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -121,7 +138,6 @@ export const TransactionHistoryPageHistoryItem = ({
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
-          relativeTimeString={relativeTime}
           transactionDetails={transactionDetails}
           onClickDelete={() => removeTransactionHistoryItem(index)}
         />

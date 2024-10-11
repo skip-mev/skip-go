@@ -24,12 +24,14 @@ export const SwapPageHeader = ({
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
   return (
     <StyledSwapPageHeaderContainer justify="space-between">
-      {leftButton && (
-        <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
-          <LeftIcon />
-          {leftButton.label}
-        </GhostButton>
-      )}
+      <Row align="center" gap={10}>
+        {leftButton && (
+          <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
+            <LeftIcon />
+            {leftButton.label}
+          </GhostButton>
+        )}
+      </Row>
 
       <Row align="center" gap={10}>
         {rightContent}

@@ -4,7 +4,7 @@ import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { HistoryIcon } from "@/icons/HistoryIcon";
 import { SmallText } from "@/components/Typography";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -19,6 +19,11 @@ export const TransactionHistoryPage = () => {
     number | undefined
   >();
   const txHistory = useAtomValue(transactionHistoryAtom);
+  const historyList = useMemo(() => {
+    return txHistory.sort((a, b) => {
+      return b.timestamp - a.timestamp;
+    });
+  }, [txHistory]);
   return (
     <Column gap={5}>
       <SwapPageHeader
@@ -45,7 +50,7 @@ export const TransactionHistoryPage = () => {
         ) : (
           <VirtualList
             key={txHistory.length}
-            listItems={txHistory}
+            listItems={historyList}
             height={262}
             itemHeight={1}
             renderItem={(item, index) => (

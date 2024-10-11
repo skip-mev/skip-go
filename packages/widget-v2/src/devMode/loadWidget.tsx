@@ -1,6 +1,6 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { SwapWidget } from "@/widget/Widget";
+import { Widget } from "@/widget/Widget";
 import { Row, Column } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 
@@ -16,7 +16,7 @@ const DevMode = () => {
   };
   return (
     <Row gap={20}>
-      <SwapWidget theme={theme === "dark" ? defaultTheme : lightTheme} />
+      <Widget theme={theme === "dark" ? defaultTheme : lightTheme} />
       <Column>
         <button onClick={() => toggleTheme()}> Toggle theme (current theme: {theme})</button>
       </Column>

@@ -41,7 +41,7 @@ export const useBroadcastedTxsStatus = ({
           return _res;
         }));
       const transferEvents = getTransferEventsFromTxStatusResponse(results);
-      const _isSettled = results.every((tx) => {
+      const _isAllTxSettled = results.every((tx) => {
         return (
           tx.state === "STATE_COMPLETED_SUCCESS" ||
           tx.state === "STATE_COMPLETED_ERROR" ||
@@ -49,17 +49,19 @@ export const useBroadcastedTxsStatus = ({
         );
       });
 
-      const _isSuccess = transferEvents.every((tx) => {
+      const _isAllTxSuccess = transferEvents.every((tx) => {
         return tx.status === "completed";
       });
 
-      if (transferEvents.length > 0 && txsRequired === results.length && _isSettled) {
+      const isRouteSettled = transferEvents.length > 0 && txsRequired === results.length && _isAllTxSettled;
+      if (isRouteSettled) {
         setIsSettled(true);
       }
 
+
       const resData: TxsStatus = {
-        isSuccess: _isSuccess,
-        isSettled: _isSettled,
+        isSuccess: _isAllTxSuccess && isRouteSettled,
+        isSettled: isRouteSettled,
         transferEvents,
       };
       setPrevData(resData);

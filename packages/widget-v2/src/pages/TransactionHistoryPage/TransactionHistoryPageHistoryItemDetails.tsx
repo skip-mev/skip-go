@@ -15,12 +15,12 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
-  relativeTimeString: string;
   transactionDetails: TransactionDetails[];
   onClickDelete?: () => void;
 };
 
 const statusMap = {
+  unconfirmed: "Unconfirmed",
   signing: "In Progress",
   broadcasted: "In Progress",
   pending: "In Progress",
@@ -33,7 +33,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   sourceChainName,
   destinationChainName,
   absoluteTimeString,
-  relativeTimeString,
   transactionDetails,
   onClickDelete,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
@@ -67,10 +66,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
           <SmallText normalTextColor>{destinationChainName}</SmallText>
         </Row>
       </Row>
-      <Row align="center" gap={10}>
-        <StyledDetailsLabel>Time</StyledDetailsLabel>
-        <SmallText normalTextColor>{relativeTimeString}</SmallText>
-      </Row>
 
       {transactionDetails.length === 1 ? (
         <Row align="center" gap={10}>
@@ -96,9 +91,9 @@ export const TransactionHistoryPageHistoryItemDetails = ({
             return "Transaction";
           };
           return (
-            <Row align="center" gap={10}>
-              <StyledDetailsLabel key={transactionDetail.txHash}>{getTransactionIdLabel()}</StyledDetailsLabel>
-              <Link key={transactionDetail.txHash} href={transactionDetail.explorerLink} target="_blank" gap={5}>
+            <Row key={`${index}-${transactionDetail.txHash}`} align="center" gap={10}>
+              <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>{getTransactionIdLabel()}</StyledDetailsLabel>
+              <Link key={`${index}-${transactionDetail.txHash}`} href={transactionDetail.explorerLink} target="_blank" gap={5}>
                 <SmallText normalTextColor>
                   {getTruncatedAddress(transactionDetail.txHash)}
                 </SmallText>
