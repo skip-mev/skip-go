@@ -84,6 +84,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
     },
+    onTransactionSigned: async (transactionDetails) => {
+      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
+    },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
 
@@ -119,9 +122,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         });
       }
     },
-    onTransactionSigned: async (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
-    },
     onValidateGasBalance: async (props) => {
       set(setValidatingGasBalanceAtom, props);
     },
@@ -141,7 +141,7 @@ export const setTransactionDetailsArrayAtom = atom(
     const newTransactionDetailsArray = transactionDetailsArray;
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
-      (transaction) => transaction.txHash === transactionDetails.txHash
+      (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase()
     );
     if (transactionIndexFound !== -1) {
       newTransactionDetailsArray[transactionIndexFound] = {
