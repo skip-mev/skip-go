@@ -10,7 +10,15 @@ type CacheOptions = {
 };
 
 export class CustomCache {
+  private static instance: CustomCache;
   private cache: Map<string, CacheEntry<any>> = new Map();
+
+  public static getInstance(): CustomCache {
+    if (!CustomCache.instance) {
+      CustomCache.instance = new CustomCache();
+    }
+    return CustomCache.instance;
+  }
 
   set<T>(key: string, data: T, timestamp: number) {
     this.cache.set(key, { data, timestamp });
@@ -23,13 +31,10 @@ export class CustomCache {
   clear() {
     this.cache.clear();
   }
+
 }
-interface Cache {
-  set<T>(key: string, data: T, timestamp: number): void;
-  get<T>(key: string): CacheEntry<T> | undefined;
-  clear(): void;
-}
-export const createCachingMiddleware = (cache: Cache, { cacheDurationMs }: CacheOptions) => {
+
+export const createCachingMiddleware = (cache: CustomCache, { cacheDurationMs }: CacheOptions) => {
   return async <T, Args extends any[]>(
     key: string,
     fn: (...args: Args) => Promise<T>,
@@ -40,7 +45,7 @@ export const createCachingMiddleware = (cache: Cache, { cacheDurationMs }: Cache
 
     const now = Date.now();
     const cachedEntry = cache.get<T>(cacheKey);
-    console.log('cacheDurationMs', cacheDurationMs)
+
     if (cachedEntry && now - cachedEntry.timestamp < cacheDurationMs) {
       return cachedEntry.data;
     }

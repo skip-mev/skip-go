@@ -124,7 +124,7 @@ export class SkipClient {
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
 
-    this.cache = new CustomCache();
+    this.cache = CustomCache.getInstance();
 
     this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
     this.cachingMiddleware = createCachingMiddleware(this.cache, { cacheDurationMs: this.cacheDurationMs });
@@ -138,8 +138,6 @@ export class SkipClient {
   }
 
   async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
-    console.log('HELLO HELLO')
-
     return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
       const response = await this.requestClient.get<{
         chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
@@ -1663,10 +1661,11 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string
   ): Promise<types.FeeAsset | undefined> {
-    const skipChains = [
-      ...(await this.chains({})),
-      ...(await this.chains({ onlyTestnets: true })),
-    ];
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains({}),
+      this.chains({ onlyTestnets: true }),
+    ]);
+    const skipChains = [...mainnetChains, ...testnetChains];
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
