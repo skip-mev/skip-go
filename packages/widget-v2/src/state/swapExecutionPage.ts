@@ -2,7 +2,7 @@ import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { ExecuteRouteOptions, RouteResponse, TxStatusResponse, UserAddress } from "@skip-go/client";
+import { TransactionCallbacks, RouteResponse, TxStatusResponse, UserAddress, ChainType } from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
@@ -28,7 +28,7 @@ type SwapExecutionState = {
 
 export type ChainAddress = {
   chainID: string;
-  chainType?: "evm" | "cosmos" | "svm";
+  chainType?: ChainType;
   address?: string;
 } & (
     | { source?: "input" | "parent" }
@@ -196,8 +196,8 @@ export type TransactionDetails = {
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
   onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
-  onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
-  onTransactionSigned?: ExecuteRouteOptions["onTransactionSigned"];
+  onValidateGasBalance?: TransactionCallbacks["onValidateGasBalance"];
+  onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<

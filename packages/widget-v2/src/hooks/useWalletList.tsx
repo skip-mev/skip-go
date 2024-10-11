@@ -13,14 +13,7 @@ export const useWalletList = ({ chainID, destinationWalletList, chainType: _chai
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainType = chainID ? chains?.find(c => c.chainID === chainID)?.chainType : _chainType;
 
-
-  let walletType = chainType;
-  const isSei = chainID === "pacific-1";
-  if (destinationWalletList) {
-    if (isSei) {
-      walletType = "sei";
-    }
-  }
+  const walletType = destinationWalletList && chainID === "pacific-1" ? "sei" : chainType;
 
   const walletList = useMemo(() => {
     switch (walletType) {
