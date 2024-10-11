@@ -37,6 +37,19 @@ export const GhostButton = styled(SmallText).attrs({
         `;
     }
   }}
+
+  ${({ disabled }) =>
+    disabled
+      ? css`
+        &:hover {
+          cursor: not-allowed;
+        }
+      `
+      : css`
+        &:hover {
+          cursor: pointer;
+        }
+      `}
  
   padding: 8px 16px;
   border-radius: 90px;
