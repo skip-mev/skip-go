@@ -267,19 +267,19 @@ export type AxelarTransferInfo = {
 
 export type AxelarTransferTransactionsJSON =
   | {
-      contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
-    }
+    contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
+  }
   | {
-      send_token_txs: SendTokenTransactionsJSON;
-    };
+    send_token_txs: SendTokenTransactionsJSON;
+  };
 
 export type AxelarTransferTransactions =
   | {
-      contractCallWithTokenTxs: ContractCallWithTokenTransactions;
-    }
+    contractCallWithTokenTxs: ContractCallWithTokenTransactions;
+  }
   | {
-      sendTokenTxs: SendTokenTransactions;
-    };
+    sendTokenTxs: SendTokenTransactions;
+  };
 
 export type ContractCallWithTokenTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -428,20 +428,46 @@ export type OPInitTransferInfo = {
 
 export type TransferEventJSON =
   | {
-      ibc_transfer: TransferInfoJSON;
-    }
+    ibc_transfer: TransferInfoJSON;
+  }
   | {
-      axelar_transfer: AxelarTransferInfoJSON;
-    }
+    axelar_transfer: AxelarTransferInfoJSON;
+  }
   | { cctp_transfer: CCTPTransferInfoJSON }
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
   | { op_init_transfer: OPInitTransferInfoJSON };
 
 export type TransferEvent =
   | {
-      ibcTransfer: TransferInfo;
-    }
+    ibcTransfer: TransferInfo;
+  }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
   | { hyperlaneTransfer: HyperlaneTransferInfo }
   | { opInitTransfer: OPInitTransferInfo };
+
+export interface TransactionCallbacks {
+  onTransactionSigned?: (txInfo: {
+    txHash: string;
+    chainID: string;
+  }) => Promise<void>;
+  onTransactionBroadcast?: (txInfo: {
+    txHash: string;
+    chainID: string;
+  }) => Promise<void>;
+  onTransactionTracked?: (txInfo: {
+    txHash: string;
+    chainID: string;
+    explorerLink: string;
+  }) => Promise<void>;
+  onTransactionCompleted?: (
+    chainID: string,
+    txHash: string,
+    status: TxStatusResponse
+  ) => Promise<void>;
+  onValidateGasBalance?: (value: {
+    chainID?: string;
+    txIndex?: number;
+    status: 'success' | 'error' | 'pending' | 'completed';
+  }) => Promise<void>;
+}

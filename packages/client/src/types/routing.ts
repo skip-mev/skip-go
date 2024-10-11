@@ -1,3 +1,5 @@
+import { ChainType } from "./unified";
+
 export type ModuleSupport = {
   authz: boolean;
   feegrant: boolean;
@@ -44,7 +46,7 @@ export type Chain = {
   logoURI?: string;
   bech32Prefix: string;
   feeAssets: FeeAsset[];
-  chainType: string;
+  chainType: ChainType;
   ibcCapabilities: IbcCapabilities;
   isTestnet: boolean;
   prettyName: string;

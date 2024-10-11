@@ -15,7 +15,9 @@ import { WalletClient } from 'viem';
 
 import * as types from './types';
 import { Adapter } from '@solana/wallet-adapter-base';
+import { TransactionCallbacks } from './types';
 
+/** Common Types */
 export interface UserAddress {
   chainID: string;
   address: string;
@@ -26,12 +28,40 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export interface SkipClientOptions {
-  apiURL?: string;
-  apiKey?: string;
+/** Signer Getters */
+export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;
+}
+
+/** Gas Options */
+export type GetFallbackGasAmount = (
+  chainID: string,
+  chainType: types.ChainType
+) => Promise<number | undefined>;
+
+export type GetGasPrice = (
+  chainID: string,
+  chainType: types.ChainType
+) => Promise<GasPrice | undefined>;
+
+interface GasOptions {
+  /**
+   * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
+   **/
+  getGasPrice?: GetGasPrice;
+  /**
+   * If `getFallbackGasAmount` is set, when router fails to simulate the gas amount, it will use the fallback gas amount
+   */
+  getFallbackGasAmount?: GetFallbackGasAmount;
+  gasAmountMultiplier?: number;
+}
+
+/** Skip Client Options */
+export interface SkipClientOptions extends SignerGetters {
+  apiURL?: string;
+  apiKey?: string;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -42,55 +72,24 @@ export interface SkipClientOptions {
   chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
 }
 
-export type ExecuteRouteOptions = {
-  route: types.RouteResponse;
-  /**
-   * addresses should be in the same order with the `chainIDs` in the `route`
+/** Execute Route Options */
+export type ExecuteRouteOptions = SignerGetters &
+  GasOptions &
+  types.TransactionCallbacks & {
+    route: types.RouteResponse;
+    /**
+     * Addresses should be in the same order with the `chainIDs` in the `route`
+     */
+    userAddresses: UserAddress[];
+    validateGasBalance?: boolean;
+    slippageTolerancePercent?: string;
+      /**
+   * Arbitrary Tx to be executed before or after route msgs
    */
-  userAddresses: UserAddress[];
-  getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  getSVMSigner?: () => Promise<Adapter>;
-  onTransactionSigned?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionBroadcast?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionTracked?: (txInfo: {
-    txHash: string;
-    chainID: string;
-    explorerLink: string;
-  }) => Promise<void>;
-  onTransactionCompleted?: (
-    chainID: string,
-    txHash: string,
-    status: types.TxStatusResponse
-  ) => Promise<void>;
-  onValidateGasBalance?: (value: {
-    chainID?: string;
-    txIndex?: number;
-    status: "success" | "error" | "pending" | "completed"
-  }) => Promise<void>;
-  validateGasBalance?: boolean;
-  slippageTolerancePercent?: string;
-  /**
-   * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
-   **/
-  getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
-  /**
-   * If `getFallbackGasAmount` is set, when router fails to simulate the gas amount, it will use the fallback gas amount
-   */
-  getFallbackGasAmount?: GetFallbackGasAmount;
-  gasAmountMultiplier?: number;
-  /**
- * Arbitrary Tx to be executed before or after route msgs
- */
-  beforeMsg?: types.CosmosMsg;
-  afterMsg?: types.CosmosMsg;
-};
+    beforeMsg?: types.CosmosMsg;
+    afterMsg?: types.CosmosMsg;
+  };
+
 
 export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
@@ -99,48 +98,29 @@ export type ExecuteCosmosMessageOptions = {
   fee: StdFee;
 };
 
-export type ExecuteCosmosMessage = {
+export type ExecuteCosmosMessage = GasOptions & {
   signerAddress: string;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  /**
-   * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
-   **/
-  getGasPrice?: GetGasPrice;
-  /**
-   * If `getFallbackGasAmount` is set, when router fails to simulate the gas amount, it will use the fallback gas amount
-   */
-  getFallbackGasAmount?: GetFallbackGasAmount;
+  getCosmosSigner?: SignerGetters['getCosmosSigner'];
   chainID: string;
   messages: types.CosmosMsg[];
-  gasAmountMultiplier?: number;
   gasTokenUsed?: Coin;
-  onTransactionSigned?: ExecuteRouteOptions['onTransactionSigned'];
+  onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
 };
 
-export type SignCosmosMessageDirectOptions = {
+interface SignCosmosMessageOptionsBase {
   signerAddress: string;
-  signer: OfflineDirectSigner;
   chainID: string;
   cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
-};
+}
 
-export type SignCosmosMessageAminoOptions = {
-  signerAddress: string;
-  signer: OfflineAminoSigner;
-  chainID: string;
-  cosmosMsgs: types.CosmosMsg[];
-  fee: StdFee;
-  signerData: SignerData;
-};
+export type SignCosmosMessageDirectOptions =
+  SignCosmosMessageOptionsBase & {
+    signer: OfflineDirectSigner;
+  };
 
-export type GetFallbackGasAmount = (
-  chainID: string,
-  chainType: 'cosmos' | 'evm' | 'svm'
-) => Promise<number | undefined>;
-
-export type GetGasPrice = (
-  chainID: string,
-  chainType: 'cosmos' | 'evm' | 'svm'
-) => Promise<GasPrice | undefined>;
+export type SignCosmosMessageAminoOptions =
+  SignCosmosMessageOptionsBase & {
+    signer: OfflineAminoSigner;
+  };
