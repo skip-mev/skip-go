@@ -30,9 +30,6 @@ export default defineConfig({
     }),
     nodePolyfills(),
   ],
-  optimizeDeps: {
-    force: true
-  },
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
