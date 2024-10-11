@@ -43,7 +43,6 @@
     "@cosmjs/math": "0.32.4",
     "@cosmjs/proto-signing": "0.32.4",
     "@cosmjs/stargate": "0.32.4",
-    "@cosmjs/tendermint-rpc": "0.32.4",
     "@initia/initia-registry": "latest",
     "@injectivelabs/core-proto-ts": "0.0.21",
     "@injectivelabs/sdk-ts": "1.14.5",
