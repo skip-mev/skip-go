@@ -70,6 +70,7 @@ export interface SkipClientOptions extends SignerGetters {
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
+  cacheDuration?: number;
 }
 
 /** Execute Route Options */
