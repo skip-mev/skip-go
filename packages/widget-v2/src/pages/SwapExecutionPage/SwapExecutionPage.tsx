@@ -186,9 +186,7 @@ export const SwapExecutionPage = () => {
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => setCurrentPage(Routes.SwapPage),
-        } : {
-          label: "",
-        }}
+        } : undefined}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
