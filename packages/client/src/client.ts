@@ -53,7 +53,7 @@ import {
   evmosProtoRegistry,
 } from './codegen/evmos/client';
 import { erc20ABI } from './constants/abis';
-import { DEFAULT_GAS_DENOM_OVERRIDES } from './constants/constants';
+import { DEFAULT_GAS_DENOM_OVERRIDES, DEFAULT_CACHE_DURATION } from './constants/constants';
 import { createTransaction } from './injective';
 import { RequestClient } from './request-client';
 import {
@@ -95,8 +95,7 @@ export class SkipClient {
     assets?: { data: Record<string, types.Asset[]>; timestamp: number };
   } = {};
 
-  private cacheDuration?: number = 1 * 60 * 1000;
-
+  private cacheDuration: number | null;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
@@ -126,7 +125,8 @@ export class SkipClient {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
-    this.cacheDuration = options.cacheDuration;
+
+    this.cacheDuration = options.cacheDuration ?? DEFAULT_CACHE_DURATION;
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -148,7 +148,6 @@ export class SkipClient {
       return SkipClient.cache.assets.data;
     }
 
-    // If no valid cache, fetch new data
     const response = await this.requestClient.get<{
       chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
     }>(
@@ -166,7 +165,6 @@ export class SkipClient {
       {} as Record<string, types.Asset[]>
     );
 
-    // Cache the response data
     SkipClient.cache.assets = { data: assets, timestamp: now };
 
     return assets;
@@ -237,7 +235,6 @@ export class SkipClient {
       return SkipClient.cache.chains.data;
     }
 
-    // If no valid cache, fetch new data
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
     }>('/v2/info/chains', {
@@ -248,7 +245,6 @@ export class SkipClient {
     });
 
     const chains = response.chains.map((chain) => types.chainFromJSON(chain));
-
     SkipClient.cache.chains = { data: chains, timestamp: now };
 
     return chains;
