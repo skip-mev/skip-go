@@ -1,4 +1,4 @@
-import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
+import { atomWithMutation } from "jotai-tanstack-query";
 import { skipClient } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
@@ -267,27 +267,5 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
       console.error(error);
       submitSwapExecutionCallbacks?.onError?.(error, transactionDetailsArray);
     },
-  };
-});
-
-export const skipTransactionStatusAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { transactionDetailsArray, overallStatus } = get(swapExecutionStateAtom);
-
-  return {
-    queryKey: ["skipTxStatus", transactionDetailsArray],
-    queryFn: async () => {
-      return Promise.all(
-        transactionDetailsArray.map(async (transaction) => {
-          return skip.transactionStatus({
-            chainID: transaction.chainID,
-            txHash: transaction.txHash,
-          });
-        })
-      );
-    },
-    enabled: overallStatus !== "completed" && overallStatus !== "failed",
-    refetchInterval: 1000 * 2,
-    keepPreviousData: true,
   };
 });

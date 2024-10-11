@@ -57,7 +57,7 @@ export const SwapExecutionPage = () => {
   });
 
   useFetchTransactionStatus({
-    transferEvents: statusData?.transferEvents,
+    statusData
   });
 
   const clientOperations = useMemo(() => {

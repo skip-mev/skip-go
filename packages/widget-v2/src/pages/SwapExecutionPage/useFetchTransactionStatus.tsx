@@ -2,23 +2,24 @@ import { setTransactionHistoryAtom } from "@/state/history";
 import {
   setOverallStatusAtom,
   swapExecutionStateAtom,
-  skipTransactionStatusAtom,
   skipSubmitSwapExecutionAtom,
 } from "@/state/swapExecutionPage";
 import {
-  ClientTransferEvent,
   getClientOperations,
   ClientOperation,
-  getSimpleOverallStatus,
 } from "@/utils/clientType";
-import { useSetAtom, useAtomValue, useAtom } from "jotai";
+import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export const useFetchTransactionStatus = ({
-  transferEvents
+  statusData,
+  historyIndex
 }: {
-  transferEvents?: ClientTransferEvent[];
+  statusData?: TxsStatus,
+  historyIndex?: number;
 }) => {
+  const transferEvents = statusData?.transferEvents;
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const {
     route,
@@ -26,7 +27,6 @@ export const useFetchTransactionStatus = ({
     overallStatus,
     transactionHistoryIndex,
   } = useAtomValue(swapExecutionStateAtom);
-  const [{ data: transactionStatus }] = useAtom(skipTransactionStatusAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -46,19 +46,14 @@ export const useFetchTransactionStatus = ({
       return;
     }
 
-    if (!transactionStatus) return;
-    const lastTransactionIndex = route?.txsRequired - 1;
+    if (!transferEvents) return;
 
-    const lastTransactionStatus = getSimpleOverallStatus(
-      transactionStatus?.[lastTransactionIndex]?.state
-    );
-
-    if (lastTransactionStatus === "completed") {
+    if (statusData.isSuccess) {
       return "completed";
     }
 
     if (
-      transferEvents?.find(({ status }) => status === "failed")
+      !statusData.isSuccess && statusData.isSettled
     ) {
       return "failed";
     }
@@ -74,26 +69,16 @@ export const useFetchTransactionStatus = ({
     ) {
       return "unconfirmed";
     }
-  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, transactionStatus, transferEvents]);
-
+  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, transferEvents]);
   useEffect(() => {
-    if (overallStatus === "completed" || overallStatus === "failed") return;
-
     if (computedSwapStatus) {
-      setTransactionHistory(transactionHistoryIndex, {
+      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
         status: computedSwapStatus,
       });
-      setOverallStatus(computedSwapStatus);
+      if (!historyIndex) {
+        setOverallStatus(computedSwapStatus);
+      }
     }
-  }, [
-    clientOperations,
-    overallStatus,
-    computedSwapStatus,
-    setOverallStatus,
-    transactionDetailsArray.length,
-    transactionStatus,
-    setTransactionHistory,
-    transactionHistoryIndex,
-  ]);
+  }, [clientOperations, overallStatus, computedSwapStatus, setOverallStatus, transactionDetailsArray.length, setTransactionHistory, transactionHistoryIndex, historyIndex]);
 
 };
