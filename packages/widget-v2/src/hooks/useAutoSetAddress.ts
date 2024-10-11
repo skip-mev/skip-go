@@ -8,7 +8,6 @@ import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
-import { getSignRequiredChainIds } from "@/utils/operations";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useModal } from "@/components/Modal";
 
@@ -30,7 +29,7 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = getSignRequiredChainIds(operations);
+    const signRequiredChains = operations.filter(o => o.signRequired).map(o => o.fromChainID);
     return signRequiredChains;
   }, [route?.operations]);
 
