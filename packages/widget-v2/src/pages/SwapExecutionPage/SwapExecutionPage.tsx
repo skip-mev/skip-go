@@ -26,8 +26,8 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
-import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
+import { useSyncTxStatus } from "./useSyncTxStatus";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -57,8 +57,8 @@ export const SwapExecutionPage = () => {
     txs: transactionDetailsArray,
   });
 
-  useFetchTransactionStatus({
-    transferEvents: statusData?.transferEvents,
+  useSyncTxStatus({
+    statusData
   });
 
   const clientOperations = useMemo(() => {
@@ -185,11 +185,11 @@ export const SwapExecutionPage = () => {
   return (
     <Column gap={5}>
       <SwapPageHeader
-        leftButton={{
+        leftButton={simpleRoute ? {
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => setCurrentPage(Routes.SwapPage),
-        }}
+        } : undefined}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
