@@ -182,11 +182,11 @@ export const SwapExecutionPage = () => {
   return (
     <Column gap={5}>
       <SwapPageHeader
-        leftButton={{
+        leftButton={simpleRoute ? {
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => setCurrentPage(Routes.SwapPage),
-        }}
+        } : undefined}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,

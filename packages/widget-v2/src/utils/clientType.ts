@@ -126,6 +126,12 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
           (operationDetails as Transfer).denomOut = (
             operationDetails as BankSend
           ).denom;
+          (operationDetails as Transfer).fromChainID = (
+            operationDetails as BankSend
+          ).chainID;
+          (operationDetails as Transfer).toChainID = (
+            operationDetails as BankSend
+          ).chainID;
           break;
         default:
       }
