@@ -47,7 +47,7 @@ export const Modal = ({
       open={modal.visible}
       onOpenChange={() => {
         setOpen(false);
-        delay(150).then(() => modal.remove());
+        delay(75).then(() => modal.remove());
       }}
     >
       <Dialog.Portal container={container}>
@@ -199,7 +199,7 @@ const StyledOverlay = styled(Dialog.Overlay) <{
   place-items: center;
   overflow-y: auto;
   z-index: 10;
-  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 350ms ease-in-out;
+  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -215,7 +215,7 @@ const StyledOverlay = styled(Dialog.Overlay) <{
       align-items: flex-end;
       position: absolute;
       background: rgba(255, 255, 255, 0);
-      animation: ${props.open ? fadeIn : fadeOut} 350ms ease-in-out;
+      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out;
       /* For Chrome */
       &::-webkit-scrollbar {
         display: none;
@@ -242,5 +242,5 @@ const StyledContent = styled(Dialog.Content) <{
       : drawer
         ? fadeOutAndSlideDown
         : fadeOutAndZoomIn}
-    350ms ease-in-out;
+    150ms ease-in-out;
 `;
