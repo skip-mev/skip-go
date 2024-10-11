@@ -95,11 +95,6 @@ export class SkipClient {
   private cache: CustomCache;
   private cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
 
-  // private static cache: {
-  //   chains?: { data: types.Chain[]; timestamp: number };
-  //   assets?: { data: Record<string, types.Asset[]>; timestamp: number };
-  // } = {};
-
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
       baseURL: options.apiURL || SKIP_API_URL,
@@ -143,6 +138,8 @@ export class SkipClient {
   }
 
   async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
+    console.log('HELLO HELLO')
+
     return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
       const response = await this.requestClient.get<{
         chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
@@ -169,7 +166,6 @@ export class SkipClient {
         '/v2/info/chains',
         opts
       );
-
       return response.chains.map((chain) => types.chainFromJSON(chain));
     }, [options]);
   }
