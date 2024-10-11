@@ -326,7 +326,8 @@ export class SkipClient {
       getGasPrice,
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
       getFallbackGasAmount,
-      onTransactionBroadcast
+      onTransactionBroadcast,
+      onTransactionCompleted
     } = options;
     let gasTokenRecord: Record<number, Coin> | undefined;
     
@@ -336,10 +337,11 @@ export class SkipClient {
         raise(`executeRoute error: invalid message at index ${i}`);
       }
 
-      let txResult: { chainID: string; txHash: string, transactionReceipt?: TransactionReceipt };
+      let txResult: { chainID: string; txHash: string };
       if ('cosmosTx' in tx) {
-        txResult = await this.executeCosmosTx(tx, options, i, gasTokenRecord);
+        txResult = await this.executeCosmosTx(tx, options);
       } else if ('evmTx' in tx) {
+        // @ts-expect-error
         txResult = await this.executeEvmMsg(tx, options);
       } else if ('svmTx' in tx) {
         txResult = await this.executeSvmTx(tx, options);
@@ -354,13 +356,12 @@ export class SkipClient {
         onTransactionTracked: options.onTransactionTracked,
       });
 
-      if (options.onTransactionCompleted) {
-        await options.onTransactionCompleted(
-          txResult.chainID,
-          txResult.txHash,
-          txStatusResponse
-        );
-      }
+      await onTransactionCompleted?.(
+        txResult.chainID,
+        txResult.txHash,
+        txStatusResponse
+      )
+
     }
   }
 
@@ -368,13 +369,12 @@ export class SkipClient {
     tx: {
       cosmosTx: types.CosmosTx;
       operationsIndices: number[];
-  },
+    },
     options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] },
-    index: number,
-    chainID: string,
-    gasTokenRecord?: Record<number, Coin>,
   ): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, validateGasBalance, getGasPrice, gasAmountMultiplier, getFallbackGasAmount } = options;
+
+    const { chainID } = tx.cosmosTx
 
     const getOfflineSigner = options.getCosmosSigner || this.getCosmosSigner;
     if (!getOfflineSigner) {
@@ -385,7 +385,7 @@ export class SkipClient {
 
     const [signer, endpoint] = await Promise.all([
       getOfflineSigner(chainID),
-      this.getRpcEndpointForChain(tx.cosmosTx.chainID)
+      this.getRpcEndpointForChain(chainID)
     ]);
 
     console.time("StargateClient Instantiation Time");
@@ -400,65 +400,63 @@ export class SkipClient {
       }
     );
 
-    const cosmosTx = tx.cosmosTx;
     const currentUserAddress = userAddresses.find(
-      (x) => x.chainID === cosmosTx.chainID
+      (x) => x.chainID === chainID
     )?.address;
 
     if (!currentUserAddress) {
       raise(
-        `executeRoute error: invalid address for chain '${cosmosTx.chainID}'`
+        `executeRoute error: invalid address for chain '${chainID}'`
       );
     }
 
     const fee = await this.estimateGasForMessage({
       stargateClient,
-      chainID: cosmosTx.chainID,
+      chainID,
       signerAddress: currentUserAddress,
       gasAmountMultiplier,
       getGasPrice,
-      messages: cosmosTx.msgs,
+      messages: tx.cosmosTx.msgs,
       getFallbackGasAmount,
     });
 
-    if (validateGasBalance) {
-      gasTokenRecord = await this.validateGasBalances({
-        txs: options.txs,
-        userAddresses,
-        getOfflineSigner: options.getCosmosSigner,
-        getGasPrice,
-        gasAmountMultiplier,
-        getFallbackGasAmount,
-        onValidateGasBalance: options.onValidateGasBalance,
-        stargateClient,
-        fee
-      });
-    }
+    // if (validateGasBalance) {
+    //   gasTokenRecord = await this.validateGasBalances({
+    //     txs: options.txs,
+    //     userAddresses,
+    //     getOfflineSigner: options.getCosmosSigner,
+    //     getGasPrice,
+    //     gasAmountMultiplier,
+    //     getFallbackGasAmount,
+    //     onValidateGasBalance: options.onValidateGasBalance,
+    //     stargateClient,
+    //     fee
+    //   });
+    // }
 
-    let gasTokenUsed = gasTokenRecord?.[index];
+    // let gasTokenUsed = gasTokenRecord?.[index];
 
-    if (cosmosTx.chainID === 'stride-1' && !gasTokenUsed) {
-      gasTokenUsed = await this.validateCosmosGasBalance({
-        chainID: cosmosTx.chainID,
-        messages: cosmosTx.msgs,
-        signerAddress: currentUserAddress,
-        getGasPrice,
-        gasAmountMultiplier,
-        getFallbackGasAmount,
-        stargateClient,
-        fee
-      });
-    }
+    // if (cosmosTx.chainID === 'stride-1' && !gasTokenUsed) {
+    //   gasTokenUsed = await this.validateCosmosGasBalance({
+    //     chainID: cosmosTx.chainID,
+    //     messages: cosmosTx.msgs,
+    //     signerAddress: currentUserAddress,
+    //     getGasPrice,
+    //     gasAmountMultiplier,
+    //     getFallbackGasAmount,
+    //     stargateClient,
+    //     fee
+    //   });
+    // }
 
     const txResponse = await this.executeCosmosMessage({
-      messages: cosmosTx.msgs,
-      chainID: cosmosTx.chainID,
+      messages: tx.cosmosTx.msgs,
+      chainID,
       getCosmosSigner: options.getCosmosSigner,
       getGasPrice: getGasPrice,
       gasAmountMultiplier,
       signerAddress: currentUserAddress,
       getFallbackGasAmount,
-      gasTokenUsed,
       stargateClient,
       signer,
       fee,
@@ -466,7 +464,7 @@ export class SkipClient {
     });
 
     return {
-      chainID: cosmosTx.chainID,
+      chainID,
       txHash: txResponse.transactionHash,
     };
   }
@@ -528,7 +526,6 @@ export class SkipClient {
       signerAddress,
       chainID,
       messages,
-      gasTokenUsed,
       onTransactionSigned,
       stargateClient,
       signer,
@@ -546,19 +543,19 @@ export class SkipClient {
       );
     }
 
-    if (gasTokenUsed) {
-      const _fee = fee.amount.find((x) => x.denom === gasTokenUsed.denom);
+    // if (gasTokenUsed) {
+    //   const _fee = fee.amount.find((x) => x.denom === gasTokenUsed.denom);
 
-      if (_fee) {
-        // @ts-expect-error - fee amount is readonly
-        fee.amount = [_fee] as Coin[];
-      }
-    }
+    //   if (_fee) {
+    //     // @ts-expect-error - fee amount is readonly
+    //     fee.amount = [_fee] as Coin[];
+    //   }
+    // }
 
-    if (fee.amount.length > 1) {
-      // @ts-expect-error - fee amount is readonly
-      fee.amount = [fee.amount[0]];
-    }
+    // if (fee.amount.length > 1) {
+    //   // @ts-expect-error - fee amount is readonly
+    //   fee.amount = [fee.amount[0]];
+    // }
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
