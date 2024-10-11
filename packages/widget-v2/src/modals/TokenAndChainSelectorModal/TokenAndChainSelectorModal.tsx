@@ -157,12 +157,7 @@ export const TokenAndChainSelectorModal = createModal(
     const filteredAssets = useMemo(() => {
       if (!groupedAssetsByRecommendedSymbol) return;
       return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
-        keys: [
-          "id",
-          "assets.*.symbol",
-          "assets.*.denom",
-          "chains.*.originChainID",
-        ],
+        keys: ["id"],
       }).sort((itemA, itemB) => {
         const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
         if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {

@@ -87,7 +87,12 @@ export const SwapPage = () => {
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
+  }, [
+    setDestinationAssetAmount,
+    setSourceAsset,
+    setSourceAssetAmount,
+    tokenAndChainSelectorModal,
+  ]);
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -101,7 +106,13 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       networkSelection: true,
     });
-  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
+  }, [
+    getClientAsset,
+    setSourceAsset,
+    sourceAsset?.chainID,
+    sourceAsset?.denom,
+    tokenAndChainSelectorModal,
+  ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
@@ -191,8 +202,6 @@ export const SwapPage = () => {
       return <MainButton label="Finding best route..." loading />;
     }
 
-
-
     if (isRouteError) {
       return (
         <MainButton label={routeError?.message ?? "No routes found"} disabled />
@@ -234,7 +243,25 @@ export const SwapPage = () => {
         }}
       />
     );
-  }, [sourceAsset?.chainID, sourceAsset?.amount, destinationAsset?.chainID, destinationAsset?.amount, isWaitingForNewRoute, sourceAccount?.address, isRouteError, isLoadingBalances, insufficientBalance, route, connectedWalletModal, selectWalletmodal, routeError?.message, setChainAddresses, setCurrentPage, setSwapExecutionState, setError]);
+  }, [
+    sourceAsset?.chainID,
+    sourceAsset?.amount,
+    destinationAsset?.chainID,
+    destinationAsset?.amount,
+    isWaitingForNewRoute,
+    sourceAccount?.address,
+    isRouteError,
+    isLoadingBalances,
+    insufficientBalance,
+    route,
+    connectedWalletModal,
+    selectWalletmodal,
+    routeError?.message,
+    setChainAddresses,
+    setCurrentPage,
+    setSwapExecutionState,
+    setError,
+  ]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
