@@ -70,7 +70,7 @@ export interface SkipClientOptions extends SignerGetters {
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
-  cacheDuration?: number;
+  cacheDurationMs?: number;
 }
 
 /** Execute Route Options */
@@ -84,9 +84,9 @@ export type ExecuteRouteOptions = SignerGetters &
     userAddresses: UserAddress[];
     validateGasBalance?: boolean;
     slippageTolerancePercent?: string;
-      /**
-   * Arbitrary Tx to be executed before or after route msgs
-   */
+    /**
+ * Arbitrary Tx to be executed before or after route msgs
+ */
     beforeMsg?: types.CosmosMsg;
     afterMsg?: types.CosmosMsg;
   };
