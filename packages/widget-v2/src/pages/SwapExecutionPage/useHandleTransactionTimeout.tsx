@@ -46,6 +46,10 @@ export const useHandleTransactionTimeout = (
     ) {
       clearTimeout(transactionTimeoutTimer);
     }
+
+    return () => {
+      clearTimeout(transactionTimeoutTimer);
+    };
   }, [
     route,
     setError,
