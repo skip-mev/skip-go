@@ -9,7 +9,6 @@ type CacheOptions = {
   cacheDurationMs: number;
 };
 
-// Renamed from Cache to CustomCache
 export class CustomCache {
   private cache: Map<string, CacheEntry<any>> = new Map();
 
@@ -25,8 +24,6 @@ export class CustomCache {
     this.cache.clear();
   }
 }
-
-// Define the Cache interface expected by createCachingMiddleware
 interface Cache {
   set<T>(key: string, data: T, timestamp: number): void;
   get<T>(key: string): CacheEntry<T> | undefined;
@@ -43,7 +40,7 @@ export const createCachingMiddleware = (cache: Cache, { cacheDurationMs }: Cache
 
     const now = Date.now();
     const cachedEntry = cache.get<T>(cacheKey);
-
+    console.log('cacheDurationMs', cacheDurationMs)
     if (cachedEntry && now - cachedEntry.timestamp < cacheDurationMs) {
       return cachedEntry.data;
     }
