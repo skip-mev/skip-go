@@ -83,13 +83,13 @@ export type ExecuteRouteOptions = SignerGetters &
     userAddresses: UserAddress[];
     validateGasBalance?: boolean;
     slippageTolerancePercent?: string;
+      /**
+   * Arbitrary Tx to be executed before or after route msgs
+   */
+    beforeMsg?: types.CosmosMsg;
+    afterMsg?: types.CosmosMsg;
   };
-  /**
- * Arbitrary Tx to be executed before or after route msgs
- */
-  beforeMsg?: types.CosmosMsg;
-  afterMsg?: types.CosmosMsg;
-};
+
 
 export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
