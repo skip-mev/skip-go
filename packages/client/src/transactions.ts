@@ -188,7 +188,6 @@ export async function getCosmosGasAmountForMessage(
 
   const estimatedGas = await client.simulate(signerAddress, encodedMsgs, '');
 
-
   const estimatedGasWithBuffer = estimatedGas * multiplier;
 
   return Math.ceil(estimatedGasWithBuffer).toFixed(0);
