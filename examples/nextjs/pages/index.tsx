@@ -28,7 +28,7 @@ const Home = () => {
         backgroundImage: `url('${theme === 'dark' ? darkbg.src : lightbg.src
           }')`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'bottom',
       }}
     >
       <button
