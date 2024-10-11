@@ -40,6 +40,7 @@ export interface SkipClientOptions {
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
+  cacheDuration?: number;
 }
 
 export type ExecuteRouteOptions = {

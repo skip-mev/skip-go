@@ -95,7 +95,8 @@ export class SkipClient {
     assets?: { data: Record<string, types.Asset[]>; timestamp: number };
   } = {};
 
-  private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  private cacheDuration?: number = 1 * 60 * 1000;
+
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
@@ -125,8 +126,7 @@ export class SkipClient {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
-
-    
+    this.cacheDuration = options.cacheDuration;
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -142,8 +142,8 @@ export class SkipClient {
     const now = Date.now();
 
     if (
-      SkipClient.cache.assets &&
-      now - SkipClient.cache.assets.timestamp < SkipClient.CACHE_DURATION
+      SkipClient.cache.assets &&  this.cacheDuration && 
+      now - SkipClient.cache.assets.timestamp < this.cacheDuration
     ) {
       return SkipClient.cache.assets.data;
     }
@@ -231,8 +231,8 @@ export class SkipClient {
     const now = Date.now();
 
     if (
-      SkipClient.cache.chains &&
-      now - SkipClient.cache.chains.timestamp < SkipClient.CACHE_DURATION
+      SkipClient.cache.chains && this.cacheDuration &&
+      now - SkipClient.cache.chains.timestamp < this.cacheDuration
     ) {
       return SkipClient.cache.chains.data;
     }
@@ -333,8 +333,6 @@ export class SkipClient {
     } = options;
     let gasTokenRecord: Record<number, Coin> | undefined;
     
-    
-
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
