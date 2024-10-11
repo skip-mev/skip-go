@@ -12,7 +12,7 @@ import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 
-export const useFetchTransactionStatus = ({
+export const useSyncTxStatus = ({
   statusData,
   historyIndex
 }: {

@@ -12,7 +12,7 @@ import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/stat
 import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
-import { useFetchTransactionStatus } from "../SwapExecutionPage/useFetchTransactionStatus";
+import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -37,7 +37,7 @@ export const TransactionHistoryPageHistoryItem = ({
     })),
   });
 
-  useFetchTransactionStatus({
+  useSyncTxStatus({
     statusData,
     historyIndex: index,
   });
