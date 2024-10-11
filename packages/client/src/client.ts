@@ -232,7 +232,7 @@ export class SkipClient {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const { route, userAddresses } = options;
+    const { route, userAddresses, beforeMsg, afterMsg } = options;
 
     let addressList: string[] = [];
     let i = 0;
@@ -269,6 +269,21 @@ export class SkipClient {
       chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
+
+    if (beforeMsg && messages.txs.length > 0) {
+      const firstTx = messages.txs[0];
+      if (firstTx && 'cosmosTx' in firstTx) {
+        firstTx.cosmosTx.msgs.unshift(beforeMsg);
+      }
+    }
+
+    if (afterMsg && messages.txs.length > 0) {
+      const lastTx = messages.txs[messages.txs.length - 1];
+      if (lastTx && 'cosmosTx' in lastTx) {
+        lastTx.cosmosTx.msgs.push(afterMsg);
+      }
+    }
+
     await this.executeTxs({ ...options, txs: messages.txs });
   }
 

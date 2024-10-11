@@ -10,7 +10,6 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
@@ -22,7 +21,7 @@ type SwapExecutionState = {
   route?: RouteResponse;
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
-  overallStatus?: SimpleStatus;
+  overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData
 };
 
@@ -55,12 +54,12 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
-    overallStatus: undefined,
+    overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
   }
 );
 
-export const setOverallStatusAtom = atom(null, (_get, set, status?: SimpleStatus) => {
+export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
   set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
 });
 
@@ -76,12 +75,16 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
+    overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
   });
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
+    },
+    onTransactionSigned: async (transactionDetails) => {
+      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
@@ -91,7 +94,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "unconfirmed");
           }
         });
       } else if (lastTransaction?.explorerLink) {
@@ -99,7 +102,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "unconfirmed");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
           transactionHash: lastTransaction?.txHash ?? "",
@@ -113,13 +116,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           error: error as Error,
           onClickBack: () => {
             set(errorAtom, undefined);
-            set(setOverallStatusAtom, undefined);
+            set(setOverallStatusAtom, "unconfirmed");
           },
         });
       }
-    },
-    onTransactionSigned: async (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
     },
     onValidateGasBalance: async (props) => {
       set(setValidatingGasBalanceAtom, props);
@@ -140,7 +140,7 @@ export const setTransactionDetailsArrayAtom = atom(
     const newTransactionDetailsArray = transactionDetailsArray;
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
-      (transaction) => transaction.txHash === transactionDetails.txHash
+      (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase()
     );
     if (transactionIndexFound !== -1) {
       newTransactionDetailsArray[transactionIndexFound] = {
@@ -160,7 +160,7 @@ export const setTransactionDetailsArrayAtom = atom(
       route,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
-      status: "broadcasted",
+      status: "unconfirmed",
     });
   }
 );
@@ -192,12 +192,6 @@ export type TransactionDetails = {
   explorerLink?: string;
   status?: TxStatusResponse;
 };
-
-export type ClientTransactionStatus =
-  | "pending"
-  | "broadcasted"
-  | "completed"
-  | "failed";
 
 type SubmitSwapExecutionCallbacks = {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
