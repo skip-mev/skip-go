@@ -1,4 +1,4 @@
-import { SwapWidget } from '@skip-go/widget';
+import { Widget } from '@skip-go/widget';
 import { defaultTheme, lightTheme } from '@skip-go/widget';
 import darkbg from './gobg-dark.svg';
 import lightbg from './gobg-light.svg';
@@ -44,7 +44,7 @@ const Home = () => {
           transform: 'translateY(-185px)',
         }}
       >
-        <SwapWidget theme={theme === 'dark' ? defaultTheme : lightTheme} />
+        <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
       </div>
     </div>
   );
