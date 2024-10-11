@@ -109,7 +109,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipChains"],
     queryFn: async () => {
-      console.log('inside skipChainsAtom')
+    queryFn: async (): Promise<Chain[]> => {
       return skip.chains({
         includeEVM: true,
         includeSVM: true,

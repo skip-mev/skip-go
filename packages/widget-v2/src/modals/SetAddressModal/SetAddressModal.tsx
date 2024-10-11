@@ -62,7 +62,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     return isValidWalletAddress({
       address: manualWalletAddress,
       bech32Prefix,
-      chainType,
+      chainType
     });
   }, [chain, manualWalletAddress]);
 

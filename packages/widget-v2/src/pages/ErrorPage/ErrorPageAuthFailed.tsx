@@ -3,6 +3,8 @@ import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { useSetAtom } from "jotai";
+import { errorAtom } from "@/state/errorPage";
 
 export type ErrorPageAuthFailedProps = {
   onClickBack: () => void;
@@ -11,7 +13,15 @@ export type ErrorPageAuthFailedProps = {
 export const ErrorPageAuthFailed = ({
   onClickBack,
 }: ErrorPageAuthFailedProps) => {
+  const setErrorAtom = useSetAtom(errorAtom);
   const theme = useTheme();
+
+  const handleOnClickBack = () => {
+    setErrorAtom(undefined);
+    if (onClickBack) {
+      onClickBack();
+    }
+  };
 
   return (
     <>
@@ -19,7 +29,7 @@ export const ErrorPageAuthFailed = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: handleOnClickBack
         }}
       />
       <ErrorState
@@ -32,7 +42,7 @@ export const ErrorPageAuthFailed = ({
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
-        onClick={onClickBack}
+        onClick={handleOnClickBack}
         backgroundColor={theme.error.text}
       />
     </>

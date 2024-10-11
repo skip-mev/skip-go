@@ -9,7 +9,6 @@ export type IBCAddress = {
   address: string;
   chainID: string;
 };
-
 export type AssetJSON = {
   denom: string;
   chain_id: string;

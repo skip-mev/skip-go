@@ -15,11 +15,12 @@ import { createPublicClient, http } from 'viem';
 import { sei } from 'viem/chains';
 import { seiPrecompileAddrABI } from '../constants/abis';
 import { StyledBorderDiv } from '../ui/StyledComponents/Theme';
+import { ChainType } from '@skip-go/client';
 
 export interface MinimalWallet {
   walletName: string;
   walletPrettyName: string;
-  walletChainType: 'evm' | 'cosmos' | 'svm';
+  walletChainType: ChainType;
   walletInfo: {
     logo?: string | { major: string; minor: string };
   };

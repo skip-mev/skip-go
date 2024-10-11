@@ -1,10 +1,24 @@
 import { setTransactionHistoryAtom } from "@/state/history";
-import { setOverallStatusAtom, swapExecutionStateAtom, skipTransactionStatusAtom, skipSubmitSwapExecutionAtom } from "@/state/swapExecutionPage";
-import { ClientTransferEvent, getTransferEventsFromTxStatusResponse, getOperationToTransferEventsMap, getClientOperations, ClientOperation } from "@/utils/clientType";
+import {
+  setOverallStatusAtom,
+  swapExecutionStateAtom,
+  skipTransactionStatusAtom,
+  skipSubmitSwapExecutionAtom,
+} from "@/state/swapExecutionPage";
+import {
+  ClientTransferEvent,
+  getClientOperations,
+  ClientOperation,
+  getSimpleOverallStatus,
+} from "@/utils/clientType";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import { useState, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 
-export const useFetchTransactionStatus = () => {
+export const useFetchTransactionStatus = ({
+  transferEvents
+}: {
+  transferEvents?: ClientTransferEvent[];
+}) => {
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const {
     route,
@@ -16,8 +30,6 @@ export const useFetchTransactionStatus = () => {
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
-  const [operationToTransferEventsMap, setOperationToTransferEventsMap] =
-    useState<Record<number, ClientTransferEvent>>({});
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
@@ -25,68 +37,47 @@ export const useFetchTransactionStatus = () => {
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
-    if (!route?.operations) return;
-    const operationTransferEventsArray = Object.values(
-      operationToTransferEventsMap
-    );
+    if (!route?.operations || !route?.txsRequired) return;
 
-    const lastOperationIndex = route?.operations?.length - 1;
-
-    if (operationTransferEventsArray.length === 0) {
+    if (transferEvents?.length === 0) {
       if (isPending) {
         setOverallStatus("signing");
       }
       return;
     }
 
-    if (
-      operationToTransferEventsMap[lastOperationIndex]?.status === "completed"
-    ) {
+    if (!transactionStatus) return;
+    const lastTransactionIndex = route?.txsRequired - 1;
+
+    const lastTransactionStatus = getSimpleOverallStatus(
+      transactionStatus?.[lastTransactionIndex]?.state
+    );
+
+    if (lastTransactionStatus === "completed") {
       return "completed";
     }
 
     if (
-      operationTransferEventsArray.find(({ status }) => status === "failed")
+      transferEvents?.find(({ status }) => status === "failed")
     ) {
       return "failed";
     }
     if (
-      operationTransferEventsArray.find(({ status }) => status === "pending")
+      transferEvents?.find(({ status }) => status === "pending")
     ) {
       return "pending";
     }
     if (
-      operationTransferEventsArray.every(
-        (state) => state.status === "broadcasted"
+      transferEvents?.every(
+        ({ status }) => status === "unconfirmed"
       )
     ) {
-      return "broadcasted";
+      return "unconfirmed";
     }
-  }, [isPending, operationToTransferEventsMap, route?.operations, setOverallStatus]);
+  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, transactionStatus, transferEvents]);
 
   useEffect(() => {
     if (overallStatus === "completed" || overallStatus === "failed") return;
-
-    const transferEvents =
-      getTransferEventsFromTxStatusResponse(transactionStatus);
-    const operationToTransferEventsMap = getOperationToTransferEventsMap(
-      transactionStatus ?? [],
-      clientOperations
-    );
-    const operationTransferEventsArray = Object.values(
-      operationToTransferEventsMap
-    );
-
-    if (transactionDetailsArray.length === 1 && transferEvents.length === 0) {
-      setOperationToTransferEventsMap({
-        0: {
-          status: "pending",
-        } as ClientTransferEvent,
-      });
-    }
-    if (operationTransferEventsArray.length > 0) {
-      setOperationToTransferEventsMap(operationToTransferEventsMap);
-    }
 
     if (computedSwapStatus) {
       setTransactionHistory(transactionHistoryIndex, {
@@ -105,5 +96,4 @@ export const useFetchTransactionStatus = () => {
     transactionHistoryIndex,
   ]);
 
-  return operationToTransferEventsMap;
 };

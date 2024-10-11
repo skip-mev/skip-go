@@ -1,11 +1,7 @@
-import { Chain as SkipChain } from '@skip-go/client';
+import { Chain } from '@skip-go/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useSkipClient } from './use-skip-client';
 import { useSwapWidgetUIStore } from '../store/swap-widget';
-
-export type Chain = SkipChain & {
-  prettyName: string;
-};
 
 export type UseChainsQueryArgs<T = Chain[]> = {
   enabled?: boolean;

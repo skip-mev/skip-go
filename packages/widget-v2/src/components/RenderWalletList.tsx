@@ -3,7 +3,7 @@ import { styled, useTheme } from "styled-components";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
-import { Text } from "@/components/Typography";
+import { SmallText, Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
@@ -91,6 +91,7 @@ export const RenderWalletList = ({
       const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName;
       const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
       const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
+      const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
 
       if (wallet.walletName === "prax") {
         return (
@@ -136,18 +137,20 @@ export const RenderWalletList = ({
           }}
           style={{ marginTop: ITEM_GAP }}
           leftContent={
-            <Row align="center" gap={10}>
-              {imageUrl && (
-                <img
-                  height={35}
-                  width={35}
-                  style={{ objectFit: "cover" }}
-                  src={imageUrl}
-                  alt={`${name} logo`}
-                />
-              )}
-
-              <Text>{name}</Text>
+            <Row style={{ width: "100%" }} align="center" justify="space-between">
+              <Row align="center" gap={10}>
+                {imageUrl && (
+                  <img
+                    height={35}
+                    width={35}
+                    style={{ objectFit: "cover" }}
+                    src={imageUrl}
+                    alt={`${name} logo`}
+                  />
+                )}
+                <Text>{name}</Text>
+              </Row>
+              {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
             </Row>
           }
           rightContent={rightContent?.()}
