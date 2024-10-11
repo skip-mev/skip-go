@@ -1626,14 +1626,14 @@ export class SkipClient {
     signer?: OfflineSigner,
     gasPrice?: GasPrice,
   ) {
-    gasPrice ||= await this.getRecommendedGasPrice(chainID);
+    gasPrice = await this.getRecommendedGasPrice(chainID);
     if (!gasPrice) {
       throw new Error(
         `getFeeForMessage error: Unable to get gas price for chain: ${chainID}`
       );
     }
 
-    signer ||= await this.getCosmosSigner?.(chainID);
+    signer = await this.getCosmosSigner?.(chainID);
     if (!signer) {
       throw new Error(
         "getFeeForMessage error: signer is not provided or 'getCosmosSigner' is not configured in skip router"
@@ -1646,8 +1646,6 @@ export class SkipClient {
       raise(
         `getFeeForMessage error: unable to resolve account address from signer`
       );
-
-    const endpoint = await this.getRpcEndpointForChain(chainID);
 
     const gasNeeded = await getCosmosGasAmountForMessage(
       client,
