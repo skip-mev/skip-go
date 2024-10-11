@@ -552,6 +552,11 @@ export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';
 
 export type ChainType = 'cosmos' | 'evm' | 'svm';
 
+export type TxResult = {
+  txHash: string
+  chainID: string
+}
+
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;
   asset_on_dest: AssetJSON;
