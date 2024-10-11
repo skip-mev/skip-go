@@ -48,11 +48,11 @@ describe('client', () => {
                       sum: 'h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=',
                     },
                     'github.com/strangelove-ventures/packet-forward-middleware':
-                      {
-                        path: 'github.com/strangelove-ventures/packet-forward-middleware/v4',
-                        version: 'v4.0.5',
-                        sum: 'h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=',
-                      },
+                    {
+                      path: 'github.com/strangelove-ventures/packet-forward-middleware/v4',
+                      version: 'v4.0.5',
+                      sum: 'h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=',
+                    },
                   },
                   cosmos_module_support: {
                     authz: true,
@@ -88,7 +88,6 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
-        cacheDuration: 0,
       });
       const response = await client.chains();
 
@@ -262,122 +261,122 @@ describe('client', () => {
       });
     });
 
-    // it('handles 200 OK - with parameters', async () => {
-    //   server.use(
-    //     rest.get(
-    //       'https://api.skip.build/v2/fungible/assets',
-    //       (req, res, ctx) => {
-    //         const chainID = req.url.searchParams.get('chain_id');
-    //         const nativeOnly = req.url.searchParams.get('native_only');
-    //         const includeNoMetadataAssets = req.url.searchParams.get(
-    //           'include_no_metadata_assets'
-    //         );
+    it('handles 200 OK - with parameters', async () => {
+      server.use(
+        rest.get(
+          'https://api.skip.build/v2/fungible/assets',
+          (req, res, ctx) => {
+            const chainID = req.url.searchParams.get('chain_id');
+            const nativeOnly = req.url.searchParams.get('native_only');
+            const includeNoMetadataAssets = req.url.searchParams.get(
+              'include_no_metadata_assets'
+            );
 
-    //         if (chainID && nativeOnly && includeNoMetadataAssets) {
-    //           return res(
-    //             ctx.status(200),
-    //             ctx.json({
-    //               chain_to_assets_map: {
-    //                 'osmosis-1': {
-    //                   assets: [
-    //                     {
-    //                       denom: 'uosmo',
-    //                       chain_id: 'osmosis-1',
-    //                       origin_denom: 'uosmo',
-    //                       origin_chain_id: 'osmosis-1',
-    //                       is_cw20: false,
-    //                       trace: '',
-    //                       symbol: 'OSMO',
-    //                       name: 'OSMO',
-    //                       logo_uri:
-    //                         'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png',
-    //                       decimals: 6,
-    //                     },
-    //                   ],
-    //                 },
-    //               },
-    //             })
-    //           );
-    //         }
+            if (chainID && nativeOnly && includeNoMetadataAssets) {
+              return res(
+                ctx.status(200),
+                ctx.json({
+                  chain_to_assets_map: {
+                    'osmosis-1': {
+                      assets: [
+                        {
+                          denom: 'uosmo',
+                          chain_id: 'osmosis-1',
+                          origin_denom: 'uosmo',
+                          origin_chain_id: 'osmosis-1',
+                          is_cw20: false,
+                          trace: '',
+                          symbol: 'OSMO',
+                          name: 'OSMO',
+                          logo_uri:
+                            'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png',
+                          decimals: 6,
+                        },
+                      ],
+                    },
+                  },
+                })
+              );
+            }
 
-    //         return res(
-    //           ctx.status(500),
-    //           ctx.json({ message: 'should not have reached this' })
-    //         );
-    //       }
-    //     )
-    //   );
+            return res(
+              ctx.status(500),
+              ctx.json({ message: 'should not have reached this' })
+            );
+          }
+        )
+      );
 
-    //   const client = new SkipClient({
-    //     apiURL: SKIP_API_URL,
-    //   });
+      const client = new SkipClient({
+        apiURL: SKIP_API_URL,
+      });
 
-    //   const assets = await client.assets({
-    //     chainID: 'osmosis-1',
-    //     nativeOnly: true,
-    //     includeNoMetadataAssets: true,
-    //   });
+      const assets = await client.assets({
+        chainID: 'osmosis-1',
+        nativeOnly: true,
+        includeNoMetadataAssets: true,
+      });
 
-    //   expect(assets).toEqual({
-    //     'osmosis-1': [
-    //       {
-    //         denom: 'uosmo',
-    //         chainID: 'osmosis-1',
-    //         originDenom: 'uosmo',
-    //         originChainID: 'osmosis-1',
-    //         trace: '',
-    //         isCW20: false,
-    //         symbol: 'OSMO',
-    //         name: 'OSMO',
-    //         logoURI:
-    //           'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png',
-    //         decimals: 6,
-    //       },
-    //     ],
-    //   });
-    // });
+      expect(assets).toEqual({
+        'osmosis-1': [
+          {
+            denom: 'uosmo',
+            chainID: 'osmosis-1',
+            originDenom: 'uosmo',
+            originChainID: 'osmosis-1',
+            trace: '',
+            isCW20: false,
+            symbol: 'OSMO',
+            name: 'OSMO',
+            logoURI:
+              'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png',
+            decimals: 6,
+          },
+        ],
+      });
+    });
 
-    // it('handles 400 Bad Request', async () => {
-    //   server.use(
-    //     rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
-    //       return res(
-    //         ctx.status(400),
-    //         ctx.json({
-    //           code: 3,
-    //           message: 'Invalid chain_id',
-    //           details: [],
-    //         })
-    //       );
-    //     })
-    //   );
+    it('handles 400 Bad Request', async () => {
+      server.use(
+        rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              code: 3,
+              message: 'Invalid chain_id',
+              details: [],
+            })
+          );
+        })
+      );
 
-    //   const client = new SkipClient({
-    //     apiURL: SKIP_API_URL,
-    //   });
+      const client = new SkipClient({
+        apiURL: SKIP_API_URL,
+      });
 
-    //   await expect(client.assets()).rejects.toThrow('Invalid chain_id');
-    // });
+      await expect(client.assets()).rejects.toThrow('Invalid chain_id');
+    });
 
-    // it('handles 500 Internal Server Error', async () => {
-    //   server.use(
-    //     rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
-    //       return res(
-    //         ctx.status(500),
-    //         ctx.json({
-    //           code: 2,
-    //           message: 'internal server error',
-    //           details: [],
-    //         })
-    //       );
-    //     })
-    //   );
+    it('handles 500 Internal Server Error', async () => {
+      server.use(
+        rest.get('https://api.skip.build/v2/fungible/assets', (_, res, ctx) => {
+          return res(
+            ctx.status(500),
+            ctx.json({
+              code: 2,
+              message: 'internal server error',
+              details: [],
+            })
+          );
+        })
+      );
 
-    //   const client = new SkipClient({
-    //     apiURL: SKIP_API_URL,
-    //   });
+      const client = new SkipClient({
+        apiURL: SKIP_API_URL,
+      });
 
-    //   await expect(client.assets()).rejects.toThrow('internal server error');
-    // });
+      await expect(client.assets()).rejects.toThrow('internal server error');
+    });
   });
 
   describe('/v2/fungible/assets_from_source', () => {
@@ -1730,15 +1729,15 @@ describe('client', () => {
       expect(result?.denom).toEqual('uosmo');
     }, 30000);
 
-    // it('returns the recommended gas price for Noble (no staking token)', async () => {
-    //   const client = new SkipClient({
-    //     apiURL: SKIP_API_URL,
-    //   });
+    it('returns the recommended gas price for Noble (no staking token)', async () => {
+      const client = new SkipClient({
+        apiURL: SKIP_API_URL,
+      });
 
-    //   const result = await client.getRecommendedGasPrice('noble-1');
+      const result = await client.getRecommendedGasPrice('noble-1');
 
-    //   expect(result?.denom).toEqual('uusdc');
-    // }, 30000);
+      expect(result?.denom).toEqual('uusdc');
+    }, 30000);
   });
 
   describe('bridges', () => {
@@ -2089,12 +2088,11 @@ describe('client', () => {
   });
 });
 
-// test('dymension', async () => {
-//   const client = new SkipClient({
-//     apiURL: SKIP_API_URL,
-//   });
+test('dymension', async () => {
+  const client = new SkipClient({
+    apiURL: SKIP_API_URL,
+  });
 
-//   const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
-//   console.log('feeInfo', feeInfo)
-//   expect(feeInfo?.denom).toEqual('adym');
-// }, 30000);
+  const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
+  expect(feeInfo?.denom).toEqual('adym');
+}, 30000);

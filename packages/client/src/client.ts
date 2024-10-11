@@ -69,6 +69,7 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
+import { createCachingMiddleware, CustomCache } from './cache';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -89,13 +90,15 @@ export class SkipClient {
   protected getSVMSigner?: clientTypes.SignerGetters['getSVMSigner'];
   protected chainIDsToAffiliates?: clientTypes.SkipClientOptions['chainIDsToAffiliates'];
   protected cumulativeAffiliateFeeBPS?: string = '0';
+  protected cacheDurationMs?: number;
 
-  private static cache: {
-    chains?: { data: types.Chain[]; timestamp: number };
-    assets?: { data: Record<string, types.Asset[]>; timestamp: number };
-  } = {};
+  private cache: CustomCache;
+  private cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
 
-  private cacheDuration: number | null;
+  // private static cache: {
+  //   chains?: { data: types.Chain[]; timestamp: number };
+  //   assets?: { data: Record<string, types.Asset[]>; timestamp: number };
+  // } = {};
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
@@ -126,7 +129,10 @@ export class SkipClient {
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
 
-    this.cacheDuration = options.cacheDuration ?? DEFAULT_CACHE_DURATION;
+    this.cache = new CustomCache();
+
+    this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
+    this.cachingMiddleware = createCachingMiddleware(this.cache, { cacheDurationMs: this.cacheDurationMs });
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -136,38 +142,36 @@ export class SkipClient {
     }
   }
 
-  async assets(
-    options: types.AssetsRequest = {}
-  ): Promise<Record<string, types.Asset[]>> {
-    const now = Date.now();
+  async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
+    return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
+      const response = await this.requestClient.get<{
+        chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
+      }>('/v2/fungible/assets', types.assetsRequestToJSON({ ...opts }));
 
-    if (
-      SkipClient.cache.assets &&  this.cacheDuration && 
-      now - SkipClient.cache.assets.timestamp < this.cacheDuration
-    ) {
-      return SkipClient.cache.assets.data;
-    }
+      return Object.entries(response.chain_to_assets_map).reduce(
+        (acc, [chainID, { assets }]) => {
+          acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
+          return acc;
+        },
+        {} as Record<string, types.Asset[]>
+      );
+    }, [options]);
+  }
 
-    const response = await this.requestClient.get<{
-      chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
-    }>(
-      '/v2/fungible/assets',
-      types.assetsRequestToJSON({
-        ...options,
-      })
-    );
+  async chains(options: {
+    includeEVM?: boolean;
+    includeSVM?: boolean;
+    onlyTestnets?: boolean;
+    chainIDs?: string[];
+  } = {}): Promise<types.Chain[]> {
+    return this.cachingMiddleware('chains', async (opts: typeof options) => {
+      const response = await this.requestClient.get<{ chains: types.ChainJSON[] }>(
+        '/v2/info/chains',
+        opts
+      );
 
-    const assets = Object.entries(response.chain_to_assets_map).reduce(
-      (acc, [chainID, { assets }]) => {
-        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
-        return acc;
-      },
-      {} as Record<string, types.Asset[]>
-    );
-
-    SkipClient.cache.assets = { data: assets, timestamp: now };
-
-    return assets;
+      return response.chains.map((chain) => types.chainFromJSON(chain));
+    }, [options]);
   }
 
   async assetsFromSource(
@@ -215,41 +219,6 @@ export class SkipClient {
     return types.bridgesResponseFromJSON(response).bridges;
   }
 
-  async chains({
-    includeEVM = false,
-    includeSVM = false,
-    onlyTestnets,
-    chainIDs,
-  }: {
-    includeEVM?: boolean;
-    includeSVM?: boolean;
-    onlyTestnets?: boolean;
-    chainIDs?: string[];
-  } = {}): Promise<types.Chain[]> {
-    const now = Date.now();
-
-    if (
-      SkipClient.cache.chains && this.cacheDuration &&
-      now - SkipClient.cache.chains.timestamp < this.cacheDuration
-    ) {
-      return SkipClient.cache.chains.data;
-    }
-
-    const response = await this.requestClient.get<{
-      chains: types.ChainJSON[];
-    }>('/v2/info/chains', {
-      include_evm: includeEVM,
-      include_svm: includeSVM,
-      only_testnets: onlyTestnets,
-      chain_ids: chainIDs,
-    });
-
-    const chains = response.chains.map((chain) => types.chainFromJSON(chain));
-    SkipClient.cache.chains = { data: chains, timestamp: now };
-
-    return chains;
-  }
-
   async balances(
     request: types.BalanceRequest
   ): Promise<types.BalanceResponse> {
@@ -261,7 +230,6 @@ export class SkipClient {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    console.time('executeRoute');
     const { route, userAddresses, beforeMsg, afterMsg } = options;
 
     let addressList: string[] = [];
@@ -315,7 +283,6 @@ export class SkipClient {
     }
 
     await this.executeTxs({ ...options, txs: messages.txs });
-    console.timeEnd('executeRoute');
   }
 
   async executeTxs(
@@ -323,7 +290,7 @@ export class SkipClient {
   ) {
     const { txs, onTransactionBroadcast, onTransactionCompleted } = options;
     let gasTokenRecord: Record<number, Coin> = {};
-    
+
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -369,7 +336,7 @@ export class SkipClient {
     gasTokenRecord: Record<number, Coin>
   ): Promise<{ chainID: string; txHash: string }> {
 
-    
+
     const {
       userAddresses,
       validateGasBalance,
@@ -518,7 +485,7 @@ export class SkipClient {
       stargateClient,
       signer
     } = options;
-  
+
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
       (account) => account.address === signerAddress
@@ -636,7 +603,6 @@ export class SkipClient {
 
     const estimatedGasAmount = await (async () => {
       try {
-        console.log('estimatedGasAmount CALLED')
         const estimatedGas = await getCosmosGasAmountForMessage(
           stargateClient,
           signerAddress,
