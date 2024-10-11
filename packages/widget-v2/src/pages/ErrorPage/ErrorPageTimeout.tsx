@@ -6,6 +6,9 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { errorAtom } from "@/state/errorPage";
+import { currentPageAtom, Routes } from "@/state/router";
+import { useSetAtom } from "jotai";
 
 export type ErrorPageTimeoutProps = {
   explorerLink: string;
@@ -17,6 +20,8 @@ export const ErrorPageTimeout = ({
   onClickBack,
 }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
+  const setErrorAtom = useSetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
     <>
@@ -24,7 +29,13 @@ export const ErrorPageTimeout = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            setErrorAtom(undefined);
+            if (onClickBack) {
+              onClickBack();
+            }
+            setCurrentPage(Routes.SwapPage);
+          },
         }}
       />
       <ErrorState
