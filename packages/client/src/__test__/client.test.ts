@@ -88,6 +88,7 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
       const response = await client.chains();
 
@@ -209,6 +210,8 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
+
       });
 
       const assets = await client.assets();
@@ -352,6 +355,7 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       await expect(client.assets()).rejects.toThrow('Invalid chain_id');
@@ -373,6 +377,7 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       await expect(client.assets()).rejects.toThrow('internal server error');
@@ -1732,6 +1737,7 @@ describe('client', () => {
     it('returns the recommended gas price for Noble (no staking token)', async () => {
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       const result = await client.getRecommendedGasPrice('noble-1');
@@ -2091,6 +2097,7 @@ describe('client', () => {
 test('dymension', async () => {
   const client = new SkipClient({
     apiURL: SKIP_API_URL,
+    cacheDurationMs: 0
   });
 
   const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
