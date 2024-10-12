@@ -12,8 +12,170 @@ import {
   RouteResponse,
   RouteResponseJSON,
 } from '../types';
+import { createHash } from 'crypto';
+import { createCachingMiddleware, CustomCache } from 'src/cache';
+import { vi, Mock } from 'vitest';
 
 export const server = setupServer();
+
+
+describe('Caching Middleware', () => {
+  let cache: CustomCache;
+  let cacheDurationMs: number;
+  let cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
+  let fn: Mock<[string], Promise<string>>;
+
+  // Setup before each test
+  beforeEach(() => {
+    cache = CustomCache.getInstance();
+    cache.clear();
+
+    cacheDurationMs = 1000; // 1 second
+    cachingMiddleware = createCachingMiddleware(cache, { cacheDurationMs });
+
+    fn = vi.fn(async (arg: string) => {
+      return `result for ${arg}`;
+    });
+  });
+
+  // Clean up after each test
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should cache results and return cached data if within cache duration', async () => {
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for testArg');
+
+    const result2 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should call function again and update cache if cache is expired', async () => {
+    vi.useFakeTimers();
+
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for testArg');
+
+    // Advance time by cacheDurationMs + 1 to expire the cache
+    vi.advanceTimersByTime(cacheDurationMs + 1);
+
+    const result2 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(2); // Function should be called again
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should cache different results for different arguments', async () => {
+    const key = 'testKey';
+
+    const args1 = ['testArg1'];
+    const args2 = ['testArg2'];
+
+    const result1 = await cachingMiddleware(key, fn, args1 as any);
+    const result2 = await cachingMiddleware(key, fn, args2 as any);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(result1).toEqual('result for testArg1');
+    expect(result2).toEqual('result for testArg2');
+
+    // Subsequent calls with the same arguments should return cached results
+    const result3 = await cachingMiddleware(key, fn, args1 as any);
+    const result4 = await cachingMiddleware(key, fn, args2 as any);
+
+    expect(fn).toHaveBeenCalledTimes(2); // Function should not be called again
+    expect(result3).toEqual('result for testArg1');
+    expect(result4).toEqual('result for testArg2');
+  });
+
+  it('should cache different results for different keys even with same arguments', async () => {
+    const key1 = 'testKey1';
+    const key2 = 'testKey2';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key1, fn, args as any);
+    const result2 = await cachingMiddleware(key2, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(result1).toEqual('result for testArg');
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should generate correct cache key based on key and arguments', async () => {
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const argsHash = createHash('md5').update(JSON.stringify(args as any)).digest('hex');
+    const expectedCacheKey = `${key}:${argsHash}`;
+
+    await cachingMiddleware(key, fn, args as any);
+
+    expect(cache.get(expectedCacheKey)).toBeDefined();
+  });
+
+  it('should not cache failed requests', async () => {
+    const errorFn = vi.fn(async () => {
+      throw new Error('Test error');
+    });
+
+    const key = 'errorKey';
+    const args = ['errorArg'];
+
+    await expect(cachingMiddleware(key, errorFn, args as any)).rejects.toThrow('Test error');
+    expect(errorFn).toHaveBeenCalledTimes(1);
+
+    // Retry the function to ensure it gets called again since it failed previously
+    await expect(cachingMiddleware(key, errorFn, args as any)).rejects.toThrow('Test error');
+    expect(errorFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('should cache resolved promises even if they take time to resolve', async () => {
+    const slowFn = vi.fn(
+      (arg: string) =>
+        new Promise((resolve) => setTimeout(() => resolve(`slow result for ${arg}`), 500))
+    );
+
+    const key = 'slowKey';
+    const args = ['slowArg'];
+
+    const result1 = await cachingMiddleware(key, slowFn, args as any);
+    expect(slowFn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('slow result for slowArg');
+
+    const result2 = await cachingMiddleware(key, slowFn, args as any);
+    expect(slowFn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('slow result for slowArg');
+  });
+
+  it('should correctly handle functions with multiple arguments', async () => {
+    const multiArgFn = vi.fn(async (arg1: string, arg2: number) => {
+      return `result for ${arg1} and ${arg2}`;
+    });
+
+    const key = 'multiArgKey';
+    const args = ['arg1', 42];
+
+    const result1 = await cachingMiddleware(key, multiArgFn, args as any);
+    expect(multiArgFn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for arg1 and 42');
+
+    const result2 = await cachingMiddleware(key, multiArgFn, args as any);
+    expect(multiArgFn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('result for arg1 and 42');
+  });
+});
 
 describe('client', () => {
   beforeAll(() => server.listen());
@@ -2092,14 +2254,15 @@ describe('client', () => {
       expect(errorOccurred).toBe(false);
     });
   });
-});
 
-test('dymension', async () => {
-  const client = new SkipClient({
-    apiURL: SKIP_API_URL,
-    cacheDurationMs: 0
-  });
+  test('dymension', async () => {
+    const client = new SkipClient({
+      apiURL: SKIP_API_URL,
+      cacheDurationMs: 0
+    });
 
-  const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
-  expect(feeInfo?.denom).toEqual('adym');
-}, 30000);
+    const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
+    expect(feeInfo?.denom).toEqual('adym');
+  }, 30000);
+})
+
