@@ -53,7 +53,7 @@ import {
   evmosProtoRegistry,
 } from './codegen/evmos/client';
 import { erc20ABI } from './constants/abis';
-import { DEFAULT_GAS_DENOM_OVERRIDES } from './constants/constants';
+import { DEFAULT_CACHE_DURATION, DEFAULT_GAS_DENOM_OVERRIDES } from './constants/constants';
 import { createTransaction } from './injective';
 import { RequestClient } from './request-client';
 import {
@@ -69,6 +69,7 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
+import { createCachingMiddleware, CustomCache } from './cache';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -89,13 +90,16 @@ export class SkipClient {
   protected getSVMSigner?: clientTypes.SignerGetters['getSVMSigner'];
   protected chainIDsToAffiliates?: clientTypes.SkipClientOptions['chainIDsToAffiliates'];
   protected cumulativeAffiliateFeeBPS?: string = '0';
+  protected cacheDurationMs?: number;
+
+  private cache: CustomCache;
+  private cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
       baseURL: options.apiURL || SKIP_API_URL,
       apiKey: options.apiKey,
     });
-
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
@@ -103,7 +107,6 @@ export class SkipClient {
       ...evmosAminoConverters,
       ...(options.aminoTypes ?? {}),
     });
-
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ['/cosmwasm.wasm.v1.MsgExecuteContract', MsgExecuteContract],
@@ -113,11 +116,16 @@ export class SkipClient {
       ...evmosProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
-
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
+
+    this.cache = CustomCache.getInstance();
+
+    this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
+    this.cachingMiddleware = createCachingMiddleware(this.cache, { cacheDurationMs: this.cacheDurationMs });
+
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -127,28 +135,35 @@ export class SkipClient {
     }
   }
 
-  async assets(
-    options: types.AssetsRequest = {}
-  ): Promise<Record<string, types.Asset[]>> {
-    const response = await this.requestClient.get<
-      {
+  async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
+    return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
+      const response = await this.requestClient.get<{
         chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
-      },
-      types.AssetsRequestJSON
-    >(
-      '/v2/fungible/assets',
-      types.assetsRequestToJSON({
-        ...options,
-      })
-    );
+      }>('/v2/fungible/assets', types.assetsRequestToJSON({ ...opts }));
 
-    return Object.entries(response.chain_to_assets_map).reduce(
-      (acc, [chainID, { assets }]) => {
-        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
-        return acc;
-      },
-      {} as Record<string, types.Asset[]>
-    );
+      return Object.entries(response.chain_to_assets_map).reduce(
+        (acc, [chainID, { assets }]) => {
+          acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
+          return acc;
+        },
+        {} as Record<string, types.Asset[]>
+      );
+    }, [options]);
+  }
+
+  async chains(options: {
+    includeEVM?: boolean;
+    includeSVM?: boolean;
+    onlyTestnets?: boolean;
+    chainIDs?: string[];
+  } = {}): Promise<types.Chain[]> {
+    return this.cachingMiddleware('chains', async (opts: typeof options) => {
+      const response = await this.requestClient.get<{ chains: types.ChainJSON[] }>(
+        '/v2/info/chains',
+        opts
+      );
+      return response.chains.map((chain) => types.chainFromJSON(chain));
+    }, [options]);
   }
 
   async assetsFromSource(
@@ -194,31 +209,6 @@ export class SkipClient {
     );
 
     return types.bridgesResponseFromJSON(response).bridges;
-  }
-
-  async chains(
-    {
-      includeEVM,
-      includeSVM,
-      onlyTestnets,
-      chainIDs,
-    }: {
-      includeEVM?: boolean;
-      includeSVM?: boolean;
-      onlyTestnets?: boolean;
-      chainIDs?: string[];
-    } = { includeEVM: false, includeSVM: false }
-  ): Promise<types.Chain[]> {
-    const response = await this.requestClient.get<{
-      chains: types.ChainJSON[];
-    }>('/v2/info/chains', {
-      include_evm: includeEVM,
-      include_svm: includeSVM,
-      only_testnets: onlyTestnets,
-      chain_ids: chainIDs,
-    });
-
-    return response.chains.map((chain) => types.chainFromJSON(chain));
   }
 
   async balances(
