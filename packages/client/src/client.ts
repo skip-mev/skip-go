@@ -365,7 +365,7 @@ export class SkipClient {
         gasAmountMultiplier,
         getFallbackGasAmount,
         onValidateGasBalance: options.onValidateGasBalance,
-        client: stargateClient
+        stargateClient
       });
     }
     let gasTokenUsed = gasTokenRecord[index];
@@ -388,7 +388,7 @@ export class SkipClient {
         getGasPrice,
         gasAmountMultiplier,
         getFallbackGasAmount,
-        client: stargateClient
+        stargateClient
       });
     }
 
@@ -1800,7 +1800,7 @@ export class SkipClient {
     gasAmountMultiplier,
     getFallbackGasAmount,
     onValidateGasBalance,
-    client
+    stargateClient
   }: {
     txs: types.Tx[];
     userAddresses: clientTypes.UserAddress[];
@@ -1809,7 +1809,7 @@ export class SkipClient {
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
-    client?: SigningStargateClient;
+    stargateClient?: SigningStargateClient;
   }) {
     // tx index -> gas token used
     let gasTokenRecord: Record<number, Coin> = {}
@@ -1819,18 +1819,17 @@ export class SkipClient {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ('cosmosTx' in tx) {
-        const { chainID, msgs } = tx.cosmosTx
-
-        if (!client) {
-          throw new Error("validateGasBalances error: 'client' is not provided or configured in skip router");
+        if (!stargateClient) {
+          throw new Error("validateGasBalances error: 'stargateClient' is not provided for cosmos tx");
         }
+
         onValidateGasBalance?.({
-          chainID,
+          chainID: tx.cosmosTx.chainID,
           txIndex: i,
           status: 'pending',
         });
-        if (!msgs) {
-          raise(`validateGasBalances error: invalid msgs ${msgs}`);
+        if (!tx.cosmosTx.msgs) {
+          raise(`validateGasBalances error: invalid msgs ${tx.cosmosTx.msgs}`);
         }
         getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
         if (!getOfflineSigner) {
@@ -1841,31 +1840,31 @@ export class SkipClient {
 
         const currentAddress =
           userAddresses.find(
-            (address) => address.chainID === chainID
+            (address) => address.chainID === tx.cosmosTx.chainID
           )?.address ||
           raise(
-            `validateGasBalance error: invalid address for chain '${chainID}'`
+            `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`
           );
         try {
           const coinUsed = await this.validateCosmosGasBalance({
-            client,
+            stargateClient,
             signerAddress: currentAddress,
-            chainID,
-            messages: msgs,
+            chainID: tx.cosmosTx.chainID,
+            messages: tx.cosmosTx.msgs,
             getGasPrice,
             gasAmountMultiplier,
             getFallbackGasAmount,
           });
           gasTokenRecord[i] = coinUsed;
           onValidateGasBalance?.({
-            chainID,
+            chainID: tx.cosmosTx.chainID,
             txIndex: i,
             status: 'success',
           });
         } catch (e) {
           const error = e as Error;
           onValidateGasBalance?.({
-            chainID,
+            chainID: tx.cosmosTx.chainID,
             txIndex: i,
             status: 'error',
           });
@@ -1883,14 +1882,14 @@ export class SkipClient {
 
   async validateCosmosGasBalance({
     chainID,
-    client,
+    stargateClient,
     signerAddress,
     messages,
     getGasPrice,
     gasAmountMultiplier,
     getFallbackGasAmount,
   }: {
-    client: SigningStargateClient;
+    stargateClient: SigningStargateClient;
     signerAddress: string;
     chainID: string;
     messages: types.CosmosMsg[];
@@ -1899,7 +1898,7 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
     const fee = await this.estimateGasForMessage({
-      stargateClient: client,
+      stargateClient: stargateClient,
       chainID,
       signerAddress,
       gasAmountMultiplier,
@@ -1933,7 +1932,7 @@ export class SkipClient {
             amount,
           };
         }
-        const balance = await client.getBalance(signerAddress, amount.denom);
+        const balance = await stargateClient.getBalance(signerAddress, amount.denom);
 
         if (parseInt(balance.amount) < parseInt(amount.amount)) {
           const formattedBalance =
