@@ -67,7 +67,7 @@
       ]
     },
     {
-      "group": "Skip Go Swap Widget",
+      "group": "Skip Go Widget",
       "pages": [
         "widget/getting-started",
         "widget/configuration",
@@ -126,7 +126,7 @@
           "pages": [
             "api-reference/prod/info/get-v2infochains",
             "api-reference/prod/info/get-v2infobridges",
-            "api-reference/prod/info/post-v2infobalance"
+            "api-reference/prod/info/post-v2infobalances"
           ]
         },
         {
@@ -157,7 +157,7 @@
       "pages": [
             "release-notes/overview",
             "release-notes/client",
-            "release-notes/swap-widget",
+            "release-notes/widget",
             "release-notes/api"
           ]
     }

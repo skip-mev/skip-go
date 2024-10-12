@@ -11,7 +11,7 @@
 ```
 
 - `client` (@skip-go/client): The core package of the project. Contains the core logic, api fetch and types, helper functions, signing, etc.
-- `widget` (@skip-go/widget): React library that contains the swap widget components.
+- `widget` (@skip-go/widget): React library that contains the widget component.
 - `examples`: The example app of the project
 
 ### How the package consumed
