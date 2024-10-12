@@ -6,6 +6,7 @@ import { ComponentProps, useEffect, useMemo } from 'react';
 import { create } from 'zustand';
 import { MergedWalletClient } from '../../lib/cosmos-kit';
 import { isMobile } from '../../utils/os';
+import { ChainType } from '@skip-go/client';
 
 const useStore = create<Record<string, true>>(() => ({}));
 
@@ -16,7 +17,7 @@ export function useTotalWallets() {
 type Props = ComponentProps<'div'> & {
   chainType: string;
   walletName: string;
-  walletChainType: 'evm' | 'cosmos' | 'svm';
+  walletChainType: ChainType;
 };
 
 export const WalletListItem = ({

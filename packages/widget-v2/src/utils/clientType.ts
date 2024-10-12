@@ -68,6 +68,9 @@ type OperationDetails = CombineObjectTypes<
 };
 
 export type ClientOperation = {
+  transferIndex: number;
+  signRequired: boolean;
+  isSwap: boolean;
   type: OperationType;
   txIndex: number;
   amountIn: string;
@@ -123,6 +126,12 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
           (operationDetails as Transfer).denomOut = (
             operationDetails as BankSend
           ).denom;
+          (operationDetails as Transfer).fromChainID = (
+            operationDetails as BankSend
+          ).chainID;
+          (operationDetails as Transfer).toChainID = (
+            operationDetails as BankSend
+          ).chainID;
           break;
         default:
       }
@@ -153,7 +162,35 @@ export function getClientOperation(operation: SkipClientOperation) {
 }
 
 export function getClientOperations(operations: SkipClientOperation[]) {
-  return operations.map((operation) => getClientOperation(operation));
+  let transferIndex = 0;
+  return operations.map((operation, index, arr) => {
+    const prevOperation = arr[index - 1];
+
+    const signRequired = (() => {
+      if (index === 0) {
+        return false;
+      } else {
+        if (operation.txIndex > prevOperation.txIndex) {
+          return true;
+        }
+        return false;
+      }
+    })();
+    const clientOperation = getClientOperation(operation);
+    const isSwap =
+      clientOperation.type === OperationType.swap ||
+      clientOperation.type === OperationType.evmSwap;
+    const result = {
+      ...clientOperation,
+      transferIndex,
+      signRequired,
+      isSwap,
+    };
+    if (!isSwap) {
+      transferIndex++;
+    }
+    return result;
+  });
 }
 
 function getClientTransferEvent(transferEvent: TransferEvent) {
@@ -203,8 +240,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           ?.txs.receiveTx?.explorerLink;
     }
   };
-
-  return {
+  const _result = {
     ...ibcTransfer,
     ...axelarTransfer,
     ...cctpTransfer,
@@ -213,69 +249,23 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
+  const status = getSimpleStatus(_result.state);
+  const result = {
+    ..._result,
+    status,
+  };
+  return result;
 }
 
 export function getTransferEventsFromTxStatusResponse(
   txStatusResponse?: TxStatusResponse[]
 ) {
   if (!txStatusResponse) return [];
-  return txStatusResponse?.flatMap((txStatus) =>
-    txStatus.transferSequence.map((transferEvent) =>
-      getClientTransferEvent(transferEvent)
-    )
-  );
-}
-
-export function getOperationToTransferEventsMap(
-  txStatusResponse: TxStatusResponse[],
-  clientOperations: ClientOperation[]
-) {
-  if (!txStatusResponse) return {};
-  const operationToTransferEventsMap = {} as Record<
-    number,
-    ClientTransferEvent
-  >;
-  const transferEvents =
-    getTransferEventsFromTxStatusResponse(txStatusResponse);
-
-  clientOperations.forEach((operation, index) => {
-    const foundTransferEventMatchingOperation = transferEvents?.find(
-      (transferEvent) =>
-        transferEvent.fromChainID === operation.fromChainID && transferEvent.toChainID === operation.toChainID
-    );
-
-    const foundSwapTransferEvent = transferEvents?.find(
-      (transferEvent) => {
-        const isSwapType = ["evmSwap", "swap"].includes(operation.type);
-        if (!isSwapType) return false;
-
-        const operationStaysOnTheSameChain = operation.fromChainID === operation.toChainID;
-        const fromChainMatches = transferEvent.fromChainID === operation.fromChainID;
-        const toChainMatches = transferEvent.toChainID === operation.toChainID;
-
-        return operationStaysOnTheSameChain
-          ? fromChainMatches || toChainMatches
-          : fromChainMatches && toChainMatches;
-      }
-    );
-
-    if (foundTransferEventMatchingOperation) {
-      foundTransferEventMatchingOperation.status = getSimpleStatus(
-        foundTransferEventMatchingOperation?.state
-      );
-      operationToTransferEventsMap[index] = foundTransferEventMatchingOperation;
-      operationToTransferEventsMap[index].explorerLink = foundTransferEventMatchingOperation.toExplorerLink;
-
-    } else if (foundSwapTransferEvent) {
-      foundSwapTransferEvent.status = getSimpleStatus(
-        foundSwapTransferEvent?.state
-      );
-      operationToTransferEventsMap[index] = { ...foundSwapTransferEvent };
-      operationToTransferEventsMap[index].explorerLink = foundSwapTransferEvent.fromExplorerLink;
-    }
+  return txStatusResponse?.flatMap((txStatus) => {
+    return txStatus.transferSequence.map((transferEvent) => {
+      return getClientTransferEvent(transferEvent);
+    });
   });
-
-  return operationToTransferEventsMap;
 }
 
 export function getSimpleOverallStatus(state: StatusState) {
@@ -299,9 +289,10 @@ export function getSimpleStatus(
     | CCTPTransferState
     | HyperlaneTransferState
     | OPInitTransferState
-) {
+): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
+    case "TRANSFER_RECEIVED":
     case "AXELAR_TRANSFER_PENDING_CONFIRMATION":
     case "AXELAR_TRANSFER_PENDING_RECEIPT":
     case "CCTP_TRANSFER_SENT":
@@ -338,11 +329,11 @@ export enum TransferType {
 }
 
 export type SimpleStatus =
+  | "unconfirmed"
+  | "signing"
   | "pending"
-  | "broadcasted"
   | "completed"
-  | "failed"
-  | "signing";
+  | "failed";
 
 export type ClientTransferEvent = {
   fromChainID: string;

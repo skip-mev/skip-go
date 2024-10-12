@@ -6,6 +6,10 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { errorAtom } from "@/state/errorPage";
+import { currentPageAtom, Routes } from "@/state/router";
+import { useSetAtom } from "jotai";
+import { getTruncatedAddress } from "@/utils/crypto";
 
 export type ErrorPageTransactionFailedProps = {
   transactionHash: string;
@@ -21,6 +25,8 @@ export const ErrorPageTransactionFailed = ({
   onClickBack,
 }: ErrorPageTransactionFailedProps) => {
   const theme = useTheme();
+  const setErrorAtom = useSetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
     <>
@@ -28,7 +34,13 @@ export const ErrorPageTransactionFailed = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            setErrorAtom(undefined);
+            if (onClickBack) {
+              onClickBack();
+            }
+            setCurrentPage(Routes.SwapPage);
+          }
         }}
       />
       <ErrorState
@@ -45,7 +57,7 @@ export const ErrorPageTransactionFailed = ({
               onClick={() => window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
-              Transaction: <u>{transactionHash}</u>
+              Transaction: <u>{getTruncatedAddress(transactionHash)}</u>
               <ChainIcon color={theme.primary.text.lowContrast} />
             </Row>
           </>

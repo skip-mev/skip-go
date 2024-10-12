@@ -23,12 +23,12 @@ import {
 } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { useFetchTransactionStatus } from "./useFetchTransactionStatus";
-import { getSignRequiredChainIds } from "@/utils/operations";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
+import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
+import { useSyncTxStatus } from "./useSyncTxStatus";
 
-enum SwapExecutionState {
+export enum SwapExecutionState {
   recoveryAddressUnset,
   destinationAddressUnset,
   ready,
@@ -50,17 +50,22 @@ export const SwapExecutionPage = () => {
   const setManualAddressModal = useModal(SetAddressModal);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
-  const operationToTransferEventsMap = useFetchTransactionStatus();
+
+  const { data: statusData } = useBroadcastedTxsStatus({
+    txsRequired: route?.txsRequired,
+    txs: transactionDetailsArray,
+  });
+
+  useSyncTxStatus({
+    statusData
+  });
 
   const clientOperations = useMemo(() => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
-  const signRequiredChains = useMemo(() => {
-    const signRequiredChains = getSignRequiredChainIds(clientOperations);
-    return signRequiredChains;
-  }, [clientOperations]);
+  const lastOperation = clientOperations[clientOperations.length - 1];
 
   const swapExecutionState = useMemo(() => {
     if (!chainAddresses) return;
@@ -130,7 +135,7 @@ export const SwapExecutionPage = () => {
               const destinationChainID = route?.destAssetChainID;
               if (!destinationChainID) return;
               setManualAddressModal.show({
-                signRequired: signRequiredChains.includes(destinationChainID),
+                signRequired: lastOperation.signRequired,
                 chainId: destinationChainID,
               });
             }}
@@ -172,26 +177,16 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [
-    connectRequiredChains,
-    mutate,
-    route?.destAssetChainID,
-    route?.estimatedRouteDurationSeconds,
-    setCurrentPage,
-    setManualAddressModal,
-    signRequiredChains,
-    swapExecutionState,
-    theme.success.text,
-  ]);
+  }, [connectRequiredChains, lastOperation.signRequired, mutate, route?.destAssetChainID, route?.estimatedRouteDurationSeconds, setCurrentPage, setManualAddressModal, swapExecutionState, theme.success.text]);
 
   return (
     <Column gap={5}>
       <SwapPageHeader
-        leftButton={{
+        leftButton={simpleRoute ? {
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => setCurrentPage(Routes.SwapPage),
-        }}
+        } : undefined}
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
@@ -206,12 +201,14 @@ export const SwapExecutionPage = () => {
             })
           }
           operations={clientOperations}
-          operationToTransferEventsMap={operationToTransferEventsMap}
+          statusData={statusData}
+          swapExecutionState={swapExecutionState}
         />
       ) : (
         <SwapExecutionPageRouteDetailed
           operations={clientOperations}
-          operationToTransferEventsMap={operationToTransferEventsMap}
+          statusData={statusData}
+          swapExecutionState={swapExecutionState}
         />
       )}
       {renderMainButton}
