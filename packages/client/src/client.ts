@@ -150,23 +150,17 @@ export class SkipClient {
         },
         {} as Record<string, types.Asset[]>
       );
-    }, [options]);
+    }, [options])
   }
 
-  async chains(options: {
-    includeEVM?: boolean;
-    includeSVM?: boolean;
-    onlyTestnets?: boolean;
-    chainIDs?: string[];
-  } = {}): Promise<types.Chain[]> {
+  async chains(options?: types.ChainsRequest): Promise<types.Chain[]> {
     return this.cachingMiddleware('chains', async (opts: typeof options) => {
       const response = await this.requestClient.get<{ chains: types.ChainJSON[] }>(
-        '/v2/info/chains',
-        opts
-      );
+        '/v2/info/chains', types.chainsRequestToJSON({ ...opts }));
       return response.chains.map((chain) => types.chainFromJSON(chain));
     }, [options]);
   }
+
 
   async assetsFromSource(
     options: types.AssetsFromSourceRequest

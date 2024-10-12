@@ -107,6 +107,20 @@ export type AssetRecommendationRequest = {
   reason?: Reason;
 };
 
+export type ChainsRequest = {
+  includeEVM?: boolean;
+  includeSVM?: boolean;
+  onlyTestnets?: boolean;
+  chainIDs?: string[];
+}
+
+export type ChainsRequestJSON = {
+  include_evm?: boolean;
+  include_svm?: boolean;
+  only_testnets?: boolean;
+  chain_ids?: string[]
+}
+
 export type RecommendAssetsRequestJSON = {
   requests: AssetRecommendationRequestJSON[];
 };

@@ -151,6 +151,8 @@ import {
   BridgeJSON,
   BridgesResponse,
   BridgesResponseJSON,
+  ChainsRequest,
+  ChainsRequestJSON,
   ChainType,
   EstimatedFee,
   EstimatedFeeJSON,
@@ -300,6 +302,17 @@ export function assetsRequestToJSON(
     include_evm_assets: assetsRequest.includeEvmAssets,
     include_svm_assets: assetsRequest.includeSvmAssets,
     only_testnets: assetsRequest.onlyTestnets,
+  };
+}
+
+export function chainsRequestToJSON(
+  chainsRequest: ChainsRequest
+): ChainsRequestJSON {
+  return {
+    include_evm: chainsRequest.includeEVM,
+    include_svm: chainsRequest.includeSVM,
+    only_testnets: chainsRequest.onlyTestnets,
+    chain_ids: chainsRequest.chainIDs,
   };
 }
 
