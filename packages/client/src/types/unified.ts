@@ -69,6 +69,20 @@ export type AssetsRequest = {
   chainID?: string;
 };
 
+export type ChainsRequest = {
+  includeEVM?: boolean;
+  includeSVM?: boolean;
+  onlyTestnets?: boolean;
+  chainIDs?: string[];
+}
+
+export type ChainsRequestJSON = {
+  include_evm?: boolean;
+  include_svm?: boolean;
+  only_testnets?: boolean;
+  chain_ids?: string[]
+}
+
 export type AssetsFromSourceRequestJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;

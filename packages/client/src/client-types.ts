@@ -8,6 +8,7 @@ import {
   AminoConverters,
   GasPrice,
   SignerData,
+  SigningStargateClient,
   StdFee,
 } from '@cosmjs/stargate';
 
@@ -106,6 +107,7 @@ export type ExecuteCosmosMessage = GasOptions & {
   messages: types.CosmosMsg[];
   gasTokenUsed?: Coin;
   onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
+  stargateClient: SigningStargateClient
 };
 
 interface SignCosmosMessageOptionsBase {

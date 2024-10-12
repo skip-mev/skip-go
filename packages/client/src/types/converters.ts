@@ -1,3 +1,4 @@
+import { ChainsRequest, ChainsRequestJSON } from 'types';
 import {
   AxelarTransferInfo,
   AxelarTransferInfoJSON,
@@ -271,6 +272,29 @@ export function assetsFromSourceRequestToJSON(
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
     include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
+  };
+}
+
+
+export function chainsRequestToJSON(
+  chainsRequest: ChainsRequest
+): ChainsRequestJSON {
+  return {
+    include_evm: chainsRequest.includeEVM,
+    include_svm: chainsRequest.includeSVM,
+    only_testnets: chainsRequest.onlyTestnets,
+    chain_ids: chainsRequest.chainIDs,
+  };
+}
+
+export function chainsRequestFromJSON(
+  chainsRequestJSON: ChainsRequestJSON
+): ChainsRequest {
+  return {
+    includeEVM: chainsRequestJSON.include_evm,
+    includeSVM: chainsRequestJSON.include_svm,
+    onlyTestnets: chainsRequestJSON.only_testnets,
+    chainIDs: chainsRequestJSON.chain_ids,
   };
 }
 
