@@ -26,6 +26,7 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
+import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 import { useSyncTxStatus } from "./useSyncTxStatus";
 
 export enum SwapExecutionState {
@@ -97,6 +98,8 @@ export const SwapExecutionPage = () => {
     }
     return SwapExecutionState.ready;
   }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
+
+  useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
     const signaturesRemaining =
