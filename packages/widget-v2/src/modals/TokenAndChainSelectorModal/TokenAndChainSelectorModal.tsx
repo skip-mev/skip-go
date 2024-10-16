@@ -36,10 +36,13 @@ export type ChainWithAsset = Chain & {
   asset: ClientAsset;
 };
 
+export type SelectorContext = "source" | "destination";
+
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
   networkSelection?: boolean;
+  context: SelectorContext
 };
 
 export const TokenAndChainSelectorModal = createModal(
@@ -251,26 +254,27 @@ export const TokenAndChainSelectorModal = createModal(
             index={index}
             onSelect={onSelect}
             skeleton={<Skeleton />}
+            context={modalProps.context}
           />
         );
       },
-      [onSelect]
+      [modalProps.context, onSelect]
     );
-
     const list = useMemo(() => {
       if (!networkSelection) {
         if (groupedAssetSelected) {
+          if (modalProps.context === "source") {
+            return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
+          }
           return filteredChains;
         }
         return filteredAssets;
       }
+      if (modalProps.context === "source") {
+        return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
+      }
       return filteredChains;
-    }, [
-      filteredAssets,
-      filteredChains,
-      groupedAssetSelected,
-      networkSelection,
-    ]);
+    }, [filteredAssets, filteredChains, groupedAssetSelected, modalProps.context, networkSelection]);
 
 
     const onClickBack = () => {

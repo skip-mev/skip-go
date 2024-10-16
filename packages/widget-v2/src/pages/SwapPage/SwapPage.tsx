@@ -77,6 +77,7 @@ export const SwapPage = () => {
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "source",
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
@@ -96,6 +97,7 @@ export const SwapPage = () => {
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "source",
       onSelect: (asset) => {
         setSourceAsset((old) => ({
           ...old,
