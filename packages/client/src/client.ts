@@ -53,7 +53,7 @@ import {
   evmosProtoRegistry,
 } from './codegen/evmos/client';
 import { erc20ABI } from './constants/abis';
-import { DEFAULT_GAS_DENOM_OVERRIDES } from './constants/constants';
+import { DEFAULT_GAS_DENOM_OVERRIDES, DEFAULT_CACHE_DURATION } from './constants/constants';
 import { createTransaction } from './injective';
 import { RequestClient } from './request-client';
 import {
@@ -69,6 +69,7 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
+import { createCachingMiddleware, CustomCache } from './cache';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -89,6 +90,10 @@ export class SkipClient {
   protected getSVMSigner?: clientTypes.SignerGetters['getSVMSigner'];
   protected chainIDsToAffiliates?: clientTypes.SkipClientOptions['chainIDsToAffiliates'];
   protected cumulativeAffiliateFeeBPS?: string = '0';
+  protected cacheDurationMs?: number;
+
+  private cache: CustomCache;
+  private cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.requestClient = new RequestClient({
@@ -119,6 +124,11 @@ export class SkipClient {
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
 
+    this.cache = CustomCache.getInstance();
+
+    this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
+    this.cachingMiddleware = createCachingMiddleware(this.cache, { cacheDurationMs: this.cacheDurationMs });
+
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
         options.chainIDsToAffiliates
@@ -127,29 +137,30 @@ export class SkipClient {
     }
   }
 
-  async assets(
-    options: types.AssetsRequest = {}
-  ): Promise<Record<string, types.Asset[]>> {
-    const response = await this.requestClient.get<
-      {
+  async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
+    return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
+      const response = await this.requestClient.get<{
         chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
-      },
-      types.AssetsRequestJSON
-    >(
-      '/v2/fungible/assets',
-      types.assetsRequestToJSON({
-        ...options,
-      })
-    );
+      }>('/v2/fungible/assets', types.assetsRequestToJSON({ ...opts }));
 
-    return Object.entries(response.chain_to_assets_map).reduce(
-      (acc, [chainID, { assets }]) => {
-        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
-        return acc;
-      },
-      {} as Record<string, types.Asset[]>
-    );
+      return Object.entries(response.chain_to_assets_map).reduce(
+        (acc, [chainID, { assets }]) => {
+          acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
+          return acc;
+        },
+        {} as Record<string, types.Asset[]>
+      );
+    }, [options])
   }
+
+  async chains(options?: types.ChainsRequest): Promise<types.Chain[]> {
+    return this.cachingMiddleware('chains', async (opts: typeof options) => {
+      const response = await this.requestClient.get<{ chains: types.ChainJSON[] }>(
+        '/v2/info/chains', types.chainsRequestToJSON({ ...opts }));
+      return response.chains.map((chain) => types.chainFromJSON(chain));
+    }, [options]);
+  }
+
 
   async assetsFromSource(
     options: types.AssetsFromSourceRequest
@@ -194,31 +205,6 @@ export class SkipClient {
     );
 
     return types.bridgesResponseFromJSON(response).bridges;
-  }
-
-  async chains(
-    {
-      includeEVM,
-      includeSVM,
-      onlyTestnets,
-      chainIDs,
-    }: {
-      includeEVM?: boolean;
-      includeSVM?: boolean;
-      onlyTestnets?: boolean;
-      chainIDs?: string[];
-    } = { includeEVM: false, includeSVM: false }
-  ): Promise<types.Chain[]> {
-    const response = await this.requestClient.get<{
-      chains: types.ChainJSON[];
-    }>('/v2/info/chains', {
-      include_evm: includeEVM,
-      include_svm: includeSVM,
-      only_testnets: onlyTestnets,
-      chain_ids: chainIDs,
-    });
-
-    return response.chains.map((chain) => types.chainFromJSON(chain));
   }
 
   async balances(
@@ -290,100 +276,18 @@ export class SkipClient {
   async executeTxs(
     options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] }
   ) {
-    const {
-      txs,
-      userAddresses,
-      validateGasBalance,
-      getGasPrice,
-      gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
-      getFallbackGasAmount,
-    } = options;
-    let gasTokenRecord: Record<number, Coin> | undefined;
-    if (validateGasBalance) {
-      // check balances on chains where a tx is initiated
-      gasTokenRecord = await this.validateGasBalances({
-        txs,
-        userAddresses,
-        getOfflineSigner: options.getCosmosSigner,
-        getGasPrice,
-        gasAmountMultiplier,
-        getFallbackGasAmount,
-        onValidateGasBalance: options.onValidateGasBalance,
-      });
-    }
+    const { txs, onTransactionBroadcast, onTransactionCompleted } = options;
+    let gasTokenRecord: Record<number, Coin> = {};
 
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
-      let gasTokenUsed = gasTokenRecord?.[i];
       if (!tx) {
         raise(`executeRoute error: invalid message at index ${i}`);
       }
 
-      let txResult: { chainID: string; txHash: string };
+      let txResult: types.TxResult;
       if ('cosmosTx' in tx) {
-        // TODO: use typeguard instead
-
-        const cosmosTx = tx.cosmosTx;
-        const currentUserAddress = userAddresses.find(
-          (x) => x.chainID === cosmosTx.chainID
-        )?.address;
-
-        if (!currentUserAddress) {
-          raise(
-            `executeRoute error: invalid address for chain '${cosmosTx.chainID}'`
-          );
-        }
-
-        if (cosmosTx.chainID === 'stride-1' && !gasTokenUsed) {
-          const getOfflineSigner =
-            options.getCosmosSigner || this.getCosmosSigner;
-          if (!getOfflineSigner) {
-            throw new Error(
-              "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router"
-            );
-          }
-          const signer = await getOfflineSigner(tx.cosmosTx.chainID);
-
-          const endpoint = await this.getRpcEndpointForChain(
-            tx.cosmosTx.chainID
-          );
-          // @note: A new client is created for both the gasbalance validation here as the execution later...
-          const client = await SigningStargateClient.connectWithSigner(
-            endpoint,
-            signer,
-            {
-              aminoTypes: this.aminoTypes,
-              registry: this.registry,
-              accountParser,
-            }
-          );
-          gasTokenUsed = await this.validateCosmosGasBalance({
-            chainID: cosmosTx.chainID,
-            messages: cosmosTx.msgs,
-            signerAddress: currentUserAddress,
-            getGasPrice,
-            gasAmountMultiplier,
-            getFallbackGasAmount,
-            client,
-          });
-        }
-
-        const txResponse = await this.executeCosmosMessage({
-          messages: cosmosTx.msgs,
-          chainID: cosmosTx.chainID,
-          getCosmosSigner: options.getCosmosSigner,
-          getGasPrice: getGasPrice,
-          gasAmountMultiplier,
-          signerAddress: currentUserAddress,
-          getFallbackGasAmount,
-          gasTokenUsed,
-          onTransactionSigned: options.onTransactionSigned,
-        });
-
-        txResult = {
-          chainID: cosmosTx.chainID,
-          txHash: txResponse.transactionHash,
-        };
+        txResult = await this.executeCosmosTx(tx, options, i, gasTokenRecord);
       } else if ('evmTx' in tx) {
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
@@ -391,46 +295,146 @@ export class SkipClient {
           txHash: txResponse.transactionHash,
         };
       } else if ('svmTx' in tx) {
-        const { svmTx } = tx;
-        const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
-        if (!getSVMSigner) {
-          throw new Error(
-            "executeRoute error: 'getSVMSigner' is not provided or configured in skip router"
-          );
-        }
-        const svmSigner = await getSVMSigner();
-
-        const txReceipt = await this.executeSVMTransaction({
-          signer: svmSigner,
-          message: svmTx,
-          onTransactionSigned: options.onTransactionSigned,
-        });
-
-        txResult = {
-          chainID: svmTx.chainID,
-          txHash: txReceipt,
-        };
+        txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
       }
-
-      if (options.onTransactionBroadcast) {
-        await options.onTransactionBroadcast({ ...txResult });
-      }
+      await onTransactionBroadcast?.({ ...txResult });
 
       const txStatusResponse = await this.waitForTransaction({
         ...txResult,
         onTransactionTracked: options.onTransactionTracked,
       });
 
-      if (options.onTransactionCompleted) {
-        await options.onTransactionCompleted(
-          txResult.chainID,
-          txResult.txHash,
-          txStatusResponse
-        );
-      }
+      await onTransactionCompleted?.(
+        txResult.chainID,
+        txResult.txHash,
+        txStatusResponse
+      );
     }
+  }
+
+  private async executeCosmosTx(
+    tx: {
+      cosmosTx: types.CosmosTx
+      operationsIndices: number[]
+    },
+    options: clientTypes.ExecuteRouteOptions,
+    index: number,
+    gasTokenRecord: Record<number, Coin>
+  ): Promise<{ chainID: string; txHash: string }> {
+
+
+    const {
+      userAddresses,
+      validateGasBalance,
+      getGasPrice,
+      gasAmountMultiplier,
+      getFallbackGasAmount,
+    } = options;
+
+    const getOfflineSigner = options.getCosmosSigner || this.getCosmosSigner;
+
+    if (!getOfflineSigner) {
+      throw new Error(
+        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router"
+      );
+    }
+
+    const [signer, endpoint] = await Promise.all([
+      getOfflineSigner(tx.cosmosTx.chainID),
+      this.getRpcEndpointForChain(tx.cosmosTx.chainID)
+    ]);
+
+    const stargateClient = await SigningStargateClient.connectWithSigner(
+      endpoint,
+      signer,
+      {
+        aminoTypes: this.aminoTypes,
+        registry: this.registry,
+        accountParser,
+      }
+    );
+
+    if (validateGasBalance) {
+      gasTokenRecord = await this.validateGasBalances({
+        txs: [tx],
+        userAddresses,
+        getOfflineSigner: options.getCosmosSigner,
+        getGasPrice,
+        gasAmountMultiplier,
+        getFallbackGasAmount,
+        onValidateGasBalance: options.onValidateGasBalance,
+        stargateClient
+      });
+    }
+    let gasTokenUsed = gasTokenRecord[index];
+
+    const currentUserAddress = userAddresses.find(
+      (x) => x.chainID === tx.cosmosTx.chainID
+    )?.address;
+
+    if (!currentUserAddress) {
+      raise(
+        `executeRoute error: invalid address for chain '${tx.cosmosTx.chainID}'`
+      );
+    }
+
+    if (tx.cosmosTx.chainID === 'stride-1' && !gasTokenUsed) {
+      gasTokenUsed = await this.validateCosmosGasBalance({
+        chainID: tx.cosmosTx.chainID,
+        messages: tx.cosmosTx.msgs,
+        signerAddress: currentUserAddress,
+        getGasPrice,
+        gasAmountMultiplier,
+        getFallbackGasAmount,
+        stargateClient
+      });
+    }
+
+    const txResponse = await this.executeCosmosMessage({
+      messages: tx.cosmosTx.msgs,
+      chainID: tx.cosmosTx.chainID,
+      getCosmosSigner: options.getCosmosSigner,
+      getGasPrice: getGasPrice,
+      gasAmountMultiplier,
+      signerAddress: currentUserAddress,
+      getFallbackGasAmount,
+      gasTokenUsed,
+      stargateClient,
+      signer,
+      onTransactionSigned: options.onTransactionSigned,
+    });
+
+    return {
+      chainID: tx.cosmosTx.chainID,
+      txHash: txResponse.transactionHash,
+    };
+  }
+
+  private async executeSvmTx(
+    tx: { svmTx: types.SvmTx },
+    options: clientTypes.ExecuteRouteOptions
+  ): Promise<{ chainID: string; txHash: string }> {
+    const { svmTx } = tx;
+    const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
+    if (!getSVMSigner) {
+      throw new Error(
+        "executeRoute error: 'getSVMSigner' is not provided or configured in skip router"
+      );
+    }
+    const svmSigner = await getSVMSigner();
+
+    const txReceipt = await this.executeSVMTransaction({
+      signer: svmSigner,
+      message: svmTx,
+      onTransactionSigned: options.onTransactionSigned,
+    });
+
+    return {
+      chainID: svmTx.chainID,
+      txHash: txReceipt,
+    };
   }
 
   async executeEvmMsg(
@@ -453,26 +457,22 @@ export class SkipClient {
     });
   }
 
-  async executeCosmosMessage(options: clientTypes.ExecuteCosmosMessage) {
+  async executeCosmosMessage(options: clientTypes.ExecuteCosmosMessage & {
+    stargateClient: SigningStargateClient,
+    signer: OfflineSigner,
+  }) {
     const {
       signerAddress,
-      getCosmosSigner,
       chainID,
       messages,
       getGasPrice,
       gasAmountMultiplier,
       getFallbackGasAmount,
       gasTokenUsed,
-      onTransactionSigned
+      onTransactionSigned,
+      stargateClient,
+      signer
     } = options;
-    const getOfflineSigner =
-      this.getCosmosSigner ||
-      getCosmosSigner ||
-      raise(
-        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router"
-      );
-
-    const signer = await getOfflineSigner(chainID);
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -485,19 +485,6 @@ export class SkipClient {
       );
     }
 
-    const endpoint = await this.getRpcEndpointForChain(chainID);
-
-    const stargateClient = await SigningStargateClient.connectWithSigner(
-      endpoint,
-      signer,
-      {
-        aminoTypes: this.aminoTypes,
-        registry: this.registry,
-        accountParser,
-      }
-    );
-
-    // @note: reusing the stargate client here and for broadcast 👍
     const fee = await this.estimateGasForMessage({
       stargateClient,
       chainID,
@@ -1604,17 +1591,18 @@ export class SkipClient {
     chainID: string,
     msgs: types.CosmosMsg[],
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
+    client: SigningStargateClient,
     signer?: OfflineSigner,
-    gasPrice?: GasPrice
+    gasPrice?: GasPrice,
   ) {
-    gasPrice ||= await this.getRecommendedGasPrice(chainID);
+    gasPrice = await this.getRecommendedGasPrice(chainID);
     if (!gasPrice) {
       throw new Error(
         `getFeeForMessage error: Unable to get gas price for chain: ${chainID}`
       );
     }
 
-    signer ||= await this.getCosmosSigner?.(chainID);
+    signer = await this.getCosmosSigner?.(chainID);
     if (!signer) {
       throw new Error(
         "getFeeForMessage error: signer is not provided or 'getCosmosSigner' is not configured in skip router"
@@ -1627,18 +1615,6 @@ export class SkipClient {
       raise(
         `getFeeForMessage error: unable to resolve account address from signer`
       );
-
-    const endpoint = await this.getRpcEndpointForChain(chainID);
-
-    const client = await SigningStargateClient.connectWithSigner(
-      endpoint,
-      signer,
-      {
-        aminoTypes: this.aminoTypes,
-        registry: this.registry,
-        accountParser,
-      }
-    );
 
     const gasNeeded = await getCosmosGasAmountForMessage(
       client,
@@ -1679,10 +1655,11 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string
   ): Promise<types.FeeAsset | undefined> {
-    const skipChains = [
-      ...(await this.chains({})),
-      ...(await this.chains({ onlyTestnets: true })),
-    ];
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains({}),
+      this.chains({ onlyTestnets: true }),
+    ]);
+    const skipChains = [...mainnetChains, ...testnetChains];
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
@@ -1822,7 +1799,8 @@ export class SkipClient {
     getGasPrice,
     gasAmountMultiplier,
     getFallbackGasAmount,
-    onValidateGasBalance
+    onValidateGasBalance,
+    stargateClient
   }: {
     txs: types.Tx[];
     userAddresses: clientTypes.UserAddress[];
@@ -1831,6 +1809,7 @@ export class SkipClient {
     gasAmountMultiplier?: number;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
+    stargateClient?: SigningStargateClient;
   }) {
     // tx index -> gas token used
     let gasTokenRecord: Record<number, Coin> = {}
@@ -1840,14 +1819,17 @@ export class SkipClient {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ('cosmosTx' in tx) {
+        if (!stargateClient) {
+          throw new Error("validateGasBalances error: 'stargateClient' is not provided for cosmos tx");
+        }
+
         onValidateGasBalance?.({
           chainID: tx.cosmosTx.chainID,
           txIndex: i,
           status: 'pending',
         });
-        const msgs = tx.cosmosTx.msgs;
-        if (!msgs) {
-          raise(`validateGasBalances error: invalid msgs ${msgs}`);
+        if (!tx.cosmosTx.msgs) {
+          raise(`validateGasBalances error: invalid msgs ${tx.cosmosTx.msgs}`);
         }
         getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
         if (!getOfflineSigner) {
@@ -1855,19 +1837,6 @@ export class SkipClient {
             "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router"
           );
         }
-        const signer = await getOfflineSigner(tx.cosmosTx.chainID);
-
-        const endpoint = await this.getRpcEndpointForChain(tx.cosmosTx.chainID);
-        // @note: A new client is created for both the gasbalance validation here as the execution later...
-        const client = await SigningStargateClient.connectWithSigner(
-          endpoint,
-          signer,
-          {
-            aminoTypes: this.aminoTypes,
-            registry: this.registry,
-            accountParser,
-          }
-        );
 
         const currentAddress =
           userAddresses.find(
@@ -1878,10 +1847,10 @@ export class SkipClient {
           );
         try {
           const coinUsed = await this.validateCosmosGasBalance({
-            client,
+            stargateClient,
             signerAddress: currentAddress,
             chainID: tx.cosmosTx.chainID,
-            messages: msgs,
+            messages: tx.cosmosTx.msgs,
             getGasPrice,
             gasAmountMultiplier,
             getFallbackGasAmount,
@@ -1913,14 +1882,14 @@ export class SkipClient {
 
   async validateCosmosGasBalance({
     chainID,
-    client,
+    stargateClient,
     signerAddress,
     messages,
     getGasPrice,
     gasAmountMultiplier,
     getFallbackGasAmount,
   }: {
-    client: SigningStargateClient;
+    stargateClient: SigningStargateClient;
     signerAddress: string;
     chainID: string;
     messages: types.CosmosMsg[];
@@ -1929,7 +1898,7 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
     const fee = await this.estimateGasForMessage({
-      stargateClient: client,
+      stargateClient: stargateClient,
       chainID,
       signerAddress,
       gasAmountMultiplier,
@@ -1963,7 +1932,7 @@ export class SkipClient {
             amount,
           };
         }
-        const balance = await client.getBalance(signerAddress, amount.denom);
+        const balance = await stargateClient.getBalance(signerAddress, amount.denom);
 
         if (parseInt(balance.amount) < parseInt(amount.amount)) {
           const formattedBalance =
