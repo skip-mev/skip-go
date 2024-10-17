@@ -723,10 +723,6 @@ export class SkipClient {
         ],
         chain: signer.chain,
       });
-      onTransactionSigned?.({
-        chainID: message.chainID,
-        txHash,
-      });
       const receipt = await extendedSigner.waitForTransactionReceipt({
         hash: txHash,
       });
@@ -747,6 +743,10 @@ export class SkipClient {
       value: message.value === '' ? undefined : BigInt(message.value),
     });
 
+    onTransactionSigned?.({
+      chainID: message.chainID,
+      txHash,
+    });
     const receipt = await extendedSigner.waitForTransactionReceipt({
       hash: txHash,
     });

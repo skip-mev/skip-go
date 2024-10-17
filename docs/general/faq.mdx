@@ -165,7 +165,7 @@ You can find the Swagger page here: [https://api-swagger.skip.build](https://api
 
 #### How do affiliate fees work?
 
-* Affiliate fees are fees developers using Skip Go charge their end-users on swaps. We support multiple parties taking and sharing fees. For example, if a defi frontend uses a swap widget a wallet team builds and distributes, the makers of the widget and the users of the widget can separately charge affiliate fees.
+* Affiliate fees are fees developers using Skip Go charge their end-users on swaps. We support multiple parties taking and sharing fees. For example, if a defi frontend uses the widget a wallet team builds and distributes, the makers of the widget and the users of the widget can separately charge affiliate fees.
 * Fees are calculated in basis points or "bps". One basis point equals one one-hundredth of a percent. So 100 bps = 1% fee
 * **Affiliate fees are calculated based off the minimum amount out and are taken/denominated in the output token.** For example, consider an ATOM to OSMO swap where min amount out is 10 uosmo and the cumulative fees are 1000 bps or 10%. If the swap successfully executes, the affiliate fee will be 1 uosmo. It will be 1 uosmo regardless of whether the user actually gets 10, 11, or 12 uosmo out of the swap.
 * **When performing a swap with an exact amount in, affiliate fees are accounted for in the `amount_out` returned by `/route`**. More plainly, the Skip Go API subtracts off expected affiliate fees prior to the `amount_out` calculation, so that it represents an accurate estimate of what the user will receive at the end of the swap, net of fees. To be exact, the user will probably receive more than the amount out because the actual fee is not known at the time of this calculation / estimate. It's not known until later when slippage is set. So the user will end up paying `slippage_percent`\*`amount_out` less than the API predicts. This is good for the user because the estimated amount out will likely be lower than the actual amount they receive, offering a buffer that protects the user from the effects of slippage.
@@ -348,10 +348,3 @@ The parameter uses the word "cumulative" (i.e. summing over a set) because the A
 * In the short term, we are adding real time data about relayer + channel health to Skip Go API, so we can accurately predict how long it will take to relay a packet over a channel + the packet tracking + relaying into the API.
 * In the medium term, we're going to enable multi-chain relaying through Skip Go API. This will be a paid service.
 * In the long term, we're working to build better incentives for relaying, so relayers don't need to run as charities. (Relayers do not receive fees or payment of any kind today and subsidize gas for users cross-chain)
-
-<Check>
-
-**Need Help or Have Feedback?**
-
-You can reach us easily at support@skip.build or in [our developer support channel on Telegram](https://t.me/+3y5biSyZRPIwZWIx)
-</Check>
