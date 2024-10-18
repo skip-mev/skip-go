@@ -18,6 +18,10 @@
     "strictNullChecks": true,
     "target": "es6"
   },
-  "exclude": ["node_modules", "src/codegen/**/*.ts"],
-  "include": ["**/*.ts", "**/*.js"]
+  "include": ["**/*.ts", "**/*.js"],
+  "exclude": [
+    "node_modules",
+    "e2e",
+    "__test__"
+  ]
 }

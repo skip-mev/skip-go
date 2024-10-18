@@ -5,6 +5,7 @@
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "files": [
     "dist/*",
     "*.js",
@@ -12,7 +13,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsup",
+    "build": "NODE_OPTIONS=--max_old_space_size=28192 rollup -c",
     "clean": "rm -rf dist",
     "codegen": "node scripts/codegen.js",
     "e2e:clean": "make stop clean",
@@ -23,7 +24,7 @@
     "postpublish": "git reset --hard",
     "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
-    "watch": "tsup --watch",
+    "watch": "rollup -c -w",
     "watch:link": "tsup --watch --onSuccess \"yalc push\""
   },
   "devDependencies": {
@@ -32,8 +33,13 @@
     "@cosmology/telescope": "1.8.3",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.1",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
+    "rollup": "^4.24.0",
     "vitest": "^1.2.2"
   },
   "dependencies": {
