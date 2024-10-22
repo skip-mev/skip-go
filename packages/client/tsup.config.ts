@@ -1,12 +1,13 @@
 import type { Options } from "tsup";
 import { defineConfig } from "tsup";
+import { dependencies, peerDependencies } from "./package.json";
 
 const defaultOptions: Options = {
   cjsInterop: true,
   clean: true,
   dts: true,
   format: ["cjs"],
-  minify: false,
+  minify: true,
   shims: true,
   splitting: true,
   treeshake: true,
@@ -20,14 +21,15 @@ export default defineConfig(async ({ watch }) => {
       clean: !watch,
       entry: {
         index: "src/index.ts",
-        parser: "src/parser.ts",
-        transactions: "src/transactions.ts",
         types: "src/types/index.ts",
       },
       external: [
+        ...Object.keys(peerDependencies || {}),
         /^@cosmjs\/.*/,
         /^@injectivelabs\/.*/,
         /^@protobufjs\/.*/,
+        "viem",
+        "cosmjs-types",
         "long",
         "protobufjs",
         //

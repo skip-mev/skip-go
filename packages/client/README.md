@@ -20,41 +20,4 @@ yarn add @skip-go/client
 
 Follow the [Getting Started](https://docs.skip.build/go/client/getting-started) guide to begin your integration.
 
-## Development
-
-```bash
-# clone repository
-git clone https://github.com/skip-mev/skip-go.git
-cd skip-go/packages/client
-
-# prepare submodules
-git submodule update --init --recursive
-
-# install dependencies
-npm install
-
-# run watch server to build on changes
-npm -w @skip-go/client run watch
-
-# build packages
-npm run build
-```
-
-
-## Unit Tests
-
-```bash
-# run unit tests
-npm run test
-
-# run unit tests in watch mode
-npm run test -- --watch
-
-# run unit tests with coverage
-npm run test -- --coverage
-```
-
-## Documentation
-
-- [Skip Go API documentation](https://docs.skip.build/go)
-- [Skip Go API Reference](https://docs.skip.build/go/api-reference/prod/info/get-v2infochains)
+Example: [Skip go client example](https://github.com/skip-mev/skip-go-example)

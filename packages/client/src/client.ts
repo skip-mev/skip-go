@@ -40,7 +40,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
 
-import { accountParser } from './parser';
+import { accountParser } from 'kujira.js';
 import { publicActions, WalletClient } from 'viem';
 
 import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
@@ -787,7 +787,7 @@ export class SkipClient {
 
       await this.submitTransaction({
         chainID: message.chainID,
-        tx: Buffer.from(serializedTx).toString('base64'),
+        tx: serializedTx.toString('base64'),
       }).then((res) => {
         onTransactionSigned?.({
           chainID: message.chainID,

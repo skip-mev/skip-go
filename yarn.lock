@@ -2112,13 +2112,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.45.31":
-  version: 0.45.31
-  resolution: "@chain-registry/types@npm:0.45.31"
-  checksum: eadcce6661d3d622e64ddc2b62c134623cbe1e07db367dbd0ce34aa4a03ff14015b4648cf7c9da4fe2e217886dde3128809b505e1bfc8bff69a7cc98cfa84611
-  languageName: node
-  linkType: hard
-
 "@chain-registry/types@npm:^0.45.56":
   version: 0.45.56
   resolution: "@chain-registry/types@npm:0.45.56"
@@ -4443,15 +4436,6 @@ __metadata:
   dependencies:
     "@initia/initia-registry-types": ^0.0.17
   checksum: d35d4a01dfbf725cfc7c1ebfd9277fdbf685cd774707383eef6161b38f25f8342b5e04bc7ed61eea417a94d0471ffb17189ec71a7eb0b5a9bd283e0afaa0fb40
-  languageName: node
-  linkType: hard
-
-"@initia/initia-registry@npm:latest":
-  version: 0.1.15
-  resolution: "@initia/initia-registry@npm:0.1.15"
-  dependencies:
-    "@initia/initia-registry-types": ^0.0.17
-  checksum: 7b658f44a56acea1182b91d1ceaf157b3d3c1a135e75e63a9324eac8f4e3dd356bcbe255bd2e2225c8aaeb87a07db04e1f4d5e1dd4034ac493fd0643c0589d2e
   languageName: node
   linkType: hard
 
@@ -7874,33 +7858,33 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@skip-go/client@workspace:packages/client"
   dependencies:
+    "@cosmjs/faucet": 0.32.3
+    "@cosmjs/faucet-client": 0.32.3
+    "@cosmology/telescope": 1.8.3
+    "@keplr-wallet/unit": ^0.12.67
+    "@protobufs/gogoproto": 0.0.10
+    "@protobufs/google": 0.0.10
+    axios: 1.x
+    keccak256: 1.x
+    minimatch: ^9.0.3
+    proxy-from-env: ^1.1.0
+    vitest: ^1.2.2
+  peerDependencies:
     "@cosmjs/amino": 0.32.4
     "@cosmjs/cosmwasm-stargate": 0.32.4
     "@cosmjs/encoding": 0.32.4
-    "@cosmjs/faucet": 0.32.3
-    "@cosmjs/faucet-client": 0.32.3
     "@cosmjs/math": 0.32.4
     "@cosmjs/proto-signing": 0.32.4
     "@cosmjs/stargate": 0.32.4
     "@cosmjs/tendermint-rpc": 0.32.4
-    "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": latest
+    "@initia/initia-registry": "*"
     "@injectivelabs/core-proto-ts": 0.0.21
-    "@injectivelabs/sdk-ts": 1.14.5
-    "@keplr-wallet/unit": ^0.12.67
-    "@protobufs/gogoproto": 0.0.10
-    "@protobufs/google": 0.0.10
-    "@solana/wallet-adapter-base": ^0.9.23
-    "@solana/web3.js": ^1.91.1
-    axios: 1.x
-    chain-registry: latest
-    cosmjs-types: 0.8.0
-    keccak256: 1.x
-    kujira.js: 0.9.x
-    minimatch: ^9.0.3
-    proxy-from-env: ^1.1.0
+    "@injectivelabs/sdk-ts": ">=1.14.5"
+    "@solana/wallet-adapter-base": ">=0.9.23"
+    "@solana/web3.js": ">=1.91.1"
+    chain-registry: "*"
+    cosmjs-types: ">=0.9.0"
     viem: 2.x
-    vitest: ^1.2.2
   languageName: unknown
   linkType: soft
 
@@ -13792,15 +13776,6 @@ __metadata:
   dependencies:
     "@chain-registry/types": ^0.45.83
   checksum: 3d49a86c009415fb69899c6b69c38e33d5aeaee00a97ce76b003d97001aca700feb7f40f2ef8b464beafb82ff900786ef951cff9533ef8096734e6218b2ab3fd
-  languageName: node
-  linkType: hard
-
-"chain-registry@npm:latest":
-  version: 1.63.38
-  resolution: "chain-registry@npm:1.63.38"
-  dependencies:
-    "@chain-registry/types": ^0.45.31
-  checksum: b3d2cc043757b9320805df5628756ce8721dc14db5b7df7c1b0fbbe85d585da3e388a81159a3ac25bced7cbadfd2b56a30954d78391701eb36ded337d7a69d18
   languageName: node
   linkType: hard
 
