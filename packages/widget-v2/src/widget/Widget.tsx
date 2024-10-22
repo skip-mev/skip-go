@@ -37,7 +37,7 @@ export const Widget = ({ theme, ...skipClientConfig }: WidgetProps) => {
   );
 };
 
-const WidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: SwapWidgetProps) => {
+const WidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: WidgetProps) => {
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   useEffect(() => {
