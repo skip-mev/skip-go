@@ -21,6 +21,7 @@
     "e2e:stop": "make stop",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.mjs --test-timeout=30000",
     "postpublish": "git reset --hard",
+    "prebuild": "node scripts/prebuild.js", 
     "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
     "watch": "tsup --watch",

@@ -1,0 +1,1 @@
+declare module 'chain-registry/esm/chains'

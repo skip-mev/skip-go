@@ -1,15 +1,11 @@
 import { Chain } from '@chain-registry/types';
-import { chains as _mainnetChains } from "chain-registry/mainnet";
+import chainRegistryChains from "chain-registry/esm/chains";
 import {
-  chains as _testnetChains,
+  chains as _testnetInitiaChains,
 } from "chain-registry/testnet";
 import {
   chains as _mainnetInitiaChains,
 } from "chain-registry/mainnet";
-import {
-  chains as _testnetInitiaChains,
-} from "chain-registry/testnet";
-
 
 const SOLANA_CHAIN = {
   chain_name: 'solana',
@@ -60,14 +56,9 @@ const SOLANA_CHAIN = {
 };
 
 export function chains(): Chain[] {
-
-const chainRegistryChains = [
-  ..._mainnetChains,
-  ..._testnetChains,
-]
   const additionalChains = [SOLANA_CHAIN] as Chain[];
 
-  const existingChainIds = new Set(chainRegistryChains.map((chain) => chain.chain_id));
+  const existingChainIds = new Set((chainRegistryChains as Chain[]).map((chain) => chain.chain_id));
 
   const newChains = additionalChains.filter(
     (chain) => !existingChainIds.has(chain.chain_id)
