@@ -3,7 +3,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useGetAccount } from "./useGetAccount";
 import { skipAllBalancesRequestAtom, skipAllBalancesAtom } from "@/state/balances";
 import { useEffect } from "react";
-import { skipAssetsAtom } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { useAccount } from "wagmi";
 
 export const useFetchAllBalances = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -11,11 +12,24 @@ export const useFetchAllBalances = () => {
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom);
   const { data: skipBalances } = useAtomValue(skipAllBalancesAtom);
+  const { data: chains } = useAtomValue(skipChainsAtom);
+
+  const { chainId: evmChainId } = useAccount();
 
   useEffect(() => {
     const allBalancesRequest = assets?.reduce((acc, asset) => {
       const address = getAccount(asset.chainID)?.address;
-      if (address) {
+      const chain = chains?.find((chain) => chain.chainID === asset.chainID);
+      const isEVM = chain?.chainType === "evm";
+      const evmAddress = (isEVM && evmChainId) ? getAccount(String(evmChainId))?.address : undefined;
+      if (isEVM && evmAddress) {
+        if (asset.denom === sourceAsset?.denom) return acc;
+        if (!acc[asset.chainID]) {
+          acc[asset.chainID] = {
+            address: evmAddress,
+          };
+        }
+      } else if (address) {
         if (asset.denom === sourceAsset?.denom) return acc;
         if (!acc[asset.chainID]) {
           acc[asset.chainID] = {
@@ -31,7 +45,7 @@ export const useFetchAllBalances = () => {
         chains: allBalancesRequest || {}
       });
     }
-  }, [assets, getAccount, setSkipAllBalancesRequest, sourceAsset]);
+  }, [assets, evmChainId, chains, getAccount, setSkipAllBalancesRequest, sourceAsset]);
 
   return skipBalances;
 };
