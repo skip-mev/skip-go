@@ -1,6 +1,14 @@
 import { Chain } from '@chain-registry/types';
-import * as chainRegistry from 'chain-registry';
-import * as initiaRegistry from '@initia/initia-registry';
+import { chains as _mainnetChains } from "chain-registry/mainnet";
+import {
+  chains as _testnetChains,
+} from "chain-registry/testnet";
+import {
+  chains as _mainnetInitiaChains,
+} from "chain-registry/mainnet";
+import {
+  chains as _testnetInitiaChains,
+} from "chain-registry/testnet";
 
 /** @deprecated */
 const DYDX_CHAIN = {
@@ -352,19 +360,27 @@ const SOLANA_CHAIN = {
 };
 
 export function chains(): Chain[] {
-  const registryChains = chainRegistry.chains;
+
+const chainRegistryChains = [
+  ..._mainnetChains,
+  ..._testnetChains,
+]
   const additionalChains = [DYDX_CHAIN, CELESTIA_CHAIN, SOLANA_CHAIN] as Chain[];
 
-  const existingChainIds = new Set(registryChains.map((chain) => chain.chain_id));
+  const existingChainIds = new Set(chainRegistryChains.map((chain) => chain.chain_id));
 
   const newChains = additionalChains.filter(
     (chain) => !existingChainIds.has(chain.chain_id)
   );
 
-  return [...registryChains, ...newChains];
+  return [...chainRegistryChains, ...newChains];
 }
+
 export function initiaChains(): Chain[] {
-  const chains = initiaRegistry.chains as Chain[];
+  const chains = [  
+    ..._mainnetInitiaChains,
+    ..._testnetInitiaChains,
+  ] as Chain[];
 
   return chains;
 }
