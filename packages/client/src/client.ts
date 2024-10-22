@@ -24,6 +24,7 @@ import {
   SigningStargateClient,
   StargateClient,
   StdFee,
+  accountFromAny,
 } from '@cosmjs/stargate';
 import {
   ChainRestAuthApi,
@@ -40,7 +41,6 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
 
-import { accountParser } from 'kujira.js';
 import { publicActions, WalletClient } from 'viem';
 
 import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
@@ -354,7 +354,7 @@ export class SkipClient {
             {
               aminoTypes: this.aminoTypes,
               registry: this.registry,
-              accountParser,
+              accountParser: accountFromAny,
             }
           );
           gasTokenUsed = await this.validateCosmosGasBalance({
@@ -493,7 +493,7 @@ export class SkipClient {
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
-        accountParser,
+        accountParser: accountFromAny,
       }
     );
 
@@ -1066,7 +1066,7 @@ export class SkipClient {
     if (aminoMsgTransferIndex !== -1) {
       const endpoint = await this.getRpcEndpointForChain(chainID);
       const client = await StargateClient.connect(endpoint, {
-        accountParser,
+        accountParser: accountFromAny,
       });
 
       const currentHeight = await client.getHeight();
@@ -1431,7 +1431,7 @@ export class SkipClient {
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client = await StargateClient.connect(endpoint, {
-      accountParser,
+      accountParser: accountFromAny,
     });
     const account = await client.getAccount(address);
     if (!account) {
@@ -1636,7 +1636,7 @@ export class SkipClient {
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
-        accountParser,
+        accountParser: accountFromAny,
       }
     );
 
@@ -1865,7 +1865,7 @@ export class SkipClient {
           {
             aminoTypes: this.aminoTypes,
             registry: this.registry,
-            accountParser,
+            accountParser: accountFromAny,
           }
         );
 
