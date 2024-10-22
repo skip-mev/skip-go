@@ -1,14 +1,14 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.10.3",
+  "version": "0.11.0-alpha.0",
   "repository": "https://github.com/skip-mev/skip-go",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.mts",
   "files": [
     "dist/*",
-    "*.js",
-    "*.d.ts"
+    "*.mjs",
+    "*.d.mts"
   ],
   "sideEffects": false,
   "scripts": {
@@ -37,6 +37,17 @@
     "vitest": "^1.2.2"
   },
   "peerDependencies": {
+    "@initia/initia-registry": "^0.1.16",
+    "@injectivelabs/core-proto-ts": "0.0.21",
+    "@injectivelabs/sdk-ts": "1.14.5",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/web3.js": "^1.91.1",
+    "chain-registry": "^1.69.8",
+    "cosmjs-types": "^0.9.0",
+    "kujira.js": "0.9.x",
+    "viem": "2.x"
+  },
+  "dependencies": {
     "@cosmjs/amino": "0.32.4",
     "@cosmjs/cosmwasm-stargate": "0.32.4",
     "@cosmjs/encoding": "0.32.4",
@@ -44,17 +55,7 @@
     "@cosmjs/proto-signing": "0.32.4",
     "@cosmjs/stargate": "0.32.4",
     "@cosmjs/tendermint-rpc": "0.32.4",
-    "@initia/initia-registry": "*",
-    "@injectivelabs/core-proto-ts": "0.0.21",
-    "@injectivelabs/sdk-ts": ">=1.14.5",
-    "@solana/wallet-adapter-base": ">=0.9.23",
-    "@solana/web3.js": ">=1.91.1",
-    "chain-registry": "*",
-    "cosmjs-types": ">=0.9.0",
-    "viem": "2.x"
-  },
-  "dependencies": {
-    "@keplr-wallet/unit": "^0.12.67",
+    "@keplr-wallet/unit": "^0.12.143",
     "axios": "1.x",
     "keccak256": "1.x"
   },

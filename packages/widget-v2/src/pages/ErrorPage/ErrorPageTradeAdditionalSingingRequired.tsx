@@ -3,7 +3,7 @@ import { MainButton } from "@/components/MainButton";
 import { SmallText, Text } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
-import { RouteResponse } from "@skip-go/client/dist/types";
+import { RouteResponse } from "@skip-go/client";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorPageTradeAdditionalSigningRequiredProps = {

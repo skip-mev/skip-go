@@ -4,7 +4,7 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { calculatePercentageDifference } from "@/utils/number";
-import { RouteResponse } from "@skip-go/client/dist/types";
+import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 

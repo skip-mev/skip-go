@@ -5290,6 +5290,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@keplr-wallet/types@npm:0.12.143":
+  version: 0.12.143
+  resolution: "@keplr-wallet/types@npm:0.12.143"
+  dependencies:
+    long: ^4.0.0
+  peerDependencies:
+    starknet: ^6
+  checksum: 5436694a587997ded2ac1c5d054e02c0a78c9d709833994d941478ca1ce884e1e5e202a14f4f4856153f9b1386aa58c69884faaa383358dddccc8ce46506efdb
+  languageName: node
+  linkType: hard
+
 "@keplr-wallet/types@npm:0.12.20":
   version: 0.12.20
   resolution: "@keplr-wallet/types@npm:0.12.20"
@@ -5366,6 +5377,17 @@ __metadata:
     big-integer: ^1.6.48
     utility-types: ^3.10.0
   checksum: d07132178057ba6488baf7ee272f99cc03b6cf77c829756a88b50e7b025dd0776c528e4965a81133a3e52eaaa7542ae3c127f7bfb8266917b7af2c6e318e9219
+  languageName: node
+  linkType: hard
+
+"@keplr-wallet/unit@npm:^0.12.143":
+  version: 0.12.143
+  resolution: "@keplr-wallet/unit@npm:0.12.143"
+  dependencies:
+    "@keplr-wallet/types": 0.12.143
+    big-integer: ^1.6.48
+    utility-types: ^3.10.0
+  checksum: bb30cdd5c8683e9fd00c37af42745798832cefe4a2bbe15d651cdae838a4746c8e79f9e021674fa833cd0e5d17db97a58fddabfcecad5cc3e686dea4525aa953
   languageName: node
   linkType: hard
 
@@ -7858,10 +7880,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@skip-go/client@workspace:packages/client"
   dependencies:
+    "@cosmjs/amino": 0.32.4
+    "@cosmjs/cosmwasm-stargate": 0.32.4
+    "@cosmjs/encoding": 0.32.4
     "@cosmjs/faucet": 0.32.3
     "@cosmjs/faucet-client": 0.32.3
+    "@cosmjs/math": 0.32.4
+    "@cosmjs/proto-signing": 0.32.4
+    "@cosmjs/stargate": 0.32.4
+    "@cosmjs/tendermint-rpc": 0.32.4
     "@cosmology/telescope": 1.8.3
-    "@keplr-wallet/unit": ^0.12.67
+    "@keplr-wallet/unit": ^0.12.143
     "@protobufs/gogoproto": 0.0.10
     "@protobufs/google": 0.0.10
     axios: 1.x
@@ -7870,20 +7899,14 @@ __metadata:
     proxy-from-env: ^1.1.0
     vitest: ^1.2.2
   peerDependencies:
-    "@cosmjs/amino": 0.32.4
-    "@cosmjs/cosmwasm-stargate": 0.32.4
-    "@cosmjs/encoding": 0.32.4
-    "@cosmjs/math": 0.32.4
-    "@cosmjs/proto-signing": 0.32.4
-    "@cosmjs/stargate": 0.32.4
-    "@cosmjs/tendermint-rpc": 0.32.4
-    "@initia/initia-registry": "*"
+    "@initia/initia-registry": ^0.1.16
     "@injectivelabs/core-proto-ts": 0.0.21
-    "@injectivelabs/sdk-ts": ">=1.14.5"
-    "@solana/wallet-adapter-base": ">=0.9.23"
-    "@solana/web3.js": ">=1.91.1"
-    chain-registry: "*"
-    cosmjs-types: ">=0.9.0"
+    "@injectivelabs/sdk-ts": 1.14.5
+    "@solana/wallet-adapter-base": ^0.9.23
+    "@solana/web3.js": ^1.91.1
+    chain-registry: ^1.69.8
+    cosmjs-types: ^0.9.0
+    kujira.js: 0.9.x
     viem: 2.x
   languageName: unknown
   linkType: soft
