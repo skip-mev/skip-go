@@ -1,9 +1,7 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/proto-signing/pubkey.ts
 
 import {
-  MultisigThresholdPubkey,
   Pubkey,
-  SinglePubkey,
   encodeSecp256k1Pubkey,
 } from "@cosmjs/amino";
 import { fromBase64 } from "@cosmjs/encoding";
@@ -49,22 +47,5 @@ export function encodePubkeyToAny(pubkey: Pubkey, chainId?: string): Any {
     });
   } else {
     return cosmEncodePubkey(pubkey);
-  }
-}
-
-function decodeAnyToPubkey(pubkey: Any): SinglePubkey {
-  switch (pubkey.typeUrl) {
-    case "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
-      const { key } = PubKey.decode(pubkey.value);
-      return encodeEthSecp256k1Pubkey(key);
-    }
-    case "/cosmos.crypto.secp256k1.PubKey": {
-      const { key } = PubKey.decode(pubkey.value);
-      return encodeSecp256k1Pubkey(key);
-    }
-    default:
-      throw new Error(
-        `Pubkey type_url ${pubkey.typeUrl} not recognized as single public key type`,
-      );
   }
 }

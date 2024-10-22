@@ -31,7 +31,6 @@ export default defineConfig(async ({ watch }) => {
         "chain-registry",
         "@initia/initia-registry",
         "viem",
-        "cosmjs-types",
         "long",
         "protobufjs",
         //
