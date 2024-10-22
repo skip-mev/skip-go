@@ -24,7 +24,6 @@ import {
   SigningStargateClient,
   StargateClient,
   StdFee,
-  accountFromAny,
 } from '@cosmjs/stargate';
 import {
   ChainRestAuthApi,
@@ -69,8 +68,9 @@ import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from "@cosmjs/crypto"
+import { accountParser } from './registry';
+import { SKIP_API_URL } from './constants/constants';
 
-export const SKIP_API_URL = 'https://api.skip.build';
 
 export class SkipClient {
   protected requestClient: RequestClient;
@@ -354,7 +354,7 @@ export class SkipClient {
             {
               aminoTypes: this.aminoTypes,
               registry: this.registry,
-              accountParser: accountFromAny,
+              accountParser,
             }
           );
           gasTokenUsed = await this.validateCosmosGasBalance({
@@ -493,7 +493,7 @@ export class SkipClient {
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
-        accountParser: accountFromAny,
+        accountParser,
       }
     );
 
@@ -1066,7 +1066,7 @@ export class SkipClient {
     if (aminoMsgTransferIndex !== -1) {
       const endpoint = await this.getRpcEndpointForChain(chainID);
       const client = await StargateClient.connect(endpoint, {
-        accountParser: accountFromAny,
+        accountParser,
       });
 
       const currentHeight = await client.getHeight();
@@ -1431,7 +1431,7 @@ export class SkipClient {
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client = await StargateClient.connect(endpoint, {
-      accountParser: accountFromAny,
+      accountParser,
     });
     const account = await client.getAccount(address);
     if (!account) {
@@ -1636,7 +1636,7 @@ export class SkipClient {
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
-        accountParser: accountFromAny,
+        accountParser,
       }
     );
 
@@ -1865,7 +1865,7 @@ export class SkipClient {
           {
             aminoTypes: this.aminoTypes,
             registry: this.registry,
-            accountParser: accountFromAny,
+            accountParser,
           }
         );
 
