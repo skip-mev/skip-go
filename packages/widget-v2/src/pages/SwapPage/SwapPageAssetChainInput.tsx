@@ -162,7 +162,7 @@ export const SwapPageAssetChainInput = ({
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <img src={assetDetails.assetImage} width={23} />
+              <StyledImage src={assetDetails.assetImage} />
               <Text>{assetDetails.symbol}</Text>
             </StyledAssetLabel>
           ) : (
@@ -261,4 +261,11 @@ export const StyledAssetLabel = styled(Row).attrs({
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background-color: ${(props) => props.theme.brandColor};
+`;
+
+const StyledImage = styled.img`
+  border-radius: 50%;
+  width: 23px;
+  height: 23px;
+  object-fit: cover;
 `;
