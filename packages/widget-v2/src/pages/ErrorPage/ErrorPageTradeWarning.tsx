@@ -3,7 +3,7 @@ import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
-import { calculatePercentageDifference } from "@/utils/number";
+import { calculatePercentageChange } from "@/utils/number";
 import { RouteResponse } from "@skip-go/client/dist/types";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
@@ -31,7 +31,7 @@ export const ErrorPageTradeWarning = ({
     destAssetChainID,
   } = route;
 
-  const swapDifferencePercentage = `${calculatePercentageDifference(
+  const swapDifferencePercentage = `${calculatePercentageChange(
     usdAmountIn ?? 0,
     usdAmountOut ?? 0,
     true

@@ -34,7 +34,7 @@ import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
-import { calculatePercentageDifference } from "@/utils/number";
+import { calculatePercentageChange } from "@/utils/number";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -279,7 +279,7 @@ export const SwapPage = () => {
       return;
     }
 
-    return calculatePercentageDifference(route.usdAmountIn, route.usdAmountOut);
+    return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
