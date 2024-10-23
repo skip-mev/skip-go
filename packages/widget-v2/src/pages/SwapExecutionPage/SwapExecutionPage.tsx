@@ -182,6 +182,8 @@ export const SwapExecutionPage = () => {
     }
   }, [connectRequiredChains, lastOperation.signRequired, mutate, route?.destAssetChainID, route?.estimatedRouteDurationSeconds, setCurrentPage, setManualAddressModal, swapExecutionState, theme.success.text]);
 
+  const SwapExecutionPageRoute = simpleRoute ? SwapExecutionPageRouteSimple : SwapExecutionPageRouteDetailed;
+
   return (
     <Column gap={5}>
       <SwapPageHeader
@@ -196,24 +198,16 @@ export const SwapExecutionPage = () => {
           onClick: () => setSimpleRoute(!simpleRoute),
         }}
       />
-      {simpleRoute ? (
-        <SwapExecutionPageRouteSimple
-          onClickEditDestinationWallet={() =>
-            setManualAddressModal.show({
-              chainId: route?.destAssetChainID,
-            })
-          }
-          operations={clientOperations}
-          statusData={statusData}
-          swapExecutionState={swapExecutionState}
-        />
-      ) : (
-        <SwapExecutionPageRouteDetailed
-          operations={clientOperations}
-          statusData={statusData}
-          swapExecutionState={swapExecutionState}
-        />
-      )}
+      <SwapExecutionPageRoute
+        onClickEditDestinationWallet={() =>
+          setManualAddressModal.show({
+            chainId: route?.destAssetChainID,
+          })
+        }
+        operations={clientOperations}
+        statusData={statusData}
+        swapExecutionState={swapExecutionState}
+      />
       {renderMainButton}
       <SwapPageFooter
         showRouteInfo={overallStatus === undefined}

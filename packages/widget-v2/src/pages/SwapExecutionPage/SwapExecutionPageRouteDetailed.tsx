@@ -6,19 +6,13 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation, OperationType } from "@/utils/clientType";
+import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
-
-export type SwapExecutionPageRouteDetailedProps = {
-  operations: ClientOperation[];
-  statusData?: TxsStatus
-  swapExecutionState?: SwapExecutionState;
-};
+import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -52,8 +46,9 @@ type tooltipMap = Record<number, boolean>;
 export const SwapExecutionPageRouteDetailed = ({
   operations,
   statusData,
+  onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
-}: SwapExecutionPageRouteDetailedProps) => {
+}: SwapExecutionPageRouteProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
 
@@ -74,8 +69,17 @@ export const SwapExecutionPageRouteDetailed = ({
   };
 
   const firstOperation = operations[0];
+  const lastOperation = operations[operations.length - 1];
+  const isSignRequired = lastOperation.signRequired;
   const status = statusData?.transferEvents;
   const firstOpStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
+
+  const onClickEditDestinationWallet = useMemo(() => {
+    if (isSignRequired) return;
+    if (swapExecutionState !== SwapExecutionState.ready) return;
+    return _onClickEditDestinationWallet;
+  }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
+
   return (
     <StyledSwapExecutionPageRoute>
       <SwapExecutionPageRouteDetailedRow
@@ -140,6 +144,7 @@ export const SwapExecutionPageRouteDetailed = ({
             <SwapExecutionPageRouteDetailedRow
               {...asset}
               index={index}
+              onClickEditDestinationWallet={onClickEditDestinationWallet}
               context={index === operations.length - 1 ? "destination" : "intermediary"}
               isSignRequired={nextOperation?.signRequired}
               status={opStatus}

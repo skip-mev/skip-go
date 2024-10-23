@@ -2,11 +2,12 @@ import { useTheme } from "styled-components";
 import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
-import { iconMap, ICONS } from "@/icons";
+import { ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
+import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
@@ -37,7 +38,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
   onClickEditDestinationWallet,
   explorerLink,
   context,
-  icon = ICONS.none,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
 
@@ -46,8 +46,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId,
     tokenAmount,
   });
-
-  const Icon = iconMap[icon];
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const getAccount = useGetAccount();
@@ -126,9 +124,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
             </Link>
           ) : onClickEditDestinationWallet ? (
             <Button align="center" onClick={onClickEditDestinationWallet}>
-              <Icon
-                width={10}
-                height={10}
+              <PenIcon
                 color={theme.primary.text.lowContrast}
               />
             </Button>
