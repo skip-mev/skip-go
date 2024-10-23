@@ -3,6 +3,7 @@ import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
+import { PenIcon } from "@/icons/PenIcon";
 import { Button, Link } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
@@ -17,6 +18,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
   isSignRequired?: boolean;
@@ -33,6 +35,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   tokenAmount,
   chainId,
   status,
+  onClickEditDestinationWallet,
   explorerLink,
   isSignRequired,
   index,
@@ -90,6 +93,36 @@ export const SwapExecutionPageRouteDetailedRow = ({
     context,
   ]);
 
+  const renderAddress = useMemo(() => {
+    const shouldRenderEditDestinationWallet = context === "destination" && onClickEditDestinationWallet;
+    const Container = shouldRenderEditDestinationWallet ? Row : React.Fragment;
+    if (!source.address) return;
+    return (
+      <Container gap={5}>
+        <StyledButton onClick={() => copyToClipboard(source.address)}>
+          {source.image && (
+            <img
+              src={source.image}
+              style={{
+                height: "100%",
+              }}
+            />
+          )}
+          <AddressText title={source.address}>
+            {getTruncatedAddress(source.address)}
+          </AddressText>
+        </StyledButton>
+        {
+          shouldRenderEditDestinationWallet && <Button align="center" onClick={onClickEditDestinationWallet}>
+            <PenIcon
+              color={theme.primary.text.lowContrast}
+            />
+          </Button>
+        }
+      </Container>
+    );
+  }, [context, onClickEditDestinationWallet, source.address, source.image, theme.primary.text.lowContrast]);
+
   return (
     <Row gap={15} align="center" {...props}>
       {assetDetails?.assetImage && (
@@ -139,21 +172,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               </SmallText>
             )}
           </Column>
-          {source.address && (
-            <StyledButton onClick={() => copyToClipboard(source.address)}>
-              {source.image && (
-                <img
-                  src={source.image}
-                  style={{
-                    height: "100%",
-                  }}
-                />
-              )}
-              <AddressText title={source.address}>
-                {getTruncatedAddress(source.address)}
-              </AddressText>
-            </StyledButton>
-          )}
+          {renderAddress}
         </Row>
       </Column>
     </Row>
