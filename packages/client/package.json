@@ -12,7 +12,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsup",
+    "build": "yarn run codegen && tsup",
     "clean": "rm -rf dist",
     "codegen": "node scripts/codegen.js",
     "e2e:clean": "make stop clean",
@@ -42,7 +42,6 @@
     "@injectivelabs/sdk-ts": "1.14.5",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/web3.js": "^1.91.1",
-    "chain-registry": "^1.69.8",
     "cosmjs-types": "^0.9.0",
     "viem": "2.x"
   },
