@@ -1,11 +1,8 @@
 import { Chain } from '@chain-registry/types';
-import chainRegistryChains from "chain-registry/esm/chains";
-import {
-  chains as _testnetInitiaChains,
-} from "chain-registry/testnet";
-import {
-  chains as _mainnetInitiaChains,
-} from "chain-registry/mainnet";
+import * as mainnetChains from './codegen/chains/chain-registry/mainnet'
+import testnetChains from '@/codegen/chains/chain-registry/testnet';
+import { chains as initiaRegistry } from '@initia/initia-registry';
+
 
 const SOLANA_CHAIN = {
   chain_name: 'solana',
@@ -53,27 +50,22 @@ const SOLANA_CHAIN = {
       png: 'https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/solana/asset/sol.png',
     },
   ],
-};
-
-export function chains(): Chain[] {
-  const additionalChains = [SOLANA_CHAIN] as Chain[];
-
-  const existingChainIds = new Set((chainRegistryChains as Chain[]).map((chain) => chain.chain_id));
-
-  const newChains = additionalChains.filter(
-    (chain) => !existingChainIds.has(chain.chain_id)
-  );
-
-  return [...chainRegistryChains, ...newChains];
 }
 
-export function initiaChains(): Chain[] {
-  const chains = [  
-    ..._mainnetInitiaChains,
-    ..._testnetInitiaChains,
-  ] as Chain[];
+  ; const chainRegistryChains = [
+    ...mainnetChains,
+    ...testnetChains,
+    ...initiaRegistry,
+  ];
 
-  return chains;
+const additionalChains = [SOLANA_CHAIN] as Chain[];
+const existingChainIds = new Set(chainRegistryChains.map((chain) => chain.chain_id));
+const newChains = additionalChains.filter(
+  (chain) => !existingChainIds.has(chain.chain_id)
+);
+
+export function chains(): Chain[] {
+  return [...chainRegistryChains, ...newChains];
 }
 
 export async function findFirstWorkingEndpoint(

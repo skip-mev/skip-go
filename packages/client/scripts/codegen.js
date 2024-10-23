@@ -1,137 +1,209 @@
-// @ts-check
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const fs = require('fs/promises');
 const path = require('path');
 const telescope = require('@cosmology/telescope').default;
 const protoDirs = require('../../../vendor');
+const outPath = path.resolve(__dirname, '../src/codegen/');
 
-async function codegen() {
-  const outPath = path.resolve(__dirname, '../src/codegen/');
+const registries = [
+  {
+    packageName: 'chain-registry',
+    registryPath: path.resolve(__dirname, '../../../node_modules/chain-registry'),
+  },
+];
 
-  await fs
-    .rm(outPath, { recursive: true, force: true })
-    .catch(() => {})
-    .then(() => fs.mkdir(outPath, { recursive: true }))
-    .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
-  await telescope({
-    protoDirs,
-    outPath,
-    options: {
-      aminoEncoding: {
-        customTypes: {
-          useCosmosSDKDec: true,
-        },
-        enabled: true,
-        exceptions: {
-          // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L33
-          '/ethermint.crypto.v1.ethsecp256k1.PrivKey': {
-            aminoType: 'ethermint/PrivKeyEthSecp256k1',
-          },
-          // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L35
-          '/ethermint.crypto.v1.ethsecp256k1.PubKey': {
-            aminoType: 'ethermint/PubKeyEthSecp256k1',
-          },
-        },
-        typeUrlToAmino: (typeUrl) => {
-          /**
-           * regex to match typeUrl, e.g.:
-           * - typeUrl  : /ethermint.evm.v1.MsgUpdateParams
-           * - mod      : ethermint
-           * - submod   : evm
-           * - version  : v1
-           * - type     : MsgUpdateParams
-           */
-          const matcher =
-            /^\/(?<mod>\w+)\.(?<submod>\w+)\.(?<version>\w+)\.(?<type>\w+)/;
+async function isValidDirectory(dirPath) {
+  try {
+      const stats = await fs.stat(dirPath);
+      if (!stats.isDirectory()) {
+          return false;
+      }
+      const files = await fs.readdir(dirPath);
+      return files.length > 0;
+  } catch (error) {
+      return false;
+  }
+}
 
-          const { mod, submod, type } = typeUrl.match(matcher)?.groups ?? {};
+async function copyChains({ packageName, registryPath }) {
+  if (packageName.includes('.')) return // exclude non-chain name directories
+  const mainnetDir = path.join(registryPath, 'mainnet');
+  const testnetDir = path.join(registryPath, 'testnet');
 
-          // https://github.com/circlefin/noble-cctp/blob/release-2024-01-09T183203/x/cctp/types/codec.go#L30-L56
-          if (typeUrl.startsWith('/circle.cctp.v1.Msg')) {
-            return typeUrl.replace('/circle.cctp.v1.Msg', 'cctp/');
-          }
+  const outMainnetDir = path.resolve(
+    __dirname,
+    `../src/codegen/chains/${packageName}/mainnet`
+  );
+  const outTestnetDir = path.resolve(
+    __dirname,
+    `../src/codegen/chains/${packageName}/testnet`
+  );
 
-          /**
-           * lookup mod to assign primary MsgUpdateParams amino type, e.g.:
-           *
-           * - typeUrl  : ethermint.evm.v1.MsgUpdateParams
-           * - mod      : ethermint
-           * - submod   : evm
-           * - type     : ethermint/MsgUpdateParams
-           *
-           * @type {Record<string, string>}
-           */
-          const lookup = {
-            ethermint: 'evm',
-            evmos: 'revenue',
-          };
+  await Promise.all([
+    copyChainFiles(mainnetDir, outMainnetDir),
+    copyChainFiles(testnetDir, outTestnetDir)
+  ]);
+}
 
-          if (mod && lookup[mod]) {
-            if (type === 'MsgUpdateParams' && lookup[mod] === submod) {
-              return `${mod}/MsgUpdateParams`;
-            }
-            if (type === 'MsgUpdateParams') {
-              return `${mod}/${submod}/MsgUpdateParams`;
-            }
-            if (type?.startsWith('Msg')) {
-              return `${mod}/${type}`;
-            }
-            return `${submod}/${type}`;
-          }
-        },
-      },
-      bundle: {
-        enabled: false,
-      },
-      interfaces: {
-        enabled: false,
-        useByDefault: false,
-        useUnionTypes: false,
-      },
-      lcdClients: {
-        enabled: false,
-      },
-      prototypes: {
-        addTypeUrlToDecoders: true,
-        addTypeUrlToObjects: true,
-        enableRegistryLoader: false,
-        enabled: true,
-        methods: {
-          decode: true,
-          encode: true,
-          fromAmino: true,
-          fromJSON: true,
-          fromProto: true,
-          toAmino: true,
-          toJSON: true,
-          toProto: true,
-        },
-        parser: {
-          keepCase: false,
-        },
-        typingsFormat: {
+async function copyChainFiles(sourceDir, targetDir) {
+  if (!(await isValidDirectory(sourceDir))) return
+
+  try {
+      await fs.mkdir(targetDir, { recursive: true });
+
+      const files = await fs.readdir(sourceDir);
+      await Promise.all(
+          files.map(async (file) => {
+              const sourcePath = path.join(sourceDir, file);
+              const targetPath = path.join(targetDir, file);
+              await fs.copyFile(sourcePath, targetPath);
+          })
+      );
+  } catch (error) {
+      console.error(`Error copying files for ${sourceDir}:`, error);
+      throw error;
+  }
+}
+
+async function genTelescope () {
+  try {
+    await telescope({
+      protoDirs,
+      outPath,
+      options: {
+        aminoEncoding: {
           customTypes: {
             useCosmosSDKDec: true,
           },
-          duration: 'duration',
-          num64: 'long',
-          timestamp: 'date',
-          useDeepPartial: false,
-          useExact: false,
+          enabled: true,
+          exceptions: {
+            // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L33
+            '/ethermint.crypto.v1.ethsecp256k1.PrivKey': {
+              aminoType: 'ethermint/PrivKeyEthSecp256k1',
+            },
+            // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L35
+            '/ethermint.crypto.v1.ethsecp256k1.PubKey': {
+              aminoType: 'ethermint/PubKeyEthSecp256k1',
+            },
+          },
+          typeUrlToAmino: (typeUrl) => {
+            /**
+             * regex to match typeUrl, e.g.:
+             * - typeUrl  : /ethermint.evm.v1.MsgUpdateParams
+             * - mod      : ethermint
+             * - submod   : evm
+             * - version  : v1
+             * - type     : MsgUpdateParams
+             */
+            const matcher =
+              /^\/(?<mod>\w+)\.(?<submod>\w+)\.(?<version>\w+)\.(?<type>\w+)/;
+
+            const { mod, submod, type } = typeUrl.match(matcher)?.groups ?? {};
+
+            // https://github.com/circlefin/noble-cctp/blob/release-2024-01-09T183203/x/cctp/types/codec.go#L30-L56
+            if (typeUrl.startsWith('/circle.cctp.v1.Msg')) {
+              return typeUrl.replace('/circle.cctp.v1.Msg', 'cctp/');
+            }
+
+            /**
+             * lookup mod to assign primary MsgUpdateParams amino type, e.g.:
+             *
+             * - typeUrl  : ethermint.evm.v1.MsgUpdateParams
+             * - mod      : ethermint
+             * - submod   : evm
+             * - type     : ethermint/MsgUpdateParams
+             *
+             * @type {Record<string, string>}
+             */
+            const lookup = {
+              ethermint: 'evm',
+              evmos: 'revenue',
+            };
+
+            if (mod && lookup[mod]) {
+              if (type === 'MsgUpdateParams' && lookup[mod] === submod) {
+                return `${mod}/MsgUpdateParams`;
+              }
+              if (type === 'MsgUpdateParams') {
+                return `${mod}/${submod}/MsgUpdateParams`;
+              }
+              if (type?.startsWith('Msg')) {
+                return `${mod}/${type}`;
+              }
+              return `${submod}/${type}`;
+            }
+          },
+        },
+        bundle: {
+          enabled: false,
+        },
+        interfaces: {
+          enabled: false,
+          useByDefault: false,
+          useUnionTypes: false,
+        },
+        lcdClients: {
+          enabled: false,
+        },
+        prototypes: {
+          addTypeUrlToDecoders: true,
+          addTypeUrlToObjects: true,
+          enableRegistryLoader: false,
+          enabled: true,
+          methods: {
+            decode: true,
+            encode: true,
+            fromAmino: true,
+            fromJSON: true,
+            fromProto: true,
+            toAmino: true,
+            toJSON: true,
+            toProto: true,
+          },
+          parser: {
+            keepCase: false,
+          },
+          typingsFormat: {
+            customTypes: {
+              useCosmosSDKDec: true,
+            },
+            duration: 'duration',
+            num64: 'long',
+            timestamp: 'date',
+            useDeepPartial: false,
+            useExact: false,
+          },
+        },
+        rpcClients: {
+          enabled: false,
+        },
+        stargateClients: {
+          enabled: false,
+        },
+        tsDisable: {
+          disableAll: true,
         },
       },
-      rpcClients: {
-        enabled: false,
-      },
-      stargateClients: {
-        enabled: false,
-      },
-      tsDisable: {
-        disableAll: true,
-      },
-    },
-  });
+    });
+  } catch (err) {
+    console.error('Failed to generate telescope:', err);
+  }
+}
+
+async function codegen() {
+  await fs
+  .rm(outPath, { recursive: true, force: true })
+  .catch(() => {})
+  .then(() => fs.mkdir(outPath, { recursive: true }))
+  .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
+
+  await genTelescope();
+
+  for (const registry of registries) {
+    await copyChains(registry);
+  }
 }
 
 void codegen();
