@@ -2,14 +2,14 @@ import { StdFee } from "@cosmjs/amino";
 import {
   CosmosTxSigningV1Beta1Signing,
   CosmosTxV1Beta1Tx,
-} from "@injectivelabs/core-proto-ts";
+} from "@injectivelabs/core-proto-ts/esm";
 import {
   createAuthInfo,
   createBody,
   createFee,
   createSignDoc,
   createSigners,
-} from "@injectivelabs/sdk-ts/dist/cjs/core/modules/tx/utils/tx";
+} from "@injectivelabs/sdk-ts/dist/esm/core/modules/tx/utils/tx";
 import { DEFAULT_STD_FEE } from "@injectivelabs/utils";
 import keccak256 from "keccak256";
 

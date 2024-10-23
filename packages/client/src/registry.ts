@@ -2,7 +2,7 @@ import { AccountParser, accountFromAny } from '@cosmjs/stargate';
 import { assert } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from './stride';
 import { BaseAccount } from './codegen/cosmos/auth/v1beta1/auth';
-import { EthAccount } from '@injectivelabs/core-proto-ts/cjs/injective/types/v1beta1/account';
+import { EthAccount } from '@injectivelabs/core-proto-ts/esm/injective/types/v1beta1/account';
 
 export const accountParser: AccountParser = (acc) => {
   switch (acc.typeUrl) {
