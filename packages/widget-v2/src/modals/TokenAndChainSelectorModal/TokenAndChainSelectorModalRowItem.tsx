@@ -8,7 +8,7 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { ChainWithAsset, GroupedAsset } from "./TokenAndChainSelectorModal";
+import { ChainWithAsset, GroupedAsset, SelectorContext } from "./TokenAndChainSelectorModal";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset
@@ -21,6 +21,7 @@ export type TokenAndChainSelectorModalRowItemProps = {
   index: number;
   skeleton: React.ReactElement;
   onSelect: (token: ClientAsset | GroupedAsset | null) => void;
+  context: SelectorContext
 };
 
 export const TokenAndChainSelectorModalRowItem = ({
@@ -28,6 +29,7 @@ export const TokenAndChainSelectorModalRowItem = ({
   index,
   skeleton,
   onSelect,
+  context
 }: TokenAndChainSelectorModalRowItemProps) => {
   const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
@@ -40,7 +42,7 @@ export const TokenAndChainSelectorModalRowItem = ({
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <TokenAndChainSelectorModalRowItemLeftContent item={item} />
+          <TokenAndChainSelectorModalRowItemLeftContent item={item} context={context} />
         }
         rightContent={
           Number(item.totalAmount) > 0 && (
@@ -98,11 +100,13 @@ export const TokenAndChainSelectorModalRowItem = ({
 
 const TokenAndChainSelectorModalRowItemLeftContent = ({
   item,
+  context
 }: {
   item: GroupedAsset;
+  context: SelectorContext;
 }) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainList = item.chains
+  const _chainList = item.chains
     .map((chain) => {
       const _chain = chains?.find((c) => c.chainID === chain.chainID);
       return {
@@ -110,6 +114,8 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
       };
     })
     .sort((a, b) => a.chainName.localeCompare(b.chainName));
+
+  const chainList = context === "source" ? _chainList.filter(c => !c.chainName.toLowerCase().includes("penumbra")) : _chainList;
 
   return (
     <Row align="center" gap={8}>

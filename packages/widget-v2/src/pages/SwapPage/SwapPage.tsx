@@ -82,6 +82,7 @@ export const SwapPage = () => {
 
   const handleChangeSourceAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "source",
       onSelect: (asset) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
@@ -103,6 +104,7 @@ export const SwapPage = () => {
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "source",
       onSelect: (asset) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
