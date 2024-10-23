@@ -8,18 +8,11 @@ import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
 import { useMemo, useState } from "react";
 import { SmallText } from "@/components/Typography";
-import { ClientOperation, OperationType } from "@/utils/clientType";
+import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
-
-export type SwapExecutionPageRouteDetailedProps = {
-  operations: ClientOperation[];
-  statusData?: TxsStatus
-  onClickEditDestinationWallet?: () => void;
-  swapExecutionState?: SwapExecutionState;
-};
+import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -55,7 +48,7 @@ export const SwapExecutionPageRouteDetailed = ({
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
-}: SwapExecutionPageRouteDetailedProps) => {
+}: SwapExecutionPageRouteProps) => {
   const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
   const [{ data: bridges }] = useAtom(skipBridgesAtom);
 

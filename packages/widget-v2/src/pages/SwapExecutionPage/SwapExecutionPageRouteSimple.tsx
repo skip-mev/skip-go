@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
 
-export type SwapExecutionPageRouteSimpleProps = {
+export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
   onClickEditDestinationWallet?: () => void;
   statusData?: TxsStatus
@@ -22,7 +22,7 @@ export const SwapExecutionPageRouteSimple = ({
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
-}: SwapExecutionPageRouteSimpleProps) => {
+}: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
   const { route } = useAtomValue(swapExecutionStateAtom);
 
