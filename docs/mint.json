@@ -14,6 +14,13 @@
       "dark": "#151617"
     }
   },
+  "anchors": [
+    {
+        "name": "Support",
+        "icon": "headset",
+        "url": "https://discord.com/channels/1010553709987639406/1210022796797677589"
+    }
+  ],
   "topbarLinks": [
     {
       "name": "Skip:Connect",
@@ -35,6 +42,10 @@
     {
     "name": "API Reference",
     "url": "api-reference"
+    },
+    {
+    "name": "Release Notes",
+    "url": "release-notes"
     }
     ],
   "navigation": [
@@ -140,6 +151,15 @@
           ]
         }
       ]
+    },
+    {
+      "group": "Release Notes",
+      "pages": [
+            "release-notes/overview",
+            "release-notes/client",
+            "release-notes/widget",
+            "release-notes/api"
+          ]
     }
   ], 
   "footerSocials": {

@@ -47,7 +47,7 @@ const meta = {
         custom: (
           <StyledCustomButton>
             Custom button <br />
-            click to open swap widget
+            click to open widget
           </StyledCustomButton>
         ),
       },

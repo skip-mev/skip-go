@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { skipAssetsAtom } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -33,11 +33,13 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
+import { useAccount } from "wagmi";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -66,6 +68,9 @@ export const SwapPage = () => {
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
 
+  const { chainId: evmChainId, connector } = useAccount();
+  const evmAddress = evmChainId ? getAccount(String(evmChainId))?.address : undefined;
+
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
       if (!denom || !chainId) return;
@@ -79,6 +84,13 @@ export const SwapPage = () => {
     tokenAndChainSelectorModal.show({
       context: "source",
       onSelect: (asset) => {
+        // if evm chain is selected and the user is connected to an evm chain, switch the chain
+        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
+        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
+          connector.switchChain?.({
+            chainId: Number(asset.chainID),
+          });
+        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
@@ -88,17 +100,19 @@ export const SwapPage = () => {
         tokenAndChainSelectorModal.hide();
       },
     });
-  }, [
-    setDestinationAssetAmount,
-    setSourceAsset,
-    setSourceAssetAmount,
-    tokenAndChainSelectorModal,
-  ]);
+  }, [chains, connector, evmAddress, evmChainId, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
       context: "source",
       onSelect: (asset) => {
+        // if evm chain is selected and the user is connected to an evm chain, switch the chain
+        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
+        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
+          connector.switchChain?.({
+            chainId: Number(asset.chainID),
+          });
+        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
@@ -108,13 +122,7 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       networkSelection: true,
     });
-  }, [
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-    tokenAndChainSelectorModal,
-  ]);
+  }, [chains, connector, evmAddress, evmChainId, getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
