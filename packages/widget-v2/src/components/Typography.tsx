@@ -6,6 +6,7 @@ type TextProps = {
   fontWeight?: "normal" | "bold" | number;
   textAlign?: string;
   lineHeight?: string;
+  textWrap?: string;
   color?: string;
   opacity?: string | number;
   monospace?: boolean;
@@ -31,6 +32,7 @@ export const textProps = css<TextProps>`
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
+  ${({ textWrap }) => textWrap && `text-wrap: ${textWrap}`};
   ${({ monospace }) => monospace && "font-family: 'ABCDiatype', monospace;"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};

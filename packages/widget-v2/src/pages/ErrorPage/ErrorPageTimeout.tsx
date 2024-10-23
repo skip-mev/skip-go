@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -38,11 +38,11 @@ export const ErrorPageTimeout = ({
           },
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title="Sorry, your transaction is taking longer than usual."
         description={
           <>
-            <SmallText color={theme.warning.text} textAlign="center">
+            <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
               Your funds are secure.
               <br />
               You can close this window safely while you wait.

@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -57,11 +57,11 @@ export const ErrorPageTradeWarning = ({
           onClick: onClickBack,
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title={`Warning: Bad trade (-${swapDifferencePercentage})`}
         description={
           <>
-            <SmallText color={theme.error.text} textAlign="center">
+            <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
               You will lose ~{swapDifferencePercentage} of your input value with
               this trade
               <br />

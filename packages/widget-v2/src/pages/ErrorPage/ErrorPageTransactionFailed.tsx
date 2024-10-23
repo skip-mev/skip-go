@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -43,11 +43,11 @@ export const ErrorPageTransactionFailed = ({
           }
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title="Transaction failed"
         description={
           <>
-            <SmallText color={theme.error.text} textAlign="center">
+            <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
               This transaction encountered a critical error. <br />
               Please contact our support team below.
             </SmallText>
