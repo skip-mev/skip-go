@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, Text } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -37,7 +37,7 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
           onClick: onClickBack,
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title={
           <Text>
             Transaction requires an
@@ -46,7 +46,7 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
           </Text>
         }
         description={
-          <SmallText>
+          <SmallText textWrap="balance">
             {sourceDetails.amount} {sourceDetails.symbol} {" -> "}
             {destinationDetails.amount} {destinationDetails.symbol}
           </SmallText>

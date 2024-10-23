@@ -34,7 +34,7 @@ export function limitDecimalsDisplayed(input: string | number) {
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
 
-export function calculatePercentageDifference(
+export function calculatePercentageChange(
   numberA: number | string,
   numberB: number | string,
   absoluteValue?: boolean

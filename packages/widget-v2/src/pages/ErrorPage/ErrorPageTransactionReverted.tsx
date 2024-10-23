@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -54,11 +54,11 @@ export const ErrorPageTransactionReverted = ({
           }
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title="Action Required"
         description={
           <>
-            <SmallText color={theme.warning.text} textAlign="center">
+            <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
               This transaction reverted while trying to execute.
               <br />
               You can continue executing this transaction now.
@@ -66,6 +66,7 @@ export const ErrorPageTransactionReverted = ({
             <SmallText
               color={theme.primary.text.lowContrast}
               textAlign="center"
+              textWrap="balance"
             >
               Current asset location: {assetDetails?.amount}{" "}
               {assetDetails?.symbol} on {assetDetails?.chainName} (
