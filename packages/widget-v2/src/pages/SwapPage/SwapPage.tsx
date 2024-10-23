@@ -198,7 +198,7 @@ export const SwapPage = () => {
       );
     }
 
-    if (!sourceAsset?.amount || !destinationAsset?.amount) {
+    if (!sourceAsset?.amount && !destinationAsset?.amount) {
       return (
         <MainButton
           label="Please enter a valid amount"

@@ -50,7 +50,7 @@ export const TokenAndChainSelectorModalRowItem = ({
               <SmallText normalTextColor>
                 {parseFloat(item.totalAmount.toFixed(8))}
               </SmallText>
-              {item.totalUsd && (
+              {Number(item.totalUsd) > 0 && (
                 <SmallText>{formatUSD(item.totalUsd)}</SmallText>
               )}
             </Column>
