@@ -39,15 +39,15 @@ export const ErrorPageTimeout = ({
         }}
       />
       <ErrorState
-        title="This transaction is taking longer than usual."
+        title="Sorry, your transaction is taking longer than usual."
         description={
           <>
             <SmallText color={theme.warning.text} textAlign="center">
-              Unstable network conditions mean this transaction may take up
+              Your funds are secure.
               <br />
-              to 48 hours to complete. Your funds are secure in the meantime.
+              You can close this window safely while you wait.
               <br />
-              This window can be closed safely while you wait.
+              Check the history page for status updates.
             </SmallText>
             <Row
               gap={5}
