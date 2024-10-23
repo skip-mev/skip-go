@@ -1,10 +1,9 @@
-// @ts-check
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const fs = require('fs/promises');
 const path = require('path');
 const telescope = require('@cosmology/telescope').default;
-const protoDirs = require('../../../vendor');
+const protoDirs = require('../../../vendors');
 
 async function codegen() {
   const outPath = path.resolve(__dirname, '../src/codegen/');
@@ -14,6 +13,7 @@ async function codegen() {
     .catch(() => {})
     .then(() => fs.mkdir(outPath, { recursive: true }))
     .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
+    
   await telescope({
     protoDirs,
     outPath,
