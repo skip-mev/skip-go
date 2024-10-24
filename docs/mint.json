@@ -80,6 +80,7 @@
       "pages": [
         "client/getting-started",
         "client/balance-gas-and-fee-tooling",
+        "client/advanced-features",
         "client/migration-guide"
       ]
     },
