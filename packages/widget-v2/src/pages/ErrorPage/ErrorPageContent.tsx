@@ -3,7 +3,7 @@ import { Column } from "@/components/Layout";
 import { iconMap, ICONS } from "@/icons";
 import { SmallText, Text } from "@/components/Typography";
 
-export type ErrorStateProps = {
+export type ErrorPageContentProps = {
   icon?: ICONS;
   title: string | React.ReactNode;
   description: string | React.ReactNode;
@@ -11,13 +11,13 @@ export type ErrorStateProps = {
   textColor?: string;
 };
 
-export const ErrorState = ({
+export const ErrorPageContent = ({
   title,
   description,
   textColor,
   backgroundColor,
   icon = ICONS.none,
-}: ErrorStateProps) => {
+}: ErrorPageContentProps) => {
   const theme = useTheme();
   textColor ??= theme.primary.text.normal;
   backgroundColor ??= theme.primary.background.normal;

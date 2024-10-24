@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { errorAtom } from "@/state/errorPage";
@@ -37,7 +37,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
           }
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title="An unexpected error has occurred"
         description={error?.message}
         icon={ICONS.triangleWarning}

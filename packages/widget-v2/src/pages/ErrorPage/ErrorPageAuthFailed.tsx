@@ -1,4 +1,4 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
@@ -32,7 +32,7 @@ export const ErrorPageAuthFailed = ({
           onClick: handleOnClickBack
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title="Transaction failed"
         description="User rejected authentication request"
         icon={ICONS.triangleWarning}

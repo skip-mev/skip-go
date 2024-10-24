@@ -1,10 +1,10 @@
-import { ErrorState } from "@/components/ErrorState";
+import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
-import { calculatePercentageDifference } from "@/utils/number";
-import { RouteResponse } from "@skip-go/client";
+import { calculatePercentageChange } from "@/utils/number";
+import { RouteResponse } from "@skip-go/client/dist/types";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
@@ -31,7 +31,7 @@ export const ErrorPageTradeWarning = ({
     destAssetChainID,
   } = route;
 
-  const swapDifferencePercentage = `${calculatePercentageDifference(
+  const swapDifferencePercentage = `${calculatePercentageChange(
     usdAmountIn ?? 0,
     usdAmountOut ?? 0,
     true
@@ -57,11 +57,11 @@ export const ErrorPageTradeWarning = ({
           onClick: onClickBack,
         }}
       />
-      <ErrorState
+      <ErrorPageContent
         title={`Warning: Bad trade (-${swapDifferencePercentage})`}
         description={
           <>
-            <SmallText color={theme.error.text} textAlign="center">
+            <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
               You will lose ~{swapDifferencePercentage} of your input value with
               this trade
               <br />
