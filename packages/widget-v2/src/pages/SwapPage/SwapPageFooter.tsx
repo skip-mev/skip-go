@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
@@ -64,7 +64,7 @@ export const SwapPageFooterItems = ({
   );
 };
 
-export const SwapPageFooter = memo(({
+export const SwapPageFooter = ({
   onClick,
   rightContent,
   showRouteInfo,
@@ -88,7 +88,7 @@ export const SwapPageFooter = memo(({
       />
     </GhostButton>
   );
-});
+};
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};

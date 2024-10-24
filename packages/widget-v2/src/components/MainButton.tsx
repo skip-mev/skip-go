@@ -4,7 +4,6 @@ import { SmallText, Text } from "@/components/Typography";
 import { useTheme } from "styled-components";
 import { ICONS, iconMap } from "@/icons";
 import { getBrandButtonTextColor } from "@/utils/colors";
-import { memo } from "react";
 
 export type MainButtonProps = {
   label: string;
@@ -17,7 +16,7 @@ export type MainButtonProps = {
   onClick?: () => void;
 };
 
-export const MainButton = memo(({
+export const MainButton = ({
   label,
   icon = ICONS.none,
   leftIcon = ICONS.none,
@@ -78,7 +77,7 @@ export const MainButton = memo(({
       <Icon backgroundColor={textColor} color={backgroundColor} />
     </StyledMainButton>
   );
-});
+};
 
 export const LoadingButton = ({
   label,
