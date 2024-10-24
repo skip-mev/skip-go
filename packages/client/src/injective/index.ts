@@ -2,7 +2,7 @@ import { StdFee } from "@cosmjs/amino";
 import {
   CosmosTxSigningV1Beta1Signing,
   CosmosTxV1Beta1Tx,
-} from "@injectivelabs/core-proto-ts";
+} from "@injectivelabs/core-proto-ts/cjs";
 import {
   createAuthInfo,
   createBody,
