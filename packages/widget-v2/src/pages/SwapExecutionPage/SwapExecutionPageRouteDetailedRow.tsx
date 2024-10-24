@@ -1,7 +1,7 @@
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
-import React, { memo, useMemo } from "react";
+import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, Link } from "@/components/Button";
