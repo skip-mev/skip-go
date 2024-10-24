@@ -52,28 +52,6 @@ const balances = await skipClient.balances({
 
 </CodeGroup>
 
-## Adding custom messages before or after route execution
-
-The `executeRoute` method now accepts `beforeMsg` and `afterMsg`  parameter to allow for the execution of custom Cosmos messages before/after the route is executed. This is useful for executing custom messages that are not part of the route definition.
-
-
-```typescript
-const msg = JSON.stringify({
-  fromAddress: 'cosmos1...',  // Replace with sender address
-  toAddress: 'cosmos1...',    // Replace with recipient address
-  amount: [{
-    denom: 'uatom',           // Replace with the actual denom, e.g., 'uatom' for ATOM
-    amount: '1000000'         // Replace with the actual amount (in smallest unit, e.g., micro-ATOM)
-  }]
-});
-
-await skip.executeRoute({
-  route,
-  userAddresses,
-  beforeMsg: { msg, msgTypeURL: '/cosmos.bank.v1beta1.MsgSend' }
-});
-```
-
 ## Getting info about gas and fees
 
  <Info>
