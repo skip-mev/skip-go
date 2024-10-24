@@ -39,6 +39,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   explorerLink,
   context,
 }: SwapExecutionPageRouteSimpleRowProps) => {
+  console.log("simple route row");
   const theme = useTheme();
 
   const assetDetails = useGetAssetDetails({

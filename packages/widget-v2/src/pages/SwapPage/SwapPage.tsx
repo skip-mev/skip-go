@@ -37,6 +37,7 @@ import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 
 export const SwapPage = () => {
+  console.log("swap page");
   const [container, setContainer] = useState<HTMLDivElement>();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
