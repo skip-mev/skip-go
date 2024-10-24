@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { SKIP_API_URL, SkipClient, SkipRouter } from '../client';
+import { SKIP_API_URL, SkipClient } from '../client';
 import {
   Chain,
   ChainJSON,
@@ -12,8 +12,170 @@ import {
   RouteResponse,
   RouteResponseJSON,
 } from '../types';
+import { createHash } from 'crypto';
+import { createCachingMiddleware, CustomCache } from 'src/cache';
+import { vi, Mock } from 'vitest';
 
 export const server = setupServer();
+
+
+describe('Caching Middleware', () => {
+  let cache: CustomCache;
+  let cacheDurationMs: number;
+  let cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
+  let fn: Mock<[string], Promise<string>>;
+
+  // Setup before each test
+  beforeEach(() => {
+    cache = CustomCache.getInstance();
+    cache.clear();
+
+    cacheDurationMs = 1000; // 1 second
+    cachingMiddleware = createCachingMiddleware(cache, { cacheDurationMs });
+
+    fn = vi.fn(async (arg: string) => {
+      return `result for ${arg}`;
+    });
+  });
+
+  // Clean up after each test
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should cache results and return cached data if within cache duration', async () => {
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for testArg');
+
+    const result2 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should call function again and update cache if cache is expired', async () => {
+    vi.useFakeTimers();
+
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for testArg');
+
+    // Advance time by cacheDurationMs + 1 to expire the cache
+    vi.advanceTimersByTime(cacheDurationMs + 1);
+
+    const result2 = await cachingMiddleware(key, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(2); // Function should be called again
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should cache different results for different arguments', async () => {
+    const key = 'testKey';
+
+    const args1 = ['testArg1'];
+    const args2 = ['testArg2'];
+
+    const result1 = await cachingMiddleware(key, fn, args1 as any);
+    const result2 = await cachingMiddleware(key, fn, args2 as any);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(result1).toEqual('result for testArg1');
+    expect(result2).toEqual('result for testArg2');
+
+    // Subsequent calls with the same arguments should return cached results
+    const result3 = await cachingMiddleware(key, fn, args1 as any);
+    const result4 = await cachingMiddleware(key, fn, args2 as any);
+
+    expect(fn).toHaveBeenCalledTimes(2); // Function should not be called again
+    expect(result3).toEqual('result for testArg1');
+    expect(result4).toEqual('result for testArg2');
+  });
+
+  it('should cache different results for different keys even with same arguments', async () => {
+    const key1 = 'testKey1';
+    const key2 = 'testKey2';
+    const args = ['testArg'];
+
+    const result1 = await cachingMiddleware(key1, fn, args as any);
+    const result2 = await cachingMiddleware(key2, fn, args as any);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(result1).toEqual('result for testArg');
+    expect(result2).toEqual('result for testArg');
+  });
+
+  it('should generate correct cache key based on key and arguments', async () => {
+    const key = 'testKey';
+    const args = ['testArg'];
+
+    const argsHash = createHash('md5').update(JSON.stringify(args as any)).digest('hex');
+    const expectedCacheKey = `${key}:${argsHash}`;
+
+    await cachingMiddleware(key, fn, args as any);
+
+    expect(cache.get(expectedCacheKey)).toBeDefined();
+  });
+
+  it('should not cache failed requests', async () => {
+    const errorFn = vi.fn(async () => {
+      throw new Error('Test error');
+    });
+
+    const key = 'errorKey';
+    const args = ['errorArg'];
+
+    await expect(cachingMiddleware(key, errorFn, args as any)).rejects.toThrow('Test error');
+    expect(errorFn).toHaveBeenCalledTimes(1);
+
+    // Retry the function to ensure it gets called again since it failed previously
+    await expect(cachingMiddleware(key, errorFn, args as any)).rejects.toThrow('Test error');
+    expect(errorFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('should cache resolved promises even if they take time to resolve', async () => {
+    const slowFn = vi.fn(
+      (arg: string) =>
+        new Promise((resolve) => setTimeout(() => resolve(`slow result for ${arg}`), 500))
+    );
+
+    const key = 'slowKey';
+    const args = ['slowArg'];
+
+    const result1 = await cachingMiddleware(key, slowFn, args as any);
+    expect(slowFn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('slow result for slowArg');
+
+    const result2 = await cachingMiddleware(key, slowFn, args as any);
+    expect(slowFn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('slow result for slowArg');
+  });
+
+  it('should correctly handle functions with multiple arguments', async () => {
+    const multiArgFn = vi.fn(async (arg1: string, arg2: number) => {
+      return `result for ${arg1} and ${arg2}`;
+    });
+
+    const key = 'multiArgKey';
+    const args = ['arg1', 42];
+
+    const result1 = await cachingMiddleware(key, multiArgFn, args as any);
+    expect(multiArgFn).toHaveBeenCalledTimes(1);
+    expect(result1).toEqual('result for arg1 and 42');
+
+    const result2 = await cachingMiddleware(key, multiArgFn, args as any);
+    expect(multiArgFn).toHaveBeenCalledTimes(1); // Should not be called again
+    expect(result2).toEqual('result for arg1 and 42');
+  });
+});
 
 describe('client', () => {
   beforeAll(() => server.listen());
@@ -48,11 +210,11 @@ describe('client', () => {
                       sum: 'h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=',
                     },
                     'github.com/strangelove-ventures/packet-forward-middleware':
-                      {
-                        path: 'github.com/strangelove-ventures/packet-forward-middleware/v4',
-                        version: 'v4.0.5',
-                        sum: 'h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=',
-                      },
+                    {
+                      path: 'github.com/strangelove-ventures/packet-forward-middleware/v4',
+                      version: 'v4.0.5',
+                      sum: 'h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=',
+                    },
                   },
                   cosmos_module_support: {
                     authz: true,
@@ -86,8 +248,9 @@ describe('client', () => {
         })
       );
 
-      const client = new SkipRouter({
+      const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
       const response = await client.chains();
 
@@ -209,6 +372,8 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
+
       });
 
       const assets = await client.assets();
@@ -352,6 +517,7 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       await expect(client.assets()).rejects.toThrow('Invalid chain_id');
@@ -373,6 +539,7 @@ describe('client', () => {
 
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       await expect(client.assets()).rejects.toThrow('internal server error');
@@ -1732,6 +1899,7 @@ describe('client', () => {
     it('returns the recommended gas price for Noble (no staking token)', async () => {
       const client = new SkipClient({
         apiURL: SKIP_API_URL,
+        cacheDurationMs: 0
       });
 
       const result = await client.getRecommendedGasPrice('noble-1');
@@ -1804,7 +1972,7 @@ describe('client', () => {
   describe('validateChainIDsToAffiliates', () => {
     it('returns an error when basisPointsFee is not included in one of the affiliates', async () => {
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1832,7 +2000,7 @@ describe('client', () => {
 
     it('returns an error when address is not included in one of the affiliates', async () => {
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1860,7 +2028,7 @@ describe('client', () => {
 
     it('returns an error when affiliate bps differs (only comparing 2 bps)', async () => {
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1891,7 +2059,7 @@ describe('client', () => {
 
     it('returns an error when first affiliate bps are the same but total differs', async () => {
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1926,7 +2094,7 @@ describe('client', () => {
 
     it('returns an error when first and last affiliates bps are the same but total bps differs', async () => {
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1970,7 +2138,7 @@ describe('client', () => {
     it('does not return an error when affiliate bps are exactly the same', async () => {
       let errorOccurred = false;
       try {
-        const client = new SkipRouter({
+        const client = new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1999,7 +2167,7 @@ describe('client', () => {
     it('does not return an error if 2 bps on first chain adds up to 2nd chains first bps', async () => {
       let errorOccurred = false;
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -2032,7 +2200,7 @@ describe('client', () => {
     it('does not return an error if 3 chains are passed and each have different number of affiliates but still add up to the same total', async () => {
       let errorOccurred = false;
       try {
-        new SkipRouter({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [
@@ -2086,13 +2254,15 @@ describe('client', () => {
       expect(errorOccurred).toBe(false);
     });
   });
-});
 
-test('dymension', async () => {
-  const client = new SkipClient({
-    apiURL: SKIP_API_URL,
-  });
+  test('dymension', async () => {
+    const client = new SkipClient({
+      apiURL: SKIP_API_URL,
+      cacheDurationMs: 0
+    });
 
-  const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
-  expect(feeInfo?.denom).toEqual('adym');
-}, 30000);
+    const feeInfo = await client.getFeeInfoForChain('dymension_1100-1');
+    expect(feeInfo?.denom).toEqual('adym');
+  }, 30000);
+})
+
