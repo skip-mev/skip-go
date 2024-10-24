@@ -279,7 +279,7 @@ export const SwapPage = () => {
       return;
     }
 
-    return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
+    return Number(calculatePercentageChange(route.usdAmountIn, route.usdAmountOut));
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (

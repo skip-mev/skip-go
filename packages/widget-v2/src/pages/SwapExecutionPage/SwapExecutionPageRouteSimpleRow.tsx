@@ -3,7 +3,7 @@ import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
@@ -29,7 +29,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   context: "source" | "destination";
 };
 
-export const SwapExecutionPageRouteSimpleRow = ({
+export const SwapExecutionPageRouteSimpleRow = memo(({
   denom,
   tokenAmount,
   usdValue,
@@ -39,6 +39,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   explorerLink,
   context,
 }: SwapExecutionPageRouteSimpleRowProps) => {
+  console.log("simple route row");
   const theme = useTheme();
 
   const assetDetails = useGetAssetDetails({
@@ -133,4 +134,4 @@ export const SwapExecutionPageRouteSimpleRow = ({
       </Column>
     </Row>
   );
-};
+});

@@ -5,7 +5,7 @@ import {
   SwapPageFooter,
 } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
@@ -40,6 +40,7 @@ export enum SwapExecutionState {
 }
 
 export const SwapExecutionPage = () => {
+  console.log("swap execution page");
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } = useAtomValue(
