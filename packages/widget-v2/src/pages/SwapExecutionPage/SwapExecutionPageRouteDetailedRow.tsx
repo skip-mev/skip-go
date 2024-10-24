@@ -1,7 +1,7 @@
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { css, styled, useTheme } from "styled-components";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, Link } from "@/components/Button";
@@ -94,11 +94,16 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ]);
 
   const renderAddress = useMemo(() => {
-    const shouldRenderEditDestinationWallet = context === "destination" && onClickEditDestinationWallet;
-    const Container = shouldRenderEditDestinationWallet ? Row : React.Fragment;
+    const shouldRenderEditDestinationWallet =
+      context === "destination" && onClickEditDestinationWallet;
+    const Container = shouldRenderEditDestinationWallet
+      ? ({ children }: { children: React.ReactNode }) => (
+        <Row gap={5}>{children}</Row>
+      )
+      : React.Fragment;
     if (!source.address) return;
     return (
-      <Container gap={5}>
+      <Container>
         <StyledButton onClick={() => copyToClipboard(source.address)}>
           {source.image && (
             <img
@@ -112,16 +117,20 @@ export const SwapExecutionPageRouteDetailedRow = ({
             {getTruncatedAddress(source.address)}
           </AddressText>
         </StyledButton>
-        {
-          shouldRenderEditDestinationWallet && <Button align="center" onClick={onClickEditDestinationWallet}>
-            <PenIcon
-              color={theme.primary.text.lowContrast}
-            />
+        {shouldRenderEditDestinationWallet && (
+          <Button align="center" onClick={onClickEditDestinationWallet}>
+            <PenIcon color={theme.primary.text.lowContrast} />
           </Button>
-        }
+        )}
       </Container>
     );
-  }, [context, onClickEditDestinationWallet, source.address, source.image, theme.primary.text.lowContrast]);
+  }, [
+    context,
+    onClickEditDestinationWallet,
+    source.address,
+    source.image,
+    theme.primary.text.lowContrast,
+  ]);
 
   return (
     <Row gap={15} align="center" {...props}>
