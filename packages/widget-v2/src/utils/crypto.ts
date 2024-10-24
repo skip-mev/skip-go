@@ -18,7 +18,7 @@ export const convertTokenAmountToHumanReadableAmount = (
     tokenAmount = parseFloat(tokenAmount);
   }
   const humanReadableAmount = tokenAmount / Math.pow(10, decimals);
-  return humanReadableAmount.toFixed(decimals).replace(/(\.\d*?[1-9])0+|\.0*$/, "$1");
+  return humanReadableAmount.toFixed(decimals).replace(/(\.\d*?[1-9])(?:0+|\.0*)$/, "$1");
 };
 
 export const getTruncatedAddress = (address?: string): string => {
