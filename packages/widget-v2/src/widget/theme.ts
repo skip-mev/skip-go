@@ -36,7 +36,7 @@ export const defaultTheme = {
 };
 
 export const lightTheme = {
-  brandColor: "darkblue",
+  brandColor: "#ff66ff",
   primary: {
     background: {
       normal: "#ffffff",

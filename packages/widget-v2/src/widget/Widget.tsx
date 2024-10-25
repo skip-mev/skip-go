@@ -3,7 +3,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useEffect, useMemo } from "react";
-import { defaultTheme, PartialTheme } from "./theme";
+import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
@@ -12,38 +12,14 @@ import { defaultSkipClientConfig, skipClientConfigAtom, themeAtom } from "@/stat
 import { SkipClientOptions } from "@skip-go/client";
 
 export type WidgetProps = {
-  theme?: PartialTheme;
+  theme?: PartialTheme | 'light' | 'dark';
+  brandColor?: string;
 } & SkipClientOptions;
 
 export const Widget = (props: WidgetProps) => {
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-  const setTheme = useSetAtom(themeAtom);
-  const mergedSkipClientConfig = useMemo(
-    () => {
-      const { theme, ...skipClientConfig } = props;
-
-      return {
-        ...defaultSkipClientConfig,
-        ...skipClientConfig,
-      };
-    },
-    [props]
-  );
-
-  const mergedTheme = useMemo(() => ({ ...defaultTheme, ...props.theme }), [props.theme]);
-
-  useEffect(() => {
-    setSkipClientConfig(mergedSkipClientConfig);
-    setTheme(mergedTheme);
-  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme]);
-
   return (
     <NiceModal.Provider>
-      <ShadowDomAndProviders theme={mergedTheme}>
-        <WidgetContainer>
-          <Router />
-        </WidgetContainer>
-      </ShadowDomAndProviders>
+      <WidgetWithoutNiceModalProvider {...props} />
     </NiceModal.Provider>
   );
 };
@@ -63,7 +39,18 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     [props]
   );
 
-  const mergedTheme = useMemo(() => ({ ...defaultTheme, ...props.theme }), [props.theme]);
+  const mergedTheme = useMemo(() => {
+    let theme: Theme;
+    if (typeof props.theme === 'string') {
+      theme = props.theme === 'light' ? lightTheme : defaultTheme;
+    } else {
+      theme = { ...defaultTheme, ...props.theme };
+    }
+    if (props.brandColor) {
+      theme.brandColor = props.brandColor;
+    }
+    return theme;
+  }, [props.theme]);
 
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
