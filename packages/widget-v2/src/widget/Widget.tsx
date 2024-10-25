@@ -82,7 +82,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
-    if (props.defaultRoute) {
+    if (props.defaultRoute && assets) {
       const {
         srcAssetDenom,
         srcChainID,
@@ -93,21 +93,27 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       } = props.defaultRoute;
       const sourceAsset = getClientAsset(srcAssetDenom, srcChainID);
       const destinationAsset = getClientAsset(destAssetDenom, destChainID);
-      setDestinationAsset({
-        ...destinationAsset,
-        amount: amountOut?.toString(),
-      });
-      setSourceAsset({
-        ...sourceAsset,
-        amount: amountIn?.toString(),
-      });
       if (amountIn) {
-        setSourceAssetAmount(amountIn?.toString())
+        setDestinationAsset({
+          ...destinationAsset,
+        });
+        setSourceAsset({
+          ...sourceAsset,
+          amount: amountIn?.toString(),
+        });
+        setSourceAssetAmount(amountIn?.toString());
       } else if (amountOut) {
-        setDestinationAssetAmount(amountOut?.toString())
+        setDestinationAsset({
+          ...destinationAsset,
+          amount: amountOut?.toString(),
+        });
+        setSourceAsset({
+          ...sourceAsset,
+        });
+        setDestinationAssetAmount(amountOut?.toString());
       }
     }
-  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme]);
+  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme, props, assets]);
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>
