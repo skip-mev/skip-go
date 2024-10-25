@@ -39,7 +39,7 @@ export const useFetchAllBalances = () => {
 
   // using useQuery to trigger the debouncedValueAtom
   useQuery({
-    queryKey: ["test", allBalancesRequest],
+    queryKey: ["all-balances-request", allBalancesRequest],
     queryFn: () => {
       if (allBalancesRequest) {
         setSkipAllBalancesRequest({
