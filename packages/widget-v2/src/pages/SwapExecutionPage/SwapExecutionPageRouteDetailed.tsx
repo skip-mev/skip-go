@@ -13,6 +13,7 @@ import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtom } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
+import React from "react";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -88,7 +89,6 @@ export const SwapExecutionPageRouteDetailed = ({
         chainId={firstOperation.fromChainID}
         explorerLink={status?.[0]?.fromExplorerLink}
         status={firstOpStatus}
-        key={`first-row-${firstOperation?.denomIn}`}
         context="source"
         index={0}
       />
@@ -124,13 +124,12 @@ export const SwapExecutionPageRouteDetailed = ({
         const opStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[operation.transferIndex]?.status;
 
         return (
-          <>
-            <StyledOperationTypeAndTooltipContainer key={`tooltip-${asset?.denom}-${index}`} style={{ height: "25px", position: "relative" }} align="center">
+          <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
+            <StyledOperationTypeAndTooltipContainer style={{ height: "25px", position: "relative" }} align="center">
               <OperationTypeIconContainer
                 onMouseEnter={() => handleMouseEnterOperationType(index)}
                 onMouseLeave={() => handleMouseLeaveOperationType(index)}
                 justify="center"
-                key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
               >
                 {operationTypeToIcon[operation.type]}
               </OperationTypeIconContainer>
@@ -149,9 +148,8 @@ export const SwapExecutionPageRouteDetailed = ({
               isSignRequired={nextOperation?.signRequired}
               status={opStatus}
               explorerLink={explorerLink}
-              key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}
             />
-          </>
+          </React.Fragment>
         );
       })}
     </StyledSwapExecutionPageRoute>
