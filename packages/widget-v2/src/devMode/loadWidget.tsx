@@ -2,7 +2,6 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Widget } from "@/widget/Widget";
 import { Row, Column } from "@/components/Layout";
-import { defaultTheme, lightTheme } from "@/widget/theme";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -16,7 +15,7 @@ const DevMode = () => {
   };
   return (
     <Row gap={20}>
-      <Widget theme={theme === "dark" ? defaultTheme : lightTheme} />
+      <Widget theme={theme} brandColor="blue" />
       <Column>
         <button onClick={() => toggleTheme()}> Toggle theme (current theme: {theme})</button>
       </Column>
