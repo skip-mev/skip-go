@@ -22,7 +22,7 @@ export type DefaultRouteConfig = {
 }
 
 export type WidgetProps = {
-  theme?: PartialTheme | 'light' | 'dark';
+  theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   defaultRoute?: DefaultRouteConfig;
 } & SkipClientOptions;
@@ -68,8 +68,8 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
 
   const mergedTheme = useMemo(() => {
     let theme: Theme;
-    if (typeof props.theme === 'string') {
-      theme = props.theme === 'light' ? lightTheme : defaultTheme;
+    if (typeof props.theme === "string") {
+      theme = props.theme === "light" ? lightTheme : defaultTheme;
     } else {
       theme = { ...defaultTheme, ...props.theme };
     }
@@ -77,7 +77,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
     return theme;
-  }, [props.theme]);
+  }, [props.brandColor, props.theme]);
 
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
@@ -93,27 +93,21 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       } = props.defaultRoute;
       const sourceAsset = getClientAsset(srcAssetDenom, srcChainID);
       const destinationAsset = getClientAsset(destAssetDenom, destChainID);
+      setDestinationAsset({
+        ...destinationAsset,
+        amount: amountOut?.toString(),
+      });
+      setSourceAsset({
+        ...sourceAsset,
+        amount: amountIn?.toString(),
+      });
       if (amountIn) {
-        setDestinationAsset({
-          ...destinationAsset,
-        });
-        setSourceAsset({
-          ...sourceAsset,
-          amount: amountIn?.toString(),
-        });
         setSourceAssetAmount(amountIn?.toString());
       } else if (amountOut) {
-        setDestinationAsset({
-          ...destinationAsset,
-          amount: amountOut?.toString(),
-        });
-        setSourceAsset({
-          ...sourceAsset,
-        });
         setDestinationAssetAmount(amountOut?.toString());
       }
     }
-  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme, props, assets]);
+  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme, props, assets, getClientAsset, setDestinationAsset, setSourceAsset, setSourceAssetAmount, setDestinationAssetAmount]);
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>
