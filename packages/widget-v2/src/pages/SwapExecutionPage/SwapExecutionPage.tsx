@@ -5,7 +5,7 @@ import {
   SwapPageFooter,
 } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
