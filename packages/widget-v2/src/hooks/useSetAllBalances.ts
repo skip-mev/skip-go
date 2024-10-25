@@ -1,17 +1,16 @@
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useGetAccount } from "./useGetAccount";
-import { skipAllBalancesRequestAtom, skipAllBalancesAtom } from "@/state/balances";
+import { skipAllBalancesRequestAtom } from "@/state/balances";
 import { useEffect } from "react";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useAccount } from "wagmi";
 
-export const useFetchAllBalances = () => {
+export const useSetAllBalances = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const getAccount = useGetAccount();
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom);
-  const { data: skipBalances } = useAtomValue(skipAllBalancesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const { chainId: evmChainId } = useAccount();
@@ -47,5 +46,4 @@ export const useFetchAllBalances = () => {
     }
   }, [assets, evmChainId, chains, getAccount, setSkipAllBalancesRequest, sourceAsset]);
 
-  return skipBalances;
 };

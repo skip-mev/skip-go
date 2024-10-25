@@ -5,11 +5,11 @@ import {
 } from "@skip-go/client";
 import * as token from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createPublicClient, erc20Abi, http, PublicClient } from "viem";
 
 import { multicall3ABI } from "../constants/abis";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { endpointOptions } from "@/constants/skipClientDefault";
 import { config } from "@/constants/wagmi";
 import { StargateClient } from "@cosmjs/stargate";
@@ -23,60 +23,74 @@ import { useAccount } from "wagmi";
 import { useGetAccount } from "./useGetAccount";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import pMap from "p-map";
-import { skipAllBalancesRequestAtom } from "@/state/balances";
-import { useMemo } from "react";
+import { skipAllBalancesAtom, skipAllBalancesRequestAtom } from "@/state/balances";
+import { useEffect, useMemo } from "react";
 
 const STARGATE_CLIENTS: Record<string, StargateClient> = {};
 const COSMWASM_CLIENTS: Record<string, CosmWasmClient> = {};
 
-type Args = {
-  enabled?: boolean;
-};
-
-export function useBalances({ enabled = true }: Args) {
+export function useClientSideBalances() {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
+  const setAllBalances = useSetAtom(skipAllBalancesAtom);
   const { chainId: evmChainId } = useAccount();
   const balReq = useAtomValue(skipAllBalancesRequestAtom);
   const getAccount = useGetAccount();
 
-  const evmChainsToFetch = chains?.filter((chain) => {
-    return (
-      balReq &&
-      Object.keys(balReq.chains).includes(chain.chainID) &&
-      chain.chainType === "evm"
-    );
-  });
-  const cosmosChainsToFetch = chains?.filter((chain) => {
-    return (
-      balReq &&
-      Object.keys(balReq.chains).includes(chain.chainID) &&
-      chain.chainType === "cosmos"
-    );
-  });
-  const cosmosCW20ChainsToFetch = chains?.filter((chain) => {
-    return (
-      balReq &&
-      Object.keys(balReq.chains).includes(chain.chainID) &&
-      chain.chainType === "cosmos" &&
-      assets?.some((a) => a.isCW20 && a.chainID === chain.chainID)
-    );
-  });
-  const svmChainsToFetch = chains?.filter((chain) => {
-    return (
-      balReq &&
-      Object.keys(balReq.chains).includes(chain.chainID) &&
-      chain.chainType === "svm"
-    );
-  });
+  const evmChainsToFetch = useMemo(() => {
+    return chains?.filter((chain) => {
+      return (
+        balReq &&
+        Object.keys(balReq.chains).includes(chain.chainID) &&
+        chain.chainType === "evm"
+      );
+    });
+  }, [chains, balReq]);
+  const cosmosChainsToFetch = useMemo(() => {
+    return chains?.filter((chain) => {
+      return (
+        balReq &&
+        Object.keys(balReq.chains).includes(chain.chainID) &&
+        chain.chainType === "cosmos"
+      );
+    });
+  }, [chains, balReq]);
+  const cosmosCW20ChainsToFetch = useMemo(() => {
+    return chains?.filter((chain) => {
+      return (
+        balReq &&
+        Object.keys(balReq.chains).includes(chain.chainID) &&
+        chain.chainType === "cosmos" &&
+        assets?.some((a) => a.isCW20 && a.chainID === chain.chainID)
+      );
+    });
+  }, [chains, balReq, assets]);
+  const svmChainsToFetch = useMemo(() => {
+    return chains?.filter((chain) => {
+      return (
+        balReq &&
+        Object.keys(balReq.chains).includes(chain.chainID) &&
+        chain.chainType === "svm"
+      );
+    });
+  }, [chains, balReq]);
+
+  const chainIDs = chains?.map((chain) => chain.chainID);
+  const assetsDenoms = assets?.map((asset) => `${asset.chainID}:${asset.denom}`);
+  const evmChainIds = evmChainsToFetch?.map((chain) => chain.chainID);
+  const cosmosChainIds = cosmosChainsToFetch?.map((chain) => chain.chainID);
+  const cosmosCW20ChainIds = cosmosCW20ChainsToFetch?.map((chain) => chain.chainID);
+  const svmChainIds = svmChainsToFetch?.map((chain) => chain.chainID);
 
   const evmBalancesQuery = useQuery({
     queryKey: [
       "USE_BALANCES_EVM_CHAIN",
-      evmChainsToFetch,
-      chains,
-      assets,
-      evmChainId,
+      {
+        evmChainIds,
+        chainIDs,
+        assetsDenoms,
+        evmChainId,
+      }
     ],
     queryFn: async () => {
       if (!assets || !chains || !evmChainsToFetch)
@@ -102,10 +116,15 @@ export function useBalances({ enabled = true }: Args) {
           balances[chain.chainID] = balance;
         }
       };
-      await pMap(evmChainsToFetch, fetchBalance, { concurrency: Infinity });
+      // await pMap(evmChainsToFetch, fetchBalance, { concurrency: Infinity });
+      await Promise.all(
+        evmChainsToFetch.map(async (chain) => {
+          await fetchBalance(chain);
+        })
+      );
       return balances;
     },
-    enabled: !!evmChainsToFetch && !!assets && !!chains && enabled,
+    enabled: !!evmChainsToFetch && !!assets && !!chains,
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
@@ -114,9 +133,11 @@ export function useBalances({ enabled = true }: Args) {
   const cosmosBalancesQuery = useQuery({
     queryKey: [
       "USE_BALANCES_COSMOS_CHAIN",
-      cosmosChainsToFetch,
-      chains,
-      assets,
+      {
+        cosmosChainIds,
+        chainIDs,
+        assetsDenoms,
+      }
     ],
     queryFn: async () => {
       if (!assets || !chains || !cosmosChainsToFetch)
@@ -140,18 +161,28 @@ export function useBalances({ enabled = true }: Args) {
           balances[chain.chainID] = balance;
         }
       };
-      await pMap(cosmosChainsToFetch, fetchBalance, { concurrency: Infinity });
+      // await pMap(cosmosChainsToFetch, fetchBalance, { concurrency: Infinity });
+      await Promise.all(
+        cosmosChainsToFetch.map(async (chain) => {
+          await fetchBalance(chain);
+        })
+      );
       return balances;
     },
-    enabled: !!cosmosChainsToFetch && !!assets && !!chains && enabled,
+    enabled: !!cosmosChainsToFetch && !!assets && !!chains,
+    refetchInterval: 1000 * 60,
+    retry: 1,
+    gcTime: 0,
   });
 
   const cosmosCW20BalancesQuery = useQuery({
     queryKey: [
       "USE_BALANCES_COSMOS_CW20_CHAIN",
-      cosmosCW20ChainsToFetch,
-      chains,
-      assets,
+      {
+        cosmosCW20ChainIds,
+        chainIDs,
+        assetsDenoms,
+      }
     ],
     queryFn: async () => {
       if (!assets || !chains || !cosmosCW20ChainsToFetch)
@@ -176,19 +207,29 @@ export function useBalances({ enabled = true }: Args) {
           balances[chain.chainID] = balance;
         }
       };
-      await pMap(cosmosCW20ChainsToFetch, fetchBalance, {
-        concurrency: Infinity,
-      });
+      // await pMap(cosmosCW20ChainsToFetch, fetchBalance, {
+      //   concurrency: Infinity,
+
+      // });
+      await Promise.all(
+        cosmosCW20ChainsToFetch.map(async (chain) => {
+          await fetchBalance(chain);
+        })
+      );
       return balances;
     },
-    enabled: !!cosmosCW20ChainsToFetch && !!assets && !!chains && enabled,
+    enabled: !!cosmosCW20ChainsToFetch && !!assets && !!chains,
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
   });
 
   const svmBalancesQuery = useQuery({
-    queryKey: ["USE_BALANCES_SVM_CHAIN", svmChainsToFetch, chains, assets],
+    queryKey: ["USE_BALANCES_SVM_CHAIN", {
+      svmChainIds,
+      chainIDs,
+      assetsDenoms,
+    }],
     queryFn: async () => {
       if (!assets || !chains || !svmChainsToFetch)
         throw new Error("Assets or chains not found");
@@ -209,10 +250,15 @@ export function useBalances({ enabled = true }: Args) {
           balances[chain.chainID] = balance;
         }
       };
-      await pMap(svmChainsToFetch, fetchBalance, { concurrency: Infinity });
+      // await pMap(svmChainsToFetch, fetchBalance, { concurrency: Infinity });
+      await Promise.all(
+        svmChainsToFetch.map(async (chain) => {
+          await fetchBalance(chain);
+        })
+      );
       return balances;
     },
-    enabled: !!svmChainsToFetch && !!assets && !!chains && enabled,
+    enabled: !!svmChainsToFetch && !!assets && !!chains,
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
@@ -256,9 +302,11 @@ export function useBalances({ enabled = true }: Args) {
   const result = useMemo(() => {
     return {
       data: {
-        ...evmBalancesQuery.data,
-        ...mergedCosmosBalances,
-        ...svmBalancesQuery.data,
+        chains: {
+          ...evmBalancesQuery.data,
+          ...mergedCosmosBalances,
+          ...svmBalancesQuery.data,
+        }
       },
       isLoading:
         evmBalancesQuery.isLoading ||
@@ -290,90 +338,10 @@ export function useBalances({ enabled = true }: Args) {
     svmBalancesQuery,
   ]);
 
-  return result;
-}
+  useEffect(() => {
+    setAllBalances(result);
+  }, [result, setAllBalances]);
 
-export function useBalancesByChain2({
-  enabled = true,
-}: Args): UseQueryResult<
-  Record<string, BalanceResponseChainEntry> | undefined
-> {
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const { chainId: evmChainId } = useAccount();
-  const balReq = useAtomValue(skipAllBalancesRequestAtom);
-  const getAccount = useGetAccount();
-
-  return useQuery({
-    queryKey: ["USE_BALANCES_BY_CHAIN", balReq],
-    queryFn: async () => {
-      if (!assets || !chains || !balReq)
-        throw new Error("Assets or chains not found");
-      const balances: Record<string, BalanceResponseChainEntry> = {};
-      const fetchBalance = async (chain: Chain) => {
-        const rpcURL = await endpointOptions?.getRpcEndpointForChain?.(
-          chain.chainID
-        );
-        if (chain.chainType === "evm") {
-          const isEVM = chain?.chainType === "evm";
-          const address =
-            isEVM && evmChainId
-              ? getAccount(String(evmChainId))?.address
-              : undefined;
-          if (!address) return;
-          const publicClient = createPublicClient({
-            chain: config.chains.find((i) => i.id === Number(chain.chainID)),
-            transport: http(),
-          });
-          const balance = await getEvmChainBalances(
-            publicClient,
-            address,
-            chain.chainID,
-            assets.filter((a) => a.isEVM && a.chainID === chain.chainID)
-          );
-          if (Object.values(balance.denoms).length > 0) {
-            balances[chain.chainID] = balance;
-          }
-        }
-        if (chain.chainType === "cosmos" && rpcURL) {
-          const account = getAccount(chain.chainID);
-          if (!account?.address) return;
-          const balance = await getCosmosBalances(
-            rpcURL,
-            account.address,
-            chain.chainID,
-            assets.filter(
-              (a) => !a.isEVM && !a.isSVM && a.chainID === chain.chainID
-            )
-          );
-          if (Object.values(balance.denoms).length > 0) {
-            balances[chain.chainID] = balance;
-          }
-        }
-        if (chain.chainType === "svm" && rpcURL) {
-          const account = getAccount(chain.chainID);
-          if (!account?.address) return;
-          const balance = await getSvmChainBalances(
-            rpcURL,
-            account.address,
-            chain.chainID,
-            assets.filter((a) => a.isSVM && a.chainID === chain.chainID)
-          );
-          if (Object.values(balance.denoms).length > 0) {
-            balances[chain.chainID] = balance;
-          }
-        }
-      };
-
-      const chainsToFetch = chains.filter((chain) => {
-        return Object.keys(balReq?.chains).includes(chain.chainID);
-      });
-      await pMap(chainsToFetch, fetchBalance, { concurrency: Infinity });
-
-      return balances;
-    },
-    enabled: !!chains && !!assets && !!balReq && enabled,
-  });
 }
 
 export async function getCosmosBalances(

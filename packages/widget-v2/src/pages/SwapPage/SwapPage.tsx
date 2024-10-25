@@ -29,12 +29,13 @@ import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
-import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
+import { useSetAllBalances } from "@/hooks/useSetAllBalances";
+import { useClientSideBalances } from "@/hooks/useClientSideBalances";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -58,14 +59,14 @@ export const SwapPage = () => {
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
-
   const swapDetailsModal = useModal(SwapDetailModal);
   const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-  useFetchAllBalances();
+  useSetAllBalances();
+  useClientSideBalances();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
 
@@ -320,7 +321,7 @@ export const SwapPage = () => {
             }
             usdValue={route?.usdAmountOut}
             value={destinationAsset?.amount}
-            priceChangePercentage={priceChangePercentage}
+            priceChangePercentage={Number(priceChangePercentage)}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={setDestinationAssetAmount}
           />
