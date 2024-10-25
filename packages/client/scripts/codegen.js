@@ -14,54 +14,6 @@ const registries = [
   },
 ];
 
-async function copyChains({ packageName, registryPath }) {
-  const mainnetDir = path.join(registryPath, 'mainnet');
-  const testnetDir = path.join(registryPath, 'testnet');
-
-  // Output directories
-  const outMainnetDir = path.resolve(
-    __dirname,
-    `../src/codegen/chains/${packageName}/mainnet`
-  );
-  const outTestnetDir = path.resolve(
-    __dirname,
-    `../src/codegen/chains/${packageName}/testnet`
-  );
-
-  await copyChainFiles(mainnetDir, outMainnetDir);
-  await copyChainFiles(testnetDir, outTestnetDir);
-}
-
-async function copyChainFiles(sourceDir, destDir) {
-  try {
-    // Create the destination directory
-    await fs.mkdir(destDir, { recursive: true });
-
-    // Read directory entries with their types
-    const dirEntries = await fs.readdir(sourceDir, { withFileTypes: true });
-
-    for (const dirent of dirEntries) {
-      if (dirent.isDirectory()) {
-        const chainName = dirent.name;
-        const chainSourceDir = path.join(sourceDir, chainName);
-        const chainDestDir = path.join(destDir, chainName);
-        await fs.mkdir(chainDestDir, { recursive: true });
-
-        const chainJsSource = path.join(chainSourceDir, 'chain.js');
-        const chainJsDest = path.join(chainDestDir, 'chain.js');
-
-        try {
-          await fs.copyFile(chainJsSource, chainJsDest);
-        } catch (err) {
-          console.error(`Error copying chain.js for ${chainName}:`, err);
-        }
-      }
-    }
-  } catch (err) {
-    console.error(`Error processing directory ${sourceDir}:`, err);
-  }
-}
-
 async function genTelescope () {
   try {
     await telescope({
@@ -187,30 +139,6 @@ async function genTelescope () {
   }
 }
 
-async function codegen() {
-  await fs
-    .rm(outPath, { recursive: true, force: true })
-    .catch(() => {})
-    .then(() => fs.mkdir(outPath, { recursive: true }))
-    .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
-
-  await genTelescope();
-
-  let allChains = [];
-
-  for (const registry of registries) {
-    const chains = await collectChains(registry);
-    allChains = allChains.concat(chains);
-  }
-
-  // Write all chains to a single JSON file
-  const outputFilePath = path.resolve(outPath, 'chains.json');
-  await fs.writeFile(outputFilePath, JSON.stringify(allChains, null, 2), 'utf-8');
-
-  // for (const registry of registries) {
-  //   await copyChains(registry);
-  // }
-}
 
 async function collectChains({ registryPath }) {
   const mainnetDir = path.join(registryPath, 'mainnet');
@@ -234,7 +162,13 @@ async function collectChainData(directory) {
         try {
           const chainModule = require(chainJsPath);
           const chainData = chainModule.default || chainModule;
-          chains.push(chainData);
+
+          // Process the chain data to extract desired properties
+          const chainArray = Array.isArray(chainData) ? chainData : [chainData];
+          for (const chain of chainArray) {
+            const extractedData = extractProperties(chain);
+            chains.push(extractedData);
+          }
         } catch (error) {
           console.error(`Failed to import ${chainJsPath}:`, error);
         }
@@ -244,6 +178,38 @@ async function collectChainData(directory) {
     console.error(`Error processing directory ${directory}:`, error);
   }
   return chains;
+}
+
+function extractProperties(chain) {
+  return {
+    chain_id: chain.chain_id,
+    fees: chain.fees,
+    apis: {
+      rpc: chain.apis?.rpc || [],
+    },
+  };
+}
+
+async function codegen() {
+  await fs
+    .rm(outPath, { recursive: true, force: true })
+    .catch(() => {})
+    .then(() => fs.mkdir(outPath, { recursive: true }))
+    .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
+
+  await genTelescope();
+
+  let allChains = [];
+
+  for (const registry of registries) {
+    const chains = await collectChains(registry);
+    allChains = allChains.concat(chains);
+  }
+
+  // Write all chains to a single JSON file
+  const outputFilePath = path.resolve(outPath, 'chains.json');
+  await fs.writeFile(outputFilePath, JSON.stringify(allChains, null, 2), 'utf-8');
+
 }
 
 void codegen();
