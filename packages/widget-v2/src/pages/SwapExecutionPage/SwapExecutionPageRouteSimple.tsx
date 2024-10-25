@@ -6,7 +6,7 @@ import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { ClientOperation } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
 
@@ -17,7 +17,7 @@ export type SwapExecutionPageRouteProps = {
   swapExecutionState?: SwapExecutionState;
 };
 
-export const SwapExecutionPageRouteSimple = memo(({
+export const SwapExecutionPageRouteSimple = ({
   operations,
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
@@ -79,7 +79,7 @@ export const SwapExecutionPageRouteSimple = memo(({
       />
     </StyledSwapExecutionPageRoute>
   );
-});
+};
 
 const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
   height: 18px;
