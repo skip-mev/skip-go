@@ -54,7 +54,6 @@ export const ConnectedWalletContent = () => {
         }}
         align="center"
         gap={8}
-        alwaysShowBackground
       >
         {sourceAccount && (
           <img
@@ -90,7 +89,6 @@ export const ConnectedWalletContent = () => {
         disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
         onClick={handleMaxButton}
         align="center"
-        alwaysShowBackground
       >
         Max
       </GhostButton>
