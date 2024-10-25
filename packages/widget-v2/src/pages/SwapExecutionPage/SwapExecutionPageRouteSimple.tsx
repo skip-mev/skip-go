@@ -23,7 +23,6 @@ export const SwapExecutionPageRouteSimple = memo(({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
-  console.log("simple route");
   const theme = useTheme();
   const { route } = useAtomValue(swapExecutionStateAtom);
 
