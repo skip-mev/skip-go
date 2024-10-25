@@ -116,12 +116,7 @@ export function useClientSideBalances() {
           balances[chain.chainID] = balance;
         }
       };
-      // await pMap(evmChainsToFetch, fetchBalance, { concurrency: Infinity });
-      await Promise.all(
-        evmChainsToFetch.map(async (chain) => {
-          await fetchBalance(chain);
-        })
-      );
+      await pMap(evmChainsToFetch, fetchBalance, { concurrency: Infinity });
       return balances;
     },
     enabled: !!evmChainsToFetch && !!assets && !!chains,
@@ -161,12 +156,7 @@ export function useClientSideBalances() {
           balances[chain.chainID] = balance;
         }
       };
-      // await pMap(cosmosChainsToFetch, fetchBalance, { concurrency: Infinity });
-      await Promise.all(
-        cosmosChainsToFetch.map(async (chain) => {
-          await fetchBalance(chain);
-        })
-      );
+      await pMap(cosmosChainsToFetch, fetchBalance, { concurrency: Infinity });
       return balances;
     },
     enabled: !!cosmosChainsToFetch && !!assets && !!chains,
@@ -207,15 +197,9 @@ export function useClientSideBalances() {
           balances[chain.chainID] = balance;
         }
       };
-      // await pMap(cosmosCW20ChainsToFetch, fetchBalance, {
-      //   concurrency: Infinity,
-
-      // });
-      await Promise.all(
-        cosmosCW20ChainsToFetch.map(async (chain) => {
-          await fetchBalance(chain);
-        })
-      );
+      await pMap(cosmosCW20ChainsToFetch, fetchBalance, {
+        concurrency: Infinity,
+      });
       return balances;
     },
     enabled: !!cosmosCW20ChainsToFetch && !!assets && !!chains,
@@ -250,12 +234,7 @@ export function useClientSideBalances() {
           balances[chain.chainID] = balance;
         }
       };
-      // await pMap(svmChainsToFetch, fetchBalance, { concurrency: Infinity });
-      await Promise.all(
-        svmChainsToFetch.map(async (chain) => {
-          await fetchBalance(chain);
-        })
-      );
+      await pMap(svmChainsToFetch, fetchBalance, { concurrency: Infinity });
       return balances;
     },
     enabled: !!svmChainsToFetch && !!assets && !!chains,
