@@ -2,18 +2,29 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useEffect, useMemo } from "react";
+import { cloneElement, ReactElement, useCallback, useEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useSetAtom } from "jotai";
-import { defaultSkipClientConfig, skipClientConfigAtom, themeAtom } from "@/state/skipClient";
+import { useAtom, useSetAtom } from "jotai";
+import { defaultSkipClientConfig, skipAssetsAtom, skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
+import { destinationAssetAmountAtom, destinationAssetAtom, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+
+export type DefaultRouteConfig = {
+  amountIn?: number;
+  amountOut?: number;
+  srcChainID?: string;
+  srcAssetDenom?: string;
+  destChainID?: string;
+  destAssetDenom?: string;
+}
 
 export type WidgetProps = {
   theme?: PartialTheme | 'light' | 'dark';
   brandColor?: string;
+  defaultRoute?: DefaultRouteConfig;
 } & SkipClientOptions;
 
 export const Widget = (props: WidgetProps) => {
@@ -27,6 +38,22 @@ export const Widget = (props: WidgetProps) => {
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setDestinationAsset = useSetAtom(destinationAssetAtom);
+  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
+  const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
+
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
+
+  const getClientAsset = useCallback(
+    (denom?: string, chainId?: string) => {
+      if (!denom || !chainId) return;
+      if (!assets) return;
+      return assets.find((a) => a.denom === denom && a.chainID === chainId);
+    },
+    [assets]
+  );
+
   const mergedSkipClientConfig = useMemo(
     () => {
       const { theme, ...skipClientConfig } = props;
@@ -55,6 +82,31 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
+    if (props.defaultRoute) {
+      const {
+        srcAssetDenom,
+        srcChainID,
+        destAssetDenom,
+        destChainID,
+        amountIn,
+        amountOut,
+      } = props.defaultRoute;
+      const sourceAsset = getClientAsset(srcAssetDenom, srcChainID);
+      const destinationAsset = getClientAsset(destAssetDenom, destChainID);
+      setDestinationAsset({
+        ...destinationAsset,
+        amount: amountOut?.toString(),
+      });
+      setSourceAsset({
+        ...sourceAsset,
+        amount: amountIn?.toString(),
+      });
+      if (amountIn) {
+        setSourceAssetAmount(amountIn?.toString())
+      } else if (amountOut) {
+        setDestinationAssetAmount(amountOut?.toString())
+      }
+    }
   }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme]);
 
   return (
