@@ -40,7 +40,6 @@ export enum SwapExecutionState {
 }
 
 export const SwapExecutionPage = () => {
-  console.log("swap execution page");
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } = useAtomValue(
