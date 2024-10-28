@@ -29,10 +29,14 @@ export const useGetFilteredChains = ({
         const chain = chains.find((c) => c.chainID === asset.chainID);
         return chain ? { ...chain, asset } : null;
       })
-      .filter((chain) => chain !== undefined) as ChainWithAsset[];
-
-    console.log(chainFilter);
-    console.log(chainsWithAssets);
+      .filter((chain) => {
+        if (!chainFilter || !chainFilter[context]) return chain !== undefined;
+        const chainIdsAllowed = Object.keys(chainFilter[context]);
+        if (chainIdsAllowed && chain?.chainID) {
+          return chainIdsAllowed.includes(chain.chainID);
+        }
+        return chain !== undefined;
+      }) as ChainWithAsset[];
 
     return matchSorter(chainsWithAssets, searchQuery, {
       keys: ["prettyName", "chainName", "chainID"],
@@ -54,7 +58,7 @@ export const useGetFilteredChains = ({
 
       return 0;
     });
-  }, [chains, getBalance, searchQuery, selectedGroup]);
+  }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
 
   return filteredChains;
 };

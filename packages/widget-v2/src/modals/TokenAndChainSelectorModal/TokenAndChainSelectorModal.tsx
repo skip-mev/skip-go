@@ -15,11 +15,10 @@ import {
   isGroupedAsset,
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
-import { matchSorter } from "match-sorter";
-import { useGetBalance } from "@/hooks/useGetBalance";
 import { Chain } from "@skip-go/client";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useGetFilteredChains } from "./useGetFilteredChains";
+import { useGetFilteredAssets } from "./useGetFilteredAssets";
+import { useGetGroupedAssetByRecommendedSymbol } from "./useGetGroupedAssetsByRecommendedSymbol";
 
 export type GroupedAsset = {
   id: string;
@@ -54,7 +53,6 @@ export const TokenAndChainSelectorModal = createModal(
       useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
-    const getBalance = useGetBalance();
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -83,95 +81,7 @@ export const TokenAndChainSelectorModal = createModal(
       [_onSelect]
     );
 
-    const groupedAssetsByRecommendedSymbol = useMemo(() => {
-      if (!assets) return;
-      const groupedAssets: GroupedAsset[] = [];
-
-      const calculateBalanceSummary = (assets: ClientAsset[]) => {
-        return assets.reduce(
-          (accumulator, asset) => {
-            const balance = getBalance(asset.chainID, asset.denom);
-            if (balance) {
-              accumulator.totalAmount += Number(
-                convertTokenAmountToHumanReadableAmount(
-                  balance.amount,
-                  balance.decimals
-                )
-              );
-              if (Number(balance.valueUSD)) {
-                accumulator.totalUsd += Number(balance.valueUSD);
-              }
-            }
-            return accumulator;
-          },
-          { totalAmount: 0, totalUsd: 0 }
-        );
-      };
-
-      assets.forEach((asset) => {
-        const foundGroup = groupedAssets.find(
-          (group) => group.id === asset.recommendedSymbol
-        );
-        if (foundGroup) {
-          foundGroup.assets.push(asset);
-          foundGroup.chains.push({
-            chainID: asset.chainID,
-            chainName: asset.chainName,
-            originChainID: asset.originChainID,
-          });
-        } else {
-          groupedAssets.push({
-            id: asset.recommendedSymbol || asset.symbol || asset.denom,
-            chains: [
-              {
-                chainID: asset.chainID,
-                chainName: asset.chainName,
-                originChainID: asset.originChainID,
-              },
-            ],
-            assets: [asset],
-            totalAmount: 0,
-            totalUsd: 0,
-          });
-        }
-      });
-
-      groupedAssets.forEach((group) => {
-        const balanceSummary = calculateBalanceSummary(group.assets);
-        group.totalAmount = balanceSummary.totalAmount;
-        group.totalUsd = balanceSummary.totalUsd;
-      });
-
-      return groupedAssets;
-    }, [assets, getBalance]);
-
-    const filteredAssets = useMemo(() => {
-      if (!groupedAssetsByRecommendedSymbol) return;
-      return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
-        keys: ["id"],
-      }).sort((itemA, itemB) => {
-        const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
-        if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {
-          const indexA = PRIVILEGED_ASSETS.indexOf(itemA.id);
-          const indexB = PRIVILEGED_ASSETS.indexOf(itemB.id);
-
-          if (indexA !== -1 && indexB !== -1) {
-            return indexA - indexB;
-          }
-
-          if (indexA !== -1) return -1;
-          if (indexB !== -1) return 1;
-        }
-
-        if (itemA.totalUsd < itemB.totalUsd) {
-          return 1;
-        }
-        if (itemA.totalUsd > itemB.totalUsd) {
-          return -1;
-        }
-        return 0;
-      });
-    }, [groupedAssetsByRecommendedSymbol, searchQuery]);
+    const groupedAssetsByRecommendedSymbol = useGetGroupedAssetByRecommendedSymbol({ context });
 
     const selectedGroup = useMemo(() => {
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
@@ -185,6 +95,7 @@ export const TokenAndChainSelectorModal = createModal(
       groupedAssetsByRecommendedSymbol,
     ]);
 
+    const filteredAssets = useGetFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
     const filteredChains = useGetFilteredChains({ selectedGroup, searchQuery, context });
 
     useEffect(() => {

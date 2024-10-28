@@ -127,6 +127,7 @@ export const SwapPage = () => {
 
   const handleChangeDestinationAsset = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "destination",
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
@@ -139,6 +140,7 @@ export const SwapPage = () => {
 
   const handleChangeDestinationChain = useCallback(() => {
     tokenAndChainSelectorModal.show({
+      context: "destination",
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
