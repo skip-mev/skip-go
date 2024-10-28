@@ -15,7 +15,7 @@ const DevMode = () => {
   };
   return (
     <Row gap={20}>
-      <Widget theme={theme} brandColor="blue" defaultRoute={{
+      <Widget theme={theme} defaultRoute={{
         amountIn: 5,
         srcChainId: "osmosis-1",
         srcAssetDenom: "uosmo",
