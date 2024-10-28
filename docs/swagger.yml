@@ -128,7 +128,7 @@ paths:
       operationId: getBalances
       tags:
         - 'Info'
-      description: Get the balances of a given set of assets on a given chain and wallet address.
+      description: Get the balances of a given set of assets on a given chain and wallet address. Compatible with all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains.
       requestBody:
         required: true
         content:
