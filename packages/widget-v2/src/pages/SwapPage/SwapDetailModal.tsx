@@ -31,7 +31,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const clientOperations = route && getClientOperations(route.operations);
 
   const usesEvmInOperations = useMemo(() => {
-    return clientOperations?.find(operation => operation.toChainID === "1");
+    return clientOperations?.find((operation) => operation.toChainID === "1");
   }, [clientOperations]);
 
   const axelarTransferOperation = useMemo(() => {
@@ -127,7 +127,13 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
               <>
-                <img width="20" height="20" src={chain?.logoURI} alt={chain?.prettyName} title={chain?.prettyName} />
+                <img
+                  width="20"
+                  height="20"
+                  src={chain?.logoURI}
+                  alt={chain?.prettyName}
+                  title={chain?.prettyName}
+                />
                 {index !== chainsRoute.length - 1 && (
                   <RouteArrow color={modalProps.theme?.primary?.text.normal} />
                 )}
@@ -170,6 +176,19 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
                 {val}%
               </StyledSlippageOptionLabel>
             ))}
+            <div style={{ position: "relative" }}>
+              <CustomSlippageInput
+                type="number"
+                value={swapSettings.slippage}
+                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
+                onChange={(e) =>
+                  setSwapSettings({ slippage: parseFloat(e.target.value) })
+                }
+              />
+              <CustomSlippageInputRightIcon selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}>
+                %
+              </CustomSlippageInputRightIcon>
+            </div>
           </Row>
         </Row>
       </Column>
@@ -205,14 +224,14 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         </Column>
       )}
 
-      {
-        usesEvmInOperations && <StyledEvmWarningMessage>
+      {usesEvmInOperations && (
+        <StyledEvmWarningMessage>
           <SwapDetailText color={theme.warning.text}>
             This swap contains at least one EVM chain, so it might take longer.
             <br /> Read more about common finality times.
           </SwapDetailText>
         </StyledEvmWarningMessage>
-      }
+      )}
 
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
@@ -275,4 +294,47 @@ const Tooltip = styled(SmallText).attrs({
   left: 110px;
   width: 250px;
   z-index: 1;
+`;
+
+const CustomSlippageInput = styled(SmallText).attrs({
+  as: "input",
+}) <{ selected?: boolean }>`
+  outline: none;
+  background-color: ${({ theme }) => theme.primary.background.normal};
+  border: 1px solid ${({ theme }) => theme.primary.text.normal};
+  border-radius: 7px;
+  color: ${({ theme }) => theme.primary.text.normal};
+  width: 55px;
+  padding: 5px 7px;
+  padding-right: 20px;
+  box-sizing: border-box;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  ${({ selected, theme }) =>
+    selected &&
+    css`
+      color: ${getBrandButtonTextColor(theme.brandColor)};
+      background-color: ${theme.brandColor};
+    `}
+`;
+
+const CustomSlippageInputRightIcon = styled(SmallText) <{ selected?: boolean }>`
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+    ${({ selected, theme }) =>
+    selected &&
+    css`
+      color: ${getBrandButtonTextColor(theme.brandColor)};
+    `}
 `;
