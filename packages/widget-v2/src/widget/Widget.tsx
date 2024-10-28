@@ -2,8 +2,8 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useEffect } from "react";
-import { defaultTheme, PartialTheme } from "./theme";
+import { cloneElement, ReactElement, useEffect, useMemo } from "react";
+import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
@@ -12,7 +12,7 @@ import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 
 export type WidgetProps = {
-  theme?: PartialTheme;
+  theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
 } & SkipClientOptions;
 
@@ -24,19 +24,41 @@ export const Widget = (props: WidgetProps) => {
   );
 };
 
-const WidgetWithoutNiceModalProvider = ({ theme, ...skipClientConfig }: WidgetProps) => {
+const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
+  const mergedSkipClientConfig = useMemo(
+    () => {
+      const { theme, ...skipClientConfig } = props;
+
+      return {
+        ...defaultSkipClientConfig,
+        ...skipClientConfig,
+      };
+    },
+    [defaultSkipClientConfig, props]
+  );
+
+  const mergedTheme = useMemo(() => {
+    let theme: Theme;
+    if (typeof props.theme === "string") {
+      theme = props.theme === "light" ? lightTheme : defaultTheme;
+    } else {
+      theme = { ...defaultTheme, ...props.theme };
+    }
+    if (props.brandColor) {
+      theme.brandColor = props.brandColor;
+    }
+    return theme;
+  }, [props.brandColor, props.theme]);
+
   useEffect(() => {
-    setSkipClientConfig({
-      ...defaultSkipClientConfig,
-      ...skipClientConfig,
-    });
-    setTheme({ ...defaultTheme, ...theme });
-  }, [defaultSkipClientConfig, setSkipClientConfig, setTheme, skipClientConfig, theme]);
+    setSkipClientConfig(mergedSkipClientConfig);
+    setTheme(mergedTheme);
+  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme]);
 
   return (
-    <ShadowDomAndProviders theme={theme}>
+    <ShadowDomAndProviders theme={mergedTheme}>
       <WidgetContainer>
         <Router />
       </WidgetContainer>
