@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter";
 import { useMemo } from "react";
-import { GroupedAsset } from "./TokenAndChainSelectorModal";
+import { GroupedAsset } from "./AssetAndChainSelectorModal";
 
 export type useFilteredAssetsProps = {
   groupedAssetsByRecommendedSymbol: GroupedAsset[] | undefined;

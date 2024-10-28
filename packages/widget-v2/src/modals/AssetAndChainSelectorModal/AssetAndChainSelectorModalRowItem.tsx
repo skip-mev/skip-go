@@ -8,7 +8,7 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { ChainWithAsset, GroupedAsset, SelectorContext } from "./TokenAndChainSelectorModal";
+import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset
@@ -16,7 +16,7 @@ export const isGroupedAsset = (
   return (item as GroupedAsset).chains !== undefined;
 };
 
-export type TokenAndChainSelectorModalRowItemProps = {
+export type AssetAndChainSelectorModalRowItemProps = {
   item: GroupedAsset | ChainWithAsset;
   index: number;
   skeleton: React.ReactElement;
@@ -24,13 +24,13 @@ export type TokenAndChainSelectorModalRowItemProps = {
   context: SelectorContext
 };
 
-export const TokenAndChainSelectorModalRowItem = ({
+export const AssetAndChainSelectorModalRowItem = ({
   item,
   index,
   skeleton,
   onSelect,
   context
-}: TokenAndChainSelectorModalRowItemProps) => {
+}: AssetAndChainSelectorModalRowItemProps) => {
   const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
   if (!item || isChainsLoading) return skeleton;
@@ -42,7 +42,7 @@ export const TokenAndChainSelectorModalRowItem = ({
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <TokenAndChainSelectorModalRowItemLeftContent item={item} context={context} />
+          <AssetAndChainSelectorModalRowItemLeftContent item={item} context={context} />
         }
         rightContent={
           Number(item.totalAmount) > 0 && (
@@ -98,7 +98,7 @@ export const TokenAndChainSelectorModalRowItem = ({
   );
 };
 
-const TokenAndChainSelectorModalRowItemLeftContent = ({
+const AssetAndChainSelectorModalRowItemLeftContent = ({
   item,
   context
 }: {

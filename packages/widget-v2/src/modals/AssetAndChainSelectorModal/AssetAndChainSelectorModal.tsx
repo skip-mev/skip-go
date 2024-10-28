@@ -10,11 +10,11 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { VirtualList } from "@/components/VirtualList";
 import {
-  TokenAndChainSelectorModalRowItem,
+  AssetAndChainSelectorModalRowItem,
   Skeleton,
   isGroupedAsset,
-} from "./TokenAndChainSelectorModalRowItem";
-import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
+} from "./AssetAndChainSelectorModalRowItem";
+import { AssetAndChainSelectorModalSearchInput } from "./AssetAndChainSelectorModalSearchInput";
 import { Chain } from "@skip-go/client";
 import { useFilteredChains } from "./useFilteredChains";
 import { useFilteredAssets } from "./useFilteredAssets";
@@ -38,15 +38,15 @@ export type ChainWithAsset = Chain & {
 
 export type SelectorContext = "source" | "destination";
 
-export type TokenAndChainSelectorModalProps = ModalProps & {
+export type AssetAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
   selectChain?: boolean;
   context: SelectorContext;
 };
 
-export const TokenAndChainSelectorModal = createModal(
-  (modalProps: TokenAndChainSelectorModalProps) => {
+export const AssetAndChainSelectorModal = createModal(
+  (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
     const { data: assets, isLoading: isAssetsLoading } =
@@ -119,7 +119,7 @@ export const TokenAndChainSelectorModal = createModal(
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         return (
-          <TokenAndChainSelectorModalRowItem
+          <AssetAndChainSelectorModalRowItem
             item={item}
             index={index}
             onSelect={onSelect}
@@ -153,7 +153,7 @@ export const TokenAndChainSelectorModal = createModal(
     };
     return (
       <StyledContainer>
-        <TokenAndChainSelectorModalSearchInput
+        <AssetAndChainSelectorModalSearchInput
           onSearch={handleSearch}
           onClickBack={onClickBack}
           asset={groupedAssetSelected?.assets[0] || selectedAsset}

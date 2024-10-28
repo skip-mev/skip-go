@@ -1,7 +1,7 @@
 import { ClientAsset } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useMemo } from "react";
-import { GroupedAsset } from "./TokenAndChainSelectorModal";
+import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
