@@ -7,12 +7,12 @@ import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useSetAtom } from "jotai";
-import { defaultSkipClientConfig, skipClientConfigAtom, themeAtom } from "@/state/skipClient";
+import { useAtom, useSetAtom } from "jotai";
+import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 
 export type WidgetProps = {
-  theme?: PartialTheme | 'light' | 'dark';
+  theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
 } & SkipClientOptions;
 
@@ -25,7 +25,7 @@ export const Widget = (props: WidgetProps) => {
 };
 
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   const mergedSkipClientConfig = useMemo(
     () => {
@@ -36,13 +36,13 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
         ...skipClientConfig,
       };
     },
-    [props]
+    [defaultSkipClientConfig, props]
   );
 
   const mergedTheme = useMemo(() => {
     let theme: Theme;
-    if (typeof props.theme === 'string') {
-      theme = props.theme === 'light' ? lightTheme : defaultTheme;
+    if (typeof props.theme === "string") {
+      theme = props.theme === "light" ? lightTheme : defaultTheme;
     } else {
       theme = { ...defaultTheme, ...props.theme };
     }
@@ -50,7 +50,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
     return theme;
-  }, [props.theme]);
+  }, [props.brandColor, props.theme]);
 
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
