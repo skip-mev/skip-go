@@ -10,6 +10,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
+import { swapSettingsAtom } from "./swapPage";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -205,6 +206,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
+  const swapSettings = get(swapSettingsAtom);
 
   return {
     gcTime: Infinity,
@@ -217,11 +219,11 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           route,
           userAddresses,
           validateGasBalance: route.sourceAssetChainID !== "984122",
-          // getFallbackGasAmount: async (chainID, chainType) => {
-          //   if (chainType === "cosmos") {
-          //     return Number(useSettingsStore.getState().customGasAmount);
-          //   }
-          // },
+          getFallbackGasAmount: async (_chainID, chainType) => {
+            if (chainType === "cosmos") {
+              return swapSettings.customGasAmount;
+            }
+          },
           onValidateGasBalance: async (props) => {
             submitSwapExecutionCallbacks?.onValidateGasBalance?.(
               props

@@ -31,10 +31,15 @@ export type WidgetProps = {
   defaultRoute?: DefaultRouteConfig;
   settings?: {
     /**
-     * percentage of slippage 0-100
+     * Default slippage percentage (0-100) for CosmosSDK chain swaps.
      * @default 3
      */
     slippage?: number;
+    /**
+     * Gas amount for CosmosSDK chain transactions.
+     * @default 200_000
+     */
+    customGasAmount?: number;
   };
   routeConfig?: RouteConfig;
   filter?: ChainFilter;
@@ -85,7 +90,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useLayoutEffect(() => {
-    if (props.settings?.slippage) {
+    if (props.settings) {
       setSwapSettings({
         ...defaultSwapSettings,
         ...props.settings,
