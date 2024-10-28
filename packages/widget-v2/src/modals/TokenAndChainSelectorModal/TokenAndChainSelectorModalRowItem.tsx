@@ -106,7 +106,7 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
   item: GroupedAsset;
   context: SelectorContext;
 }) => {
-  const filteredChains = useFilteredChains({ selectedGroup: item, context });
+  const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
   // prioritize logoURI from raw.githubusercontent over coingecko
   const logoURI = item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ?? item.assets[0].logoURI;
 

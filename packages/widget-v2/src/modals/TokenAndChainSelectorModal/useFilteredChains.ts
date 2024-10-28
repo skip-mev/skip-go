@@ -69,5 +69,5 @@ export const useFilteredChains = ({
     });
   }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
 
-  return filteredChains ?? [];
+  return filteredChains;
 };
