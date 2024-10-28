@@ -20,11 +20,23 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
+import { ChainFilter, chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
+import { RouteConfig, routeConfigAtom } from "@/state/route";
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   defaultRoute?: DefaultRouteConfig;
+  settings?: {
+    /**
+     * percentage of slippage 0-100
+     * @default 3
+     */
+    slippage?: number;
+  };
+  onlyTestnet?: boolean;
+  routeConfig?: RouteConfig;
+  filter?: ChainFilter;
 } & SkipClientOptions;
 
 export const Widget = (props: WidgetProps) => {
@@ -39,6 +51,9 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useInitDefaultRoute(props.defaultRoute);
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
+  const setSwapSettings = useSetAtom(swapSettingsAtom);
+  const setRouteConfig = useSetAtom(routeConfigAtom);
+  const setChainFilter = useSetAtom(chainFilterAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
     const { theme, ...skipClientConfig } = props;
@@ -71,6 +86,21 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     setTheme,
     mergedTheme
   ]);
+
+  useEffect(() => {
+    if (props.settings?.slippage) {
+      setSwapSettings({
+        ...defaultSwapSettings,
+        ...props.settings,
+      });
+    }
+    if (props.routeConfig) {
+      setRouteConfig(props.routeConfig);
+    }
+    if (props.filter) {
+      setChainFilter(props.filter);
+    }
+  }, [props.filter, props.routeConfig, props.settings, props.settings?.slippage, setChainFilter, setRouteConfig, setSwapSettings]);
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>

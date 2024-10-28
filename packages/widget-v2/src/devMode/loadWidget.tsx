@@ -22,6 +22,9 @@ const DevMode = () => {
         destChainId: "cosmoshub-4",
         destAssetDenom: "uatom",
       }}
+        settings={{
+          slippage: 5,
+        }}
       />
       <Column>
         <button onClick={() => toggleTheme()}> Toggle theme (current theme: {theme})</button>

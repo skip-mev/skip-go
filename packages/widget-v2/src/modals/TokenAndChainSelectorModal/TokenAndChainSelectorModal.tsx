@@ -19,6 +19,7 @@ import { matchSorter } from "match-sorter";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { Chain } from "@skip-go/client";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { useGetFilteredChains } from "./useGetFilteredChains";
 
 export type GroupedAsset = {
   id: string;
@@ -42,16 +43,15 @@ export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
   networkSelection?: boolean;
-  context: SelectorContext
+  context: SelectorContext;
 };
 
 export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
-    const { onSelect: _onSelect, selectedAsset, networkSelection } = modalProps;
+    const { onSelect: _onSelect, selectedAsset, networkSelection, context } = modalProps;
     const { data: assets, isLoading: isAssetsLoading } =
       useAtomValue(skipAssetsAtom);
-    const { data: chains } = useAtomValue(skipChainsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
     const getBalance = useGetBalance();
@@ -145,18 +145,6 @@ export const TokenAndChainSelectorModal = createModal(
       return groupedAssets;
     }, [assets, getBalance]);
 
-    const selectedGroup = useMemo(() => {
-      const asset = groupedAssetSelected?.assets[0] || selectedAsset;
-      if (!asset) return;
-      return groupedAssetsByRecommendedSymbol?.find(
-        (group) => group.id === asset.recommendedSymbol
-      );
-    }, [
-      groupedAssetSelected?.assets,
-      selectedAsset,
-      groupedAssetsByRecommendedSymbol,
-    ]);
-
     const filteredAssets = useMemo(() => {
       if (!groupedAssetsByRecommendedSymbol) return;
       return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
@@ -185,48 +173,19 @@ export const TokenAndChainSelectorModal = createModal(
       });
     }, [groupedAssetsByRecommendedSymbol, searchQuery]);
 
-    const filteredChains = useMemo(() => {
-      if (!selectedGroup || !chains) return;
-      const resChains = selectedGroup.assets
-        .map((asset) => {
-          const c = chains.find((c) => c.chainID === asset.chainID);
-          return {
-            ...c,
-            asset,
-          };
-        })
-        .filter((c) => c) as ChainWithAsset[];
-      return matchSorter(resChains, searchQuery, {
-        keys: ["prettyName", "chainName", "chainID"],
-      }).sort((assetA, assetB) => {
-        const balanceA = getBalance(
-          assetA.chainID,
-          assetA.asset.denom
-        );
-        const balanceB = getBalance(
-          assetB.chainID,
-          assetB.asset.denom
-        );
+    const selectedGroup = useMemo(() => {
+      const asset = groupedAssetSelected?.assets[0] || selectedAsset;
+      if (!asset) return;
+      return groupedAssetsByRecommendedSymbol?.find(
+        (group) => group.id === asset.recommendedSymbol
+      );
+    }, [
+      groupedAssetSelected?.assets,
+      selectedAsset,
+      groupedAssetsByRecommendedSymbol,
+    ]);
 
-        if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
-          return 1;
-        }
-
-        if (Number(balanceA?.valueUSD ?? 0) > Number(balanceB?.valueUSD ?? 0)) {
-          return -1;
-        }
-
-        if (assetB.asset.originChainID === assetB.chainID) {
-          return 1;
-        }
-
-        if (assetA.asset.originChainID === assetA.chainID) {
-          return -1;
-        }
-
-        return 0;
-      });
-    }, [chains, getBalance, searchQuery, selectedGroup]);
+    const filteredChains = useGetFilteredChains({ selectedGroup, searchQuery, context });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -254,27 +213,27 @@ export const TokenAndChainSelectorModal = createModal(
             index={index}
             onSelect={onSelect}
             skeleton={<Skeleton />}
-            context={modalProps.context}
+            context={context}
           />
         );
       },
-      [modalProps.context, onSelect]
+      [context, onSelect]
     );
     const list = useMemo(() => {
       if (!networkSelection) {
         if (groupedAssetSelected) {
-          if (modalProps.context === "source") {
+          if (context === "source") {
             return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
           }
           return filteredChains;
         }
         return filteredAssets;
       }
-      if (modalProps.context === "source") {
+      if (context === "source") {
         return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
       }
       return filteredChains;
-    }, [filteredAssets, filteredChains, groupedAssetSelected, modalProps.context, networkSelection]);
+    }, [filteredAssets, filteredChains, groupedAssetSelected, context, networkSelection]);
 
 
     const onClickBack = () => {
