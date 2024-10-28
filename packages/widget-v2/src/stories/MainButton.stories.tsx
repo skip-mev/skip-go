@@ -87,14 +87,14 @@ export const SwapInProgress: Story = {
   },
 };
 
-export const SwapComplete: Story = {
-  render: function SwapComplete(props) {
+export const SwapAgain: Story = {
+  render: function SwapAgain(props) {
     return renderLightAndDarkTheme(
       <MainButton {...props} backgroundColor={useTheme().success.text} />
     );
   },
   args: {
-    label: "Swap Complete",
+    label: "Swap Again",
     icon: ICONS.checkmark,
     onClick: () => alert("should trigger"),
   },

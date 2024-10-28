@@ -207,6 +207,7 @@ export const TokenAndChainSelectorModal = createModal(
           assetB.chainID,
           assetB.asset.denom
         );
+        console.log(assetA)
 
         if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
           return 1;
@@ -217,6 +218,7 @@ export const TokenAndChainSelectorModal = createModal(
         }
 
         if (assetB.asset.originChainID === assetB.chainID) {
+          console.log(assetB.asset.originChainID, assetB.chainID)
           return 1;
         }
 
@@ -290,7 +292,6 @@ export const TokenAndChainSelectorModal = createModal(
         setGroupedAssetSelected(null);
       }
     };
-
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput

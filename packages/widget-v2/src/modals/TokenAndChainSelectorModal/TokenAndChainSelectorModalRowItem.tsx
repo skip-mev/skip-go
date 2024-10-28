@@ -116,13 +116,15 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
     .sort((a, b) => a.chainName.localeCompare(b.chainName));
 
   const chainList = context === "source" ? _chainList.filter(c => !c.chainName.toLowerCase().includes("penumbra")) : _chainList;
+  // prioritize logoURI from raw.githubusercontent over coingecko
+  const logoURI = item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ?? item.assets[0].logoURI;
 
   return (
     <Row align="center" gap={8}>
       <StyledAssetImage
         height={35}
         width={35}
-        src={item.assets[0].logoURI}
+        src={logoURI}
         alt={`${item.assets[0].recommendedSymbol} logo`}
       />
       <Row align="end" gap={8}>
