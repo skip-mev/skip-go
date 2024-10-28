@@ -15,10 +15,10 @@ import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
 import { useAtom, useSetAtom } from "jotai";
 import {
-  defaultSkipClientConfig,
   skipAssetsAtom,
   skipClientConfigAtom,
   themeAtom,
+  defaultSkipClientConfig,
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import {
@@ -31,9 +31,9 @@ import {
 export type DefaultRouteConfig = {
   amountIn?: number;
   amountOut?: number;
-  srcChainID?: string;
+  srcChainId?: string;
   srcAssetDenom?: string;
-  destChainID?: string;
+  destChainId?: string;
   destAssetDenom?: string;
 };
 
@@ -52,7 +52,7 @@ export const Widget = (props: WidgetProps) => {
 };
 
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setDestinationAsset = useSetAtom(destinationAssetAtom);
@@ -98,14 +98,14 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     if (props.defaultRoute && assets) {
       const {
         srcAssetDenom,
-        srcChainID,
+        srcChainId,
         destAssetDenom,
-        destChainID,
+        destChainId,
         amountIn,
         amountOut,
       } = props.defaultRoute;
-      const sourceAsset = getClientAsset(srcAssetDenom, srcChainID);
-      const destinationAsset = getClientAsset(destAssetDenom, destChainID);
+      const sourceAsset = getClientAsset(srcAssetDenom, srcChainId);
+      const destinationAsset = getClientAsset(destAssetDenom, destChainId);
       setDestinationAsset({
         ...destinationAsset,
         amount: amountOut?.toString(),
@@ -121,12 +121,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       }
     }
   }, [
-    mergedSkipClientConfig,
-    mergedTheme,
-    setSkipClientConfig,
-    setTheme,
     props,
     assets,
+    setSkipClientConfig,
+    mergedSkipClientConfig,
+    setTheme,
+    mergedTheme,
     getClientAsset,
     setDestinationAsset,
     setSourceAsset,
