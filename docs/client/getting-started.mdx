@@ -136,7 +136,8 @@ const assets = await client.assets({
 ```
 
 ```ts Map of Token Balances
-// returns a map of assets by chain ID
+// returns a map of assets by chain ID 
+// includes all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains
 const balances = await skipClient.balances({
   "chains": {
     "137": {
