@@ -2,12 +2,7 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import {
-  cloneElement,
-  ReactElement,
-  useEffect,
-  useMemo,
-} from "react";
+import { cloneElement, ReactElement, useEffect, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
@@ -17,15 +12,22 @@ import {
   skipClientConfigAtom,
   themeAtom,
   defaultSkipClientConfig,
+  onlyTestnetsAtom,
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
-import { ChainFilter, chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
+import {
+  ChainFilter,
+  chainFilterAtom,
+  defaultSwapSettings,
+  swapSettingsAtom,
+} from "@/state/swapPage";
 import { RouteConfig, routeConfigAtom } from "@/state/route";
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
+  onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
   settings?: {
     /**
@@ -34,7 +36,6 @@ export type WidgetProps = {
      */
     slippage?: number;
   };
-  onlyTestnet?: boolean;
   routeConfig?: RouteConfig;
   filter?: ChainFilter;
 } & SkipClientOptions;
@@ -54,6 +55,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
+  const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
     const { theme, ...skipClientConfig } = props;
@@ -77,17 +79,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     return theme;
   }, [props.brandColor, props.theme]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
-  }, [
-    setSkipClientConfig,
-    mergedSkipClientConfig,
-    setTheme,
-    mergedTheme
-  ]);
+  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (props.settings?.slippage) {
       setSwapSettings({
         ...defaultSwapSettings,
@@ -100,7 +97,20 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     if (props.filter) {
       setChainFilter(props.filter);
     }
-  }, [props.filter, props.routeConfig, props.settings, props.settings?.slippage, setChainFilter, setRouteConfig, setSwapSettings]);
+    if (props.onlyTestnet) {
+      setOnlyTestnets(props.onlyTestnet);
+    }
+  }, [
+    props.filter,
+    props.onlyTestnet,
+    props.routeConfig,
+    props.settings,
+    props.settings?.slippage,
+    setChainFilter,
+    setOnlyTestnets,
+    setRouteConfig,
+    setSwapSettings,
+  ]);
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>
