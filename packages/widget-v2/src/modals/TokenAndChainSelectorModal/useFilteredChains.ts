@@ -30,12 +30,16 @@ export const useFilteredChains = ({
         return chain ? { ...chain, asset } : null;
       })
       .filter((chain) => {
-        if (!chainFilter || !chainFilter[context]) return chain !== undefined;
-        const chainIdsAllowed = Object.keys(chainFilter[context]);
-        if (chainIdsAllowed && chain?.chainID) {
-          return chainIdsAllowed.includes(chain.chainID);
-        }
-        return chain !== undefined;
+        if (!chain) return false;
+        // Check if chain is allowed based on chainFilter
+        const isAllowedByFilter = !chainFilter?.[context] ||
+          Object.keys(chainFilter[context]).includes(chain.chainID);
+
+        // For source context, exclude Penumbra chains
+        const isPenumbraAllowed = context !== "source" ||
+          !chain.chainID.includes("penumbra");
+
+        return isAllowedByFilter && isPenumbraAllowed;
       }) as ChainWithAsset[];
 
     return matchSorter(chainsWithAssets, searchQuery, {

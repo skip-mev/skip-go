@@ -121,7 +121,7 @@ export const SwapPage = () => {
         tokenAndChainSelectorModal.hide();
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
-      networkSelection: true,
+      selectChain: true,
     });
   }, [chains, connector, evmAddress, evmChainId, getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
 
@@ -152,7 +152,7 @@ export const SwapPage = () => {
         destinationAsset?.denom,
         destinationAsset?.chainID
       ),
-      networkSelection: true,
+      selectChain: true,
     });
   }, [
     destinationAsset?.chainID,

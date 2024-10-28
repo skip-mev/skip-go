@@ -41,14 +41,14 @@ export type SelectorContext = "source" | "destination";
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
-  networkSelection?: boolean;
+  selectChain?: boolean;
   context: SelectorContext;
 };
 
 export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
-    const { onSelect: _onSelect, selectedAsset, networkSelection, context } = modalProps;
+    const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
     const { data: assets, isLoading: isAssetsLoading } =
       useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
@@ -130,22 +130,13 @@ export const TokenAndChainSelectorModal = createModal(
       },
       [context, onSelect]
     );
-    const list = useMemo(() => {
-      if (!networkSelection) {
-        if (groupedAssetSelected) {
-          if (context === "source") {
-            return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
-          }
-          return filteredChains;
-        }
-        return filteredAssets;
-      }
-      if (context === "source") {
-        return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
-      }
-      return filteredChains;
-    }, [filteredAssets, filteredChains, groupedAssetSelected, context, networkSelection]);
 
+    const listOfAssetsOrChains = useMemo(() => {
+      if (selectChain || groupedAssetSelected) {
+        return filteredChains;
+      }
+      return filteredAssets;
+    }, [filteredAssets, filteredChains, groupedAssetSelected, selectChain]);
 
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
@@ -178,7 +169,7 @@ export const TokenAndChainSelectorModal = createModal(
           </Column>
         ) : (
           <VirtualList
-            listItems={list ?? []}
+            listItems={listOfAssetsOrChains ?? []}
             height={530}
             itemHeight={70}
             itemKey={(item) => {
