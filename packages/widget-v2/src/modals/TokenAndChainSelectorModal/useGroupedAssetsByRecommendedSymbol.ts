@@ -7,11 +7,11 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { chainFilterAtom } from "@/state/swapPage";
 
-export type useGetGroupedAssetByRecommendedSymbolProps = {
+export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
 }
 
-export const useGetGroupedAssetByRecommendedSymbol = ({ context }: useGetGroupedAssetByRecommendedSymbolProps) => {
+export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetByRecommendedSymbolProps) => {
   const { data: _assets } = useAtomValue(skipAssetsAtom);
   const getBalance = useGetBalance();
   const chainFilter = useAtomValue(chainFilterAtom);

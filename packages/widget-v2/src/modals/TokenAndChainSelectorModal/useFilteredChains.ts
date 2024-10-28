@@ -6,17 +6,17 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { chainFilterAtom } from "@/state/swapPage";
 
-export type useGetFilteredChainsProps = {
+export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
   searchQuery: string;
   context: "source" | "destination";
 };
 
-export const useGetFilteredChains = ({
+export const useFilteredChains = ({
   selectedGroup,
   searchQuery,
   context,
-}: useGetFilteredChainsProps) => {
+}: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainFilter = useAtomValue(chainFilterAtom);
   const getBalance = useGetBalance();

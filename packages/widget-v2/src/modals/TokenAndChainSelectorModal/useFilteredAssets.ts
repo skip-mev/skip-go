@@ -2,17 +2,17 @@ import { matchSorter } from "match-sorter";
 import { useMemo } from "react";
 import { GroupedAsset } from "./TokenAndChainSelectorModal";
 
-export type useGetFilteredAssetsProps = {
+export type useFilteredAssetsProps = {
   groupedAssetsByRecommendedSymbol: GroupedAsset[] | undefined;
   searchQuery: string;
 };
 
 const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
 
-export const useGetFilteredAssets = ({
+export const useFilteredAssets = ({
   groupedAssetsByRecommendedSymbol,
   searchQuery,
-}: useGetFilteredAssetsProps) => {
+}: useFilteredAssetsProps) => {
 
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;

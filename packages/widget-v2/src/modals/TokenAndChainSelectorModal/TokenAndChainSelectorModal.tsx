@@ -16,9 +16,9 @@ import {
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
 import { Chain } from "@skip-go/client";
-import { useGetFilteredChains } from "./useGetFilteredChains";
-import { useGetFilteredAssets } from "./useGetFilteredAssets";
-import { useGetGroupedAssetByRecommendedSymbol } from "./useGetGroupedAssetsByRecommendedSymbol";
+import { useFilteredChains } from "./useFilteredChains";
+import { useFilteredAssets } from "./useFilteredAssets";
+import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
 
 export type GroupedAsset = {
   id: string;
@@ -81,7 +81,7 @@ export const TokenAndChainSelectorModal = createModal(
       [_onSelect]
     );
 
-    const groupedAssetsByRecommendedSymbol = useGetGroupedAssetByRecommendedSymbol({ context });
+    const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
 
     const selectedGroup = useMemo(() => {
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
@@ -95,8 +95,8 @@ export const TokenAndChainSelectorModal = createModal(
       groupedAssetsByRecommendedSymbol,
     ]);
 
-    const filteredAssets = useGetFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useGetFilteredChains({ selectedGroup, searchQuery, context });
+    const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
+    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
 
     useEffect(() => {
       if (!isLoading && assets) {
