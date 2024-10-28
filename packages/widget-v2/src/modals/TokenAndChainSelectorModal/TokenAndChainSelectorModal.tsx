@@ -42,7 +42,7 @@ export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
   networkSelection?: boolean;
-  context: SelectorContext
+  context: SelectorContext;
 };
 
 export const TokenAndChainSelectorModal = createModal(
@@ -162,7 +162,16 @@ export const TokenAndChainSelectorModal = createModal(
       return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
         keys: ["id"],
       }).sort((itemA, itemB) => {
-        const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
+        const PRIVILEGED_ASSETS = [
+          "ATOM",
+          "USDC",
+          "USDT",
+          "ETH",
+          "TIA",
+          "OSMO",
+          "NTRN",
+          "INJ",
+        ];
         if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {
           const indexA = PRIVILEGED_ASSETS.indexOf(itemA.id);
           const indexB = PRIVILEGED_ASSETS.indexOf(itemB.id);
@@ -187,26 +196,26 @@ export const TokenAndChainSelectorModal = createModal(
 
     const filteredChains = useMemo(() => {
       if (!selectedGroup || !chains) return;
+      const seenChainIds = new Set<string>();
+
       const resChains = selectedGroup.assets
         .map((asset) => {
-          const c = chains.find((c) => c.chainID === asset.chainID);
-          return {
-            ...c,
-            asset,
-          };
+          const chain = chains.find((c) => c.chainID === asset.chainID);
+          return chain ? { ...chain, asset } : null;
         })
-        .filter((c) => c) as ChainWithAsset[];
+        .filter((item) => {
+          if (!item) return false;
+          if (seenChainIds.has(item.chainID)) return false;
+
+          seenChainIds.add(item.chainID);
+          return true;
+        }) as ChainWithAsset[];
+
       return matchSorter(resChains, searchQuery, {
         keys: ["prettyName", "chainName", "chainID"],
       }).sort((assetA, assetB) => {
-        const balanceA = getBalance(
-          assetA.chainID,
-          assetA.asset.denom
-        );
-        const balanceB = getBalance(
-          assetB.chainID,
-          assetB.asset.denom
-        );
+        const balanceA = getBalance(assetA.chainID, assetA.asset.denom);
+        const balanceB = getBalance(assetB.chainID, assetB.asset.denom);
 
         if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
           return 1;
@@ -245,7 +254,6 @@ export const TokenAndChainSelectorModal = createModal(
       setSearchQuery(term);
     };
 
-
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         return (
@@ -264,18 +272,25 @@ export const TokenAndChainSelectorModal = createModal(
       if (!networkSelection) {
         if (groupedAssetSelected) {
           if (modalProps.context === "source") {
-            return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
+            return filteredChains?.filter(
+              (c) => !c.chainID.includes("penumbra")
+            );
           }
           return filteredChains;
         }
         return filteredAssets;
       }
       if (modalProps.context === "source") {
-        return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
+        return filteredChains?.filter((c) => !c.chainID.includes("penumbra"));
       }
       return filteredChains;
-    }, [filteredAssets, filteredChains, groupedAssetSelected, modalProps.context, networkSelection]);
-
+    }, [
+      filteredAssets,
+      filteredChains,
+      groupedAssetSelected,
+      modalProps.context,
+      networkSelection,
+    ]);
 
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
@@ -286,7 +301,11 @@ export const TokenAndChainSelectorModal = createModal(
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
+      if (
+        event.key === "Backspace" &&
+        groupedAssetSelected !== null &&
+        searchQuery === ""
+      ) {
         setGroupedAssetSelected(null);
       }
     };
