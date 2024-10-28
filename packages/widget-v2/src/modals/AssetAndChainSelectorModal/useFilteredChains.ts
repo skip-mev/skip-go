@@ -24,6 +24,8 @@ export const useFilteredChains = ({
   const filteredChains = useMemo(() => {
     if (!selectedGroup || !chains) return;
 
+    const seenChainIds = new Set<string>();
+
     const chainsWithAssets = selectedGroup.assets
       .map((asset) => {
         const chain = chains.find((c) => c.chainID === asset.chainID);
@@ -31,6 +33,8 @@ export const useFilteredChains = ({
       })
       .filter((chain) => {
         if (!chain) return false;
+        if (seenChainIds.has(chain.chainID)) return false;
+
         // Check if chain is allowed based on chainFilter
         const isAllowedByFilter = !chainFilter?.[context] ||
           Object.keys(chainFilter[context]).includes(chain.chainID);
@@ -39,6 +43,7 @@ export const useFilteredChains = ({
         const isPenumbraAllowed = context !== "source" ||
           !chain.chainID.includes("penumbra");
 
+        seenChainIds.add(chain.chainID);
         return isAllowedByFilter && isPenumbraAllowed;
       }) as ChainWithAsset[];
 
