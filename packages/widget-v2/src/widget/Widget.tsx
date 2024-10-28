@@ -2,18 +2,29 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useEffect, useMemo } from "react";
+import {
+  cloneElement,
+  ReactElement,
+  useEffect,
+  useMemo,
+} from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useAtom, useSetAtom } from "jotai";
-import { skipClientConfigAtom, themeAtom } from "@/state/skipClient";
+import { useSetAtom } from "jotai";
+import {
+  skipClientConfigAtom,
+  themeAtom,
+  defaultSkipClientConfig,
+} from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
+import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
+  defaultRoute?: DefaultRouteConfig;
 } & SkipClientOptions;
 
 export const Widget = (props: WidgetProps) => {
@@ -25,19 +36,18 @@ export const Widget = (props: WidgetProps) => {
 };
 
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
+  useInitDefaultRoute(props.defaultRoute);
+  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
-  const mergedSkipClientConfig = useMemo(
-    () => {
-      const { theme, ...skipClientConfig } = props;
 
-      return {
-        ...defaultSkipClientConfig,
-        ...skipClientConfig,
-      };
-    },
-    [defaultSkipClientConfig, props]
-  );
+  const mergedSkipClientConfig = useMemo(() => {
+    const { theme, ...skipClientConfig } = props;
+
+    return {
+      ...defaultSkipClientConfig,
+      ...skipClientConfig,
+    };
+  }, [props]);
 
   const mergedTheme = useMemo(() => {
     let theme: Theme;
@@ -55,7 +65,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
-  }, [mergedSkipClientConfig, mergedTheme, setSkipClientConfig, setTheme]);
+  }, [
+    setSkipClientConfig,
+    mergedSkipClientConfig,
+    setTheme,
+    mergedTheme
+  ]);
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>

@@ -15,7 +15,14 @@ const DevMode = () => {
   };
   return (
     <Row gap={20}>
-      <Widget theme={theme} brandColor="blue" />
+      <Widget theme={theme} defaultRoute={{
+        amountIn: 5,
+        srcChainId: "osmosis-1",
+        srcAssetDenom: "uosmo",
+        destChainId: "cosmoshub-4",
+        destAssetDenom: "uatom",
+      }}
+      />
       <Column>
         <button onClick={() => toggleTheme()}> Toggle theme (current theme: {theme})</button>
       </Column>
