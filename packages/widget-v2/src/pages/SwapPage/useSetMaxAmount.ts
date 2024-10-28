@@ -7,8 +7,6 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
 
-
-const ETH_GAS_FEE = 0.01;
 const COSMOS_GAS_FEE = 2_000_000;
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
@@ -28,7 +26,21 @@ export const useGasFeeTokenAmount = () => {
     case "evm":
       {
         const isFeeAsset = sourceAsset?.denom?.includes("-native") && sourceAsset?.originChainID === sourceAsset?.chainID;
-        return isFeeAsset ? Number(convertHumanReadableAmountToCryptoAmount(ETH_GAS_FEE, sourceDetails.asset?.decimals)) : 0;
+        if (isFeeAsset) {
+          switch (sourceAsset?.chainID) {
+            case "1": // mainnet
+              return Number(convertHumanReadableAmountToCryptoAmount(0.015, sourceDetails.asset?.decimals));
+            case "137": // polygon
+              return Number(convertHumanReadableAmountToCryptoAmount(0.06, sourceDetails.asset?.decimals));
+            case "43114": // avalanche
+              return Number(convertHumanReadableAmountToCryptoAmount(0.02, sourceDetails.asset?.decimals));
+            case "42220": // celo
+              return Number(convertHumanReadableAmountToCryptoAmount(0.01, sourceDetails.asset?.decimals));
+            default: // other chains
+              return Number(convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals));
+          }
+        }
+        return 0;
       }
     case "cosmos":
       if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
