@@ -290,7 +290,6 @@ export const TokenAndChainSelectorModal = createModal(
         setGroupedAssetSelected(null);
       }
     };
-
     return (
       <StyledContainer>
         <TokenAndChainSelectorModalSearchInput

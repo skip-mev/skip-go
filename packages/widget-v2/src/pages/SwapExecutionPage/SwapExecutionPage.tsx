@@ -173,7 +173,7 @@ export const SwapExecutionPage = () => {
       case SwapExecutionState.confirmed:
         return (
           <MainButton
-            label="Swap Complete"
+            label="Swap again"
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
             onClick={() => setCurrentPage(Routes.SwapPage)}

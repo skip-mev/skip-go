@@ -92,6 +92,7 @@ export const LoadingButton = ({
     <StyledOverlay
       className="overlay"
       justify="space-between"
+      align="center"
       padding={20}
       backgroundColor={backgroundColor}
     >
@@ -168,6 +169,8 @@ const StyledTimeRemaining = styled(Row)`
   background-color: ${(props) => props.theme.secondary.background.normal};
   padding: 16px;
   border-radius: 10px;
+  height: 40px;
+  width: 76px;
 `;
 
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
