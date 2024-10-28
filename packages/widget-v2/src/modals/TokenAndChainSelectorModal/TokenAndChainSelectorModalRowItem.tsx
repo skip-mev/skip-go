@@ -9,6 +9,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { ChainWithAsset, GroupedAsset, SelectorContext } from "./TokenAndChainSelectorModal";
+import { useFilteredChains } from "./useFilteredChains";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset
@@ -105,17 +106,7 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
   item: GroupedAsset;
   context: SelectorContext;
 }) => {
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const _chainList = item.chains
-    .map((chain) => {
-      const _chain = chains?.find((c) => c.chainID === chain.chainID);
-      return {
-        chainName: _chain?.prettyName || chain.chainID,
-      };
-    })
-    .sort((a, b) => a.chainName.localeCompare(b.chainName));
-
-  const chainList = context === "source" ? _chainList.filter(c => !c.chainName.toLowerCase().includes("penumbra")) : _chainList;
+  const filteredChains = useFilteredChains({ selectedGroup: item, context });
   // prioritize logoURI from raw.githubusercontent over coingecko
   const logoURI = item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ?? item.assets[0].logoURI;
 
@@ -129,10 +120,10 @@ const TokenAndChainSelectorModalRowItemLeftContent = ({
       />
       <Row align="end" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
-        {chainList.length > 1 ? (
-          <SmallText>{`${chainList.length} networks`}</SmallText>
+        {filteredChains.length > 1 ? (
+          <SmallText>{`${filteredChains.length} networks`}</SmallText>
         ) : (
-          chainList.map((chain, index) => (
+          filteredChains.map((chain, index) => (
             <Row key={index} align="center" gap={6}>
               {<SmallText>{chain.chainName}</SmallText>}
             </Row>

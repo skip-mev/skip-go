@@ -8,13 +8,13 @@ import { chainFilterAtom } from "@/state/swapPage";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
-  searchQuery: string;
+  searchQuery?: string;
   context: "source" | "destination";
 };
 
 export const useFilteredChains = ({
   selectedGroup,
-  searchQuery,
+  searchQuery = "",
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -69,5 +69,5 @@ export const useFilteredChains = ({
     });
   }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
 
-  return filteredChains;
+  return filteredChains ?? [];
 };
