@@ -52,7 +52,7 @@ export const Widget = (props: WidgetProps) => {
 };
 
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const [defaultSkipClientConfig, setSkipClientConfig] = useAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setDestinationAsset = useSetAtom(destinationAssetAtom);

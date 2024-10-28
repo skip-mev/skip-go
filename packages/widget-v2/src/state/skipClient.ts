@@ -16,12 +16,10 @@ import { solanaWallets } from "@/constants/solana";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
 
-export const defaultSkipClientConfig = {
+export const skipClientConfigAtom = atom<SkipClientOptions>({
   apiURL: prodApiUrl,
   endpointOptions,
-};
-
-export const skipClientConfigAtom = atom<SkipClientOptions>(defaultSkipClientConfig);
+});
 
 export const themeAtom = atom<Theme>(defaultTheme);
 

@@ -13,7 +13,7 @@ import {
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
-import { memo, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 
@@ -29,7 +29,7 @@ export type AssetChainInputProps = {
   badPriceWarning?: boolean;
 };
 
-export const SwapPageAssetChainInput = memo(({
+export const SwapPageAssetChainInput = ({
   value,
   usdValue,
   onChangeValue,
@@ -217,7 +217,7 @@ export const SwapPageAssetChainInput = memo(({
       </Row>
     </StyledAssetChainInputWrapper>
   );
-});
+};
 
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
