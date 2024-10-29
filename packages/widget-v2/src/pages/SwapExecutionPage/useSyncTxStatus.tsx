@@ -39,11 +39,14 @@ export const useSyncTxStatus = ({
   const computedSwapStatus = useMemo(() => {
     if (!route?.operations || !route?.txsRequired) return;
 
-    if (transferEvents?.length === 0) {
+    if (transferEvents?.length === 0 && !statusData?.isSettled) {
       if (isPending) {
         setOverallStatus("signing");
       }
       return;
+    }
+    if (statusData?.lastTxStatus === "pending") {
+      return "pending";
     }
 
     if (!transferEvents) return;
@@ -69,7 +72,7 @@ export const useSyncTxStatus = ({
     ) {
       return "unconfirmed";
     }
-  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, transferEvents]);
+  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, statusData?.lastTxStatus, transferEvents]);
   useEffect(() => {
     if (computedSwapStatus) {
       setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
