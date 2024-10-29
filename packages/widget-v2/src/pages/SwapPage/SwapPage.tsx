@@ -70,7 +70,6 @@ export const SwapPage = () => {
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
-  console.log('txHistory', txHistory)
 
   const { chainId: evmChainId, connector } = useAccount();
   const evmAddress = evmChainId ? getAccount(String(evmChainId))?.address : undefined;
