@@ -31,7 +31,12 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const clientOperations = route && getClientOperations(route.operations);
 
   const usesEvmInOperations = useMemo(() => {
-    return clientOperations?.find((operation) => operation.toChainID === "1");
+    return clientOperations?.find(
+      (operation) =>
+        operation.toChainID === "1" ||
+        operation.fromChainID === "1" ||
+        operation.chainID === "1"
+    );
   }, [clientOperations]);
 
   const axelarTransferOperation = useMemo(() => {
@@ -185,7 +190,9 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
                   setSwapSettings({ slippage: parseFloat(e.target.value) })
                 }
               />
-              <CustomSlippageInputRightIcon selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}>
+              <CustomSlippageInputRightIcon
+                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
+              >
                 %
               </CustomSlippageInputRightIcon>
             </div>
@@ -315,7 +322,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
     margin: 0;
   }
 
-  &[type=number] {
+  &[type='number'] {
     -moz-appearance: textfield;
   }
 
@@ -332,7 +339,7 @@ const CustomSlippageInputRightIcon = styled(SmallText) <{ selected?: boolean }>`
   top: 50%;
   right: 7px;
   transform: translateY(-50%);
-    ${({ selected, theme }) =>
+  ${({ selected, theme }) =>
     selected &&
     css`
       color: ${getBrandButtonTextColor(theme.brandColor)};
