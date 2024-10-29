@@ -1,4 +1,4 @@
-import { css, styled, useTheme } from "styled-components";
+import { css, styled } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
@@ -15,9 +15,9 @@ import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getBrandButtonTextColor } from "@/utils/colors";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
+import { EvmDisclaimer } from "@/components/EvmDisclaimer";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
-  const theme = useTheme();
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [swapSettings, setSwapSettings] = useAtom(swapSettingsAtom);
@@ -29,15 +29,6 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   }, [route, chains]);
 
   const clientOperations = route && getClientOperations(route.operations);
-
-  const usesEvmInOperations = useMemo(() => {
-    return clientOperations?.find(
-      (operation) =>
-        operation.toChainID === "1" ||
-        operation.fromChainID === "1" ||
-        operation.chainID === "1"
-    );
-  }, [clientOperations]);
 
   const axelarTransferOperation = useMemo(() => {
     if (!clientOperations) return;
@@ -231,14 +222,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         </Column>
       )}
 
-      {usesEvmInOperations && (
-        <StyledEvmWarningMessage>
-          <SwapDetailText color={theme.warning.text}>
-            This swap contains at least one EVM chain, so it might take longer.
-            <br /> Read more about common finality times.
-          </SwapDetailText>
-        </StyledEvmWarningMessage>
-      )}
+      <EvmDisclaimer operations={clientOperations} />
 
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
