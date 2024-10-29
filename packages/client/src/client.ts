@@ -787,7 +787,7 @@ export class SkipClient {
 
       await this.submitTransaction({
         chainID: message.chainID,
-        tx: Buffer.from(serializedTx).toString('base64'),
+        tx: serializedTx.toString('base64'),
       }).then((res) => {
         onTransactionSigned?.({
           chainID: message.chainID,
