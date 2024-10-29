@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter";
 import { useMemo } from "react";
-import { ChainWithAsset, GroupedAsset } from "./TokenAndChainSelectorModal";
+import { ChainWithAsset, GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
@@ -8,7 +8,7 @@ import { chainFilterAtom } from "@/state/swapPage";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
-  searchQuery?: string;
+  searchQuery: string;
   context: "source" | "destination";
 };
 
