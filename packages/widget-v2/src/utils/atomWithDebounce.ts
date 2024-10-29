@@ -11,40 +11,33 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
   const debouncedValueAtom = atom(
     (get) => get(_debouncedValueAtom),
     (get, set, update: SetStateAction<T>, callback?: () => void) => {
-      const prevTimeout = get(prevTimeoutAtom);
-      if (prevTimeout) {
-        clearTimeout(prevTimeout);
-      }
+      clearTimeout(get(prevTimeoutAtom));
 
-      // Calculate next value
       const prevValue = get(_currentValueAtom);
       const nextValue =
         typeof update === "function"
           ? (update as (prev: T | undefined) => T)(prevValue)
           : update;
 
-      // Update current value immediately
-      set(_currentValueAtom, nextValue);
-      set(isDebouncingAtom, true);
-      set(valueInitialized, true);
+      // Only update if the value has changed
+      if (nextValue !== prevValue) {
+        set(_currentValueAtom, nextValue);
+        set(isDebouncingAtom, true);
+        set(valueInitialized, true);
 
-      // Debounce the update to the debounced value
-      const timeoutId = setTimeout(() => {
-        set(_debouncedValueAtom, nextValue);
-        set(isDebouncingAtom, false);
-        callback?.();
-      }, delayMilliseconds);
+        const timeoutId = setTimeout(() => {
+          set(_debouncedValueAtom, nextValue);
+          set(isDebouncingAtom, false);
+          callback?.();
+        }, delayMilliseconds);
 
-      set(prevTimeoutAtom, timeoutId);
+        set(prevTimeoutAtom, timeoutId);
+      }
     }
   );
 
-  // Cleanup atom
   const cleanupAtom = atom(null, (get, set) => {
-    const prevTimeout = get(prevTimeoutAtom);
-    if (prevTimeout) {
-      clearTimeout(prevTimeout);
-    }
+    clearTimeout(get(prevTimeoutAtom));
     set(prevTimeoutAtom, undefined);
     set(isDebouncingAtom, false);
   });
