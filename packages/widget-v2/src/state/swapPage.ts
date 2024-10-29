@@ -160,6 +160,16 @@ export const routeAmountEffect = atomEffect((get, set) => {
   }
 });
 
-export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", {
+export type ChainFilter = {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
+};
+
+export const chainFilterAtom = atom<ChainFilter>();
+
+export const defaultSwapSettings = {
   slippage: 3,
-});
+  customGasAmount: 200_000
+};
+
+export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);

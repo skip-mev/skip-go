@@ -88,9 +88,12 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
   return flattenedData;
 };
 
+export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
+
 export const skipAssetsAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const chains = get(skipChainsAtom);
+  const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
     queryKey: ["skipAssets"],
@@ -100,6 +103,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
           includeEvmAssets: true,
           includeCW20Assets: true,
           includeSvmAssets: true,
+          onlyTestnets,
         })
         .then((v) => flattenData(v, chains.data));
     },
@@ -108,12 +112,15 @@ export const skipAssetsAtom = atomWithQuery((get) => {
 
 export const skipChainsAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const onlyTestnets = get(onlyTestnetsAtom);
+
   return {
     queryKey: ["skipChains"],
     queryFn: async (): Promise<Chain[]> => {
       return skip.chains({
         includeEVM: true,
         includeSVM: true,
+        onlyTestnets,
       });
     },
   };
@@ -131,10 +138,12 @@ export const skipBridgesAtom = atomWithQuery((get) => {
 
 export const skipSwapVenuesAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const onlyTestnets = get(onlyTestnetsAtom);
+
   return {
     queryKey: ["skipSwapVenue"],
     queryFn: async () => {
-      return skip.venues();
+      return skip.venues(onlyTestnets);
     },
   };
 });

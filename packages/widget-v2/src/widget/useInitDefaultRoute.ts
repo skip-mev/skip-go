@@ -1,7 +1,7 @@
 import { skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom, destinationAssetAtom, sourceAssetAmountAtom, destinationAssetAmountAtom } from "@/state/swapPage";
 import { useSetAtom, useAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useLayoutEffect } from "react";
 
 export type DefaultRouteConfig = {
   amountIn?: number;
@@ -29,7 +29,7 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
     [assets]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!defaultRoute) return;
     if (defaultRoute && assets) {
       const {

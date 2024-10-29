@@ -15,10 +15,10 @@ import {
   isGroupedAsset,
 } from "./TokenAndChainSelectorModalRowItem";
 import { TokenAndChainSelectorModalSearchInput } from "./TokenAndChainSelectorModalSearchInput";
-import { matchSorter } from "match-sorter";
-import { useGetBalance } from "@/hooks/useGetBalance";
 import { Chain } from "@skip-go/client";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { useFilteredChains } from "./useFilteredChains";
+import { useFilteredAssets } from "./useFilteredAssets";
+import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
 
 export type GroupedAsset = {
   id: string;
@@ -41,20 +41,18 @@ export type SelectorContext = "source" | "destination";
 export type TokenAndChainSelectorModalProps = ModalProps & {
   onSelect: (token: ClientAsset | null) => void;
   selectedAsset?: ClientAsset;
-  networkSelection?: boolean;
-  context: SelectorContext
+  selectChain?: boolean;
+  context: SelectorContext;
 };
 
 export const TokenAndChainSelectorModal = createModal(
   (modalProps: TokenAndChainSelectorModalProps) => {
     const modal = useModal();
-    const { onSelect: _onSelect, selectedAsset, networkSelection } = modalProps;
+    const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
     const { data: assets, isLoading: isAssetsLoading } =
       useAtomValue(skipAssetsAtom);
-    const { data: chains } = useAtomValue(skipChainsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
-    const getBalance = useGetBalance();
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -83,67 +81,7 @@ export const TokenAndChainSelectorModal = createModal(
       [_onSelect]
     );
 
-    const groupedAssetsByRecommendedSymbol = useMemo(() => {
-      if (!assets) return;
-      const groupedAssets: GroupedAsset[] = [];
-
-      const calculateBalanceSummary = (assets: ClientAsset[]) => {
-        return assets.reduce(
-          (accumulator, asset) => {
-            const balance = getBalance(asset.chainID, asset.denom);
-            if (balance) {
-              accumulator.totalAmount += Number(
-                convertTokenAmountToHumanReadableAmount(
-                  balance.amount,
-                  balance.decimals
-                )
-              );
-              if (Number(balance.valueUSD)) {
-                accumulator.totalUsd += Number(balance.valueUSD);
-              }
-            }
-            return accumulator;
-          },
-          { totalAmount: 0, totalUsd: 0 }
-        );
-      };
-
-      assets.forEach((asset) => {
-        const foundGroup = groupedAssets.find(
-          (group) => group.id === asset.recommendedSymbol
-        );
-        if (foundGroup) {
-          foundGroup.assets.push(asset);
-          foundGroup.chains.push({
-            chainID: asset.chainID,
-            chainName: asset.chainName,
-            originChainID: asset.originChainID,
-          });
-        } else {
-          groupedAssets.push({
-            id: asset.recommendedSymbol || asset.symbol || asset.denom,
-            chains: [
-              {
-                chainID: asset.chainID,
-                chainName: asset.chainName,
-                originChainID: asset.originChainID,
-              },
-            ],
-            assets: [asset],
-            totalAmount: 0,
-            totalUsd: 0,
-          });
-        }
-      });
-
-      groupedAssets.forEach((group) => {
-        const balanceSummary = calculateBalanceSummary(group.assets);
-        group.totalAmount = balanceSummary.totalAmount;
-        group.totalUsd = balanceSummary.totalUsd;
-      });
-
-      return groupedAssets;
-    }, [assets, getBalance]);
+    const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
 
     const selectedGroup = useMemo(() => {
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
@@ -157,76 +95,8 @@ export const TokenAndChainSelectorModal = createModal(
       groupedAssetsByRecommendedSymbol,
     ]);
 
-    const filteredAssets = useMemo(() => {
-      if (!groupedAssetsByRecommendedSymbol) return;
-      return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
-        keys: ["id"],
-      }).sort((itemA, itemB) => {
-        const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
-        if (itemA.totalUsd === 0 && itemB.totalUsd === 0) {
-          const indexA = PRIVILEGED_ASSETS.indexOf(itemA.id);
-          const indexB = PRIVILEGED_ASSETS.indexOf(itemB.id);
-
-          if (indexA !== -1 && indexB !== -1) {
-            return indexA - indexB;
-          }
-
-          if (indexA !== -1) return -1;
-          if (indexB !== -1) return 1;
-        }
-
-        if (itemA.totalUsd < itemB.totalUsd) {
-          return 1;
-        }
-        if (itemA.totalUsd > itemB.totalUsd) {
-          return -1;
-        }
-        return 0;
-      });
-    }, [groupedAssetsByRecommendedSymbol, searchQuery]);
-
-    const filteredChains = useMemo(() => {
-      if (!selectedGroup || !chains) return;
-      const resChains = selectedGroup.assets
-        .map((asset) => {
-          const c = chains.find((c) => c.chainID === asset.chainID);
-          return {
-            ...c,
-            asset,
-          };
-        })
-        .filter((c) => c) as ChainWithAsset[];
-      return matchSorter(resChains, searchQuery, {
-        keys: ["prettyName", "chainName", "chainID"],
-      }).sort((assetA, assetB) => {
-        const balanceA = getBalance(
-          assetA.chainID,
-          assetA.asset.denom
-        );
-        const balanceB = getBalance(
-          assetB.chainID,
-          assetB.asset.denom
-        );
-
-        if (Number(balanceA?.valueUSD ?? 0) < Number(balanceB?.valueUSD ?? 0)) {
-          return 1;
-        }
-
-        if (Number(balanceA?.valueUSD ?? 0) > Number(balanceB?.valueUSD ?? 0)) {
-          return -1;
-        }
-
-        if (assetB.asset.originChainID === assetB.chainID) {
-          return 1;
-        }
-
-        if (assetA.asset.originChainID === assetA.chainID) {
-          return -1;
-        }
-
-        return 0;
-      });
-    }, [chains, getBalance, searchQuery, selectedGroup]);
+    const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
+    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -254,28 +124,19 @@ export const TokenAndChainSelectorModal = createModal(
             index={index}
             onSelect={onSelect}
             skeleton={<Skeleton />}
-            context={modalProps.context}
+            context={context}
           />
         );
       },
-      [modalProps.context, onSelect]
+      [context, onSelect]
     );
-    const list = useMemo(() => {
-      if (!networkSelection) {
-        if (groupedAssetSelected) {
-          if (modalProps.context === "source") {
-            return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
-          }
-          return filteredChains;
-        }
-        return filteredAssets;
-      }
-      if (modalProps.context === "source") {
-        return filteredChains?.filter(c => !c.chainID.includes("penumbra"));
-      }
-      return filteredChains;
-    }, [filteredAssets, filteredChains, groupedAssetSelected, modalProps.context, networkSelection]);
 
+    const listOfAssetsOrChains = useMemo(() => {
+      if (selectChain || groupedAssetSelected) {
+        return filteredChains;
+      }
+      return filteredAssets;
+    }, [filteredAssets, filteredChains, groupedAssetSelected, selectChain]);
 
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
@@ -308,7 +169,7 @@ export const TokenAndChainSelectorModal = createModal(
           </Column>
         ) : (
           <VirtualList
-            listItems={list ?? []}
+            listItems={listOfAssetsOrChains ?? []}
             height={530}
             itemHeight={70}
             itemKey={(item) => {
