@@ -35,6 +35,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
+import { transactionHistoryAtom } from "@/state/history";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -68,6 +69,7 @@ export const SwapPage = () => {
   useFetchAllBalances();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
+  const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { chainId: evmChainId, connector } = useAccount();
   const evmAddress = evmChainId ? getAccount(String(evmChainId))?.address : undefined;
@@ -293,7 +295,8 @@ export const SwapPage = () => {
         }}
       >
         <SwapPageHeader
-          leftButton={{
+          leftButton={txHistory.length === 0 ? undefined :
+          {
             label: "History",
             icon: ICONS.history,
             onClick: () => setCurrentPage(Routes.TransactionHistoryPage),

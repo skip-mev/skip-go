@@ -11,22 +11,22 @@ export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
 }
 
-export function limitDecimalsDisplayed(input: string | number) {
-  const DECIMAL_PLACES_TO_DISPLAY = 6;
+export function limitDecimalsDisplayed(input: string | number | undefined, decimalPlaces = 6) {
+  if (input === undefined) return "";
 
   if (typeof input === "string") {
     const [integer, decimal] = input.split(".");
 
-    if (decimal === undefined || decimal.length <= DECIMAL_PLACES_TO_DISPLAY) {
+    if (decimal === undefined || decimal.length <= decimalPlaces) {
       return input;
     }
 
-    return integer + "." + decimal.slice(0, DECIMAL_PLACES_TO_DISPLAY);
+    return integer + "." + decimal.slice(0, decimalPlaces);
   }
 
   if (isNaN(input)) return "";
 
-  const decimalScalingFactor = Math.pow(10, DECIMAL_PLACES_TO_DISPLAY);
+  const decimalScalingFactor = Math.pow(10, decimalPlaces);
 
   const flooredAndLimitedDecimalPlacesNumber =
     Math.floor((input) * decimalScalingFactor) / decimalScalingFactor;

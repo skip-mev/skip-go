@@ -40,10 +40,8 @@ export const SwapPageAssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
 }: AssetChainInputProps) => {
-
   const theme = useTheme();
-  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
-    useState(false);
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
 
   const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
@@ -62,8 +60,7 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
-
-    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest)));
+    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest), assetDetails?.decimals))
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -73,19 +70,14 @@ export const SwapPageAssetChainInput = ({
 
     switch (event.key) {
       case "Escape":
-        if (
-          event.currentTarget.selectionStart ===
-          event.currentTarget.selectionEnd
-        ) {
+        if (event.currentTarget.selectionStart === event.currentTarget.selectionEnd) {
           event.currentTarget.select();
         }
         return;
 
       case "ArrowUp":
         event.preventDefault();
-        value = new BigNumber(
-          formatNumberWithoutCommas(event.currentTarget.value) || "0"
-        );
+        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
 
         if (event.shiftKey) {
           value = value.plus(10);
@@ -104,9 +96,7 @@ export const SwapPageAssetChainInput = ({
 
       case "ArrowDown":
         event.preventDefault();
-        value = new BigNumber(
-          formatNumberWithoutCommas(event.currentTarget.value) || "0"
-        );
+        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
 
         if (event.shiftKey) {
           value = value.minus(10);
@@ -143,21 +133,20 @@ export const SwapPageAssetChainInput = ({
     theme.success.text,
   ]);
 
+  const displayedValue = formatNumberWithCommas(value || "");
+
   return (
-    <StyledAssetChainInputWrapper
-      justify="space-between"
-      padding={20}
-      borderRadius={25}
-    >
+    <StyledAssetChainInputWrapper justify="space-between" padding={20} borderRadius={25}>
       <Row justify="space-between">
         <StyledInput
           type="text"
-          value={formatNumberWithCommas(value || "")}
+          value={displayedValue}
           placeholder="0"
           inputMode="numeric"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
+          valueLength={displayedValue.length}
         />
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
@@ -185,29 +174,22 @@ export const SwapPageAssetChainInput = ({
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
-              {(usdValue && formatUSD(usdValue))}
+              {usdValue && formatUSD(usdValue)}
             </SmallTextButton>
             <TinyTriangleIcon
               color={priceChangeColor}
               direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
-            {(showPriceChangePercentage) && (
-              <SmallText color={priceChangeColor}>
-                {priceChangePercentage}%
-              </SmallText>
+            {showPriceChangePercentage && (
+              <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
           </Row>
         ) : (
-          <SmallText>{(usdValue && formatUSD(usdValue))}</SmallText>
+          <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <GhostButton
-            onClick={handleChangeChain}
-            align="center"
-            secondary
-            gap={4}
-          >
+          <GhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
             <SmallText>on {assetDetails?.chainName}</SmallText>
             <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
@@ -225,9 +207,15 @@ const StyledAssetChainInputWrapper = styled(Column)`
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
-const StyledInput = styled.input<{ isWaitingToUpdateInputValue?: boolean }>`
+const StyledInput = styled.input<{
+  isWaitingToUpdateInputValue?: boolean;
+  valueLength: number;
+}>`
   all: unset;
-  font-size: 38px;
+  font-size: ${({ valueLength }) => {
+    let fontSize = valueLength > 15 ? 28 : valueLength > 10 ? 32 : 38;
+    return `${fontSize}px`;
+  }};
   font-weight: 300;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
