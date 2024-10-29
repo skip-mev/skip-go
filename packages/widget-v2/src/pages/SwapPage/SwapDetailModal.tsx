@@ -267,12 +267,6 @@ const SwapDetailText = styled(Row).attrs({
   letter-spacing: 0.26px;
 `;
 
-const StyledEvmWarningMessage = styled.div`
-  padding: 12px;
-  border-radius: 5px;
-  background-color: ${({ theme }) => theme.warning.background};
-`;
-
 const Tooltip = styled(SmallText).attrs({
   normalTextColor: true,
 })`
