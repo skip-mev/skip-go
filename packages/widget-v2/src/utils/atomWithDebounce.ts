@@ -10,6 +10,7 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
   // inconsistent state between currentValueAtom and debouncedValueAtom
   const _currentValueAtom = atom<T>();
   const isDebouncingAtom = atom(false);
+  const valueInitialized = atom(false);
 
   // Atom for debounced value
   const debouncedValueAtom = atom(
@@ -26,6 +27,7 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
       const onDebounceStart = () => {
         set(_currentValueAtom, nextValue);
         set(isDebouncingAtom, true);
+        set(valueInitialized, true);
       };
 
       const onDebounceEnd = () => {
@@ -58,5 +60,6 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
     isDebouncingAtom,
     clearTimeoutAtom,
     debouncedValueAtom,
+    valueInitialized,
   };
 }

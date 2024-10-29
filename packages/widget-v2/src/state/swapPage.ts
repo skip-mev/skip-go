@@ -13,10 +13,12 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 export const {
   debouncedValueAtom: debouncedSourceAssetAmountAtom,
+  valueInitialized: debouncedSourceAssetAmountValueInitializedAtom,
 } = atomWithDebounce<string | undefined>();
 
 export const {
   debouncedValueAtom: debouncedDestinationAssetAmountAtom,
+  valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
 } = atomWithDebounce<string | undefined>();
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(

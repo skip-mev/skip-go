@@ -13,18 +13,22 @@ import {
   debouncedDestinationAssetAmountAtom,
   isInvertingSwapAtom,
   routeAmountEffect,
+  debouncedSourceAssetAmountValueInitializedAtom,
+  debouncedDestinationAssetAmountValueInitializedAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
 
 export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
+  const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
 
-  if (sourceAsset?.amount) {
+  if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
     set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
   }
 
-  if (destinationAsset?.amount) {
+  if (destinationAsset?.amount && !debouncedDestinationAssetInitialized) {
     set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
   }
 });
