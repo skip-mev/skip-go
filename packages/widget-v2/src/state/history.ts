@@ -40,12 +40,12 @@ export const removeTransactionHistoryItemAtom = atom(
     if (index < 0) return;
     if (index >= history.length) return;
 
-    const newHistory = history;
-    newHistory.splice(index, 1);
+    // Create a new array without mutating the original
+    const newHistory = history.filter((_, i) => i !== index);
 
     set(transactionHistoryAtom, newHistory);
   }
-);
+)
 
 export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
   const skip = get(skipClient);

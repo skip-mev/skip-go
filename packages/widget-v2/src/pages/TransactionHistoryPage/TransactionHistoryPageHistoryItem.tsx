@@ -43,6 +43,7 @@ export const TransactionHistoryPageHistoryItem = ({
   });
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
+
   const {
     route: {
       amountIn,
@@ -146,6 +147,29 @@ export const TransactionHistoryPageHistoryItem = ({
   );
 };
 
+
+const RenderAssetAmount = ({
+  amount,
+  asset,
+  assetImage,
+}: {
+  amount?: string;
+  asset?: ClientAsset;
+  assetImage: string;
+}) => {
+  return (
+    <>
+      <img height={20} width={20} src={assetImage} />
+      <StyledAssetAmount normalTextColor title={amount}>
+        {amount}
+      </StyledAssetAmount>
+      <SmallText normalTextColor>
+        {asset?.recommendedSymbol ?? asset?.symbol}
+      </SmallText>
+    </>
+  );
+};
+
 const StyledHistoryContainer = styled(Column) <{ showDetails?: boolean }>`
   background-color: ${({ theme, showDetails }) =>
     showDetails && theme.secondary.background.normal};
@@ -170,28 +194,6 @@ const StyledGreenDot = styled.div`
   border-radius: 50%;
 `;
 
-const RenderAssetAmount = ({
-  amount,
-  asset,
-  assetImage,
-}: {
-  amount?: string;
-  asset?: ClientAsset;
-  assetImage: string;
-}) => {
-  return (
-    <>
-      <img height={20} width={20} src={assetImage} />
-      <StyledAssetAmount normalTextColor title={amount}>
-        {amount}
-      </StyledAssetAmount>
-      <SmallText normalTextColor>
-        {asset?.recommendedSymbol ?? asset?.symbol}
-      </SmallText>
-    </>
-  );
-};
-
 const StyledAssetAmount = styled(SmallText)`
   max-width: 40px;
   text-overflow: ellipsis;
@@ -199,7 +201,7 @@ const StyledAssetAmount = styled(SmallText)`
 `;
 
 const StyledChainName = styled(SmallText)`
-  max-width: 95px;
+  max-width: 85px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

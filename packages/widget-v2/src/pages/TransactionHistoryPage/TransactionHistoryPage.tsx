@@ -20,10 +20,9 @@ export const TransactionHistoryPage = () => {
   >();
   const txHistory = useAtomValue(transactionHistoryAtom);
   const historyList = useMemo(() => {
-    return txHistory.sort((a, b) => {
-      return b.timestamp - a.timestamp;
-    });
+    return txHistory.sort((a, b) => b.timestamp - a.timestamp);
   }, [txHistory]);
+
   return (
     <Column gap={5}>
       <SwapPageHeader
