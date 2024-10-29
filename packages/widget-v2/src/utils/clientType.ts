@@ -24,6 +24,8 @@ import {
   TxStatusResponse,
 } from "@skip-go/client";
 
+export type OverallStatus = "pending" | "success" | "failed"
+
 export enum OperationType {
   swap = "swap",
   evmSwap = "evmSwap",
@@ -268,13 +270,13 @@ export function getTransferEventsFromTxStatusResponse(
   });
 }
 
-export function getSimpleOverallStatus(state: StatusState) {
+export function getSimpleOverallStatus(state: StatusState): OverallStatus {
   switch (state) {
     case "STATE_SUBMITTED":
     case "STATE_PENDING":
       return "pending";
     case "STATE_COMPLETED_SUCCESS":
-      return "completed";
+      return "success";
     case "STATE_COMPLETED_ERROR":
     case "STATE_PENDING_ERROR":
     default:
