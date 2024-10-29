@@ -9,7 +9,7 @@ export type TxsStatus = {
   isSuccess: boolean;
   isSettled: boolean;
   transferEvents: ClientTransferEvent[];
-  lastTxStatus?: OverallStatus
+  lastTxStatus?: OverallStatus;
 };
 
 export const useBroadcastedTxsStatus = ({
