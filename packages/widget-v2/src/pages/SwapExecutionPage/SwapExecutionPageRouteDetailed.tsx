@@ -10,10 +10,12 @@ import { useMemo, useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
+import { EvmDisclaimer } from "@/components/EvmDisclaimer";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -50,8 +52,11 @@ export const SwapExecutionPageRouteDetailed = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
-  const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
-  const [{ data: bridges }] = useAtom(skipBridgesAtom);
+  const { route } = useAtomValue(
+    swapExecutionStateAtom
+  );
+  const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
+  const { data: bridges } = useAtomValue(skipBridgesAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -83,75 +88,78 @@ export const SwapExecutionPageRouteDetailed = ({
 
   return (
     <StyledSwapExecutionPageRoute>
-      <SwapExecutionPageRouteDetailedRow
-        tokenAmount={firstOperation.amountIn}
-        denom={firstOperation.denomIn}
-        chainId={firstOperation.fromChainID}
-        explorerLink={status?.[0]?.fromExplorerLink}
-        status={firstOpStatus}
-        context="source"
-        index={0}
-      />
-      {operations.map((operation, index) => {
-        const simpleOperationType =
-          operationTypeToSimpleOperationType[operation.type];
+      <Column>
+        <SwapExecutionPageRouteDetailedRow
+          tokenAmount={firstOperation.amountIn}
+          denom={firstOperation.denomIn}
+          chainId={firstOperation.fromChainID}
+          explorerLink={status?.[0]?.fromExplorerLink}
+          status={firstOpStatus}
+          context="source"
+          index={0}
+        />
+        {operations.map((operation, index) => {
+          const simpleOperationType =
+            operationTypeToSimpleOperationType[operation.type];
 
-        const getBridgeSwapVenue = () => {
-          const swapVenueId = operation.swapVenues?.[0]?.chainID;
-          const bridgeId = operation.bridgeID;
+          const getBridgeSwapVenue = () => {
+            const swapVenueId = operation.swapVenues?.[0]?.chainID;
+            const bridgeId = operation.bridgeID;
 
-          const bridge = bridges?.find(bridge => bridge.id === bridgeId);
-          const swapVenue = swapVenues?.find(swapVenue => swapVenue.chainID === swapVenueId);
+            const bridge = bridges?.find(bridge => bridge.id === bridgeId);
+            const swapVenue = swapVenues?.find(swapVenue => swapVenue.chainID === swapVenueId);
 
-          const bridgeOrSwapVenue = {
-            name: bridge?.name ?? swapVenue?.name,
-            image: bridge?.logoURI ?? swapVenue?.logoUri,
+            const bridgeOrSwapVenue = {
+              name: bridge?.name ?? swapVenue?.name,
+              image: bridge?.logoURI ?? swapVenue?.logoUri,
+            };
+
+            return bridgeOrSwapVenue;
           };
 
-          return bridgeOrSwapVenue;
-        };
+          const bridgeOrSwapVenue = getBridgeSwapVenue();
+          const nextOperation = operations[index + 1];
 
-        const bridgeOrSwapVenue = getBridgeSwapVenue();
-        const nextOperation = operations[index + 1];
+          const asset = {
+            tokenAmount: operation.amountOut,
+            denom: operation.denomOut,
+            chainId: operation.toChainID ?? operation.chainID,
+          };
 
-        const asset = {
-          tokenAmount: operation.amountOut,
-          denom: operation.denomOut,
-          chainId: operation.toChainID ?? operation.chainID,
-        };
+          const explorerLink = operation.isSwap ? status?.[operation.transferIndex]?.fromExplorerLink : status?.[operation.transferIndex]?.toExplorerLink;
+          const opStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[operation.transferIndex]?.status;
 
-        const explorerLink = operation.isSwap ? status?.[operation.transferIndex]?.fromExplorerLink : status?.[operation.transferIndex]?.toExplorerLink;
-        const opStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[operation.transferIndex]?.status;
-
-        return (
-          <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
-            <StyledOperationTypeAndTooltipContainer style={{ height: "25px", position: "relative" }} align="center">
-              <OperationTypeIconContainer
-                onMouseEnter={() => handleMouseEnterOperationType(index)}
-                onMouseLeave={() => handleMouseLeaveOperationType(index)}
-                justify="center"
-              >
-                {operationTypeToIcon[operation.type]}
-              </OperationTypeIconContainer>
-              {tooltipMap?.[index] && (
-                <Tooltip>
-                  {simpleOperationType} with {bridgeOrSwapVenue.name}
-                  <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
-                </Tooltip>
-              )}
-            </StyledOperationTypeAndTooltipContainer>
-            <SwapExecutionPageRouteDetailedRow
-              {...asset}
-              index={index}
-              onClickEditDestinationWallet={onClickEditDestinationWallet}
-              context={index === operations.length - 1 ? "destination" : "intermediary"}
-              isSignRequired={nextOperation?.signRequired}
-              status={opStatus}
-              explorerLink={explorerLink}
-            />
-          </React.Fragment>
-        );
-      })}
+          return (
+            <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
+              <StyledOperationTypeAndTooltipContainer style={{ height: "25px", position: "relative" }} align="center">
+                <OperationTypeIconContainer
+                  onMouseEnter={() => handleMouseEnterOperationType(index)}
+                  onMouseLeave={() => handleMouseLeaveOperationType(index)}
+                  justify="center"
+                >
+                  {operationTypeToIcon[operation.type]}
+                </OperationTypeIconContainer>
+                {tooltipMap?.[index] && (
+                  <Tooltip>
+                    {simpleOperationType} with {bridgeOrSwapVenue.name}
+                    <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
+                  </Tooltip>
+                )}
+              </StyledOperationTypeAndTooltipContainer>
+              <SwapExecutionPageRouteDetailedRow
+                {...asset}
+                index={index}
+                onClickEditDestinationWallet={onClickEditDestinationWallet}
+                context={index === operations.length - 1 ? "destination" : "intermediary"}
+                isSignRequired={nextOperation?.signRequired}
+                status={opStatus}
+                explorerLink={explorerLink}
+              />
+            </React.Fragment>
+          );
+        })}
+      </Column>
+      <EvmDisclaimer route={route} />
     </StyledSwapExecutionPageRoute>
   );
 };
@@ -180,6 +188,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
 
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
+  gap: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;
