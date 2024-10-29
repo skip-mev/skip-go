@@ -167,7 +167,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
               <StyledSlippageOptionLabel
                 monospace
                 selected={val === swapSettings.slippage}
-                onClick={() => setSwapSettings({ slippage: val })}
+                onClick={() => setSwapSettings({ slippage: val, customGasAmount: swapSettings.customGasAmount })}
               >
                 {val}%
               </StyledSlippageOptionLabel>
@@ -175,10 +175,10 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             <div style={{ position: "relative" }}>
               <CustomSlippageInput
                 type="number"
-                value={swapSettings.slippage}
                 selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
+                value={swapSettings.slippage}
                 onChange={(e) =>
-                  setSwapSettings({ slippage: parseFloat(e.target.value) })
+                  setSwapSettings({ slippage: parseFloat(e.target.value), customGasAmount: swapSettings.customGasAmount })
                 }
               />
               <CustomSlippageInputRightIcon

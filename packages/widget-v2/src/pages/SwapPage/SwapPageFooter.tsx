@@ -9,6 +9,8 @@ import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { styled } from "styled-components";
+import { CogIcon } from "@/icons/CogIcon";
+import { swapSettingsAtom, defaultSwapSettings } from "@/state/swapPage";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
@@ -22,37 +24,56 @@ export const SwapPageFooterItems = ({
   showEstimatedTime,
 }: SwapPageFooterItemsProps) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
+  const swapSettings = useAtomValue(swapSettingsAtom); 
+
+  const settingsChanged = useMemo(() => {
+    return (
+      swapSettings.slippage !== defaultSwapSettings.slippage ||
+      swapSettings.customGasAmount !== defaultSwapSettings.customGasAmount
+    );
+  }, [swapSettings]);
+
   const estimatedTime = convertSecondsToMinutesOrHours(
     route?.estimatedRouteDurationSeconds
   );
 
-  const renderRightContent = useMemo(() => {
-    if (rightContent) return rightContent;
-    if (isLoading) return;
-    if (showRouteInfo && route) {
-      return (
-        <Row align="center" gap={8}>
-          {
-            route?.txsRequired > 1 && <Row gap={4} align="center">
-              <StyledSignatureRequiredContainer gap={5} align="center">
-                <SignatureIcon />
-                {route?.txsRequired}{" "}
-                {pluralize("Signature", route?.txsRequired)} required
-              </StyledSignatureRequiredContainer>
-            </Row>
-          }
+const renderRightContent = useMemo(() => {
+  if (rightContent) return rightContent;
+  if (isLoading) return;
+  if (showRouteInfo && route) {
+    return (
+      <Row align="center" gap={8}>
+        {route?.txsRequired > 1 && (
+          <Row gap={4} align="center">
+            <StyledSignatureRequiredContainer gap={5} align="center">
+              <SignatureIcon />
+              {route?.txsRequired} {pluralize("Signature", route?.txsRequired)} required
+            </StyledSignatureRequiredContainer>
+          </Row>
+        )}
 
-
-          {showEstimatedTime && estimatedTime && (
-            <Row gap={4} align="center">
-              <SpeedometerIcon />
-              {estimatedTime}.
-            </Row>
-          )}
-        </Row>
-      );
-    }
-  }, [estimatedTime, isLoading, rightContent, route, showEstimatedTime, showRouteInfo]);
+        {showEstimatedTime && estimatedTime && (
+          <Row gap={6} align="center">
+            <SpeedometerIcon />
+            {estimatedTime}
+            <CogIconWrapper>
+              <CogIcon height={13} width={13} />
+              {settingsChanged && <SettingsChangedIndicator />}
+            </CogIconWrapper>
+          </Row>
+        )}
+      </Row>
+    );
+  }
+}, [
+  estimatedTime,
+  isLoading,
+  rightContent,
+  route,
+  showEstimatedTime,
+  showRouteInfo,
+  settingsChanged,
+]);
 
   return (
     <>
@@ -92,4 +113,19 @@ export const SwapPageFooter = ({
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
+`;
+
+const CogIconWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const SettingsChangedIndicator = styled.div`
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 5px;
+  height: 5px;
+  background-color: white;
+  border-radius: 50%;
 `;

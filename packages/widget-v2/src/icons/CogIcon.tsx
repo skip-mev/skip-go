@@ -1,14 +1,17 @@
 type IconProps = {
   color?: string;
+  height?: number;
+  width?: number;
 };
 
-export const CogIcon = ({ color = "currentColor" }: IconProps) => (
+export const CogIcon = ({ color = "currentColor", ...props }: IconProps) => (
   <svg
     width="10"
     height="10"
     viewBox="0 0 10 10"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    {...props}
   >
     <g opacity="0.5">
       <path
