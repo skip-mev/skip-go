@@ -10,11 +10,12 @@ import { useMemo, useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
 import { EvmDisclaimer } from "@/components/EvmDisclaimer";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -51,8 +52,11 @@ export const SwapExecutionPageRouteDetailed = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
-  const [{ data: swapVenues }] = useAtom(skipSwapVenuesAtom);
-  const [{ data: bridges }] = useAtom(skipBridgesAtom);
+  const { route } = useAtomValue(
+    swapExecutionStateAtom
+  );
+  const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
+  const { data: bridges } = useAtomValue(skipBridgesAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -155,7 +159,7 @@ export const SwapExecutionPageRouteDetailed = ({
           );
         })}
       </Column>
-      <EvmDisclaimer operations={operations} />
+      <EvmDisclaimer route={route} />
     </StyledSwapExecutionPageRoute>
   );
 };

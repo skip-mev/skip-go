@@ -222,7 +222,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
         </Column>
       )}
 
-      <EvmDisclaimer operations={clientOperations} />
+      <EvmDisclaimer route={route} />
 
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />

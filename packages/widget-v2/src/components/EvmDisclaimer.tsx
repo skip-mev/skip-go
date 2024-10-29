@@ -3,21 +3,20 @@ import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import { SmallText } from "./Typography";
-import { ClientOperation } from "@/utils/clientType";
+import { RouteResponse } from "@skip-go/client";
 
-export const EvmDisclaimer = ({ operations }: { operations?: ClientOperation[] } = {}) => {
+export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const usesEvmInOperations = useMemo(() => {
-    return operations?.find(
-      (operation) => {
-        const chainTypeIn = chains?.find(chain => chain.chainID === operation.fromChainID)?.chainType;
-        const chainTypeOut = chains?.find(chain => chain.chainID === operation.toChainID)?.chainType;
-        return chainTypeIn === "evm" || chainTypeOut === "evm";
+    return route?.requiredChainAddresses?.find(
+      (chainId) => {
+        const chainType = chains?.find(chain => chain.chainID === chainId)?.chainType;
+        return chainType === "evm";
       }
     );
-  }, [chains, operations]);
+  }, [chains, route?.requiredChainAddresses]);
 
   if (usesEvmInOperations) {
     return (
