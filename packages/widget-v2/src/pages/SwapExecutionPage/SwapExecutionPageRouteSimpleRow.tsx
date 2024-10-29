@@ -16,6 +16,9 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
+import {
+  limitDecimalsDisplayed,
+} from "@/utils/number";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -92,7 +95,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.amount} {assetDetails?.symbol}
+          {limitDecimalsDisplayed(assetDetails.amount)} {assetDetails?.symbol}
         </Text>
         {usdValue && (
           <SmallText>
