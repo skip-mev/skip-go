@@ -14,6 +14,20 @@ import {
   isInvertingSwapAtom,
   routeAmountEffect,
 } from "./swapPage";
+import { atomEffect } from "jotai-effect";
+
+export const initializeDebounceValuesEffect = atomEffect((get, set) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+
+  if (sourceAsset?.amount) {
+    set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
+  }
+
+  if (destinationAsset?.amount) {
+    set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
+  }
+});
 
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
@@ -21,6 +35,8 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const direction = get(swapDirectionAtom);
   const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
   const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
+
+  get(initializeDebounceValuesEffect);
 
   if (
     !sourceAsset?.chainID ||
