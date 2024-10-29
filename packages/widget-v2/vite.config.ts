@@ -30,6 +30,10 @@ export default defineConfig({
     }),
     nodePolyfills(),
   ],
+  optimizeDeps: {
+    include: ["@skip-go/client"],
+    force: true, // This forces Vite to optimize this dependency
+  },
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points

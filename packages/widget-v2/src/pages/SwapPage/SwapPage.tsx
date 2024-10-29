@@ -320,7 +320,7 @@ export const SwapPage = () => {
             }
             usdValue={route?.usdAmountOut}
             value={destinationAsset?.amount}
-            priceChangePercentage={priceChangePercentage}
+            priceChangePercentage={Number(priceChangePercentage)}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={setDestinationAssetAmount}
           />
