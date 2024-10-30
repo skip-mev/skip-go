@@ -18,7 +18,7 @@ const DevMode = () => {
       <Widget
         theme={theme}
         defaultRoute={{
-          amountIn: 5,
+          // amountIn: 5,
           srcChainId: "osmosis-1",
           srcAssetDenom: "uosmo",
           destChainId: "cosmoshub-4",
@@ -26,16 +26,6 @@ const DevMode = () => {
         }}
         settings={{
           slippage: 5,
-        }}
-        filter={{
-          source: {
-            "cosmoshub-4": undefined,
-            "osmosis-1": undefined,
-          },
-          destination: {
-            "cosmoshub-4": ["uatom"],
-            "osmosis-1": undefined,
-          }
         }}
       />
       <Column>

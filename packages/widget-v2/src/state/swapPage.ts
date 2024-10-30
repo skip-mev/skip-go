@@ -50,7 +50,7 @@ export const debouncedDestinationAssetAmountAtom = atom(
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
-  undefined,
+  undefined
 );
 
 export const sourceAssetAmountAtom = atom(
@@ -62,6 +62,11 @@ export const sourceAssetAmountAtom = atom(
     set(swapDirectionAtom, "swap-in");
   }
 );
+
+export const clearInputAmountsAtom = atom(null, (_get, set) => {
+  set(sourceAssetAmountAtom, "");
+  set(destinationAssetAmountAtom, "");
+});
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "destinationAsset",

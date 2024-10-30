@@ -28,6 +28,7 @@ import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 import { useSyncTxStatus } from "./useSyncTxStatus";
+import { clearInputAmountsAtom } from "@/state/swapPage";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -49,6 +50,7 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
   const setManualAddressModal = useModal(SetAddressModal);
+  const clearInputs = useSetAtom(clearInputAmountsAtom);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -176,7 +178,10 @@ export const SwapExecutionPage = () => {
             label="Swap again"
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
-            onClick={() => setCurrentPage(Routes.SwapPage)}
+            onClick={() => {
+              clearInputs();
+              setCurrentPage(Routes.SwapPage)
+            }}
           />
         );
     }
