@@ -138,3 +138,7 @@ export const defaultSwapSettings = {
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
+
+export const setSlippageAtom = atom(null, (_get, set, slippage: number) => {
+  set(swapSettingsAtom, (state) => ({ ...state, slippage }));
+});
