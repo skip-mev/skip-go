@@ -8,7 +8,7 @@ import { chainFilterAtom } from "@/state/swapPage";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
-  searchQuery: string;
+  searchQuery?: string;
   context: "source" | "destination";
 };
 
