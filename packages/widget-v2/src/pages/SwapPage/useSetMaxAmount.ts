@@ -1,7 +1,7 @@
 
 import { convertHumanReadableAmountToCryptoAmount, convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
@@ -71,11 +71,15 @@ export const useMaxAmountTokenMinusFees = () => {
 
 export const useSetMaxAmount = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
-  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
 
   return () => {
     if (maxAmountTokenMinusFees) {
-      setSourceAssetAmount(maxAmountTokenMinusFees);
+      setSourceAsset((old) => ({
+        ...old,
+        amount: maxAmountTokenMinusFees,
+      })
+      );
     }
   };
 };

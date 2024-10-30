@@ -36,7 +36,6 @@ import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWal
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
-import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 
 export const SwapPage = () => {
@@ -61,21 +60,19 @@ export const SwapPage = () => {
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
-
   const swapDetailsModal = useModal(SwapDetailModal);
   const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const connectedWalletModal = useModal(ConnectedWalletModal);
-
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-  useFetchAllBalances();
-  useCleanupDebouncedAtoms();
-  useUpdateAmountWhenRouteChanges();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
-
   const { chainId: evmChainId, connector } = useAccount();
+
+  useFetchAllBalances();
+  useUpdateAmountWhenRouteChanges();
+
   const evmAddress = evmChainId
     ? getAccount(String(evmChainId))?.address
     : undefined;

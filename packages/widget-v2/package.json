@@ -83,7 +83,6 @@
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
-    "lodash.debounce": "^4.0.8",
     "match-sorter": "^6.3.4",
     "pluralize": "^8.0.0",
     "rc-virtual-list": "^3.14.5",

@@ -9,37 +9,13 @@ import {
   sourceAssetAtom,
   destinationAssetAtom,
   swapDirectionAtom,
-  debouncedSourceAssetAmountAtom,
-  debouncedDestinationAssetAmountAtom,
   isInvertingSwapAtom,
-  debouncedSourceAssetAmountValueInitializedAtom,
-  debouncedDestinationAssetAmountValueInitializedAtom,
 } from "./swapPage";
-import { atomEffect } from "jotai-effect";
-
-export const initializeDebounceValuesEffect = atomEffect((get, set) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
-  const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
-  const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
-
-  if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
-    set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
-  }
-
-  if (destinationAsset?.amount && !debouncedDestinationAssetInitialized) {
-    set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
-  }
-});
 
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const direction = get(swapDirectionAtom);
-  const sourceAssetAmount = get(debouncedSourceAssetAmountAtom);
-  const destinationAssetAmount = get(debouncedDestinationAssetAmountAtom);
-
-  get(initializeDebounceValuesEffect);
 
   if (
     !sourceAsset?.chainID ||
@@ -53,13 +29,13 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
     direction === "swap-in"
       ? {
         amountIn: convertHumanReadableAmountToCryptoAmount(
-          sourceAssetAmount ?? "0",
+          sourceAsset?.amount ?? "0",
           sourceAsset.decimals
         ),
       }
       : {
         amountOut: convertHumanReadableAmountToCryptoAmount(
-          destinationAssetAmount ?? "0",
+          destinationAsset?.amount ?? "0",
           destinationAsset.decimals
         ),
       };
@@ -104,6 +80,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const skipRouteConfig = get(routeConfigAtom);
+  console.log('')
 
   const queryEnabled =
     params !== undefined &&

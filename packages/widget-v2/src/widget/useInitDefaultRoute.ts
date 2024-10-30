@@ -1,5 +1,5 @@
 import { skipAssetsAtom } from "@/state/skipClient";
-import { sourceAssetAtom, destinationAssetAtom, sourceAssetAmountAtom, destinationAssetAmountAtom } from "@/state/swapPage";
+import { sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { useSetAtom, useAtom } from "jotai";
 import { useCallback, useLayoutEffect } from "react";
 
@@ -15,8 +15,6 @@ export type DefaultRouteConfig = {
 export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setDestinationAsset = useSetAtom(destinationAssetAtom);
-  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
-  const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
 
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
@@ -50,11 +48,6 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
         ...sourceAsset,
         amount: amountIn?.toString(),
       });
-      if (amountIn) {
-        setSourceAssetAmount(amountIn?.toString());
-      } else if (amountOut) {
-        setDestinationAssetAmount(amountOut?.toString());
-      }
     }
-  }, [assets, defaultRoute, getClientAsset, setDestinationAsset, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
+  }, [assets, defaultRoute, getClientAsset, setDestinationAsset, setSourceAsset]);
 };

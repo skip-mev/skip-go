@@ -8,18 +8,6 @@ export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
 };
 
-export const {
-  debouncedValueAtom: debouncedSourceAssetAmountAtom,
-  valueInitialized: debouncedSourceAssetAmountValueInitializedAtom,
-  clearTimeoutAtom: cleanupDebouncedSourceAssetAmountAtom,
-} = atomWithDebounce<string | undefined>();
-
-export const {
-  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
-  valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
-  clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
-} = atomWithDebounce<string | undefined>();
-
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
   undefined
@@ -30,7 +18,6 @@ export const sourceAssetAmountAtom = atom(
   (get, set, newAmount: string) => {
     const oldSourceAsset = get(sourceAssetAtom);
     set(sourceAssetAtom, { ...oldSourceAsset, amount: newAmount });
-    set(debouncedSourceAssetAmountAtom, newAmount);
     set(swapDirectionAtom, "swap-in");
   }
 );
@@ -50,25 +37,14 @@ export const destinationAssetAmountAtom = atom(
   (get, set, newAmount: string, callback?: () => void) => {
     const oldDestinationAsset = get(destinationAssetAtom);
     set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
-    set(debouncedDestinationAssetAmountAtom, newAmount, callback);
     set(swapDirectionAtom, "swap-out");
+    callback?.();
   }
 );
 
 export const isWaitingForNewRouteAtom = atom((get) => {
-  const sourceAmount = get(sourceAssetAmountAtom);
-  const destinationAmount = get(destinationAssetAmountAtom);
-  const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
-  const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
-
   const { isLoading } = get(skipRouteAtom);
-  const direction = get(swapDirectionAtom);
-
-  if (direction === "swap-in") {
-    return sourceAmount !== debouncedSourceAmount || isLoading;
-  } else if (direction === "swap-out") {
-    return destinationAmount !== debouncedDestinationAmount || isLoading;
-  }
+  return isLoading
 });
 
 export type SwapDirection = "swap-in" | "swap-out";
