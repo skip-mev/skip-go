@@ -24,7 +24,9 @@ import {
   SigningStargateClient,
   StargateClient,
   StdFee,
+  accountFromAny,
 } from '@cosmjs/stargate';
+import { accountParser } from './registry';
 import {
   ChainRestAuthApi,
   ChainRestTendermintApi,
@@ -40,7 +42,6 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
 
-import { accountParser } from './parser';
 import { publicActions, WalletClient } from 'viem';
 
 import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
@@ -1514,7 +1515,7 @@ export class SkipClient {
       }
     }
 
-    console.warn('Warning: You are using unreliable public endpoints. We strongly reccomend overriding them via endpointOptions for use beyond development settings.');
+    console.warn('Warning: You are using unreliable public endpoints. We strongly recommend overriding them via endpointOptions for use beyond development settings.');
 
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
