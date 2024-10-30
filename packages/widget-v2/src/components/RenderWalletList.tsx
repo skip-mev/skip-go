@@ -215,6 +215,9 @@ export const RenderWalletList = ({
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
         itemKey={(item) => item.walletName}
+        empty={{
+          details: "No wallets available",
+        }}
       />
     );
   }, [

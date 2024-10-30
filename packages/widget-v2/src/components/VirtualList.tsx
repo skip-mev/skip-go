@@ -1,7 +1,9 @@
 import List, { ListRef } from "rc-virtual-list";
 import { getHexColor, opacityToHex } from "@/utils/colors";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useEffect, useRef, useState } from "react";
+import { Column } from "./Layout";
+import { SmallText, Text } from "./Typography";
 
 export type VirtualListProps<T> = {
   listItems: T[];
@@ -11,6 +13,11 @@ export type VirtualListProps<T> = {
   renderItem: (item: T, index: number) => React.ReactNode;
   itemKey: (item: T) => string;
   className?: string;
+  empty?: {
+    header?: string;
+    details?: string;
+    icon?: React.ReactNode;
+  };
 };
 
 export const VirtualList = <T,>({
@@ -20,6 +27,7 @@ export const VirtualList = <T,>({
   renderItem,
   itemKey,
   className,
+  empty,
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
@@ -67,6 +75,16 @@ export const VirtualList = <T,>({
     }, 0);
   }, [listItems.length]);
 
+  if (listItems.length === 0 && empty) {
+    return (
+      <StyledNoResultsContainer align="center" justify="center" gap={5}>
+        {empty?.icon}
+        <Text>{empty?.header}</Text>
+        <SmallText>{empty?.details}</SmallText>
+      </StyledNoResultsContainer>
+    );
+  }
+
   return (
     <List
       ref={listRef}
@@ -91,3 +109,8 @@ export const VirtualList = <T,>({
     </List>
   );
 };
+
+const StyledNoResultsContainer = styled(Column)`
+  height: 100%;
+  width: 100%;
+`;

@@ -111,10 +111,10 @@ export const TransactionHistoryPageHistoryItem = ({
       return "In Progress";
     }
     return formatDistanceStrict(new Date(timestamp), new Date(), { addSuffix: true })
-      .replace(" minutes", " mins")
-      .replace(" minute", " min")
-      .replace(" hours", " hrs")
-      .replace(" hour", " hr")
+      .replace("minutes", "mins")
+      .replace("minute", "min")
+      .replace("hours", "hrs")
+      .replace("hour", "hr")
   }, [status, timestamp]);
 
   return (
