@@ -4,11 +4,11 @@ import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { SwapPageFooterItems } from "./SwapPageFooter";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { useMemo, useState } from "react";
-import { setSlippageAtom, swapSettingsAtom } from "@/state/swapPage";
+import { swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
@@ -20,8 +20,7 @@ import { EvmDisclaimer } from "@/components/EvmDisclaimer";
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const swapSettings = useAtomValue(swapSettingsAtom);
-  const setSlippage = useSetAtom(setSlippageAtom);
+  const [swapSettings, setSwapSettings] = useAtom(swapSettingsAtom);
   const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const chainsRoute = useMemo(() => {
     return route?.chainIDs.map((chainID) =>
@@ -164,13 +163,13 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             )}
           </SwapDetailText>
           <Row gap={4}>
-            {SLIPPAGE_OPTIONS.map((slippage) => (
+            {SLIPPAGE_OPTIONS.map((val) => (
               <StyledSlippageOptionLabel
                 monospace
-                selected={slippage === swapSettings.slippage}
-                onClick={() => setSlippage(slippage)}
+                selected={val === swapSettings.slippage}
+                onClick={() => setSwapSettings({ slippage: val })}
               >
-                {slippage}%
+                {val}%
               </StyledSlippageOptionLabel>
             ))}
             <div style={{ position: "relative" }}>
@@ -179,7 +178,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
                 value={swapSettings.slippage}
                 selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
                 onChange={(e) =>
-                  setSlippage(parseFloat(e.target.value))
+                  setSwapSettings({ slippage: parseFloat(e.target.value) })
                 }
               />
               <CustomSlippageInputRightIcon

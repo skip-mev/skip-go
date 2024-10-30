@@ -9,16 +9,44 @@ export type AssetAtom = Partial<ClientAsset> & {
 };
 
 export const {
-  debouncedValueAtom: debouncedSourceAssetAmountAtom,
+  debouncedValueAtom: _debouncedSourceAssetAmountAtom,
   valueInitialized: debouncedSourceAssetAmountValueInitializedAtom,
-  cleanupAtom: cleanupDebouncedSourceAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
 export const {
-  debouncedValueAtom: debouncedDestinationAssetAmountAtom,
+  debouncedValueAtom: _debouncedDestinationAssetAmountAtom,
   valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
-  cleanupAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
+
+export const debouncedSourceAssetAmountAtom = atom(
+  (get) => {
+    const initialized = get(debouncedSourceAssetAmountValueInitializedAtom);
+    const debouncedValue = get(_debouncedSourceAssetAmountAtom);
+
+    if (initialized === false && !debouncedValue) {
+      return get(sourceAssetAtom)?.amount;
+    }
+    return debouncedValue;
+  },
+  (_get, set, newAmount: string) => {
+    set(_debouncedSourceAssetAmountAtom, newAmount);
+  }
+);
+
+export const debouncedDestinationAssetAmountAtom = atom(
+  (get) => {
+    const initialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
+    const debouncedValue = get(_debouncedDestinationAssetAmountAtom);
+
+    if (initialized === false && !debouncedValue) {
+      return get(destinationAssetAtom)?.amount;
+    }
+    return debouncedValue;
+  },
+  (_get, set, newAmount: string, callback?: () => void) => {
+    set(_debouncedDestinationAssetAmountAtom, newAmount, callback);
+  }
+);
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
@@ -110,7 +138,3 @@ export const defaultSwapSettings = {
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
-
-export const setSlippageAtom = atom(null, (_get, set, slippage: number) => {
-  set(swapSettingsAtom, (state) => ({ ...state, slippage }));
-});
