@@ -1,4 +1,4 @@
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
@@ -94,9 +94,9 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
-        <Text fontSize={24}>
+        <StyledSymbolAndAmount>
           {limitDecimalsDisplayed(assetDetails.amount)} {assetDetails?.symbol}
-        </Text>
+        </StyledSymbolAndAmount>
         {usdValue && (
           <SmallText>
             {formatUSD(usdValue)}
@@ -137,3 +137,10 @@ export const SwapExecutionPageRouteSimpleRow = ({
     </Row>
   );
 };
+
+const StyledSymbolAndAmount = styled(Text)`
+  font-size: 24px;
+  max-width: 325px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;

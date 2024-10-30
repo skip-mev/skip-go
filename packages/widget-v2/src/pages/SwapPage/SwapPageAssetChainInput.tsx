@@ -59,7 +59,8 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
-    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest), assetDetails?.decimals))
+    const formattedValue = formatNumberWithoutCommas(latest)
+    onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -218,6 +219,7 @@ const StyledInput = styled.input<{
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
+  height: 50px;
 
   ${(props) =>
     props.isWaitingToUpdateInputValue &&
