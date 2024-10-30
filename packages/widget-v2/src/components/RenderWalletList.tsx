@@ -70,7 +70,13 @@ export const RenderWalletList = ({
               chainID: chainId,
               chainType: chainType as "evm" | "cosmos" | "svm",
               address: address,
-              source: "input",
+              source: "wallet",
+              wallet: {
+                walletName: wallet.walletName,
+                walletPrettyName: wallet.walletPrettyName,
+                walletChainType: wallet.walletChainType,
+                walletInfo: wallet.walletInfo,
+              },
             },
           };
         });

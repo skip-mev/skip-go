@@ -3,7 +3,7 @@ import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
 import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
@@ -16,6 +16,9 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
+import {
+  limitDecimalsDisplayed,
+} from "@/utils/number";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -29,7 +32,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   context: "source" | "destination";
 };
 
-export const SwapExecutionPageRouteSimpleRow = memo(({
+export const SwapExecutionPageRouteSimpleRow = ({
   denom,
   tokenAmount,
   usdValue,
@@ -92,7 +95,7 @@ export const SwapExecutionPageRouteSimpleRow = memo(({
       )}
       <Column gap={5}>
         <Text fontSize={24}>
-          {assetDetails.amount} {assetDetails?.symbol}
+          {limitDecimalsDisplayed(assetDetails.amount)} {assetDetails?.symbol}
         </Text>
         {usdValue && (
           <SmallText>
@@ -133,4 +136,4 @@ export const SwapExecutionPageRouteSimpleRow = memo(({
       </Column>
     </Row>
   );
-});
+};

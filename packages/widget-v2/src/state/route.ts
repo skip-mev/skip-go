@@ -1,5 +1,5 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
-import { RouteRequest, RouteResponse } from "@skip-go/client";
+import { BridgeType, ExperimentalFeature, RouteRequest, RouteResponse, SmartSwapOptions, SwapVenueRequest } from "@skip-go/client";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { errorAtom } from "./errorPage";
@@ -12,7 +12,6 @@ import {
   debouncedSourceAssetAmountAtom,
   debouncedDestinationAssetAmountAtom,
   isInvertingSwapAtom,
-  routeAmountEffect,
 } from "./swapPage";
 
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
@@ -59,14 +58,32 @@ type CaughtRouteError = {
   error: unknown;
 };
 
+export type RouteConfig = {
+  experimentalFeatures?: ExperimentalFeature[];
+  allowMultiTx?: boolean;
+  allowUnsafe?: boolean;
+  bridges?: BridgeType[];
+  swapVenues?: SwapVenueRequest[];
+  smartSwapOptions?: SmartSwapOptions;
+}
+
+export const routeConfigAtom = atom<RouteConfig>({
+  experimentalFeatures: ["hyperlane"],
+  allowMultiTx: true,
+  allowUnsafe: true,
+  smartSwapOptions: {
+    splitRoutes: true,
+    evmSwaps: true,
+  },
+});
+
 export const _skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
-
-  get(routeAmountEffect);
+  const skipRouteConfig = get(routeConfigAtom);
 
   const queryEnabled =
     params !== undefined &&
@@ -85,13 +102,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
         const response = await skip.route({
           ...params,
           smartRelay: true,
-          smartSwapOptions: {
-            splitRoutes: true,
-            evmSwaps: true,
-          },
-          experimentalFeatures: ["hyperlane"],
-          allowMultiTx: true,
-          allowUnsafe: true,
+          ...skipRouteConfig,
         });
         return response;
       } catch (error) {

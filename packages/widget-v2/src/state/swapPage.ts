@@ -1,10 +1,7 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
-import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { limitDecimalsDisplayed } from "@/utils/number";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
@@ -128,38 +125,20 @@ export const invertSwapAtom = atom(null, (get, set) => {
   }
 });
 
-export const routeAmountEffect = atomEffect((get, set) => {
-  const route = get(skipRouteAtom);
-  const direction = get(swapDirectionAtom);
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
+export type ChainFilter = {
+  source?: Record<string, string[] | undefined>;
+  destination?: Record<string, string[] | undefined>;
+};
 
-  if (!route.data || !sourceAsset || !destinationAsset) return;
+export const chainFilterAtom = atom<ChainFilter>();
 
-  const swapInAmount = convertTokenAmountToHumanReadableAmount(
-    route.data.amountOut,
-    destinationAsset.decimals
-  );
-  const swapOutAmount = convertTokenAmountToHumanReadableAmount(
-    route.data.amountIn,
-    sourceAsset.decimals
-  );
-  const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
-  const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
-
-  if (direction === "swap-in" && swapInAmountChanged) {
-    set(destinationAssetAtom, (old) => ({
-      ...old,
-      amount: limitDecimalsDisplayed(swapInAmount),
-    }));
-  } else if (direction === "swap-out" && swapOutAmountChanged) {
-    set(sourceAssetAtom, (old) => ({
-      ...old,
-      amount: limitDecimalsDisplayed(swapOutAmount),
-    }));
-  }
-});
-
-export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", {
+export const defaultSwapSettings = {
   slippage: 3,
+  customGasAmount: 200_000
+};
+
+export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
+
+export const setSlippageAtom = atom(null, (_get, set, slippage: number) => {
+  set(swapSettingsAtom, (state) => ({ ...state, slippage }));
 });

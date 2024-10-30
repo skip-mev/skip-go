@@ -7,10 +7,9 @@ import {
   svmWalletAtom,
   walletsAtom,
 } from "@/state/wallets";
-import { Key } from "@keplr-wallet/types";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 
 export const useGetAccount = () => {
@@ -18,19 +17,11 @@ export const useGetAccount = () => {
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
-  const [cosmosAccounts, setCosmosAccounts] = useState<Record<string, Key> | undefined>();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { data: _cosmosAccount, walletType } = useCosmosAccount({
+  const { data: cosmosAccounts, walletType } = useCosmosAccount({
     multiChain: true,
   });
-
-  useEffect(() => {
-    // hack to work around useCosmosAccount constantly updating data
-    if (_cosmosAccount && JSON.stringify(_cosmosAccount) !== JSON.stringify(cosmosAccounts)) {
-      setCosmosAccounts(_cosmosAccount as Record<string, Key>);
-    }
-  }, [_cosmosAccount, cosmosAccounts]);
 
   const solanaWallet = solanaWallets.find(
     (w) => w.name === wallet.svm?.walletName

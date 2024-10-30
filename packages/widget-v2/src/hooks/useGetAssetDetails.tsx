@@ -16,6 +16,7 @@ export type AssetDetailsProps = {
   chainImage?: string;
   amount?: string;
   tokenAmount?: string;
+  decimals?: number;
 };
 
 /**
@@ -72,6 +73,7 @@ export const useGetAssetDetails = ({
   });
   const chainName = chain?.prettyName ?? chain?.chainName;
   const chainImage = chain?.logoURI;
+  const decimals = asset?.decimals;
 
   if (!chainId) {
     return {
@@ -95,5 +97,6 @@ export const useGetAssetDetails = ({
     symbol,
     amount,
     tokenAmount,
+    decimals
   };
 };

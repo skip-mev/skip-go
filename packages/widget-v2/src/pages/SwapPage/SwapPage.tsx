@@ -17,7 +17,7 @@ import {
   setSwapExecutionStateAtom,
   chainAddressesAtom,
 } from "@/state/swapExecutionPage";
-import { TokenAndChainSelectorModal } from "@/modals/TokenAndChainSelectorModal/TokenAndChainSelectorModal";
+import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -35,6 +35,8 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
+import { transactionHistoryAtom } from "@/state/history";
+import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -60,14 +62,16 @@ export const SwapPage = () => {
   } = useAtomValue(skipRouteAtom);
 
   const swapDetailsModal = useModal(SwapDetailModal);
-  const tokenAndChainSelectorModal = useModal(TokenAndChainSelectorModal);
+  const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
   const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
+  useUpdateAmountWhenRouteChanges();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
+  const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { chainId: evmChainId, connector } = useAccount();
   const evmAddress = evmChainId ? getAccount(String(evmChainId))?.address : undefined;
@@ -82,7 +86,7 @@ export const SwapPage = () => {
   );
 
   const handleChangeSourceAsset = useCallback(() => {
-    tokenAndChainSelectorModal.show({
+    assetAndChainSelectorModal.show({
       context: "source",
       onSelect: (asset) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
@@ -98,13 +102,13 @@ export const SwapPage = () => {
         }));
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        tokenAndChainSelectorModal.hide();
+        assetAndChainSelectorModal.hide();
       },
     });
-  }, [chains, connector, evmAddress, evmChainId, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, tokenAndChainSelectorModal]);
+  }, [chains, connector, evmAddress, evmChainId, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, assetAndChainSelectorModal]);
 
   const handleChangeSourceChain = useCallback(() => {
-    tokenAndChainSelectorModal.show({
+    assetAndChainSelectorModal.show({
       context: "source",
       onSelect: (asset) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
@@ -118,46 +122,48 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorModal.hide();
+        assetAndChainSelectorModal.hide();
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
-      networkSelection: true,
+      selectChain: true,
     });
-  }, [chains, connector, evmAddress, evmChainId, getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, tokenAndChainSelectorModal]);
+  }, [chains, connector, evmAddress, evmChainId, getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, assetAndChainSelectorModal]);
 
   const handleChangeDestinationAsset = useCallback(() => {
-    tokenAndChainSelectorModal.show({
+    assetAndChainSelectorModal.show({
+      context: "destination",
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorModal.hide();
+        assetAndChainSelectorModal.hide();
       },
     });
-  }, [setDestinationAsset, tokenAndChainSelectorModal]);
+  }, [setDestinationAsset, assetAndChainSelectorModal]);
 
   const handleChangeDestinationChain = useCallback(() => {
-    tokenAndChainSelectorModal.show({
+    assetAndChainSelectorModal.show({
+      context: "destination",
       onSelect: (asset) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        tokenAndChainSelectorModal.hide();
+        assetAndChainSelectorModal.hide();
       },
       selectedAsset: getClientAsset(
         destinationAsset?.denom,
         destinationAsset?.chainID
       ),
-      networkSelection: true,
+      selectChain: true,
     });
   }, [
     destinationAsset?.chainID,
     destinationAsset?.denom,
     getClientAsset,
     setDestinationAsset,
-    tokenAndChainSelectorModal,
+    assetAndChainSelectorModal,
   ]);
 
   const swapButton = useMemo(() => {
@@ -291,11 +297,12 @@ export const SwapPage = () => {
         }}
       >
         <SwapPageHeader
-          leftButton={{
-            label: "History",
-            icon: ICONS.history,
-            onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-          }}
+          leftButton={txHistory.length === 0 ? undefined :
+            {
+              label: "History",
+              icon: ICONS.history,
+              onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+            }}
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">

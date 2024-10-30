@@ -101,7 +101,7 @@ export const useCreateCosmosWallets = () => {
           if (!chainID) throw new Error("Chain ID is required");
           const chainInfo = getChainInfo(chainID);
           const currentAddress = accounts?.[chainID]?.bech32Address;
-          if (wallet !== currentWallet || !currentAddress) {
+          if (wallet !== currentWallet && !currentAddress) {
             if (!chainInfo)
               throw new Error(
                 `getAddress: Chain info not found for chainID: ${chainID}`
@@ -121,6 +121,31 @@ export const useCreateCosmosWallets = () => {
           return address;
         };
         const walletInfo = getCosmosWalletInfo(wallet);
+        const initialChainIds = (
+          wallet === WalletType.KEPLR
+            ? keplrMainnetChainIdsInitialConnect
+            : walletMainnetChainIdsInitialConnect
+        ).filter(
+          (x) =>
+            chains
+              ?.filter((z) => z.chainType === "cosmos")
+              .map((y) => y.chainID)
+              .includes(x) &&
+            mainnetChains.map((c) => c.chainId).includes(x)
+        );
+
+        const connectEco = async () => {
+          const promises = initialChainIds.map(
+            async (c) =>
+              await connect({
+                chainId: c,
+                walletType: wallet,
+              })
+          );
+          await Promise.all(promises);
+          return Promise.resolve();
+        };
+
         const minimalWallet: MinimalWallet = {
           walletName: wallet,
           walletPrettyName: walletInfo?.name,
@@ -129,26 +154,7 @@ export const useCreateCosmosWallets = () => {
             logo: walletInfo?.imgSrc,
           },
           connectEco: async () => {
-            const chainIds = (
-              wallet === WalletType.KEPLR
-                ? keplrMainnetChainIdsInitialConnect
-                : walletMainnetChainIdsInitialConnect
-            ).filter(
-              (x) =>
-                chains
-                  ?.filter((z) => z.chainType === "cosmos")
-                  .map((y) => y.chainID)
-                  .includes(x) &&
-                mainnetChains.map((c) => c.chainId).includes(x)
-            );
-            const promises = chainIds.map(
-              async (c) =>
-                await connect({
-                  chainId: c,
-                  walletType: wallet,
-                })
-            );
-            await Promise.all(promises);
+            await connectEco();
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
             const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
             const asset = assets?.find((x) => x.denom === "uatom");
@@ -169,12 +175,17 @@ export const useCreateCosmosWallets = () => {
                 );
               // @ts-expect-error mismatch keplr types version
               await getWallet(wallet).experimentalSuggestChain(chainInfo);
-              await connect({
-                chainId: chainID,
-                walletType: wallet,
-              });
+              const isInitialConnect = initialChainIds.includes(chainID);
+              if (isInitialConnect) {
+                await connectEco();
+              } else {
+                await connect({
+                  chainId: chainID,
+                  walletType: wallet,
+                });
+              }
               setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
-
+              connectEco();
               // TODO: onWalletConnected
             } catch (error) {
               console.error(error);
@@ -184,6 +195,7 @@ export const useCreateCosmosWallets = () => {
           getAddress,
           disconnect: async () => {
             await disconnectAsync();
+            setCosmosWallet(undefined);
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {

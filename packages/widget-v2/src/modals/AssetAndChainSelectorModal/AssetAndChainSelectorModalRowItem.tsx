@@ -8,7 +8,8 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { ChainWithAsset, GroupedAsset, SelectorContext } from "./TokenAndChainSelectorModal";
+import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
+import { useFilteredChains } from "./useFilteredChains";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset
@@ -16,7 +17,7 @@ export const isGroupedAsset = (
   return (item as GroupedAsset).chains !== undefined;
 };
 
-export type TokenAndChainSelectorModalRowItemProps = {
+export type AssetAndChainSelectorModalRowItemProps = {
   item: GroupedAsset | ChainWithAsset;
   index: number;
   skeleton: React.ReactElement;
@@ -24,13 +25,13 @@ export type TokenAndChainSelectorModalRowItemProps = {
   context: SelectorContext
 };
 
-export const TokenAndChainSelectorModalRowItem = ({
+export const AssetAndChainSelectorModalRowItem = ({
   item,
   index,
   skeleton,
   onSelect,
   context
-}: TokenAndChainSelectorModalRowItemProps) => {
+}: AssetAndChainSelectorModalRowItemProps) => {
   const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
   if (!item || isChainsLoading) return skeleton;
@@ -42,7 +43,7 @@ export const TokenAndChainSelectorModalRowItem = ({
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
         leftContent={
-          <TokenAndChainSelectorModalRowItemLeftContent item={item} context={context} />
+          <AssetAndChainSelectorModalRowItemLeftContent item={item} context={context} />
         }
         rightContent={
           Number(item.totalAmount) > 0 && (
@@ -98,39 +99,31 @@ export const TokenAndChainSelectorModalRowItem = ({
   );
 };
 
-const TokenAndChainSelectorModalRowItemLeftContent = ({
+const AssetAndChainSelectorModalRowItemLeftContent = ({
   item,
   context
 }: {
   item: GroupedAsset;
   context: SelectorContext;
 }) => {
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const _chainList = item.chains
-    .map((chain) => {
-      const _chain = chains?.find((c) => c.chainID === chain.chainID);
-      return {
-        chainName: _chain?.prettyName || chain.chainID,
-      };
-    })
-    .sort((a, b) => a.chainName.localeCompare(b.chainName));
-
-  const chainList = context === "source" ? _chainList.filter(c => !c.chainName.toLowerCase().includes("penumbra")) : _chainList;
+  const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
+  // prioritize logoURI from raw.githubusercontent over coingecko
+  const logoURI = item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ?? item.assets[0].logoURI;
 
   return (
     <Row align="center" gap={8}>
       <StyledAssetImage
         height={35}
         width={35}
-        src={item.assets[0].logoURI}
+        src={logoURI}
         alt={`${item.assets[0].recommendedSymbol} logo`}
       />
       <Row align="end" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
-        {chainList.length > 1 ? (
-          <SmallText>{`${chainList.length} networks`}</SmallText>
+        {filteredChains.length > 1 ? (
+          <SmallText>{`${filteredChains.length} networks`}</SmallText>
         ) : (
-          chainList.map((chain, index) => (
+          filteredChains.map((chain, index) => (
             <Row key={index} align="center" gap={6}>
               {<SmallText>{chain.chainName}</SmallText>}
             </Row>

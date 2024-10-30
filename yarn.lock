@@ -5400,6 +5400,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@leapwallet/cosmos-social-login-capsule-provider@npm:^0.0.44":
+  version: 0.0.44
+  resolution: "@leapwallet/cosmos-social-login-capsule-provider@npm:0.0.44"
+  dependencies:
+    "@cosmjs/amino": 0.31.3
+    "@leapwallet/cosmos-social-login-core": 0.0.1
+    "@usecapsule/cosmjs-v0-integration": 1.21.0
+    "@usecapsule/web-sdk": 1.23.0
+    long: 5.2.3
+  checksum: 771ecb7371528f9e8782b7b92711bb848acbb5a063681e6c07d1e541cd423f18fc1c15c714e64664f3fba6821dec598fea92aff2c8ec2baf0ddce5dad13ea2e9
+  languageName: node
+  linkType: hard
+
 "@leapwallet/cosmos-social-login-core@npm:0.0.1":
   version: 0.0.1
   resolution: "@leapwallet/cosmos-social-login-core@npm:0.0.1"
@@ -7880,6 +7893,7 @@ __metadata:
     "@eslint/js": ^9.9.0
     "@initia/initia-registry": ^0.1.16
     "@keplr-wallet/types": ^0.12.125
+    "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^7.0.0
     "@penumbra-zone/client": ^18.1.0
     "@penumbra-zone/protobuf": ^6.0.0
@@ -7917,7 +7931,7 @@ __metadata:
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     graz: ^0.1.25
-    jotai: ^2.9.1
+    jotai: ^2.10.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
@@ -7937,8 +7951,8 @@ __metadata:
     wagmi: ^2.12.8
     zod: ^3.23.8
   peerDependencies:
-    react: 17.x || 18.x
-    react-dom: 17.x || 18.x
+    react: ">=17.0.0"
+    react-dom: ">=17.0.0"
   languageName: unknown
   linkType: soft
 
@@ -10599,6 +10613,19 @@ __metadata:
     libphonenumber-js: 1.11.2
     node-forge: ^1.3.1
   checksum: 920459e26efbf0d21460caed7dccb399fdb2d765f67db182739e793c8cec91f238ac30b776972ade6153f2f094dc46db337d84f12dc68736c91515c946014024
+  languageName: node
+  linkType: hard
+
+"@usecapsule/cosmjs-v0-integration@npm:1.21.0":
+  version: 1.21.0
+  resolution: "@usecapsule/cosmjs-v0-integration@npm:1.21.0"
+  dependencies:
+    "@usecapsule/core-sdk": 1.21.0
+  peerDependencies:
+    "@cosmjs/amino": ">= 0.31.3 < 1"
+    "@cosmjs/encoding": ">= 0.31.3 < 1"
+    "@cosmjs/proto-signing": ">= 0.31.3 < 1"
+  checksum: 46c24f5c2106ad9cc6f7a4e77657aad02bdd0935abfd06d9b56089ff25cc4c3bca226805145a746826b4bf16a67d825185e759f08bb6a9ffb7d679fda09272e6
   languageName: node
   linkType: hard
 
@@ -20493,9 +20520,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:^2.9.1":
-  version: 2.10.0
-  resolution: "jotai@npm:2.10.0"
+"jotai@npm:^2.10.1":
+  version: 2.10.1
+  resolution: "jotai@npm:2.10.1"
   peerDependencies:
     "@types/react": ">=17.0.0"
     react: ">=17.0.0"
@@ -20504,7 +20531,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 79bcecf57156f1820cf2aa8cfa6a843678dcf86c3f3a2153acf2dab8f839933a3f764f9b967cc75d0f7c767a366f6d9693210ddf783900a2b9bddd20a02285ae
+  checksum: c9580f29fbbfce3e18f044e2bb80bb563a6d15952451a0430f28c4bd6340498bbec0537e8cf38722de117d4ec5846aa2d81489cd55e41b28d018776d2ae533e4
   languageName: node
   linkType: hard
 

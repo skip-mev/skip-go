@@ -10,7 +10,7 @@ import { Text } from "@/components/Typography";
 import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 
-type TokenAndChainSelectorModalSearchInputProps = {
+type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
   onClickBack: () => void;
   asset?: Asset;
@@ -19,14 +19,14 @@ type TokenAndChainSelectorModalSearchInputProps = {
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
-export const TokenAndChainSelectorModalSearchInput = ({
+export const AssetAndChainSelectorModalSearchInput = ({
   asset,
   onSearch,
   onClickBack,
   searchTerm,
   setSearchTerm,
   onKeyDown,
-}: TokenAndChainSelectorModalSearchInputProps) => {
+}: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
 
