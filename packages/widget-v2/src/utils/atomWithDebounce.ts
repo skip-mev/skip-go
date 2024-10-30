@@ -2,14 +2,19 @@ import { atom } from "jotai";
 import { SetStateAction } from "react";
 
 export function atomWithDebounce<T>(delayMilliseconds = 500) {
-  const prevTimeoutAtom = atom<NodeJS.Timeout | undefined>(undefined);
-  const _currentValueAtom = atom<T | undefined>(undefined);
-  const _debouncedValueAtom = atom<T | undefined>(undefined);
+  const prevTimeoutAtom = atom<NodeJS.Timeout | undefined>(
+    undefined
+  );
+
+  // DO NOT EXPORT currentValueAtom as using this atom to set state can cause
+  // inconsistent state between currentValueAtom and debouncedValueAtom
+  const _currentValueAtom = atom<T>();
   const isDebouncingAtom = atom(false);
   const valueInitialized = atom(false);
 
+  // Atom for debounced value
   const debouncedValueAtom = atom(
-    (get) => get(_debouncedValueAtom),
+    undefined,
     (get, set, update: SetStateAction<T>, callback?: () => void) => {
       clearTimeout(get(prevTimeoutAtom));
 
@@ -19,33 +24,41 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
           ? (update as (prev: T | undefined) => T)(prevValue)
           : update;
 
-      // Only update if the value has changed
-      if (nextValue !== prevValue) {
+      const onDebounceStart = () => {
         set(_currentValueAtom, nextValue);
         set(isDebouncingAtom, true);
         set(valueInitialized, true);
+      };
 
-        const timeoutId = setTimeout(() => {
-          set(_debouncedValueAtom, nextValue);
-          set(isDebouncingAtom, false);
-          callback?.();
-        }, delayMilliseconds);
+      const onDebounceEnd = () => {
+        set(debouncedValueAtom, nextValue);
+        set(isDebouncingAtom, false);
+        callback?.();
+      };
 
-        set(prevTimeoutAtom, timeoutId);
+      onDebounceStart();
+
+      const nextTimeoutId = setTimeout(() => {
+        onDebounceEnd();
+      }, delayMilliseconds);
+
+      // set previous timeout atom in case it needs to get cleared
+      if (nextTimeoutId) {
+        set(prevTimeoutAtom, nextTimeoutId);
       }
     }
   );
 
-  const cleanupAtom = atom(null, (get, set) => {
+  // Exported atom setter to clear the timeout if needed
+  const clearTimeoutAtom = atom(null, (get, set, _arg) => {
     clearTimeout(get(prevTimeoutAtom));
-    set(prevTimeoutAtom, undefined);
     set(isDebouncingAtom, false);
   });
 
   return {
     currentValueAtom: atom((get) => get(_currentValueAtom)),
     isDebouncingAtom,
-    cleanupAtom,
+    clearTimeoutAtom,
     debouncedValueAtom,
     valueInitialized,
   };
