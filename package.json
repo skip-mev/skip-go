@@ -26,7 +26,8 @@
     "submodule:init": "git submodule init",
     "submodule:update": "git submodule update",
     "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
-    "swagger": "npx open-swagger-ui --open docs/swagger.yml"
+    "swagger": "npx open-swagger-ui --open docs/swagger.yml",
+    "postinstall": "yarn run submodule"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
@@ -69,7 +70,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "keccak256": "1.x",
-    "kujira.js": "0.9.x",
+    "kujira.js": "^1.0.74",
     "minimatch": "^9.0.3",
     "msw": "^1.2.3",
     "p-map": "^7.0.2",

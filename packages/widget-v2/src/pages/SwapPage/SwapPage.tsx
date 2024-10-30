@@ -36,6 +36,7 @@ import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWal
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
+import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -67,6 +68,7 @@ export const SwapPage = () => {
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
+  useUpdateAmountWhenRouteChanges();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
