@@ -124,8 +124,8 @@ const SettingsChangedIndicator = styled.div`
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   background-color: white;
   border-radius: 50%;
 `;

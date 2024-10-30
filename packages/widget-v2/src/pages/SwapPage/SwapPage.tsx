@@ -296,11 +296,11 @@ export const SwapPage = () => {
       >
         <SwapPageHeader
           leftButton={txHistory.length === 0 ? undefined :
-          {
-            label: "History",
-            icon: ICONS.history,
-            onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-          }}
+            {
+              label: "History",
+              icon: ICONS.history,
+              onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+            }}
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
