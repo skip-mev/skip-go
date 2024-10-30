@@ -19,7 +19,6 @@ import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
   chainFilterAtom,
-  clearInputAmountsAtom,
   defaultSwapSettings,
   swapSettingsAtom,
 } from "@/state/swapPage";
@@ -55,7 +54,6 @@ export const Widget = (props: WidgetProps) => {
 };
 
 const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const clearInputs = useSetAtom(clearInputAmountsAtom);
   useInitDefaultRoute(props.defaultRoute);
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
@@ -87,7 +85,6 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   }, [props.brandColor, props.theme]);
 
   useLayoutEffect(() => {
-    clearInputs();
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
