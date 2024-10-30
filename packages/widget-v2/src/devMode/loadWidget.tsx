@@ -17,13 +17,6 @@ const DevMode = () => {
     <Row gap={20}>
       <Widget
         theme={theme}
-        defaultRoute={{
-          // amountIn: 5,
-          srcChainId: "osmosis-1",
-          srcAssetDenom: "uosmo",
-          destChainId: "cosmoshub-4",
-          destAssetDenom: "uatom",
-        }}
         settings={{
           slippage: 5,
         }}
