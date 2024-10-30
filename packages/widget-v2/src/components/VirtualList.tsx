@@ -3,7 +3,7 @@ import { getHexColor, opacityToHex } from "@/utils/colors";
 import styled, { useTheme } from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import { Column } from "./Layout";
-import { SmallText, Text } from "./Typography";
+import { SmallText } from "./Typography";
 
 export type VirtualListProps<T> = {
   listItems: T[];
@@ -57,8 +57,8 @@ export const VirtualList = <T,>({
         event.preventDefault();
         const prevElement = currentlyFocusedElement?.previousElementSibling as HTMLElement;
         if (prevElement) {
-          prevElement.focus();
           setCurrentlyFocusedElement(prevElement);
+          prevElement.focus();
         }
       }
     };
@@ -75,12 +75,14 @@ export const VirtualList = <T,>({
     }, 0);
   }, [listItems.length]);
 
-  if (listItems.length === 0 && empty) {
+  if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer align="center" justify="center" gap={5}>
-        {empty?.icon}
-        <Text>{empty?.header}</Text>
-        <SmallText>{empty?.details}</SmallText>
+      <StyledNoResultsContainer align="center" justify="center" >
+        <StyledEmptyContent gap={10}>
+          {empty?.icon}
+          <SmallText fontSize={22}>{empty?.header}</SmallText>
+          <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
+        </StyledEmptyContent>
       </StyledNoResultsContainer>
     );
   }
@@ -113,4 +115,15 @@ export const VirtualList = <T,>({
 const StyledNoResultsContainer = styled(Column)`
   height: 100%;
   width: 100%;
+`;
+
+const StyledEmptyContent = styled(Column)`
+  width: 50%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledEmptyDetails = styled(SmallText)`
+  white-space: pre-line;
 `;

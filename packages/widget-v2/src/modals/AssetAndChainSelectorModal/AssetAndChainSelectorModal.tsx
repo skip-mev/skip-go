@@ -174,7 +174,8 @@ export const AssetAndChainSelectorModal = createModal(
             itemKey={(item) => isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`}
             renderItem={renderItem}
             empty={{
-              details: selectedGroup ? "No assets found" : "No chains found",
+              header: selectedGroup ? "No networks found" : "No assets found",
+              details: selectedGroup ? "Looking for an asset? \n Select back to return to asset selection." : "Looking for a network? \n Select an asset first, then move to network selection.",
             }}
           />
         )}

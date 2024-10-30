@@ -216,7 +216,7 @@ export const RenderWalletList = ({
         renderItem={renderItem}
         itemKey={(item) => item.walletName}
         empty={{
-          details: "No wallets available",
+          header: "No wallets available",
         }}
       />
     );
