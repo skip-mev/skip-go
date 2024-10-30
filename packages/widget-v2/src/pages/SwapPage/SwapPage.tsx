@@ -37,6 +37,7 @@ import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
+import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -69,6 +70,7 @@ export const SwapPage = () => {
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
+  useUpdateAmountWhenRouteChanges();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
@@ -334,15 +336,12 @@ export const SwapPage = () => {
         }}
       >
         <SwapPageHeader
-          leftButton={
-            txHistory.length === 0
-              ? undefined
-              : {
-                label: "History",
-                icon: ICONS.history,
-                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-              }
-          }
+          leftButton={txHistory.length === 0 ? undefined :
+            {
+              label: "History",
+              icon: ICONS.history,
+              onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+            }}
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">

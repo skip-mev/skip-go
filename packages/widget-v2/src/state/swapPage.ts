@@ -1,10 +1,7 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
-import { atomEffect } from "jotai-effect";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { limitDecimalsDisplayed } from "@/utils/number";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
@@ -97,38 +94,6 @@ export const invertSwapAtom = atom(null, (get, set) => {
       set(swapDirectionAtom, newSwapDirection);
       set(isInvertingSwapAtom, false);
     });
-  }
-});
-
-export const routeAmountEffect = atomEffect((get, set) => {
-  const route = get(skipRouteAtom);
-  const direction = get(swapDirectionAtom);
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
-
-  if (!route.data || !sourceAsset || !destinationAsset) return;
-
-  const swapInAmount = convertTokenAmountToHumanReadableAmount(
-    route.data.amountOut,
-    destinationAsset.decimals
-  );
-  const swapOutAmount = convertTokenAmountToHumanReadableAmount(
-    route.data.amountIn,
-    sourceAsset.decimals
-  );
-  const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
-  const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
-
-  if (direction === "swap-in" && swapInAmountChanged) {
-    set(destinationAssetAtom, (old) => ({
-      ...old,
-      amount: limitDecimalsDisplayed(swapInAmount),
-    }));
-  } else if (direction === "swap-out" && swapOutAmountChanged) {
-    set(sourceAssetAtom, (old) => ({
-      ...old,
-      amount: limitDecimalsDisplayed(swapOutAmount),
-    }));
   }
 });
 
