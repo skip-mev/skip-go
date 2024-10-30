@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.0.0-beta.9",
+  "version": "3.0.0-alpha.20",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
@@ -23,8 +23,8 @@
     "README.md"
   ],
   "peerDependencies": {
-    "react": "17.x || 18.x",
-    "react-dom": "17.x || 18.x"
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
@@ -60,12 +60,13 @@
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@initia/initia-registry": "^0.1.16",
+    "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
     "@penumbra-zone/bech32m": "^7.0.0",
     "@penumbra-zone/client": "^18.1.0",
     "@penumbra-zone/protobuf": "^6.0.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@radix-ui/react-dialog": "^1.1.1",
-    "@skip-go/client": "workspace:^",
+    "@skip-go/client": "0.10.3",
     "@solana/spl-token": "^0.4.8",
     "@solana/wallet-adapter-backpack": "^0.1.14",
     "@solana/wallet-adapter-coinbase": "^0.1.19",

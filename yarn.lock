@@ -5434,6 +5434,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@leapwallet/cosmos-social-login-capsule-provider@npm:^0.0.44":
+  version: 0.0.44
+  resolution: "@leapwallet/cosmos-social-login-capsule-provider@npm:0.0.44"
+  dependencies:
+    "@cosmjs/amino": 0.31.3
+    "@leapwallet/cosmos-social-login-core": 0.0.1
+    "@usecapsule/cosmjs-v0-integration": 1.21.0
+    "@usecapsule/web-sdk": 1.23.0
+    long: 5.2.3
+  checksum: 771ecb7371528f9e8782b7b92711bb848acbb5a063681e6c07d1e541cd423f18fc1c15c714e64664f3fba6821dec598fea92aff2c8ec2baf0ddce5dad13ea2e9
+  languageName: node
+  linkType: hard
+
 "@leapwallet/cosmos-social-login-core@npm:0.0.1":
   version: 0.0.1
   resolution: "@leapwallet/cosmos-social-login-core@npm:0.0.1"
@@ -7870,7 +7883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skip-go/client@workspace:^, @skip-go/client@workspace:packages/client":
+"@skip-go/client@0.10.3, @skip-go/client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@skip-go/client@workspace:packages/client"
   dependencies:
@@ -7915,12 +7928,13 @@ __metadata:
     "@eslint/js": ^9.9.0
     "@initia/initia-registry": ^0.1.16
     "@keplr-wallet/types": ^0.12.125
+    "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^7.0.0
     "@penumbra-zone/client": ^18.1.0
     "@penumbra-zone/protobuf": ^6.0.0
     "@penumbra-zone/transport-dom": ^7.5.0
     "@radix-ui/react-dialog": ^1.1.1
-    "@skip-go/client": "workspace:^"
+    "@skip-go/client": 0.10.3
     "@solana/spl-token": ^0.4.8
     "@solana/wallet-adapter-backpack": ^0.1.14
     "@solana/wallet-adapter-coinbase": ^0.1.19
@@ -7972,8 +7986,8 @@ __metadata:
     wagmi: ^2.12.8
     zod: ^3.23.8
   peerDependencies:
-    react: 17.x || 18.x
-    react-dom: 17.x || 18.x
+    react: ">=17.0.0"
+    react-dom: ">=17.0.0"
   languageName: unknown
   linkType: soft
 
@@ -10634,6 +10648,19 @@ __metadata:
     libphonenumber-js: 1.11.2
     node-forge: ^1.3.1
   checksum: 920459e26efbf0d21460caed7dccb399fdb2d765f67db182739e793c8cec91f238ac30b776972ade6153f2f094dc46db337d84f12dc68736c91515c946014024
+  languageName: node
+  linkType: hard
+
+"@usecapsule/cosmjs-v0-integration@npm:1.21.0":
+  version: 1.21.0
+  resolution: "@usecapsule/cosmjs-v0-integration@npm:1.21.0"
+  dependencies:
+    "@usecapsule/core-sdk": 1.21.0
+  peerDependencies:
+    "@cosmjs/amino": ">= 0.31.3 < 1"
+    "@cosmjs/encoding": ">= 0.31.3 < 1"
+    "@cosmjs/proto-signing": ">= 0.31.3 < 1"
+  checksum: 46c24f5c2106ad9cc6f7a4e77657aad02bdd0935abfd06d9b56089ff25cc4c3bca226805145a746826b4bf16a67d825185e759f08bb6a9ffb7d679fda09272e6
   languageName: node
   linkType: hard
 
