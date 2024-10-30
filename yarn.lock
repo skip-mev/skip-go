@@ -2126,15 +2126,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/keplr@npm:^1.68.79":
-  version: 1.68.103
-  resolution: "@chain-registry/keplr@npm:1.68.103"
+"@chain-registry/keplr@npm:^1.74.17":
+  version: 1.74.17
+  resolution: "@chain-registry/keplr@npm:1.74.17"
   dependencies:
-    "@chain-registry/types": ^0.45.83
+    "@chain-registry/types": ^0.50.3
     "@keplr-wallet/cosmos": 0.12.28
     "@keplr-wallet/crypto": 0.12.28
     semver: ^7.5.0
-  checksum: b83d222f71279d809a2480d5484a574214639aa890da7e59956c9ceef2c4b825962585fa32bb6c424b6f5127ab4033009ce20e2170d85431efdb48299c28c7e9
+  checksum: 3ee7ac504526daa24d004cbdcd3eddbe4cedbebacfb93cec75f7ecab5a9198ba4e58c94a452f83cd898bc99c86da64c0c4fc3756a1b58645b3074f2bf4b23783
   languageName: node
   linkType: hard
 
@@ -2161,17 +2161,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.45.83":
-  version: 0.45.83
-  resolution: "@chain-registry/types@npm:0.45.83"
-  checksum: 4fb45f5885f64c92c5949fe790a49ba8fff13ae78ccb871f58d7747689a8e6e2e796d0daf178fde6de6e8159c6191f16013784c968516030944c80aef0e2c6d7
-  languageName: node
-  linkType: hard
-
 "@chain-registry/types@npm:^0.50.1":
   version: 0.50.1
   resolution: "@chain-registry/types@npm:0.50.1"
   checksum: eb4e148076509d159df82dc5e31ffc80f9b6287f61080dd9aea898d74ce4274383f012cd62d58349f36c5b3a4254fd4361c223fa0b2d244dca7cb22fc933e379
+  languageName: node
+  linkType: hard
+
+"@chain-registry/types@npm:^0.50.3":
+  version: 0.50.3
+  resolution: "@chain-registry/types@npm:0.50.3"
+  checksum: 209a3a04161f296c23ce2f895316d8d58296e4a64e64a7b12a1dd23182e022b17afbf0c24c115bf3b057194bb50a6f6add0dca18616615bc4d8cdcd155dd1685
   languageName: node
   linkType: hard
 
@@ -7886,7 +7886,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget-v2"
   dependencies:
-    "@chain-registry/keplr": ^1.68.79
+    "@chain-registry/keplr": ^1.74.17
     "@chromatic-com/storybook": ^1.6.1
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
@@ -7927,7 +7927,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     buffer: ^6.0.3
-    chain-registry: ^1.63.43
+    chain-registry: ^1.69.17
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     graz: ^0.1.25
@@ -13905,12 +13905,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.63.43":
-  version: 1.63.103
-  resolution: "chain-registry@npm:1.63.103"
+"chain-registry@npm:^1.69.17":
+  version: 1.69.17
+  resolution: "chain-registry@npm:1.69.17"
   dependencies:
-    "@chain-registry/types": ^0.45.83
-  checksum: 3d49a86c009415fb69899c6b69c38e33d5aeaee00a97ce76b003d97001aca700feb7f40f2ef8b464beafb82ff900786ef951cff9533ef8096734e6218b2ab3fd
+    "@chain-registry/types": ^0.50.3
+  checksum: 0c2d7052b486896336fa8fafb267501fd8fe7a0cb8dff48d3aa239b3d6c296be052dc2c56d0bdb6a94ccc99996a1b66ae14b31ab9cc55c7a29da483b014fa2c1
   languageName: node
   linkType: hard
 
