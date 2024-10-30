@@ -7966,7 +7966,7 @@ __metadata:
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     graz: ^0.1.25
-    jotai: ^2.9.1
+    jotai: ^2.10.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
@@ -20437,9 +20437,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jotai@npm:^2.9.1":
-  version: 2.10.0
-  resolution: "jotai@npm:2.10.0"
+"jotai@npm:^2.10.1":
+  version: 2.10.1
+  resolution: "jotai@npm:2.10.1"
   peerDependencies:
     "@types/react": ">=17.0.0"
     react: ">=17.0.0"
@@ -20448,7 +20448,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 79bcecf57156f1820cf2aa8cfa6a843678dcf86c3f3a2153acf2dab8f839933a3f764f9b967cc75d0f7c767a366f6d9693210ddf783900a2b9bddd20a02285ae
+  checksum: c9580f29fbbfce3e18f044e2bb80bb563a6d15952451a0430f28c4bd6340498bbec0537e8cf38722de117d4ec5846aa2d81489cd55e41b28d018776d2ae533e4
   languageName: node
   linkType: hard
 

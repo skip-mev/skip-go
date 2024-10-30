@@ -12,7 +12,6 @@ import {
   debouncedSourceAssetAmountAtom,
   debouncedDestinationAssetAmountAtom,
   isInvertingSwapAtom,
-  routeAmountEffect,
   debouncedSourceAssetAmountValueInitializedAtom,
   debouncedDestinationAssetAmountValueInitializedAtom,
 } from "./swapPage";
@@ -105,8 +104,6 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const skipRouteConfig = get(routeConfigAtom);
-
-  get(routeAmountEffect);
 
   const queryEnabled =
     params !== undefined &&

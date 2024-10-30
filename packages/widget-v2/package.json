@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.0.0-alpha.20",
+  "version": "3.0.0-alpha.22",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
@@ -80,7 +80,7 @@
     "@tanstack/react-query": "^5.51.21",
     "chain-registry": "^1.63.43",
     "graz": "^0.1.25",
-    "jotai": "^2.9.1",
+    "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
     "lodash.debounce": "^4.0.8",
