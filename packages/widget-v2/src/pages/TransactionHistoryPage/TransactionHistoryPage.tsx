@@ -20,7 +20,7 @@ export const TransactionHistoryPage = () => {
 
   const txHistory = useAtomValue(transactionHistoryAtom);
   const historyList = useMemo(
-    () => txHistory.slice().sort((a, b) => b.timestamp - a.timestamp),
+    () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
     [txHistory]
   );
 
