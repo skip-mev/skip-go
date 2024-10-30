@@ -17,11 +17,10 @@ export function makePubkeyAnyFromAccount(
   chainId?: string,
 ) {
   const algo = `${account.algo}`;
-
   // Some impl use `eth_secp256k1` and some use `ethsecp256k1`, so we check for both
   const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
-
-  const pubkey = isEthSecp256k1
+  const isDymension = chainId?.includes("dymension");
+  const pubkey = (isEthSecp256k1 || isDymension)
     ? encodeEthSecp256k1Pubkey(account.pubkey)
     : encodeSecp256k1Pubkey(account.pubkey);
 
@@ -38,7 +37,7 @@ export function encodePubkeyToAny(pubkey: Pubkey, chainId?: string): Any {
     let typeUrl = "";
     if (chainId?.includes("injective")) {
       typeUrl = "/injective.crypto.v1beta1.ethsecp256k1.PubKey";
-    } else {
+    } else if (chainId?.includes("dymension")) {
       typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
     }
     return Any.fromPartial({
