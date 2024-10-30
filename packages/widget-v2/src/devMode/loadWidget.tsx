@@ -27,16 +27,6 @@ const DevMode = () => {
         settings={{
           slippage: 5,
         }}
-        filter={{
-          source: {
-            "cosmoshub-4": undefined,
-            "osmosis-1": undefined,
-          },
-          destination: {
-            "cosmoshub-4": ["uatom"],
-            "osmosis-1": undefined,
-          }
-        }}
       />
       <Column>
         <button onClick={() => toggleTheme()}>
