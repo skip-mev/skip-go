@@ -9,7 +9,7 @@ export type AssetAtom = Partial<ClientAsset> & {
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
-  undefined
+  undefined,
 );
 
 export const sourceAssetAmountAtom = atom(
@@ -20,21 +20,6 @@ export const sourceAssetAmountAtom = atom(
     set(swapDirectionAtom, "swap-in");
   }
 );
-
-export const clearInputAmountsAtom = atom((get, set) => {
-  const sourceAsset = get(sourceAssetAtom);
-  console.log('sourceAsset', sourceAsset)
-  const destinationAsset = get(destinationAssetAtom);
-  console.log('destinationAsset', destinationAsset)
-  // set(sourceAssetAtom, (prev) => {
-  //   console.log('prev source', prev)
-  //   return { ...sourceAsset, amount: "" };
-  // });
-  // set(destinationAssetAtom, (prev) => {
-  //   console.log('prev destination', prev)
-  //   return { ...destinationAsset, amount: "" };
-  // })
-});
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "destinationAsset",

@@ -19,7 +19,6 @@ import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
   chainFilterAtom,
-  clearInputAmountsAtom,
   defaultSwapSettings,
   destinationAssetAmountAtom,
   destinationAssetAtom,

@@ -187,7 +187,7 @@
           "provider": "ecostake"
         },
         {
-          "address": "https://akash-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/akash",
           "provider": "Lavender.Five Nodes"
         },
         {
@@ -299,7 +299,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://althea-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/althea",
           "provider": "Lavender.Five Nodes 🐝"
         }
       ]
@@ -336,7 +336,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://andromeda-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/andromeda",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -402,7 +402,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://andromeda-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/andromeda",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -484,10 +484,6 @@
           "provider": "AM Solutions"
         },
         {
-          "address": "https://rpc-archway.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://archway-rpc.w3coins.io",
           "provider": "w3coins"
         },
@@ -496,7 +492,7 @@
           "provider": "𝐥𝐞𝐬𝐧𝐢𝐤 | 𝐔𝐓𝐒𝐀"
         },
         {
-          "address": "https://archway-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/archway",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -538,10 +534,6 @@
         {
           "address": "https://rpc.archway.stakeup.tech",
           "provider": "StakeUp"
-        },
-        {
-          "address": "https://archway.api.trivium.network:26657",
-          "provider": "TriviumX | Architech"
         },
         {
           "address": "https://archway-rpc.stakeandrelax.net",
@@ -623,10 +615,6 @@
           "provider": "Notional"
         },
         {
-          "address": "https://rpc-assetmantle.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://rpc.mantle.paranorm.pro:443",
           "provider": "paranorm"
         },
@@ -637,6 +625,60 @@
         {
           "address": "https://assetmantle-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "atomone-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uatone",
+          "fixed_min_gas_price": 0.001,
+          "low_gas_price": 0.006,
+          "average_gas_price": 0.006,
+          "high_gas_price": 0.009
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://atomone-rpc.allinbits.com:443",
+          "provider": "AllInBits"
+        },
+        {
+          "address": "https://atomone-rpc.cogwheel.zone",
+          "provider": "Cogwheel ⚙️"
+        },
+        {
+          "address": "https://atomone.rpc.nodeshub.online:443",
+          "provider": "Nodes Hub 🛡️ 100% Slash Protected 🛡️"
+        },
+        {
+          "address": "https://rpc-atomone.nodeist.net",
+          "provider": "Nodeist"
+        },
+        {
+          "address": "https://rpc-atomone-1.cros-nest.com:443",
+          "provider": "crosnest"
+        },
+        {
+          "address": "https://community.nuxian-node.ch:6797/atomone/trpc",
+          "provider": "PRO Delegators"
+        },
+        {
+          "address": "https://atomone-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://atomone_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
+        },
+        {
+          "address": "https://atomone-rpc.ibs.team:443",
+          "provider": "Inter Blockchain Services"
         }
       ]
     }
@@ -681,7 +723,7 @@
           "provider": "KonsorTech"
         },
         {
-          "address": "https://aura-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/aura",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -767,7 +809,7 @@
           "provider": "TienThuatToan"
         },
         {
-          "address": "https://aura-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/aura",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -903,6 +945,10 @@
         {
           "address": "https://axelar-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://axelar.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -1007,6 +1053,28 @@
         {
           "address": "https://beezee_mainnet_rpc.chain.whenmoonwhenlambo.money",
           "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "bitbadges-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "ubadge",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0.00025,
+          "average_gas_price": 0.0025,
+          "high_gas_price": 0.025
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "http://134.122.12.165:26657",
+          "provider": "bitbadges"
         }
       ]
     }
@@ -1211,6 +1279,10 @@
         {
           "address": "https://bitsong-rpc.bluestake.net:443",
           "provider": "BlueStake 🚀"
+        },
+        {
+          "address": "https://bitsong.rpc.m.stavr.tech:443",
+          "provider": "🔥STAVR🔥"
         }
       ]
     }
@@ -1218,11 +1290,20 @@
   {
     "chain_id": "blockx_19191-1",
     "apis": {
-      "rpc": []
+      "rpc": [
+        {
+          "address": "https://rpc-blockx.nodeist.net",
+          "provider": "Nodeist"
+        },
+        {
+          "address": "https://blockx_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
+        }
+      ]
     }
   },
   {
-    "chain_id": "bluechip-1",
+    "chain_id": "bluechip-2",
     "fees": {
       "fee_tokens": [
         {
@@ -1297,6 +1378,28 @@
         {
           "address": "https://rpc.cyber.bronbro.io:443",
           "provider": "Bro_n_Bro"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "bouachain",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "ubouacoin",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0.0006,
+          "average_gas_price": 0.012,
+          "high_gas_price": 0.04
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.bouachain.com",
+          "provider": "BouaValidator"
         }
       ]
     }
@@ -1631,7 +1734,7 @@
           "provider": "switcheo-labs"
         },
         {
-          "address": "https://carbon-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/carbon",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -1677,7 +1780,7 @@
           "provider": "NodeStake"
         },
         {
-          "address": "https://celestia-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/celestia",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -1954,7 +2057,7 @@
           "provider": "cheqd"
         },
         {
-          "address": "https://cheqd-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/cheqd",
           "provider": "Lavender.Five Nodes"
         },
         {
@@ -2032,7 +2135,7 @@
           "provider": "Notional"
         },
         {
-          "address": "https://chihuahua-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/chihuahua",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -2213,16 +2316,12 @@
           "provider": "ChainTools"
         },
         {
-          "address": "https://comdex-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/comdex",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
           "address": "https://rpc-comdex.cosmos-spaces.cloud",
           "provider": "Cosmos Spaces"
-        },
-        {
-          "address": "https://rpc-comdex.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://comdex-mainnet-rpc.autostake.com:443",
@@ -2304,16 +2403,12 @@
           "provider": "Cogwheel ⚙️"
         },
         {
-          "address": "https://picasso-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/picasso",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
           "address": "https://composable-rpc.genznodes.dev",
           "provider": "genznodes"
-        },
-        {
-          "address": "https://rpc-picasso.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://picasso-rpc.stake-town.com",
@@ -2450,6 +2545,10 @@
     "apis": {
       "rpc": [
         {
+          "address": "https://cosmoshub.tendermintrpc.lava.build:443",
+          "provider": "Lava"
+        },
+        {
           "address": "https://cosmos-rpc.quickapi.com:443",
           "provider": "Chainlayer"
         },
@@ -2462,7 +2561,7 @@
           "provider": "WhisperNode 🤐"
         },
         {
-          "address": "https://cosmoshub-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/cosmoshub",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -2588,6 +2687,10 @@
         {
           "address": "https://cosmos-rpc.stakeandrelax.net",
           "provider": "Stake&Relax 🦥"
+        },
+        {
+          "address": "https://cosmos-hub.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -2704,6 +2807,10 @@
         {
           "address": "https://cronos-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://cronos.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -2784,7 +2891,7 @@
           "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
-          "address": "https://cudos-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/cudos",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -2962,6 +3069,25 @@
         {
           "address": "https://dora-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://doravota-mainnet-rpc.itrocket.net:443",
+          "provider": "ITRocket"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "dungeon-1",
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc-dungeonchain.apeironnodes.com",
+          "provider": "ApeironNodes"
+        },
+        {
+          "address": "https://rpc-archive-dungeonchain.apeironnodes.com",
+          "provider": "ApeironNodes (Archive)"
         }
       ]
     }
@@ -3001,12 +3127,12 @@
           "provider": "Bware Labs"
         },
         {
-          "address": "https://dydx-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/dydx",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
           "address": "https://dydx-mainnet-rpc.autostake.com:443",
-          "provider": "AutoStake | StakeDrops"
+          "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
           "address": "https://rpc-dydx.ecostake.com:443",
@@ -3079,7 +3205,7 @@
           "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
-          "address": "https://dymension-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/dymension",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -3181,6 +3307,10 @@
         {
           "address": "https://rpc.archive.dymension.mainnet.dteam.tech:443",
           "provider": "DTEAM"
+        },
+        {
+          "address": "https://dymension.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -3326,10 +3456,6 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://rpc-empower.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://rpc-empowerchain.mzonder.com:443",
           "provider": "MZONDER"
         },
@@ -3368,6 +3494,28 @@
         {
           "address": "https://empower-rpc.bluestake.net:443",
           "provider": "BlueStake 🚀"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "epix_4242-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "aepix",
+          "fixed_min_gas_price": 1000000000000,
+          "low_gas_price": 1000000000000,
+          "average_gas_price": 2000000000000,
+          "high_gas_price": 3000000000000
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://epix.rpc.silknodes.io/",
+          "provider": "Silk Nodes"
         }
       ]
     }
@@ -3424,7 +3572,7 @@
           "provider": "ecostake"
         },
         {
-          "address": "https://evmos-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/evmos",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -3518,6 +3666,10 @@
         {
           "address": "https://rpc.evmos.citizenweb3.com:443",
           "provider": "Citizen Web3"
+        },
+        {
+          "address": "https://evmos.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -3652,7 +3804,7 @@
           "provider": "ChainTools"
         },
         {
-          "address": "https://firmachain-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/firmachain",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -3662,6 +3814,10 @@
         {
           "address": "https://firmachain.rpc.nodeshub.online:443",
           "provider": "Nodes Hub 🛡️ 100% Slash Protected 🛡️ | Restake ✅"
+        },
+        {
+          "address": "https://firmachain_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -3776,6 +3932,10 @@
         {
           "address": "https://26657.genesisl1.org",
           "provider": "GenesisL1"
+        },
+        {
+          "address": "https://genesisl1-rpc.zenode.app",
+          "provider": "anodeofzen"
         }
       ]
     }
@@ -3800,7 +3960,7 @@
           "provider": "polkachu"
         },
         {
-          "address": "https://gitopia-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/gitopia",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -3826,10 +3986,6 @@
         {
           "address": "https://gitopia-rpc.genznodes.dev",
           "provider": "genznodes"
-        },
-        {
-          "address": "https://rpc-gitopia.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://gitopia.rpc.liveraven.net",
@@ -4004,7 +4160,7 @@
           "provider": "Notional"
         },
         {
-          "address": "https://gravitybridge-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/gravitybridge",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4074,7 +4230,7 @@
           "provider": "Allnodes ⚡️ Nodes & Staking"
         },
         {
-          "address": "https://haqq-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/haqq",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4088,6 +4244,10 @@
         {
           "address": "https://haqq-rpc.noders.services",
           "provider": "[NODERS]TEAM"
+        },
+        {
+          "address": "https://haqq.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -4255,7 +4415,7 @@
           "provider": "Notional"
         },
         {
-          "address": "https://impacthub-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/impacthub",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4318,7 +4478,7 @@
           "provider": "Polkachu"
         },
         {
-          "address": "https://injective-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/injective",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4364,6 +4524,28 @@
         {
           "address": "https://rpc-injective.kewrnode.com",
           "provider": "Kewr Node"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "int3face-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uint3",
+          "fixed_min_gas_price": 0.0025,
+          "low_gas_price": 0.0025,
+          "average_gas_price": 0.025,
+          "high_gas_price": 0.04
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.mainnet.int3face.zone",
+          "provider": "Int3face.io"
         }
       ]
     }
@@ -4429,7 +4611,7 @@
           "provider": "Jackal Labs"
         },
         {
-          "address": "https://jackal-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/jackal",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4520,6 +4702,10 @@
         {
           "address": "https://rpc.joltify.io",
           "provider": "joltify"
+        },
+        {
+          "address": "https://joltify_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -4547,10 +4733,6 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://rpc-juno.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://rpc-juno.itastakers.com",
           "provider": "itastakers"
         },
@@ -4567,7 +4749,7 @@
           "provider": "Polkachu"
         },
         {
-          "address": "https://juno-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/juno",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4706,6 +4888,10 @@
         {
           "address": "https://kava-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://kava.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -4746,7 +4932,7 @@
           "provider": "ChainTools"
         },
         {
-          "address": "https://kichain-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/kichain",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -4760,6 +4946,28 @@
         {
           "address": "https://rpc.kichain-2.kichain.aviaone.com",
           "provider": "AVIAONE 🟢"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "kima_network",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uKIMA",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0.0025,
+          "average_gas_price": 0.025,
+          "high_gas_price": 0.04
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.kima.network/",
+          "provider": "Kima Network"
         }
       ]
     }
@@ -4911,10 +5119,6 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://rpc-kujira.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://rpc.kaiyo.kujira.setten.io",
           "provider": "setten.io"
         },
@@ -4927,7 +5131,7 @@
           "provider": "ecostake"
         },
         {
-          "address": "https://kujira-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/kujira",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5013,7 +5217,7 @@
           "provider": "ecostake"
         },
         {
-          "address": "https://kyve-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/kyve",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5120,7 +5324,7 @@
           "provider": "w3coins"
         },
         {
-          "address": "https://lava-rpc.finteh.org:443",
+          "address": "https://lava-rpc.finteh.org:26657",
           "provider": "finteh"
         },
         {
@@ -5134,6 +5338,10 @@
         {
           "address": "https://rpc.lava-mainnet-1.lava.aviaone.com:443",
           "provider": "AVIAONE 🟢"
+        },
+        {
+          "address": "https://rpc-lava.r93axnodes.cloud:443",
+          "provider": "r93AX Nodes"
         },
         {
           "address": "https://lava-rpc.publicnode.com:443",
@@ -5249,6 +5457,28 @@
     }
   },
   {
+    "chain_id": "lorenzo_8329-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "stBTC",
+          "fixed_min_gas_price": 2000000,
+          "low_gas_price": 2000000,
+          "average_gas_price": 2000000,
+          "high_gas_price": 8000000
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc-cosmos.lorenzo-protocol.xyz/",
+          "provider": "Lorenzo Protocol"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "loyal-main-02",
     "fees": {
       "fee_tokens": [
@@ -5320,7 +5550,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://lumnetwork-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/lumnetwork",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5360,6 +5590,36 @@
     }
   },
   {
+    "chain_id": "mantra-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uom",
+          "fixed_min_gas_price": 0.01,
+          "low_gas_price": 0.01,
+          "average_gas_price": 0.02,
+          "high_gas_price": 0.03
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.mantrachain.io",
+          "provider": "MANTRACHAIN"
+        },
+        {
+          "address": "https://rpc-mantra.r93axnodes.cloud:443",
+          "provider": "r93AX Nodes"
+        },
+        {
+          "address": "https://mantrachain-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "mars-1",
     "fees": {
       "fee_tokens": [
@@ -5379,7 +5639,7 @@
           "provider": "Delphi Labs"
         },
         {
-          "address": "https://mars-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/mars",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5515,10 +5775,6 @@
           "provider": "Polkachu"
         },
         {
-          "address": "https://migaloo-rpc.lavenderfive.com",
-          "provider": "Lavender.Five Nodes 🐝"
-        },
-        {
           "address": "https://rpc-migaloo.cosmos-spaces.cloud",
           "provider": "Cosmos Spaces"
         },
@@ -5531,12 +5787,12 @@
           "provider": "NodeStake"
         },
         {
-          "address": "https://migaloo-rpc.cosmosrescue.com",
-          "provider": "cosmosrescue"
-        },
-        {
           "address": "https://migaloo-rpc.highstakes.ch",
           "provider": "High Stakes 🇨🇭"
+        },
+        {
+          "address": "https://migaloo-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -5718,11 +5974,19 @@
     "apis": {
       "rpc": [
         {
+          "address": "https://rpc-voidara.neutron-1.neutron.org",
+          "provider": "Neutron"
+        },
+        {
+          "address": "https://rpc-pulsarix.neutron-1.neutron.org",
+          "provider": "Neutron"
+        },
+        {
           "address": "https://rpc.novel.remedy.tm.p2p.org",
           "provider": "P2P"
         },
         {
-          "address": "https://neutron-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/neutron",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5752,6 +6016,10 @@
         {
           "address": "https://rpc.neutron.quokkastake.io",
           "provider": "🐹 Quokka Stake"
+        },
+        {
+          "address": "https://neutron.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -5784,7 +6052,7 @@
           "provider": "NodeStake"
         },
         {
-          "address": "https://nibiru-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/nibiru",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5878,8 +6146,12 @@
           "provider": "polkachu"
         },
         {
-          "address": "https://noble-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/noble",
           "provider": "Lavender.Five Nodes 🐝"
+        },
+        {
+          "address": "https://noble-rpc.owallet.io",
+          "provider": "OWALLET"
         }
       ]
     }
@@ -5908,7 +6180,7 @@
           "provider": "BccNodes"
         },
         {
-          "address": "https://nois-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/nois",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -5982,7 +6254,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://pirin-cl.nolus.network:26657",
+          "address": "rpc.nolus.network",
           "provider": "NolusProtocol"
         },
         {
@@ -5990,7 +6262,7 @@
           "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
-          "address": "https://nolus-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/nolus",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -6034,6 +6306,12 @@
       "fee_tokens": [
         {
           "denom": "unom",
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        },
+        {
+          "denom": "usat",
           "low_gas_price": 0,
           "average_gas_price": 0,
           "high_gas_price": 0
@@ -6144,7 +6422,7 @@
           "provider": "Odin Protocol"
         },
         {
-          "address": "https://odin-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/odin",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -6207,7 +6485,7 @@
           "provider": "Notional"
         },
         {
-          "address": "https://omniflixhub-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/omniflixhub",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -6358,6 +6636,14 @@
         {
           "address": "https://oraichain-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://orai-rpc.imdev.app",
+          "provider": "imORAI"
+        },
+        {
+          "address": "https://orai-rpc.owallet.io",
+          "provider": "OWALLET"
         }
       ]
     }
@@ -6398,7 +6684,7 @@
           "provider": "WhisperNode 🤐"
         },
         {
-          "address": "https://osmosis-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/osmosis",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -6492,6 +6778,10 @@
         {
           "address": "https://osmosis-rpc.noders.services",
           "provider": "[NODERS]TEAM"
+        },
+        {
+          "address": "https://osmosis.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -6569,7 +6859,7 @@
           "provider": "ecostake"
         },
         {
-          "address": "https://passage-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/passage",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -6595,10 +6885,6 @@
         {
           "address": "https://rpc-passage.d-stake.xyz",
           "provider": "D-stake"
-        },
-        {
-          "address": "https://rpc-passage.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://passage-mainnet-rpc.autostake.com:443",
@@ -6985,6 +7271,13 @@
           "low_gas_price": 10000000000,
           "average_gas_price": 12000000000,
           "high_gas_price": 14000000000
+        },
+        {
+          "denom": "ibc/EA6E1E8BA2EB9F681C4BD12C8C81A46530A62934F2BD561B120A00F46946CE87",
+          "fixed_min_gas_price": 0.0025,
+          "low_gas_price": 0.0025,
+          "average_gas_price": 0.003,
+          "high_gas_price": 0.004
         }
       ]
     },
@@ -6995,7 +7288,7 @@
           "provider": "PRYZM"
         },
         {
-          "address": "https://pryzm-rpc.lavenderfive.com",
+          "address": "https://rpc.lavenderfive.com:443/pryzm",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7115,16 +7408,12 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://quasar-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/quasar",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
           "address": "https://quasar-rpc.polkachu.com",
           "provider": "polkachu"
-        },
-        {
-          "address": "https://rpc-quasar.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://quasar-rpc.enigma-validator.com",
@@ -7197,7 +7486,7 @@
           "provider": "Notional"
         },
         {
-          "address": "https://quicksilver-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/quicksilver",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7311,7 +7600,7 @@
           "provider": "Staketab archive"
         },
         {
-          "address": "https://qwoyn-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/qwoyn",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7383,6 +7672,10 @@
         {
           "address": "https://rpc-realio.blockval.io",
           "provider": "Blockval"
+        },
+        {
+          "address": "https://realio_rio_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -7548,15 +7841,28 @@
     }
   },
   {
+    "chain_id": "30",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "sat"
+        }
+      ]
+    },
+    "apis": {
+      "rpc": []
+    }
+  },
+  {
     "chain_id": "router_9600-1",
     "fees": {
       "fee_tokens": [
         {
           "denom": "route",
-          "fixed_min_gas_price": 0.006,
-          "low_gas_price": 0.006,
-          "average_gas_price": 0.006,
-          "high_gas_price": 0.01
+          "fixed_min_gas_price": 7,
+          "low_gas_price": 7,
+          "average_gas_price": 7,
+          "high_gas_price": 10
         }
       ]
     },
@@ -7569,6 +7875,14 @@
         {
           "address": "https://router-rpc.genznodes.dev/",
           "provider": "genznodes"
+        },
+        {
+          "address": "https://router.rpc.nodeshub.online:443",
+          "provider": "Nodes Hub 🛡️ 100% Slash Protected 🛡️"
+        },
+        {
+          "address": "https://router-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
         }
       ]
     }
@@ -7616,7 +7930,7 @@
           "provider": "Bro_n_Bro"
         },
         {
-          "address": "https://saga-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/saga",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7668,7 +7982,7 @@
           "provider": "ANKR"
         },
         {
-          "address": "https://secretnetwork-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/secretnetwork",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7726,7 +8040,7 @@
           "provider": "Synergy Nodes"
         },
         {
-          "address": "https://seda-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/seda",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -7760,6 +8074,10 @@
         {
           "address": "https://seda_mainnet_rpc.chain.whenmoonwhenlambo.money:443",
           "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
+        },
+        {
+          "address": "https://rpc-seda-mainnet.keepitstaked.com:443",
+          "provider": "KeepItStaked.com"
         }
       ]
     }
@@ -7780,19 +8098,23 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://sei-rpc.lavenderfive.com:443",
+          "address": "https://rpc.sei-apis.com",
+          "provider": "Rhino Stake"
+        },
+        {
+          "address": "https://rpc.lavenderfive.com:443/sei",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
-          "address": "https://sei-rpc.polkachu.com/",
+          "address": "https://sei-rpc.polkachu.com",
           "provider": "polkachu.com"
         },
         {
-          "address": "https://sei-rpc.brocha.in/",
+          "address": "https://sei-rpc.brocha.in",
           "provider": "Brochain"
         },
         {
-          "address": "https://rpc-sei.stingray.plus/",
+          "address": "https://rpc-sei.stingray.plus",
           "provider": "StingRay"
         },
         {
@@ -7806,6 +8128,10 @@
         {
           "address": "https://sei-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        },
+        {
+          "address": "https://sei.drpc.org",
+          "provider": "dRPC - All chains in one place"
         }
       ]
     }
@@ -7844,6 +8170,10 @@
         {
           "address": "https://selfchain-mainnet.rpc.stakevillage.net:443",
           "provider": "Stake Village"
+        },
+        {
+          "address": "https://selfchain-mainnet-rpc.autostake.com:443",
+          "provider": "AutoStake 🛡️ Slash Protected"
         }
       ]
     }
@@ -7869,10 +8199,6 @@
         {
           "address": "https://rpc-sentinel-ia.cosmosia.notional.ventures/",
           "provider": "Notional"
-        },
-        {
-          "address": "https://rpc-sentinel.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://rpc.sentinel.chaintools.tech/",
@@ -7903,7 +8229,7 @@
           "provider": "Trinity Stake"
         },
         {
-          "address": "https://rpc.sentinelgrowthdao.com",
+          "address": "https://rpc.sentineldao.com",
           "provider": "Sentinel Growth DAO"
         },
         {
@@ -7937,6 +8263,10 @@
         {
           "address": "https://rpc-sentinel.chainvibes.com:443",
           "provider": "chainvibes"
+        },
+        {
+          "address": "https://sentinel-rpc.ibs.team:443",
+          "provider": "Inter Blockchain Services"
         }
       ]
     }
@@ -7957,7 +8287,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://sge-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/sge",
           "provider": "Lavenderfive"
         },
         {
@@ -8052,7 +8382,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://shenturpc.noopsbycertik.com/",
+          "address": "https://rpc.shentu.org:443",
           "provider": "Shentu"
         },
         {
@@ -8114,8 +8444,8 @@
           "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         },
         {
-          "address": "https://s2.shido-rpc.applejuice.256x25.tech:443",
-          "provider": "Apple juice 🧃"
+          "address": "https://rest.shido.256x25.tech:443",
+          "provider": "256x25"
         },
         {
           "address": "https://rpc.shido.indonode.net:443",
@@ -8124,6 +8454,10 @@
         {
           "address": "https://rpc-maverick.mavnode.io",
           "provider": "MavNode"
+        },
+        {
+          "address": "https://rpc.kenseishido.com",
+          "provider": "KENSEI"
         }
       ]
     }
@@ -8222,7 +8556,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://sommelier-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/sommelier",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -8420,10 +8754,6 @@
           "provider": "silent"
         },
         {
-          "address": "https://rpc-stargaze.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://stargaze-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
         },
@@ -8492,7 +8822,10 @@
     "fees": {
       "fee_tokens": [
         {
-          "denom": "wei"
+          "denom": "wei",
+          "low_gas_price": 1000000000,
+          "average_gas_price": 1200000000,
+          "high_gas_price": 1600000000
         }
       ]
     },
@@ -8505,10 +8838,6 @@
         {
           "address": "http://stratos.rpc.nodersteam.com:26657/",
           "provider": "[NODERS]TEAM"
-        },
-        {
-          "address": "https://rpc-stratos.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
         },
         {
           "address": "https://stratos-rpc.noders.services:443",
@@ -8639,7 +8968,7 @@
           "provider": "Oni Validator ⛩️"
         },
         {
-          "address": "https://stride-rpc.lavenderfive.com/",
+          "address": "https://rpc.lavenderfive.com:443/stride",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -9076,7 +9405,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://terra2-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/terra2",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -9098,6 +9427,10 @@
         {
           "address": "https://rpc-terra-01.stakeflow.io",
           "provider": "Stakeflow"
+        },
+        {
+          "address": "https://rpc-archive-terra.r93axnodes.cloud:443",
+          "provider": "r93AX Nodes"
         },
         {
           "address": "https://rpc-terra.cosmos-spaces.cloud",
@@ -9153,7 +9486,7 @@
     }
   },
   {
-    "chain_id": "thorchain-mainnet-v1",
+    "chain_id": "thorchain-1",
     "apis": {
       "rpc": []
     }
@@ -9188,8 +9521,25 @@
         {
           "address": "https://titan-rpc-hongkong.titanlab.io:443",
           "provider": "Titanlab.io"
+        },
+        {
+          "address": "https://titan-rpc.ibs.team",
+          "provider": "ibs.team"
         }
       ]
+    }
+  },
+  {
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "nanoton",
+          "fixed_min_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": []
     }
   },
   {
@@ -9327,7 +9677,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://rpc1.unification.io:443",
+          "address": "https://rpc.unification.io:443",
           "provider": "Unification"
         },
         {
@@ -9361,11 +9711,11 @@
           "provider": "NodeStake"
         },
         {
-          "address": "https://ununifi-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/ununifi",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
-          "address": "https://ununifi-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/ununifi",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -9503,7 +9853,7 @@
           "provider": "🔥STAVR🔥"
         },
         {
-          "address": "https://xpla-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/xpla",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -9536,7 +9886,7 @@
           "provider": "All That Node"
         },
         {
-          "address": "https://zetachain-rpc.lavenderfive.com:443",
+          "address": "https://rpc.lavenderfive.com:443/zetachain",
           "provider": "Lavender.Five Nodes 🐝"
         },
         {
@@ -9550,6 +9900,10 @@
         {
           "address": "https://zetachain.rpc.nodeshub.online:443",
           "provider": "Nodes Hub 🛡️ 100% Slash Protected 🛡️ | Restake ✅"
+        },
+        {
+          "address": "https://zeta-chain.drpc.org",
+          "provider": "dRPC"
         }
       ]
     }
@@ -10137,6 +10491,10 @@
     "apis": {
       "rpc": [
         {
+          "address": "https://cosmoshubt.tendermintrpc.lava.build:443",
+          "provider": "Lava"
+        },
+        {
           "address": "https://rpc.sentry-01.theta-testnet.polypore.xyz",
           "provider": "Hypha"
         },
@@ -10300,6 +10658,28 @@
         {
           "address": "https://rpc.morpheus.desmos.network",
           "provider": "desmos"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "dhealth-testnet-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "utdhp",
+          "fixed_min_gas_price": 0.01,
+          "low_gas_price": 0.025,
+          "average_gas_price": 0.03,
+          "high_gas_price": 0.035
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc-testnet.dhealth.dev",
+          "provider": "dHealth"
         }
       ]
     }
@@ -10518,6 +10898,27 @@
         {
           "address": "https://testnet-rpc.entrypoint.zone",
           "provider": "Simply Staking"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "epix_4243-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "aepix",
+          "low_gas_price": 20000000000,
+          "average_gas_price": 25000000000,
+          "high_gas_price": 40000000000
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet.epix.zone",
+          "provider": "Epix Testnet"
         }
       ]
     }
@@ -10873,6 +11274,28 @@
     }
   },
   {
+    "chain_id": "kima_testnet",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uKIMA",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0.0025,
+          "average_gas_price": 0.025,
+          "high_gas_price": 0.04
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc-testnet.kima.finance/",
+          "provider": "Kima Network"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "harpoon-4",
     "fees": {
       "fee_tokens": [
@@ -10937,7 +11360,7 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://public-rpc-testnet2.lavanet.xyz:443/rpc/",
+          "address": "https://lav1.tendermintrpc.lava.build:443",
           "provider": "Lava"
         },
         {
@@ -11030,6 +11453,32 @@
     }
   },
   {
+    "chain_id": "manifest-ledger-beta",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umfx",
+          "fixed_min_gas_price": 0.001,
+          "low_gas_price": 0.01,
+          "average_gas_price": 0.007,
+          "high_gas_price": 0.1
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://nodes.chandrastation.com/rpc/manifest/",
+          "provider": "Chandra Station"
+        },
+        {
+          "address": "https://manifest-beta-rpc.liftedinit.tech/",
+          "provider": "Lifted Initiative"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "mantra-hongbai-1",
     "fees": {
       "fee_tokens": [
@@ -11051,6 +11500,28 @@
         {
           "address": "https://mantra-testnet-rpc.publicnode.com:443",
           "provider": "Allnodes ⚡️ Nodes & Staking"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "mantra-dukong-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uom",
+          "fixed_min_gas_price": 0.01,
+          "low_gas_price": 0.01,
+          "average_gas_price": 0.02,
+          "high_gas_price": 0.03
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.dukong.mantrachain.io",
+          "provider": "MANTRACHAIN"
         }
       ]
     }
@@ -11302,6 +11773,33 @@
         {
           "address": "https://rila-cl.nolus.network:26657",
           "provider": "NolusProtocol"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "nomic-testnet-6",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "unom",
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        },
+        {
+          "denom": "usat",
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://testnet-rpc.nomic.io:2096",
+          "provider": "nomic"
         }
       ]
     }
@@ -11761,6 +12259,10 @@
         {
           "address": "https://sei-testnet-2-rpc.brocha.in",
           "provider": "Brochain"
+        },
+        {
+          "address": "https://rpc-testnet-sei.stingray.plus",
+          "provider": "StingRay"
         }
       ]
     }
@@ -11846,6 +12348,27 @@
         {
           "address": "https://rpc-t.sge.nodestake.top/",
           "provider": "Nodestake.top"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "yulei-2.1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uctk",
+          "low_gas_price": 0.01,
+          "average_gas_price": 0.025,
+          "high_gas_price": 0.04
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://yulei-rpc.shentu.org:443",
+          "provider": "Shentu"
         }
       ]
     }
@@ -12255,12 +12778,56 @@
     }
   },
   {
+    "chain_id": "tucana_712-1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "atuc",
+          "fixed_min_gas_price": 5000000000,
+          "low_gas_price": 10000000000,
+          "average_gas_price": 25000000000,
+          "high_gas_price": 30000000000
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.birdee-2.tucana.zone/",
+          "provider": "Tucana"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "ulas",
     "apis": {
       "rpc": [
         {
           "address": "http://65.49.204.199:26657",
           "provider": "UlasNetwork"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "FUND-TestNet-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "nund",
+          "fixed_min_gas_price": 25,
+          "low_gas_price": 100,
+          "average_gas_price": 200,
+          "high_gas_price": 300
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc-testnet.unification.io:443",
+          "provider": "Unification"
         }
       ]
     }
@@ -12391,8 +12958,8 @@
       "fee_tokens": [
         {
           "denom": "uxion",
-          "fixed_min_gas_price": 0.025,
-          "low_gas_price": 0.025,
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
           "average_gas_price": 0.025,
           "high_gas_price": 0.04
         }
@@ -12407,6 +12974,10 @@
         {
           "address": "https://xion-testnet-rpc.polkachu.com",
           "provider": "polkachu"
+        },
+        {
+          "address": "https://burnt-testnet-rpc.itrocket.net",
+          "provider": "ITRocket"
         }
       ]
     }
