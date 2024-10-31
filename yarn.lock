@@ -13887,15 +13887,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:1.63.68":
-  version: 1.63.68
-  resolution: "chain-registry@npm:1.63.68"
-  dependencies:
-    "@chain-registry/types": ^0.45.56
-  checksum: deab21712e0e54355fa0304805831219602f6691f18d7151cae120fcaec6f99f0933f899950a742aa6db611cfb445361c5b55162d7b96d9d4c6692f1eb536519
-  languageName: node
-  linkType: hard
-
 "chain-registry@npm:^1.27.0":
   version: 1.69.8
   resolution: "chain-registry@npm:1.69.8"
@@ -13905,7 +13896,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.17":
+"chain-registry@npm:^1.69.17, chain-registry@npm:latest":
   version: 1.69.17
   resolution: "chain-registry@npm:1.69.17"
   dependencies:
@@ -22259,7 +22250,7 @@ __metadata:
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3
     "@types/react": ^18.2.43
-    chain-registry: 1.63.68
+    chain-registry: latest
     eslint: ^8.15.0
     eslint-config-next: ^14.0.4
     graz: 0.1.19
