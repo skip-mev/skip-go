@@ -330,6 +330,12 @@ const CustomSlippageInput = styled(SmallText).attrs({
   &[type='number'] {
     -moz-appearance: textfield;
   }
+  ${({ selected, theme }) =>
+    selected &&
+    css`
+      color: ${getBrandButtonTextColor(theme.brandColor)};
+      background-color: ${theme.brandColor};
+    `}
 `;
 
 const CustomSlippageInputRightIcon = styled(SmallText).attrs({
