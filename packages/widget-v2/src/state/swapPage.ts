@@ -1,7 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
-import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
 export type AssetAtom = Partial<ClientAsset> & {
@@ -22,9 +21,19 @@ export const sourceAssetAmountAtom = atom(
   }
 );
 
-export const clearInputAmountsAtom = atom(null, (_get, set) => {
-  set(sourceAssetAmountAtom, "");
-  set(destinationAssetAmountAtom, "");
+export const clearInputAmountsAtom = atom((get, set) => {
+  const sourceAsset = get(sourceAssetAtom);
+  console.log('sourceAsset', sourceAsset)
+  const destinationAsset = get(destinationAssetAtom);
+  console.log('destinationAsset', destinationAsset)
+  // set(sourceAssetAtom, (prev) => {
+  //   console.log('prev source', prev)
+  //   return { ...sourceAsset, amount: "" };
+  // });
+  // set(destinationAssetAtom, (prev) => {
+  //   console.log('prev destination', prev)
+  //   return { ...destinationAsset, amount: "" };
+  // })
 });
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(

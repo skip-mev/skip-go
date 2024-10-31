@@ -7,7 +7,7 @@ import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
@@ -19,7 +19,12 @@ import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
   chainFilterAtom,
+  clearInputAmountsAtom,
   defaultSwapSettings,
+  destinationAssetAmountAtom,
+  destinationAssetAtom,
+  sourceAssetAmountAtom,
+  sourceAssetAtom,
   swapSettingsAtom,
 } from "@/state/swapPage";
 import { RouteConfig, routeConfigAtom } from "@/state/route";
@@ -61,6 +66,8 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
     const { theme, ...skipClientConfig } = props;
@@ -90,15 +97,27 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useLayoutEffect(() => {
+    if (sourceAsset?.amount) {
+      setSourceAsset({ ...sourceAsset, amount: "" });
+    }
+  
+    if (destinationAsset?.amount) {
+      setDestinationAsset({ ...destinationAsset, amount: "" });
+    }
+  }, [sourceAsset?.denom, destinationAsset?.denom]);
+
+  useLayoutEffect(() => {
     if (props.settings) {
       setSwapSettings({
         ...defaultSwapSettings,
         ...props.settings,
       });
     }
+
     if (props.routeConfig) {
       setRouteConfig(props.routeConfig);
     }
+    
     if (props.filter) {
       setChainFilter(props.filter);
     }
@@ -108,13 +127,13 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   }, [
     props.filter,
     props.onlyTestnet,
-    props.routeConfig,
     props.settings,
     props.settings?.slippage,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
+    props.routeConfig,
   ]);
 
   return (

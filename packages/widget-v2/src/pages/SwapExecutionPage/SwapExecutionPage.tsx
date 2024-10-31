@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
@@ -28,6 +28,7 @@ import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 import { useSyncTxStatus } from "./useSyncTxStatus";
+import { destinationAssetAtom, sourceAssetAtom } from "@/state/swapPage";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -49,6 +50,8 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
   const setManualAddressModal = useModal(SetAddressModal);
+  const [soruceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const [destinationAsset, setDestinationAsset] = useAtom(destinationAssetAtom);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -177,6 +180,8 @@ export const SwapExecutionPage = () => {
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
             onClick={() => {
+              setDestinationAsset({ ...destinationAsset, amount: "" });
+              setSourceAsset({ ...soruceAsset, amount: "" });
               setCurrentPage(Routes.SwapPage)
             }}
           />

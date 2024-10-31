@@ -17,8 +17,25 @@ const DevMode = () => {
     <Row gap={20}>
       <Widget
         theme={theme}
+        defaultRoute={{
+          // amountIn: 5,
+          srcChainId: "osmosis-1",
+          srcAssetDenom: "uosmo",
+          destChainId: "cosmoshub-4",
+          destAssetDenom: "uatom",
+        }}
         settings={{
           slippage: 5,
+        }}
+        filter={{
+          source: {
+            "cosmoshub-4": undefined,
+            "osmosis-1": undefined,
+          },
+          destination: {
+            "cosmoshub-4": ["uatom"],
+            "osmosis-1": undefined,
+          }
         }}
       />
       <Column>

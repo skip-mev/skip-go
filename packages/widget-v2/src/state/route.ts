@@ -80,7 +80,6 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const skipRouteConfig = get(routeConfigAtom);
-  console.log('')
 
   const queryEnabled =
     params !== undefined &&
