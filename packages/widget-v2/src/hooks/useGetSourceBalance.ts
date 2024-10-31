@@ -15,6 +15,12 @@ export const useGetSourceBalance = () => {
     const { chainID, denom } = sourceAsset;
     if (!denom || !chainID) return;
 
+    const denomsExists = !!skipBalances?.chains?.[chainID]?.denoms;
+    const sourceBalance = skipBalances?.chains?.[chainID]?.denoms?.[denom];
+
+    if (denomsExists && sourceBalance === undefined) {
+      return null;
+    }
     return skipBalances?.chains?.[chainID]?.denoms?.[denom];
   }, [sourceAsset, sourceAccount, skipBalances]);
 

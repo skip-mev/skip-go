@@ -28,8 +28,10 @@ export const ConnectedWalletContent = () => {
   const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const formattedBalance = useMemo(() => {
+    const symbol = sourceDetails?.symbol ? sourceDetails?.symbol : "";
     if (sourceBalance?.error?.message) return "--";
-    if (sourceBalance === undefined) return `0 ${sourceDetails?.symbol}`;
+    if (sourceBalance === undefined) return;
+    if (sourceBalance === null) return `0 ${symbol}`;
 
     const amount = sourceBalance?.amount;
     let formattedBalanceAmount = sourceBalance?.formattedAmount;
@@ -38,7 +40,7 @@ export const ConnectedWalletContent = () => {
       formattedBalanceAmount = amount;
     }
 
-    return `${limitDecimalsDisplayed(formattedBalanceAmount)} ${sourceDetails?.symbol}`;
+    return `${limitDecimalsDisplayed(formattedBalanceAmount)} ${symbol}`;
   }, [sourceBalance, sourceDetails?.symbol]);
   if (!sourceAccount) return null;
   return (
