@@ -1,0 +1,144 @@
+---
+title: 'Widget V2 Migration Guide'
+description: 'This guide provides a concise overview of the changes needed to migrate your existing Widget V1 implementation to Widget V2.'
+---
+
+## 1. Update Dependency
+    <CodeGroup>
+    ```shell NPM
+    npm install @skip-go/widget@latest
+    ```
+    ```shell Yarn
+    yarn add @skip-go/widget@latest
+    ```
+    </CodeGroup>
+
+## 2. `theme` Prop Changes
+The `theme` prop now supports more customization. You can pass either `light`, `dark`, or a custom theme object with granular 
+control over the widget's appearance.
+
+**Before:**
+```tsx
+  <Widget
+    theme='{
+        "backgroundColor": "#191A1C",
+        "textColor": "#E6EAE9",
+        "borderColor": "#363B3F",
+        "brandColor": "#FF4FFF",
+        "highlightColor": "#1F2022"
+    }'
+  />
+```
+**After:**
+  ```tsx
+  <Widget
+  theme="light" // or "dark"
+  // Or provide a custom theme object
+  theme={{
+    brandColor: "#FF4FFF",
+    primary: {
+      background: {
+        normal: "#191A1C",
+        transparent: "rgba(25, 26, 28, 0.5)",
+      },
+      text: {
+        normal: "#E6EAE9",
+        lowContrast: "#B0B3B5",
+        ultraLowContrast: "#7C7F81",
+      },
+      ghostButtonHover: "#1F2022",
+    },
+    // Define other theme properties as needed
+  }}
+/>
+  ```
+
+  The custom theme object has the following structure: 
+
+  ```tsx
+  theme = {
+    brandColor: string;
+    primary: {
+      background: {
+        normal: string;
+        transparent: string;
+      };
+      text: {
+        normal: string;
+        lowContrast: string;
+        ultraLowContrast: string;
+      };
+      ghostButtonHover: string;
+    };
+    secondary: {
+      background: {
+        normal: string;
+        transparent: string;
+        hover: string;
+      };
+    };
+    success: {
+      text: string;
+    };
+    warning: {
+      background: string;
+      text: string;
+    };
+    error: {
+      background: string;
+      text: string;
+    };
+  };
+```
+## 3. Prop Spelling Changes
+
+### `chainID` Renamed to `chainId`
+
+Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` prop.
+
+**Before:** 
+```tsx
+<Widget
+  defaultRoute={{
+    amountIn: 1,
+    srcChainID: "osmosis-1",
+    srcAssetDenom: "uosmo",
+    destChainID: "cosmoshub-4",
+    destAssetDenom: "uatom",
+  }}
+/>
+```
+
+**After:**
+```tsx
+<Widget
+  defaultRoute={{
+    amountIn: 1,
+    srcChainId: "osmosis-1",
+    srcAssetDenom: "uosmo",
+    destChainId: "cosmoshub-4",
+    destAssetDenom: "uatom",
+  }}
+/>
+```
+## 4. Temporarily Disabled Features
+The following props will be reintroduced in future versions of `Widget`.
+### a. `connectedWallet` Prop
+The connectedWallet prop, which allowed passing a custom wallet provider, isn't currently supported.
+### b. `CallbackStore` Callback Props
+The `onWalletConnected`, `onWalletDisconnected`, `onTransactionBroadcasted`, `onTransactionComplete`, and `onTransactionFailed` callback props aren't currently supported.
+
+## 5. Removed Features
+### a. `persistSwapWidgetState`
+This prop is no longer supported, as the `Widget` persists state by default.
+### b. `toasterProps`
+The `toasterProps` prop has been removed because the `Widget` no longer generates notifications.
+### c. `makeDestinationWallets`
+The `makeDestinationWallets` prop has been removed. The `Widget` now automatically generates destination wallets from connected wallets or manual user entry.
+
+<Info>
+By implementing these changes, you can successfully migrate your application from Widget V1 to Widget V2. For further assistance, refer to the official documentation or reach out to the [support team](https://discord.com/channels/1010553709987639406/1210022796797677589).
+</Info>
+
+
+
