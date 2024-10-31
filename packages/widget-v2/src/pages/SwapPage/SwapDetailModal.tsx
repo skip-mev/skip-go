@@ -7,8 +7,8 @@ import { SwapPageFooterItems } from "./SwapPageFooter";
 import { useAtomValue, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
-import { useMemo, useState } from "react";
-import { setSlippageAtom, swapSettingsAtom } from "@/state/swapPage";
+import { useMemo, useState, useEffect } from "react";
+import { defaultSwapSettings, setSlippageAtom, swapSettingsAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
@@ -23,6 +23,16 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const swapSettings = useAtomValue(swapSettingsAtom);
   const setSlippage = useSetAtom(setSlippageAtom);
   const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
+  const [customSlippageInput, setCustomSlippageInput] = useState('');
+  const [isCustomSlippageActive, setIsCustomSlippageActive] = useState(false);
+
+  useEffect(() => {
+    if (!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)) {
+      setCustomSlippageInput(swapSettings.slippage.toString());
+      setIsCustomSlippageActive(true);
+    } 
+  }, [swapSettings.slippage]);
+
   const chainsRoute = useMemo(() => {
     return route?.chainIDs.map((chainID) =>
       chains?.find((chain) => chain.chainID === chainID)
@@ -164,31 +174,50 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             )}
           </SwapDetailText>
           <Row gap={4}>
-            {SLIPPAGE_OPTIONS.map((slippage) => (
+          {SLIPPAGE_OPTIONS.map((slippage) => (
+            <StyledSlippageOptionLabel
+              key={slippage}
+              monospace
+              selected={slippage === swapSettings.slippage && !isCustomSlippageActive}
+              onClick={() => {
+                setSlippage(slippage);
+                setIsCustomSlippageActive(false);
+              }}
+            >
+              {slippage}%
+            </StyledSlippageOptionLabel>
+          ))}
+          <div style={{ position: 'relative' }}>
+            {isCustomSlippageActive ? (
+              <>
+                <CustomSlippageInput
+                  type="number"
+                  value={customSlippageInput}
+                  selected={isCustomSlippageActive}
+                  onChange={(e) => setCustomSlippageInput(e.target.value)}
+                  onBlur={() => {
+                    const value = parseFloat(customSlippageInput);
+                    if (!isNaN(value) && value >= 0 && value <= 100) {
+                      setSlippage(value);
+                    } else {
+                      setSlippage(defaultSwapSettings.slippage);
+                    }
+                    setIsCustomSlippageActive(false);
+                  }}
+                  autoFocus
+                />
+                <CustomSlippageInputRightIcon>%</CustomSlippageInputRightIcon>
+              </>
+            ) : (
               <StyledSlippageOptionLabel
                 monospace
-                selected={slippage === swapSettings.slippage}
-                onClick={() => setSlippage(slippage)}
+                onClick={() => setIsCustomSlippageActive(true)}
               >
-                {slippage}%
+                Custom
               </StyledSlippageOptionLabel>
-            ))}
-            <div style={{ position: "relative" }}>
-              <CustomSlippageInput
-                type="number"
-                value={swapSettings.slippage}
-                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
-                onChange={(e) =>
-                  setSlippage(parseFloat(e.target.value))
-                }
-              />
-              <CustomSlippageInputRightIcon
-                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
-              >
-                %
-              </CustomSlippageInputRightIcon>
-            </div>
-          </Row>
+            )}
+          </div>
+        </Row>
         </Row>
       </Column>
       {(axelarFee || hyperlaneFee || smartRelayFee) && (
@@ -224,7 +253,6 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
       )}
 
       <EvmDisclaimer route={route} />
-
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>
@@ -284,43 +312,32 @@ const Tooltip = styled(SmallText).attrs({
 
 const CustomSlippageInput = styled(SmallText).attrs({
   as: "input",
+  normalTextColor: true,
 }) <{ selected?: boolean }>`
   outline: none;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
   border-radius: 7px;
-  color: ${({ theme }) => theme.primary.text.normal};
   width: 55px;
   padding: 5px 7px;
   padding-right: 20px;
   box-sizing: border-box;
-
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-
   &[type='number'] {
     -moz-appearance: textfield;
   }
-
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
-      background-color: ${theme.brandColor};
-    `}
 `;
 
-const CustomSlippageInputRightIcon = styled(SmallText) <{ selected?: boolean }>`
+const CustomSlippageInputRightIcon = styled(SmallText).attrs({
+  normalTextColor: true,
+}) <{ selected?: boolean }>`
   position: absolute;
   top: 50%;
   right: 7px;
   transform: translateY(-50%);
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
-    `}
+  
 `;
