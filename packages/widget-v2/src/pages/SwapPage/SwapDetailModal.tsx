@@ -333,7 +333,6 @@ const CustomSlippageInput = styled(SmallText).attrs({
 `;
 
 const CustomSlippageInputRightIcon = styled(SmallText).attrs({
-  normalTextColor: true,
 }) <{ selected?: boolean }>`
   position: absolute;
   top: 50%;
