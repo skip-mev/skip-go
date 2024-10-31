@@ -72,7 +72,6 @@
         "widget/getting-started",
         "widget/configuration",
         "widget/web-component",
-        "widget/migration-guide",
         "widget/faq"
       ]
     },
