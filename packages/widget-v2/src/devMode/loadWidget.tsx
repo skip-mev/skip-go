@@ -18,7 +18,7 @@ const DevMode = () => {
       <Widget
         theme={theme}
         defaultRoute={{
-          amountIn: 5,
+          amountIn: 0.05,
           srcChainId: "osmosis-1",
           srcAssetDenom: "uosmo",
           destChainId: "cosmoshub-4",
