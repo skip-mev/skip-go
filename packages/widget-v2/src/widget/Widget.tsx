@@ -7,7 +7,7 @@ import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
 import { numberOfModalsOpenAtom } from "@/state/modal";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
@@ -20,9 +20,7 @@ import {
   ChainFilter,
   chainFilterAtom,
   defaultSwapSettings,
-  destinationAssetAmountAtom,
   destinationAssetAtom,
-  sourceAssetAmountAtom,
   sourceAssetAtom,
   swapSettingsAtom,
 } from "@/state/swapPage";
