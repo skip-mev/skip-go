@@ -115,6 +115,8 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("minute", "min")
       .replace("hours", "hrs")
       .replace("hour", "hr")
+      .replace("seconds", "secs")
+      .replace("second", "sec")
   }, [status, timestamp]);
 
   return (
