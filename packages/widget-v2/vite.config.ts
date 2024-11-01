@@ -35,6 +35,7 @@ export default defineConfig({
     force: true, // This forces Vite to optimize this dependency
   },
   build: {
+    minify: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),

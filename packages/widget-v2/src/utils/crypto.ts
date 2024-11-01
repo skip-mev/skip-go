@@ -1,3 +1,5 @@
+import { BigNumber } from "bignumber.js";
+
 export const convertHumanReadableAmountToCryptoAmount = (
   humanReadableAmount: number | string,
   decimals = 6
@@ -5,8 +7,8 @@ export const convertHumanReadableAmountToCryptoAmount = (
   if (typeof humanReadableAmount === "string") {
     humanReadableAmount = parseFloat(humanReadableAmount);
   }
-  const cryptoAmount = humanReadableAmount * Math.pow(10, decimals);
-  return cryptoAmount.toString();
+  const cryptoAmount = new BigNumber(humanReadableAmount).shiftedBy(decimals);
+  return cryptoAmount.toFixed(0);
 };
 
 export const convertTokenAmountToHumanReadableAmount = (
@@ -17,7 +19,7 @@ export const convertTokenAmountToHumanReadableAmount = (
   if (typeof tokenAmount === "string") {
     tokenAmount = parseFloat(tokenAmount);
   }
-  const humanReadableAmount = tokenAmount / Math.pow(10, decimals);
+  const humanReadableAmount = new BigNumber(tokenAmount).shiftedBy(-decimals);
   return humanReadableAmount.toFixed(decimals).replace(/(\.\d*?[1-9])(?:0+|\.0*)$/, "$1");
 };
 
