@@ -30,5 +30,5 @@
     }
   },
   "exclude": ["build", "src/stories"],
-  "include": ["src"]
+  "include": ["src", "web-component"]
 }
