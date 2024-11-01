@@ -6,7 +6,6 @@ import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
 import { useMemo, useState } from "react";
 import { HistoryIcon } from "@/icons/HistoryIcon";
-import { SmallText } from "@/components/Typography";
 import { useAtomValue, useSetAtom } from "jotai";
 import { transactionHistoryAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
@@ -17,11 +16,13 @@ export const TransactionHistoryPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
     number | undefined
-  >();
+  >(undefined);
+
   const txHistory = useAtomValue(transactionHistoryAtom);
-  const historyList = useMemo(() => {
-    return txHistory.sort((a, b) => b.timestamp - a.timestamp);
-  }, [txHistory]);
+  const historyList = useMemo(
+    () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
+    [txHistory]
+  );
 
   return (
     <Column gap={5}>
@@ -33,52 +34,40 @@ export const TransactionHistoryPage = () => {
         }}
       />
       <StyledContainer gap={5} justify="center">
-        {txHistory.length === 0 ? (
-          <StyledNoTransactionHistoryContainer
-            align="center"
-            justify="center"
-            gap={15}
-          >
-            <HistoryIcon
-              width={30}
-              height={30}
-              color={theme?.primary?.text.lowContrast}
-            />
-            <SmallText>No transactions yet</SmallText>
-          </StyledNoTransactionHistoryContainer>
-        ) : (
-          <VirtualList
-            key={txHistory.length}
-            listItems={historyList}
-            height={262}
-            itemHeight={1}
-            renderItem={(item, index) => (
-              <TransactionHistoryPageHistoryItem
-                index={index}
-                txHistoryItem={item}
-                showDetails={index === itemIndexToShowDetail}
-                onClickRow={() => {
-                  if (index !== itemIndexToShowDetail) {
-                    setItemIndexToShowDetail(index);
-                  } else {
-                    setItemIndexToShowDetail(undefined);
-                  }
-                }}
+        <VirtualList
+          key={txHistory.length}
+          listItems={historyList}
+          height={262}
+          empty={{
+            details: "No transactions yet",
+            icon: (
+              <HistoryIcon
+                width={30}
+                height={30}
+                color={theme?.primary?.text.lowContrast}
               />
-            )}
-            itemKey={(item) => item.transactionDetails[0].txHash}
-          />
-        )}
+            ),
+          }}
+          itemHeight={1}
+          renderItem={(item, index) => (
+            <TransactionHistoryPageHistoryItem
+              index={index}
+              txHistoryItem={item}
+              showDetails={index === itemIndexToShowDetail}
+              onClickRow={() =>
+                setItemIndexToShowDetail((prev) =>
+                  prev === index ? undefined : index
+                )
+              }
+            />
+          )}
+          itemKey={(item) => item.transactionDetails[0].txHash}
+        />
       </StyledContainer>
       <SwapPageFooter />
     </Column>
   );
 };
-
-const StyledNoTransactionHistoryContainer = styled(Column)`
-  height: 100%;
-  width: 100%;
-`;
 
 const StyledContainer = styled(Column)`
   position: relative;

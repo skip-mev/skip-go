@@ -115,7 +115,6 @@ export const AssetAndChainSelectorModal = createModal(
       setSearchQuery(term);
     };
 
-
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         return (
@@ -172,13 +171,12 @@ export const AssetAndChainSelectorModal = createModal(
             listItems={listOfAssetsOrChains ?? []}
             height={530}
             itemHeight={70}
-            itemKey={(item) => {
-              if (isGroupedAsset(item)) {
-                return `${item.id}`;
-              }
-              return `${item.chainID}-${item.asset.denom}`;
-            }}
+            itemKey={(item) => isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`}
             renderItem={renderItem}
+            empty={{
+              header: selectedGroup ? "No networks found" : "No assets found",
+              details: selectedGroup ? "Looking for an asset? \n Select back to return to asset selection." : "Looking for a network? \n Select an asset first, then move to network selection.",
+            }}
           />
         )}
       </StyledContainer>
