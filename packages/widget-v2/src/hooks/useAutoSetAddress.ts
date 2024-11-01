@@ -189,6 +189,8 @@ export const useAutoSetAddress = () => {
       await connectRequiredChains();
       return null;
     },
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   return { connectRequiredChains };
