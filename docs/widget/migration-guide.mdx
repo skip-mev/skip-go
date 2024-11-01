@@ -33,8 +33,10 @@ control over the widget's appearance.
 ```
 **After:**
   ```tsx
-  <Widget
+<Widget
   theme="light" // or "dark"
+  // Note: you can pass a "brandColor" in addition to the selected "light" or "dark" theme
+  brandColor: "#FF4FFF", 
   // Or provide a custom theme object
   theme={{
     brandColor: "#FF4FFF",
