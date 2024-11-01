@@ -237,25 +237,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               props
             );
           },
-          onTransactionBroadcast: async (
-            transactionDetails: TransactionDetails
-          ) => {
-            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionDetails
-            );
-          },
-          onTransactionTracked: async (
-            transactionDetails: TransactionDetails
-          ) => {
-            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionDetails
-            );
-          },
           onTransactionCompleted: async (chainID, txHash, status) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.({
               chainID,
               txHash,
               status,
+              isTxCompleted: true,
             });
           },
         });
