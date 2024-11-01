@@ -83,7 +83,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
+      if (!transactionDetails.isTxCompleted) {
+        set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
+      }
     },
     onTransactionSigned: async (transactionDetails) => {
       set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
@@ -148,7 +150,6 @@ export const setTransactionDetailsArrayAtom = atom(
     } else {
       newTransactionDetailsArray.push(transactionDetails);
     }
-
     set(swapExecutionStateAtom, {
       ...swapExecutionState,
       transactionDetailsArray: newTransactionDetailsArray,
@@ -189,6 +190,7 @@ export type TransactionDetails = {
   chainID: string;
   explorerLink?: string;
   status?: TxStatusResponse;
+  isTxCompleted?: boolean;
 };
 
 type SubmitSwapExecutionCallbacks = {
@@ -234,25 +236,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               props
             );
           },
-          onTransactionBroadcast: async (
-            transactionDetails: TransactionDetails
-          ) => {
-            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionDetails
-            );
-          },
-          onTransactionTracked: async (
-            transactionDetails: TransactionDetails
-          ) => {
-            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
-              transactionDetails
-            );
-          },
           onTransactionCompleted: async (chainID, txHash, status) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.({
               chainID,
               txHash,
               status,
+              isTxCompleted: true,
             });
           },
         });
