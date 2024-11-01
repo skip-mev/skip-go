@@ -14,7 +14,12 @@ import {
   defaultSkipClientConfig,
   onlyTestnetsAtom,
 } from "@/state/skipClient";
-import { SkipClientOptions } from "@skip-go/client";
+import {
+  BridgeType,
+  ExperimentalFeature,
+  SkipClientOptions,
+  SmartSwapOptions,
+} from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
@@ -41,7 +46,17 @@ export type WidgetProps = {
      */
     customGasAmount?: number;
   };
-  routeConfig?: RouteConfig;
+  routeConfig?: {
+    experimentalFeatures?: ExperimentalFeature[];
+    allowMultiTx?: boolean;
+    allowUnsafe?: boolean;
+    bridges?: BridgeType[];
+    swapVenues?: {
+      name: string;
+      chainId: string;
+    }[];
+    smartSwapOptions?: SmartSwapOptions;
+  };
   filter?: ChainFilter;
 } & SkipClientOptions;
 
@@ -97,7 +112,17 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       });
     }
     if (props.routeConfig) {
-      setRouteConfig(props.routeConfig);
+      // temp before clientLibrary updates swapVenues to be
+      // { name: string, chainId: string }[]
+      const tempClientRouteConfig = props.routeConfig;
+      if (tempClientRouteConfig.swapVenues) {
+        (tempClientRouteConfig as RouteConfig).swapVenues =
+          tempClientRouteConfig.swapVenues.map((swapVenue) => ({
+            name: swapVenue.name,
+            chainID: swapVenue.chainId,
+          }));
+      }
+      setRouteConfig(tempClientRouteConfig as RouteConfig);
     }
     if (props.filter) {
       setChainFilter(props.filter);
