@@ -2087,7 +2087,7 @@ export class SkipClient {
       },
     });
     console.log('feeBalance', feeBalance);
-    const validate = feeAssets.map((asset, index) => {
+    const validatedAssets = feeAssets.map((asset, index) => {
       const fee = fees[index];
       if (!fee) {
         return {
@@ -2119,22 +2119,22 @@ export class SkipClient {
         asset,
       };
     })
-    console.log('validate', validate);
+    console.log('validate', validatedAssets);
 
-    const successful = validate.find((res) => res.error === null);
-    if (!successful) {
-      if (validate.length > 1) {
+    const feeUsed = validatedAssets.find((res) => res.error === null);
+    if (!feeUsed) {
+      if (validatedAssets.length > 1) {
         throw new Error(
-          validate[0]?.error ||
+          validatedAssets[0]?.error ||
           `Insufficient fee token to initiate transfer on ${chainID}.`
         );
       }
       throw new Error(
-        validate[0]?.error ||
+        validatedAssets[0]?.error ||
         `Insufficient fee token to initiate transfer on ${chainID}.`
       );
     }
-    return successful.asset;
+    return feeUsed.asset;
   }
 }
 
