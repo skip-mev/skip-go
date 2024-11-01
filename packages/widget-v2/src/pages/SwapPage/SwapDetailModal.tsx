@@ -176,8 +176,8 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             <div style={{ position: "relative" }}>
               <CustomSlippageInput
                 type="number"
-                value={swapSettings.slippage}
                 selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
+                value={swapSettings.slippage}
                 onChange={(e) =>
                   setSlippage(parseFloat(e.target.value))
                 }
