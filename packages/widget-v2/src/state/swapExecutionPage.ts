@@ -220,6 +220,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         await skip.executeRoute({
           route,
           userAddresses,
+          slippageTolerancePercent: swapSettings.slippage.toString(),
           validateGasBalance: route.sourceAssetChainID !== "984122",
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
@@ -236,12 +237,25 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               props
             );
           },
+          onTransactionBroadcast: async (
+            transactionDetails: TransactionDetails
+          ) => {
+            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
+              transactionDetails
+            );
+          },
+          onTransactionTracked: async (
+            transactionDetails: TransactionDetails
+          ) => {
+            submitSwapExecutionCallbacks?.onTransactionUpdated?.(
+              transactionDetails
+            );
+          },
           onTransactionCompleted: async (chainID, txHash, status) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.({
               chainID,
               txHash,
               status,
-              isTxCompleted: true,
             });
           },
         });
