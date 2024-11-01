@@ -54,7 +54,10 @@ import {
   evmosProtoRegistry,
 } from './codegen/evmos/client';
 import { erc20ABI } from './constants/abis';
-import { DEFAULT_GAS_DENOM_OVERRIDES, DEFAULT_CACHE_DURATION } from './constants/constants';
+import {
+  DEFAULT_GAS_DENOM_OVERRIDES,
+  DEFAULT_CACHE_DURATION,
+} from './constants/constants';
 import { createTransaction } from './injective';
 import { RequestClient } from './request-client';
 import {
@@ -69,7 +72,7 @@ import { msgsDirectRequestToJSON } from './types/converters';
 import { Adapter } from '@solana/wallet-adapter-base';
 import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
-import { sha256 } from "@cosmjs/crypto"
+import { sha256 } from '@cosmjs/crypto';
 import { createCachingMiddleware, CustomCache } from './cache';
 
 export const SKIP_API_URL = 'https://api.skip.build';
@@ -128,7 +131,9 @@ export class SkipClient {
     this.cache = CustomCache.getInstance();
 
     this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
-    this.cachingMiddleware = createCachingMiddleware(this.cache, { cacheDurationMs: this.cacheDurationMs });
+    this.cachingMiddleware = createCachingMiddleware(this.cache, {
+      cacheDurationMs: this.cacheDurationMs,
+    });
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -138,30 +143,40 @@ export class SkipClient {
     }
   }
 
-  async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
-    return this.cachingMiddleware('assets', async (opts: types.AssetsRequest) => {
-      const response = await this.requestClient.get<{
-        chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
-      }>('/v2/fungible/assets', types.assetsRequestToJSON({ ...opts }));
+  async assets(
+    options: types.AssetsRequest = {}
+  ): Promise<Record<string, types.Asset[]>> {
+    return this.cachingMiddleware(
+      'assets',
+      async (opts: types.AssetsRequest) => {
+        const response = await this.requestClient.get<{
+          chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
+        }>('/v2/fungible/assets', types.assetsRequestToJSON({ ...opts }));
 
-      return Object.entries(response.chain_to_assets_map).reduce(
-        (acc, [chainID, { assets }]) => {
-          acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
-          return acc;
-        },
-        {} as Record<string, types.Asset[]>
-      );
-    }, [options])
+        return Object.entries(response.chain_to_assets_map).reduce(
+          (acc, [chainID, { assets }]) => {
+            acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
+            return acc;
+          },
+          {} as Record<string, types.Asset[]>
+        );
+      },
+      [options]
+    );
   }
 
   async chains(options?: types.ChainsRequest): Promise<types.Chain[]> {
-    return this.cachingMiddleware('chains', async (opts: typeof options) => {
-      const response = await this.requestClient.get<{ chains: types.ChainJSON[] }>(
-        '/v2/info/chains', types.chainsRequestToJSON({ ...opts }));
-      return response.chains.map((chain) => types.chainFromJSON(chain));
-    }, [options]);
+    return this.cachingMiddleware(
+      'chains',
+      async (opts: typeof options) => {
+        const response = await this.requestClient.get<{
+          chains: types.ChainJSON[];
+        }>('/v2/info/chains', types.chainsRequestToJSON({ ...opts }));
+        return response.chains.map((chain) => types.chainFromJSON(chain));
+      },
+      [options]
+    );
   }
-
 
   async assetsFromSource(
     options: types.AssetsFromSourceRequest
@@ -317,15 +332,13 @@ export class SkipClient {
 
   private async executeCosmosTx(
     tx: {
-      cosmosTx: types.CosmosTx
-      operationsIndices: number[]
+      cosmosTx: types.CosmosTx;
+      operationsIndices: number[];
     },
     options: clientTypes.ExecuteRouteOptions,
     index: number,
     gasTokenRecord: Record<number, Coin>
   ): Promise<{ chainID: string; txHash: string }> {
-
-
     const {
       userAddresses,
       validateGasBalance,
@@ -344,7 +357,7 @@ export class SkipClient {
 
     const [signer, endpoint] = await Promise.all([
       getOfflineSigner(tx.cosmosTx.chainID),
-      this.getRpcEndpointForChain(tx.cosmosTx.chainID)
+      this.getRpcEndpointForChain(tx.cosmosTx.chainID),
     ]);
 
     const stargateClient = await SigningStargateClient.connectWithSigner(
@@ -358,6 +371,7 @@ export class SkipClient {
     );
 
     if (validateGasBalance) {
+
       gasTokenRecord = await this.validateGasBalances({
         txs: [tx],
         userAddresses,
@@ -366,7 +380,7 @@ export class SkipClient {
         gasAmountMultiplier,
         getFallbackGasAmount,
         onValidateGasBalance: options.onValidateGasBalance,
-        stargateClient
+        stargateClient,
       });
     }
     let gasTokenUsed = gasTokenRecord[index];
@@ -380,6 +394,13 @@ export class SkipClient {
         `executeRoute error: invalid address for chain '${tx.cosmosTx.chainID}'`
       );
     }
+    const test = await this.validateGasBalance2({
+      chainID: tx.cosmosTx.chainID,
+      messages: tx.cosmosTx.msgs,
+      client: stargateClient,
+      signerAddress: currentUserAddress,
+    })
+    console.log('gas used', test)
 
     if (tx.cosmosTx.chainID === 'stride-1' && !gasTokenUsed) {
       gasTokenUsed = await this.validateCosmosGasBalance({
@@ -389,7 +410,7 @@ export class SkipClient {
         getGasPrice,
         gasAmountMultiplier,
         getFallbackGasAmount,
-        stargateClient
+        stargateClient,
       });
     }
 
@@ -458,10 +479,12 @@ export class SkipClient {
     });
   }
 
-  async executeCosmosMessage(options: clientTypes.ExecuteCosmosMessage & {
-    stargateClient: SigningStargateClient,
-    signer: OfflineSigner,
-  }) {
+  async executeCosmosMessage(
+    options: clientTypes.ExecuteCosmosMessage & {
+      stargateClient: SigningStargateClient;
+      signer: OfflineSigner;
+    }
+  ) {
     const {
       signerAddress,
       chainID,
@@ -472,7 +495,7 @@ export class SkipClient {
       gasTokenUsed,
       onTransactionSigned,
       stargateClient,
-      signer
+      signer,
     } = options;
 
     const accounts = await signer.getAccounts();
@@ -546,7 +569,7 @@ export class SkipClient {
 
     const txBytes = TxRaw.encode(rawTx).finish();
 
-    const txHash = toHex(sha256(txBytes))
+    const txHash = toHex(sha256(txBytes));
     onTransactionSigned?.({
       chainID,
       txHash,
@@ -582,11 +605,8 @@ export class SkipClient {
         `executeRoute error: unable to get gas prices for chain '${chainID}'`
       );
 
-    if (chainID === "noble-1") {
-      const fee = calculateFee(
-        200000,
-        gasPrice
-      );
+    if (chainID === 'noble-1') {
+      const fee = calculateFee(200000, gasPrice);
       return fee;
     }
 
@@ -847,6 +867,7 @@ export class SkipClient {
     }
 
     if (chainID.includes('injective')) {
+      console.log('injective')
       return this.signCosmosMessageDirectInjective(
         signerAddress,
         signer,
@@ -991,13 +1012,13 @@ export class SkipClient {
     const timeoutHeight = new BigNumberInBase(latestHeight).plus(
       DEFAULT_BLOCK_TIMEOUT_HEIGHT
     );
-
+    console.log('her4e buffer ', accountFromSigner.pubkey)
     const pk = Buffer.from(accountFromSigner.pubkey).toString('base64');
-
+    console.log('here pk ', pk)
     const messages = cosmosMsgs.map((cosmosMsg) =>
       getEncodeObjectFromCosmosMessageInjective(cosmosMsg)
     );
-
+    console.log('here messages ', messages)
     const { signDoc } = createTransaction({
       pubKey: pk,
       chainId: chainId,
@@ -1515,7 +1536,9 @@ export class SkipClient {
       }
     }
 
-    console.warn('Warning: You are using unreliable public endpoints. We strongly recommend overriding them via endpointOptions for use beyond development settings.');
+    console.warn(
+      'Warning: You are using unreliable public endpoints. We strongly recommend overriding them via endpointOptions for use beyond development settings.'
+    );
 
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
@@ -1594,7 +1617,7 @@ export class SkipClient {
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
     client: SigningStargateClient,
     signer?: OfflineSigner,
-    gasPrice?: GasPrice,
+    gasPrice?: GasPrice
   ) {
     gasPrice = await this.getRecommendedGasPrice(chainID);
     if (!gasPrice) {
@@ -1801,7 +1824,7 @@ export class SkipClient {
     gasAmountMultiplier,
     getFallbackGasAmount,
     onValidateGasBalance,
-    stargateClient
+    stargateClient,
   }: {
     txs: types.Tx[];
     userAddresses: clientTypes.UserAddress[];
@@ -1813,7 +1836,7 @@ export class SkipClient {
     stargateClient?: SigningStargateClient;
   }) {
     // tx index -> gas token used
-    let gasTokenRecord: Record<number, Coin> = {}
+    let gasTokenRecord: Record<number, Coin> = {};
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -1821,7 +1844,9 @@ export class SkipClient {
       }
       if ('cosmosTx' in tx) {
         if (!stargateClient) {
-          throw new Error("validateGasBalances error: 'stargateClient' is not provided for cosmos tx");
+          throw new Error(
+            "validateGasBalances error: 'stargateClient' is not provided for cosmos tx"
+          );
         }
 
         onValidateGasBalance?.({
@@ -1869,14 +1894,12 @@ export class SkipClient {
             txIndex: i,
             status: 'error',
           });
-          throw new Error(
-            `validateGasBalances error: ${error.message}`
-          );
+          throw new Error(`validateGasBalances error: ${error.message}`);
         }
       }
     }
     onValidateGasBalance?.({
-      status: 'completed'
+      status: 'completed',
     });
     return gasTokenRecord;
   }
@@ -1913,7 +1936,7 @@ export class SkipClient {
         `validateCosmosGasBalance error: unable to get fee amount`
       );
     }
-    if (chainID === "noble-1") {
+    if (chainID === 'noble-1') {
       return fee.amount[0];
     }
 
@@ -1933,7 +1956,10 @@ export class SkipClient {
             amount,
           };
         }
-        const balance = await stargateClient.getBalance(signerAddress, amount.denom);
+        const balance = await stargateClient.getBalance(
+          signerAddress,
+          amount.denom
+        );
 
         if (parseInt(balance.amount) < parseInt(amount.amount)) {
           const formattedBalance =
@@ -1968,6 +1994,147 @@ export class SkipClient {
       );
     }
     return successful.amount;
+  }
+
+  async validateGasBalance2({
+    chainID,
+    signerAddress,
+    client,
+    messages,
+    getFallbackGasAmount,
+  }: {
+    chainID: string;
+    signerAddress: string;
+    client: SigningStargateClient;
+    messages?: types.CosmosMsg[];
+    getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+  }) {
+    const mainnetChains = await this.chains();
+    const testnetChains = await this.chains({ onlyTestnets: true });
+    const skipChains = [...mainnetChains, ...testnetChains];
+    const chain = skipChains.find((chain) => chain.chainID === chainID);
+    if (!chain) {
+      throw new Error(
+        `validateGasBalance2 error: failed to find chain id '${chainID}'`
+      );
+    }
+
+    const { feeAssets } = chain;
+    if (!feeAssets) {
+      throw new Error(
+        `validateGasBalance2 error: failed to find fee assets for chain '${chainID}'`
+      );
+    }
+    console.log('feeAssets', feeAssets);
+    const estimatedGasAmount = await (async () => {
+      try {
+        const estimatedGas = await getCosmosGasAmountForMessage(
+          client,
+          signerAddress,
+          chainID,
+          messages
+        );
+        return estimatedGas;
+      } catch (error) {
+        if (getFallbackGasAmount) {
+          const fallbackGasAmount = await getFallbackGasAmount(
+            chainID,
+            'cosmos'
+          );
+          if (!fallbackGasAmount) {
+            raise(
+              `executeRoute error: unable to estimate gas for message(s) ${messages}`
+            );
+          }
+          return String(fallbackGasAmount);
+        }
+        throw error;
+      }
+    })();
+
+    console.log('estimatedGasAmount', estimatedGasAmount);
+
+    const fees = feeAssets.map((asset) => {
+      const gasPrice = (() => {
+        if (!asset.gasPrice) return undefined;
+        let price = asset.gasPrice.average;
+        if (price === '') {
+          price = asset.gasPrice.high;
+        }
+        if (price === '') {
+          price = asset.gasPrice.low;
+        }
+        return new GasPrice(Decimal.fromUserInput(price, 18), asset.denom)
+      })()
+      if (!gasPrice) {
+        return null;
+      }
+      if (chainID === 'noble-1') {
+        const fee = calculateFee(200000, gasPrice);
+        return fee;
+      }
+      return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
+    })
+
+    console.log('fees', fees);
+
+    const feeBalance = await this.balances({
+      chains: {
+        [chainID]: {
+          address: signerAddress,
+          denoms: feeAssets.map((asset) => asset.denom),
+        },
+      },
+    });
+    console.log('feeBalance', feeBalance);
+    const validate = feeAssets.map((asset, index) => {
+      const fee = fees[index];
+      if (!fee) {
+        return {
+          error: `Unable to calculate fee for ${asset.denom}`,
+          asset,
+        };
+      }
+      const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
+      if (!balance) {
+        return {
+          error: `Unable to find balance for ${asset.denom}`,
+          asset,
+        };
+      }
+      if (!fee.amount[0]?.amount) {
+        return {
+          error: `Unable to get fee for ${asset.denom}`,
+          asset,
+        }
+      }
+      if (parseInt(balance.amount) < parseInt(fee.amount[0]?.amount)) {
+        return {
+          error: `Insufficient balance for ${asset.denom}. Need ${fee.amount[0]?.amount} but only have ${balance.amount}`,
+          asset,
+        };
+      }
+      return {
+        error: null,
+        asset,
+      };
+    })
+    console.log('validate', validate);
+
+    const successful = validate.find((res) => res.error === null);
+    if (!successful) {
+      if (validate.length > 1) {
+        throw new Error(
+          validate[0]?.error ||
+          `Insufficient fee token to initiate transfer on ${chainID}.`
+        );
+      }
+      throw new Error(
+        validate[0]?.error ||
+        `Insufficient fee token to initiate transfer on ${chainID}.`
+      );
+    }
+    return successful.asset;
   }
 }
 
