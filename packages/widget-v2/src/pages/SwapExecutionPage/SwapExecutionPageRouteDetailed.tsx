@@ -51,9 +51,6 @@ export const SwapExecutionPageRouteDetailed = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
-  const { route } = useAtomValue(
-    swapExecutionStateAtom
-  );
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
 

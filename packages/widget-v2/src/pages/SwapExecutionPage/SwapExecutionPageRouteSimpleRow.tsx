@@ -18,6 +18,7 @@ import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
 import {
   limitDecimalsDisplayed,
+  removeTrailingZeros,
 } from "@/utils/number";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
@@ -75,6 +76,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
     }
   }, [account?.address, account?.wallet.logo, chainAddresses, context]);
 
+  const displayAmount = useMemo(() => {
+    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount))
+  }
+    , [assetDetails.amount]);
+
   return (
     <Row gap={25} align="center">
       {assetDetails.assetImage && (
@@ -95,7 +101,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       )}
       <Column gap={5}>
         <StyledSymbolAndAmount>
-          {limitDecimalsDisplayed(assetDetails.amount)} {assetDetails?.symbol}
+          {displayAmount} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
         {usdValue && (
           <SmallText>

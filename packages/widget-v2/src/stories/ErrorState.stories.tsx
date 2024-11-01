@@ -77,7 +77,6 @@ const transactionFailedProps = (theme: Theme) => {
     description: (
       <>
         <SmallText color={theme.error.text} textAlign="center">
-          This transaction encountered a critical error. <br />
           Please contact our support team below.
         </SmallText>
         <Row
