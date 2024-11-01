@@ -23,6 +23,7 @@ export const useGetSourceBalance = () => {
         amount: 0,
         formattedAmount: "0",
         error: undefined,
+        decimals: undefined
       };
     }
     return skipBalances?.chains?.[chainID]?.denoms?.[denom];
