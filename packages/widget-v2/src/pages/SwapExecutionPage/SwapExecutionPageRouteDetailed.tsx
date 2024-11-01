@@ -14,8 +14,6 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
-import { EvmDisclaimer } from "@/components/EvmDisclaimer";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -52,9 +50,6 @@ export const SwapExecutionPageRouteDetailed = ({
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
-  const { route } = useAtomValue(
-    swapExecutionStateAtom
-  );
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
 
@@ -159,7 +154,6 @@ export const SwapExecutionPageRouteDetailed = ({
           );
         })}
       </Column>
-      <EvmDisclaimer route={route} />
     </StyledSwapExecutionPageRoute>
   );
 };
