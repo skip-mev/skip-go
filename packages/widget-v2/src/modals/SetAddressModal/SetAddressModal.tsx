@@ -86,7 +86,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const destinationIndex = Object.values(prev).length - 1;
+      const lastIndex = Object.values(prev).length - 1;
+      // determine if we are setting destination address or recovery address
+      const destinationIndex = prev[lastIndex]?.address ? lastIndex - 1 : lastIndex;
       return {
         ...prev,
         [destinationIndex]: {
