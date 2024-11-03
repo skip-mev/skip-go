@@ -81,7 +81,7 @@ export const SwapExecutionPageRouteDetailed = ({
     if (isSignRequired) return;
     const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
     const destinationAddress = chainAddresses?.[lastIndex]?.address;
-    if (!destinationAddress) return;
+    if (!destinationAddress || swapExecutionState === SwapExecutionState.pending || swapExecutionState === SwapExecutionState.waitingForSigning || swapExecutionState === SwapExecutionState.validatingGasBalance || swapExecutionState === SwapExecutionState.confirmed) return;
     return _onClickEditDestinationWallet;
   }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
 
