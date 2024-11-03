@@ -20,6 +20,7 @@ export type RenderWalletListProps = {
   chainId?: string;
   chainType?: string;
   isConnectEco?: boolean;
+  chainAddressIndex?: number;
 };
 
 export type ManualWalletEntry = {
@@ -50,7 +51,8 @@ export const RenderWalletList = ({
   isDestinationAddress,
   chainId,
   chainType,
-  isConnectEco
+  isConnectEco,
+  chainAddressIndex
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const modal = useModal();
@@ -63,7 +65,7 @@ export const RenderWalletList = ({
         if (!chainId || !chainType) return;
         const address = await wallet.getAddress?.({});
         setChainAddresses((prev) => {
-          const destinationIndex = Object.values(prev).length - 1;
+          const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
           return {
             ...prev,
             [destinationIndex]: {

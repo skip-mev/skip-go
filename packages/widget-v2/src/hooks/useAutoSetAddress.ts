@@ -2,7 +2,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { ChainAddress, chainAddressEffectAtom, chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
@@ -12,9 +12,10 @@ import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useModal } from "@/components/Modal";
 
 export const useAutoSetAddress = () => {
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
+
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
 
@@ -60,12 +61,13 @@ export const useAutoSetAddress = () => {
           {
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(w => w.walletName === sourceWallet.cosmos?.walletName);
-
             if (!wallet) {
               if (!openModal) return;
+              if (chainAddresses[index].address) return
               setWalletModal.show({
                 signRequired: isSignRequired,
                 chainId: chainID,
+                chainAddressIndex: index
               });
               return;
             }

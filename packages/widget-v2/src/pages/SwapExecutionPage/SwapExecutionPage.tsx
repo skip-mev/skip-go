@@ -75,6 +75,7 @@ export const SwapExecutionPage = () => {
     const allAddressesSet = requiredChainAddresses.every(
       (_chainId, index) => chainAddresses[index]?.address
     );
+
     const lastChainAddress =
       chainAddresses[requiredChainAddresses.length - 1]?.address;
 
@@ -202,6 +203,7 @@ export const SwapExecutionPage = () => {
         onClickEditDestinationWallet={() =>
           setManualAddressModal.show({
             chainId: route?.destAssetChainID,
+            signRequired: lastOperation.signRequired,
           })
         }
         operations={clientOperations}
