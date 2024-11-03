@@ -75,6 +75,7 @@ export const SwapExecutionPage = () => {
     const allAddressesSet = requiredChainAddresses.every(
       (_chainId, index) => chainAddresses[index]?.address
     );
+
     const lastChainAddress =
       chainAddresses[requiredChainAddresses.length - 1]?.address;
 
@@ -98,6 +99,12 @@ export const SwapExecutionPage = () => {
     }
     return SwapExecutionState.ready;
   }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
+
+  const recoveryAddressIndex = useMemo(() => {
+    return route?.requiredChainAddresses.findIndex((_, index) => {
+      return !chainAddresses[index]?.address;
+    });
+  }, [chainAddresses, route?.requiredChainAddresses]);
 
   useHandleTransactionTimeout(swapExecutionState);
 
@@ -125,7 +132,7 @@ export const SwapExecutionPage = () => {
             label="Set recovery address"
             icon={ICONS.rightArrow}
             onClick={() => {
-              connectRequiredChains(true);
+              connectRequiredChains(true, recoveryAddressIndex);
             }}
           />
         );

@@ -12,9 +12,10 @@ import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useModal } from "@/components/Modal";
 
 export const useAutoSetAddress = () => {
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
+
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
 
@@ -46,7 +47,7 @@ export const useAutoSetAddress = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connectRequiredChains = async (openModal?: boolean) => {
+  const connectRequiredChains = async (openModal?: boolean, chainAddressIndex?: number) => {
     if (!requiredChainAddresses) return;
     requiredChainAddresses.forEach(async (chainID, index) => {
       const chain = chains?.find((c) => c.chainID === chainID);
@@ -63,9 +64,11 @@ export const useAutoSetAddress = () => {
 
             if (!wallet) {
               if (!openModal) return;
+              if (chainAddresses[index].address) return
               setWalletModal.show({
                 signRequired: isSignRequired,
                 chainId: chainID,
+                chainAddressIndex
               });
               return;
             }

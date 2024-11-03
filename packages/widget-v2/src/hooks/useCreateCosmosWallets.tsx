@@ -92,34 +92,7 @@ export const useCreateCosmosWallets = () => {
       const wallets: MinimalWallet[] = [];
 
       for (const wallet of cosmosWallets) {
-        const getAddress = async ({
-          signRequired,
-        }: {
-          signRequired?: boolean;
-          context?: "recovery" | "destination";
-        }) => {
-          if (!chainID) throw new Error("Chain ID is required");
-          const chainInfo = getChainInfo(chainID);
-          const currentAddress = accounts?.[chainID]?.bech32Address;
-          if (wallet !== currentWallet && !currentAddress) {
-            if (!chainInfo)
-              throw new Error(
-                `getAddress: Chain info not found for chainID: ${chainID}`
-              );
-            // @ts-expect-error mismatch keplr types version
-            await getWallet(wallet).experimentalSuggestChain(chainInfo);
-            await connect({
-              chainId: chainID,
-              walletType: wallet,
-            });
-            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
-          } else if (currentAddress && isConnected && signRequired) {
-            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
-          }
-          const address = (await getWallet(wallet).getKey(chainID))
-            .bech32Address;
-          return address;
-        };
+
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (
           wallet === WalletType.KEPLR
@@ -144,6 +117,40 @@ export const useCreateCosmosWallets = () => {
           );
           await Promise.all(promises);
           return Promise.resolve();
+        };
+
+        const getAddress = async ({
+          signRequired,
+        }: {
+          signRequired?: boolean;
+          context?: "recovery" | "destination";
+        }) => {
+          if (!chainID) throw new Error("Chain ID is required");
+          const chainInfo = getChainInfo(chainID);
+          const currentAddress = accounts?.[chainID]?.bech32Address;
+          if (wallet !== currentWallet || !currentAddress) {
+            if (!chainInfo)
+              throw new Error(
+                `getAddress: Chain info not found for chainID: ${chainID}`
+              );
+            // @ts-expect-error mismatch keplr types version
+            await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            const isInitialConnect = initialChainIds.includes(chainID);
+            if (isInitialConnect) {
+              await connectEco();
+            } else {
+              await connect({
+                chainId: chainID,
+                walletType: wallet,
+              });
+            }
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
+          } else if (currentAddress && isConnected && signRequired) {
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
+          }
+          const address = (await getWallet(wallet).getKey(chainID))
+            .bech32Address;
+          return address;
         };
 
         const minimalWallet: MinimalWallet = {
