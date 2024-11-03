@@ -16,8 +16,8 @@ export const useCleanupDebouncedAtoms = () => {
 
   useEffect(() => {
     return () => {
-      cleanupDebouncedSourceAssetAmount();
-      cleanupDebouncedDestinationAssetAmount();
+      cleanupDebouncedSourceAssetAmount(undefined);
+      cleanupDebouncedDestinationAssetAmount(undefined);
     };
   }, [
     cleanupDebouncedDestinationAssetAmount,
