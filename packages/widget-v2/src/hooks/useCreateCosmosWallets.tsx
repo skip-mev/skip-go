@@ -128,7 +128,7 @@ export const useCreateCosmosWallets = () => {
           if (!chainID) throw new Error("Chain ID is required");
           const chainInfo = getChainInfo(chainID);
           const currentAddress = accounts?.[chainID]?.bech32Address;
-          if (wallet !== currentWallet || !currentAddress) {
+          if (wallet !== currentWallet && !currentAddress) {
             if (!chainInfo)
               throw new Error(
                 `getAddress: Chain info not found for chainID: ${chainID}`

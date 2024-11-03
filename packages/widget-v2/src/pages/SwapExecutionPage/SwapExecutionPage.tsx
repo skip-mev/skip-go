@@ -100,12 +100,6 @@ export const SwapExecutionPage = () => {
     return SwapExecutionState.ready;
   }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
 
-  const recoveryAddressIndex = useMemo(() => {
-    return route?.requiredChainAddresses.findIndex((_, index) => {
-      return !chainAddresses[index]?.address;
-    });
-  }, [chainAddresses, route?.requiredChainAddresses]);
-
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
@@ -132,7 +126,7 @@ export const SwapExecutionPage = () => {
             label="Set recovery address"
             icon={ICONS.rightArrow}
             onClick={() => {
-              connectRequiredChains(true, recoveryAddressIndex);
+              connectRequiredChains(true);
             }}
           />
         );

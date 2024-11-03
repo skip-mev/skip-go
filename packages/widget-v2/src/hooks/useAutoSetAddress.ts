@@ -2,7 +2,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { ChainAddress, chainAddressEffectAtom, chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
@@ -47,7 +47,7 @@ export const useAutoSetAddress = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connectRequiredChains = async (openModal?: boolean, chainAddressIndex?: number) => {
+  const connectRequiredChains = async (openModal?: boolean) => {
     if (!requiredChainAddresses) return;
     requiredChainAddresses.forEach(async (chainID, index) => {
       const chain = chains?.find((c) => c.chainID === chainID);
@@ -61,14 +61,13 @@ export const useAutoSetAddress = () => {
           {
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(w => w.walletName === sourceWallet.cosmos?.walletName);
-
             if (!wallet) {
               if (!openModal) return;
               if (chainAddresses[index].address) return
               setWalletModal.show({
                 signRequired: isSignRequired,
                 chainId: chainID,
-                chainAddressIndex
+                chainAddressIndex: index
               });
               return;
             }
