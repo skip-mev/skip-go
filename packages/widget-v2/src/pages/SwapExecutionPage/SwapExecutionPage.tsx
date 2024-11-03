@@ -203,6 +203,7 @@ export const SwapExecutionPage = () => {
         onClickEditDestinationWallet={() =>
           setManualAddressModal.show({
             chainId: route?.destAssetChainID,
+            signRequired: lastOperation.signRequired,
           })
         }
         operations={clientOperations}

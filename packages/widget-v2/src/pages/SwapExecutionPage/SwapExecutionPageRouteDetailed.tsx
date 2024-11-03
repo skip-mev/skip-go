@@ -14,6 +14,7 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -52,6 +53,7 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
+  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -77,7 +79,9 @@ export const SwapExecutionPageRouteDetailed = ({
 
   const onClickEditDestinationWallet = useMemo(() => {
     if (isSignRequired) return;
-    if (swapExecutionState !== SwapExecutionState.ready) return;
+    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
+    const destinationAddress = chainAddresses?.[lastIndex]?.address;
+    if (!destinationAddress) return;
     return _onClickEditDestinationWallet;
   }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
 
