@@ -12,7 +12,7 @@ type WebComponentProps = {
 function isJsonString(str: string) {
   try {
     JSON.parse(str);
-  } catch (e) {
+  } catch (_err) {
     return false;
   }
   return true;
