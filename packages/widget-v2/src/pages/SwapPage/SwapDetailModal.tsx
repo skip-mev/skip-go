@@ -1,27 +1,22 @@
-import { css, styled } from "styled-components";
+import { styled } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
-import { Column, Row, Spacer } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { SwapPageFooterItems } from "./SwapPageFooter";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
-import { useMemo, useState } from "react";
-import { setSlippageAtom, swapSettingsAtom } from "@/state/swapPage";
+import { Fragment, useMemo } from "react";
 import { formatUSD } from "@/utils/intl";
-import { SLIPPAGE_OPTIONS } from "@/constants/widget";
 import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { getBrandButtonTextColor } from "@/utils/colors";
-import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
+import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
+import SlippageSelector from "./SlippageSelector";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const swapSettings = useAtomValue(swapSettingsAtom);
-  const setSlippage = useSetAtom(setSlippageAtom);
-  const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const chainsRoute = useMemo(() => {
     return route?.chainIDs.map((chainID) =>
       chains?.find((chain) => chain.chainID === chainID)
@@ -80,39 +75,9 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
     }
   }, [hyperlaneTransferOperation]);
 
-  const isSmartRelay = route?.estimatedFees?.some(
-    (fee) => fee.feeType === "SMART_RELAY"
-  );
-
+  const isSmartRelay = checkIsSmartRelay(route);
   const smartRelayFee = useMemo(() => {
-    if (!isSmartRelay) return;
-    const fee = route?.estimatedFees.filter(
-      (fee) => fee.feeType === "SMART_RELAY"
-    );
-    const sameAsset = fee?.every(
-      (fee, _, arr) => fee.originAsset.symbol === arr[0].originAsset.symbol
-    );
-    if (!sameAsset) return;
-    const computedAmount = fee?.reduce(
-      (acc, fee) => acc + Number(fee.amount),
-      0
-    );
-    const computedUsd = fee?.reduce(
-      (acc, fee) => acc + Number(fee.usdAmount),
-      0
-    );
-    if (!computedAmount || !fee || !computedUsd) return;
-    const inAsset = (
-      computedAmount / Math.pow(10, fee[0].originAsset.decimals || 6)
-    ).toLocaleString("en-US", {
-      maximumFractionDigits: 6,
-    });
-
-    return {
-      assetAmount: Number(inAsset),
-      formattedAssetAmount: `${inAsset} ${fee[0].originAsset.symbol}`,
-      formattedUsdAmount: `${formatUSD(computedUsd)}`,
-    };
+    return calculateSmartRelayFee(isSmartRelay, route?.estimatedFees);
   }, [isSmartRelay, route?.estimatedFees]);
 
   return (
@@ -122,7 +87,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           <SwapDetailText>Route</SwapDetailText>
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
-              <>
+              <Fragment key={index}>
                 <img
                   width="20"
                   height="20"
@@ -133,7 +98,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
                 {index !== chainsRoute.length - 1 && (
                   <RouteArrow color={modalProps.theme?.primary?.text.normal} />
                 )}
-              </>
+              </Fragment>
             ))}
           </Row>
         </Row>
@@ -147,48 +112,8 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             </Row>
           </Row>
         )}
-        <Row justify="space-between">
-          <SwapDetailText>
-            Max Slippage
-            <Spacer width={5} />
-            <QuestionMarkIcon
-              onMouseEnter={() => setShowMaxSlippageTooltip(true)}
-              onMouseLeave={() => setShowMaxSlippageTooltip(false)}
-            />
-            {showMaxSlippageTooltip && (
-              <Tooltip>
-                If price changes unfavorably during the transaction by more than
-                this amount, the transaction will revert
-              </Tooltip>
-            )}
-          </SwapDetailText>
-          <Row gap={4}>
-            {SLIPPAGE_OPTIONS.map((slippage) => (
-              <StyledSlippageOptionLabel
-                monospace
-                selected={slippage === swapSettings.slippage}
-                onClick={() => setSlippage(slippage)}
-              >
-                {slippage}%
-              </StyledSlippageOptionLabel>
-            ))}
-            <div style={{ position: "relative" }}>
-              <CustomSlippageInput
-                type="number"
-                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
-                value={swapSettings.slippage}
-                onChange={(e) =>
-                  setSlippage(parseFloat(e.target.value))
-                }
-              />
-              <CustomSlippageInputRightIcon
-                selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
-              >
-                %
-              </CustomSlippageInputRightIcon>
-            </div>
-          </Row>
-        </Row>
+        <SlippageSelector 
+        />
       </Column>
       {(axelarFee || hyperlaneFee || smartRelayFee) && (
         <Column gap={10}>
@@ -235,26 +160,6 @@ const StyledSwapPageSettings = styled(Column)`
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 
-const StyledSlippageOptionLabel = styled(SmallText) <{ selected?: boolean }>`
-  border-radius: 7px;
-  padding: 4px 7px;
-  white-space: nowrap;
-  color: ${({ selected, theme }) =>
-    selected
-      ? getBrandButtonTextColor(theme.brandColor)
-      : theme.primary.text.normal};
-  &:hover {
-    box-shadow: inset 0px 0px 0px 1px ${(props) => props.theme.brandColor};
-    opacity: 1;
-    cursor: pointer;
-  }
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      background-color: ${theme.brandColor};
-      opacity: 1;
-    `}
-`;
 
 const SwapDetailText = styled(Row).attrs({
   as: SmallText,
@@ -262,61 +167,4 @@ const SwapDetailText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
-`;
-
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  padding: 13px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
-  top: -30px;
-  left: 110px;
-  width: 250px;
-  z-index: 1;
-`;
-
-const CustomSlippageInput = styled(SmallText).attrs({
-  as: "input",
-}) <{ selected?: boolean }>`
-  outline: none;
-  background-color: ${({ theme }) => theme.primary.background.normal};
-  border: 1px solid ${({ theme }) => theme.primary.text.normal};
-  border-radius: 7px;
-  color: ${({ theme }) => theme.primary.text.normal};
-  width: 55px;
-  padding: 5px 7px;
-  padding-right: 20px;
-  box-sizing: border-box;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  &[type='number'] {
-    -moz-appearance: textfield;
-  }
-
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
-      background-color: ${theme.brandColor};
-    `}
-`;
-
-const CustomSlippageInputRightIcon = styled(SmallText) <{ selected?: boolean }>`
-  position: absolute;
-  top: 50%;
-  right: 7px;
-  transform: translateY(-50%);
-  ${({ selected, theme }) =>
-    selected &&
-    css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
-    `}
 `;
