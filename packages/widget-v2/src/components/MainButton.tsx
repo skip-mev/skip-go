@@ -47,35 +47,37 @@ export const MainButton = ({
   }
 
   return (
-    <StyledMainButton
-      align="center"
-      justify="space-between"
-      padding={20}
-      backgroundColor={backgroundColor}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {leftIcon ? (
-        <Row align="center" gap={10}>
-          <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-          <Text
-            fontWeight="bold"
-            fontSize={24}
-            color={textColor}
-            mainButtonColor={backgroundColor}
-            capitalize
-          >
+    <MainButtonContainer>
+      <StyledMainButton
+        align="center"
+        justify="space-between"
+        padding={20}
+        backgroundColor={backgroundColor}
+        disabled={disabled}
+        onClick={onClick}
+      >
+        {leftIcon ? (
+          <Row align="center" gap={10}>
+            <LeftIcon backgroundColor={textColor} color={backgroundColor} />
+            <Text
+              fontWeight="bold"
+              fontSize={24}
+              color={textColor}
+              mainButtonColor={backgroundColor}
+              capitalize
+            >
+              {label}
+            </Text>
+          </Row>
+        ) : (
+          <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
             {label}
           </Text>
-        </Row>
-      ) : (
-        <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
-          {label}
-        </Text>
-      )}
+        )}
 
-      <Icon backgroundColor={textColor} color={backgroundColor} />
-    </StyledMainButton>
+        <Icon backgroundColor={textColor} color={backgroundColor} />
+      </StyledMainButton>
+    </MainButtonContainer>
   );
 };
 
@@ -107,6 +109,23 @@ export const LoadingButton = ({
     </StyledOverlay>
   </StyledLoadingButton>
 );
+
+// on hover mask to lighten the button
+const MainButtonContainer = styled.div`
+  position: relative;
+  overflow: hidden;
+  &:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+  }
+`;
 
 const StyledMainButton = styled(Row).attrs({
   as: "button",
