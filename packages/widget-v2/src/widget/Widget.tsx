@@ -15,10 +15,7 @@ import {
   onlyTestnetsAtom,
 } from "@/state/skipClient";
 import {
-  BridgeType,
-  ExperimentalFeature,
   SkipClientOptions,
-  SmartSwapOptions,
 } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
@@ -46,19 +43,20 @@ export type WidgetProps = {
      */
     customGasAmount?: number;
   };
-  routeConfig?: {
-    experimentalFeatures?: ExperimentalFeature[];
-    allowMultiTx?: boolean;
-    allowUnsafe?: boolean;
-    bridges?: BridgeType[];
-    swapVenues?: {
-      name: string;
-      chainId: string;
-    }[];
-    smartSwapOptions?: SmartSwapOptions;
+  routeConfig?: Omit<RouteConfig, "swapVenues"> & {
+    swapVenues?: NewSwapVenueRequest[];
   };
   filter?: ChainFilter;
-} & SkipClientOptions;
+} & NewSkipClientOptions;
+
+type NewSwapVenueRequest = {
+  name: string;
+  chainId: string;
+};
+
+type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL"> & {
+  apiUrl?: string
+}
 
 export const Widget = (props: WidgetProps) => {
   return (
@@ -78,11 +76,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
-    const { theme, ...skipClientConfig } = props;
+    const { theme, apiUrl, ...skipClientConfig } = props;
 
     return {
       ...defaultSkipClientConfig,
       ...skipClientConfig,
+      apiURL: apiUrl,
     };
   }, [props]);
 
