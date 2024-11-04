@@ -97,12 +97,14 @@ control over the widget's appearance.
 ## 3. Prop Spelling Changes
 
 ### `chainID` Renamed to `chainId`
+### `apiURL` Renamed to `apiUrl`
 
 Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` prop.
 
 **Before:** 
 ```tsx
 <Widget
+  apiURL="..."
   defaultRoute={{
     amountIn: 1,
     srcChainID: "osmosis-1",
@@ -116,6 +118,7 @@ Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` pr
 **After:**
 ```tsx
 <Widget
+  apiUrl="..."
   defaultRoute={{
     amountIn: 1,
     srcChainId: "osmosis-1",
