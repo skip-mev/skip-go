@@ -160,7 +160,8 @@ export const useCreateEvmWallets = () => {
               return seiAddress;
             } catch (error) {
               console.error(error);
-              throw new Error(`Failed to get the address: Your EVM address (0x) has not associated on chain yet. Please visit https://app.sei.io/ to associate your SEI address.`);
+              throw new Error(`Your EVM address (0x) has not been associated on chain yet. Please visit https://app.sei.io/ to associate your SEI address.
+`);
             }
           };
         }
