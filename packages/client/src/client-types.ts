@@ -28,6 +28,12 @@ export type EndpointOptions = {
   rest?: string;
 };
 
+export type Gas = {
+  error: null;
+  asset: types.FeeAsset;
+  fee: StdFee;
+}
+
 /** Signer Getters */
 export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
@@ -104,7 +110,7 @@ export type ExecuteCosmosMessage = GasOptions & {
   getCosmosSigner?: SignerGetters['getCosmosSigner'];
   chainID: string;
   messages: types.CosmosMsg[];
-  gasTokenUsed?: Coin;
+  gas: Gas
   onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
 };
 
