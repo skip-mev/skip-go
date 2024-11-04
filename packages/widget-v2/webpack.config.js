@@ -13,11 +13,10 @@ syncVersion();
 // Custom plugin to copy index.d.ts after build
 class CopyIndexDtsPlugin {
   apply(compiler) {
-    compiler.hooks.afterEmit.tapPromise("CopyIndexDtsPlugin", async (compilation) => {
+    compiler.hooks.afterEmit.tapPromise("CopyIndexDtsPlugin", async () => {
       const srcPath = resolve(__dirname, "web-component/index.d.ts");
       const destPath = resolve(__dirname, "web-component/build/index.d.ts");
       await fs.copyFile(srcPath, destPath);
-      console.log("index.d.ts has been copied to the build directory");
     });
   }
 }
