@@ -144,6 +144,11 @@ export const useCreateEvmWallets = () => {
         };
 
         if (isSei) {
+          const isMultiChainWallet =
+            connector.name.toLowerCase().includes("keplr") ||
+            connector.name.toLowerCase().includes("leap") ||
+            connector.name.toLowerCase().includes("cosmostation");
+          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async ({ signRequired, context }) => {
             const address = await evmGetAddress({ signRequired, context });
             const publicClient = createPublicClient({
@@ -160,7 +165,8 @@ export const useCreateEvmWallets = () => {
               return seiAddress;
             } catch (error) {
               console.error(error);
-              throw error;
+              throw new Error(`Your EVM address (0x) has not been associated on chain yet. Please visit https://app.sei.io/ to associate your SEI address.
+`);
             }
           };
         }
