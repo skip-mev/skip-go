@@ -39,6 +39,9 @@ export default {
 
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+    alias: {
+      "@": resolve(__dirname, "src"), // Set up alias for @
+    },
     extensionAlias: {
       ".js": [".js", ".ts"],
       ".cjs": [".cjs", ".cts"],
@@ -58,7 +61,14 @@ export default {
       },
       {
         test: /\.tsx?$/, // Transpile TypeScript and JSX files
-        use: "ts-loader",
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true, // Ignore type checking
+            },
+          },
+        ],
         exclude: /node_modules/,
       },
       {

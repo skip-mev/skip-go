@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 /* eslint-disable @typescript-eslint/no-namespace */
 import toWebComponent from "@r2wc/react-to-web-component";
-import { Widget, WidgetProps } from "./Widget";
+import { Widget, WidgetProps } from "./widget/Widget";
 
 type WebComponentProps = {
   container: {
