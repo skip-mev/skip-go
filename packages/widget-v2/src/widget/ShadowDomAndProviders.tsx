@@ -14,6 +14,7 @@ import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
+import { globalStyles } from "./globalStyles";
 export const queryClient = new QueryClient();
 
 function shouldForwardProp(
@@ -63,7 +64,7 @@ export const ShadowDomAndProviders = ({
   }, [theme]);
 
   return isClient ? (
-    <Scope ref={onShadowDomLoaded}>
+    <Scope ref={onShadowDomLoaded} stylesheet={globalStyles}>
       <div ref={onStyledComponentContainerLoaded}></div>
       <StyleSheetManager
         shouldForwardProp={shouldForwardProp}
