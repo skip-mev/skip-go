@@ -23,7 +23,7 @@ const SlippageSelector: React.FC = () => {
   }, [slippage, isCustomSlippage]);
 
   return (
-    <Container justify="space-between">
+    <Container>
       <SwapDetailText>
         Max Slippage
         <Spacer width={5} />
@@ -48,7 +48,7 @@ const SlippageSelector: React.FC = () => {
             {option}%
           </StyledSlippageOptionLabel>
         ))}
-        <div style={{ position: 'relative' }}>
+        <CustomSlippageContainer>
           {(isCustomSlippage || isInputFocused) ? (
             <>
               <CustomSlippageInput
@@ -79,7 +79,7 @@ const SlippageSelector: React.FC = () => {
               Custom
             </StyledSlippageOptionLabel>
           )}
-        </div>
+        </CustomSlippageContainer>
       </Row>
     </Container>
   );
@@ -87,6 +87,12 @@ const SlippageSelector: React.FC = () => {
 
 const Container = styled(Row)`
   max-height: 25px;
+  justify-content: space-between;
+`;
+
+const CustomSlippageContainer = styled.div`
+  position: relative;
+  width: 60px;
 `;
 
 const SwapDetailText = styled(Row).attrs({
@@ -140,10 +146,11 @@ const CustomSlippageInput = styled(SmallText).attrs({
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
   border-radius: 7px;
   color: ${({ theme }) => theme.primary.text.normal};
-  width: 55px;
-  padding: 5px 7px;
+  width: 100%;
+  padding: 4px 5px;
   padding-right: 20px;
   box-sizing: border-box;
+  text-align: center;
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
@@ -166,7 +173,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
 const CustomSlippageInputRightIcon = styled(SmallText)<{ selected?: boolean }>`
   position: absolute;
   top: 50%;
-  right: 7px;
+  right: 8px;
   transform: translateY(-50%);
   ${({ selected, theme }) =>
     selected &&
