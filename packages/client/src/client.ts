@@ -26,7 +26,7 @@ import {
   StdFee,
   accountFromAny,
 } from '@cosmjs/stargate';
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from 'bignumber.js';
 import { accountParser } from './registry';
 import {
   ChainRestAuthApi,
@@ -299,7 +299,7 @@ export class SkipClient {
       getFallbackGasAmount: options.getFallbackGasAmount,
       getOfflineSigner: options.getCosmosSigner,
       onValidateGasBalance: options.onValidateGasBalance,
-    })
+    });
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -479,7 +479,7 @@ export class SkipClient {
       );
     }
 
-    const fee = gas.fee
+    const fee = gas.fee;
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
@@ -1638,7 +1638,12 @@ export class SkipClient {
     return chain.staking.staking_tokens;
   }
 
-  async validateGasBalances({ txs, getOfflineSigner, onValidateGasBalance, getFallbackGasAmount }: {
+  async validateGasBalances({
+    txs,
+    getOfflineSigner,
+    onValidateGasBalance,
+    getFallbackGasAmount,
+  }: {
     txs: types.Tx[];
     getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
@@ -1647,56 +1652,58 @@ export class SkipClient {
     onValidateGasBalance?.({
       status: 'pending',
     });
-    const validateResult = await Promise.all(txs.map(async (tx, i) => {
-      if (!tx) {
-        raise(` invalid tx at index ${i}`);
-      }
-      if ('cosmosTx' in tx) {
-        if (!tx.cosmosTx.msgs) {
-          raise(`invalid msgs ${tx.cosmosTx.msgs}`);
+    const validateResult = await Promise.all(
+      txs.map(async (tx, i) => {
+        if (!tx) {
+          raise(` invalid tx at index ${i}`);
         }
-        getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
-        if (!getOfflineSigner) {
-          throw new Error(
-            "'getCosmosSigner' is not provided or configured in skip router"
-          );
-        }
-        const endpoint = await this.getRpcEndpointForChain(tx.cosmosTx.chainID);
-        const signer = await getOfflineSigner(tx.cosmosTx.chainID);
-        const client = await SigningStargateClient.connectWithSigner(
-          endpoint,
-          signer,
-          {
-            aminoTypes: this.aminoTypes,
-            registry: this.registry,
-            accountParser,
+        if ('cosmosTx' in tx) {
+          if (!tx.cosmosTx.msgs) {
+            raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
-        );
+          getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
+          if (!getOfflineSigner) {
+            throw new Error(
+              "'getCosmosSigner' is not provided or configured in skip router"
+            );
+          }
+          const endpoint = await this.getRpcEndpointForChain(
+            tx.cosmosTx.chainID
+          );
+          const signer = await getOfflineSigner(tx.cosmosTx.chainID);
+          const client = await SigningStargateClient.connectWithSigner(
+            endpoint,
+            signer,
+            {
+              aminoTypes: this.aminoTypes,
+              registry: this.registry,
+              accountParser,
+            }
+          );
 
-        if (!client) {
-          throw new Error(
-            "'stargateClient' is not provided for cosmos tx"
-          );
-        }
-        try {
-          const res = await this.validateCosmosGasBalance({
-            chainID: tx.cosmosTx.chainID,
-            signerAddress: tx.cosmosTx.signerAddress,
-            client,
-            messages: tx.cosmosTx.msgs,
-            getFallbackGasAmount,
-          });
-          return res;
-        } catch (e) {
-          const error = e as Error;
-          return {
-            error: error.message,
-            asset: null,
-            fee: null
+          if (!client) {
+            throw new Error("'stargateClient' is not provided for cosmos tx");
+          }
+          try {
+            const res = await this.validateCosmosGasBalance({
+              chainID: tx.cosmosTx.chainID,
+              signerAddress: tx.cosmosTx.signerAddress,
+              client,
+              messages: tx.cosmosTx.msgs,
+              getFallbackGasAmount,
+            });
+            return res;
+          } catch (e) {
+            const error = e as Error;
+            return {
+              error: error.message,
+              asset: null,
+              fee: null,
+            };
           }
         }
-      }
-    }))
+      })
+    );
     const txError = validateResult.find((res) => res?.error !== null);
     if (txError) {
       onValidateGasBalance?.({
@@ -1707,7 +1714,7 @@ export class SkipClient {
     onValidateGasBalance?.({
       status: 'completed',
     });
-    return validateResult as unknown as clientTypes.Gas[]
+    return validateResult as unknown as clientTypes.Gas[];
   }
 
   /**
@@ -1733,23 +1740,19 @@ export class SkipClient {
 
     const assets = await this.assets({
       chainIDs: [chainID],
-    })
+    });
 
-    const chainAssets = assets[chainID]
+    const chainAssets = assets[chainID];
 
     const skipChains = [...mainnetChains, ...testnetChains];
     const chain = skipChains.find((chain) => chain.chainID === chainID);
     if (!chain) {
-      throw new Error(
-        `failed to find chain id for '${chainID}'`
-      );
+      throw new Error(`failed to find chain id for '${chainID}'`);
     }
 
     const { feeAssets } = chain;
     if (!feeAssets) {
-      throw new Error(
-        `failed to find fee assets for chain '${chainID}'`
-      );
+      throw new Error(`failed to find fee assets for chain '${chainID}'`);
     }
     const estimatedGasAmount = await (async () => {
       try {
@@ -1767,9 +1770,7 @@ export class SkipClient {
             'cosmos'
           );
           if (!fallbackGasAmount) {
-            raise(
-              `unable to estimate gas for message(s) ${messages}`
-            );
+            raise(`unable to estimate gas for message(s) ${messages}`);
           }
           return String(fallbackGasAmount);
         }
@@ -1786,8 +1787,8 @@ export class SkipClient {
         if (price === '') {
           price = asset.gasPrice.low;
         }
-        return new GasPrice(Decimal.fromUserInput(price, 18), asset.denom)
-      })()
+        return new GasPrice(Decimal.fromUserInput(price, 18), asset.denom);
+      })();
       if (!gasPrice) {
         return null;
       }
@@ -1796,7 +1797,7 @@ export class SkipClient {
         return fee;
       }
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
-    })
+    });
     const feeBalance = await this.balances({
       chains: {
         [chainID]: {
@@ -1807,7 +1808,7 @@ export class SkipClient {
     });
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
-      const symbol = chainAsset?.recommendedSymbol?.toUpperCase()
+      const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
 
       const fee = fees[index];
@@ -1828,12 +1829,16 @@ export class SkipClient {
         return {
           error: `(${chain?.prettyName}) Unable to get fee for ${symbol}`,
           asset,
-        }
+        };
       }
       if (parseInt(balance.amount) < parseInt(fee.amount[0]?.amount)) {
-        const decimal = Number(chainAsset?.decimals)
-        const userAmount = new BigNumber(parseFloat(balance.amount)).shiftedBy(-decimal).toFixed(decimal)
-        const feeAmount = new BigNumber(parseFloat(fee.amount[0]?.amount)).shiftedBy(-decimal).toFixed(decimal)
+        const decimal = Number(chainAsset?.decimals);
+        const userAmount = new BigNumber(parseFloat(balance.amount))
+          .shiftedBy(-decimal)
+          .toFixed(decimal);
+        const feeAmount = new BigNumber(parseFloat(fee.amount[0]?.amount))
+          .shiftedBy(-decimal)
+          .toFixed(decimal);
         return {
           error: `Insufficient balance for gas on ${chain?.prettyName}. Need ${feeAmount} ${symbol} but only have ${userAmount} ${symbol}.`,
           asset,
@@ -1842,9 +1847,9 @@ export class SkipClient {
       return {
         error: null,
         asset,
-        fee
+        fee,
       };
-    })
+    });
 
     const feeUsed = validatedAssets.find((res) => res.error === null);
     if (!feeUsed) {
