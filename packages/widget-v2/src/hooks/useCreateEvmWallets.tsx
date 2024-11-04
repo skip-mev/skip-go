@@ -1,12 +1,12 @@
-import { seiPrecompileAddrABI } from '@/constants/abis';
-import { skipChainsAtom, skipAssetsAtom } from '@/state/skipClient';
-import { sourceAssetAtom } from '@/state/swapPage';
-import { evmWalletAtom, MinimalWallet } from '@/state/wallets';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useCallback } from 'react';
-import { createPublicClient, http } from 'viem';
-import { sei } from 'viem/chains';
-import { useAccount, useConnect, useConnectors } from 'wagmi';
+import { seiPrecompileAddrABI } from "@/constants/abis";
+import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { sourceAssetAtom } from "@/state/swapPage";
+import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback } from "react";
+import { createPublicClient, http } from "viem";
+import { sei } from "viem/chains";
+import { useAccount, useConnect, useConnectors } from "wagmi";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -26,7 +26,7 @@ export const useCreateEvmWallets = () => {
   );
   const createEvmWallets = useCallback(
     (chainID?: string) => {
-      const isSei = chainID === 'pacific-1';
+      const isSei = chainID === "pacific-1";
       if (isSei) {
         chainID = sei.id.toString();
       }
@@ -39,7 +39,7 @@ export const useCreateEvmWallets = () => {
           continue;
         }
 
-        const evmGetAddress: MinimalWallet['getAddress'] = async ({
+        const evmGetAddress: MinimalWallet["getAddress"] = async ({
           signRequired,
         }) => {
           if (
@@ -58,10 +58,10 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            setEvmWallet({ walletName: connector.id, chainType: 'evm' });
+            setEvmWallet({ walletName: connector.id, chainType: "evm" });
             return res.accounts[0];
           } else if (evmAddress && isEvmConnected && signRequired) {
-            setEvmWallet({ walletName: connector.id, chainType: 'evm' });
+            setEvmWallet({ walletName: connector.id, chainType: "evm" });
           }
           return evmAddress;
         };
@@ -69,7 +69,7 @@ export const useCreateEvmWallets = () => {
         const minimalWallet: MinimalWallet = {
           walletName: connector.id,
           walletPrettyName: connector.name,
-          walletChainType: 'evm',
+          walletChainType: "evm",
           walletInfo: {
             logo: connector.icon,
           },
@@ -89,9 +89,9 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(1) });
-              setEvmWallet({ walletName: connector.id, chainType: 'evm' });
-              const chain = chains?.find((x) => x.chainID === '1');
-              const asset = assets?.find((x) => x.denom === 'ethereum-native');
+              setEvmWallet({ walletName: connector.id, chainType: "evm" });
+              const chain = chains?.find((x) => x.chainID === "1");
+              const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
                 chainID: chain?.chainID,
                 chainName: chain?.chainName,
@@ -119,7 +119,7 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
-              setEvmWallet({ walletName: connector.id, chainType: 'evm' });
+              setEvmWallet({ walletName: connector.id, chainType: "evm" });
               // TODO: onWalletConnected
             } catch (error) {
               console.error(error);
@@ -145,10 +145,10 @@ export const useCreateEvmWallets = () => {
 
         if (isSei) {
           const isMultiChainWallet =
-            connector.name.toLowerCase().includes('keplr') ||
-            connector.name.toLowerCase().includes('leap') ||
-            connector.name.toLowerCase().includes('cosmostation');
-          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? '(EVM)' : ''}`;
+            connector.name.toLowerCase().includes("keplr") ||
+            connector.name.toLowerCase().includes("leap") ||
+            connector.name.toLowerCase().includes("cosmostation");
+          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async ({ signRequired, context }) => {
             const address = await evmGetAddress({ signRequired, context });
             const publicClient = createPublicClient({
@@ -158,9 +158,9 @@ export const useCreateEvmWallets = () => {
             try {
               const seiAddress = await publicClient.readContract({
                 args: [address as `0x${string}`],
-                address: '0x0000000000000000000000000000000000001004',
+                address: "0x0000000000000000000000000000000000001004",
                 abi: seiPrecompileAddrABI,
-                functionName: 'getSeiAddr',
+                functionName: "getSeiAddr",
               });
               return seiAddress;
             } catch (error) {
