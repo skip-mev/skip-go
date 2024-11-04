@@ -160,6 +160,7 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
               });
             }
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
           const address = (await getWallet(wallet).getKey(chainID))
             .bech32Address;
