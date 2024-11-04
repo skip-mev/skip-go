@@ -47,6 +47,7 @@ export default {
       ".cjs": [".cjs", ".cts"],
       ".mjs": [".mjs", ".mts"],
     },
+    
   },
 
   mode: "production",
@@ -72,20 +73,6 @@ export default {
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/i,
-        use: [
-          "raw-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                config: resolve(__dirname, "postcss.config.cjs"),
-              },
-            },
-          },
-        ],
-      },
-      {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         use: [
           {
@@ -102,10 +89,13 @@ export default {
 
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.NODE_DEBUG": "false",
+      "process.env.NODE_DEBUG": JSON.stringify(false),
     }),
     new NodePolyfillPlugin(),
     new CopyIndexDtsPlugin(),
+    new webpack.ProvidePlugin({
+      process: "process/browser",
+    }),
   ],
 
   optimization: {

@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.0.0-alpha.22",
+  "version": "3.0.0-alpha.25",
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
@@ -52,6 +52,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "postcss-loader": "^8.1.1",
+    "process": "^0.11.10",
     "raw-loader": "^4.0.2",
     "storybook": "^8.2.6",
     "ts-loader": "^9.5.1",

@@ -154,4 +154,11 @@ export const ShowWidget = ({
 const WidgetContainer = styled.div`
   width: 480px;
   position: relative;
+
+  * {
+  font-family: 'ABCDiatype', sans-serif;
+  }
+  div {
+    box-sizing: border-box;
+  }
 `;

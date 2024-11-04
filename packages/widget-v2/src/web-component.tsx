@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 /* eslint-disable @typescript-eslint/no-namespace */
 import toWebComponent from "@r2wc/react-to-web-component";
-import { Widget, WidgetProps } from "./widget/Widget";
+import { Widget } from "./widget/Widget";
 
 type WebComponentProps = {
   container: {
@@ -18,12 +18,15 @@ function isJsonString(str: string) {
   return true;
 }
 
-const propMap = {
+const propMap: Record<string, string> = {
   "api-url": "apiURL",
 };
 
 const camelize = (inputString: string) => {
   inputString = inputString.toLowerCase();
+  if (propMap[inputString]) {
+    return propMap[inputString];
+  }
   return inputString.replace(/-./g, (x) => x[1].toUpperCase());
 };
 

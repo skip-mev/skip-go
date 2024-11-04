@@ -7966,6 +7966,7 @@ __metadata:
     node-polyfill-webpack-plugin: ^4.0.0
     pluralize: ^8.0.0
     postcss-loader: ^8.1.1
+    process: ^0.11.10
     raw-loader: ^4.0.2
     rc-virtual-list: ^3.14.5
     react-error-boundary: ^4.0.13
