@@ -1,5 +1,6 @@
 import { formatUSD } from "@/utils/intl";
 import { EstimatedFee, RouteResponse } from "@skip-go/client";
+import { convertTokenAmountToHumanReadableAmount } from "./crypto";
 
 export enum FeeType {
   SMART_RELAY = "SMART_RELAY",
@@ -41,13 +42,8 @@ export const calculateSmartRelayFee = (
 
   if (!computedAmount || !computedUsd) return undefined;
 
-  const assetDecimals = relayFees[0].originAsset.decimals || 6;
-  const inAsset = (computedAmount / Math.pow(10, assetDecimals)).toLocaleString(
-    "en-US",
-    {
-      maximumFractionDigits: 6,
-    }
-  );
+  const assetDecimals = relayFees[0].originAsset.decimals ?? 6;
+  const inAsset = convertTokenAmountToHumanReadableAmount(computedAmount, assetDecimals);
 
   return {
     assetAmount: Number(inAsset),
