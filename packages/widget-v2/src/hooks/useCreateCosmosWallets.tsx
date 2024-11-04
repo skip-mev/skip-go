@@ -148,6 +148,19 @@ export const useCreateCosmosWallets = () => {
           } else if (currentAddress && isConnected && signRequired) {
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
+          if (!currentAddress) {
+            // @ts-expect-error mismatch keplr types version
+            await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            const isInitialConnect = initialChainIds.includes(chainID);
+            if (isInitialConnect) {
+              await connectEco();
+            } else {
+              await connect({
+                chainId: chainID,
+                walletType: wallet,
+              });
+            }
+          }
           const address = (await getWallet(wallet).getKey(chainID))
             .bech32Address;
           return address;
