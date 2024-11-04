@@ -19,10 +19,11 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 export type SetAddressModalProps = ModalProps & {
   signRequired?: boolean;
   chainId: string
+  chainAddressIndex?: number
 };
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
-  const { theme, signRequired, chainId } = modalProps;
+  const { theme, signRequired, chainId, chainAddressIndex } = modalProps;
   const modal = useModal();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === chainId);
@@ -86,7 +87,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const destinationIndex = Object.values(prev).length - 1;
+      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
       return {
         ...prev,
         [destinationIndex]: {
@@ -151,6 +152,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           chainId={chainId}
           chainType={chain?.chainType}
           isDestinationAddress
+          chainAddressIndex={chainAddressIndex}
         />
       )}
     </>

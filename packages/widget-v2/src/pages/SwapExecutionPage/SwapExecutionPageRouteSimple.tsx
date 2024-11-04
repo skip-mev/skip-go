@@ -5,7 +5,7 @@ import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleR
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
 import { ClientOperation } from "@/utils/clientType";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useMemo } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
@@ -25,6 +25,7 @@ export const SwapExecutionPageRouteSimple = ({
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
   const { route } = useAtomValue(swapExecutionStateAtom);
+  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
@@ -54,7 +55,9 @@ export const SwapExecutionPageRouteSimple = ({
 
   const onClickEditDestinationWallet = useMemo(() => {
     if (isSignRequired) return;
-    if (swapExecutionState !== SwapExecutionState.ready) return;
+    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
+    const destinationAddress = chainAddresses?.[lastIndex]?.address;
+    if (!destinationAddress || swapExecutionState === SwapExecutionState.pending || swapExecutionState === SwapExecutionState.waitingForSigning || swapExecutionState === SwapExecutionState.validatingGasBalance || swapExecutionState === SwapExecutionState.confirmed) return;
     return _onClickEditDestinationWallet;
   }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
 

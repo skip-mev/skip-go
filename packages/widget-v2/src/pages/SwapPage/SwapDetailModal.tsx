@@ -15,7 +15,6 @@ import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { getBrandButtonTextColor } from "@/utils/colors";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
-import { EvmDisclaimer } from "@/components/EvmDisclaimer";
 
 export const SwapDetailModal = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
@@ -176,8 +175,8 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             <div style={{ position: "relative" }}>
               <CustomSlippageInput
                 type="number"
-                value={swapSettings.slippage}
                 selected={!SLIPPAGE_OPTIONS.includes(swapSettings.slippage)}
+                value={swapSettings.slippage}
                 onChange={(e) =>
                   setSlippage(parseFloat(e.target.value))
                 }
@@ -222,9 +221,6 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
           )}
         </Column>
       )}
-
-      <EvmDisclaimer route={route} />
-
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>

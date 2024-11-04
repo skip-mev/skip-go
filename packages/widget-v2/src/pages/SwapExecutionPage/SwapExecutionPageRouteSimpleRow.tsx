@@ -1,4 +1,4 @@
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Link, Button } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
@@ -18,6 +18,7 @@ import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
 import {
   limitDecimalsDisplayed,
+  removeTrailingZeros,
 } from "@/utils/number";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
@@ -75,6 +76,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
     }
   }, [account?.address, account?.wallet.logo, chainAddresses, context]);
 
+  const displayAmount = useMemo(() => {
+    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount))
+  }
+    , [assetDetails.amount]);
+
   return (
     <Row gap={25} align="center">
       {assetDetails.assetImage && (
@@ -94,9 +100,9 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </StyledAnimatedBorder>
       )}
       <Column gap={5}>
-        <Text fontSize={24}>
-          {limitDecimalsDisplayed(assetDetails.amount)} {assetDetails?.symbol}
-        </Text>
+        <StyledSymbolAndAmount>
+          {displayAmount} {assetDetails?.symbol}
+        </StyledSymbolAndAmount>
         {usdValue && (
           <SmallText>
             {formatUSD(usdValue)}
@@ -137,3 +143,10 @@ export const SwapExecutionPageRouteSimpleRow = ({
     </Row>
   );
 };
+
+const StyledSymbolAndAmount = styled(Text)`
+  font-size: 24px;
+  max-width: 325px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;

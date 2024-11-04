@@ -162,7 +162,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {assetDetails?.amount}
               </StyledAssetAmount>
-              <SmallText normalTextColor>{assetDetails?.symbol}</SmallText>
+              <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
               <StyledChainName title={assetDetails?.chainName}>
                 {" "}
                 on {assetDetails?.chainName}
@@ -201,6 +201,12 @@ const StyledButton = styled(Button)`
   background-color: ${({ theme }) => theme.secondary.background.normal};
   gap: 4px;
   align-items: center;
+`;
+
+const StyledSymbol = styled(SmallText)`
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledChainImage = styled.img`

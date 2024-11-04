@@ -3,7 +3,6 @@ import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText, SmallTextButton, Text } from "@/components/Typography";
 import { ChevronIcon } from "@/icons/ChevronIcon";
 import { useTheme } from "styled-components";
-import { CogIcon } from "@/icons/CogIcon";
 import { Button, GhostButton } from "@/components/Button";
 import { BigNumber } from "bignumber.js";
 import {
@@ -60,7 +59,8 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
-    onChangeValue?.(limitDecimalsDisplayed(formatNumberWithoutCommas(latest), assetDetails?.decimals))
+    const formattedValue = formatNumberWithoutCommas(latest)
+    onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -191,7 +191,6 @@ export const SwapPageAssetChainInput = ({
         {assetDetails?.chainName ? (
           <GhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
             <SmallText>on {assetDetails?.chainName}</SmallText>
-            <CogIcon color={theme.primary.text.normal} />
           </GhostButton>
         ) : (
           <Spacer />
@@ -220,6 +219,7 @@ const StyledInput = styled.input<{
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
+  height: 50px;
 
   ${(props) =>
     props.isWaitingToUpdateInputValue &&

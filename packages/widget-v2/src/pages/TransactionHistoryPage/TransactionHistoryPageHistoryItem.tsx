@@ -110,7 +110,13 @@ export const TransactionHistoryPageHistoryItem = ({
     if (status === "pending") {
       return "In Progress";
     }
-    return formatDistanceStrict(new Date(timestamp), new Date(), { addSuffix: true });
+    return formatDistanceStrict(new Date(timestamp), new Date(), { addSuffix: true })
+      .replace("minutes", "mins")
+      .replace("minute", "min")
+      .replace("hours", "hrs")
+      .replace("hour", "hr")
+      .replace("seconds", "secs")
+      .replace("second", "sec")
   }, [status, timestamp]);
 
   return (
@@ -163,9 +169,9 @@ const RenderAssetAmount = ({
       <StyledAssetAmount normalTextColor title={amount}>
         {amount}
       </StyledAssetAmount>
-      <SmallText normalTextColor>
+      <StyledSymbol normalTextColor>
         {asset?.recommendedSymbol ?? asset?.symbol}
-      </SmallText>
+      </StyledSymbol>
     </>
   );
 };
@@ -195,14 +201,20 @@ const StyledGreenDot = styled.div`
 `;
 
 const StyledAssetAmount = styled(SmallText)`
+  max-width: 60px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
+
+const StyledSymbol = styled(SmallText)`
   max-width: 40px;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
 
 const StyledChainName = styled(SmallText)`
-  max-width: 85px;
   text-overflow: ellipsis;
   overflow: hidden;
+  max-width: 40px;
   white-space: nowrap;
 `;
