@@ -2,7 +2,7 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useLayoutEffect, useMemo } from "react";
+import { cloneElement, ReactElement, useContext, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useResetAtom } from "jotai/utils";
@@ -25,6 +25,7 @@ import {
   swapSettingsAtom,
 } from "@/state/swapPage";
 import { RouteConfig, routeConfigAtom } from "@/state/route";
+import { registerModals } from "@/modals/registerModals";
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
@@ -75,6 +76,11 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
+
+  const nicemodal = useContext(NiceModal.NiceModalContext);
+
+  console.log(nicemodal);
+
   const mergedSkipClientConfig = useMemo(() => {
     const { theme, apiUrl, ...skipClientConfig } = props;
 
@@ -101,6 +107,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useLayoutEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
+    registerModals();
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useLayoutEffect(() => {

@@ -12,6 +12,7 @@ import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./
 import { useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
+import NiceModal from "@ebay/nice-modal-react";
 
 export type RenderWalletListProps = {
   title: string;
@@ -88,12 +89,14 @@ export const RenderWalletList = ({
         return null;
       }
       if (isConnectEco) {
+        clearAssetInputAmounts();
         return await wallet.connectEco();
       }
       return await wallet.connect();
     },
     onSuccess: () => {
-      modal.remove();
+      console.log("successfully connected modal");
+      NiceModal.remove("ConnectedWalletModal");
     },
   });
 
@@ -105,12 +108,12 @@ export const RenderWalletList = ({
       const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
 
       const onClickConnectWallet = () => {
-        clearAssetInputAmounts();
         if (isMinimalWallet(wallet)) {
           connectMutation.mutate(wallet);
         } else {
           wallet.onSelect();
         };
+        modal.remove();
       };
 
       if (wallet.walletName === "prax") {
@@ -165,7 +168,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [clearAssetInputAmounts, connectMutation]
+    [connectMutation, modal]
   );
 
   const height = useMemo(() => {

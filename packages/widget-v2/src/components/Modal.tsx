@@ -107,18 +107,15 @@ export const useModal = <T extends ModalProps>(
           ...showArgs,
           theme,
         } as Partial<T>);
-        setNumberOfModalsOpen((prev) => prev + 1);
       },
       remove: () => {
-        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
         modalInstance.remove();
       },
       hide: () => {
-        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
         modalInstance.hide();
       },
     }),
-    [modalInstance, theme, setNumberOfModalsOpen]
+    [modalInstance, theme]
   );
 };
 

@@ -20,6 +20,7 @@ import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { useMemo } from "react";
 import { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
+import NiceModal from "@ebay/nice-modal-react";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -84,13 +85,12 @@ const ConnectEco = ({
   const connectedWallet = wallets.find(
     (wallet) => wallet.walletName === account?.wallet.name
   );
-  const selectWalletmodal = useModal(WalletSelectorModal);
 
   return (
     <ModalRowItem
       style={{ marginTop: ITEM_GAP }}
       onClick={() => {
-        selectWalletmodal.show({
+        NiceModal.show(WalletSelectorModal, {
           chainType,
           connectEco: true,
         });

@@ -38,6 +38,7 @@ import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
+import NiceModal from "@ebay/nice-modal-react";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -65,7 +66,6 @@ export const SwapPage = () => {
   const swapDetailsModal = useModal(SwapDetailModal);
   const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
-  const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -213,7 +213,7 @@ export const SwapPage = () => {
           icon={ICONS.plus}
           onClick={() => {
             if (!sourceAsset?.chainID) {
-              connectedWalletModal.show();
+              NiceModal.show("ConnectedWalletModal");
             } else {
               selectWalletmodal.show({
                 chainId: sourceAsset?.chainID,
@@ -310,7 +310,6 @@ export const SwapPage = () => {
     isLoadingBalances,
     insufficientBalance,
     route,
-    connectedWalletModal,
     selectWalletmodal,
     routeError?.message,
     setChainAddresses,
@@ -336,12 +335,15 @@ export const SwapPage = () => {
         }}
       >
         <SwapPageHeader
-          leftButton={txHistory.length === 0 ? undefined :
-            {
-              label: "History",
-              icon: ICONS.history,
-              onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-            }}
+          leftButton={
+            txHistory.length === 0
+              ? undefined
+              : {
+                label: "History",
+                icon: ICONS.history,
+                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+              }
+          }
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">

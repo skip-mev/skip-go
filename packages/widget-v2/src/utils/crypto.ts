@@ -32,7 +32,7 @@ export const getTruncatedAddress = (address?: string): string => {
   )}…${address.slice(-5)}`;
 };
 
-export const hasAmountChanged = (newAmount: string, oldAmount: string, decimals: number) => {
+export const hasAmountChanged = (newAmount: string, oldAmount: string, decimals: number = DEFAULT_DECIMAL_PLACES) => {
   const newAmountBN = new BigNumber(newAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
   const oldAmountBN = new BigNumber(oldAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
   return !newAmountBN.eq(oldAmountBN);
