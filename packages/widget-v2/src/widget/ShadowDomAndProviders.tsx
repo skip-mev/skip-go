@@ -9,22 +9,13 @@ import {
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
-import { createGlobalStyle } from "styled-components";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
+import { globalStyles } from "./globalStyles";
 export const queryClient = new QueryClient();
-
-export const GlobalStyles = createGlobalStyle`
-  * {
-    font-family: 'ABCDiatype', sans-serif;
-  }
-  div {
-    box-sizing: border-box;
-  }
-`;
 
 function shouldForwardProp(
   propName: string,
@@ -73,14 +64,13 @@ export const ShadowDomAndProviders = ({
   }, [theme]);
 
   return isClient ? (
-    <Scope ref={onShadowDomLoaded}>
+    <Scope ref={onShadowDomLoaded} stylesheet={globalStyles}>
       <div ref={onStyledComponentContainerLoaded}></div>
       <StyleSheetManager
         shouldForwardProp={shouldForwardProp}
         target={styledComponentContainer}
       >
         <ThemeProvider theme={mergedThemes}>
-          <GlobalStyles />
           <WalletProviders>
             <QueryClientProvider client={queryClient} key={"skip-widget"}>
               {children}
