@@ -487,32 +487,23 @@ export class SkipClient {
     );
 
     let rawTx: TxRaw;
+
+    const commonRawTxBody = {
+      signerAddress,
+      chainID,
+      cosmosMsgs: messages,
+      fee,
+      signerData: {
+        accountNumber,
+        sequence,
+        chainId: chainID,
+      },
+    }
+
     if (isOfflineDirectSigner(signer)) {
-      rawTx = await this.signCosmosMessageDirect({
-        signerAddress,
-        signer,
-        chainID,
-        cosmosMsgs: messages,
-        fee,
-        signerData: {
-          accountNumber,
-          sequence,
-          chainId: chainID,
-        },
-      });
+      rawTx = await this.signCosmosMessageDirect({ ...commonRawTxBody, signer});
     } else {
-      rawTx = await this.signCosmosMessageAmino({
-        signerAddress,
-        signer,
-        chainID,
-        cosmosMsgs: messages,
-        fee,
-        signerData: {
-          accountNumber,
-          sequence,
-          chainId: chainID,
-        },
-      });
+      rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer});
     }
 
     const txBytes = TxRaw.encode(rawTx).finish();

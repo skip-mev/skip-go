@@ -155,6 +155,49 @@ export type AxelarTransfer = {
   smartRelay: boolean;
 };
 
+export type GoFastFeeJSON = {
+  fee_asset: AssetJSON;
+  bps_fee: string;
+  bps_fee_amount: string;
+  bps_fee_usd: string;
+  source_chain_fee_amount: string;
+  source_chain_fee_usd: string;
+  destination_chain_fee_amount: string;
+  destination_chain_fee_usd: string;
+}
+
+export type GoFastFee = {
+  feeAsset: Asset;
+  bpsFee: string;
+  bpsFeeAmount: string;
+  bpsFeeUSD: string;
+  sourceChainFeeAmount: string;
+  sourceChainFeeUSD: string;
+  destinationChainFeeAmount: string;
+  destinationChainFeeUSD: string;
+}
+export type GoFastTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  fee: GoFastFee;
+  bridgeID: BridgeType;
+  denomIn: string;
+  denomOut: string;
+  sourceDomain: string;
+  destinationDomain: string;
+}
+
+export type GoFastTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  fee: GoFastFeeJSON;
+  bridge_id: BridgeType;
+  denom_in: string;
+  denom_out: string;
+  source_domain: string;
+  destination_domain: string;
+}
+
 export type BankSendJSON = {
   chain_id: string;
   denom: string;

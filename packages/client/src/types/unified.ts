@@ -165,6 +165,7 @@ export type RouteRequestBaseJSON = {
   smart_relay?: boolean;
   smart_swap_options?: SmartSwapOptionsJSON;
   allow_swaps?: boolean;
+  go_fast?: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -211,6 +212,7 @@ export type RouteRequestBase = {
   smartRelay?: boolean;
   smartSwapOptions?: SmartSwapOptions;
   allowSwaps?: boolean;
+  goFast?: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -242,7 +244,10 @@ export type MsgsWarning = {
   message: string;
 };
 
-export type FeeType = 'SMART_RELAY';
+export enum FeeType {
+  SMART_RELAY = 'SMART_RELAY',
+  GO_FAST = 'GO_FAST',
+};
 
 export type EstimatedFee = {
   feeType: FeeType;
@@ -562,7 +567,7 @@ export type MsgsResponse = {
   warning?: MsgsWarning;
 };
 
-export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT';
+export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST';
 
 export type ChainType = 'cosmos' | 'evm' | 'svm';
 
