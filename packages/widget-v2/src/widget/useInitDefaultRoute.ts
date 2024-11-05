@@ -1,5 +1,5 @@
 import { skipAssetsAtom } from "@/state/skipClient";
-import { sourceAssetAtom, destinationAssetAtom, sourceAssetAmountAtom, destinationAssetAmountAtom } from "@/state/swapPage";
+import { sourceAssetAtom, destinationAssetAtom, sourceAssetAmountAtom, destinationAssetAmountAtom, clearAssetInputAmountsAtom } from "@/state/swapPage";
 import { useSetAtom, useAtom } from "jotai";
 import { useCallback, useLayoutEffect } from "react";
 
@@ -18,6 +18,8 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
 
+  const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
+
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
   const getClientAsset = useCallback(
@@ -30,6 +32,9 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
   );
 
   useLayoutEffect(() => {
+    if (!defaultRoute?.amountIn && !defaultRoute?.amountOut) {
+      clearAssetInputAmounts();
+    }
     if (!defaultRoute) return;
     if (defaultRoute && assets) {
       const {
@@ -56,5 +61,5 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
         setDestinationAssetAmount(amountOut?.toString());
       }
     }
-  }, [assets, defaultRoute, getClientAsset, setDestinationAsset, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
+  }, [assets, clearAssetInputAmounts, defaultRoute, getClientAsset, setDestinationAsset, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
 };
