@@ -9,6 +9,7 @@ import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { TransactionDetails } from "@/state/swapExecutionPage";
+import { copyToClipboard } from "@/utils/misc";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status: SimpleStatus;
@@ -47,6 +48,15 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     return;
   }, [status, theme]);
 
+  const handleClickingLinkIfNoExplorerLink = (
+    txHash: string,
+    explorerLink?: string
+  ) => {
+    if (!explorerLink) {
+      copyToClipboard(txHash);
+    }
+  };
+
   return (
     <Column padding={10} gap={10}>
       <Row align="center" gap={10}>
@@ -70,7 +80,13 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       {transactionDetails.length === 1 ? (
         <Row align="center" gap={10}>
           <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
-          <Link href={transactionDetails?.[0]?.explorerLink} target="_blank" gap={5}>
+          <Link
+            onClick={() => handleClickingLinkIfNoExplorerLink(transactionDetails?.[0]?.txHash, transactionDetails?.[0]?.explorerLink)}
+            href={transactionDetails?.[0]?.explorerLink}
+            title={transactionDetails?.[0]?.txHash}
+            target="_blank"
+            gap={5}
+          >
             <SmallText normalTextColor>
               {getTruncatedAddress(transactionDetails?.[0]?.txHash)}
             </SmallText>
@@ -91,9 +107,22 @@ export const TransactionHistoryPageHistoryItemDetails = ({
             return "Transaction";
           };
           return (
-            <Row key={`${index}-${transactionDetail.txHash}`} align="center" gap={10}>
-              <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>{getTransactionIdLabel()}</StyledDetailsLabel>
-              <Link key={`${index}-${transactionDetail.txHash}`} href={transactionDetail.explorerLink} target="_blank" gap={5}>
+            <Row
+              key={`${index}-${transactionDetail.txHash}`}
+              align="center"
+              gap={10}
+            >
+              <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>
+                {getTransactionIdLabel()}
+              </StyledDetailsLabel>
+              <Link
+                onClick={() => handleClickingLinkIfNoExplorerLink(transactionDetail.txHash, transactionDetail.explorerLink)}
+                key={`${index}-${transactionDetail.txHash}`}
+                href={transactionDetail.explorerLink}
+                title={transactionDetail?.txHash}
+                target="_blank"
+                gap={5}
+              >
                 <SmallText normalTextColor>
                   {getTruncatedAddress(transactionDetail.txHash)}
                 </SmallText>
