@@ -167,7 +167,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [clearAssetInputAmounts, connectMutation]
+    [connectMutation]
   );
 
   const height = useMemo(() => {
