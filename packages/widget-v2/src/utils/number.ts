@@ -1,3 +1,4 @@
+import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 import { BigNumber } from "bignumber.js";
 import pluralize from "pluralize";
 
@@ -12,9 +13,9 @@ export function formatNumberWithoutCommas(str: string | number) {
 }
 
 export const removeTrailingZeros = (input: string | undefined) =>
-  input?.replace(/0+$/, '').replace(/\.$/, '');
+  input?.replace(/0+$/, "").replace(/\.$/, "");
 
-export function limitDecimalsDisplayed(input: string | number | undefined, decimalPlaces = 6) {
+export function limitDecimalsDisplayed(input: string | number | undefined, decimalPlaces = DEFAULT_DECIMAL_PLACES) {
   if (input === undefined) return "";
 
   if (typeof input === "string") {

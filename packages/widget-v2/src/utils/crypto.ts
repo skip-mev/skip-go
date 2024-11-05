@@ -1,8 +1,9 @@
+import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 import { BigNumber } from "bignumber.js";
 
 export const convertHumanReadableAmountToCryptoAmount = (
   humanReadableAmount: number | string,
-  decimals = 6
+  decimals = DEFAULT_DECIMAL_PLACES
 ): string => {
   if (typeof humanReadableAmount === "string") {
     humanReadableAmount = parseFloat(humanReadableAmount);
@@ -13,7 +14,7 @@ export const convertHumanReadableAmountToCryptoAmount = (
 
 export const convertTokenAmountToHumanReadableAmount = (
   tokenAmount: number | string,
-  decimals = 6
+  decimals = DEFAULT_DECIMAL_PLACES
 ): string => {
   if (tokenAmount === "") return "";
   if (typeof tokenAmount === "string") {
@@ -29,4 +30,10 @@ export const getTruncatedAddress = (address?: string): string => {
     0,
     9
   )}…${address.slice(-5)}`;
+};
+
+export const hasAmountChanged = (newAmount: string, oldAmount: string, decimals: number) => {
+  const newAmountBN = new BigNumber(newAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+  const oldAmountBN = new BigNumber(oldAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+  return !newAmountBN.eq(oldAmountBN);
 };

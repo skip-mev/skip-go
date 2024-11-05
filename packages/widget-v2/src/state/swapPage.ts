@@ -27,11 +27,13 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount,
-  (get, set, newAmount: string) => {
-    const oldSourceAsset = get(sourceAssetAtom);
-    set(sourceAssetAtom, { ...oldSourceAsset, amount: newAmount });
+  (_get, set, newAmount: string) => {
+    set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
     set(debouncedSourceAssetAmountAtom, newAmount);
     set(swapDirectionAtom, "swap-in");
+    if (newAmount === "") {
+      set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+    }
   }
 );
 
@@ -42,13 +44,21 @@ export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | un
 
 export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
-  (get, set, newAmount: string, callback?: () => void) => {
-    const oldDestinationAsset = get(destinationAssetAtom);
-    set(destinationAssetAtom, { ...oldDestinationAsset, amount: newAmount });
+  (_get, set, newAmount: string, callback?: () => void) => {
+    set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
     set(debouncedDestinationAssetAmountAtom, newAmount, callback);
     set(swapDirectionAtom, "swap-out");
+
+    if (newAmount === "") {
+      set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+    }
   }
 );
+
+export const clearAssetInputAmountsAtom = atom(null, (_get, set) => {
+  set(sourceAssetAtom, (prev) => ({ ...prev, amount: "" }));
+  set(destinationAssetAtom, (prev) => ({ ...prev, amount: "" }));
+});
 
 export const isWaitingForNewRouteAtom = atom((get) => {
   const sourceAmount = get(sourceAssetAmountAtom);
@@ -112,7 +122,7 @@ export const defaultSwapSettings = {
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
 
 export const slippageAtom = atom(
-  (get) => get(swapSettingsAtom).slippage, 
+  (get) => get(swapSettingsAtom).slippage,
   (get, set, newSlippage: number) => {
     const currentSettings = get(swapSettingsAtom);
     set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });

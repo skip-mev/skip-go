@@ -59,7 +59,7 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
-    const formattedValue = formatNumberWithoutCommas(latest)
+    const formattedValue = formatNumberWithoutCommas(latest);
     onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
   };
 
@@ -212,7 +212,7 @@ const StyledInput = styled.input<{
 }>`
   all: unset;
   font-size: ${({ valueLength }) => {
-    let fontSize = valueLength > 15 ? 28 : valueLength > 10 ? 32 : 38;
+    const fontSize = valueLength > 15 ? 28 : valueLength > 10 ? 32 : 38;
     return `${fontSize}px`;
   }};
   font-weight: 300;
