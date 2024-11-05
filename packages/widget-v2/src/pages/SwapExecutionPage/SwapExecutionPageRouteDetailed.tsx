@@ -83,7 +83,7 @@ export const SwapExecutionPageRouteDetailed = ({
     const destinationAddress = chainAddresses?.[lastIndex]?.address;
     if (!destinationAddress || swapExecutionState === SwapExecutionState.pending || swapExecutionState === SwapExecutionState.waitingForSigning || swapExecutionState === SwapExecutionState.validatingGasBalance || swapExecutionState === SwapExecutionState.confirmed) return;
     return _onClickEditDestinationWallet;
-  }, [isSignRequired, swapExecutionState, _onClickEditDestinationWallet]);
+  }, [isSignRequired, chainAddresses, swapExecutionState, _onClickEditDestinationWallet]);
 
   return (
     <StyledSwapExecutionPageRoute>
