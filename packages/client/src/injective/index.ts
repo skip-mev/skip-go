@@ -11,7 +11,8 @@ import {
   createSigners,
 } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/tx/utils/tx";
 import { DEFAULT_STD_FEE } from "@injectivelabs/utils";
-import keccak256 from "keccak256";
+
+import createKeccakHash from 'keccak';
 
 export interface CreateTransactionArgs {
   fee?: StdFee; // the fee to include in the transaction
@@ -81,10 +82,8 @@ export function createTransaction({
   });
 
   const signDocBytes = CosmosTxV1Beta1Tx.SignDoc.encode(signDoc).finish();
-
   const toSignBytes = Buffer.from(signDocBytes);
-  const toSignHash = keccak256(Buffer.from(signDocBytes));
-
+  const toSignHash = createKeccakHash('keccak256').update(toSignBytes).digest();
   const txRaw = CosmosTxV1Beta1Tx.TxRaw.create();
   txRaw.authInfoBytes = authInfoBytes;
   txRaw.bodyBytes = bodyBytes;

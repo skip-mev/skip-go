@@ -5,7 +5,7 @@
   "repository": "https://github.com/skip-mev/widget",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "dev:storybook": "storybook dev -p 6006",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
@@ -56,10 +56,12 @@
     "vite-plugin-node-polyfills": "^0.22.0"
   },
   "dependencies": {
-    "@chain-registry/keplr": "^1.74.17",
+    "@chain-registry/keplr": "^1.74.22",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@initia/initia-registry": "^0.1.16",
+    "@injectivelabs/core-proto-ts": "0.0.21",
+    "@injectivelabs/sdk-ts": "1.14.5",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
     "@penumbra-zone/bech32m": "^7.0.0",
     "@penumbra-zone/client": "^18.1.0",
@@ -78,7 +80,8 @@
     "@solana/web3.js": "^1.95.3",
     "@tanstack/query-core": "^5.51.21",
     "@tanstack/react-query": "^5.51.21",
-    "chain-registry": "^1.69.17",
+    "chain-registry": "^1.69.22",
+    "cosmjs-types": "^0.9.0",
     "graz": "^0.1.25",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
