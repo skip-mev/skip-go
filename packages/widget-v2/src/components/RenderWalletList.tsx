@@ -93,6 +93,9 @@ export const RenderWalletList = ({
       return await wallet.connect();
     },
     onSuccess: () => {
+      if (isConnectEco) {
+        clearAssetInputAmounts();
+      }
       modal.remove();
     },
   });
@@ -105,7 +108,6 @@ export const RenderWalletList = ({
       const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
 
       const onClickConnectWallet = () => {
-        clearAssetInputAmounts();
         if (isMinimalWallet(wallet)) {
           connectMutation.mutate(wallet);
         } else {
