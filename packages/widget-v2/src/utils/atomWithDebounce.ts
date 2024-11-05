@@ -15,14 +15,20 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
   // Atom for debounced value
   const debouncedValueAtom = atom(
     undefined,
-    (get, set, update: SetStateAction<T>, callback?: () => void) => {
+    (get, set, update: {
+      newValue: SetStateAction<T>;
+      callback?: () => void;
+      immediate?: boolean;
+    }) => {
+      const { newValue, callback, immediate } = update;
+
       clearTimeout(get(prevTimeoutAtom));
 
       const prevValue = get(_currentValueAtom);
       const nextValue =
-        typeof update === "function"
-          ? (update as (prev: T | undefined) => T)(prevValue)
-          : update;
+        typeof newValue === "function"
+          ? (newValue as (prev: T | undefined) => T)(prevValue)
+          : newValue;
 
       const onDebounceStart = () => {
         set(_currentValueAtom, nextValue);
@@ -31,12 +37,16 @@ export function atomWithDebounce<T>(delayMilliseconds = 500) {
       };
 
       const onDebounceEnd = () => {
-        set(debouncedValueAtom, nextValue);
+        set(debouncedValueAtom, { newValue: nextValue });
         set(isDebouncingAtom, false);
         callback?.();
       };
 
-      onDebounceStart();
+      if (immediate) {
+        onDebounceEnd();
+      } else {
+        onDebounceStart();
+      }
 
       const nextTimeoutId = setTimeout(() => {
         onDebounceEnd();

@@ -11,6 +11,7 @@ import { useModal } from "./Modal";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
 import { useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 
 export type RenderWalletListProps = {
   title: string;
@@ -58,6 +59,8 @@ export const RenderWalletList = ({
   const modal = useModal();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
+  const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
+
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
@@ -101,17 +104,20 @@ export const RenderWalletList = ({
       const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
       const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
 
+      const onClickConnectWallet = () => {
+        clearAssetInputAmounts();
+        if (isMinimalWallet(wallet)) {
+          connectMutation.mutate(wallet);
+        } else {
+          wallet.onSelect();
+        };
+      };
+
       if (wallet.walletName === "prax") {
         return (
           <ModalRowItem
             key={name}
-            onClick={() => {
-              if (isMinimalWallet(wallet)) {
-                connectMutation.mutate(wallet);
-              } else {
-                wallet.onSelect();
-              };
-            }}
+            onClick={onClickConnectWallet}
             style={{ marginTop: ITEM_GAP }}
             leftContent={
               <Row align="center" gap={10}>
@@ -136,13 +142,7 @@ export const RenderWalletList = ({
       return (
         <ModalRowItem
           key={name}
-          onClick={() => {
-            if (isMinimalWallet(wallet)) {
-              connectMutation.mutate(wallet);
-            } else {
-              wallet.onSelect();
-            };
-          }}
+          onClick={onClickConnectWallet}
           style={{ marginTop: ITEM_GAP }}
           leftContent={
             <Row style={{ width: "100%" }} align="center" justify="space-between">
@@ -165,7 +165,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation]
+    [clearAssetInputAmounts, connectMutation]
   );
 
   const height = useMemo(() => {

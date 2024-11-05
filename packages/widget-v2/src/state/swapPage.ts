@@ -29,10 +29,16 @@ export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount,
   (_get, set, newAmount: string) => {
     set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
-    set(debouncedSourceAssetAmountAtom, newAmount);
+    set(debouncedSourceAssetAmountAtom, {
+      newValue: newAmount,
+    });
     set(swapDirectionAtom, "swap-in");
     if (newAmount === "") {
       set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+      set(debouncedDestinationAssetAmountAtom, {
+        newValue: newAmount,
+        immediate: true,
+      });
     }
   }
 );
@@ -46,18 +52,35 @@ export const destinationAssetAmountAtom = atom(
   (get) => get(destinationAssetAtom)?.amount,
   (_get, set, newAmount: string, callback?: () => void) => {
     set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
-    set(debouncedDestinationAssetAmountAtom, newAmount, callback);
+    set(debouncedDestinationAssetAmountAtom, {
+      newValue: newAmount,
+      callback
+    });
     set(swapDirectionAtom, "swap-out");
 
     if (newAmount === "") {
       set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+      set(debouncedSourceAssetAmountAtom, {
+        newValue: newAmount,
+        immediate: true,
+      });
     }
   }
 );
 
 export const clearAssetInputAmountsAtom = atom(null, (_get, set) => {
   set(sourceAssetAtom, (prev) => ({ ...prev, amount: "" }));
+  set(debouncedSourceAssetAmountAtom, {
+    newValue: "",
+    immediate: true,
+  });
+
   set(destinationAssetAtom, (prev) => ({ ...prev, amount: "" }));
+  set(debouncedSourceAssetAmountAtom, {
+    newValue: "",
+    immediate: true,
+  });
+
 });
 
 export const isWaitingForNewRouteAtom = atom((get) => {
