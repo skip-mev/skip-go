@@ -28,6 +28,7 @@ import pluralize from "pluralize";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 import { useSyncTxStatus } from "./useSyncTxStatus";
+import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -36,19 +37,23 @@ export enum SwapExecutionState {
   pending,
   waitingForSigning,
   confirmed,
-  validatingGasBalance
+  validatingGasBalance,
 }
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } = useAtomValue(
-    swapExecutionStateAtom
-  );
+  const {
+    route,
+    overallStatus,
+    transactionDetailsArray,
+    isValidatingGasBalance,
+  } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
   const setManualAddressModal = useModal(SetAddressModal);
+  const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -58,7 +63,7 @@ export const SwapExecutionPage = () => {
   });
 
   useSyncTxStatus({
-    statusData
+    statusData,
   });
 
   const clientOperations = useMemo(() => {
@@ -85,7 +90,10 @@ export const SwapExecutionPage = () => {
     if (overallStatus === "pending") {
       return SwapExecutionState.pending;
     }
-    if (isValidatingGasBalance?.status !== "completed" && !!isValidatingGasBalance) {
+    if (
+      isValidatingGasBalance?.status !== "completed" &&
+      !!isValidatingGasBalance
+    ) {
       return SwapExecutionState.validatingGasBalance;
     }
     if (overallStatus === "signing") {
@@ -98,16 +106,19 @@ export const SwapExecutionPage = () => {
       return SwapExecutionState.recoveryAddressUnset;
     }
     return SwapExecutionState.ready;
-  }, [chainAddresses, isValidatingGasBalance, overallStatus, route?.requiredChainAddresses]);
+  }, [
+    chainAddresses,
+    isValidatingGasBalance,
+    overallStatus,
+    route?.requiredChainAddresses,
+  ]);
 
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
     const signaturesRemaining =
       (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
-    if (
-      signaturesRemaining > 1
-    ) {
+    if (signaturesRemaining > 1) {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
@@ -155,7 +166,11 @@ export const SwapExecutionPage = () => {
         );
       case SwapExecutionState.validatingGasBalance:
         return (
-          <MainButton label="Validating gas and balance" icon={ICONS.rightArrow} loading />
+          <MainButton
+            label="Validating gas and balance"
+            icon={ICONS.rightArrow}
+            loading
+          />
         );
       case SwapExecutionState.waitingForSigning:
         return (
@@ -177,22 +192,42 @@ export const SwapExecutionPage = () => {
             label="Swap again"
             icon={ICONS.checkmark}
             backgroundColor={theme.success.text}
-            onClick={() => setCurrentPage(Routes.SwapPage)}
+            onClick={() => {
+              clearAssetInputAmounts();
+              setCurrentPage(Routes.SwapPage);
+            }}
           />
         );
     }
-  }, [connectRequiredChains, lastOperation.signRequired, mutate, route?.destAssetChainID, route?.estimatedRouteDurationSeconds, setCurrentPage, setManualAddressModal, swapExecutionState, theme.success.text]);
+  }, [
+    clearAssetInputAmounts,
+    connectRequiredChains,
+    lastOperation.signRequired,
+    mutate,
+    route?.destAssetChainID,
+    route?.estimatedRouteDurationSeconds,
+    setCurrentPage,
+    setManualAddressModal,
+    swapExecutionState,
+    theme.success.text,
+  ]);
 
-  const SwapExecutionPageRoute = simpleRoute ? SwapExecutionPageRouteSimple : SwapExecutionPageRouteDetailed;
+  const SwapExecutionPageRoute = simpleRoute
+    ? SwapExecutionPageRouteSimple
+    : SwapExecutionPageRouteDetailed;
 
   return (
     <Column gap={5}>
       <SwapPageHeader
-        leftButton={simpleRoute ? {
-          label: "Back",
-          icon: ICONS.thinArrow,
-          onClick: () => setCurrentPage(Routes.SwapPage),
-        } : undefined}
+        leftButton={
+          simpleRoute
+            ? {
+              label: "Back",
+              icon: ICONS.thinArrow,
+              onClick: () => setCurrentPage(Routes.SwapPage),
+            }
+            : undefined
+        }
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,

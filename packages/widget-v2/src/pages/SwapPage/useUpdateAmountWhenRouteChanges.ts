@@ -6,8 +6,9 @@ import {
   destinationAssetAtom,
 } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { limitDecimalsDisplayed } from "@/utils/number";
+import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
+import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export const useUpdateAmountWhenRouteChanges = () => {
   const [route] = useAtom(skipRouteAtom);
@@ -17,18 +18,24 @@ export const useUpdateAmountWhenRouteChanges = () => {
 
   useEffect(() => {
     if (!route.data || !sourceAsset || !destinationAsset) return;
+    if (sourceAsset?.amount === "" && direction === "swap-in") return;
+    if (destinationAsset?.amount === "" && direction === "swap-out") return;
 
     const swapInAmount = convertTokenAmountToHumanReadableAmount(
       route.data.amountOut,
-      destinationAsset.decimals
+      DEFAULT_DECIMAL_PLACES
     );
     const swapOutAmount = convertTokenAmountToHumanReadableAmount(
       route.data.amountIn,
-      sourceAsset.decimals
+      DEFAULT_DECIMAL_PLACES
     );
 
-    const swapInAmountChanged = swapInAmount !== destinationAsset.amount;
-    const swapOutAmountChanged = swapOutAmount !== sourceAsset.amount;
+    const swapInAmountChanged =
+      removeTrailingZeros(swapInAmount) !==
+      removeTrailingZeros(destinationAsset.amount);
+    const swapOutAmountChanged =
+      removeTrailingZeros(swapOutAmount) !==
+      removeTrailingZeros(sourceAsset.amount);
 
     if (direction === "swap-in" && swapInAmountChanged) {
       setDestinationAsset((old) => ({
@@ -41,6 +48,12 @@ export const useUpdateAmountWhenRouteChanges = () => {
         amount: limitDecimalsDisplayed(swapOutAmount),
       }));
     }
-  }, [route.data, sourceAsset, destinationAsset, direction, setSourceAsset, setDestinationAsset]);
-
+  }, [
+    route.data,
+    sourceAsset,
+    destinationAsset,
+    direction,
+    setSourceAsset,
+    setDestinationAsset,
+  ]);
 };
