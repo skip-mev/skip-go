@@ -9,7 +9,9 @@
     "dev:storybook": "storybook dev -p 6006",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
+    "publish:web-component": "npm run build:web-component && cd web-component && npm publish --tag=alpha && cd .."
   },
   "exports": {
     ".": {
@@ -48,12 +50,20 @@
     "buffer": "^6.0.3",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "node-polyfill-webpack-plugin": "^4.0.0",
+    "postcss-loader": "^8.1.1",
+    "process": "^0.11.10",
+    "raw-loader": "^4.0.2",
     "storybook": "^8.2.6",
+    "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0",
+    "url-loader": "^4.1.1",
     "vite": "^5.3.4",
     "vite-plugin-dts": "^4.0.0-beta.1",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@chain-registry/keplr": "^1.74.22",
@@ -67,6 +77,7 @@
     "@penumbra-zone/client": "^18.1.0",
     "@penumbra-zone/protobuf": "^6.0.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
+    "@r2wc/react-to-web-component": "^2.0.3",
     "@radix-ui/react-dialog": "^1.1.1",
     "@skip-go/client": "workspace:^",
     "@solana/spl-token": "^0.4.8",
