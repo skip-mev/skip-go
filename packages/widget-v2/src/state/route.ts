@@ -24,15 +24,11 @@ export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
 
   if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
-    set(debouncedSourceAssetAmountAtom, {
-      newValue: sourceAsset.amount,
-    });
+    set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
   }
 
   if (destinationAsset?.amount && !debouncedDestinationAssetInitialized) {
-    set(debouncedDestinationAssetAmountAtom, {
-      newValue: destinationAsset.amount,
-    });
+    set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
   }
 });
 
