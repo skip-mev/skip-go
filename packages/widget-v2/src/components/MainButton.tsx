@@ -189,7 +189,6 @@ const StyledTimeRemaining = styled(Row)`
   padding: 16px;
   border-radius: 10px;
   height: 40px;
-  width: 76px;
 `;
 
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
