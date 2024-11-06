@@ -1,15 +1,17 @@
-const path = require('path');
-const fs = require('fs/promises');
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-require-imports */
+const path = require("path");
+const fs = require("fs/promises");
 
 module.exports = async function syncVersion() {
-  const basePackageJson = require('../package.json');
-  const webComponentPackageJson = require('./package.json');
+  const basePackageJson = require("../package.json");
+  const webComponentPackageJson = require("./package.json");
 
   webComponentPackageJson.version = basePackageJson.version;
 
-  const targetFile = path.resolve(path.resolve(__dirname, '../web-component'), 'package.json');
+  const targetFile = path.resolve(path.resolve(__dirname, "../web-component"), "package.json");
   
   await fs.writeFile(targetFile, JSON.stringify(webComponentPackageJson, null, 2), {
-    encoding: 'utf-8'
+    encoding: "utf-8"
   });
-}
+};

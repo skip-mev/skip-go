@@ -1075,6 +1075,10 @@
         {
           "address": "http://134.122.12.165:26657",
           "provider": "bitbadges"
+        },
+        {
+          "address": "https://bitbadges_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -5615,6 +5619,10 @@
         {
           "address": "https://mantrachain-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://mantra-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -11522,6 +11530,10 @@
         {
           "address": "https://rpc.dukong.mantrachain.io",
           "provider": "MANTRACHAIN"
+        },
+        {
+          "address": "https://mantra-testnet-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -11662,6 +11674,28 @@
       "rpc": [
         {
           "address": "https://rpc.testnet-2.nibiru.fi",
+          "provider": "Nibiru Foundation"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "nibiru-testnet-3",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "unibi",
+          "fixed_min_gas_price": 0.025,
+          "low_gas_price": 0.025,
+          "average_gas_price": 0.05,
+          "high_gas_price": 0.1
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet-3.nibiru.fi",
           "provider": "Nibiru Foundation"
         }
       ]

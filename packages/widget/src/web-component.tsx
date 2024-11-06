@@ -1,33 +1,31 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+/* eslint-disable @typescript-eslint/no-namespace */
 import toWebComponent from "@r2wc/react-to-web-component";
-import { SwapWidgetProps, SwapWidgetProviderProps, SwapWidget } from '.';
+import { Widget } from "./widget/Widget";
 
-type WebComponentProps = SwapWidgetProps & SwapWidgetProviderProps;
+type WebComponentProps = {
+  container: {
+    attributes: Record<string, string>[]
+  }
+}
 
 function isJsonString(str: string) {
   try {
     JSON.parse(str);
-  } catch (e) {
+  } catch (_err) {
     return false;
   }
   return true;
 }
 
-const propMap = {
-  'api-url': 'apiURL',
-};
-
 const camelize = (inputString: string) => {
   inputString = inputString.toLowerCase();
-  if (propMap[inputString]) {
-    return propMap[inputString];
-  }
   return inputString.replace(/-./g, (x) => x[1].toUpperCase());
 };
 
 const WidgetWithProvider = (props: WebComponentProps) => {
-  // @ts-ignore
   const parsedProps = Array.from(props.container.attributes).map(
-    ({ name, value }: any) => {
+    ({ name, value }) => {
       return { key: name, value };
     }
   );
@@ -39,13 +37,13 @@ const WidgetWithProvider = (props: WebComponentProps) => {
       ? JSON.parse(value)
       : value;
     return accumulator;
-  }, {});
+  }, {} as Record<string, string>);
 
-  return <SwapWidget {...realProps} />;
+  return <Widget {...realProps} />;
 };
 
 
-const WEB_COMPONENT_NAME = 'skip-widget';
+const WEB_COMPONENT_NAME = "skip-widget";
 
 const WebComponent = toWebComponent(WidgetWithProvider);
 

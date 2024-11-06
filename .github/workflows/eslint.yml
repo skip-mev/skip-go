@@ -1,9 +1,9 @@
-name: ESLint Widget v2
+name: ESLint Widget
 
 on:
   pull_request:
     paths:
-      - 'packages/widget-v2/**'
+      - 'packages/widget/**'
 
 jobs:
   eslint:
@@ -15,7 +15,7 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: yarn install
-        working-directory: packages/widget-v2
+        working-directory: packages/widget
       - name: Run ESLint
         run: yarn lint
-        working-directory: packages/widget-v2
+        working-directory: packages/widget
