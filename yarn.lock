@@ -8117,13 +8117,13 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
+    cosmjs-types: ^0.9.0
     keccak: 3.0.4
     minimatch: ^9.0.3
     proxy-from-env: ^1.1.0
     vitest: ^1.2.2
   peerDependencies:
     "@solana/web3.js": ^1.91.1
-    cosmjs-types: ^0.9.0
     viem: 2.x
   languageName: unknown
   linkType: soft
@@ -8138,8 +8138,6 @@ __metadata:
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
     "@initia/initia-registry": ^0.1.16
-    "@injectivelabs/core-proto-ts": 0.0.21
-    "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^7.0.0
@@ -8175,7 +8173,6 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     buffer: ^6.0.3
-    cosmjs-types: ^0.9.0
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.10.1
@@ -14757,13 +14754,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmjs-types@npm:0.8.0, cosmjs-types@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "cosmjs-types@npm:0.8.0"
-  dependencies:
-    long: ^4.0.0
-    protobufjs: ~6.11.2
-  checksum: 99714ec956d2cb2e521d39896c9c9a24cf9df0d370265c203646ea015b51e86472efc0cb11f67a80f0649d178b0bcff77ac659e67fdfc8b2437cd7a42018577f
+"cosmjs-types@npm:0.9.0, cosmjs-types@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "cosmjs-types@npm:0.9.0"
+  checksum: 9b00d169eca334f27418bb80b39e0cff0196af40b0079e1f85536246059279207b853bdb6ec224ead0a02d15d4b7f6bf16bc096d41c436426aa5f8976ed2b430
   languageName: node
   linkType: hard
 
@@ -14777,10 +14771,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmjs-types@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "cosmjs-types@npm:0.9.0"
-  checksum: 9b00d169eca334f27418bb80b39e0cff0196af40b0079e1f85536246059279207b853bdb6ec224ead0a02d15d4b7f6bf16bc096d41c436426aa5f8976ed2b430
+"cosmjs-types@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "cosmjs-types@npm:0.8.0"
+  dependencies:
+    long: ^4.0.0
+    protobufjs: ~6.11.2
+  checksum: 99714ec956d2cb2e521d39896c9c9a24cf9df0d370265c203646ea015b51e86472efc0cb11f67a80f0649d178b0bcff77ac659e67fdfc8b2437cd7a42018577f
   languageName: node
   linkType: hard
 
@@ -26684,7 +26681,7 @@ __metadata:
     "@typescript-eslint/parser": ^6.21.0
     axios: 1.x
     chain-registry: ^1.69.22
-    cosmjs-types: 0.8.0
+    cosmjs-types: 0.9.0
     eslint: ^8.56.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.1.3
