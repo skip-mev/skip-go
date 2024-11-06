@@ -26,13 +26,14 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
 );
 
 export const sourceAssetAmountAtom = atom(
-  (get) => get(sourceAssetAtom)?.amount,
+  (get) => get(sourceAssetAtom)?.amount ?? "",
   (_get, set, newAmount: string) => {
     set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
     set(debouncedSourceAssetAmountAtom, newAmount);
     set(swapDirectionAtom, "swap-in");
     if (newAmount === "") {
       set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+      set(debouncedDestinationAssetAmountAtom, newAmount, undefined, true);
     }
   }
 );
@@ -43,7 +44,7 @@ export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | un
 );
 
 export const destinationAssetAmountAtom = atom(
-  (get) => get(destinationAssetAtom)?.amount,
+  (get) => get(destinationAssetAtom)?.amount ?? "",
   (_get, set, newAmount: string, callback?: () => void) => {
     set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
     set(debouncedDestinationAssetAmountAtom, newAmount, callback);
@@ -51,13 +52,17 @@ export const destinationAssetAmountAtom = atom(
 
     if (newAmount === "") {
       set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
+      set(debouncedSourceAssetAmountAtom, newAmount, undefined, true);
     }
   }
 );
 
 export const clearAssetInputAmountsAtom = atom(null, (_get, set) => {
   set(sourceAssetAtom, (prev) => ({ ...prev, amount: "" }));
+  set(debouncedSourceAssetAmountAtom, "", undefined, true);
+
   set(destinationAssetAtom, (prev) => ({ ...prev, amount: "" }));
+  set(debouncedDestinationAssetAmountAtom, "", undefined, true);
 });
 
 export const isWaitingForNewRouteAtom = atom((get) => {
@@ -69,10 +74,13 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
+  const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
+  const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
+
   if (direction === "swap-in") {
-    return sourceAmount !== debouncedSourceAmount || isLoading;
+    return sourceAmountHasChanged || isLoading;
   } else if (direction === "swap-out") {
-    return destinationAmount !== debouncedDestinationAmount || isLoading;
+    return destinationAmountHasChanged || isLoading;
   }
 });
 
