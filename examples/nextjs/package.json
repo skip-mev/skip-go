@@ -14,6 +14,7 @@
     "@leapwallet/cosmos-social-login-capsule-provider": "0.0.40",
     "@skip-go/widget": "workspace:^",
     "@solana/wallet-adapter-phantom": "0.9.24",
+    "@solana/web3.js": "1.95.4",
     "@tanstack/react-query": "^5.17.15",
     "chain-registry": "latest",
     "graz": "0.1.19",

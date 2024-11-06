@@ -31,6 +31,7 @@ export default defineConfig({
     nodePolyfills(),
   ],
   build: {
+    reportCompressedSize: true,
     minify: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points
@@ -38,8 +39,9 @@ export default defineConfig({
       formats: ["es"],
       name: "widget-v2",
     },
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
+      treeshake: true,
       external: externalDeps,
       output: {
         dir: "build",
