@@ -155,37 +155,6 @@ Customize widget appearance.
   };
 ```
 
-
-
-### `chainIDsToAffiliates`
-
-Define fees per chain and recipient addresses.
-
-<Info>
-Total basisPointsFee must be consistent across chains. Addresses must be valid for respective chains.
-</Info>
-
-```ts
-chainIdsToAffiliates: {
-  'noble-1': {
-    affiliates: [{
-      basisPointsFee: '100', // 1% fee
-      address: 'test', // address to receive fee
-    },
-    {
-      basisPointsFee: '100', // 1% fee
-      address: 'test2', // address to receive fee
-    }]
-  },
-  'osmosis-1': {
-    affiliates: [{
-      basisPointsFee: '200', // 2% fee
-      address: 'test', // address to receive fee
-    },]
-  }
-}
-```
-
 ## Coming Soon
 
 The following props are in development and will be available soon.
@@ -234,4 +203,34 @@ connectedWallet?: {
     getSigner: () => Promise<Adapter>;
   };
 };
+```
+
+
+### `chainIDsToAffiliates`
+
+Define fees per chain and recipient addresses.
+
+<Info>
+Total basisPointsFee must be consistent across chains. Addresses must be valid for respective chains.
+</Info>
+
+```ts
+chainIdsToAffiliates: {
+  'noble-1': {
+    affiliates: [{
+      basisPointsFee: '100', // 1% fee
+      address: 'test', // address to receive fee
+    },
+    {
+      basisPointsFee: '100', // 1% fee
+      address: 'test2', // address to receive fee
+    }]
+  },
+  'osmosis-1': {
+    affiliates: [{
+      basisPointsFee: '200', // 2% fee
+      address: 'test', // address to receive fee
+    },]
+  }
+}
 ```
