@@ -1,4 +1,4 @@
-name: ESLint Widget v2
+name: ESLint Widget
 
 on:
   pull_request:
