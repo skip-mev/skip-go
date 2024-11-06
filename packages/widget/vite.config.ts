@@ -38,7 +38,7 @@ export default defineConfig({
       formats: ["es"],
       name: "widget",
     },
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
       treeshake: true,
       external: externalDeps,
