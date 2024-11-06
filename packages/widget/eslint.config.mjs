@@ -27,7 +27,7 @@ export default tseslint.config(
       "semi": ["error", "always"],
       "no-console": ["error", { allow: ["warn", "error"] }],
       "quotes": ["error", "double", { "avoidEscape": true }],
-
     },
+    ignores: ["scripts/prepublish.cjs", "build/*"],
   }
 );

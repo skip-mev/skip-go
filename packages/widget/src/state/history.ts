@@ -45,7 +45,7 @@ export const removeTransactionHistoryItemAtom = atom(
 
     set(transactionHistoryAtom, newHistory);
   }
-)
+);
 
 export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
   const skip = get(skipClient);

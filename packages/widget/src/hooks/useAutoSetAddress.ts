@@ -63,7 +63,7 @@ export const useAutoSetAddress = () => {
             const wallet = wallets.find(w => w.walletName === sourceWallet.cosmos?.walletName);
             if (!wallet) {
               if (!openModal) return;
-              if (chainAddresses[index].address) return
+              if (chainAddresses[index].address) return;
               setWalletModal.show({
                 signRequired: isSignRequired,
                 chainId: chainID,

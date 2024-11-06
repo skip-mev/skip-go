@@ -30,6 +30,6 @@
       "@/*": ["src/*"]
     }
   },
-  "exclude": ["build", "src/stories"],
+  "exclude": ["build", "src/stories", "scripts"],
   "include": ["src", "web-component"]
 }

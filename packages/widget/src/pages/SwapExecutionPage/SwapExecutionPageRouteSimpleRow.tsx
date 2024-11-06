@@ -77,7 +77,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   }, [account?.address, account?.wallet.logo, chainAddresses, context]);
 
   const displayAmount = useMemo(() => {
-    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount))
+    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
   }
     , [assetDetails.amount]);
 

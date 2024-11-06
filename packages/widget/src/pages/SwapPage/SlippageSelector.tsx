@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useAtom } from 'jotai';
-import { slippageAtom } from '@/state/swapPage';
-import { SLIPPAGE_OPTIONS } from '@/constants/widget';
-import { Row, Spacer } from '@/components/Layout';
-import { SmallText } from '@/components/Typography';
-import { QuestionMarkIcon } from '@/icons/QuestionMarkIcon';
-import styled, { css } from 'styled-components';
-import { getBrandButtonTextColor } from '@/utils/colors';
+import React, { useState, useEffect } from "react";
+import { useAtom } from "jotai";
+import { slippageAtom } from "@/state/swapPage";
+import { SLIPPAGE_OPTIONS } from "@/constants/widget";
+import { Row, Spacer } from "@/components/Layout";
+import { SmallText } from "@/components/Typography";
+import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
+import styled, { css } from "styled-components";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 const SlippageSelector: React.FC = () => {
   const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [customSlippageInput, setCustomSlippageInput] = useState('');
+  const [customSlippageInput, setCustomSlippageInput] = useState("");
   const [slippage, setSlippage] = useAtom(slippageAtom);
 
   const isCustomSlippage = !SLIPPAGE_OPTIONS.includes(slippage);
@@ -139,7 +139,7 @@ const StyledSlippageOptionLabel = styled(SmallText)<{ selected?: boolean }>`
 `;
 
 const CustomSlippageInput = styled(SmallText).attrs({
-  as: 'input',
+  as: "input",
 })<{ selected?: boolean }>`
   outline: none;
   background-color: ${({ theme }) => theme.primary.background.normal};

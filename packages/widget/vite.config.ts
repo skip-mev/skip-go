@@ -26,7 +26,7 @@ export default defineConfig({
       rollupTypes: true,
       outDir: "build",
       tsconfigPath: "./tsconfig.json",
-      exclude: ["node_modules/**", "build/**", ".storybook/**"],
+      exclude: ["node_modules/**", "build/**", ".storybook/**", "scripts/**"],
     }),
     nodePolyfills(),
   ],
