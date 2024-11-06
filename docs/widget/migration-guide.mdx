@@ -3,7 +3,7 @@ title: 'Widget V2 Migration Guide'
 description: 'This guide provides a concise overview of the changes needed to migrate your existing Widget V1 implementation to Widget V2.'
 ---
 
-## 1. Update Dependency
+## 1. Update Dependency (`latest` or `^3.0.0`)
     <CodeGroup>
     ```shell NPM
     npm install @skip-go/widget@latest
@@ -12,6 +12,15 @@ description: 'This guide provides a concise overview of the changes needed to mi
     yarn add @skip-go/widget@latest
     ```
     </CodeGroup>
+
+<Info>
+If you're using `yarn` (or another package manager that doesn't install peer dependencies by default)
+you may need to install these peer dependencies as well:
+
+```bash
+  yarn add @tanstack/react-query chain-registry graz react react-dom viem wagmi
+```
+</Info>
 
 ## 2. `theme` Prop Changes
 
@@ -36,7 +45,7 @@ control over the widget's appearance.
 <Widget
   theme="light" // or "dark"
   // Note: you can pass a "brandColor" in addition to the selected "light" or "dark" theme
-  brandColor: "#FF4FFF", 
+  brandColor: "#FF4FFF"
   // Or provide a custom theme object
   theme={{
     brandColor: "#FF4FFF",
@@ -136,7 +145,7 @@ The connectedWallet prop, which allowed passing a custom wallet provider, isn't 
 The `onWalletConnected`, `onWalletDisconnected`, `onTransactionBroadcasted`, `onTransactionComplete`, and `onTransactionFailed` callback props aren't currently supported.
 
 ## 5. Removed Features
-### a. `persistSwapWidgetState`
+### a. `persistWidgetState`
 This prop is no longer supported, as the `Widget` persists state by default.
 ### b. `toasterProps`
 The `toasterProps` prop has been removed because the `Widget` no longer generates notifications.
