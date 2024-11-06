@@ -36,7 +36,7 @@ export default defineConfig({
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),
       formats: ["es"],
-      name: "widget-v2",
+      name: "widget",
     },
     sourcemap: true,
     rollupOptions: {
