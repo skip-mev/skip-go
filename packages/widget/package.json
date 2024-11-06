@@ -2,7 +2,10 @@
   "name": "@skip-go/widget",
   "description": "Swap widget",
   "version": "3.0.0",
-  "repository": "https://github.com/skip-mev/widget",
+  "repository": {
+    "url": "https://github.com/skip-mev/skip-go",
+    "directory": "packages/widget"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --force",
@@ -108,5 +111,8 @@
     "react-shadow-scope": "^1.0.5",
     "styled-components": "^6.1.13",
     "zod": "^3.23.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
