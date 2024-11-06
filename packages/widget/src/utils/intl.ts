@@ -21,8 +21,6 @@ export function formatUSD(amount: string | number) {
   return usdFormatter.format(amountNumber);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 const percentFormatter = new Intl.NumberFormat("en-US", {
   style: "percent",
   maximumFractionDigits: 2,

@@ -45,7 +45,6 @@ export const skipClient = atom((get) => {
         ? wallet.getOfflineSignerOnlyAmino(chainID)
         : wallet.getOfflineSigner(chainID);
     },
-    // @ts-expect-error having a different viem version
     getEVMSigner: async (chainID) => {
       const evmWalletClient = (await getWalletClient(config, {
         chainId: parseInt(chainID),

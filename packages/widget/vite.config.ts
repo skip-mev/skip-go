@@ -40,6 +40,7 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
+      treeshake: true,
       external: externalDeps,
       output: {
         dir: "build",

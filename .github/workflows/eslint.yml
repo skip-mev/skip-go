@@ -3,7 +3,7 @@ name: ESLint Widget v2
 on:
   pull_request:
     paths:
-      - 'packages/widget-v2/**'
+      - 'packages/widget/**'
 
 jobs:
   eslint:
