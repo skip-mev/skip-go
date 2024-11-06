@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.0
+
+### Major Changes
+
+- c3be461: Fresh UI/UX
+
 ### Patch Changes
 
 - Updated dependencies [b114667]
