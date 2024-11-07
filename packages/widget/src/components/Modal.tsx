@@ -2,7 +2,14 @@ import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
-import { ComponentType, FC, useEffect, useMemo, useState } from "react";
+import {
+  ComponentType,
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -15,7 +22,6 @@ export type ModalProps = {
   drawer?: boolean;
   container?: HTMLElement;
   onOpenChange?: (open: boolean) => void;
-  stackedModal?: boolean;
   theme?: PartialTheme;
 };
 
@@ -24,10 +30,12 @@ export const Modal = ({
   drawer,
   container,
   onOpenChange,
-  stackedModal,
   theme,
 }: ModalProps) => {
   const modal = useModal();
+  const modalContext = useContext(NiceModal.NiceModalContext);
+  const ModalsOpen = Object.keys(modalContext);
+  const isNotFirstModalOpen = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
 
   useEffect(() => {
     onOpenChange?.(true);
@@ -51,7 +59,11 @@ export const Modal = ({
     >
       <Dialog.Portal container={container}>
         <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay drawer={drawer} open={open} invisible={stackedModal}>
+          <StyledOverlay
+            drawer={drawer}
+            open={open}
+            invisible={isNotFirstModalOpen}
+          >
             <StyledContent drawer={drawer} open={open}>
               {children}
             </StyledContent>
