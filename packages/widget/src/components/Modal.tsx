@@ -1,13 +1,11 @@
 import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
-import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import {
   ComponentType,
-  FC,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { PartialTheme } from "@/widget/theme";
@@ -15,7 +13,6 @@ import { PartialTheme } from "@/widget/theme";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { themeAtom } from "@/state/skipClient";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -104,34 +101,6 @@ export const createModal = <T extends ModalProps>(
   };
 
   return NiceModal.create(WrappedComponent);
-};
-
-export const useModal = <T extends ModalProps>(
-  modal?: FC<T>,
-  initialArgs?: Partial<T>
-) => {
-  const [theme] = useAtom(themeAtom);
-
-  const modalInstance = useNiceModal(modal as FC<unknown>, initialArgs);
-
-  return useMemo(
-    () => ({
-      ...modalInstance,
-      show: (showArgs?: Partial<T & ModalProps>) => {
-        modalInstance.show({
-          ...showArgs,
-          theme,
-        } as Partial<T>);
-      },
-      remove: () => {
-        modalInstance.remove();
-      },
-      hide: () => {
-        modalInstance.hide();
-      },
-    }),
-    [modalInstance, theme]
-  );
 };
 
 const fadeIn = keyframes`
