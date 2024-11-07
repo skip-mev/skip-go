@@ -18,7 +18,7 @@ const SlippageSelector: React.FC = () => {
 
   useEffect(() => {
     if (isCustomSlippage) {
-      setCustomSlippageInput(slippage.toString());
+      setCustomSlippageInput(slippage?.toString());
     }
   }, [slippage, isCustomSlippage]);
 
