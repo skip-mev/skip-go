@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.2
+
+### Patch Changes
+
+- 3fe0cb4: fix explorer link in transaction details
+
 ## 3.0.1
 
 ### Patch Changes
