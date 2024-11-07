@@ -8,7 +8,6 @@ import { PartialTheme } from "@/widget/theme";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { numberOfModalsOpenAtom } from "@/state/modal";
 import { themeAtom } from "@/state/skipClient";
 
 export type ModalProps = {
@@ -93,9 +92,6 @@ export const useModal = <T extends ModalProps>(
   initialArgs?: Partial<T>
 ) => {
   const [theme] = useAtom(themeAtom);
-  const [_numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
-    numberOfModalsOpenAtom
-  );
 
   const modalInstance = useNiceModal(modal as FC<unknown>, initialArgs);
 

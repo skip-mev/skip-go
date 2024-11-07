@@ -5,8 +5,6 @@ import { createModal, useModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useContext, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
-import { useResetAtom } from "jotai/utils";
-import { numberOfModalsOpenAtom } from "@/state/modal";
 import { useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
@@ -75,7 +73,6 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-
 
   const nicemodal = useContext(NiceModal.NiceModalContext);
 
@@ -168,10 +165,8 @@ export const ShowWidget = ({
   const modal = useModal(
     createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
   );
-  const resetNumberOfModalsOpen = useResetAtom(numberOfModalsOpenAtom);
 
   const handleClick = () => {
-    resetNumberOfModalsOpen();
     modal.show({
       stackedModal: false,
     });

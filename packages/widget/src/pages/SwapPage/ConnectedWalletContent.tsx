@@ -12,6 +12,7 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { limitDecimalsDisplayed } from "@/utils/number";
 import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -52,7 +53,7 @@ export const ConnectedWalletContent = () => {
     >
       <GhostButton
         onClick={() => {
-          NiceModal.show("ConnectedWalletModal");
+          NiceModal.show(Modals.ConnectedWalletModal);
         }}
         align="center"
         gap={8}

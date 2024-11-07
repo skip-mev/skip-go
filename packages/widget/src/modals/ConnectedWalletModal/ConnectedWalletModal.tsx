@@ -21,6 +21,7 @@ import { useMemo } from "react";
 import { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -90,7 +91,7 @@ const ConnectEco = ({
     <ModalRowItem
       style={{ marginTop: ITEM_GAP }}
       onClick={() => {
-        NiceModal.show(WalletSelectorModal, {
+        NiceModal.show(Modals.WalletSelectorModal, {
           chainType,
           connectEco: true,
         });

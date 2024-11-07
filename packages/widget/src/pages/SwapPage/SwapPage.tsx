@@ -18,7 +18,6 @@ import {
   chainAddressesAtom,
 } from "@/state/swapExecutionPage";
 import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
-import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
@@ -39,6 +38,7 @@ import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -63,7 +63,6 @@ export const SwapPage = () => {
     error: routeError,
   } = useAtomValue(skipRouteAtom);
 
-  const swapDetailsModal = useModal(SwapDetailModal);
   const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
 
@@ -213,7 +212,7 @@ export const SwapPage = () => {
           icon={ICONS.plus}
           onClick={() => {
             if (!sourceAsset?.chainID) {
-              NiceModal.show("ConnectedWalletModal");
+              NiceModal.show(Modals.ConnectedWalletModal);
             } else {
               selectWalletmodal.show({
                 chainId: sourceAsset?.chainID,
@@ -379,7 +378,7 @@ export const SwapPage = () => {
           disabled={isRouteError || isWaitingForNewRoute}
           showEstimatedTime
           onClick={() =>
-            swapDetailsModal.show({
+            NiceModal.show(Modals.SwapSettingsDrawer, {
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>
