@@ -11,18 +11,20 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 
 export type ErrorPageTimeoutProps = {
-  explorerLink: string;
+  txHash: string
+  explorerLink?: string;
   onClickBack: () => void;
 };
 
 export const ErrorPageTimeout = ({
+  txHash,
   explorerLink,
   onClickBack,
 }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const isLink = explorerLink.includes("http");
+
   return (
     <>
       <SwapPageHeader
@@ -53,11 +55,11 @@ export const ErrorPageTimeout = ({
               gap={5}
               align="center"
               as={SmallTextButton}
-              onClick={() => isLink && window.open(explorerLink, "_blank")}
+              onClick={() => explorerLink && window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />
-              {isLink ? "View on explorer" : `Tx hash: ${explorerLink}`}
+              {explorerLink ? "View on explorer" : `Tx hash: ${txHash}`}
             </Row>
           </>
         }
