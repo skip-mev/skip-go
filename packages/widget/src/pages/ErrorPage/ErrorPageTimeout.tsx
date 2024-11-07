@@ -22,7 +22,7 @@ export const ErrorPageTimeout = ({
   const theme = useTheme();
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-
+  const isLink = explorerLink.includes("http");
   return (
     <>
       <SwapPageHeader
@@ -53,11 +53,11 @@ export const ErrorPageTimeout = ({
               gap={5}
               align="center"
               as={SmallTextButton}
-              onClick={() => window.open(explorerLink, "_blank")}
+              onClick={() => isLink && window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />
-              View on explorer
+              {isLink ? "View on explorer" : `Tx hash: ${explorerLink}`}
             </Row>
           </>
         }
