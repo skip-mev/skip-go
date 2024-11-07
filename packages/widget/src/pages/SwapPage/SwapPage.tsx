@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -17,7 +17,6 @@ import {
   setSwapExecutionStateAtom,
   chainAddressesAtom,
 } from "@/state/swapExecutionPage";
-import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
@@ -31,7 +30,6 @@ import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
@@ -63,7 +61,6 @@ export const SwapPage = () => {
     error: routeError,
   } = useAtomValue(skipRouteAtom);
 
-  const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
   const selectWalletmodal = useModal(WalletSelectorModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
@@ -89,9 +86,9 @@ export const SwapPage = () => {
   );
 
   const handleChangeSourceAsset = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm =
           chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
@@ -113,7 +110,7 @@ export const SwapPage = () => {
         }));
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [
@@ -124,13 +121,12 @@ export const SwapPage = () => {
     setDestinationAssetAmount,
     setSourceAsset,
     setSourceAssetAmount,
-    assetAndChainSelectorModal,
   ]);
 
   const handleChangeSourceChain = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm =
           chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
@@ -150,7 +146,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
@@ -164,31 +160,30 @@ export const SwapPage = () => {
     setSourceAsset,
     sourceAsset?.chainID,
     sourceAsset?.denom,
-    assetAndChainSelectorModal,
   ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAsset, assetAndChainSelectorModal]);
+  }, [setDestinationAsset]);
 
   const handleChangeDestinationChain = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(
         destinationAsset?.denom,
@@ -201,7 +196,6 @@ export const SwapPage = () => {
     destinationAsset?.denom,
     getClientAsset,
     setDestinationAsset,
-    assetAndChainSelectorModal,
   ]);
 
   const swapButton = useMemo(() => {
