@@ -57,7 +57,7 @@ export const ErrorPageTimeout = ({
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />
-              View on mintscan
+              View on explorer
             </Row>
           </>
         }
