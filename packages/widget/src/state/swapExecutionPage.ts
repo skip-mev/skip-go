@@ -1,5 +1,5 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipClient } from "@/state/skipClient";
+import { skipChainsAtom, skipClient } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import { TransactionCallbacks, RouteResponse, TxStatusResponse, UserAddress, ChainType } from "@skip-go/client";
@@ -11,6 +11,7 @@ import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { swapSettingsAtom } from "./swapPage";
+import { createExplorerLink } from "@/utils/explorerLink";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -67,6 +68,7 @@ export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus)
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
+  const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
   const transactionHistoryIndex = transactionHistory.length;
 
@@ -80,7 +82,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
   });
-
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (transactionDetails) => {
       if (!transactionDetails.isTxCompleted) {
@@ -88,7 +89,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onTransactionSigned: async (transactionDetails) => {
-      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink: undefined, status: undefined }, transactionHistoryIndex);
+      const chain = chains?.find((chain) => chain.chainID === transactionDetails.chainID);
+      const explorerLink = createExplorerLink({ chainID: transactionDetails.chainID, chainType: chain?.chainType, txHash: transactionDetails.txHash });
+      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink, status: undefined }, transactionHistoryIndex);
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
