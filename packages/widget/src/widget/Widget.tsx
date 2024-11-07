@@ -2,7 +2,7 @@ import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal, useModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useContext, useLayoutEffect, useMemo } from "react";
+import { cloneElement, ReactElement, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useSetAtom } from "jotai";
@@ -73,10 +73,6 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-
-  const nicemodal = useContext(NiceModal.NiceModalContext);
-
-  console.log(nicemodal);
 
   const mergedSkipClientConfig = useMemo(() => {
     const { theme, apiUrl, ...skipClientConfig } = props;
