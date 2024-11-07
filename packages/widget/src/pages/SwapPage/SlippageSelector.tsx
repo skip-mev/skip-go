@@ -14,11 +14,11 @@ const SlippageSelector: React.FC = () => {
   const [customSlippageInput, setCustomSlippageInput] = useState("");
   const [slippage, setSlippage] = useAtom(slippageAtom);
 
-  const isCustomSlippage = !SLIPPAGE_OPTIONS.includes(slippage);
+  const isCustomSlippage = !!(slippage && !SLIPPAGE_OPTIONS.includes(slippage));
 
   useEffect(() => {
     if (isCustomSlippage) {
-      setCustomSlippageInput(slippage.toString());
+      setCustomSlippageInput(slippage?.toString());
     }
   }, [slippage, isCustomSlippage]);
 
