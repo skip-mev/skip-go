@@ -12,6 +12,7 @@ import { useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export type RenderWalletListProps = {
   title: string;
@@ -96,7 +97,7 @@ export const RenderWalletList = ({
       if (isConnectEco) {
         clearAssetInputAmounts();
       }
-      NiceModal.remove("ConnectedWalletModal");
+      NiceModal.remove(Modals.ConnectedWalletModal);
     },
   });
 
@@ -113,6 +114,8 @@ export const RenderWalletList = ({
         } else {
           wallet.onSelect();
         };
+
+        NiceModal.remove(Modals.WalletSelectorModal);
       };
 
       if (wallet.walletName === "prax") {

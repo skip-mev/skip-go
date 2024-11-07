@@ -1,4 +1,4 @@
-import { createModal, ModalProps, useModal } from "@/components/Modal";
+import { createModal, ModalProps } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { css, styled } from "styled-components";
 import { useCallback, useMemo, useState } from "react";
@@ -15,6 +15,8 @@ import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader } from "@/components/ModalHeader";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 export type SetAddressModalProps = ModalProps & {
   signRequired?: boolean;
@@ -24,7 +26,6 @@ export type SetAddressModalProps = ModalProps & {
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const { theme, signRequired, chainId, chainAddressIndex } = modalProps;
-  const modal = useModal();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === chainId);
   const chainName = chain?.prettyName;
@@ -98,7 +99,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         },
       };
     });
-    modal.remove();
+    NiceModal.remove(Modals.SetAddressModal);
   };
   return (
     <>
@@ -148,7 +149,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         <RenderWalletList
           title="Destination wallet"
           walletList={signRequired ? _walletList : walletList}
-          onClickBackButton={() => modal.remove()}
+          onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
           isDestinationAddress

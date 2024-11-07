@@ -1,6 +1,8 @@
-import { createModal, ModalProps, useModal } from "@/components/Modal";
+import { createModal, ModalProps } from "@/components/Modal";
 import { RenderWalletList } from "@/components/RenderWalletList";
 import { useWalletList } from "@/hooks/useWalletList";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
@@ -11,14 +13,13 @@ export type WalletSelectorModalProps = ModalProps & {
 export const WalletSelectorModal = createModal(
   (modalProps: WalletSelectorModalProps) => {
     const { chainId, chainType, connectEco } = modalProps;
-    const modal = useModal();
     const walletList = useWalletList({ chainID: chainId, chainType });
 
     return (
       <RenderWalletList
         title="Connect wallet"
         walletList={walletList}
-        onClickBackButton={() => modal.remove()}
+        onClickBackButton={() => NiceModal.remove(Modals.WalletSelectorModal)}
         isConnectEco={connectEco}
       />
     );

@@ -19,6 +19,8 @@ import { Chain } from "@skip-go/client";
 import { useFilteredChains } from "./useFilteredChains";
 import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 export type GroupedAsset = {
   id: string;
@@ -139,7 +141,7 @@ export const AssetAndChainSelectorModal = createModal(
 
     const onClickBack = () => {
       if (groupedAssetSelected === null) {
-        modal.remove();
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       } else {
         setGroupedAssetSelected(null);
       }
