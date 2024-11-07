@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.1
+
+### Patch Changes
+
+- 8a3c3a3: prevent undefined or null slippage
+
 ## 3.0.0
 
 ### Major Changes
