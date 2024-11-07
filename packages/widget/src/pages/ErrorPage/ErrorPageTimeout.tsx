@@ -11,11 +11,13 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 
 export type ErrorPageTimeoutProps = {
-  explorerLink: string;
+  txHash: string
+  explorerLink?: string;
   onClickBack: () => void;
 };
 
 export const ErrorPageTimeout = ({
+  txHash,
   explorerLink,
   onClickBack,
 }: ErrorPageTimeoutProps) => {
@@ -53,11 +55,11 @@ export const ErrorPageTimeout = ({
               gap={5}
               align="center"
               as={SmallTextButton}
-              onClick={() => window.open(explorerLink, "_blank")}
+              onClick={() => explorerLink && window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />
-              View on mintscan
+              {explorerLink ? "View on explorer" : `Tx hash: ${txHash}`}
             </Row>
           </>
         }

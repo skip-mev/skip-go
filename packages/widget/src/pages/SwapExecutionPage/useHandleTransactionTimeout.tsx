@@ -35,6 +35,7 @@ export const useHandleTransactionTimeout = (
             setOverallStatus("unconfirmed");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
+          txHash: lastTransaction?.txHash,
         });
       }, route.estimatedRouteDurationSeconds * 1_000 * 2);
 
