@@ -34,8 +34,15 @@ export const Modal = ({
 }: ModalProps) => {
   const modal = useModal();
   const modalContext = useContext(NiceModal.NiceModalContext);
-  const ModalsOpen = Object.keys(modalContext);
-  const isNotFirstModalOpen = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
+  const ModalsOpen = Object.entries(modalContext)
+    .filter((entries) => {
+      const [_modalId, modalState] = entries;
+      return modalState.visible;
+    })
+    .map((entries) => entries[0]);
+
+  const isNotFirstModalVisible =
+    ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
 
   useEffect(() => {
     onOpenChange?.(true);
@@ -62,7 +69,7 @@ export const Modal = ({
           <StyledOverlay
             drawer={drawer}
             open={open}
-            invisible={isNotFirstModalOpen}
+            invisible={isNotFirstModalVisible}
           >
             <StyledContent drawer={drawer} open={open}>
               {children}
