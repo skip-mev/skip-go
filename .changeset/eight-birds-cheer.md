@@ -2,4 +2,4 @@
 '@skip-go/widget': patch
 ---
 
-change mintscan to explorer copy
+fix explorer link in transaction details
