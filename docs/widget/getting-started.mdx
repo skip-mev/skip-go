@@ -4,7 +4,7 @@ title: 'Getting Started'
 
 # Overview
 
-The Skip Go `SwapWidget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or [Web component](./web-component.mdx). 
+The Skip Go `Widget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or [Web component](./web-component.mdx). 
 
 # Useful Links
 
@@ -13,7 +13,7 @@ The Skip Go `SwapWidget` is the easiest way to onboard users and capital from an
 
 # Quickstart Guide
 
-This guide will walk you though how to integrate the `SwapWidget` into your React app. 
+This guide will walk you though how to integrate the `Widget` into your React app. 
 
 <Info>
 Starting from scratch? It's recommended to use a React framework like [Next.js](https://nextjs.org/docs/getting-started/installation) or [Create React App](https://create-react-app.dev/docs/getting-started) to get up and running quickly.
@@ -30,22 +30,20 @@ npm install @skip-go/widget
 yarn add @skip-go/widget
 ```
 </CodeGroup>
-
 <Info>
 If you're using `yarn` (or another package manager that doesn't install peer dependencies by default)
 you may need to install these peer dependencies as well:
 
 ```bash
-yarn add react react-dom styled-components
+  yarn add @tanstack/react-query chain-registry graz react react-dom viem wagmi
 ```
 </Info>
+</Step><Step title="Import the Widget Component">
 
-</Step><Step title="Import the SwapWidget Component">
-
-Next, use the `SwapWidget` component to render the swap interface:
+Next, use the `Widget` component to render the swap interface:
 
 ```typescript
-import { SwapWidget } from '@skip-go/widget';
+import { Widget } from '@skip-go/widget';
 
 const SwapPage = () => {
   return (
@@ -55,10 +53,9 @@ const SwapPage = () => {
         height: '640px',
       }}
     >
-      <SwapWidget
-        theme={{
-          brandColor: '#FF4FFF',
-        }}
+      <Widget
+        theme="light"
+        brandColor: '#FF4FFF'
       />
     </div>
   );
@@ -68,7 +65,6 @@ const SwapPage = () => {
 </Step><Step title="Configuration">
 
 Now that you have the widget integrated, it's time to configure the user experience. Find more details on widget configuration [here](./configuration).
-
 
 </Step></Steps>
 

@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.12.0",
+  "version": "0.14.0",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,12 +38,7 @@
     "vitest": "^1.2.2"
   },
   "peerDependencies": {
-    "@initia/initia-registry": "^0.1.16",
-    "@injectivelabs/core-proto-ts": "0.0.21",
-    "@injectivelabs/sdk-ts": "1.14.5",
-    "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/web3.js": "^1.91.1",
-    "cosmjs-types": "^0.9.0",
     "viem": "2.x"
   },
   "dependencies": {
@@ -54,8 +49,13 @@
     "@cosmjs/proto-signing": "0.32.4",
     "@cosmjs/stargate": "0.32.4",
     "@cosmjs/tendermint-rpc": "0.32.4",
+    "@initia/initia-registry": "^0.1.16",
+    "@injectivelabs/core-proto-ts": "0.0.21",
+    "@injectivelabs/sdk-ts": "1.14.5",
     "@keplr-wallet/unit": "^0.12.143",
+    "@solana/wallet-adapter-base": "^0.9.23",
     "axios": "1.x",
+    "cosmjs-types": "^0.9.0",
     "keccak": "3.0.4"
   },
   "publishConfig": {
