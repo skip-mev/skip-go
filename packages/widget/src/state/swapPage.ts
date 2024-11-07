@@ -3,7 +3,6 @@ import { ClientAsset } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
-import { hasAmountChanged } from "@/utils/crypto";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
