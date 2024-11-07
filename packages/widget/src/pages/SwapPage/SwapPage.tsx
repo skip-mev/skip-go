@@ -3,7 +3,11 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import {
+  ClientAsset,
+  skipAssetsAtom,
+  skipChainsAtom,
+} from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -20,8 +24,6 @@ import {
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
-import { useModal } from "@/components/Modal";
-import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
@@ -60,8 +62,6 @@ export const SwapPage = () => {
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
-
-  const selectWalletmodal = useModal(WalletSelectorModal);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -208,7 +208,7 @@ export const SwapPage = () => {
             if (!sourceAsset?.chainID) {
               NiceModal.show(Modals.ConnectedWalletModal);
             } else {
-              selectWalletmodal.show({
+              NiceModal.show(Modals.WalletSelectorModal, {
                 chainId: sourceAsset?.chainID,
               });
             }
@@ -303,7 +303,6 @@ export const SwapPage = () => {
     isLoadingBalances,
     insufficientBalance,
     route,
-    selectWalletmodal,
     routeError?.message,
     setChainAddresses,
     setCurrentPage,

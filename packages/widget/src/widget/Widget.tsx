@@ -167,9 +167,7 @@ export const ShowWidget = ({
   );
 
   const handleClick = () => {
-    modal.show({
-      stackedModal: false,
-    });
+    modal.show();
   };
 
   const Element = cloneElement(button, { onClick: handleClick });

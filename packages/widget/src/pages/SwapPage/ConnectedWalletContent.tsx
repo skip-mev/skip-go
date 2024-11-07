@@ -1,10 +1,8 @@
 import { Row } from "@/components/Layout";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees, useSetMaxAmount } from "./useSetMaxAmount";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
-import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { GhostButton } from "@/components/Button";

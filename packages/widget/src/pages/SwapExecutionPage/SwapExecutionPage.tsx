@@ -7,13 +7,11 @@ import {
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
-import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
 import { useTheme } from "styled-components";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 
-import { useModal } from "@/components/Modal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import {
@@ -29,6 +27,8 @@ import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
 import { useSyncTxStatus } from "./useSyncTxStatus";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -52,7 +52,6 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
-  const setManualAddressModal = useModal(SetAddressModal);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
   const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -149,7 +148,7 @@ export const SwapExecutionPage = () => {
             onClick={() => {
               const destinationChainID = route?.destAssetChainID;
               if (!destinationChainID) return;
-              setManualAddressModal.show({
+              NiceModal.show(Modals.SetAddressModal, {
                 signRequired: lastOperation.signRequired,
                 chainId: destinationChainID,
               });
@@ -207,7 +206,6 @@ export const SwapExecutionPage = () => {
     route?.destAssetChainID,
     route?.estimatedRouteDurationSeconds,
     setCurrentPage,
-    setManualAddressModal,
     swapExecutionState,
     theme.success.text,
   ]);
@@ -236,7 +234,7 @@ export const SwapExecutionPage = () => {
       />
       <SwapExecutionPageRoute
         onClickEditDestinationWallet={() =>
-          setManualAddressModal.show({
+          NiceModal.show(Modals.SetAddressModal, {
             chainId: route?.destAssetChainID,
             signRequired: lastOperation.signRequired,
           })
