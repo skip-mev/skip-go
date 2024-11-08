@@ -59,7 +59,7 @@ export const skipClient = atom((get) => {
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
       if (!solanaWallet)
         throw new Error("getSVMSigner error: wallet not found");
-      return solanaWallet as ArgumentTypes<typeof SkipClient>['getSVMSigner'];
+      return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
   });
 });

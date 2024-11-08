@@ -10,7 +10,7 @@ type CosmosProviderProps = {
 export const CosmosProvider: React.FC<CosmosProviderProps> = ({
   children,
 }) => {
-  const isTestnet = useAtomValue(onlyTestnetsAtom)
+  const isTestnet = useAtomValue(onlyTestnetsAtom);
   return (
     <GrazProvider grazOptions={{
       // @ts-expect-error mismatch keplr types version
