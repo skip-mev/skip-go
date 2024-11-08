@@ -12,6 +12,10 @@ const registries = [
     packageName: 'chain-registry',
     registryPath: path.resolve(__dirname, '../../../node_modules/chain-registry'),
   },
+  {
+    packageName: 'initia-registry',
+    registryPath: path.resolve(__dirname, '../../../node_modules/@initia/initia-registry/main'),
+  }
 ];
 
 async function genTelescope () {

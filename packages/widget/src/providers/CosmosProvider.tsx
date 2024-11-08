@@ -1,4 +1,4 @@
-import { mainnetChains } from "@/constants/graz";
+import { mainnetChains } from "@/constants/chains";
 import { GrazProvider } from "graz";
 
 

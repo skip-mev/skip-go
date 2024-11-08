@@ -1,4 +1,3 @@
-import { getChainInfo } from "@/state/chains";
 import { cosmosWalletAtom, MinimalWallet } from "@/state/wallets";
 import {
   getWallet,
@@ -17,8 +16,11 @@ import {
   getCosmosWalletInfo,
   keplrMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
-  mainnetChains,
 } from "@/constants/graz";
+import {
+  mainnetChains,
+  getChainInfo
+} from "@/constants/chains";
 import { useCallback } from "react";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";

@@ -1075,10 +1075,6 @@
         {
           "address": "http://134.122.12.165:26657",
           "provider": "bitbadges"
-        },
-        {
-          "address": "https://bitbadges_mainnet_rpc.chain.whenmoonwhenlambo.money",
-          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -5619,10 +5615,6 @@
         {
           "address": "https://mantrachain-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
-        },
-        {
-          "address": "https://mantra-rpc.publicnode.com:443",
-          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -11530,10 +11522,6 @@
         {
           "address": "https://rpc.dukong.mantrachain.io",
           "provider": "MANTRACHAIN"
-        },
-        {
-          "address": "https://mantra-testnet-rpc.publicnode.com:443",
-          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -11674,28 +11662,6 @@
       "rpc": [
         {
           "address": "https://rpc.testnet-2.nibiru.fi",
-          "provider": "Nibiru Foundation"
-        }
-      ]
-    }
-  },
-  {
-    "chain_id": "nibiru-testnet-3",
-    "fees": {
-      "fee_tokens": [
-        {
-          "denom": "unibi",
-          "fixed_min_gas_price": 0.025,
-          "low_gas_price": 0.025,
-          "average_gas_price": 0.05,
-          "high_gas_price": 0.1
-        }
-      ]
-    },
-    "apis": {
-      "rpc": [
-        {
-          "address": "https://rpc.testnet-3.nibiru.fi",
           "provider": "Nibiru Foundation"
         }
       ]
@@ -13037,6 +13003,174 @@
         {
           "address": "https://zetachain-testnet-archive.allthatnode.com:26657",
           "provider": "All That Node"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "landlord-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "l2/1666ede2bf1985307a86de36a6b78411cbf1edeffc2ac569e6a7b2f8753db4bb",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://maze-rpc-sequencer-53ecf1d6-4fa1-4103-827f-a9430df97cef.ane1-prod-nocsm.newmetric.xyz",
+          "provider": "Civitia"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "initiation-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uinit",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.15,
+          "average_gas_price": 0.15,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet.initia.xyz/",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.testnet.initia.xyz/",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "glados-2.1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umilk",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        },
+        {
+          "denom": "ibc/37A3FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C5A50",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet.milkyway.zone",
+          "provider": "MilkyWay Labs"
+        },
+        {
+          "address": "https://rpc-skip.testnet.milkyway.zone",
+          "provider": "MilkyWay Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "minievm-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "GAS",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.minievm-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.minievm-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "minimove-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umin",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.minimove-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.minimove-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "miniwasm-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umin",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.miniwasm-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.miniwasm-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
         }
       ]
     }
