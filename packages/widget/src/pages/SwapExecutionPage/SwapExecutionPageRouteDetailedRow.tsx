@@ -113,7 +113,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               }}
             />
           )}
-          <AddressText title={source.address}>
+          <AddressText title={source.address} monospace>
             {getTruncatedAddress(source.address)}
           </AddressText>
         </StyledButton>
@@ -189,7 +189,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
 };
 
 const AddressText = styled(SmallText)`
-  font-family: monospace;
   text-transform: lowercase;
 `;
 
