@@ -15,7 +15,7 @@ import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { defaultTheme, Theme } from "@/widget/theme";
 
-type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
 export const defaultSkipClientConfig = {
   apiURL: prodApiUrl,
