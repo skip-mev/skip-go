@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.0.3
+
+### Patch Changes
+
+- a16478e: bundle size reduced
+- 9424290: Update chainIdsToAffiliates prop to be proper camelCase
+- 991596a: Update fonts
+
 ## 3.0.2
 
 ### Patch Changes
