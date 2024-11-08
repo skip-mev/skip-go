@@ -195,20 +195,8 @@
           "provider": "Polkachu"
         },
         {
-          "address": "https://rpc-akash.cosmos-spaces.cloud",
-          "provider": "Cosmos Spaces"
-        },
-        {
-          "address": "https://rpc-akash-ia.cosmosia.notional.ventures:443",
-          "provider": "Notional"
-        },
-        {
           "address": "http://akash.c29r3.xyz:80/rpc",
           "provider": "c29r3"
-        },
-        {
-          "address": "https://akash-mainnet-rpc.autostake.com:443",
-          "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
           "address": "https://akash-rpc.kleomedes.network",
@@ -231,20 +219,16 @@
           "provider": "Allnodes ⚡️ Nodes & Staking"
         },
         {
-          "address": "https://akash-rpc.validatornode.com",
-          "provider": "ValidatorNode"
-        },
-        {
-          "address": "https://rpc-akash.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://public.stakewolle.com/cosmos/akash/rpc",
           "provider": "Stakewolle"
         },
         {
           "address": "https://akash.declab.pro:26601",
           "provider": "Decloud Nodes Lab"
+        },
+        {
+          "address": "https://rpc.akash.bronbro.io:443",
+          "provider": "Bro_n_Bro"
         }
       ]
     }
@@ -597,10 +581,6 @@
         {
           "address": "https://rpc.assetmantle.one",
           "provider": "AssetMantle"
-        },
-        {
-          "address": "https://rpc-assetmantle.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://assetmantle-rpc.polkachu.com",
@@ -1878,6 +1858,10 @@
         {
           "address": "https://rpc.celestia.mainnet.dteam.tech:443",
           "provider": "DTEAM"
+        },
+        {
+          "address": "https://celestia-rpc.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
         }
       ]
     }
@@ -3572,10 +3556,6 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://rpc-evmos.ecostake.com",
-          "provider": "ecostake"
-        },
-        {
           "address": "https://rpc.lavenderfive.com:443/evmos",
           "provider": "Lavender.Five Nodes 🐝"
         },
@@ -4369,6 +4349,10 @@
         {
           "address": "https://humans-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://humans-mainnet-rpc.cosmonautstakes.com",
+          "provider": "Cosmonaut Stakes 🤖"
         }
       ]
     }
@@ -4743,10 +4727,6 @@
         {
           "address": "http://juno.rpc.m.stavr.tech:1067",
           "provider": "🔥STAVR🔥"
-        },
-        {
-          "address": "https://rpc-juno.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://juno-rpc.polkachu.com",
@@ -5129,10 +5109,6 @@
         {
           "address": "https://kujira-rpc.polkachu.com",
           "provider": "polkachu"
-        },
-        {
-          "address": "https://rpc-kujira.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://rpc.lavenderfive.com:443/kujira",
@@ -5931,7 +5907,7 @@
           "provider": "Neutaro"
         },
         {
-          "address": "https://rpc3.neutaro.tech:26657",
+          "address": "https://rpc3.neutaro.io:26657",
           "provider": "Neutaro"
         }
       ]
@@ -10335,6 +10311,10 @@
         {
           "address": "https://rpc.celestia.testnet.dteam.tech:443",
           "provider": "DTEAM"
+        },
+        {
+          "address": "https://celestia-testnet-rpc.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
         }
       ]
     }
@@ -11101,6 +11081,10 @@
         {
           "address": "https://humans-testnet.nodejumper.io",
           "provider": "NODEJUMPER"
+        },
+        {
+          "address": "https://humans-testnet-rpc.cosmonautstakes.com",
+          "provider": "Cosmonaut Stakes 🤖"
         }
       ]
     }
@@ -11722,6 +11706,14 @@
         {
           "address": "https://testnet-nillion-rpc.lavenderfive.com",
           "provider": "lavenderfive"
+        },
+        {
+          "address": "https://nillion-testnet.rpc.kjnodes.com",
+          "provider": "kjnodes"
+        },
+        {
+          "address": "https://nillion-testnet.rpc.nodex.one",
+          "provider": "NodeX Emperor"
         }
       ]
     }
@@ -13037,6 +13029,174 @@
         {
           "address": "https://zetachain-testnet-archive.allthatnode.com:26657",
           "provider": "All That Node"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "landlord-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "l2/1666ede2bf1985307a86de36a6b78411cbf1edeffc2ac569e6a7b2f8753db4bb",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://maze-rpc-sequencer-53ecf1d6-4fa1-4103-827f-a9430df97cef.ane1-prod-nocsm.newmetric.xyz",
+          "provider": "Civitia"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "initiation-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "uinit",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.15,
+          "average_gas_price": 0.15,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet.initia.xyz/",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.testnet.initia.xyz/",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip"
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "glados-2.1",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umilk",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        },
+        {
+          "denom": "ibc/37A3FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C5A50",
+          "fixed_min_gas_price": 0.15,
+          "low_gas_price": 0.2,
+          "average_gas_price": 0.3,
+          "high_gas_price": 0.4
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet.milkyway.zone",
+          "provider": "MilkyWay Labs"
+        },
+        {
+          "address": "https://rpc-skip.testnet.milkyway.zone",
+          "provider": "MilkyWay Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "minievm-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "GAS",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.minievm-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.minievm-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "minimove-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umin",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.minimove-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.minimove-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
+        }
+      ]
+    }
+  },
+  {
+    "chain_id": "miniwasm-2",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "umin",
+          "fixed_min_gas_price": 0,
+          "low_gas_price": 0,
+          "average_gas_price": 0,
+          "high_gas_price": 0
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.miniwasm-2.initia.xyz",
+          "provider": "Initia Labs"
+        },
+        {
+          "address": "https://rpc-skip.miniwasm-2.initia.xyz",
+          "provider": "Initia Labs",
+          "authorizedUser": "skip",
+          "indexForSkip": 0
         }
       ]
     }

@@ -31,5 +31,5 @@
     }
   },
   "exclude": ["build", "src/stories", "scripts"],
-  "include": ["src", "web-component"]
+  "include": ["src", "web-component", "src/**/*.json"]
 }
