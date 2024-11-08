@@ -28,6 +28,6 @@ export default tseslint.config(
       "no-console": ["error", { allow: ["warn", "error"] }],
       "quotes": ["error", "double", { "avoidEscape": true }],
     },
-    ignores: ["scripts/prepublish.cjs", "build/*"],
+    ignores: ["scripts/prepublish.cjs", "scripts/generate-chains.cjs", "build/*"],
   }
 );
