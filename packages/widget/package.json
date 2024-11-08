@@ -14,7 +14,7 @@
     "lint": "eslint . --fix",
     "preview": "vite preview",
     "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
-    "publish:web-component": "npm run build:web-component && cd web-component && npm publish --tag=alpha && cd ..",
+    "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
