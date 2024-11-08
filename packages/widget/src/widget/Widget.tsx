@@ -15,6 +15,7 @@ import {
   onlyTestnetsAtom,
 } from "@/state/skipClient";
 import {
+  ChainAffiliates,
   SkipClientOptions,
 } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
@@ -54,8 +55,9 @@ type NewSwapVenueRequest = {
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL"> & {
-  apiUrl?: string
+type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
+  apiUrl?: string;
+  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 }
 
 export const Widget = (props: WidgetProps) => {
@@ -76,12 +78,13 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
-    const { theme, apiUrl, ...skipClientConfig } = props;
+    const { theme, apiUrl, chainIdsToAffiliates, ...skipClientConfig } = props;
 
     return {
       ...defaultSkipClientConfig,
       ...skipClientConfig,
       apiURL: apiUrl,
+      chainIDsToAffiliates: chainIdsToAffiliates,
     };
   }, [props]);
 
