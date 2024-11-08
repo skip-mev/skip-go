@@ -3,7 +3,7 @@ import { getBrandButtonTextColor } from "@/utils/colors";
 
 type TextProps = {
   fontSize?: number;
-  fontWeight?: "normal" | "bold" | number;
+  fontWeight?: "normal" | "medium" | "bold" | number | string;
   textAlign?: string;
   lineHeight?: string;
   textWrap?: string;
@@ -23,9 +23,22 @@ export const removeButtonStyles = css`
 `;
 
 export const textProps = css<TextProps>`
-  font-family: 'ABCDiatype', sans-serif;
+  font-family: 'ABCDiatype-regular', sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
+  ${({ fontWeight }) => {
+    switch (fontWeight) {
+      case "400":
+      case "normal":
+        return "font-family: 'ABCDiatype-regular', sans-serif;";
+      case "500":
+      case "medium":
+        return "font-family: 'ABCDiatype-medium', sans-serif;";
+      case "700":
+      case "bold":
+        return "font-family: 'ABCDiatype-bold', sans-serif;";
+    }
+  }};
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
   ${({ normalTextColor, theme }) =>
     normalTextColor && `color: ${theme.primary.text.normal}`};
@@ -33,7 +46,7 @@ export const textProps = css<TextProps>`
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
   ${({ textWrap }) => textWrap && `text-wrap: ${textWrap}`};
-  ${({ monospace }) => monospace && "font-family: 'ABCDiatype', monospace;"};
+  ${({ monospace }) => monospace && "font-family: 'ABCDiatype-mono', monospace;"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
   ${({ capitalize }) =>
