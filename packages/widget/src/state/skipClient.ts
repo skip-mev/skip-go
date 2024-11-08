@@ -13,8 +13,9 @@ import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
-import { Adapter } from "@solana/wallet-adapter-base";
 import { defaultTheme, Theme } from "@/widget/theme";
+
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;
 
 export const defaultSkipClientConfig = {
   apiURL: prodApiUrl,
@@ -52,14 +53,13 @@ export const skipClient = atom((get) => {
 
       return evmWalletClient;
     },
-    // @ts-expect-error solanaWallet is not a merged Adapter
     getSVMSigner: async () => {
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
       if (!solanaWallet)
         throw new Error("getSVMSigner error: wallet not found");
-      return solanaWallet as Adapter;
+      return solanaWallet as ArgumentTypes<typeof SkipClient>['getSVMSigner'];
     },
   });
 });
