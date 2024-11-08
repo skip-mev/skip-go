@@ -1,5 +1,5 @@
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable */
+
 const fs = require('fs/promises');
 const path = require('path');
 const { Bech32Address } = require('@keplr-wallet/cosmos');

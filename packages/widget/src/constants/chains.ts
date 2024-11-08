@@ -3,7 +3,7 @@ import _mainnetChains from "@/constants/cosmosChains/mainnet.json";
 import _testnetChains from "@/constants/cosmosChains/testnet.json";
 import _explorers from "@/constants/cosmosChains/explorers.json";
 
-export interface Explorer {
+export type Explorer = {
   kind?: string;
   url?: string;
   tx_page?: string;
