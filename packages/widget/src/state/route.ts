@@ -86,7 +86,6 @@ export const routeConfigAtom = atom<RouteConfig>({
     splitRoutes: true,
     evmSwaps: true,
   },
-  goFast: true,
 });
 
 export const _skipRouteAtom = atomWithQuery((get) => {
