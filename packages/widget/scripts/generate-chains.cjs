@@ -83,7 +83,6 @@ function extractProperties(chain, asset) {
     coinDenom: mainAsset.denom_units[mainAsset.denom_units.length - 1].denom,
     coinMinimalDenom: mainAsset.denom_units[0].denom,
     coinDecimals: mainAsset.denom_units[mainAsset.denom_units.length - 1].exponent,
-    coinGeckoId: mainAsset.coingecko_id,
   };
 
   const feeCurrencies = chain.fees?.fee_tokens.map((token) => {
@@ -95,8 +94,7 @@ function extractProperties(chain, asset) {
           feeAsset.denom_units[feeAsset.denom_units.length - 1]?.denom || token.denom,
         coinMinimalDenom:
           feeAsset.denom_units[0]?.denom || token.denom,
-        coinDecimals: Number(feeAsset.exponent),
-        coinGeckoId: feeAsset?.coingecko_id || "",
+        coinDecimals: Number(feeAsset.denom_units[feeAsset.denom_units.length - 1]?.exponent),
         gasPriceStep: {
           low: Number(token.low_gas_price),
           average: Number(token.average_gas_price),
@@ -109,8 +107,7 @@ function extractProperties(chain, asset) {
         feeAsset?.denom_units[feeAsset.denom_units.length - 1]?.denom || token.denom,
       coinMinimalDenom:
         feeAsset?.denom_units[0]?.denom || token.denom,
-      coinDecimals: Number(assets?.find((asset) => asset.denom === token.denom)?.decimals),
-      coinGeckoId: assets?.find((asset) => asset.denom === token.denom)?.coingecko_id || "",
+      coinDecimals: Number(feeAsset.denom_units[feeAsset.denom_units.length - 1]?.exponent),
     };
   });
 
@@ -125,7 +122,6 @@ function extractProperties(chain, asset) {
       coinDenom: asset.denom_units[asset.denom_units.length - 1].denom,
       coinMinimalDenom: asset.denom_units[0].denom,
       coinDecimals: asset.denom_units[asset.denom_units.length - 1].exponent,
-      coinGeckoId: asset.coingecko_id,
     })),
     rest: chain.apis.rest[0].address,
     rpc: chain.apis.rpc[0].address,
