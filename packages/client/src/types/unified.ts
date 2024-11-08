@@ -34,6 +34,8 @@ import {
   CosmosTxJSON,
   CosmosTx,
   SvmTxJSON,
+  GoFastTransferJSON,
+  GoFastTransfer,
   SvmTx,
   SmartSwapOptions,
   SmartSwapOptionsJSON,
@@ -270,86 +272,39 @@ export type EstimatedFeeJSON = {
   tx_index: number;
   operation_index?: number;
 };
+interface BaseOperationJSON {
+  tx_index: number;
+  amount_in: string;
+  amount_out: string;
+}
 
 export type OperationJSON =
-  | {
-    transfer: TransferJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | {
-    bank_send: BankSendJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | { swap: SwapJSON; tx_index: number; amount_in: string; amount_out: string }
-  | {
-    axelar_transfer: AxelarTransferJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | {
-    cctp_transfer: CCTPTransferJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | {
-    hyperlane_transfer: HyperlaneTransferJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | {
-    evm_swap: EvmSwapJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  }
-  | {
-    op_init_transfer: OPInitTransferJSON;
-    tx_index: number;
-    amount_in: string;
-    amount_out: string;
-  };
+  | (BaseOperationJSON & { transfer: TransferJSON })
+  | (BaseOperationJSON & { bank_send: BankSendJSON })
+  | (BaseOperationJSON & { swap: SwapJSON })
+  | (BaseOperationJSON & { axelar_transfer: AxelarTransferJSON })
+  | (BaseOperationJSON & { cctp_transfer: CCTPTransferJSON })
+  | (BaseOperationJSON & { hyperlane_transfer: HyperlaneTransferJSON })
+  | (BaseOperationJSON & { evm_swap: EvmSwapJSON })
+  | (BaseOperationJSON & { op_init_transfer: OPInitTransferJSON })
+  | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON });
+
+interface BaseOperation {
+  txIndex: number;
+  amountIn: string;
+  amountOut: string;
+}
 
 export type Operation =
-  | { transfer: Transfer; txIndex: number; amountIn: string; amountOut: string }
-  | { bankSend: BankSend; txIndex: number; amountIn: string; amountOut: string }
-  | { swap: Swap; txIndex: number; amountIn: string; amountOut: string }
-  | {
-    axelarTransfer: AxelarTransfer;
-    txIndex: number;
-    amountIn: string;
-    amountOut: string;
-  }
-  | {
-    cctpTransfer: CCTPTransfer;
-    txIndex: number;
-    amountIn: string;
-    amountOut: string;
-  }
-  | {
-    hyperlaneTransfer: HyperlaneTransfer;
-    txIndex: number;
-    amountIn: string;
-    amountOut: string;
-  }
-  | {
-    evmSwap: EvmSwap;
-    txIndex: number;
-    amountIn: string;
-    amountOut: string;
-  }
-  | {
-    opInitTransfer: OPInitTransfer;
-    txIndex: number;
-    amountIn: string;
-    amountOut: string;
-  };
+  | (BaseOperation & { transfer: Transfer })
+  | (BaseOperation & { bankSend: BankSend })
+  | (BaseOperation & { swap: Swap })
+  | (BaseOperation & { axelarTransfer: AxelarTransfer })
+  | (BaseOperation & { cctpTransfer: CCTPTransfer })
+  | (BaseOperation & { hyperlaneTransfer: HyperlaneTransfer })
+  | (BaseOperation & { evmSwap: EvmSwap })
+  | (BaseOperation & { opInitTransfer: OPInitTransfer })
+  | (BaseOperation & { goFastTransfer: GoFastTransfer });
 
 export type RouteResponseJSON = {
   source_asset_denom: string;

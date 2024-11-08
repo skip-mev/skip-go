@@ -45,6 +45,10 @@ import {
   TransferStatusJSON,
   TxStatusResponse,
   TxStatusResponseJSON,
+  GoFastTransferInfo,
+  GoFastTransferInfoJSON,
+  GoFastTransferTransactions,
+  GoFastTransferTransactionsJSON,
 } from './lifecycle';
 import {
   Chain,
@@ -121,6 +125,10 @@ import {
   SmartSwapOptionsJSON,
   ChainAffiliatesJSON,
   ChainAffiliates,
+  GoFastTransfer,
+  GoFastTransferJSON,
+  GoFastFee,
+  GoFastFeeJSON,
 } from './shared';
 import {
   AssetBetweenChains,
@@ -517,45 +525,17 @@ export function swapVenueRequestToJSON(
   };
 }
 
+
 export function routeRequestFromJSON(
   routeRequestJSON: RouteRequestJSON
 ): RouteRequest {
-  const swapVenues = routeRequestJSON.swap_venues
-    ? routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
-    : undefined;
-
-  if (routeRequestJSON.amount_in !== undefined) {
-    return {
-      sourceAssetDenom: routeRequestJSON.source_asset_denom,
-      sourceAssetChainID: routeRequestJSON.source_asset_chain_id,
-      destAssetDenom: routeRequestJSON.dest_asset_denom,
-      destAssetChainID: routeRequestJSON.dest_asset_chain_id,
-      amountIn: routeRequestJSON.amount_in,
-
-      cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
-      swapVenue: routeRequestJSON.swap_venue
-        ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
-        : undefined,
-      swapVenues: swapVenues,
-      allowUnsafe: routeRequestJSON.allow_unsafe,
-      experimentalFeatures: routeRequestJSON.experimental_features,
-      bridges: routeRequestJSON.bridges,
-      allowMultiTx: routeRequestJSON.allow_multi_tx,
-      smartRelay: routeRequestJSON.smart_relay,
-      smartSwapOptions: routeRequestJSON.smart_swap_options
-        ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
-        : undefined,
-      allowSwaps: routeRequestJSON.allow_swaps,
-    };
-  }
+  const swapVenues = routeRequestJSON.swap_venues?.map(swapVenueRequestFromJSON);
 
   return {
     sourceAssetDenom: routeRequestJSON.source_asset_denom,
     sourceAssetChainID: routeRequestJSON.source_asset_chain_id,
     destAssetDenom: routeRequestJSON.dest_asset_denom,
     destAssetChainID: routeRequestJSON.dest_asset_chain_id,
-    amountOut: routeRequestJSON.amount_out,
-
     cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
     swapVenue: routeRequestJSON.swap_venue
       ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
@@ -570,52 +550,27 @@ export function routeRequestFromJSON(
       ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
       : undefined,
     allowSwaps: routeRequestJSON.allow_swaps,
+    goFast: routeRequestJSON.go_fast,
+    ...(routeRequestJSON.amount_in !== undefined
+      ? { amountIn: routeRequestJSON.amount_in }
+      : { amountOut: routeRequestJSON.amount_out }),
   };
 }
+
 
 export function routeRequestToJSON(
   routeRequest: RouteRequest
 ): RouteRequestJSON {
-  const swapVenues = routeRequest.swapVenues
-    ? routeRequest.swapVenues.map(swapVenueRequestToJSON)
-    : undefined;
-
-  if (routeRequest.amountIn !== undefined) {
-    return {
-      source_asset_denom: routeRequest.sourceAssetDenom,
-      source_asset_chain_id: routeRequest.sourceAssetChainID,
-      dest_asset_denom: routeRequest.destAssetDenom,
-      dest_asset_chain_id: routeRequest.destAssetChainID,
-      amount_in: routeRequest.amountIn,
-
-      cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
-      swap_venue: routeRequest.swapVenue
-        ? swapVenueRequestToJSON(routeRequest.swapVenue)
-        : undefined,
-      swap_venues: swapVenues,
-      allow_unsafe: routeRequest.allowUnsafe,
-      experimental_features: routeRequest.experimentalFeatures,
-      bridges: routeRequest.bridges,
-      allow_multi_tx: routeRequest.allowMultiTx,
-      smart_relay: routeRequest.smartRelay,
-      smart_swap_options: routeRequest.smartSwapOptions
-        ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
-        : undefined,
-      allow_swaps: routeRequest.allowSwaps,
-    };
-  }
+  const swapVenues = routeRequest.swapVenues?.map(swapVenueRequestToJSON);
 
   return {
     source_asset_denom: routeRequest.sourceAssetDenom,
     source_asset_chain_id: routeRequest.sourceAssetChainID,
     dest_asset_denom: routeRequest.destAssetDenom,
     dest_asset_chain_id: routeRequest.destAssetChainID,
-    amount_out: routeRequest.amountOut,
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
-    swap_venue: routeRequest.swapVenue
-      ? swapVenueRequestToJSON(routeRequest.swapVenue)
-      : undefined,
+    swap_venue: routeRequest.swapVenue ? swapVenueRequestToJSON(routeRequest.swapVenue) : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
     experimental_features: routeRequest.experimentalFeatures,
@@ -626,8 +581,14 @@ export function routeRequestToJSON(
       ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
       : undefined,
     allow_swaps: routeRequest.allowSwaps,
+    go_fast: routeRequest.goFast,
+    ...(
+      routeRequest.amountIn !== undefined
+        ? { amount_in: routeRequest.amountIn }
+        : { amount_out: routeRequest.amountOut }
+    ),
   };
-}
+} 1
 
 export function transferFromJSON(transferJSON: TransferJSON): Transfer {
   return {
@@ -786,30 +747,7 @@ export function swapExactCoinOutToJSON(
 }
 
 export function swapFromJSON(swapJSON: SwapJSON): Swap {
-  if ('swap_in' in swapJSON) {
-    return {
-      swapIn: swapExactCoinInFromJSON(swapJSON.swap_in),
-      estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
-      fromChainID: swapJSON.from_chain_id,
-      chainID: swapJSON.chain_id,
-      denomIn: swapJSON.denom_in,
-      denomOut: swapJSON.denom_out,
-      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
-    };
-  } else if ('smart_swap_in' in swapJSON) {
-    return {
-      smartSwapIn: smartSwapExactCoinInFromJSON(swapJSON.smart_swap_in),
-      estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
-      fromChainID: swapJSON.from_chain_id,
-      chainID: swapJSON.chain_id,
-      denomIn: swapJSON.denom_in,
-      denomOut: swapJSON.denom_out,
-      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
-    };
-  }
-
-  return {
-    swapOut: swapExactCoinOutFromJSON(swapJSON.swap_out),
+  const commonProps = {
     estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
     fromChainID: swapJSON.from_chain_id,
     chainID: swapJSON.chain_id,
@@ -817,39 +755,50 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     denomOut: swapJSON.denom_out,
     swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
   };
-}
 
-export function swapToJSON(swap: Swap): SwapJSON {
-  if ('swapIn' in swap) {
+  if ('swap_in' in swapJSON) {
     return {
-      swap_in: swapExactCoinInToJSON(swap.swapIn),
-      estimated_affiliate_fee: swap.estimatedAffiliateFee,
-      from_chain_id: swap.fromChainID,
-      chain_id: swap.chainID,
-      denom_in: swap.denomIn,
-      denom_out: swap.denomOut,
-      swap_venues: swap.swapVenues.map(swapVenueToJSON),
+      ...commonProps,
+      swapIn: swapExactCoinInFromJSON(swapJSON.swap_in),
     };
-  } else if ('smartSwapIn' in swap) {
+  } else if ('smart_swap_in' in swapJSON) {
     return {
-      smart_swap_in: smartSwapExactCoinInToJSON(swap.smartSwapIn),
-      estimated_affiliate_fee: swap.estimatedAffiliateFee,
-      from_chain_id: swap.fromChainID,
-      chain_id: swap.chainID,
-      denom_in: swap.denomIn,
-      denom_out: swap.denomOut,
-      swap_venues: swap.swapVenues.map(swapVenueToJSON),
+      ...commonProps,
+      smartSwapIn: smartSwapExactCoinInFromJSON(swapJSON.smart_swap_in),
     };
   }
 
   return {
-    swap_out: swapExactCoinOutToJSON(swap.swapOut),
+    ...commonProps,
+    swapOut: swapExactCoinOutFromJSON(swapJSON.swap_out),
+  };
+}
+
+export function swapToJSON(swap: Swap): SwapJSON {
+  const commonProps = {
     estimated_affiliate_fee: swap.estimatedAffiliateFee,
     from_chain_id: swap.fromChainID,
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
     swap_venues: swap.swapVenues.map(swapVenueToJSON),
+  };
+
+  if ('swapIn' in swap) {
+    return {
+      ...commonProps,
+      swap_in: swapExactCoinInToJSON(swap.swapIn),
+    };
+  } else if ('smartSwapIn' in swap) {
+    return {
+      ...commonProps,
+      smart_swap_in: smartSwapExactCoinInToJSON(swap.smartSwapIn),
+    };
+  }
+
+  return {
+    ...commonProps,
+    swap_out: swapExactCoinOutToJSON(swap.swapOut),
   };
 }
 
@@ -878,152 +827,201 @@ export function evmSwapToJSON(evmSwap: EvmSwap): EvmSwapJSON {
     swap_venues: evmSwap.swapVenues.map(swapVenueToJSON),
   };
 }
+export function goFastFeeToJSON(goFastFee: GoFastFee): GoFastFeeJSON {
+  return {
+    fee_asset: assetToJSON(goFastFee.feeAsset),
+    bps_fee: goFastFee.bpsFee,
+    bps_fee_amount: goFastFee.bpsFeeAmount,
+    bps_fee_usd: goFastFee.bpsFeeUSD,
+    source_chain_fee_amount: goFastFee.sourceChainFeeAmount,
+    source_chain_fee_usd: goFastFee.sourceChainFeeUSD,
+    destination_chain_fee_amount: goFastFee.destinationChainFeeAmount,
+    destination_chain_fee_usd: goFastFee.destinationChainFeeUSD,
+  };
+}
 
+export function goFastFeeFromJSON(goFastFeeJSON: GoFastFeeJSON): GoFastFee {
+  return {
+    feeAsset: assetFromJSON(goFastFeeJSON.fee_asset),
+    bpsFee: goFastFeeJSON.bps_fee,
+    bpsFeeAmount: goFastFeeJSON.bps_fee_amount,
+    bpsFeeUSD: goFastFeeJSON.bps_fee_usd,
+    sourceChainFeeAmount: goFastFeeJSON.source_chain_fee_amount,
+    sourceChainFeeUSD: goFastFeeJSON.source_chain_fee_usd,
+    destinationChainFeeAmount: goFastFeeJSON.destination_chain_fee_amount,
+    destinationChainFeeUSD: goFastFeeJSON.destination_chain_fee_usd,
+  };
+}
+export function goFastTransferToJSON(goFast: GoFastTransfer): GoFastTransferJSON {
+  return {
+    from_chain_id: goFast.fromChainID,
+    to_chain_id: goFast.toChainID,
+    fee: goFastFeeToJSON(goFast.fee),
+    bridge_id: goFast.bridgeID,
+    denom_in: goFast.denomIn,
+    denom_out: goFast.denomOut,
+    source_domain: goFast.sourceDomain,
+    destination_domain: goFast.destinationDomain,
+
+  };
+}
+
+export function goFastTransferFromJSON(goFastJSON: GoFastTransferJSON): GoFastTransfer {
+  return {
+    fromChainID: goFastJSON.from_chain_id,
+    toChainID: goFastJSON.to_chain_id,
+    fee: goFastFeeFromJSON(goFastJSON.fee),
+    bridgeID: goFastJSON.bridge_id,
+    denomIn: goFastJSON.denom_in,
+    denomOut: goFastJSON.denom_out,
+    sourceDomain: goFastJSON.source_domain,
+    destinationDomain: goFastJSON.destination_domain,
+  };
+}
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
+  const commonProps = {
+    txIndex: operationJSON.tx_index,
+    amountIn: operationJSON.amount_in,
+    amountOut: operationJSON.amount_out,
+  };
+
   if ('transfer' in operationJSON) {
     return {
+      ...commonProps,
       transfer: transferFromJSON(operationJSON.transfer),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
     };
   }
 
   if ('bank_send' in operationJSON) {
     return {
+      ...commonProps,
       bankSend: bankSendFromJSON(operationJSON.bank_send),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
     };
   }
 
   if ('axelar_transfer' in operationJSON) {
     return {
+      ...commonProps,
       axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
     };
   }
 
   if ('cctp_transfer' in operationJSON) {
     return {
+      ...commonProps,
       cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
     };
   }
 
   if ('hyperlane_transfer' in operationJSON) {
     return {
-      hyperlaneTransfer: hyperlaneTransferFromJSON(
-        operationJSON.hyperlane_transfer
-      ),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
+      ...commonProps,
+      hyperlaneTransfer: hyperlaneTransferFromJSON(operationJSON.hyperlane_transfer),
     };
   }
 
   if ('op_init_transfer' in operationJSON) {
     return {
+      ...commonProps,
       opInitTransfer: opInitTransferFromJSON(operationJSON.op_init_transfer),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
+    };
+  }
+
+  if ('go_fast_transfer' in operationJSON) {
+    return {
+      ...commonProps,
+      goFastTransfer: goFastTransferFromJSON(operationJSON.go_fast_transfer),
     };
   }
 
   if ('swap' in operationJSON) {
     return {
+      ...commonProps,
       swap: swapFromJSON(operationJSON.swap),
-      txIndex: operationJSON.tx_index,
-      amountIn: operationJSON.amount_in,
-      amountOut: operationJSON.amount_out,
     };
   }
 
-  return {
-    evmSwap: evmSwapFromJSON(operationJSON.evm_swap),
-    txIndex: operationJSON.tx_index,
-    amountIn: operationJSON.amount_in,
-    amountOut: operationJSON.amount_out,
-  };
+  if ('evm_swap' in operationJSON) {
+    return {
+      ...commonProps,
+      evmSwap: evmSwapFromJSON(operationJSON.evm_swap),
+    };
+  }
+
+  throw new Error('Unknown operation type');
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
+  const commonProps = {
+    tx_index: operation.txIndex,
+    amount_in: operation.amountIn,
+    amount_out: operation.amountOut,
+  };
+
   if ('transfer' in operation) {
     return {
+      ...commonProps,
       transfer: transferToJSON(operation.transfer),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
 
   if ('bankSend' in operation) {
     return {
+      ...commonProps,
       bank_send: bankSendToJSON(operation.bankSend),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
 
   if ('axelarTransfer' in operation) {
     return {
+      ...commonProps,
       axelar_transfer: axelarTransferToJSON(operation.axelarTransfer),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
 
   if ('cctpTransfer' in operation) {
     return {
+      ...commonProps,
       cctp_transfer: cctpTransferToJSON(operation.cctpTransfer),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
 
   if ('hyperlaneTransfer' in operation) {
     return {
+      ...commonProps,
       hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
 
   if ('opInitTransfer' in operation) {
     return {
+      ...commonProps,
       op_init_transfer: opInitTransferToJSON(operation.opInitTransfer),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
+    };
+  }
+
+  if ('goFastTransfer' in operation) {
+    return {
+      ...commonProps,
+      go_fast_transfer: goFastTransferToJSON(operation.goFastTransfer),
     };
   }
 
   if ('swap' in operation) {
     return {
+      ...commonProps,
       swap: swapToJSON(operation.swap),
-      tx_index: operation.txIndex,
-      amount_in: operation.amountIn,
-      amount_out: operation.amountOut,
     };
   }
-
-  return {
-    evm_swap: evmSwapToJSON(operation.evmSwap),
-    tx_index: operation.txIndex,
-    amount_in: operation.amountIn,
-    amount_out: operation.amountOut,
-  };
+  if ('evmSwap' in operation) {
+    return {
+      ...commonProps,
+      evm_swap: evmSwapToJSON(operation.evmSwap),
+    }
+  }
+  throw new Error('Unknown operation type');
 }
+
 
 export function routeResponseFromJSON(
   routeResponseJSON: RouteResponseJSON
@@ -1950,6 +1948,27 @@ export function axelarTransferInfoFromJSON(
     dstChainID: value.dst_chain_id,
   };
 }
+export function goFastTransferInfoFromJSON(
+  value: GoFastTransferInfoJSON
+): GoFastTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && goFastTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function goFastTransferInfoToJson(
+  value: GoFastTransferInfo
+): GoFastTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && goFastTransferTransactionsToJSON(value.txs),
+  };
+}
 
 export function axelarTransferInfoToJSON(
   value: AxelarTransferInfo
@@ -1993,6 +2012,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ('go_fast_transfer' in value) {
+    return {
+      goFastTransfer: goFastTransferInfoFromJSON(value.go_fast_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -2020,6 +2045,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ('opInitTransfer' in value) {
     return {
       op_init_transfer: opInitTransferInfoToJSON(value.opInitTransfer),
+    };
+  }
+
+  if ('goFastTransfer' in value) {
+    return {
+      go_fast_transfer: goFastTransferInfoToJson(value.goFastTransfer),
     };
   }
 
@@ -2305,6 +2336,28 @@ export function hyperlaneTransferTransactionsToJSON(
     receive_tx: value.receiveTx
       ? chainTransactionToJSON(value.receiveTx)
       : null,
+  };
+}
+
+export function goFastTransferTransactionsToJSON(
+  value: GoFastTransferTransactions
+): GoFastTransferTransactionsJSON {
+  return {
+    order_submitted_tx: value.orderSubmittedTx ? chainTransactionToJSON(value.orderSubmittedTx) : null,
+    order_refunded_tx: value.orderRefundedTx ? chainTransactionToJSON(value.orderRefundedTx) : null,
+    order_filled_tx: value.orderFilledTx ? chainTransactionToJSON(value.orderFilledTx) : null,
+    order_timeout_tx: value.orderTimeoutTx ? chainTransactionToJSON(value.orderTimeoutTx) : null,
+  };
+}
+
+export function goFastTransferTransactionsFromJSON(
+  value: GoFastTransferTransactionsJSON
+): GoFastTransferTransactions {
+  return {
+    orderSubmittedTx: value.order_submitted_tx ? chainTransactionFromJSON(value.order_submitted_tx) : null,
+    orderRefundedTx: value.order_refunded_tx ? chainTransactionFromJSON(value.order_refunded_tx) : null,
+    orderFilledTx: value.order_filled_tx ? chainTransactionFromJSON(value.order_filled_tx) : null,
+    orderTimeoutTx: value.order_timeout_tx ? chainTransactionFromJSON(value.order_timeout_tx) : null,
   };
 }
 
