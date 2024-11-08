@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.0.4
+
+### Patch Changes
+
+- 28c097f: fix null coin decimals
+- Updated dependencies [4248305]
+  - @skip-go/client@0.14.1
+
 ## 3.0.3
 
 ### Patch Changes
