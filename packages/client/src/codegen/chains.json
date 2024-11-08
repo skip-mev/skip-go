@@ -195,20 +195,8 @@
           "provider": "Polkachu"
         },
         {
-          "address": "https://rpc-akash.cosmos-spaces.cloud",
-          "provider": "Cosmos Spaces"
-        },
-        {
-          "address": "https://rpc-akash-ia.cosmosia.notional.ventures:443",
-          "provider": "Notional"
-        },
-        {
           "address": "http://akash.c29r3.xyz:80/rpc",
           "provider": "c29r3"
-        },
-        {
-          "address": "https://akash-mainnet-rpc.autostake.com:443",
-          "provider": "AutoStake 🛡️ Slash Protected"
         },
         {
           "address": "https://akash-rpc.kleomedes.network",
@@ -231,20 +219,16 @@
           "provider": "Allnodes ⚡️ Nodes & Staking"
         },
         {
-          "address": "https://akash-rpc.validatornode.com",
-          "provider": "ValidatorNode"
-        },
-        {
-          "address": "https://rpc-akash.whispernode.com:443",
-          "provider": "WhisperNode 🤐"
-        },
-        {
           "address": "https://public.stakewolle.com/cosmos/akash/rpc",
           "provider": "Stakewolle"
         },
         {
           "address": "https://akash.declab.pro:26601",
           "provider": "Decloud Nodes Lab"
+        },
+        {
+          "address": "https://rpc.akash.bronbro.io:443",
+          "provider": "Bro_n_Bro"
         }
       ]
     }
@@ -597,10 +581,6 @@
         {
           "address": "https://rpc.assetmantle.one",
           "provider": "AssetMantle"
-        },
-        {
-          "address": "https://rpc-assetmantle.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://assetmantle-rpc.polkachu.com",
@@ -1075,6 +1055,10 @@
         {
           "address": "http://134.122.12.165:26657",
           "provider": "bitbadges"
+        },
+        {
+          "address": "https://bitbadges_mainnet_rpc.chain.whenmoonwhenlambo.money",
+          "provider": "🚀 WHEN MOON 🌕 WHEN LAMBO 🔥"
         }
       ]
     }
@@ -1874,6 +1858,10 @@
         {
           "address": "https://rpc.celestia.mainnet.dteam.tech:443",
           "provider": "DTEAM"
+        },
+        {
+          "address": "https://celestia-rpc.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
         }
       ]
     }
@@ -3568,10 +3556,6 @@
     "apis": {
       "rpc": [
         {
-          "address": "https://rpc-evmos.ecostake.com",
-          "provider": "ecostake"
-        },
-        {
           "address": "https://rpc.lavenderfive.com:443/evmos",
           "provider": "Lavender.Five Nodes 🐝"
         },
@@ -4365,6 +4349,10 @@
         {
           "address": "https://humans-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://humans-mainnet-rpc.cosmonautstakes.com",
+          "provider": "Cosmonaut Stakes 🤖"
         }
       ]
     }
@@ -4739,10 +4727,6 @@
         {
           "address": "http://juno.rpc.m.stavr.tech:1067",
           "provider": "🔥STAVR🔥"
-        },
-        {
-          "address": "https://rpc-juno.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://juno-rpc.polkachu.com",
@@ -5125,10 +5109,6 @@
         {
           "address": "https://kujira-rpc.polkachu.com",
           "provider": "polkachu"
-        },
-        {
-          "address": "https://rpc-kujira.ecostake.com",
-          "provider": "ecostake"
         },
         {
           "address": "https://rpc.lavenderfive.com:443/kujira",
@@ -5615,6 +5595,10 @@
         {
           "address": "https://mantrachain-mainnet-rpc.autostake.com:443",
           "provider": "AutoStake 🛡️ Slash Protected"
+        },
+        {
+          "address": "https://mantra-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -5923,7 +5907,7 @@
           "provider": "Neutaro"
         },
         {
-          "address": "https://rpc3.neutaro.tech:26657",
+          "address": "https://rpc3.neutaro.io:26657",
           "provider": "Neutaro"
         }
       ]
@@ -10327,6 +10311,10 @@
         {
           "address": "https://rpc.celestia.testnet.dteam.tech:443",
           "provider": "DTEAM"
+        },
+        {
+          "address": "https://celestia-testnet-rpc.stakeandrelax.net",
+          "provider": "Stake&Relax Validator 🦥"
         }
       ]
     }
@@ -11093,6 +11081,10 @@
         {
           "address": "https://humans-testnet.nodejumper.io",
           "provider": "NODEJUMPER"
+        },
+        {
+          "address": "https://humans-testnet-rpc.cosmonautstakes.com",
+          "provider": "Cosmonaut Stakes 🤖"
         }
       ]
     }
@@ -11522,6 +11514,10 @@
         {
           "address": "https://rpc.dukong.mantrachain.io",
           "provider": "MANTRACHAIN"
+        },
+        {
+          "address": "https://mantra-testnet-rpc.publicnode.com:443",
+          "provider": "Allnodes ⚡️ Nodes & Staking"
         }
       ]
     }
@@ -11668,6 +11664,28 @@
     }
   },
   {
+    "chain_id": "nibiru-testnet-3",
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "unibi",
+          "fixed_min_gas_price": 0.025,
+          "low_gas_price": 0.025,
+          "average_gas_price": 0.05,
+          "high_gas_price": 0.1
+        }
+      ]
+    },
+    "apis": {
+      "rpc": [
+        {
+          "address": "https://rpc.testnet-3.nibiru.fi",
+          "provider": "Nibiru Foundation"
+        }
+      ]
+    }
+  },
+  {
     "chain_id": "nillion-chain-testnet-1",
     "fees": {
       "fee_tokens": [
@@ -11688,6 +11706,14 @@
         {
           "address": "https://testnet-nillion-rpc.lavenderfive.com",
           "provider": "lavenderfive"
+        },
+        {
+          "address": "https://nillion-testnet.rpc.kjnodes.com",
+          "provider": "kjnodes"
+        },
+        {
+          "address": "https://nillion-testnet.rpc.nodex.one",
+          "provider": "NodeX Emperor"
         }
       ]
     }
