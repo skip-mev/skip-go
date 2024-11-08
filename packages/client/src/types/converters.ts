@@ -588,7 +588,7 @@ export function routeRequestToJSON(
         : { amount_out: routeRequest.amountOut }
     ),
   };
-} 1
+}
 
 export function transferFromJSON(transferJSON: TransferJSON): Transfer {
   return {
