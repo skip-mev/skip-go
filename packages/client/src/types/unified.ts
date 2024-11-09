@@ -198,12 +198,14 @@ export type MsgsDirectResponseJSON = {
   warning?: MsgsWarning;
 };
 
-export type RouteRequestBase = {
+export type RouteRequestBase = RouteConfig & {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   destAssetDenom: string;
   destAssetChainID: string;
+};
 
+export type RouteConfig = {
   cumulativeAffiliateFeeBPS?: string;
   swapVenue?: SwapVenueRequest;
   swapVenues?: SwapVenueRequest[];
@@ -216,6 +218,7 @@ export type RouteRequestBase = {
   allowSwaps?: boolean;
   goFast?: boolean;
 };
+
 
 export type RouteRequestGivenIn = RouteRequestBase & {
   amountIn: string;

@@ -25,7 +25,8 @@ import {
   defaultSwapSettings,
   swapSettingsAtom,
 } from "@/state/swapPage";
-import { RouteConfig, routeConfigAtom } from "@/state/route";
+import { routeConfigAtom } from "@/state/route";
+import { RouteConfig } from "@skip-go/client";
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";

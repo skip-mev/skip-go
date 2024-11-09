@@ -1,5 +1,5 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
-import { BridgeType, ExperimentalFeature, RouteRequest, RouteResponse, SmartSwapOptions, SwapVenueRequest } from "@skip-go/client";
+import { RouteResponse, RouteConfig, RouteRequest } from "@skip-go/client";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { errorAtom } from "./errorPage";
@@ -77,15 +77,6 @@ type CaughtRouteError = {
   isError: boolean;
   error: unknown;
 };
-
-export type RouteConfig = {
-  experimentalFeatures?: ExperimentalFeature[];
-  allowMultiTx?: boolean;
-  allowUnsafe?: boolean;
-  bridges?: BridgeType[];
-  swapVenues?: SwapVenueRequest[];
-  smartSwapOptions?: SmartSwapOptions;
-}
 
 export const routeConfigAtom = atom<RouteConfig>({
   experimentalFeatures: ["hyperlane"],
