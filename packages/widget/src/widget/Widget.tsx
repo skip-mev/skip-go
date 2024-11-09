@@ -28,6 +28,12 @@ import {
 import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 
+export type WidgetRouteConfig =
+  Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
+    swapVenues?: NewSwapVenueRequest[];
+    swapVenue?: NewSwapVenueRequest;
+  };
+
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
@@ -45,9 +51,7 @@ export type WidgetProps = {
      */
     customGasAmount?: number;
   };
-  routeConfig?: Omit<RouteConfig, "swapVenues"> & {
-    swapVenues?: NewSwapVenueRequest[];
-  };
+  routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
 } & NewSkipClientOptions;
 
@@ -115,17 +119,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       });
     }
     if (props.routeConfig) {
-      // temp before clientLibrary updates swapVenues to be
-      // { name: string, chainId: string }[]
-      const tempClientRouteConfig = props.routeConfig;
-      if (tempClientRouteConfig.swapVenues) {
-        (tempClientRouteConfig as RouteConfig).swapVenues =
-          tempClientRouteConfig.swapVenues.map((swapVenue) => ({
-            name: swapVenue.name,
-            chainID: swapVenue.chainId,
-          }));
-      }
-      setRouteConfig(tempClientRouteConfig as RouteConfig);
+      setRouteConfig((prev) => {
+        return {
+          ...prev,
+          ...props.routeConfig,
+        };
+      });
     }
     if (props.filter) {
       setChainFilter(props.filter);

@@ -16,6 +16,7 @@ import {
   debouncedDestinationAssetAmountValueInitializedAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
+import { WidgetRouteConfig } from "@/widget/Widget";
 
 export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
@@ -78,7 +79,7 @@ type CaughtRouteError = {
   error: unknown;
 };
 
-export const routeConfigAtom = atom<RouteConfig>({
+export const routeConfigAtom = atom<WidgetRouteConfig>({
   experimentalFeatures: ["hyperlane"],
   allowMultiTx: true,
   allowUnsafe: true,
@@ -87,6 +88,34 @@ export const routeConfigAtom = atom<RouteConfig>({
     evmSwaps: true,
   },
 });
+
+export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig): RouteConfig => {
+  return {
+    ...params,
+    swapVenues: params.swapVenues?.map((venue) => ({
+      ...venue,
+      chainID: venue.chainId,
+    })),
+    swapVenue: params.swapVenue && {
+      ...params.swapVenue,
+      chainID: params.swapVenue.chainId,
+    },
+  };
+}
+
+export const convertClientRouteConfigToWidgetRouteConfig = (params: RouteConfig): WidgetRouteConfig => {
+  return {
+    ...params,
+    swapVenues: params.swapVenues?.map((venue) => ({
+      ...venue,
+      chainId: venue.chainID,
+    })),
+    swapVenue: params.swapVenue && {
+      ...params.swapVenue,
+      chainId: params.swapVenue.chainID,
+    },
+  };
+}
 
 export const _skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
@@ -110,10 +139,11 @@ export const _skipRouteAtom = atomWithQuery((get) => {
         throw new Error("No route request provided");
       }
       try {
+        const _skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(skipRouteConfig);
         const response = await skip.route({
           ...params,
           smartRelay: true,
-          ...skipRouteConfig,
+          ..._skipRouteConfig,
         });
         return response;
       } catch (error) {
