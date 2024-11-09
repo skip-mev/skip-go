@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.2
+
+### Patch Changes
+
+- 3e1d39a: widget RouteConfig adjustment
+
 ## 0.14.1
 
 ### Patch Changes
