@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.6
+
+### Patch Changes
+
+- 6fa8cb2: fix route config prop
+
 ## 3.0.5
 
 ### Patch Changes
