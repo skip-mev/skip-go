@@ -110,7 +110,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
         )}
 
         <Row align="center" gap={5}>
-          <SmallText normalTextColor>on {assetDetails.chainName}</SmallText>
+          <SmallText normalTextColor textWrap="nowrap">on {assetDetails.chainName}</SmallText>
 
           <Button
             align="center"
@@ -119,7 +119,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           >
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
-              <SmallText monospace title={source.address}>
+              <SmallText monospace title={source.address} textWrap="nowrap">
                 {getTruncatedAddress(source.address)}
               </SmallText>
             )}

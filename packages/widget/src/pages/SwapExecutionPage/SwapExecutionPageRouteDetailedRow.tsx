@@ -13,6 +13,8 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { CopyIcon } from "@/icons/CopyIcon";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -43,6 +45,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -113,9 +116,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
               }}
             />
           )}
-          <AddressText title={source.address} monospace>
-            {getTruncatedAddress(source.address)}
-          </AddressText>
+          {isMobileScreenSize ? (
+            <CopyIcon color={theme.primary.text.lowContrast} />
+          ) : (
+            <AddressText title={source.address} monospace textWrap="nowrap">
+              {getTruncatedAddress(source.address)}
+            </AddressText>
+          )}
         </StyledButton>
         {shouldRenderEditDestinationWallet && (
           <Button align="center" onClick={onClickEditDestinationWallet}>
@@ -126,6 +133,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     );
   }, [
     context,
+    isMobileScreenSize,
     onClickEditDestinationWallet,
     source.address,
     source.image,
@@ -162,7 +170,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {assetDetails?.amount}
               </StyledAssetAmount>
-              <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
+              <StyledSymbol normalTextColor>
+                {assetDetails?.symbol}
+              </StyledSymbol>
               <StyledChainName title={assetDetails?.chainName}>
                 {" "}
                 on {assetDetails?.chainName}
