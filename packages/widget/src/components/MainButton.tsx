@@ -194,7 +194,7 @@ const StyledTimeRemaining = styled(Row)`
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
-  width: 476px;
+  width: 100%;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

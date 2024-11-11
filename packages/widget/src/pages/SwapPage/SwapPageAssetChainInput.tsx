@@ -163,7 +163,6 @@ export const SwapPageAssetChainInput = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
-          valueLength={displayedValue.length}
         />
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
@@ -239,13 +238,12 @@ const StyledAssetChainInputWrapper = styled(Column)`
 
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
-  valueLength: number;
 }>`
   all: unset;
-  font-size: ${({ valueLength }) => {
-    const fontSize = valueLength > 15 ? 28 : valueLength > 10 ? 32 : 38;
-    return `${fontSize}px`;
-  }};
+  font-size: 38px;
+  @media (max-width: 767px) {
+    font-size: 30px;
+  }
   font-weight: 300;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
