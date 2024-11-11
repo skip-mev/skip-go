@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.8
+
+### Patch Changes
+
+- cb443b8: Fix SetAddressModal not closing after connection
+
 ## 3.0.7
 
 ### Patch Changes
