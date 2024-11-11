@@ -1699,9 +1699,7 @@ export class SkipClient {
     const txError = validateResult.find(
       (res) => res && res?.error !== null
     );
-    console.log('txError1', txError);
     if (txError) {
-      console.log('txError', txError);
       onValidateGasBalance?.({
         status: 'error',
       });
