@@ -1,5 +1,5 @@
 import { createModal, ModalProps } from "@/components/Modal";
-import { Column, Row } from "@/components/Layout";
+import { Row } from "@/components/Layout";
 import { css, styled } from "styled-components";
 import { useCallback, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";

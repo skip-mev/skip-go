@@ -35,10 +35,10 @@ export const StyledModalContainer = styled(Column)`
   padding: 10px;
   gap: 10px;
   width: 100%;
+  max-height: 600px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
-  margin: 10px;
 `;
 
 export const StyledModalInnerContainer = styled(Column) <{

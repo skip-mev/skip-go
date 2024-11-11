@@ -7,7 +7,7 @@ import { SmallText } from "./Typography";
 
 export type VirtualListProps<T> = {
   listItems: T[];
-  height: number;
+  height?: number;
   itemHeight: number;
   bufferSize?: number;
   renderItem: (item: T, index: number) => React.ReactNode;
@@ -20,6 +20,9 @@ export type VirtualListProps<T> = {
   };
 };
 
+const MAX_MODAL_HEIGHT = 600;
+const MOBILE_VERTICAL_MARGIN = 100;
+
 export const VirtualList = <T,>({
   listItems,
   height,
@@ -31,8 +34,32 @@ export const VirtualList = <T,>({
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
+  const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
 
   const listRef = useRef<ListRef>(null);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const windowHeight = window.innerHeight;
+
+      if (MAX_MODAL_HEIGHT > windowHeight) {
+        return windowHeight - itemHeight - MOBILE_VERTICAL_MARGIN * 2;
+      }
+      return MAX_MODAL_HEIGHT - itemHeight;
+    };
+
+    setVirtualListHeight(calculateHeight());
+
+    const handleResize = () => {
+      setVirtualListHeight(calculateHeight());
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [itemHeight]);
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
@@ -91,7 +118,7 @@ export const VirtualList = <T,>({
     <List
       ref={listRef}
       data={listItems}
-      height={height}
+      height={height ?? virtualListHeight}
       itemHeight={itemHeight}
       itemKey={itemKey}
       virtual

@@ -1,7 +1,7 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ShowWidget, Widget } from "@/widget/Widget";
-import { Row, Column } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");

@@ -213,7 +213,7 @@ const StyledContent = styled(Dialog.Content) <{
   open?: boolean;
 }>`
   max-width: 600px;
-  width: 100%;
+  width: calc(100% - 20px);
   border-radius: 4px;
   display: flex;
   align-items: center;
