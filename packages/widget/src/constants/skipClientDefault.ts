@@ -9,4 +9,4 @@ export const endpointOptions = {
   },
 };
 
-export const prodApiUrl = `${appUrl}/api/widget/skip`;
+export const prodApiUrl = `${appUrl}/api/skip`;

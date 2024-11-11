@@ -18,11 +18,14 @@ import { defaultTheme, Theme } from "@/widget/theme";
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
 export const defaultSkipClientConfig = {
-  apiURL: prodApiUrl,
+  apiUrl: prodApiUrl,
   endpointOptions,
 };
 
-export const skipClientConfigAtom = atom<SkipClientOptions>(defaultSkipClientConfig);
+export const skipClientConfigAtom = atom<SkipClientOptions>({
+  apiURL: defaultSkipClientConfig.apiUrl,
+  endpointOptions: defaultSkipClientConfig.endpointOptions,
+});
 
 export const themeAtom = atom<Theme>(defaultTheme);
 
