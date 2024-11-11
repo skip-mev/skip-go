@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.0.2",
+  "version": "3.0.6",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -10,15 +10,16 @@
   "scripts": {
     "dev": "vite --force",
     "dev:storybook": "storybook dev -p 6006",
-    "build": "NODE_OPTIONS=--max-old-space-size=16384 vite build",
+    "build": "npm run generate-chains && NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
     "preview": "vite preview",
     "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
-    "publish:web-component": "npm run build:web-component && cd web-component && npm publish --tag=alpha && cd ..",
+    "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
-    "post": "git checkout -- package.json"
+    "post": "git checkout -- package.json",
+    "generate-chains": "node scripts/generate-chains.cjs"
   },
   "exports": {
     ".": {
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
+    "@initia/initia-registry": "^0.2.1",
     "@keplr-wallet/types": "^0.12.125",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
@@ -51,6 +53,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
+    "chain-registry": "^1.69.26",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "node-polyfill-webpack-plugin": "^4.0.0",
@@ -70,7 +73,6 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.51.21",
-    "chain-registry": "^1.69.22",
     "graz": "^0.1.25",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
@@ -78,10 +80,8 @@
     "wagmi": "^2.12.8"
   },
   "dependencies": {
-    "@chain-registry/keplr": "^1.74.22",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
-    "@initia/initia-registry": "^0.1.16",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
     "@penumbra-zone/bech32m": "^7.0.0",
     "@penumbra-zone/client": "^18.1.0",

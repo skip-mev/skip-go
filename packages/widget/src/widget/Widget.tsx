@@ -13,6 +13,7 @@ import {
   onlyTestnetsAtom,
 } from "@/state/skipClient";
 import {
+  ChainAffiliates,
   SkipClientOptions,
 } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
@@ -22,8 +23,15 @@ import {
   defaultSwapSettings,
   swapSettingsAtom,
 } from "@/state/swapPage";
-import { RouteConfig, routeConfigAtom } from "@/state/route";
+import { routeConfigAtom } from "@/state/route";
+import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
+
+export type WidgetRouteConfig =
+  Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
+    swapVenues?: NewSwapVenueRequest[];
+    swapVenue?: NewSwapVenueRequest;
+  };
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
@@ -42,9 +50,7 @@ export type WidgetProps = {
      */
     customGasAmount?: number;
   };
-  routeConfig?: Omit<RouteConfig, "swapVenues"> & {
-    swapVenues?: NewSwapVenueRequest[];
-  };
+  routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
 } & NewSkipClientOptions;
 
@@ -53,8 +59,9 @@ type NewSwapVenueRequest = {
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL"> & {
-  apiUrl?: string
+type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
+  apiUrl?: string;
+  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 }
 
 export const Widget = (props: WidgetProps) => {
@@ -75,12 +82,13 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
   const mergedSkipClientConfig = useMemo(() => {
-    const { theme, apiUrl, ...skipClientConfig } = props;
+    const { theme, apiUrl, chainIdsToAffiliates, ...skipClientConfig } = props;
 
     return {
       ...defaultSkipClientConfig,
       ...skipClientConfig,
       apiURL: apiUrl,
+      chainIDsToAffiliates: chainIdsToAffiliates,
     };
   }, [props]);
 
@@ -111,17 +119,12 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       });
     }
     if (props.routeConfig) {
-      // temp before clientLibrary updates swapVenues to be
-      // { name: string, chainId: string }[]
-      const tempClientRouteConfig = props.routeConfig;
-      if (tempClientRouteConfig.swapVenues) {
-        (tempClientRouteConfig as RouteConfig).swapVenues =
-          tempClientRouteConfig.swapVenues.map((swapVenue) => ({
-            name: swapVenue.name,
-            chainID: swapVenue.chainId,
-          }));
-      }
-      setRouteConfig(tempClientRouteConfig as RouteConfig);
+      setRouteConfig((prev) => {
+        return {
+          ...prev,
+          ...props.routeConfig,
+        };
+      });
     }
     if (props.filter) {
       setChainFilter(props.filter);

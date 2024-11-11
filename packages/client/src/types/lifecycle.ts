@@ -397,10 +397,47 @@ export type HyperlaneTransferInfo = {
   txs: HyperlaneTransferTransactions;
 };
 
+export type GoFastTransferTransactionsJSON = {
+  order_submitted_tx: ChainTransactionJSON | null;
+  order_filled_tx: ChainTransactionJSON | null;
+  order_refunded_tx: ChainTransactionJSON | null;
+  order_timeout_tx: ChainTransactionJSON | null;
+};
+
+export type GoFastTransferTransactions = {
+  orderSubmittedTx: ChainTransaction | null;
+  orderFilledTx: ChainTransaction | null;
+  orderRefundedTx: ChainTransaction | null;
+  orderTimeoutTx: ChainTransaction | null;
+};
+
+export type GoFastTransferState = 
+  | "GO_FAST_TRANSFER_UNKNOWN" 
+  | "GO_FAST_TRANSFER_SENT" 
+  | "GO_FAST_POST_ACTION_FAILED" 
+  | "GO_FAST_TRANSFER_TIMEOUT" 
+  | "GO_FAST_TRANSFER_FILLED" 
+  | "GO_FAST_TRANSFER_REFUNDED"
+
+export type GoFastTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: GoFastTransferState;
+  txs: GoFastTransferTransactionsJSON;
+};
+
+export type GoFastTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: GoFastTransferState;
+  txs: GoFastTransferTransactions;
+};
+
 export type OPInitTransferState =
   | 'OPINIT_TRANSFER_UNKNOWN'
   | 'OPINIT_TRANSFER_SENT'
   | 'OPINIT_TRANSFER_RECEIVED';
+
 
 export type OPInitTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -435,7 +472,8 @@ export type TransferEventJSON =
   }
   | { cctp_transfer: CCTPTransferInfoJSON }
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
-  | { op_init_transfer: OPInitTransferInfoJSON };
+  | { op_init_transfer: OPInitTransferInfoJSON }
+  | { go_fast_transfer: GoFastTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -444,7 +482,8 @@ export type TransferEvent =
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
   | { hyperlaneTransfer: HyperlaneTransferInfo }
-  | { opInitTransfer: OPInitTransferInfo };
+  | { opInitTransfer: OPInitTransferInfo }
+  | { goFastTransfer: GoFastTransferInfo };
 
 export interface TransactionCallbacks {
   onTransactionSigned?: (txInfo: {

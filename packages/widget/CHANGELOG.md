@@ -1,5 +1,35 @@
 ## 0.0.15
 
+## 3.0.6
+
+### Patch Changes
+
+- 6fa8cb2: fix route config prop
+
+## 3.0.5
+
+### Patch Changes
+
+- 3e1d39a: widget RouteConfig adjustment
+- Updated dependencies [3e1d39a]
+  - @skip-go/client@0.14.2
+
+## 3.0.4
+
+### Patch Changes
+
+- 28c097f: fix null coin decimals
+- Updated dependencies [4248305]
+  - @skip-go/client@0.14.1
+
+## 3.0.3
+
+### Patch Changes
+
+- a16478e: bundle size reduced
+- 9424290: Update chainIdsToAffiliates prop to be proper camelCase
+- 991596a: Update fonts
+
 ## 3.0.2
 
 ### Patch Changes
