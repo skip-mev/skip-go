@@ -1,22 +1,24 @@
 import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
-import NiceModal, { useModal as useNiceModal } from "@ebay/nice-modal-react";
-import { ComponentType, FC, useEffect, useMemo, useState } from "react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import {
+  ComponentType,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { numberOfModalsOpenAtom } from "@/state/modal";
-import { themeAtom } from "@/state/skipClient";
 
 export type ModalProps = {
   children: React.ReactNode;
   drawer?: boolean;
   container?: HTMLElement;
   onOpenChange?: (open: boolean) => void;
-  stackedModal?: boolean;
   theme?: PartialTheme;
 };
 
@@ -25,10 +27,19 @@ export const Modal = ({
   drawer,
   container,
   onOpenChange,
-  stackedModal,
   theme,
 }: ModalProps) => {
   const modal = useModal();
+  const modalContext = useContext(NiceModal.NiceModalContext);
+  const ModalsOpen = Object.entries(modalContext)
+    .filter((entries) => {
+      const [_modalId, modalState] = entries;
+      return modalState.visible;
+    })
+    .map((entries) => entries[0]);
+
+  const isNotFirstModalVisible =
+    ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
 
   useEffect(() => {
     onOpenChange?.(true);
@@ -52,7 +63,11 @@ export const Modal = ({
     >
       <Dialog.Portal container={container}>
         <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay drawer={drawer} open={open} invisible={stackedModal}>
+          <StyledOverlay
+            drawer={drawer}
+            open={open}
+            invisible={isNotFirstModalVisible}
+          >
             <StyledContent drawer={drawer} open={open}>
               {children}
             </StyledContent>
@@ -86,40 +101,6 @@ export const createModal = <T extends ModalProps>(
   };
 
   return NiceModal.create(WrappedComponent);
-};
-
-export const useModal = <T extends ModalProps>(
-  modal?: FC<T>,
-  initialArgs?: Partial<T>
-) => {
-  const [theme] = useAtom(themeAtom);
-  const [_numberOfModalsOpen, setNumberOfModalsOpen] = useAtom(
-    numberOfModalsOpenAtom
-  );
-
-  const modalInstance = useNiceModal(modal as FC<unknown>, initialArgs);
-
-  return useMemo(
-    () => ({
-      ...modalInstance,
-      show: (showArgs?: Partial<T & ModalProps>) => {
-        modalInstance.show({
-          ...showArgs,
-          theme,
-        } as Partial<T>);
-        setNumberOfModalsOpen((prev) => prev + 1);
-      },
-      remove: () => {
-        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
-        modalInstance.remove();
-      },
-      hide: () => {
-        setNumberOfModalsOpen((prev) => Math.max(0, prev - 1));
-        modalInstance.hide();
-      },
-    }),
-    [modalInstance, theme, setNumberOfModalsOpen]
-  );
 };
 
 const fadeIn = keyframes`

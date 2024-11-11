@@ -7,11 +7,12 @@ import { SmallText, Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
-import { useModal } from "./Modal";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
 import { useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export type RenderWalletListProps = {
   title: string;
@@ -56,7 +57,6 @@ export const RenderWalletList = ({
   chainAddressIndex
 }: RenderWalletListProps) => {
   const theme = useTheme();
-  const modal = useModal();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
@@ -88,6 +88,7 @@ export const RenderWalletList = ({
         return null;
       }
       if (isConnectEco) {
+        clearAssetInputAmounts();
         return await wallet.connectEco();
       }
       return await wallet.connect();
@@ -96,7 +97,7 @@ export const RenderWalletList = ({
       if (isConnectEco) {
         clearAssetInputAmounts();
       }
-      modal.remove();
+      NiceModal.remove(Modals.WalletSelectorModal);
     },
   });
 

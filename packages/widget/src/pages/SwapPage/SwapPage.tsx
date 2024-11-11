@@ -3,7 +3,11 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import {
+  ClientAsset,
+  skipAssetsAtom,
+  skipChainsAtom,
+} from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -17,13 +21,9 @@ import {
   setSwapExecutionStateAtom,
   chainAddressesAtom,
 } from "@/state/swapExecutionPage";
-import { AssetAndChainSelectorModal } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
-import { SwapDetailModal } from "./SwapDetailModal";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
-import { useModal } from "@/components/Modal";
-import { WalletSelectorModal } from "@/modals/WalletSelectorModal/WalletSelectorModal";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
@@ -32,12 +32,13 @@ import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -62,11 +63,6 @@ export const SwapPage = () => {
     error: routeError,
   } = useAtomValue(skipRouteAtom);
 
-  const swapDetailsModal = useModal(SwapDetailModal);
-  const assetAndChainSelectorModal = useModal(AssetAndChainSelectorModal);
-  const selectWalletmodal = useModal(WalletSelectorModal);
-  const connectedWalletModal = useModal(ConnectedWalletModal);
-
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
@@ -90,9 +86,9 @@ export const SwapPage = () => {
   );
 
   const handleChangeSourceAsset = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm =
           chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
@@ -114,7 +110,7 @@ export const SwapPage = () => {
         }));
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [
@@ -125,13 +121,12 @@ export const SwapPage = () => {
     setDestinationAssetAmount,
     setSourceAsset,
     setSourceAssetAmount,
-    assetAndChainSelectorModal,
   ]);
 
   const handleChangeSourceChain = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm =
           chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
@@ -151,7 +146,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
@@ -165,31 +160,30 @@ export const SwapPage = () => {
     setSourceAsset,
     sourceAsset?.chainID,
     sourceAsset?.denom,
-    assetAndChainSelectorModal,
   ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAsset, assetAndChainSelectorModal]);
+  }, [setDestinationAsset]);
 
   const handleChangeDestinationChain = useCallback(() => {
-    assetAndChainSelectorModal.show({
+    NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
-      onSelect: (asset) => {
+      onSelect: (asset: ClientAsset | null) => {
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
         }));
-        assetAndChainSelectorModal.hide();
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(
         destinationAsset?.denom,
@@ -202,7 +196,6 @@ export const SwapPage = () => {
     destinationAsset?.denom,
     getClientAsset,
     setDestinationAsset,
-    assetAndChainSelectorModal,
   ]);
 
   const swapButton = useMemo(() => {
@@ -213,9 +206,9 @@ export const SwapPage = () => {
           icon={ICONS.plus}
           onClick={() => {
             if (!sourceAsset?.chainID) {
-              connectedWalletModal.show();
+              NiceModal.show(Modals.ConnectedWalletModal);
             } else {
-              selectWalletmodal.show({
+              NiceModal.show(Modals.WalletSelectorModal, {
                 chainId: sourceAsset?.chainID,
               });
             }
@@ -310,8 +303,6 @@ export const SwapPage = () => {
     isLoadingBalances,
     insufficientBalance,
     route,
-    connectedWalletModal,
-    selectWalletmodal,
     routeError?.message,
     setChainAddresses,
     setCurrentPage,
@@ -336,12 +327,15 @@ export const SwapPage = () => {
         }}
       >
         <SwapPageHeader
-          leftButton={txHistory.length === 0 ? undefined :
-            {
-              label: "History",
-              icon: ICONS.history,
-              onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-            }}
+          leftButton={
+            txHistory.length === 0
+              ? undefined
+              : {
+                label: "History",
+                icon: ICONS.history,
+                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+              }
+          }
           rightContent={<ConnectedWalletContent />}
         />
         <Column align="center">
@@ -377,7 +371,7 @@ export const SwapPage = () => {
           disabled={isRouteError || isWaitingForNewRoute}
           showEstimatedTime
           onClick={() =>
-            swapDetailsModal.show({
+            NiceModal.show(Modals.SwapSettingsDrawer, {
               drawer: true,
               container,
               onOpenChange: (open: boolean) =>

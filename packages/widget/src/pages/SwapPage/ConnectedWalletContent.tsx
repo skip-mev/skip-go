@@ -1,16 +1,16 @@
 import { Row } from "@/components/Layout";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { ConnectedWalletModal } from "@/modals/ConnectedWalletModal/ConnectedWalletModal";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees, useSetMaxAmount } from "./useSetMaxAmount";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
-import { useModal } from "@/components/Modal";
 import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { GhostButton } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { limitDecimalsDisplayed } from "@/utils/number";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -25,7 +25,6 @@ export const ConnectedWalletContent = () => {
   const { data: sourceBalance, isLoading } = useGetSourceBalance();
   const handleMaxButton = useSetMaxAmount();
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
-  const connectedWalletModal = useModal(ConnectedWalletModal);
 
   const formattedBalance = useMemo(() => {
     const symbol = sourceDetails?.symbol ? ` ${sourceDetails?.symbol}` : "";
@@ -52,7 +51,7 @@ export const ConnectedWalletContent = () => {
     >
       <GhostButton
         onClick={() => {
-          connectedWalletModal.show();
+          NiceModal.show(Modals.ConnectedWalletModal);
         }}
         align="center"
         gap={8}

@@ -1,12 +1,10 @@
 import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
-import NiceModal from "@ebay/nice-modal-react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import { createModal, useModal } from "@/components/Modal";
+import { createModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
-import { useResetAtom } from "jotai/utils";
-import { numberOfModalsOpenAtom } from "@/state/modal";
 import { useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
@@ -27,6 +25,7 @@ import {
 } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
+import { registerModals } from "@/modals/registerModals";
 
 export type WidgetRouteConfig =
   Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
@@ -109,6 +108,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   useLayoutEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
+    registerModals();
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useLayoutEffect(() => {
@@ -164,13 +164,9 @@ export const ShowWidget = ({
   const modal = useModal(
     createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
   );
-  const resetNumberOfModalsOpen = useResetAtom(numberOfModalsOpenAtom);
 
   const handleClick = () => {
-    resetNumberOfModalsOpen();
-    modal.show({
-      stackedModal: false,
-    });
+    modal.show();
   };
 
   const Element = cloneElement(button, { onClick: handleClick });

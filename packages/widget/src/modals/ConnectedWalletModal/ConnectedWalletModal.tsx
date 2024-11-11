@@ -1,6 +1,6 @@
 import { GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
-import { createModal, ModalProps, useModal } from "@/components/Modal";
+import { createModal, ModalProps } from "@/components/Modal";
 import {
   ModalHeader,
   StyledModalContainer,
@@ -12,7 +12,6 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
-import { WalletSelectorModal } from "../WalletSelectorModal/WalletSelectorModal";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { copyToClipboard } from "@/utils/misc";
@@ -20,12 +19,13 @@ import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { useMemo } from "react";
 import { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 
 export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
-  const modal = useModal();
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { chainImage, chainName } = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -36,7 +36,7 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
     <StyledModalContainer gap={15}>
       <ModalHeader
         title="Wallets"
-        onClickBackButton={modal.remove}
+        onClickBackButton={() => NiceModal.remove(Modals.ConnectedWalletModal)}
         rightContent={() => {
           return sourceAsset?.chainID ? (
             <img src={chainImage} height={36} width={36} title={chainName} />
@@ -84,13 +84,13 @@ const ConnectEco = ({
   const connectedWallet = wallets.find(
     (wallet) => wallet.walletName === account?.wallet.name
   );
-  const selectWalletmodal = useModal(WalletSelectorModal);
 
   return (
     <ModalRowItem
       style={{ marginTop: ITEM_GAP }}
       onClick={() => {
-        selectWalletmodal.show({
+        NiceModal.remove(Modals.ConnectedWalletModal);
+        NiceModal.show(Modals.WalletSelectorModal, {
           chainType,
           connectEco: true,
         });
@@ -140,6 +140,7 @@ const ConnectEco = ({
             onClick={(e) => {
               e.stopPropagation();
               connectedWallet?.disconnect();
+              NiceModal.remove(Modals.ConnectedWalletModal);
             }}
           >
             Disconnect

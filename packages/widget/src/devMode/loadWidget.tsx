@@ -1,6 +1,6 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Widget } from "@/widget/Widget";
+import { ShowWidget, Widget } from "@/widget/Widget";
 import { Row, Column } from "@/components/Layout";
 
 const DevMode = () => {
@@ -28,7 +28,8 @@ const DevMode = () => {
           slippage: 5,
         }}
       />
-      <Column>
+      <Column gap={5}>
+        <ShowWidget />
         <button onClick={() => toggleTheme()}>
           Toggle theme (current theme: {theme})
         </button>

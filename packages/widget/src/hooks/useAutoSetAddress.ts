@@ -8,8 +8,8 @@ import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
-import { SetAddressModal } from "@/modals/SetAddressModal/SetAddressModal";
-import { useModal } from "@/components/Modal";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -24,8 +24,6 @@ export const useAutoSetAddress = () => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
-
-  const setWalletModal = useModal(SetAddressModal);
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
@@ -64,7 +62,7 @@ export const useAutoSetAddress = () => {
             if (!wallet) {
               if (!openModal) return;
               if (chainAddresses[index].address) return;
-              setWalletModal.show({
+              NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
                 chainAddressIndex: index
@@ -104,7 +102,7 @@ export const useAutoSetAddress = () => {
             const wallet = wallets.find(w => w.walletName === sourceWallet.svm?.walletName);
             if (!wallet) {
               if (!openModal) return;
-              setWalletModal.show({
+              NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
               });
@@ -144,7 +142,7 @@ export const useAutoSetAddress = () => {
             const wallet = wallets.find(w => w.walletName === sourceWallet.evm?.walletName);
             if (!wallet) {
               if (!openModal) return;
-              setWalletModal.show({
+              NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
               });

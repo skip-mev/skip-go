@@ -3,7 +3,7 @@ import { createModal, ModalProps } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { SwapPageFooterItems } from "./SwapPageFooter";
+import { SwapPageFooterItems } from "../../pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
@@ -12,9 +12,9 @@ import { formatUSD } from "@/utils/intl";
 import { getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
-import SlippageSelector from "./SlippageSelector";
+import SlippageSelector from "../../pages/SwapPage/SlippageSelector";
 
-export const SwapDetailModal = createModal((modalProps: ModalProps) => {
+export const SwapSettingsDrawer = createModal((modalProps: ModalProps) => {
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainsRoute = useMemo(() => {
@@ -112,7 +112,7 @@ export const SwapDetailModal = createModal((modalProps: ModalProps) => {
             </Row>
           </Row>
         )}
-        <SlippageSelector 
+        <SlippageSelector
         />
       </Column>
       {(axelarFee || hyperlaneFee || smartRelayFee) && (
