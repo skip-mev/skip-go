@@ -202,7 +202,7 @@ export const SwapPageAssetChainInput = ({
 
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
-  width: 480px;
+  width: 100%;
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 

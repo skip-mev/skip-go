@@ -21,6 +21,7 @@ import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { StyledModalContainer } from "@/components/ModalHeader";
 
 export type GroupedAsset = {
   id: string;
@@ -186,12 +187,6 @@ export const AssetAndChainSelectorModal = createModal(
   }
 );
 
-const StyledContainer = styled(Column)`
-  padding: 10px;
-  gap: 10px;
-  width: 580px;
+const StyledContainer = styled(StyledModalContainer)`
   height: 600px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
 `;

@@ -14,7 +14,13 @@ const DevMode = () => {
     }
   };
   return (
-    <Row gap={20}>
+    <Column>
+      <Column gap={5}>
+        <ShowWidget />
+        <button onClick={() => toggleTheme()}>
+          Toggle theme (current theme: {theme})
+        </button>
+      </Column>
       <Widget
         theme={theme}
         defaultRoute={{
@@ -28,13 +34,7 @@ const DevMode = () => {
           slippage: 5,
         }}
       />
-      <Column gap={5}>
-        <ShowWidget />
-        <button onClick={() => toggleTheme()}>
-          Toggle theme (current theme: {theme})
-        </button>
-      </Column>
-    </Row>
+    </Column>
   );
 };
 

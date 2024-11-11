@@ -34,10 +34,11 @@ export const StyledModalContainer = styled(Column)`
   position: relative;
   padding: 10px;
   gap: 10px;
-  width: 580px;
+  width: 100%;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
+  margin: 10px;
 `;
 
 export const StyledModalInnerContainer = styled(Column) <{

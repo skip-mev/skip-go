@@ -13,7 +13,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
-import { ModalHeader } from "@/components/ModalHeader";
+import { ModalHeader, StyledModalContainer } from "@/components/ModalHeader";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
@@ -104,7 +104,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   return (
     <>
       {showManualAddressInput ? (
-        <StyledContainer gap={15}>
+        <StyledModalContainer>
           <ModalHeader
             title={`Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
@@ -144,7 +144,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
               Confirm
             </Text>
           </StyledBrandButton>
-        </StyledContainer>
+        </StyledModalContainer>
       ) : (
         <RenderWalletList
           title="Destination wallet"
@@ -159,16 +159,6 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     </>
   );
 });
-
-const StyledContainer = styled(Column)`
-  position: relative;
-  padding: 10px;
-  gap: 15px;
-  width: 580px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
-`;
 
 const StyledInputContainer = styled.div`
   position: relative;

@@ -56,7 +56,7 @@ export const ErrorPageContent = ({
 };
 
 const StyledErrorStateContainer = styled(Column) <{ backgroundColor?: string }>`
-  width: 480px;
+  width: 100%;
   height: 225px;
   border-radius: 25px;
   ${({ backgroundColor }) =>

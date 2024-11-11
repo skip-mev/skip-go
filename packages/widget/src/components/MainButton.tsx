@@ -135,7 +135,7 @@ const StyledMainButton = styled(Row).attrs({
   background-color: ${({ theme, backgroundColor }) =>
     backgroundColor ?? theme.brandColor};
   height: 70px;
-  width: 480px;
+  width: 100%;
   border-radius: 25px;
   overflow: hidden;
 

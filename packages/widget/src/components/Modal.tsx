@@ -212,8 +212,12 @@ const StyledContent = styled(Dialog.Content) <{
   drawer?: boolean;
   open?: boolean;
 }>`
-  min-width: 300px;
+  max-width: 600px;
+  width: 100%;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 100;
   animation: ${({ drawer, open }) =>
     open
