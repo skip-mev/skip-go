@@ -15,7 +15,7 @@ const DevMode = () => {
   };
   return (
     <Column>
-      <Column gap={5}>
+      <Column gap={5} style={{ width: 200 }}>
         <ShowWidget />
         <button onClick={() => toggleTheme()}>
           Toggle theme (current theme: {theme})
