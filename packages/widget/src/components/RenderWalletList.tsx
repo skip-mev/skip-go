@@ -97,6 +97,7 @@ export const RenderWalletList = ({
       if (isConnectEco) {
         clearAssetInputAmounts();
       }
+      NiceModal.remove(Modals.SetAddressModal);
       NiceModal.remove(Modals.WalletSelectorModal);
     },
   });
