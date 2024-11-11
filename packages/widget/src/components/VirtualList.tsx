@@ -4,6 +4,7 @@ import styled, { useTheme } from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import { Column } from "./Layout";
 import { SmallText } from "./Typography";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type VirtualListProps<T> = {
   listItems: T[];
@@ -35,31 +36,21 @@ export const VirtualList = <T,>({
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
   const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const listRef = useRef<ListRef>(null);
 
   useEffect(() => {
     const calculateHeight = () => {
-      const windowHeight = window.innerHeight;
-
-      if (MAX_MODAL_HEIGHT > windowHeight) {
-        return windowHeight - itemHeight - MOBILE_VERTICAL_MARGIN * 2;
+      if (isMobileScreenSize) {
+        return window.innerHeight - itemHeight - MOBILE_VERTICAL_MARGIN * 2;
       }
       return MAX_MODAL_HEIGHT - itemHeight;
     };
 
     setVirtualListHeight(calculateHeight());
 
-    const handleResize = () => {
-      setVirtualListHeight(calculateHeight());
-    };
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [itemHeight]);
+  }, [isMobileScreenSize, itemHeight]);
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];

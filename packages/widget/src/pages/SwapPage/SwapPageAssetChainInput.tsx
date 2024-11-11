@@ -15,6 +15,7 @@ import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -40,9 +41,12 @@ export const SwapPageAssetChainInput = ({
   badPriceWarning,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
+    useState(false);
+  const isMobileScreenSize = useIsMobileScreenSize();
 
-  const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
+  const showPriceChangePercentage =
+    _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
@@ -60,7 +64,9 @@ export const SwapPageAssetChainInput = ({
     latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
 
     const formattedValue = formatNumberWithoutCommas(latest);
-    onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
+    onChangeValue?.(
+      limitDecimalsDisplayed(formattedValue, assetDetails?.decimals)
+    );
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -70,14 +76,19 @@ export const SwapPageAssetChainInput = ({
 
     switch (event.key) {
       case "Escape":
-        if (event.currentTarget.selectionStart === event.currentTarget.selectionEnd) {
+        if (
+          event.currentTarget.selectionStart ===
+          event.currentTarget.selectionEnd
+        ) {
           event.currentTarget.select();
         }
         return;
 
       case "ArrowUp":
         event.preventDefault();
-        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0"
+        );
 
         if (event.shiftKey) {
           value = value.plus(10);
@@ -96,7 +107,9 @@ export const SwapPageAssetChainInput = ({
 
       case "ArrowDown":
         event.preventDefault();
-        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
+        value = new BigNumber(
+          formatNumberWithoutCommas(event.currentTarget.value) || "0"
+        );
 
         if (event.shiftKey) {
           value = value.minus(10);
@@ -136,7 +149,11 @@ export const SwapPageAssetChainInput = ({
   const displayedValue = formatNumberWithCommas(value || "");
 
   return (
-    <StyledAssetChainInputWrapper justify="space-between" padding={20} borderRadius={25}>
+    <StyledAssetChainInputWrapper
+      justify="space-between"
+      padding={20}
+      borderRadius={25}
+    >
       <Row justify="space-between">
         <StyledInput
           type="text"
@@ -153,17 +170,24 @@ export const SwapPageAssetChainInput = ({
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <StyledImage src={assetDetails.assetImage} />
               <Text>{assetDetails.symbol}</Text>
+              {isMobileScreenSize && (
+                <ChevronIcon width="13px" height="8px" color={theme.primary.text.normal} noBackground />
+              )}
             </StyledAssetLabel>
           ) : (
-            <StyledSelectTokenLabel>
+            <StyledSelectTokenLabel align="center" justify="center" gap={7}>
               <Text mainButtonColor={theme.brandColor}>Select asset</Text>
+              {isMobileScreenSize && (
+                <ChevronIcon width="13px" height="8px" color={theme.primary.background.normal} noBackground />
+              )}
             </StyledSelectTokenLabel>
           )}
-
-          <ChevronIcon
-            color={theme.primary.background.normal}
-            backgroundColor={theme.primary.text.normal}
-          />
+          {!isMobileScreenSize && (
+            <ChevronIcon
+              color={theme.primary.background.normal}
+              backgroundColor={theme.primary.text.normal}
+            />
+          )}
         </Button>
       </Row>
       <Row justify="space-between" align="center">
@@ -182,14 +206,21 @@ export const SwapPageAssetChainInput = ({
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
             {showPriceChangePercentage && (
-              <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+              <SmallText color={priceChangeColor}>
+                {priceChangePercentage}%
+              </SmallText>
             )}
           </Row>
         ) : (
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <GhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
+          <GhostButton
+            onClick={handleChangeChain}
+            align="center"
+            secondary
+            gap={4}
+          >
             <SmallText>on {assetDetails?.chainName}</SmallText>
           </GhostButton>
         ) : (
