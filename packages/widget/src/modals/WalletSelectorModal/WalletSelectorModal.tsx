@@ -15,11 +15,18 @@ export const WalletSelectorModal = createModal(
     const { chainId, chainType, connectEco } = modalProps;
     const walletList = useWalletList({ chainID: chainId, chainType });
 
+    const handleOnClickBackButton = () => {
+      NiceModal.remove(Modals.WalletSelectorModal);
+      if (connectEco) {
+        NiceModal.show(Modals.ConnectedWalletModal);
+      }
+    };
+
     return (
       <RenderWalletList
         title="Connect wallet"
         walletList={walletList}
-        onClickBackButton={() => NiceModal.remove(Modals.WalletSelectorModal)}
+        onClickBackButton={handleOnClickBackButton}
         isConnectEco={connectEco}
       />
     );

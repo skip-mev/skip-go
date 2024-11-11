@@ -97,7 +97,7 @@ export const RenderWalletList = ({
       if (isConnectEco) {
         clearAssetInputAmounts();
       }
-      NiceModal.remove(Modals.ConnectedWalletModal);
+      NiceModal.remove(Modals.WalletSelectorModal);
     },
   });
 
@@ -114,8 +114,6 @@ export const RenderWalletList = ({
         } else {
           wallet.onSelect();
         };
-
-        NiceModal.remove(Modals.WalletSelectorModal);
       };
 
       if (wallet.walletName === "prax") {

@@ -89,6 +89,7 @@ const ConnectEco = ({
     <ModalRowItem
       style={{ marginTop: ITEM_GAP }}
       onClick={() => {
+        NiceModal.remove(Modals.ConnectedWalletModal);
         NiceModal.show(Modals.WalletSelectorModal, {
           chainType,
           connectEco: true,
