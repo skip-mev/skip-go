@@ -27,6 +27,9 @@ const DevMode = () => {
         settings={{
           slippage: 5,
         }}
+        routeConfig={{
+          goFast: true,
+        }}
       />
       <Column gap={5}>
         <ShowWidget />

@@ -7,6 +7,9 @@ import {
   CCTPTransferInfo,
   CCTPTransferState,
   EvmSwap,
+  GoFastTransfer,
+  GoFastTransferInfo,
+  GoFastTransferState,
   HyperlaneTransfer,
   HyperlaneTransferInfo,
   HyperlaneTransferState,
@@ -35,6 +38,7 @@ export enum OperationType {
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   bankSend = "bankSend",
+  goFastTransfer = "goFastTransfer",
 }
 
 type CombinedOperation = {
@@ -49,6 +53,7 @@ type CombinedOperation = {
   hyperlaneTransfer?: HyperlaneTransfer;
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
+  goFastTransfer?: GoFastTransfer;
 };
 
 type OperationDetails = CombineObjectTypes<
@@ -59,7 +64,8 @@ type OperationDetails = CombineObjectTypes<
   CCTPTransfer &
   HyperlaneTransfer &
   EvmSwap &
-  OPInitTransfer
+  OPInitTransfer &
+  GoFastTransfer
 > & {
   swapIn?: {
     swapVenue: SwapVenue;
@@ -101,8 +107,8 @@ type KeysNotPresentInAll<T> = keyof T extends infer Key
 type CombineObjectTypes<T> = {
   [K in KeysPresentInAll<T>]: T[K];
 } & {
-  [K in KeysNotPresentInAll<T>]?: T[K];
-};
+    [K in KeysNotPresentInAll<T>]?: T[K];
+  };
 
 function getOperationDetailsAndType(operation: SkipClientOperation) {
   const combinedOperation = operation as CombinedOperation;
@@ -206,6 +212,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
   const opInitTransfer =
     combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
+  const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -218,6 +225,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.hyperlaneTransfer;
   } else if (opInitTransfer) {
     transferType = TransferType.opInitTransfer;
+  } else if (goFastTransfer) {
+    transferType = TransferType.goFastTransfer;
   }
 
   const getExplorerLink = (type: "send" | "receive") => {
@@ -227,6 +236,11 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           return ibcTransfer.packetTXs.sendTx?.explorerLink;
         }
         return ibcTransfer.packetTXs.receiveTx?.explorerLink;
+      case TransferType.goFastTransfer:
+        if (type === "send") {
+          return goFastTransfer.txs.orderSubmittedTx?.explorerLink;
+        }
+        return goFastTransfer.txs.orderFilledTx?.explorerLink;
       case TransferType.axelarTransfer:
         return axelarTransfer.axelarScanLink;
       default:
@@ -248,6 +262,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...cctpTransfer,
     ...hyperlaneTransfer,
     ...opInitTransfer,
+    ...goFastTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -291,6 +306,7 @@ export function getSimpleStatus(
     | CCTPTransferState
     | HyperlaneTransferState
     | OPInitTransferState
+    | GoFastTransferState
 ): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
@@ -302,12 +318,14 @@ export function getSimpleStatus(
     case "CCTP_TRANSFER_CONFIRMED":
     case "HYPERLANE_TRANSFER_SENT":
     case "OPINIT_TRANSFER_SENT":
+    case "GO_FAST_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
     case "CCTP_TRANSFER_RECEIVED":
     case "HYPERLANE_TRANSFER_RECEIVED":
     case "OPINIT_TRANSFER_RECEIVED":
+    case "GO_FAST_TRANSFER_FILLED":
       return "completed";
     default:
       return "failed";
@@ -320,6 +338,7 @@ type CombinedTransferEvent = {
   [TransferType.cctpTransfer]: CCTPTransferInfo;
   [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
   [TransferType.opInitTransfer]: OPInitTransferInfo;
+  [TransferType.goFastTransfer]: GoFastTransferInfo;
 };
 
 export enum TransferType {
@@ -328,6 +347,7 @@ export enum TransferType {
   cctpTransfer = "cctpTransfer",
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
+  goFastTransfer = "goFastTransfer",
 }
 
 export type SimpleStatus =
@@ -345,7 +365,8 @@ export type ClientTransferEvent = {
   | AxelarTransferState
   | CCTPTransferState
   | HyperlaneTransferState
-  | OPInitTransferState;
+  | OPInitTransferState
+  | GoFastTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;
