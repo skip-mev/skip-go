@@ -99,6 +99,16 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderAddress = useMemo(() => {
     const shouldRenderEditDestinationWallet =
       context === "destination" && onClickEditDestinationWallet;
+
+    const renderEditDestinationWalletButton = () => {
+      if (!shouldRenderEditDestinationWallet) return;
+      const ButtonElement = isMobileScreenSize ? StyledButton : Button;
+      return (
+        <ButtonElement align="center" onClick={onClickEditDestinationWallet}>
+          <PenIcon color={theme.primary.text.lowContrast} />
+        </ButtonElement>
+      );
+    };
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => (
         <Row gap={5}>{children}</Row>
@@ -124,11 +134,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
             </AddressText>
           )}
         </StyledButton>
-        {shouldRenderEditDestinationWallet && (
-          <Button align="center" onClick={onClickEditDestinationWallet}>
-            <PenIcon color={theme.primary.text.lowContrast} />
-          </Button>
-        )}
+        {renderEditDestinationWalletButton()}
       </Container>
     );
   }, [
