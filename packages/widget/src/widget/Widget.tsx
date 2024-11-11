@@ -52,7 +52,7 @@ export type WidgetProps = {
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
-} & NewSkipClientOptions;
+} & Pick<NewSkipClientOptions, "apiUrl" | "chainIdsToAffiliates" | "endpointOptions">;
 
 type NewSwapVenueRequest = {
   name: string;
@@ -81,14 +81,20 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
 
-  const mergedSkipClientConfig = useMemo(() => {
-    const { theme, apiUrl, chainIdsToAffiliates, ...skipClientConfig } = props;
+  const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
+    const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
+    const fromWidgetProps = {
+      apiUrl,
+      chainIdsToAffiliates,
+      endpointOptions,
+    }
+
+    // merge if not undefined
 
     return {
-      ...defaultSkipClientConfig,
-      ...skipClientConfig,
-      apiURL: apiUrl,
-      chainIDsToAffiliates: chainIdsToAffiliates,
+      apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
+      endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
+      chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
 
@@ -106,7 +112,11 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   }, [props.brandColor, props.theme]);
 
   useLayoutEffect(() => {
-    setSkipClientConfig(mergedSkipClientConfig);
+    setSkipClientConfig({
+      apiURL: mergedSkipClientConfig.apiURL,
+      endpointOptions: mergedSkipClientConfig.endpointOptions,
+      chainIDsToAffiliates: mergedSkipClientConfig.chainIDsToAffiliates,
+    });
     setTheme(mergedTheme);
     registerModals();
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);

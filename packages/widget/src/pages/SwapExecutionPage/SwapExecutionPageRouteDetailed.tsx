@@ -28,6 +28,7 @@ const operationTypeToIcon: operationTypeToIcon = {
   [OperationType.cctpTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.hyperlaneTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.opInitTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.goFastTransfer]: <SwapExecutionBridgeIcon width={34} />,
   // send icon
   [OperationType.bankSend]: <SwapExecutionSendIcon width={34} />,
 };
@@ -41,6 +42,7 @@ const operationTypeToSimpleOperationType = {
   hyperlaneTransfer: "Bridged",
   opInitTransfer: "Bridged",
   bankSend: "Sent",
+  goFastTransfer: "Bridged",
 };
 
 type tooltipMap = Record<number, boolean>;
