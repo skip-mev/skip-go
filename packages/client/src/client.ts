@@ -501,9 +501,9 @@ export class SkipClient {
     }
 
     if (isOfflineDirectSigner(signer)) {
-      rawTx = await this.signCosmosMessageDirect({ ...commonRawTxBody, signer});
+      rawTx = await this.signCosmosMessageDirect({ ...commonRawTxBody, signer });
     } else {
-      rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer});
+      rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
     }
 
     const txBytes = TxRaw.encode(rawTx).finish();
@@ -1646,7 +1646,7 @@ export class SkipClient {
     const validateResult = await Promise.all(
       txs.map(async (tx, i) => {
         if (!tx) {
-          raise(` invalid tx at index ${i}`);
+          raise(`invalid tx at index ${i}`);
         }
         if ('cosmosTx' in tx) {
           if (!tx.cosmosTx.msgs) {
@@ -1682,6 +1682,7 @@ export class SkipClient {
               client,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
+              txIndex: i
             });
             return res;
           } catch (e) {
@@ -1695,8 +1696,12 @@ export class SkipClient {
         }
       })
     );
-    const txError = validateResult.find((res) => res?.error !== null);
+    const txError = validateResult.find(
+      (res) => res && res?.error !== null
+    );
+    console.log('txError1', txError);
     if (txError) {
+      console.log('txError', txError);
       onValidateGasBalance?.({
         status: 'error',
       });
@@ -1719,12 +1724,14 @@ export class SkipClient {
     client,
     messages,
     getFallbackGasAmount,
+    txIndex
   }: {
     chainID: string;
     signerAddress: string;
     client: SigningStargateClient;
     messages?: types.CosmosMsg[];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+    txIndex?: number;
   }) {
     const mainnetChains = await this.chains();
     const testnetChains = await this.chains({ onlyTestnets: true });
@@ -1809,6 +1816,16 @@ export class SkipClient {
           asset,
         };
       }
+
+      // Skip fee validation for noble-1 in multi tx route
+      if (txIndex !== 0 && chainID === 'noble-1') {
+        return {
+          error: null,
+          asset,
+          fee,
+        }
+      }
+
       const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
       if (!balance) {
         return {
