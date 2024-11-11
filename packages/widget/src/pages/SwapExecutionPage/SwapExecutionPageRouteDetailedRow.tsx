@@ -4,7 +4,7 @@ import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
-import { Button, Link } from "@/components/Button";
+import { Button, PillButton, Link } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -99,16 +99,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderAddress = useMemo(() => {
     const shouldRenderEditDestinationWallet =
       context === "destination" && onClickEditDestinationWallet;
-
-    const renderEditDestinationWalletButton = () => {
-      if (!shouldRenderEditDestinationWallet) return;
-      const ButtonElement = isMobileScreenSize ? StyledButton : Button;
-      return (
-        <ButtonElement align="center" onClick={onClickEditDestinationWallet}>
-          <PenIcon color={theme.primary.text.lowContrast} />
-        </ButtonElement>
-      );
-    };
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => (
         <Row gap={5}>{children}</Row>
@@ -117,7 +107,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     if (!source.address) return;
     return (
       <Container>
-        <StyledButton onClick={() => copyToClipboard(source.address)}>
+        <PillButton onClick={() => copyToClipboard(source.address)}>
           {source.image && (
             <img
               src={source.image}
@@ -133,8 +123,16 @@ export const SwapExecutionPageRouteDetailedRow = ({
               {getTruncatedAddress(source.address)}
             </AddressText>
           )}
-        </StyledButton>
-        {renderEditDestinationWalletButton()}
+        </PillButton>
+        {shouldRenderEditDestinationWallet && (
+          <Button
+            as={isMobileScreenSize ? PillButton : undefined}
+            align="center"
+            onClick={onClickEditDestinationWallet}
+          >
+            <PenIcon color={theme.primary.text.lowContrast} />
+          </Button>
+        )}
       </Container>
     );
   }, [
@@ -179,7 +177,10 @@ export const SwapExecutionPageRouteDetailedRow = ({
               <StyledSymbol normalTextColor>
                 {assetDetails?.symbol}
               </StyledSymbol>
-              <StyledChainName title={assetDetails?.chainName}>
+              <StyledChainName
+                title={assetDetails?.chainName}
+                textWrap="nowrap"
+              >
                 {" "}
                 on {assetDetails?.chainName}
               </StyledChainName>
@@ -206,16 +207,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledButton = styled(Button)`
-  padding: 5px 8px;
-  height: 28px;
-  border-radius: 30px;
-  box-sizing: border-box;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
-  gap: 4px;
-  align-items: center;
 `;
 
 const StyledSymbol = styled(SmallText)`

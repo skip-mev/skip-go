@@ -62,6 +62,16 @@ export const Button = styled.button<FlexProps>`
   ${flexProps};
 `;
 
+export const PillButton = styled(Button)`
+  padding: 5px 8px;
+  height: 28px;
+  border-radius: 30px;
+  box-sizing: border-box;
+  background-color: ${({ theme }) => theme.secondary.background.normal};
+  gap: 4px;
+  align-items: center;
+`;
+
 export const Link = styled(Button).attrs({
   as: "a",
 })`

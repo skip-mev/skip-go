@@ -1,11 +1,13 @@
 import styled, { useTheme } from "styled-components";
-import { Link, Button } from "@/components/Button";
+import { Link, Button, PillButton } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
-import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
+import {
+  StyledAnimatedBorder,
+} from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -16,10 +18,8 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
-import {
-  limitDecimalsDisplayed,
-  removeTrailingZeros,
-} from "@/utils/number";
+import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -44,6 +44,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   context,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -78,8 +79,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
-  }
-    , [assetDetails.amount]);
+  }, [assetDetails.amount]);
 
   return (
     <Row gap={25} align="center">
@@ -93,7 +93,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           <img
             height={50}
             width={50}
-            style={{ borderRadius: 50, }}
+            style={{ borderRadius: 50 }}
             src={assetDetails.assetImage}
             title={assetDetails?.asset?.name}
           />
@@ -103,14 +103,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
         <StyledSymbolAndAmount>
           {displayAmount} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
-        {usdValue && (
-          <SmallText>
-            {formatUSD(usdValue)}
-          </SmallText>
-        )}
+        {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 
         <Row align="center" gap={5}>
-          <SmallText normalTextColor textWrap="nowrap">on {assetDetails.chainName}</SmallText>
+          <SmallText normalTextColor textWrap="nowrap">
+            on {assetDetails.chainName}
+          </SmallText>
 
           <Button
             align="center"
@@ -132,10 +130,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
               </SmallText>
             </Link>
           ) : onClickEditDestinationWallet ? (
-            <Button align="center" onClick={onClickEditDestinationWallet}>
-              <PenIcon
-                color={theme.primary.text.lowContrast}
-              />
+            <Button
+              as={isMobileScreenSize ? PillButton : undefined}
+              align="center"
+              onClick={onClickEditDestinationWallet}
+            >
+              <PenIcon color={theme.primary.text.lowContrast} />
             </Button>
           ) : null}
         </Row>
