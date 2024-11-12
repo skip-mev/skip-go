@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.9
+
+### Patch Changes
+
+- 2932a9e: Update styling for mobile support
+
 ## 3.0.8
 
 ### Patch Changes
