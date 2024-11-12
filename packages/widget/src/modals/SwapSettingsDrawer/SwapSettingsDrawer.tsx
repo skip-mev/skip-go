@@ -1,5 +1,5 @@
 import { styled, useTheme } from "styled-components";
-import { createModal, ModalProps } from "@/components/Modal";
+import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
