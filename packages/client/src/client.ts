@@ -449,6 +449,7 @@ export class SkipClient {
       message: evmTx,
       signer: evmSigner,
       onTransactionSigned: options.onTransactionSigned,
+      onApproveAllowance: options.onApproveAllowance,
     });
   }
 
@@ -521,10 +522,12 @@ export class SkipClient {
     message,
     signer,
     onTransactionSigned,
+    onApproveAllowance,
   }: {
     message: types.EvmTx;
     signer: WalletClient;
-    onTransactionSigned?: clientTypes.ExecuteRouteOptions['onTransactionSigned'];
+    onTransactionSigned?: types.TransactionCallbacks['onTransactionSigned'];
+    onApproveAllowance?: types.TransactionCallbacks['onApproveAllowance'];
   }) {
     if (!signer.account) {
       throw new Error(
@@ -536,6 +539,10 @@ export class SkipClient {
 
     // check for approvals
     for (const requiredApproval of message.requiredERC20Approvals) {
+      onApproveAllowance?.({
+        status: 'pending',
+        allowance: requiredApproval
+      });
       const allowance = await extendedSigner.readContract({
         address: requiredApproval.tokenContract as `0x${string}`,
         abi: erc20ABI,
@@ -571,6 +578,9 @@ export class SkipClient {
         );
       }
     }
+    onApproveAllowance?.({
+      status: 'completed'
+    });
 
     // execute tx
     const txHash = await extendedSigner.sendTransaction({
@@ -1825,6 +1835,7 @@ export class SkipClient {
       }
 
       const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
+
       if (!balance) {
         return {
           error: `(${chain?.prettyName}) Unable to find balance for ${symbol}`,
@@ -1837,6 +1848,7 @@ export class SkipClient {
           asset,
         };
       }
+
       if (parseInt(balance.amount) < parseInt(fee.amount[0]?.amount)) {
         const decimal = Number(chainAsset?.decimals);
         const userAmount = new BigNumber(parseFloat(balance.amount))
