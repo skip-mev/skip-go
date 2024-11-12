@@ -88,7 +88,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
       }
     },
-    onTransactionSigned: async (transactionDetails) => {
+    onTransactionTracked: async (transactionDetails) => {
       const chain = chains?.find((chain) => chain.chainID === transactionDetails.chainID);
       const explorerLink = createExplorerLink({ chainID: transactionDetails.chainID, chainType: chain?.chainType, txHash: transactionDetails.txHash });
       set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink, status: undefined }, transactionHistoryIndex);
@@ -201,6 +201,7 @@ type SubmitSwapExecutionCallbacks = {
   onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
   onValidateGasBalance?: TransactionCallbacks["onValidateGasBalance"];
   onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
+  onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -239,6 +240,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             submitSwapExecutionCallbacks?.onTransactionSigned?.(
               props
             );
+          },
+          onTransactionTracked: async (props) => {
+            submitSwapExecutionCallbacks?.onTransactionTracked?.(props);
           },
           onTransactionCompleted: async (chainID, txHash, status) => {
             submitSwapExecutionCallbacks?.onTransactionUpdated?.({
