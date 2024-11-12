@@ -37,7 +37,6 @@ const DevMode = () => {
           settings={{
             slippage: 5,
           }}
-          apiUrl="https://dev.go.skip.build/api/skip"
           routeConfig={{
             goFast: true,
           }}
