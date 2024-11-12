@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
@@ -14,7 +14,8 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
 import SlippageSelector from "../../pages/SwapPage/SlippageSelector";
 
-export const SwapSettingsDrawer = createModal((modalProps: ModalProps) => {
+export const SwapSettingsDrawer = createModal(() => {
+  const theme = useTheme();
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainsRoute = useMemo(() => {
@@ -96,7 +97,7 @@ export const SwapSettingsDrawer = createModal((modalProps: ModalProps) => {
                   title={chain?.prettyName}
                 />
                 {index !== chainsRoute.length - 1 && (
-                  <RouteArrow color={modalProps.theme?.primary?.text.normal} />
+                  <RouteArrow color={theme?.primary?.text.normal} />
                 )}
               </Fragment>
             ))}
