@@ -13,6 +13,7 @@ type TextProps = {
   mainButtonColor?: string;
   normalTextColor?: boolean;
   capitalize?: boolean;
+  overflowEllipsis?: boolean;
 };
 
 export const removeButtonStyles = css`
@@ -46,7 +47,8 @@ export const textProps = css<TextProps>`
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
   ${({ textWrap }) => textWrap && `text-wrap: ${textWrap}`};
-  ${({ monospace }) => monospace && "font-family: 'ABCDiatype-mono', monospace;"};
+  ${({ monospace }) =>
+    monospace && "font-family: 'ABCDiatype-mono', monospace;"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
   ${({ capitalize }) =>
@@ -55,6 +57,12 @@ export const textProps = css<TextProps>`
       &::first-letter {
         text-transform: capitalize;
       }
+    `};
+  ${({ overflowEllipsis }) =>
+    overflowEllipsis &&
+    css`
+      text-overflow: ellipsis;
+      overflow: hidden;
     `};
 `;
 

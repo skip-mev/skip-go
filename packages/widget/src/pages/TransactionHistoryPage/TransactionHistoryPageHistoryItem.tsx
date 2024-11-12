@@ -8,11 +8,16 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
+import {
+  removeTransactionHistoryItemAtom,
+  TransactionHistoryItem,
+} from "@/state/history";
 import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
 import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { getMobileDateFormat } from "@/utils/date";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -28,10 +33,11 @@ export const TransactionHistoryPageHistoryItem = ({
   onClickRow,
 }: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: txHistoryItem?.route.txsRequired,
-    txs: txHistoryItem.transactionDetails.map(tx => ({
+    txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
     })),
@@ -42,7 +48,9 @@ export const TransactionHistoryPageHistoryItem = ({
     historyIndex: index,
   });
 
-  const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
+  const removeTransactionHistoryItem = useSetAtom(
+    removeTransactionHistoryItemAtom
+  );
 
   const {
     route: {
@@ -102,15 +110,20 @@ export const TransactionHistoryPageHistoryItem = ({
   }, [status, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
+    if (isMobileScreenSize) {
+      return getMobileDateFormat(new Date(timestamp));
+    }
     return new Date(timestamp).toLocaleString();
-  }, [timestamp]);
+  }, [isMobileScreenSize, timestamp]);
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
     if (status === "pending") {
       return "In Progress";
     }
-    return formatDistanceStrict(new Date(timestamp), new Date(), { addSuffix: true })
+    return formatDistanceStrict(new Date(timestamp), new Date(), {
+      addSuffix: true,
+    })
       .replace("minutes", "mins")
       .replace("minute", "min")
       .replace("hours", "hrs")
@@ -126,14 +139,19 @@ export const TransactionHistoryPageHistoryItem = ({
         justify="space-between"
         onClick={onClickRow}
       >
-        <Row gap={5} align="center">
+        <StyledHistoryItemContainer gap={5} align="center">
           <RenderAssetAmount {...source} />
-          <HistoryArrowIcon color={theme.primary.text.lowContrast} />
+          <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
           <RenderAssetAmount {...destination} />
-          <StyledChainName normalTextColor title={destinationAssetDetails.chainName}>
+          <SmallText
+            normalTextColor
+            title={destinationAssetDetails.chainName}
+            textWrap="nowrap"
+            overflowEllipsis
+          >
             on {destinationAssetDetails.chainName}
-          </StyledChainName>
-        </Row>
+          </SmallText>
+        </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
           {renderStatus}
@@ -153,7 +171,6 @@ export const TransactionHistoryPageHistoryItem = ({
   );
 };
 
-
 const RenderAssetAmount = ({
   amount,
   asset,
@@ -163,15 +180,18 @@ const RenderAssetAmount = ({
   asset?: ClientAsset;
   assetImage: string;
 }) => {
+  const isMobileScreenSize = useIsMobileScreenSize();
   return (
     <>
       <img height={20} width={20} src={assetImage} />
-      <StyledAssetAmount normalTextColor title={amount}>
+      <SmallText normalTextColor title={amount}>
         {amount}
-      </StyledAssetAmount>
-      <StyledSymbol normalTextColor>
-        {asset?.recommendedSymbol ?? asset?.symbol}
-      </StyledSymbol>
+      </SmallText>
+      {!isMobileScreenSize && (
+        <SmallText normalTextColor>
+          {asset?.recommendedSymbol ?? asset?.symbol}
+        </SmallText>
+      )}
     </>
   );
 };
@@ -200,21 +220,7 @@ const StyledGreenDot = styled.div`
   border-radius: 50%;
 `;
 
-const StyledAssetAmount = styled(SmallText)`
-  max-width: 60px;
-  text-overflow: ellipsis;
+const StyledHistoryItemContainer = styled(Row)`
+  max-width: calc(100% - 80px);
   overflow: hidden;
-`;
-
-const StyledSymbol = styled(SmallText)`
-  max-width: 40px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
-
-const StyledChainName = styled(SmallText)`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 40px;
-  white-space: nowrap;
 `;
