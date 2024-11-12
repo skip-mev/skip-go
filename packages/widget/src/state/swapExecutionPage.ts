@@ -84,7 +84,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
-      if (txInfo.status?.status !== 'STATE_COMPLETED_SUCCESS') {
+      if (txInfo.status?.status !== 'STATE_COMPLETED') {
         set(setTransactionDetailsArrayAtom, txInfo, transactionHistoryIndex);
       }
     },
