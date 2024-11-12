@@ -1,5 +1,6 @@
 import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
 import { createModal } from "@/components/Modal";
 import { cloneElement, ReactElement, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
@@ -145,7 +146,9 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
 
   return (
     <ShadowDomAndProviders theme={mergedTheme}>
-      <Router />
+      <WidgetContainer>
+        <Router />
+      </WidgetContainer>
     </ShadowDomAndProviders>
   );
 };
@@ -170,3 +173,12 @@ export const ShowWidget = ({
 
   return <>{Element}</>;
 };
+
+const WidgetContainer = styled.div`
+  width: 500px;
+  position: relative;
+  padding: 0 10px;
+  @media (max-width: 500px) {
+    width: 100%;
+  }
+`;

@@ -5,10 +5,10 @@ import { ErrorPageAuthFailed } from "./ErrorPageAuthFailed";
 import { ErrorPageTransactionFailed } from "./ErrorPageTransactionFailed";
 import { ErrorPageUnexpected } from "./ErrorPageUnexpected";
 import { useMemo } from "react";
+import { Column } from "@/components/Layout";
 import { ErrorPageTimeout } from "./ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSingingRequired";
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
-import { PageContainer } from "@/components/Layout";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -36,5 +36,5 @@ export const ErrorPage = () => {
 
   if (error?.errorType === undefined) return;
 
-  return <PageContainer>{renderErrorVariant}</PageContainer>;
+  return <Column gap={5}>{renderErrorVariant}</Column>;
 };

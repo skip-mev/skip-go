@@ -37,14 +37,3 @@ type SpacerProps = {
   width?: number;
   height?: number;
 };
-
-export const PageContainer = styled(Column).attrs({
-  gap: 5
-})`
-  width: 500px;
-  position: relative;
-  padding: 0 10px;
-  @media (max-width: 500px) {
-    width: 100%;
-  }
-`;

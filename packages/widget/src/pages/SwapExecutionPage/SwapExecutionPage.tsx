@@ -1,4 +1,4 @@
-import { PageContainer } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import {
   StyledSignatureRequiredContainer,
@@ -215,7 +215,7 @@ export const SwapExecutionPage = () => {
     : SwapExecutionPageRouteDetailed;
 
   return (
-    <PageContainer>
+    <Column gap={5}>
       <SwapPageHeader
         leftButton={
           simpleRoute
@@ -248,6 +248,6 @@ export const SwapExecutionPage = () => {
         showRouteInfo={overallStatus === undefined}
         rightContent={renderSignaturesStillRequired}
       />
-    </PageContainer>
+    </Column>
   );
 };

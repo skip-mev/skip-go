@@ -4,7 +4,7 @@ export const globalStyles = `
   * {
     font-style: unset;
     font-weight: unset;
-    text-align: revert;
+    text-align: left;
     text-decoration: unset;
     text-indent: unset;
     text-transform: unset;

@@ -1,4 +1,4 @@
-import { Column, PageContainer } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
@@ -25,7 +25,7 @@ export const TransactionHistoryPage = () => {
   );
 
   return (
-    <PageContainer>
+    <Column gap={5}>
       <SwapPageHeader
         leftButton={{
           label: "Back",
@@ -65,7 +65,7 @@ export const TransactionHistoryPage = () => {
         />
       </StyledContainer>
       <SwapPageFooter />
-    </PageContainer>
+    </Column>
   );
 };
 

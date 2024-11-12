@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { Column, PageContainer } from "@/components/Layout";
+import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
@@ -319,12 +319,12 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
-    <PageContainer>
+    <>
       <Column
+        gap={5}
         style={{
           opacity: drawerOpen ? 0.3 : 1,
         }}
-        gap={5}
       >
         <SwapPageHeader
           leftButton={
@@ -380,11 +380,14 @@ export const SwapPage = () => {
           }
         />
       </Column>
-      <div id="swap-flow-settings-container" ref={(element) => {
-        if (element && container === undefined) {
-          setContainer(element);
-        }
-      }}></div>
-    </PageContainer>
+      <div
+        id="swap-flow-settings-container"
+        ref={(element) => {
+          if (element && container === undefined) {
+            setContainer(element);
+          }
+        }}
+      ></div>
+    </>
   );
 };
