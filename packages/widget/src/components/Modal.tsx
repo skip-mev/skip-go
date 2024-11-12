@@ -11,8 +11,9 @@ import {
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
-import { useAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
+import { themeAtom } from "@/state/skipClient";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -84,10 +85,11 @@ export const createModal = <T extends ModalProps>(
   const Component = component;
 
   const WrappedComponent = (props: T) => {
-    const [, setError] = useAtom(errorAtom);
+    const setError = useSetAtom(errorAtom);
+    const theme = useAtomValue(themeAtom);
 
     return (
-      <Modal {...props}>
+      <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
           onError={(error) =>
