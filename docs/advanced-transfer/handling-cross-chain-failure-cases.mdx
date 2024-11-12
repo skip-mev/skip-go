@@ -63,6 +63,46 @@ Each Hyperlane token transfer route is secured by an Interchain Security Module 
 
 The most common ISM is a Multisig ISM where "Validators" of a specific Hyperlane route sign attestations that a specific message on an origin chain is a valid message to be processed on the destination chain. In the case where the set of Validators have not hit the required signature threshold to successfully process a Hyperlane message on the receiving chain, funds will not be accessible by the user on either chain until the threshold is met (once met, funds will be sent to the user on the destination chain). This generalizes to the different requirements for different ISMs. The Hyperlane documentation explains the different types of ISMs in more detail: [https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM](https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM)
 
+## Go Fast Failures
+
+1. Failures during Intent Initiation and Solver Fulfillment
+
+**Outcome**: The user's assets remain on the source chain, or any failed transfers are returned to the user’s address on the source chain.
+
+**Common causes:**
+
+- Network congestion on the source chain or destination chain causes delays, exceeding the allowable transaction window.
+- A solver is unavailable, or none meet the requirements to fulfill the intent on the destination chain.
+- Contract errors or unexpected conditions prevent the intent from being fulfilled correctly.
+
+2. Post-Transfer Fulfillment Failures
+
+**Outcome:** The solver’s fronted assets remain in limbo on the destination chain until the settlement is retried or resolved. The user’s assets have successfully arrived, but the settlement for the solver is incomplete.
+
+**Common failure sources:**
+
+- Network issues delay the cross-chain message, preventing the settlement request from reaching the source chain.
+- The source chain contract experiences high congestion or unexpected downtime, delaying the settlement.
+- An error in the relayer process results in missed messages or failed validations.
+
+3. Verification and Messaging Failures (Cross-Chain Message Failures)
+
+Outcome: Either the user’s transfer does not complete, or the solver’s settlement remains pending until the cross-chain messaging service resolves the issue.
+
+**Common causes:**
+
+- Timeout or delays in the cross-chain messaging protocol prevent successful relay.
+- Invalid data or misconfigurations in the cross-chain message lead to verification failures.
+- Outages or maintenance in the cross-chain messaging service affect message relaying.
+
+4. Solver Fronting Errors (Inaccurate Fees or Asset Estimation)
+
+**Outcome:** The user’s intent is not fulfilled, and the solver cannot claim fees or assets for an incomplete attempt. The user’s assets remain accessible from the source chain.
+
+**Common failure sources:**
+
+- Inaccurate gas or asset estimates result in insufficient resources on the destination chain.
+- Solvers under-estimate cross-chain fee requirements, causing partial or failed transfers.
 
 <Warning>
  **Failures might occur for each transaction in a multi-tx sequence**
