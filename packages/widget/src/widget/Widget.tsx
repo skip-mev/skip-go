@@ -175,7 +175,10 @@ export const ShowWidget = ({
 };
 
 const WidgetContainer = styled.div`
-  max-width: 480px;
-  width: 100%;
+  width: 500px;
   position: relative;
+  padding: 0 10px;
+  @media (max-width: 500px) {
+    width: 100%;
+  }
 `;
