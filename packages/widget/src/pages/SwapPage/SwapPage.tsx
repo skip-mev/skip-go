@@ -319,11 +319,12 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
-    <>
-      <PageContainer
+    <PageContainer>
+      <Column
         style={{
           opacity: drawerOpen ? 0.3 : 1,
         }}
+        gap={5}
       >
         <SwapPageHeader
           leftButton={
@@ -378,15 +379,12 @@ export const SwapPage = () => {
             })
           }
         />
-      </PageContainer>
-      <div
-        id="swap-flow-settings-container"
-        ref={(element) => {
-          if (element && container === undefined) {
-            setContainer(element);
-          }
-        }}
-      ></div>
-    </>
+      </Column>
+      <div id="swap-flow-settings-container" ref={(element) => {
+        if (element && container === undefined) {
+          setContainer(element);
+        }
+      }}></div>
+    </PageContainer>
   );
 };

@@ -132,7 +132,7 @@ export const SwapPageFooterItems = ({
         <Row align="center" gap={5}>
           Powered by <SkipLogoIcon />
         </Row>
-        {renderRightContent}
+        {renderRightContent()}
       </>
     );
   }, [

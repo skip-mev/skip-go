@@ -25,7 +25,6 @@ import {
 import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
-import { Column } from "@/components/Layout";
 
 export type WidgetRouteConfig =
   Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
