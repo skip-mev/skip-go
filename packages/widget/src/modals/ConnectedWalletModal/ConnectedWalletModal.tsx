@@ -1,4 +1,4 @@
-import { GhostButton } from "@/components/Button";
+import { Button, GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { createModal, ModalProps } from "@/components/Modal";
 import {
@@ -21,6 +21,8 @@ import { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { XIcon } from "@/icons/XIcon";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -61,6 +63,7 @@ const ConnectEco = ({
 }) => {
   const theme = useTheme();
   const getAccount = useGetAccount();
+  const isMobileScreenSize = useIsMobileScreenSize();
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { chain } = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -79,11 +82,46 @@ const ConnectEco = ({
     return getAccount(_chainID, true);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
-  const truncatedAddress = getTruncatedAddress(account?.address);
+  const truncatedAddress = getTruncatedAddress(
+    account?.address,
+    isMobileScreenSize
+  );
   const wallets = useWalletList({ chainType });
   const connectedWallet = wallets.find(
     (wallet) => wallet.walletName === account?.wallet.name
   );
+
+  const renderDisconnectButton = useMemo(() => {
+    if (isMobileScreenSize) {
+      return (
+        <Button
+          align="center"
+          justify="center"
+          style={{ width: 35, height: 35 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            connectedWallet?.disconnect();
+            NiceModal.remove(Modals.ConnectedWalletModal);
+          }}
+        >
+          <XIcon height="22" width="22" color={theme?.primary?.text?.ultraLowContrast} />
+        </Button>
+      );
+    }
+    return (
+      <GhostButton
+        align="center"
+        justify="center"
+        onClick={(e) => {
+          e.stopPropagation();
+          connectedWallet?.disconnect();
+          NiceModal.remove(Modals.ConnectedWalletModal);
+        }}
+      >
+        Disconnect
+      </GhostButton>
+    );
+  }, [connectedWallet, isMobileScreenSize, theme?.primary?.text?.ultraLowContrast]);
 
   return (
     <ModalRowItem
@@ -110,6 +148,7 @@ const ConnectEco = ({
             }
             <Row align="end" gap={8}>
               <TextButton
+                fontSize={isMobileScreenSize ? 13 : undefined}
                 title={account?.address}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -119,7 +158,9 @@ const ConnectEco = ({
                 {truncatedAddress}
               </TextButton>
               {chainType === "evm" && (
-                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
+                <EvmChainIndicator
+                  chainId={account?.currentConnectedEVMChainId}
+                />
               )}
             </Row>
           </Row>
@@ -135,17 +176,7 @@ const ConnectEco = ({
         )
       }
       rightContent={
-        account ? (
-          <GhostButton
-            onClick={(e) => {
-              e.stopPropagation();
-              connectedWallet?.disconnect();
-              NiceModal.remove(Modals.ConnectedWalletModal);
-            }}
-          >
-            Disconnect
-          </GhostButton>
-        ) : (
+        account ? renderDisconnectButton : (
           <RightArrowIcon
             color={theme?.primary?.background.normal}
             backgroundColor={theme.primary.text.normal}

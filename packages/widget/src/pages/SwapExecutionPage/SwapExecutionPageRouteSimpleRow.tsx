@@ -1,13 +1,11 @@
 import styled, { useTheme } from "styled-components";
-import { Link, Button, PillButton } from "@/components/Button";
+import { Link, Button, PillButton, PillButtonLink } from "@/components/Button";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useMemo } from "react";
 import { ChainTransaction } from "@skip-go/client";
-import {
-  StyledAnimatedBorder,
-} from "./SwapExecutionPageRouteDetailedRow";
+import { StyledAnimatedBorder } from "./SwapExecutionPageRouteDetailedRow";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -81,6 +79,22 @@ export const SwapExecutionPageRouteSimpleRow = ({
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
   }, [assetDetails.amount]);
 
+  const renderExplorerLink = useMemo(() => {
+    if (!explorerLink) return;
+    if (isMobileScreenSize) {
+      return (
+        <PillButtonLink href={explorerLink} target="_blank">
+          <ChainIcon />
+        </PillButtonLink>
+      );
+    }
+    return (
+      <Link href={explorerLink} target="_blank">
+        <ChainIcon />
+      </Link>
+    );
+  }, [explorerLink, isMobileScreenSize]);
+
   return (
     <Row gap={25} align="center">
       {assetDetails.assetImage && (
@@ -118,17 +132,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
-                {getTruncatedAddress(source.address)}
+                {getTruncatedAddress(source.address, isMobileScreenSize)}
               </SmallText>
             )}
           </Button>
 
           {explorerLink ? (
-            <Link href={explorerLink} target="_blank">
-              <SmallText>
-                <ChainIcon />
-              </SmallText>
-            </Link>
+            renderExplorerLink
           ) : onClickEditDestinationWallet ? (
             <Button
               as={isMobileScreenSize ? PillButton : undefined}

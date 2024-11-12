@@ -17,6 +17,7 @@ import { ModalHeader, StyledModalContainer } from "@/components/ModalHeader";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type SetAddressModalProps = ModalProps & {
   signRequired?: boolean;
@@ -25,6 +26,7 @@ export type SetAddressModalProps = ModalProps & {
 };
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
+  const isMobileScreenSize = useIsMobileScreenSize();
   const { theme, signRequired, chainId, chainAddressIndex } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === chainId);
@@ -106,7 +108,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       {showManualAddressInput ? (
         <StyledModalContainer>
           <ModalHeader
-            title={`Enter a ${chainName} address`}
+            title={isMobileScreenSize ? "Enter an address" : `Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
             rightContent={() => (
               <StyledChainLogoContainerRow align="center" justify="center">

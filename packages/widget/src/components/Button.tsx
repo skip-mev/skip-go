@@ -63,17 +63,26 @@ export const Button = styled.button<FlexProps>`
 `;
 
 export const PillButton = styled(Button)`
-  padding: 5px 8px;
+  padding: 5px 10px;
   height: 28px;
   border-radius: 30px;
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.secondary.background.normal};
-  gap: 4px;
+  gap: 10px;
   align-items: center;
+  justify-content: center;
 `;
 
 export const Link = styled(Button).attrs({
   as: "a",
 })`
+  color: ${({ theme }) => theme.primary.text.lowContrast};
+  text-decoration: none;
+`;
+
+export const PillButtonLink = styled(PillButton).attrs({
+  as: "a",
+})`
+  color: ${({ theme }) => theme.primary.text.lowContrast};
   text-decoration: none;
 `;

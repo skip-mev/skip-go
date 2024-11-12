@@ -4,7 +4,7 @@ import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
-import { Button, PillButton, Link } from "@/components/Button";
+import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -120,7 +120,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
             <CopyIcon color={theme.primary.text.lowContrast} />
           ) : (
             <AddressText title={source.address} monospace textWrap="nowrap">
-              {getTruncatedAddress(source.address)}
+              {getTruncatedAddress(source.address, isMobileScreenSize)}
             </AddressText>
           )}
         </PillButton>
@@ -143,6 +143,22 @@ export const SwapExecutionPageRouteDetailedRow = ({
     source.image,
     theme.primary.text.lowContrast,
   ]);
+
+  const renderExplorerLink = useMemo(() => {
+    if (!explorerLink) return;
+    if (isMobileScreenSize) {
+      return (
+        <PillButtonLink href={explorerLink} target="_blank">
+          <ChainIcon />
+        </PillButtonLink>
+      );
+    }
+    return (
+      <Link href={explorerLink} target="_blank">
+        <ChainIcon />
+      </Link>
+    );
+  }, [explorerLink, isMobileScreenSize]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -170,7 +186,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
       >
         <Row align="center" justify="space-between">
           <Column>
-            <Row gap={5}>
+            <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {assetDetails?.amount}
               </StyledAssetAmount>
@@ -184,13 +200,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
                 {" "}
                 on {assetDetails?.chainName}
               </StyledChainName>
-              {explorerLink && (
-                <Link href={explorerLink} target="_blank">
-                  <SmallText>
-                    <ChainIcon />
-                  </SmallText>
-                </Link>
-              )}
+              {renderExplorerLink}
             </Row>{" "}
             {isSignRequired && (
               <SmallText color={theme.warning.text}>
@@ -263,6 +273,7 @@ const StyledLoadingContainer = styled(Row) <{
   status?: SimpleStatus;
   backgroundColor?: string;
 }>`
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   height: ${({ height, borderSize }) => height + borderSize * 2}px;
