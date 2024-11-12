@@ -58,7 +58,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   };
 
   return (
-    <Column padding={20} gap={10}>
+    <Column padding={20} gap={10} style={{ paddingTop: 10 }}>
       <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
