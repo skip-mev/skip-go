@@ -39,13 +39,9 @@ const Home = () => {
       </button>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           position: 'absolute',
           top: '50%',
           transform: 'translateY(-185px)',
-          width: '100%'
         }}
       >
         <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
