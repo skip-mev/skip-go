@@ -145,11 +145,11 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   ]);
 
   return (
-    <ShadowDomAndProviders theme={mergedTheme}>
-      <WidgetContainer>
+    <WidgetContainer>
+      <ShadowDomAndProviders theme={mergedTheme}>
         <Router />
-      </WidgetContainer>
-    </ShadowDomAndProviders>
+      </ShadowDomAndProviders>
+    </WidgetContainer>
   );
 };
 
