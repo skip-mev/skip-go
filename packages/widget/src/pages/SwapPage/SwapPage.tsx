@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { Column } from "@/components/Layout";
+import { Column, PageContainer } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import {
@@ -320,8 +320,7 @@ export const SwapPage = () => {
 
   return (
     <>
-      <Column
-        gap={5}
+      <PageContainer
         style={{
           opacity: drawerOpen ? 0.3 : 1,
         }}
@@ -379,7 +378,7 @@ export const SwapPage = () => {
             })
           }
         />
-      </Column>
+      </PageContainer>
       <div
         id="swap-flow-settings-container"
         ref={(element) => {
