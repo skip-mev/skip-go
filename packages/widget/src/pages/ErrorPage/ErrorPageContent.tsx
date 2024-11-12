@@ -34,7 +34,7 @@ export const ErrorPageContent = ({
     >
       <Icon backgroundColor={textColor} color={backgroundColor} height={40} width={40} />
       {typeof title === "string" ? (
-        <Text fontSize={20} color={textColor}>
+        <Text fontSize={20} color={textColor} textAlign="center">
           {title}
         </Text>
       ) : (

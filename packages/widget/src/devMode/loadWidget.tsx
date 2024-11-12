@@ -1,7 +1,8 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ShowWidget, Widget } from "@/widget/Widget";
-import { Column } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
+import "./global.css";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -14,26 +15,30 @@ const DevMode = () => {
     }
   };
   return (
-    <Column>
+    <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
         <ShowWidget />
         <button onClick={() => toggleTheme()}>
           Toggle theme (current theme: {theme})
         </button>
       </Column>
-      <Widget
-        theme={theme}
-        defaultRoute={{
-          amountIn: 5,
-          srcChainId: "osmosis-1",
-          srcAssetDenom: "uosmo",
-          destChainId: "cosmoshub-4",
-          destAssetDenom: "uatom",
-        }}
-        settings={{
-          slippage: 5,
-        }}
-      />
+      <Row style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -185px)",
+        width: "100%",
+      }}
+        align="center"
+        justify="center"
+      >
+        <Widget
+          theme={theme}
+          settings={{
+            slippage: 5,
+          }}
+        />
+      </Row>
     </Column>
   );
 };
