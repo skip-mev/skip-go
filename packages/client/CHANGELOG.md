@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.3
+
+### Patch Changes
+
+- d01248c: skip validation gas on noble-1 on multi tx route
+
 ## 0.14.2
 
 ### Patch Changes

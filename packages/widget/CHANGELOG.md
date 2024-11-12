@@ -1,5 +1,20 @@
 ## 0.0.15
 
+## 3.0.8
+
+### Patch Changes
+
+- cb443b8: Fix SetAddressModal not closing after connection
+
+## 3.0.7
+
+### Patch Changes
+
+- d01248c: support go fast operation type
+- 7f90caf: Modals refactored, close existing modal when opening a second one
+- Updated dependencies [d01248c]
+  - @skip-go/client@0.14.3
+
 ## 3.0.6
 
 ### Patch Changes

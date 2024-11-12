@@ -37,6 +37,9 @@ const DevMode = () => {
           settings={{
             slippage: 5,
           }}
+          routeConfig={{
+            goFast: true,
+          }}
         />
       </Row>
     </Column>
