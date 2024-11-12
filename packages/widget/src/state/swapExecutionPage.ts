@@ -98,6 +98,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         set(setOverallStatusAtom, 'approving');
       }
     },
+    onTransactionSigned: async () => {
+      set(setOverallStatusAtom, 'signing');
+    },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
