@@ -216,8 +216,8 @@ export const RenderWalletList = ({
 
     return (
       <VirtualList
-        listItems={walletList}
         height={height}
+        listItems={walletList}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
         itemKey={(item) => item.walletName}

@@ -25,15 +25,11 @@ export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
 
   if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
-    set(debouncedSourceAssetAmountAtom, {
-      newValue: sourceAsset.amount,
-    });
+    set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
   }
 
   if (destinationAsset?.amount && !debouncedDestinationAssetInitialized) {
-    set(debouncedDestinationAssetAmountAtom, {
-      newValue: destinationAsset.amount,
-    });
+    set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
   }
 });
 
@@ -105,7 +101,7 @@ export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteC
       chainID: params.swapVenue.chainId,
     },
   };
-}
+};
 
 export const convertClientRouteConfigToWidgetRouteConfig = (params: RouteConfig): WidgetRouteConfig => {
   return {
@@ -119,7 +115,7 @@ export const convertClientRouteConfigToWidgetRouteConfig = (params: RouteConfig)
       chainId: params.swapVenue.chainID,
     },
   };
-}
+};
 
 export const _skipRouteAtom = atomWithQuery((get) => {
   const skip = get(skipClient);

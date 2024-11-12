@@ -135,7 +135,7 @@ const StyledMainButton = styled(Row).attrs({
   background-color: ${({ theme, backgroundColor }) =>
     backgroundColor ?? theme.brandColor};
   height: 70px;
-  width: 480px;
+  width: 100%;
   border-radius: 25px;
   overflow: hidden;
 
@@ -194,7 +194,7 @@ const StyledTimeRemaining = styled(Row)`
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
-  width: 476px;
+  width: 100%;
   border-radius: 24px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

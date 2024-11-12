@@ -4,7 +4,7 @@ import { css, styled, useTheme } from "styled-components";
 import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
-import { Button, Link } from "@/components/Button";
+import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
 import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -13,6 +13,8 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { CopyIcon } from "@/icons/CopyIcon";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -43,6 +45,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -104,7 +107,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     if (!source.address) return;
     return (
       <Container>
-        <StyledButton onClick={() => copyToClipboard(source.address)}>
+        <PillButton onClick={() => copyToClipboard(source.address)}>
           {source.image && (
             <img
               src={source.image}
@@ -113,12 +116,20 @@ export const SwapExecutionPageRouteDetailedRow = ({
               }}
             />
           )}
-          <AddressText title={source.address} monospace>
-            {getTruncatedAddress(source.address)}
-          </AddressText>
-        </StyledButton>
+          {isMobileScreenSize ? (
+            <CopyIcon color={theme.primary.text.lowContrast} />
+          ) : (
+            <AddressText title={source.address} monospace textWrap="nowrap">
+              {getTruncatedAddress(source.address, isMobileScreenSize)}
+            </AddressText>
+          )}
+        </PillButton>
         {shouldRenderEditDestinationWallet && (
-          <Button align="center" onClick={onClickEditDestinationWallet}>
+          <Button
+            as={isMobileScreenSize ? PillButton : undefined}
+            align="center"
+            onClick={onClickEditDestinationWallet}
+          >
             <PenIcon color={theme.primary.text.lowContrast} />
           </Button>
         )}
@@ -126,11 +137,28 @@ export const SwapExecutionPageRouteDetailedRow = ({
     );
   }, [
     context,
+    isMobileScreenSize,
     onClickEditDestinationWallet,
     source.address,
     source.image,
     theme.primary.text.lowContrast,
   ]);
+
+  const renderExplorerLink = useMemo(() => {
+    if (!explorerLink) return;
+    if (isMobileScreenSize) {
+      return (
+        <PillButtonLink href={explorerLink} target="_blank">
+          <ChainIcon />
+        </PillButtonLink>
+      );
+    }
+    return (
+      <Link href={explorerLink} target="_blank">
+        <ChainIcon />
+      </Link>
+    );
+  }, [explorerLink, isMobileScreenSize]);
 
   return (
     <Row gap={15} align="center" {...props}>
@@ -158,22 +186,21 @@ export const SwapExecutionPageRouteDetailedRow = ({
       >
         <Row align="center" justify="space-between">
           <Column>
-            <Row gap={5}>
+            <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {assetDetails?.amount}
               </StyledAssetAmount>
-              <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
-              <StyledChainName title={assetDetails?.chainName}>
+              <StyledSymbol normalTextColor>
+                {assetDetails?.symbol}
+              </StyledSymbol>
+              <StyledChainName
+                title={assetDetails?.chainName}
+                textWrap="nowrap"
+              >
                 {" "}
                 on {assetDetails?.chainName}
               </StyledChainName>
-              {explorerLink && (
-                <Link href={explorerLink} target="_blank">
-                  <SmallText>
-                    <ChainIcon />
-                  </SmallText>
-                </Link>
-              )}
+              {renderExplorerLink}
             </Row>{" "}
             {isSignRequired && (
               <SmallText color={theme.warning.text}>
@@ -190,16 +217,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledButton = styled(Button)`
-  padding: 5px 8px;
-  height: 28px;
-  border-radius: 30px;
-  box-sizing: border-box;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
-  gap: 4px;
-  align-items: center;
 `;
 
 const StyledSymbol = styled(SmallText)`
@@ -256,6 +273,7 @@ const StyledLoadingContainer = styled(Row) <{
   status?: SimpleStatus;
   backgroundColor?: string;
 }>`
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   height: ${({ height, borderSize }) => height + borderSize * 2}px;

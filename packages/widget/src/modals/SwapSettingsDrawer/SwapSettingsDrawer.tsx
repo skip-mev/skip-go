@@ -154,7 +154,8 @@ export const SwapSettingsDrawer = createModal((modalProps: ModalProps) => {
 });
 
 const StyledSwapPageSettings = styled(Column)`
-  width: 480px;
+  max-width: 480px;
+  width: 100%;
   padding: 20px;
   border-radius: 20px;
   background-color: ${(props) => props.theme.primary.background.normal};

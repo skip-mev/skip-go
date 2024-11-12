@@ -72,7 +72,7 @@ export const TransactionHistoryPage = () => {
 const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
-  width: 480px;
+  width: 100%;
   min-height: 302px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};

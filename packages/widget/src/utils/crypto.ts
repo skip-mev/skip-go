@@ -21,19 +21,29 @@ export const convertTokenAmountToHumanReadableAmount = (
     tokenAmount = parseFloat(tokenAmount);
   }
   const humanReadableAmount = new BigNumber(tokenAmount).shiftedBy(-decimals);
-  return humanReadableAmount.toFixed(decimals).replace(/(\.\d*?[1-9])(?:0+|\.0*)$/, "$1");
+  return humanReadableAmount
+    .toFixed(decimals)
+    .replace(/(\.\d*?[1-9])(?:0+|\.0*)$/, "$1");
 };
 
-export const getTruncatedAddress = (address?: string): string => {
+export const getTruncatedAddress = (address?: string, extraShort?: boolean): string => {
   if (!address) return "";
-  return `${address.slice(
-    0,
-    9
-  )}…${address.slice(-5)}`;
+  if (extraShort) return `${address.slice(0, 6)}…${address.slice(-3)}`;
+  return `${address.slice(0, 9)}…${address.slice(-5)}`;
 };
 
-export const hasAmountChanged = (newAmount: string, oldAmount: string, decimals: number) => {
-  const newAmountBN = new BigNumber(newAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
-  const oldAmountBN = new BigNumber(oldAmount).decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+export const hasAmountChanged = (
+  newAmount: string,
+  oldAmount: string,
+  decimals: number
+) => {
+  const newAmountBN = new BigNumber(newAmount).decimalPlaces(
+    decimals,
+    BigNumber.ROUND_DOWN
+  );
+  const oldAmountBN = new BigNumber(oldAmount).decimalPlaces(
+    decimals,
+    BigNumber.ROUND_DOWN
+  );
   return !newAmountBN.eq(oldAmountBN);
 };

@@ -11,6 +11,7 @@ import pluralize from "pluralize";
 import { styled } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { swapSettingsAtom, defaultSwapSettings } from "@/state/swapPage";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
@@ -24,7 +25,8 @@ export const SwapPageFooterItems = ({
   showEstimatedTime,
 }: SwapPageFooterItemsProps) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
-  const swapSettings = useAtomValue(swapSettingsAtom); 
+  const swapSettings = useAtomValue(swapSettingsAtom);
+  const isMobileScreenSize = useIsMobileScreenSize();
 
   const settingsChanged = useMemo(() => {
     return (
@@ -37,52 +39,120 @@ export const SwapPageFooterItems = ({
     route?.estimatedRouteDurationSeconds
   );
 
-const renderRightContent = useMemo(() => {
-  if (rightContent) return rightContent;
-  if (isLoading) return;
-  if (showRouteInfo && route) {
-    return (
-      <Row align="center" gap={8}>
-        {route?.txsRequired > 1 && (
-          <Row gap={4} align="center">
-            <StyledSignatureRequiredContainer gap={5} align="center">
-              <SignatureIcon />
-              {route?.txsRequired} {pluralize("Signature", route?.txsRequired)} required
-            </StyledSignatureRequiredContainer>
-          </Row>
-        )}
+  const routeRequiresMultipleSignatures =
+    route?.txsRequired && route.txsRequired > 1;
 
-        {showEstimatedTime && estimatedTime && (
-          <Row gap={6} align="center">
-            <SpeedometerIcon />
-            {estimatedTime}
-            <CogIconWrapper>
-              <CogIcon height={13} width={13} />
-              {settingsChanged && <SettingsChangedIndicator />}
-            </CogIconWrapper>
-          </Row>
-        )}
+  const renderSignatureRequired = useMemo(() => {
+    return (
+      <Row gap={4} align="center">
+        <StyledSignatureRequiredContainer gap={5} align="center">
+          <SignatureIcon />
+          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)}{" "}
+          required
+        </StyledSignatureRequiredContainer>
       </Row>
     );
-  }
-}, [
-  estimatedTime,
-  isLoading,
-  rightContent,
-  route,
-  showEstimatedTime,
-  showRouteInfo,
-  settingsChanged,
-]);
+  }, [route?.txsRequired]);
 
-  return (
-    <>
-      <Row align="center" gap={5}>
-        Powered by <SkipLogoIcon />
-      </Row>
-      {renderRightContent}
-    </>
-  );
+  const renderMobileContent = useMemo(() => {
+    const renderLeftContent = () => {
+      if (routeRequiresMultipleSignatures) {
+        return renderSignatureRequired;
+      }
+      return (
+        <Row align="center" gap={5}>
+          Powered by <SkipLogoIcon />
+        </Row>
+      );
+    };
+    const renderRightContent = () => {
+      if (rightContent) return rightContent;
+      if (isLoading) return;
+      if (showRouteInfo && route) {
+        return (
+          <Row align="center" gap={8}>
+            {showEstimatedTime && estimatedTime && (
+              <Row gap={6} align="center">
+                <SpeedometerIcon />
+                {estimatedTime}
+                <CogIconWrapper>
+                  <CogIcon height={13} width={13} />
+                  {settingsChanged && <SettingsChangedIndicator />}
+                </CogIconWrapper>
+              </Row>
+            )}
+          </Row>
+        );
+      }
+    };
+    return (
+      <>
+        {renderLeftContent()}
+        {renderRightContent()}
+      </>
+    );
+  }, [
+    estimatedTime,
+    isLoading,
+    renderSignatureRequired,
+    rightContent,
+    route,
+    routeRequiresMultipleSignatures,
+    settingsChanged,
+    showEstimatedTime,
+    showRouteInfo,
+  ]);
+
+  const renderDesktopContent = useMemo(() => {
+    const renderRightContent = () => {
+      if (rightContent) return rightContent;
+      if (isLoading) return;
+      if (showRouteInfo && route) {
+        return (
+          <Row align="center" gap={8}>
+            {!isMobileScreenSize &&
+              routeRequiresMultipleSignatures &&
+              renderSignatureRequired}
+            {showEstimatedTime && estimatedTime && (
+              <Row gap={6} align="center">
+                <SpeedometerIcon />
+                {estimatedTime}
+                <CogIconWrapper>
+                  <CogIcon height={13} width={13} />
+                  {settingsChanged && <SettingsChangedIndicator />}
+                </CogIconWrapper>
+              </Row>
+            )}
+          </Row>
+        );
+      }
+    };
+    return (
+      <>
+        <Row align="center" gap={5}>
+          Powered by <SkipLogoIcon />
+        </Row>
+        {renderRightContent()}
+      </>
+    );
+  }, [
+    estimatedTime,
+    isLoading,
+    isMobileScreenSize,
+    renderSignatureRequired,
+    rightContent,
+    route,
+    routeRequiresMultipleSignatures,
+    settingsChanged,
+    showEstimatedTime,
+    showRouteInfo,
+  ]);
+
+  if (isMobileScreenSize) {
+    return renderMobileContent;
+  }
+
+  return renderDesktopContent;
 };
 
 export const SwapPageFooter = ({
@@ -96,12 +166,7 @@ export const SwapPageFooter = ({
 } & SwapPageFooterItemsProps &
   React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <GhostButton
-      gap={5}
-      justify="space-between"
-      onClick={onClick}
-      {...props}
-    >
+    <GhostButton gap={5} justify="space-between" onClick={onClick} {...props}>
       <SwapPageFooterItems
         rightContent={rightContent}
         showRouteInfo={showRouteInfo}

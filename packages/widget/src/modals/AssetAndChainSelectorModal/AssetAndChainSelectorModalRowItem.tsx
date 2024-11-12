@@ -76,7 +76,7 @@ export const AssetAndChainSelectorModalRowItem = ({
           />
           <Row align="end" gap={8}>
             <Text>{item.prettyName}</Text>
-            <SmallText>{item.chainID}</SmallText></Row>
+            <SmallText lineHeight="22px">{item.chainID}</SmallText></Row>
         </Row>
       }
       rightContent={
@@ -121,7 +121,7 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
       <Row align="end" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
         {filteredChains.length > 1 ? (
-          <SmallText>{`${filteredChains.length} networks`}</SmallText>
+          <SmallText lineHeight="22px">{`${filteredChains.length} networks`}</SmallText>
         ) : (
           filteredChains.map((chain, index) => (
             <Row key={index} align="center" gap={6}>

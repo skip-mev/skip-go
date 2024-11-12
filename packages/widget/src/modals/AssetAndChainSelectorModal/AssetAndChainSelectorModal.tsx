@@ -1,6 +1,5 @@
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column } from "@/components/Layout";
-import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
 import {
   ClientAsset,
@@ -21,6 +20,7 @@ import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { StyledModalContainer } from "@/components/ModalHeader";
 
 export type GroupedAsset = {
   id: string;
@@ -46,6 +46,9 @@ export type AssetAndChainSelectorModalProps = ModalProps & {
   selectChain?: boolean;
   context: SelectorContext;
 };
+
+const ITEM_HEIGHT = 60;
+const ITEM_GAP = 5;
 
 export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
@@ -152,8 +155,9 @@ export const AssetAndChainSelectorModal = createModal(
         setGroupedAssetSelected(null);
       }
     };
+
     return (
-      <StyledContainer>
+      <StyledModalContainer>
         <AssetAndChainSelectorModalSearchInput
           onSearch={handleSearch}
           onClickBack={onClickBack}
@@ -171,8 +175,7 @@ export const AssetAndChainSelectorModal = createModal(
         ) : (
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
-            height={530}
-            itemHeight={70}
+            itemHeight={ITEM_HEIGHT + ITEM_GAP}
             itemKey={(item) => isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`}
             renderItem={renderItem}
             empty={{
@@ -181,17 +184,8 @@ export const AssetAndChainSelectorModal = createModal(
             }}
           />
         )}
-      </StyledContainer>
+      </StyledModalContainer>
     );
   }
 );
 
-const StyledContainer = styled(Column)`
-  padding: 10px;
-  gap: 10px;
-  width: 580px;
-  height: 600px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
-`;

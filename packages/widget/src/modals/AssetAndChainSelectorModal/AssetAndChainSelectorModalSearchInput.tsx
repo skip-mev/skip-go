@@ -9,6 +9,7 @@ import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
 import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
@@ -28,6 +29,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
   onKeyDown,
 }: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = useCallback(
@@ -65,19 +67,19 @@ export const AssetAndChainSelectorModalSearchInput = ({
         ref={inputRef}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
-        placeholder={
-          asset
-            ? "Search network"
-            : "Search asset"
-        }
+        placeholder={asset ? "Search networks" : "Search for an asset"}
         value={searchTerm}
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
 
       <Row align="center" gap={5}>
-        <SmallText style={{ textWrap: "nowrap" }}> Powered by </SmallText>
-        <SkipLogoIcon color={theme.primary.text.lowContrast} />
+        {!isMobileScreenSize && (
+          <>
+            <SmallText textWrap="nowrap"> Powered by </SmallText>
+            <SkipLogoIcon color={theme.primary.text.lowContrast} />
+          </>
+        )}
       </Row>
     </StyledSearchInputContainer>
   );
@@ -104,10 +106,13 @@ const StyledSearchInputContainer = styled(Row)`
   position: relative;
 `;
 
-const StyledSearchInput = styled.input`
+const StyledSearchInput = styled(Text).attrs({
+  as: "input"
+})`
   height: 40px;
   box-sizing: border-box;
   width: 100%;
+  font-size: 20px;
   border: none;
   outline: none;
   color: ${({ theme }) => theme.primary.text.normal};
