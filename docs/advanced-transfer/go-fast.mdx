@@ -17,7 +17,7 @@ Find integration details for Go Fast [here](../client/advanced-features).
 # How it Works
 The Go Fast Protocol lets you quickly move assets and run smart contracts between two different blockchains: the source chain and the destination chain. Here’s a simple breakdown of how it all happens.
 
-To start, you—the user—initiate a transfer by calling the `initiateIntent` function on the protocol contract on your current blockchain (source chain). In this step, you specify the assets, any message you want to send, and the address on the destination chain. This information is then broadcasted as an intent.
+To start, you—the user—initiate a transfer by calling the `submitOrder` function on the protocol contract on your current blockchain (source chain). In this step, you specify the assets, any message you want to send, and the address on the destination chain. This information is then broadcasted as an intent.
 
 Special participants called solvers, who watch for these intents, receive this notification. When they see your request, they evaluate whether they can help based on their resources on the destination chain and the potential reward for fulfilling it. If a solver agrees to fulfill the intent, they call the fulfill function on the protocol contract deployed on the destination chain. This step transfers the specified assets and processes any additional actions, like executing a contract call with the provided message payload. From your perspective, the assets or messages appear on the destination chain almost instantly, marking the transfer as complete.
 
