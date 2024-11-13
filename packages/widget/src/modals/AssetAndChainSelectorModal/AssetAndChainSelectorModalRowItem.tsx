@@ -74,7 +74,7 @@ export const AssetAndChainSelectorModalRowItem = ({
             src={item?.logoURI}
             alt={`${item.chainID} logo`}
           />
-          <Row align="end" gap={8}>
+          <Row align="baseline" gap={8}>
             <Text>{item.prettyName}</Text>
             <SmallText lineHeight="22px">{item.chainID}</SmallText></Row>
         </Row>
@@ -118,7 +118,7 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
         src={logoURI}
         alt={`${item.assets[0].recommendedSymbol} logo`}
       />
-      <Row align="end" gap={8}>
+      <Row align="baseline" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
         {filteredChains.length > 1 ? (
           <SmallText lineHeight="22px">{`${filteredChains.length} networks`}</SmallText>
