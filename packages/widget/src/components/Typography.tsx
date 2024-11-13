@@ -14,6 +14,7 @@ type TextProps = {
   normalTextColor?: boolean;
   capitalize?: boolean;
   overflowEllipsis?: boolean;
+  letterSpacing?: string;
 };
 
 export const removeButtonStyles = css`
@@ -24,20 +25,20 @@ export const removeButtonStyles = css`
 `;
 
 export const textProps = css<TextProps>`
-  font-family: 'ABCDiatype-regular', sans-serif;
+  font-family: 'ABCDiatype', sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
   ${({ fontWeight }) => {
     switch (fontWeight) {
       case "400":
       case "normal":
-        return "font-family: 'ABCDiatype-regular', sans-serif;";
+        return "font-weight: 400";
       case "500":
       case "medium":
-        return "font-family: 'ABCDiatype-medium', sans-serif;";
+        return "font-weight: 500";
       case "700":
       case "bold":
-        return "font-family: 'ABCDiatype-bold', sans-serif;";
+        return "font-weight: 700";
     }
   }};
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
@@ -47,8 +48,7 @@ export const textProps = css<TextProps>`
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
   ${({ textWrap }) => textWrap && `text-wrap: ${textWrap}`};
-  ${({ monospace }) =>
-    monospace && "font-family: 'ABCDiatype-mono', monospace;"};
+  ${({ monospace }) => monospace && "font-family: 'ABCDiatype-mono', monospace; letter-spacing: 0"};
   ${({ mainButtonColor }) =>
     mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
   ${({ capitalize }) =>
@@ -64,12 +64,15 @@ export const textProps = css<TextProps>`
       text-overflow: ellipsis;
       overflow: hidden;
     `};
+  ${({ letterSpacing }) => letterSpacing && `letter-spacing: ${letterSpacing}`};
 `;
 
 export const SmallText = styled.p<TextProps>`
   color: ${({ theme }) => theme.primary.text.lowContrast};
   margin: 0;
   font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   ${textProps}
 `;
 
@@ -77,12 +80,14 @@ export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
   line-height: 15px;
   ${removeButtonStyles}
   cursor: pointer;
+  letter-spacing: 0.01em;
 `;
 
 export const Text = styled(SmallText)`
   color: ${(props) => props.theme.primary.text.normal};
   font-size: 20px;
   font-weight: 500;
+  letter-spacing: 0;
   ${textProps}
 `;
 

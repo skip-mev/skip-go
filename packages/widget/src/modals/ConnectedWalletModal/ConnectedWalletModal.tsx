@@ -146,7 +146,7 @@ const ConnectEco = ({
                 title={account?.wallet.prettyName}
               />
             }
-            <Row align="end" gap={8}>
+            <Row align="baseline" gap={8}>
               <TextButton
                 fontSize={isMobileScreenSize ? 13 : undefined}
                 title={account?.address}

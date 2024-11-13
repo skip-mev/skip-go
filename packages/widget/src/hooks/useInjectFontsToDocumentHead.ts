@@ -6,17 +6,17 @@ import monospace from "@/fonts/ABCDiatypeMono-Medium.woff2";
 
 export const fonts = `
   @font-face {
-    font-family: ABCDiatype-regular;
+    font-family: ABCDiatype;
     font-weight: 400;
     src: url(${regular}) format(woff2);
   }
   @font-face {
-    font-family: ABCDiatype-medium;
+    font-family: ABCDiatype;
     font-weight: 500;
     src: url(${medium}) format(woff2);
   }
   @font-face {
-    font-family: ABCDiatype-bold;
+    font-family: ABCDiatype;
     font-weight: 700;
     src: url(${bold}) format(woff2);
   }
