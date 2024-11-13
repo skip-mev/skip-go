@@ -491,10 +491,13 @@ export class SkipClient {
         sequence,
         chainId: chainID,
       },
-    }
+    };
 
     if (isOfflineDirectSigner(signer)) {
-      rawTx = await this.signCosmosMessageDirect({ ...commonRawTxBody, signer });
+      rawTx = await this.signCosmosMessageDirect({
+        ...commonRawTxBody,
+        signer,
+      });
     } else {
       rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
     }
@@ -546,7 +549,7 @@ export class SkipClient {
       }
       onApproveAllowance?.({
         status: 'pending',
-        allowance: requiredApproval
+        allowance: requiredApproval,
       });
       const txHash = await extendedSigner.writeContract({
         account: signer.account,
@@ -570,7 +573,7 @@ export class SkipClient {
       }
     }
     onApproveAllowance?.({
-      status: 'completed'
+      status: 'completed',
     });
 
     // execute tx
@@ -1607,7 +1610,7 @@ export class SkipClient {
               client,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
-              txIndex: i
+              txIndex: i,
             });
             return res;
           } catch (e) {
@@ -1621,9 +1624,7 @@ export class SkipClient {
         }
       })
     );
-    const txError = validateResult.find(
-      (res) => res && res?.error !== null
-    );
+    const txError = validateResult.find((res) => res && res?.error !== null);
     if (txError) {
       onValidateGasBalance?.({
         status: 'error',
@@ -1647,7 +1648,7 @@ export class SkipClient {
     client,
     messages,
     getFallbackGasAmount,
-    txIndex
+    txIndex,
   }: {
     chainID: string;
     signerAddress: string;
@@ -1683,7 +1684,7 @@ export class SkipClient {
           client,
           signerAddress,
           chainID,
-          messages,
+          messages
         );
         return estimatedGas;
       } catch (error) {
@@ -1739,9 +1740,10 @@ export class SkipClient {
           error: `(${chain?.prettyName}) Unable to find asset for ${asset.denom}`,
         };
       }
-      if (isNaN(decimal)) return {
-        error: `(${chain?.prettyName}) Unable to find decimal for ${symbol}`,
-      }
+      if (isNaN(decimal))
+        return {
+          error: `(${chain?.prettyName}) Unable to find decimal for ${symbol}`,
+        };
 
       const fee = fees[index];
       if (!fee) {
@@ -1757,7 +1759,7 @@ export class SkipClient {
           error: null,
           asset,
           fee,
-        }
+        };
       }
 
       const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
