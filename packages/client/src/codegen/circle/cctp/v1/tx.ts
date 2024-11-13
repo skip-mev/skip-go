@@ -2,7 +2,6 @@
 import { Long, isSet, bytesFromBase64, base64FromBytes } from "../../../helpers";
 import * as _m0 from "protobufjs/minimal";
 import { JsonSafe } from "../../../json-safe";
-/** TODO add comments */
 export interface MsgUpdateOwner {
   from: string;
   newOwner: string;
@@ -11,7 +10,6 @@ export interface MsgUpdateOwnerProtoMsg {
   typeUrl: "/circle.cctp.v1.MsgUpdateOwner";
   value: Uint8Array;
 }
-/** TODO add comments */
 export interface MsgUpdateOwnerAmino {
   from?: string;
   new_owner?: string;
@@ -20,7 +18,6 @@ export interface MsgUpdateOwnerAminoMsg {
   type: "cctp/UpdateOwner";
   value: MsgUpdateOwnerAmino;
 }
-/** TODO add comments */
 export interface MsgUpdateOwnerSDKType {
   from: string;
   new_owner: string;
