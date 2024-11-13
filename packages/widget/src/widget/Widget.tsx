@@ -29,6 +29,7 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { WalletConnect, walletConnectAtom } from "@/state/wallets";
 
 export type WidgetRouteConfig =
   Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
@@ -55,6 +56,7 @@ export type WidgetProps = {
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
+  walletConnect?: WalletConnect;
 } & Pick<NewSkipClientOptions, "apiUrl" | "chainIdsToAffiliates" | "endpointOptions">;
 
 type NewSwapVenueRequest = {
@@ -94,6 +96,7 @@ const useInitWidget = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
+  const setWalletConnect = useSetAtom(walletConnectAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -155,12 +158,16 @@ const useInitWidget = (props: WidgetProps) => {
     if (props.onlyTestnet) {
       setOnlyTestnets(props.onlyTestnet);
     }
+    if (props.walletConnect) {
+      setWalletConnect(props.walletConnect);
+    }
   }, [
     props.filter,
     props.onlyTestnet,
     props.routeConfig,
     props.settings,
     props.settings?.slippage,
+    props.walletConnect,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,

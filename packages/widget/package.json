@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite --force",
+    "dev": "vite --force --host",
     "dev:storybook": "storybook dev -p 6006",
     "build": "npm run generate-chains && NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",

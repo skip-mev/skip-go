@@ -25,6 +25,7 @@ import {
 import { useCallback } from "react";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
+import { isMobile } from "@/utils/os";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -41,10 +42,20 @@ export const useCreateCosmosWallets = () => {
 
   const createCosmosWallets = useCallback(
     (chainID?: string) => {
-      const cosmosWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS];
-
+      const mobile = isMobile();
+      const browserWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS];
+      const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE, WalletType.WC_LEAP_MOBILE, WalletType.WC_COSMOSTATION_MOBILE];
+      const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter((x) => {
+        try {
+          return Boolean(getWallet(x));
+        }
+        catch (_error) {
+          return false;
+        }
+      });
+      const cosmosWallets = mobile ? availableMobileCosmosWallets : browserWallets;
       const isPenumbra = chainID?.includes("penumbra");
-      if (isPenumbra) {
+      if (isPenumbra && !mobile) {
         const praxWallet: MinimalWallet = {
           walletName: "prax",
           walletPrettyName: "Prax Wallet",
@@ -112,7 +123,7 @@ export const useCreateCosmosWallets = () => {
         const connectEco = async () => {
           try {
             await connect({
-              chainId: initialChainIds,
+              chainId: mobile ? walletMainnetChainIdsInitialConnect : initialChainIds,
               walletType: wallet,
             })
           } catch (e) {
@@ -142,8 +153,10 @@ export const useCreateCosmosWallets = () => {
               throw new Error(
                 `getAddress: Chain info not found for chainID: ${chainID}`
               );
-            // @ts-expect-error mismatch keplr types version
-            await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            if (!mobile) {
+              // @ts-expect-error mismatch keplr types version
+              await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            }
             const isInitialConnect = initialChainIds.includes(chainID);
             if (isInitialConnect) {
               await connectEco();
@@ -158,8 +171,10 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
           if (!currentAddress) {
-            // @ts-expect-error mismatch keplr types version
-            await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            if (!mobile) {
+              // @ts-expect-error mismatch keplr types version
+              await getWallet(wallet).experimentalSuggestChain(chainInfo);
+            }
             const isInitialConnect = initialChainIds.includes(chainID);
             if (isInitialConnect) {
               await connectEco();
@@ -203,8 +218,10 @@ export const useCreateCosmosWallets = () => {
                 throw new Error(
                   `connect: Chain info not found for chainID: ${chainID}`
                 );
-              // @ts-expect-error mismatch keplr types version
-              await getWallet(wallet).experimentalSuggestChain(chainInfo);
+              if (!mobile) {
+                // @ts-expect-error mismatch keplr types version
+                await getWallet(wallet).experimentalSuggestChain(chainInfo);
+              }
               const isInitialConnect = initialChainIds.includes(chainID);
               if (isInitialConnect) {
                 await connectEco();
@@ -229,6 +246,7 @@ export const useCreateCosmosWallets = () => {
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
+            if (mobile) return undefined
             try {
               const w = getWallet(wallet);
               return Boolean(w);
