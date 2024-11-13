@@ -7,7 +7,7 @@ import { ErrorPageUnexpected } from "./ErrorPageUnexpected";
 import { useMemo } from "react";
 import { Column } from "@/components/Layout";
 import { ErrorPageTimeout } from "./ErrorPageTimeout";
-import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSingingRequired";
+import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
 
 export const ErrorPage = () => {
