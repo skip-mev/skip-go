@@ -63,7 +63,6 @@ Each Hyperlane token transfer route is secured by an Interchain Security Module 
 
 The most common ISM is a Multisig ISM where "Validators" of a specific Hyperlane route sign attestations that a specific message on an origin chain is a valid message to be processed on the destination chain. In the case where the set of Validators have not hit the required signature threshold to successfully process a Hyperlane message on the receiving chain, funds will not be accessible by the user on either chain until the threshold is met (once met, funds will be sent to the user on the destination chain). This generalizes to the different requirements for different ISMs. The Hyperlane documentation explains the different types of ISMs in more detail: [https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM](https://docs.hyperlane.xyz/docs/reference/ISM/specify-your-ISM)
 
-
 <Warning>
  **Failures might occur for each transaction in a multi-tx sequence**
  

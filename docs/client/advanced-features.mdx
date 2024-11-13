@@ -24,3 +24,21 @@ await skip.executeRoute({
   beforeMsg: { msg, msgTypeURL: '/cosmos.bank.v1beta1.MsgSend' }
 });
 ```
+## Use the Go Fast Transfer system
+
+When initializing your client, specify the `goFast` boolean in the `routeConfig` prop. If a route is eligible for a Go Fast transfer, the API will return it as one of the transfer operations. No further action is required on your part.
+
+```typescript
+import { SkipClient } from '@skip-go/client';
+
+const skipClient = new SkipClient({
+  // ...otherProps,
+  routeConfig: {
+    goFast: true
+  }
+});
+
+await skip.executeRoute({
+  ...
+});
+```
