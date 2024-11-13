@@ -23,4 +23,4 @@ Permissionless participants called solvers, who watch for these intents, ingest 
 
 After fulfilling the transfer, the solver seeks to recover the assets they fronted, plus any earned fees. They do this by calling the `initiateSettle` function on the destination chain's Go Fast Protocol contract, listing the intents they fulfilled. The protocol verifies the solver’s actions, then sends a secure message back to the source chain through a cross-chain messaging system.
 
-A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver’s fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees all on the source chain.
+A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver’s fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees on the source chain.
