@@ -248,7 +248,7 @@ export const SwapExecutionPage = () => {
     lastOperation.signRequired,
     route?.destAssetChainID,
     route?.estimatedRouteDurationSeconds,
-    route.txsRequired,
+    route?.txsRequired,
     setCurrentPage,
     setError,
     signaturesRemaining,
