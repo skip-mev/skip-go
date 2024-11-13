@@ -1,3 +1,5 @@
+import { ERC20Approval } from '../types';
+
 export type SubmitTxRequestJSON = {
   tx: string;
   chain_id: string;
@@ -411,12 +413,12 @@ export type GoFastTransferTransactions = {
   orderTimeoutTx: ChainTransaction | null;
 };
 
-export type GoFastTransferState = 
-  | "GO_FAST_TRANSFER_UNKNOWN" 
-  | "GO_FAST_TRANSFER_SENT" 
-  | "GO_FAST_POST_ACTION_FAILED" 
-  | "GO_FAST_TRANSFER_TIMEOUT" 
-  | "GO_FAST_TRANSFER_FILLED" 
+export type GoFastTransferState =
+  | "GO_FAST_TRANSFER_UNKNOWN"
+  | "GO_FAST_TRANSFER_SENT"
+  | "GO_FAST_POST_ACTION_FAILED"
+  | "GO_FAST_TRANSFER_TIMEOUT"
+  | "GO_FAST_TRANSFER_FILLED"
   | "GO_FAST_TRANSFER_REFUNDED"
 
 export type GoFastTransferInfoJSON = {
@@ -485,6 +487,7 @@ export type TransferEvent =
   | { opInitTransfer: OPInitTransferInfo }
   | { goFastTransfer: GoFastTransferInfo };
 
+type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {
   onTransactionSigned?: (txInfo: {
     txHash: string;
@@ -507,6 +510,10 @@ export interface TransactionCallbacks {
   onValidateGasBalance?: (value: {
     chainID?: string;
     txIndex?: number;
-    status: 'success' | 'error' | 'pending' | 'completed';
+    status: CallbackStatus;
+  }) => Promise<void>;
+  onApproveAllowance?: (value: {
+    allowance?: ERC20Approval,
+    status: CallbackStatus
   }) => Promise<void>;
 }

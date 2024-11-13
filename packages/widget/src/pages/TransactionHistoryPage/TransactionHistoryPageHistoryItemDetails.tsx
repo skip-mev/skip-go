@@ -27,6 +27,7 @@ const statusMap = {
   pending: "In Progress",
   completed: "Completed",
   failed: "Failed",
+  approving: "Approving allowance",
 };
 
 export const TransactionHistoryPageHistoryItemDetails = ({

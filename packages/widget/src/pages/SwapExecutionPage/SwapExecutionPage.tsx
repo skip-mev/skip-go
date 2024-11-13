@@ -40,6 +40,7 @@ export enum SwapExecutionState {
   signaturesRemaining,
   confirmed,
   validatingGasBalance,
+  approving
 }
 
 export const SwapExecutionPage = () => {
@@ -100,6 +101,9 @@ export const SwapExecutionPage = () => {
         return SwapExecutionState.signaturesRemaining;
       }
       return SwapExecutionState.pending;
+    }
+    if (overallStatus === "approving") {
+      return SwapExecutionState.approving;
     }
     if (
       isValidatingGasBalance?.status !== "completed" &&
@@ -197,6 +201,10 @@ export const SwapExecutionPage = () => {
       case SwapExecutionState.waitingForSigning:
         return (
           <MainButton label="Confirm swap" icon={ICONS.rightArrow} loading />
+        );
+      case SwapExecutionState.approving:
+        return (
+          <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />
         );
       case SwapExecutionState.pending:
         return (

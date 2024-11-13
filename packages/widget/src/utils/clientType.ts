@@ -107,8 +107,8 @@ type KeysNotPresentInAll<T> = keyof T extends infer Key
 type CombineObjectTypes<T> = {
   [K in KeysPresentInAll<T>]: T[K];
 } & {
-    [K in KeysNotPresentInAll<T>]?: T[K];
-  };
+  [K in KeysNotPresentInAll<T>]?: T[K];
+};
 
 function getOperationDetailsAndType(operation: SkipClientOperation) {
   const combinedOperation = operation as CombinedOperation;
@@ -355,7 +355,8 @@ export type SimpleStatus =
   | "signing"
   | "pending"
   | "completed"
-  | "failed";
+  | "failed"
+  | "approving"
 
 export type ClientTransferEvent = {
   fromChainID: string;

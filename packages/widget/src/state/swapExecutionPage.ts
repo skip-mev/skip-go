@@ -83,15 +83,23 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     isValidatingGasBalance: undefined,
   });
   set(submitSwapExecutionCallbacksAtom, {
-    onTransactionUpdated: (transactionDetails) => {
-      if (!transactionDetails.isTxCompleted) {
-        set(setTransactionDetailsArrayAtom, transactionDetails, transactionHistoryIndex);
+    onTransactionUpdated: (txInfo) => {
+      if (txInfo.status?.status !== 'STATE_COMPLETED') {
+        set(setTransactionDetailsArrayAtom, txInfo, transactionHistoryIndex);
       }
     },
-    onTransactionTracked: async (transactionDetails) => {
-      const chain = chains?.find((chain) => chain.chainID === transactionDetails.chainID);
-      const explorerLink = createExplorerLink({ chainID: transactionDetails.chainID, chainType: chain?.chainType, txHash: transactionDetails.txHash });
-      set(setTransactionDetailsArrayAtom, { ...transactionDetails, explorerLink, status: undefined }, transactionHistoryIndex);
+    onTransactionTracked: async (txInfo) => {
+      const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
+      const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
+      set(setTransactionDetailsArrayAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
+    },
+    onApproveAllowance: async ({ status, allowance }) => {
+      if (allowance && status === 'pending') {
+        set(setOverallStatusAtom, 'approving');
+      }
+    },
+    onTransactionSigned: async () => {
+      set(setOverallStatusAtom, 'signing');
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
@@ -169,12 +177,11 @@ export const setTransactionDetailsArrayAtom = atom(
 
 export const chainAddressEffectAtom = atomEffect((get, set) => {
   const chainAddresses = get(chainAddressesAtom);
-  if (
-    !Object.values(chainAddresses).every(
-      (chainAddress) => !!chainAddress.address
-    )
+  const addressesMatch = Object.values(chainAddresses).every(
+    (chainAddress) => !!chainAddress.address
   )
-    return;
+  if (!addressesMatch) return;
+
   const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
     return {
       chainID: chainAddress.chainID,
@@ -193,15 +200,11 @@ export type TransactionDetails = {
   chainID: string;
   explorerLink?: string;
   status?: TxStatusResponse;
-  isTxCompleted?: boolean;
 };
 
-type SubmitSwapExecutionCallbacks = {
+type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
   onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
-  onValidateGasBalance?: TransactionCallbacks["onValidateGasBalance"];
-  onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
-  onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
 };
 
 export const submitSwapExecutionCallbacksAtom = atom<
@@ -231,27 +234,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               return swapSettings.customGasAmount;
             }
           },
-          onValidateGasBalance: async (props) => {
-            submitSwapExecutionCallbacks?.onValidateGasBalance?.(
-              props
-            );
-          },
-          onTransactionSigned: async (props) => {
-            submitSwapExecutionCallbacks?.onTransactionSigned?.(
-              props
-            );
-          },
-          onTransactionTracked: async (props) => {
-            submitSwapExecutionCallbacks?.onTransactionTracked?.(props);
-          },
-          onTransactionCompleted: async (chainID, txHash, status) => {
-            submitSwapExecutionCallbacks?.onTransactionUpdated?.({
-              chainID,
-              txHash,
-              status,
-              isTxCompleted: true,
-            });
-          },
+          ...submitSwapExecutionCallbacks,
         });
       } catch (error: unknown) {
         console.error(error);
