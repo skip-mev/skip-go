@@ -259,15 +259,9 @@ export class SkipClient {
     }
 
     const messages = await this.messages({
-      sourceAssetDenom: route.sourceAssetDenom,
-      sourceAssetChainID: route.sourceAssetChainID,
-      destAssetDenom: route.destAssetDenom,
-      destAssetChainID: route.destAssetChainID,
-      amountIn: route.amountIn,
+      ...route,
       amountOut: route.estimatedAmountOut || '0',
       addressList: addressList,
-      operations: route.operations,
-      chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
 
@@ -1723,8 +1717,10 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     txIndex?: number;
   }) {
-    const mainnetChains = await this.chains();
-    const testnetChains = await this.chains({ onlyTestnets: true });
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains(),
+      this.chains({ onlyTestnets: true }),
+    ]);
 
     const assets = await this.assets({
       chainIDs: [chainID],
@@ -1798,6 +1794,8 @@ export class SkipClient {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
+      const decimal = Number(chainAsset?.decimals);
+      if (isNaN(decimal)) return null
 
       const fee = fees[index];
       if (!fee) {
@@ -1832,7 +1830,6 @@ export class SkipClient {
       }
 
       if (parseInt(balance.amount) < parseInt(fee.amount[0]?.amount)) {
-        const decimal = Number(chainAsset?.decimals);
         const userAmount = new BigNumber(parseFloat(balance.amount))
           .shiftedBy(-decimal)
           .toFixed(decimal);
@@ -1851,7 +1848,7 @@ export class SkipClient {
       };
     });
 
-    const feeUsed = validatedAssets.find((res) => res.error === null);
+    const feeUsed = validatedAssets.find((res) => res?.error === null);
     if (!feeUsed) {
       if (validatedAssets.length > 1) {
         throw new Error(
