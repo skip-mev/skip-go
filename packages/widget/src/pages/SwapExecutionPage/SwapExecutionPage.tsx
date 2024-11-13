@@ -181,7 +181,7 @@ export const SwapExecutionPage = () => {
         );
       case SwapExecutionState.approving:
         return (
-          <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />
+          <MainButton label="Awaiting approval" icon={ICONS.rightArrow} loading />
         );
       case SwapExecutionState.pending:
         return (
