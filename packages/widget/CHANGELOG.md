@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.10
+
+### Patch Changes
+
+- 67281cc: Fix light mode modals being black
+
 ## 3.0.9
 
 ### Patch Changes

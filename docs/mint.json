@@ -93,7 +93,8 @@
         "advanced-transfer/evm-transactions",
         "advanced-transfer/svm-transaction-details",
         "advanced-transfer/cw20-swaps",
-        "advanced-transfer/experimental-features"
+        "advanced-transfer/experimental-features",
+        "advanced-transfer/go-fast"
       ]
     },
     {
