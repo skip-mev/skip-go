@@ -1739,7 +1739,9 @@ export class SkipClient {
           error: `(${chain?.prettyName}) Unable to find asset for ${asset.denom}`,
         };
       }
-      if (isNaN(decimal)) return null
+      if (isNaN(decimal)) return {
+        error: `(${chain?.prettyName}) Unable to find decimal for ${symbol}`,
+      }
 
       const fee = fees[index];
       if (!fee) {
