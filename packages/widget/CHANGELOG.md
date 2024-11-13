@@ -1,5 +1,21 @@
 ## 0.0.15
 
+## 3.0.11
+
+### Patch Changes
+
+- d2ad384: Add multi-transaction acknowledgement warning
+- 9c456c4: fix fonts
+- 4f97d18: fix carbon gas insufficient
+- 4d03b96: Add mobile styling for history and swap settings
+- ca179fd: update chains and noble cctp modules
+- 95c7596: only track transfer tx (not approval) and dont call status until track has completed
+- 1c38025: approving allowance callback
+- Updated dependencies [4f97d18]
+- Updated dependencies [ca179fd]
+- Updated dependencies [1c38025]
+  - @skip-go/client@0.14.4
+
 ## 3.0.10
 
 ### Patch Changes
