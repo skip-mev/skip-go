@@ -231,6 +231,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           validateGasBalance: route.sourceAssetChainID !== "984122",
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
+              if (_chainID === "carbon-1") {
+                return 10_000_000
+              }
               return swapSettings.customGasAmount;
             }
           },

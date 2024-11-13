@@ -1234,20 +1234,6 @@ export class SkipClient {
     return response.venues.map((venue) => types.swapVenueFromJSON(venue));
   }
 
-  async getCosmsosGasAmountForMessage(
-    client: SigningStargateClient,
-    signerAddress: string,
-    chainID: string,
-    cosmosMessages: types.CosmosMsg[]
-  ): Promise<string> {
-    return getCosmosGasAmountForMessage(
-      client,
-      signerAddress,
-      chainID,
-      cosmosMessages
-    );
-  }
-
   async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes('dymension')) {
       return this.getAccountNumberAndSequenceFromDymension(address, chainID);
@@ -1417,53 +1403,6 @@ export class SkipClient {
     }
 
     return endpoint;
-  }
-
-  async getCosmosFeeForMessage(
-    chainID: string,
-    msgs: types.CosmosMsg[],
-    gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
-    client: SigningStargateClient,
-    signer?: OfflineSigner,
-    gasPrice?: GasPrice
-  ) {
-    gasPrice = await this.getRecommendedGasPrice(chainID);
-    if (!gasPrice) {
-      throw new Error(
-        `getFeeForMessage error: Unable to get gas price for chain: ${chainID}`
-      );
-    }
-
-    signer = await this.getCosmosSigner?.(chainID);
-    if (!signer) {
-      throw new Error(
-        "getFeeForMessage error: signer is not provided or 'getCosmosSigner' is not configured in skip router"
-      );
-    }
-
-    const accounts = await signer.getAccounts();
-    const signerAddress =
-      accounts[0]?.address ||
-      raise(
-        `getFeeForMessage error: unable to resolve account address from signer`
-      );
-
-    const gasNeeded = await getCosmosGasAmountForMessage(
-      client,
-      signerAddress,
-      chainID,
-      msgs,
-      undefined,
-      gasAmountMultiplier
-    );
-
-    const fee = calculateFee(Math.ceil(parseFloat(gasNeeded)), gasPrice);
-
-    if (!fee) {
-      throw new Error('getFeeForMessage error: unable to get fee for message');
-    }
-
-    return fee;
   }
 
   async getRecommendedGasPrice(chainID: string) {
@@ -1744,7 +1683,7 @@ export class SkipClient {
           client,
           signerAddress,
           chainID,
-          messages
+          messages,
         );
         return estimatedGas;
       } catch (error) {
@@ -1795,6 +1734,11 @@ export class SkipClient {
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
       const decimal = Number(chainAsset?.decimals);
+      if (!chainAsset) {
+        return {
+          error: `(${chain?.prettyName}) Unable to find asset for ${asset.denom}`,
+        };
+      }
       if (isNaN(decimal)) return null
 
       const fee = fees[index];
