@@ -1,6 +1,5 @@
 import { Chain } from '@chain-registry/types';
 import chainRegistryChains from './codegen/chains.json';
-import { chains as initiaRegistry } from '@initia/initia-registry';
 
 const SOLANA_CHAIN = {
   chain_name: 'solana',
@@ -58,10 +57,6 @@ const newChains = additionalChains.filter(
 
 export function chains(): Chain[] {
   return [...chainRegistryChains as Chain[], ...newChains];
-}
-
-export function initiaChains() {
-  return initiaRegistry as Chain[];
 }
 
 export async function findFirstWorkingEndpoint(

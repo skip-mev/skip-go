@@ -212,7 +212,7 @@ async function codegen() {
 
   // Write all chains to a single JSON file
   const outputFilePath = path.resolve(outPath, 'chains.json');
-  await fs.writeFile(outputFilePath, JSON.stringify(allChains, null, 2), 'utf-8');
+  await fs.writeFile(outputFilePath, JSON.stringify(allChains), 'utf-8');
 
 }
 

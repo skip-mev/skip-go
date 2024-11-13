@@ -2221,17 +2221,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chain-registry/types@npm:^0.50.12":
+  version: 0.50.12
+  resolution: "@chain-registry/types@npm:0.50.12"
+  checksum: 09876f0bf63b873965cdec3f79d1d55917a0d7fea46c8a1047d3b75134bf3ad9155ba6fa8de01b94fce23cd02d7c2db5ceb0b66c4f1eddb76a5ea44d7fdc9d68
+  languageName: node
+  linkType: hard
+
 "@chain-registry/types@npm:^0.50.3":
   version: 0.50.3
   resolution: "@chain-registry/types@npm:0.50.3"
   checksum: 209a3a04161f296c23ce2f895316d8d58296e4a64e64a7b12a1dd23182e022b17afbf0c24c115bf3b057194bb50a6f6add0dca18616615bc4d8cdcd155dd1685
-  languageName: node
-  linkType: hard
-
-"@chain-registry/types@npm:^0.50.8":
-  version: 0.50.8
-  resolution: "@chain-registry/types@npm:0.50.8"
-  checksum: 892a914c7b57b1f4091d0d35cd1b7583137140cec0001131d6c33a2056fef445801c6d6a75dabd31be6dbf8eba820ee9ead123b1b09b28ebf863615ea5239611
   languageName: node
   linkType: hard
 
@@ -4436,30 +4436,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry-types@npm:^0.0.17":
-  version: 0.0.17
-  resolution: "@initia/initia-registry-types@npm:0.0.17"
-  dependencies:
-    zod: ^3.22.4
-  checksum: 6e4fdb785d4743fbc1183b57965add251a61c33d74c21848a066f4670524f2ccacd438e15d5a55482fc41c6f3ab841a3ad173ff361d475a7fbc51ca8279466d0
-  languageName: node
-  linkType: hard
-
 "@initia/initia-registry-types@npm:^0.0.21":
   version: 0.0.21
   resolution: "@initia/initia-registry-types@npm:0.0.21"
   dependencies:
     zod: ^3.22.4
   checksum: a4e6895b6a4002e998ab86fe85018be661d7d72619c10a9fd408f94e5816e0a3b5379ce6d41c2f1e019ba5dcd3282ba1161fc7de2ad7e7f038fb663d236ffc97
-  languageName: node
-  linkType: hard
-
-"@initia/initia-registry@npm:^0.1.16":
-  version: 0.1.16
-  resolution: "@initia/initia-registry@npm:0.1.16"
-  dependencies:
-    "@initia/initia-registry-types": ^0.0.17
-  checksum: d35d4a01dfbf725cfc7c1ebfd9277fdbf685cd774707383eef6161b38f25f8342b5e04bc7ed61eea417a94d0471ffb17189ec71a7eb0b5a9bd283e0afaa0fb40
   languageName: node
   linkType: hard
 
@@ -7768,7 +7750,7 @@ __metadata:
     "@cosmjs/stargate": 0.32.4
     "@cosmjs/tendermint-rpc": 0.32.4
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": ^0.1.16
+    "@initia/initia-registry": ^0.2.1
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.143
@@ -7777,7 +7759,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
-    chain-registry: ^1.69.26
+    chain-registry: ^1.69.31
     cosmjs-types: ^0.9.0
     keccak: 3.0.4
     minimatch: ^9.0.3
@@ -7833,7 +7815,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     buffer: ^6.0.3
-    chain-registry: ^1.69.26
+    chain-registry: ^1.69.31
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.10.1
@@ -13468,12 +13450,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.26":
-  version: 1.69.26
-  resolution: "chain-registry@npm:1.69.26"
+"chain-registry@npm:^1.69.31":
+  version: 1.69.31
+  resolution: "chain-registry@npm:1.69.31"
   dependencies:
-    "@chain-registry/types": ^0.50.8
-  checksum: 156e252a305df3be45f8f0907316a2980dde3b0a42fcba848a35bacd46a07b967e3dadee45bf54f470315854148f3e047e2cd4fef1fc18e417fe480bd4a64bb5
+    "@chain-registry/types": ^0.50.12
+  checksum: 3a36e8e0b9529e8dd5a5bb7a1b2e581283ff98290a15c448be756386fc6494489b46f14ac07d79fe8f4041bb8df393576e24e5b27c681ecb350d54a21aae1fa3
   languageName: node
   linkType: hard
 

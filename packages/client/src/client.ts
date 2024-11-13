@@ -1,11 +1,10 @@
-import { Coin, makeSignDoc as makeSignDocAmino } from '@cosmjs/amino';
+import { makeSignDoc as makeSignDocAmino } from '@cosmjs/amino';
 import { createWasmAminoConverters } from '@cosmjs/cosmwasm-stargate';
 import { fromBase64, toHex } from '@cosmjs/encoding';
 import { Int53 } from '@cosmjs/math';
 import { Decimal } from '@cosmjs/math';
 import { makePubkeyAnyFromAccount } from './proto-signing/pubkey';
 import {
-  EncodeObject,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -24,7 +23,6 @@ import {
   SigningStargateClient,
   StargateClient,
   StdFee,
-  accountFromAny,
 } from '@cosmjs/stargate';
 import { BigNumber } from 'bignumber.js';
 import { accountParser } from './registry';
@@ -45,7 +43,7 @@ import { MsgExecute } from './codegen/initia/move/v1/tx';
 
 import { publicActions, WalletClient } from 'viem';
 
-import { chains, findFirstWorkingEndpoint, initiaChains } from './chains';
+import { chains, findFirstWorkingEndpoint } from './chains';
 import {
   circleAminoConverters,
   circleProtoRegistry,
@@ -1356,9 +1354,6 @@ export class SkipClient {
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      chain = initiaChains().find((chain) => chain.chain_id === chainID);
-    }
-    if (!chain) {
       throw new Error(
         `getRpcEndpointForChain: failed to find chain id '${chainID}' in registry`
       );
@@ -1399,9 +1394,6 @@ export class SkipClient {
 
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
-    if (!chain) {
-      chain = initiaChains().find((chain) => chain.chain_id === chainID);
-    }
     if (!chain) {
       throw new Error(
         `getRestEndpointForChain error: failed to find chain id '${chainID}' in registry`
@@ -1524,9 +1516,6 @@ export class SkipClient {
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      chain = initiaChains().find((chain) => chain.chain_id === chainID);
-    }
-    if (!chain) {
       return undefined;
     }
 
@@ -1566,9 +1555,6 @@ export class SkipClient {
 
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
-    if (!chain) {
-      chain = initiaChains().find((chain) => chain.chain_id === chainID);
-    }
     if (!chain) {
       return undefined;
     }
@@ -1613,9 +1599,6 @@ export class SkipClient {
   private getStakingTokensForChain(chainID: string) {
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
-    if (!chain) {
-      chain = initiaChains().find((chain) => chain.chain_id === chainID);
-    }
     if (!chain) {
       throw new Error(
         `getStakingTokensForChain error: failed to find chain id '${chainID}' in registry`
