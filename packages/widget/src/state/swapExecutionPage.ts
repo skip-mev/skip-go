@@ -84,7 +84,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
-      if (txInfo.status?.status !== 'STATE_COMPLETED') {
+      if (txInfo.status?.status !== "STATE_COMPLETED") {
         set(setTransactionDetailsArrayAtom, txInfo, transactionHistoryIndex);
       }
     },
@@ -94,12 +94,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setTransactionDetailsArrayAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
     },
     onApproveAllowance: async ({ status, allowance }) => {
-      if (allowance && status === 'pending') {
-        set(setOverallStatusAtom, 'approving');
+      if (allowance && status === "pending") {
+        set(setOverallStatusAtom, "approving");
       }
     },
     onTransactionSigned: async () => {
-      set(setOverallStatusAtom, 'signing');
+      set(setOverallStatusAtom, "signing");
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
@@ -179,7 +179,7 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
   const chainAddresses = get(chainAddressesAtom);
   const addressesMatch = Object.values(chainAddresses).every(
     (chainAddress) => !!chainAddress.address
-  )
+  );
   if (!addressesMatch) return;
 
   const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
@@ -231,6 +231,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           validateGasBalance: route.sourceAssetChainID !== "984122",
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
+              if (_chainID === "carbon-1") {
+                return 10_000_000;
+              }
               return swapSettings.customGasAmount;
             }
           },

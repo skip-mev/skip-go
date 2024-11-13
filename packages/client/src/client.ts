@@ -259,15 +259,9 @@ export class SkipClient {
     }
 
     const messages = await this.messages({
-      sourceAssetDenom: route.sourceAssetDenom,
-      sourceAssetChainID: route.sourceAssetChainID,
-      destAssetDenom: route.destAssetDenom,
-      destAssetChainID: route.destAssetChainID,
-      amountIn: route.amountIn,
+      ...route,
       amountOut: route.estimatedAmountOut || '0',
       addressList: addressList,
-      operations: route.operations,
-      chainIDsToAffiliates: this.chainIDsToAffiliates,
       slippageTolerancePercent: options.slippageTolerancePercent || '1',
     });
 
@@ -497,10 +491,13 @@ export class SkipClient {
         sequence,
         chainId: chainID,
       },
-    }
+    };
 
     if (isOfflineDirectSigner(signer)) {
-      rawTx = await this.signCosmosMessageDirect({ ...commonRawTxBody, signer });
+      rawTx = await this.signCosmosMessageDirect({
+        ...commonRawTxBody,
+        signer,
+      });
     } else {
       rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
     }
@@ -552,7 +549,7 @@ export class SkipClient {
       }
       onApproveAllowance?.({
         status: 'pending',
-        allowance: requiredApproval
+        allowance: requiredApproval,
       });
       const txHash = await extendedSigner.writeContract({
         account: signer.account,
@@ -576,7 +573,7 @@ export class SkipClient {
       }
     }
     onApproveAllowance?.({
-      status: 'completed'
+      status: 'completed',
     });
 
     // execute tx
@@ -1240,20 +1237,6 @@ export class SkipClient {
     return response.venues.map((venue) => types.swapVenueFromJSON(venue));
   }
 
-  async getCosmsosGasAmountForMessage(
-    client: SigningStargateClient,
-    signerAddress: string,
-    chainID: string,
-    cosmosMessages: types.CosmosMsg[]
-  ): Promise<string> {
-    return getCosmosGasAmountForMessage(
-      client,
-      signerAddress,
-      chainID,
-      cosmosMessages
-    );
-  }
-
   async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes('dymension')) {
       return this.getAccountNumberAndSequenceFromDymension(address, chainID);
@@ -1423,53 +1406,6 @@ export class SkipClient {
     }
 
     return endpoint;
-  }
-
-  async getCosmosFeeForMessage(
-    chainID: string,
-    msgs: types.CosmosMsg[],
-    gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
-    client: SigningStargateClient,
-    signer?: OfflineSigner,
-    gasPrice?: GasPrice
-  ) {
-    gasPrice = await this.getRecommendedGasPrice(chainID);
-    if (!gasPrice) {
-      throw new Error(
-        `getFeeForMessage error: Unable to get gas price for chain: ${chainID}`
-      );
-    }
-
-    signer = await this.getCosmosSigner?.(chainID);
-    if (!signer) {
-      throw new Error(
-        "getFeeForMessage error: signer is not provided or 'getCosmosSigner' is not configured in skip router"
-      );
-    }
-
-    const accounts = await signer.getAccounts();
-    const signerAddress =
-      accounts[0]?.address ||
-      raise(
-        `getFeeForMessage error: unable to resolve account address from signer`
-      );
-
-    const gasNeeded = await getCosmosGasAmountForMessage(
-      client,
-      signerAddress,
-      chainID,
-      msgs,
-      undefined,
-      gasAmountMultiplier
-    );
-
-    const fee = calculateFee(Math.ceil(parseFloat(gasNeeded)), gasPrice);
-
-    if (!fee) {
-      throw new Error('getFeeForMessage error: unable to get fee for message');
-    }
-
-    return fee;
   }
 
   async getRecommendedGasPrice(chainID: string) {
@@ -1674,7 +1610,7 @@ export class SkipClient {
               client,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
-              txIndex: i
+              txIndex: i,
             });
             return res;
           } catch (e) {
@@ -1688,9 +1624,7 @@ export class SkipClient {
         }
       })
     );
-    const txError = validateResult.find(
-      (res) => res && res?.error !== null
-    );
+    const txError = validateResult.find((res) => res && res?.error !== null);
     if (txError) {
       onValidateGasBalance?.({
         status: 'error',
@@ -1714,7 +1648,7 @@ export class SkipClient {
     client,
     messages,
     getFallbackGasAmount,
-    txIndex
+    txIndex,
   }: {
     chainID: string;
     signerAddress: string;
@@ -1723,8 +1657,10 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     txIndex?: number;
   }) {
-    const mainnetChains = await this.chains();
-    const testnetChains = await this.chains({ onlyTestnets: true });
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains(),
+      this.chains({ onlyTestnets: true }),
+    ]);
 
     const assets = await this.assets({
       chainIDs: [chainID],
@@ -1798,6 +1734,16 @@ export class SkipClient {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
+      const decimal = Number(chainAsset?.decimals);
+      if (!chainAsset) {
+        return {
+          error: `(${chain?.prettyName}) Unable to find asset for ${asset.denom}`,
+        };
+      }
+      if (isNaN(decimal))
+        return {
+          error: `(${chain?.prettyName}) Unable to find decimal for ${symbol}`,
+        };
 
       const fee = fees[index];
       if (!fee) {
@@ -1813,7 +1759,7 @@ export class SkipClient {
           error: null,
           asset,
           fee,
-        }
+        };
       }
 
       const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
@@ -1832,7 +1778,6 @@ export class SkipClient {
       }
 
       if (parseInt(balance.amount) < parseInt(fee.amount[0]?.amount)) {
-        const decimal = Number(chainAsset?.decimals);
         const userAmount = new BigNumber(parseFloat(balance.amount))
           .shiftedBy(-decimal)
           .toFixed(decimal);
@@ -1851,7 +1796,7 @@ export class SkipClient {
       };
     });
 
-    const feeUsed = validatedAssets.find((res) => res.error === null);
+    const feeUsed = validatedAssets.find((res) => res?.error === null);
     if (!feeUsed) {
       if (validatedAssets.length > 1) {
         throw new Error(

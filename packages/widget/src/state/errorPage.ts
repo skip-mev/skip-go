@@ -1,6 +1,6 @@
 import { ErrorPageAuthFailedProps } from "@/pages/ErrorPage/ErrorPageAuthFailed";
 import { ErrorPageTimeoutProps } from "@/pages/ErrorPage/ErrorPageTimeout";
-import { ErrorPageTradeAdditionalSigningRequiredProps } from "@/pages/ErrorPage/ErrorPageTradeAdditionalSingingRequired";
+import { ErrorPageTradeAdditionalSigningRequiredProps } from "@/pages/ErrorPage/ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTradeWarningProps } from "@/pages/ErrorPage/ErrorPageTradeWarning";
 import { ErrorPageTransactionFailedProps } from "@/pages/ErrorPage/ErrorPageTransactionFailed";
 import { ErrorPageTransactionRevertedProps } from "@/pages/ErrorPage/ErrorPageTransactionReverted";
