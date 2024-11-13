@@ -64,13 +64,14 @@ export const MainButton = ({
               fontSize={24}
               color={textColor}
               mainButtonColor={backgroundColor}
+              letterSpacing="-0.015em"
               capitalize
             >
               {label}
             </Text>
           </Row>
         ) : (
-          <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor}>
+          <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor} letterSpacing="-0.015em">
             {label}
           </Text>
         )}
@@ -98,7 +99,7 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <Text fontWeight="bold" fontSize={24} style={{ opacity: 0.5 }}>
+      <Text fontWeight="bold" fontSize={24} style={{ opacity: 0.5 }} letterSpacing="-0.015em">
         {label}
       </Text>
       {loadingTimeString && (

@@ -20,6 +20,11 @@ export const globalStyles = `
     background-color: unset;
     word-spacing: unset;
     font-family: 'ABCDiatype', sans-serif;
+    
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
   }
   u {
     text-decoration: underline;

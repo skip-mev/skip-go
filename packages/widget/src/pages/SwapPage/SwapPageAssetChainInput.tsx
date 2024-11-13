@@ -244,7 +244,8 @@ const StyledInput = styled.input<{
   @media (max-width: 767px) {
     font-size: 30px;
   }
-  font-weight: 300;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
   background-color: ${(props) => props.theme.primary.background.normal};
