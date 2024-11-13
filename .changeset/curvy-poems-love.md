@@ -1,5 +1,5 @@
 ---
-'@skip-go/widget': minor
+'@skip-go/widget': patch
 ---
 
 Add multi-transaction acknowledgement warning
