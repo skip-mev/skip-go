@@ -93,8 +93,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsArrayAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
     },
-    onApproveAllowance: async ({ status }) => {
-      if (status === 'pending') {
+    onApproveAllowance: async ({ status, allowance }) => {
+      if (allowance && status === 'pending') {
         set(setOverallStatusAtom, 'approving');
       }
     },

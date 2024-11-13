@@ -539,10 +539,6 @@ export class SkipClient {
 
     // check for approvals
     for (const requiredApproval of message.requiredERC20Approvals) {
-      onApproveAllowance?.({
-        status: 'pending',
-        allowance: requiredApproval
-      });
       const allowance = await extendedSigner.readContract({
         address: requiredApproval.tokenContract as `0x${string}`,
         abi: erc20ABI,
@@ -556,7 +552,10 @@ export class SkipClient {
       if (allowance > BigInt(requiredApproval.amount)) {
         continue;
       }
-
+      onApproveAllowance?.({
+        status: 'pending',
+        allowance: requiredApproval
+      });
       const txHash = await extendedSigner.writeContract({
         account: signer.account,
         address: requiredApproval.tokenContract as `0x${string}`,
