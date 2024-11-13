@@ -87,7 +87,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
       apiUrl,
       chainIdsToAffiliates,
       endpointOptions,
-    }
+    };
 
     // merge if not undefined
 
@@ -189,6 +189,6 @@ const WidgetContainer = styled.div`
   position: relative;
   padding: 0 10px;
   @media (max-width: 500px) {
-    width: 100%;
+    width: 100vw;
   }
 `;

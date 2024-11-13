@@ -58,8 +58,8 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   };
 
   return (
-    <Column padding={10} gap={10}>
-      <Row align="center" gap={10}>
+    <Column padding={20} gap={10} style={{ paddingTop: 10 }}>
+      <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor color={statusColor}>
@@ -67,18 +67,18 @@ export const TransactionHistoryPageHistoryItemDetails = ({
           </SmallText>
           <SmallText>at {absoluteTimeString}</SmallText>
         </Row>
-      </Row>
-      <Row align="center" gap={10}>
+      </StyledHistoryItemDetailRow>
+      <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Chain route</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor>{sourceChainName}</SmallText>
           <HistoryArrowIcon color={theme.primary.text.normal} />
           <SmallText normalTextColor>{destinationChainName}</SmallText>
         </Row>
-      </Row>
+      </StyledHistoryItemDetailRow>
 
       {transactionDetails.length === 1 ? (
-        <Row align="center" gap={10}>
+        <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
           <Link
             onClick={() => handleClickingLinkIfNoExplorerLink(transactionDetails?.[0]?.txHash, transactionDetails?.[0]?.explorerLink)}
@@ -94,7 +94,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
               <ChainIcon />
             </SmallText>
           </Link>
-        </Row>
+        </StyledHistoryItemDetailRow>
       ) : (
         transactionDetails.map((transactionDetail, index) => {
           const getTransactionIdLabel = () => {
@@ -107,10 +107,9 @@ export const TransactionHistoryPageHistoryItemDetails = ({
             return "Transaction";
           };
           return (
-            <Row
+            <StyledHistoryItemDetailRow
               key={`${index}-${transactionDetail.txHash}`}
               align="center"
-              gap={10}
             >
               <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>
                 {getTransactionIdLabel()}
@@ -130,7 +129,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
                   <ChainIcon />
                 </SmallText>
               </Link>
-            </Row>
+            </StyledHistoryItemDetailRow>
           );
         })
       )}
@@ -147,4 +146,11 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
 const StyledDetailsLabel = styled(SmallText)`
   width: 100px;
+`;
+
+const StyledHistoryItemDetailRow = styled(Row)`
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;

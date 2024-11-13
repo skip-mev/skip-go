@@ -113,8 +113,7 @@ export const SwapSettingsDrawer = createModal(() => {
             </Row>
           </Row>
         )}
-        <SlippageSelector
-        />
+
       </Column>
       {(axelarFee || hyperlaneFee || smartRelayFee) && (
         <Column gap={10}>
@@ -147,6 +146,7 @@ export const SwapSettingsDrawer = createModal(() => {
           )}
         </Column>
       )}
+      <SlippageSelector />
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>
@@ -159,9 +159,9 @@ const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
   border-radius: 20px;
+  margin: 0 10px;
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
-
 
 const SwapDetailText = styled(Row).attrs({
   as: SmallText,
