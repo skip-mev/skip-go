@@ -234,7 +234,20 @@ export const SwapExecutionPage = () => {
           />
         );
     }
-  }, [clearAssetInputAmounts, connectRequiredChains, lastOperation.signRequired, route?.destAssetChainID, route?.estimatedRouteDurationSeconds, route.txsRequired, setCurrentPage, setError, signaturesRemaining, submitExecuteRouteMutation, swapExecutionState, theme.success.text]);
+  }, [
+    clearAssetInputAmounts,
+    connectRequiredChains,
+    lastOperation.signRequired,
+    route?.destAssetChainID,
+    route?.estimatedRouteDurationSeconds,
+    route.txsRequired,
+    setCurrentPage,
+    setError,
+    signaturesRemaining,
+    submitExecuteRouteMutation,
+    swapExecutionState,
+    theme.success.text,
+  ]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
