@@ -21,6 +21,9 @@ export const globalStyles = `
     word-spacing: unset;
     font-family: 'ABCDiatype', sans-serif;
   }
+  u {
+    text-decoration: underline;
+  }
   div {
     box-sizing: border-box;
   }

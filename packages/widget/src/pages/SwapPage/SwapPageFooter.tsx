@@ -56,7 +56,7 @@ export const SwapPageFooterItems = ({
 
   const renderMobileContent = useMemo(() => {
     const renderLeftContent = () => {
-      if (routeRequiresMultipleSignatures) {
+      if (showRouteInfo && routeRequiresMultipleSignatures) {
         return renderSignatureRequired;
       }
       return (

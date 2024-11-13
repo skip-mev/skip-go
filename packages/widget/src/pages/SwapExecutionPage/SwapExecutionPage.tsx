@@ -29,6 +29,7 @@ import { useSyncTxStatus } from "./useSyncTxStatus";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { errorAtom, ErrorType } from "@/state/errorPage";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -36,12 +37,14 @@ export enum SwapExecutionState {
   ready,
   pending,
   waitingForSigning,
+  signaturesRemaining,
   confirmed,
   validatingGasBalance,
 }
 
 export const SwapExecutionPage = () => {
   const theme = useTheme();
+  const setError = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const {
     route,
@@ -54,7 +57,12 @@ export const SwapExecutionPage = () => {
   const [simpleRoute, setSimpleRoute] = useState(true);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
-  const { mutate } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const { mutate: submitExecuteRouteMutation } = useAtomValue(
+    skipSubmitSwapExecutionAtom
+  );
+
+  const signaturesRemaining =
+    (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
@@ -86,7 +94,11 @@ export const SwapExecutionPage = () => {
     if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
     }
+
     if (overallStatus === "pending") {
+      if (signaturesRemaining > 0) {
+        return SwapExecutionState.signaturesRemaining;
+      }
       return SwapExecutionState.pending;
     }
     if (
@@ -110,14 +122,13 @@ export const SwapExecutionPage = () => {
     isValidatingGasBalance,
     overallStatus,
     route?.requiredChainAddresses,
+    signaturesRemaining,
   ]);
 
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
-    const signaturesRemaining =
-      (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
-    if (signaturesRemaining > 1) {
+    if (signaturesRemaining) {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
@@ -126,7 +137,7 @@ export const SwapExecutionPage = () => {
         </StyledSignatureRequiredContainer>
       );
     }
-  }, [route?.txsRequired, transactionDetailsArray?.length]);
+  }, [signaturesRemaining]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -155,14 +166,26 @@ export const SwapExecutionPage = () => {
             }}
           />
         );
-      case SwapExecutionState.ready:
+      case SwapExecutionState.ready: {
+        const onClickConfirmSwap = () => {
+          if (route?.txsRequired && route.txsRequired > 1) {
+            setError({
+              errorType: ErrorType.AdditionalSigningRequired,
+              onClickContinue: () => submitExecuteRouteMutation(),
+              signaturesRequired: route.txsRequired,
+            });
+            return;
+          }
+          submitExecuteRouteMutation();
+        };
         return (
           <MainButton
             label="Confirm swap"
             icon={ICONS.rightArrow}
-            onClick={mutate}
+            onClick={onClickConfirmSwap}
           />
         );
+      }
       case SwapExecutionState.validatingGasBalance:
         return (
           <MainButton
@@ -179,6 +202,19 @@ export const SwapExecutionPage = () => {
         return (
           <MainButton
             label="Swap in progress"
+            loading
+            loadingTimeString={convertSecondsToMinutesOrHours(
+              route?.estimatedRouteDurationSeconds
+            )}
+          />
+        );
+      case SwapExecutionState.signaturesRemaining:
+        return (
+          <MainButton
+            label={`${signaturesRemaining} ${pluralize(
+              "signature",
+              signaturesRemaining
+            )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
             loading
             loadingTimeString={convertSecondsToMinutesOrHours(
               route?.estimatedRouteDurationSeconds
@@ -202,10 +238,13 @@ export const SwapExecutionPage = () => {
     clearAssetInputAmounts,
     connectRequiredChains,
     lastOperation.signRequired,
-    mutate,
     route?.destAssetChainID,
     route?.estimatedRouteDurationSeconds,
+    route.txsRequired,
     setCurrentPage,
+    setError,
+    signaturesRemaining,
+    submitExecuteRouteMutation,
     swapExecutionState,
     theme.success.text,
   ]);
