@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 0.14.4
+
+### Patch Changes
+
+- 4f97d18: fix carbon gas insufficient
+- ca179fd: update chains and noble cctp modules
+- 1c38025: approving allowance callback
+
 ## 0.14.3
 
 ### Patch Changes
