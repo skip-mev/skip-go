@@ -74,11 +74,11 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.51.21",
-    "graz": "^0.1.25",
+    "graz": "0.1.21",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
-    "viem": "^2.21.1",
-    "wagmi": "^2.12.8"
+    "viem": "2.21.4",
+    "wagmi": "2.12.9"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
