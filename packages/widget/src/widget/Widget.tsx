@@ -172,6 +172,7 @@ const useInitWidget = (props: WidgetProps) => {
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
+    setWalletConnect
   ]);
 
   return { theme: mergedTheme }
