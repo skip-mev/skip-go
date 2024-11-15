@@ -49,7 +49,6 @@ export const VirtualList = <T,>({
     };
 
     setVirtualListHeight(calculateHeight());
-
   }, [isMobileScreenSize, itemHeight]);
 
   useEffect(() => {
@@ -57,7 +56,6 @@ export const VirtualList = <T,>({
     const firstElementInList = (listElement?.firstChild as HTMLElement);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-
       if (event.key === "ArrowDown") {
         if (firstElementInList) {
           firstElementInList.focus();
@@ -71,7 +69,6 @@ export const VirtualList = <T,>({
           setCurrentlyFocusedElement(nextElement);
         }
       } else if (event.key === "ArrowUp") {
-
         event.preventDefault();
         const prevElement = currentlyFocusedElement?.previousElementSibling as HTMLElement;
         if (prevElement) {
@@ -95,12 +92,10 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer align="center" justify="center" >
-        <StyledEmptyContent gap={10}>
-          {empty?.icon}
-          <SmallText fontSize={22}>{empty?.header}</SmallText>
-          <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
-        </StyledEmptyContent>
+      <StyledNoResultsContainer gap={10}>
+        {empty?.icon}
+        <SmallText fontSize={22}>{empty?.header}</SmallText>
+        <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
       </StyledNoResultsContainer>
     );
   }
@@ -133,10 +128,6 @@ export const VirtualList = <T,>({
 const StyledNoResultsContainer = styled(Column)`
   height: 100%;
   width: 100%;
-`;
-
-const StyledEmptyContent = styled(Column)`
-  width: 50%;
   text-align: center;
   align-items: center;
   justify-content: center;
