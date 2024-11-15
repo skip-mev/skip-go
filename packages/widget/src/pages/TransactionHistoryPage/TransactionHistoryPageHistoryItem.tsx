@@ -138,6 +138,9 @@ export const TransactionHistoryPageHistoryItem = ({
   }, [isMobileScreenSize, timestamp]);
 
   const relativeTime = useMemo(() => {
+    if (status === "abandoned") {
+      return "Abandoned";
+    }
     if (status === "pending") {
       return "In Progress";
     }
