@@ -3,13 +3,14 @@ import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { XIcon } from "@/icons/XIcon";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import {
   removeTransactionHistoryItemAtom,
+  setTransactionHistoryAtom,
   TransactionHistoryItem,
 } from "@/state/history";
 import { useSetAtom } from "jotai";
@@ -18,6 +19,7 @@ import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs"
 import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
+import { removeTrailingZeros } from "@/utils/number";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -34,6 +36,23 @@ export const TransactionHistoryPageHistoryItem = ({
 }: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+
+
+  // User failed to sign the second signature of the route
+  const isAbandoned = useMemo(() => {
+    return txHistoryItem.route?.txsRequired !== txHistoryItem.transactionDetails.length;
+  }, [
+    txHistoryItem.route?.txsRequired,
+    txHistoryItem.transactionDetails.length,
+  ]);
+
+  useEffect(() => {
+    if (isAbandoned) {
+      setTransactionHistory(index, { status: 'abandoned' }
+      );
+    }
+  }, [index, isAbandoned, setTransactionHistory]);
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: txHistoryItem?.route.txsRequired,
@@ -41,6 +60,7 @@ export const TransactionHistoryPageHistoryItem = ({
       chainID: tx.chainID,
       txHash: tx.txHash,
     })),
+    enabled: !isAbandoned,
   });
 
   useSyncTxStatus({
@@ -105,6 +125,7 @@ export const TransactionHistoryPageHistoryItem = ({
       case "completed":
         return <StyledGreenDot />;
       case "failed":
+      case "abandoned":
         return <XIcon color={theme.error.text} />;
     }
   }, [status, theme.error.text, theme.primary.text.normal]);
@@ -117,7 +138,6 @@ export const TransactionHistoryPageHistoryItem = ({
   }, [isMobileScreenSize, timestamp]);
 
   const relativeTime = useMemo(() => {
-    // get relative time based on timestamp
     if (status === "pending") {
       return "In Progress";
     }
@@ -185,7 +205,7 @@ const RenderAssetAmount = ({
     <>
       <img height={20} width={20} src={assetImage} />
       <SmallText normalTextColor title={amount}>
-        {amount}
+        {removeTrailingZeros(amount)}
       </SmallText>
       {!isMobileScreenSize && (
         <SmallText normalTextColor>

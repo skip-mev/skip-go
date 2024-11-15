@@ -36,6 +36,7 @@ export const useSyncTxStatus = ({
     return getClientOperations(route.operations);
   }, [route?.operations]);
 
+
   const computedSwapStatus = useMemo(() => {
     if (!route?.operations || !route?.txsRequired) return;
 
@@ -78,9 +79,10 @@ export const useSyncTxStatus = ({
       return "unconfirmed";
     }
   }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, statusData?.lastTxStatus, transferEvents]);
+
   useEffect(() => {
     if (computedSwapStatus) {
-      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
+      setTransactionHistory(historyIndex !== undefined ? historyIndex : transactionHistoryIndex, {
         status: computedSwapStatus,
       });
       if (!historyIndex) {
