@@ -39,13 +39,10 @@ export const StyledModalContainer = styled(Column)`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
+  height: 100%;
 
   @media (max-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
     max-height: 600px;
-  }
-
-  @media (min-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
-    height: 600px;
   }
 `;
 export const StyledModalInnerContainer = styled(Column) <{

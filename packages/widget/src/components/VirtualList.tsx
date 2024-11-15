@@ -126,7 +126,7 @@ export const VirtualList = <T,>({
 };
 
 const StyledNoResultsContainer = styled(Column)`
-  height: 100%;
+  min-height: 300px;
   width: 100%;
   text-align: center;
   align-items: center;
