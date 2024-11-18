@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.0.12
+
+### Patch Changes
+
+- b9d30fe: update registries
+- 51f538e: ui fixes
+- 381e22f: cw20 balance
+- Updated dependencies [b9d30fe]
+  - @skip-go/client@0.14.5
+
 ## 3.0.11
 
 ### Patch Changes
