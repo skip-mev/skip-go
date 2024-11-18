@@ -6,6 +6,9 @@ import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
+import { Decimal } from "@cosmjs/math";
+import { useGetBalance } from "@/hooks/useGetBalance";
 
 const COSMOS_GAS_FEE = 2_000_000;
 export const useGasFeeTokenAmount = () => {
@@ -83,10 +86,50 @@ export const useSetMaxAmount = () => {
 export const useInsufficientSourceBalance = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const [sourceAsset] = useAtom(sourceAssetAtom);
-
+  const getBalance = useGetBalance();
+  const [{ data: chains }] = useAtom(skipChainsAtom);
+  const assetDetail = useGetAssetDetails({
+    assetDenom: sourceAsset?.denom,
+    amount: sourceAsset?.amount,
+    chainId: sourceAsset?.chainID,
+  });
   if (!sourceAsset?.amount) return false;
-
   if (!maxAmountTokenMinusFees) return true;
+
+  const chain = chains?.find(chain => chain.chainID === sourceAsset?.chainID);
+  if (chain?.chainType === "cosmos") {
+    const cosmosFeeAssets = chain?.feeAssets;
+    const cosmosFees = cosmosFeeAssets?.map((asset) => {
+      const gasPrice = (() => {
+        if (!asset.gasPrice) return undefined;
+        let price = asset.gasPrice.average;
+        if (price === '') {
+          price = asset.gasPrice.high;
+        }
+        if (price === '') {
+          price = asset.gasPrice.low;
+        }
+        return new GasPrice(Decimal.fromUserInput(price, 18), asset.denom);
+      })();
+      if (!gasPrice) return undefined;
+      const fee = calculateFee(Math.ceil(parseFloat(String(COSMOS_GAS_FEE))), gasPrice);
+      const feeAmount = convertTokenAmountToHumanReadableAmount(fee.amount[0].amount, assetDetail.decimals)
+
+      const _balance = getBalance(sourceAsset?.chainID!, asset.denom)?.amount;
+      if (!_balance) return undefined;
+      const balance = convertTokenAmountToHumanReadableAmount(_balance, assetDetail.decimals);
+      const balanceMinusFee = BigNumber(balance).minus(feeAmount).toString();
+      return {
+        denom: asset.denom,
+        amount: feeAmount,
+        isSufficient: BigNumber(balanceMinusFee).isGreaterThanOrEqualTo(BigNumber(feeAmount))
+      };
+    }).filter((asset) => asset) as { denom: string, amount: string, isSufficient: boolean }[];
+    if (!cosmosFees) return false;
+    const isSufficient = cosmosFees.find((fee) => fee.isSufficient);
+    if (isSufficient) return false;
+    return true;
+  }
 
   if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
     return false;
