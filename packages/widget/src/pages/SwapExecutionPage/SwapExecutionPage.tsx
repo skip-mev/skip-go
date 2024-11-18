@@ -40,7 +40,7 @@ export enum SwapExecutionState {
   signaturesRemaining,
   confirmed,
   validatingGasBalance,
-  approving
+  approving,
 }
 
 export const SwapExecutionPage = () => {
@@ -62,8 +62,10 @@ export const SwapExecutionPage = () => {
     skipSubmitSwapExecutionAtom
   );
 
-  const signaturesRemaining =
-    (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
+  const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
+  const signaturesRemaining = shouldDisplaySignaturesRemaining
+    ? route.txsRequired - (transactionDetailsArray?.length ?? 0)
+    : 0;
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
@@ -97,7 +99,7 @@ export const SwapExecutionPage = () => {
     }
 
     if (overallStatus === "pending") {
-      if (signaturesRemaining > 0) {
+      if (shouldDisplaySignaturesRemaining && signaturesRemaining > 0) {
         return SwapExecutionState.signaturesRemaining;
       }
       return SwapExecutionState.pending;
@@ -126,13 +128,14 @@ export const SwapExecutionPage = () => {
     isValidatingGasBalance,
     overallStatus,
     route?.requiredChainAddresses,
+    shouldDisplaySignaturesRemaining,
     signaturesRemaining,
   ]);
 
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
-    if (signaturesRemaining) {
+    if (shouldDisplaySignaturesRemaining && signaturesRemaining > 0) {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
@@ -141,7 +144,8 @@ export const SwapExecutionPage = () => {
         </StyledSignatureRequiredContainer>
       );
     }
-  }, [signaturesRemaining]);
+    return null;
+  }, [shouldDisplaySignaturesRemaining, signaturesRemaining]);
 
   const renderMainButton = useMemo(() => {
     switch (swapExecutionState) {
@@ -172,7 +176,7 @@ export const SwapExecutionPage = () => {
         );
       case SwapExecutionState.ready: {
         const onClickConfirmSwap = () => {
-          if (route?.txsRequired && route.txsRequired > 1) {
+          if (shouldDisplaySignaturesRemaining) {
             setError({
               errorType: ErrorType.AdditionalSigningRequired,
               onClickContinue: () => submitExecuteRouteMutation(),
@@ -204,7 +208,11 @@ export const SwapExecutionPage = () => {
         );
       case SwapExecutionState.approving:
         return (
-          <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />
+          <MainButton
+            label="Approving allowance"
+            icon={ICONS.rightArrow}
+            loading
+          />
         );
       case SwapExecutionState.pending:
         return (
@@ -222,7 +230,8 @@ export const SwapExecutionPage = () => {
             label={`${signaturesRemaining} ${pluralize(
               "signature",
               signaturesRemaining
-            )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
+            )} ${signaturesRemaining > 1 ? "are" : "is"
+              } still required`}
             loading
             loadingTimeString={convertSecondsToMinutesOrHours(
               route?.estimatedRouteDurationSeconds
@@ -251,6 +260,7 @@ export const SwapExecutionPage = () => {
     route?.txsRequired,
     setCurrentPage,
     setError,
+    shouldDisplaySignaturesRemaining,
     signaturesRemaining,
     submitExecuteRouteMutation,
     swapExecutionState,

@@ -18,6 +18,7 @@ import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs"
 import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
+import { removeTrailingZeros } from "@/utils/number";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -185,7 +186,7 @@ const RenderAssetAmount = ({
     <>
       <img height={20} width={20} src={assetImage} />
       <SmallText normalTextColor title={amount}>
-        {amount}
+        {removeTrailingZeros(amount)}
       </SmallText>
       {!isMobileScreenSize && (
         <SmallText normalTextColor>

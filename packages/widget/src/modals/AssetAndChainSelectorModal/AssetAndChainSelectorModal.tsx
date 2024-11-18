@@ -47,7 +47,7 @@ export type AssetAndChainSelectorModalProps = ModalProps & {
   context: SelectorContext;
 };
 
-const ITEM_HEIGHT = 60;
+const ITEM_HEIGHT = 65;
 const ITEM_GAP = 5;
 
 export const AssetAndChainSelectorModal = createModal(
