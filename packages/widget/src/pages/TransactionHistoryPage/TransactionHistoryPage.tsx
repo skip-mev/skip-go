@@ -24,7 +24,7 @@ export const TransactionHistoryPage = () => {
   const historyList = useMemo(
     () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
     [txHistory]
-  );
+  )
 
   return (
     <Column gap={5}>
@@ -35,7 +35,7 @@ export const TransactionHistoryPage = () => {
           onClick: () => setCurrentPage(Routes.SwapPage),
         }}
       />
-      <StyledContainer gap={5} justify="center">
+      <StyledContainer gap={5}>
         <VirtualList
           key={txHistory.length}
           listItems={historyList}

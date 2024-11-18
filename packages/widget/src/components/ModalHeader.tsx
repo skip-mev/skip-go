@@ -3,6 +3,7 @@ import { Column, Row } from "./Layout";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Text } from "./Typography";
 import { Button } from "./Button";
+import { MAX_MOBILE_SCREEN_WIDTH } from "@/hooks/useIsMobileScreenSize";
 
 type ModalHeaderProps = {
   title: string;
@@ -35,12 +36,15 @@ export const StyledModalContainer = styled(Column)`
   padding: 10px;
   gap: 10px;
   width: calc(100% - 20px);
-  max-height: 600px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
-`;
+  height: 100%;
 
+  @media (max-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
+    max-height: 600px;
+  }
+`;
 export const StyledModalInnerContainer = styled(Column) <{
   height: number;
 }>`

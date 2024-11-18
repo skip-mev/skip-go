@@ -15,6 +15,7 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
+import { removeTrailingZeros } from "@/utils/number";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -188,7 +189,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <Column>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
-                {assetDetails?.amount}
+                {removeTrailingZeros(assetDetails?.amount)}
               </StyledAssetAmount>
               <StyledSymbol normalTextColor>
                 {assetDetails?.symbol}

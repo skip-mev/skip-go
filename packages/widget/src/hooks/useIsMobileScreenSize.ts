@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const MAX_MOBILE_SCREEN_WIDTH = 767;
+export const MAX_MOBILE_SCREEN_WIDTH = 767;
 
 export const useIsMobileScreenSize = () => {
   const [isMobileScreenSize, setIsMobileScreenSize] = useState(window.innerWidth <= MAX_MOBILE_SCREEN_WIDTH);

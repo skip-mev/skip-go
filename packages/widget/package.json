@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.0.11",
+  "version": "3.0.12",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -19,7 +19,8 @@
     "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.cjs",
     "post": "git checkout -- package.json",
-    "generate-chains": "node scripts/generate-chains.cjs"
+    "generate-chains": "node scripts/generate-chains.cjs",
+    "update-registries": "yarn up @initia/initia-registry chain-registry"
   },
   "exports": {
     ".": {
@@ -53,7 +54,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
-    "chain-registry": "^1.69.31",
+    "chain-registry": "^1.69.36",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "node-polyfill-webpack-plugin": "^4.0.0",
@@ -80,6 +81,7 @@
     "wagmi": "^2.12.8"
   },
   "dependencies": {
+    "@cosmjs/cosmwasm-stargate": "^0.32.4",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",

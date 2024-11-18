@@ -56,7 +56,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
             <img src={asset.logoURI} width={20} height={20} />
-            <Text>{asset?.symbol}</Text>
+            <Text>{asset?.recommendedSymbol}</Text>
           </StyledSelectedAsset>
         </>
       ) : (
