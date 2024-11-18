@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.5
+
+### Patch Changes
+
+- b9d30fe: update registries
+
 ## 0.14.4
 
 ### Patch Changes
