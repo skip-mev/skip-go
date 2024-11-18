@@ -24,7 +24,8 @@
     "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
     "watch": "tsup --watch",
-    "watch:link": "tsup --watch --onSuccess \"yalc push\""
+    "watch:link": "tsup --watch --onSuccess \"yalc push\"",
+    "update-registries": "yarn up @initia/initia-registry chain-registry"
   },
   "devDependencies": {
     "@cosmjs/faucet": "0.32.3",
@@ -34,7 +35,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^1.69.31",
+    "chain-registry": "^1.69.36",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "vitest": "^1.2.2"
