@@ -41,12 +41,6 @@ export const useHandleTransactionTimeout = (
 
       setTransactionTimeoutTimer(timeoutTimer);
     }
-    if (
-      swapExecutionState === SwapExecutionState.confirmed &&
-      transactionTimeoutTimer !== undefined
-    ) {
-      clearTimeout(transactionTimeoutTimer);
-    }
 
     return () => {
       clearTimeout(transactionTimeoutTimer);
