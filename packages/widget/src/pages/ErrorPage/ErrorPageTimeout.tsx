@@ -41,7 +41,7 @@ export const ErrorPageTimeout = ({
     if (error && data?.isSettled) {
       setError(undefined);
     }
-  }, [data?.isSettled, error]);
+  }, [data?.isSettled, error, setError]);
 
   return (
     <>
