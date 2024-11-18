@@ -56,6 +56,7 @@ export const SwapExecutionPage = () => {
 
   const signaturesRemaining =
     (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
+  const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
@@ -84,7 +85,7 @@ export const SwapExecutionPage = () => {
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
-    if (signaturesRemaining) {
+    if (shouldDisplaySignaturesRemaining && signaturesRemaining) {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
@@ -93,7 +94,7 @@ export const SwapExecutionPage = () => {
         </StyledSignatureRequiredContainer>
       );
     }
-  }, [signaturesRemaining]);
+  }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
 
   const SwapExecutionPageRoute = simpleRoute
