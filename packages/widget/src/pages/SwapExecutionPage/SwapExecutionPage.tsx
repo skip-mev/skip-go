@@ -54,9 +54,10 @@ export const SwapExecutionPage = () => {
     skipSubmitSwapExecutionAtom
   );
 
-  const signaturesRemaining =
-    (route?.txsRequired ?? 0) - transactionDetailsArray?.length;
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
+  const signaturesRemaining = shouldDisplaySignaturesRemaining
+    ? route.txsRequired - (transactionDetailsArray?.length ?? 0)
+    : 0;
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
