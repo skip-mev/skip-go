@@ -12,7 +12,7 @@ import { TransactionDetails } from "@/state/swapExecutionPage";
 import { copyToClipboard } from "@/utils/misc";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
-  status: SimpleStatus;
+  status?: SimpleStatus;
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
@@ -28,6 +28,7 @@ const statusMap = {
   completed: "Completed",
   failed: "Failed",
   approving: "Approving allowance",
+  incomplete: "Incomplete",
 };
 
 export const TransactionHistoryPageHistoryItemDetails = ({
@@ -41,7 +42,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   const theme = useTheme();
 
   const statusColor = useMemo(() => {
-    if (status === "failed") {
+    if (status === "failed" || status === "incomplete") {
       return theme.error.text;
     } else if (status === "completed") {
       return theme.success.text;
@@ -64,7 +65,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor color={statusColor}>
-            {statusMap[status]}
+            {status ? statusMap[status] : "Loading..."}
           </SmallText>
           <SmallText>at {absoluteTimeString}</SmallText>
         </Row>

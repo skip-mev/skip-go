@@ -357,6 +357,8 @@ export type SimpleStatus =
   | "completed"
   | "failed"
   | "approving"
+  | "incomplete";
+
 
 export type ClientTransferEvent = {
   fromChainID: string;
