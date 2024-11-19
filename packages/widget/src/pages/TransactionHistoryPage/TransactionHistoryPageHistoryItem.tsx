@@ -216,6 +216,6 @@ const StyledGreenDot = styled.div`
 `;
 
 const StyledHistoryItemContainer = styled(Row)`
-  max-width: calc(100% - 80px);
+  max-width: calc(100% - 100px);
   overflow: hidden;
 `;
