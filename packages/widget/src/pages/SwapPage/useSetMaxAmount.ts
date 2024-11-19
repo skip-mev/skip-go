@@ -6,12 +6,10 @@ import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
-import { useCosmosFeeAssetValidation } from "@/hooks/useCosmosFeeAssetValidation";
-import { COSMOS_GAS_FEE } from "@/constants/widget";
+import { useCosmosFeeAssetSourceAmountValidation, useCosmosFeeAssetsBalanceValidation } from "@/hooks/useCosmosFeeAssetValidation";
 
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
-  const [{ data: chains }] = useAtom(skipChainsAtom);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -19,7 +17,8 @@ export const useGasFeeTokenAmount = () => {
     chainId: sourceAsset?.chainID,
   });
 
-  const feeAsset = chains?.find(chain => chain.chainID === sourceAsset?.chainID)?.feeAssets?.[0];
+  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
+  const cosmosFeeUsed = cosmosFees?.find(fee => fee?.isSufficient)
 
   const chainType = sourceDetails?.chain?.chainType;
 
@@ -44,8 +43,8 @@ export const useGasFeeTokenAmount = () => {
         return 0;
       }
     case "cosmos":
-      if (!feeAsset?.gasPrice?.average || feeAsset.denom !== sourceAsset?.denom) return 0;
-      return Number(feeAsset.gasPrice.average) * (COSMOS_GAS_FEE);
+      if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
+      return Number(cosmosFeeUsed.feeAmount);
     case "svm":
     default:
       return 0;
@@ -85,7 +84,7 @@ export const useInsufficientSourceBalance = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
-  const cosmosFeeAssetValidation = useCosmosFeeAssetValidation();
+  const cosmosFeeAssetValidation = useCosmosFeeAssetSourceAmountValidation();
 
   if (!sourceAsset?.amount) return false;
   if (!maxAmountTokenMinusFees) return true;
@@ -98,6 +97,5 @@ export const useInsufficientSourceBalance = () => {
   if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
     return false;
   }
-
   return true;
 };
