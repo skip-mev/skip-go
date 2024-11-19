@@ -18,7 +18,7 @@ export const useCW20Balance = ({
 }) => {
   const skipClientConfig = useAtomValue(skipClientConfigAtom)
   const query = useQuery({
-    queryKey: ["cw20Balance", { asset, address }],
+    queryKey: ["cw20Balance", { denom: asset.denom, address }],
     queryFn: async () => {
       const rpcURL = await skipClientConfig.endpointOptions?.getRpcEndpointForChain?.(asset.chainID) || getChainInfo({
         chainId: asset.chainID,

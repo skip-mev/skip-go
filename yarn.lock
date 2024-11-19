@@ -7770,6 +7770,8 @@ __metadata:
   dependencies:
     "@chromatic-com/storybook": ^1.6.1
     "@cosmjs/cosmwasm-stargate": ^0.32.4
+    "@cosmjs/math": ^0.32.4
+    "@cosmjs/stargate": ^0.32.4
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0

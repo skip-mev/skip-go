@@ -6,8 +6,9 @@ import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
+import { useCosmosFeeAssetValidation } from "@/hooks/useCosmosFeeAssetValidation";
+import { COSMOS_GAS_FEE } from "@/constants/widget";
 
-const COSMOS_GAS_FEE = 2_000_000;
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
@@ -83,10 +84,16 @@ export const useSetMaxAmount = () => {
 export const useInsufficientSourceBalance = () => {
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
   const [sourceAsset] = useAtom(sourceAssetAtom);
+  const [{ data: chains }] = useAtom(skipChainsAtom);
+  const cosmosFeeAssetValidation = useCosmosFeeAssetValidation();
 
   if (!sourceAsset?.amount) return false;
-
   if (!maxAmountTokenMinusFees) return true;
+
+  const chain = chains?.find(chain => chain.chainID === sourceAsset?.chainID);
+  if (chain?.chainType === "cosmos") {
+    return cosmosFeeAssetValidation
+  }
 
   if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
     return false;
