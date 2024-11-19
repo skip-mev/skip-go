@@ -47,9 +47,7 @@ export const ErrorPageTransactionReverted = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             setErrorAtom(undefined);
-            if (onClickBack) {
-              onClickBack();
-            }
+            onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           }
         }}

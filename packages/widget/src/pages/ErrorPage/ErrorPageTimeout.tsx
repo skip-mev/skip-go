@@ -8,7 +8,10 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
-import { useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { useEffect } from "react";
 
 export type ErrorPageTimeoutProps = {
   txHash: string
@@ -22,8 +25,23 @@ export const ErrorPageTimeout = ({
   onClickBack,
 }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
-  const setErrorAtom = useSetAtom(errorAtom);
+  const [error, setError] = useAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const {
+    route,
+    transactionDetailsArray,
+  } = useAtomValue(swapExecutionStateAtom);
+
+  const { data } = useBroadcastedTxsStatus({
+    txsRequired: route?.txsRequired,
+    txs: transactionDetailsArray,
+  });
+
+  useEffect(() => {
+    if (error && data?.isSettled) {
+      setError(undefined);
+    }
+  }, [data?.isSettled, error, setError]);
 
   return (
     <>
@@ -32,10 +50,8 @@ export const ErrorPageTimeout = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            setErrorAtom(undefined);
-            if (onClickBack) {
-              onClickBack();
-            }
+            setError(undefined);
+            onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
