@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.0.13
+
+### Patch Changes
+
+- 8a34cf5: improve cosmos chains balance validation
+- 1284623: fix history item stuck loading
+- 970fc82: fix client side error undefined asset in cw20 hook
+- b9f17e6: fix timeout page freeze
+- 08925c0: source amount validation based on fee assets
+
 ## 3.0.12
 
 ### Patch Changes
