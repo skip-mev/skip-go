@@ -14,11 +14,10 @@ import {
 } from "@/state/history";
 import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
-import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
-import { useSyncTxStatus } from "../SwapExecutionPage/useSyncTxStatus";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
 import { removeTrailingZeros } from "@/utils/number";
+import { useTxHistoryStatus } from "@/hooks/useTxHistoryStatus";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -36,17 +35,12 @@ export const TransactionHistoryPageHistoryItem = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const { data: statusData } = useBroadcastedTxsStatus({
-    txsRequired: txHistoryItem?.route.txsRequired,
+  const historyStatus = useTxHistoryStatus({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
     })),
-  });
-
-  useSyncTxStatus({
-    statusData,
-    historyIndex: index,
+    txsRequired: txHistoryItem.route.txsRequired,
   });
 
   const removeTransactionHistoryItem = useSetAtom(
@@ -63,7 +57,6 @@ export const TransactionHistoryPageHistoryItem = ({
       destAssetChainID,
     },
     timestamp,
-    status,
     transactionDetails,
   } = txHistoryItem;
 
@@ -92,7 +85,7 @@ export const TransactionHistoryPageHistoryItem = ({
   };
 
   const renderStatus = useMemo(() => {
-    switch (status) {
+    switch (historyStatus) {
       case "unconfirmed":
       case "pending":
         return (
@@ -105,10 +98,11 @@ export const TransactionHistoryPageHistoryItem = ({
         );
       case "completed":
         return <StyledGreenDot />;
+      case "incomplete":
       case "failed":
         return <XIcon color={theme.error.text} />;
     }
-  }, [status, theme.error.text, theme.primary.text.normal]);
+  }, [historyStatus, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -119,7 +113,7 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (status === "pending") {
+    if (historyStatus === "pending") {
       return "In Progress";
     }
     return formatDistanceStrict(new Date(timestamp), new Date(), {
@@ -131,7 +125,7 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("hour", "hr")
       .replace("seconds", "secs")
       .replace("second", "sec");
-  }, [status, timestamp]);
+  }, [historyStatus, timestamp]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -160,7 +154,7 @@ export const TransactionHistoryPageHistoryItem = ({
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={status}
+          status={historyStatus}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
