@@ -18,6 +18,16 @@ npm install @skip-go/client
 yarn add @skip-go/client
 ```
 </CodeGroup>
+
+<Info>
+If you're using `yarn` (or another package manager that doesn't install peer dependencies by default)
+you may need to install these peer dependencies as well:
+
+```bash
+  yarn add viem @solana/web3.js
+```
+</Info>
+
 </Step> <Step title="Initialize Client">
 
 To start integrating with the Skip Go API, initialize a `SkipClient` instance. This `skipClient` provides helper methods for common actions such as querying assets and chains, constructing routes, and executing transactions.
