@@ -114,8 +114,8 @@ export const useInsufficientSourceBalance = () => {
       if (!gasPrice) return undefined;
       const fee = calculateFee(Math.ceil(parseFloat(String(COSMOS_GAS_FEE))), gasPrice);
       const feeAmount = convertTokenAmountToHumanReadableAmount(fee.amount[0].amount, assetDetail.decimals)
-
-      const _balance = getBalance(sourceAsset?.chainID!, asset.denom)?.amount;
+      if (!sourceAsset?.chainID) return undefined;
+      const _balance = getBalance(sourceAsset?.chainID, asset.denom)?.amount;
       if (!_balance) return undefined;
       const balance = convertTokenAmountToHumanReadableAmount(_balance, assetDetail.decimals);
       const balanceMinusFee = BigNumber(balance).minus(feeAmount).toString();

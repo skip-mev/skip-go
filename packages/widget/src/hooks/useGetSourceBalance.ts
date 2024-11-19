@@ -41,7 +41,7 @@ export const useGetSourceBalance = () => {
       };
     }
     return skipBalances?.chains?.[chainID]?.denoms?.[denom];
-  }, [sourceAsset, sourceAccount, skipBalances]);
+  }, [sourceAsset, sourceAccount, skipBalances, cw20Balance.data, cw20Balance.error]);
 
   return {
     data,
