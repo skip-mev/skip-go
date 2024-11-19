@@ -23,13 +23,8 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
       if (!balance) return undefined;
       const gasPrice = (() => {
         if (!a.gasPrice) return undefined;
-        let price = a.gasPrice.average;
-        if (price === '') {
-          price = a.gasPrice.high;
-        }
-        if (price === '') {
-          price = a.gasPrice.low;
-        }
+        const price =
+          a.gasPrice.average || a.gasPrice.high || a.gasPrice.low;
         return new GasPrice(Decimal.fromUserInput(price, 18), a.denom);
       })();
       if (!gasPrice) return undefined;
