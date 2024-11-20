@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.0.14
+
+### Patch Changes
+
+- 1001c0b: add go fast specific styles
+- 06dff77: gas amount set by chain id
+- cc8c27a: fix chainId typescript error
+- 1042690: fix ledger initial connect
+- Updated dependencies [23edd2f]
+  - @skip-go/client@0.14.6
+
 ## 3.0.13
 
 ### Patch Changes
