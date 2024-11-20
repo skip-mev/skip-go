@@ -195,7 +195,7 @@ const StyledLoadingButton = styled(StyledMainButton)
       ? props.theme.brandColor
       : props.theme.primary.text.normal}
   );
-  animation: rotate ${(props) => (props.useBrandColor ? '2s' : '4s')} linear infinite;
+  animation: rotate ${(props) => (props.useBrandColor ? '1.3s' : '4s')} linear infinite;
 }
 
   @keyframes rotate {
