@@ -95,7 +95,10 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       );
     case SwapExecutionState.waitingForSigning:
       return (
-        <MainButton label="Confirm swap" icon={ICONS.rightArrow} loading />
+        <MainButton label="Confirm swap" icon={ICONS.rightArrow} loading
+          useBrandColorForLoadingAnimation={isGoFast}
+          extra={isGoFast && <GoFastSymbol />}
+        />
       );
     case SwapExecutionState.approving:
       return (
