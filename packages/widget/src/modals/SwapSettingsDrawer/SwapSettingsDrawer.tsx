@@ -24,7 +24,7 @@ export const SwapSettingsDrawer = createModal(() => {
     );
   }, [route, chains]);
 
-  const clientOperations = route && getClientOperations(route.operations);
+  const clientOperations = getClientOperations(route?.operations);
 
   const axelarTransferOperation = useMemo(() => {
     if (!clientOperations) return;

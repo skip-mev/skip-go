@@ -11,6 +11,7 @@ import { ThinArrowIcon } from "./ThinArrowIcon";
 import { HamburgerIcon } from "./HamburgerIcon";
 import { HorizontalLineIcon } from "./HorizontalLineIcon";
 import { SVGProps } from "react";
+import { LightningIcon } from "./LightningIcon";
 
 export enum ICONS {
   none,
@@ -27,6 +28,7 @@ export enum ICONS {
   thinArrow,
   hamburger,
   horizontalLine,
+  lightning
 }
 
 type IconProps = SVGProps<SVGSVGElement> & {
@@ -52,4 +54,5 @@ export const iconMap: IconMap = {
   [ICONS.thinArrow]: ThinArrowIcon,
   [ICONS.hamburger]: HamburgerIcon,
   [ICONS.horizontalLine]: HorizontalLineIcon,
+  [ICONS.lightning]: LightningIcon,
 };

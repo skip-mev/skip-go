@@ -169,7 +169,8 @@ export function getClientOperation(operation: SkipClientOperation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(operations: SkipClientOperation[]) {
+export function getClientOperations(operations?: SkipClientOperation[]) {
+  if (!operations) return [];
   let transferIndex = 0;
   return operations.map((operation, index, arr) => {
     const prevOperation = arr[index - 1];
