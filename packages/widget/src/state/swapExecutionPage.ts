@@ -229,6 +229,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           userAddresses,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           validateGasBalance: route.sourceAssetChainID !== "984122",
+          approveMaxAllowance: true,
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
               if (_chainID === "carbon-1") {

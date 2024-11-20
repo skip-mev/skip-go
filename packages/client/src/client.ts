@@ -440,8 +440,7 @@ export class SkipClient {
     return await this.executeEVMTransaction({
       message: evmTx,
       signer: evmSigner,
-      onTransactionSigned: options.onTransactionSigned,
-      onApproveAllowance: options.onApproveAllowance,
+      options,
     });
   }
 
@@ -516,19 +515,19 @@ export class SkipClient {
   async executeEVMTransaction({
     message,
     signer,
-    onTransactionSigned,
-    onApproveAllowance,
+    options
   }: {
     message: types.EvmTx;
     signer: WalletClient;
-    onTransactionSigned?: types.TransactionCallbacks['onTransactionSigned'];
-    onApproveAllowance?: types.TransactionCallbacks['onApproveAllowance'];
+    options: clientTypes.ExecuteRouteOptions;
   }) {
     if (!signer.account) {
       throw new Error(
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
+
+    const { onApproveAllowance, onTransactionSigned, approveMaxAllowance } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -558,7 +557,7 @@ export class SkipClient {
         functionName: 'approve',
         args: [
           requiredApproval.spender as `0x${string}`,
-          maxUint256,
+          approveMaxAllowance ? maxUint256 : BigInt(requiredApproval.amount),
         ],
         chain: signer.chain,
       });
