@@ -1,19 +1,20 @@
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { skipAssetsAtom, skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { Decimal } from "@cosmjs/math";
 import { GasPrice, calculateFee } from "@cosmjs/stargate";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useGetBalance } from "./useGetBalance";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { BigNumber } from "bignumber.js";
-import { COSMOS_GAS_FEE } from "@/constants/widget";
+import { DEFAULT_COSMOS_GAS_AMOUNT, SWAP_COSMOS_GAS_AMOUNT } from "@/constants/widget";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees } from "@/pages/SwapPage/useSetMaxAmount";
 
 /** feeAmount is in crypto amount */
 export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
   const getBalance = useGetBalance();
-  const [{ data: chains }] = useAtom(skipChainsAtom);
+  const { data: chains } = useAtomValue(skipChainsAtom);
+  const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
 
   const feeAssetsState = useMemo(() => {
     if (!chainId) return undefined;
@@ -28,7 +29,8 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         return new GasPrice(Decimal.fromUserInput(price, 18), a.denom);
       })();
       if (!gasPrice) return undefined;
-      const fee = calculateFee(Math.ceil(parseFloat(String(COSMOS_GAS_FEE))), gasPrice);
+      const isSwapChain = swapVenues?.map(venue => venue.chainID).includes(chainId)
+      const fee = calculateFee(Math.ceil(parseFloat(String(isSwapChain ? SWAP_COSMOS_GAS_AMOUNT : DEFAULT_COSMOS_GAS_AMOUNT))), gasPrice);
       const feeAmount = fee.amount[0].amount
 
       return {
@@ -44,8 +46,8 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
 }
 
 export const useCosmosFeeAssetSourceAmountValidation = () => {
-  const [sourceAsset] = useAtom(sourceAssetAtom);
-  const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
+  const { data: assets } = useAtomValue(skipAssetsAtom);
   const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
 
