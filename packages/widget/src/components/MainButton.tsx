@@ -4,6 +4,8 @@ import { SmallText, Text } from "@/components/Typography";
 import { useTheme } from "styled-components";
 import { ICONS, iconMap } from "@/icons";
 import { getBrandButtonTextColor } from "@/utils/colors";
+import { ReactNode } from "react";
+import { RouteResponse } from "@skip-go/client";
 
 export type MainButtonProps = {
   label: string;
@@ -14,6 +16,13 @@ export type MainButtonProps = {
   loading?: boolean;
   loadingTimeString?: string;
   onClick?: () => void;
+  extra?: ReactNode;
+  route?: RouteResponse
+  useBrandColorForLoadingAnimation?: boolean;
+
+};
+
+type LoadingButtonProps = MainButtonProps & {
 };
 
 export const MainButton = ({
@@ -25,6 +34,8 @@ export const MainButton = ({
   loading,
   loadingTimeString,
   onClick,
+  extra,
+  useBrandColorForLoadingAnimation,
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled
@@ -42,6 +53,8 @@ export const MainButton = ({
         label={label}
         backgroundColor={theme.primary.background.normal}
         loadingTimeString={loadingTimeString}
+        extra={extra}
+        useBrandColorForLoadingAnimation={useBrandColorForLoadingAnimation}
       />
     );
   }
@@ -86,11 +99,14 @@ export const LoadingButton = ({
   label,
   backgroundColor,
   loadingTimeString,
-}: MainButtonProps) => (
+  useBrandColorForLoadingAnimation,
+  extra
+}: LoadingButtonProps) => (
   <StyledLoadingButton
     align="center"
     justify="center"
     backgroundColor={backgroundColor}
+    useBrandColor={useBrandColorForLoadingAnimation}
   >
     <StyledOverlay
       className="overlay"
@@ -104,6 +120,7 @@ export const LoadingButton = ({
       </Text>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
+          {extra}
           <SmallText>{loadingTimeString}.</SmallText>
         </StyledTimeRemaining>
       )}
@@ -155,11 +172,13 @@ const StyledMainButton = styled(Row).attrs({
     `};
 `;
 
-const StyledLoadingButton = styled(StyledMainButton)`
+const StyledLoadingButton = styled(StyledMainButton)
+  <{ useBrandColor?: boolean; }>`
   background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
+
 
   &:before {
     content: '';
@@ -171,7 +190,7 @@ const StyledLoadingButton = styled(StyledMainButton)`
       transparent,
       transparent,
       transparent,
-      ${(props) => props.theme.primary.text.normal}
+      ${(props) => props.useBrandColor ? props.theme.brandColor : props.theme.primary.text.normal}
     );
     animation: rotate 4s linear infinite;
   }
@@ -190,6 +209,7 @@ const StyledTimeRemaining = styled(Row)`
   padding: 16px;
   border-radius: 10px;
   height: 40px;
+  gap: 5px
 `;
 
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`

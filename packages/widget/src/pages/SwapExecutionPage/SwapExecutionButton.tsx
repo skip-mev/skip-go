@@ -13,6 +13,8 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
+import { GoFastSymbol } from "@/components/GoFastSymbol";
+import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 interface SwapExecutionButtonProps {
   swapExecutionState: SwapExecutionState | undefined;
@@ -35,6 +37,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const setError = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
+  const isGoFast = useIsGoFast(route)
 
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
@@ -103,6 +106,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         <MainButton
           label="Swap in progress"
           loading
+          useBrandColorForLoadingAnimation={isGoFast}
+          extra={isGoFast && <GoFastSymbol />}
           loadingTimeString={convertSecondsToMinutesOrHours(
             route?.estimatedRouteDurationSeconds
           )}
