@@ -41,7 +41,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
 
-import { publicActions, WalletClient } from 'viem';
+import { maxUint256, publicActions, WalletClient } from 'viem';
 
 import { chains, findFirstWorkingEndpoint } from './chains';
 import {
@@ -558,7 +558,7 @@ export class SkipClient {
         functionName: 'approve',
         args: [
           requiredApproval.spender as `0x${string}`,
-          BigInt(requiredApproval.amount),
+          maxUint256,
         ],
         chain: signer.chain,
       });
