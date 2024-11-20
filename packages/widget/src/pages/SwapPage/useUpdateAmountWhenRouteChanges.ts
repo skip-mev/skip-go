@@ -9,7 +9,7 @@ import {
   convertTokenAmountToHumanReadableAmount,
   hasAmountChanged,
 } from "@/utils/crypto";
-import { limitDecimalsDisplayed } from "@/utils/number";
+import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
 import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
@@ -47,12 +47,12 @@ export const useUpdateAmountWhenRouteChanges = () => {
     if (direction === "swap-in" && swapInAmountChanged) {
       setDestinationAsset((old) => ({
         ...old,
-        amount: limitDecimalsDisplayed(swapInAmount),
+        amount: removeTrailingZeros(limitDecimalsDisplayed(swapInAmount)),
       }));
     } else if (direction === "swap-out" && swapOutAmountChanged) {
       setSourceAsset((old) => ({
         ...old,
-        amount: limitDecimalsDisplayed(swapOutAmount),
+        amount: removeTrailingZeros(limitDecimalsDisplayed(swapOutAmount)),
       }));
     }
   }, [
