@@ -40,7 +40,7 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         isSufficient: balance ? BigNumber(balance).isGreaterThanOrEqualTo(BigNumber(feeAmount)) : false,
       }
     }).filter((asset) => asset) as { feeAmount: string, denom: string, balanceWithFees: string, isSufficient: boolean }[];
-  }, [chainId, chains, getBalance]);
+  }, [chainId, chains, getBalance, swapVenues]);
 
   return feeAssetsState;
 }
