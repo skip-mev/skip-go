@@ -18,7 +18,7 @@ export type MainButtonProps = {
   onClick?: () => void;
   extra?: ReactNode;
   route?: RouteResponse
-  useBrandColorForLoadingAnimation?: boolean;
+  isGoFast?: boolean;
 
 };
 
