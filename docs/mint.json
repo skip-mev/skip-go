@@ -115,13 +115,6 @@
       ]
     },
     {
-      "group": "Anything Anywhere",
-      "pages": [
-        "anything-anywhere/how-to-generate-shareable-links",
-        "anything-anywhere/embed-iframe-widget"
-      ]
-    },
-    {
       "group": "Prod Endpoints",
       "pages": [
         {
