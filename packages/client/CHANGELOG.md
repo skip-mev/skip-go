@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.6
+
+### Patch Changes
+
+- 23edd2f: max amount allowance approval
+
 ## 0.14.5
 
 ### Patch Changes
