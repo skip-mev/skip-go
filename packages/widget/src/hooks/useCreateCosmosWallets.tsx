@@ -14,6 +14,7 @@ import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
 import {
   getCosmosWalletInfo,
+  keplrMainnetWithoutEthermintChainIdsInitialConnect,
   keplrMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
 } from "@/constants/graz";
@@ -108,17 +109,23 @@ export const useCreateCosmosWallets = () => {
               .includes(x) &&
             mainnetChains.map((c) => c.chainId).includes(x)
         );
-
         const connectEco = async () => {
-          const promises = initialChainIds.map(
-            async (c) =>
+          try {
+            await connect({
+              chainId: initialChainIds,
+              walletType: wallet,
+            })
+          } catch (e) {
+            const error = e as Error;
+            if (error?.message?.toLowerCase().includes("no ethereum public key")) {
               await connect({
-                chainId: c,
+                chainId: keplrMainnetWithoutEthermintChainIdsInitialConnect,
                 walletType: wallet,
               })
-          );
-          await Promise.all(promises);
-          return Promise.resolve();
+              return Promise.resolve();
+            }
+            throw e;
+          }
         };
 
         const getAddress = async ({
