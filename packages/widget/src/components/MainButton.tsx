@@ -19,7 +19,6 @@ export type MainButtonProps = {
   extra?: ReactNode;
   route?: RouteResponse
   isGoFast?: boolean;
-
 };
 
 type LoadingButtonProps = MainButtonProps & {
@@ -35,7 +34,7 @@ export const MainButton = ({
   loadingTimeString,
   onClick,
   extra,
-  useBrandColorForLoadingAnimation,
+  isGoFast,
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled
@@ -54,7 +53,7 @@ export const MainButton = ({
         backgroundColor={theme.primary.background.normal}
         loadingTimeString={loadingTimeString}
         extra={extra}
-        useBrandColorForLoadingAnimation={useBrandColorForLoadingAnimation}
+        isGoFast={isGoFast}
       />
     );
   }
@@ -99,14 +98,14 @@ export const LoadingButton = ({
   label,
   backgroundColor,
   loadingTimeString,
-  useBrandColorForLoadingAnimation,
+  isGoFast,
   extra
 }: LoadingButtonProps) => (
   <StyledLoadingButton
     align="center"
     justify="center"
     backgroundColor={backgroundColor}
-    useBrandColor={useBrandColorForLoadingAnimation}
+    isGoFast={isGoFast}
   >
     <StyledOverlay
       className="overlay"
@@ -173,7 +172,7 @@ const StyledMainButton = styled(Row).attrs({
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)
-  <{ useBrandColor?: boolean; }>`
+  <{ isGoFast?: boolean; }>`
   background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
@@ -191,11 +190,11 @@ const StyledLoadingButton = styled(StyledMainButton)
     transparent,
     transparent,
     ${(props) =>
-    props.useBrandColor
+    props.isGoFast
       ? props.theme.brandColor
       : props.theme.primary.text.normal}
   );
-  animation: rotate ${(props) => (props.useBrandColor ? '1.3s' : '4s')} linear infinite;
+  animation: rotate ${(props) => (props.isGoFast ? '1.3s' : '4s')} linear infinite;
 }
 
   @keyframes rotate {
