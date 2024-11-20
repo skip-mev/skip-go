@@ -25,7 +25,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
       },
       walletConnect: {
         options: {
-          projectId: "baea98874b230c2a8d9c0ae32a98677a",
+          projectId: walletConnect.options?.projectId,
         },
         web3Modal: walletConnect?.web3Modal
       }
