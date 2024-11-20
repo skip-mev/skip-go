@@ -180,20 +180,24 @@ const StyledLoadingButton = styled(StyledMainButton)
   }
 
 
-  &:before {
-    content: '';
-    position: absolute;
-    height: 500px;
-    width: 500px;
-    opacity: 0.5;
-    background-image: conic-gradient(
-      transparent,
-      transparent,
-      transparent,
-      ${(props) => props.useBrandColor ? props.theme.brandColor : props.theme.primary.text.normal}
-    );
-    animation: rotate 4s linear infinite;
-  }
+&:before {
+  content: '';
+  position: absolute;
+  height: 500px;
+  width: 500px;
+  opacity: 0.5;
+  background-image: conic-gradient(
+    transparent,
+    transparent,
+    transparent,
+    ${(props) =>
+    props.useBrandColor
+      ? props.theme.brandColor
+      : props.theme.primary.text.normal}
+  );
+  animation: rotate ${(props) => (props.useBrandColor ? '2s' : '4s')} linear infinite;
+}
+
   @keyframes rotate {
     0% {
       transform: rotate(0deg);
