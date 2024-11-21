@@ -21,8 +21,8 @@ export type VirtualListProps<T> = {
   };
 };
 
-const MAX_MODAL_HEIGHT = 600;
-const MOBILE_VERTICAL_MARGIN = 100;
+export const MAX_MODAL_HEIGHT = 600;
+export const MOBILE_VERTICAL_MARGIN = 100;
 
 export const VirtualList = <T,>({
   listItems,
@@ -92,7 +92,7 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer gap={10}>
+      <StyledNoResultsContainer gap={10} height={virtualListHeight}>
         {empty?.icon}
         <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
@@ -125,11 +125,10 @@ export const VirtualList = <T,>({
   );
 };
 
-const StyledNoResultsContainer = styled(Column)`
-  min-height: 530px;
-  @media (max-width: 767px) {
-    min-height: 493px;
-  }
+const StyledNoResultsContainer = styled(Column) <{
+  height: number;
+}>`
+  min-height: ${({ height }) => height}px;
   width: 100%;
   text-align: center;
   align-items: center;

@@ -7,7 +7,7 @@ import {
   skipChainsAtom,
 } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { VirtualList } from "@/components/VirtualList";
+import { MAX_MODAL_HEIGHT, MOBILE_VERTICAL_MARGIN, VirtualList } from "@/components/VirtualList";
 import {
   AssetAndChainSelectorModalRowItem,
   Skeleton,
@@ -106,10 +106,7 @@ export const AssetAndChainSelectorModal = createModal(
 
     useEffect(() => {
       if (!isLoading && assets) {
-        const timer = setTimeout(() => {
-          setShowSkeleton(false);
-        }, 100);
-        return () => clearTimeout(timer);
+        setShowSkeleton(false);
       }
     }, [isLoading, assets]);
 
@@ -191,9 +188,9 @@ export const AssetAndChainSelectorModal = createModal(
 );
 
 const StyledColumn = styled(Column)`
-  height: 530px;
+  height:  ${MAX_MODAL_HEIGHT - (ITEM_HEIGHT + ITEM_GAP)}px;
   @media (max-width: 767px) {
-    height: 493px;
+    height: ${window.innerHeight - (ITEM_HEIGHT + ITEM_GAP) - MOBILE_VERTICAL_MARGIN * 2}px;
   }
   overflow: hidden;
 `;
