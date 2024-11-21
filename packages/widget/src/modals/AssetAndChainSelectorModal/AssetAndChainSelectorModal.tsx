@@ -21,6 +21,7 @@ import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommen
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
+import styled from "styled-components";
 
 export type GroupedAsset = {
   id: string;
@@ -167,11 +168,11 @@ export const AssetAndChainSelectorModal = createModal(
           onKeyDown={onKeyDown}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
-          <Column>
-            {Array.from({ length: 10 }, (_, index) => (
+          <StyledColumn>
+            {Array.from({ length: 8 }, (_, index) => (
               <Skeleton key={index} />
             ))}
-          </Column>
+          </StyledColumn>
         ) : (
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
@@ -189,3 +190,10 @@ export const AssetAndChainSelectorModal = createModal(
   }
 );
 
+const StyledColumn = styled(Column)`
+  height: 530px;
+  @media (max-width: 767px) {
+    height: 493px;
+  }
+  overflow: hidden;
+`;

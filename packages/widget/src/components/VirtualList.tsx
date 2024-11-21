@@ -94,7 +94,7 @@ export const VirtualList = <T,>({
     return (
       <StyledNoResultsContainer gap={10}>
         {empty?.icon}
-        <SmallText fontSize={22}>{empty?.header}</SmallText>
+        <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
       </StyledNoResultsContainer>
     );
@@ -126,7 +126,10 @@ export const VirtualList = <T,>({
 };
 
 const StyledNoResultsContainer = styled(Column)`
-  min-height: 300px;
+  min-height: 530px;
+  @media (max-width: 767px) {
+    min-height: 493px;
+  }
   width: 100%;
   text-align: center;
   align-items: center;
@@ -135,4 +138,5 @@ const StyledNoResultsContainer = styled(Column)`
 
 const StyledEmptyDetails = styled(SmallText)`
   white-space: pre-line;
+  text-align: center;
 `;

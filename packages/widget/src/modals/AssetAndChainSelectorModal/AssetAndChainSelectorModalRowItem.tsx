@@ -145,7 +145,7 @@ export const Skeleton = () => {
     <ModalRowItem
       style={{ margin: "5px 0" }}
       leftContent={
-        <StyledRow align="center" gap={10}>
+        <StyledRow align="center" gap={8}>
           <CircleSkeletonElement width={35} height={35} />
           <SkeletonElement width={80} height={20} />
           <SkeletonElement width={60} height={16} />
