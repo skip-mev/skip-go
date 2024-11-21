@@ -40,14 +40,14 @@ const SlippageSelector: React.FC = () => {
       </SwapDetailText>
       <StyledSlippageOptionsContainer gap={5}>
         {SLIPPAGE_OPTIONS.map((option) => (
-          <StyledSlippageOptionLabel
+          <StyledSettingsOptionLabel
             key={option}
             monospace
             selected={option === slippage && !isInputFocused}
             onClick={() => setSlippage(option)}
           >
             {option}%
-          </StyledSlippageOptionLabel>
+          </StyledSettingsOptionLabel>
         ))}
         <CustomSlippageContainer>
           {isCustomSlippage || isInputFocused ? (
@@ -72,13 +72,13 @@ const SlippageSelector: React.FC = () => {
               </CustomSlippageInputRightIcon>
             </>
           ) : (
-            <StyledSlippageOptionLabel
+            <StyledSettingsOptionLabel
               monospace
               selected={isCustomSlippage && !isInputFocused}
               onClick={() => setIsInputFocused(true)}
             >
               Custom
-            </StyledSlippageOptionLabel>
+            </StyledSettingsOptionLabel>
           )}
         </CustomSlippageContainer>
       </StyledSlippageOptionsContainer>
@@ -132,7 +132,7 @@ const Tooltip = styled(SmallText).attrs({
   z-index: 1;
 `;
 
-const StyledSlippageOptionLabel = styled(SmallText) <{ selected?: boolean }>`
+export const StyledSettingsOptionLabel = styled(SmallText) <{ selected?: boolean }>`
   border-radius: 7px;
   padding: 4px 7px;
   white-space: nowrap;

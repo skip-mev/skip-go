@@ -106,7 +106,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         <MainButton
           label="Swap in progress"
           loading
-          isGoFast
+          isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
           loadingTimeString={convertSecondsToMinutesOrHours(
             route?.estimatedRouteDurationSeconds

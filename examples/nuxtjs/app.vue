@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="width:450px;height:820px;">
+    <div style="width:100%; max-width:500px; padding: 0 10px;">
       <skip-widget
         theme='{
           "backgroundColor": "#191A1C",

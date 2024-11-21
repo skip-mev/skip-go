@@ -44,7 +44,13 @@ const Home = () => {
           transform: 'translateY(-185px)',
         }}
       >
-        <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
+        <div style={{
+          width: '100%',
+          maxWidth: 500,
+          padding: '0 10px',
+        }}>
+          <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
+        </div>
       </div>
     </div>
   );

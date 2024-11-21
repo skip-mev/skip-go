@@ -4,16 +4,16 @@ title: 'Getting Started'
 
 # Overview
 
-The Skip Go `Widget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or [Web component](./web-component.mdx). 
+The Skip Go `Widget` is the easiest way to onboard users and capital from anywhere in the world to your corner of the sovereign web! The widget provides seamless cross-chain bridging, swapping, and transferring functionality in an easy to integrate React or [Web component](./web-component.mdx).
 
 # Useful Links
 
-- [Skip Go Repository](https://github.com/skip-mev/skip-go) 
+- [Skip Go Repository](https://github.com/skip-mev/skip-go)
 - [Example Widget Implementation](https://github.com/skip-mev/skip-go/tree/main/examples/nextjs)
 
 # Quickstart Guide
 
-This guide will walk you though how to integrate the `Widget` into your React app. 
+This guide will walk you though how to integrate the `Widget` into your React app.
 
 <Info>
 Starting from scratch? It's recommended to use a React framework like [Next.js](https://nextjs.org/docs/getting-started/installation) or [Create React App](https://create-react-app.dev/docs/getting-started) to get up and running quickly.
@@ -49,8 +49,9 @@ const SwapPage = () => {
   return (
     <div
       style={{
-        width: '500px',
-        height: '640px',
+        width: '100%',
+        maxWidth: '500px',
+        padding: '0 10px',
       }}
     >
       <Widget
@@ -71,5 +72,3 @@ Now that you have the widget integrated, it's time to configure the user experie
 <Info>
 If there's any functionality or configurations you'd like to see in the widget, we'd love for you to contribute by opening up an issue or pull request in [the repository](https://github.com/skip-mev/skip-go/tree/main/packages/widget) or by joining [our Discord](https://skip.build/discord) and giving us a shout!
 </Info>
-
-
