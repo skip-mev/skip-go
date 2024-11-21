@@ -186,7 +186,7 @@ const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
     height: 100%;
     opacity: ${(props) =>
     props.isGoFast
-      ? '1'
+      ? '0.9'
       : '0.6'};
     background: linear-gradient(
       90deg,
