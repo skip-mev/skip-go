@@ -27,19 +27,26 @@ const DevMode = () => {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -185px)",
+        width: "100%",
       }}
         align="center"
         justify="center"
       >
-        <Widget
-          theme={theme}
-          settings={{
-            slippage: 5,
-          }}
-          routeConfig={{
-            goFast: true,
-          }}
-        />
+        <div style={{
+          width: "100%",
+          maxWidth: 500,
+          padding: "0 10px"
+        }}>
+          <Widget
+            theme={theme}
+            settings={{
+              slippage: 5,
+            }}
+            routeConfig={{
+              goFast: true,
+            }}
+          />
+        </div>
       </Row>
     </Column>
   );
