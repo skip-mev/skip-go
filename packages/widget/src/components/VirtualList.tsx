@@ -24,21 +24,9 @@ export type VirtualListProps<T> = {
 export const MAX_MODAL_HEIGHT = 600;
 export const MOBILE_VERTICAL_MARGIN = 100;
 
-export const VirtualList = <T,>({
-  listItems,
-  height,
-  itemHeight,
-  renderItem,
-  itemKey,
-  className,
-  empty,
-}: VirtualListProps<T>) => {
-  const theme = useTheme();
-  const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
-  const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
+export const useListHeight = (itemHeight: number) => {
   const isMobileScreenSize = useIsMobileScreenSize();
-
-  const listRef = useRef<ListRef>(null);
+  const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
 
   useEffect(() => {
     const calculateHeight = () => {
@@ -50,6 +38,27 @@ export const VirtualList = <T,>({
 
     setVirtualListHeight(calculateHeight());
   }, [isMobileScreenSize, itemHeight]);
+
+  return virtualListHeight;
+}
+
+export const VirtualList = <T,>({
+  listItems,
+  height,
+  itemHeight,
+  renderItem,
+  itemKey,
+  className,
+  empty,
+}: VirtualListProps<T>) => {
+  const theme = useTheme();
+  const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
+  const isMobileScreenSize = useIsMobileScreenSize();
+  const listHeight = useListHeight(itemHeight);
+
+
+  const listRef = useRef<ListRef>(null);
+
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
@@ -92,7 +101,7 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer gap={10} height={virtualListHeight}>
+      <StyledNoResultsContainer gap={10} height={listHeight}>
         {empty?.icon}
         <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
@@ -104,7 +113,7 @@ export const VirtualList = <T,>({
     <List
       ref={listRef}
       data={listItems}
-      height={height ?? virtualListHeight}
+      height={height ?? listHeight}
       itemHeight={itemHeight}
       itemKey={itemKey}
       virtual

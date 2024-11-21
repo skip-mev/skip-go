@@ -7,7 +7,7 @@ import {
   skipChainsAtom,
 } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MAX_MODAL_HEIGHT, MOBILE_VERTICAL_MARGIN, VirtualList } from "@/components/VirtualList";
+import { MAX_MODAL_HEIGHT, MOBILE_VERTICAL_MARGIN, useListHeight, VirtualList } from "@/components/VirtualList";
 import {
   AssetAndChainSelectorModalRowItem,
   Skeleton,
@@ -64,6 +64,8 @@ export const AssetAndChainSelectorModal = createModal(
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [groupedAssetSelected, setGroupedAssetSelected] =
       useState<GroupedAsset | null>(null);
+
+    const listHeight = useListHeight(ITEM_HEIGHT + ITEM_GAP);
 
     const resetInput = () => {
       setSearchQuery("");
@@ -165,7 +167,7 @@ export const AssetAndChainSelectorModal = createModal(
           onKeyDown={onKeyDown}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
-          <StyledColumn>
+          <StyledColumn height={listHeight}>
             {Array.from({ length: 8 }, (_, index) => (
               <Skeleton key={index} />
             ))}
@@ -187,10 +189,9 @@ export const AssetAndChainSelectorModal = createModal(
   }
 );
 
-const StyledColumn = styled(Column)`
-  height:  ${MAX_MODAL_HEIGHT - (ITEM_HEIGHT + ITEM_GAP)}px;
-  @media (max-width: 767px) {
-    height: ${window.innerHeight - (ITEM_HEIGHT + ITEM_GAP) - MOBILE_VERTICAL_MARGIN * 2}px;
-  }
+const StyledColumn = styled(Column) <{
+  height: number;
+}>`
+  height: ${({ height }) => height}px;
   overflow: hidden;
 `;
