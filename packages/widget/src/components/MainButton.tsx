@@ -191,12 +191,12 @@ const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
     background: linear-gradient(
       90deg,
       transparent 0%,
-      transparent 10%,
+      transparent 30%,
       ${(props) =>
     props.isGoFast
       ? props.theme.brandColor
       : props.theme.primary.text.normal} 50%,
-      transparent 55%,
+      transparent 54%,
       transparent 100%
     );
     background-size: 200% 100%;
