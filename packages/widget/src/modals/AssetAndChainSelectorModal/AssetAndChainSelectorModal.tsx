@@ -7,7 +7,7 @@ import {
   skipChainsAtom,
 } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { VirtualList } from "@/components/VirtualList";
+import { useListHeight, VirtualList } from "@/components/VirtualList";
 import {
   AssetAndChainSelectorModalRowItem,
   Skeleton,
@@ -21,6 +21,7 @@ import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommen
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
+import styled from "styled-components";
 
 export type GroupedAsset = {
   id: string;
@@ -64,6 +65,8 @@ export const AssetAndChainSelectorModal = createModal(
     const [groupedAssetSelected, setGroupedAssetSelected] =
       useState<GroupedAsset | null>(null);
 
+    const listHeight = useListHeight(ITEM_HEIGHT + ITEM_GAP);
+
     const resetInput = () => {
       setSearchQuery("");
     };
@@ -105,10 +108,7 @@ export const AssetAndChainSelectorModal = createModal(
 
     useEffect(() => {
       if (!isLoading && assets) {
-        const timer = setTimeout(() => {
-          setShowSkeleton(false);
-        }, 100);
-        return () => clearTimeout(timer);
+        setShowSkeleton(false);
       }
     }, [isLoading, assets]);
 
@@ -167,11 +167,11 @@ export const AssetAndChainSelectorModal = createModal(
           onKeyDown={onKeyDown}
         />
         {showSkeleton || (!filteredAssets && !filteredChains) ? (
-          <Column>
-            {Array.from({ length: 10 }, (_, index) => (
+          <StyledColumn height={listHeight}>
+            {Array.from({ length: 8 }, (_, index) => (
               <Skeleton key={index} />
             ))}
-          </Column>
+          </StyledColumn>
         ) : (
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
@@ -189,3 +189,9 @@ export const AssetAndChainSelectorModal = createModal(
   }
 );
 
+const StyledColumn = styled(Column) <{
+  height: number;
+}>`
+  height: ${({ height }) => height}px;
+  overflow: hidden;
+`;
