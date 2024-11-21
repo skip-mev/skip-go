@@ -56,7 +56,7 @@ export const useGetAssetDetails = ({
     if (!assets) return;
     return assets.find((a) => a.denom === assetDenom && a.chainID === chainId);
   },
-    [assets]
+    [assets, assetDenom, chainId]
   );
 
   if (!amount && tokenAmount) {
