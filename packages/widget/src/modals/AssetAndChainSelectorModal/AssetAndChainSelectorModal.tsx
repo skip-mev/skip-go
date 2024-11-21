@@ -7,7 +7,7 @@ import {
   skipChainsAtom,
 } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MAX_MODAL_HEIGHT, MOBILE_VERTICAL_MARGIN, useListHeight, VirtualList } from "@/components/VirtualList";
+import { useListHeight, VirtualList } from "@/components/VirtualList";
 import {
   AssetAndChainSelectorModalRowItem,
   Skeleton,

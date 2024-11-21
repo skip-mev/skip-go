@@ -53,7 +53,6 @@ export const VirtualList = <T,>({
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
-  const isMobileScreenSize = useIsMobileScreenSize();
   const listHeight = useListHeight(itemHeight);
 
 
