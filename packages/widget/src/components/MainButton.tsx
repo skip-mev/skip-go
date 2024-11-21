@@ -171,38 +171,45 @@ const StyledMainButton = styled(Row).attrs({
     `};
 `;
 
-const StyledLoadingButton = styled(StyledMainButton)
-  <{ isGoFast?: boolean; }>`
+const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
   background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
 
-
-&:before {
-  content: '';
-  position: absolute;
-  height: 500px;
-  width: 500px;
-  opacity: 0.5;
-  background-image: conic-gradient(
-    transparent,
-    transparent,
-    transparent,
-    ${(props) =>
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: ${(props) =>
+    props.isGoFast
+      ? '1'
+      : '0.6'};
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 10%,
+      ${(props) =>
     props.isGoFast
       ? props.theme.brandColor
-      : props.theme.primary.text.normal}
-  );
-  animation: rotate ${(props) => (props.isGoFast ? '1.3s' : '4s')} linear infinite;
-}
+      : props.theme.primary.text.normal} 50%,
+      transparent 55%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    animation: loadingPulse ${(props) => (props.isGoFast ? '.6s' : '1s')} linear infinite;
+  }
 
-  @keyframes rotate {
+  @keyframes loadingPulse {
     0% {
-      transform: rotate(0deg);
+      background-position: 100% 0;
     }
     100% {
-      transform: rotate(360deg);
+      background-position: -100% 0;
     }
   }
 `;
@@ -218,7 +225,9 @@ const StyledTimeRemaining = styled(Row)`
 const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
-  width: 100%;
+  left:2px;
+  right: 0;
+  width: calc(100% - 4px);
   border-radius: 24px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;
