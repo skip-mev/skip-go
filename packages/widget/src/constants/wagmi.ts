@@ -1,5 +1,5 @@
 import { http } from "viem";
-import { Config, createConfig } from "wagmi";
+import { Config, createConfig, createStorage } from "wagmi";
 import {
   arbitrum,
   arbitrumSepolia,
@@ -134,4 +134,8 @@ export const config: Config = createConfig({
     [sei.id]: http(),
   },
   ssr: false,
+  storage: createStorage({
+    storage: localStorage,
+    key: "skip-go-widget-wagmi",
+  }),
 });

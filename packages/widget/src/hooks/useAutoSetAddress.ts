@@ -6,7 +6,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
@@ -45,9 +45,10 @@ export const useAutoSetAddress = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connectRequiredChains = async (openModal?: boolean) => {
+  const connectRequiredChains = useCallback(async (openModal?: boolean) => {
     if (!requiredChainAddresses) return;
     requiredChainAddresses.forEach(async (chainID, index) => {
+
       const chain = chains?.find((c) => c.chainID === chainID);
       if (!chain) {
         return;
@@ -70,6 +71,7 @@ export const useAutoSetAddress = () => {
               return;
             }
             try {
+              if (chainAddresses[index].address) return;
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -179,7 +181,7 @@ export const useAutoSetAddress = () => {
           break;
       }
     });
-  };
+  }, [requiredChainAddresses, chains, sourceWallet, createCosmosWallets, createEvmWallets, createSolanaWallets, setChainAddresses, signRequiredChains]);
 
   useQuery({
     queryKey: ["auto-set-address", { requiredChainAddresses, chains, sourceWallet, signRequiredChains }],
