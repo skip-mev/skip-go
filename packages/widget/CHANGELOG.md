@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.0.15
+
+### Patch Changes
+
+- 10762ad: asset image placeholder for no image assets
+- 17c99d3: pulse loading animation button
+- 698c8d2: removed widget fixed width and padding
+- 15481a6: asset selector height fixed
+- 79288a9: fix loading animation
+
 ## 3.0.14
 
 ### Patch Changes
