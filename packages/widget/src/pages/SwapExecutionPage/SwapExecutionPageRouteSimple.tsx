@@ -1,57 +1,60 @@
+
 import { styled, useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
 import { useAtomValue } from "jotai";
 import { SwapExecutionPageRouteSimpleRow } from "./SwapExecutionPageRouteSimpleRow";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { ICONS } from "@/icons";
-import { ClientOperation } from "@/utils/clientType";
-import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useMemo } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { getClientOperation } from "@/utils/clientType";
+import { RouteResponse } from "@skip-go/client";
 
 export type SwapExecutionPageRouteProps = {
-  operations: ClientOperation[];
   onClickEditDestinationWallet?: () => void;
   statusData?: TxsStatus
   swapExecutionState?: SwapExecutionState;
+  route: RouteResponse | undefined;
 };
 
 export const SwapExecutionPageRouteSimple = ({
-  operations,
+  route,
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
   swapExecutionState
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
-  const { route } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
-  const firstOperation = operations[0];
-  const lastOperation = operations[operations.length - 1];
-  const status = statusData?.transferEvents;
-  const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOperation.transferIndex]?.status;
-  const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOperation.transferIndex]?.status;
+  if (!route) return null;
 
-  const sourceDenom = firstOperation.denomIn;
-  const destinationDenom = lastOperation.denomOut;
+  const { operations } = route;
+
+  const firstOp = getClientOperation(operations[0]);
+  const lastOp = getClientOperation(operations[operations.length - 1]);
+
+  const status = statusData?.transferEvents;
+  const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOp.transferIndex]?.status;
+  const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOp.transferIndex]?.status;
 
   const source = {
-    denom: sourceDenom,
-    tokenAmount: firstOperation.amountIn,
-    chainId: firstOperation.fromChainID ?? firstOperation.chainID,
+    denom: route.sourceAssetDenom,
+    tokenAmount: route.amountIn,
+    chainId: route.sourceAssetChainID,
     usdValue: route?.usdAmountIn,
   };
   const destination = {
-    denom: destinationDenom,
-    tokenAmount: lastOperation.amountOut,
-    chainId: lastOperation.toChainID ?? lastOperation.chainID,
-    usdValue: route?.usdAmountOut,
+    denom: route.destAssetDenom,
+    tokenAmount: route.amountOut,
+    chainId: route.destAssetChainID,
+    usdValue: route.usdAmountOut,
   };
 
-  const isSignRequired = lastOperation.signRequired;
-  const sourceExplorerLink = status?.[firstOperation.transferIndex]?.fromExplorerLink;
-  const destinationExplorerLink = status?.[lastOperation.transferIndex]?.toExplorerLink;
+  const isSignRequired = lastOp.signRequired;
+  const sourceExplorerLink = status?.[firstOp.transferIndex]?.fromExplorerLink;
+  const destinationExplorerLink = status?.[firstOp.transferIndex]?.toExplorerLink;
 
   const onClickEditDestinationWallet = useMemo(() => {
     if (isSignRequired) return;

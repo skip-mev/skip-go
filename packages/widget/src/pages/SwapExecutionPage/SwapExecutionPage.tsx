@@ -97,6 +97,31 @@ export const SwapExecutionPage = () => {
     }
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
+  const source = {
+    denom: route?.sourceAssetDenom,
+    tokenAmount: route?.amountIn,
+    chainId: route?.sourceAssetChainID,
+    usdValue: route?.usdAmountIn,
+    explorerLink: statusData?.transferEvents?.[0]?.fromExplorerLink,
+    status:
+      swapExecutionState === SwapExecutionState.confirmed
+        ? "completed"
+        : statusData?.transferEvents?.[0]?.status,
+  };
+
+  const destinationIndex = (route?.txsRequired ?? 1) - 1;
+  const destination = {
+    denom: route?.destAssetDenom,
+    tokenAmount: route?.amountOut,
+    chainId: route?.destAssetChainID,
+    usdValue: route?.usdAmountOut,
+    explorerLink: statusData?.transferEvents?.[destinationIndex]?.toExplorerLink,
+    status:
+      swapExecutionState === SwapExecutionState.confirmed
+        ? "completed"
+        : statusData?.transferEvents?.[destinationIndex]?.status,
+  };
+
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
@@ -127,6 +152,8 @@ export const SwapExecutionPage = () => {
             signRequired: lastOperation.signRequired,
           })
         }
+        {...source}
+        {...destination}
         operations={clientOperations}
         statusData={statusData}
         swapExecutionState={swapExecutionState}
