@@ -12,6 +12,7 @@ import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
+import { WalletProviders } from "@/providers/WalletProviders";
 
 function shouldForwardProp(
   propName: string,
