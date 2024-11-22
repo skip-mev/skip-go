@@ -47,7 +47,7 @@ export const useSyncTxStatus = ({
     }
 
     if (transferEvents?.length === 0 && !statusData?.isSettled) {
-      if (isPending) {
+      if (isPending && overallStatus !== "pending") {
         setOverallStatus("signing");
       }
       return;

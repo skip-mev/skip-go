@@ -85,21 +85,21 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
       if (txInfo.status?.status !== "STATE_COMPLETED") {
-        set(setTransactionDetailsArrayAtom, txInfo, transactionHistoryIndex);
+        set(setTransactionDetailsAtom, txInfo, transactionHistoryIndex);
       }
-    },
-    onTransactionTracked: async (txInfo) => {
-      const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
-      const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
-      set(setTransactionDetailsArrayAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
     },
     onApproveAllowance: async ({ status, allowance }) => {
       if (allowance && status === "pending") {
         set(setOverallStatusAtom, "approving");
       }
     },
+    onTransactionHash: async (txInfo) => {
+      const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
+      const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
+      set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
+    },
     onTransactionSigned: async () => {
-      set(setOverallStatusAtom, "signing");
+      set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
@@ -142,7 +142,7 @@ export const setValidatingGasBalanceAtom = atom(null, (_get, set, isValidatingGa
   set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
 });
 
-export const setTransactionDetailsArrayAtom = atom(
+export const setTransactionDetailsAtom = atom(
   null,
   (get, set, transactionDetails: TransactionDetails, transactionHistoryIndex: number) => {
     const swapExecutionState = get(swapExecutionStateAtom);

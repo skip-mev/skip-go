@@ -490,7 +490,6 @@ export type TransferEvent =
 type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {
   onTransactionSigned?: (txInfo: {
-    txHash: string;
     chainID: string;
   }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {
@@ -515,5 +514,9 @@ export interface TransactionCallbacks {
   onApproveAllowance?: (value: {
     allowance?: ERC20Approval,
     status: CallbackStatus
+  }) => Promise<void>;
+  onTransactionHash?: (value: {
+    txHash: string,
+    chainID: string;
   }) => Promise<void>;
 }
