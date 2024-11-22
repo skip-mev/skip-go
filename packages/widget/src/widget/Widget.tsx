@@ -28,7 +28,6 @@ import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
 
 export type WidgetRouteConfig =

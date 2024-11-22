@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { SignClientTypes } from '@walletconnect/types';
-import { Web3ModalConfig } from '@web3modal/standalone';
+import { WalletConnectModalConfig } from '@walletconnect/modal';
 
 export type MinimalWallet = {
   walletName: string;
@@ -31,7 +31,7 @@ type WalletState = {
 
 export type WalletConnect = {
   options: Pick<SignClientTypes.Options, "projectId" | "name"> | null;
-  web3Modal?: Pick<Web3ModalConfig, "themeVariables" | "themeMode" | "privacyPolicyUrl" | "termsOfServiceUrl"> | null;
+  walletConnectModal?: Pick<WalletConnectModalConfig, "themeVariables" | "themeMode" | "privacyPolicyUrl" | "termsOfServiceUrl"> | null;
 }
 
 export const walletConnectAtom = atom<WalletConnect>({

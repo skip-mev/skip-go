@@ -6,6 +6,7 @@ import {
   useDisconnect,
   WalletType,
   connect,
+  isWalletConnect,
 } from "graz";
 import { useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -44,7 +45,7 @@ export const useCreateCosmosWallets = () => {
   const createCosmosWallets = useCallback(
     (chainID?: string) => {
       const mobile = isMobile();
-      const browserWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS];
+      const browserWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS, WalletType.WALLETCONNECT];
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE, WalletType.WC_LEAP_MOBILE, WalletType.WC_COSMOSTATION_MOBILE];
       const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter((x) => {
         try {
@@ -55,6 +56,7 @@ export const useCreateCosmosWallets = () => {
         }
       });
       const cosmosWallets = mobile ? availableMobileCosmosWallets : browserWallets;
+
       const isPenumbra = chainID?.includes("penumbra");
       if (isPenumbra && !mobile) {
         const praxWallet: MinimalWallet = {
@@ -108,9 +110,11 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
 
+        const isWC = isWalletConnect(wallet)
+
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (
-          wallet === WalletType.KEPLR
+          mobile ? mobileWalletMainnetChainIdsInitialConnect : wallet === WalletType.KEPLR
             ? keplrMainnetChainIdsInitialConnect
             : walletMainnetChainIdsInitialConnect
         ).filter(
@@ -124,7 +128,7 @@ export const useCreateCosmosWallets = () => {
         const connectEco = async () => {
           try {
             await connect({
-              chainId: mobile ? walletMainnetChainIdsInitialConnect : initialChainIds,
+              chainId: initialChainIds,
               walletType: wallet,
             })
           } catch (e) {
@@ -154,7 +158,7 @@ export const useCreateCosmosWallets = () => {
               throw new Error(
                 `getAddress: Chain info not found for chainID: ${chainID}`
               );
-            if (!mobile) {
+            if (!mobile && !isWC) {
               // @ts-expect-error mismatch keplr types version
               await getWallet(wallet).experimentalSuggestChain(chainInfo);
             }
@@ -172,7 +176,7 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
           if (!currentAddress) {
-            if (!mobile) {
+            if (!mobile && !isWC) {
               // @ts-expect-error mismatch keplr types version
               await getWallet(wallet).experimentalSuggestChain(chainInfo);
             }
@@ -219,7 +223,7 @@ export const useCreateCosmosWallets = () => {
                 throw new Error(
                   `connect: Chain info not found for chainID: ${chainID}`
                 );
-              if (!mobile) {
+              if (!mobile && !isWC) {
                 // @ts-expect-error mismatch keplr types version
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
