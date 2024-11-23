@@ -26,6 +26,7 @@ import {
   sepolia,
 } from "wagmi/chains";
 import { defineChain } from "viem";
+const isBrowser = typeof window !== 'undefined';
 
 const forma = defineChain({
   id: 984_122,
@@ -135,7 +136,7 @@ export const config: Config = createConfig({
   },
   ssr: false,
   storage: createStorage({
-    storage: localStorage,
+    storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
     key: "skip-go-widget-wagmi",
   }),
 });
