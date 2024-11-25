@@ -93,7 +93,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         set(setOverallStatusAtom, "approving");
       }
     },
-    onTransactionHash: async (txInfo) => {
+    onTransactionBroadcast: async (txInfo) => {
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);

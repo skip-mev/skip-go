@@ -410,7 +410,7 @@ export class SkipClient {
     const txReceipt = await this.executeSVMTransaction({
       signer: svmSigner,
       message: svmTx,
-      options,
+      callbacks: options,
     });
 
     return {
@@ -453,7 +453,7 @@ export class SkipClient {
       onTransactionSigned,
       stargateClient,
       signer,
-      onTransactionHash,
+      onTransactionSubmitted,
     } = options;
 
     const accounts = await signer.getAccounts();
@@ -505,12 +505,12 @@ export class SkipClient {
 
     const txHash = toHex(sha256(txBytes));
 
-    onTransactionHash?.({
+    const tx = await stargateClient.broadcastTx(txBytes);
+
+    onTransactionSubmitted?.({
       txHash,
       chainID,
     });
-
-    const tx = await stargateClient.broadcastTx(txBytes);
     return tx;
   }
 
@@ -521,14 +521,14 @@ export class SkipClient {
   }: {
     message: types.EvmTx;
     signer: WalletClient;
-    options: clientTypes.ExecuteRouteOptions;
+    options: types.TransactionCallbacks;
   }) {
     if (!signer.account) {
       throw new Error(
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
-    const { onApproveAllowance, onTransactionSigned, onTransactionHash } = options;
+    const { onApproveAllowance, onTransactionSigned, onTransactionSubmitted } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -590,7 +590,7 @@ export class SkipClient {
       chainID: message.chainID,
     });
 
-    onTransactionHash?.({
+    onTransactionSubmitted?.({
       txHash,
       chainID: message.chainID,
     });
@@ -605,13 +605,13 @@ export class SkipClient {
   async executeSVMTransaction({
     signer,
     message,
-    options,
+    callbacks,
   }: {
     signer: Adapter;
     message: types.SvmTx;
-    options: clientTypes.ExecuteRouteOptions;
+    callbacks: types.TransactionCallbacks
   }) {
-    const { onTransactionSigned, onTransactionHash } = options;
+    const { onTransactionSigned, onTransactionSubmitted } = callbacks;
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
@@ -628,7 +628,7 @@ export class SkipClient {
         chainID: message.chainID,
         tx: serializedTx.toString('base64'),
       }).then((res) => {
-        onTransactionHash?.({
+        onTransactionSubmitted?.({
           txHash: res.txHash,
           chainID: message.chainID,
         })
