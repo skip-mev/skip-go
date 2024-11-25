@@ -2228,10 +2228,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.17":
-  version: 0.50.17
-  resolution: "@chain-registry/types@npm:0.50.17"
-  checksum: d56381a6c92c523bb6d4747bc4b8bd00fb10c1ff6df922f75a1c70e7ab42bd8f07a43f7982bbb7c1b5500c8ed715370220908c8f4b4eb31f321af03c14c40e29
+"@chain-registry/types@npm:^0.50.20":
+  version: 0.50.20
+  resolution: "@chain-registry/types@npm:0.50.20"
+  checksum: 6f7fd698ebd8acdcb40e2d7e70a4ae95c348ab8dafd4ffcdf50560f7d9a50ec1ff58af568df12c59ccc56c3a70cb9617a54bc2092c2e97d3d267a1a6e9dfe86c
   languageName: node
   linkType: hard
 
@@ -7684,7 +7684,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
-    chain-registry: ^1.69.39
+    chain-registry: ^1.69.43
     cosmjs-types: ^0.9.0
     keccak: 3.0.4
     minimatch: ^9.0.3
@@ -7743,7 +7743,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     buffer: ^6.0.3
-    chain-registry: ^1.69.39
+    chain-registry: ^1.69.43
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.10.1
@@ -13264,12 +13264,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.39":
-  version: 1.69.39
-  resolution: "chain-registry@npm:1.69.39"
+"chain-registry@npm:^1.69.43":
+  version: 1.69.43
+  resolution: "chain-registry@npm:1.69.43"
   dependencies:
-    "@chain-registry/types": ^0.50.17
-  checksum: bad2acc98f1bdca01f7ae309da00d0ed67fb2757a991c0066f3438bb2d0660e4cfe93b48fea55167c0a5ec6bf77afdd9d410f3fe89849db60b2eb36b721d2855
+    "@chain-registry/types": ^0.50.20
+  checksum: 1eb3fa381d16950331074a072287a054a72a2aeed9cfef826a2e600692debdb95d48a22177c3254236c08721f1e66b12009f4f4fcfe294e3834762d7ec6d665d
   languageName: node
   linkType: hard
 
@@ -21723,7 +21723,7 @@ __metadata:
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3
     "@types/react": ^18.2.43
-    chain-registry: ^1.69.39
+    chain-registry: ^1.69.43
     eslint: ^8.15.0
     eslint-config-next: ^14.0.4
     graz: 0.1.28
