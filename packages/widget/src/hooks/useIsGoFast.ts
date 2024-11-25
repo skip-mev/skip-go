@@ -12,8 +12,6 @@ export const useIsGoFast = (route: RouteResponse | undefined) => {
   }, [route?.operations]);
 };
 
-
-
 export const useIsSwapOperation = (route: RouteResponse | undefined) => {
   return useMemo(() => {
     const swapOperations = [OperationType.swap, OperationType.evmSwap];
