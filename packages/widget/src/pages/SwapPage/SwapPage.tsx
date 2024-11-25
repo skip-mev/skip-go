@@ -39,6 +39,7 @@ import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -70,6 +71,7 @@ export const SwapPage = () => {
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
+  const isSwapOperation = useIsSwapOperation(route);
 
   const { chainId: evmChainId, connector } = useAccount();
   const evmAddress = evmChainId
@@ -266,7 +268,7 @@ export const SwapPage = () => {
     }
     return (
       <MainButton
-        label="Swap"
+        label={isSwapOperation ? "Swap" : "Send"}
         icon={ICONS.swap}
         disabled={!route}
         onClick={() => {
