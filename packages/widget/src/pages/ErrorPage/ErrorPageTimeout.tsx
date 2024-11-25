@@ -12,6 +12,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
+import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 export type ErrorPageTimeoutProps = {
   txHash: string
@@ -31,6 +32,7 @@ export const ErrorPageTimeout = ({
     route,
     transactionDetailsArray,
   } = useAtomValue(swapExecutionStateAtom);
+  const isGoFast = useIsGoFast(route);
 
   const { data } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
@@ -83,7 +85,7 @@ export const ErrorPageTimeout = ({
         backgroundColor={theme.warning.background}
         textColor={theme.warning.text}
       />
-      <MainButton label="Swap in progress..." loading />
+      <MainButton isGoFast={isGoFast} label="Processing" loading />
     </>
   );
 };
