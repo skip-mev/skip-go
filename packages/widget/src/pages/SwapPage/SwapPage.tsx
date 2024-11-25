@@ -296,6 +296,7 @@ export const SwapPage = () => {
     );
   }, [
     sourceAsset?.chainID,
+    isSwapOperation,
     sourceAsset?.amount,
     destinationAsset?.chainID,
     destinationAsset?.amount,
