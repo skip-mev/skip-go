@@ -453,7 +453,6 @@ export class SkipClient {
       onTransactionSigned,
       stargateClient,
       signer,
-      onTransactionBroadcast,
     } = options;
 
     const accounts = await signer.getAccounts();
@@ -507,10 +506,6 @@ export class SkipClient {
 
     const tx = await stargateClient.broadcastTx(txBytes);
 
-    onTransactionBroadcast?.({
-      txHash,
-      chainID,
-    });
     return tx;
   }
 
@@ -528,7 +523,7 @@ export class SkipClient {
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
-    const { onApproveAllowance, onTransactionSigned, onTransactionBroadcast } = options;
+    const { onApproveAllowance, onTransactionSigned } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -590,10 +585,6 @@ export class SkipClient {
       chainID: message.chainID,
     });
 
-    onTransactionBroadcast?.({
-      txHash,
-      chainID: message.chainID,
-    });
 
     const receipt = await extendedSigner.waitForTransactionReceipt({
       hash: txHash,
@@ -611,7 +602,7 @@ export class SkipClient {
     message: types.SvmTx;
     callbacks: types.TransactionCallbacks
   }) {
-    const { onTransactionSigned, onTransactionBroadcast } = callbacks;
+    const { onTransactionSigned } = callbacks;
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
@@ -628,10 +619,6 @@ export class SkipClient {
         chainID: message.chainID,
         tx: serializedTx.toString('base64'),
       }).then((res) => {
-        onTransactionBroadcast?.({
-          txHash: res.txHash,
-          chainID: message.chainID,
-        })
         signature = res.txHash;
       });
 
@@ -1219,9 +1206,8 @@ export class SkipClient {
         },
       },
     });
-    if (onTransactionTracked) {
-      await onTransactionTracked({ txHash, chainID, explorerLink });
-    }
+    await onTransactionTracked?.({ txHash, chainID, explorerLink });
+
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const txStatusResponse = await this.transactionStatus({
