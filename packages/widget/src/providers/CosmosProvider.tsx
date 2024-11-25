@@ -15,7 +15,6 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
   const walletConnect = useAtomValue(walletConnectAtom);
   return (
     <GrazProvider grazOptions={{
-      // @ts-expect-error mismatch keplr types version
       chains: isTestnet ? testnetChains : mainnetChains,
       autoReconnect: false,
       walletDefaultOptions: {

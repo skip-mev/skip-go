@@ -159,7 +159,6 @@ export const useCreateCosmosWallets = () => {
                 `getAddress: Chain info not found for chainID: ${chainID}`
               );
             if (!mobile && !isWC) {
-              // @ts-expect-error mismatch keplr types version
               await getWallet(wallet).experimentalSuggestChain(chainInfo);
             }
             const isInitialConnect = initialChainIds.includes(chainID);
@@ -224,7 +223,6 @@ export const useCreateCosmosWallets = () => {
                   `connect: Chain info not found for chainID: ${chainID}`
                 );
               if (!mobile && !isWC) {
-                // @ts-expect-error mismatch keplr types version
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
               const isInitialConnect = initialChainIds.includes(chainID);
