@@ -250,7 +250,7 @@ export const SwapPage = () => {
     }
 
     if (isWaitingForNewRoute) {
-      return <MainButton label="Finding best route..." loading />;
+      return <MainButton label="Finding best route" loading />;
     }
 
     if (isRouteError) {
