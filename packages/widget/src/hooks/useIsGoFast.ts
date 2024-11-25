@@ -11,3 +11,13 @@ export const useIsGoFast = (route: RouteResponse | undefined) => {
     ) ?? false;
   }, [route?.operations]);
 };
+
+export const useIsSwapOperation = (route: RouteResponse | undefined) => {
+  return useMemo(() => {
+    const swapOperations = [OperationType.swap, OperationType.evmSwap];
+    const clientOperations = getClientOperations(route?.operations);
+    return clientOperations?.some(
+      (item) => swapOperations.includes(item.type)
+    ) ?? false;
+  }, [route?.operations]);
+}

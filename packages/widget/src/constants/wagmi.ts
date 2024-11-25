@@ -1,5 +1,5 @@
 import { http } from "viem";
-import { Config, createConfig } from "wagmi";
+import { Config, createConfig, createStorage } from "wagmi";
 import {
   arbitrum,
   arbitrumSepolia,
@@ -26,6 +26,7 @@ import {
   sepolia,
 } from "wagmi/chains";
 import { defineChain } from "viem";
+const isBrowser = typeof window !== 'undefined';
 
 const forma = defineChain({
   id: 984_122,
@@ -134,4 +135,8 @@ export const config: Config = createConfig({
     [sei.id]: http(),
   },
   ssr: false,
+  storage: createStorage({
+    storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
+    key: "skip-go-widget-wagmi",
+  }),
 });
