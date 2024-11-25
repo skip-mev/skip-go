@@ -112,7 +112,7 @@ export type ExecuteCosmosMessage = GasOptions & {
   messages: types.CosmosMsg[];
   gas: Gas
   onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
-  onTransactionSubmitted?: TransactionCallbacks['onTransactionSubmitted'];
+  onTransactionBroadcast?: TransactionCallbacks['onTransactionBroadcast'];
 };
 
 interface SignCosmosMessageOptionsBase {

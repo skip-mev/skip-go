@@ -453,7 +453,7 @@ export class SkipClient {
       onTransactionSigned,
       stargateClient,
       signer,
-      onTransactionSubmitted,
+      onTransactionBroadcast,
     } = options;
 
     const accounts = await signer.getAccounts();
@@ -507,7 +507,7 @@ export class SkipClient {
 
     const tx = await stargateClient.broadcastTx(txBytes);
 
-    onTransactionSubmitted?.({
+    onTransactionBroadcast?.({
       txHash,
       chainID,
     });
@@ -528,7 +528,7 @@ export class SkipClient {
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
-    const { onApproveAllowance, onTransactionSigned, onTransactionSubmitted } = options;
+    const { onApproveAllowance, onTransactionSigned, onTransactionBroadcast } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -590,7 +590,7 @@ export class SkipClient {
       chainID: message.chainID,
     });
 
-    onTransactionSubmitted?.({
+    onTransactionBroadcast?.({
       txHash,
       chainID: message.chainID,
     });
@@ -611,7 +611,7 @@ export class SkipClient {
     message: types.SvmTx;
     callbacks: types.TransactionCallbacks
   }) {
-    const { onTransactionSigned, onTransactionSubmitted } = callbacks;
+    const { onTransactionSigned, onTransactionBroadcast } = callbacks;
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
@@ -628,7 +628,7 @@ export class SkipClient {
         chainID: message.chainID,
         tx: serializedTx.toString('base64'),
       }).then((res) => {
-        onTransactionSubmitted?.({
+        onTransactionBroadcast?.({
           txHash: res.txHash,
           chainID: message.chainID,
         })

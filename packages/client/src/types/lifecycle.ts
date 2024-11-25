@@ -515,8 +515,4 @@ export interface TransactionCallbacks {
     allowance?: ERC20Approval,
     status: CallbackStatus
   }) => Promise<void>;
-  onTransactionSubmitted?: (value: {
-    txHash: string,
-    chainID: string;
-  }) => Promise<void>;
 }
