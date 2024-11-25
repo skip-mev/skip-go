@@ -55,9 +55,7 @@ export const VirtualList = <T,>({
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
   const listHeight = useListHeight(itemHeight);
 
-
   const listRef = useRef<ListRef>(null);
-
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
@@ -100,7 +98,7 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer gap={10} height={listHeight}>
+      <StyledNoResultsContainer gap={10} height={height}>
         {empty?.icon}
         <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
@@ -134,7 +132,7 @@ export const VirtualList = <T,>({
 };
 
 const StyledNoResultsContainer = styled(Column) <{
-  height: number;
+  height?: number;
 }>`
   min-height: ${({ height }) => height}px;
   width: 100%;
