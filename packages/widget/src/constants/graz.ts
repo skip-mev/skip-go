@@ -56,7 +56,6 @@ export const walletMainnetChainIdsInitialConnect = [
 
 export const walletConnectMainnetChainIdsInitialConnect = [
   "cosmoshub-4",
-  "injective-1",
   "noble-1",
   "osmosis-1",
   "neutron-1",
