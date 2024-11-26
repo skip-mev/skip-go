@@ -2,4 +2,4 @@
 '@skip-go/client': patch
 ---
 
-more responsive button text user feedback to wallet actions
+Improve onTransactionSigned callback to be more close after signing

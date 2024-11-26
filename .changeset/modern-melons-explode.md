@@ -2,4 +2,4 @@
 '@skip-go/widget': patch
 ---
 
-Improve loading state
+more responsive button text user feedback to wallet actions
