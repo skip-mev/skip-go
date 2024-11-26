@@ -17,7 +17,7 @@ import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
   keplrMainnetChainIdsInitialConnect,
-  mobileWalletMainnetChainIdsInitialConnect,
+  walletConnectMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
 } from "@/constants/graz";
 import {
@@ -114,7 +114,7 @@ export const useCreateCosmosWallets = () => {
 
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (
-          isWC ? mobileWalletMainnetChainIdsInitialConnect : wallet === WalletType.KEPLR
+          isWC ? walletConnectMainnetChainIdsInitialConnect : wallet === WalletType.KEPLR
             ? keplrMainnetChainIdsInitialConnect
             : walletMainnetChainIdsInitialConnect
         ).filter(
@@ -130,19 +130,41 @@ export const useCreateCosmosWallets = () => {
             await connect({
               chainId: initialChainIds,
               walletType: wallet,
+              autoReconnect: false,
             })
           } catch (e) {
             const error = e as Error;
+            if (error?.message?.toLowerCase().includes("no chain info")) {
+              throw new Error(`There is no chain info for ${chainID}. Please add ${chainID} chain in your wallet`);
+            }
             if (error?.message?.toLowerCase().includes("no ethereum public key")) {
               await connect({
                 chainId: keplrMainnetWithoutEthermintChainIdsInitialConnect,
                 walletType: wallet,
+                autoReconnect: false,
               })
               return Promise.resolve();
             }
             throw e;
           }
         };
+
+        const connectSingleChainId = async () => {
+          try {
+            if (!chainID) throw new Error("Chain ID is required");
+            await connect({
+              chainId: chainID,
+              walletType: wallet,
+              autoReconnect: false,
+            });
+          } catch (e) {
+            const error = e as Error;
+            if (error?.message?.toLowerCase().includes("no chain info")) {
+              throw new Error(`There is no chain info for ${chainID}. Please add ${chainID} chain in your wallet`);
+            }
+            throw e;
+          }
+        }
 
         const getAddress = async ({
           signRequired,
@@ -165,10 +187,7 @@ export const useCreateCosmosWallets = () => {
             if (isInitialConnect) {
               await connectEco();
             } else {
-              await connect({
-                chainId: chainID,
-                walletType: wallet,
-              });
+              await connectSingleChainId();
             }
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           } else if (currentAddress && isConnected && signRequired) {
@@ -176,17 +195,14 @@ export const useCreateCosmosWallets = () => {
           }
           if (!currentAddress) {
             if (!mobile && !isWC) {
-              // @ts-expect-error mismatch keplr types version
+              if (!chainInfo) throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
               await getWallet(wallet).experimentalSuggestChain(chainInfo);
             }
             const isInitialConnect = initialChainIds.includes(chainID);
             if (isInitialConnect) {
               await connectEco();
             } else {
-              await connect({
-                chainId: chainID,
-                walletType: wallet,
-              });
+              await connectSingleChainId();
             }
             setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
@@ -229,10 +245,7 @@ export const useCreateCosmosWallets = () => {
               if (isInitialConnect) {
                 await connectEco();
               } else {
-                await connect({
-                  chainId: chainID,
-                  walletType: wallet,
-                });
+                await connectSingleChainId();
               }
               setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
               connectEco();

@@ -54,7 +54,7 @@ export const walletMainnetChainIdsInitialConnect = [
   "chihuahua-1",
 ];
 
-export const mobileWalletMainnetChainIdsInitialConnect = [
+export const walletConnectMainnetChainIdsInitialConnect = [
   "cosmoshub-4",
   "injective-1",
   "noble-1",
