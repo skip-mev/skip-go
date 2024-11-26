@@ -9,13 +9,9 @@ import {
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { QueryClient } from "@tanstack/react-query";
 import isPropValid from "@emotion/is-prop-valid";
-import { WalletProviders } from "@/providers/WalletProviders";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
-export const queryClient = new QueryClient();
 
 function shouldForwardProp(
   propName: string,
@@ -35,7 +31,6 @@ export const ShadowDomAndProviders = ({
   theme?: PartialTheme;
 }) => {
   useInjectFontsToDocumentHead();
-  const [isClient, setIsClient] = useState<boolean>(false);
 
   const [, setShadowDom] = useState<HTMLElement>();
   const [styledComponentContainer, setStyledComponentContainer] =
@@ -52,9 +47,6 @@ export const ShadowDomAndProviders = ({
     []
   );
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const mergedThemes = useMemo(() => {
     return {
@@ -63,21 +55,29 @@ export const ShadowDomAndProviders = ({
     };
   }, [theme]);
 
-  return isClient ? (
-    <Scope ref={onShadowDomLoaded} stylesheet={globalStyles}>
-      <div ref={onStyledComponentContainerLoaded}></div>
-      <StyleSheetManager
-        shouldForwardProp={shouldForwardProp}
-        target={styledComponentContainer}
-      >
-        <ThemeProvider theme={mergedThemes}>
-          <WalletProviders>
-            <QueryClientProvider client={queryClient} key={"skip-widget"}>
-              {children}
-            </QueryClientProvider>
-          </WalletProviders>
-        </ThemeProvider>
-      </StyleSheetManager>
-    </Scope>
-  ) : null;
+  return (
+    <ClientOnly>
+      <Scope ref={onShadowDomLoaded} stylesheet={globalStyles}>
+        <div ref={onStyledComponentContainerLoaded}></div>
+        <StyleSheetManager
+          shouldForwardProp={shouldForwardProp}
+          target={styledComponentContainer}
+        >
+          <ThemeProvider theme={mergedThemes}>
+            {children}
+          </ThemeProvider>
+        </StyleSheetManager>
+      </Scope>
+    </ClientOnly>
+  )
+};
+
+export const ClientOnly = ({ children }: { children: ReactNode }) => {
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  return <>{isHydrated ? children : null}</>;
 };
