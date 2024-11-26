@@ -9,7 +9,7 @@ import {
 } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 
 export const useGetAccount = () => {
@@ -29,6 +29,28 @@ export const useGetAccount = () => {
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
+
+  useEffect(() => {
+    if (walletType && cosmosWallet === undefined) {
+      setCosmosWallet({
+        walletName: walletType,
+        chainType: "cosmos",
+      });
+    }
+    if (solanaWallet && svmWallet === undefined) {
+      setSvmWallet({
+        walletName: solanaWallet.name,
+        chainType: "svm",
+      });
+    }
+    if (evmAccount.connector && evmWallet === undefined) {
+      setEvmWallet({
+        walletName: evmAccount.connector.id,
+        chainType: "evm",
+      });
+    }
+
+  }, [walletType, cosmosWallet, solanaWallet, svmWallet, evmAccount.connector, evmWallet]);
 
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
