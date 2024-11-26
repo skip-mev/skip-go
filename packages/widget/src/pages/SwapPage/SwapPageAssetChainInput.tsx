@@ -74,7 +74,7 @@ export const SwapPageAssetChainInput = ({
     // Remove leading zeros unless they are immediately followed by a dot
     latest = latest.replace(/^0+(?!\.)/, '0');
 
-    const formattedValue = latest;
+    const formattedValue = formatNumberWithoutCommas(latest);
 
     onChangeValue?.(
       limitDecimalsDisplayed(formattedValue, assetDetails?.decimals)
