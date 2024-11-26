@@ -42,12 +42,17 @@ const Home = () => {
           position: 'absolute',
           top: '50%',
           transform: 'translateY(-185px)',
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <div style={{
           width: '100%',
           maxWidth: 500,
           padding: '0 10px',
+          boxSizing: 'border-box'
         }}>
           <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
         </div>
