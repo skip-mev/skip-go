@@ -12,6 +12,7 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
+import { isMobile } from "@/utils/os";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -217,18 +218,19 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const swapSettings = get(swapSettingsAtom);
 
+
   return {
     gcTime: Infinity,
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
-
+      const isMobileDevice = isMobile();
       try {
         await skip.executeRoute({
           route,
           userAddresses,
           slippageTolerancePercent: swapSettings.slippage.toString(),
-          validateGasBalance: route.sourceAssetChainID !== "984122",
+          simulate: route.sourceAssetChainID !== "984122" && !isMobileDevice,
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
               if (_chainID === "carbon-1") {
