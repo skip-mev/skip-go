@@ -410,7 +410,7 @@ export class SkipClient {
     const txReceipt = await this.executeSVMTransaction({
       signer: svmSigner,
       message: svmTx,
-      callbacks: options,
+      options,
     });
 
     return {
@@ -516,7 +516,7 @@ export class SkipClient {
   }: {
     message: types.EvmTx;
     signer: WalletClient;
-    options: types.TransactionCallbacks;
+    options: clientTypes.ExecuteRouteOptions;
   }) {
     if (!signer.account) {
       throw new Error(
@@ -596,13 +596,13 @@ export class SkipClient {
   async executeSVMTransaction({
     signer,
     message,
-    callbacks,
+    options: options,
   }: {
     signer: Adapter;
     message: types.SvmTx;
-    callbacks: types.TransactionCallbacks
+    options: clientTypes.ExecuteRouteOptions
   }) {
-    const { onTransactionSigned } = callbacks;
+    const { onTransactionSigned } = options;
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
