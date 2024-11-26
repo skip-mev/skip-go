@@ -523,8 +523,6 @@ export class SkipClient {
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
-    const { onApproveAllowance, onTransactionSigned } = options;
-
     const { onApproveAllowance, onTransactionSigned, useUnlimitedApproval } = options;
 
     const extendedSigner = signer.extend(publicActions);

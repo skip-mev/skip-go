@@ -129,7 +129,7 @@ export enum RoutePreference {
 export const defaultSwapSettings = {
   slippage: 3,
   customGasAmount: 200_000,
-  useUnlimitedApproval: true
+  useUnlimitedApproval: true,
   routePreference: RoutePreference.FASTEST,
 };
 
