@@ -143,7 +143,8 @@ export const config: Config = createConfig({
   connectors: [
     walletConnect({
       projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
-      name: "Skip Go"
+      name: "Skip Go",
+      showQrModal: true,
     })
   ]
 });
