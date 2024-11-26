@@ -69,9 +69,13 @@ export const SwapPageAssetChainInput = ({
     // Remove multiple leading zeros
     latest = latest.replace(/^0+(\d)/, '0$1');
 
-    // Ensure only one decimal point is present
-    const parts = latest.split('.');
-    latest = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
+    // Remove all decimal points after the first one
+    const decimalIndex = latest.indexOf('.');
+    if (decimalIndex !== -1) {
+      const integerPart = latest.slice(0, decimalIndex);
+      const decimalPart = latest.slice(decimalIndex + 1).replace(/\./g, '');
+      latest = integerPart + '.' + decimalPart;
+    }
 
     const formattedValue = formatNumberWithoutCommas(latest);
     onChangeValue?.(
@@ -167,7 +171,7 @@ export const SwapPageAssetChainInput = ({
     >
       <Row justify="space-between">
         <StyledInput
-          type="number"
+          type="text"
           value={displayedValue}
           step="any"
           placeholder="0"
