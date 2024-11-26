@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.0.16
+
+### Patch Changes
+
+- c9def8a: fix transaction history modal height
+- cae55fe: fix recovery wallet override destination address
+- 4a48064: rendering bugfixes
+- fc7374d: more responsive button text user feedback to wallet actions
+- 10dcd41: Keep previous balance data to avoid reloading
+- 59b165a: improve and simplify button text
+- ef165f1: adjust slippage options and default to 1 percent
+- Updated dependencies [fc7374d]
+  - @skip-go/client@0.14.7
+
 ## 3.0.15
 
 ### Patch Changes
