@@ -74,7 +74,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.51.21",
-    "graz": "0.1.29-alpha.3",
+    "graz": "0.1.29-alpha.4",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
     "viem": "2.21.4",
