@@ -2228,10 +2228,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.20":
-  version: 0.50.20
-  resolution: "@chain-registry/types@npm:0.50.20"
-  checksum: 6f7fd698ebd8acdcb40e2d7e70a4ae95c348ab8dafd4ffcdf50560f7d9a50ec1ff58af568df12c59ccc56c3a70cb9617a54bc2092c2e97d3d267a1a6e9dfe86c
+"@chain-registry/types@npm:^0.50.21":
+  version: 0.50.21
+  resolution: "@chain-registry/types@npm:0.50.21"
+  checksum: a8ea5eeaf868b0e353b35d2a5260286fdbcbfe1612b113ff534a2833e4fc4177c043ad3f1a078a04b8e3241958b7d1d0502af48abffcc16d5aacd94c48d5403b
   languageName: node
   linkType: hard
 
@@ -7684,7 +7684,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
-    chain-registry: ^1.69.43
+    chain-registry: ^1.69.44
     cosmjs-types: ^0.9.0
     keccak: 3.0.4
     minimatch: ^9.0.3
@@ -7743,7 +7743,7 @@ __metadata:
     "@typescript-eslint/parser": ^7.15.0
     "@vitejs/plugin-react": ^4.3.1
     buffer: ^6.0.3
-    chain-registry: ^1.69.43
+    chain-registry: ^1.69.44
     eslint: ^9.9.0
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.10.1
@@ -7774,7 +7774,7 @@ __metadata:
     zod: ^3.23.8
   peerDependencies:
     "@tanstack/react-query": ^5.51.21
-    graz: 0.1.29-alpha.4
+    graz: 0.1.29
     react: ">=17.0.0"
     react-dom: ">=17.0.0"
     viem: 2.21.4
@@ -13264,12 +13264,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.43":
-  version: 1.69.43
-  resolution: "chain-registry@npm:1.69.43"
+"chain-registry@npm:^1.69.44":
+  version: 1.69.44
+  resolution: "chain-registry@npm:1.69.44"
   dependencies:
-    "@chain-registry/types": ^0.50.20
-  checksum: 1eb3fa381d16950331074a072287a054a72a2aeed9cfef826a2e600692debdb95d48a22177c3254236c08721f1e66b12009f4f4fcfe294e3834762d7ec6d665d
+    "@chain-registry/types": ^0.50.21
+  checksum: f31f4eec37d505663118e093ad5ee5dbae88b6dce9fe86e8b1ae542e4e06c95fc141f70ab16d1d0f604d3b4e1beae28b483853da3a60c076bafd358b68218529
   languageName: node
   linkType: hard
 
@@ -17919,9 +17919,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graz@npm:0.1.29-alpha.4":
-  version: 0.1.29-alpha.4
-  resolution: "graz@npm:0.1.29-alpha.4"
+"graz@npm:0.1.29":
+  version: 0.1.29
+  resolution: "graz@npm:0.1.29"
   dependencies:
     "@cosmsnap/snapper": 0.1.29
     "@dao-dao/cosmiframe": 0.1.0
@@ -17949,7 +17949,7 @@ __metadata:
     react: ">=17"
   bin:
     graz: dist/cli.js
-  checksum: a0f3d4244d70e09ed041d899744ca6214ecf3c91b4b212c462428caf2b0194b2d9301136176d9caac57f013f5c8c46d59d7475e08841ac1707fc22da4146883c
+  checksum: 28d725b9268848cdfbeca487e8694210dd43326a734d916fc04da81825716e72efcefe59edcb966dd6d0ec17b83f2a95edc66080c411d9a4c60c779960adb031
   languageName: node
   linkType: hard
 
@@ -21723,10 +21723,10 @@ __metadata:
     "@tanstack/react-query": ^5.17.15
     "@types/node": ^18.19.3
     "@types/react": ^18.2.43
-    chain-registry: ^1.69.43
+    chain-registry: ^1.69.44
     eslint: ^8.15.0
     eslint-config-next: ^14.0.4
-    graz: 0.1.29-alpha.4
+    graz: 0.1.29
     next: ^14.0.4
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -25874,7 +25874,7 @@ __metadata:
     eslint-plugin-prettier: ^5.1.3
     eslint-plugin-simple-import-sort: ^10.0.0
     globby: ^14.0.1
-    graz: 0.1.29-alpha.4
+    graz: 0.1.29
     jest: ^29.7.0
     jest-environment-jsdom: ^29.7.0
     keccak256: 1.x

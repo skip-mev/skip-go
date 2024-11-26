@@ -1,6 +1,5 @@
 import { http } from "viem";
 import { Config, createConfig, createStorage } from "wagmi";
-import { walletConnect } from "wagmi/connectors";
 import {
   arbitrum,
   arbitrumSepolia,
@@ -140,11 +139,4 @@ export const config: Config = createConfig({
     storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
     key: "skip-go-widget-wagmi",
   }),
-  connectors: [
-    walletConnect({
-      projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
-      name: "Skip Go",
-      showQrModal: true,
-    })
-  ]
 });
