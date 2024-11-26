@@ -93,5 +93,6 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
+    placeholderData: (previousData) => previousData
   };
 });
