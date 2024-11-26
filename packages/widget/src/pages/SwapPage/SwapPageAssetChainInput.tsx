@@ -156,11 +156,11 @@ export const SwapPageAssetChainInput = ({
     >
       <Row justify="space-between">
         <StyledInput
-          type="number"
+          type="text"
           value={displayedValue}
           step="any"
           placeholder="0"
-          inputMode="numeric"
+          inputMode="decimal"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
@@ -241,13 +241,6 @@ const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
 }>`
   all: unset;
-
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-  }
-  -moz-appearance: textfield;
 
   font-size: 38px;
   @media (max-width: 767px) {
