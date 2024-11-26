@@ -57,13 +57,25 @@ export const SwapPageAssetChainInput = ({
     if (!onChangeValue) return;
     let latest = e.target.value;
 
-    if (latest.match(/^[.,]/)) latest = `0.${latest}`; // Handle first character being a period or comma
-    latest = latest.replace(/^[0]{2,}/, "0"); // Remove leading zeros
-    latest = latest.replace(/[^\d.,]/g, ""); // Remove non-numeric and non-decimal characters
-    latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
-    latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
+    // If the first character is '.', prefix with '0'
+    if (latest.startsWith('.')) latest = '0' + latest;
 
-    const formattedValue = formatNumberWithoutCommas(latest);
+    // Remove all characters except digits and dots
+    latest = latest.replace(/[^\d.]/g, '');
+
+    // Keep only the first dot, remove any additional dots
+    const firstDotIndex = latest.indexOf('.');
+    if (firstDotIndex !== -1) {
+      latest =
+        latest.substring(0, firstDotIndex + 1) +
+        latest.substring(firstDotIndex + 1).replace(/\./g, '');
+    }
+
+    // Remove leading zeros unless they are immediately followed by a dot
+    latest = latest.replace(/^0+(?!\.)/, '0');
+
+    const formattedValue = latest;
+
     onChangeValue?.(
       limitDecimalsDisplayed(formattedValue, assetDetails?.decimals)
     );
@@ -156,11 +168,12 @@ export const SwapPageAssetChainInput = ({
     >
       <Row justify="space-between">
         <StyledInput
-          type="number"
-          value={displayedValue}
-          step="any"
-          placeholder="0"
+          type="text"
+          lang="en-US"
           inputMode="decimal"
+          pattern="[0-9]*\.?[0-9]*"
+          value={displayedValue}
+          placeholder="0"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
