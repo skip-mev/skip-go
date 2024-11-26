@@ -88,17 +88,17 @@ export const queryClient = new QueryClient();
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <NiceModal.Provider>
-      <ShadowDomAndProviders theme={theme}>
-        <WalletProviders>
-          <QueryClientProvider client={queryClient} key={'skip-widget'}>
+    <ShadowDomAndProviders theme={theme}>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={'skip-widget'}>
+          <NiceModal.Provider>
             <WidgetWrapper>
               <Router />
             </WidgetWrapper>
-          </QueryClientProvider>
-        </WalletProviders>
-      </ShadowDomAndProviders>
-    </NiceModal.Provider>
+          </NiceModal.Provider>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
   );
 };
 

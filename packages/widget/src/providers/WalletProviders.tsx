@@ -6,10 +6,10 @@ export const WalletProviders = (
   { children }: { children: ReactNode }
 ) => {
   return (
-    <EVMProvider>
-      <CosmosProvider>
+    <CosmosProvider>
+      <EVMProvider>
         {children}
-      </CosmosProvider>
-    </EVMProvider>
+      </EVMProvider>
+    </CosmosProvider>
   );
 };
