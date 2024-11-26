@@ -27,6 +27,8 @@ import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 
 export type WidgetRouteConfig =
   Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
@@ -65,18 +67,21 @@ type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffili
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 }
 
+export const queryClient = new QueryClient();
 
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
     <WalletProviders>
-      <NiceModal.Provider>
-        <ShadowDomAndProviders theme={theme}>
-          <WidgetWrapper>
-            <Router />
-          </WidgetWrapper>
-        </ShadowDomAndProviders>
-      </NiceModal.Provider>
+      <QueryClientProvider client={queryClient} key={"skip-widget"}>
+        <NiceModal.Provider>
+          <ShadowDomAndProviders theme={theme}>
+            <WidgetWrapper>
+              <Router />
+            </WidgetWrapper>
+          </ShadowDomAndProviders>
+        </NiceModal.Provider>
+      </QueryClientProvider>
     </WalletProviders>
   );
 };
@@ -171,9 +176,11 @@ export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
-        <WidgetWrapper>
-          <Router />
-        </WidgetWrapper>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <WidgetWrapper>
+            <Router />
+          </WidgetWrapper>
+        </QueryClientProvider>
       </WalletProviders>
     </ShadowDomAndProviders>
   );
