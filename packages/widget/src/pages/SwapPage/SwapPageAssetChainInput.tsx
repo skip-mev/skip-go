@@ -156,7 +156,7 @@ export const SwapPageAssetChainInput = ({
     >
       <Row justify="space-between">
         <StyledInput
-          type="text"
+          type="number"
           value={displayedValue}
           step="any"
           placeholder="0"
