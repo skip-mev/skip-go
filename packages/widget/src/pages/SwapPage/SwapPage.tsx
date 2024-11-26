@@ -74,9 +74,11 @@ export const SwapPage = () => {
   const isSwapOperation = useIsSwapOperation(route);
 
   const { chainId: evmChainId, connector } = useAccount();
-  const evmAddress = evmChainId
-    ? getAccount(String(evmChainId))?.address
-    : undefined;
+  const evmAddress = useMemo(() => {
+    return evmChainId
+      ? getAccount(String(evmChainId))?.address
+      : undefined;
+  }, [evmChainId, getAccount]);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -339,7 +341,7 @@ export const SwapPage = () => {
                 onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
               }
           }
-          rightContent={<ConnectedWalletContent />}
+          rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
         />
         <Column align="center">
           <SwapPageAssetChainInput
