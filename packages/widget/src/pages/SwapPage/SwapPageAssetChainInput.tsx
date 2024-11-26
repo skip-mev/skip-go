@@ -57,17 +57,28 @@ export const SwapPageAssetChainInput = ({
     if (!onChangeValue) return;
     let latest = e.target.value;
 
-    if (latest.match(/^[.,]/)) latest = `0.${latest}`; // Handle first character being a period or comma
-    latest = latest.replace(/^[0]{2,}/, "0"); // Remove leading zeros
-    latest = latest.replace(/[^\d.,]/g, ""); // Remove non-numeric and non-decimal characters
-    latest = latest.replace(/[.]{2,}/g, "."); // Remove multiple decimals
-    latest = latest.replace(/[,]{2,}/g, ","); // Remove multiple commas
+    // Handle first character being a period or comma
+    if (latest.match(/^[.,]/)) latest = `0.${latest}`;
+
+    // Replace commas with periods to standardize the decimal separator
+    latest = latest.replace(/,/g, '.');
+
+    // Remove any non-digit and non-period characters
+    latest = latest.replace(/[^\d.]/g, '');
+
+    // Remove multiple leading zeros
+    latest = latest.replace(/^0+(\d)/, '0$1');
+
+    // Ensure only one decimal point is present
+    const parts = latest.split('.');
+    latest = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
 
     const formattedValue = formatNumberWithoutCommas(latest);
     onChangeValue?.(
       limitDecimalsDisplayed(formattedValue, assetDetails?.decimals)
     );
   };
+
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
