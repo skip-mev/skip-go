@@ -46,7 +46,7 @@ export const useCreateCosmosWallets = () => {
     (chainID?: string) => {
       const mobile = isMobile();
       const browserWallets = [WalletType.KEPLR, WalletType.LEAP, WalletType.COSMOSTATION, WalletType.XDEFI, WalletType.STATION, WalletType.VECTIS, WalletType.WALLETCONNECT];
-      const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE, WalletType.WC_LEAP_MOBILE, WalletType.WC_COSMOSTATION_MOBILE];
+      const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter((x) => {
         try {
           return Boolean(getWallet(x));
