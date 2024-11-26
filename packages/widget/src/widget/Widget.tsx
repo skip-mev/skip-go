@@ -49,6 +49,10 @@ export type WidgetProps = {
      * @default 200_000
      */
     customGasAmount?: number;
+    /**
+* Set allowance amount to max if EVM transaction requires allowance approval 
+*/
+    useUnlimitedApproval?: boolean;
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
@@ -128,6 +132,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
         ...props.settings,
       });
     }
+
     if (props.routeConfig) {
       setRouteConfig((prev) => {
         return {

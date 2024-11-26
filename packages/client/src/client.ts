@@ -527,7 +527,7 @@ export class SkipClient {
       );
     }
 
-    const { onApproveAllowance, onTransactionSigned, approveMaxAllowance } = options;
+    const { onApproveAllowance, onTransactionSigned, useUnlimitedApproval } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -550,6 +550,7 @@ export class SkipClient {
         status: 'pending',
         allowance: requiredApproval,
       });
+
       const txHash = await extendedSigner.writeContract({
         account: signer.account,
         address: requiredApproval.tokenContract as `0x${string}`,
@@ -557,7 +558,7 @@ export class SkipClient {
         functionName: 'approve',
         args: [
           requiredApproval.spender as `0x${string}`,
-          approveMaxAllowance ? maxUint256 : BigInt(requiredApproval.amount),
+          useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount),
         ],
         chain: signer.chain,
       });

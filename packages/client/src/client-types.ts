@@ -93,7 +93,7 @@ export type ExecuteRouteOptions = SignerGetters &
     /**
  * Set allowance amount to max if EVM transaction requires allowance approval 
  */
-    approveMaxAllowance?: boolean;
+    useUnlimitedApproval?: boolean;
     /**
  * Arbitrary Tx to be executed before or after route msgs
  */

@@ -124,7 +124,8 @@ export const chainFilterAtom = atom<ChainFilter>();
 
 export const defaultSwapSettings = {
   slippage: 3,
-  customGasAmount: 200_000
+  customGasAmount: 200_000,
+  useUnlimitedApproval: true
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
