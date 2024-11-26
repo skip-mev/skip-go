@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.7
+
+### Patch Changes
+
+- fc7374d: Improve onTransactionSigned callback to be more close after signing
+
 ## 0.14.6
 
 ### Patch Changes
