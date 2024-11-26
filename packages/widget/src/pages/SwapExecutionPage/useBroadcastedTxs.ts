@@ -13,7 +13,7 @@ export type TxsStatus = {
 };
 
 export const useBroadcastedTxsStatus = ({
-  txs: _txs,
+  txs,
   txsRequired,
   enabled,
 }: {
@@ -24,10 +24,7 @@ export const useBroadcastedTxsStatus = ({
   const skipClient = useAtomValue(skipClientAtom);
   const [isSettled, setIsSettled] = useState(false);
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
-  const txs = _txs?.map((tx) => ({
-    chainID: tx.chainID,
-    txHash: tx.txHash.toLowerCase(),
-  }));
+
   const queryKey = useMemo(
     () => ["txs-status", txsRequired, txs] as const,
     [txs, txsRequired]

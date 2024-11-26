@@ -490,7 +490,6 @@ export type TransferEvent =
 type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {
   onTransactionSigned?: (txInfo: {
-    txHash: string;
     chainID: string;
   }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {

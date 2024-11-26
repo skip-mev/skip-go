@@ -338,15 +338,13 @@ export class SkipClient {
   ): Promise<{ chainID: string; txHash: string }> {
     const {
       userAddresses,
-      getGasPrice,
-      gasAmountMultiplier,
-      getFallbackGasAmount,
+      getCosmosSigner,
     } = options;
     const gasUsed = gas[index];
     if (!gasUsed) {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
-    const getOfflineSigner = options.getCosmosSigner || this.getCosmosSigner;
+    const getOfflineSigner = options.getCosmosSigner ?? this.getCosmosSigner;
 
     if (!getOfflineSigner) {
       throw new Error(
@@ -382,15 +380,12 @@ export class SkipClient {
     const txResponse = await this.executeCosmosMessage({
       messages: tx.cosmosTx.msgs,
       chainID: tx.cosmosTx.chainID,
-      getCosmosSigner: options.getCosmosSigner,
-      getGasPrice: getGasPrice,
-      gasAmountMultiplier,
+      getCosmosSigner,
       signerAddress: currentUserAddress,
-      getFallbackGasAmount,
       gas: gasUsed,
       stargateClient,
       signer,
-      onTransactionSigned: options.onTransactionSigned,
+      ...options
     });
 
     return {
@@ -415,7 +410,7 @@ export class SkipClient {
     const txReceipt = await this.executeSVMTransaction({
       signer: svmSigner,
       message: svmTx,
-      onTransactionSigned: options.onTransactionSigned,
+      options,
     });
 
     return {
@@ -440,8 +435,7 @@ export class SkipClient {
     return await this.executeEVMTransaction({
       message: evmTx,
       signer: evmSigner,
-      onTransactionSigned: options.onTransactionSigned,
-      onApproveAllowance: options.onApproveAllowance,
+      options,
     });
   }
 
@@ -502,33 +496,34 @@ export class SkipClient {
       rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
     }
 
+    onTransactionSigned?.({
+      chainID,
+    });;
+
     const txBytes = TxRaw.encode(rawTx).finish();
 
     const txHash = toHex(sha256(txBytes));
-    onTransactionSigned?.({
-      chainID,
-      txHash,
-    });
+
     const tx = await stargateClient.broadcastTx(txBytes);
+
     return tx;
   }
 
   async executeEVMTransaction({
     message,
     signer,
-    onTransactionSigned,
-    onApproveAllowance,
+    options,
   }: {
     message: types.EvmTx;
     signer: WalletClient;
-    onTransactionSigned?: types.TransactionCallbacks['onTransactionSigned'];
-    onApproveAllowance?: types.TransactionCallbacks['onApproveAllowance'];
+    options: clientTypes.ExecuteRouteOptions;
   }) {
     if (!signer.account) {
       throw new Error(
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
+    const { onApproveAllowance, onTransactionSigned } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -576,6 +571,7 @@ export class SkipClient {
       status: 'completed',
     });
 
+
     // execute tx
     const txHash = await extendedSigner.sendTransaction({
       account: signer.account,
@@ -587,8 +583,9 @@ export class SkipClient {
 
     onTransactionSigned?.({
       chainID: message.chainID,
-      txHash,
     });
+
+
     const receipt = await extendedSigner.waitForTransactionReceipt({
       hash: txHash,
     });
@@ -599,12 +596,13 @@ export class SkipClient {
   async executeSVMTransaction({
     signer,
     message,
-    onTransactionSigned,
+    options: options,
   }: {
     signer: Adapter;
     message: types.SvmTx;
-    onTransactionSigned?: types.TransactionCallbacks['onTransactionSigned'];
+    options: clientTypes.ExecuteRouteOptions
   }) {
+    const { onTransactionSigned } = options;
     const _tx = Buffer.from(message.tx, 'base64');
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
@@ -612,16 +610,15 @@ export class SkipClient {
     let signature;
     if ('signTransaction' in signer) {
       const tx = await signer.signTransaction(transaction);
+      onTransactionSigned?.({
+        chainID: message.chainID,
+      });
       const serializedTx = tx.serialize();
 
       await this.submitTransaction({
         chainID: message.chainID,
         tx: serializedTx.toString('base64'),
       }).then((res) => {
-        onTransactionSigned?.({
-          chainID: message.chainID,
-          txHash: res.txHash,
-        });
         signature = res.txHash;
       });
 
@@ -1209,9 +1206,8 @@ export class SkipClient {
         },
       },
     });
-    if (onTransactionTracked) {
-      await onTransactionTracked({ txHash, chainID, explorerLink });
-    }
+    await onTransactionTracked?.({ txHash, chainID, explorerLink });
+
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const txStatusResponse = await this.transactionStatus({
