@@ -97,13 +97,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   return (
     <Row gap={25} align="center">
-      {assetDetails.assetImage && (
-        <StyledAnimatedBorder
-          width={50}
-          height={50}
-          backgroundColor={theme.success.text}
-          status={status}
-        >
+      <StyledAnimatedBorder
+        width={50}
+        height={50}
+        backgroundColor={theme.success.text}
+        status={status}
+      >
+        {assetDetails.assetImage ? (
           <img
             height={50}
             width={50}
@@ -111,8 +111,10 @@ export const SwapExecutionPageRouteSimpleRow = ({
             src={assetDetails.assetImage}
             title={assetDetails?.asset?.name}
           />
-        </StyledAnimatedBorder>
-      )}
+        ) : (
+          <PlaceholderIcon>?</PlaceholderIcon>
+        )}
+      </StyledAnimatedBorder>
       <Column gap={5}>
         <StyledSymbolAndAmount>
           {displayAmount} {assetDetails?.symbol}
@@ -159,4 +161,17 @@ const StyledSymbolAndAmount = styled(Text)`
   max-width: 325px;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const PlaceholderIcon = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: ${props => props.theme.secondary.background.normal};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: ${props => props.theme.primary.text.normal};
+  border: 1px solid ${props => props.theme.primary.text.normal};
 `;

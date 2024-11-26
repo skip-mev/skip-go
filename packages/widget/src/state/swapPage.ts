@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
@@ -122,10 +122,15 @@ export type ChainFilter = {
 
 export const chainFilterAtom = atom<ChainFilter>();
 
+export enum RoutePreference {
+  FASTEST = "Fastest",
+  CHEAPEST = "Cheapest",
+}
 export const defaultSwapSettings = {
   slippage: 3,
   customGasAmount: 200_000,
   useUnlimitedApproval: true
+  routePreference: RoutePreference.FASTEST,
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
@@ -135,5 +140,14 @@ export const slippageAtom = atom(
   (get, set, newSlippage: number) => {
     const currentSettings = get(swapSettingsAtom);
     set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });
+  }
+);
+
+export const routePreferenceAtom = atom(
+  (get) => get(swapSettingsAtom).routePreference,
+  (get, set, newRoutePreference: RoutePreference) => {
+    const currentSettings = get(swapSettingsAtom);
+    set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
+    set(routeConfigAtom, (prev) => ({ ...prev, goFast: newRoutePreference === RoutePreference.FASTEST }));
   }
 );

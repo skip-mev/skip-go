@@ -3,21 +3,23 @@ import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { SwapPageFooterItems } from "../../pages/SwapPage/SwapPageFooter";
+import { SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
 import { formatUSD } from "@/utils/intl";
-import { getClientOperations, OperationType } from "@/utils/clientType";
+import { ClientOperation, getClientOperations, OperationType } from "@/utils/clientType";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
-import SlippageSelector from "../../pages/SwapPage/SlippageSelector";
+import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
+import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
   const { data: route } = useAtomValue(skipRouteAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
+
   const chainsRoute = useMemo(() => {
     return route?.chainIDs.map((chainID) =>
       chains?.find((chain) => chain.chainID === chainID)
@@ -26,60 +28,93 @@ export const SwapSettingsDrawer = createModal(() => {
 
   const clientOperations = getClientOperations(route?.operations);
 
-  const axelarTransferOperation = useMemo(() => {
-    if (!clientOperations) return;
-    return clientOperations?.find(
-      (item) => item.type === OperationType.axelarTransfer
+  const transferOperations = useMemo(() => {
+    if (!clientOperations) return [];
+    return clientOperations.filter((item) =>
+      [
+        OperationType.axelarTransfer,
+        OperationType.hyperlaneTransfer,
+        OperationType.goFastTransfer,
+      ].includes(item.type)
     );
   }, [clientOperations]);
 
-  const hyperlaneTransferOperation = useMemo(() => {
-    if (!clientOperations) return;
-    return clientOperations?.find(
-      (item) => item.type === OperationType.hyperlaneTransfer
-    );
-  }, [clientOperations]);
+  const computeFee = (operation: ClientOperation) => {
+    if (!operation) return;
+    if (operation.type === OperationType.goFastTransfer) {
+      const goFastFee = operation.fee;
+      if (!goFastFee) return;
 
-  const axelarFee = useMemo(() => {
-    if (axelarTransferOperation) {
-      const { feeAmount, feeAsset, usdFeeAmount } = axelarTransferOperation;
+      const { feeAsset, sourceChainFeeAmount, destinationChainFeeAmount,
+        bpsFeeAmount, sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD }
+        = goFastFee;
+
+      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
+        .reduce((sum, amount) => sum + Number(amount), 0);
+      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD]
+        .reduce((sum, amount) => sum + Number(amount), 0);
+
+      const computed = convertTokenAmountToHumanReadableAmount(
+        totalFeeAmount.toString(),
+        feeAsset.decimals
+      )
+      return {
+        assetAmount: Number(computed),
+        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
+        formattedUsdAmount: formatUSD(totalUsdAmount.toString()),
+      };
+    } else {
+      const { feeAmount, feeAsset, usdFeeAmount } = operation;
       if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
+
       const computed = convertTokenAmountToHumanReadableAmount(
         feeAmount,
         feeAsset.decimals
       );
+
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount
-          ? `${formatUSD(usdFeeAmount)}`
-          : undefined,
+        formattedUsdAmount: usdFeeAmount ? formatUSD(usdFeeAmount) : undefined,
       };
     }
-  }, [axelarTransferOperation]);
+  };
 
-  const hyperlaneFee = useMemo(() => {
-    if (hyperlaneTransferOperation) {
-      const { feeAmount, feeAsset, usdFeeAmount } = hyperlaneTransferOperation;
-      if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
-      const computed = convertTokenAmountToHumanReadableAmount(
-        feeAmount,
-        feeAsset.decimals
-      );
-      return {
-        assetAmount: Number(computed),
-        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount
-          ? `${formatUSD(usdFeeAmount)}`
-          : undefined,
-      };
+  const fees = useMemo(() => {
+    const feeList = [];
+
+    transferOperations.forEach((operation) => {
+      const fee = computeFee(operation);
+      if (fee) {
+        let label = '';
+        switch (operation.type) {
+          case OperationType.axelarTransfer:
+            label = 'Axelar Bridging Fee';
+            break;
+          case OperationType.hyperlaneTransfer:
+            label = 'Hyperlane Bridging Fee';
+            break;
+          case OperationType.goFastTransfer:
+            label = 'Go Fast Transfer Fee';
+            break;
+          default:
+            break;
+        }
+        feeList.push({ label, fee });
+      }
+    });
+
+    const isSmartRelay = checkIsSmartRelay(route);
+    const smartRelayFee = calculateSmartRelayFee(
+      isSmartRelay,
+      route?.estimatedFees
+    );
+
+    if (smartRelayFee) {
+      feeList.push({ label: 'Relayer Fee', fee: smartRelayFee });
     }
-  }, [hyperlaneTransferOperation]);
-
-  const isSmartRelay = checkIsSmartRelay(route);
-  const smartRelayFee = useMemo(() => {
-    return calculateSmartRelayFee(isSmartRelay, route?.estimatedFees);
-  }, [isSmartRelay, route?.estimatedFees]);
+    return feeList;
+  }, [transferOperations, route]);
 
   return (
     <StyledSwapPageSettings gap={20}>
@@ -113,39 +148,20 @@ export const SwapSettingsDrawer = createModal(() => {
             </Row>
           </Row>
         )}
-
       </Column>
-      {(axelarFee || hyperlaneFee || smartRelayFee) && (
+      {fees.length > 0 && (
         <Column gap={10}>
-          {axelarFee && (
-            <Row justify="space-between">
-              <SwapDetailText>Axelar Bridging Fee</SwapDetailText>
+          {fees.map(({ label, fee }, index) => (
+            <Row justify="space-between" key={index}>
+              <SwapDetailText>{label}</SwapDetailText>
               <SwapDetailText monospace>
-                {axelarFee.formattedAssetAmount} ({axelarFee.formattedUsdAmount}
-                )
+                {fee.formattedAssetAmount} ({fee.formattedUsdAmount})
               </SwapDetailText>
             </Row>
-          )}
-          {hyperlaneFee && (
-            <Row justify="space-between">
-              <SwapDetailText>Hyperlane Bridging Fee</SwapDetailText>
-              <SwapDetailText monospace>
-                {hyperlaneFee.formattedAssetAmount} (
-                {hyperlaneFee.formattedUsdAmount})
-              </SwapDetailText>
-            </Row>
-          )}
-          {smartRelayFee && (
-            <Row justify="space-between">
-              <SwapDetailText>Relayer Fee</SwapDetailText>
-              <SwapDetailText monospace>
-                {smartRelayFee.formattedAssetAmount} (
-                {smartRelayFee.formattedUsdAmount})
-              </SwapDetailText>
-            </Row>
-          )}
+          ))}
         </Column>
       )}
+      <RoutePreferenceSelector />
       <SlippageSelector />
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
@@ -155,7 +171,6 @@ export const SwapSettingsDrawer = createModal(() => {
 });
 
 const StyledSwapPageSettings = styled(Column)`
-  max-width: 480px;
   width: 100%;
   padding: 20px;
   border-radius: 20px;

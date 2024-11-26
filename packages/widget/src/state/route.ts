@@ -87,6 +87,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
     splitRoutes: true,
     evmSwaps: true,
   },
+  goFast: true
 });
 
 export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig): RouteConfig => {
@@ -123,7 +124,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
-  const skipRouteConfig = get(routeConfigAtom);
+  const routeConfig = get(routeConfigAtom);
 
   const queryEnabled =
     params !== undefined &&
@@ -133,17 +134,17 @@ export const _skipRouteAtom = atomWithQuery((get) => {
     error === undefined;
 
   return {
-    queryKey: ["skipRoute", params],
+    queryKey: ["skipRoute", params, routeConfig],
     queryFn: async (): Promise<CaughtRouteError | RouteResponse> => {
       if (!params) {
         throw new Error("No route request provided");
       }
       try {
-        const _skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(skipRouteConfig);
+        const skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(routeConfig);
         const response = await skip.route({
           ...params,
           smartRelay: true,
-          ..._skipRouteConfig,
+          ...skipRouteConfig,
         });
         return response;
       } catch (error) {

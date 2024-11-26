@@ -21,8 +21,26 @@ export type VirtualListProps<T> = {
   };
 };
 
-const MAX_MODAL_HEIGHT = 600;
-const MOBILE_VERTICAL_MARGIN = 100;
+export const MAX_MODAL_HEIGHT = 600;
+export const MOBILE_VERTICAL_MARGIN = 100;
+
+export const useListHeight = (itemHeight: number) => {
+  const isMobileScreenSize = useIsMobileScreenSize();
+  const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      if (isMobileScreenSize) {
+        return window.innerHeight - itemHeight - MOBILE_VERTICAL_MARGIN * 2;
+      }
+      return MAX_MODAL_HEIGHT - itemHeight;
+    };
+
+    setVirtualListHeight(calculateHeight());
+  }, [isMobileScreenSize, itemHeight]);
+
+  return virtualListHeight;
+}
 
 export const VirtualList = <T,>({
   listItems,
@@ -35,21 +53,9 @@ export const VirtualList = <T,>({
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
-  const [virtualListHeight, setVirtualListHeight] = useState(MAX_MODAL_HEIGHT - itemHeight);
-  const isMobileScreenSize = useIsMobileScreenSize();
+  const listHeight = useListHeight(itemHeight);
 
   const listRef = useRef<ListRef>(null);
-
-  useEffect(() => {
-    const calculateHeight = () => {
-      if (isMobileScreenSize) {
-        return window.innerHeight - itemHeight - MOBILE_VERTICAL_MARGIN * 2;
-      }
-      return MAX_MODAL_HEIGHT - itemHeight;
-    };
-
-    setVirtualListHeight(calculateHeight());
-  }, [isMobileScreenSize, itemHeight]);
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
@@ -92,9 +98,9 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer gap={10}>
+      <StyledNoResultsContainer gap={10} height={height}>
         {empty?.icon}
-        <SmallText fontSize={22}>{empty?.header}</SmallText>
+        <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
       </StyledNoResultsContainer>
     );
@@ -104,7 +110,7 @@ export const VirtualList = <T,>({
     <List
       ref={listRef}
       data={listItems}
-      height={height ?? virtualListHeight}
+      height={height ?? listHeight}
       itemHeight={itemHeight}
       itemKey={itemKey}
       virtual
@@ -125,8 +131,10 @@ export const VirtualList = <T,>({
   );
 };
 
-const StyledNoResultsContainer = styled(Column)`
-  min-height: 300px;
+const StyledNoResultsContainer = styled(Column) <{
+  height?: number;
+}>`
+  min-height: ${({ height }) => height}px;
   width: 100%;
   text-align: center;
   align-items: center;
@@ -135,4 +143,5 @@ const StyledNoResultsContainer = styled(Column)`
 
 const StyledEmptyDetails = styled(SmallText)`
   white-space: pre-line;
+  text-align: center;
 `;

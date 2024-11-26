@@ -64,7 +64,7 @@ async function collectChainData(directory, packageName, networkType, isGetExplor
           }
 
         } catch (error) {
-          console.error(`Error generating chain info for ${chainName} in ${packageName}:`, error.message);
+          console.warn(`Error generating chain info for ${chainName} in ${packageName}:`, error.message);
         }
       }
     }

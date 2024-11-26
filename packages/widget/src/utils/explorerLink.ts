@@ -1,8 +1,8 @@
 import { explorers } from "@/constants/chains";
 import { config } from "@/constants/wagmi";
 
-export const createExplorerLink = ({ chainID, txHash, chainType }: { chainID: string, chainType?: string, txHash: string }) => {
-  if (!chainType) return undefined;
+export const createExplorerLink = ({ chainID, txHash, chainType }: { chainID?: string, chainType?: string, txHash: string }) => {
+  if (!chainType || !chainID) return undefined;
   switch (chainType) {
     case "cosmos":
       {

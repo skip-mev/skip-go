@@ -14,7 +14,7 @@ import { Modals } from "@/modals/registerModals";
 import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
-import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 
 interface SwapExecutionButtonProps {
   swapExecutionState: SwapExecutionState | undefined;
@@ -38,6 +38,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route)
+  const isSwapOperation = useIsSwapOperation(route);
+  const operationText = isSwapOperation ? "Swap" : "Send";
 
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
@@ -79,7 +81,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       };
       return (
         <MainButton
-          label="Confirm swap"
+          label="Confirm"
           icon={ICONS.rightArrow}
           onClick={onClickConfirmSwap}
         />
@@ -88,14 +90,14 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.validatingGasBalance:
       return (
         <MainButton
-          label="Validating gas and balance"
+          label="Validating"
           icon={ICONS.rightArrow}
           loading
         />
       );
     case SwapExecutionState.waitingForSigning:
       return (
-        <MainButton label="Confirm swap" icon={ICONS.rightArrow} loading />
+        <MainButton label="Confirming" icon={ICONS.rightArrow} loading />
       );
     case SwapExecutionState.approving:
       return (
@@ -104,9 +106,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.pending:
       return (
         <MainButton
-          label="Swap in progress"
+          label="Processing"
           loading
-          isGoFast
+          isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
           loadingTimeString={convertSecondsToMinutesOrHours(
             route?.estimatedRouteDurationSeconds
@@ -129,7 +131,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.confirmed:
       return (
         <MainButton
-          label="Swap again"
+          label={`${operationText} again`}
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {

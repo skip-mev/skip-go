@@ -190,10 +190,6 @@ export const ShowWidget = ({
 };
 
 const WidgetContainer = styled.div`
-  width: 500px;
+  width: 100%;
   position: relative;
-  padding: 0 10px;
-  @media (max-width: 500px) {
-    width: 100vw;
-  }
 `;
