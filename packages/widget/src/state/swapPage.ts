@@ -127,7 +127,7 @@ export enum RoutePreference {
   CHEAPEST = "Cheapest",
 }
 export const defaultSwapSettings = {
-  slippage: 3,
+  slippage: 1,
   customGasAmount: 200_000,
   routePreference: RoutePreference.FASTEST,
 };

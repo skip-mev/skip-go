@@ -1,6 +1,6 @@
 import { RoutePreference } from "@/state/swapPage";
 
-export const SLIPPAGE_OPTIONS = [0.5, 3, 5, 10];
+export const SLIPPAGE_OPTIONS = [0.1, 0.5, 1, 3];
 
 export const ROUTE_PREFERENCE_OPTIONS: RoutePreference[] = [
   RoutePreference.FASTEST,
