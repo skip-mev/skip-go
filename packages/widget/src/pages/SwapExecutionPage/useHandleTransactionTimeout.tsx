@@ -37,7 +37,7 @@ export const useHandleTransactionTimeout = (
           explorerLink: lastTransaction?.explorerLink ?? "",
           txHash: lastTransaction?.txHash,
         });
-      }, route.estimatedRouteDurationSeconds * 1_000 * 2);
+      }, route.estimatedRouteDurationSeconds * 1_000 * 3);
 
       setTransactionTimeoutTimer(timeoutTimer);
     }
