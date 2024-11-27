@@ -50,7 +50,7 @@ export const useGetAccount = () => {
       });
     }
 
-  }, [walletType, cosmosWallet, solanaWallet, svmWallet, evmAccount.connector, evmWallet]);
+  }, [walletType, cosmosWallet, solanaWallet, svmWallet, evmAccount.connector, evmWallet, setCosmosWallet, setSvmWallet, setEvmWallet]);
 
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
