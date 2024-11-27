@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.14.8
+
+### Patch Changes
+
+- b0319d5: update msgs direct request for go fast
+
 ## 0.14.7
 
 ### Patch Changes
