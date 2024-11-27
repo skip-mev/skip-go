@@ -58,21 +58,21 @@ export const SwapPageAssetChainInput = ({
     let latest = e.target.value;
 
     // If the first character is '.', prefix with '0'
-    if (latest.startsWith('.')) latest = '0' + latest;
+    if (latest.startsWith(".")) latest = "0" + latest;
 
     // Remove all characters except digits and dots
-    latest = latest.replace(/[^\d.]/g, '');
+    latest = latest.replace(/[^\d.]/g, "");
 
     // Keep only the first dot, remove any additional dots
-    const firstDotIndex = latest.indexOf('.');
+    const firstDotIndex = latest.indexOf(".");
     if (firstDotIndex !== -1) {
       latest =
         latest.substring(0, firstDotIndex + 1) +
-        latest.substring(firstDotIndex + 1).replace(/\./g, '');
+        latest.substring(firstDotIndex + 1).replace(/\./g, "");
     }
 
     // Remove leading zeros unless they are immediately followed by a dot
-    latest = latest.replace(/^0+(?!\.)/, '0');
+    latest = latest.replace(/^0+(?!\.)/, "0");
 
     const formattedValue = formatNumberWithoutCommas(latest);
 
@@ -171,7 +171,6 @@ export const SwapPageAssetChainInput = ({
           type="text"
           lang="en-US"
           inputMode="decimal"
-          pattern="[0-9]*\.?[0-9]*"
           value={displayedValue}
           placeholder="0"
           onChange={handleInputChange}
