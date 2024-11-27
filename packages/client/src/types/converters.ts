@@ -2462,6 +2462,7 @@ export function msgsDirectRequestFromJSON(
     allowUnsafe: msgDirectRequestJSON.allow_unsafe,
     bridges: msgDirectRequestJSON.bridges,
     experimentalFeatures: msgDirectRequestJSON.experimental_features,
+    goFast: msgDirectRequestJSON.go_fast,
   };
 
   if (msgDirectRequestJSON.amount_in !== undefined) {
@@ -2509,6 +2510,7 @@ export function msgsDirectRequestToJSON(
       : undefined,
     allow_swaps: msgDirectRequest.allowSwaps,
     enable_gas_warnings: msgDirectRequest.enableGasWarnings,
+    go_fast: msgDirectRequest.goFast,
   };
 
   if (msgDirectRequest.amountIn !== undefined) {
