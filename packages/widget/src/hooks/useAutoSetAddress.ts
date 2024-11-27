@@ -181,7 +181,7 @@ export const useAutoSetAddress = () => {
           break;
       }
     });
-  }, [requiredChainAddresses, chains, sourceWallet, createCosmosWallets, createEvmWallets, createSolanaWallets, setChainAddresses, signRequiredChains]);
+  }, [requiredChainAddresses, chains, sourceWallet, createCosmosWallets, createEvmWallets, createSolanaWallets, setChainAddresses, signRequiredChains, chainAddresses]);
 
   useQuery({
     queryKey: ["auto-set-address", { requiredChainAddresses, chains, sourceWallet, signRequiredChains }],

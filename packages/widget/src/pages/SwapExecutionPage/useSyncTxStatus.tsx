@@ -77,7 +77,7 @@ export const useSyncTxStatus = ({
     ) {
       return "unconfirmed";
     }
-  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, statusData?.lastTxStatus, transferEvents]);
+  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, statusData?.lastTxStatus, transferEvents, overallStatus]);
   useEffect(() => {
     if (computedSwapStatus) {
       setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
