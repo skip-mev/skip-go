@@ -37,7 +37,9 @@ export const ConnectedWalletContent = () => {
     if (amount === "0") {
       formattedBalanceAmount = amount;
     }
-    formattedBalanceAmount = limitDecimalsDisplayed(removeTrailingZeros(formattedBalanceAmount));
+    formattedBalanceAmount = limitDecimalsDisplayed(
+      removeTrailingZeros(formattedBalanceAmount)
+    );
 
     return formattedBalanceAmount + symbol;
   }, [sourceBalance, sourceDetails?.symbol]);
