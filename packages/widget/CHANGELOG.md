@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.0.17
+
+### Patch Changes
+
+- 23939e6: fix destination/recovery address not auto filled
+- 7cc8da5: increase transaction timeout cushion
+- a5fe75b: fix balance decimals display
+- Updated dependencies [b0319d5]
+  - @skip-go/client@0.14.8
+
 ## 3.0.16
 
 ### Patch Changes
