@@ -254,13 +254,6 @@ const StyledInput = styled.input<{
 }>`
   all: unset;
 
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-  }
-  -moz-appearance: textfield;
-
   font-size: 38px;
   @media (max-width: 767px) {
     font-size: 30px;
