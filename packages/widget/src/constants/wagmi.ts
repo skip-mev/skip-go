@@ -28,7 +28,7 @@ import {
 import { defineChain } from "viem";
 const isBrowser = typeof window !== 'undefined';
 
-const forma = defineChain({
+export const forma = defineChain({
   id: 984_122,
   name: "Forma",
   nativeCurrency: {
@@ -56,7 +56,7 @@ const forma = defineChain({
   testnet: false,
 });
 
-const formaTestnet = defineChain({
+export const formaTestnet = defineChain({
   id: 984_123,
   name: "Forma Testnet",
   nativeCurrency: {
