@@ -24,7 +24,7 @@ export const TransactionHistoryPage = () => {
   const historyList = useMemo(
     () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
     [txHistory]
-  )
+  );
 
   return (
     <Column gap={5}>

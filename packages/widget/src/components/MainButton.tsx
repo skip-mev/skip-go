@@ -186,8 +186,8 @@ const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
     height: 100%;
     opacity: ${(props) =>
     props.isGoFast
-      ? '0.9'
-      : '0.6'};
+      ? "0.9"
+      : "0.6"};
     background: linear-gradient(
       90deg,
       transparent 0%,
@@ -201,7 +201,7 @@ const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
     );
     background-size: 200% 100%;
     background-position: 100% 0;
-    animation: loadingPulse ${(props) => (props.isGoFast ? '.6s' : '1s')} linear infinite;
+    animation: loadingPulse ${(props) => (props.isGoFast ? ".6s" : "1s")} linear infinite;
   }
 
   @keyframes loadingPulse {

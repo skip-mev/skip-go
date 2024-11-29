@@ -26,7 +26,7 @@ import {
   sepolia,
 } from "wagmi/chains";
 import { defineChain } from "viem";
-const isBrowser = typeof window !== 'undefined';
+const isBrowser = typeof window !== "undefined";
 
 export const forma = defineChain({
   id: 984_122,

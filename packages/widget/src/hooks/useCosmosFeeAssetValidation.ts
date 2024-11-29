@@ -29,21 +29,21 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         return new GasPrice(Decimal.fromUserInput(price, 18), a.denom);
       })();
       if (!gasPrice) return undefined;
-      const isSwapChain = swapVenues?.map(venue => venue.chainID).includes(chainId)
+      const isSwapChain = swapVenues?.map(venue => venue.chainID).includes(chainId);
       const fee = calculateFee(Math.ceil(parseFloat(String(isSwapChain ? SWAP_COSMOS_GAS_AMOUNT : DEFAULT_COSMOS_GAS_AMOUNT))), gasPrice);
-      const feeAmount = fee.amount[0].amount
+      const feeAmount = fee.amount[0].amount;
 
       return {
         feeAmount,
         denom: a.denom,
         balanceWithFees: BigNumber(balance).minus(feeAmount).toString(),
         isSufficient: balance ? BigNumber(balance).isGreaterThanOrEqualTo(BigNumber(feeAmount)) : false,
-      }
+      };
     }).filter((asset) => asset) as { feeAmount: string, denom: string, balanceWithFees: string, isSufficient: boolean }[];
   }, [chainId, chains, getBalance, swapVenues]);
 
   return feeAssetsState;
-}
+};
 
 export const useCosmosFeeAssetSourceAmountValidation = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -68,4 +68,4 @@ export const useCosmosFeeAssetSourceAmountValidation = () => {
 
   if (isSufficient) return false;
   return true;
-}
+};

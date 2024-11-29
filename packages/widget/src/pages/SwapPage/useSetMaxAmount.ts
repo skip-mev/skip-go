@@ -18,7 +18,7 @@ export const useGasFeeTokenAmount = () => {
   });
 
   const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
-  const cosmosFeeUsed = cosmosFees?.find(fee => fee?.isSufficient)
+  const cosmosFeeUsed = cosmosFees?.find(fee => fee?.isSufficient);
 
   const chainType = sourceDetails?.chain?.chainType;
 
@@ -91,7 +91,7 @@ export const useInsufficientSourceBalance = () => {
 
   const chain = chains?.find(chain => chain.chainID === sourceAsset?.chainID);
   if (chain?.chainType === "cosmos") {
-    return cosmosFeeAssetValidation
+    return cosmosFeeAssetValidation;
   }
 
   if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
