@@ -1,3 +1,4 @@
+'use client';
 import { Widget } from '@skip-go/widget';
 import { defaultTheme, lightTheme } from '@skip-go/widget';
 import darkbg from './gobg-dark.svg';
@@ -5,7 +6,7 @@ import lightbg from './gobg-light.svg';
 
 import { useState } from 'react';
 
-const Home = () => {
+export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const toggleTheme = () => {
@@ -59,6 +60,4 @@ const Home = () => {
       </div>
     </div>
   );
-};
-
-export default Home;
+}
