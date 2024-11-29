@@ -110,7 +110,7 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
 
-        const isWC = isWalletConnect(wallet)
+        const isWC = isWalletConnect(wallet);
 
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (
@@ -131,7 +131,7 @@ export const useCreateCosmosWallets = () => {
               chainId: initialChainIds,
               walletType: wallet,
               autoReconnect: false,
-            })
+            });
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -142,7 +142,7 @@ export const useCreateCosmosWallets = () => {
                 chainId: keplrMainnetWithoutEthermintChainIdsInitialConnect,
                 walletType: wallet,
                 autoReconnect: false,
-              })
+              });
               return Promise.resolve();
             }
             throw e;
@@ -164,7 +164,7 @@ export const useCreateCosmosWallets = () => {
             }
             throw e;
           }
-        }
+        };
 
         const getAddress = async ({
           signRequired,
@@ -262,7 +262,7 @@ export const useCreateCosmosWallets = () => {
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
-            if (mobile) return undefined
+            if (mobile) return undefined;
             try {
               const w = getWallet(wallet);
               return Boolean(w);

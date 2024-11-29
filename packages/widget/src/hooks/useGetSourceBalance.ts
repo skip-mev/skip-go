@@ -29,7 +29,7 @@ export const useGetSourceBalance = () => {
       return {
         ...cw20Balance.data,
         error: cw20Balance.error || undefined
-      }
+      };
     }
 
     if (denomsExists && sourceBalance === undefined) {

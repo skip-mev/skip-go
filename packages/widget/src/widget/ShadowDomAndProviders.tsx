@@ -69,7 +69,7 @@ export const ShadowDomAndProviders = ({
         </StyleSheetManager>
       </Scope>
     </ClientOnly>
-  )
+  );
 };
 
 export const ClientOnly = ({ children }: { children: ReactNode }) => {

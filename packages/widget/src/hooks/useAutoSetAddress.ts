@@ -1,20 +1,20 @@
-import { skipChainsAtom } from '@/state/skipClient';
+import { skipChainsAtom } from "@/state/skipClient";
 import {
   ChainAddress,
   chainAddressEffectAtom,
   chainAddressesAtom,
   swapExecutionStateAtom,
-} from '@/state/swapExecutionPage';
-import { walletsAtom } from '@/state/wallets';
-import { useQuery } from '@tanstack/react-query';
-import { useAtom, useAtomValue } from 'jotai';
-import { useCreateCosmosWallets } from './useCreateCosmosWallets';
-import { useCreateEvmWallets } from './useCreateEvmWallets';
-import { useCreateSolanaWallets } from './useCreateSolanaWallets';
-import { useCallback, useEffect, useMemo } from 'react';
-import { getClientOperations } from '@/utils/clientType';
-import NiceModal from '@ebay/nice-modal-react';
-import { Modals } from '@/modals/registerModals';
+} from "@/state/swapExecutionPage";
+import { walletsAtom } from "@/state/wallets";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom, useAtomValue } from "jotai";
+import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
+import { useCreateEvmWallets } from "./useCreateEvmWallets";
+import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
+import { useCallback, useEffect, useMemo } from "react";
+import { getClientOperations } from "@/utils/clientType";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "@/modals/registerModals";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -63,7 +63,7 @@ export const useAutoSetAddress = () => {
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
         switch (chainType) {
-          case 'cosmos': {
+          case "cosmos": {
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.cosmos?.walletName
@@ -91,8 +91,8 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: 'cosmos',
-                  source: 'wallet',
+                  chainType: "cosmos",
+                  source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -106,7 +106,7 @@ export const useAutoSetAddress = () => {
             }
             break;
           }
-          case 'svm': {
+          case "svm": {
             const wallets = createSolanaWallets();
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.svm?.walletName
@@ -131,8 +131,8 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: 'svm',
-                  source: 'wallet',
+                  chainType: "svm",
+                  source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -147,7 +147,7 @@ export const useAutoSetAddress = () => {
 
             break;
           }
-          case 'evm': {
+          case "evm": {
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
@@ -172,8 +172,8 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: 'evm',
-                  source: 'wallet',
+                  chainType: "evm",
+                  source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -209,7 +209,7 @@ export const useAutoSetAddress = () => {
 
   useQuery({
     queryKey: [
-      'auto-set-address',
+      "auto-set-address",
       { requiredChainAddresses, chains, sourceWallet, signRequiredChains },
     ],
     enabled:

@@ -5,7 +5,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
 
-interface UseSwapExecutionStateParams {
+type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
   route?: RouteResponse;
   overallStatus: SimpleStatus;

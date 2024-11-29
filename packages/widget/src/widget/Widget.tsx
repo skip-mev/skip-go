@@ -1,48 +1,48 @@
-import { ClientOnly, ShadowDomAndProviders } from './ShadowDomAndProviders';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { styled } from 'styled-components';
-import { createModal } from '@/components/Modal';
+import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { styled } from "styled-components";
+import { createModal } from "@/components/Modal";
 import {
   cloneElement,
   ReactElement,
   ReactNode,
   useEffect,
   useMemo,
-} from 'react';
-import { defaultTheme, lightTheme, PartialTheme, Theme } from './theme';
-import { Router } from './Router';
-import { useSetAtom } from 'jotai';
+} from "react";
+import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
+import { Router } from "./Router";
+import { useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
   defaultSkipClientConfig,
   onlyTestnetsAtom,
-} from '@/state/skipClient';
-import { ChainAffiliates, SkipClientOptions } from '@skip-go/client';
-import { DefaultRouteConfig, useInitDefaultRoute } from './useInitDefaultRoute';
+} from "@/state/skipClient";
+import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
+import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
   chainFilterAtom,
   defaultSwapSettings,
   swapSettingsAtom,
-} from '@/state/swapPage';
-import { routeConfigAtom } from '@/state/route';
-import { RouteConfig } from '@skip-go/client';
-import { registerModals } from '@/modals/registerModals';
-import { WalletProviders } from '@/providers/WalletProviders';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WalletConnect, walletConnectAtom } from '@/state/wallets';
+} from "@/state/swapPage";
+import { routeConfigAtom } from "@/state/route";
+import { RouteConfig } from "@skip-go/client";
+import { registerModals } from "@/modals/registerModals";
+import { WalletProviders } from "@/providers/WalletProviders";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WalletConnect, walletConnectAtom } from "@/state/wallets";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
-  'swapVenues' | 'swapVenue'
+  "swapVenues" | "swapVenue"
 > & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
 };
 
 export type WidgetProps = {
-  theme?: PartialTheme | 'light' | 'dark';
+  theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
@@ -63,7 +63,7 @@ export type WidgetProps = {
   walletConnect?: WalletConnect;
 } & Pick<
   NewSkipClientOptions,
-  'apiUrl' | 'chainIdsToAffiliates' | 'endpointOptions'
+  "apiUrl" | "chainIdsToAffiliates" | "endpointOptions"
 >;
 
 type NewSwapVenueRequest = {
@@ -73,7 +73,7 @@ type NewSwapVenueRequest = {
 
 type NewSkipClientOptions = Omit<
   SkipClientOptions,
-  'apiURL' | 'chainIDsToAffiliates'
+  "apiURL" | "chainIDsToAffiliates"
 > & {
   apiUrl?: string;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
@@ -90,7 +90,7 @@ export const Widget = (props: WidgetProps) => {
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
-        <QueryClientProvider client={queryClient} key={'skip-widget'}>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <NiceModal.Provider>
             <WidgetWrapper>
               <Router />
@@ -107,7 +107,7 @@ export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
-        <QueryClientProvider client={queryClient} key={'skip-widget'}>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <WidgetWrapper>
             <Router />
           </WidgetWrapper>
@@ -176,8 +176,8 @@ const useInitWidget = (props: WidgetProps) => {
 
   const mergedTheme = useMemo(() => {
     let theme: Theme;
-    if (typeof props.theme === 'string') {
-      theme = props.theme === 'light' ? lightTheme : defaultTheme;
+    if (typeof props.theme === "string") {
+      theme = props.theme === "light" ? lightTheme : defaultTheme;
     } else {
       theme = { ...defaultTheme, ...props.theme };
     }

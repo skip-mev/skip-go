@@ -1,6 +1,6 @@
 import { atom } from "jotai";
-import { SignClientTypes } from '@walletconnect/types';
-import { WalletConnectModalConfig } from '@walletconnect/modal';
+import { SignClientTypes } from "@walletconnect/types";
+import { WalletConnectModalConfig } from "@walletconnect/modal";
 
 export type MinimalWallet = {
   walletName: string;

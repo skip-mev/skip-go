@@ -6117,7 +6117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.3.3, @noble/hashes@npm:~1.3.3":
+"@noble/hashes@npm:1.3.3, @noble/hashes@npm:~1.3.0, @noble/hashes@npm:~1.3.3":
   version: 1.3.3
   resolution: "@noble/hashes@npm:1.3.3"
   checksum: 8a6496d1c0c64797339bc694ad06cdfaa0f9e56cd0c3f68ae3666cfb153a791a55deb0af9c653c7ed2db64d537aa3e3054629740d2f2338bb1dcb7ab60cd205b
@@ -11556,7 +11556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abi-wan-kanabi@npm:^2.2.2":
+"abi-wan-kanabi@npm:^2.2.2, abi-wan-kanabi@npm:^2.2.3":
   version: 2.2.3
   resolution: "abi-wan-kanabi@npm:2.2.3"
   dependencies:
@@ -25892,6 +25892,7 @@ __metadata:
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: 0.36.0
     rollup-plugin-visualizer: ^5.5.4
+    starknet: ^6.11.0
     ts-jest: ^29.1.2
     tslib: ^1.9.3
     tsup: ^8.0.1
@@ -26146,6 +26147,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"starknet-types-07@npm:@starknet-io/types-js@^0.7.10":
+  version: 0.7.10
+  resolution: "@starknet-io/types-js@npm:0.7.10"
+  checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
+  languageName: node
+  linkType: hard
+
 "starknet@npm:6.11.0":
   version: 6.11.0
   resolution: "starknet@npm:6.11.0"
@@ -26164,6 +26172,25 @@ __metadata:
     ts-mixer: ^6.0.3
     url-join: ^4.0.1
   checksum: 997c4a9efad53b0c25d0402c2dcd4e334b83865389ea29791f72ac757e0d9a216cf4634c6fbd5d33154e26389d499d39d893cf52302ec6b4eb9d7f04c034b579
+  languageName: node
+  linkType: hard
+
+"starknet@npm:^6.11.0":
+  version: 6.20.3
+  resolution: "starknet@npm:6.20.3"
+  dependencies:
+    "@noble/curves": ~1.3.0
+    "@noble/hashes": ~1.3.0
+    "@scure/base": ~1.1.3
+    "@scure/starknet": ~1.0.0
+    abi-wan-kanabi: ^2.2.3
+    fetch-cookie: ^3.0.0
+    isomorphic-fetch: ^3.0.0
+    lossless-json: ^4.0.1
+    pako: ^2.0.4
+    starknet-types-07: "npm:@starknet-io/types-js@^0.7.10"
+    ts-mixer: ^6.0.3
+  checksum: c970098141d645ed182321885cc530431a9b93eb06feaa5d03af85e68504bba6145e06d4d642294bf37268e10483777be4db7724747311fe6160d23a8969d0bf
   languageName: node
   linkType: hard
 
