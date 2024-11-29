@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.0.18
+
+### Patch Changes
+
+- 8f21a1d: Fix not being able to type decimal on mobile
+- 39552a3: Externalize react/jsx-runtime to support react19
+- fc908b0: cosmos mobile wallet support and walletconnect
+- Updated dependencies [fc908b0]
+  - @skip-go/client@0.15.0
+
 ## 3.0.17
 
 ### Patch Changes
