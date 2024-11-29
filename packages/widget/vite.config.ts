@@ -45,6 +45,10 @@ export default defineConfig({
       output: {
         dir: "build",
         entryFileNames: "[name].js",
+        globals: {
+          react: "React",
+          "react-dom": "ReactDOM",
+        }
       },
     },
   },
