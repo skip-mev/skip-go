@@ -1,11 +1,10 @@
+'use client';
 import { Widget } from '@skip-go/widget';
 import { defaultTheme, lightTheme } from '@skip-go/widget';
-import darkbg from './gobg-dark.svg';
-import lightbg from './gobg-light.svg';
 
 import { useState } from 'react';
 
-const Home = () => {
+export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const toggleTheme = () => {
@@ -25,7 +24,7 @@ const Home = () => {
         height: '100vh',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url('${theme === 'dark' ? darkbg.src : lightbg.src
+        backgroundImage: `url('${theme === 'dark' ? '/gobg-dark.svg' : '/gobg-light.svg'
           }')`,
         backgroundSize: 'cover',
         backgroundPosition: 'bottom',
@@ -59,6 +58,4 @@ const Home = () => {
       </div>
     </div>
   );
-};
-
-export default Home;
+}

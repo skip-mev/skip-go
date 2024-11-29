@@ -10,6 +10,7 @@ import { dependencies, peerDependencies } from "./package.json";
 const externalDeps = [
   ...Object.keys(dependencies || {}),
   ...Object.keys(peerDependencies || {}),
+  "react/jsx-runtime",
 ].filter((dep) => dep !== "styled-components");
 
 // https://vitejs.dev/config/
