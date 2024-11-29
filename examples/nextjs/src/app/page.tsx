@@ -1,8 +1,6 @@
 'use client';
 import { Widget } from '@skip-go/widget';
 import { defaultTheme, lightTheme } from '@skip-go/widget';
-import darkbg from './gobg-dark.svg';
-import lightbg from './gobg-light.svg';
 
 import { useState } from 'react';
 
@@ -26,7 +24,7 @@ export default function Home() {
         height: '100vh',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url('${theme === 'dark' ? darkbg.src : lightbg.src
+        backgroundImage: `url('${theme === 'dark' ? '/gobg-dark.svg' : '/gobg-light.svg'
           }')`,
         backgroundSize: 'cover',
         backgroundPosition: 'bottom',
