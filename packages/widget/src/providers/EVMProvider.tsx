@@ -1,4 +1,6 @@
-import { config } from "@/constants/wagmi";
+import { createWagmiConfig } from "@/constants/wagmi";
+import { walletConnectAtom } from "@/state/wallets";
+import { useAtomValue } from "jotai";
 import React from "react";
 import { Config, WagmiProvider } from "wagmi";
 
@@ -11,6 +13,11 @@ export const EVMProvider: React.FC<EVMProviderProps> = ({
   children,
   wagmiConfig,
 }) => {
+  const { options, walletConnectModal } = useAtomValue(walletConnectAtom);
+  const config = createWagmiConfig({
+    options,
+    walletConnectModal,
+  });
   return (
     <WagmiProvider
       key={"skip-widget-wagmi-provider"}

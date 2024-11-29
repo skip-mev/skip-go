@@ -80,8 +80,8 @@
     "graz": "^0.1.30",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
-    "viem": "2.21.4",
-    "wagmi": "2.12.9"
+    "viem": "^2.21.53",
+    "wagmi": "^2.13.2"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",

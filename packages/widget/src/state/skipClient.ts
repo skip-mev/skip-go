@@ -10,7 +10,7 @@ import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
-import { config } from "@/constants/wagmi";
+import { createWagmiConfig } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { defaultTheme, Theme } from "@/widget/theme";
@@ -50,6 +50,7 @@ export const skipClient = atom((get) => {
         : wallet.getOfflineSigner(chainID);
     },
     getEVMSigner: async (chainID) => {
+      const config = createWagmiConfig(undefined)
       const evmWalletClient = (await getWalletClient(config, {
         chainId: parseInt(chainID),
       })) as WalletClient;
