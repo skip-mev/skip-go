@@ -285,12 +285,13 @@ export class SkipClient {
   async executeTxs(
     options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] }
   ) {
-    const { txs, onTransactionBroadcast, onTransactionCompleted } = options;
+    const { txs, onTransactionBroadcast, onTransactionCompleted, simulate = true } = options;
     const gas = await this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
       getOfflineSigner: options.getCosmosSigner,
       onValidateGasBalance: options.onValidateGasBalance,
+      simulate: simulate,
     });
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
@@ -1558,11 +1559,13 @@ export class SkipClient {
     getOfflineSigner,
     onValidateGasBalance,
     getFallbackGasAmount,
+    simulate,
   }: {
     txs: types.Tx[];
     getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions['onValidateGasBalance'];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+    simulate?: clientTypes.ExecuteRouteOptions['simulate'];
   }) {
     onValidateGasBalance?.({
       status: 'pending',
@@ -1607,6 +1610,7 @@ export class SkipClient {
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
               txIndex: i,
+              simulate,
             });
             return res;
           } catch (e) {
@@ -1645,6 +1649,7 @@ export class SkipClient {
     messages,
     getFallbackGasAmount,
     txIndex,
+    simulate
   }: {
     chainID: string;
     signerAddress: string;
@@ -1652,6 +1657,7 @@ export class SkipClient {
     messages?: types.CosmosMsg[];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     txIndex?: number;
+    simulate?: clientTypes.ExecuteRouteOptions['simulate'];
   }) {
     const [mainnetChains, testnetChains] = await Promise.all([
       this.chains(),
@@ -1676,6 +1682,7 @@ export class SkipClient {
     }
     const estimatedGasAmount = await (async () => {
       try {
+        if (!simulate) throw new Error('simulate');
         const estimatedGas = await getCosmosGasAmountForMessage(
           client,
           signerAddress,
@@ -1683,7 +1690,11 @@ export class SkipClient {
           messages
         );
         return estimatedGas;
-      } catch (error) {
+      } catch (e) {
+        const error = e as Error;
+        if (error.message === 'simulate' && !getFallbackGasAmount) {
+          throw new Error(`unable to get gas amount for ${chainID}'s message(s)`);
+        }
         if (getFallbackGasAmount) {
           const fallbackGasAmount = await getFallbackGasAmount(
             chainID,

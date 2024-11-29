@@ -88,7 +88,7 @@ export type ExecuteRouteOptions = SignerGetters &
      * Addresses should be in the same order with the `chainIDs` in the `route`
      */
     userAddresses: UserAddress[];
-    validateGasBalance?: boolean;
+    simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
  * Arbitrary Tx to be executed before or after route msgs

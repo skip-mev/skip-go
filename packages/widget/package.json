@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite --force",
+    "dev": "vite --force --host",
     "dev:storybook": "storybook dev -p 6006",
     "build": "npm run generate-chains && NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "lint": "eslint . --fix",
@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
-    "chain-registry": "^1.69.39",
+    "chain-registry": "^1.69.47",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "node-polyfill-webpack-plugin": "^4.0.0",
@@ -74,11 +74,11 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.51.21",
-    "graz": "^0.1.25",
+    "graz": "0.1.29",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
-    "viem": "^2.21.1",
-    "wagmi": "^2.12.8"
+    "viem": "2.21.4",
+    "wagmi": "2.12.9"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.4",
@@ -113,6 +113,7 @@
     "rc-virtual-list": "^3.14.5",
     "react-error-boundary": "^4.0.13",
     "react-shadow-scope": "^1.0.5",
+    "starknet": "6.11.0",
     "styled-components": "^6.1.13",
     "zod": "^3.23.8"
   },

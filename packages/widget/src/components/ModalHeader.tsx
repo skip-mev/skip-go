@@ -62,6 +62,7 @@ const StyledHeader = styled(Row)`
 
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
   opacity: 0.2;
+  transform: rotate(180deg);
 `;
 
 const StyledCenteredTitle = styled(Text)`

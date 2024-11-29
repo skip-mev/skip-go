@@ -35,3 +35,5 @@ yalc.lock
 .node_repl_history
 .npm
 .turbo
+
+.env

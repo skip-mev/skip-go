@@ -1,4 +1,6 @@
 import { atom } from "jotai";
+import { SignClientTypes } from '@walletconnect/types';
+import { WalletConnectModalConfig } from '@walletconnect/modal';
 
 export type MinimalWallet = {
   walletName: string;
@@ -26,6 +28,18 @@ type WalletState = {
   walletName: string;
   chainType: string;
 }
+
+export type WalletConnect = {
+  options: Pick<SignClientTypes.Options, "projectId" | "name"> | null;
+  walletConnectModal?: Pick<WalletConnectModalConfig, "themeVariables" | "themeMode" | "privacyPolicyUrl" | "termsOfServiceUrl"> | null;
+}
+
+export const walletConnectAtom = atom<WalletConnect>({
+  options: {
+    projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+    name: "Skip Go",
+  },
+});
 
 export const evmWalletAtom = atom<WalletState>();
 export const cosmosWalletAtom = atom<WalletState>();

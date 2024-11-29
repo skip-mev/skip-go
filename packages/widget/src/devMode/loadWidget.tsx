@@ -14,6 +14,7 @@ const DevMode = () => {
       setTheme("dark");
     }
   };
+
   return (
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
