@@ -1,13 +1,13 @@
-import { setTransactionHistoryAtom } from '@/state/history';
+import { setTransactionHistoryAtom } from "@/state/history";
 import {
   setOverallStatusAtom,
   swapExecutionStateAtom,
   skipSubmitSwapExecutionAtom,
-} from '@/state/swapExecutionPage';
-import { getClientOperations, ClientOperation } from '@/utils/clientType';
-import { useSetAtom, useAtomValue } from 'jotai';
-import { useMemo, useEffect } from 'react';
-import { TxsStatus } from './useBroadcastedTxs';
+} from "@/state/swapExecutionPage";
+import { getClientOperations, ClientOperation } from "@/utils/clientType";
+import { useSetAtom, useAtomValue } from "jotai";
+import { useMemo, useEffect } from "react";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export const useSyncTxStatus = ({
   statusData,
@@ -36,16 +36,16 @@ export const useSyncTxStatus = ({
   const computedSwapStatus = useMemo(() => {
     if (!route?.operations || !route?.txsRequired) return;
 
-    if (statusData?.lastTxStatus === 'pending') {
+    if (statusData?.lastTxStatus === "pending") {
       if (isPending) {
-        setOverallStatus('pending');
+        setOverallStatus("pending");
       }
-      return 'pending';
+      return "pending";
     }
 
     if (transferEvents?.length === 0 && !statusData?.isSettled) {
-      if (isPending && overallStatus !== 'pending') {
-        setOverallStatus('signing');
+      if (isPending && overallStatus !== "pending") {
+        setOverallStatus("signing");
       }
       return;
     }
@@ -53,17 +53,17 @@ export const useSyncTxStatus = ({
     if (!transferEvents) return;
 
     if (statusData.isSuccess) {
-      return 'completed';
+      return "completed";
     }
 
     if (!statusData.isSuccess && statusData.isSettled) {
-      return 'failed';
+      return "failed";
     }
-    if (transferEvents?.find(({ status }) => status === 'pending')) {
-      return 'pending';
+    if (transferEvents?.find(({ status }) => status === "pending")) {
+      return "pending";
     }
-    if (transferEvents?.every(({ status }) => status === 'unconfirmed')) {
-      return 'unconfirmed';
+    if (transferEvents?.every(({ status }) => status === "unconfirmed")) {
+      return "unconfirmed";
     }
   }, [
     isPending,

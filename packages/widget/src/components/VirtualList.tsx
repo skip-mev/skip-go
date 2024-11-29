@@ -40,7 +40,7 @@ export const useListHeight = (itemHeight: number) => {
   }, [isMobileScreenSize, itemHeight]);
 
   return virtualListHeight;
-}
+};
 
 export const VirtualList = <T,>({
   listItems,
