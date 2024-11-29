@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.15.0
+
+### Minor Changes
+
+- fc908b0: executeRoute prop: replace validateGasBalance to simulate
+
 ## 0.14.8
 
 ### Patch Changes
