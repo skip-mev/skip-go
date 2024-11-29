@@ -9,4 +9,4 @@ export const endpointOptions = {
   },
 };
 
-export const prodApiUrl = `https://api.skip.build`;
+export const prodApiUrl = `${appUrl}/api/skip`;
