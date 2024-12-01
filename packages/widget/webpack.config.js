@@ -66,6 +66,7 @@ export default {
             loader: "ts-loader",
             options: {
               transpileOnly: true, // Ignore type checking
+              configFile: "tsconfig.webpack.json"
             },
           },
         ],
