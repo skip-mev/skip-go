@@ -100,19 +100,15 @@ export const invertSwapAtom = atom(null, (get, set) => {
   set(isInvertingSwapAtom, true);
 
   set(sourceAssetAtom, { ...destinationAsset });
-  if (destinationAsset?.amount) {
-    set(sourceAssetAmountAtom, destinationAsset?.amount);
-  }
+  set(sourceAssetAmountAtom, destinationAsset?.amount ?? "");
 
   set(destinationAssetAtom, { ...sourceAsset });
-  if (sourceAsset?.amount) {
-    set(destinationAssetAmountAtom, sourceAsset?.amount, () => {
-      const newSwapDirection =
-        swapDirection === "swap-in" ? "swap-out" : "swap-in";
-      set(swapDirectionAtom, newSwapDirection);
-      set(isInvertingSwapAtom, false);
-    });
-  }
+  set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
+    const newSwapDirection =
+      swapDirection === "swap-in" ? "swap-out" : "swap-in";
+    set(swapDirectionAtom, newSwapDirection);
+    set(isInvertingSwapAtom, false);
+  });
 });
 
 export type ChainFilter = {
