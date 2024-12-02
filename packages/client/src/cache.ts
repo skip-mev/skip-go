@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash } from 'crypto-browserify';
 
 type CacheEntry<T> = {
   data: T;

@@ -7621,6 +7621,7 @@ __metadata:
     axios: 1.x
     chain-registry: ^1.69.47
     cosmjs-types: ^0.9.0
+    crypto-browserify: ^3.12.1
     keccak: 3.0.4
     minimatch: ^9.0.3
     proxy-from-env: ^1.1.0
@@ -13853,7 +13854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-browserify@npm:^3.11.0":
+"crypto-browserify@npm:^3.11.0, crypto-browserify@npm:^3.12.1":
   version: 3.12.1
   resolution: "crypto-browserify@npm:3.12.1"
   dependencies:
