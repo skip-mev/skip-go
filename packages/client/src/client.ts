@@ -1664,9 +1664,20 @@ export class SkipClient {
       this.chains({ onlyTestnets: true }),
     ]);
 
-    const assets = await this.assets({
-      chainIDs: [chainID],
-    });
+
+    const [assetsMainnet, assetsTestnet] = await Promise.all([
+      this.assets({
+        chainIDs: [chainID],
+      }),
+      this.assets({
+        chainIDs: [chainID],
+        onlyTestnets: true,
+      }),
+    ])
+    const assets = {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
 
     const chainAssets = assets[chainID];
 
