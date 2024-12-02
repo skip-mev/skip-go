@@ -53,7 +53,7 @@ When using the `/route` and `/msgs` endpoints, you can add a fee to your swap tr
 
 After making the `/route` request, check the `swap_venue.chain_id` field in the response.
 - Purpose: Identifies the chain where the swap will occur.
-- Importance: You'll need valid addresses on this chain for the next step.
+- Importance: You'll need a valid address on this chain for the next step.
 
 #### 3. Specify Fee-Receiving Addresses in the `/msgs` Request
 
@@ -94,16 +94,6 @@ When using the `@skip-go/client` library, parameter names should be in camelCase
     - Use `basisPointsFee` instead of `basis_points_fee`.
 
 </Info>
-
-#### Summary
-
-By correctly setting `cumulative_affiliate_fee_bps` in your `/route` request and specifying the fee distribution in the `affiliates` array in your `/msgs` request, you can effectively incorporate fees into your swap transactions.
-
-- **Ensure:**
-  - The total `basis_points_fee` matches the `cumulative_affiliate_fee_bps`.
-  - All addresses are valid on the swap chain.
-
-**Failure to meet these requirements will result in a 400 error.**
 
 #### Fees with `/msgs_direct`
 
