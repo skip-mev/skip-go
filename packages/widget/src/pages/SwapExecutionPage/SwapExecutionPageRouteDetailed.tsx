@@ -14,7 +14,7 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -51,11 +51,12 @@ export const SwapExecutionPageRouteDetailed = ({
   operations,
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
-  swapExecutionState
+  swapExecutionState,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -92,7 +93,7 @@ export const SwapExecutionPageRouteDetailed = ({
       <Column>
         <SwapExecutionPageRouteDetailedRow
           tokenAmount={firstOperation.amountIn}
-          denom={firstOperation.denomIn}
+          denom={route?.sourceAssetDenom ?? firstOperation.denomIn}
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
           status={firstOpStatus}
