@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.0.19
+
+### Patch Changes
+
+- fd0554c: support testnet
+- Updated dependencies [fd0554c]
+- Updated dependencies [1d80759]
+  - @skip-go/client@0.15.1
+
 ## 3.0.18
 
 ### Patch Changes
