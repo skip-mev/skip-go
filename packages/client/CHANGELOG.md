@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.15.1
+
+### Patch Changes
+
+- fd0554c: support testnet
+- 1d80759: Use create-hash npm package as dependency (used by crypto-browserify) instead of assuming native crypto.createHash exists
+
 ## 0.15.0
 
 ### Minor Changes
