@@ -34,7 +34,7 @@ export const ErrorPage = () => {
     }
   }, [error]);
 
-  if (error?.errorType === undefined) return;
+  if (error?.errorType === undefined) return null;
 
   return <Column gap={5}>{renderErrorVariant}</Column>;
 };
