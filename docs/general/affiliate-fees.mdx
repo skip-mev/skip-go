@@ -27,16 +27,83 @@ There are two simple steps involved in using affiliate fees:
 1. **Incorporate the fee into the quote** : You need to request the route & quote with the total fee amount (in basis points) you will collect, so Skip Go can deduct this automatically from the estimated `amount_out` it returns to the user. This ensures the quote you show the user already accounts for the fee, and they won't receive any unexpectedly low amount.
 2. **Set the address(es) to receive the fee**: You also need to tell Skip Go the exact address(es) to send the fee revenue to. You need to pass a list of addresses and specify a fee amount (in basis points) for each to collect.
 
-#### Fees with /route and /msgs
+### Incorporating Fees with `/route` and `/msgs`
 
-When using `/route` and `/msgs`, you incorporate the fee into the quote when you call `/route` then separately set the addresses to receive the fee when calling `/msgs`: 
+When using the `/route` and `/msgs` endpoints, you can add a fee to your swap transaction by following these steps:
 
-1. In the `/route` request, set `cumulative_affiliate_fee_bps` to the integer corresponding to the number of basis points you will collect in your fee  
-   1. For example, set `cumulative_affiliate_fee_bps` to 100 if you would like to collect a 1% fee on the swap
-2. Use the `swap_venue.chain_id` field in the response of `/route` to determine which chain the swap takes place on. You'll need to use addresses on this chain later when setting the addresses to receive the fee
-3. In the `/msgs` request, set `affiliates` to a list of `Affiliate` objects, where each corresponds to a fee-receiving address on the chain where the swap will take place (`address` gives the address, and `basis_points_fee` gives the fee amount).  
-   1. The sum of `basis_points_fee` values across all affiliates should equal `cumulative_affiliate_fee_bps`  
-   2. If you pass any addresses that are not valid on the chain where the swap will take place, the request will return a `400` error
+#### 1. Set the Fee in the `/route` Request
+
+**Parameter:** `cumulative_affiliate_fee_bps`
+- Description: The total fee you want to collect on the swap, expressed in basis points (bps).
+- Format: A string representing an integer value.
+
+**Example:**
+- To collect a **0.75% fee** on the swap, set `cumulative_affiliate_fee_bps` to `"75"` in your `/route` request.
+  
+  ```json
+  {
+    "cumulative_affiliate_fee_bps": "75",
+    // other parameters...
+  }
+  ```
+
+- Note: 1% equals 100 basis points. So, a fee of 1% corresponds to `"100"`.
+
+#### 2. Determine the Swap Chain
+
+After making the `/route` request, check the `swap_venue.chain_id` field in the response.
+- Purpose: Identifies the chain where the swap will occur.
+- Importance: You'll need valid addresses on this chain for the next step.
+
+#### 3. Specify Fee-Receiving Addresses in the `/msgs` Request
+
+**Parameter:** `affiliates`
+- Description: An array of affiliate objects, each containing an address and the fee amount in basis points.
+- Format of Each `Affiliate` Object:
+  
+    ```json
+    {
+      "address": "fee-receiving-address",
+      "basis_points_fee": "fee-in-basis-points"
+    }
+    ```
+
+**Requirements:**
+- The sum of `basis_points_fee` across all affiliate objects must equal the `cumulative_affiliate_fee_bps` value from your `/route` request.
+- All addresses must be valid on the chain identified in `swap_venue.chain_id`. Invalid addresses will result in a 400 error.
+
+**Example:**
+- To allocate the entire 0.75% fee to a single address:
+  
+    ```json
+    {
+      "affiliates": [
+        {
+          "address": "osmo1...2p4u",
+          "basis_points_fee": "75"
+        }
+      ],
+      // other parameters...
+    }
+    ```
+
+<Info>
+When using the `@skip-go/client` library, parameter names should be in camelCase.
+  - **Examples:**
+    - Use `cumulativeAffiliateFeeBps` instead of `cumulative_affiliate_fee_bps`.
+    - Use `basisPointsFee` instead of `basis_points_fee`.
+
+</Info>
+
+#### Summary
+
+By correctly setting `cumulative_affiliate_fee_bps` in your `/route` request and specifying the fee distribution in the `affiliates` array in your `/msgs` request, you can effectively incorporate fees into your swap transactions.
+
+- **Ensure:**
+  - The total `basis_points_fee` matches the `cumulative_affiliate_fee_bps`.
+  - All addresses are valid on the swap chain.
+
+**Failure to meet these requirements will result in a 400 error.**
 
 #### Fees with `/msgs_direct`
 
