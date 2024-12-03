@@ -62,12 +62,12 @@ export const ErrorPageTradeWarning = ({
         description={
           <>
             <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
-              You will lose ~{swapDifferencePercentage} of your input value with
+              You will lose {swapDifferencePercentage} of your input value with
               this trade
               <br />
               Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
               <br />
-              Estimated output: ~{destinationDetails?.amount}{" "}
+              Estimated output: {destinationDetails?.amount}{" "}
               {destinationDetails?.symbol} ({usdAmountOut})
             </SmallText>
             <SmallTextButton
