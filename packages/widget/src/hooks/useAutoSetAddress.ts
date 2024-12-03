@@ -80,6 +80,7 @@ export const useAutoSetAddress = () => {
             }
             try {
               if (chainAddresses[index].address) return;
+
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -210,7 +211,9 @@ export const useAutoSetAddress = () => {
   useQuery({
     queryKey: [
       "auto-set-address",
-      { requiredChainAddresses, chains, sourceWallet, signRequiredChains },
+      {
+        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses
+      },
     ],
     enabled:
       !!requiredChainAddresses &&
