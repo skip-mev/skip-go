@@ -10,7 +10,7 @@ export const useGetSourceBalance = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
-  const { data: skipBalances, isLoading, refetch  } = useAtomValue(skipAllBalancesAtom);
+  const { data: skipBalances, isLoading, refetch } = useAtomValue(skipAllBalancesAtom);
 
   const cw20Balance = useCW20Balance({
     asset: sourceAsset as ClientAsset,
