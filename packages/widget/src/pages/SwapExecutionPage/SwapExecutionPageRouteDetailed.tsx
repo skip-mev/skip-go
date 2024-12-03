@@ -56,7 +56,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { route } = useAtomValue(swapExecutionStateAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -88,12 +87,19 @@ export const SwapExecutionPageRouteDetailed = ({
     return _onClickEditDestinationWallet;
   }, [isSignRequired, chainAddresses, swapExecutionState, _onClickEditDestinationWallet]);
 
+  // special case needed for axelar transfers where the source denom is not the first operation denom
+  const ibcTransferToAxelarOp = operations.find(op => op.ibcTransferToAxelar);
+
+  const sourceDenom = ibcTransferToAxelarOp
+    ? ibcTransferToAxelarOp.ibcTransferToAxelar?.denomIn
+    : firstOperation.denomIn;
+
   return (
     <StyledSwapExecutionPageRoute>
       <Column>
         <SwapExecutionPageRouteDetailedRow
           tokenAmount={firstOperation.amountIn}
-          denom={route?.sourceAssetDenom ?? firstOperation.denomIn}
+          denom={sourceDenom}
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
           status={firstOpStatus}
