@@ -31,19 +31,14 @@ export const ConnectedWalletContent = () => {
     if (sourceBalance?.error?.message) return "--";
     if (sourceBalance === undefined) return;
 
-    const amount = sourceBalance?.amount;
-    let formattedBalanceAmount = sourceBalance?.formattedAmount;
-
-    if (amount === "0") {
-      formattedBalanceAmount = amount;
-    }
-    formattedBalanceAmount = limitDecimalsDisplayed(
-      removeTrailingZeros(formattedBalanceAmount)
+    const formattedBalanceAmount = limitDecimalsDisplayed(
+      removeTrailingZeros(sourceBalance?.formattedAmount)
     );
 
     return formattedBalanceAmount + symbol;
   }, [sourceBalance, sourceDetails?.symbol]);
   if (!sourceAccount) return null;
+
   return (
     <Row
       gap={6}
