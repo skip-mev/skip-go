@@ -40,7 +40,7 @@ export const SwapExecutionPageRouteSimple = ({
     ? ibcTransferToAxelarOp.ibcTransferToAxelar?.denomIn
     : firstOperation.denomIn;
 
-  const destinationDenom = route?.destAssetDenom ?? lastOperation.denomOut;
+  const destinationDenom = lastOperation.denomOut;
 
   const source = {
     denom: sourceDenom,
