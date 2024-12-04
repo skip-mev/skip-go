@@ -71,6 +71,7 @@ export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetB
       } else {
         groupedAssets.push({
           id: asset.recommendedSymbol || asset.symbol || asset.denom,
+          name: asset.name,
           chains: [
             {
               chainID: asset.chainID,

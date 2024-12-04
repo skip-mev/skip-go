@@ -17,7 +17,7 @@ export const useFilteredAssets = ({
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;
     return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
-      keys: ["id"],
+      keys: ["id", "name"],
     }).sort((assetA, assetB) => {
       const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
 
