@@ -12,7 +12,7 @@ import {
   RouteResponse,
   RouteResponseJSON,
 } from '../types';
-import { createHash } from 'crypto';
+import createHash from 'create-hash';
 import { createCachingMiddleware, CustomCache } from 'src/cache';
 import { vi, Mock } from 'vitest';
 

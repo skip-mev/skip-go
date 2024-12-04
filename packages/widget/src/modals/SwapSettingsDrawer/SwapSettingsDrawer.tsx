@@ -57,7 +57,7 @@ export const SwapSettingsDrawer = createModal(() => {
       const computed = convertTokenAmountToHumanReadableAmount(
         totalFeeAmount.toString(),
         feeAsset.decimals
-      )
+      );
       return {
         assetAmount: Number(computed),
         formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
@@ -86,16 +86,16 @@ export const SwapSettingsDrawer = createModal(() => {
     transferOperations.forEach((operation) => {
       const fee = computeFee(operation);
       if (fee) {
-        let label = '';
+        let label = "";
         switch (operation.type) {
           case OperationType.axelarTransfer:
-            label = 'Axelar Bridging Fee';
+            label = "Axelar Bridging Fee";
             break;
           case OperationType.hyperlaneTransfer:
-            label = 'Hyperlane Bridging Fee';
+            label = "Hyperlane Bridging Fee";
             break;
           case OperationType.goFastTransfer:
-            label = 'Go Fast Transfer Fee';
+            label = "Go Fast Transfer Fee";
             break;
           default:
             break;
@@ -111,7 +111,7 @@ export const SwapSettingsDrawer = createModal(() => {
     );
 
     if (smartRelayFee) {
-      feeList.push({ label: 'Relayer Fee', fee: smartRelayFee });
+      feeList.push({ label: "Relayer Fee", fee: smartRelayFee });
     }
     return feeList;
   }, [transferOperations, route]);
@@ -174,7 +174,6 @@ const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
   border-radius: 20px;
-  margin: 0 10px;
   background-color: ${(props) => props.theme.primary.background.normal};
 `;
 

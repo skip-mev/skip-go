@@ -39,13 +39,23 @@ export const keplrMainnetChainIdsInitialConnect = [
   "stride-1",
   "umee-1",
   "wormchain"
-]
+];
 
 // other wallets not the keplr wallet
 export const walletMainnetChainIdsInitialConnect = [
   "cosmoshub-4",
   "injective-1",
   "pacific-1",
+  "noble-1",
+  "osmosis-1",
+  "neutron-1",
+  "pryzm-1",
+  "axelar-dojo-1",
+  "chihuahua-1",
+];
+
+export const walletConnectMainnetChainIdsInitialConnect = [
+  "cosmoshub-4",
   "noble-1",
   "osmosis-1",
   "neutron-1",

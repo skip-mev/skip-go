@@ -100,19 +100,15 @@ export const invertSwapAtom = atom(null, (get, set) => {
   set(isInvertingSwapAtom, true);
 
   set(sourceAssetAtom, { ...destinationAsset });
-  if (destinationAsset?.amount) {
-    set(sourceAssetAmountAtom, destinationAsset?.amount);
-  }
+  set(sourceAssetAmountAtom, destinationAsset?.amount ?? "");
 
   set(destinationAssetAtom, { ...sourceAsset });
-  if (sourceAsset?.amount) {
-    set(destinationAssetAmountAtom, sourceAsset?.amount, () => {
-      const newSwapDirection =
-        swapDirection === "swap-in" ? "swap-out" : "swap-in";
-      set(swapDirectionAtom, newSwapDirection);
-      set(isInvertingSwapAtom, false);
-    });
-  }
+  set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
+    const newSwapDirection =
+      swapDirection === "swap-in" ? "swap-out" : "swap-in";
+    set(swapDirectionAtom, newSwapDirection);
+    set(isInvertingSwapAtom, false);
+  });
 });
 
 export type ChainFilter = {
@@ -127,7 +123,7 @@ export enum RoutePreference {
   CHEAPEST = "Cheapest",
 }
 export const defaultSwapSettings = {
-  slippage: 3,
+  slippage: 1,
   customGasAmount: 200_000,
   useUnlimitedApproval: true,
   routePreference: RoutePreference.FASTEST,

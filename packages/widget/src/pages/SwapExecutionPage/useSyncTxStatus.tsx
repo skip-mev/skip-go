@@ -4,19 +4,16 @@ import {
   swapExecutionStateAtom,
   skipSubmitSwapExecutionAtom,
 } from "@/state/swapExecutionPage";
-import {
-  getClientOperations,
-  ClientOperation,
-} from "@/utils/clientType";
+import { getClientOperations, ClientOperation } from "@/utils/clientType";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
 
 export const useSyncTxStatus = ({
   statusData,
-  historyIndex
+  historyIndex,
 }: {
-  statusData?: TxsStatus,
+  statusData?: TxsStatus;
   historyIndex?: number;
 }) => {
   const transferEvents = statusData?.transferEvents;
@@ -53,31 +50,33 @@ export const useSyncTxStatus = ({
       return;
     }
 
-
     if (!transferEvents) return;
 
     if (statusData.isSuccess) {
       return "completed";
     }
 
-    if (
-      !statusData.isSuccess && statusData.isSettled
-    ) {
+    if (!statusData.isSuccess && statusData.isSettled) {
       return "failed";
     }
-    if (
-      transferEvents?.find(({ status }) => status === "pending")
-    ) {
+    if (transferEvents?.find(({ status }) => status === "pending")) {
       return "pending";
     }
-    if (
-      transferEvents?.every(
-        ({ status }) => status === "unconfirmed"
-      )
-    ) {
+    if (transferEvents?.every(({ status }) => status === "unconfirmed")) {
       return "unconfirmed";
     }
-  }, [isPending, route?.operations, route?.txsRequired, setOverallStatus, statusData?.isSettled, statusData?.isSuccess, statusData?.lastTxStatus, transferEvents]);
+  }, [
+    isPending,
+    route?.operations,
+    route?.txsRequired,
+    setOverallStatus,
+    statusData?.isSettled,
+    statusData?.isSuccess,
+    statusData?.lastTxStatus,
+    transferEvents,
+    overallStatus,
+  ]);
+
   useEffect(() => {
     if (computedSwapStatus) {
       setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
@@ -87,6 +86,14 @@ export const useSyncTxStatus = ({
         setOverallStatus(computedSwapStatus);
       }
     }
-  }, [clientOperations, overallStatus, computedSwapStatus, setOverallStatus, transactionDetailsArray.length, setTransactionHistory, transactionHistoryIndex, historyIndex]);
-
+  }, [
+    clientOperations,
+    overallStatus,
+    computedSwapStatus,
+    setOverallStatus,
+    transactionDetailsArray.length,
+    setTransactionHistory,
+    transactionHistoryIndex,
+    historyIndex,
+  ]);
 };

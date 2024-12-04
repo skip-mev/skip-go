@@ -40,7 +40,7 @@ export const useListHeight = (itemHeight: number) => {
   }, [isMobileScreenSize, itemHeight]);
 
   return virtualListHeight;
-}
+};
 
 export const VirtualList = <T,>({
   listItems,
@@ -98,7 +98,7 @@ export const VirtualList = <T,>({
 
   if (listItems.length === 0) {
     return (
-      <StyledNoResultsContainer gap={10} height={height}>
+      <StyledNoResultsContainer gap={10} height={height ?? listHeight}>
         {empty?.icon}
         <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>

@@ -16,7 +16,7 @@ import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 
-interface SwapExecutionButtonProps {
+type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
   route: RouteResponse | undefined;
   signaturesRemaining: number;
@@ -37,7 +37,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const setError = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
-  const isGoFast = useIsGoFast(route)
+  const isGoFast = useIsGoFast(route);
   const isSwapOperation = useIsSwapOperation(route);
   const operationText = isSwapOperation ? "Swap" : "Send";
 

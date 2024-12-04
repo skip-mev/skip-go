@@ -88,7 +88,7 @@ export type ExecuteRouteOptions = SignerGetters &
      * Addresses should be in the same order with the `chainIDs` in the `route`
      */
     userAddresses: UserAddress[];
-    validateGasBalance?: boolean;
+    simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
  * Set allowance amount to max if EVM transaction requires allowance approval 

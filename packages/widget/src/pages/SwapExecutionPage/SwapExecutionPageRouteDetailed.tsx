@@ -51,7 +51,7 @@ export const SwapExecutionPageRouteDetailed = ({
   operations,
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
-  swapExecutionState
+  swapExecutionState,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
@@ -86,6 +86,7 @@ export const SwapExecutionPageRouteDetailed = ({
     if (!destinationAddress || swapExecutionState === SwapExecutionState.pending || swapExecutionState === SwapExecutionState.waitingForSigning || swapExecutionState === SwapExecutionState.validatingGasBalance || swapExecutionState === SwapExecutionState.confirmed) return;
     return _onClickEditDestinationWallet;
   }, [isSignRequired, chainAddresses, swapExecutionState, _onClickEditDestinationWallet]);
+
 
   return (
     <StyledSwapExecutionPageRoute>

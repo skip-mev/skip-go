@@ -10,13 +10,18 @@ import {
   blast,
   blastSepolia,
   bsc,
+  bscTestnet,
   celo,
   fantom,
+  fantomTestnet,
   filecoin,
   kava,
+  kavaTestnet,
   linea,
+  lineaSepolia,
   mainnet,
   manta,
+  mantaSepoliaTestnet,
   moonbeam,
   optimism,
   optimismSepolia,
@@ -26,9 +31,9 @@ import {
   sepolia,
 } from "wagmi/chains";
 import { defineChain } from "viem";
-const isBrowser = typeof window !== 'undefined';
+const isBrowser = typeof window !== "undefined";
 
-const forma = defineChain({
+export const forma = defineChain({
   id: 984_122,
   name: "Forma",
   nativeCurrency: {
@@ -56,7 +61,7 @@ const forma = defineChain({
   testnet: false,
 });
 
-const formaTestnet = defineChain({
+export const formaTestnet = defineChain({
   id: 984_123,
   name: "Forma Testnet",
   nativeCurrency: {
@@ -106,6 +111,11 @@ export const config: Config = createConfig({
     forma,
     formaTestnet,
     sei,
+    bscTestnet,
+    fantomTestnet,
+    kavaTestnet,
+    lineaSepolia,
+    mantaSepoliaTestnet,
   ],
   transports: {
     [arbitrum.id]: http(),
@@ -133,6 +143,11 @@ export const config: Config = createConfig({
     [forma.id]: http(),
     [formaTestnet.id]: http(),
     [sei.id]: http(),
+    [bscTestnet.id]: http(),
+    [fantomTestnet.id]: http(),
+    [kavaTestnet.id]: http(),
+    [lineaSepolia.id]: http(),
+    [mantaSepoliaTestnet.id]: http(),
   },
   ssr: false,
   storage: createStorage({

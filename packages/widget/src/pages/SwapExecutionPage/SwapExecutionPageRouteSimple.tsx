@@ -21,7 +21,7 @@ export const SwapExecutionPageRouteSimple = ({
   operations,
   statusData,
   onClickEditDestinationWallet: _onClickEditDestinationWallet,
-  swapExecutionState
+  swapExecutionState,
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
   const { route } = useAtomValue(swapExecutionStateAtom);
@@ -33,17 +33,15 @@ export const SwapExecutionPageRouteSimple = ({
   const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOperation.transferIndex]?.status;
   const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOperation.transferIndex]?.status;
 
-  const sourceDenom = firstOperation.denomIn;
-  const destinationDenom = lastOperation.denomOut;
 
   const source = {
-    denom: sourceDenom,
+    denom: firstOperation.denomIn,
     tokenAmount: firstOperation.amountIn,
     chainId: firstOperation.fromChainID ?? firstOperation.chainID,
     usdValue: route?.usdAmountIn,
   };
   const destination = {
-    denom: destinationDenom,
+    denom: lastOperation.denomOut,
     tokenAmount: lastOperation.amountOut,
     chainId: lastOperation.toChainID ?? lastOperation.chainID,
     usdValue: route?.usdAmountOut,

@@ -429,6 +429,7 @@ export type MsgsDirectRequestBaseJSON = {
   smart_swap_options?: SmartSwapOptionsJSON;
   allow_swaps?: boolean;
   enable_gas_warnings?: boolean;
+  go_fast?: boolean;
 };
 
 export type MsgsDirectRequestGivenInJSON = MsgsDirectRequestBaseJSON & {
@@ -471,6 +472,7 @@ export type MsgsDirectRequestBase = {
   smartSwapOptions?: SmartSwapOptions;
   allowSwaps?: boolean;
   enableGasWarnings?: boolean;
+  goFast?: boolean;
 };
 
 export type MsgsDirectRequestGivenIn = MsgsDirectRequestBase & {

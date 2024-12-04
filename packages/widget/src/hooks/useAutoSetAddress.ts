@@ -1,5 +1,10 @@
 import { skipChainsAtom } from "@/state/skipClient";
-import { ChainAddress, chainAddressEffectAtom, chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  ChainAddress,
+  chainAddressEffectAtom,
+  chainAddressesAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
@@ -28,7 +33,9 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = operations.filter(o => o.signRequired).map(o => o.fromChainID);
+    const signRequiredChains = operations
+      .filter((o) => o.signRequired)
+      .map((o) => o.fromChainID);
     return signRequiredChains;
   }, [route?.operations]);
 
@@ -45,33 +52,35 @@ export const useAutoSetAddress = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connectRequiredChains = useCallback(async (openModal?: boolean) => {
-    if (!requiredChainAddresses) return;
-    requiredChainAddresses.forEach(async (chainID, index) => {
-
-      const chain = chains?.find((c) => c.chainID === chainID);
-      if (!chain) {
-        return;
-      }
-      const isSignRequired = signRequiredChains?.includes(chainID);
-      const chainType = chain.chainType;
-      switch (chainType) {
-        case "cosmos":
-          {
+  const connectRequiredChains = useCallback(
+    async (openModal?: boolean) => {
+      if (!requiredChainAddresses) return;
+      requiredChainAddresses.forEach(async (chainID, index) => {
+        const chain = chains?.find((c) => c.chainID === chainID);
+        if (!chain) {
+          return;
+        }
+        const isSignRequired = signRequiredChains?.includes(chainID);
+        const chainType = chain.chainType;
+        switch (chainType) {
+          case "cosmos": {
             const wallets = createCosmosWallets(chainID);
-            const wallet = wallets.find(w => w.walletName === sourceWallet.cosmos?.walletName);
+            const wallet = wallets.find(
+              (w) => w.walletName === sourceWallet.cosmos?.walletName
+            );
             if (!wallet) {
               if (!openModal) return;
               if (chainAddresses[index].address) return;
               NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
-                chainAddressIndex: index
+                chainAddressIndex: index,
               });
               return;
             }
             try {
               if (chainAddresses[index].address) return;
+
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -98,10 +107,11 @@ export const useAutoSetAddress = () => {
             }
             break;
           }
-        case "svm":
-          {
+          case "svm": {
             const wallets = createSolanaWallets();
-            const wallet = wallets.find(w => w.walletName === sourceWallet.svm?.walletName);
+            const wallet = wallets.find(
+              (w) => w.walletName === sourceWallet.svm?.walletName
+            );
             if (!wallet) {
               if (!openModal) return;
               NiceModal.show(Modals.SetAddressModal, {
@@ -138,10 +148,11 @@ export const useAutoSetAddress = () => {
 
             break;
           }
-        case "evm":
-          {
+          case "evm": {
             const wallets = createEvmWallets(chainID);
-            const wallet = wallets.find(w => w.walletName === sourceWallet.evm?.walletName);
+            const wallet = wallets.find(
+              (w) => w.walletName === sourceWallet.evm?.walletName
+            );
             if (!wallet) {
               if (!openModal) return;
               NiceModal.show(Modals.SetAddressModal, {
@@ -177,15 +188,37 @@ export const useAutoSetAddress = () => {
             }
             break;
           }
-        default:
-          break;
-      }
-    });
-  }, [requiredChainAddresses, chains, sourceWallet, createCosmosWallets, createEvmWallets, createSolanaWallets, setChainAddresses, signRequiredChains]);
+          default:
+            break;
+        }
+      });
+    },
+    [
+      chains,
+      createCosmosWallets,
+      createEvmWallets,
+      createSolanaWallets,
+      requiredChainAddresses,
+      setChainAddresses,
+      sourceWallet.cosmos,
+      sourceWallet.evm,
+      sourceWallet.svm,
+      signRequiredChains,
+      chainAddresses
+    ]
+  );
 
   useQuery({
-    queryKey: ["auto-set-address", { requiredChainAddresses, chains, sourceWallet, signRequiredChains }],
-    enabled: !!requiredChainAddresses && !!chains && (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm),
+    queryKey: [
+      "auto-set-address",
+      {
+        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses
+      },
+    ],
+    enabled:
+      !!requiredChainAddresses &&
+      !!chains &&
+      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm),
     queryFn: async () => {
       if (!requiredChainAddresses) return;
       await connectRequiredChains();

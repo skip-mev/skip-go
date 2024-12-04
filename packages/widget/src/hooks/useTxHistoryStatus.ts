@@ -24,6 +24,6 @@ export const useTxHistoryStatus = ({ txs, txsRequired }: {
       if (statusData?.isSettled && !statusData?.isSuccess) return "failed";
       return "pending";
     },
-  })
-  return query.data
-}
+  });
+  return query.data;
+};

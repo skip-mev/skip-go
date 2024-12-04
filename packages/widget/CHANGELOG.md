@@ -1,5 +1,63 @@
 ## 0.0.15
 
+## 3.0.20
+
+### Patch Changes
+
+- efc6388: Fix no route fetched when inverting swap before entering input/output amount
+- ad0f03d: bump solana web3js version
+- 7f81190: Remove extra margin in settings drawer
+- ba6a4dc: improve balance display
+- f053d5b: search by asset name
+- 1c6dfab: fix no results modal height
+- 7cc25f2: fix android not opening wallet when signing
+- 9068af7: autoset address initially when already connected
+- Updated dependencies [ad0f03d]
+  - @skip-go/client@0.15.2
+
+## 3.0.19
+
+### Patch Changes
+
+- fd0554c: support testnet
+- Updated dependencies [fd0554c]
+- Updated dependencies [1d80759]
+  - @skip-go/client@0.15.1
+
+## 3.0.18
+
+### Patch Changes
+
+- 8f21a1d: Fix not being able to type decimal on mobile
+- 39552a3: Externalize react/jsx-runtime to support react19
+- fc908b0: cosmos mobile wallet support and walletconnect
+- Updated dependencies [fc908b0]
+  - @skip-go/client@0.15.0
+
+## 3.0.17
+
+### Patch Changes
+
+- 23939e6: fix destination/recovery address not auto filled
+- 7cc8da5: increase transaction timeout cushion
+- a5fe75b: fix balance decimals display
+- Updated dependencies [b0319d5]
+  - @skip-go/client@0.14.8
+
+## 3.0.16
+
+### Patch Changes
+
+- c9def8a: fix transaction history modal height
+- cae55fe: fix recovery wallet override destination address
+- 4a48064: rendering bugfixes
+- fc7374d: more responsive button text user feedback to wallet actions
+- 10dcd41: Keep previous balance data to avoid reloading
+- 59b165a: improve and simplify button text
+- ef165f1: adjust slippage options and default to 1 percent
+- Updated dependencies [fc7374d]
+  - @skip-go/client@0.14.7
+
 ## 3.0.15
 
 ### Patch Changes

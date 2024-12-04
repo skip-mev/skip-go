@@ -122,9 +122,9 @@ export const SwapExecutionPageRouteSimpleRow = ({
         {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 
         <Row align="center" gap={5}>
-          <SmallText normalTextColor textWrap="nowrap">
+          <StyledChainName normalTextColor textWrap="nowrap">
             on {assetDetails.chainName}
-          </SmallText>
+          </StyledChainName>
 
           <Button
             align="center"
@@ -174,4 +174,11 @@ const PlaceholderIcon = styled.div`
   font-size: 24px;
   color: ${props => props.theme.primary.text.normal};
   border: 1px solid ${props => props.theme.primary.text.normal};
+`;
+
+const StyledChainName = styled(SmallText)`
+  max-width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;

@@ -12,8 +12,10 @@ export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
 }
 
-export const removeTrailingZeros = (input: string | undefined) =>
-  input?.replace(/0+$/, "").replace(/\.$/, "");
+export const removeTrailingZeros = (input: string | undefined) => {
+  if (input === "0") return input;
+  return input?.replace(/0+$/, "").replace(/\.$/, "");
+}
 
 export function limitDecimalsDisplayed(input: string | number | undefined, decimalPlaces = DEFAULT_DECIMAL_PLACES) {
   if (input === undefined) return "";

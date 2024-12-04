@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.14.6",
+  "version": "0.15.2",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,13 +35,13 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^1.69.39",
+    "chain-registry": "^1.69.52",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "vitest": "^1.2.2"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.91.1",
+    "@solana/web3.js": "^1.95.8",
     "viem": "2.x"
   },
   "dependencies": {
@@ -58,6 +58,7 @@
     "@solana/wallet-adapter-base": "^0.9.23",
     "axios": "1.x",
     "cosmjs-types": "^0.9.0",
+    "create-hash": "^1.2.0",
     "keccak": "3.0.4"
   },
   "publishConfig": {

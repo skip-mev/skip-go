@@ -217,12 +217,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const swapSettings = get(swapSettingsAtom);
 
+
   return {
     gcTime: Infinity,
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
-
       try {
         await skip.executeRoute({
           route,
@@ -230,6 +230,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           validateGasBalance: route.sourceAssetChainID !== "984122",
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
+          simulate: route.sourceAssetChainID !== "984122",
           getFallbackGasAmount: async (_chainID, chainType) => {
             if (chainType === "cosmos") {
               if (_chainID === "carbon-1") {

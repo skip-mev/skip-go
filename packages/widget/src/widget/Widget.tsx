@@ -1,8 +1,14 @@
-import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal } from "@/components/Modal";
-import { cloneElement, ReactElement, useLayoutEffect, useMemo } from "react";
+import {
+  cloneElement,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+} from "react";
 import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
 import { Router } from "./Router";
 import { useSetAtom } from "jotai";
@@ -12,10 +18,7 @@ import {
   defaultSkipClientConfig,
   onlyTestnetsAtom,
 } from "@/state/skipClient";
-import {
-  ChainAffiliates,
-  SkipClientOptions,
-} from "@skip-go/client";
+import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
 import {
   ChainFilter,
@@ -26,12 +29,17 @@ import {
 import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
+import { WalletProviders } from "@/providers/WalletProviders";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WalletConnect, walletConnectAtom } from "@/state/wallets";
 
-export type WidgetRouteConfig =
-  Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
-    swapVenues?: NewSwapVenueRequest[];
-    swapVenue?: NewSwapVenueRequest;
-  };
+export type WidgetRouteConfig = Omit<
+  RouteConfig,
+  "swapVenues" | "swapVenue"
+> & {
+  swapVenues?: NewSwapVenueRequest[];
+  swapVenue?: NewSwapVenueRequest;
+};
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
@@ -56,27 +64,92 @@ export type WidgetProps = {
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
-} & Pick<NewSkipClientOptions, "apiUrl" | "chainIdsToAffiliates" | "endpointOptions">;
+  walletConnect?: WalletConnect;
+} & Pick<
+  NewSkipClientOptions,
+  "apiUrl" | "chainIdsToAffiliates" | "endpointOptions"
+>;
 
 type NewSwapVenueRequest = {
   name: string;
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
+type NewSkipClientOptions = Omit<
+  SkipClientOptions,
+  "apiURL" | "chainIDsToAffiliates"
+> & {
   apiUrl?: string;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
-}
+};
+
+export type ShowSwapWidget = {
+  button?: ReactElement;
+} & WidgetProps;
+
+export const queryClient = new QueryClient();
 
 export const Widget = (props: WidgetProps) => {
+  const { theme } = useInitWidget(props);
   return (
-    <NiceModal.Provider>
-      <WidgetWithoutNiceModalProvider {...props} />
-    </NiceModal.Provider>
+    <ShadowDomAndProviders theme={theme}>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <NiceModal.Provider>
+            <WidgetWrapper>
+              <Router />
+            </WidgetWrapper>
+          </NiceModal.Provider>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
   );
 };
 
-const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
+export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
+  const { theme } = useInitWidget(props);
+  return (
+    <ShadowDomAndProviders theme={theme}>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <WidgetWrapper>
+            <Router />
+          </WidgetWrapper>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
+  );
+};
+
+export const ShowWidget = ({
+  button = <button>show widget</button>,
+  ...props
+}: ShowSwapWidget) => {
+  const modal = useModal(
+    createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
+  );
+
+  const handleClick = () => {
+    modal.show();
+  };
+
+  const Element = cloneElement(button, { onClick: handleClick });
+
+  return <>{Element}</>;
+};
+
+const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+  useEffect(() => {
+    registerModals();
+  }, []);
+  return (
+    <WidgetContainer>
+      <ClientOnly>{children}</ClientOnly>
+    </WidgetContainer>
+  );
+};
+
+const useInitWidget = (props: WidgetProps) => {
   useInitDefaultRoute(props.defaultRoute);
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
@@ -84,6 +157,7 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
+  const setWalletConnect = useSetAtom(walletConnectAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -97,7 +171,9 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
 
     return {
       apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
-      endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
+      endpointOptions:
+        fromWidgetProps.endpointOptions ??
+        defaultSkipClientConfig.endpointOptions,
       chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
@@ -115,17 +191,16 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     return theme;
   }, [props.brandColor, props.theme]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setSkipClientConfig({
       apiURL: mergedSkipClientConfig.apiURL,
       endpointOptions: mergedSkipClientConfig.endpointOptions,
       chainIDsToAffiliates: mergedSkipClientConfig.chainIDsToAffiliates,
     });
     setTheme(mergedTheme);
-    registerModals();
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (props.settings) {
       setSwapSettings({
         ...defaultSwapSettings,
@@ -147,46 +222,24 @@ const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
     if (props.onlyTestnet) {
       setOnlyTestnets(props.onlyTestnet);
     }
+    if (props.walletConnect) {
+      setWalletConnect(props.walletConnect);
+    }
   }, [
     props.filter,
     props.onlyTestnet,
     props.routeConfig,
     props.settings,
     props.settings?.slippage,
+    props.walletConnect,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
+    setWalletConnect,
   ]);
 
-  return (
-    <ShadowDomAndProviders theme={mergedTheme}>
-      <WidgetContainer>
-        <Router />
-      </WidgetContainer>
-    </ShadowDomAndProviders>
-  );
-};
-
-export type ShowSwapWidget = {
-  button?: ReactElement;
-} & WidgetProps;
-
-export const ShowWidget = ({
-  button = <button>show widget</button>,
-  ...props
-}: ShowSwapWidget) => {
-  const modal = useModal(
-    createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
-  );
-
-  const handleClick = () => {
-    modal.show();
-  };
-
-  const Element = cloneElement(button, { onClick: handleClick });
-
-  return <>{Element}</>;
+  return { theme: mergedTheme };
 };
 
 const WidgetContainer = styled.div`

@@ -33,6 +33,7 @@ export type GroupedAsset = {
   assets: ClientAsset[];
   totalAmount: number;
   totalUsd: number;
+  name?: string;
 };
 
 export type ChainWithAsset = Chain & {

@@ -1,5 +1,36 @@
 # @skip-go/client
 
+## 0.15.2
+
+### Patch Changes
+
+- ad0f03d: bump solana web3js version
+
+## 0.15.1
+
+### Patch Changes
+
+- fd0554c: support testnet
+- 1d80759: Use create-hash npm package as dependency (used by crypto-browserify) instead of assuming native crypto.createHash exists
+
+## 0.15.0
+
+### Minor Changes
+
+- fc908b0: executeRoute prop: replace validateGasBalance to simulate
+
+## 0.14.8
+
+### Patch Changes
+
+- b0319d5: update msgs direct request for go fast
+
+## 0.14.7
+
+### Patch Changes
+
+- fc7374d: Improve onTransactionSigned callback to be more close after signing
+
 ## 0.14.6
 
 ### Patch Changes

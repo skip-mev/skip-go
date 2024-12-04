@@ -16,23 +16,23 @@ export const useCW20Balance = ({
   address?: string,
   asset?: ClientAsset
 }) => {
-  const skipClientConfig = useAtomValue(skipClientConfigAtom)
+  const skipClientConfig = useAtomValue(skipClientConfigAtom);
   const query = useQuery({
     queryKey: ["cw20Balance", { denom: asset?.denom, address, chainID: asset?.chainID }],
     queryFn: async () => {
       if (!asset?.chainID) throw new Error("Chain ID not found");
       const rpcURL = await skipClientConfig.endpointOptions?.getRpcEndpointForChain?.(asset?.chainID) || getChainInfo({
         chainId: asset?.chainID,
-      })?.rpc
+      })?.rpc;
       if (!rpcURL) throw new Error("RPC URL not found");
       if (!address) throw new Error("Address not found");
       if (!asset) throw new Error("Asset not found");
       return getCosmosCW20Balance(rpcURL, address, asset);
     },
     enabled: !!address && !!asset?.tokenContract && !!asset?.isCW20 && !!asset?.chainID,
-  })
+  });
   return query;
-}
+};
 
 export async function getCosmosCW20Balance(
   rpcURL: string,
@@ -60,5 +60,5 @@ export async function getCosmosCW20Balance(
       asset.decimals
     ),
     decimals: asset.decimals,
-  }
+  };
 }

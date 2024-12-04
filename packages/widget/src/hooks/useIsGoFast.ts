@@ -20,4 +20,4 @@ export const useIsSwapOperation = (route: RouteResponse | undefined) => {
       (item) => swapOperations.includes(item.type)
     ) ?? false;
   }, [route?.operations]);
-}
+};

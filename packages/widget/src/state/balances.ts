@@ -1,4 +1,4 @@
-import { BalanceRequest } from "@skip-go/client";
+import { BalanceRequest, BalanceResponse } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "./skipClient";
 import { isInvertingSwapAtom } from "./swapPage";
@@ -93,5 +93,6 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
+    placeholderData: (previousData: BalanceResponse | undefined) => previousData
   };
 });
