@@ -1,5 +1,5 @@
 import { explorers } from "@/constants/chains";
-import { config } from "@/constants/wagmi";
+import { createWagmiConfig } from "@/constants/wagmi";
 
 export const createExplorerLink = ({ chainID, txHash, chainType }: { chainID?: string, chainType?: string, txHash: string }) => {
   if (!chainType || !chainID) return undefined;
@@ -13,6 +13,7 @@ export const createExplorerLink = ({ chainID, txHash, chainType }: { chainID?: s
         return url;
       }
     case "evm": {
+      const config = createWagmiConfig(undefined);
       const chain = config.chains.find((chain) => chain.id === Number(chainID));
       const url = chain?.blockExplorers?.default.url;
       return url ? `${url}/tx/${txHash}` : undefined;
