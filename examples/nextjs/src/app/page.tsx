@@ -1,7 +1,5 @@
 'use client';
 import { Widget } from '@skip-go/widget';
-import { defaultTheme, lightTheme } from '@skip-go/widget';
-
 import { useState } from 'react';
 
 export default function Home() {
@@ -53,7 +51,7 @@ export default function Home() {
           padding: '0 10px',
           boxSizing: 'border-box'
         }}>
-          <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
+          <Widget theme={theme} />
         </div>
       </div>
     </div>
