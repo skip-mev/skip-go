@@ -1,5 +1,20 @@
 ## 0.0.15
 
+## 3.0.20
+
+### Patch Changes
+
+- efc6388: Fix no route fetched when inverting swap before entering input/output amount
+- ad0f03d: bump solana web3js version
+- 7f81190: Remove extra margin in settings drawer
+- ba6a4dc: improve balance display
+- f053d5b: search by asset name
+- 1c6dfab: fix no results modal height
+- 7cc25f2: fix android not opening wallet when signing
+- 9068af7: autoset address initially when already connected
+- Updated dependencies [ad0f03d]
+  - @skip-go/client@0.15.2
+
 ## 3.0.19
 
 ### Patch Changes
