@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.15.2
+
+### Patch Changes
+
+- ad0f03d: bump solana web3js version
+
 ## 0.15.1
 
 ### Patch Changes
