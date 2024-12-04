@@ -7627,7 +7627,7 @@ __metadata:
     proxy-from-env: ^1.1.0
     vitest: ^1.2.2
   peerDependencies:
-    "@solana/web3.js": ^1.91.1
+    "@solana/web3.js": ^1.95.8
     viem: 2.x
   languageName: unknown
   linkType: soft
@@ -7661,7 +7661,7 @@ __metadata:
     "@solana/wallet-adapter-react": ^0.15.35
     "@solana/wallet-adapter-solflare": ^0.6.28
     "@solana/wallet-adapter-trust": ^0.1.13
-    "@solana/web3.js": ^1.95.3
+    "@solana/web3.js": ^1.95.8
     "@storybook/addon-essentials": ^8.2.6
     "@storybook/addon-interactions": ^8.2.6
     "@storybook/addon-links": ^8.2.6
@@ -8210,7 +8210,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana/web3.js@npm:^1.32.0, @solana/web3.js@npm:^1.91.1":
+"@solana/web3.js@npm:^1.32.0":
   version: 1.94.0
   resolution: "@solana/web3.js@npm:1.94.0"
   dependencies:
@@ -8233,9 +8233,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana/web3.js@npm:^1.95.3":
-  version: 1.95.3
-  resolution: "@solana/web3.js@npm:1.95.3"
+"@solana/web3.js@npm:^1.95.8":
+  version: 1.95.8
+  resolution: "@solana/web3.js@npm:1.95.8"
   dependencies:
     "@babel/runtime": ^7.25.0
     "@noble/curves": ^1.4.2
@@ -8252,7 +8252,7 @@ __metadata:
     node-fetch: ^2.7.0
     rpc-websockets: ^9.0.2
     superstruct: ^2.0.2
-  checksum: 6951eb12275de09ef9422fc65982b7496f3d11253b4cd1b09694dd2135d92aa272a04a7adf50ef0136a459b08ea40e07f6e7cbf1970cae44d6193d93fe6acc1f
+  checksum: 875a65c2e16ea797b2a1e842fe9a53ae74f627b8678d946a12f4a6acd1922dfcb107429b2b6d93131d406d30deffaa366132fe9b87dbf0b62c7b83e83184b3fa
   languageName: node
   linkType: hard
 
@@ -24789,7 +24789,7 @@ __metadata:
     "@protobufs/google": 0.0.10
     "@rollup/plugin-node-resolve": ^13.1.3
     "@solana/wallet-adapter-base": ^0.9.23
-    "@solana/web3.js": ^1.91.1
+    "@solana/web3.js": ^1.95.8
     "@tanstack/react-query": ^5.51.21
     "@types/jest": ^29.5.12
     "@typescript-eslint/eslint-plugin": ^6.21.0
