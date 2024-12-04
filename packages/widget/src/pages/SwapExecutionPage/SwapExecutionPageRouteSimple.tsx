@@ -33,23 +33,15 @@ export const SwapExecutionPageRouteSimple = ({
   const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOperation.transferIndex]?.status;
   const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOperation.transferIndex]?.status;
 
-  // special case needed for axelar transfers where the source denom is not the first operation denom
-  const ibcTransferToAxelarOp = operations.find(op => op.ibcTransferToAxelar);
-
-  const sourceDenom = ibcTransferToAxelarOp
-    ? ibcTransferToAxelarOp.ibcTransferToAxelar?.denomIn
-    : firstOperation.denomIn;
-
-  const destinationDenom = lastOperation.denomOut;
 
   const source = {
-    denom: sourceDenom,
+    denom: firstOperation.denomIn,
     tokenAmount: firstOperation.amountIn,
     chainId: firstOperation.fromChainID ?? firstOperation.chainID,
     usdValue: route?.usdAmountIn,
   };
   const destination = {
-    denom: destinationDenom,
+    denom: lastOperation.denomOut,
     tokenAmount: lastOperation.amountOut,
     chainId: lastOperation.toChainID ?? lastOperation.chainID,
     usdValue: route?.usdAmountOut,

@@ -127,6 +127,12 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
             operationDetails as EvmSwap
           ).fromChainID;
           break;
+        // special case needed for axelar transfers where the source denom is not the first operation denom
+        case OperationType.axelarTransfer:
+          (operationDetails as Transfer).denomIn = (
+            operationDetails as AxelarTransfer
+          ).ibcTransferToAxelar?.denomIn ?? (operationDetails as Transfer).denomIn;
+          break;
         case OperationType.bankSend:
           (operationDetails as Transfer).denomIn = (
             operationDetails as BankSend
