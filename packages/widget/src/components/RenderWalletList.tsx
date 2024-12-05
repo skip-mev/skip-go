@@ -13,6 +13,7 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { ChainType } from "@skip-go/client";
 
 export type RenderWalletListProps = {
   title: string;
@@ -73,7 +74,7 @@ export const RenderWalletList = ({
             ...prev,
             [destinationIndex]: {
               chainID: chainId,
-              chainType: chainType as "evm" | "cosmos" | "svm",
+              chainType: chainType as ChainType,
               address: address,
               source: "wallet",
               wallet: {

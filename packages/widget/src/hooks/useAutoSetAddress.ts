@@ -149,6 +149,7 @@ export const useAutoSetAddress = () => {
             break;
           }
           case "evm": {
+            if (chainAddresses[index].source === "input") return;
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
