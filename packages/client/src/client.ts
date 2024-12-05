@@ -1420,7 +1420,7 @@ export class SkipClient {
       price = feeInfo.gasPrice.low;
     }
 
-    return new GasPrice(Decimal.fromUserInput(price, 18), feeInfo.denom);
+    return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), feeInfo.denom);
   }
 
   async getFeeInfoForChain(
@@ -1729,7 +1729,7 @@ export class SkipClient {
         if (price === '') {
           price = asset.gasPrice.low;
         }
-        return new GasPrice(Decimal.fromUserInput(price, 18), asset.denom);
+        return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), asset.denom);
       })();
       if (!gasPrice) {
         return null;
