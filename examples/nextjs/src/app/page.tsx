@@ -1,11 +1,13 @@
 'use client';
 import { Widget } from '@skip-go/widget';
-import { defaultTheme, lightTheme } from '@skip-go/widget';
-
 import { useState } from 'react';
+import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
+  // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  // optional query params, not necessary for the widget to work
+  const defaultRoute = useQueryParams();
 
   const toggleTheme = () => {
     if (theme === 'dark') {
@@ -47,13 +49,17 @@ export default function Home() {
           justifyContent: 'center',
         }}
       >
+        {/* widget will cohere to the parent container's width */}
         <div style={{
           width: '100%',
           maxWidth: 500,
           padding: '0 10px',
           boxSizing: 'border-box'
         }}>
-          <Widget theme={theme === 'dark' ? defaultTheme : lightTheme} />
+          <Widget
+            theme={theme}
+            defaultRoute={defaultRoute}
+          />
         </div>
       </div>
     </div>
