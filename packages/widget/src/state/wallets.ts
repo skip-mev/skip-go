@@ -1,11 +1,12 @@
 import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
+import { ChainType } from "@skip-go/client";
 
 export type MinimalWallet = {
   walletName: string;
   walletPrettyName: string;
-  walletChainType: "evm" | "cosmos" | "svm";
+  walletChainType: ChainType;
   walletInfo: {
     logo?: string
   };

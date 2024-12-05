@@ -95,7 +95,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         ...prev,
         [destinationIndex]: {
           chainID: chainId,
-          chainType: chainType as "evm" | "cosmos" | "svm",
+          chainType: chainType,
           address: manualWalletAddress,
           source: "input",
         },

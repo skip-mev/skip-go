@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { ChainType } from "@skip-go/client";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -63,7 +64,7 @@ export const useAutoSetAddress = () => {
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
         switch (chainType) {
-          case "cosmos": {
+          case ChainType.Cosmos: {
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.cosmos?.walletName
@@ -92,7 +93,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: "cosmos",
+                  chainType: ChainType.Cosmos,
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
@@ -107,7 +108,7 @@ export const useAutoSetAddress = () => {
             }
             break;
           }
-          case "svm": {
+          case ChainType.SVM: {
             const wallets = createSolanaWallets();
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.svm?.walletName
@@ -132,7 +133,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: "svm",
+                  chainType: ChainType.SVM,
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
@@ -148,7 +149,7 @@ export const useAutoSetAddress = () => {
 
             break;
           }
-          case "evm": {
+          case ChainType.EVM: {
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
@@ -173,7 +174,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: "evm",
+                  chainType: ChainType.EVM,
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
