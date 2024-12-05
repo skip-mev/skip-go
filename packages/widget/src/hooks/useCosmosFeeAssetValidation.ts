@@ -26,7 +26,7 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         if (!a.gasPrice) return undefined;
         const price =
           a.gasPrice.average || a.gasPrice.high || a.gasPrice.low;
-        return new GasPrice(Decimal.fromUserInput(price, 18), a.denom);
+        return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), a.denom);
       })();
       if (!gasPrice) return undefined;
       const isSwapChain = swapVenues?.map(venue => venue.chainID).includes(chainId);
