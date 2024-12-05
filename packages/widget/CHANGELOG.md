@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.0.21
+
+### Patch Changes
+
+- 94573e0: Refactor SwapExecutionPage to use route data for asset denoms
+- b67ca86: prevent gas price scientific notation
+- e0bc1a7: update registries
+- f14bd83: update registries
+- Updated dependencies [b67ca86]
+- Updated dependencies [e0bc1a7]
+- Updated dependencies [f14bd83]
+  - @skip-go/client@0.15.3
+
 ## 3.0.20
 
 ### Patch Changes
