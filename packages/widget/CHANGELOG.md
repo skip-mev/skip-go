@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.0.22
+
+### Patch Changes
+
+- 187d91d: fix autoset address override manual address
+
 ## 3.0.21
 
 ### Patch Changes

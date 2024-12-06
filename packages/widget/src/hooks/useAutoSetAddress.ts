@@ -61,6 +61,7 @@ export const useAutoSetAddress = () => {
         if (!chain) {
           return;
         }
+        if (chainAddresses[index]?.address) return;
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
         switch (chainType) {
@@ -71,7 +72,6 @@ export const useAutoSetAddress = () => {
             );
             if (!wallet) {
               if (!openModal) return;
-              if (chainAddresses[index].address) return;
               NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
@@ -80,8 +80,6 @@ export const useAutoSetAddress = () => {
               return;
             }
             try {
-              if (chainAddresses[index].address) return;
-
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
