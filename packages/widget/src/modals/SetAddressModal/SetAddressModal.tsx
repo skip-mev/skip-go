@@ -76,11 +76,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const { chainType, bech32Prefix } = chain;
 
     switch (chainType) {
-      case "cosmos":
+      case ChainType.Cosmos:
         return `${bech32Prefix}1...`;
-      case "evm":
+      case ChainType.EVM:
         return "0x...";
-      case "svm":
+      case ChainType.SVM:
         return "Enter solana address...";
       default:
         return "Enter address...";
@@ -96,7 +96,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         ...prev,
         [destinationIndex]: {
           chainID: chainId,
-          chainType: chainType as ChainType,
+          chainType: chainType,
           address: manualWalletAddress,
           source: "input",
         },
