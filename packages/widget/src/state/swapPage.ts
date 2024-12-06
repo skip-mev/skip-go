@@ -122,9 +122,16 @@ export enum RoutePreference {
   FASTEST = "Fastest",
   CHEAPEST = "Cheapest",
 }
+
+export const CosmosGasAmount = {
+  DEFAULT: 300_000,
+  SWAP: 2_800_000,
+  CARBON: 1_000_000,
+}
+
 export const defaultSwapSettings = {
   slippage: 1,
-  customGasAmount: 200_000,
+  customGasAmount: CosmosGasAmount.DEFAULT,
   routePreference: RoutePreference.FASTEST,
 };
 

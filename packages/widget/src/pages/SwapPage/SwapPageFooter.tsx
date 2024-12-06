@@ -31,7 +31,8 @@ export const SwapPageFooterItems = ({
   const settingsChanged = useMemo(() => {
     return (
       swapSettings.slippage !== defaultSwapSettings.slippage ||
-      swapSettings.customGasAmount !== defaultSwapSettings.customGasAmount
+      swapSettings.customGasAmount !== defaultSwapSettings.customGasAmount ||
+      swapSettings.routePreference !== defaultSwapSettings.routePreference
     );
   }, [swapSettings]);
 
