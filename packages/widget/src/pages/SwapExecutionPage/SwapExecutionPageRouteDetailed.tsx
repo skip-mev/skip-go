@@ -6,7 +6,7 @@ import {
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
@@ -14,7 +14,6 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -50,12 +49,11 @@ type tooltipMap = Record<number, boolean>;
 export const SwapExecutionPageRouteDetailed = ({
   operations,
   statusData,
-  onClickEditDestinationWallet: _onClickEditDestinationWallet,
+  onClickEditDestinationWallet,
   swapExecutionState,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
-  const chainAddresses = useAtomValue(chainAddressesAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -74,18 +72,8 @@ export const SwapExecutionPageRouteDetailed = ({
   };
 
   const firstOperation = operations[0];
-  const lastOperation = operations[operations.length - 1];
-  const isSignRequired = lastOperation.signRequired;
   const status = statusData?.transferEvents;
   const firstOpStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
-
-  const onClickEditDestinationWallet = useMemo(() => {
-    if (isSignRequired) return;
-    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
-    const destinationAddress = chainAddresses?.[lastIndex]?.address;
-    if (!destinationAddress || swapExecutionState === SwapExecutionState.pending || swapExecutionState === SwapExecutionState.waitingForSigning || swapExecutionState === SwapExecutionState.validatingGasBalance || swapExecutionState === SwapExecutionState.confirmed) return;
-    return _onClickEditDestinationWallet;
-  }, [isSignRequired, chainAddresses, swapExecutionState, _onClickEditDestinationWallet]);
 
 
   return (
