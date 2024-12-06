@@ -8,10 +8,3 @@ export const ROUTE_PREFERENCE_OPTIONS: RoutePreference[] = [
   RoutePreference.CHEAPEST,
 ];
 export const DEFAULT_DECIMAL_PLACES = 6;
-
-export enum CosmosGasAmount {
-  DEFAULT = 300_000,
-  SWAP = 2_800_000,
-  CARBON = 1_000_000,
-}
-

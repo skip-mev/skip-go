@@ -12,7 +12,6 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
-import { CosmosGasAmount } from "@/constants/widget";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -221,7 +220,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const getFallbackGasAmount = async (_chainID: string, chainType: ChainType) => {
     if (chainType === "cosmos") {
       if (_chainID === "carbon-1") {
-        return CosmosGasAmount.CARBON;
+        return 1_000_000;
       }
       return swapSettings.customGasAmount;
     }
