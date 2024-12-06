@@ -3,6 +3,7 @@ import { ClientAsset } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { CosmosGasAmount, DEFAULT_SLIPPAGE } from "@/constants/widget";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -123,8 +124,8 @@ export enum RoutePreference {
   CHEAPEST = "Cheapest",
 }
 export const defaultSwapSettings = {
-  slippage: 1,
-  customGasAmount: 200_000,
+  slippage: DEFAULT_SLIPPAGE,
+  customGasAmount: CosmosGasAmount.DEFAULT,
   routePreference: RoutePreference.FASTEST,
 };
 
