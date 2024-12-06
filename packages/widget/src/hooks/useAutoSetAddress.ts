@@ -64,13 +64,13 @@ export const useAutoSetAddress = () => {
         const chainType = chain.chainType;
         switch (chainType) {
           case "cosmos": {
+            if (chainAddresses[index].address) return;
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.cosmos?.walletName
             );
             if (!wallet) {
               if (!openModal) return;
-              if (chainAddresses[index].address) return;
               NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
@@ -79,8 +79,6 @@ export const useAutoSetAddress = () => {
               return;
             }
             try {
-              if (chainAddresses[index].address) return;
-
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -108,6 +106,7 @@ export const useAutoSetAddress = () => {
             break;
           }
           case "svm": {
+            if (chainAddresses[index]?.address) return;
             const wallets = createSolanaWallets();
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.svm?.walletName
@@ -149,7 +148,7 @@ export const useAutoSetAddress = () => {
             break;
           }
           case "evm": {
-            if (chainAddresses[index]?.source === "input") return;
+            if (chainAddresses[index]?.address) return;
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
