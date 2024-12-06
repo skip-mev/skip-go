@@ -1,4 +1,4 @@
-import { Coin, OfflineAminoSigner } from '@cosmjs/amino';
+import { AminoSignResponse, Coin, OfflineAminoSigner, StdSignDoc } from '@cosmjs/amino';
 import {
   GeneratedType,
   OfflineDirectSigner,
@@ -10,7 +10,6 @@ import {
   SignerData,
   StdFee,
 } from '@cosmjs/stargate';
-
 import { WalletClient } from 'viem';
 
 import * as types from './types';
@@ -34,11 +33,21 @@ export type Gas = {
   fee: StdFee;
 }
 
+type EIP72CosmosSigner = (chainId: string, signer: string, eip712: {
+  types: Record<string, {
+    name: string;
+    type: string;
+  }[] | undefined>;
+  domain: Record<string, any>;
+  primaryType: string;
+}, signDoc: StdSignDoc) => Promise<AminoSignResponse>
+
 /** Signer Getters */
 export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;
+  getEIP72CosmosSigner?: () => Promise<EIP72CosmosSigner | undefined>;
 }
 
 /** Gas Options */

@@ -1,3 +1,9 @@
+import {
+  MsgExecuteContractCompat as InjMsgExecuteContractCompat,
+  MsgTransfer as InjMsgTransfer,
+  MsgInstantiateContract as InjMsgInstantiateContract,
+  MsgMigrateContract as InjMsgMigrateContract,
+} from "@injectivelabs/sdk-ts";
 import { StdFee } from "@cosmjs/amino";
 import {
   CosmosTxSigningV1Beta1Signing,
@@ -10,9 +16,13 @@ import {
   createSignDoc,
   createSigners,
 } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/tx/utils/tx";
-import { DEFAULT_STD_FEE } from "@injectivelabs/utils";
+import { BigNumberInBase, DEFAULT_STD_FEE } from "@injectivelabs/utils";
 
 import createKeccakHash from 'keccak';
+import TransactionMsg from "./messages/txMsg";
+import MsgExecuteContract from "./messages/msgExecuteContract";
+import MsgInstantiateContract from "./messages/msgInstatiateContract";
+import MsgTransfer from "./messages/msgTransfer";
 
 export interface CreateTransactionArgs {
   fee?: StdFee; // the fee to include in the transaction
@@ -98,4 +108,66 @@ export function createTransaction({
     bodyBytes: bodyBytes,
     authInfoBytes: authInfoBytes,
   };
+}
+
+export function prepareMessagesForInjective(
+  messages: TransactionMsg[],
+): (InjMsgExecuteContractCompat | InjMsgInstantiateContract | InjMsgMigrateContract | InjMsgTransfer)[] {
+  return messages
+    .map((msg) => {
+      if (msg.typeUrl === MsgExecuteContract.TYPE) {
+        const execMsg = msg as MsgExecuteContract;
+
+        return InjMsgExecuteContractCompat.fromJSON({
+          sender: execMsg.value.sender,
+          contractAddress: execMsg.value.contract,
+          msg: execMsg.value.msg,
+          funds: execMsg.value.funds && execMsg.value.funds.length > 0 ? execMsg.value.funds : undefined,
+        });
+      }
+
+      if (msg.typeUrl === MsgInstantiateContract.TYPE) {
+        const instantiateMsg = msg as MsgInstantiateContract;
+
+        return InjMsgInstantiateContract.fromJSON({
+          sender: instantiateMsg.value.sender,
+          admin: instantiateMsg.value.admin,
+          codeId: Number(instantiateMsg.value.codeId),
+          label: instantiateMsg.value.label ?? "",
+          msg: instantiateMsg.value.msg,
+          amount:
+            instantiateMsg.value.funds && instantiateMsg.value.funds.length > 0
+              ? instantiateMsg.value.funds[0]
+              : undefined,
+        });
+      }
+      if (msg.typeUrl === MsgTransfer.TYPE) {
+        const execMsg = msg as MsgTransfer;
+
+        if (!execMsg.value.timeoutHeight) {
+          throw new Error("Injective IBC transfer requires timeout height");
+        }
+
+        return InjMsgTransfer.fromJSON({
+          memo: "IBC Transfer",
+          sender: execMsg.value.sender,
+          receiver: execMsg.value.receiver,
+          port: execMsg.value.sourcePort,
+          channelId: execMsg.value.sourceChannel,
+          amount: execMsg.value.token ?? { denom: "", amount: "" },
+          timeout: new BigNumberInBase(execMsg.value.timeoutTimestamp).toNumber(),
+          height: {
+            revisionHeight: new BigNumberInBase(execMsg.value.timeoutHeight.revisionHeight).toNumber(),
+            revisionNumber: new BigNumberInBase(execMsg.value.timeoutHeight.revisionNumber).toNumber(),
+          },
+        });
+      }
+
+      return null;
+    })
+    .filter(nonNullable);
+}
+
+function nonNullable<T>(value: T): value is NonNullable<T> {
+  return value !== null && value !== undefined;
 }

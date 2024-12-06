@@ -64,6 +64,12 @@ export const skipClient = atom((get) => {
         throw new Error("getSVMSigner error: wallet not found");
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
+    getEIP72CosmosSigner: async () => {
+      if (!wallets.cosmos) throw new Error("experimental sign EIP712 Cosmos Tx v0 error: no cosmos wallet");
+      const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+      if (!wallet) throw new Error("experimental sign EIP712 Cosmos Tx v0 error: wallet not found");
+      return wallet.experimentalSignEIP712CosmosTx_v0;
+    }
   });
 });
 

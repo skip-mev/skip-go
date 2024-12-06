@@ -34,9 +34,11 @@ import {
   BigNumberInBase,
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
 } from '@injectivelabs/utils';
+import { EthereumChainId } from "@injectivelabs/ts-types/dist/cjs/enums";
+
 import axios from 'axios';
 import { SignMode } from 'cosmjs-types/cosmos/tx/signing/v1beta1/signing';
-import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
+import { TxBody, TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MsgExecute } from './codegen/initia/move/v1/tx';
@@ -57,10 +59,9 @@ import {
   DEFAULT_GAS_DENOM_OVERRIDES,
   DEFAULT_CACHE_DURATION,
 } from './constants/constants';
-import { createTransaction } from './injective';
+import { createTransaction, prepareMessagesForInjective } from './injective';
 import { RequestClient } from './request-client';
 import {
-  DEFAULT_GAS_MULTIPLIER,
   getEncodeObjectFromCosmosMessage,
   getEncodeObjectFromCosmosMessageInjective,
   getCosmosGasAmountForMessage,
@@ -73,6 +74,8 @@ import { Connection, Transaction } from '@solana/web3.js';
 import { MsgInitiateTokenDeposit } from './codegen/opinit/ophost/v1/tx';
 import { sha256 } from '@cosmjs/crypto';
 import { createCachingMiddleware, CustomCache } from './cache';
+import { BaseAccount, BroadcastMode, createTxRawEIP712, createWeb3Extension, getEip712TypedData, SIGN_AMINO, TxRestApi } from '@injectivelabs/sdk-ts';
+import { PubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys';
 
 export const SKIP_API_URL = 'https://api.skip.build';
 
@@ -91,6 +94,8 @@ export class SkipClient {
   protected getCosmosSigner?: clientTypes.SignerGetters['getCosmosSigner'];
   protected getEVMSigner?: clientTypes.SignerGetters['getEVMSigner'];
   protected getSVMSigner?: clientTypes.SignerGetters['getSVMSigner'];
+  protected getEIP72CosmosSigner?: clientTypes.SignerGetters['getEIP72CosmosSigner'];
+
   protected chainIDsToAffiliates?: clientTypes.SkipClientOptions['chainIDsToAffiliates'];
   protected cumulativeAffiliateFeeBPS?: string = '0';
   protected cacheDurationMs?: number;
@@ -126,6 +131,7 @@ export class SkipClient {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
+    this.getEIP72CosmosSigner = options.getEIP72CosmosSigner;
 
     this.cache = CustomCache.getInstance();
 
@@ -915,44 +921,121 @@ export class SkipClient {
       sequence
     );
 
-    const { signature, signed } = await signer.signAmino(
-      signerAddress,
-      signDoc
-    );
+    const rest = await this.getRestEndpointForChain(chainID);
+    const chainRestAuthApi = new ChainRestAuthApi(rest);
+    const accountDetailsResponse = await chainRestAuthApi.fetchAccount(signerAddress);
+    const baseAccount = BaseAccount.fromRestApi(accountDetailsResponse);
 
-    const signedTxBody = {
-      messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
-      memo: signed.memo,
-    };
+    const chainRestTendermintApi = new ChainRestTendermintApi(rest);
+    const latestBlock = await chainRestTendermintApi.fetchLatestBlock();
+    const latestHeight = latestBlock.header.height;
+    const timeoutHeight = new BigNumberInBase(latestHeight).plus(DEFAULT_BLOCK_TIMEOUT_HEIGHT);
 
-    signedTxBody.messages[0]!.value.memo = messages[0]!.value.memo;
+    // @ts-expect-error TODO: Fix this
+    const preparedMessages = prepareMessagesForInjective(messages);
 
-    const signedTxBodyEncodeObject: TxBodyEncodeObject = {
-      typeUrl: '/cosmos.tx.v1beta1.TxBody',
-      value: signedTxBody,
-    };
+    const realFee = {
+      amount: fee.amount.map((x) => ({
+        denom: x.denom,
+        amount: x.amount
+      })),
+      gas: fee.gas
+    }
 
-    const signedTxBodyBytes = this.registry.encode(signedTxBodyEncodeObject);
-
-    const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
-    const signedSequence = Int53.fromString(signed.sequence).toNumber();
-
-    const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner, chainID);
-
-    const signedAuthInfoBytes = makeAuthInfoBytes(
-      [{ pubkey: pubkeyAny, sequence: signedSequence }],
-      signed.fee.amount,
-      signedGasLimit,
-      signed.fee.granter,
-      signed.fee.payer,
-      signMode
-    );
-
-    return TxRaw.fromPartial({
-      bodyBytes: signedTxBodyBytes,
-      authInfoBytes: signedAuthInfoBytes,
-      signatures: [fromBase64(signature.signature)],
+    const eip712TypedData = getEip712TypedData({
+      msgs: preparedMessages,
+      tx: {
+        memo: "",
+        accountNumber: baseAccount.accountNumber.toString(),
+        sequence: baseAccount.sequence.toString(),
+        chainId: chainID,
+        timeoutHeight: timeoutHeight.toFixed(),
+      },
+      fee: realFee,
+      ethereumChainId: EthereumChainId.Mainnet,
     });
+    const signDocs = {
+      chain_id: chainID,
+      timeout_height: timeoutHeight.toFixed(),
+      account_number: baseAccount.accountNumber.toString(),
+      sequence: baseAccount.sequence.toString(),
+      fee,
+      msgs: preparedMessages.map((m) => m.toEip712()),
+      memo: "",
+    };
+
+    const _signer = await this.getEIP72CosmosSigner?.()
+    if (!_signer) throw new Error('signCosmosMessageAmino: failed to retrieve EIP72 signer');
+    const aminoSignResponse = await _signer?.(
+      chainID,
+      signerAddress,
+      eip712TypedData,
+      signDocs
+    )
+
+    const pk = Buffer.from(accountFromSigner.pubkey).toString('base64');
+
+    const preparedTx = createTransaction({
+      message: preparedMessages,
+      memo: aminoSignResponse.signed.memo,
+      signMode: SIGN_AMINO,
+      fee: aminoSignResponse.signed.fee,
+      pubKey: pk,
+      sequence: parseInt(aminoSignResponse.signed.sequence, 10),
+      timeoutHeight: parseInt((aminoSignResponse.signed as any).timeout_height, 10),
+      accountNumber: parseInt(aminoSignResponse.signed.account_number, 10),
+      chainId: chainId,
+    });
+
+    const web3Extension = createWeb3Extension({
+      ethereumChainId: EthereumChainId.Mainnet,
+    });
+
+    const txRawEip712 = createTxRawEIP712(preparedTx.txRaw, web3Extension);
+
+    const signatureBuff = Buffer.from(aminoSignResponse.signature.signature, "base64");
+    txRawEip712.signatures = [signatureBuff];
+
+
+    // console.log("txRawEip712", txRawEip712);
+    // const txRestApi = new TxRestApi(rest);
+
+    // const broadcast = await txRestApi.broadcast(txRawEip712, {
+    //   mode: BroadcastMode.Sync as any,
+    //   timeout: 15000,
+    // });
+    // console.log("broadcast", broadcast);
+
+    const txRaw = TxRaw.fromPartial({
+      authInfoBytes: makeAuthInfoBytes([
+        {
+          pubkey: {
+            typeUrl: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+            value: PubKey.encode({
+              key: fromBase64(aminoSignResponse.signature.pub_key.value),
+            }).finish(),
+          },
+          sequence: Number(aminoSignResponse.signed.sequence),
+        }
+      ],
+        aminoSignResponse.signed.fee.amount,
+        Number(aminoSignResponse.signed.fee.gas),
+        undefined,
+        aminoSignResponse.signed.fee.payer,
+        SignMode.SIGN_MODE_LEGACY_AMINO_JSON),
+      bodyBytes: TxBody.encode(
+        TxBody.fromPartial({
+          memo: aminoSignResponse.signed.memo,
+          messages: messages,
+          timeoutHeight: aminoSignResponse.signed.timeout_height
+            ? BigInt(aminoSignResponse.signed.timeout_height)
+            : undefined,
+        }),
+      ).finish(),
+      signatures: [fromBase64(aminoSignResponse.signature.signature)]
+    })
+
+    return txRaw;
   }
 
   async messages(options: types.MsgsRequest): Promise<types.MsgsResponse> {
