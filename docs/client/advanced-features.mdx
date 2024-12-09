@@ -26,19 +26,21 @@ await skip.executeRoute({
 ```
 ## Use the Go Fast Transfer system
 
-When initializing your client, specify the `goFast` boolean in the `routeConfig` prop. If a route is eligible for a Go Fast transfer, the API will return it as one of the transfer operations. No further action is required on your part.
-
+The `route` method accepts a `goFast` parameter to enable the Go Fast Transfers. Then pass this route to the `executeRoute` method to execute.
 ```typescript
 import { SkipClient } from '@skip-go/client';
 
-const skipClient = new SkipClient({
-  // ...otherProps,
-  routeConfig: {
-    goFast: true
-  }
+const skip = new SkipClient({
+  // ...config,
 });
 
+const route = await skip.route({
+  goFast: true
+  // ... other params,
+}); 
+
 await skip.executeRoute({
-  ...
+  route,
+  // ...other params
 });
 ```
