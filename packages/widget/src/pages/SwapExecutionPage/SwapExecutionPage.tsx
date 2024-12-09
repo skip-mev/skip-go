@@ -108,7 +108,7 @@ export const SwapExecutionPage = () => {
       chainId: route?.destAssetChainID,
       signRequired: lastOperation.signRequired,
     })
-  }, [chainAddresses, swapExecutionState]);
+  }, [chainAddresses, swapExecutionState, lastOperation.signRequired, route?.destAssetChainID]);
 
 
   const SwapExecutionPageRoute = simpleRoute
