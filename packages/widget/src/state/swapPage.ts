@@ -3,6 +3,7 @@ import { ClientAsset } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { RoutePreference } from "./types";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -118,10 +119,7 @@ export type ChainFilter = {
 
 export const chainFilterAtom = atom<ChainFilter>();
 
-export enum RoutePreference {
-  FASTEST = "Fastest",
-  CHEAPEST = "Cheapest",
-}
+
 export const defaultSwapSettings = {
   slippage: 1,
   customGasAmount: 200_000,
