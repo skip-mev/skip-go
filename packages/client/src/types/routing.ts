@@ -46,7 +46,7 @@ export type Chain = {
   logoURI?: string;
   bech32Prefix: string;
   feeAssets: FeeAsset[];
-  chainType: ChainType;
+  chainType: ChainType | string;
   ibcCapabilities: IbcCapabilities;
   isTestnet: boolean;
   prettyName: string;
@@ -69,7 +69,7 @@ export type ChainJSON = {
   logo_uri?: string;
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
-  chain_type: string;
+  chain_type: ChainType | string;
   ibc_capabilities: IbcCapabilitiesJSON;
   is_testnet: boolean;
   pretty_name: string;
