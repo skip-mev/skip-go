@@ -18,7 +18,6 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { ChainType } from "@skip-go/client";
 
 export type SetAddressModalProps = ModalProps & {
   signRequired?: boolean;
