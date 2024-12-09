@@ -62,6 +62,8 @@ export const useAutoSetAddress = () => {
         }
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
+        // If already set by manual entry do not auto set
+        if (chainAddresses[index]?.address) return;
         switch (chainType) {
           case "cosmos": {
             if (chainAddresses[index].address) return;
@@ -106,7 +108,6 @@ export const useAutoSetAddress = () => {
             break;
           }
           case "svm": {
-            if (chainAddresses[index]?.address) return;
             const wallets = createSolanaWallets();
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.svm?.walletName
@@ -148,7 +149,6 @@ export const useAutoSetAddress = () => {
             break;
           }
           case "evm": {
-            if (chainAddresses[index]?.address) return;
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
