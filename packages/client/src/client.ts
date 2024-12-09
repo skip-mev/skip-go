@@ -1735,7 +1735,7 @@ export class SkipClient {
         return null;
       }
       if (chainID === 'noble-1') {
-        const fee = calculateFee(200_000, gasPrice);
+        const fee = calculateFee(200000, gasPrice);
         return fee;
       }
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);

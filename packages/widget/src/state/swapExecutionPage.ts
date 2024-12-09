@@ -217,14 +217,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const swapSettings = get(swapSettingsAtom);
 
-  const getFallbackGasAmount = async (_chainID: string, chainType: ChainType) => {
-    if (chainType === "cosmos") {
-      if (_chainID === "carbon-1") {
-        return 1_000_000;
-      }
-      return swapSettings.customGasAmount;
-    }
-  }
 
   return {
     gcTime: Infinity,
@@ -237,7 +229,14 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           userAddresses,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           simulate: route.sourceAssetChainID !== "984122",
-          getFallbackGasAmount,
+          getFallbackGasAmount: async (_chainID, chainType) => {
+            if (chainType === "cosmos") {
+              if (_chainID === "carbon-1") {
+                return 10_000_000;
+              }
+              return swapSettings.customGasAmount;
+            }
+          },
           ...submitSwapExecutionCallbacks,
         });
       } catch (error: unknown) {
