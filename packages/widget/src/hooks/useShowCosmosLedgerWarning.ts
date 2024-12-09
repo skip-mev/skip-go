@@ -4,6 +4,7 @@ import { knownEthermintLikeChains } from "@/state/wallets"
 import { useAccount } from "graz";
 import { useAtomValue } from "jotai"
 import { useMemo } from "react";
+import { ChainType } from "@skip-go/client";
 
 export const useShowCosmosLedgerWarning = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -15,7 +16,7 @@ export const useShowCosmosLedgerWarning = () => {
 
   return useMemo(() => {
     if (!sourceAsset?.chainID) return false;
-    if (chainType !== "cosmos") return false;
+    if (chainType !== ChainType.Cosmos) return false;
     if (!knownEthermintLikeChains.includes(sourceAsset?.chainID)) return false;
     return !!cosmosAccount?.isNanoLedger
   }, [
