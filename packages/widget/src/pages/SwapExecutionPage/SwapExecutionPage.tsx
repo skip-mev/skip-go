@@ -1,7 +1,7 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -97,6 +97,19 @@ export const SwapExecutionPage = () => {
     }
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
+  const onClickEditDestinationWallet = useCallback(() => {
+    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
+    const destinationAddress = chainAddresses?.[lastIndex]?.address;
+    const loadingStates = [SwapExecutionState.pending, SwapExecutionState.waitingForSigning, SwapExecutionState.validatingGasBalance, SwapExecutionState.confirmed];
+    if (loadingStates.includes(swapExecutionState)) return;
+    if (!destinationAddress) return;
+
+    NiceModal.show(Modals.SetAddressModal, {
+      chainId: route?.destAssetChainID,
+      signRequired: lastOperation.signRequired,
+    })
+  }, [chainAddresses, swapExecutionState, lastOperation.signRequired, route?.destAssetChainID]);
+
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
@@ -121,12 +134,7 @@ export const SwapExecutionPage = () => {
         }}
       />
       <SwapExecutionPageRoute
-        onClickEditDestinationWallet={() =>
-          NiceModal.show(Modals.SetAddressModal, {
-            chainId: route?.destAssetChainID,
-            signRequired: lastOperation.signRequired,
-          })
-        }
+        onClickEditDestinationWallet={onClickEditDestinationWallet}
         operations={clientOperations}
         statusData={statusData}
         swapExecutionState={swapExecutionState}
