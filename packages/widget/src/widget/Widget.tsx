@@ -49,12 +49,12 @@ export type WidgetProps = {
   settings?: {
     /**
      * Default slippage percentage (0-100) for CosmosSDK chain swaps.
-     * @default 1
+     * @default 3
      */
     slippage?: number;
     /**
      * Gas amount for CosmosSDK chain transactions.
-     * @default 300_000
+     * @default 200_000
      */
     customGasAmount?: number;
   };
