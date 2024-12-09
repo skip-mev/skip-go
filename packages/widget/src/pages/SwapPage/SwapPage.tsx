@@ -40,6 +40,7 @@ import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChang
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
+import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -63,6 +64,8 @@ export const SwapPage = () => {
     isError: isRouteError,
     error: routeError,
   } = useAtomValue(skipRouteAtom);
+  const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
+
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -274,6 +277,21 @@ export const SwapPage = () => {
         icon={ICONS.swap}
         disabled={!route}
         onClick={() => {
+          if (showCosmosLedgerWarning) {
+            setError({
+              errorType: ErrorType.CosmosLedgerWarning,
+              onClickContinue: () => {
+                setError(undefined);
+                setChainAddresses({});
+                setCurrentPage(Routes.SwapExecutionPage);
+                setSwapExecutionState();
+              },
+              onClickBack: () => {
+                setError(undefined);
+              },
+            });
+            return;
+          }
           if (route?.warning?.type === "BAD_PRICE_WARNING") {
             setError({
               errorType: ErrorType.TradeWarning,
