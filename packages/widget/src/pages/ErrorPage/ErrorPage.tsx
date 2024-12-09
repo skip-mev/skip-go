@@ -9,6 +9,7 @@ import { Column } from "@/components/Layout";
 import { ErrorPageTimeout } from "./ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
+import { ErrorPageCosmosLedgerWarning } from "./ErrorPageCosmosLedgerWarning";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -29,6 +30,8 @@ export const ErrorPage = () => {
         return <ErrorPageTransactionReverted {...error} />;
       case ErrorType.Unexpected:
         return <ErrorPageUnexpected error={error.error} />;
+      case ErrorType.CosmosLedgerWarning:
+        return <ErrorPageCosmosLedgerWarning {...error} />;
       default:
         return;
     }

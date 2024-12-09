@@ -8,7 +8,7 @@ export type MinimalWallet = {
   walletPrettyName: string;
   walletChainType: ChainType;
   walletInfo: {
-    logo?: string
+    logo?: string;
   };
   connectEco: () => Promise<void>;
   connect: () => Promise<void>;
@@ -17,28 +17,31 @@ export type MinimalWallet = {
   isAvailable?: boolean;
   getAddress?: (props: {
     signRequired?: boolean;
-    context?: "recovery" | "destination";
+    context?: 'recovery' | 'destination';
     praxWallet?: {
       index?: number;
       sourceChainID?: string;
     };
   }) => Promise<string | undefined>;
-}
+};
 
 type WalletState = {
   walletName: string;
   chainType: string;
-}
+};
 
 export type WalletConnect = {
-  options: Pick<SignClientTypes.Options, "projectId" | "name"> | null;
-  walletConnectModal?: Pick<WalletConnectModalConfig, "themeVariables" | "themeMode" | "privacyPolicyUrl" | "termsOfServiceUrl"> | null;
-}
+  options: Pick<SignClientTypes.Options, 'projectId' | 'name'> | null;
+  walletConnectModal?: Pick<
+    WalletConnectModalConfig,
+    'themeVariables' | 'themeMode' | 'privacyPolicyUrl' | 'termsOfServiceUrl'
+  > | null;
+};
 
 export const walletConnectAtom = atom<WalletConnect>({
   options: {
-    projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
-    name: "Skip Go",
+    projectId: 'ff1b9e9bd6329cfb07642bd7f4d11a8c',
+    name: 'Skip Go',
   },
 });
 
@@ -53,3 +56,12 @@ export const walletsAtom = atom((get) => {
     svm: get(svmWalletAtom),
   };
 });
+
+export const knownEthermintLikeChains = [
+  'evmos_9001-2',
+  'dymension_1100-1',
+  'injective-1',
+  'dimension_37-1',
+  'haqq_11235-1',
+  'shido_9008-1',
+];
