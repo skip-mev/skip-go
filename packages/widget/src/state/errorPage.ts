@@ -1,4 +1,5 @@
 import { ErrorPageAuthFailedProps } from "@/pages/ErrorPage/ErrorPageAuthFailed";
+import { ErrorCosmosLedgerWarningProps } from "@/pages/ErrorPage/ErrorPageCosmosLedgerWarning";
 import { ErrorPageTimeoutProps } from "@/pages/ErrorPage/ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequiredProps } from "@/pages/ErrorPage/ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTradeWarningProps } from "@/pages/ErrorPage/ErrorPageTradeWarning";
@@ -16,6 +17,7 @@ export type ErrorPageVariants =
   | ({ errorType: ErrorType.Timeout } & ErrorPageTimeoutProps)
   | ({ errorType: ErrorType.AdditionalSigningRequired } & ErrorPageTradeAdditionalSigningRequiredProps)
   | ({ errorType: ErrorType.TradeWarning } & ErrorPageTradeWarningProps)
+  | ({ errorType: ErrorType.CosmosLedgerWarning } & ErrorCosmosLedgerWarningProps)
   | ({ errorType: ErrorType.TransactionFailed } & ErrorPageTransactionFailedProps)
   | ({ errorType: ErrorType.TransactionReverted } & ErrorPageTransactionRevertedProps)
   | ({ errorType: ErrorType.Unexpected } & ErrorPageUnexpectedProps);
@@ -28,4 +30,5 @@ export enum ErrorType {
   TransactionFailed,
   TransactionReverted,
   Unexpected,
+  CosmosLedgerWarning,
 }
