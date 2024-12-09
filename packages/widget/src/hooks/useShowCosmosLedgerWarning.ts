@@ -21,6 +21,7 @@ export const useShowCosmosLedgerWarning = () => {
   }, [
     sourceAsset?.chainID,
     chainType,
+    cosmosAccount?.isNanoLedger,
     cosmosAccount?.bech32Address,
   ])
 }
