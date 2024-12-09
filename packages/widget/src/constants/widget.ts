@@ -1,4 +1,4 @@
-import { RoutePreference } from "@/state/swapPage";
+import { RoutePreference } from "@/state/types";
 
 export const SLIPPAGE_OPTIONS = [0.1, 0.5, 1, 3];
 export const DEFAULT_SLIPPAGE = 1;
