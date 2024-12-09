@@ -15,7 +15,6 @@ import { useCallback, useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { ChainType } from "@skip-go/client";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -61,17 +60,17 @@ export const useAutoSetAddress = () => {
         if (!chain) {
           return;
         }
-        if (chainAddresses[index]?.address) return;
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
         switch (chainType) {
-          case ChainType.Cosmos: {
+          case "cosmos": {
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.cosmos?.walletName
             );
             if (!wallet) {
               if (!openModal) return;
+              if (chainAddresses[index].address) return;
               NiceModal.show(Modals.SetAddressModal, {
                 signRequired: isSignRequired,
                 chainId: chainID,
@@ -80,6 +79,8 @@ export const useAutoSetAddress = () => {
               return;
             }
             try {
+              if (chainAddresses[index].address) return;
+
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -91,7 +92,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: ChainType.Cosmos,
+                  chainType: "cosmos",
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
@@ -106,7 +107,7 @@ export const useAutoSetAddress = () => {
             }
             break;
           }
-          case ChainType.SVM: {
+          case "svm": {
             const wallets = createSolanaWallets();
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.svm?.walletName
@@ -131,7 +132,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: ChainType.SVM,
+                  chainType: "svm",
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,
@@ -147,7 +148,7 @@ export const useAutoSetAddress = () => {
 
             break;
           }
-          case ChainType.EVM: {
+          case "evm": {
             const wallets = createEvmWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.evm?.walletName
@@ -172,7 +173,7 @@ export const useAutoSetAddress = () => {
                 [index]: {
                   chainID,
                   address,
-                  chainType: ChainType.EVM,
+                  chainType: "evm",
                   source: "wallet",
                   wallet: {
                     walletName: wallet?.walletName,

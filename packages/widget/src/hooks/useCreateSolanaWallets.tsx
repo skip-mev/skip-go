@@ -4,7 +4,6 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
-import { ChainType } from "@skip-go/client";
 
 
 export const useCreateSolanaWallets = () => {
@@ -19,14 +18,14 @@ export const useCreateSolanaWallets = () => {
       const minimalWallet: MinimalWallet = {
         walletName: wallet.name,
         walletPrettyName: wallet.name,
-        walletChainType: ChainType.SVM,
+        walletChainType: "svm",
         walletInfo: {
           logo: wallet.icon,
         },
         connect: async () => {
           try {
             await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+            setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             // TODO: onWalletConnected
           } catch (error) {
             console.error(error);
@@ -36,7 +35,7 @@ export const useCreateSolanaWallets = () => {
         connectEco: async () => {
           try {
             await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+            setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             const chain = chains?.find((x) => x.chainID === "solana");
             const asset = assets?.find((x) => x.denom.toLowerCase() ===
               "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase());
@@ -56,12 +55,12 @@ export const useCreateSolanaWallets = () => {
             const isConnected = wallet.connected;
             if (!isConnected) {
               await wallet.connect();
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             }
             const address = wallet.publicKey;
             if (!address) throw new Error("No address found");
             if (signRequired) {
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({ walletName: wallet.name, chainType: "svm" });
             }
             return address.toBase58();
           } catch (error) {

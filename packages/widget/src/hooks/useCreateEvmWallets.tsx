@@ -7,7 +7,6 @@ import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
-import { ChainType } from "@skip-go/client";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -59,10 +58,10 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+            setEvmWallet({ walletName: connector.id, chainType: "evm" });
             return res.accounts[0];
           } else if (evmAddress && isEvmConnected && signRequired) {
-            setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+            setEvmWallet({ walletName: connector.id, chainType: "evm" });
           }
           return evmAddress;
         };
@@ -70,7 +69,7 @@ export const useCreateEvmWallets = () => {
         const minimalWallet: MinimalWallet = {
           walletName: connector.id,
           walletPrettyName: connector.name,
-          walletChainType: ChainType.EVM,
+          walletChainType: "evm",
           walletInfo: {
             logo: connector.icon,
           },
@@ -90,7 +89,7 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(1) });
-              setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+              setEvmWallet({ walletName: connector.id, chainType: "evm" });
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
@@ -120,7 +119,7 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
-              setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+              setEvmWallet({ walletName: connector.id, chainType: "evm" });
               // TODO: onWalletConnected
             } catch (error) {
               console.error(error);

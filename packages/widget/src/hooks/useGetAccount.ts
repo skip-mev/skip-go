@@ -11,7 +11,6 @@ import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
-import { ChainType } from "@skip-go/client";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
@@ -35,19 +34,19 @@ export const useGetAccount = () => {
     if (walletType && cosmosWallet === undefined) {
       setCosmosWallet({
         walletName: walletType,
-        chainType: ChainType.Cosmos,
+        chainType: "cosmos",
       });
     }
     if (solanaWallet && svmWallet === undefined) {
       setSvmWallet({
         walletName: solanaWallet.name,
-        chainType: ChainType.SVM,
+        chainType: "svm",
       });
     }
     if (evmAccount.connector && evmWallet === undefined) {
       setEvmWallet({
         walletName: evmAccount.connector.id,
-        chainType: ChainType.EVM,
+        chainType: "evm",
       });
     }
   }, [
@@ -67,27 +66,27 @@ export const useGetAccount = () => {
     (chainId?: string, checkChainType?: boolean) => {
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       switch (chainType) {
-        case ChainType.Cosmos:
+        case "cosmos":
           if (walletType && cosmosWallet === undefined) {
             setCosmosWallet({
               walletName: walletType,
-              chainType: ChainType.Cosmos,
+              chainType: "cosmos",
             });
           }
           break;
-        case ChainType.SVM:
+        case "svm":
           if (solanaWallet && svmWallet === undefined) {
             setSvmWallet({
               walletName: solanaWallet.name,
-              chainType: ChainType.SVM,
+              chainType: "svm",
             });
           }
           break;
-        case ChainType.EVM:
+        case "evm":
           if (evmAccount.connector && evmWallet === undefined) {
             setEvmWallet({
               walletName: evmAccount.connector.id,
-              chainType: ChainType.EVM,
+              chainType: "evm",
             });
           }
           break;
@@ -102,7 +101,7 @@ export const useGetAccount = () => {
       const cosmosAccount = getCosmosAccount();
 
       switch (chainType) {
-        case ChainType.Cosmos: {
+        case "cosmos": {
           if (!cosmosAccount) return;
           if (!wallet.cosmos) return;
           const walletInfo = getCosmosWalletInfo(
@@ -120,7 +119,7 @@ export const useGetAccount = () => {
             },
           };
         }
-        case ChainType.EVM:
+        case "evm":
           if (!wallet.evm) return;
           if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
@@ -137,7 +136,7 @@ export const useGetAccount = () => {
               )?.icon,
             },
           };
-        case ChainType.SVM: {
+        case "svm": {
           if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
           return {

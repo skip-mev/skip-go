@@ -1,13 +1,5 @@
 # nextjs
 
-## 0.1.24
-
-### Patch Changes
-
-- 330b429: add query params to example app for testing purposes and example react version
-- Updated dependencies [187d91d]
-  - @skip-go/widget@3.0.22
-
 ## 0.1.23
 
 ### Patch Changes

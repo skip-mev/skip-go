@@ -23,7 +23,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { XIcon } from "@/icons/XIcon";
-import { ChainType } from "@skip-go/client";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -47,9 +46,9 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
         }}
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <ConnectEco key="cosmos" chainID="cosmoshub-4" chainType={ChainType.Cosmos} />
-        <ConnectEco key="evm" chainID="1" chainType={ChainType.EVM} />
-        <ConnectEco key="svm" chainID="solana" chainType={ChainType.SVM} />
+        <ConnectEco key="cosmos" chainID="cosmoshub-4" chainType="cosmos" />
+        <ConnectEco key="evm" chainID="1" chainType="evm" />
+        <ConnectEco key="svm" chainID="solana" chainType="svm" />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );
@@ -59,7 +58,7 @@ const ConnectEco = ({
   chainType,
   chainID,
 }: {
-  chainType: ChainType;
+  chainType: "cosmos" | "svm" | "evm";
   chainID: string;
 }) => {
   const theme = useTheme();
@@ -70,9 +69,16 @@ const ConnectEco = ({
     assetDenom: sourceAsset?.denom,
     chainId: sourceAsset?.chainID,
   });
-
   const account = useMemo(() => {
-    const _chainID = chainType === chain?.chainType ? sourceAsset?.chainID : chainID;
+    const _chainID = (() => {
+      if (chainType === "cosmos" && chain?.chainType === "cosmos")
+        return sourceAsset?.chainID;
+      if (chainType === "evm" && chain?.chainType === "evm")
+        return sourceAsset?.chainID;
+      if (chainType === "svm" && chain?.chainType === "svm")
+        return sourceAsset?.chainID;
+      return chainID;
+    })();
     return getAccount(_chainID, true);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
@@ -161,9 +167,9 @@ const ConnectEco = ({
         ) : (
           <TextButton>
             Connect to{" "}
-            {chainType === ChainType.Cosmos
+            {chainType === "cosmos"
               ? "Cosmos"
-              : chainType === ChainType.EVM
+              : chainType === "evm"
                 ? "Ethereum"
                 : "Solana"}
           </TextButton>

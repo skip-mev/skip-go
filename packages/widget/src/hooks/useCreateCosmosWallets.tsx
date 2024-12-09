@@ -13,7 +13,6 @@ import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
-import { ChainType } from "@skip-go/client";
 import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
@@ -63,7 +62,7 @@ export const useCreateCosmosWallets = () => {
         const praxWallet: MinimalWallet = {
           walletName: "prax",
           walletPrettyName: "Prax Wallet",
-          walletChainType: ChainType.Cosmos,
+          walletChainType: "cosmos",
           walletInfo: {
             logo: "https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg",
           },
@@ -190,9 +189,9 @@ export const useCreateCosmosWallets = () => {
             } else {
               await connectSingleChainId();
             }
-            setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           } else if (currentAddress && isConnected && signRequired) {
-            setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
           if (!currentAddress) {
             if (!mobile && !isWC) {
@@ -205,7 +204,7 @@ export const useCreateCosmosWallets = () => {
             } else {
               await connectSingleChainId();
             }
-            setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
           }
           const address = (await getWallet(wallet).getKey(chainID))
             .bech32Address;
@@ -215,13 +214,13 @@ export const useCreateCosmosWallets = () => {
         const minimalWallet: MinimalWallet = {
           walletName: wallet,
           walletPrettyName: walletInfo?.name,
-          walletChainType: ChainType.Cosmos,
+          walletChainType: "cosmos",
           walletInfo: {
             logo: walletInfo?.imgSrc,
           },
           connectEco: async () => {
             await connectEco();
-            setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
+            setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
             const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
             const asset = assets?.find((x) => x.denom === "uatom");
             setSourceAsset({
@@ -248,7 +247,7 @@ export const useCreateCosmosWallets = () => {
               } else {
                 await connectSingleChainId();
               }
-              setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
+              setCosmosWallet({ walletName: wallet, chainType: "cosmos" });
               connectEco();
               // TODO: onWalletConnected
             } catch (error) {

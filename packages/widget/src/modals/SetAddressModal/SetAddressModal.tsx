@@ -18,7 +18,6 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { ChainType } from "@skip-go/client";
 
 export type SetAddressModalProps = ModalProps & {
   signRequired?: boolean;
@@ -76,11 +75,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const { chainType, bech32Prefix } = chain;
 
     switch (chainType) {
-      case ChainType.Cosmos:
+      case "cosmos":
         return `${bech32Prefix}1...`;
-      case ChainType.EVM:
+      case "evm":
         return "0x...";
-      case ChainType.SVM:
+      case "svm":
         return "Enter solana address...";
       default:
         return "Enter address...";
@@ -96,7 +95,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         ...prev,
         [destinationIndex]: {
           chainID: chainId,
-          chainType: chainType,
+          chainType: chainType as "evm" | "cosmos" | "svm",
           address: manualWalletAddress,
           source: "input",
         },
