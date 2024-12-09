@@ -66,7 +66,6 @@ export const useAutoSetAddress = () => {
         if (chainAddresses[index]?.address) return;
         switch (chainType) {
           case "cosmos": {
-            if (chainAddresses[index].address) return;
             const wallets = createCosmosWallets(chainID);
             const wallet = wallets.find(
               (w) => w.walletName === sourceWallet.cosmos?.walletName
