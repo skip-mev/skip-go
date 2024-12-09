@@ -1,5 +1,5 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipChainsAtom, skipClient } from "@/state/skipClient";
+import { skipChainsAtom, skipClient, skipSwapVenuesAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import { TransactionCallbacks, RouteResponse, TxStatusResponse, UserAddress, ChainType } from "@skip-go/client";
@@ -10,7 +10,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { swapSettingsAtom } from "./swapPage";
+import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 
 type ValidatingGasBalanceData = {
@@ -211,20 +211,30 @@ export const submitSwapExecutionCallbacksAtom = atom<
   SubmitSwapExecutionCallbacks | undefined
 >();
 
+export const fallbackGasAmountFnAtom = atom((get) => {
+  const swapVenues = get(skipSwapVenuesAtom)?.data;
+
+  return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
+    if (chainType !== 'cosmos') return undefined;
+
+    const isSwapChain = swapVenues?.some(venue => venue.chainID === chainId) ?? false;
+    const defaultGasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
+
+    // Special case for carbon-1
+    if (chainId === 'carbon-1') {
+      return CosmosGasAmount.CARBON;
+    }
+
+    return defaultGasAmount;
+  };
+});
+
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const swapSettings = get(swapSettingsAtom);
-
-  const getFallbackGasAmount = async (_chainID: string, chainType: ChainType) => {
-    if (chainType === "cosmos") {
-      if (_chainID === "carbon-1") {
-        return 1_000_000;
-      }
-      return swapSettings.customGasAmount;
-    }
-  }
+  const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
 
   return {
     gcTime: Infinity,
