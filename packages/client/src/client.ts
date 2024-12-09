@@ -524,7 +524,7 @@ export class SkipClient {
         'executeEVMTransaction error: failed to retrieve account from signer'
       );
     }
-    const { onApproveAllowance, onTransactionSigned } = options;
+    const { onApproveAllowance, onTransactionSigned, useUnlimitedApproval } = options;
 
     const extendedSigner = signer.extend(publicActions);
 
@@ -547,6 +547,7 @@ export class SkipClient {
         status: 'pending',
         allowance: requiredApproval,
       });
+
       const txHash = await extendedSigner.writeContract({
         account: signer.account,
         address: requiredApproval.tokenContract as `0x${string}`,
@@ -554,7 +555,7 @@ export class SkipClient {
         functionName: 'approve',
         args: [
           requiredApproval.spender as `0x${string}`,
-          maxUint256,
+          useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount),
         ],
         chain: signer.chain,
       });
@@ -1735,7 +1736,7 @@ export class SkipClient {
         return null;
       }
       if (chainID === 'noble-1') {
-        const fee = calculateFee(200000, gasPrice);
+        const fee = calculateFee(200_000, gasPrice);
         return fee;
       }
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);

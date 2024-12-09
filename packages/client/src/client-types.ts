@@ -91,6 +91,10 @@ export type ExecuteRouteOptions = SignerGetters &
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
+ * Set allowance amount to max if EVM transaction requires allowance approval 
+ */
+    useUnlimitedApproval?: boolean;
+    /**
  * Arbitrary Tx to be executed before or after route msgs
  */
     beforeMsg?: types.CosmosMsg;
