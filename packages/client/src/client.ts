@@ -1710,7 +1710,7 @@ export class SkipClient {
         if (getFallbackGasAmount) {
           const fallbackGasAmount = await getFallbackGasAmount(
             chainID,
-            'cosmos'
+            types.ChainType.Cosmos,
           );
           if (!fallbackGasAmount) {
             raise(`unable to estimate gas for message(s) ${messages}`);
