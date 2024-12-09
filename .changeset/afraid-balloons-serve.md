@@ -3,4 +3,4 @@
 '@skip-go/widget': patch
 ---
 
-update registries
+update default gas amounts and improve code readability

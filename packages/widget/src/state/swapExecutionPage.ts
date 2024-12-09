@@ -217,6 +217,14 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const swapSettings = get(swapSettingsAtom);
 
+  const getFallbackGasAmount = async (_chainID: string, chainType: ChainType) => {
+    if (chainType === "cosmos") {
+      if (_chainID === "carbon-1") {
+        return 1_000_000;
+      }
+      return swapSettings.customGasAmount;
+    }
+  }
 
   return {
     gcTime: Infinity,
@@ -231,14 +239,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           validateGasBalance: route.sourceAssetChainID !== "984122",
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: route.sourceAssetChainID !== "984122",
-          getFallbackGasAmount: async (_chainID, chainType) => {
-            if (chainType === "cosmos") {
-              if (_chainID === "carbon-1") {
-                return 10_000_000;
-              }
-              return swapSettings.customGasAmount;
-            }
-          },
+          getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
         });
       } catch (error: unknown) {

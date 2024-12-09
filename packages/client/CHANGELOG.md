@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 0.15.3
+
+### Patch Changes
+
+- b67ca86: prevent gas price scientific notation
+- e0bc1a7: update registries
+- f14bd83: update registries
+
 ## 0.15.2
 
 ### Patch Changes
