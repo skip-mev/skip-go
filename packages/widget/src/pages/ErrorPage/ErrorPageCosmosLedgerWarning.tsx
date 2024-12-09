@@ -30,7 +30,7 @@ export const ErrorPageCosmosLedgerWarning = ({
         description={
           <>
             <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
-              We currently do not support Ledger on Ethermint-based chains (such as Injective, Dymension, EVMOS, and similar networks).
+              Ledger isn't currently supported on Ethermint chains (such as Injective, Dymension, EVMOS, and similar networks).
             </SmallText>
             <SmallTextButton
               onClick={onClickContinue}
