@@ -52,11 +52,6 @@ export type WidgetProps = {
      * @default 1
      */
     slippage?: number;
-    /**
-     * Gas amount for CosmosSDK chain transactions.
-     * @default 300_000
-     */
-    customGasAmount?: number;
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
