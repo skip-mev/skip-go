@@ -30,7 +30,6 @@ import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
 
 export type WidgetRouteConfig = Omit<
@@ -83,20 +82,16 @@ export type ShowSwapWidget = {
   button?: ReactElement;
 } & WidgetProps;
 
-export const queryClient = new QueryClient();
-
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <NiceModal.Provider>
-            <WidgetWrapper>
-              <Router />
-            </WidgetWrapper>
-          </NiceModal.Provider>
-        </QueryClientProvider>
+        <NiceModal.Provider>
+          <WidgetWrapper>
+            <Router />
+          </WidgetWrapper>
+        </NiceModal.Provider>
       </WalletProviders>
     </ShadowDomAndProviders>
   );
@@ -107,11 +102,9 @@ export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <WidgetWrapper>
-            <Router />
-          </WidgetWrapper>
-        </QueryClientProvider>
+        <WidgetWrapper>
+          <Router />
+        </WidgetWrapper>
       </WalletProviders>
     </ShadowDomAndProviders>
   );
