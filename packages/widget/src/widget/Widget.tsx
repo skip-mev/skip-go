@@ -7,31 +7,20 @@ import {
   ReactElement,
   ReactNode,
   useEffect,
-  useMemo,
 } from "react";
-import { defaultTheme, lightTheme, PartialTheme, Theme } from "./theme";
+import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { useSetAtom } from "jotai";
-import {
-  skipClientConfigAtom,
-  themeAtom,
-  defaultSkipClientConfig,
-  onlyTestnetsAtom,
-} from "@/state/skipClient";
 import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
-import { DefaultRouteConfig, useInitDefaultRoute } from "./useInitDefaultRoute";
+import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import {
   ChainFilter,
-  chainFilterAtom,
-  defaultSwapSettings,
-  swapSettingsAtom,
 } from "@/state/swapPage";
-import { routeConfigAtom } from "@/state/route";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WalletConnect, walletConnectAtom } from "@/state/wallets";
+import { WalletConnect } from "@/state/wallets";
+import { useInitWidget } from "./useInitWidget";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -58,7 +47,7 @@ export type WidgetProps = {
   walletConnect?: WalletConnect;
 } & Pick<
   NewSkipClientOptions,
-  "apiUrl" | "chainIdsToAffiliates" | "endpointOptions"
+  "apiUrl" | "chainIdsToAffiliates" | "endpointOptions" | "getCosmosSigner" | "getEVMSigner" | "getSVMSigner"
 >;
 
 type NewSwapVenueRequest = {
@@ -140,97 +129,6 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const useInitWidget = (props: WidgetProps) => {
-  useInitDefaultRoute(props.defaultRoute);
-  const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-  const setTheme = useSetAtom(themeAtom);
-  const setSwapSettings = useSetAtom(swapSettingsAtom);
-  const setRouteConfig = useSetAtom(routeConfigAtom);
-  const setChainFilter = useSetAtom(chainFilterAtom);
-  const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
-  const setWalletConnect = useSetAtom(walletConnectAtom);
-
-  const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
-    const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
-    const fromWidgetProps = {
-      apiUrl,
-      chainIdsToAffiliates,
-      endpointOptions,
-    };
-
-    // merge if not undefined
-
-    return {
-      apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
-      endpointOptions:
-        fromWidgetProps.endpointOptions ??
-        defaultSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
-    };
-  }, [props]);
-
-  const mergedTheme = useMemo(() => {
-    let theme: Theme;
-    if (typeof props.theme === "string") {
-      theme = props.theme === "light" ? lightTheme : defaultTheme;
-    } else {
-      theme = { ...defaultTheme, ...props.theme };
-    }
-    if (props.brandColor) {
-      theme.brandColor = props.brandColor;
-    }
-    return theme;
-  }, [props.brandColor, props.theme]);
-
-  useEffect(() => {
-    setSkipClientConfig({
-      apiURL: mergedSkipClientConfig.apiURL,
-      endpointOptions: mergedSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: mergedSkipClientConfig.chainIDsToAffiliates,
-    });
-    setTheme(mergedTheme);
-  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
-
-  useEffect(() => {
-    if (props.settings) {
-      setSwapSettings({
-        ...defaultSwapSettings,
-        ...props.settings,
-      });
-    }
-    if (props.routeConfig) {
-      setRouteConfig((prev) => {
-        return {
-          ...prev,
-          ...props.routeConfig,
-        };
-      });
-    }
-    if (props.filter) {
-      setChainFilter(props.filter);
-    }
-    if (props.onlyTestnet) {
-      setOnlyTestnets(props.onlyTestnet);
-    }
-    if (props.walletConnect) {
-      setWalletConnect(props.walletConnect);
-    }
-  }, [
-    props.filter,
-    props.onlyTestnet,
-    props.routeConfig,
-    props.settings,
-    props.settings?.slippage,
-    props.walletConnect,
-    setChainFilter,
-    setOnlyTestnets,
-    setRouteConfig,
-    setSwapSettings,
-    setWalletConnect,
-  ]);
-
-  return { theme: mergedTheme };
-};
 
 const WidgetContainer = styled.div`
   width: 100%;

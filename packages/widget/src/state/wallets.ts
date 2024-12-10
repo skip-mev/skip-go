@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
-import { ChainType } from "@skip-go/client";
+import { ChainType, SkipClientOptions } from "@skip-go/client";
 
 export type MinimalWallet = {
   walletName: string;
@@ -30,6 +30,8 @@ type WalletState = {
   chainType: string;
 };
 
+type GetSigners = Pick<SkipClientOptions, "getCosmosSigner" | "getEVMSigner" | "getSVMSigner">
+
 export type WalletConnect = {
   options: Pick<SignClientTypes.Options, 'projectId' | 'name'> | null;
   walletConnectModal?: Pick<
@@ -56,6 +58,8 @@ export const walletsAtom = atom((get) => {
     svm: get(svmWalletAtom),
   };
 });
+
+export const getSignersAtom = atom<GetSigners>()
 
 export const knownEthermintLikeChains = [
   'evmos_9001-2',
