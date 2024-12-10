@@ -15,6 +15,7 @@ export const useShowCosmosLedgerWarning = () => {
   })
 
   return useMemo(() => {
+    if (!cosmosAccount?.bech32Address) return false;
     if (!sourceAsset?.chainID) return false;
     if (chainType !== ChainType.Cosmos) return false;
     if (!knownEthermintLikeChains.includes(sourceAsset?.chainID)) return false;

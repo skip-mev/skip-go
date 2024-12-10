@@ -327,6 +327,7 @@ export const SwapPage = () => {
     insufficientBalance,
     route,
     routeError?.message,
+    showCosmosLedgerWarning,
     setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,

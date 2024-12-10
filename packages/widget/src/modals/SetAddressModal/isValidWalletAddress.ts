@@ -15,20 +15,20 @@ export const isValidWalletAddress = ({
   bech32Prefix,
 }: isValidWalletAddressProps) => {
   switch (chainType) {
-    case "cosmos":
+    case ChainType.Cosmos:
       try {
         const { prefix } = fromBech32(address);
         return bech32Prefix === prefix;
       } catch (_error) {
         return false;
       }
-    case "evm":
+    case ChainType.EVM:
       try {
         return isAddress(address);
       } catch (_error) {
         return false;
       }
-    case "svm":
+    case ChainType.SVM:
       try {
         const publicKey = new PublicKey(address);
         return PublicKey.isOnCurve(publicKey);

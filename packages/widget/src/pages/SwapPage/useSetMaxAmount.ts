@@ -7,6 +7,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
 import { BigNumber } from "bignumber.js";
 import { useCosmosFeeAssetSourceAmountValidation, useCosmosFeeAssetsBalanceValidation } from "@/hooks/useCosmosFeeAssetValidation";
+import { ChainType } from "@skip-go/client";
 
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
@@ -23,7 +24,7 @@ export const useGasFeeTokenAmount = () => {
   const chainType = sourceDetails?.chain?.chainType;
 
   switch (chainType) {
-    case "evm":
+    case ChainType.EVM:
       {
         const isFeeAsset = sourceAsset?.denom?.includes("-native") && sourceAsset?.originChainID === sourceAsset?.chainID;
         if (isFeeAsset) {
@@ -42,10 +43,10 @@ export const useGasFeeTokenAmount = () => {
         }
         return 0;
       }
-    case "cosmos":
+    case ChainType.Cosmos:
       if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
       return Number(cosmosFeeUsed.feeAmount);
-    case "svm":
+    case ChainType.SVM:
     default:
       return 0;
   }
@@ -90,7 +91,7 @@ export const useInsufficientSourceBalance = () => {
   if (!maxAmountTokenMinusFees) return true;
 
   const chain = chains?.find(chain => chain.chainID === sourceAsset?.chainID);
-  if (chain?.chainType === "cosmos") {
+  if (chain?.chainType === ChainType.Cosmos) {
     return cosmosFeeAssetValidation;
   }
 
