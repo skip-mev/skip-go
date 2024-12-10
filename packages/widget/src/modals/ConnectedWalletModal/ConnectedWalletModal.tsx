@@ -47,9 +47,9 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
         }}
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <ConnectEco key="cosmos" chainID="cosmoshub-4" chainType={ChainType.Cosmos} />
-        <ConnectEco key="evm" chainID="1" chainType={ChainType.EVM} />
-        <ConnectEco key="svm" chainID="solana" chainType={ChainType.SVM} />
+        <ConnectEco key={ChainType.Cosmos} chainID="cosmoshub-4" chainType={ChainType.Cosmos} />
+        <ConnectEco key={ChainType.EVM} chainID="1" chainType={ChainType.EVM} />
+        <ConnectEco key={ChainType.SVM} chainID="solana" chainType={ChainType.SVM} />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );

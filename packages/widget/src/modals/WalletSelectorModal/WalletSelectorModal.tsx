@@ -3,10 +3,11 @@ import { RenderWalletList } from "@/components/RenderWalletList";
 import { useWalletList } from "@/hooks/useWalletList";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { ChainType } from "@skip-go/client";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
-  chainType?: "cosmos" | "evm" | "svm";
+  chainType?: ChainType;
   connectEco?: boolean;
 };
 

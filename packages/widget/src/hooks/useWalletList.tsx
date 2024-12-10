@@ -4,8 +4,9 @@ import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
+import { ChainType } from "@skip-go/client";
 
-export const useWalletList = ({ chainID, destinationWalletList, chainType: _chainType }: { chainID?: string, destinationWalletList?: boolean, chainType?: "cosmos" | "evm" | "svm" }) => {
+export const useWalletList = ({ chainID, destinationWalletList, chainType: _chainType }: { chainID?: string, destinationWalletList?: boolean, chainType?: ChainType }) => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();

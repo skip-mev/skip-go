@@ -121,7 +121,7 @@ export const useCreateCosmosWallets = () => {
         ).filter(
           (x) =>
             chains
-              ?.filter((z) => z.chainType === "cosmos")
+              ?.filter((z) => z.chainType === ChainType.Cosmos)
               .map((y) => y.chainID)
               .includes(x) &&
             mainnetChains.map((c) => c.chainId).includes(x)
