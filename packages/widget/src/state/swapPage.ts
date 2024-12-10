@@ -119,10 +119,15 @@ export type ChainFilter = {
 
 export const chainFilterAtom = atom<ChainFilter>();
 
+export const CosmosGasAmount = {
+  DEFAULT: 300_000,
+  SWAP: 2_800_000,
+  CARBON: 1_000_000,
+}
 
 export const defaultSwapSettings = {
   slippage: 1,
-  customGasAmount: 200_000,
+  customGasAmount: undefined,
   routePreference: RoutePreference.FASTEST,
 };
 
