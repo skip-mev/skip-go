@@ -8,12 +8,15 @@ import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
+import { allCallbacksAtom } from "@/state/callbacks";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
+  const allCallbacks = useAtomValue(allCallbacksAtom);
+
   const {
     connector: currentEvmConnector,
     address: evmAddress,
@@ -139,7 +142,7 @@ export const useCreateEvmWallets = () => {
           disconnect: async () => {
             await currentConnector?.disconnect();
             setEvmWallet(undefined);
-            // TODO: onWalletDisconnected
+            allCallbacks?.onWalletDisconnected?.({ chainType: "evm" });
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,
         };
