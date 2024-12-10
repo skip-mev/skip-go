@@ -69,7 +69,7 @@ export type ChainJSON = {
   logo_uri?: string;
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
-  chainType: ChainType;
+  chain_type: ChainType;
   ibc_capabilities: IbcCapabilitiesJSON;
   is_testnet: boolean;
   pretty_name: string;
