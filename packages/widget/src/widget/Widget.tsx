@@ -53,14 +53,10 @@ export type WidgetProps = {
      */
     slippage?: number;
     /**
-     * Gas amount for CosmosSDK chain transactions.
-     * @default 300_000
-     */
-    customGasAmount?: number;
-    /**
 * Set allowance amount to max if EVM transaction requires allowance approval 
 */
     useUnlimitedApproval?: boolean;
+
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
