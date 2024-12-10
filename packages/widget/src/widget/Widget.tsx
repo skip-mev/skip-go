@@ -223,14 +223,13 @@ const useInitWidget = (props: WidgetProps) => {
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
-
-    const callbacks = ({
+    const callbacks = {
       onWalletConnected: props.onWalletConnected,
       onWalletDisconnected: props.onWalletDisconnected,
       onTransactionBroadcasted: props.onTransactionBroadcasted,
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
-    } = props);
+    };
 
     if (Object.values(callbacks).some(Boolean)) {
       setAllCallbacks(callbacks);

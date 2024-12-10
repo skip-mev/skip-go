@@ -29,12 +29,14 @@ import { useCallback } from "react";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { isMobile } from "@/utils/os";
+import { allCallbacksAtom } from "@/state/callbacks";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setCosmosWallet = useSetAtom(cosmosWalletAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const allCallbacks = useAtomValue(allCallbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
 
   const { data: accounts, isConnected } = useAccount({
@@ -101,6 +103,7 @@ export const useCreateCosmosWallets = () => {
           },
           disconnect: async () => {
             console.error("Prax wallet is not supported");
+            allCallbacks?.onWalletDisconnected?.({ chainType: "cosmos" });
           },
           isWalletConnected: false,
         };
@@ -260,6 +263,7 @@ export const useCreateCosmosWallets = () => {
           disconnect: async () => {
             await disconnectAsync();
             setCosmosWallet(undefined);
+            allCallbacks?.onWalletDisconnected?.({ chainType: "cosmos" });
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {

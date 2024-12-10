@@ -7,7 +7,7 @@ export type OnWalletConnectedProps = {
 };
 
 export type OnWalletDisconnectedProps = {
-  chainType?: string;
+  chainType?: "cosmos" | "evm" | "svm";
 };
 
 export type OnTransactionBroadcastedProps = {
