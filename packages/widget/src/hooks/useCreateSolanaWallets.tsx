@@ -5,6 +5,7 @@ import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
+import { allCallbacksAtom } from "@/state/callbacks";
 
 
 export const useCreateSolanaWallets = () => {
@@ -12,6 +13,8 @@ export const useCreateSolanaWallets = () => {
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
+  const allCallbacks = useAtomValue(allCallbacksAtom);
+
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
@@ -71,7 +74,7 @@ export const useCreateSolanaWallets = () => {
         disconnect: async () => {
           await wallet.disconnect();
           setSvmWallet(undefined);
-          // TODO: onWalletDisconnected
+          allCallbacks?.onWalletDisconnected?.({ chainType: "svm" });
         },
         isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
