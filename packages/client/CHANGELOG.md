@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.15.4
+
+### Patch Changes
+
+- 10d5222: update default gas amounts and improve code readability
+
 ## 0.15.3
 
 ### Patch Changes
