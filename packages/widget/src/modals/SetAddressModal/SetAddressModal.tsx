@@ -95,7 +95,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         ...prev,
         [destinationIndex]: {
           chainID: chainId,
-          chainType: chainType,
+          chainType: chainType as ChainType,
           address: manualWalletAddress,
           source: "input",
         },
