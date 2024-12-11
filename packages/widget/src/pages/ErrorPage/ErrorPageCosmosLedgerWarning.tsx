@@ -1,17 +1,15 @@
 import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
-import { SmallText, SmallTextButton } from "@/components/Typography";
+import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
 export type ErrorCosmosLedgerWarningProps = {
-  onClickContinue: () => void;
   onClickBack: () => void;
 };
 
 export const ErrorPageCosmosLedgerWarning = ({
-  onClickContinue,
   onClickBack,
 }: ErrorCosmosLedgerWarningProps) => {
   const theme = useTheme();
@@ -32,12 +30,6 @@ export const ErrorPageCosmosLedgerWarning = ({
             <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
               Ledger isn't currently supported on Ethermint chains (such as Injective, Dymension, EVMOS, and similar networks).
             </SmallText>
-            <SmallTextButton
-              onClick={onClickContinue}
-              color={theme.primary.text.lowContrast}
-            >
-              I know the risk, continue anyway
-            </SmallTextButton>
           </>
         }
         icon={ICONS.triangleWarning}
