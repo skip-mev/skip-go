@@ -10,6 +10,7 @@ export const useShowCosmosLedgerWarning = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const chainType = chains?.find((c) => c.chainID === sourceAsset?.chainID)?.chainType;
+  if (chainType !== ChainType.Cosmos) return false;
   const { data: cosmosAccount } = useAccount({
     chainId: sourceAsset?.chainID,
   })
