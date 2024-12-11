@@ -21,7 +21,6 @@ export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
-
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
 
@@ -46,10 +45,12 @@ export const useAutoSetAddress = () => {
     route?.requiredChainAddresses?.forEach((chainID, index) => {
       res[index] = {
         chainID,
+        address: chainAddresses[index]?.address,
+        chainType: chainAddresses[index]?.chainType,
       };
     });
     setChainAddresses(res);
-    //  we only want to run this once for preserve the chainAddresses chainID
+    //  we only want to run this once to preserve the chainAddresses chainID
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -66,8 +67,6 @@ export const useAutoSetAddress = () => {
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
-        console.log('chainAddresses in auto set', chainAddresses)
-        console.log('auto set is called')
         switch (chainType) {
           case ChainType.Cosmos: {
             const wallets = createCosmosWallets(chainID);
