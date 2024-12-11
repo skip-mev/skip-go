@@ -283,6 +283,7 @@ export const SwapPage = () => {
               onClickContinue: () => {
                 setError(undefined);
                 setChainAddresses({});
+                console.log('on click continue is called')
                 setCurrentPage(Routes.SwapExecutionPage);
                 setSwapExecutionState();
               },
@@ -298,6 +299,8 @@ export const SwapPage = () => {
               onClickContinue: () => {
                 setError(undefined);
                 setChainAddresses({});
+                console.log('on click continue is called')
+
                 setCurrentPage(Routes.SwapExecutionPage);
                 setSwapExecutionState();
               },
@@ -309,6 +312,8 @@ export const SwapPage = () => {
             return;
           }
           setChainAddresses({});
+          console.log('reset chain addresses')
+
           setCurrentPage(Routes.SwapExecutionPage);
           setSwapExecutionState();
         }}

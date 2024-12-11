@@ -66,6 +66,8 @@ export const useAutoSetAddress = () => {
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
+        console.log('chainAddresses in auto set', chainAddresses)
+        console.log('auto set is called')
         switch (chainType) {
           case ChainType.Cosmos: {
             const wallets = createCosmosWallets(chainID);
