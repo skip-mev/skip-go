@@ -280,12 +280,6 @@ export const SwapPage = () => {
           if (showCosmosLedgerWarning) {
             setError({
               errorType: ErrorType.CosmosLedgerWarning,
-              onClickContinue: () => {
-                setError(undefined);
-                setChainAddresses({});
-                setCurrentPage(Routes.SwapExecutionPage);
-                setSwapExecutionState();
-              },
               onClickBack: () => {
                 setError(undefined);
               },
