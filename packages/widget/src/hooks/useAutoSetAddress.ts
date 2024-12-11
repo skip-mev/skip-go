@@ -62,7 +62,6 @@ export const useAutoSetAddress = () => {
         if (!chain) {
           return;
         }
-        if (chainAddresses[index]?.address) return;
         const isSignRequired = signRequiredChains?.includes(chainID);
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
