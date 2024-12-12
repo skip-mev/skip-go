@@ -171,7 +171,7 @@ const ConnectEco = ({
         )
       }
       rightContent={
-        account ? renderDisconnectButton : (
+        (account && account.wallet.name !== "injected") ? renderDisconnectButton : (
           <RightArrowIcon
             color={theme?.primary?.background.normal}
             backgroundColor={theme.primary.text.normal}
