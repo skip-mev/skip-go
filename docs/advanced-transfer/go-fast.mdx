@@ -32,6 +32,8 @@ Yes! Go Fast is a permissionless protocol, so anybody can run a solver!
 
 **Open-Source Protocol Contracts:** Although we recommend starting with the open-source solver, ambitious solvers are already modifying the reference implementation or developing their own solving systems. If you fall under this category, another useful resource will be our open-source Solidity and CosmWasm protocol contracts to integrate directly. You can find them [here](https://github.com/skip-mev/go-fast-contracts).
 
+If you have any questions about setting up a solver, please don't hesistate to reach out to us! 
+
 # What chains are supported today?
 
 Currently, Go Fast supports the following source chains:
@@ -44,3 +46,11 @@ Currently, Go Fast supports the following source chains:
 
 And the following destination chains:
 1. Any IBC-connected chain supported by Skip Go
+
+# What is the fee model for Go Fast?
+
+Go Fast works by having solvers use their own capital to fill orders as quickly as possible, where the solvers take on the re-org risk of the source chain. The Go Fast protocol compensates solvers by paying them a fee (denoted by the difference in the input and output amount of the user's order). The fee is composed of three parts, a basis points fee on the transfer size, a source gas fee, and a destination gas fee.
+
+Currently, the basis points fee on transfer size paid to solvers is 10 basis points across all transfer sizes. As the protocol evolves, the basis points fee charged is expected to decrease as transfer size increases.
+
+The source and destination gas fees are determined dynamically based on the source and destination chains and their current gas costs, optimized to be as low as possible while still covering settlement and rebalance costs for the solvers.
