@@ -121,7 +121,6 @@ const useInitGetSigners = (props: Pick<WidgetProps, "getCosmosSigner" | "getEVMS
   const setConnectedAddress = useSetAtom(connectedAddressAtom);
 
   useEffect(() => {
-    console.log("effect connectedAddress", props.connectedAddress);
     setConnectedAddress(props.connectedAddress);
   }, [props.connectedAddress, setConnectedAddress]);
 
