@@ -12,32 +12,24 @@ export const useFetchAllBalances = () => {
   const { data: assets, isFetched: assetsFetched } = useAtomValue(skipAssetsAtom);
   const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
-
   const { chainId: evmChainId } = useAccount();
-  console.log('assets', assets)
 
   const allBalancesRequest = useMemo(() => {
-    return assets?.reduce((acc, asset) => {
-      const address = getAccount(asset.chainID)?.address;
-      const chain = chains?.find((chain) => chain.chainID === asset.chainID);
+    if (!assets || !chains) return {};
+
+    return assets.reduce((acc, asset) => {
+      const chain = chains.find((c) => c.chainID === asset.chainID);
       const isEVM = chain?.chainType === ChainType.EVM;
-      const evmAddress = (isEVM && evmChainId) ? getAccount(String(evmChainId))?.address : undefined;
-      if (isEVM && evmAddress) {
-        if (!acc[asset.chainID]) {
-          acc[asset.chainID] = {
-            address: evmAddress,
-          };
-        }
-      } else if (address) {
-        if (!acc[asset.chainID]) {
-          acc[asset.chainID] = {
-            address: address,
-          };
-        }
+      const evmAddress = isEVM && evmChainId ? getAccount(String(evmChainId))?.address : undefined;
+      const addressToUse = evmAddress || getAccount(asset.chainID)?.address;
+
+      if (addressToUse && !acc[asset.chainID]) {
+        acc[asset.chainID] = { address: addressToUse };
       }
+
       return acc;
     }, {} as Record<string, { address: string }>);
-  }, [assets, getAccount, chains, evmChainId]);
+  }, [assets, chains, evmChainId, getAccount]);
 
   useQuery({
     queryKey: ["all-balances-request", allBalancesRequest],
@@ -47,8 +39,7 @@ export const useFetchAllBalances = () => {
       }
       setSkipAllBalancesRequest({ chains: allBalancesRequest });
       return { chains: allBalancesRequest };
-
     },
     enabled: assetsFetched,
-  })
-}
+  });
+};
