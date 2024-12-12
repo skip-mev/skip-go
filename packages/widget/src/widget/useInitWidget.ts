@@ -18,11 +18,13 @@ import {
   swapSettingsAtom,
 } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
-import { getSignersAtom, walletConnectAtom } from "@/state/wallets";
+import { connectedAddressAtom, getSignersAtom, walletConnectAtom } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 
 export const useInitWidget = (props: WidgetProps) => {
   useInitDefaultRoute(props.defaultRoute);
+  useInitGetSigners(props);
+
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
@@ -30,7 +32,6 @@ export const useInitWidget = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
-  const setGetSigners = useSetAtom(getSignersAtom)
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -72,6 +73,7 @@ export const useInitWidget = (props: WidgetProps) => {
     setTheme(mergedTheme);
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
+
   useEffect(() => {
     if (props.settings) {
       setSwapSettings({
@@ -96,21 +98,6 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
-    if (props.getCosmosSigner) {
-      setGetSigners({
-        getCosmosSigner: props.getCosmosSigner,
-      });
-    }
-    if (props.getEVMSigner) {
-      setGetSigners({
-        getEVMSigner: props.getEVMSigner,
-      });
-    }
-    if (props.getSVMSigner) {
-      setGetSigners({
-        getSVMSigner: props.getSVMSigner,
-      });
-    }
 
   }, [
     props.filter,
@@ -128,3 +115,38 @@ export const useInitWidget = (props: WidgetProps) => {
 
   return { theme: mergedTheme };
 };
+
+const useInitGetSigners = (props: Pick<WidgetProps, "getCosmosSigner" | "getEVMSigner" | "getSVMSigner" | "connectedAddress">) => {
+  const setGetSigners = useSetAtom(getSignersAtom)
+  const setConnectedAddress = useSetAtom(connectedAddressAtom);
+
+  useEffect(() => {
+    console.log("effect connectedAddress", props.connectedAddress);
+    setConnectedAddress(props.connectedAddress);
+  }, [props.connectedAddress, setConnectedAddress]);
+
+  useEffect(() => {
+    if (props.getCosmosSigner) {
+      setGetSigners({
+        getCosmosSigner: props.getCosmosSigner,
+      });
+    }
+  }, [props.getCosmosSigner, setGetSigners]);
+
+  useEffect(() => {
+    if (props.getEVMSigner) {
+      setGetSigners({
+        getEVMSigner: props.getEVMSigner,
+      });
+    }
+  }, [props.getEVMSigner, setGetSigners]);
+
+  useEffect(() => {
+    if (props.getSVMSigner) {
+      setGetSigners({
+        getSVMSigner: props.getSVMSigner,
+      });
+    }
+  }, [props.getSVMSigner, setGetSigners]);
+
+}

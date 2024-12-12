@@ -45,6 +45,15 @@ export type WidgetProps = {
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
   walletConnect?: WalletConnect;
+  /**
+   * Connected address for the widget from your app.
+   * This is used to show the connected address in the widget. So if a chain is provided an address, widget will use it for the connected address.
+   *
+   * @example
+   * ```tsx
+   * <Widget connectedAddress={{ "cosmoshub-4": "cosmos1...", "1": "0x..." }} />
+   */
+  connectedAddress?: Record<string, string | undefined>;
 } & Pick<
   NewSkipClientOptions,
   "apiUrl" | "chainIdsToAffiliates" | "endpointOptions" | "getCosmosSigner" | "getEVMSigner" | "getSVMSigner"

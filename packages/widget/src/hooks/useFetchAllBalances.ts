@@ -1,16 +1,32 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import { useGetAccount } from "./useGetAccount";
-import { skipAllBalancesRequestAtom } from "@/state/balances";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { useAccount } from "wagmi";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useGetAccount } from './useGetAccount';
+import { skipAllBalancesRequestAtom } from '@/state/balances';
+import { skipAssetsAtom, skipChainsAtom } from '@/state/skipClient';
+import { useAccount } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { connectedAddressAtom } from '@/state/wallets';
 
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom.debouncedValueAtom);
+  const setSkipAllBalancesRequest = useSetAtom(
+    skipAllBalancesRequestAtom.debouncedValueAtom
+  );
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const connectedAddress = useAtomValue(connectedAddressAtom);
+  const evmConnectedAddress = useMemo(() => {
+    if (!connectedAddress) return;
+    const chainIds = Object.keys(connectedAddress);
+    const evmChainId = chainIds.find((chainId) => {
+      const chain = chains?.find((chain) => chain.chainID === chainId);
+      return chain?.chainType === 'evm';
+    });
+    return evmChainId && connectedAddress[evmChainId];
+  }, [
+    connectedAddress,
+    chains,
+  ]);
 
   const { chainId: evmChainId } = useAccount();
 
@@ -18,9 +34,18 @@ export const useFetchAllBalances = () => {
     return assets?.reduce((acc, asset) => {
       const address = getAccount(asset.chainID)?.address;
       const chain = chains?.find((chain) => chain.chainID === asset.chainID);
-      const isEVM = chain?.chainType === "evm";
-      const evmAddress = (isEVM && evmChainId) ? getAccount(String(evmChainId))?.address : undefined;
-      if (isEVM && evmAddress) {
+      const isEVM = chain?.chainType === 'evm';
+      const evmAddress =
+        isEVM && evmChainId
+          ? getAccount(String(evmChainId))?.address
+          : undefined;
+      if (isEVM && evmConnectedAddress) {
+        if (!acc[asset.chainID]) {
+          acc[asset.chainID] = {
+            address: evmConnectedAddress,
+          };
+        }
+      } else if (isEVM && evmAddress) {
         if (!acc[asset.chainID]) {
           acc[asset.chainID] = {
             address: evmAddress,
@@ -39,14 +64,14 @@ export const useFetchAllBalances = () => {
 
   // using useQuery to trigger the debouncedValueAtom
   useQuery({
-    queryKey: ["all-balances-request", allBalancesRequest],
+    queryKey: ['all-balances-request', allBalancesRequest],
     queryFn: () => {
       if (allBalancesRequest) {
         setSkipAllBalancesRequest({
-          chains: allBalancesRequest || {}
+          chains: allBalancesRequest || {},
         });
       }
       return null;
-    }
+    },
   });
 };

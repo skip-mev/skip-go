@@ -61,6 +61,8 @@ export const walletsAtom = atom((get) => {
 
 export const getSignersAtom = atom<GetSigners>()
 
+export const connectedAddressAtom = atom<Record<string, string | undefined>>();
+
 export const knownEthermintLikeChains = [
   'evmos_9001-2',
   'dymension_1100-1',

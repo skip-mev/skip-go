@@ -130,7 +130,7 @@ const ConnectEco = ({
       leftContent={
         account ? (
           <Row align="center" gap={10}>
-            {
+            {account?.wallet.logo && (
               <img
                 height={35}
                 width={35}
@@ -139,6 +139,7 @@ const ConnectEco = ({
                 alt={`${account?.wallet.prettyName} logo`}
                 title={account?.wallet.prettyName}
               />
+            )
             }
             <Row align="baseline" gap={8}>
               <TextButton
