@@ -97,6 +97,28 @@ export const SwapExecutionPage = () => {
     }
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
+  const onClickEditDestinationWallet = useMemo(() => {
+    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
+    const destinationAddress = chainAddresses?.[lastIndex]?.address;
+    const loadingStates = [
+      SwapExecutionState.pending,
+      SwapExecutionState.waitingForSigning,
+      SwapExecutionState.validatingGasBalance,
+      SwapExecutionState.confirmed
+    ];
+
+    if (loadingStates.includes(swapExecutionState) || !destinationAddress) {
+      return undefined;
+    }
+
+    return () => {
+      NiceModal.show(Modals.SetAddressModal, {
+        chainId: route?.destAssetChainID,
+      });
+    };
+  }, [chainAddresses, swapExecutionState, route?.destAssetChainID]);
+
+
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
@@ -121,12 +143,7 @@ export const SwapExecutionPage = () => {
         }}
       />
       <SwapExecutionPageRoute
-        onClickEditDestinationWallet={() =>
-          NiceModal.show(Modals.SetAddressModal, {
-            chainId: route?.destAssetChainID,
-            signRequired: lastOperation.signRequired,
-          })
-        }
+        onClickEditDestinationWallet={onClickEditDestinationWallet}
         operations={clientOperations}
         statusData={statusData}
         swapExecutionState={swapExecutionState}

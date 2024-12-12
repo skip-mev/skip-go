@@ -38,13 +38,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish web component
-        if: steps.changesets.outputs.published == 'true'
-        continue-on-error: true
-        working-directory: ./packages/widget
-        run: |
-          git pull origin main
-          yarn publish:web-component
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

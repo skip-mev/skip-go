@@ -1,0 +1,40 @@
+name: Sync (staging)
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [sync-staging]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: staging
+
+      - id: configure
+        name: configure
+        run: git config pull.ff true
+
+      - id: pull-main
+        name: Pull latest 'main'
+        run: git pull --ff-only origin main
+
+      - id: diff-check
+        name: Check if 'staging' is behind 'main'
+        run: git diff --exit-code origin/main
+
+      - id: fast-forward
+        name: Fast forward 'main' → 'staging'
+        run: git merge --ff-only origin/main
+
+      - id: push-staging
+        name: Push latest 'staging'
+        run: git push --set-upstream origin staging

@@ -528,8 +528,11 @@ export type MsgsResponse = {
 
 export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST';
 
-export type ChainType = 'cosmos' | 'evm' | 'svm';
-
+export enum ChainType {
+  Cosmos = 'cosmos',
+  EVM = 'evm',
+  SVM = 'svm',
+}
 export type TxResult = {
   txHash: string
   chainID: string
