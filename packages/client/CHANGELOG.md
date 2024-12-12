@@ -1,5 +1,14 @@
 # @skip-go/client
 
+## 0.15.5
+
+### Patch Changes
+
+- f91ad80: update default gas amounts and improve code readability
+- 3b098a8: improve ChainType enum usage
+- 2196e84: update registries
+- a4f63d9: fix edit destination address for 2 tx routes
+
 ## 0.15.4
 
 ### Patch Changes

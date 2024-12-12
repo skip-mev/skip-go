@@ -1,5 +1,23 @@
 ## 0.0.15
 
+## 3.0.24
+
+### Patch Changes
+
+- f91ad80: update default gas amounts and improve code readability
+- 15d22da: remove continue option in ledger warning
+- 3b098a8: improve ChainType enum usage
+- fbb4a00: fix failure on warning
+- b31e42a: update fallback gas amount logic
+- 93a4f40: ledger warning for ethermint based chains
+- e036461: allow set destination on 2 sig routes
+- 2196e84: update registries
+- Updated dependencies [f91ad80]
+- Updated dependencies [3b098a8]
+- Updated dependencies [2196e84]
+- Updated dependencies [a4f63d9]
+  - @skip-go/client@0.15.5
+
 ## 3.0.23
 
 ### Patch Changes
