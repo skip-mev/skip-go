@@ -4,7 +4,7 @@ description: 'A brief overview of the Go Fast Transfer system'
 ---
 
 <Info>
-Read the whitepaper and learn how to become a solver [here](https://skip-protocol.notion.site/EXT-Skip-Go-Fast-b30bc47ecc114871bc856184633b504b).
+Read the whitepaper [here](https://skip-protocol.notion.site/EXT-Skip-Go-Fast-b30bc47ecc114871bc856184633b504b).
 Find integration details for Go Fast [here](../client/advanced-features).
 </Info>
 
@@ -12,7 +12,7 @@ Find integration details for Go Fast [here](../client/advanced-features).
 Go Fast is a decentralized bridging protocol, built by Skip, designed to enable rapid and secure cross-chain transactions across major blockchain ecosystems such as Ethereum, Cosmos, and Solana. Go Fast accelerates cross-chain actions by up to 25 times, reducing onboarding times from 10+ minutes to seconds.
 
 # How it Works
-The Go Fast Protocol lets you quickly move assets and run smart contracts between two different blockchains: the source chain and the destination chain. Here’s a simple breakdown of how it all happens.
+The Go Fast Protocol lets you quickly move assets and execute smart contracts between two different blockchains: the source chain and the destination chain. Here’s a simple breakdown of how it all happens.
 
 To start, you—the user—initiate a transfer by calling the `submitOrder` function on the protocol contract on your current blockchain (source chain). In this step, you specify the assets, any message you want to send, and the address on the destination chain. This information is then broadcasted as an intent.
 
@@ -23,3 +23,24 @@ This step transfers the specified assets and processes any additional actions, l
 After fulfilling the transfer, the solver seeks to recover the assets they fronted, plus any earned fees. They do this by calling the `initiateSettlement` function on the destination chain's Go Fast smart contract, listing the intents they fulfilled. The protocol verifies the solver’s actions, then sends a secure message back to the source chain through a cross-chain messaging system.
 
 A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver’s fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees on the source chain.
+
+# Can I become a solver?
+
+Yes! Go Fast is a permissionless protocol, so anybody can run a solver!
+
+**Open-Source Reference Solver Implementation:** To make it as easy as possible to get started, we've open-sourced a reference implementation of a solver that handles everything from monitoring events, filling orders, settling, and rebalancing. All you need to do is set up the config with the chains you want to solve for, provide node endpoints to use, and customize your capital and rebalancing preferences. Check out the repo [here](https://github.com/skip-mev/skip-go-fast-solver).
+
+**Open-Source Protocol Contracts:** Although we recommend starting with the open-source solver, ambitious solvers are already modifying the reference implementation or developing their own solving systems. If you fall under this category, another useful resource will be our open-source Solidity and CosmWasm protocol contracts to integrate directly. You can find them [here](https://github.com/skip-mev/go-fast-contracts).
+
+# What chains are supported today?
+
+Currently, Go Fast supports the following source chains:
+1. Ethereum Mainnet
+2. Arbitrum
+3. Avalanche
+4. Base
+5. Optimism
+6. Polygon
+
+And the following destination chains:
+1. Any IBC-connected chain supported by Skip Go
