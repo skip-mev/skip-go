@@ -46,9 +46,6 @@ const DevMode = () => {
             routeConfig={{
               goFast: true,
             }}
-            connectedAddress={{
-              "cosmoshub-4": "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-            }}
           />
         </div>
       </Row>
