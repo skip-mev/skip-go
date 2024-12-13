@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.15.5
+
+### Patch Changes
+
+- 31f05d1: Add BRIDGE fee type to estimated fees array
+
 ## 0.15.4
 
 ### Patch Changes
