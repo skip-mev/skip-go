@@ -231,7 +231,7 @@ const useInitWidget = (props: WidgetProps) => {
       onTransactionFailed: props.onTransactionFailed,
     };
 
-    if (Object.values(callbacks).some(Boolean)) {
+    if (Object.values(callbacks).some((callback) => callback !== undefined)) {
       setAllCallbacks(callbacks);
     }
   }, [
