@@ -30,7 +30,11 @@ export const useCreateSolanaWallets = () => {
           try {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
-            // TODO: onWalletConnected
+            const chain = chains?.find((x) => x.chainID === "solana");
+            allCallbacks?.onWalletConnected?.({
+              walletName: wallet.name,
+              chainId: chain?.chainID,
+            });
           } catch (error) {
             console.error(error);
             throw error;
@@ -48,7 +52,10 @@ export const useCreateSolanaWallets = () => {
               chainName: chain?.chainName,
               ...asset
             });
-            // TODO: onWalletConnected
+            allCallbacks?.onWalletConnected?.({
+              walletName: wallet.name,
+              chainId: chain?.chainID,
+            });
           } catch (error) {
             console.error(error);
             throw error;

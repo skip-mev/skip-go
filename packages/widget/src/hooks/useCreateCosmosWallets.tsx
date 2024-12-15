@@ -136,6 +136,7 @@ export const useCreateCosmosWallets = () => {
               walletType: wallet,
               autoReconnect: false,
             });
+
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -161,6 +162,7 @@ export const useCreateCosmosWallets = () => {
               walletType: wallet,
               autoReconnect: false,
             });
+
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -248,12 +250,19 @@ export const useCreateCosmosWallets = () => {
               const isInitialConnect = initialChainIds.includes(chainID);
               if (isInitialConnect) {
                 await connectEco();
+                allCallbacks?.onWalletConnected?.({
+                  walletName: wallet,
+                  chainIds: initialChainIds,
+                });
               } else {
                 await connectSingleChainId();
+                allCallbacks?.onWalletConnected?.({
+                  walletName: wallet,
+                  chainId: chainID,
+                });
               }
               setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
               connectEco();
-              // TODO: onWalletConnected
             } catch (error) {
               console.error(error);
               throw error;

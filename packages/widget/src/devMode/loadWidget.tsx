@@ -40,11 +40,11 @@ const DevMode = () => {
         }}>
           <Widget
             theme={theme}
-            onWalletConnected={() => {
-              console.log('wallet connected')
+            onWalletConnected={(props) => {
+              console.log('wallet connected', props)
             }}
-            onWalletDisconnected={() => {
-              console.log('wallet disconnected')
+            onWalletDisconnected={(props) => {
+              console.log('wallet disconnected', props)
             }}
             settings={{
               slippage: 5,

@@ -1,13 +1,22 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
-export type OnWalletConnectedProps = {
+export type OnWalletConnectedProps =
+  | OnWalletConnectedMultipleChainProps
+  | OnWalletConnectedSingleChainProps;
+
+export type OnWalletConnectedMultipleChainProps = {
+  walletName: string;
+  chainIds?: string[];
+};
+
+export type OnWalletConnectedSingleChainProps = {
   walletName: string;
   chainId: string;
   address?: string;
 };
 
 export type OnWalletDisconnectedProps = {
-  chainType?: "cosmos" | "evm" | "svm";
+  chainType?: 'cosmos' | 'evm' | 'svm';
 };
 
 export type OnTransactionBroadcastedProps = {
@@ -32,6 +41,6 @@ export type AllCallbacks = {
   onTransactionBroadcasted?: (props: OnTransactionBroadcastedProps) => void;
   onTransactionComplete?: (props: OnTransactionCompleteProps) => void;
   onTransactionFailed?: (props: OnTransactionFailedProps) => void;
-}
+};
 
 export const allCallbacksAtom = atom<AllCallbacks>();

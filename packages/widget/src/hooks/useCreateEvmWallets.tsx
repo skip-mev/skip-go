@@ -101,7 +101,10 @@ export const useCreateEvmWallets = () => {
                 chainName: chain?.chainName,
                 ...asset,
               });
-              // TODO: onWalletConnected
+              allCallbacks?.onWalletConnected?.({
+                walletName: connector.id,
+                chainId: chain?.chainID,
+              })
             } catch (error) {
               console.error(error);
               throw error;
@@ -124,7 +127,10 @@ export const useCreateEvmWallets = () => {
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
               setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
-              // TODO: onWalletConnected
+              allCallbacks?.onWalletConnected?.({
+                walletName: connector.id,
+                chainId: chainID,
+              })
             } catch (error) {
               console.error(error);
               throw error;
