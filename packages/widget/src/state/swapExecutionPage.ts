@@ -12,6 +12,7 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
+import { allCallbacksAtom } from "./callbacks";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -70,6 +71,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
+  const allCallbacks = get(allCallbacksAtom);
   const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
@@ -97,11 +99,29 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
+      allCallbacks?.onTransactionBroadcasted?.({
+        chainId: txInfo.chainID,
+        txHash: txInfo.txHash,
+        explorerLink: explorerLink ?? '',
+      });
+    },
+    onTransactionCompleted: async (chainId: string, txHash: string) => {
+      const chain = chains?.find((chain) => chain.chainID === chainId);
+      const explorerLink = createExplorerLink({ chainID: chainId, chainType: chain?.chainType, txHash });
+      allCallbacks?.onTransactionComplete?.({
+        chainId,
+        txHash,
+        explorerLink: explorerLink ?? '',
+      });
     },
     onTransactionSigned: async () => {
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      allCallbacks?.onTransactionFailed?.({
+        error: (error as Error)?.message,
+      });
+
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
