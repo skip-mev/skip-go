@@ -59,6 +59,21 @@ export default function Home() {
           <Widget
             theme={theme}
             defaultRoute={defaultRoute}
+            onWalletConnected={(props) => {
+              console.log('wallet connected', props)
+            }}
+            onWalletDisconnected={(props) => {
+              console.log('wallet disconnected', props)
+            }}
+            onTransactionBroadcasted={(props) => {
+              console.log('transaction broadcasted', props);
+            }}
+            onTransactionFailed={(props) => {
+              console.log('transaction failed', props)
+            }}
+            onTransactionComplete={(props) => {
+              console.log('transaction complete', props);
+            }}
           />
         </div>
       </div>
