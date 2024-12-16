@@ -71,7 +71,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
-  const allCallbacks = get(callbacksAtom);
+  const callbacks = get(callbacksAtom);
   const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
@@ -99,7 +99,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
-      allCallbacks?.onTransactionBroadcasted?.({
+      callbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainID,
         txHash: txInfo.txHash,
         explorerLink: explorerLink ?? "",
@@ -108,7 +108,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionCompleted: async (chainId: string, txHash: string) => {
       const chain = chains?.find((chain) => chain.chainID === chainId);
       const explorerLink = createExplorerLink({ chainID: chainId, chainType: chain?.chainType, txHash });
-      allCallbacks?.onTransactionComplete?.({
+      callbacks?.onTransactionComplete?.({
         chainId,
         txHash,
         explorerLink: explorerLink ?? "",
@@ -118,7 +118,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
-      allCallbacks?.onTransactionFailed?.({
+      callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
 
