@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { SetStateAction } from "react";
 
-export function atomWithDebounce<T>(delayMilliseconds = 500) {
+export function atomWithDebounce<T>(delayMilliseconds = 250) {
   const prevTimeoutAtom = atom<NodeJS.Timeout | undefined>(
     undefined
   );

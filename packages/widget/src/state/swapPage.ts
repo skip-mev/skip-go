@@ -127,7 +127,6 @@ export const CosmosGasAmount = {
 
 export const defaultSwapSettings = {
   slippage: 1,
-  customGasAmount: CosmosGasAmount.DEFAULT,
   routePreference: RoutePreference.FASTEST,
 };
 

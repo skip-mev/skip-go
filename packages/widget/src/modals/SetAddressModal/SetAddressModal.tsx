@@ -21,14 +21,13 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 
 export type SetAddressModalProps = ModalProps & {
-  signRequired?: boolean;
   chainId: string
   chainAddressIndex?: number
 };
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { theme, signRequired, chainId, chainAddressIndex } = modalProps;
+  const { theme, chainId, chainAddressIndex } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === chainId);
   const chainName = chain?.prettyName;
@@ -96,7 +95,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         ...prev,
         [destinationIndex]: {
           chainID: chainId,
-          chainType: chainType,
+          chainType: chainType as ChainType,
           address: manualWalletAddress,
           source: "input",
         },
@@ -151,7 +150,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title="Destination wallet"
-          walletList={signRequired ? _walletList : walletList}
+          walletList={walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
