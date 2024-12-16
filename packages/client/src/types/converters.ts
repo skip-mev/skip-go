@@ -129,6 +129,8 @@ import {
   GoFastTransferJSON,
   GoFastFee,
   GoFastFeeJSON,
+  StargateTransferJSON,
+  StargateTransfer,
 } from './shared';
 import {
   AssetBetweenChains,
@@ -878,6 +880,43 @@ export function goFastTransferFromJSON(goFastJSON: GoFastTransferJSON): GoFastTr
     destinationDomain: goFastJSON.destination_domain,
   };
 }
+
+export function stargateTransferFromJSON(stargateTransferJSON: StargateTransferJSON): StargateTransfer {
+  return {
+    fromChainID: stargateTransferJSON.from_chain_id,
+    toChainID: stargateTransferJSON.to_chain_id,
+    denomIn: stargateTransferJSON.denom_in,
+    denomOut: stargateTransferJSON.denom_out,
+    poolAddress: stargateTransferJSON.pool_address,
+    destinationEndpointID: stargateTransferJSON.destination_endpoint_id,
+    oftFeeAsset: assetFromJSON(stargateTransferJSON.oft_fee_asset),
+    oftFeeAmount: stargateTransferJSON.oft_fee_amount,
+    oftFeeAmountUSD: stargateTransferJSON.oft_fee_amount_usd,
+    sendFeeAsset: assetFromJSON(stargateTransferJSON.send_fee_asset),
+    sendFeeAmount: stargateTransferJSON.send_fee_amount,
+    sendFeeAmountUSD: stargateTransferJSON.send_fee_amount_usd,
+    bridgeID: stargateTransferJSON.bridge_id,
+  }
+}
+
+export function stargateTransferToJSON(stargateTransfer: StargateTransfer): StargateTransferJSON {
+  return {
+    from_chain_id: stargateTransfer.fromChainID,
+    to_chain_id: stargateTransfer.toChainID,
+    denom_in: stargateTransfer.denomIn,
+    denom_out: stargateTransfer.denomOut,
+    pool_address: stargateTransfer.poolAddress,
+    destination_endpoint_id: stargateTransfer.destinationEndpointID,
+    oft_fee_asset: assetToJSON(stargateTransfer.oftFeeAsset),
+    oft_fee_amount: stargateTransfer.oftFeeAmount,
+    oft_fee_amount_usd: stargateTransfer.oftFeeAmountUSD,
+    send_fee_asset: assetToJSON(stargateTransfer.sendFeeAsset),
+    send_fee_amount: stargateTransfer.sendFeeAmount,
+    send_fee_amount_usd: stargateTransfer.sendFeeAmountUSD,
+    bridge_id: stargateTransfer.bridgeID,
+  }
+}
+
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   const commonProps = {
     txIndex: operationJSON.tx_index,
@@ -931,6 +970,13 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     return {
       ...commonProps,
       goFastTransfer: goFastTransferFromJSON(operationJSON.go_fast_transfer),
+    };
+  }
+
+  if ('stargate_transfer' in operationJSON) {
+    return {
+      ...commonProps,
+      stargateTransfer: stargateTransferFromJSON(operationJSON.stargate_transfer),
     };
   }
 
