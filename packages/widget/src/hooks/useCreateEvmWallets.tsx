@@ -8,6 +8,7 @@ import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
+import { walletConnectLogo } from "@/constants/wagmi";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -72,7 +73,7 @@ export const useCreateEvmWallets = () => {
           walletPrettyName: connector.name,
           walletChainType: ChainType.EVM,
           walletInfo: {
-            logo: connector.icon,
+            logo: connector.id === "walletConnect" ? walletConnectLogo : connector.icon,
           },
           connectEco: async () => {
             if (
