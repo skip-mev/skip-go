@@ -42,10 +42,12 @@ export const AssetAndChainSelectorModalSearchInput = ({
   );
 
   useEffect(() => {
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  }, [asset]);
+    if (!isMobileScreenSize) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  }, [asset, isMobileScreenSize]);
 
   return (
     <StyledSearchInputContainer align="center" gap={5}>
