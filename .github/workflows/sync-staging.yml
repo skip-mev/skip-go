@@ -1,40 +1,25 @@
-name: Sync (staging)
+name: Sync (Staging)
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
   push:
-    branches: [main]
-  repository_dispatch:
-    types: [sync-staging]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
-  sync:
+  sync-branches:
     runs-on: ubuntu-latest
+    name: Syncing branches
     steps:
-      - id: checkout
-        name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v1
         with:
-          ref: staging
-
-      - id: configure
-        name: configure
-        run: git config pull.ff true
-
-      - id: pull-main
-        name: Pull latest 'main'
-        run: git pull --ff-only origin main
-
-      - id: diff-check
-        name: Check if 'staging' is behind 'main'
-        run: git diff --exit-code origin/main
-
-      - id: fast-forward
-        name: Fast forward 'main' → 'staging'
-        run: git merge --ff-only origin/main
-
-      - id: push-staging
-        name: Push latest 'staging'
-        run: git push --set-upstream origin staging
+          node-version: 12
+      - name: Opening pull request
+        id: pull
+        uses: tretuna/sync-branches@1.4.0
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          FROM_BRANCH: 'main'
+          TO_BRANCH: 'staging'
+          CONTENT_COMPARISON: true

@@ -233,12 +233,9 @@ export const submitSwapExecutionCallbacksAtom = atom<
 
 export const fallbackGasAmountFnAtom = atom((get) => {
   const swapVenues = get(skipSwapVenuesAtom)?.data;
-  const swapSettings = get(swapSettingsAtom);
 
   return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
-    if (chainType !== 'cosmos') return undefined;
-
-    if (swapSettings?.customGasAmount) return swapSettings.customGasAmount;
+    if (chainType !== ChainType.Cosmos) return undefined;
 
     const isSwapChain = swapVenues?.some(venue => venue.chainID === chainId) ?? false;
     const defaultGasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);

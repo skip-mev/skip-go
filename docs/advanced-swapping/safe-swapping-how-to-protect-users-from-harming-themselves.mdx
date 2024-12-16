@@ -35,7 +35,7 @@ In addition to showing estimated amount in and out (the obvious ones), we recomm
 * **Price Impact** (`response.swap_price_impact_percent`) -- This measures how much the user's expected execution price differs from the current on-chain spot price at time of execution. A high price impact means the user's swap size is large relative to the available on chain liquidity that they're swapping against, which makes a bad price very likely.
 * **Swapping Venue** (Available in the `swap_venue` field of the `swap` operation in `response.operations`) - This tells the user what DEX they're actually performing the underlying swap on, which helps avoid confusion about prices. This can be useful information in the event the API returns an usual route and routes the user to a DEX they're unfamiliar with / don't want to use or to a DEX where there's not much liquidity of the token they're swapping (e.g. SEI liquidity on Osmosis is sparse at the time of this writing)
 * **Bridge Fee Amounts** (Available in the `transfer` and `axelar_transfer` entries in `response.operations` under `fee_asset` and `fee_amount`) -- These represent the fees that bridges take from the user along the route, denominated in the token(s) they're taking. It's important to show because sometimes bridges take fees unexpectedly (e.g. Noble used to take 0.10% fee on IBC transfers), and sometimes they take large fees (e.g. During periods of high gas prices, Axelar fees can be as high as $200)
-* **USD value of bridge fee amounts** (Available in the `transfer` and `axelar_transfer` entries in `response.operations` under `usd_fee_amount`) -- This gives the user a sense of the actual cost of their fee amounts. In cases of more complex swaps and tranfsers, the user might have a hard time making sense of the underlying fee tokens because the fees are being charged at an intermediate point in the route
+* **USD value of bridge fee amounts** (Available in the `transfer` and `axelar_transfer` entries in `response.operations` under `usd_fee_amount`) -- This gives the user a sense of the actual cost of their fee amounts. In cases of more complex swaps and transfers, the user might have a hard time making sense of the underlying fee tokens because the fees are being charged at an intermediate point in the route
 
 The quote shown to the users should **always** match the transaction that they end up signing. Once you have called `/route` and displayed the quote to the user, a call to `/msgs` is the only way to generate the correct message. (DO NOT call `/msgs_direct` after calling `/route` since this will regenerate the quote) 
 
@@ -51,7 +51,7 @@ We recommend alerting users in the following three scenarios at least:
 
 Loud visual emphasis of the values that exceed safe tolerances is the most effective form of alerting. This includes: 
 
-* Bolding unusually high/low quote numbers numbers -- or otherwise making them larger than surrounding text/numbers
+* Bolding unusually high/low quote numbers -- or otherwise making them larger than surrounding text/numbers
 * Automatically opening drop downs / detail panes that are usually closed by default to display the alert field
 * Highlighting the offending quote number in red, yellow, or some other loud color indicating danger and/or greying out other numbers
 

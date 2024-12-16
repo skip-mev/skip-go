@@ -251,6 +251,7 @@ export type MsgsWarning = {
 
 export enum FeeType {
   SMART_RELAY = 'SMART_RELAY',
+  BRIDGE = 'BRIDGE',
 };
 
 export type EstimatedFee = {
