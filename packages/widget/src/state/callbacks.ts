@@ -1,14 +1,9 @@
 import { ChainType } from "@skip-go/client";
 import { atom } from "jotai";
 
-export type OnWalletConnectedMultipleChainProps = {
+export type OnWalletConnectedProps = {
   walletName: string;
-  chainIds?: string[];
   chainIdToAddressMap?: Record<string, string>;
-};
-
-export type OnWalletConnectedSingleChainProps = {
-  walletName: string;
   chainId?: string;
   address?: string;
 };
@@ -35,11 +30,7 @@ export type OnTransactionFailedProps = {
 };
 
 export type Callbacks = {
-  onWalletConnected?: (
-    props:
-      | OnWalletConnectedMultipleChainProps
-      | OnWalletConnectedSingleChainProps
-  ) => void;
+  onWalletConnected?: (props: OnWalletConnectedProps) => void;
   onWalletDisconnected?: (props: OnWalletDisconnectedProps) => void;
   onTransactionBroadcasted?: (props: OnTransactionBroadcastedProps) => void;
   onTransactionComplete?: (props: OnTransactionCompleteProps) => void;

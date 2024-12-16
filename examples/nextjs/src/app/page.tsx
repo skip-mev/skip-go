@@ -50,29 +50,47 @@ export default function Home() {
         }}
       >
         {/* widget will cohere to the parent container's width */}
-        <div style={{
-          width: '100%',
-          maxWidth: 500,
-          padding: '0 10px',
-          boxSizing: 'border-box'
-        }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 500,
+            padding: '0 10px',
+            boxSizing: 'border-box',
+          }}
+        >
           <Widget
             theme={theme}
             defaultRoute={defaultRoute}
-            onWalletConnected={(props) => {
-              console.log('wallet connected', props)
+            onWalletConnected={({ walletName, chainIdToAddressMap, chainId, address }) => {
+              console.log(
+                'wallet connected',
+                walletName,
+                chainIdToAddressMap,
+                chainId,
+                address
+              );
             }}
-            onWalletDisconnected={(props) => {
-              console.log('wallet disconnected', props)
+            onWalletDisconnected={({ walletName, chainType }) => {
+              console.log('wallet disconnected', walletName, chainType);
             }}
-            onTransactionBroadcasted={(props) => {
-              console.log('transaction broadcasted', props);
+            onTransactionBroadcasted={({ txHash, chainId, explorerLink }) => {
+              console.log(
+                'transaction broadcasted',
+                txHash,
+                chainId,
+                explorerLink
+              );
             }}
-            onTransactionFailed={(props) => {
-              console.log('transaction failed', props)
+            onTransactionFailed={({ error }) => {
+              console.log('transaction failed', error);
             }}
-            onTransactionComplete={(props) => {
-              console.log('transaction complete', props);
+            onTransactionComplete={({ txHash, chainId, explorerLink }) => {
+              console.log(
+                'transaction complete',
+                txHash,
+                chainId,
+                explorerLink
+              );
             }}
           />
         </div>

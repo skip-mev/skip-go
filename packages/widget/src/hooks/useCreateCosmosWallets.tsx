@@ -293,7 +293,6 @@ export const useCreateCosmosWallets = () => {
 
                 callbacks?.onWalletConnected?.({
                   walletName: wallet,
-                  chainIds: initialChainIds,
                   chainIdToAddressMap,
                 });
               } else {
