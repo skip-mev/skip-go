@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Widget } from "@skip-go/widget";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { createWalletClient, custom, Account } from "viem";
-import { mainnet } from "viem/chains";
+import { mainnet, optimism, polygon, base, arbitrum, avalanche } from 'viem/chains';
 
 type ChainId = string;
 type Address = string;
@@ -31,9 +31,9 @@ export default function Home() {
       method: "eth_requestAccounts",
     })) as string[];
     const evmAddress = accounts[0];
+    // Ethereum mainnet chain ID is "1"
     updateAccount("1", evmAddress);
   };
-
   /**
    * Connect to a Solana wallet using Phantom Wallet Adapter.
    */
@@ -80,7 +80,16 @@ export default function Home() {
   /**
    * Get an EVM-compatible signer by creating a viem wallet client.
    */
-  const getEVMSigner = async () => {
+  const chainConfigMap: Record<string, any> = {
+    "1": mainnet,
+    "10": optimism,
+    "137": polygon,
+    "8453": base,
+    "42161": arbitrum,
+    "43114": avalanche,
+  };
+
+  const getEVMSigner = async (targetChainId: string) => {
     const ethereum = window.ethereum;
     if (!ethereum) {
       throw new Error("MetaMask not installed");
@@ -95,9 +104,11 @@ export default function Home() {
       throw new Error("No EVM accounts found");
     }
 
+    const selectedChain = chainConfigMap[targetChainId] ?? mainnet;
+
     const client = createWalletClient({
       account: evmAddress as Account,
-      chain: mainnet,
+      chain: selectedChain,
       transport: custom(window.ethereum),
     });
 
@@ -140,13 +151,12 @@ export default function Home() {
         <button onClick={connectCosmos}>Connect Cosmos</button>
         <button onClick={connectEthereum}>Connect Ethereum</button>
         <button onClick={connectSolana}>Connect Solana</button>
-        <button onClick={() => setAccountMap(undefined)}>Disconnect</button>
       </div>
       <Widget
         // Provide the connected addresses and signer retrieval functions to the Widget
         connectedAddresses={accountMap}
         getCosmosSigner={getCosmosSigner}
-        getEVMSigner={getEVMSigner}
+        getEVMSigner={() => getEVMSigner("1")} // or "1", "10", etc.
         getSVMSigner={getSVMSigner}
       />
     </div>

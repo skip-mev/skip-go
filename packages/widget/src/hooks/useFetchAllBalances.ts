@@ -23,45 +23,32 @@ export const useFetchAllBalances = () => {
       const chain = chains?.find((chain) => chain.chainID === chainId);
       return chain?.chainType === ChainType.EVM;
     });
-    return evmChainId && connectedAddresses[evmChainId];
+    return evmChainId && connectedAddresses?.[evmChainId];
   }, [
     connectedAddresses,
     chains,
   ]);
 
+
   const { chainId: evmChainId } = useAccount();
 
   const allBalancesRequest = useMemo(() => {
     return assets?.reduce((acc, asset) => {
-      const address = getAccount(asset.chainID)?.address;
       const chain = chains?.find((chain) => chain.chainID === asset.chainID);
-      const isEVM = chain?.chainType === 'evm';
-      const evmAddress =
-        isEVM && evmChainId
-          ? getAccount(String(evmChainId))?.address
-          : undefined;
-      if (isEVM && evmConnectedAddress) {
-        if (!acc[asset.chainID]) {
-          acc[asset.chainID] = {
-            address: evmConnectedAddress,
-          };
-        }
-      } else if (isEVM && evmAddress) {
-        if (!acc[asset.chainID]) {
-          acc[asset.chainID] = {
-            address: evmAddress,
-          };
-        }
-      } else if (address) {
-        if (!acc[asset.chainID]) {
-          acc[asset.chainID] = {
-            address: address,
-          };
-        }
+      const isEVM = chain?.chainType === ChainType.EVM;
+      const evmAddress = evmConnectedAddress ?? (evmChainId && getAccount(String(evmChainId))?.address)
+
+      const address = isEVM
+        ? evmAddress
+        : getAccount(asset.chainID)?.address;
+
+      if (address && !acc[asset.chainID]) {
+        acc[asset.chainID] = { address };
       }
+
       return acc;
     }, {} as Record<string, { address: string }>);
-  }, [assets, getAccount, chains, evmChainId]);
+  }, [assets, getAccount, chains, evmChainId, evmConnectedAddress]);
 
   // using useQuery to trigger the debouncedValueAtom
   useQuery({
