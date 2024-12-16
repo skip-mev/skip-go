@@ -250,15 +250,29 @@ export const useCreateCosmosWallets = () => {
               const isInitialConnect = initialChainIds.includes(chainID);
               if (isInitialConnect) {
                 await connectEco();
+
+                const chainIdToAddressMap = Object.fromEntries(
+                  await Promise.all(
+                    initialChainIds.map(async chainId => [
+                      chainId,
+                      (await getWallet(wallet).getKey(chainId)).bech32Address
+                    ])
+                  )
+                );
+
                 allCallbacks?.onWalletConnected?.({
                   walletName: wallet,
                   chainIds: initialChainIds,
+                  chainIdToAddressMap,
                 });
               } else {
                 await connectSingleChainId();
+                const address = (await getWallet(wallet).getKey(chainID))
+                  .bech32Address;
                 allCallbacks?.onWalletConnected?.({
                   walletName: wallet,
                   chainId: chainID,
+                  address,
                 });
               }
               setCosmosWallet({ walletName: wallet, chainType: ChainType.Cosmos });
@@ -289,7 +303,7 @@ export const useCreateCosmosWallets = () => {
       }
       return wallets;
     },
-    [accounts, assets, chains, currentWallet, disconnectAsync, isConnected, setCosmosWallet, setSourceAsset]
+    [accounts, allCallbacks, assets, chains, currentWallet, disconnectAsync, isConnected, setCosmosWallet, setSourceAsset]
   );
 
   return { createCosmosWallets };

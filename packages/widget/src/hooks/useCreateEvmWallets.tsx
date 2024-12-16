@@ -62,10 +62,16 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+            setEvmWallet({
+              walletName: connector.id,
+              chainType: ChainType.EVM,
+            });
             return res.accounts[0];
           } else if (evmAddress && isEvmConnected && signRequired) {
-            setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+            setEvmWallet({
+              walletName: connector.id,
+              chainType: ChainType.EVM,
+            });
           }
           return evmAddress;
         };
@@ -93,7 +99,10 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(1) });
-              setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
+              setEvmWallet({
+                walletName: connector.id,
+                chainType: ChainType.EVM,
+              });
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
@@ -101,10 +110,12 @@ export const useCreateEvmWallets = () => {
                 chainName: chain?.chainName,
                 ...asset,
               });
+              const account = await connector.getAccounts();
               allCallbacks?.onWalletConnected?.({
-                walletName: connector.id,
+                walletName: connector.name,
                 chainId: chain?.chainID,
-              })
+                address: account[0],
+              });
             } catch (error) {
               console.error(error);
               throw error;
@@ -126,11 +137,16 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
-              setEvmWallet({ walletName: connector.id, chainType: ChainType.EVM });
-              allCallbacks?.onWalletConnected?.({
+              setEvmWallet({
                 walletName: connector.id,
+                chainType: ChainType.EVM,
+              });
+              const account = await connector.getAccounts();
+              allCallbacks?.onWalletConnected?.({
+                walletName: connector.name,
                 chainId: chainID,
-              })
+                address: account[0],
+              });
             } catch (error) {
               console.error(error);
               throw error;
@@ -158,7 +174,8 @@ export const useCreateEvmWallets = () => {
             connector.name.toLowerCase().includes("keplr") ||
             connector.name.toLowerCase().includes("leap") ||
             connector.name.toLowerCase().includes("cosmostation");
-          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
+          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""
+            }`;
           minimalWallet.getAddress = async ({ signRequired, context }) => {
             const address = await evmGetAddress({ signRequired, context });
             const publicClient = createPublicClient({
@@ -185,6 +202,7 @@ export const useCreateEvmWallets = () => {
       return wallets;
     },
     [
+      allCallbacks,
       assets,
       chainId,
       chains,

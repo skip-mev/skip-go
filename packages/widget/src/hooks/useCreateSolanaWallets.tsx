@@ -31,9 +31,12 @@ export const useCreateSolanaWallets = () => {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
             const chain = chains?.find((x) => x.chainID === "solana");
+
+            const address = wallet.publicKey?.toBase58();
             allCallbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
+              address,
             });
           } catch (error) {
             console.error(error);
@@ -52,9 +55,11 @@ export const useCreateSolanaWallets = () => {
               chainName: chain?.chainName,
               ...asset
             });
+            const address = wallet.publicKey?.toBase58();
             allCallbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
+              address
             });
           } catch (error) {
             console.error(error);
@@ -89,6 +94,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [assets, chains, setSourceAsset, setSvmWallet]);
+  }, [allCallbacks, assets, chains, setSourceAsset, setSvmWallet]);
   return { createSolanaWallets };
 };
