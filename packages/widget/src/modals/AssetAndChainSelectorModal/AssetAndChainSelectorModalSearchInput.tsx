@@ -10,6 +10,7 @@ import { Text } from "@/components/Typography";
 import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { isMobile } from "@/utils/os";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
@@ -30,6 +31,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
 }: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const mobile = isMobile();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = useCallback(
@@ -42,11 +44,11 @@ export const AssetAndChainSelectorModalSearchInput = ({
   );
 
   useEffect(() => {
-    if (isMobileScreenSize) return;
+    if (mobile) return;
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
-  }, [asset, isMobileScreenSize]);
+  }, [asset, mobile]);
 
   return (
     <StyledSearchInputContainer align="center" gap={5}>
