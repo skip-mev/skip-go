@@ -14,6 +14,7 @@ export type OnWalletConnectedSingleChainProps = {
 };
 
 export type OnWalletDisconnectedProps = {
+  walletName: string;
   chainType?: ChainType;
 };
 

@@ -7,7 +7,6 @@ import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 
-
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
@@ -48,18 +47,21 @@ export const useCreateSolanaWallets = () => {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
             const chain = chains?.find((x) => x.chainID === "solana");
-            const asset = assets?.find((x) => x.denom.toLowerCase() ===
-              "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase());
+            const asset = assets?.find(
+              (x) =>
+                x.denom.toLowerCase() ===
+                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase()
+            );
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
-              ...asset
+              ...asset,
             });
             const address = wallet.publicKey?.toBase58();
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
-              address
+              address,
             });
           } catch (error) {
             console.error(error);
@@ -71,12 +73,18 @@ export const useCreateSolanaWallets = () => {
             const isConnected = wallet.connected;
             if (!isConnected) {
               await wallet.connect();
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({
+                walletName: wallet.name,
+                chainType: ChainType.SVM,
+              });
             }
             const address = wallet.publicKey;
             if (!address) throw new Error("No address found");
             if (signRequired) {
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({
+                walletName: wallet.name,
+                chainType: ChainType.SVM,
+              });
             }
             return address.toBase58();
           } catch (error) {
@@ -86,7 +94,10 @@ export const useCreateSolanaWallets = () => {
         disconnect: async () => {
           await wallet.disconnect();
           setSvmWallet(undefined);
-          callbacks?.onWalletDisconnected?.({ chainType: ChainType.SVM });
+          callbacks?.onWalletDisconnected?.({
+            walletName: wallet.name,
+            chainType: ChainType.SVM,
+          });
         },
         isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
