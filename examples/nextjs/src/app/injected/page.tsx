@@ -69,14 +69,13 @@ export default function Home() {
    * Get an offline signer for a given Cosmos chain using Keplr.
    */
   const getCosmosSigner = async (chainId: string) => {
-    try {
-      const offlineSigner = await window.keplr?.getOfflineSigner(chainId);
-      return offlineSigner;
-    } catch (error) {
-      alert(`${chainId} is not connected in Keplr`);
-      return undefined;
+    if (window.keplr?.getOfflineSigner === undefined) {
+      throw new Error("Keplr extension not installed");
     }
-  };
+    const offlineSigner = await window.keplr?.getOfflineSigner(chainId);
+    return offlineSigner;
+  }
+
 
   /**
    * Get an EVM-compatible signer by creating a viem wallet client.
@@ -146,7 +145,6 @@ export default function Home() {
       <Widget
         // Provide the connected addresses and signer retrieval functions to the Widget
         connectedAddress={accountMap}
-        // @ts-ignore - ignoring TS warning if any for demonstration purposes
         getCosmosSigner={getCosmosSigner}
         getEVMSigner={getEVMSigner}
         getSVMSigner={getSVMSigner}
