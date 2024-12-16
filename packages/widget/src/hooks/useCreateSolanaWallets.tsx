@@ -5,7 +5,7 @@ import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
-import { allCallbacksAtom } from "@/state/callbacks";
+import { callbacksAtom } from "@/state/callbacks";
 
 
 export const useCreateSolanaWallets = () => {
@@ -13,7 +13,7 @@ export const useCreateSolanaWallets = () => {
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
-  const allCallbacks = useAtomValue(allCallbacksAtom);
+  const callbacks = useAtomValue(callbacksAtom);
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -33,7 +33,7 @@ export const useCreateSolanaWallets = () => {
             const chain = chains?.find((x) => x.chainID === "solana");
 
             const address = wallet.publicKey?.toBase58();
-            allCallbacks?.onWalletConnected?.({
+            callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
               address,
@@ -56,7 +56,7 @@ export const useCreateSolanaWallets = () => {
               ...asset
             });
             const address = wallet.publicKey?.toBase58();
-            allCallbacks?.onWalletConnected?.({
+            callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
               address
@@ -86,7 +86,7 @@ export const useCreateSolanaWallets = () => {
         disconnect: async () => {
           await wallet.disconnect();
           setSvmWallet(undefined);
-          allCallbacks?.onWalletDisconnected?.({ chainType: "svm" });
+          callbacks?.onWalletDisconnected?.({ chainType: ChainType.SVM });
         },
         isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
@@ -94,6 +94,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [allCallbacks, assets, chains, setSourceAsset, setSvmWallet]);
+  }, [callbacks, assets, chains, setSourceAsset, setSvmWallet]);
   return { createSolanaWallets };
 };

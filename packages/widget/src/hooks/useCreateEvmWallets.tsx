@@ -8,14 +8,14 @@ import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
-import { allCallbacksAtom } from "@/state/callbacks";
+import { callbacksAtom } from "@/state/callbacks";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
-  const allCallbacks = useAtomValue(allCallbacksAtom);
+  const callbacks = useAtomValue(callbacksAtom);
 
   const {
     connector: currentEvmConnector,
@@ -111,7 +111,7 @@ export const useCreateEvmWallets = () => {
                 ...asset,
               });
               const account = await connector.getAccounts();
-              allCallbacks?.onWalletConnected?.({
+              callbacks?.onWalletConnected?.({
                 walletName: connector.name,
                 chainId: chain?.chainID,
                 address: account[0],
@@ -142,7 +142,7 @@ export const useCreateEvmWallets = () => {
                 chainType: ChainType.EVM,
               });
               const account = await connector.getAccounts();
-              allCallbacks?.onWalletConnected?.({
+              callbacks?.onWalletConnected?.({
                 walletName: connector.name,
                 chainId: chainID,
                 address: account[0],
@@ -164,7 +164,7 @@ export const useCreateEvmWallets = () => {
           disconnect: async () => {
             await currentConnector?.disconnect();
             setEvmWallet(undefined);
-            allCallbacks?.onWalletDisconnected?.({ chainType: "evm" });
+            callbacks?.onWalletDisconnected?.({ chainType: ChainType.EVM });
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,
         };
@@ -202,7 +202,7 @@ export const useCreateEvmWallets = () => {
       return wallets;
     },
     [
-      allCallbacks,
+      callbacks,
       assets,
       chainId,
       chains,

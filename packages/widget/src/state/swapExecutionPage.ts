@@ -12,7 +12,7 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
-import { allCallbacksAtom } from "./callbacks";
+import { callbacksAtom } from "./callbacks";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -71,7 +71,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
-  const allCallbacks = get(allCallbacksAtom);
+  const allCallbacks = get(callbacksAtom);
   const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
@@ -102,7 +102,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       allCallbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainID,
         txHash: txInfo.txHash,
-        explorerLink: explorerLink ?? '',
+        explorerLink: explorerLink ?? "",
       });
     },
     onTransactionCompleted: async (chainId: string, txHash: string) => {
@@ -111,7 +111,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       allCallbacks?.onTransactionComplete?.({
         chainId,
         txHash,
-        explorerLink: explorerLink ?? '',
+        explorerLink: explorerLink ?? "",
       });
     },
     onTransactionSigned: async () => {
@@ -241,7 +241,7 @@ export const fallbackGasAmountFnAtom = atom((get) => {
     const defaultGasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
 
     // Special case for carbon-1
-    if (chainId === 'carbon-1') {
+    if (chainId === "carbon-1") {
       return CosmosGasAmount.CARBON;
     }
 
