@@ -2,11 +2,11 @@ import { getCosmosWalletInfo } from "@/constants/graz";
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
 import {
-  connectedAddressAtom,
   cosmosWalletAtom,
   evmWalletAtom,
   svmWalletAtom,
   walletsAtom,
+  connectedAddressesAtom
 } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
@@ -19,7 +19,7 @@ export const useGetAccount = () => {
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
-  const connectedAddress = useAtomValue(connectedAddressAtom);
+  const connectedAddress = useAtomValue(connectedAddressesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const { data: cosmosAccounts, walletType } = useCosmosAccount({

@@ -5,7 +5,8 @@ import { skipAssetsAtom, skipChainsAtom } from '@/state/skipClient';
 import { useAccount } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { connectedAddressAtom } from '@/state/wallets';
+import { connectedAddressesAtom } from '@/state/wallets';
+import { ChainType } from '@skip-go/client';
 
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();
@@ -14,17 +15,17 @@ export const useFetchAllBalances = () => {
     skipAllBalancesRequestAtom.debouncedValueAtom
   );
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const connectedAddress = useAtomValue(connectedAddressAtom);
+  const connectedAddresses = useAtomValue(connectedAddressesAtom);
   const evmConnectedAddress = useMemo(() => {
-    if (!connectedAddress) return;
-    const chainIds = Object.keys(connectedAddress);
+    if (!connectedAddresses) return;
+    const chainIds = Object.keys(connectedAddresses);
     const evmChainId = chainIds.find((chainId) => {
       const chain = chains?.find((chain) => chain.chainID === chainId);
-      return chain?.chainType === 'evm';
+      return chain?.chainType === ChainType.EVM;
     });
-    return evmChainId && connectedAddress[evmChainId];
+    return evmChainId && connectedAddresses[evmChainId];
   }, [
-    connectedAddress,
+    connectedAddresses,
     chains,
   ]);
 

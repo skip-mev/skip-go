@@ -26,7 +26,7 @@ export default function Home() {
   /**
    * Connect to an EVM-compatible wallet (e.g., MetaMask).
    */
-  const connectEVM = async () => {
+  const connectEthereum = async () => {
     const accounts = (await window.ethereum.request({
       method: "eth_requestAccounts",
     })) as string[];
@@ -37,7 +37,7 @@ export default function Home() {
   /**
    * Connect to a Solana wallet using Phantom Wallet Adapter.
    */
-  const connectSVM = async () => {
+  const connectSolana = async () => {
     const phantom = new PhantomWalletAdapter();
     await phantom.connect();
     const publicKey = phantom.publicKey?.toBase58();
@@ -138,13 +138,13 @@ export default function Home() {
         }}
       >
         <button onClick={connectCosmos}>Connect Cosmos</button>
-        <button onClick={connectEVM}>Connect EVM</button>
-        <button onClick={connectSVM}>Connect SVM</button>
+        <button onClick={connectEthereum}>Connect Ethereum</button>
+        <button onClick={connectSolana}>Connect Solana</button>
         <button onClick={() => setAccountMap(undefined)}>Disconnect</button>
       </div>
       <Widget
         // Provide the connected addresses and signer retrieval functions to the Widget
-        connectedAddress={accountMap}
+        connectedAddresses={accountMap}
         getCosmosSigner={getCosmosSigner}
         getEVMSigner={getEVMSigner}
         getSVMSigner={getSVMSigner}

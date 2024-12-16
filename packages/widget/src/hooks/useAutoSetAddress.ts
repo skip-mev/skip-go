@@ -5,7 +5,8 @@ import {
   chainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
-import { connectedAddressAtom, walletsAtom } from "@/state/wallets";
+import { connectedAddressesAtom } from "@/state/wallets";
+import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
@@ -30,7 +31,7 @@ export const useAutoSetAddress = () => {
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
 
-  const connectedAddress = useAtomValue(connectedAddressAtom);
+  const connectedAddress = useAtomValue(connectedAddressesAtom);
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
