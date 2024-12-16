@@ -32,7 +32,7 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
-import { AllCallbacks, callbacksAtom } from "@/state/callbacks";
+import { Callbacks, callbacksAtom } from "@/state/callbacks";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -61,7 +61,7 @@ export type WidgetProps = {
   NewSkipClientOptions,
   "apiUrl" | "chainIdsToAffiliates" | "endpointOptions"
 > &
-  AllCallbacks;
+  Callbacks;
 
 type NewSwapVenueRequest = {
   name: string;

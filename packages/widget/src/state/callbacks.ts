@@ -33,7 +33,7 @@ export type OnTransactionFailedProps = {
   error: string;
 };
 
-export type AllCallbacks = {
+export type Callbacks = {
   onWalletConnected?: (
     props:
       | OnWalletConnectedMultipleChainProps
@@ -45,4 +45,4 @@ export type AllCallbacks = {
   onTransactionFailed?: (props: OnTransactionFailedProps) => void;
 };
 
-export const callbacksAtom = atom<AllCallbacks>();
+export const callbacksAtom = atom<Callbacks>();
