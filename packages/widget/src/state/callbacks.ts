@@ -1,3 +1,4 @@
+import { ChainType } from "@skip-go/client";
 import { atom } from "jotai";
 
 export type OnWalletConnectedMultipleChainProps = {
@@ -13,7 +14,7 @@ export type OnWalletConnectedSingleChainProps = {
 };
 
 export type OnWalletDisconnectedProps = {
-  chainType?: "cosmos" | "evm" | "svm";
+  chainType?: ChainType;
 };
 
 export type OnTransactionBroadcastedProps = {
@@ -44,4 +45,4 @@ export type AllCallbacks = {
   onTransactionFailed?: (props: OnTransactionFailedProps) => void;
 };
 
-export const allCallbacksAtom = atom<AllCallbacks>();
+export const callbacksAtom = atom<AllCallbacks>();

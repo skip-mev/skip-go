@@ -32,7 +32,7 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
-import { AllCallbacks, allCallbacksAtom } from "@/state/callbacks";
+import { AllCallbacks, callbacksAtom } from "@/state/callbacks";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -151,7 +151,7 @@ const useInitWidget = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
-  const setAllCallbacks = useSetAtom(allCallbacksAtom);
+  const setCallbacks = useSetAtom(callbacksAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -227,7 +227,7 @@ const useInitWidget = (props: WidgetProps) => {
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
-      setAllCallbacks(callbacks);
+      setCallbacks(callbacks);
     }
   }, [
     props,
@@ -241,7 +241,7 @@ const useInitWidget = (props: WidgetProps) => {
     props.routeConfig,
     props.settings?.slippage,
     props.walletConnect,
-    setAllCallbacks,
+    setCallbacks,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
