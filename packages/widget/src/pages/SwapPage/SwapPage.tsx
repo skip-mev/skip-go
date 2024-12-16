@@ -41,6 +41,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
+import { useAppKit } from '@reown/appkit/react'
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -65,6 +66,7 @@ export const SwapPage = () => {
     error: routeError,
   } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
+  const { open, close } = useAppKit()
 
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
@@ -212,13 +214,10 @@ export const SwapPage = () => {
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
-            if (!sourceAsset?.chainID) {
-              NiceModal.show(Modals.ConnectedWalletModal);
-            } else {
-              NiceModal.show(Modals.WalletSelectorModal, {
-                chainId: sourceAsset?.chainID,
-              });
-            }
+            open({
+              view: "Connect"
+            })
+
           }}
         />
       );
@@ -277,6 +276,7 @@ export const SwapPage = () => {
         icon={ICONS.swap}
         disabled={!route}
         onClick={() => {
+
           if (showCosmosLedgerWarning) {
             setError({
               errorType: ErrorType.CosmosLedgerWarning,

@@ -1,5 +1,5 @@
-import { http } from "viem";
-import { Config, createConfig, createStorage } from "wagmi";
+import { cookieStorage, createStorage } from "wagmi";
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import {
   arbitrum,
   arbitrumSepolia,
@@ -29,63 +29,20 @@ import {
   polygonMumbai,
   sei,
   sepolia,
-} from "wagmi/chains";
-import { defineChain } from "viem";
+  forma,
+} from '@reown/appkit/networks'
+import { createAppKit } from "@reown/appkit/react";
+
 const isBrowser = typeof window !== "undefined";
 
-export const forma = defineChain({
-  id: 984_122,
-  name: "Forma",
-  nativeCurrency: {
-    name: "TIA",
-    symbol: "TIA",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.forma.art"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Forma Explorer",
-      url: "https://explorer.forma.art",
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: "0xd53C6FFB123F7349A32980F87faeD8FfDc9ef079",
-      blockCreated: 252_705,
-    },
-  },
-  testnet: false,
-});
-
-export const formaTestnet = defineChain({
-  id: 984_123,
-  name: "Forma Testnet",
-  nativeCurrency: {
-    name: "TIA",
-    symbol: "TIA",
-    decimals: 18,
-  },
-
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.sketchpad-1.forma.art"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Forma Explorer",
-      url: "https://explorer.sketchpad-1.forma.art",
-    },
-  },
-  testnet: true,
-});
-
-export const config: Config = createConfig({
-  chains: [
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
+    key: "skip-go-widget-wagmi",
+  }),
+  ssr: false,
+  projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+  networks: [
     arbitrum,
     avalanche,
     base,
@@ -109,7 +66,54 @@ export const config: Config = createConfig({
     blast,
     blastSepolia,
     forma,
-    formaTestnet,
+    sei,
+    bscTestnet,
+    fantomTestnet,
+    kavaTestnet,
+    lineaSepolia,
+    mantaSepoliaTestnet,
+  ]
+})
+
+export const config = wagmiAdapter.wagmiConfig
+
+
+// Set up metadata
+const metadata = {
+  name: 'appkit-example',
+  description: 'AppKit Example',
+  url: 'https://appkitexampleapp.com', // origin must match your domain & subdomain
+  icons: ['https://avatars.githubusercontent.com/u/179229932']
+}
+
+// Create the modal
+const modal = createAppKit({
+  adapters: [wagmiAdapter],
+  projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+  networks: [
+    arbitrum,
+    avalanche,
+    base,
+    bsc,
+    celo,
+    fantom,
+    filecoin,
+    kava,
+    linea,
+    mainnet,
+    manta,
+    moonbeam,
+    optimism,
+    polygon,
+    polygonMumbai,
+    sepolia,
+    avalancheFuji,
+    baseSepolia,
+    optimismSepolia,
+    arbitrumSepolia,
+    blast,
+    blastSepolia,
+    forma,
     sei,
     bscTestnet,
     fantomTestnet,
@@ -117,41 +121,9 @@ export const config: Config = createConfig({
     lineaSepolia,
     mantaSepoliaTestnet,
   ],
-  transports: {
-    [arbitrum.id]: http(),
-    [avalanche.id]: http(),
-    [base.id]: http(),
-    [bsc.id]: http(),
-    [celo.id]: http(),
-    [fantom.id]: http(),
-    [filecoin.id]: http(),
-    [kava.id]: http(),
-    [linea.id]: http(),
-    [mainnet.id]: http(),
-    [manta.id]: http(),
-    [moonbeam.id]: http(),
-    [optimism.id]: http(),
-    [polygon.id]: http(),
-    [polygonMumbai.id]: http(),
-    [sepolia.id]: http(),
-    [avalancheFuji.id]: http(),
-    [baseSepolia.id]: http(),
-    [optimismSepolia.id]: http(),
-    [arbitrumSepolia.id]: http(),
-    [blast.id]: http(),
-    [blastSepolia.id]: http(),
-    [forma.id]: http(),
-    [formaTestnet.id]: http(),
-    [sei.id]: http(),
-    [bscTestnet.id]: http(),
-    [fantomTestnet.id]: http(),
-    [kavaTestnet.id]: http(),
-    [lineaSepolia.id]: http(),
-    [mantaSepoliaTestnet.id]: http(),
-  },
-  ssr: false,
-  storage: createStorage({
-    storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
-    key: "skip-go-widget-wagmi",
-  }),
-});
+  defaultNetwork: mainnet,
+  metadata: metadata,
+  features: {
+    analytics: true // Optional - defaults to your Cloud configuration
+  }
+})

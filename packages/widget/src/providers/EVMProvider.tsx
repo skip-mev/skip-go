@@ -11,6 +11,7 @@ export const EVMProvider: React.FC<EVMProviderProps> = ({
   children,
   wagmiConfig,
 }) => {
+
   return (
     <WagmiProvider
       key={"skip-widget-wagmi-provider"}
