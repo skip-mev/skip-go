@@ -1,6 +1,6 @@
 import { makeSignDoc as makeSignDocAmino } from '@cosmjs/amino';
 import { createWasmAminoConverters } from '@cosmjs/cosmwasm-stargate';
-import { fromBase64, toHex } from '@cosmjs/encoding';
+import { fromBase64, toBase64, toHex } from '@cosmjs/encoding';
 import { Int53 } from '@cosmjs/math';
 import { Decimal } from '@cosmjs/math';
 import { makePubkeyAnyFromAccount } from './proto-signing/pubkey';
@@ -972,8 +972,9 @@ export class SkipClient {
       eip712TypedData,
       signDocs
     )
-
-    const pk = Buffer.from(accountFromSigner.pubkey).toString('base64');
+    console.log(accountFromSigner.pubkey)
+    const pk = toBase64(accountFromSigner.pubkey)
+    const signDocRes = aminoSignResponse.signed
 
     const preparedTx = createTransaction({
       message: preparedMessages,
@@ -982,7 +983,7 @@ export class SkipClient {
       fee: aminoSignResponse.signed.fee,
       pubKey: pk,
       sequence: parseInt(aminoSignResponse.signed.sequence, 10),
-      timeoutHeight: parseInt((aminoSignResponse.signed as any).timeout_height, 10),
+      timeoutHeight: parseInt(aminoSignResponse.signed.timeout_height || "0", 10),
       accountNumber: parseInt(aminoSignResponse.signed.account_number, 10),
       chainId: chainId,
     });
@@ -1005,36 +1006,14 @@ export class SkipClient {
     //   timeout: 15000,
     // });
     // console.log("broadcast", broadcast);
-
-    const txRaw = TxRaw.fromPartial({
-      authInfoBytes: makeAuthInfoBytes([
-        {
-          pubkey: {
-            typeUrl: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
-            value: PubKey.encode({
-              key: fromBase64(aminoSignResponse.signature.pub_key.value),
-            }).finish(),
-          },
-          sequence: Number(aminoSignResponse.signed.sequence),
-        }
-      ],
-        aminoSignResponse.signed.fee.amount,
-        Number(aminoSignResponse.signed.fee.gas),
-        undefined,
-        aminoSignResponse.signed.fee.payer,
-        SignMode.SIGN_MODE_LEGACY_AMINO_JSON),
-      bodyBytes: TxBody.encode(
-        TxBody.fromPartial({
-          memo: aminoSignResponse.signed.memo,
-          messages: messages,
-          timeoutHeight: aminoSignResponse.signed.timeout_height
-            ? BigInt(aminoSignResponse.signed.timeout_height)
-            : undefined,
-        }),
-      ).finish(),
-      signatures: [fromBase64(aminoSignResponse.signature.signature)]
+    console.log(txRawEip712)
+    const txRaw = TxRaw.fromPartial(txRawEip712)
+    const txRestApi = new TxRestApi("https://go.skip.build/api/rest/injective-1")
+    const res = await txRestApi.broadcast(txRaw, {
+      mode: BroadcastMode.Sync as any,
+      timeout: 15000
     })
-
+    console.log("res", res)
     return txRaw;
   }
 
