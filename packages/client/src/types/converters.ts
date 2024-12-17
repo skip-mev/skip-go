@@ -1053,6 +1053,13 @@ export function operationToJSON(operation: Operation): OperationJSON {
     };
   }
 
+  if ('stargateTransfer' in operation) {
+    return {
+      ...commonProps,
+      stargate_transfer: stargateTransferToJSON(operation.stargateTransfer),
+    };
+  }
+
   if ('swap' in operation) {
     return {
       ...commonProps,

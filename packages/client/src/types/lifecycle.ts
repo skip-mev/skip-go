@@ -435,6 +435,34 @@ export type GoFastTransferInfo = {
   txs: GoFastTransferTransactions;
 };
 
+export type StargateTransferState =
+  | "TBD"
+
+
+export type StargateTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+};
+
+export type StargateTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+};
+
+export type StargateTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: StargateTransferState;
+  txs: StargateTransferTransactionsJSON;
+};
+
+export type StargateTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: StargateTransferState;
+  txs: StargateTransferTransactions;
+};
+
 export type OPInitTransferState =
   | 'OPINIT_TRANSFER_UNKNOWN'
   | 'OPINIT_TRANSFER_SENT'
@@ -475,7 +503,8 @@ export type TransferEventJSON =
   | { cctp_transfer: CCTPTransferInfoJSON }
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
   | { op_init_transfer: OPInitTransferInfoJSON }
-  | { go_fast_transfer: GoFastTransferInfoJSON };
+  | { go_fast_transfer: GoFastTransferInfoJSON }
+  | { stargate_transfer: StargateTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -485,7 +514,8 @@ export type TransferEvent =
   | { cctpTransfer: CCTPTransferInfo }
   | { hyperlaneTransfer: HyperlaneTransferInfo }
   | { opInitTransfer: OPInitTransferInfo }
-  | { goFastTransfer: GoFastTransferInfo };
+  | { goFastTransfer: GoFastTransferInfo }
+  | { stargateTransfer: StargateTransferInfo };
 
 type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {
