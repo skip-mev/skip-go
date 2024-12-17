@@ -20,6 +20,7 @@ import {
 import { routeConfigAtom } from "@/state/route";
 import { walletConnectAtom, getConnectedSignersAtom, connectedAddressesAtom } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
+import { callbacksAtom } from "@/state/callbacks";
 
 export const useInitWidget = (props: WidgetProps) => {
   useInitDefaultRoute(props.defaultRoute);
@@ -32,6 +33,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
+  const setCallbacks = useSetAtom(callbacksAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -99,6 +101,18 @@ export const useInitWidget = (props: WidgetProps) => {
       setWalletConnect(props.walletConnect);
     }
 
+    const callbacks = {
+      onWalletConnected: props.onWalletConnected,
+      onWalletDisconnected: props.onWalletDisconnected,
+      onTransactionBroadcasted: props.onTransactionBroadcasted,
+      onTransactionComplete: props.onTransactionComplete,
+      onTransactionFailed: props.onTransactionFailed,
+    };
+
+    if (Object.values(callbacks).some((callback) => callback !== undefined)) {
+      setCallbacks(callbacks);
+    }
+
   }, [
     props.filter,
     props.onlyTestnet,
@@ -111,6 +125,7 @@ export const useInitWidget = (props: WidgetProps) => {
     setRouteConfig,
     setSwapSettings,
     setWalletConnect,
+    setCallbacks
   ]);
 
   return { theme: mergedTheme };

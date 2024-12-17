@@ -20,8 +20,8 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
-import { WalletConnect, walletConnectAtom } from "@/state/wallets";
-import { Callbacks, callbacksAtom } from "@/state/callbacks";
+import { WalletConnect } from "@/state/wallets";
+import { Callbacks } from "@/state/callbacks";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -49,9 +49,9 @@ export type WidgetProps = {
   /**
    * Map of connected wallet addresses, allowing your app to pass pre-connected addresses to the widget.
    * This feature enables the widget to display a specific address as connected for a given chain.
-   * 
+   *
    * If a chain ID is mapped to an address, the widget will automatically use it as the connected address for that chain.
-   * 
+   *
    * @example
    * ```tsx
    * <Widget connectedAddresses={{ "cosmoshub-4": "cosmos1...", "1": "0x..." }} />
