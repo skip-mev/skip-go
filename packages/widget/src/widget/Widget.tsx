@@ -32,6 +32,7 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
+import { Callbacks, callbacksAtom } from "@/state/callbacks";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -59,7 +60,8 @@ export type WidgetProps = {
 } & Pick<
   NewSkipClientOptions,
   "apiUrl" | "chainIdsToAffiliates" | "endpointOptions"
->;
+> &
+  Callbacks;
 
 type NewSwapVenueRequest = {
   name: string;
@@ -149,6 +151,7 @@ const useInitWidget = (props: WidgetProps) => {
   const setChainFilter = useSetAtom(chainFilterAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
+  const setCallbacks = useSetAtom(callbacksAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -215,13 +218,30 @@ const useInitWidget = (props: WidgetProps) => {
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
+    const callbacks = {
+      onWalletConnected: props.onWalletConnected,
+      onWalletDisconnected: props.onWalletDisconnected,
+      onTransactionBroadcasted: props.onTransactionBroadcasted,
+      onTransactionComplete: props.onTransactionComplete,
+      onTransactionFailed: props.onTransactionFailed,
+    };
+
+    if (Object.values(callbacks).some((callback) => callback !== undefined)) {
+      setCallbacks(callbacks);
+    }
   }, [
+    props,
     props.filter,
+    props.onTransactionBroadcasted,
+    props.onTransactionComplete,
+    props.onTransactionFailed,
+    props.onWalletConnected,
+    props.onWalletDisconnected,
     props.onlyTestnet,
     props.routeConfig,
-    props.settings,
     props.settings?.slippage,
     props.walletConnect,
+    setCallbacks,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
