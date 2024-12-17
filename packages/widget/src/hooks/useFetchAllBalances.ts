@@ -10,7 +10,7 @@ import { ChainType } from '@skip-go/client';
 
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();
-  const { data: assets } = useAtomValue(skipAssetsAtom);
+  const { data: assets, isFetched: assetsFetched } = useAtomValue(skipAssetsAtom);
   const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const connectedAddresses = useAtomValue(connectedAddressesAtom);
