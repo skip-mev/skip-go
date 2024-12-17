@@ -35,7 +35,7 @@ export type ChainAddress = {
   chainType?: ChainType;
   address?: string;
 } & (
-    | { source?: "input" | "parent" }
+    | { source?: "input" | "parent" | "injected" }
     | {
       source?: "wallet";
       wallet: Pick<

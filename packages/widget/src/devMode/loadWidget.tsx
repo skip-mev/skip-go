@@ -46,21 +46,6 @@ const DevMode = () => {
             routeConfig={{
               goFast: true,
             }}
-          // // @ts-expect-error - testing
-          // connectedAddress={{
-          //   "cosmoshub-4": "address",
-          //   "1": "0xaddress",
-          //   "solana": "address",
-          // }}
-          // getCosmosSigner={(chainId) => {
-          //   return getSigner(chainId)
-          // }}
-          // getEVMSigner={(chainId) => {
-          //   return getSigner(chainId)
-          // }}
-          // getSVMSigner={(chainId) => {
-          //   return getSigner(chainId)
-          // }}
           />
         </div>
       </Row>
