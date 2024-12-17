@@ -32,6 +32,7 @@ import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WalletConnect, walletConnectAtom } from "@/state/wallets";
+import { useInitSentry } from "./useInitSentry";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -141,6 +142,7 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 const useInitWidget = (props: WidgetProps) => {
+  useInitSentry();
   useInitDefaultRoute(props.defaultRoute);
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
