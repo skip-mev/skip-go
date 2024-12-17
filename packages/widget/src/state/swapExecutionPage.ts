@@ -12,6 +12,7 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
+import { callbacksAtom } from "./callbacks";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -34,7 +35,7 @@ export type ChainAddress = {
   chainType?: ChainType;
   address?: string;
 } & (
-    | { source?: "input" | "parent" }
+    | { source?: "input" | "parent" | "injected" }
     | {
       source?: "wallet";
       wallet: Pick<
@@ -70,6 +71,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
+  const callbacks = get(callbacksAtom);
   const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
@@ -97,11 +99,29 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
+      callbacks?.onTransactionBroadcasted?.({
+        chainId: txInfo.chainID,
+        txHash: txInfo.txHash,
+        explorerLink: explorerLink ?? "",
+      });
+    },
+    onTransactionCompleted: async (chainId: string, txHash: string) => {
+      const chain = chains?.find((chain) => chain.chainID === chainId);
+      const explorerLink = createExplorerLink({ chainID: chainId, chainType: chain?.chainType, txHash });
+      callbacks?.onTransactionComplete?.({
+        chainId,
+        txHash,
+        explorerLink: explorerLink ?? "",
+      });
     },
     onTransactionSigned: async () => {
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      callbacks?.onTransactionFailed?.({
+        error: (error as Error)?.message,
+      });
+
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         set(errorAtom, {
@@ -221,7 +241,7 @@ export const fallbackGasAmountFnAtom = atom((get) => {
     const defaultGasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
 
     // Special case for carbon-1
-    if (chainId === 'carbon-1') {
+    if (chainId === "carbon-1") {
       return CosmosGasAmount.CARBON;
     }
 

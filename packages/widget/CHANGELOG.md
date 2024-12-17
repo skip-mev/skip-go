@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.0.25
+
+### Patch Changes
+
+- 6e9f9cc: bump chain registry versions
+- Updated dependencies [6e9f9cc]
+  - @skip-go/client@0.15.6
+
 ## 3.0.24
 
 ### Patch Changes

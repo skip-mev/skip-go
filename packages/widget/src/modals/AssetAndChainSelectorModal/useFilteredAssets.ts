@@ -9,36 +9,53 @@ export type useFilteredAssetsProps = {
 
 const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
 
+export const EXCLUDED_TOKEN_COMBINATIONS: {
+  id: string;
+  chainIDs: string[];
+}[] = [
+    { id: "SOL", chainIDs: ["solana"] },
+  ];
+
 export const useFilteredAssets = ({
   groupedAssetsByRecommendedSymbol,
   searchQuery,
 }: useFilteredAssetsProps) => {
-
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;
-    return matchSorter(groupedAssetsByRecommendedSymbol, searchQuery, {
+
+    // Filter out excluded assets first
+    const sanitizedAssets = groupedAssetsByRecommendedSymbol
+      .map((group) => {
+        const allowedAssets = group.assets.filter((asset) => {
+          const isExcluded = EXCLUDED_TOKEN_COMBINATIONS.some(
+            (ex) => ex.id === group.id && ex.chainIDs.includes(asset.chainID)
+          );
+          return !isExcluded;
+        });
+
+        if (allowedAssets.length === 0) return null;
+        return { ...group, assets: allowedAssets };
+      })
+      .filter(Boolean) as GroupedAsset[];
+
+    return matchSorter(sanitizedAssets, searchQuery, {
       keys: ["id", "name"],
     }).sort((assetA, assetB) => {
       const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
 
-      // If both assets have zero balance, sort by privileged status
       if (bothHaveZeroBalance) {
         const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
         const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
 
         const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
-
         if (bothArePrivileged) {
-          // Sort by privilege order
           return aPrivilegedIndex - bPrivilegedIndex;
         }
 
-        // If only one is privileged, it should come first
         if (bPrivilegedIndex !== -1) return 1;
         if (aPrivilegedIndex !== -1) return -1;
       }
 
-      // Sort by USD value (higher values first)
       return assetB.totalUsd - assetA.totalUsd;
     });
   }, [groupedAssetsByRecommendedSymbol, searchQuery]);

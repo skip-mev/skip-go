@@ -6,18 +6,21 @@ import {
   evmWalletAtom,
   svmWalletAtom,
   walletsAtom,
+  connectedAddressesAtom
 } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
+import { walletConnectLogo } from "@/constants/wagmi";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
+  const connectedAddress = useAtomValue(connectedAddressesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const { data: cosmosAccounts, walletType } = useCosmosAccount({
@@ -65,7 +68,18 @@ export const useGetAccount = () => {
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean) => {
+      if (!chainId) return
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
+      if (connectedAddress && connectedAddress[chainId]) {
+        return {
+          address: connectedAddress[chainId],
+          chainType: chainType,
+          wallet: {
+            name: "injected",
+            prettyName: "injected",
+          },
+        }
+      }
       switch (chainType) {
         case ChainType.Cosmos:
           if (walletType && cosmosWallet === undefined) {
@@ -132,7 +146,7 @@ export const useGetAccount = () => {
             wallet: {
               name: evmAccount.connector.id,
               prettyName: evmAccount.connector.name,
-              logo: connectors.find(
+              logo: evmAccount.connector.id === "walletConnect" ? walletConnectLogo : connectors.find(
                 (item) => item.id === evmAccount.connector?.id
               )?.icon,
             },
@@ -172,6 +186,7 @@ export const useGetAccount = () => {
       wallet.cosmos,
       wallet.svm,
       connectors,
+      connectedAddress,
     ]
   );
 

@@ -5,13 +5,15 @@ import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
-
+import { callbacksAtom } from "@/state/callbacks";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
+  const callbacks = useAtomValue(callbacksAtom);
+
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
@@ -27,7 +29,14 @@ export const useCreateSolanaWallets = () => {
           try {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
-            // TODO: onWalletConnected
+            const chain = chains?.find((x) => x.chainID === "solana");
+
+            const address = wallet.publicKey?.toBase58();
+            callbacks?.onWalletConnected?.({
+              walletName: wallet.name,
+              chainId: chain?.chainID,
+              address,
+            });
           } catch (error) {
             console.error(error);
             throw error;
@@ -38,14 +47,22 @@ export const useCreateSolanaWallets = () => {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
             const chain = chains?.find((x) => x.chainID === "solana");
-            const asset = assets?.find((x) => x.denom.toLowerCase() ===
-              "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase());
+            const asset = assets?.find(
+              (x) =>
+                x.denom.toLowerCase() ===
+                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase()
+            );
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
-              ...asset
+              ...asset,
             });
-            // TODO: onWalletConnected
+            const address = wallet.publicKey?.toBase58();
+            callbacks?.onWalletConnected?.({
+              walletName: wallet.name,
+              chainId: chain?.chainID,
+              address,
+            });
           } catch (error) {
             console.error(error);
             throw error;
@@ -56,12 +73,18 @@ export const useCreateSolanaWallets = () => {
             const isConnected = wallet.connected;
             if (!isConnected) {
               await wallet.connect();
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({
+                walletName: wallet.name,
+                chainType: ChainType.SVM,
+              });
             }
             const address = wallet.publicKey;
             if (!address) throw new Error("No address found");
             if (signRequired) {
-              setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+              setSvmWallet({
+                walletName: wallet.name,
+                chainType: ChainType.SVM,
+              });
             }
             return address.toBase58();
           } catch (error) {
@@ -71,7 +94,10 @@ export const useCreateSolanaWallets = () => {
         disconnect: async () => {
           await wallet.disconnect();
           setSvmWallet(undefined);
-          // TODO: onWalletDisconnected
+          callbacks?.onWalletDisconnected?.({
+            walletName: wallet.name,
+            chainType: ChainType.SVM,
+          });
         },
         isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
@@ -79,6 +105,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [assets, chains, setSourceAsset, setSvmWallet]);
+  }, [callbacks, assets, chains, setSourceAsset, setSvmWallet]);
   return { createSolanaWallets };
 };
