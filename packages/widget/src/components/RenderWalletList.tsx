@@ -14,6 +14,7 @@ import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
+import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
 
 export type RenderWalletListProps = {
   title: string;
@@ -21,7 +22,7 @@ export type RenderWalletListProps = {
   onClickBackButton: () => void;
   isDestinationAddress?: boolean;
   chainId?: string;
-  chainType?: string;
+  chainType?: ChainType;
   isConnectEco?: boolean;
   chainAddressIndex?: number;
 };
@@ -74,9 +75,9 @@ export const RenderWalletList = ({
             ...prev,
             [destinationIndex]: {
               chainID: chainId,
-              chainType: chainType as ChainType,
-              address: address,
-              source: "wallet",
+              chainType,
+              address,
+              source: WalletSource.Wallet,
               wallet: {
                 walletName: wallet.walletName,
                 walletPrettyName: wallet.walletPrettyName,

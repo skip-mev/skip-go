@@ -1,4 +1,4 @@
-import { Coin, OfflineAminoSigner } from '@cosmjs/amino';
+import { OfflineAminoSigner } from '@cosmjs/amino';
 import {
   GeneratedType,
   OfflineDirectSigner,
@@ -37,7 +37,7 @@ export type Gas = {
 /** Signer Getters */
 export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getCosmosSigner?: (chainID: string) => Promise<OfflineAminoSigner & OfflineDirectSigner | OfflineAminoSigner | OfflineDirectSigner>;
   getSVMSigner?: () => Promise<Adapter>;
 }
 
