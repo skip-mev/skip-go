@@ -18,7 +18,7 @@ import {
   swapSettingsAtom,
 } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
-import { connectedAddressAtom, getSignersAtom, walletConnectAtom } from "@/state/wallets";
+import { walletConnectAtom, getConnectedSignersAtom, connectedAddressesAtom } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 
 export const useInitWidget = (props: WidgetProps) => {
@@ -116,36 +116,22 @@ export const useInitWidget = (props: WidgetProps) => {
   return { theme: mergedTheme };
 };
 
-const useInitGetSigners = (props: Pick<WidgetProps, "getCosmosSigner" | "getEVMSigner" | "getSVMSigner" | "connectedAddress">) => {
-  const setGetSigners = useSetAtom(getSignersAtom)
-  const setConnectedAddress = useSetAtom(connectedAddressAtom);
+const useInitGetSigners = (props: Partial<WidgetProps>) => {
+  const setGetSigners = useSetAtom(getConnectedSignersAtom);
+  const setInjectedAddresses = useSetAtom(connectedAddressesAtom);
 
+  // Update injected addresses whenever `connectedAddresses` changes
   useEffect(() => {
-    setConnectedAddress(props.connectedAddress);
-  }, [props.connectedAddress, setConnectedAddress]);
+    setInjectedAddresses(props.connectedAddresses);
+  }, [props.connectedAddresses, setInjectedAddresses]);
 
+  // Update all signers together whenever any of them changes
   useEffect(() => {
-    if (props.getCosmosSigner) {
-      setGetSigners({
-        getCosmosSigner: props.getCosmosSigner,
-      });
-    }
-  }, [props.getCosmosSigner, setGetSigners]);
-
-  useEffect(() => {
-    if (props.getEVMSigner) {
-      setGetSigners({
-        getEVMSigner: props.getEVMSigner,
-      });
-    }
-  }, [props.getEVMSigner, setGetSigners]);
-
-  useEffect(() => {
-    if (props.getSVMSigner) {
-      setGetSigners({
-        getSVMSigner: props.getSVMSigner,
-      });
-    }
-  }, [props.getSVMSigner, setGetSigners]);
-
-}
+    setGetSigners((prev) => ({
+      ...prev,
+      ...(props.getCosmosSigner && { getCosmosSigner: props.getCosmosSigner }),
+      ...(props.getEVMSigner && { getEVMSigner: props.getEVMSigner }),
+      ...(props.getSVMSigner && { getSVMSigner: props.getSVMSigner }),
+    }));
+  }, [props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, setGetSigners]);
+};

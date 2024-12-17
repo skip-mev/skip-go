@@ -5,7 +5,8 @@ import {
   chainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
-import { connectedAddressAtom, walletsAtom } from "@/state/wallets";
+import { connectedAddressesAtom } from "@/state/wallets";
+import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
@@ -16,6 +17,7 @@ import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
+import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -30,7 +32,7 @@ export const useAutoSetAddress = () => {
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
 
-  const connectedAddress = useAtomValue(connectedAddressAtom);
+  const connectedAddress = useAtomValue(connectedAddressesAtom);
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
@@ -72,7 +74,7 @@ export const useAutoSetAddress = () => {
               chainID,
               address: connectedAddress[chainID],
               chainType: chains?.find((c) => c.chainID === chainID)?.chainType,
-              source: "injected",
+              source: WalletSource.Injected,
             },
           }));
           return;
@@ -108,7 +110,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.Cosmos,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -148,7 +150,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.SVM,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -189,7 +191,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.EVM,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,

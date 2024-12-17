@@ -7,7 +7,8 @@ import {
 } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
-import { getSignersAtom, walletsAtom } from "./wallets";
+import { walletsAtom } from "./wallets";
+import { getConnectedSignersAtom } from "@/state/wallets";
 import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
@@ -32,7 +33,7 @@ export const themeAtom = atom<Theme>(defaultTheme);
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
   const wallets = get(walletsAtom);
-  const getSigners = get(getSignersAtom);
+  const getSigners = get(getConnectedSignersAtom);
 
   return new SkipClient({
     ...options,
