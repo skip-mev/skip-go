@@ -1,5 +1,14 @@
 # nextjs
 
+<<<<<<< kiki/fre-1310-add-ability-to-inject-wallet-from-app-into-widget
+=======
+## 0.1.26
+
+### Patch Changes
+
+- @skip-go/widget@3.0.24
+
+>>>>>>> staging
 ## 0.1.25
 
 ### Patch Changes

@@ -11,9 +11,7 @@ import { ChainType } from '@skip-go/client';
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setSkipAllBalancesRequest = useSetAtom(
-    skipAllBalancesRequestAtom.debouncedValueAtom
-  );
+  const setSkipAllBalancesRequest = useSetAtom(skipAllBalancesRequestAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
   const connectedAddresses = useAtomValue(connectedAddressesAtom);
   const evmConnectedAddress = useMemo(() => {
@@ -36,30 +34,27 @@ export const useFetchAllBalances = () => {
     return assets?.reduce((acc, asset) => {
       const chain = chains?.find((chain) => chain.chainID === asset.chainID);
       const isEVM = chain?.chainType === ChainType.EVM;
-      const evmAddress = evmConnectedAddress ?? (evmChainId && getAccount(String(evmChainId))?.address)
+      const evmAddress = isEVM && evmChainId ? getAccount(String(evmChainId))?.address : undefined;
+      const addressToUse = evmAddress || getAccount(asset.chainID)?.address;
 
-      const address = isEVM
-        ? evmAddress
-        : getAccount(asset.chainID)?.address;
-
-      if (address && !acc[asset.chainID]) {
-        acc[asset.chainID] = { address };
+      if (addressToUse && !acc[asset.chainID]) {
+        acc[asset.chainID] = { address: addressToUse };
       }
 
       return acc;
     }, {} as Record<string, { address: string }>);
   }, [assets, getAccount, chains, evmChainId, evmConnectedAddress]);
 
-  // using useQuery to trigger the debouncedValueAtom
   useQuery({
     queryKey: ['all-balances-request', allBalancesRequest],
     queryFn: () => {
-      if (allBalancesRequest) {
-        setSkipAllBalancesRequest({
-          chains: allBalancesRequest || {},
-        });
+
+      if (!allBalancesRequest || Object.keys(allBalancesRequest).length === 0) {
+        throw new Error("No balance request provided");
       }
-      return null;
+      setSkipAllBalancesRequest({ chains: allBalancesRequest });
+      return { chains: allBalancesRequest };
     },
+    enabled: assetsFetched,
   });
 };

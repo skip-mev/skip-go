@@ -19,8 +19,9 @@ import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WalletConnect } from "@/state/wallets";
 import { useInitWidget } from "./useInitWidget";
+import { WalletConnect, walletConnectAtom } from "@/state/wallets";
+import { Callbacks, callbacksAtom } from "@/state/callbacks";
 
 export type WidgetRouteConfig = Omit<
   RouteConfig,
@@ -60,7 +61,7 @@ export type WidgetProps = {
 } & Pick<
   NewSkipClientOptions,
   "apiUrl" | "chainIdsToAffiliates" | "endpointOptions" | "getCosmosSigner" | "getEVMSigner" | "getSVMSigner"
->;
+> & Callbacks;
 
 type NewSwapVenueRequest = {
   name: string;
@@ -140,7 +141,6 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
     </WidgetContainer>
   );
 };
-
 
 const WidgetContainer = styled.div`
   width: 100%;
