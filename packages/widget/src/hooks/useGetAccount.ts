@@ -12,6 +12,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
+import { walletConnectLogo } from "@/constants/wagmi";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
@@ -132,7 +133,7 @@ export const useGetAccount = () => {
             wallet: {
               name: evmAccount.connector.id,
               prettyName: evmAccount.connector.name,
-              logo: connectors.find(
+              logo: evmAccount.connector.id === "walletConnect" ? walletConnectLogo : connectors.find(
                 (item) => item.id === evmAccount.connector?.id
               )?.icon,
             },
