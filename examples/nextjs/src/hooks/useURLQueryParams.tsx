@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { WidgetProps } from '@skip-go/widget';
 
 export const useQueryParams = () => {
-  const [params, setParams] = useState<WidgetProps['defaultRoute']>({});
+  const [params, setParams] = useState<WidgetProps['defaultRoute']>(undefined);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -34,6 +34,8 @@ export const useQueryParams = () => {
           }
         }
       });
+
+      if (!Object.keys(result).length) return;
 
       setParams(result as WidgetProps['defaultRoute']);
     }
