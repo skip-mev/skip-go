@@ -53,7 +53,7 @@ export const ConnectedWalletContent = () => {
         align="center"
         gap={8}
       >
-        {sourceAccount && (
+        {sourceAccount?.wallet.logo && (
           <img
             style={{ objectFit: "cover" }}
             src={sourceAccount?.wallet.logo}

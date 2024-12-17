@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.15.6
+
+### Patch Changes
+
+- 6e9f9cc: bump chain registry versions
+
 ## 0.15.5
 
 ### Patch Changes

@@ -25,6 +25,12 @@ export type SetAddressModalProps = ModalProps & {
   chainAddressIndex?: number
 };
 
+export enum WalletSource {
+  Input = "input",
+  Wallet = "wallet",
+  Injected = "injected",
+}
+
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { theme, chainId, chainAddressIndex } = modalProps;
@@ -97,7 +103,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           chainID: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
-          source: "input",
+          source: WalletSource.Input,
         },
       };
     });

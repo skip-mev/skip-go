@@ -5,6 +5,7 @@ import {
   chainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
+import { connectedAddressesAtom } from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
@@ -16,6 +17,7 @@ import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
+import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -29,6 +31,8 @@ export const useAutoSetAddress = () => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
+
+  const connectedAddress = useAtomValue(connectedAddressesAtom);
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
@@ -63,6 +67,18 @@ export const useAutoSetAddress = () => {
           return;
         }
         const isSignRequired = signRequiredChains?.includes(chainID);
+        if (connectedAddress?.[chainID]) {
+          setChainAddresses((prev) => ({
+            ...prev,
+            [index]: {
+              chainID,
+              address: connectedAddress[chainID],
+              chainType: chains?.find((c) => c.chainID === chainID)?.chainType,
+              source: WalletSource.Injected,
+            },
+          }));
+          return;
+        }
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
@@ -94,7 +110,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.Cosmos,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -134,7 +150,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.SVM,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -175,7 +191,7 @@ export const useAutoSetAddress = () => {
                   chainID,
                   address,
                   chainType: ChainType.EVM,
-                  source: "wallet",
+                  source: WalletSource.Wallet,
                   wallet: {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
@@ -205,7 +221,8 @@ export const useAutoSetAddress = () => {
       sourceWallet.evm,
       sourceWallet.svm,
       signRequiredChains,
-      chainAddresses
+      chainAddresses,
+      connectedAddress,
     ]
   );
 
@@ -213,13 +230,13 @@ export const useAutoSetAddress = () => {
     queryKey: [
       "auto-set-address",
       {
-        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses
+        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses, connectedAddress,
       },
     ],
     enabled:
       !!requiredChainAddresses &&
       !!chains &&
-      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm),
+      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm || !!connectedAddress),
     queryFn: async () => {
       if (!requiredChainAddresses) return;
       await connectRequiredChains();

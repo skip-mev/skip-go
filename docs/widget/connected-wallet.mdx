@@ -1,0 +1,43 @@
+---
+title: 'Connected Wallet'
+
+---
+
+## Overview
+
+If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you can provide this information directly to the Widget. By doing so, the Widget will:
+
+- Display and query balances for the user's already-connected wallet addresses for supported chains.
+- Use the signer functions you provide to facilitate transactions, token swaps, or any operation that requires the user's signature.
+
+This eliminates the need for the user to perform a separate connection flow within the widget itself, improving their overall experience and reducing friction.
+
+<Info>
+See a full code example [here](https://github.com/skip-mev/skip-go/tree/staging/examples/nextjs/src/app/injected/page.tsx).
+</Info>
+
+## Key Props and Concepts
+
+### `connectedAddresses`
+
+The `connectedAddresses` prop is a map from chain IDs to addresses. This map tells the widget which addresses are currently connected and should be used for transactions.
+
+- **Type:** `Record<ChainId, Address>`
+- **Example:** 
+  ```typescript
+  const accountMap: Record<string, string> = {
+    "1": "0x123...abc",          // Ethereum mainnet address
+    "solana": "3n9...xyz",       // Solana address
+    "cosmoshub-4": "cosmos1...", // Cosmos Hub address
+    ...
+  };
+  
+### Signer Functions
+
+In addition to passing in `connectedAddresses`, you must also provide the widget with signer functions so it can sign and send transactions on behalf of the user. These functions vary by chain type and are provided as separate props:
+
+- `getCosmosSigner() => Promise<OfflineSigner>`
+- `getEVMSigner() => Promise<WalletClient>`
+- `getSVMSigner() => Promise<PhantomWalletAdapter>`
+
+Each of these functions should return a signer (or signer-like interface) that the widget can use to create and broadcast transactions.

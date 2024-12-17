@@ -8,6 +8,7 @@ import {
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { walletsAtom } from "./wallets";
+import { getConnectedSignersAtom } from "@/state/wallets";
 import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
@@ -32,10 +33,14 @@ export const themeAtom = atom<Theme>(defaultTheme);
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
   const wallets = get(walletsAtom);
+  const getSigners = get(getConnectedSignersAtom);
 
   return new SkipClient({
     ...options,
     getCosmosSigner: async (chainID) => {
+      if (getSigners?.getCosmosSigner) {
+        return getSigners.getCosmosSigner(chainID);
+      }
       if (!wallets.cosmos) {
         throw new Error("getCosmosSigner error: no cosmos wallet");
       }
@@ -50,6 +55,9 @@ export const skipClient = atom((get) => {
         : wallet.getOfflineSigner(chainID);
     },
     getEVMSigner: async (chainID) => {
+      if (getSigners?.getEVMSigner) {
+        return getSigners.getEVMSigner(chainID);
+      }
       const evmWalletClient = (await getWalletClient(config, {
         chainId: parseInt(chainID),
       })) as WalletClient;
@@ -57,6 +65,9 @@ export const skipClient = atom((get) => {
       return evmWalletClient;
     },
     getSVMSigner: async () => {
+      if (getSigners?.getSVMSigner) {
+        return getSigners.getSVMSigner()
+      }
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
