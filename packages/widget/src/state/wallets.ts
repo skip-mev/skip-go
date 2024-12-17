@@ -30,7 +30,6 @@ type WalletState = {
   chainType: string;
 };
 
-
 export type WalletConnect = {
   options: Pick<SignClientTypes.Options, 'projectId' | 'name'> | null;
   walletConnectModal?: Pick<
