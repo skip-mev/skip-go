@@ -50,15 +50,48 @@ export default function Home() {
         }}
       >
         {/* widget will cohere to the parent container's width */}
-        <div style={{
-          width: '100%',
-          maxWidth: 500,
-          padding: '0 10px',
-          boxSizing: 'border-box'
-        }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 500,
+            padding: '0 10px',
+            boxSizing: 'border-box',
+          }}
+        >
           <Widget
             theme={theme}
             defaultRoute={defaultRoute}
+            onWalletConnected={({ walletName, chainIdToAddressMap, chainId, address }) => {
+              console.log(
+                'wallet connected',
+                walletName,
+                chainIdToAddressMap,
+                chainId,
+                address
+              );
+            }}
+            onWalletDisconnected={({ walletName, chainType }) => {
+              console.log('wallet disconnected', walletName, chainType);
+            }}
+            onTransactionBroadcasted={({ txHash, chainId, explorerLink }) => {
+              console.log(
+                'transaction broadcasted',
+                txHash,
+                chainId,
+                explorerLink
+              );
+            }}
+            onTransactionFailed={({ error }) => {
+              console.log('transaction failed', error);
+            }}
+            onTransactionComplete={({ txHash, chainId, explorerLink }) => {
+              console.log(
+                'transaction complete',
+                txHash,
+                chainId,
+                explorerLink
+              );
+            }}
           />
         </div>
       </div>
