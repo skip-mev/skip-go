@@ -2076,6 +2076,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ('stargate_transfer' in value) {
+    return {
+      stargateTransfer: stargateTransferInfoFromJSON(value.stargate_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -2109,6 +2115,11 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ('goFastTransfer' in value) {
     return {
       go_fast_transfer: goFastTransferInfoToJson(value.goFastTransfer),
+    };
+  }
+  if ('stargateTransfer' in value) {
+    return {
+      stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
     };
   }
 
