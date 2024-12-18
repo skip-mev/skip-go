@@ -61,11 +61,11 @@ export default function Home() {
           <Widget
             theme={theme}
             defaultRoute={defaultRoute}
-            onWalletConnected={(props) => console.log({ props })}
-            onWalletDisconnected={(props) => console.log({ props })}
-            onTransactionBroadcasted={(props) => console.log({ props })}
-            onTransactionFailed={(props) => console.log({ props })}
-            onTransactionComplete={(props) => console.log({ props })}
+            onWalletConnected={(props) => console.log('onWalletConnected', { ...props })}
+            onWalletDisconnected={(props) => console.log('onWalletDisconnected', { ...props })}
+            onTransactionBroadcasted={(props) => console.log('onTransactionBroadcasted', { ...props })}
+            onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
+            onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
           />
         </div>
       </div>

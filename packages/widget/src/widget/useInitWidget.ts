@@ -114,6 +114,11 @@ export const useInitWidget = (props: WidgetProps) => {
     }
 
   }, [
+    props.onTransactionFailed,
+    props.onTransactionComplete,
+    props.onTransactionBroadcasted,
+    props.onWalletDisconnected,
+    props.onWalletConnected,
     props.filter,
     props.onlyTestnet,
     props.routeConfig,
