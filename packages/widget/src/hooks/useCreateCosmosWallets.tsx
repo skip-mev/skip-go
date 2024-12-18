@@ -53,6 +53,7 @@ export const useCreateCosmosWallets = () => {
         WalletType.STATION,
         WalletType.VECTIS,
         WalletType.WALLETCONNECT,
+        WalletType.COSMIFRAME
       ];
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [
