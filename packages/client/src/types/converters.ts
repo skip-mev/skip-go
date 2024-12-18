@@ -49,6 +49,10 @@ import {
   GoFastTransferInfoJSON,
   GoFastTransferTransactions,
   GoFastTransferTransactionsJSON,
+  StargateTransferInfo,
+  StargateTransferInfoJSON,
+  StargateTransferTransactionsJSON,
+  StargateTransferTransactions,
 } from './lifecycle';
 import {
   Chain,
@@ -1685,6 +1689,7 @@ export function hyperlaneTransferToJSON(
   };
 }
 
+
 export function opInitTransferFromJSON(
   value: OPInitTransferJSON
 ): OPInitTransfer {
@@ -2458,6 +2463,30 @@ export function opInitTransferTransactionsToJSON(
   };
 }
 
+export function stargateTransferTransactionsFromJSON(
+  value: StargateTransferTransactionsJSON
+): StargateTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+    errorTx: value.error_tx ? chainTransactionFromJSON(value.error_tx) : null,
+  };
+}
+
+export function stargateTransferTransactionsToJSON(
+  value: StargateTransferTransactions
+): StargateTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+    error_tx: value.errorTx ? chainTransactionToJSON(value.errorTx) : null,
+  };
+}
+
 export function opInitTransferInfoFromJSON(
   value: OPInitTransferInfoJSON
 ): OPInitTransferInfo {
@@ -2477,6 +2506,28 @@ export function opInitTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && opInitTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function stargateTransferInfoFromJSON(
+  value: StargateTransferInfoJSON
+): StargateTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && stargateTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function stargateTransferInfoToJSON(
+  value: StargateTransferInfo
+): StargateTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && stargateTransferTransactionsToJSON(value.txs),
   };
 }
 export function msgsDirectRequestFromJSON(

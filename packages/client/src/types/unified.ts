@@ -531,13 +531,14 @@ export type MsgsResponse = {
   warning?: MsgsWarning;
 };
 
-export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST';
+export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE';
 
 export enum ChainType {
   Cosmos = 'cosmos',
   EVM = 'evm',
   SVM = 'svm',
 }
+
 export type TxResult = {
   txHash: string
   chainID: string

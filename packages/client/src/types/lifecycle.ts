@@ -436,17 +436,22 @@ export type GoFastTransferInfo = {
 };
 
 export type StargateTransferState =
-  | "TBD"
+  | "STARGATE_TRANSFER_UNKNOWN"
+  | "STARGATE_TRANSFER_SENT"
+  | "STARGATE_TRANSFER_RECEIVED"
+  | "STARGATE_TRANSFER_FAILED"
 
 
 export type StargateTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
   receive_tx: ChainTransactionJSON | null;
+  error_tx: ChainTransactionJSON | null;
 };
 
 export type StargateTransferTransactions = {
   sendTx: ChainTransaction | null;
   receiveTx: ChainTransaction | null;
+  errorTx: ChainTransaction | null;
 };
 
 export type StargateTransferInfoJSON = {
