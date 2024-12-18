@@ -283,6 +283,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...hyperlaneTransfer,
     ...opInitTransfer,
     ...goFastTransfer,
+    ...stargateTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -327,6 +328,7 @@ export function getSimpleStatus(
     | HyperlaneTransferState
     | OPInitTransferState
     | GoFastTransferState
+    | StargateTransferState
 ): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
@@ -339,12 +341,14 @@ export function getSimpleStatus(
     case "HYPERLANE_TRANSFER_SENT":
     case "OPINIT_TRANSFER_SENT":
     case "GO_FAST_TRANSFER_SENT":
+    case "STARGATE_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
     case "CCTP_TRANSFER_RECEIVED":
     case "HYPERLANE_TRANSFER_RECEIVED":
     case "OPINIT_TRANSFER_RECEIVED":
+    case "STARGATE_TRANSFER_RECEIVED":
     case "GO_FAST_TRANSFER_FILLED":
       return "completed";
     default:
