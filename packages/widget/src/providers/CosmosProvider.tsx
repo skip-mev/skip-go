@@ -28,7 +28,10 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
           name: walletConnect.options?.name
         },
         walletConnectModal: walletConnect?.walletConnectModal
-      }
+      },
+      iframeOptions: {
+        allowedIframeParentOrigins: ["https://daodao.zone", "https://dao.daodao.zone"]
+      },
     }}>
       {children}
     </GrazProvider>

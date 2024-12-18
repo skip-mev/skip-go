@@ -7,6 +7,7 @@ import {
   WalletType,
   connect,
   isWalletConnect,
+  checkWallet,
 } from "graz";
 import { useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -45,6 +46,8 @@ export const useCreateCosmosWallets = () => {
   const createCosmosWallets = useCallback(
     (chainID?: string) => {
       const mobile = isMobile();
+
+      const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
       const browserWallets = [
         WalletType.KEPLR,
         WalletType.LEAP,
@@ -54,6 +57,9 @@ export const useCreateCosmosWallets = () => {
         WalletType.VECTIS,
         WalletType.WALLETCONNECT,
       ];
+      if (isIframeAvailable) {
+        browserWallets.push(WalletType.COSMIFRAME);
+      }
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [
         ...browserWallets,
