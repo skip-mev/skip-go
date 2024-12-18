@@ -41,6 +41,8 @@ import {
   SmartSwapOptionsJSON,
   ChainAffiliatesJSON,
   ChainAffiliates,
+  StargateTransferJSON,
+  StargateTransfer,
 } from './shared';
 
 export type AssetsRequestJSON = {
@@ -290,7 +292,8 @@ export type OperationJSON =
   | (BaseOperationJSON & { hyperlane_transfer: HyperlaneTransferJSON })
   | (BaseOperationJSON & { evm_swap: EvmSwapJSON })
   | (BaseOperationJSON & { op_init_transfer: OPInitTransferJSON })
-  | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON });
+  | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON })
+  | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON });
 
 interface BaseOperation {
   txIndex: number;
@@ -307,7 +310,8 @@ export type Operation =
   | (BaseOperation & { hyperlaneTransfer: HyperlaneTransfer })
   | (BaseOperation & { evmSwap: EvmSwap })
   | (BaseOperation & { opInitTransfer: OPInitTransfer })
-  | (BaseOperation & { goFastTransfer: GoFastTransfer });
+  | (BaseOperation & { goFastTransfer: GoFastTransfer })
+  | (BaseOperation & { stargateTransfer: StargateTransfer });
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -527,13 +531,14 @@ export type MsgsResponse = {
   warning?: MsgsWarning;
 };
 
-export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST';
+export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE';
 
 export enum ChainType {
   Cosmos = 'cosmos',
   EVM = 'evm',
   SVM = 'svm',
 }
+
 export type TxResult = {
   txHash: string
   chainID: string

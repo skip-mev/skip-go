@@ -13,6 +13,9 @@ import {
   HyperlaneTransfer,
   HyperlaneTransferInfo,
   HyperlaneTransferState,
+  StargateTransferInfo,
+  StargateTransfer,
+  StargateTransferState,
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
@@ -39,6 +42,7 @@ export enum OperationType {
   opInitTransfer = "opInitTransfer",
   bankSend = "bankSend",
   goFastTransfer = "goFastTransfer",
+  stargateTransfer = "stargateTransfer",
 }
 
 type CombinedOperation = {
@@ -54,6 +58,7 @@ type CombinedOperation = {
   evmSwap?: EvmSwap;
   opInitTransfer?: OPInitTransfer;
   goFastTransfer?: GoFastTransfer;
+  stargateTransfer?: StargateTransfer;
 };
 
 type OperationDetails = CombineObjectTypes<
@@ -64,6 +69,7 @@ type OperationDetails = CombineObjectTypes<
   CCTPTransfer &
   HyperlaneTransfer &
   EvmSwap &
+  StargateTransfer &
   OPInitTransfer &
   GoFastTransfer
 > & {
@@ -220,6 +226,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const opInitTransfer =
     combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
   const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
+  const stargateTransfer = combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -234,6 +241,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.opInitTransfer;
   } else if (goFastTransfer) {
     transferType = TransferType.goFastTransfer;
+  } else if (stargateTransfer) {
+    transferType = TransferType.stargateTransfer;
   }
 
   const getExplorerLink = (type: "send" | "receive") => {
@@ -254,7 +263,9 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
         type RemainingTransferTypes =
           | CCTPTransferInfo
           | HyperlaneTransferInfo
-          | OPInitTransferInfo;
+          | OPInitTransferInfo
+          | StargateTransferInfo;
+
         if (type === "send") {
           return (combinedTransferEvent[transferType] as RemainingTransferTypes)
             ?.txs.sendTx?.explorerLink;
@@ -268,8 +279,11 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...axelarTransfer,
     ...cctpTransfer,
     ...hyperlaneTransfer,
+    ...stargateTransfer,
+    ...hyperlaneTransfer,
     ...opInitTransfer,
     ...goFastTransfer,
+    ...stargateTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -314,6 +328,7 @@ export function getSimpleStatus(
     | HyperlaneTransferState
     | OPInitTransferState
     | GoFastTransferState
+    | StargateTransferState
 ): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
@@ -326,12 +341,14 @@ export function getSimpleStatus(
     case "HYPERLANE_TRANSFER_SENT":
     case "OPINIT_TRANSFER_SENT":
     case "GO_FAST_TRANSFER_SENT":
+    case "STARGATE_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
     case "CCTP_TRANSFER_RECEIVED":
     case "HYPERLANE_TRANSFER_RECEIVED":
     case "OPINIT_TRANSFER_RECEIVED":
+    case "STARGATE_TRANSFER_RECEIVED":
     case "GO_FAST_TRANSFER_FILLED":
       return "completed";
     default:
@@ -346,6 +363,8 @@ type CombinedTransferEvent = {
   [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
   [TransferType.opInitTransfer]: OPInitTransferInfo;
   [TransferType.goFastTransfer]: GoFastTransferInfo;
+  [TransferType.stargateTransfer]: StargateTransferInfo;
+
 };
 
 export enum TransferType {
@@ -355,6 +374,7 @@ export enum TransferType {
   hyperlaneTransfer = "hyperlaneTransfer",
   opInitTransfer = "opInitTransfer",
   goFastTransfer = "goFastTransfer",
+  stargateTransfer = "stargateTransfer",
 }
 
 export type SimpleStatus =
@@ -376,7 +396,8 @@ export type ClientTransferEvent = {
   | CCTPTransferState
   | HyperlaneTransferState
   | OPInitTransferState
-  | GoFastTransferState;
+  | GoFastTransferState
+  | StargateTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;
