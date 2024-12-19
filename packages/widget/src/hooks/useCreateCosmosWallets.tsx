@@ -132,15 +132,13 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
         const isWC = isWalletConnect(wallet);
-
+        const mobile = isMobile()
         const walletInfo = getCosmosWalletInfo(wallet);
-        const initialChainIds = (
-          isWC
-            ? walletConnectMainnetChainIdsInitialConnect
-            : wallet === WalletType.KEPLR
-              ? keplrMainnetChainIdsInitialConnect
-              : walletMainnetChainIdsInitialConnect
-        ).filter(
+        const initialChainIds = (() => {
+          if (isWC) return walletConnectMainnetChainIdsInitialConnect
+          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect
+          return walletMainnetChainIdsInitialConnect
+        })().filter(
           (x) =>
             chains
               ?.filter((z) => z.chainType === ChainType.Cosmos)
