@@ -49,6 +49,10 @@ import {
   GoFastTransferInfoJSON,
   GoFastTransferTransactions,
   GoFastTransferTransactionsJSON,
+  StargateTransferInfo,
+  StargateTransferInfoJSON,
+  StargateTransferTransactionsJSON,
+  StargateTransferTransactions,
 } from './lifecycle';
 import {
   Chain,
@@ -129,6 +133,8 @@ import {
   GoFastTransferJSON,
   GoFastFee,
   GoFastFeeJSON,
+  StargateTransferJSON,
+  StargateTransfer,
 } from './shared';
 import {
   AssetBetweenChains,
@@ -878,6 +884,43 @@ export function goFastTransferFromJSON(goFastJSON: GoFastTransferJSON): GoFastTr
     destinationDomain: goFastJSON.destination_domain,
   };
 }
+
+export function stargateTransferFromJSON(stargateTransferJSON: StargateTransferJSON): StargateTransfer {
+  return {
+    fromChainID: stargateTransferJSON.from_chain_id,
+    toChainID: stargateTransferJSON.to_chain_id,
+    denomIn: stargateTransferJSON.denom_in,
+    denomOut: stargateTransferJSON.denom_out,
+    poolAddress: stargateTransferJSON.pool_address,
+    destinationEndpointID: stargateTransferJSON.destination_endpoint_id,
+    oftFeeAsset: assetFromJSON(stargateTransferJSON.oft_fee_asset),
+    oftFeeAmount: stargateTransferJSON.oft_fee_amount,
+    oftFeeAmountUSD: stargateTransferJSON.oft_fee_amount_usd,
+    sendFeeAsset: assetFromJSON(stargateTransferJSON.send_fee_asset),
+    sendFeeAmount: stargateTransferJSON.send_fee_amount,
+    sendFeeAmountUSD: stargateTransferJSON.send_fee_amount_usd,
+    bridgeID: stargateTransferJSON.bridge_id,
+  }
+}
+
+export function stargateTransferToJSON(stargateTransfer: StargateTransfer): StargateTransferJSON {
+  return {
+    from_chain_id: stargateTransfer.fromChainID,
+    to_chain_id: stargateTransfer.toChainID,
+    denom_in: stargateTransfer.denomIn,
+    denom_out: stargateTransfer.denomOut,
+    pool_address: stargateTransfer.poolAddress,
+    destination_endpoint_id: stargateTransfer.destinationEndpointID,
+    oft_fee_asset: assetToJSON(stargateTransfer.oftFeeAsset),
+    oft_fee_amount: stargateTransfer.oftFeeAmount,
+    oft_fee_amount_usd: stargateTransfer.oftFeeAmountUSD,
+    send_fee_asset: assetToJSON(stargateTransfer.sendFeeAsset),
+    send_fee_amount: stargateTransfer.sendFeeAmount,
+    send_fee_amount_usd: stargateTransfer.sendFeeAmountUSD,
+    bridge_id: stargateTransfer.bridgeID,
+  }
+}
+
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   const commonProps = {
     txIndex: operationJSON.tx_index,
@@ -931,6 +974,13 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     return {
       ...commonProps,
       goFastTransfer: goFastTransferFromJSON(operationJSON.go_fast_transfer),
+    };
+  }
+
+  if ('stargate_transfer' in operationJSON) {
+    return {
+      ...commonProps,
+      stargateTransfer: stargateTransferFromJSON(operationJSON.stargate_transfer),
     };
   }
 
@@ -1004,6 +1054,13 @@ export function operationToJSON(operation: Operation): OperationJSON {
     return {
       ...commonProps,
       go_fast_transfer: goFastTransferToJSON(operation.goFastTransfer),
+    };
+  }
+
+  if ('stargateTransfer' in operation) {
+    return {
+      ...commonProps,
+      stargate_transfer: stargateTransferToJSON(operation.stargateTransfer),
     };
   }
 
@@ -1632,6 +1689,7 @@ export function hyperlaneTransferToJSON(
   };
 }
 
+
 export function opInitTransferFromJSON(
   value: OPInitTransferJSON
 ): OPInitTransfer {
@@ -2018,6 +2076,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ('stargate_transfer' in value) {
+    return {
+      stargateTransfer: stargateTransferInfoFromJSON(value.stargate_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -2051,6 +2115,11 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ('goFastTransfer' in value) {
     return {
       go_fast_transfer: goFastTransferInfoToJson(value.goFastTransfer),
+    };
+  }
+  if ('stargateTransfer' in value) {
+    return {
+      stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
     };
   }
 
@@ -2405,6 +2474,30 @@ export function opInitTransferTransactionsToJSON(
   };
 }
 
+export function stargateTransferTransactionsFromJSON(
+  value: StargateTransferTransactionsJSON
+): StargateTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+    errorTx: value.error_tx ? chainTransactionFromJSON(value.error_tx) : null,
+  };
+}
+
+export function stargateTransferTransactionsToJSON(
+  value: StargateTransferTransactions
+): StargateTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+    error_tx: value.errorTx ? chainTransactionToJSON(value.errorTx) : null,
+  };
+}
+
 export function opInitTransferInfoFromJSON(
   value: OPInitTransferInfoJSON
 ): OPInitTransferInfo {
@@ -2424,6 +2517,28 @@ export function opInitTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && opInitTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function stargateTransferInfoFromJSON(
+  value: StargateTransferInfoJSON
+): StargateTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && stargateTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function stargateTransferInfoToJSON(
+  value: StargateTransferInfo
+): StargateTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && stargateTransferTransactionsToJSON(value.txs),
   };
 }
 export function msgsDirectRequestFromJSON(
