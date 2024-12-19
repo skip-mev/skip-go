@@ -50,15 +50,22 @@ export default function Home() {
         }}
       >
         {/* widget will cohere to the parent container's width */}
-        <div style={{
-          width: '100%',
-          maxWidth: 500,
-          padding: '0 10px',
-          boxSizing: 'border-box'
-        }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 500,
+            padding: '0 10px',
+            boxSizing: 'border-box',
+          }}
+        >
           <Widget
             theme={theme}
             defaultRoute={defaultRoute}
+            onWalletConnected={(props) => console.log('onWalletConnected', { ...props })}
+            onWalletDisconnected={(props) => console.log('onWalletDisconnected', { ...props })}
+            onTransactionBroadcasted={(props) => console.log('onTransactionBroadcasted', { ...props })}
+            onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
+            onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
           />
         </div>
       </div>

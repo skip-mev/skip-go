@@ -23,6 +23,5 @@ export const useShowCosmosLedgerWarning = () => {
     sourceAsset?.chainID,
     chainType,
     getAccount,
-    knownEthermintLikeChains,
   ])
 }
