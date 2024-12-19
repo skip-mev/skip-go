@@ -1,5 +1,23 @@
 ## 0.0.15
 
+## 3.1.0
+
+### Minor Changes
+
+- dacf973: evm mobile wallet support
+
+### Patch Changes
+
+- dacf973: ability to pass signer and account
+- dacf973: fix balance loading display state
+- dacf973: fix loading indicator
+- dacf973: Add callback functions for wallet connect/disconnect and transaction broadcasted / completed / failed
+- dacf973: exclude assets programatically
+- dacf973: add daodao iframe wallet
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+  - @skip-go/client@0.16.0
+
 ## 3.0.25
 
 ### Patch Changes
