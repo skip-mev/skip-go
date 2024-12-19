@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.1.1
+
+### Patch Changes
+
+- bc373bd: fix keplr in app browser issue
+
 ## 3.1.0
 
 ### Minor Changes
