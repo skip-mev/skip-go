@@ -189,7 +189,10 @@ Below are detailed explanations of the different fields and their purposes:
   * `order_filled_tx`: The transaction where the solver called fulfill on the destination chain.
   * `order_refunded_tx`: The transaction where the user received a refund on the source chain, if applicable.
   * `order_timeout_tx`: The transaction indicating a timeout occurred in the transfer process.
+<<<<<<< HEAD
 * `error_message`: A message describing the error that occurred during the transfer, if applicable.
+=======
+>>>>>>> dacf973d (chore: release (#598))
 
 
 When tracking a Go Fast transfer, you can use the `GoFastTransferInfo` to monitor the progress and status of your asset transfer between chains. For instance, if the state is `GO_FAST_TRANSFER_FILLED`, you know that the transfer was successful and your assets should be available on the destination chain. If the state is `GO_FAST_TRANSFER_TIMEOUT`, you can check the `orderTimeoutTx` for details on the timeout event.
