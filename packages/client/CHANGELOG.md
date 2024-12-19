@@ -1,5 +1,15 @@
 # @skip-go/client
 
+## 0.16.0
+
+### Minor Changes
+
+- dacf973: stargate transfer types
+
+### Patch Changes
+
+- dacf973: update getCosmosSigner type
+
 ## 0.15.6
 
 ### Patch Changes

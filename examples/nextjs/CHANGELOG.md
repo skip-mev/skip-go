@@ -1,5 +1,19 @@
 # nextjs
 
+## 0.1.28
+
+### Patch Changes
+
+- dacf973: fix example default route and client asset search
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+  - @skip-go/widget@3.1.0
+
 ## 0.1.27
 
 ### Patch Changes
