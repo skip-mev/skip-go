@@ -426,6 +426,7 @@ export type GoFastTransferInfoJSON = {
   to_chain_id: string;
   state: GoFastTransferState;
   txs: GoFastTransferTransactionsJSON;
+  error_message: string | null;
 };
 
 export type GoFastTransferInfo = {
@@ -433,6 +434,7 @@ export type GoFastTransferInfo = {
   toChainID: string;
   state: GoFastTransferState;
   txs: GoFastTransferTransactions;
+  errorMessage: string | null;
 };
 
 export type StargateTransferState =
