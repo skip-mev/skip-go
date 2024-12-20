@@ -1,6 +1,6 @@
 import { createModal, ModalProps } from "@/components/Modal";
 import { Row } from "@/components/Layout";
-import { css, styled } from "styled-components";
+import { css, styled, useTheme } from "styled-components";
 import { useCallback, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
@@ -33,7 +33,9 @@ export enum WalletSource {
 
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { theme, chainId, chainAddressIndex } = modalProps;
+  const { chainId, chainAddressIndex } = modalProps;
+  // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
+  const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find(c => c.chainID === chainId);
   const chainName = chain?.prettyName;
@@ -41,7 +43,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
   const _walletList = useWalletList({ chainID: chainId, destinationWalletList: true });
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
+
+  // If not same chain transaction, show warning
+  const showWithdrawalWarning = (
+    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID))
+  ).size > 1;
 
   const walletList = [
     ..._walletList,
@@ -122,6 +129,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
               </StyledChainLogoContainerRow>
             )}
           />
+          {showWithdrawalWarning && (
+            <SmallText color={theme?.error?.text} textAlign="center">
+              Avoid transfers to centralized exchanges. Your assets may be lost.
+            </SmallText>
+          )}
           <StyledInputContainer>
             <StyledInput
               placeholder={placeholder}
