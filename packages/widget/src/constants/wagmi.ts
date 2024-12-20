@@ -131,7 +131,7 @@ export const config: Config = createConfig({
   }),
   connectors: [
     walletConnect({
-      projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+      projectId: "19b7fb4e5adc3e74e37aa00c05937fa5",
       showQrModal: true
     })
   ]
