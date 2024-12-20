@@ -3,7 +3,7 @@ import { styled, useTheme } from "styled-components";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
-import { Text } from "@/components/Typography";
+import { SmallText, Text } from "@/components/Typography";
 import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
@@ -60,7 +60,17 @@ export const RenderWalletList = ({
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
-  const availableWallets = walletList.filter((w) => isMinimalWallet(w) && w?.isAvailable !== false);
+
+  const displayWallets = useMemo(() => {
+    const filteredWallets = walletList.filter(
+      (wallet) => isMinimalWallet(wallet) && wallet?.isAvailable !== false
+    );
+
+    // If only walletconnect is available, return the list as is to show install options.
+    if (filteredWallets.length === 1) return walletList
+    return filteredWallets.length === 1 ? walletList : filteredWallets;
+
+  }, [walletList]);
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
@@ -111,17 +121,13 @@ export const RenderWalletList = ({
         ? wallet.walletPrettyName ?? wallet.walletName
         : wallet.walletName;
 
-      const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
-      const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
-      const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
-
-      if (availableWallets.length > 0 && isAvailable === false) {
-        return <></>;
-      }
+      const imageUrl = isMinimalWallet(wallet) ? wallet?.walletInfo?.logo : undefined;
+      const rightContent = isManualWalletEntry(wallet) ? wallet?.rightContent : undefined;
+      const isAvailable = isMinimalWallet(wallet) ? wallet?.isAvailable : undefined;
 
       const renderedRightContent = rightContent?.() ?? <></>;
 
-      const imageElement = imageUrl ? (
+      const imageElement = (
         <img
           height={35}
           width={35}
@@ -129,7 +135,7 @@ export const RenderWalletList = ({
           src={imageUrl}
           alt={`${name}-logo`}
         />
-      ) : <></>;
+      )
 
       const onClickConnectWallet = () => {
         if (isMinimalWallet(wallet)) {
@@ -140,9 +146,12 @@ export const RenderWalletList = ({
       };
 
       const leftContent = (
-        <Row align="center" gap={10}>
-          {imageElement}
-          <Text>{name}</Text>
+        <Row style={{ width: "100%" }} align="center" justify="space-between">
+          <Row align="center" gap={10}>
+            {imageElement}
+            <Text>{name}</Text>
+          </Row>
+          {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
         </Row>
       );
 
@@ -156,12 +165,12 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation, availableWallets]
+    [connectMutation, displayWallets]
   );
 
   const height = useMemo(() => {
-    return Math.min(530, availableWallets.length * (ITEM_HEIGHT + ITEM_GAP));
-  }, [walletList, availableWallets]);
+    return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
+  }, [walletList, displayWallets]);
 
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
@@ -205,7 +214,7 @@ export const RenderWalletList = ({
     return (
       <VirtualList
         height={height}
-        listItems={availableWallets}
+        listItems={displayWallets}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
         itemKey={(item) => item.walletName}
