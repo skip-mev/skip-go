@@ -61,6 +61,17 @@ export const RenderWalletList = ({
   const theme = useTheme();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
+  const displayWallets = useMemo(() => {
+    const filteredWallets = walletList.filter(
+      (wallet) => isMinimalWallet(wallet) && wallet?.isAvailable !== false
+    );
+
+    // If only walletconnect is available, return the list as is to show install options.
+    if (filteredWallets.length === 1) return walletList
+    return filteredWallets.length === 1 ? walletList : filteredWallets;
+
+  }, [walletList]);
+
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
   const connectMutation = useMutation({
@@ -106,77 +117,61 @@ export const RenderWalletList = ({
 
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
-      const name = isMinimalWallet(wallet) ? wallet.walletPrettyName ?? wallet.walletName : wallet.walletName;
-      const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo.logo : undefined;
-      const rightContent = isManualWalletEntry(wallet) ? wallet.rightContent : undefined;
-      const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
+      const name = isMinimalWallet(wallet)
+        ? wallet.walletPrettyName ?? wallet.walletName
+        : wallet.walletName;
+
+      const imageUrl = isMinimalWallet(wallet) ? wallet?.walletInfo?.logo : undefined;
+      const rightContent = isManualWalletEntry(wallet) ? wallet?.rightContent : undefined;
+      const isAvailable = isMinimalWallet(wallet) ? wallet?.isAvailable : undefined;
+
+      const renderedRightContent = rightContent?.() ?? <></>;
+
+      const imageElement = (
+        <img
+          height={35}
+          width={35}
+          style={{ objectFit: "cover" }}
+          src={imageUrl}
+          alt={`${name}-logo`}
+        />
+      )
 
       const onClickConnectWallet = () => {
         if (isMinimalWallet(wallet)) {
           connectMutation.mutate(wallet);
         } else {
           wallet.onSelect();
-        };
+        }
       };
 
-      if (wallet.walletName === "prax") {
-        return (
-          <ModalRowItem
-            key={name}
-            onClick={onClickConnectWallet}
-            style={{ marginTop: ITEM_GAP }}
-            leftContent={
-              <Row align="center" gap={10}>
-                {imageUrl && (
-                  <img
-                    height={35}
-                    width={35}
-                    style={{ objectFit: "cover" }}
-                    src={imageUrl}
-                    alt={`${name} logo`}
-                  />
-                )}
-
-                <Text>{name}</Text>
-              </Row>
-            }
-            rightContent={rightContent?.()}
-          />
-        );
-      }
+      const leftContent = (
+        <Row style={{ width: "100%" }} align="center" justify="space-between">
+          <Row align="center" gap={10}>
+            {imageElement}
+            <Text>{name}</Text>
+          </Row>
+          {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
+        </Row>
+      );
 
       return (
         <ModalRowItem
           key={name}
           onClick={onClickConnectWallet}
           style={{ marginTop: ITEM_GAP }}
-          leftContent={
-            <Row style={{ width: "100%" }} align="center" justify="space-between">
-              <Row align="center" gap={10}>
-                {imageUrl && (
-                  <img
-                    height={35}
-                    width={35}
-                    style={{ objectFit: "cover" }}
-                    src={imageUrl}
-                    alt={`${name} logo`}
-                  />
-                )}
-                <Text>{name}</Text>
-              </Row>
-              {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
-            </Row>
-          }
-          rightContent={rightContent?.()}
+          leftContent={leftContent}
+          rightContent={renderedRightContent}
         />
       );
     },
-    [connectMutation]
+    [connectMutation, displayWallets]
   );
 
   const height = useMemo(() => {
-    return Math.min(530, walletList.length * (ITEM_HEIGHT + ITEM_GAP));
-  }, [walletList]);
+    return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
+  }, [walletList, displayWallets]);
+
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
     if (connectMutation.isError || connectMutation.isPending) {
@@ -219,7 +214,7 @@ export const RenderWalletList = ({
     return (
       <VirtualList
         height={height}
-        listItems={walletList}
+        listItems={displayWallets}
         itemHeight={ITEM_HEIGHT + ITEM_GAP}
         renderItem={renderItem}
         itemKey={(item) => item.walletName}
