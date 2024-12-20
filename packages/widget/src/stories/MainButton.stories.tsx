@@ -94,7 +94,7 @@ export const SwapAgain: Story = {
     );
   },
   args: {
-    label: "Swap Again",
+    label: "Go Again",
     icon: ICONS.checkmark,
     onClick: () => alert("should trigger"),
   },
