@@ -3,6 +3,7 @@ import { onlyTestnetsAtom } from "@/state/skipClient";
 import { walletConnectAtom } from "@/state/wallets";
 import { GrazProvider } from "graz";
 import { useAtomValue } from "jotai";
+import { Core } from "@walletconnect/core";
 
 type CosmosProviderProps = {
   children: React.ReactNode;
@@ -13,6 +14,9 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
 }) => {
   const isTestnet = useAtomValue(onlyTestnetsAtom);
   const walletConnect = useAtomValue(walletConnectAtom);
+  const core = new Core({
+    projectId: walletConnect.options?.projectId
+  })
   return (
     <GrazProvider grazOptions={{
       chains: isTestnet ? testnetChains : mainnetChains,
@@ -25,7 +29,8 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({
       walletConnect: {
         options: {
           projectId: walletConnect.options?.projectId,
-          name: walletConnect.options?.name
+          name: walletConnect.options?.name,
+          core,
         },
         walletConnectModal: walletConnect?.walletConnectModal
       },
