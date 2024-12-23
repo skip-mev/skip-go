@@ -1,5 +1,20 @@
 ## 0.0.15
 
+## 3.1.2
+
+### Patch Changes
+
+- 40a9229: show warning if ends in ibc transfer
+- ea59c36: Update post tx button to Go again
+- 7caf0cb: filter cosmos wallets for is available items
+- 2cff22b: remove evm wallet connect
+- 9628165: update registries
+- afb37b6: fix build
+- Updated dependencies [fa9b9c9]
+- Updated dependencies [9628165]
+- Updated dependencies [afb37b6]
+  - @skip-go/client@0.16.1
+
 ## 3.1.1
 
 ### Patch Changes
