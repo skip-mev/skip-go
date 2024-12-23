@@ -2,27 +2,30 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Only handle requests to /api/skip/*
-  if (!request.nextUrl.pathname.startsWith('/api/skip/')) {
-    return NextResponse.next()
+  // Get the origin of the request
+  const origin = request.headers.get('origin') || ''
+
+  // Create response object
+  const response = NextResponse.next()
+
+  // Add CORS headers
+  response.headers.set('Access-Control-Allow-Origin', origin)
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, sentry-trace')
+  response.headers.set('Access-Control-Allow-Credentials', 'true')
+
+  // Handle preflight requests
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 200,
+      headers: response.headers,
+    })
   }
 
-  // Transform the request URL from /api/skip/* to go.skip.build/api/skip/*
-  const skipUrl = new URL(request.nextUrl.pathname.replace('/api/skip/', '/api/skip/'), 'https://go.skip.build')
-  skipUrl.search = request.nextUrl.search // Preserve query parameters
-
-  // Forward the request to Skip API
-  return NextResponse.rewrite(skipUrl, {
-    request: {
-      // Forward headers
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        // Add any other required headers
-      })
-    }
-  })
+  return response
 }
 
+// Configure which paths should be handled by the middleware
 export const config = {
-  matcher: '/api/skip/:path*',  // Only match /api/skip routes
+  matcher: '/api/:path*',  // Applies to all API routes
 }

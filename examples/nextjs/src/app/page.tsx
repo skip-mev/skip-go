@@ -60,7 +60,6 @@ export default function Home() {
         >
           <Widget
             theme={theme}
-            apiUrl='/api/skip'
             defaultRoute={defaultRoute}
             onWalletConnected={({ walletName, chainIdToAddressMap, chainId, address }) => {
               console.log(
