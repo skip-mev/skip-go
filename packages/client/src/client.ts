@@ -884,25 +884,6 @@ export class SkipClient {
       getEncodeObjectFromCosmosMessage(cosmosMsg)
     );
 
-    const aminoMsgTransferIndex = messages.findIndex(
-      (x) => x.typeUrl === '/ibc.applications.transfer.v1.MsgTransfer'
-    );
-    if (aminoMsgTransferIndex !== -1) {
-      const endpoint = await this.getRpcEndpointForChain(chainID);
-      const client = await StargateClient.connect(endpoint, {
-        accountParser,
-      });
-
-      const currentHeight = await client.getHeight();
-
-      messages[aminoMsgTransferIndex]!.value.timeoutHeight = {
-        revisionHeight: currentHeight + 100,
-        revisionNumber: currentHeight + 100,
-      };
-
-      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp = 0;
-    }
-
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
     const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
 
