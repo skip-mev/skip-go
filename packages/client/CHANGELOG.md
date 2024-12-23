@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.2
+
+### Patch Changes
+
+- 8a1ae46: no longer override timeout in signCosmosMessageAmino
+
 ## 0.16.1
 
 ### Patch Changes
