@@ -139,6 +139,13 @@ export const useCreateCosmosWallets = () => {
           if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect
           return walletMainnetChainIdsInitialConnect
         })().filter(
+        const initialChainIds = (
+          isWC
+            ? walletConnectMainnetChainIdsInitialConnect
+            : wallet === WalletType.KEPLR
+              ? keplrMainnetChainIdsInitialConnect
+              : walletMainnetChainIdsInitialConnect
+        ).filter(
           (x) =>
             chains
               ?.filter((z) => z.chainType === ChainType.Cosmos)

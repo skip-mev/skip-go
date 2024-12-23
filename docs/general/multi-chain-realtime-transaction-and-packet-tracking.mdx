@@ -180,7 +180,7 @@ Below are detailed explanations of the different fields and their purposes:
 * `state`: Indicates the current status of the transfer. Possible values are:
   * `GO_FAST_TRANSFER_UNKNOWN`: An unknown error has occurred.
   * `GO_FAST_TRANSFER_SENT`: The user's intent has been successfully submitted on the source chain.
-  * `GO_FAST_POST_ACTION_FAILED`: The transfer failed after the initial intent submission.
+  * `GO_FAST_POST_ACTION_FAILED`: The transfer's post-intent action failed. For example a swap on the destination chain failed due to slippage.
   * `GO_FAST_TRANSFER_TIMEOUT`: The transfer did not complete within the expected time frame.
   * `GO_FAST_TRANSFER_FILLED`: The transfer was successfully fulfilled on the destination chain.
   * `GO_FAST_TRANSFER_REFUNDED`: The user's assets have been refunded on the source chain.
@@ -189,7 +189,7 @@ Below are detailed explanations of the different fields and their purposes:
   * `order_filled_tx`: The transaction where the solver called fulfill on the destination chain.
   * `order_refunded_tx`: The transaction where the user received a refund on the source chain, if applicable.
   * `order_timeout_tx`: The transaction indicating a timeout occurred in the transfer process.
-
+* `error_message`: A message describing the error that occurred during the transfer, if applicable.
 
 When tracking a Go Fast transfer, you can use the `GoFastTransferInfo` to monitor the progress and status of your asset transfer between chains. For instance, if the state is `GO_FAST_TRANSFER_FILLED`, you know that the transfer was successful and your assets should be available on the destination chain. If the state is `GO_FAST_TRANSFER_TIMEOUT`, you can check the `orderTimeoutTx` for details on the timeout event.
 

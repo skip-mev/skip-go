@@ -14,7 +14,7 @@ import { Modals } from "@/modals/registerModals";
 import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
-import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
+import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -38,8 +38,6 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route);
-  const isSwapOperation = useIsSwapOperation(route);
-  const operationText = isSwapOperation ? "Swap" : "Send";
 
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
@@ -131,7 +129,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.confirmed:
       return (
         <MainButton
-          label={`${operationText} again`}
+          label="Go again"
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {
