@@ -2014,6 +2014,7 @@ export function goFastTransferInfoFromJSON(
     toChainID: value.to_chain_id,
     state: value.state,
     txs: value.txs && goFastTransferTransactionsFromJSON(value.txs),
+    errorMessage: value.error_message,
   };
 }
 
@@ -2025,6 +2026,7 @@ export function goFastTransferInfoToJson(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && goFastTransferTransactionsToJSON(value.txs),
+    error_message: value.errorMessage,
   };
 }
 
