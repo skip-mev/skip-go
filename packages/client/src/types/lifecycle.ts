@@ -470,39 +470,6 @@ export type StargateTransferInfo = {
   txs: StargateTransferTransactions;
 };
 
-export type StargateTransferState =
-  | "STARGATE_TRANSFER_UNKNOWN"
-  | "STARGATE_TRANSFER_SENT"
-  | "STARGATE_TRANSFER_RECEIVED"
-  | "STARGATE_TRANSFER_FAILED"
-
-
-export type StargateTransferTransactionsJSON = {
-  send_tx: ChainTransactionJSON | null;
-  receive_tx: ChainTransactionJSON | null;
-  error_tx: ChainTransactionJSON | null;
-};
-
-export type StargateTransferTransactions = {
-  sendTx: ChainTransaction | null;
-  receiveTx: ChainTransaction | null;
-  errorTx: ChainTransaction | null;
-};
-
-export type StargateTransferInfoJSON = {
-  from_chain_id: string;
-  to_chain_id: string;
-  state: StargateTransferState;
-  txs: StargateTransferTransactionsJSON;
-};
-
-export type StargateTransferInfo = {
-  fromChainID: string;
-  toChainID: string;
-  state: StargateTransferState;
-  txs: StargateTransferTransactions;
-};
-
 export type OPInitTransferState =
   | 'OPINIT_TRANSFER_UNKNOWN'
   | 'OPINIT_TRANSFER_SENT'
