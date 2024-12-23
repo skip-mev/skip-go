@@ -167,7 +167,7 @@ export const RenderWalletList = ({
 
   const height = useMemo(() => {
     return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
-  }, [walletList, displayWallets.length]);
+  }, [displayWallets.length]);
 
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
@@ -230,6 +230,7 @@ export const RenderWalletList = ({
     renderItem,
     theme.primary.text.lowContrast,
     theme.primary.text.normal,
+    displayWallets,
   ]);
 
   return (
