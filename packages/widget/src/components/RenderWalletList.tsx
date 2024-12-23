@@ -66,10 +66,7 @@ export const RenderWalletList = ({
       (wallet) => isMinimalWallet(wallet) && wallet?.isAvailable !== false
     );
 
-    // If only walletconnect is available, return the list as is to show install options.
-    if (filteredWallets.length === 1) return walletList
     return filteredWallets.length === 1 ? walletList : filteredWallets;
-
   }, [walletList]);
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
@@ -165,12 +162,12 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation, displayWallets]
+    [connectMutation]
   );
 
   const height = useMemo(() => {
     return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
-  }, [walletList, displayWallets]);
+  }, [walletList]);
 
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
@@ -230,6 +227,7 @@ export const RenderWalletList = ({
     connectMutation.variables?.walletInfo.logo,
     connectMutation.variables?.walletPrettyName,
     height,
+    displayWallets,
     renderItem,
     theme.primary.text.lowContrast,
     theme.primary.text.normal,
