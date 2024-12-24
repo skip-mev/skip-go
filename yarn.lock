@@ -7598,6 +7598,77 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry-internal/browser-utils@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry-internal/browser-utils@npm:8.46.0"
+  dependencies:
+    "@sentry/core": 8.46.0
+  checksum: 2151495dc349d48618654217b6250d9cd1cd89fe1a1f9da86e105c2a196549891521783ed055c6c5721ef83f4bdca406b2b0e00b1af3a2f9e235ec1dc3b25d63
+  languageName: node
+  linkType: hard
+
+"@sentry-internal/feedback@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry-internal/feedback@npm:8.46.0"
+  dependencies:
+    "@sentry/core": 8.46.0
+  checksum: 1c5751ef69e363a3785676d34da5b43b5d937448d902d7fd3195a6fca6e30050ccbd9565cc7718e0bd3b4ee275f5deb34bfc9370e56ea214a42cf1e379ded0d5
+  languageName: node
+  linkType: hard
+
+"@sentry-internal/replay-canvas@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry-internal/replay-canvas@npm:8.46.0"
+  dependencies:
+    "@sentry-internal/replay": 8.46.0
+    "@sentry/core": 8.46.0
+  checksum: 5ed79df242c9b2c41084039e6ef73bac0714902822c04e45684c20200f17c89cfda7daf56e066c7e315023e157e150acab36ebaa7132d6062ad1ac6216eb0852
+  languageName: node
+  linkType: hard
+
+"@sentry-internal/replay@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry-internal/replay@npm:8.46.0"
+  dependencies:
+    "@sentry-internal/browser-utils": 8.46.0
+    "@sentry/core": 8.46.0
+  checksum: 66d90a7e1cf6aecec9d81436eb5d07642dec07f5e8dea95e049af615ae0858e64d36a64524bdff8b4d81b9da359b60b11aea574d313a743de16410489014604b
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry/browser@npm:8.46.0"
+  dependencies:
+    "@sentry-internal/browser-utils": 8.46.0
+    "@sentry-internal/feedback": 8.46.0
+    "@sentry-internal/replay": 8.46.0
+    "@sentry-internal/replay-canvas": 8.46.0
+    "@sentry/core": 8.46.0
+  checksum: fc40fd73c8af1f79c2984425cc12354d76d57d12c27b7b83eaaaa118f74e7e81861f8f33c2069d8feaa4a7cd71a1ef8b3e699e2626f4875f4bc226e4d9df6d51
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:8.46.0":
+  version: 8.46.0
+  resolution: "@sentry/core@npm:8.46.0"
+  checksum: 0d7f5907ae925c51acbf0713f8f685bdc854f7af7f5b4a336ace07f64f86002e9493cc27ee8c06bd440f879472ee2ed47120cd48d0336f4e4a29114b198927b4
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:^8.46.0":
+  version: 8.46.0
+  resolution: "@sentry/react@npm:8.46.0"
+  dependencies:
+    "@sentry/browser": 8.46.0
+    "@sentry/core": 8.46.0
+    hoist-non-react-statics: ^3.3.2
+  peerDependencies:
+    react: ^16.14.0 || 17.x || 18.x || 19.x
+  checksum: ceeeed52c68679569a8153a36d8b2efe2da0957c43e51ac0891d5a71af83b1d278bf32fabf65f13f7eb06fd340ee9c763fb7e0765d358f95985b1668e8624bca
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.24.1":
   version: 0.24.51
   resolution: "@sinclair/typebox@npm:0.24.51"
@@ -7693,6 +7764,7 @@ __metadata:
     "@penumbra-zone/transport-dom": ^7.5.0
     "@r2wc/react-to-web-component": ^2.0.3
     "@radix-ui/react-dialog": ^1.1.1
+    "@sentry/react": ^8.46.0
     "@skip-go/client": "workspace:^"
     "@solana/spl-token": ^0.4.8
     "@solana/wallet-adapter-backpack": ^0.1.14
