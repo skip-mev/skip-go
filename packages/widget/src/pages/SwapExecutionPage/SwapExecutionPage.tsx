@@ -102,7 +102,8 @@ export const SwapExecutionPage = () => {
       SwapExecutionState.pending,
       SwapExecutionState.waitingForSigning,
       SwapExecutionState.validatingGasBalance,
-      SwapExecutionState.confirmed
+      SwapExecutionState.confirmed,
+      SwapExecutionState.signaturesRemaining,
     ];
 
     if (loadingStates.includes(swapExecutionState)) {
