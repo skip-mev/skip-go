@@ -98,16 +98,15 @@ export const SwapExecutionPage = () => {
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
   const onClickEditDestinationWallet = useMemo(() => {
-    const lastIndex = chainAddresses ? Object.keys(chainAddresses).length - 1 : 0;
-    const destinationAddress = chainAddresses?.[lastIndex]?.address;
     const loadingStates = [
       SwapExecutionState.pending,
       SwapExecutionState.waitingForSigning,
       SwapExecutionState.validatingGasBalance,
-      SwapExecutionState.confirmed
+      SwapExecutionState.confirmed,
+      SwapExecutionState.signaturesRemaining,
     ];
 
-    if (loadingStates.includes(swapExecutionState) || !destinationAddress) {
+    if (loadingStates.includes(swapExecutionState)) {
       return undefined;
     }
 
@@ -116,7 +115,7 @@ export const SwapExecutionPage = () => {
         chainId: route?.destAssetChainID,
       });
     };
-  }, [chainAddresses, swapExecutionState, route?.destAssetChainID]);
+  }, [swapExecutionState, route?.destAssetChainID]);
 
 
 

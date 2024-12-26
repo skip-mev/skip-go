@@ -63,7 +63,7 @@ export const RenderWalletList = ({
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
-      (wallet) => isMinimalWallet(wallet) && wallet?.isAvailable !== false
+      (wallet) => isManualWalletEntry(wallet) || wallet?.isAvailable !== false
     );
 
     return filteredWallets.length === 1 ? walletList : filteredWallets;
@@ -124,7 +124,7 @@ export const RenderWalletList = ({
 
       const renderedRightContent = rightContent?.() ?? <></>;
 
-      const imageElement = (
+      const imageElement = imageUrl ? (
         <img
           height={35}
           width={35}
@@ -132,7 +132,7 @@ export const RenderWalletList = ({
           src={imageUrl}
           alt={`${name}-logo`}
         />
-      )
+      ) : null;
 
       const onClickConnectWallet = () => {
         if (isMinimalWallet(wallet)) {
