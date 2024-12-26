@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.1.4
+
+### Patch Changes
+
+- c7d3743: fix edit desintation address
+
 ## 3.1.3
 
 ### Patch Changes
