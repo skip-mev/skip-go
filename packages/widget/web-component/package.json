@@ -1,6 +1,6 @@
 {
   "name": "@skip-go/widget-web-component",
-  "version": "3.0.23",
+  "version": "3.1.1",
   "description": "Swap widget web component",
   "exports": {
     ".": {

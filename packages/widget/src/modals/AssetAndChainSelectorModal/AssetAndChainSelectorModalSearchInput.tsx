@@ -93,6 +93,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
   width: 25px;
   opacity: 0.5;
+  transform: rotate(180deg);
 `;
 
 const StyledSelectedAsset = styled(StyledAssetLabel)`
