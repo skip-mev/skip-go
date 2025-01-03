@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.1.5
+
+### Patch Changes
+
+- 0622dcd: Convert globalStyles to stylesheet before passing to react-shadow-scope
+- Updated dependencies [0622dcd]
+- Updated dependencies [0622dcd]
+  - @skip-go/client@0.16.3
+
 ## 3.1.4
 
 ### Patch Changes
