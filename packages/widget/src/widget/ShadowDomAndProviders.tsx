@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
-import { Scope } from "react-shadow-scope";
+import { useCSS, Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
@@ -31,6 +31,7 @@ export const ShadowDomAndProviders = ({
   theme?: PartialTheme;
 }) => {
   useInjectFontsToDocumentHead();
+  const css = useCSS();
 
   const [, setShadowDom] = useState<HTMLElement>();
   const [styledComponentContainer, setStyledComponentContainer] =
@@ -57,7 +58,7 @@ export const ShadowDomAndProviders = ({
 
   return (
     <ClientOnly>
-      <Scope ref={onShadowDomLoaded} stylesheet={globalStyles}>
+      <Scope ref={onShadowDomLoaded} stylesheet={css`${globalStyles}`}>
         <div ref={onStyledComponentContainerLoaded}></div>
         <StyleSheetManager
           shouldForwardProp={shouldForwardProp}
