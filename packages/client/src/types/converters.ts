@@ -896,9 +896,9 @@ export function stargateTransferFromJSON(stargateTransferJSON: StargateTransferJ
     oftFeeAsset: assetFromJSON(stargateTransferJSON.oft_fee_asset),
     oftFeeAmount: stargateTransferJSON.oft_fee_amount,
     oftFeeAmountUSD: stargateTransferJSON.oft_fee_amount_usd,
-    sendFeeAsset: assetFromJSON(stargateTransferJSON.send_fee_asset),
-    sendFeeAmount: stargateTransferJSON.send_fee_amount,
-    sendFeeAmountUSD: stargateTransferJSON.send_fee_amount_usd,
+    messagingFeeAsset: assetFromJSON(stargateTransferJSON.messaging_fee_asset),
+    messagingFeeAmount: stargateTransferJSON.messaging_fee_amount,
+    messagingFeeAmountUSD: stargateTransferJSON.messaging_fee_amount_usd,
     bridgeID: stargateTransferJSON.bridge_id,
   }
 }
@@ -914,9 +914,9 @@ export function stargateTransferToJSON(stargateTransfer: StargateTransfer): Star
     oft_fee_asset: assetToJSON(stargateTransfer.oftFeeAsset),
     oft_fee_amount: stargateTransfer.oftFeeAmount,
     oft_fee_amount_usd: stargateTransfer.oftFeeAmountUSD,
-    send_fee_asset: assetToJSON(stargateTransfer.sendFeeAsset),
-    send_fee_amount: stargateTransfer.sendFeeAmount,
-    send_fee_amount_usd: stargateTransfer.sendFeeAmountUSD,
+    messaging_fee_asset: assetToJSON(stargateTransfer.messagingFeeAsset),
+    messaging_fee_amount: stargateTransfer.messagingFeeAmount,
+    messaging_fee_amount_usd: stargateTransfer.messagingFeeAmountUSD,
     bridge_id: stargateTransfer.bridgeID,
   }
 }

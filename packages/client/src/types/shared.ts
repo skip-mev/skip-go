@@ -211,9 +211,9 @@ export type StargateTransferJSON = {
   oft_fee_amount: string;
   oft_fee_amount_usd: string;
 
-  send_fee_asset: AssetJSON;
-  send_fee_amount: string;
-  send_fee_amount_usd: string;
+  messaging_fee_asset: AssetJSON;
+  messaging_fee_amount: string;
+  messaging_fee_amount_usd: string;
 
   bridge_id: BridgeType;
 };
@@ -231,9 +231,9 @@ export type StargateTransfer = {
   oftFeeAmount: string;
   oftFeeAmountUSD: string;
 
-  sendFeeAsset: Asset;
-  sendFeeAmount: string;
-  sendFeeAmountUSD: string;
+  messagingFeeAsset: Asset;
+  messagingFeeAmount: string;
+  messagingFeeAmountUSD: string;
 
   bridgeID: BridgeType;
 };
