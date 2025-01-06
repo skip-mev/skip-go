@@ -11,6 +11,8 @@ import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
+import { captureException } from "@sentry/react";
+import { useEffect } from "react";
 
 export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
@@ -27,6 +29,11 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
+
+  useEffect(() => {
+    captureException("TransactionReverted");
+  }, []);
+
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
