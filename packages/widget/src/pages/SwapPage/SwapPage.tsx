@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -41,6 +41,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
+import { getReplay } from "@sentry/react";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -77,6 +78,12 @@ export const SwapPage = () => {
   const isSwapOperation = useIsSwapOperation(route);
 
   const { chainId: evmChainId, connector } = useAccount();
+
+  useEffect(() => {
+    const replay = getReplay();
+    replay?.startBuffering();
+  }, []);
+
   const evmAddress = useMemo(() => {
     return evmChainId
       ? getAccount(String(evmChainId))?.address
