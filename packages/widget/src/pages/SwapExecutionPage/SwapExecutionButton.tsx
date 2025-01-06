@@ -15,6 +15,9 @@ import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
+import {
+  getReplay,
+} from "@sentry/react";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -135,6 +138,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {
+            const replay = getReplay();
+            replay?.flush();
+
             clearAssetInputAmounts();
             setCurrentPage(Routes.SwapPage);
           }}
