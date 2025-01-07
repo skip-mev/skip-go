@@ -15,9 +15,6 @@ import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
-import {
-  captureException,
-} from "@sentry/react";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -136,8 +133,6 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {
-            captureException("Test capture on error");
-
             clearAssetInputAmounts();
             setCurrentPage(Routes.SwapPage);
           }}

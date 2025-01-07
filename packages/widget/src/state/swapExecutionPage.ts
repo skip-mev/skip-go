@@ -110,7 +110,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onTransactionBroadcast: async (txInfo) => {
-      setUser({ username: txInfo.txHash });
+      setUser({ id: txInfo.txHash });
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({
         chainID: txInfo.chainID,

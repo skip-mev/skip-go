@@ -41,6 +41,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
+import { setUser } from "@sentry/react";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -304,6 +305,7 @@ export const SwapPage = () => {
           }
           setChainAddresses({});
           setCurrentPage(Routes.SwapExecutionPage);
+          setUser({ username: sourceAccount?.address });
           setSwapExecutionState();
         }}
       />
