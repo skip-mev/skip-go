@@ -123,7 +123,7 @@ export const CosmosGasAmount = {
   DEFAULT: 300_000,
   SWAP: 2_800_000,
   CARBON: 1_000_000,
-}
+};
 
 export const defaultSwapSettings = {
   slippage: 1,

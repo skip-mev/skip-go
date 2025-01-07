@@ -15,7 +15,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
-import { captureMessage } from "@sentry/react";
 
 export type RenderWalletListProps = {
   title: string;
@@ -100,7 +99,6 @@ export const RenderWalletList = ({
       if (isConnectEco) {
         clearAssetInputAmounts();
       }
-      captureMessage("Ecosystem connected");
       NiceModal.remove(Modals.SetAddressModal);
       NiceModal.remove(Modals.WalletSelectorModal);
     },
@@ -119,7 +117,6 @@ export const RenderWalletList = ({
         } else {
           wallet.onSelect();
         };
-        captureMessage("Wallet connected");
       };
 
       if (wallet.walletName === "prax") {

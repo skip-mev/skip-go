@@ -6,6 +6,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
+import { captureMessage } from "@sentry/react";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -37,6 +38,7 @@ export const useCreateSolanaWallets = () => {
               chainId: chain?.chainID,
               address,
             });
+            captureMessage("Wallet connected");
           } catch (error) {
             console.error(error);
             throw error;
@@ -63,6 +65,7 @@ export const useCreateSolanaWallets = () => {
               chainId: chain?.chainID,
               address,
             });
+            captureMessage("Ecosystem connected");
           } catch (error) {
             console.error(error);
             throw error;
@@ -98,6 +101,7 @@ export const useCreateSolanaWallets = () => {
             walletName: wallet.name,
             chainType: ChainType.SVM,
           });
+          captureMessage("Wallet disconnected");
         },
         isWalletConnected: wallet.connected,
         isAvailable: wallet.readyState === "Installed",
