@@ -10,7 +10,6 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-import { captureMessage } from "@sentry/react";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -118,7 +117,6 @@ export const useCreateEvmWallets = () => {
                 chainId: chain?.chainID,
                 address: account[0],
               });
-              captureMessage("Ecosystem connected");
             } catch (error) {
               console.error(error);
               throw error;
@@ -150,7 +148,6 @@ export const useCreateEvmWallets = () => {
                 chainId: chainID,
                 address: account[0],
               });
-              captureMessage("Wallet connected");
             } catch (error) {
               console.error(error);
               throw error;
@@ -172,7 +169,6 @@ export const useCreateEvmWallets = () => {
               walletName: connector.name,
               chainType: ChainType.EVM,
             });
-            captureMessage("Wallet disconnected");
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,
         };

@@ -28,7 +28,6 @@ import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { isMobile } from "@/utils/os";
 import { callbacksAtom } from "@/state/callbacks";
-import { captureMessage } from "@sentry/react";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -123,7 +122,6 @@ export const useCreateCosmosWallets = () => {
               walletName: "Prax Wallet",
               chainType: ChainType.Cosmos,
             });
-            captureMessage("Wallet disconnected");
           },
           isWalletConnected: false,
         };
@@ -134,12 +132,12 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
         const isWC = isWalletConnect(wallet);
-        const mobile = isMobile()
+        const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (() => {
-          if (isWC) return walletConnectMainnetChainIdsInitialConnect
-          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect
-          return walletMainnetChainIdsInitialConnect
+          if (isWC) return walletConnectMainnetChainIdsInitialConnect;
+          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
+          return walletMainnetChainIdsInitialConnect;
         })().filter(
           (x) =>
             chains
@@ -302,7 +300,6 @@ export const useCreateCosmosWallets = () => {
                   chainIdToAddressMap,
                 });
 
-                captureMessage("Ecosystem connected");
               } else {
                 await connectSingleChainId();
                 const address = (await getWallet(wallet).getKey(chainID))
@@ -312,7 +309,6 @@ export const useCreateCosmosWallets = () => {
                   chainId: chainID,
                   address,
                 });
-                captureMessage("Wallet connected");
               }
               setCosmosWallet({
                 walletName: wallet,
@@ -332,7 +328,6 @@ export const useCreateCosmosWallets = () => {
               walletName: wallet,
               chainType: ChainType.Cosmos,
             });
-            captureMessage("Wallet disconnected");
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
