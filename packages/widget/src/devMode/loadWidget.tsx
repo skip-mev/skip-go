@@ -40,12 +40,6 @@ const DevMode = () => {
         }}>
           <Widget
             theme={theme}
-            settings={{
-              slippage: 5,
-            }}
-            routeConfig={{
-              goFast: true,
-            }}
           />
         </div>
       </Row>
