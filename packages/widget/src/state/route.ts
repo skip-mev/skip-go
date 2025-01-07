@@ -14,9 +14,11 @@ import {
   isInvertingSwapAtom,
   debouncedSourceAssetAmountValueInitializedAtom,
   debouncedDestinationAssetAmountValueInitializedAtom,
+  routePreferenceAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
+import { RoutePreference } from "./types";
 
 export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
@@ -125,6 +127,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const routeConfig = get(routeConfigAtom);
+  const routePreference = get(routePreferenceAtom);
 
   const queryEnabled =
     params !== undefined &&
@@ -134,7 +137,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
     error === undefined;
 
   return {
-    queryKey: ["skipRoute", params, routeConfig],
+    queryKey: ["skipRoute", params, routeConfig, routePreference],
     queryFn: async (): Promise<CaughtRouteError | RouteResponse> => {
       if (!params) {
         throw new Error("No route request provided");
@@ -145,6 +148,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
           ...params,
           smartRelay: true,
           ...skipRouteConfig,
+          goFast: routePreference === RoutePreference.FASTEST,
         });
         return response;
       } catch (error) {

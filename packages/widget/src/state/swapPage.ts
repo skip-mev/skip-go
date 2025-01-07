@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { routeConfigAtom, skipRouteAtom } from "@/state/route";
+import { skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
@@ -123,7 +123,7 @@ export const CosmosGasAmount = {
   DEFAULT: 300_000,
   SWAP: 2_800_000,
   CARBON: 1_000_000,
-}
+};
 
 export const defaultSwapSettings = {
   slippage: 1,
@@ -145,6 +145,5 @@ export const routePreferenceAtom = atom(
   (get, set, newRoutePreference: RoutePreference) => {
     const currentSettings = get(swapSettingsAtom);
     set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
-    set(routeConfigAtom, (prev) => ({ ...prev, goFast: newRoutePreference === RoutePreference.FASTEST }));
   }
 );

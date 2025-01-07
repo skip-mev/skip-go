@@ -10,7 +10,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
+import { CosmosGasAmount, slippageAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 
@@ -253,7 +253,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
-  const swapSettings = get(swapSettingsAtom);
+  const slippage = get(slippageAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
 
   return {
@@ -265,7 +265,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         await skip.executeRoute({
           route,
           userAddresses,
-          slippageTolerancePercent: swapSettings.slippage.toString(),
+          slippageTolerancePercent: slippage.toString(),
           simulate: route.sourceAssetChainID !== "984122",
           getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
