@@ -2,4 +2,4 @@
 '@skip-go/client': patch
 ---
 
-update getCosmosSigner type
+update stargate fee types

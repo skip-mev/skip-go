@@ -1,5 +1,29 @@
 # @skip-go/client
 
+## 0.16.2
+
+### Patch Changes
+
+- 8a1ae46: no longer override timeout in signCosmosMessageAmino
+
+## 0.16.1
+
+### Patch Changes
+
+- fa9b9c9: add error message field on GoFastTransferInfo
+- 9628165: update registries
+- afb37b6: fix build
+
+## 0.16.0
+
+### Minor Changes
+
+- dacf973: stargate transfer types
+
+### Patch Changes
+
+- dacf973: update getCosmosSigner type
+
 ## 0.15.6
 
 ### Patch Changes

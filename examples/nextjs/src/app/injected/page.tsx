@@ -11,13 +11,13 @@ type Address = string;
 
 export default function Home() {
   // This state holds a mapping from chain IDs to connected addresses.
-  const [accountMap, setAccountMap] = useState<Record<ChainId, Address>>();
+  const [connectedAddresses, setConnectedAddresses] = useState<Record<ChainId, Address>>();
 
   /**
-   * Helper to update the accountMap with a given chainId and address.
+   * Helper to update the connectedAddresses with a given chainId and address.
    */
   const updateAccount = (chainId: ChainId, address: Address) => {
-    setAccountMap((prev) => ({
+    setConnectedAddresses((prev) => ({
       ...prev,
       [chainId]: address,
     }));
@@ -27,13 +27,26 @@ export default function Home() {
    * Connect to an EVM-compatible wallet (e.g., MetaMask).
    */
   const connectEthereum = async () => {
-    const accounts = (await window.ethereum.request({
+    const ethereum = window.ethereum;
+    if (!ethereum) {
+      throw new Error("MetaMask not installed");
+    }
+
+    // Request accounts
+    const accounts = (await ethereum.request({
       method: "eth_requestAccounts",
     })) as string[];
+
     const evmAddress = accounts[0];
-    // Ethereum mainnet chain ID is "1"
-    updateAccount("1", evmAddress);
+    if (!evmAddress) throw new Error("No EVM accounts found");
+
+    // Get currently selected chain ID from MetaMask
+    const chainIdHex = (await ethereum.request({ method: 'eth_chainId' })) as string;
+    const chainId = parseInt(chainIdHex, 16).toString();
+
+    updateAccount(chainId, evmAddress);
   };
+
   /**
    * Connect to a Solana wallet using Phantom Wallet Adapter.
    */
@@ -76,7 +89,6 @@ export default function Home() {
     return offlineSigner;
   }
 
-
   /**
    * Get an EVM-compatible signer by creating a viem wallet client.
    */
@@ -89,12 +101,13 @@ export default function Home() {
     "43114": avalanche,
   };
 
-  const getEVMSigner = async (targetChainId: string) => {
+  const getEVMSigner = async () => {
     const ethereum = window.ethereum;
     if (!ethereum) {
       throw new Error("MetaMask not installed");
     }
 
+    // Request accounts
     const accounts = (await ethereum.request({
       method: "eth_requestAccounts",
     })) as Account[];
@@ -104,12 +117,16 @@ export default function Home() {
       throw new Error("No EVM accounts found");
     }
 
-    const selectedChain = chainConfigMap[targetChainId] ?? mainnet;
+    // Get the currently selected chain ID
+    const chainIdHex = (await ethereum.request({ method: 'eth_chainId' })) as string;
+    const chainId = parseInt(chainIdHex, 16).toString();
+
+    const selectedChain = chainConfigMap[chainId] ?? mainnet;
 
     const client = createWalletClient({
-      account: evmAddress as Account,
+      account: evmAddress,
       chain: selectedChain,
-      transport: custom(window.ethereum),
+      transport: custom(ethereum),
     });
 
     return client;
@@ -135,7 +152,7 @@ export default function Home() {
     >
       <p>Connected addresses:</p>
       <ul>
-        {Object.entries(accountMap ?? {}).map(([chainId, address]) => (
+        {Object.entries(connectedAddresses ?? {}).map(([chainId, address]) => (
           <li key={chainId}>
             {chainId}: {address}
           </li>
@@ -154,9 +171,9 @@ export default function Home() {
       </div>
       <Widget
         // Provide the connected addresses and signer retrieval functions to the Widget
-        connectedAddresses={accountMap}
+        connectedAddresses={connectedAddresses}
         getCosmosSigner={getCosmosSigner}
-        getEVMSigner={() => getEVMSigner("1")} // or "1", "10", etc.
+        getEVMSigner={getEVMSigner}
         getSVMSigner={getSVMSigner}
       />
     </div>

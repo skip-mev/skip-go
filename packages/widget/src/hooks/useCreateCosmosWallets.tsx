@@ -7,6 +7,7 @@ import {
   WalletType,
   connect,
   isWalletConnect,
+  checkWallet,
 } from "graz";
 import { useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -46,6 +47,8 @@ export const useCreateCosmosWallets = () => {
   const createCosmosWallets = useCallback(
     (chainID?: string) => {
       const mobile = isMobile();
+
+      const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
       const browserWallets = [
         WalletType.KEPLR,
         WalletType.LEAP,
@@ -55,6 +58,9 @@ export const useCreateCosmosWallets = () => {
         WalletType.VECTIS,
         WalletType.WALLETCONNECT,
       ];
+      if (isIframeAvailable) {
+        browserWallets.push(WalletType.COSMIFRAME);
+      }
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [
         ...browserWallets,
@@ -128,15 +134,13 @@ export const useCreateCosmosWallets = () => {
 
       for (const wallet of cosmosWallets) {
         const isWC = isWalletConnect(wallet);
-
+        const mobile = isMobile()
         const walletInfo = getCosmosWalletInfo(wallet);
-        const initialChainIds = (
-          isWC
-            ? walletConnectMainnetChainIdsInitialConnect
-            : wallet === WalletType.KEPLR
-              ? keplrMainnetChainIdsInitialConnect
-              : walletMainnetChainIdsInitialConnect
-        ).filter(
+        const initialChainIds = (() => {
+          if (isWC) return walletConnectMainnetChainIdsInitialConnect
+          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect
+          return walletMainnetChainIdsInitialConnect
+        })().filter(
           (x) =>
             chains
               ?.filter((z) => z.chainType === ChainType.Cosmos)

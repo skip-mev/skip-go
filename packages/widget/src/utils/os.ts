@@ -1,4 +1,4 @@
-const isBrowser = typeof window !== "undefined" && typeof window.navigator !== "undefined";
+export const isBrowser = typeof window !== "undefined" && typeof window.navigator !== "undefined";
 
 export function isAndroid() {
   if (!isBrowser) {

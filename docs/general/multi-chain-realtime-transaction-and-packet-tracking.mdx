@@ -59,6 +59,7 @@ The `transfer_sequence` array consists of `TransferEvent` objects, which give de
 * `AxelarTransferInfo`
 * `HyperlaneTransferInfo`
 * `GoFastTransferInfo`
+* `StargateTransferInfo`
 
 Each one contains slightly different data and statuses corresponding to the details of their bridge, but they all contain some standard info: 
 * `from_chain_id`
@@ -174,23 +175,45 @@ When one of the transfers is a `GoFastTransfer`, the `transfer_sequence` array w
 
 Below are detailed explanations of the different fields and their purposes:
 
-* `fromChainID`: The chain ID where the transfer originates (source chain).
-* `toChainID`: The chain ID where the assets are being sent (destination chain).
+* `from_chain_id`: The chain ID where the transfer originates (source chain).
+* `to_chain_id`: The chain ID where the assets are being sent (destination chain).
 * `state`: Indicates the current status of the transfer. Possible values are:
   * `GO_FAST_TRANSFER_UNKNOWN`: An unknown error has occurred.
   * `GO_FAST_TRANSFER_SENT`: The user's intent has been successfully submitted on the source chain.
-  * `GO_FAST_POST_ACTION_FAILED`: The transfer failed after the initial intent submission.
+  * `GO_FAST_POST_ACTION_FAILED`: The transfer's post-intent action failed. For example a swap on the destination chain failed due to slippage.
   * `GO_FAST_TRANSFER_TIMEOUT`: The transfer did not complete within the expected time frame.
   * `GO_FAST_TRANSFER_FILLED`: The transfer was successfully fulfilled on the destination chain.
   * `GO_FAST_TRANSFER_REFUNDED`: The user's assets have been refunded on the source chain.
 * `txs`: Contains transaction details related to the GoFast transfer:
-  * `orderSubmittedTx`: The transaction where the user called initiateIntent on the source chain.
-  * `orderFilledTx`: The transaction where the solver called fulfill on the destination chain.
-  * `orderRefundedTx`: The transaction where the user received a refund on the source chain, if applicable.
-  * `orderTimeoutTx`: The transaction indicating a timeout occurred in the transfer process.
-
+  * `order_submitted_tx`: The transaction where the user called initiateIntent on the source chain.
+  * `order_filled_tx`: The transaction where the solver called fulfill on the destination chain.
+  * `order_refunded_tx`: The transaction where the user received a refund on the source chain, if applicable.
+  * `order_timeout_tx`: The transaction indicating a timeout occurred in the transfer process.
+* `error_message`: A message describing the error that occurred during the transfer, if applicable.
 
 When tracking a Go Fast transfer, you can use the `GoFastTransferInfo` to monitor the progress and status of your asset transfer between chains. For instance, if the state is `GO_FAST_TRANSFER_FILLED`, you know that the transfer was successful and your assets should be available on the destination chain. If the state is `GO_FAST_TRANSFER_TIMEOUT`, you can check the `orderTimeoutTx` for details on the timeout event.
+
+### Stargate Transfer Data
+
+When one of the transfers is a `StargateTransfer`, the `transfer_sequence` array will include a `stargate_transfer` (`StargateTransferInfo`). This provides detailed information about a cross-chain asset transfer powered by Stargate, a popular cross-chain bridging protocol.
+
+Below are detailed explanations of the fields and their purposes:
+
+* `from_chain_id`: The chain ID where the transfer originates (source chain).
+* `to_chain_id`: The chain ID where the assets are being sent (destination chain).
+
+* `state`: Indicates the current status of the Stargate transfer. Possible values are:
+  * `STARGATE_TRANSFER_UNKNOWN`: An unknown error has occurred or the state cannot be determined.
+  * `STARGATE_TRANSFER_SENT`: The transfer has been successfully initiated on the source chain (i.e., the assets have left the source chain and are in transit).
+  * `STARGATE_TRANSFER_RECEIVED`: The transfer has been successfully completed on the destination chain (i.e., the assets are now available at the recipient address on the destination chain).
+  * `STARGATE_TRANSFER_FAILED`: The transfer encountered an error during bridging and did not complete as intended.
+
+* `txs`: Contains transaction details related to the Stargate transfer. 
+  * `send_tx`: The transaction on the source chain that initiated the Stargate transfer. 
+  * `receive_tx`: The transaction on the destination chain where the assets were received.
+  * `error_tx`: A transaction (if any) related to the failure of the transfer. 
+
+When monitoring a Stargate transfer, you can use `StargateTransferInfo` to confirm that your assets have safely bridged between chains or identify if and where a problem has occurred. 
 
 <Info>
 The Go Fast Protocol involves interactions with solvers who fulfill transfer intents. The additional transaction fields help provide transparency and traceability throughout the transfer process, ensuring users can track each step and identify any issues that may arise.

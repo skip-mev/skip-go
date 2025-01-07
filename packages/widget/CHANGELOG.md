@@ -1,5 +1,57 @@
 ## 0.0.15
 
+## 3.1.4
+
+### Patch Changes
+
+- c7d3743: fix edit desintation address
+
+## 3.1.3
+
+### Patch Changes
+
+- Updated dependencies [8a1ae46]
+  - @skip-go/client@0.16.2
+
+## 3.1.2
+
+### Patch Changes
+
+- 40a9229: show warning if ends in ibc transfer
+- ea59c36: Update post tx button to Go again
+- 7caf0cb: filter cosmos wallets for is available items
+- 2cff22b: remove evm wallet connect
+- 9628165: update registries
+- afb37b6: fix build
+- Updated dependencies [fa9b9c9]
+- Updated dependencies [9628165]
+- Updated dependencies [afb37b6]
+  - @skip-go/client@0.16.1
+
+## 3.1.1
+
+### Patch Changes
+
+- bc373bd: fix keplr in app browser issue
+
+## 3.1.0
+
+### Minor Changes
+
+- dacf973: evm mobile wallet support
+
+### Patch Changes
+
+- dacf973: ability to pass signer and account
+- dacf973: fix balance loading display state
+- dacf973: fix loading indicator
+- dacf973: Add callback functions for wallet connect/disconnect and transaction broadcasted / completed / failed
+- dacf973: exclude assets programatically
+- dacf973: add daodao iframe wallet
+- Updated dependencies [dacf973]
+- Updated dependencies [dacf973]
+  - @skip-go/client@0.16.0
+
 ## 3.0.25
 
 ### Patch Changes

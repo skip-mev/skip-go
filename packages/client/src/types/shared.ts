@@ -198,6 +198,46 @@ export type GoFastTransferJSON = {
   destination_domain: string;
 }
 
+export type StargateTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  denom_in: string;
+  denom_out: string;
+
+  pool_address: string;
+  destination_endpoint_id: number;
+
+  oft_fee_asset: AssetJSON;
+  oft_fee_amount: string;
+  oft_fee_amount_usd: string;
+
+  messaging_fee_asset: AssetJSON;
+  messaging_fee_amount: string;
+  messaging_fee_amount_usd: string;
+
+  bridge_id: BridgeType;
+};
+
+export type StargateTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  denomIn: string;
+  denomOut: string;
+
+  poolAddress: string;
+  destinationEndpointID: number;
+
+  oftFeeAsset: Asset;
+  oftFeeAmount: string;
+  oftFeeAmountUSD: string;
+
+  messagingFeeAsset: Asset;
+  messagingFeeAmount: string;
+  messagingFeeAmountUSD: string;
+
+  bridgeID: BridgeType;
+};
+
 export type BankSendJSON = {
   chain_id: string;
   denom: string;
