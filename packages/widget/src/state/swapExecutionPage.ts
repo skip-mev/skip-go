@@ -10,7 +10,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, slippageAtom, swapSettingsAtom } from "./swapPage";
+import { CosmosGasAmount, slippageAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 
