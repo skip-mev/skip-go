@@ -132,7 +132,9 @@ const Tooltip = styled(SmallText).attrs({
   z-index: 1;
 `;
 
-export const StyledSettingsOptionLabel = styled(SmallText)<{ selected?: boolean }>`
+export const StyledSettingsOptionLabel = styled(SmallText)<{
+  selected?: boolean;
+}>`
   border-radius: 7px;
   padding: 4px 7px;
   white-space: nowrap;
