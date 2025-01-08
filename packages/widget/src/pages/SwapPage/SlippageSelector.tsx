@@ -33,8 +33,8 @@ const SlippageSelector: React.FC = () => {
         />
         {showMaxSlippageTooltip && (
           <Tooltip>
-            If price changes unfavorably during the transaction by more than
-            this amount, the transaction will revert.
+            If price changes unfavorably during the transaction by more than this amount, the
+            transaction will revert.
           </Tooltip>
         )}
       </SwapDetailText>
@@ -132,7 +132,7 @@ const Tooltip = styled(SmallText).attrs({
   z-index: 1;
 `;
 
-export const StyledSettingsOptionLabel = styled(SmallText) <{ selected?: boolean }>`
+export const StyledSettingsOptionLabel = styled(SmallText)<{ selected?: boolean }>`
   border-radius: 7px;
   padding: 4px 7px;
   white-space: nowrap;
@@ -149,9 +149,7 @@ export const StyledSettingsOptionLabel = styled(SmallText) <{ selected?: boolean
   }
 
   color: ${({ selected, theme }) =>
-    selected
-      ? getBrandButtonTextColor(theme.brandColor)
-      : theme.primary.text.normal};
+    selected ? getBrandButtonTextColor(theme.brandColor) : theme.primary.text.normal};
   &:hover {
     box-shadow: inset 0px 0px 0px 1px ${({ theme }) => theme.brandColor};
     opacity: 1;
@@ -169,7 +167,7 @@ export const StyledSettingsOptionLabel = styled(SmallText) <{ selected?: boolean
 
 const CustomSlippageInput = styled(SmallText).attrs({
   as: "input",
-}) <{ selected?: boolean }>`
+})<{ selected?: boolean }>`
   outline: none;
   background-color: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
@@ -188,7 +186,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
     margin: 0;
   }
 
-  &[type='number'] {
+  &[type="number"] {
     -moz-appearance: textfield;
   }
 
@@ -205,7 +203,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   }
 `;
 
-const CustomSlippageInputRightIcon = styled(SmallText) <{ selected?: boolean }>`
+const CustomSlippageInputRightIcon = styled(SmallText)<{ selected?: boolean }>`
   position: absolute;
   top: 50%;
   right: 8px;

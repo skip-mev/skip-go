@@ -1,10 +1,5 @@
 import { atom } from "jotai";
-import {
-  Asset,
-  SkipClient,
-  Chain,
-  SkipClientOptions,
-} from "@skip-go/client";
+import { Asset, SkipClient, Chain, SkipClientOptions } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { walletsAtom } from "./wallets";
@@ -66,13 +61,12 @@ export const skipClient = atom((get) => {
     },
     getSVMSigner: async () => {
       if (getSigners?.getSVMSigner) {
-        return getSigners.getSVMSigner()
+        return getSigners.getSVMSigner();
       }
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
       const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-      if (!solanaWallet)
-        throw new Error("getSVMSigner error: wallet not found");
+      if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
   });
@@ -92,8 +86,7 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
       flattenedData.push({
         ...asset,
         chain_key: chainKey,
-        chainName:
-          chain?.prettyName ?? chain?.chainName ?? asset.chainID ?? "--",
+        chainName: chain?.prettyName ?? chain?.chainName ?? asset.chainID ?? "--",
       });
     });
   }
@@ -168,7 +161,7 @@ export type ChainWithAsset = Chain & {
 export const getChainsContainingAsset = (
   assetSymbol: string,
   assets: ClientAsset[],
-  chains: Chain[]
+  chains: Chain[],
 ): ChainWithAsset[] => {
   if (!assets) return [];
   const chainIDs = assets
@@ -180,8 +173,7 @@ export const getChainsContainingAsset = (
       return {
         ...chain,
         asset: assets.find(
-          (asset) =>
-            asset.chainID === chain.chainID && asset.symbol === assetSymbol
+          (asset) => asset.chainID === chain.chainID && asset.symbol === assetSymbol,
         ),
       };
     });

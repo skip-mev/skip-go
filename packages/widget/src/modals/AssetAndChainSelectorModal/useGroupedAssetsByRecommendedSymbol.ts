@@ -9,9 +9,11 @@ import { chainFilterAtom } from "@/state/swapPage";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
-}
+};
 
-export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetByRecommendedSymbolProps) => {
+export const useGroupedAssetByRecommendedSymbol = ({
+  context,
+}: useGroupedAssetByRecommendedSymbolProps) => {
   const { data: _assets } = useAtomValue(skipAssetsAtom);
   const getBalance = useGetBalance();
   const chainFilter = useAtomValue(chainFilterAtom);
@@ -20,14 +22,16 @@ export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetB
     if (!chainFilter || !chainFilter[context]) return _assets;
     const chainIdAndDenomsAllowed = Object.entries(chainFilter[context]);
     if (chainIdAndDenomsAllowed) {
-      return _assets?.filter(asset => chainIdAndDenomsAllowed.some(entries => {
-        const [chainId, denoms] = entries;
-        if (denoms) {
-          return denoms.includes(asset.denom) && chainId === asset.chainID;
-        } else if (chainId) {
-          return chainId === asset.chainID;
-        }
-      }));
+      return _assets?.filter((asset) =>
+        chainIdAndDenomsAllowed.some((entries) => {
+          const [chainId, denoms] = entries;
+          if (denoms) {
+            return denoms.includes(asset.denom) && chainId === asset.chainID;
+          } else if (chainId) {
+            return chainId === asset.chainID;
+          }
+        }),
+      );
     }
     return _assets;
   }, [_assets, chainFilter, context]);
@@ -42,10 +46,7 @@ export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetB
           const balance = getBalance(asset.chainID, asset.denom);
           if (balance) {
             accumulator.totalAmount += Number(
-              convertTokenAmountToHumanReadableAmount(
-                balance.amount,
-                balance.decimals
-              )
+              convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals),
             );
             if (Number(balance.valueUSD)) {
               accumulator.totalUsd += Number(balance.valueUSD);
@@ -53,14 +54,12 @@ export const useGroupedAssetByRecommendedSymbol = ({ context }: useGroupedAssetB
           }
           return accumulator;
         },
-        { totalAmount: 0, totalUsd: 0 }
+        { totalAmount: 0, totalUsd: 0 },
       );
     };
 
     assets.forEach((asset) => {
-      const foundGroup = groupedAssets.find(
-        (group) => group.id === asset.recommendedSymbol
-      );
+      const foundGroup = groupedAssets.find((group) => group.id === asset.recommendedSymbol);
       if (foundGroup) {
         foundGroup.assets.push(asset);
         foundGroup.chains.push({

@@ -34,7 +34,7 @@ export const ErrorPageTradeWarning = ({
   const swapDifferencePercentage = `${calculatePercentageChange(
     usdAmountIn ?? 0,
     usdAmountOut ?? 0,
-    true
+    true,
   )}%`;
 
   const sourceDetails = useGetAssetDetails({
@@ -62,18 +62,14 @@ export const ErrorPageTradeWarning = ({
         description={
           <>
             <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
-              You will lose {swapDifferencePercentage} of your input value with
-              this trade
+              You will lose {swapDifferencePercentage} of your input value with this trade
               <br />
               Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
               <br />
-              Estimated output: {destinationDetails?.amount}{" "}
-              {destinationDetails?.symbol} ({usdAmountOut})
+              Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (
+              {usdAmountOut})
             </SmallText>
-            <SmallTextButton
-              onClick={onClickContinue}
-              color={theme.primary.text.lowContrast}
-            >
+            <SmallTextButton onClick={onClickContinue} color={theme.primary.text.lowContrast}>
               I know the risk, continue anyway
             </SmallTextButton>
           </>

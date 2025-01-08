@@ -58,8 +58,10 @@ export const VirtualList = <T,>({
   const listRef = useRef<ListRef>(null);
 
   useEffect(() => {
-    const listElement = listRef.current?.nativeElement?.getElementsByClassName("rc-virtual-list-holder-inner")?.[0];
-    const firstElementInList = (listElement?.firstChild as HTMLElement);
+    const listElement = listRef.current?.nativeElement?.getElementsByClassName(
+      "rc-virtual-list-holder-inner",
+    )?.[0];
+    const firstElementInList = listElement?.firstChild as HTMLElement;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowDown") {
@@ -100,7 +102,9 @@ export const VirtualList = <T,>({
     return (
       <StyledNoResultsContainer gap={10} height={height ?? listHeight}>
         {empty?.icon}
-        <SmallText textAlign="center" fontSize={22}>{empty?.header}</SmallText>
+        <SmallText textAlign="center" fontSize={22}>
+          {empty?.header}
+        </SmallText>
         <StyledEmptyDetails>{empty?.details}</StyledEmptyDetails>
       </StyledNoResultsContainer>
     );
@@ -121,8 +125,7 @@ export const VirtualList = <T,>({
           visibility: "visible",
         },
         verticalScrollBarThumb: {
-          backgroundColor:
-            getHexColor(theme.primary.text.normal) + opacityToHex(50),
+          backgroundColor: getHexColor(theme.primary.text.normal) + opacityToHex(50),
         },
       }}
     >
@@ -131,7 +134,7 @@ export const VirtualList = <T,>({
   );
 };
 
-const StyledNoResultsContainer = styled(Column) <{
+const StyledNoResultsContainer = styled(Column)<{
   height?: number;
 }>`
   min-height: ${({ height }) => height}px;

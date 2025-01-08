@@ -2,12 +2,7 @@ import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import {
-  ComponentType,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ComponentType, useContext, useEffect, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -23,13 +18,7 @@ export type ModalProps = {
   theme?: PartialTheme;
 };
 
-export const Modal = ({
-  children,
-  drawer,
-  container,
-  onOpenChange,
-  theme,
-}: ModalProps) => {
+export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
   const modal = useModal();
   const modalContext = useContext(NiceModal.NiceModalContext);
   const ModalsOpen = Object.entries(modalContext)
@@ -39,8 +28,7 @@ export const Modal = ({
     })
     .map((entries) => entries[0]);
 
-  const isNotFirstModalVisible =
-    ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
+  const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
 
   useEffect(() => {
     onOpenChange?.(true);
@@ -64,11 +52,7 @@ export const Modal = ({
     >
       <Dialog.Portal container={container}>
         <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay
-            drawer={drawer}
-            open={open}
-            invisible={isNotFirstModalVisible}
-          >
+          <StyledOverlay drawer={drawer} open={open} invisible={isNotFirstModalVisible}>
             <StyledContent drawer={drawer} open={open}>
               {children}
             </StyledContent>
@@ -79,9 +63,7 @@ export const Modal = ({
   );
 };
 
-export const createModal = <T extends ModalProps>(
-  component: ComponentType<T>
-) => {
+export const createModal = <T extends ModalProps>(component: ComponentType<T>) => {
   const Component = component;
 
   const WrappedComponent = (props: T) => {
@@ -92,9 +74,7 @@ export const createModal = <T extends ModalProps>(
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setError({ errorType: ErrorType.Unexpected, error })
-          }
+          onError={(error) => setError({ errorType: ErrorType.Unexpected, error })}
         >
           <Component {...props} />
         </ErrorBoundary>
@@ -167,7 +147,7 @@ const fadeOutAndZoomIn = keyframes`
   }
 `;
 
-const StyledOverlay = styled(Dialog.Overlay) <{
+const StyledOverlay = styled(Dialog.Overlay)<{
   drawer?: boolean;
   invisible?: boolean;
   open?: boolean;
@@ -210,7 +190,7 @@ const StyledOverlay = styled(Dialog.Overlay) <{
     `};
 `;
 
-const StyledContent = styled(Dialog.Content) <{
+const StyledContent = styled(Dialog.Content)<{
   drawer?: boolean;
   open?: boolean;
 }>`
@@ -222,12 +202,12 @@ const StyledContent = styled(Dialog.Content) <{
   justify-content: center;
   z-index: 100;
   animation: ${({ drawer, open }) =>
-    open
-      ? drawer
-        ? fadeInAndSlideUp
-        : fadeInAndZoomOut
-      : drawer
-        ? fadeOutAndSlideDown
-        : fadeOutAndZoomIn}
+      open
+        ? drawer
+          ? fadeInAndSlideUp
+          : fadeInAndZoomOut
+        : drawer
+          ? fadeOutAndSlideDown
+          : fadeOutAndZoomIn}
     150ms ease-in-out;
 `;

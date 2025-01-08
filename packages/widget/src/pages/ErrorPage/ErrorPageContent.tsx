@@ -42,9 +42,13 @@ export const ErrorPageContent = ({
       )}
       {typeof description === "string" ? (
         <StyledErrorTextInnerContainer>
-          <SmallText color={textColor} textAlign="center" style={{
-            wordWrap: "break-word",
-          }}>
+          <SmallText
+            color={textColor}
+            textAlign="center"
+            style={{
+              wordWrap: "break-word",
+            }}
+          >
             {description}
           </SmallText>
         </StyledErrorTextInnerContainer>
@@ -55,12 +59,11 @@ export const ErrorPageContent = ({
   );
 };
 
-const StyledErrorStateContainer = styled(Column) <{ backgroundColor?: string }>`
+const StyledErrorStateContainer = styled(Column)<{ backgroundColor?: string }>`
   width: 100%;
   height: 225px;
   border-radius: 25px;
-  ${({ backgroundColor }) =>
-    backgroundColor && `background-color: ${backgroundColor}`};
+  ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor}`};
 `;
 
 const StyledErrorTextInnerContainer = styled(Column)`

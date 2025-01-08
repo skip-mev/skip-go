@@ -12,9 +12,7 @@ const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN",
 export const EXCLUDED_TOKEN_COMBINATIONS: {
   id: string;
   chainIDs: string[];
-}[] = [
-    { id: "SOL", chainIDs: ["solana"] },
-  ];
+}[] = [{ id: "SOL", chainIDs: ["solana"] }];
 
 export const useFilteredAssets = ({
   groupedAssetsByRecommendedSymbol,
@@ -28,7 +26,7 @@ export const useFilteredAssets = ({
       .map((group) => {
         const allowedAssets = group.assets.filter((asset) => {
           const isExcluded = EXCLUDED_TOKEN_COMBINATIONS.some(
-            (ex) => ex.id === group.id && ex.chainIDs.includes(asset.chainID)
+            (ex) => ex.id === group.id && ex.chainIDs.includes(asset.chainID),
           );
           return !isExcluded;
         });

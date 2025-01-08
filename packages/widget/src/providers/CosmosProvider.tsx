@@ -6,33 +6,33 @@ import { useAtomValue } from "jotai";
 
 type CosmosProviderProps = {
   children: React.ReactNode;
-}
+};
 
-export const CosmosProvider: React.FC<CosmosProviderProps> = ({
-  children,
-}) => {
+export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
   const isTestnet = useAtomValue(onlyTestnetsAtom);
   const walletConnect = useAtomValue(walletConnectAtom);
   return (
-    <GrazProvider grazOptions={{
-      chains: isTestnet ? testnetChains : mainnetChains,
-      autoReconnect: false,
-      walletDefaultOptions: {
-        sign: {
-          preferNoSetFee: true,
-        }
-      },
-      walletConnect: {
-        options: {
-          projectId: walletConnect.options?.projectId,
-          name: walletConnect.options?.name
+    <GrazProvider
+      grazOptions={{
+        chains: isTestnet ? testnetChains : mainnetChains,
+        autoReconnect: false,
+        walletDefaultOptions: {
+          sign: {
+            preferNoSetFee: true,
+          },
         },
-        walletConnectModal: walletConnect?.walletConnectModal
-      },
-      iframeOptions: {
-        allowedIframeParentOrigins: ["https://daodao.zone", "https://dao.daodao.zone"]
-      },
-    }}>
+        walletConnect: {
+          options: {
+            projectId: walletConnect.options?.projectId,
+            name: walletConnect.options?.name,
+          },
+          walletConnectModal: walletConnect?.walletConnectModal,
+        },
+        iframeOptions: {
+          allowedIframeParentOrigins: ["https://daodao.zone", "https://dao.daodao.zone"],
+        },
+      }}
+    >
       {children}
     </GrazProvider>
   );

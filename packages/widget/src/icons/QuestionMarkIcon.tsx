@@ -2,7 +2,10 @@ type IconProps = {
   color?: string;
 };
 
-export const QuestionMarkIcon = ({ color = "currentColor", ...props }: IconProps & React.SVGProps<SVGSVGElement>) => (
+export const QuestionMarkIcon = ({
+  color = "currentColor",
+  ...props
+}: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg
     width="15"
     height="15"

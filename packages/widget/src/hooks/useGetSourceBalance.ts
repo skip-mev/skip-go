@@ -14,7 +14,7 @@ export const useGetSourceBalance = () => {
 
   const cw20Balance = useCW20Balance({
     asset: sourceAsset as ClientAsset,
-    address: sourceAccount?.address
+    address: sourceAccount?.address,
   });
 
   const data = useMemo(() => {
@@ -28,7 +28,7 @@ export const useGetSourceBalance = () => {
     if (sourceAsset.isCW20) {
       return {
         ...cw20Balance.data,
-        error: cw20Balance.error || undefined
+        error: cw20Balance.error || undefined,
       };
     }
 
@@ -37,7 +37,7 @@ export const useGetSourceBalance = () => {
         amount: 0,
         formattedAmount: "0",
         error: undefined,
-        decimals: undefined
+        decimals: undefined,
       };
     }
     return skipBalances?.chains?.[chainID]?.denoms?.[denom];
@@ -49,6 +49,6 @@ export const useGetSourceBalance = () => {
     refetch: () => {
       refetch();
       cw20Balance.refetch();
-    }
+    },
   };
 };

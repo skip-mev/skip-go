@@ -5,9 +5,9 @@ import { Widget } from "./widget/Widget";
 
 type WebComponentProps = {
   container: {
-    attributes: Record<string, string>[]
-  }
-}
+    attributes: Record<string, string>[];
+  };
+};
 
 function isJsonString(str: string) {
   try {
@@ -24,24 +24,22 @@ const camelize = (inputString: string) => {
 };
 
 const WidgetWithProvider = (props: WebComponentProps) => {
-  const parsedProps = Array.from(props.container.attributes).map(
-    ({ name, value }) => {
-      return { key: name, value };
-    }
+  const parsedProps = Array.from(props.container.attributes).map(({ name, value }) => {
+    return { key: name, value };
+  });
+
+  const realProps = parsedProps.reduce(
+    (accumulator, initialValue) => {
+      const { key, value } = initialValue;
+
+      accumulator[camelize(key)] = isJsonString(value) ? JSON.parse(value) : value;
+      return accumulator;
+    },
+    {} as Record<string, string>,
   );
-
-  const realProps = parsedProps.reduce((accumulator, initialValue) => {
-    const { key, value } = initialValue;
-
-    accumulator[camelize(key)] = isJsonString(value)
-      ? JSON.parse(value)
-      : value;
-    return accumulator;
-  }, {} as Record<string, string>);
 
   return <Widget {...realProps} />;
 };
-
 
 const WEB_COMPONENT_NAME = "skip-widget";
 

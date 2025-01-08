@@ -15,11 +15,7 @@ type SwapPageHeaderProps = {
   rightContent?: React.ReactNode;
 };
 
-export const SwapPageHeader = ({
-  leftButton,
-  rightButton,
-  rightContent,
-}: SwapPageHeaderProps) => {
+export const SwapPageHeader = ({ leftButton, rightButton, rightContent }: SwapPageHeaderProps) => {
   const LeftIcon = iconMap[leftButton?.icon || ICONS.none];
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
   return (

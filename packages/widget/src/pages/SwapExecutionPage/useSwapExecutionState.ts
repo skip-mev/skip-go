@@ -11,7 +11,7 @@ type UseSwapExecutionStateParams = {
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: { status: string };
   signaturesRemaining: number;
-}
+};
 
 export function useSwapExecutionState({
   chainAddresses,
@@ -26,11 +26,10 @@ export function useSwapExecutionState({
     if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
 
     const allAddressesSet = requiredChainAddresses.every(
-      (_chainId, index) => chainAddresses[index]?.address
+      (_chainId, index) => chainAddresses[index]?.address,
     );
 
-    const lastChainAddress =
-      chainAddresses[requiredChainAddresses.length - 1]?.address;
+    const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
 
     if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
@@ -47,10 +46,7 @@ export function useSwapExecutionState({
       return SwapExecutionState.approving;
     }
 
-    if (
-      isValidatingGasBalance &&
-      isValidatingGasBalance.status !== "completed"
-    ) {
+    if (isValidatingGasBalance && isValidatingGasBalance.status !== "completed") {
       return SwapExecutionState.validatingGasBalance;
     }
 
