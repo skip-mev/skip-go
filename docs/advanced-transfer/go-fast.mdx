@@ -5,7 +5,7 @@ description: 'A brief overview of the Go Fast Transfer system'
 
 <Info>
 Read the whitepaper [here](https://skip-protocol.notion.site/EXT-Skip-Go-Fast-b30bc47ecc114871bc856184633b504b).
-Find integration details for Go Fast [here](../client/advanced-features).
+Find integration details for Go Fast [here](../client/advanced-features#use-the-go-fast-transfer-system).
 </Info>
 
 # Overview
@@ -54,3 +54,9 @@ Go Fast works by having solvers use their own capital to fill orders as quickly 
 Currently, the basis points fee on transfer size paid to solvers is 10 basis points across all transfer sizes. As the protocol evolves, the basis points fee charged is expected to decrease as transfer size increases.
 
 The source and destination gas fees are determined dynamically based on the source and destination chains and their current gas costs, optimized to minimize costs while covering settlement and rebalancing for solvers. 
+
+# How do I integrate Go Fast into my application?
+
+For instructions on integrating Go Fast using the `@skip-go/client`, see the [Advanced Features guide](../client/advanced-features#use-the-go-fast-transfer-system).
+
+If you're using the Widget, refer to the [Widget Configuration](../widget/configuration#routeconfig).
