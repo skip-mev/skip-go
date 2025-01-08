@@ -13,6 +13,7 @@ import { isUserRejectedRequestError } from "@/utils/error";
 import { CosmosGasAmount, slippageAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
+import { setUser } from "@sentry/react";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -96,6 +97,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onTransactionBroadcast: async (txInfo) => {
+      setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
       set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
