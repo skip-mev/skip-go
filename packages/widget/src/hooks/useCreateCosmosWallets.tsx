@@ -58,6 +58,11 @@ export const useCreateCosmosWallets = () => {
         WalletType.VECTIS,
         WalletType.WALLETCONNECT,
       ];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window?.keplr as any).isOkxWallet) {
+        browserWallets[0] = WalletType.OKX;
+      }
+
       if (isIframeAvailable) {
         browserWallets.push(WalletType.COSMIFRAME);
       }
@@ -136,11 +141,8 @@ export const useCreateCosmosWallets = () => {
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (() => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((window?.keplr as any).isOkxWallet) {
-            return okxWalletChainIdsInitialConnect;
-          }
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
+          if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
           if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
           return walletMainnetChainIdsInitialConnect;
         })().filter(
