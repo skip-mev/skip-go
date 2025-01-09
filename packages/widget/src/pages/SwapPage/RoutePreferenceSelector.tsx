@@ -23,8 +23,8 @@ const RoutePreferenceSelector: React.FC = () => {
         />
         {showTooltip && (
           <Tooltip>
-            Choose if Skip:Go should prioritize faster routes or routes
-            with the lowest possible fees.
+            Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
+            fees.
           </Tooltip>
         )}
       </PreferenceText>

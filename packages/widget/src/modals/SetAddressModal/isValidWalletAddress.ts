@@ -7,7 +7,7 @@ type isValidWalletAddressProps = {
   address: string;
   chainType: ChainType | string;
   bech32Prefix: string;
-}
+};
 
 export const isValidWalletAddress = ({
   address,

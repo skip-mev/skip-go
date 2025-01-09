@@ -11,7 +11,7 @@ export type Explorer = {
   validator_page?: string;
   proposal_page?: string;
   block_page?: string;
-}
+};
 
 export const mainnetChains = _mainnetChains as unknown as ChainInfo[];
 export const testnetChains = _testnetChains as unknown as ChainInfo[];

@@ -9,9 +9,7 @@ export type ErrorCosmosLedgerWarningProps = {
   onClickBack: () => void;
 };
 
-export const ErrorPageCosmosLedgerWarning = ({
-  onClickBack,
-}: ErrorCosmosLedgerWarningProps) => {
+export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerWarningProps) => {
   const theme = useTheme();
 
   return (
@@ -24,11 +22,12 @@ export const ErrorPageCosmosLedgerWarning = ({
         }}
       />
       <ErrorPageContent
-        title={`Warning: Ledger not supported`}
+        title={"Warning: Ledger not supported"}
         description={
           <>
             <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
-              Ledger isn't currently supported on Ethermint chains (such as Injective, Dymension, EVMOS, and similar networks).
+              Ledger isn't currently supported on Ethermint chains (such as Injective, Dymension,
+              EVMOS, and similar networks).
             </SmallText>
           </>
         }

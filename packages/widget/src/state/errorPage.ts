@@ -8,14 +8,14 @@ import { ErrorPageTransactionRevertedProps } from "@/pages/ErrorPage/ErrorPageTr
 import { ErrorPageUnexpectedProps } from "@/pages/ErrorPage/ErrorPageUnexpected";
 import { atomWithReset } from "jotai/utils";
 
-export const errorAtom = atomWithReset<ErrorPageVariants | undefined>(
-  undefined
-);
+export const errorAtom = atomWithReset<ErrorPageVariants | undefined>(undefined);
 
 export type ErrorPageVariants =
   | ({ errorType: ErrorType.AuthFailed } & ErrorPageAuthFailedProps)
   | ({ errorType: ErrorType.Timeout } & ErrorPageTimeoutProps)
-  | ({ errorType: ErrorType.AdditionalSigningRequired } & ErrorPageTradeAdditionalSigningRequiredProps)
+  | ({
+      errorType: ErrorType.AdditionalSigningRequired;
+    } & ErrorPageTradeAdditionalSigningRequiredProps)
   | ({ errorType: ErrorType.TradeWarning } & ErrorPageTradeWarningProps)
   | ({ errorType: ErrorType.CosmosLedgerWarning } & ErrorCosmosLedgerWarningProps)
   | ({ errorType: ErrorType.TransactionFailed } & ErrorPageTransactionFailedProps)

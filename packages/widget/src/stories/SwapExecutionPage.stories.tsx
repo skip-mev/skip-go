@@ -20,12 +20,8 @@ const meta = {
 
     const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-    const sourceAsset = assets?.find(
-      (asset) => asset.denom === firstOperation.denomIn
-    );
-    const destinationAsset = assets?.find(
-      (asset) => asset.denom === lastOperation.denomOut
-    );
+    const sourceAsset = assets?.find((asset) => asset.denom === firstOperation.denomIn);
+    const destinationAsset = assets?.find((asset) => asset.denom === lastOperation.denomOut);
 
     useEffect(() => {
       setSourceAsset(sourceAsset);
@@ -41,7 +37,7 @@ const meta = {
           <SwapExecutionPage {...props} />
         </NiceModal.Provider>,
         undefined,
-        true
+        true,
       );
     }
     return null;

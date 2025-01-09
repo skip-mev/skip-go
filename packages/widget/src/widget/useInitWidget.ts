@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-} from "react";
+import { useEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, Theme } from "./theme";
 import { useSetAtom } from "jotai";
 import {
@@ -12,13 +9,13 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import {
-  chainFilterAtom,
-  defaultSwapSettings,
-  swapSettingsAtom,
-} from "@/state/swapPage";
+import { chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
-import { walletConnectAtom, getConnectedSignersAtom, connectedAddressesAtom } from "@/state/wallets";
+import {
+  walletConnectAtom,
+  getConnectedSignersAtom,
+  connectedAddressesAtom,
+} from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
 
@@ -46,9 +43,7 @@ export const useInitWidget = (props: WidgetProps) => {
     // merge if not undefined
     return {
       apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
-      endpointOptions:
-        fromWidgetProps.endpointOptions ??
-        defaultSkipClientConfig.endpointOptions,
+      endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
       chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
@@ -74,7 +69,6 @@ export const useInitWidget = (props: WidgetProps) => {
     });
     setTheme(mergedTheme);
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
-
 
   useEffect(() => {
     if (props.settings) {
@@ -112,7 +106,6 @@ export const useInitWidget = (props: WidgetProps) => {
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
       setCallbacks(callbacks);
     }
-
   }, [
     props.onTransactionFailed,
     props.onTransactionComplete,
@@ -130,7 +123,7 @@ export const useInitWidget = (props: WidgetProps) => {
     setRouteConfig,
     setSwapSettings,
     setWalletConnect,
-    setCallbacks
+    setCallbacks,
   ]);
 
   return { theme: mergedTheme };

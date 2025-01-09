@@ -2,7 +2,10 @@ type IconProps = {
   color?: string;
 };
 
-export const XIcon = ({ color = "currentColor", ...props }: IconProps & React.SVGProps<SVGSVGElement>) => (
+export const XIcon = ({
+  color = "currentColor",
+  ...props
+}: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg
     width="10"
     height="10"

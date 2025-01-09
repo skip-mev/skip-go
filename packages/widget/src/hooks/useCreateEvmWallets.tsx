@@ -26,9 +26,7 @@ export const useCreateEvmWallets = () => {
   } = useAccount();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
-  const currentConnector = connectors.find(
-    (connector) => connector.id === currentEvmConnector?.id
-  );
+  const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
   const createEvmWallets = useCallback(
     (chainID?: string) => {
       const isSei = chainID === "pacific-1";
@@ -38,15 +36,12 @@ export const useCreateEvmWallets = () => {
       const wallets: MinimalWallet[] = [];
       for (const connector of connectors) {
         const isWalletFound =
-          wallets.findIndex((wallet) => wallet.walletName === connector.id) !==
-          -1;
+          wallets.findIndex((wallet) => wallet.walletName === connector.id) !== -1;
         if (isWalletFound) {
           continue;
         }
 
-        const evmGetAddress: MinimalWallet["getAddress"] = async ({
-          signRequired,
-        }) => {
+        const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
           if (
             signRequired &&
             isEvmConnected &&
@@ -178,8 +173,7 @@ export const useCreateEvmWallets = () => {
             connector.name.toLowerCase().includes("keplr") ||
             connector.name.toLowerCase().includes("leap") ||
             connector.name.toLowerCase().includes("cosmostation");
-          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""
-            }`;
+          minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async ({ signRequired, context }) => {
             const address = await evmGetAddress({ signRequired, context });
             const publicClient = createPublicClient({
@@ -218,7 +212,7 @@ export const useCreateEvmWallets = () => {
       isEvmConnected,
       setEvmWallet,
       setSourceAsset,
-    ]
+    ],
   );
 
   return { createEvmWallets };

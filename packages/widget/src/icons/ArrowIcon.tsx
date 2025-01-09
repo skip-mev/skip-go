@@ -24,10 +24,10 @@ export const ArrowIcon = ({
       direction === "down"
         ? "rotate(90)"
         : direction === "left"
-        ? "rotate(180)"
-        : direction === "up"
-        ? "rotate(-90)"
-        : ""
+          ? "rotate(180)"
+          : direction === "up"
+            ? "rotate(-90)"
+            : ""
     }
   >
     <rect width="40" height="40" rx="10" fill={backgroundColor} />

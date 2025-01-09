@@ -25,7 +25,7 @@ export const removeButtonStyles = css`
 `;
 
 export const textProps = css<TextProps>`
-  font-family: 'ABCDiatype', sans-serif;
+  font-family: "ABCDiatype", sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
   ${({ fontWeight }) => {
@@ -42,8 +42,7 @@ export const textProps = css<TextProps>`
     }
   }};
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
-  ${({ normalTextColor, theme }) =>
-    normalTextColor && `color: ${theme.primary.text.normal}`};
+  ${({ normalTextColor, theme }) => normalTextColor && `color: ${theme.primary.text.normal}`};
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};

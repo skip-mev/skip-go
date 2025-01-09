@@ -9,11 +9,7 @@ import { renderLightAndDarkTheme } from "./renderLightAndDarkTheme";
 
 const meta = {
   title: "Pages/ErrorPage",
-  component: (props) => renderLightAndDarkTheme(
-    <RenderExample {...props} />,
-    undefined,
-    true
-  ),
+  component: (props) => renderLightAndDarkTheme(<RenderExample {...props} />, undefined, true),
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "fullscreen",
@@ -35,7 +31,7 @@ const route = {
 const revertedOperation = {
   denom: "uatom",
   amountIn: "50000000",
-  fromChainID: "noble-1"
+  fromChainID: "noble-1",
 } as ClientOperation;
 
 const RenderExample = (props: ErrorPageVariants) => {
@@ -54,14 +50,14 @@ export const AuthFailed: Story = {
   args: {
     errorType: ErrorType.AuthFailed,
     onClickBack: () => alert("back"),
-  }
+  },
 };
 
 export const Timeout: Story = {
   args: {
     errorType: ErrorType.Timeout,
     explorerUrl: "https://www.google.com",
-  }
+  },
 };
 
 export const AdditionalSigningRequired: Story = {
@@ -69,7 +65,7 @@ export const AdditionalSigningRequired: Story = {
     errorType: ErrorType.AdditionalSigningRequired,
     onClickSign: () => alert("sign"),
     route,
-  }
+  },
 };
 
 export const TradeWarning: Story = {
@@ -78,7 +74,7 @@ export const TradeWarning: Story = {
     onClickContinue: () => alert("continue"),
     onClickBack: () => alert("back"),
     route,
-  }
+  },
 };
 
 export const TransactionFailed: Story = {
@@ -86,8 +82,8 @@ export const TransactionFailed: Story = {
     errorType: ErrorType.TransactionFailed,
     transactionHash: "jalksdjfalksdf",
     explorerUrl: "https://www.google.com",
-    onClickContactSupport: () => alert("contact support")
-  }
+    onClickContactSupport: () => alert("contact support"),
+  },
 };
 
 export const TransactionReverted: Story = {
@@ -96,14 +92,13 @@ export const TransactionReverted: Story = {
     explorerUrl: "https://www.google.com",
     revertedOperation,
     recoveryAddress: "RECOVERY ADDRESS",
-    onClickContinueTransaction: () => alert("continue transaction")
-  }
+    onClickContinueTransaction: () => alert("continue transaction"),
+  },
 };
-
 
 export const Unexpected: Story = {
   args: {
     errorType: ErrorType.Unexpected,
     error: new Error("unexpected error"),
-  }
+  },
 };

@@ -90,7 +90,7 @@ export const SwapInProgress: Story = {
 export const SwapAgain: Story = {
   render: function SwapAgain(props) {
     return renderLightAndDarkTheme(
-      <MainButton {...props} backgroundColor={useTheme().success.text} />
+      <MainButton {...props} backgroundColor={useTheme().success.text} />,
     );
   },
   args: {
@@ -103,7 +103,7 @@ export const SwapAgain: Story = {
 export const ContinueTransaction: Story = {
   render: function ContinueTransaction(props) {
     return renderLightAndDarkTheme(
-      <MainButton {...props} backgroundColor={useTheme().warning.text} />
+      <MainButton {...props} backgroundColor={useTheme().warning.text} />,
     );
   },
   args: {
@@ -116,7 +116,7 @@ export const ContinueTransaction: Story = {
 export const GoBack: Story = {
   render: function GoBack(props) {
     return renderLightAndDarkTheme(
-      <MainButton {...props} backgroundColor={useTheme().error.text} />
+      <MainButton {...props} backgroundColor={useTheme().error.text} />,
     );
   },
   args: {

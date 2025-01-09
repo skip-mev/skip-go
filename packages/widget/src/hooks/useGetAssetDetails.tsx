@@ -1,9 +1,8 @@
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import {
-  ClientAsset,
-  skipAssetsAtom,
-  skipChainsAtom,
-} from "@/state/skipClient";
-import { convertTokenAmountToHumanReadableAmount, convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
+  convertTokenAmountToHumanReadableAmount,
+  convertHumanReadableAmountToCryptoAmount,
+} from "@/utils/crypto";
 import { Chain } from "@skip-go/client";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
@@ -50,14 +49,11 @@ export const useGetAssetDetails = ({
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const [{ data: chains }] = useAtom(skipChainsAtom);
 
-
   const asset = useMemo(() => {
     if (!assetDenom || !chainId) return;
     if (!assets) return;
     return assets.find((a) => a.denom === assetDenom && a.chainID === chainId);
-  },
-    [assets, assetDenom, chainId]
-  );
+  }, [assets, assetDenom, chainId]);
 
   if (!amount && tokenAmount) {
     amount = convertTokenAmountToHumanReadableAmount(tokenAmount, asset?.decimals);
@@ -100,6 +96,6 @@ export const useGetAssetDetails = ({
     symbol,
     amount,
     tokenAmount,
-    decimals
+    decimals,
   };
 };

@@ -18,12 +18,8 @@ export const useSyncTxStatus = ({
 }) => {
   const transferEvents = statusData?.transferEvents;
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
-  const {
-    route,
-    transactionDetailsArray,
-    overallStatus,
-    transactionHistoryIndex,
-  } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
+    useAtomValue(swapExecutionStateAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);

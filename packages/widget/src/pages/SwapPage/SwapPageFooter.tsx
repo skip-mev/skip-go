@@ -35,20 +35,16 @@ export const SwapPageFooterItems = ({
     );
   }, [swapSettings]);
 
-  const estimatedTime = convertSecondsToMinutesOrHours(
-    route?.estimatedRouteDurationSeconds
-  );
+  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
-  const routeRequiresMultipleSignatures =
-    route?.txsRequired && route.txsRequired > 1;
+  const routeRequiresMultipleSignatures = route?.txsRequired && route.txsRequired > 1;
 
   const renderSignatureRequired = useMemo(() => {
     return (
       <Row gap={4} align="center">
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
-          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)}{" "}
-          required
+          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)} required
         </StyledSignatureRequiredContainer>
       </Row>
     );
@@ -110,9 +106,7 @@ export const SwapPageFooterItems = ({
       if (showRouteInfo && route) {
         return (
           <Row align="center" gap={8}>
-            {!isMobileScreenSize &&
-              routeRequiresMultipleSignatures &&
-              renderSignatureRequired}
+            {!isMobileScreenSize && routeRequiresMultipleSignatures && renderSignatureRequired}
             {showEstimatedTime && estimatedTime && (
               <Row gap={6} align="center">
                 <SpeedometerIcon />

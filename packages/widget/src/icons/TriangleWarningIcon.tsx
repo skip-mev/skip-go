@@ -3,13 +3,7 @@ type IconProps = {
 };
 
 export const TriangleWarningIcon = ({ backgroundColor }: IconProps) => (
-  <svg
-    width="47"
-    height="41"
-    viewBox="0 0 47 41"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="47" height="41" viewBox="0 0 47 41" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

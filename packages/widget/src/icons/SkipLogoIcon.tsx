@@ -3,13 +3,7 @@ type IconProps = {
 };
 
 export const SkipLogoIcon = ({ color = "currentColor" }: IconProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="50"
-    height="16"
-    viewBox="0 0 50 16"
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="50" height="16" viewBox="0 0 50 16" fill="none">
     <path
       d="M45.6038 9.5579C46.3169 9.5579 46.855 9.01981 46.855 8.30673C46.855 7.59365 46.3169 7.05556 45.6038 7.05556C44.8907 7.05556 44.3526 7.59365 44.3526 8.30673C44.3526 9.01981 44.8907 9.5579 45.6038 9.5579ZM41.4609 8.30673L42.7524 4.51297H48.4561L49.7344 8.30673L48.4561 12.1005H42.7524L41.4609 8.30673Z"
       fill={color}

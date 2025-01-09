@@ -10,9 +10,7 @@ export type ErrorPageAuthFailedProps = {
   onClickBack: () => void;
 };
 
-export const ErrorPageAuthFailed = ({
-  onClickBack,
-}: ErrorPageAuthFailedProps) => {
+export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) => {
   const setErrorAtom = useSetAtom(errorAtom);
   const theme = useTheme();
 
@@ -29,7 +27,7 @@ export const ErrorPageAuthFailed = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: handleOnClickBack
+          onClick: handleOnClickBack,
         }}
       />
       <ErrorPageContent

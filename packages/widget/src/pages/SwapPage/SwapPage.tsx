@@ -3,11 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import {
-  ClientAsset,
-  skipAssetsAtom,
-  skipChainsAtom,
-} from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -17,10 +13,7 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
-import {
-  setSwapExecutionStateAtom,
-  chainAddressesAtom,
-} from "@/state/swapExecutionPage";
+import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
@@ -41,6 +34,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
+import { setUser } from "@sentry/react";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -59,13 +53,8 @@ export const SwapPage = () => {
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
   const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
-  const {
-    data: route,
-    isError: isRouteError,
-    error: routeError,
-  } = useAtomValue(skipRouteAtom);
+  const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
-
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -78,18 +67,18 @@ export const SwapPage = () => {
 
   const { chainId: evmChainId, connector } = useAccount();
   const evmAddress = useMemo(() => {
-    return evmChainId
-      ? getAccount(String(evmChainId))?.address
-      : undefined;
+    return evmChainId ? getAccount(String(evmChainId))?.address : undefined;
   }, [evmChainId, getAccount]);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
       if (!denom || !chainId) return;
       if (!assets) return;
-      return assets.find((a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId);
+      return assets.find(
+        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+      );
     },
-    [assets]
+    [assets],
   );
 
   const handleChangeSourceAsset = useCallback(() => {
@@ -97,16 +86,8 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm =
-          chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
-          "evm";
-        if (
-          isEvm &&
-          evmAddress &&
-          asset &&
-          asset.chainID !== String(evmChainId) &&
-          connector
-        ) {
+        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
+        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
           connector.switchChain?.({
             chainId: Number(asset.chainID),
           });
@@ -135,16 +116,8 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm =
-          chains?.find((c) => c.chainID === asset?.chainID)?.chainType ===
-          "evm";
-        if (
-          isEvm &&
-          evmAddress &&
-          asset &&
-          asset.chainID !== String(evmChainId) &&
-          connector
-        ) {
+        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
+        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
           connector.switchChain?.({
             chainId: Number(asset.chainID),
           });
@@ -192,18 +165,10 @@ export const SwapPage = () => {
         }));
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
-      selectedAsset: getClientAsset(
-        destinationAsset?.denom,
-        destinationAsset?.chainID
-      ),
+      selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainID),
       selectChain: true,
     });
-  }, [
-    destinationAsset?.chainID,
-    destinationAsset?.denom,
-    getClientAsset,
-    setDestinationAsset,
-  ]);
+  }, [destinationAsset?.chainID, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
 
   const swapButton = useMemo(() => {
     if (!sourceAccount?.address) {
@@ -225,33 +190,15 @@ export const SwapPage = () => {
     }
 
     if (!sourceAsset?.chainID) {
-      return (
-        <MainButton
-          label="Please select a source asset"
-          icon={ICONS.swap}
-          disabled
-        />
-      );
+      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
     if (!destinationAsset?.chainID) {
-      return (
-        <MainButton
-          label="Please select a destination asset"
-          icon={ICONS.swap}
-          disabled
-        />
-      );
+      return <MainButton label="Please select a destination asset" icon={ICONS.swap} disabled />;
     }
 
     if (!sourceAsset?.amount && !destinationAsset?.amount) {
-      return (
-        <MainButton
-          label="Please enter a valid amount"
-          icon={ICONS.swap}
-          disabled
-        />
-      );
+      return <MainButton label="Please enter a valid amount" icon={ICONS.swap} disabled />;
     }
 
     if (isWaitingForNewRoute) {
@@ -259,17 +206,13 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      return (
-        <MainButton label={routeError?.message ?? "No routes found"} disabled />
-      );
+      return <MainButton label={routeError?.message ?? "No routes found"} disabled />;
     }
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
     }
     if (insufficientBalance) {
-      return (
-        <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />
-      );
+      return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
     }
     return (
       <MainButton
@@ -304,6 +247,7 @@ export const SwapPage = () => {
           }
           setChainAddresses({});
           setCurrentPage(Routes.SwapExecutionPage);
+          setUser({ username: sourceAccount?.address });
           setSwapExecutionState();
         }}
       />
@@ -349,10 +293,10 @@ export const SwapPage = () => {
             txHistory.length === 0
               ? undefined
               : {
-                label: "History",
-                icon: ICONS.history,
-                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-              }
+                  label: "History",
+                  icon: ICONS.history,
+                  onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+                }
           }
           rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
         />
@@ -361,9 +305,7 @@ export const SwapPage = () => {
             selectedAsset={sourceAsset}
             handleChangeAsset={handleChangeSourceAsset}
             handleChangeChain={handleChangeSourceChain}
-            isWaitingToUpdateInputValue={
-              swapDirection === "swap-out" && isWaitingForNewRoute
-            }
+            isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
             value={sourceAsset?.amount}
             usdValue={route?.usdAmountIn}
             onChangeValue={setSourceAssetAmount}
@@ -373,9 +315,7 @@ export const SwapPage = () => {
             selectedAsset={destinationAsset}
             handleChangeAsset={handleChangeDestinationAsset}
             handleChangeChain={handleChangeDestinationChain}
-            isWaitingToUpdateInputValue={
-              swapDirection === "swap-in" && isWaitingForNewRoute
-            }
+            isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
             usdValue={route?.usdAmountOut}
             value={destinationAsset?.amount}
             priceChangePercentage={Number(priceChangePercentage)}
@@ -392,8 +332,7 @@ export const SwapPage = () => {
             NiceModal.show(Modals.SwapSettingsDrawer, {
               drawer: true,
               container,
-              onOpenChange: (open: boolean) =>
-                open ? setDrawerOpen(true) : setDrawerOpen(false),
+              onOpenChange: (open: boolean) => (open ? setDrawerOpen(true) : setDrawerOpen(false)),
             })
           }
         />

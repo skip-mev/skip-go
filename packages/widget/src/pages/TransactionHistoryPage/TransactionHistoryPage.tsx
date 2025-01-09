@@ -16,14 +16,12 @@ export const TransactionHistoryPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<
-    number | undefined
-  >(undefined);
+  const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<number | undefined>(undefined);
 
   const txHistory = useAtomValue(transactionHistoryAtom);
   const historyList = useMemo(
     () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
-    [txHistory]
+    [txHistory],
   );
 
   return (
@@ -42,13 +40,7 @@ export const TransactionHistoryPage = () => {
           height={isMobileScreenSize ? 0 : 262}
           empty={{
             details: "No transactions yet",
-            icon: (
-              <HistoryIcon
-                width={30}
-                height={30}
-                color={theme?.primary?.text.lowContrast}
-              />
-            ),
+            icon: <HistoryIcon width={30} height={30} color={theme?.primary?.text.lowContrast} />,
           }}
           itemHeight={1}
           renderItem={(item, index) => (
@@ -57,9 +49,7 @@ export const TransactionHistoryPage = () => {
               txHistoryItem={item}
               showDetails={index === itemIndexToShowDetail}
               onClickRow={() =>
-                setItemIndexToShowDetail((prev) =>
-                  prev === index ? undefined : index
-                )
+                setItemIndexToShowDetail((prev) => (prev === index ? undefined : index))
               }
             />
           )}

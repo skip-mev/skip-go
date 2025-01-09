@@ -17,12 +17,11 @@ export type MainButtonProps = {
   loadingTimeString?: string;
   onClick?: () => void;
   extra?: ReactNode;
-  route?: RouteResponse
+  route?: RouteResponse;
   isGoFast?: boolean;
 };
 
-type LoadingButtonProps = MainButtonProps & {
-};
+type LoadingButtonProps = MainButtonProps & {};
 
 export const MainButton = ({
   label,
@@ -37,9 +36,7 @@ export const MainButton = ({
   isGoFast,
 }: MainButtonProps) => {
   const theme = useTheme();
-  backgroundColor ??= disabled
-    ? theme.secondary.background.normal
-    : theme.brandColor;
+  backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
 
   const textColor = getBrandButtonTextColor(backgroundColor);
 
@@ -83,7 +80,14 @@ export const MainButton = ({
             </Text>
           </Row>
         ) : (
-          <Text fontWeight="bold" capitalize fontSize={24} color={textColor} mainButtonColor={backgroundColor} letterSpacing="-0.015em">
+          <Text
+            fontWeight="bold"
+            capitalize
+            fontSize={24}
+            color={textColor}
+            mainButtonColor={backgroundColor}
+            letterSpacing="-0.015em"
+          >
             {label}
           </Text>
         )}
@@ -99,7 +103,7 @@ export const LoadingButton = ({
   backgroundColor,
   loadingTimeString,
   isGoFast,
-  extra
+  extra,
 }: LoadingButtonProps) => (
   <StyledLoadingButton
     align="center"
@@ -132,7 +136,7 @@ const MainButtonContainer = styled.div`
   position: relative;
   overflow: hidden;
   &:hover::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -146,11 +150,10 @@ const MainButtonContainer = styled.div`
 
 const StyledMainButton = styled(Row).attrs({
   as: "button",
-}) <{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
+})<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${({ theme, backgroundColor }) =>
-    backgroundColor ?? theme.brandColor};
+  background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
   height: 70px;
   width: 100%;
   border-radius: 25px;
@@ -171,31 +174,25 @@ const StyledMainButton = styled(Row).attrs({
     `};
 `;
 
-const StyledLoadingButton = styled(StyledMainButton) <{ isGoFast?: boolean; }>`
+const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
   background-color: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: ${(props) =>
-    props.isGoFast
-      ? "0.9"
-      : "0.6"};
+    opacity: ${(props) => (props.isGoFast ? "0.9" : "0.6")};
     background: linear-gradient(
       90deg,
       transparent 0%,
       transparent 30%,
-      ${(props) =>
-    props.isGoFast
-      ? props.theme.brandColor
-      : props.theme.primary.text.normal} 50%,
+      ${(props) => (props.isGoFast ? props.theme.brandColor : props.theme.primary.text.normal)} 50%,
       transparent 54%,
       transparent 100%
     );
@@ -219,13 +216,13 @@ const StyledTimeRemaining = styled(Row)`
   padding: 16px;
   border-radius: 10px;
   height: 40px;
-  gap: 5px
+  gap: 5px;
 `;
 
-const StyledOverlay = styled(Row) <{ backgroundColor?: string }>`
+const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   position: absolute;
   height: 66px;
-  left:2px;
+  left: 2px;
   right: 0;
   width: calc(100% - 4px);
   border-radius: 24px;

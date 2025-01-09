@@ -6,6 +6,7 @@ import { errorAtom, ErrorType } from "@/state/errorPage";
 import { Routes, currentPageAtom } from "@/state/router";
 import { useAtom } from "jotai";
 import { ErrorBoundary } from "react-error-boundary";
+import { captureException } from "@sentry/browser";
 
 export const Router = () => {
   const [currentPage] = useAtom(currentPageAtom);
@@ -20,9 +21,10 @@ export const Router = () => {
       return (
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setError({ errorType: ErrorType.Unexpected, error })
-          }
+          onError={(error) => {
+            captureException(error);
+            setError({ errorType: ErrorType.Unexpected, error });
+          }}
         >
           <SwapPage />
         </ErrorBoundary>
@@ -31,9 +33,10 @@ export const Router = () => {
       return (
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setError({ errorType: ErrorType.Unexpected, error })
-          }
+          onError={(error) => {
+            captureException(error);
+            setError({ errorType: ErrorType.Unexpected, error });
+          }}
         >
           <SwapExecutionPage />
         </ErrorBoundary>
@@ -42,9 +45,10 @@ export const Router = () => {
       return (
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setError({ errorType: ErrorType.Unexpected, error })
-          }
+          onError={(error) => {
+            captureException(error);
+            setError({ errorType: ErrorType.Unexpected, error });
+          }}
         >
           <TransactionHistoryPage />
         </ErrorBoundary>

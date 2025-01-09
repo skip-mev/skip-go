@@ -3,10 +3,7 @@ import { Row } from "@/components/Layout";
 import { css, styled, useTheme } from "styled-components";
 import { useCallback, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
-import {
-  RenderWalletList,
-  ManualWalletEntry,
-} from "@/components/RenderWalletList";
+import { RenderWalletList, ManualWalletEntry } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
 import { useAtom, useAtomValue } from "jotai";
@@ -21,8 +18,8 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 
 export type SetAddressModalProps = ModalProps & {
-  chainId: string
-  chainAddressIndex?: number
+  chainId: string;
+  chainAddressIndex?: number;
 };
 
 export enum WalletSource {
@@ -37,7 +34,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find(c => c.chainID === chainId);
+  const chain = chains?.find((c) => c.chainID === chainId);
   const chainName = chain?.prettyName;
   const chainLogo = chain?.logoURI;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
@@ -46,9 +43,8 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
 
   // If not same chain transaction, show warning
-  const showWithdrawalWarning = (
-    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID))
-  ).size > 1;
+  const showWithdrawalWarning =
+    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
 
   const walletList = [
     ..._walletList,
@@ -66,12 +62,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     } as ManualWalletEntry,
   ];
 
-  const handleChangeAddress = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setManualWalletAddress(e.target.value);
-    },
-    []
-  );
+  const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setManualWalletAddress(e.target.value);
+  }, []);
 
   const addressIsValid = useMemo(() => {
     if (!chain || manualWalletAddress.length === 0) return;
@@ -79,7 +72,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     return isValidWalletAddress({
       address: manualWalletAddress,
       bech32Prefix,
-      chainType
+      chainType,
     });
   }, [chain, manualWalletAddress]);
 
@@ -155,9 +148,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
             onClick={onConfirmSetManualAddress}
           >
             <Text
-              mainButtonColor={
-                addressIsValid === true ? theme?.brandColor : undefined
-              }
+              mainButtonColor={addressIsValid === true ? theme?.brandColor : undefined}
               opacity={addressIsValid ? 1 : 0.5}
               fontSize={24}
             >
@@ -232,6 +223,5 @@ export const StyledBrandButton = styled(Button)`
   background-color: ${({ theme }) => theme.brandColor};
   height: 60px;
   border-radius: 12px;
-  ${({ disabled, theme }) =>
-    disabled && `background-color: ${theme.secondary.background.normal}`};
+  ${({ disabled, theme }) => disabled && `background-color: ${theme.secondary.background.normal}`};
 `;
