@@ -34,6 +34,7 @@ import {
 import { defineChain } from "viem";
 import { walletConnect } from "wagmi/connectors";
 import { isMobile, isBrowser } from "@/utils/os";
+const isBrowser = typeof window !== 'undefined';
 
 export const formaTestnet = defineChain({
   id: 984_123,
