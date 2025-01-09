@@ -7,13 +7,7 @@ export const SwapIcon = ({
   color = "currentColor",
   backgroundColor = "transparent",
 }: IconProps) => (
-  <svg
-    width="40"
-    height="40"
-    viewBox="0 0 40 40"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="40" height="40" rx="10" fill={backgroundColor} />
     <path
       d="M22.959 27.9526H17.5572C16.3875 27.9526 15.8005 26.5389 16.6294 25.71L21.5607 20.7787L19.2281 18.446L14.2967 23.3774C13.4701 24.204 12.0542 23.6192 12.0542 22.4496V17.0411H8.75635V31.2482H22.959V27.9504V27.9526Z"

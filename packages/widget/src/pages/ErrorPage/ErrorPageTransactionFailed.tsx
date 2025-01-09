@@ -26,7 +26,6 @@ export const ErrorPageTransactionFailed = ({
   onClickContactSupport,
   onClickBack,
 }: ErrorPageTransactionFailedProps) => {
-
   useEffect(() => {
     captureException("TransactionFailed");
   }, []);
@@ -47,7 +46,7 @@ export const ErrorPageTransactionFailed = ({
               onClickBack();
             }
             setCurrentPage(Routes.SwapPage);
-          }
+          },
         }}
       />
       <ErrorPageContent

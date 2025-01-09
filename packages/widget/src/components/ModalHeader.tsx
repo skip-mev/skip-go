@@ -11,11 +11,7 @@ type ModalHeaderProps = {
   rightContent?: () => React.ReactNode;
 };
 
-export const ModalHeader = ({
-  title,
-  onClickBackButton,
-  rightContent,
-}: ModalHeaderProps) => {
+export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHeaderProps) => {
   const theme = useTheme();
   return (
     <StyledHeader align="center" justify="space-between">
@@ -45,7 +41,7 @@ export const StyledModalContainer = styled(Column)`
     max-height: 600px;
   }
 `;
-export const StyledModalInnerContainer = styled(Column) <{
+export const StyledModalInnerContainer = styled(Column)<{
   height: number;
 }>`
   height: ${({ height }) => height}px;

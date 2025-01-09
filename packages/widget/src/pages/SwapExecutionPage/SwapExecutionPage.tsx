@@ -39,20 +39,13 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const {
-    route,
-    overallStatus,
-    transactionDetailsArray,
-    isValidatingGasBalance,
-  } = useAtomValue(swapExecutionStateAtom);
+  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
+    useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
-
-  const { mutate: submitExecuteRouteMutation } = useAtomValue(
-    skipSubmitSwapExecutionAtom
-  );
+  const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
@@ -90,8 +83,7 @@ export const SwapExecutionPage = () => {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
-          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)}{" "}
-          still required
+          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)} still required
         </StyledSignatureRequiredContainer>
       );
     }
@@ -117,8 +109,6 @@ export const SwapExecutionPage = () => {
     };
   }, [swapExecutionState, route?.destAssetChainID]);
 
-
-
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
@@ -129,10 +119,10 @@ export const SwapExecutionPage = () => {
         leftButton={
           simpleRoute
             ? {
-              label: "Back",
-              icon: ICONS.thinArrow,
-              onClick: () => setCurrentPage(Routes.SwapPage),
-            }
+                label: "Back",
+                icon: ICONS.thinArrow,
+                onClick: () => setCurrentPage(Routes.SwapPage),
+              }
             : undefined
         }
         rightButton={{

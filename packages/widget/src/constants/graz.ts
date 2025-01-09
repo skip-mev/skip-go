@@ -50,7 +50,7 @@ export const keplrMainnetChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain"
+  "wormchain",
 ];
 
 // other wallets not the keplr wallet
@@ -110,7 +110,7 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain"
+  "wormchain",
 ];
 
 export const walletInfo: Record<

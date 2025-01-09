@@ -15,11 +15,7 @@ export const GoFastSymbol = () => {
         onMouseLeave={() => setShowTooltip(false)}
         color={theme.brandColor}
       />
-      {showTooltip && (
-        <Tooltip>
-          Powered by Skip:Go Fast
-        </Tooltip>
-      )}
+      {showTooltip && <Tooltip>Powered by Skip:Go Fast</Tooltip>}
     </Row>
   );
 };

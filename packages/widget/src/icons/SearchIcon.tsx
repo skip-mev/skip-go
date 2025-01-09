@@ -3,10 +3,7 @@ type IconProps = {
   className?: string;
 };
 
-export const SearchIcon = ({
-  color = "currentColor",
-  className,
-}: IconProps) => (
+export const SearchIcon = ({ color = "currentColor", className }: IconProps) => (
   <svg
     width="21"
     height="20"

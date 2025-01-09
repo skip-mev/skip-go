@@ -32,7 +32,7 @@ export const SwapPageBridge = () => {
   );
 };
 
-const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
+const StyledBridgeArrow = styled(BridgeArrowIcon)<{ spin?: boolean }>`
   position: absolute;
   left: 50%;
   top: 50%;
@@ -47,6 +47,5 @@ const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
     }
   }
 
-  ${({ spin }) =>
-    spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
+  ${({ spin }) => spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
 `;

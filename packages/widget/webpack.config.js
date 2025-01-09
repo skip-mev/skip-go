@@ -46,7 +46,6 @@ export default {
       ".cjs": [".cjs", ".cts"],
       ".mjs": [".mjs", ".mts"],
     },
-    
   },
 
   mode: "production",
@@ -66,7 +65,7 @@ export default {
             loader: "ts-loader",
             options: {
               transpileOnly: true, // Ignore type checking
-              configFile: "tsconfig.webpack.json"
+              configFile: "tsconfig.webpack.json",
             },
           },
         ],

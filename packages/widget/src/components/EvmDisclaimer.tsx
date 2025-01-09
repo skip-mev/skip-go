@@ -10,12 +10,10 @@ export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const usesEvmInOperations = useMemo(() => {
-    return route?.requiredChainAddresses?.find(
-      (chainId) => {
-        const chainType = chains?.find(chain => chain.chainID === chainId)?.chainType;
-        return chainType === "evm";
-      }
-    );
+    return route?.requiredChainAddresses?.find((chainId) => {
+      const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+      return chainType === "evm";
+    });
   }, [chains, route?.requiredChainAddresses]);
 
   if (usesEvmInOperations) {

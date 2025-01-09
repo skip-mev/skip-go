@@ -2,19 +2,12 @@ import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import { createModal } from "@/components/Modal";
-import {
-  cloneElement,
-  ReactElement,
-  ReactNode,
-  useEffect,
-} from "react";
+import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
-import {
-  ChainFilter,
-} from "@/state/swapPage";
+import { ChainFilter } from "@/state/swapPage";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
@@ -23,10 +16,7 @@ import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
 
-export type WidgetRouteConfig = Omit<
-  RouteConfig,
-  "swapVenues" | "swapVenue"
-> & {
+export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
 };
@@ -60,18 +50,21 @@ export type WidgetProps = {
   connectedAddresses?: Record<string, string | undefined>;
 } & Pick<
   NewSkipClientOptions,
-  "apiUrl" | "chainIdsToAffiliates" | "endpointOptions" | "getCosmosSigner" | "getEVMSigner" | "getSVMSigner"
-> & Callbacks;
+  | "apiUrl"
+  | "chainIdsToAffiliates"
+  | "endpointOptions"
+  | "getCosmosSigner"
+  | "getEVMSigner"
+  | "getSVMSigner"
+> &
+  Callbacks;
 
 type NewSwapVenueRequest = {
   name: string;
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<
-  SkipClientOptions,
-  "apiURL" | "chainIDsToAffiliates"
-> & {
+type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
   apiUrl?: string;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 };
@@ -114,13 +107,8 @@ export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   );
 };
 
-export const ShowWidget = ({
-  button = <button>show widget</button>,
-  ...props
-}: ShowSwapWidget) => {
-  const modal = useModal(
-    createModal(() => <WidgetWithoutNiceModalProvider {...props} />)
-  );
+export const ShowWidget = ({ button = <button>show widget</button>, ...props }: ShowSwapWidget) => {
+  const modal = useModal(createModal(() => <WidgetWithoutNiceModalProvider {...props} />));
 
   const handleClick = () => {
     modal.show();

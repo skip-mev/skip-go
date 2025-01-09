@@ -3,7 +3,10 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Row } from "@/components/Layout";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 
-import { WalletSelectorModal, WalletSelectorModalProps } from "@/modals/WalletSelectorModal/WalletSelectorModal";
+import {
+  WalletSelectorModal,
+  WalletSelectorModalProps,
+} from "@/modals/WalletSelectorModal/WalletSelectorModal";
 
 const meta = {
   title: "Modals/WalletSelectorModal",
