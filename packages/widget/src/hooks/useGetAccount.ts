@@ -160,7 +160,7 @@ export const useGetAccount = () => {
             wallet: {
               name: solanaWallet.name as string,
               prettyName: solanaWallet.name as string,
-              logo: solanaWallet.icon,
+              logo: solanaWallet.name === "WalletConnect" ? walletConnectLogo : solanaWallet.icon,
             },
           };
         }

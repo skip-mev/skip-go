@@ -6,6 +6,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
+import { walletConnectLogo } from "@/constants/wagmi";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -23,7 +24,7 @@ export const useCreateSolanaWallets = () => {
         walletPrettyName: wallet.name,
         walletChainType: ChainType.SVM,
         walletInfo: {
-          logo: wallet.icon,
+          logo: wallet.name === "WalletConnect" ? walletConnectLogo : wallet.icon,
         },
         connect: async () => {
           try {
