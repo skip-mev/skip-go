@@ -1,5 +1,6 @@
 import { skipClient as skipClientAtom } from "@/state/skipClient";
 import { ClientTransferEvent, getSimpleOverallStatus, getTransferEventsFromTxStatusResponse, OverallStatus } from "@/utils/clientType";
+import { captureException } from "@sentry/react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState, useMemo } from "react";
@@ -61,6 +62,10 @@ export const useBroadcastedTxsStatus = ({
       }
 
       const lastTxStatus = results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
+
+      if (lastTxStatus === "failed" && isRouteSettled) {
+        captureException("TransactionFailed");
+      }
 
       const resData: TxsStatus = {
         isSuccess: (lastTxStatus === "success" && isRouteSettled) || (_isAllTxSuccess && isRouteSettled),
