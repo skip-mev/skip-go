@@ -21,6 +21,7 @@ import {
   keplrMainnetChainIdsInitialConnect,
   walletConnectMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
+  okxWalletChainIdsInitialConnect,
 } from "@/constants/graz";
 import { mainnetChains, getChainInfo } from "@/constants/chains";
 import { useCallback } from "react";
@@ -135,6 +136,10 @@ export const useCreateCosmosWallets = () => {
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = (() => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((window?.keplr as any).isOkxWallet) {
+            return okxWalletChainIdsInitialConnect;
+          }
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
           return walletMainnetChainIdsInitialConnect;

@@ -1,5 +1,17 @@
 import { WalletType } from "graz";
 
+export const okxWalletChainIdsInitialConnect = [
+  "axelar-dojo-1",
+  "celestia",
+  "cosmoshub-4",
+  "dydx-mainnet-1",
+  "injective-1",
+  "juno-1",
+  "kava_2222-10",
+  "osmosis-1",
+  "stargaze-1",
+];
+
 export const keplrMainnetChainIdsInitialConnect = [
   "agoric-3",
   "akashnet-2",
