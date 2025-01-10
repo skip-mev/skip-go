@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 0.16.4
+
+### Patch Changes
+
+- 7f3ede7: no longer override timeout in signCosmosMessageAmino
+- 7f3ede7: update stargate fee types
+- 7f3ede7: add stargate to experimental features
+
 ## 0.16.3
 
 ### Patch Changes

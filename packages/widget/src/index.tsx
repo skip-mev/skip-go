@@ -12,8 +12,8 @@ init({
       maskAllInputs: false,
       blockAllMedia: false,
       networkDetailAllowUrls: [/^https:\/\/go\.skip\.build\//],
-      networkRequestHeaders: ['X-Custom-Header'],
-      networkResponseHeaders: ['X-Custom-Header'],
+      networkRequestHeaders: ["X-Custom-Header"],
+      networkResponseHeaders: ["X-Custom-Header"],
     }),
   ],
   // Session Replay

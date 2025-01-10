@@ -1,5 +1,30 @@
 ## 0.0.15
 
+## 3.1.7
+
+### Patch Changes
+
+- 9965900: Fix handling of transaction failed status
+- 9965900: add network details to sentry
+- 9965900: fix okx wallet override
+- 9965900: Add Smarter asset image loading
+
+## 3.1.6
+
+### Patch Changes
+
+- 7f3ede7: Convert globalStyles to stylesheet before passing to react-shadow-scope
+- 7f3ede7: Fix routePreference bug
+- 7f3ede7: Add sentry integration (session replay, error tracking)
+- 7f3ede7: Fix okxWallet eco connection
+- 7f3ede7: enable evm walletconnect for desktop
+- 7f3ede7: add stargate to experimental features
+- 7f3ede7: Track error in sentry if the transaction fails
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+  - @skip-go/client@0.16.4
+
 ## 3.1.5
 
 ### Patch Changes
