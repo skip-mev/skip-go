@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.1.7
+
+### Patch Changes
+
+- 9965900: Fix handling of transaction failed status
+- 9965900: add network details to sentry
+- 9965900: fix okx wallet override
+- 9965900: Add Smarter asset image loading
+
 ## 3.1.6
 
 ### Patch Changes
