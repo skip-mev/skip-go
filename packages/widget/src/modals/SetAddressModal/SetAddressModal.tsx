@@ -16,6 +16,8 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
+import { isMobile } from "@/utils/os";
+import { isWalletConnect, WalletType } from "graz";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
@@ -46,20 +48,37 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const showWithdrawalWarning =
     new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
 
+  const onlyShowManualWalletEntry = useMemo(() => {
+    const mobile = isMobile()
+    if (!mobile) return false;
+    const source = chainAddresses[0];
+    if (source.chainType !== chain?.chainType) return false;
+    if (source.source !== "wallet") return false;
+    const isCosmosWC = isWalletConnect(source.wallet.walletName as WalletType);
+    const isWC = source.wallet.walletName === "WalletConnect";
+    const isSourceWC = isCosmosWC || isWC;
+    return isSourceWC
+  }, [
+    chainAddresses,
+    chain?.chainType,
+  ]);
+
+  const manualWalletEntry = {
+    onSelect: () => setShowManualAddressInput(true),
+    walletName: "Enter address manually",
+    rightContent: () => {
+      return (
+        <RightArrowIcon
+          color={theme?.primary?.background.normal}
+          backgroundColor={theme?.primary?.text.normal}
+        />
+      );
+    },
+  } as ManualWalletEntry
+
   const walletList = [
     ..._walletList,
-    {
-      onSelect: () => setShowManualAddressInput(true),
-      walletName: "Enter address manually",
-      rightContent: () => {
-        return (
-          <RightArrowIcon
-            color={theme?.primary?.background.normal}
-            backgroundColor={theme?.primary?.text.normal}
-          />
-        );
-      },
-    } as ManualWalletEntry,
+    manualWalletEntry
   ];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +178,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title="Destination wallet"
-          walletList={walletList}
+          walletList={onlyShowManualWalletEntry ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
