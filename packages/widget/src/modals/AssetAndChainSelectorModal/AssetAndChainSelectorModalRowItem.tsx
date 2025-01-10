@@ -97,17 +97,26 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
   context: SelectorContext;
 }) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
-  // prioritize logoURI from raw.githubusercontent over coingecko
-  const logoURI =
-    item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ??
-    item.assets[0].logoURI;
+  const logoURIs = [
+    item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
+    ...item.assets.map((asset) => asset.logoURI),
+  ].filter((uri): uri is string => !!uri);
 
   return (
     <Row align="center" gap={8}>
       <StyledAssetImage
         height={35}
         width={35}
-        src={logoURI}
+        src={logoURIs[0]}
+        onError={(e) => {
+          const img = e.currentTarget;
+          const currentIndex = logoURIs.indexOf(img.src);
+          const nextIndex = currentIndex + 1;
+
+          if (nextIndex < logoURIs.length) {
+            img.src = logoURIs[nextIndex];
+          }
+        }}
         alt={`${item.assets[0].recommendedSymbol} logo`}
       />
       <Row align="baseline" gap={8}>
