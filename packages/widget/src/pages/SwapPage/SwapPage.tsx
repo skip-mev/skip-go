@@ -309,6 +309,7 @@ export const SwapPage = () => {
             value={sourceAsset?.amount}
             usdValue={route?.usdAmountIn}
             onChangeValue={setSourceAssetAmount}
+            context="source"
           />
           <SwapPageBridge />
           <SwapPageAssetChainInput
@@ -321,6 +322,7 @@ export const SwapPage = () => {
             priceChangePercentage={Number(priceChangePercentage)}
             badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
             onChangeValue={setDestinationAssetAmount}
+            context="destination"
           />
         </Column>
         {swapButton}

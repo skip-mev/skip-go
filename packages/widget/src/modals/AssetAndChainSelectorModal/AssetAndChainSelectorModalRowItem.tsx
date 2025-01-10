@@ -10,6 +10,7 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 import { useFilteredChains } from "./useFilteredChains";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset,
@@ -62,7 +63,7 @@ export const AssetAndChainSelectorModalRowItem = ({
       style={{ margin: "5px 0" }}
       leftContent={
         <Row align="center" gap={8}>
-          <StyledAssetImage
+          <StyledChainImage
             height={35}
             width={35}
             src={item?.logoURI}
@@ -97,28 +98,9 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
   context: SelectorContext;
 }) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
-  const logoURIs = [
-    item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
-    ...item.assets.map((asset) => asset.logoURI),
-  ].filter((uri): uri is string => !!uri);
-
   return (
     <Row align="center" gap={8}>
-      <StyledAssetImage
-        height={35}
-        width={35}
-        src={logoURIs[0]}
-        onError={(e) => {
-          const img = e.currentTarget;
-          const currentIndex = logoURIs.indexOf(img.src);
-          const nextIndex = currentIndex + 1;
-
-          if (nextIndex < logoURIs.length) {
-            img.src = logoURIs[nextIndex];
-          }
-        }}
-        alt={`${item.assets[0].recommendedSymbol} logo`}
-      />
+      <StyledAssetImage height={35} width={35} groupedAsset={item} />
       <Row align="baseline" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
         {filteredChains.length > 1 ? (
@@ -135,9 +117,13 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
   );
 };
 
-const StyledAssetImage = styled.img`
+const StyledChainImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
+  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
+`;
+
+const StyledAssetImage = styled(GroupedAssetImage)`
   ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
 `;
 
