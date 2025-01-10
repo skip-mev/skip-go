@@ -1,7 +1,7 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -24,6 +24,7 @@ import { SwapExecutionButton } from "./SwapExecutionButton";
 import { StyledSignatureRequiredContainer } from "@/pages/SwapPage/SwapPageFooter";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
+import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -48,7 +49,6 @@ export const SwapExecutionPage = () => {
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
-
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(
     skipSubmitSwapExecutionAtom
@@ -83,6 +83,7 @@ export const SwapExecutionPage = () => {
     signaturesRemaining,
   });
 
+  useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {

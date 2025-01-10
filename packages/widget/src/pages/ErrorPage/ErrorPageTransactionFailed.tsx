@@ -14,14 +14,14 @@ import { captureException } from "@sentry/browser";
 import { useEffect } from "react";
 
 export type ErrorPageTransactionFailedProps = {
-  transactionHash: string;
+  txHash: string;
   explorerLink: string;
   onClickContactSupport: () => void;
-  onClickBack: () => void;
+  onClickBack?: () => void;
 };
 
 export const ErrorPageTransactionFailed = ({
-  transactionHash,
+  txHash,
   explorerLink,
   onClickContactSupport,
   onClickBack,
@@ -63,7 +63,7 @@ export const ErrorPageTransactionFailed = ({
               onClick={() => window.open(explorerLink, "_blank")}
               color={theme.primary.text.lowContrast}
             >
-              Transaction: <u>{getTruncatedAddress(transactionHash)}</u>
+              Transaction: <u>{getTruncatedAddress(txHash)}</u>
               <ChainIcon color={theme.primary.text.lowContrast} />
             </Row>
           </>

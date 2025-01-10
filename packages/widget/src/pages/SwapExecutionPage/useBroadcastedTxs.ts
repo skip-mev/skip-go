@@ -5,7 +5,6 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState, useMemo } from "react";
 
-
 export type TxsStatus = {
   isSuccess: boolean;
   isSettled: boolean;
@@ -52,10 +51,6 @@ export const useBroadcastedTxsStatus = ({
         );
       });
 
-      const _isAllTxSuccess = transferEvents.every((tx) => {
-        return tx.status === "completed";
-      });
-
       const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
       if (isRouteSettled) {
         setIsSettled(true);
@@ -68,7 +63,7 @@ export const useBroadcastedTxsStatus = ({
       }
 
       const resData: TxsStatus = {
-        isSuccess: (lastTxStatus === "success" && isRouteSettled) || (_isAllTxSuccess && isRouteSettled),
+        isSuccess: (lastTxStatus === "success" && isRouteSettled),
         lastTxStatus,
         isSettled: isRouteSettled,
         transferEvents,
