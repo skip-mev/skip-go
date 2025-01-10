@@ -32,6 +32,7 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
           currentImageIndex === dedupedLogoURIs.length - 1 ||
           currentImageIndex === MAX_NUMBER_OF_IMAGES_TO_CHECK
         ) {
+          e.currentTarget.src = "";
           e.currentTarget.onerror = null;
           return;
         }
@@ -49,4 +50,5 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
+  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
 `;

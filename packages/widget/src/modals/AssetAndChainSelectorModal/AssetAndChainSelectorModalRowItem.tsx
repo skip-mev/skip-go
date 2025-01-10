@@ -100,7 +100,7 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
   return (
     <Row align="center" gap={8}>
-      <StyledAssetImage height={35} width={35} groupedAsset={item} />
+      <GroupedAssetImage height={35} width={35} groupedAsset={item} />
       <Row align="baseline" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
         {filteredChains.length > 1 ? (
@@ -120,10 +120,6 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
 const StyledChainImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
-`;
-
-const StyledAssetImage = styled(GroupedAssetImage)`
   ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
 `;
 
