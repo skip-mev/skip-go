@@ -59,7 +59,7 @@ export const useCreateCosmosWallets = () => {
         WalletType.WALLETCONNECT,
       ];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((window?.keplr as any).isOkxWallet) {
+      if (typeof window !== 'undefined' && window.keplr && (window?.keplr as any).isOkxWallet) {
         browserWallets[0] = WalletType.OKX;
       }
 
