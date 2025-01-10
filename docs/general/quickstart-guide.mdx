@@ -39,6 +39,8 @@ import { SkipClient } from "@skip-go/client";
 const skipClient = new SkipClient({
   getCosmosSigner = async (chainID: string) => {
     const key = await window.keplr?.getKey(chainID);
+    if (!key) throw new Error("Keplr not installed or chain not added");
+
 
     return key.isNanoLedger
       ? window.keplr?.getOfflineSignerOnlyAmino(chainID)
