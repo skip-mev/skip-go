@@ -32,7 +32,6 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
           currentImageIndex === dedupedLogoURIs.length - 1 ||
           currentImageIndex === MAX_NUMBER_OF_IMAGES_TO_CHECK
         ) {
-          e.currentTarget.src = "";
           e.currentTarget.onerror = null;
           return;
         }
