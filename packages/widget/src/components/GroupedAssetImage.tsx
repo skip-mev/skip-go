@@ -2,7 +2,7 @@ import { GroupedAsset } from "@/modals/AssetAndChainSelectorModal/AssetAndChainS
 import { useState } from "react";
 import styled from "styled-components";
 
-const NUMBER_OF_IMAGES_TO_CHECK = 6;
+const MAX_NUMBER_OF_IMAGES_TO_CHECK = 6;
 
 export type GroupedAssetImageType = {
   groupedAsset?: GroupedAsset;
@@ -30,7 +30,7 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
       onError={(e) => {
         if (
           currentImageIndex === dedupedLogoURIs.length - 1 ||
-          currentImageIndex === NUMBER_OF_IMAGES_TO_CHECK
+          currentImageIndex === MAX_NUMBER_OF_IMAGES_TO_CHECK
         ) {
           e.currentTarget.onerror = null;
           return;
