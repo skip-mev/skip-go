@@ -287,10 +287,3 @@ export const StyledAssetLabel = styled(Row).attrs({
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background-color: ${(props) => props.theme.brandColor};
 `;
-
-const StyledImage = styled.img`
-  border-radius: 50%;
-  width: 23px;
-  height: 23px;
-  object-fit: cover;
-`;
