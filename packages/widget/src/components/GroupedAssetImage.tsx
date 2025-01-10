@@ -13,28 +13,31 @@ export type GroupedAssetImageType = {
 export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetImageType) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  if (!groupedAsset?.assets) return <img />;
-  const logoURIs = [
+  if (!groupedAsset?.assets) return <img height={height} width={width} />;
+  const allLogoURIs = [
     groupedAsset.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
     ...groupedAsset.assets.map((asset) => asset.logoURI),
   ].filter((uri): uri is string => !!uri);
+
+  const dedupedLogoURIs = Array.from(new Set(allLogoURIs));
 
   return (
     <StyledAssetImage
       height={height}
       width={width}
-      src={logoURIs[0]}
+      src={dedupedLogoURIs[0]}
+      loading="lazy"
       onError={(e) => {
-        if (currentImageIndex === NUMBER_OF_IMAGES_TO_CHECK) {
+        if (
+          currentImageIndex === dedupedLogoURIs.length - 1 ||
+          currentImageIndex === NUMBER_OF_IMAGES_TO_CHECK
+        ) {
           e.currentTarget.onerror = null;
           return;
         }
         const nextIndex = currentImageIndex + 1;
         const img = e.currentTarget;
-
-        if (currentImageIndex < 5) {
-          img.src = logoURIs[nextIndex];
-        }
+        img.src = dedupedLogoURIs[nextIndex];
 
         setCurrentImageIndex(nextIndex);
       }}
