@@ -24,6 +24,7 @@ import { SwapExecutionButton } from "./SwapExecutionButton";
 import { StyledSignatureRequiredContainer } from "@/pages/SwapPage/SwapPageFooter";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
+import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -76,6 +77,7 @@ export const SwapExecutionPage = () => {
     signaturesRemaining,
   });
 
+  useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {

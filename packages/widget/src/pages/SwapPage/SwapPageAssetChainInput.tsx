@@ -16,6 +16,9 @@ import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -27,6 +30,7 @@ export type AssetChainInputProps = {
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
+  context: SelectorContext;
 };
 
 export const SwapPageAssetChainInput = ({
@@ -39,6 +43,7 @@ export const SwapPageAssetChainInput = ({
   priceChangePercentage,
   isWaitingToUpdateInputValue,
   badPriceWarning,
+  context,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
@@ -50,6 +55,11 @@ export const SwapPageAssetChainInput = ({
     amount: value,
     chainId: selectedAsset?.chainID,
   });
+
+  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
+  const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
+    (group) => group.id === assetDetails.asset?.recommendedSymbol,
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -160,7 +170,7 @@ export const SwapPageAssetChainInput = ({
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <StyledImage src={assetDetails.assetImage} />
+              <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text>{assetDetails.symbol}</Text>
               {isMobileScreenSize && (
                 <ChevronIcon
@@ -275,11 +285,4 @@ export const StyledAssetLabel = styled(Row).attrs({
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background-color: ${(props) => props.theme.brandColor};
-`;
-
-const StyledImage = styled.img`
-  border-radius: 50%;
-  width: 23px;
-  height: 23px;
-  object-fit: cover;
 `;
