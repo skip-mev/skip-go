@@ -101,7 +101,7 @@ export const useCreateSolanaWallets = () => {
           });
         },
         isWalletConnected: wallet.connected,
-        isAvailable: wallet.readyState === "Installed",
+        isAvailable: wallet.readyState === "Installed" || wallet.readyState === "Loadable",
       };
       wallets.push(minimalWallet);
     }
