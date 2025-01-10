@@ -1,5 +1,10 @@
 import { skipClient as skipClientAtom } from "@/state/skipClient";
-import { ClientTransferEvent, getSimpleOverallStatus, getTransferEventsFromTxStatusResponse, OverallStatus } from "@/utils/clientType";
+import {
+  ClientTransferEvent,
+  getSimpleOverallStatus,
+  getTransferEventsFromTxStatusResponse,
+  OverallStatus,
+} from "@/utils/clientType";
 import { captureException } from "@sentry/react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
@@ -49,14 +54,14 @@ export const useBroadcastedTxsStatus = ({
         );
       });
 
-      const _isAllTxSuccess = transferEvents.every((tx) => {
-        return tx.status === "completed";
-      });
-
       const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
       if (isRouteSettled) {
         setIsSettled(true);
       }
+
+      const someTxFailed = results.some((tx) => {
+        return tx.state === "STATE_COMPLETED_ERROR" || tx.state === "STATE_ABANDONED";
+      });
 
       const lastTxStatus =
         results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
@@ -66,8 +71,7 @@ export const useBroadcastedTxsStatus = ({
       }
 
       const resData: TxsStatus = {
-        isSuccess:
-          (lastTxStatus === "success" && isRouteSettled) || (_isAllTxSuccess && isRouteSettled),
+        isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
         lastTxStatus,
         isSettled: isRouteSettled,
         transferEvents,
