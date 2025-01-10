@@ -17,7 +17,7 @@ export type MinimalWallet = {
   isAvailable?: boolean;
   getAddress?: (props: {
     signRequired?: boolean;
-    context?: 'recovery' | 'destination';
+    context?: "recovery" | "destination";
     praxWallet?: {
       index?: number;
       sourceChainID?: string;
@@ -31,17 +31,17 @@ type WalletState = {
 };
 
 export type WalletConnect = {
-  options: Pick<SignClientTypes.Options, 'projectId' | 'name'> | null;
+  options: Pick<SignClientTypes.Options, "projectId" | "name"> | null;
   walletConnectModal?: Pick<
     WalletConnectModalConfig,
-    'themeVariables' | 'themeMode' | 'privacyPolicyUrl' | 'termsOfServiceUrl'
+    "themeVariables" | "themeMode" | "privacyPolicyUrl" | "termsOfServiceUrl"
   > | null;
 };
 
 export const walletConnectAtom = atom<WalletConnect>({
   options: {
-    projectId: 'ff1b9e9bd6329cfb07642bd7f4d11a8c',
-    name: 'Skip Go',
+    projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+    name: "Skip Go",
   },
 });
 
@@ -58,14 +58,14 @@ export const walletsAtom = atom((get) => {
 });
 
 export const knownEthermintLikeChains = [
-  'evmos_9001-2',
-  'dymension_1100-1',
-  'injective-1',
-  'dimension_37-1',
-  'haqq_11235-1',
-  'shido_9008-1',
+  "evmos_9001-2",
+  "dymension_1100-1",
+  "injective-1",
+  "dimension_37-1",
+  "haqq_11235-1",
+  "shido_9008-1",
 ];
 
-export const getConnectedSignersAtom = atom<SignerGetters>()
+export const getConnectedSignersAtom = atom<SignerGetters>();
 
 export const connectedAddressesAtom = atom<Record<string, string | undefined>>();

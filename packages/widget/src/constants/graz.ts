@@ -1,5 +1,17 @@
 import { WalletType } from "graz";
 
+export const okxWalletChainIdsInitialConnect = [
+  "axelar-dojo-1",
+  "celestia",
+  "cosmoshub-4",
+  "dydx-mainnet-1",
+  "injective-1",
+  "juno-1",
+  "kava_2222-10",
+  "osmosis-1",
+  "stargaze-1",
+];
+
 export const keplrMainnetChainIdsInitialConnect = [
   "agoric-3",
   "akashnet-2",
@@ -38,7 +50,7 @@ export const keplrMainnetChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain"
+  "wormchain",
 ];
 
 // other wallets not the keplr wallet
@@ -98,7 +110,7 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain"
+  "wormchain",
 ];
 
 export const walletInfo: Record<
@@ -109,6 +121,10 @@ export const walletInfo: Record<
     mobile?: boolean;
   }
 > = {
+  [WalletType.OKX]: {
+    name: "OKX",
+    imgSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJDSURBVHgB7Zq9jtpAEMfHlhEgQLiioXEkoAGECwoKxMcTRHmC5E3IoyRPkPAEkI7unJYmTgEFTYwA8a3NTKScLnCHN6c9r1e3P2llWQy7M/s1Gv1twCP0ej37dDq9x+Zut1t3t9vZjDEHIiSRSPg4ZpDL5fxkMvn1cDh8m0wmfugfO53OoFQq/crn8wxfY9EymQyrVCqMfHvScZx1p9ls3pFxXBy/bKlUipGPrVbLuQqAfsCliq3zl0H84zwtjQrOw4Mt1W63P5LvBm2d+Xz+YzqdgkqUy+WgWCy+Mc/nc282m4FqLBYL+3g8fjDxenq72WxANZbLJeA13zDX67UDioL5ybXwafMYu64Ltn3bdDweQ5R97fd7GyhBQMipx4POeEDHIu2LfDdBIGGz+hJ9CQ1ABjoA2egAZPM6AgiCAEQhsi/C4jHyPA/6/f5NG3Ks2+3CYDC4aTccDrn6ojG54MnEvG00GoVmWLIRNZ7wTCwDHYBsdACy0QHIhiuRETxlICWpMMhGZHmqS8qH6JLyGegAZKMDkI0uKf8X4SWlaZo+Pp1bRrwlJU8ZKLIvUjKh0WiQ3sRUbNVq9c5Ebew7KEo2m/1p4jJ4qAmDaqDQBzj5XyiAT4VCQezJigAU+IDU+z8vJFnGWeC+bKQV/5VZ71FV6L7PA3gg3tXrdQ+DgLhC+75Wq3no69P3MC0NFQpx2lL04Ql9gHK1bRDjsSBIvScBnDTk1WrlGIZBorIDEYJj+rhdgnQ67VmWRe0zlplXl81vcyEt0rSoYDUAAAAASUVORK5CYII=",
+  },
   [WalletType.KEPLR]: {
     name: "Keplr",
     imgSrc:

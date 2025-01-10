@@ -1,11 +1,4 @@
-import {
-  ComponentType,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { useCSS, Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
@@ -13,10 +6,7 @@ import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
 
-function shouldForwardProp(
-  propName: string,
-  target: string | ComponentType<unknown>
-) {
+function shouldForwardProp(propName: string, target: string | ComponentType<unknown>) {
   if (typeof target === "string") {
     return isPropValid(propName);
   }
@@ -34,20 +24,15 @@ export const ShadowDomAndProviders = ({
   const css = useCSS();
 
   const [, setShadowDom] = useState<HTMLElement>();
-  const [styledComponentContainer, setStyledComponentContainer] =
-    useState<HTMLElement>();
+  const [styledComponentContainer, setStyledComponentContainer] = useState<HTMLElement>();
 
   const onShadowDomLoaded = useCallback((element: HTMLDivElement) => {
     setShadowDom(element);
   }, []);
 
-  const onStyledComponentContainerLoaded = useCallback(
-    (element: HTMLDivElement) => {
-      setStyledComponentContainer(element);
-    },
-    []
-  );
-
+  const onStyledComponentContainerLoaded = useCallback((element: HTMLDivElement) => {
+    setStyledComponentContainer(element);
+  }, []);
 
   const mergedThemes = useMemo(() => {
     return {
@@ -58,15 +43,15 @@ export const ShadowDomAndProviders = ({
 
   return (
     <ClientOnly>
-      <Scope ref={onShadowDomLoaded} stylesheet={css`${globalStyles}`}>
+      <Scope
+        ref={onShadowDomLoaded}
+        stylesheet={css`
+          ${globalStyles}
+        `}
+      >
         <div ref={onStyledComponentContainerLoaded}></div>
-        <StyleSheetManager
-          shouldForwardProp={shouldForwardProp}
-          target={styledComponentContainer}
-        >
-          <ThemeProvider theme={mergedThemes}>
-            {children}
-          </ThemeProvider>
+        <StyleSheetManager shouldForwardProp={shouldForwardProp} target={styledComponentContainer}>
+          <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
         </StyleSheetManager>
       </Scope>
     </ClientOnly>

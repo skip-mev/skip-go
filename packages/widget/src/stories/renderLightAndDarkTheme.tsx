@@ -7,7 +7,7 @@ import React from "react";
 export const renderLightAndDarkTheme = (
   render: ReactNode,
   style?: CSSProperties,
-  row?: boolean
+  row?: boolean,
 ) => {
   return (
     <StyledWrapper gap={10} align="center" style={style} row={row}>
@@ -16,12 +16,10 @@ export const renderLightAndDarkTheme = (
     </StyledWrapper>
   );
 };
-export const renderLightAndDarkThemeSeperateProps = <
-  T extends React.ComponentType
->(
+export const renderLightAndDarkThemeSeperateProps = <T extends React.ComponentType>(
   render: React.ReactElement<ComponentProps<T>>,
   defaultProps: Partial<ComponentProps<T>>,
-  lightProps: Partial<ComponentProps<T>>
+  lightProps: Partial<ComponentProps<T>>,
 ): React.ReactElement => {
   const renderDarkElement = cloneElement(render, defaultProps);
   const renderLightElement = cloneElement(render, lightProps);

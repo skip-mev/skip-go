@@ -17,29 +17,37 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
 
   const feeAssetsState = useMemo(() => {
     if (!chainId) return undefined;
-    const feeAssets = chains?.find(chain => chain.chainID === chainId)?.feeAssets;
-    return feeAssets?.map(a => {
-      const balance = getBalance(chainId, a.denom)?.amount;
-      if (!balance) return undefined;
-      const gasPrice = (() => {
-        if (!a.gasPrice) return undefined;
-        const price =
-          a.gasPrice.average || a.gasPrice.high || a.gasPrice.low;
-        return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), a.denom);
-      })();
-      if (!gasPrice) return undefined;
-      const isSwapChain = swapVenues?.map(venue => venue.chainID).includes(chainId);
-      const gasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
-      const fee = calculateFee(gasAmount, gasPrice);
-      const feeAmount = fee.amount[0].amount;
+    const feeAssets = chains?.find((chain) => chain.chainID === chainId)?.feeAssets;
+    return feeAssets
+      ?.map((a) => {
+        const balance = getBalance(chainId, a.denom)?.amount;
+        if (!balance) return undefined;
+        const gasPrice = (() => {
+          if (!a.gasPrice) return undefined;
+          const price = a.gasPrice.average || a.gasPrice.high || a.gasPrice.low;
+          return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), a.denom);
+        })();
+        if (!gasPrice) return undefined;
+        const isSwapChain = swapVenues?.map((venue) => venue.chainID).includes(chainId);
+        const gasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
+        const fee = calculateFee(gasAmount, gasPrice);
+        const feeAmount = fee.amount[0].amount;
 
-      return {
-        feeAmount,
-        denom: a.denom,
-        balanceWithFees: BigNumber(balance).minus(feeAmount).toString(),
-        isSufficient: balance ? BigNumber(balance).isGreaterThanOrEqualTo(BigNumber(feeAmount)) : false,
-      };
-    }).filter((asset) => asset) as { feeAmount: string, denom: string, balanceWithFees: string, isSufficient: boolean }[];
+        return {
+          feeAmount,
+          denom: a.denom,
+          balanceWithFees: BigNumber(balance).minus(feeAmount).toString(),
+          isSufficient: balance
+            ? BigNumber(balance).isGreaterThanOrEqualTo(BigNumber(feeAmount))
+            : false,
+        };
+      })
+      .filter((asset) => asset) as {
+      feeAmount: string;
+      denom: string;
+      balanceWithFees: string;
+      isSufficient: boolean;
+    }[];
   }, [chainId, chains, getBalance, swapVenues]);
 
   return feeAssetsState;
@@ -51,7 +59,7 @@ export const useCosmosFeeAssetSourceAmountValidation = () => {
   const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
 
-  const cosmosFeeUsed = cosmosFees?.find(fee => fee?.isSufficient);
+  const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);
   if (cosmosFeeUsed?.denom !== sourceAsset?.denom) {
     if (!sourceAsset?.amount) return false;
     if (BigNumber(maxAmountTokenMinusFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))) {
@@ -63,8 +71,13 @@ export const useCosmosFeeAssetSourceAmountValidation = () => {
   const asset = assets?.find((asset) => asset.denom === cosmosFeeUsed?.denom);
   if (!cosmosFeeUsed?.balanceWithFees) return false;
 
-  const balanceWithFees = convertTokenAmountToHumanReadableAmount(cosmosFeeUsed?.balanceWithFees, asset?.decimals);
-  const isSufficient = sourceAsset?.amount ? BigNumber(balanceWithFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount)) : false;
+  const balanceWithFees = convertTokenAmountToHumanReadableAmount(
+    cosmosFeeUsed?.balanceWithFees,
+    asset?.decimals,
+  );
+  const isSufficient = sourceAsset?.amount
+    ? BigNumber(balanceWithFees).isGreaterThanOrEqualTo(BigNumber(sourceAsset?.amount))
+    : false;
 
   if (isSufficient) return false;
   return true;

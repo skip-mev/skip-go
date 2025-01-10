@@ -28,7 +28,7 @@ export enum ICONS {
   thinArrow,
   hamburger,
   horizontalLine,
-  lightning
+  lightning,
 }
 
 type IconProps = SVGProps<SVGSVGElement> & {

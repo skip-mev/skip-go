@@ -5,9 +5,7 @@ export function isUserRejectedRequestError(input: unknown): input is Error {
       input.message.toLowerCase().includes("rejected") ||
       // leap
       input.message.toLowerCase().includes("declined") ||
-
       input.message.toLowerCase().includes("denied") ||
-
       // @ts-expect-error common user rejected request error code
       input.code === 4001
     ) {

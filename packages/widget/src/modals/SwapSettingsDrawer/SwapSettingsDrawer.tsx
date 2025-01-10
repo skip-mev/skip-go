@@ -21,9 +21,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) =>
-      chains?.find((chain) => chain.chainID === chainID)
-    );
+    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
   }, [route, chains]);
 
   const clientOperations = getClientOperations(route?.operations);
@@ -35,7 +33,7 @@ export const SwapSettingsDrawer = createModal(() => {
         OperationType.axelarTransfer,
         OperationType.hyperlaneTransfer,
         OperationType.goFastTransfer,
-      ].includes(item.type)
+      ].includes(item.type),
     );
   }, [clientOperations]);
 
@@ -45,18 +43,28 @@ export const SwapSettingsDrawer = createModal(() => {
       const goFastFee = operation.fee;
       if (!goFastFee) return;
 
-      const { feeAsset, sourceChainFeeAmount, destinationChainFeeAmount,
-        bpsFeeAmount, sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD }
-        = goFastFee;
+      const {
+        feeAsset,
+        sourceChainFeeAmount,
+        destinationChainFeeAmount,
+        bpsFeeAmount,
+        sourceChainFeeUSD,
+        destinationChainFeeUSD,
+        bpsFeeUSD,
+      } = goFastFee;
 
-      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
-        .reduce((sum, amount) => sum + Number(amount), 0);
-      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD]
-        .reduce((sum, amount) => sum + Number(amount), 0);
+      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount].reduce(
+        (sum, amount) => sum + Number(amount),
+        0,
+      );
+      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD].reduce(
+        (sum, amount) => sum + Number(amount),
+        0,
+      );
 
       const computed = convertTokenAmountToHumanReadableAmount(
         totalFeeAmount.toString(),
-        feeAsset.decimals
+        feeAsset.decimals,
       );
       return {
         assetAmount: Number(computed),
@@ -67,10 +75,7 @@ export const SwapSettingsDrawer = createModal(() => {
       const { feeAmount, feeAsset, usdFeeAmount } = operation;
       if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
 
-      const computed = convertTokenAmountToHumanReadableAmount(
-        feeAmount,
-        feeAsset.decimals
-      );
+      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
 
       return {
         assetAmount: Number(computed),
@@ -105,10 +110,7 @@ export const SwapSettingsDrawer = createModal(() => {
     });
 
     const isSmartRelay = checkIsSmartRelay(route);
-    const smartRelayFee = calculateSmartRelayFee(
-      isSmartRelay,
-      route?.estimatedFees
-    );
+    const smartRelayFee = calculateSmartRelayFee(isSmartRelay, route?.estimatedFees);
 
     if (smartRelayFee) {
       feeList.push({ label: "Relayer Fee", fee: smartRelayFee });
@@ -142,9 +144,7 @@ export const SwapSettingsDrawer = createModal(() => {
           <Row justify="space-between">
             <SwapDetailText>Price Impact</SwapDetailText>
             <Row align="center" gap={5}>
-              <SwapDetailText monospace>
-                {route?.swapPriceImpactPercent}%
-              </SwapDetailText>
+              <SwapDetailText monospace>{route?.swapPriceImpactPercent}%</SwapDetailText>
             </Row>
           </Row>
         )}

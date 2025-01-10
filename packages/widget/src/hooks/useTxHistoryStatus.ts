@@ -1,8 +1,12 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { useQuery } from "@tanstack/react-query";
 
-export const useTxHistoryStatus = ({ txs, txsRequired }: {
-  statusData?: TxsStatus, txs: {
+export const useTxHistoryStatus = ({
+  txs,
+  txsRequired,
+}: {
+  statusData?: TxsStatus;
+  txs: {
     chainID: string;
     txHash: string;
   }[];

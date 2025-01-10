@@ -3,10 +3,7 @@ type IconProps = {
   className?: string;
 };
 
-export const BridgeArrowIcon = ({
-  color = "currentColor",
-  className,
-}: IconProps) => (
+export const BridgeArrowIcon = ({ color = "currentColor", className }: IconProps) => (
   <svg
     width="13"
     height="13"

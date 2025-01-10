@@ -29,7 +29,6 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
-
   useEffect(() => {
     captureException("TransactionReverted");
   }, []);
@@ -56,7 +55,7 @@ export const ErrorPageTransactionReverted = ({
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
-          }
+          },
         }}
       />
       <ErrorPageContent
@@ -68,14 +67,9 @@ export const ErrorPageTransactionReverted = ({
               <br />
               You can continue executing this transaction now.
             </SmallText>
-            <SmallText
-              color={theme.primary.text.lowContrast}
-              textAlign="center"
-              textWrap="balance"
-            >
-              Current asset location: {assetDetails?.amount}{" "}
-              {assetDetails?.symbol} on {assetDetails?.chainName} (
-              {recoveryAddress})
+            <SmallText color={theme.primary.text.lowContrast} textAlign="center" textWrap="balance">
+              Current asset location: {assetDetails?.amount} {assetDetails?.symbol} on{" "}
+              {assetDetails?.chainName} ({recoveryAddress})
             </SmallText>
             <Row gap={25} justify="center">
               <Row

@@ -10,8 +10,8 @@ module.exports = async function syncVersion() {
   webComponentPackageJson.version = basePackageJson.version;
 
   const targetFile = path.resolve(path.resolve(__dirname, "../web-component"), "package.json");
-  
+
   await fs.writeFile(targetFile, JSON.stringify(webComponentPackageJson, null, 2), {
-    encoding: "utf-8"
+    encoding: "utf-8",
   });
 };

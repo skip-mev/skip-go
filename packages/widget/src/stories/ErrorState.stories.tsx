@@ -22,7 +22,7 @@ const meta = {
     renderLightAndDarkThemeSeperateProps(
       <ErrorState title={undefined} description={undefined} />,
       props.dark,
-      props.light
+      props.light,
     ),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
@@ -207,8 +207,7 @@ export const ActionRequired = {
 };
 
 export const AdditionalSignature = {
-  render: (props: ErrorStateProps) =>
-    renderLightAndDarkTheme(<ErrorState {...props} />),
+  render: (props: ErrorStateProps) => renderLightAndDarkTheme(<ErrorState {...props} />),
   args: {
     title: (
       <Text>
@@ -217,9 +216,7 @@ export const AdditionalSignature = {
         additional signing step
       </Text>
     ),
-    description: (
-      <SmallText normalTextColor> ATOM {" -> "} 71.235 COREUM</SmallText>
-    ),
+    description: <SmallText normalTextColor> ATOM {" -> "} 71.235 COREUM</SmallText>,
     icon: ICONS.signature,
   },
 };

@@ -34,13 +34,13 @@ export type ManualWalletEntry = {
 };
 
 export const isManualWalletEntry = (
-  wallet: ManualWalletEntry | MinimalWallet
+  wallet: ManualWalletEntry | MinimalWallet,
 ): wallet is ManualWalletEntry => {
   return (wallet as ManualWalletEntry).onSelect !== undefined;
 };
 
 export const isMinimalWallet = (
-  wallet: ManualWalletEntry | MinimalWallet
+  wallet: ManualWalletEntry | MinimalWallet,
 ): wallet is MinimalWallet => {
   return (wallet as MinimalWallet).connect !== undefined;
 };
@@ -56,14 +56,14 @@ export const RenderWalletList = ({
   chainId,
   chainType,
   isConnectEco,
-  chainAddressIndex
+  chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
-      (wallet) => isManualWalletEntry(wallet) || wallet?.isAvailable !== false
+      (wallet) => isManualWalletEntry(wallet) || wallet?.isAvailable !== false,
     );
 
     return filteredWallets.length === 1 ? walletList : filteredWallets;
@@ -115,7 +115,7 @@ export const RenderWalletList = ({
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
       const name = isMinimalWallet(wallet)
-        ? wallet.walletPrettyName ?? wallet.walletName
+        ? (wallet.walletPrettyName ?? wallet.walletName)
         : wallet.walletName;
 
       const imageUrl = isMinimalWallet(wallet) ? wallet?.walletInfo?.logo : undefined;
@@ -148,7 +148,9 @@ export const RenderWalletList = ({
             {imageElement}
             <Text>{name}</Text>
           </Row>
-          {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
+          {isAvailable !== undefined && (
+            <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>
+          )}
         </Row>
       );
 
@@ -162,19 +164,16 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation]
+    [connectMutation],
   );
 
   const height = useMemo(() => {
     return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
   }, [displayWallets.length]);
 
-
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
     if (connectMutation.isError || connectMutation.isPending) {
-      const titleText = connectMutation.isError
-        ? "Failed to connect"
-        : "Connecting to";
+      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
       return (
         <StyledModalInnerContainer height={height}>
           <StyledLoadingContainer>
@@ -195,11 +194,7 @@ export const RenderWalletList = ({
               {titleText} {connectMutation.variables?.walletPrettyName}
             </Text>
             {connectMutation.error && (
-              <Text
-                textAlign="center"
-                fontSize={14}
-                color={theme.primary.text.lowContrast}
-              >
+              <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>
                 {connectMutation.error.message}
               </Text>
             )}

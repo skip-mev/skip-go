@@ -24,7 +24,9 @@ export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
-  const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
+  const debouncedDestinationAssetInitialized = get(
+    debouncedDestinationAssetAmountValueInitializedAtom,
+  );
 
   if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
     set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
@@ -55,17 +57,17 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-        amountIn: convertHumanReadableAmountToCryptoAmount(
-          sourceAssetAmount ?? "0",
-          sourceAsset.decimals
-        ),
-      }
+          amountIn: convertHumanReadableAmountToCryptoAmount(
+            sourceAssetAmount ?? "0",
+            sourceAsset.decimals,
+          ),
+        }
       : {
-        amountOut: convertHumanReadableAmountToCryptoAmount(
-          destinationAssetAmount ?? "0",
-          destinationAsset.decimals
-        ),
-      };
+          amountOut: convertHumanReadableAmountToCryptoAmount(
+            destinationAssetAmount ?? "0",
+            destinationAsset.decimals,
+          ),
+        };
 
   return {
     ...amount,
@@ -82,17 +84,19 @@ type CaughtRouteError = {
 };
 
 export const routeConfigAtom = atom<WidgetRouteConfig>({
-  experimentalFeatures: ["hyperlane"],
+  experimentalFeatures: ["hyperlane", "stargate"],
   allowMultiTx: true,
   allowUnsafe: true,
   smartSwapOptions: {
     splitRoutes: true,
     evmSwaps: true,
   },
-  goFast: true
+  goFast: true,
 });
 
-export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig): RouteConfig => {
+export const convertWidgetRouteConfigToClientRouteConfig = (
+  params: WidgetRouteConfig,
+): RouteConfig => {
   return {
     ...params,
     swapVenues: params.swapVenues?.map((venue) => ({
@@ -106,7 +110,9 @@ export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteC
   };
 };
 
-export const convertClientRouteConfigToWidgetRouteConfig = (params: RouteConfig): WidgetRouteConfig => {
+export const convertClientRouteConfigToWidgetRouteConfig = (
+  params: RouteConfig,
+): WidgetRouteConfig => {
   return {
     ...params,
     swapVenues: params.swapVenues?.map((venue) => ({

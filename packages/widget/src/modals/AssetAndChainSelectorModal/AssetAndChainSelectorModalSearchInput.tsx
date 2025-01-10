@@ -40,7 +40,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
       setSearchTerm(term);
       onSearch(term);
     },
-    [onSearch, setSearchTerm]
+    [onSearch, setSearchTerm],
   );
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const StyledSearchInputContainer = styled(Row)`
 `;
 
 const StyledSearchInput = styled(Text).attrs({
-  as: "input"
+  as: "input",
 })`
   height: 40px;
   box-sizing: border-box;

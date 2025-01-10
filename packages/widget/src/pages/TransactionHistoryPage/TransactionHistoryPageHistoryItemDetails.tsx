@@ -50,10 +50,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     return;
   }, [status, theme]);
 
-  const handleClickingLinkIfNoExplorerLink = (
-    txHash: string,
-    explorerLink?: string
-  ) => {
+  const handleClickingLinkIfNoExplorerLink = (txHash: string, explorerLink?: string) => {
     if (!explorerLink) {
       copyToClipboard(txHash);
     }
@@ -83,7 +80,12 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
           <Link
-            onClick={() => handleClickingLinkIfNoExplorerLink(transactionDetails?.[0]?.txHash, transactionDetails?.[0]?.explorerLink)}
+            onClick={() =>
+              handleClickingLinkIfNoExplorerLink(
+                transactionDetails?.[0]?.txHash,
+                transactionDetails?.[0]?.explorerLink,
+              )
+            }
             href={transactionDetails?.[0]?.explorerLink}
             title={transactionDetails?.[0]?.txHash}
             target="_blank"
@@ -109,15 +111,17 @@ export const TransactionHistoryPageHistoryItemDetails = ({
             return "Transaction";
           };
           return (
-            <StyledHistoryItemDetailRow
-              key={`${index}-${transactionDetail.txHash}`}
-              align="center"
-            >
+            <StyledHistoryItemDetailRow key={`${index}-${transactionDetail.txHash}`} align="center">
               <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>
                 {getTransactionIdLabel()}
               </StyledDetailsLabel>
               <Link
-                onClick={() => handleClickingLinkIfNoExplorerLink(transactionDetail.txHash, transactionDetail.explorerLink)}
+                onClick={() =>
+                  handleClickingLinkIfNoExplorerLink(
+                    transactionDetail.txHash,
+                    transactionDetail.explorerLink,
+                  )
+                }
                 key={`${index}-${transactionDetail.txHash}`}
                 href={transactionDetail.explorerLink}
                 title={transactionDetail?.txHash}

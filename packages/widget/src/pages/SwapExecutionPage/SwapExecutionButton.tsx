@@ -23,7 +23,7 @@ type SwapExecutionButtonProps = {
   lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
   submitExecuteRouteMutation: () => void;
-}
+};
 
 export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   swapExecutionState,
@@ -77,30 +77,14 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         }
         submitExecuteRouteMutation();
       };
-      return (
-        <MainButton
-          label="Confirm"
-          icon={ICONS.rightArrow}
-          onClick={onClickConfirmSwap}
-        />
-      );
+      return <MainButton label="Confirm" icon={ICONS.rightArrow} onClick={onClickConfirmSwap} />;
     }
     case SwapExecutionState.validatingGasBalance:
-      return (
-        <MainButton
-          label="Validating"
-          icon={ICONS.rightArrow}
-          loading
-        />
-      );
+      return <MainButton label="Validating" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.waitingForSigning:
-      return (
-        <MainButton label="Confirming" icon={ICONS.rightArrow} loading />
-      );
+      return <MainButton label="Confirming" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.approving:
-      return (
-        <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />
-      );
+      return <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.pending:
       return (
         <MainButton
@@ -108,9 +92,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           loading
           isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
-          loadingTimeString={convertSecondsToMinutesOrHours(
-            route?.estimatedRouteDurationSeconds
-          )}
+          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
         />
       );
     case SwapExecutionState.signaturesRemaining:
@@ -118,12 +100,10 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         <MainButton
           label={`${signaturesRemaining} ${pluralize(
             "signature",
-            signaturesRemaining
+            signaturesRemaining,
           )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
           loading
-          loadingTimeString={convertSecondsToMinutesOrHours(
-            route?.estimatedRouteDurationSeconds
-          )}
+          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
         />
       );
     case SwapExecutionState.confirmed:
