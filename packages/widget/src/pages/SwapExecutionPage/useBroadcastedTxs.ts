@@ -59,6 +59,10 @@ export const useBroadcastedTxsStatus = ({
         setIsSettled(true);
       }
 
+      const someTxFailed = results.some((tx) => {
+        return tx.state === "STATE_COMPLETED_ERROR" || tx.state === "STATE_ABANDONED";
+      });
+
       const lastTxStatus =
         results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
 
@@ -66,12 +70,8 @@ export const useBroadcastedTxsStatus = ({
         captureException("TransactionFailed");
       }
 
-      if (lastTxStatus === "failed" && isRouteSettled) {
-        captureException("TransactionFailed");
-      }
-
       const resData: TxsStatus = {
-        isSuccess: lastTxStatus === "success" && isRouteSettled,
+        isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
         lastTxStatus,
         isSettled: isRouteSettled,
         transferEvents,
