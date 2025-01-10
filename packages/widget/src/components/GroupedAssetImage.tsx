@@ -1,5 +1,8 @@
 import { GroupedAsset } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { useState } from "react";
 import styled from "styled-components";
+
+const NUMBER_OF_IMAGES_TO_CHECK = 6;
 
 export type GroupedAssetImageType = {
   groupedAsset?: GroupedAsset;
@@ -8,6 +11,8 @@ export type GroupedAssetImageType = {
 };
 
 export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetImageType) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   if (!groupedAsset?.assets) return <img />;
   const logoURIs = [
     groupedAsset.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
@@ -20,13 +25,18 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
       width={width}
       src={logoURIs[0]}
       onError={(e) => {
+        if (currentImageIndex === NUMBER_OF_IMAGES_TO_CHECK) {
+          e.currentTarget.onerror = null;
+          return;
+        }
+        const nextIndex = currentImageIndex + 1;
         const img = e.currentTarget;
-        const currentIndex = logoURIs.indexOf(img.src);
-        const nextIndex = currentIndex + 1;
 
-        if (nextIndex < logoURIs.length) {
+        if (currentImageIndex < 5) {
           img.src = logoURIs[nextIndex];
         }
+
+        setCurrentImageIndex(nextIndex);
       }}
       alt={`${groupedAsset.assets[0].recommendedSymbol} logo`}
     />
