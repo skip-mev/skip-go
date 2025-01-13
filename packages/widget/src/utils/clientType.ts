@@ -22,12 +22,13 @@ import {
   Operation as SkipClientOperation,
   StatusState,
   Swap,
-  SwapVenue,
   Transfer,
   TransferEvent,
   TransferInfo,
   TransferState,
   TxStatusResponse,
+  SwapExactCoinIn,
+  SwapExactCoinOut,
 } from "@skip-go/client";
 
 export type OverallStatus = "pending" | "success" | "failed";
@@ -73,12 +74,8 @@ type OperationDetails = CombineObjectTypes<
     OPInitTransfer &
     GoFastTransfer
 > & {
-  swapIn?: {
-    swapVenue: SwapVenue;
-  };
-  swapOut?: {
-    swapVenue: SwapVenue;
-  };
+  swapIn?: SwapExactCoinIn;
+  swapOut?: SwapExactCoinOut;
 };
 
 export type ClientOperation = {
@@ -174,33 +171,64 @@ export function getClientOperation(operation: SkipClientOperation) {
 export function getClientOperations(operations?: SkipClientOperation[]) {
   if (!operations) return [];
   let transferIndex = 0;
-  return operations.map((operation, index, arr) => {
-    const prevOperation = arr[index - 1];
-
-    const signRequired = (() => {
-      if (index === 0) {
-        return false;
-      } else {
-        if (operation.txIndex > prevOperation.txIndex) {
-          return true;
+  return (
+    operations
+      // filter neutron fees to not shown in route details
+      .filter((op, i) => {
+        const clientOperation = getClientOperation(op);
+        if (
+          clientOperation.type === OperationType.swap &&
+          clientOperation.swapOut?.swapVenue.name === "neutron-astroport" &&
+          clientOperation.swapOut?.swapVenue.chainID === "neutron-1" &&
+          clientOperation.chainID === "neutron-1" &&
+          clientOperation.denomOut === "untrn" &&
+          clientOperation.fromChainID === "neutron-1" &&
+          clientOperation.swapOut?.swapAmountOut === "200000"
+        ) {
+          const nextOperation = operations[i + 1];
+          if (nextOperation) {
+            const nextClientOperation = getClientOperation(nextOperation);
+            if (
+              nextClientOperation.type === OperationType.swap &&
+              nextClientOperation.swapIn?.swapVenue.name === "neutron-astroport" &&
+              nextClientOperation.swapIn?.swapVenue.chainID === "neutron-1" &&
+              nextClientOperation.chainID === "neutron-1"
+            ) {
+              return false;
+            }
+          }
         }
-        return false;
-      }
-    })();
-    const clientOperation = getClientOperation(operation);
-    const isSwap =
-      clientOperation.type === OperationType.swap || clientOperation.type === OperationType.evmSwap;
-    const result = {
-      ...clientOperation,
-      transferIndex,
-      signRequired,
-      isSwap,
-    };
-    if (!isSwap) {
-      transferIndex++;
-    }
-    return result;
-  });
+        return true;
+      })
+      .map((operation, index, arr) => {
+        const prevOperation = arr[index - 1];
+
+        const signRequired = (() => {
+          if (index === 0) {
+            return false;
+          } else {
+            if (operation.txIndex > prevOperation.txIndex) {
+              return true;
+            }
+            return false;
+          }
+        })();
+        const clientOperation = getClientOperation(operation);
+        const isSwap =
+          clientOperation.type === OperationType.swap ||
+          clientOperation.type === OperationType.evmSwap;
+        const result = {
+          ...clientOperation,
+          transferIndex,
+          signRequired,
+          isSwap,
+        };
+        if (!isSwap) {
+          transferIndex++;
+        }
+        return result;
+      })
+  );
 }
 
 function getClientTransferEvent(transferEvent: TransferEvent) {
