@@ -33,8 +33,7 @@ import {
 } from "wagmi/chains";
 import { defineChain } from "viem";
 import { walletConnect } from "wagmi/connectors";
-import { isMobile, isBrowser } from "@/utils/os";
-const isBrowser = typeof window !== 'undefined';
+import { isBrowser } from "@/utils/os";
 
 export const formaTestnet = defineChain({
   id: 984_123,
@@ -129,14 +128,12 @@ export const config: Config = createConfig({
     storage: isBrowser ? localStorage : undefined, // Use a fallback for SSR
     key: "skip-go-widget-wagmi",
   }),
-  connectors: isMobile()
-    ? undefined
-    : [
-        walletConnect({
-          projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
-          showQrModal: true,
-        }),
-      ],
+  connectors: [
+    walletConnect({
+      projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
+      showQrModal: true,
+    }),
+  ],
 });
 
 export const walletConnectLogo =
