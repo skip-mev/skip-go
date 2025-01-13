@@ -37,11 +37,15 @@ To start integrating with the Skip Go API, initialize a `SkipClient` instance. T
 ```ts
 import { SkipClient } from "@skip-go/client";
 const skipClient = new SkipClient({
-  getCosmosSigner: async (chainID) => {
-    const offlineSigner = window.keplr?.getOfflineSigner(chainID);
-    if (!offlineSigner) throw new Error("Keplr not installed");
-    return offlineSigner;
-  }
+  getCosmosSigner = async (chainID: string) => {
+    const key = await window.keplr?.getKey(chainID);
+    if (!key) throw new Error("Keplr not installed or chain not added");
+
+
+    return key.isNanoLedger
+      ? window.keplr?.getOfflineSignerOnlyAmino(chainID)
+      : window.keplr?.getOfflineSigner(chainID);
+};
 });
 ```
 </Step>

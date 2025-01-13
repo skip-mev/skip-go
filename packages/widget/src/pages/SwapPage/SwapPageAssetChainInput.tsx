@@ -50,7 +50,6 @@ export const SwapPageAssetChainInput = ({
   const isMobileScreenSize = useIsMobileScreenSize();
 
   const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
-
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
