@@ -7827,6 +7827,8 @@ __metadata:
     buffer: ^6.0.3
     chain-registry: ^1.69.71
     eslint: ^9.9.0
+    eslint-config-prettier: ^9.1.0
+    eslint-plugin-prettier: ^5.2.1
     eslint-plugin-react-hooks: ^4.6.2
     jotai: ^2.10.1
     jotai-effect: ^1.0.2
@@ -7837,6 +7839,7 @@ __metadata:
     pino-pretty: ^13.0.0
     pluralize: ^8.0.0
     postcss-loader: ^8.1.1
+    prettier: ^3.4.2
     process: ^0.11.10
     raw-loader: ^4.0.2
     rc-virtual-list: ^3.14.5
@@ -15944,6 +15947,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-prettier@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "eslint-plugin-prettier@npm:5.2.1"
+  dependencies:
+    prettier-linter-helpers: ^1.0.0
+    synckit: ^0.9.1
+  peerDependencies:
+    "@types/eslint": ">=8.0.0"
+    eslint: ">=8.0.0"
+    eslint-config-prettier: "*"
+    prettier: ">=3.0.0"
+  peerDependenciesMeta:
+    "@types/eslint":
+      optional: true
+    eslint-config-prettier:
+      optional: true
+  checksum: 812f4d1596dcd3a55963212dfbd818a4b38f880741aac75f6869aa740dc5d934060674d3b85d10ff9fec424defa61967dbdef26b8a893a92c9b51880264ed0d9
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-react-hooks@npm:^4.6.2":
   version: 4.6.2
   resolution: "eslint-plugin-react-hooks@npm:4.6.2"
@@ -23280,6 +23303,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "prettier@npm:3.4.2"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 061c84513db62d3944c8dc8df36584dad82883ce4e49efcdbedd8703dce5b173c33fd9d2a4e1725d642a3b713c932b55418342eaa347479bc4a9cca114a04cd0
+  languageName: node
+  linkType: hard
+
 "pretty-bytes@npm:^6.1.1":
   version: 6.1.1
   resolution: "pretty-bytes@npm:6.1.1"
@@ -26037,6 +26069,16 @@ __metadata:
     "@pkgr/core": ^0.1.0
     tslib: ^2.6.2
   checksum: 9ed5d33abb785f5f24e2531efd53b2782ca77abf7912f734d170134552b99001915531be5a50297aa45c5701b5c9041e8762e6cd7a38e41e2461c1e7fccdedf8
+  languageName: node
+  linkType: hard
+
+"synckit@npm:^0.9.1":
+  version: 0.9.2
+  resolution: "synckit@npm:0.9.2"
+  dependencies:
+    "@pkgr/core": ^0.1.0
+    tslib: ^2.6.2
+  checksum: 3a30e828efbdcf3b50fccab4da6e90ea7ca24d8c5c2ad3ffe98e07d7c492df121e0f75227c6e510f96f976aae76f1fa4710cb7b1d69db881caf66ef9de89360e
   languageName: node
   linkType: hard
 

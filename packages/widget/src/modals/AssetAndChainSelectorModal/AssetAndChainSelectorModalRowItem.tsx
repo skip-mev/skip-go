@@ -10,9 +10,10 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 import { useFilteredChains } from "./useFilteredChains";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export const isGroupedAsset = (
-  item: GroupedAsset | ClientAsset | ChainWithAsset
+  item: GroupedAsset | ClientAsset | ChainWithAsset,
 ): item is GroupedAsset => {
   return (item as GroupedAsset).chains !== undefined;
 };
@@ -22,7 +23,7 @@ export type AssetAndChainSelectorModalRowItemProps = {
   index: number;
   skeleton: React.ReactElement;
   onSelect: (token: ClientAsset | GroupedAsset | null) => void;
-  context: SelectorContext
+  context: SelectorContext;
 };
 
 export const AssetAndChainSelectorModalRowItem = ({
@@ -30,7 +31,7 @@ export const AssetAndChainSelectorModalRowItem = ({
   index,
   skeleton,
   onSelect,
-  context
+  context,
 }: AssetAndChainSelectorModalRowItemProps) => {
   const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
@@ -42,18 +43,12 @@ export const AssetAndChainSelectorModalRowItem = ({
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
-        leftContent={
-          <AssetAndChainSelectorModalRowItemLeftContent item={item} context={context} />
-        }
+        leftContent={<AssetAndChainSelectorModalRowItemLeftContent item={item} context={context} />}
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
-              <SmallText normalTextColor>
-                {parseFloat(item.totalAmount.toFixed(8))}
-              </SmallText>
-              {Number(item.totalUsd) > 0 && (
-                <SmallText>{formatUSD(item.totalUsd)}</SmallText>
-              )}
+              <SmallText normalTextColor>{parseFloat(item.totalAmount.toFixed(8))}</SmallText>
+              {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
             </Column>
           )
         }
@@ -68,7 +63,7 @@ export const AssetAndChainSelectorModalRowItem = ({
       style={{ margin: "5px 0" }}
       leftContent={
         <Row align="center" gap={8}>
-          <StyledAssetImage
+          <StyledChainImage
             height={35}
             width={35}
             src={item?.logoURI}
@@ -76,7 +71,8 @@ export const AssetAndChainSelectorModalRowItem = ({
           />
           <Row align="baseline" gap={8}>
             <Text>{item.prettyName}</Text>
-            <SmallText lineHeight="22px">{item.chainID}</SmallText></Row>
+            <SmallText lineHeight="22px">{item.chainID}</SmallText>
+          </Row>
         </Row>
       }
       rightContent={
@@ -84,14 +80,9 @@ export const AssetAndChainSelectorModalRowItem = ({
         Number(balance.amount) > 0 && (
           <Column align="flex-end">
             <SmallText normalTextColor>
-              {convertTokenAmountToHumanReadableAmount(
-                balance.amount,
-                balance.decimals
-              )}
+              {convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals)}
             </SmallText>
-            {balance.valueUSD && (
-              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
-            )}
+            {balance.valueUSD && <SmallText>{formatUSD(balance.valueUSD)}</SmallText>}
           </Column>
         )
       }
@@ -101,23 +92,15 @@ export const AssetAndChainSelectorModalRowItem = ({
 
 const AssetAndChainSelectorModalRowItemLeftContent = ({
   item,
-  context
+  context,
 }: {
   item: GroupedAsset;
   context: SelectorContext;
 }) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
-  // prioritize logoURI from raw.githubusercontent over coingecko
-  const logoURI = item.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI ?? item.assets[0].logoURI;
-
   return (
     <Row align="center" gap={8}>
-      <StyledAssetImage
-        height={35}
-        width={35}
-        src={logoURI}
-        alt={`${item.assets[0].recommendedSymbol} logo`}
-      />
+      <GroupedAssetImage height={35} width={35} groupedAsset={item} />
       <Row align="baseline" gap={8}>
         <Text>{item.assets[0].recommendedSymbol}</Text>
         {filteredChains.length > 1 ? (
@@ -134,7 +117,7 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
   );
 };
 
-const StyledAssetImage = styled.img`
+const StyledChainImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
   ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};

@@ -9,32 +9,32 @@ export type GhostButtonProps = {
 
 export const GhostButton = styled(SmallText).attrs({
   as: "button",
-}) <GhostButtonProps>`
+})<GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
   height: 30px;
 
   ${({ alwaysShowBackground, theme, secondary }) => {
     if (alwaysShowBackground) {
-      return (css`
+      return css`
         background-color: ${secondary
           ? theme.secondary.background.normal
           : theme.primary.ghostButtonHover};
-      `);
+      `;
     }
   }}
 
   ${({ onClick, disabled, secondary, theme }) => {
     if (onClick && !disabled) {
       return css`
-          &:hover {
-            background-color: ${secondary
-          ? theme.secondary.background.normal
-          : theme.primary.ghostButtonHover};
-            color: ${theme.primary.text.normal};
-            cursor: pointer;
-          }
-        `;
+        &:hover {
+          background-color: ${secondary
+            ? theme.secondary.background.normal
+            : theme.primary.ghostButtonHover};
+          color: ${theme.primary.text.normal};
+          cursor: pointer;
+        }
+      `;
     }
   }}
  

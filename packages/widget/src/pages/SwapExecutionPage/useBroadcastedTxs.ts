@@ -1,9 +1,14 @@
 import { skipClient as skipClientAtom } from "@/state/skipClient";
-import { ClientTransferEvent, getSimpleOverallStatus, getTransferEventsFromTxStatusResponse, OverallStatus } from "@/utils/clientType";
+import {
+  ClientTransferEvent,
+  getSimpleOverallStatus,
+  getTransferEventsFromTxStatusResponse,
+  OverallStatus,
+} from "@/utils/clientType";
+import { captureException } from "@sentry/react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState, useMemo } from "react";
-
 
 export type TxsStatus = {
   isSuccess: boolean;
@@ -25,10 +30,7 @@ export const useBroadcastedTxsStatus = ({
   const [isSettled, setIsSettled] = useState(false);
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
 
-  const queryKey = useMemo(
-    () => ["txs-status", txsRequired, txs] as const,
-    [txs, txsRequired]
-  );
+  const queryKey = useMemo(() => ["txs-status", txsRequired, txs] as const, [txs, txsRequired]);
   return useQuery({
     queryKey,
     queryFn: async ({ queryKey: [, txsRequired, txs] }) => {
@@ -41,7 +43,8 @@ export const useBroadcastedTxsStatus = ({
             txHash: tx.txHash,
           });
           return _res;
-        }));
+        }),
+      );
       const transferEvents = getTransferEventsFromTxStatusResponse(results);
       const _isAllTxSettled = results.every((tx) => {
         return (
@@ -51,19 +54,24 @@ export const useBroadcastedTxsStatus = ({
         );
       });
 
-      const _isAllTxSuccess = transferEvents.every((tx) => {
-        return tx.status === "completed";
-      });
-
       const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
       if (isRouteSettled) {
         setIsSettled(true);
       }
 
-      const lastTxStatus = results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
+      const someTxFailed = results.some((tx) => {
+        return tx.state === "STATE_COMPLETED_ERROR" || tx.state === "STATE_ABANDONED";
+      });
+
+      const lastTxStatus =
+        results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
+
+      if (lastTxStatus === "failed" && isRouteSettled) {
+        captureException("TransactionFailed");
+      }
 
       const resData: TxsStatus = {
-        isSuccess: (lastTxStatus === "success" && isRouteSettled) || (_isAllTxSuccess && isRouteSettled),
+        isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
         lastTxStatus,
         isSettled: isRouteSettled,
         transferEvents,
@@ -71,9 +79,7 @@ export const useBroadcastedTxsStatus = ({
       setPrevData(resData);
       return resData;
     },
-    enabled:
-      !isSettled &&
-      (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
+    enabled: !isSettled && (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
     refetchInterval: 500,
     // to make the data persist when query key changed
     initialData: prevData,

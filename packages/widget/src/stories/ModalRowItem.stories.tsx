@@ -18,8 +18,7 @@ const StyledRightArrowIcon = styled(RightArrowIcon)`
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: "Components/ModalRowItem",
-  component: (props) =>
-    renderLightAndDarkTheme(<ModalRowItem {...props} />, { width: 500 }),
+  component: (props) => renderLightAndDarkTheme(<ModalRowItem {...props} />, { width: 500 }),
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",

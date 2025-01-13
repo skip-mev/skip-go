@@ -7,11 +7,9 @@ import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 export const useCleanupDebouncedAtoms = () => {
-  const cleanupDebouncedSourceAssetAmount = useSetAtom(
-    cleanupDebouncedSourceAssetAmountAtom
-  );
+  const cleanupDebouncedSourceAssetAmount = useSetAtom(cleanupDebouncedSourceAssetAmountAtom);
   const cleanupDebouncedDestinationAssetAmount = useSetAtom(
-    cleanupDebouncedDestinationAssetAmountAtom
+    cleanupDebouncedDestinationAssetAmountAtom,
   );
 
   useEffect(() => {
@@ -19,8 +17,5 @@ export const useCleanupDebouncedAtoms = () => {
       cleanupDebouncedSourceAssetAmount(undefined);
       cleanupDebouncedDestinationAssetAmount(undefined);
     };
-  }, [
-    cleanupDebouncedDestinationAssetAmount,
-    cleanupDebouncedSourceAssetAmount,
-  ]);
+  }, [cleanupDebouncedDestinationAssetAmount, cleanupDebouncedSourceAssetAmount]);
 };

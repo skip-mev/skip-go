@@ -51,7 +51,7 @@ export const useCreateSolanaWallets = () => {
             const asset = assets?.find(
               (x) =>
                 x.denom.toLowerCase() ===
-                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase()
+                "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
             );
             setSourceAsset({
               chainID: chain?.chainID,

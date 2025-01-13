@@ -12,7 +12,7 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
   onClickEditDestinationWallet?: () => void;
-  statusData?: TxsStatus
+  statusData?: TxsStatus;
   swapExecutionState?: SwapExecutionState;
 };
 
@@ -28,9 +28,14 @@ export const SwapExecutionPageRouteSimple = ({
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
   const status = statusData?.transferEvents;
-  const sourceStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[firstOperation.transferIndex]?.status;
-  const destinationStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[lastOperation.transferIndex]?.status;
-
+  const sourceStatus =
+    swapExecutionState === SwapExecutionState.confirmed
+      ? "completed"
+      : status?.[firstOperation.transferIndex]?.status;
+  const destinationStatus =
+    swapExecutionState === SwapExecutionState.confirmed
+      ? "completed"
+      : status?.[lastOperation.transferIndex]?.status;
 
   const source = {
     denom: firstOperation.denomIn,

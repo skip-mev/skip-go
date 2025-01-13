@@ -6,7 +6,7 @@ import {
   evmWalletAtom,
   svmWalletAtom,
   walletsAtom,
-  connectedAddressesAtom
+  connectedAddressesAtom,
 } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
@@ -27,9 +27,7 @@ export const useGetAccount = () => {
     multiChain: true,
   });
 
-  const solanaWallet = solanaWallets.find(
-    (w) => w.name === wallet.svm?.walletName
-  );
+  const solanaWallet = solanaWallets.find((w) => w.name === wallet.svm?.walletName);
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
@@ -68,7 +66,7 @@ export const useGetAccount = () => {
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean) => {
-      if (!chainId) return
+      if (!chainId) return;
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
         return {
@@ -78,7 +76,7 @@ export const useGetAccount = () => {
             name: "injected",
             prettyName: "injected",
           },
-        }
+        };
       }
       switch (chainType) {
         case ChainType.Cosmos:
@@ -119,9 +117,7 @@ export const useGetAccount = () => {
         case ChainType.Cosmos: {
           if (!cosmosAccount) return;
           if (!wallet.cosmos) return;
-          const walletInfo = getCosmosWalletInfo(
-            wallet.cosmos.walletName as WalletType
-          );
+          const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
           return {
             address: cosmosAccount.bech32Address,
@@ -146,9 +142,10 @@ export const useGetAccount = () => {
             wallet: {
               name: evmAccount.connector.id,
               prettyName: evmAccount.connector.name,
-              logo: evmAccount.connector.id === "walletConnect" ? walletConnectLogo : connectors.find(
-                (item) => item.id === evmAccount.connector?.id
-              )?.icon,
+              logo:
+                evmAccount.connector.id === "walletConnect"
+                  ? walletConnectLogo
+                  : connectors.find((item) => item.id === evmAccount.connector?.id)?.icon,
             },
           };
         case ChainType.SVM: {
@@ -187,7 +184,7 @@ export const useGetAccount = () => {
       wallet.svm,
       connectors,
       connectedAddress,
-    ]
+    ],
   );
 
   return getAccount;

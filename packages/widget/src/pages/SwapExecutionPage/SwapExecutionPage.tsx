@@ -24,6 +24,7 @@ import { SwapExecutionButton } from "./SwapExecutionButton";
 import { StyledSignatureRequiredContainer } from "@/pages/SwapPage/SwapPageFooter";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
+import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -39,20 +40,13 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const {
-    route,
-    overallStatus,
-    transactionDetailsArray,
-    isValidatingGasBalance,
-  } = useAtomValue(swapExecutionStateAtom);
+  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
+    useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
-
-  const { mutate: submitExecuteRouteMutation } = useAtomValue(
-    skipSubmitSwapExecutionAtom
-  );
+  const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
@@ -83,6 +77,7 @@ export const SwapExecutionPage = () => {
     signaturesRemaining,
   });
 
+  useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
   useHandleTransactionTimeout(swapExecutionState);
 
   const renderSignaturesStillRequired = useMemo(() => {
@@ -90,8 +85,7 @@ export const SwapExecutionPage = () => {
       return (
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
-          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)}{" "}
-          still required
+          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)} still required
         </StyledSignatureRequiredContainer>
       );
     }
@@ -117,8 +111,6 @@ export const SwapExecutionPage = () => {
     };
   }, [swapExecutionState, route?.destAssetChainID]);
 
-
-
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
@@ -129,10 +121,10 @@ export const SwapExecutionPage = () => {
         leftButton={
           simpleRoute
             ? {
-              label: "Back",
-              icon: ICONS.thinArrow,
-              onClick: () => setCurrentPage(Routes.SwapPage),
-            }
+                label: "Back",
+                icon: ICONS.thinArrow,
+                onClick: () => setCurrentPage(Routes.SwapPage),
+              }
             : undefined
         }
         rightButton={{

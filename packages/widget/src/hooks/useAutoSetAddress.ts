@@ -37,9 +37,7 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = operations
-      .filter((o) => o.signRequired)
-      .map((o) => o.fromChainID);
+    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainID);
     return signRequiredChains;
   }, [route?.operations]);
 
@@ -85,9 +83,7 @@ export const useAutoSetAddress = () => {
         switch (chainType) {
           case ChainType.Cosmos: {
             const wallets = createCosmosWallets(chainID);
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.cosmos?.walletName
-            );
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
             if (!wallet) {
               if (!openModal) return;
               NiceModal.show(Modals.SetAddressModal, {
@@ -126,9 +122,7 @@ export const useAutoSetAddress = () => {
           }
           case ChainType.SVM: {
             const wallets = createSolanaWallets();
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.svm?.walletName
-            );
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.svm?.walletName);
             if (!wallet) {
               if (!openModal) return;
               NiceModal.show(Modals.SetAddressModal, {
@@ -167,9 +161,7 @@ export const useAutoSetAddress = () => {
           }
           case ChainType.EVM: {
             const wallets = createEvmWallets(chainID);
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.evm?.walletName
-            );
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
             if (!wallet) {
               if (!openModal) return;
               NiceModal.show(Modals.SetAddressModal, {
@@ -223,14 +215,19 @@ export const useAutoSetAddress = () => {
       signRequiredChains,
       chainAddresses,
       connectedAddress,
-    ]
+    ],
   );
 
   useQuery({
     queryKey: [
       "auto-set-address",
       {
-        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses, connectedAddress,
+        requiredChainAddresses,
+        chains,
+        sourceWallet,
+        signRequiredChains,
+        chainAddresses,
+        connectedAddress,
       },
     ],
     enabled:
