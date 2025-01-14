@@ -5,9 +5,12 @@ import { invertSwapAtom } from "@/state/swapPage";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "@/components/Button";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
+
   const [isSpinning, setIsSpinning] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
   const onInvertSwap = () => {
@@ -26,8 +29,17 @@ export const SwapPageBridge = () => {
       onClick={onInvertSwap}
       disabled={isSpinning}
     >
-      <BridgeIcon color={theme.primary.background.normal} />
-      <StyledBridgeArrow spin={isSpinning} color={theme.primary.text.normal} />
+      <BridgeIcon
+        color={theme.primary.background.normal}
+        width={isMobileScreenSize ? 60 : undefined}
+        height={isMobileScreenSize ? 10 : undefined}
+      />
+      <StyledBridgeArrow
+        spin={isSpinning}
+        color={theme.primary.text.normal}
+        width={isMobileScreenSize ? 16 : undefined}
+        height={isMobileScreenSize ? 16 : undefined}
+      />
     </Button>
   );
 };
