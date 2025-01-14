@@ -17,6 +17,7 @@ import {
 init({
   dsn: "https://10ce608bdd1c68a13d3849d6b242333c@o4504768725909504.ingest.us.sentry.io/4508485201231872",
   defaultIntegrations: false,
+  denyUrls: [/^https?:\/\/localhost:.*/],
   integrations: [
     breadcrumbsIntegration(),
     dedupeIntegration(),
