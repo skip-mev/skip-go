@@ -155,7 +155,7 @@ export const SwapPageAssetChainInput = ({
   const displayedValue = formatNumberWithCommas(value || "");
 
   return (
-    <StyledAssetChainInputWrapper justify="space-between" padding={20} borderRadius={25}>
+    <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
       <Row justify="space-between">
         <StyledInput
           type="text"
@@ -225,9 +225,9 @@ export const SwapPageAssetChainInput = ({
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <GhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
+          <StyledOnChainGhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
             <SmallText>on {assetDetails?.chainName}</SmallText>
-          </GhostButton>
+          </StyledOnChainGhostButton>
         ) : (
           <Spacer />
         )}
@@ -236,10 +236,20 @@ export const SwapPageAssetChainInput = ({
   );
 };
 
+const StyledOnChainGhostButton = styled(GhostButton)`
+  @media (max-width: 767px) {
+    padding: unset;
+  }
+`;
+
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 100%;
   background-color: ${(props) => props.theme.primary.background.normal};
+  padding: 20px;
+  @media (max-width: 767px) {
+    padding: 15px;
+  }
 `;
 
 const StyledInput = styled.input<{
