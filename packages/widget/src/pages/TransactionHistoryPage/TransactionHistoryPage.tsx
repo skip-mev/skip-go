@@ -61,9 +61,7 @@ export const TransactionHistoryPage = () => {
   );
 };
 
-const StyledContainer = styled(Column).attrs({
-  justify: "center",
-})`
+const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
   width: 100%;

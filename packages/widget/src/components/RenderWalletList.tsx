@@ -248,4 +248,5 @@ const StyledLoadingContainer = styled(Column)`
   justify-content: center;
   gap: 10px;
   padding-bottom: 10px;
+  padding: 20px;
 `;

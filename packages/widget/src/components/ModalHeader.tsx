@@ -45,7 +45,6 @@ export const StyledModalInnerContainer = styled(Column)`
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 `;
 
 const StyledHeader = styled(Row)`
