@@ -115,7 +115,8 @@ export const RenderWalletList = ({
         });
         return null;
       }
-      if (isMobile()) {
+      const mobile = isMobile();
+      if (mobile) {
         switch (chainType) {
           case ChainType.EVM:
             if (walletAtom.cosmos) {
