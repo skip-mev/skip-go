@@ -28,6 +28,8 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       walletList={walletList}
       onClickBackButton={handleOnClickBackButton}
       isConnectEco={connectEco}
+      chainType={chainType}
+      chainId={chainId}
     />
   );
 });
