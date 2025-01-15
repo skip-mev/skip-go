@@ -14,6 +14,11 @@
       "dark": "#151617"
     }
   },
+  "api": {
+    "playground": {
+      "disableProxy": true
+    }
+  },
   "anchors": [
     {
         "name": "Support",

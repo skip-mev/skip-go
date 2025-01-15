@@ -112,7 +112,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           <PlaceholderIcon>?</PlaceholderIcon>
         )}
       </StyledAnimatedBorder>
-      <Column>
+      <Column gap={5}>
         <StyledSymbolAndAmount>
           {displayAmount} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
