@@ -65,6 +65,7 @@ const StyledContainer = styled(Column)`
   position: relative;
   padding: 20px;
   width: 100%;
+  min-height: 300px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

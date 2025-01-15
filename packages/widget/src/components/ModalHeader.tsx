@@ -41,10 +41,7 @@ export const StyledModalContainer = styled(Column)`
     max-height: 600px;
   }
 `;
-export const StyledModalInnerContainer = styled(Column)<{
-  height: number;
-}>`
-  height: ${({ height }) => height}px;
+export const StyledModalInnerContainer = styled(Column)`
   width: 100%;
   align-items: center;
   justify-content: center;
