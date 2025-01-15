@@ -58,6 +58,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const getAccount = useGetAccount();
   const account = getAccount(chainId);
 
+  const shouldRenderEditDestinationWallet =
+    context === "destination" && onClickEditDestinationWallet !== undefined;
+
+  const renderingEditDestinationWalletOrExplorerLink =
+    shouldRenderEditDestinationWallet || explorerLink !== undefined;
+
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     switch (context) {
@@ -86,8 +92,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
   }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
 
   const renderAddress = useMemo(() => {
-    const shouldRenderEditDestinationWallet =
-      context === "destination" && onClickEditDestinationWallet;
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
@@ -123,9 +127,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
-    context,
     isMobileScreenSize,
     onClickEditDestinationWallet,
+    shouldRenderEditDestinationWallet,
     source.address,
     source.image,
     theme.primary.text.lowContrast,
@@ -178,7 +182,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
                 {removeTrailingZeros(assetDetails?.amount)}
               </StyledAssetAmount>
               <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
-              <StyledChainName title={assetDetails?.chainName} textWrap="nowrap">
+              <StyledChainName
+                renderingEditDestinationWalletOrExplorerLink={
+                  renderingEditDestinationWalletOrExplorerLink
+                }
+                title={assetDetails?.chainName}
+                textWrap="nowrap"
+              >
                 {" "}
                 on {assetDetails?.chainName}
               </StyledChainName>
@@ -195,12 +205,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledSymbol = styled(SmallText)`
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const StyledChainImage = styled.img`
@@ -308,14 +312,67 @@ const StyledLoadingOverlay = styled(Row)<{
 `;
 
 const StyledAssetAmount = styled(SmallText)`
-  max-width: 90px;
+  max-width: 60px;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  @media (max-width: 767px) {
+    max-width: 80px;
+  }
+
+  @media (max-width: 400px) {
+    max-width: 55px;
+  }
 `;
 
-const StyledChainName = styled(SmallText)`
+const StyledSymbol = styled(SmallText)`
+  max-width: 55px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 400px) {
+    max-width: 40px;
+  }
+`;
+
+const StyledChainName = styled(SmallText)<{
+  renderingEditDestinationWalletOrExplorerLink: boolean;
+}>`
   max-width: 95px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
+  @media (min-width: 500px) and (max-width: 767px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 120px;
+          `
+        : css`
+            max-width: 140px;
+          `};
+  }
+
+  @media (min-width: 400px) and (max-width: 500px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 55px;
+          `
+        : css`
+            max-width: 85px;
+          `};
+  }
+
+  @media (max-width: 400px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 65px;
+          `
+        : css`
+            max-width: 100px;
+          `};
+  }
 `;
