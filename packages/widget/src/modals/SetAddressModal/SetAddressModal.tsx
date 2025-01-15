@@ -17,7 +17,6 @@ import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 import { isMobile } from "@/utils/os";
-import { isWalletConnect, WalletType } from "graz";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
@@ -48,20 +47,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const showWithdrawalWarning =
     new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
 
-  const onlyShowManualWalletEntry = useMemo(() => {
-    const mobile = isMobile()
-    if (!mobile) return false;
-    const source = chainAddresses[0];
-    if (source.chainType !== chain?.chainType) return false;
-    if (source.source !== "wallet") return false;
-    const isCosmosWC = isWalletConnect(source.wallet.walletName as WalletType);
-    const isWC = source.wallet.walletName === "WalletConnect";
-    const isSourceWC = isCosmosWC || isWC;
-    return isSourceWC
-  }, [
-    chainAddresses,
-    chain?.chainType,
-  ]);
+  const mobile = isMobile();
 
   const manualWalletEntry = {
     onSelect: () => setShowManualAddressInput(true),
@@ -74,12 +60,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         />
       );
     },
-  } as ManualWalletEntry
+  } as ManualWalletEntry;
 
-  const walletList = [
-    ..._walletList,
-    manualWalletEntry
-  ];
+  const walletList = [..._walletList, manualWalletEntry];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setManualWalletAddress(e.target.value);
@@ -177,8 +160,8 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title="Destination wallet"
-          walletList={onlyShowManualWalletEntry ? [manualWalletEntry] : walletList}
+          title={mobile ? "Destination" : "Destination wallet"}
+          walletList={mobile ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
