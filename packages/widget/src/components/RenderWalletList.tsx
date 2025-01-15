@@ -22,7 +22,7 @@ import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
 import { isMobile } from "@/utils/os";
-import { WalletType, getWallet } from "graz";
+import { WalletType, getWallet, useDisconnect } from "graz";
 import { solanaWallets } from "@/constants/solana";
 import { useConnectors } from "wagmi";
 
@@ -87,6 +87,7 @@ export const RenderWalletList = ({
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
   const connectors = useConnectors();
+  const { disconnectAsync } = useDisconnect();
 
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
@@ -120,6 +121,7 @@ export const RenderWalletList = ({
             if (walletAtom.cosmos) {
               const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
               await cosmosWallet.disable?.();
+              await disconnectAsync();
               setCosmosWallet(undefined);
             }
             if (walletAtom.svm) {
@@ -137,6 +139,7 @@ export const RenderWalletList = ({
             if (walletAtom.cosmos) {
               const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
               await cosmosWallet.disable?.();
+              await disconnectAsync();
               setCosmosWallet(undefined);
             }
             break;
