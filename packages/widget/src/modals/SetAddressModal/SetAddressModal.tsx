@@ -160,7 +160,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title="Destination wallet"
+          title={mobile ? "Destination" : "Destination wallet"}
           walletList={mobile ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
