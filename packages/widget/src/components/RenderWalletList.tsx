@@ -4,17 +4,21 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { SmallText, Text } from "@/components/Typography";
-import { MinimalWallet } from "@/state/wallets";
+import { MinimalWallet, walletsAtom } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
+import { isMobile } from "@/utils/os";
+import { WalletType, getWallet } from "graz";
+import { solanaWallets } from "@/constants/solana";
+import { useConnectors } from "wagmi";
 
 export type RenderWalletListProps = {
   title: string;
@@ -59,6 +63,7 @@ export const RenderWalletList = ({
   chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
+  const walletAtom = useAtomValue(walletsAtom);
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
@@ -70,6 +75,8 @@ export const RenderWalletList = ({
   }, [walletList]);
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
+
+  const connectors = useConnectors();
 
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
@@ -97,6 +104,43 @@ export const RenderWalletList = ({
         });
         return null;
       }
+      if (isMobile()) {
+        switch (chainType) {
+          case ChainType.EVM:
+            if (walletAtom.cosmos) {
+              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
+              await cosmosWallet.disable?.();
+            }
+            if (walletAtom.svm) {
+              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
+              await svmWallet?.disconnect?.();
+            }
+            break;
+          case ChainType.SVM:
+            if (walletAtom.evm) {
+              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
+              await evmWallet?.disconnect?.();
+            }
+            if (walletAtom.cosmos) {
+              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
+              await cosmosWallet.disable?.();
+            }
+            break;
+          case ChainType.Cosmos:
+            if (walletAtom.evm) {
+              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
+              await evmWallet?.disconnect?.();
+            }
+            if (walletAtom.svm) {
+              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
+              await svmWallet?.disconnect?.();
+            }
+            break;
+          default:
+            break;
+        }
+      }
+
       if (isConnectEco) {
         clearAssetInputAmounts();
         return await wallet.connectEco();
