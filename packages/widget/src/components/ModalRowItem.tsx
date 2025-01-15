@@ -43,5 +43,11 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
           cursor: pointer;
         }
       }
+      @media (max-width: 767px) {
+        &:active {
+          background-color: ${theme.secondary.background.hover};
+          cursor: pointer;
+        }
+      }
     `};
 `;
