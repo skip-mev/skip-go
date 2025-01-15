@@ -61,10 +61,13 @@ export const TransactionHistoryPage = () => {
   );
 };
 
-const StyledContainer = styled(Column)`
+const StyledContainer = styled(Column).attrs({
+  justify: "center",
+})`
   position: relative;
   padding: 20px;
   width: 100%;
+  min-height: 300px;
   border-radius: 25px;
   background-color: ${({ theme }) => theme.primary.background.normal};
 `;

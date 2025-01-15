@@ -175,7 +175,7 @@ export const RenderWalletList = ({
     if (connectMutation.isError || connectMutation.isPending) {
       const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
       return (
-        <StyledModalInnerContainer height={height}>
+        <StyledModalInnerContainer>
           <StyledLoadingContainer>
             <StyledAnimatedBorder
               width={80}
@@ -190,7 +190,7 @@ export const RenderWalletList = ({
                 alt={`${connectMutation.variables?.walletPrettyName} logo`}
               />
             </StyledAnimatedBorder>
-            <Text color={theme.primary.text.lowContrast}>
+            <Text color={theme.primary.text.lowContrast} textAlign="center">
               {titleText} {connectMutation.variables?.walletPrettyName}
             </Text>
             {connectMutation.error && (
