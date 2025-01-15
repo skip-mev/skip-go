@@ -22250,6 +22250,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"performance-now@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "performance-now@npm:2.1.0"
+  checksum: 534e641aa8f7cba160f0afec0599b6cecefbb516a2e837b512be0adbe6c1da5550e89c78059c7fabc5c9ffdf6627edabe23eb7c518c4500067a898fa65c2b550
+  languageName: node
+  linkType: hard
+
 "picocolors@npm:^1.0.0, picocolors@npm:^1.0.1":
   version: 1.0.1
   resolution: "picocolors@npm:1.0.1"
@@ -23635,6 +23642,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"raf@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "raf@npm:3.4.1"
+  dependencies:
+    performance-now: ^2.1.0
+  checksum: 50ba284e481c8185dbcf45fc4618ba3aec580bb50c9121385d5698cb6012fe516d2015b1df6dd407a7b7c58d44be8086108236affbce1861edd6b44637c8cd52
+  languageName: node
+  linkType: hard
+
 "randombytes@npm:^2.0.0, randombytes@npm:^2.0.1, randombytes@npm:^2.0.5, randombytes@npm:^2.1.0":
   version: 2.1.0
   resolution: "randombytes@npm:2.1.0"
@@ -23700,6 +23716,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rc-util@npm:^5.0.0":
+  version: 5.44.3
+  resolution: "rc-util@npm:5.44.3"
+  dependencies:
+    "@babel/runtime": ^7.18.3
+    react-is: ^18.2.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: e4cc88e5e36559fb47f26b5d6147915f9d17fea72db6c9a0b99b65e2b7f56ab906cd1696f37d82c0ea7e437665dfdaf082d8b4a8a2c2d9663e4fcb948c583728
+  languageName: node
+  linkType: hard
+
 "rc-util@npm:^5.36.0, rc-util@npm:^5.38.0":
   version: 5.43.0
   resolution: "rc-util@npm:5.43.0"
@@ -23710,6 +23739,20 @@ __metadata:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
   checksum: 48c10afb5886aed86d1f5241883f972b2b16235b0cc4867a05d061324f107aa113260c34eeb13ad18f4b66d1264dbcb3baf725c8ea34fbdaa504410d4e71b3ce
+  languageName: node
+  linkType: hard
+
+"rc-virtual-list@npm:1.1.6":
+  version: 1.1.6
+  resolution: "rc-virtual-list@npm:1.1.6"
+  dependencies:
+    classnames: ^2.2.6
+    raf: ^3.4.1
+    rc-util: ^5.0.0
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 9cd543aba2243f29a089359137db4a793a23a5260a0d0bd1f215d1d82e77270dd1dbf7c9bab5edf7a6707fdb41acea2b4ee6ed59c67295465159e2171928765c
   languageName: node
   linkType: hard
 
@@ -25193,6 +25236,7 @@ __metadata:
     p-map: ^7.0.2
     postcss-prefixwrap: ^1.49.0
     proxy-from-env: ^1.1.0
+    rc-virtual-list: 1.1.6
     react: ^18.0.0
     react-dom: ^18.0.0
     rollup: ^2.67.1
