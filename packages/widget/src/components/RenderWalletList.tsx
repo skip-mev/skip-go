@@ -4,7 +4,13 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { SmallText, Text } from "@/components/Typography";
-import { MinimalWallet, walletsAtom } from "@/state/wallets";
+import {
+  MinimalWallet,
+  cosmosWalletAtom,
+  evmWalletAtom,
+  svmWalletAtom,
+  walletsAtom,
+} from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
@@ -64,6 +70,10 @@ export const RenderWalletList = ({
 }: RenderWalletListProps) => {
   const theme = useTheme();
   const walletAtom = useAtomValue(walletsAtom);
+  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
+  const setEVMWallet = useSetAtom(evmWalletAtom);
+  const setSVMWallet = useSetAtom(svmWalletAtom);
+
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
@@ -110,30 +120,36 @@ export const RenderWalletList = ({
             if (walletAtom.cosmos) {
               const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
               await cosmosWallet.disable?.();
+              setCosmosWallet(undefined);
             }
             if (walletAtom.svm) {
               const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
               await svmWallet?.disconnect?.();
+              setSVMWallet(undefined);
             }
             break;
           case ChainType.SVM:
             if (walletAtom.evm) {
               const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
               await evmWallet?.disconnect?.();
+              setEVMWallet(undefined);
             }
             if (walletAtom.cosmos) {
               const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
               await cosmosWallet.disable?.();
+              setCosmosWallet(undefined);
             }
             break;
           case ChainType.Cosmos:
             if (walletAtom.evm) {
               const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
               await evmWallet?.disconnect?.();
+              setEVMWallet(undefined);
             }
             if (walletAtom.svm) {
               const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
               await svmWallet?.disconnect?.();
+              setSVMWallet(undefined);
             }
             break;
           default:
