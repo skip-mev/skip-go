@@ -1,5 +1,26 @@
 ## 0.0.15
 
+## 3.1.8
+
+### Patch Changes
+
+- f88389b: Prevent non-error/fatal level events from being sent to sentry
+- e5c31f2: Disable sentry globalHandlers and browserApiErrors default integrations
+- 6d1f93d: Fix connect wallet styling, fix history page to have default min-height
+- 8d2685e: Mobile styling updates
+- 4789d60: Start loading green circle immediately after signing
+- 60291ff: fix default route
+- bd75f93: only manual address on mobile
+- 7709f59: single walletconnect instance
+- 905a8e0: refactor source status
+- 5bed02d: filter 0.2 ntrn swap fees
+- 26f9185: fix history truncation
+- a33b066: mobile: disconnect before connect
+- 2780661: Mobile styling updates
+- 69d7656: Fix set recovery address not working if chainid isnt supported by wallet
+- 4609c5d: hide okx wallet on evm
+- a05fdce: add solana walletconnect
+
 ## 3.1.7
 
 ### Patch Changes

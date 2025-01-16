@@ -1,5 +1,27 @@
 # nextjs
 
+## 0.1.36
+
+### Patch Changes
+
+- Updated dependencies [f88389b]
+- Updated dependencies [e5c31f2]
+- Updated dependencies [6d1f93d]
+- Updated dependencies [8d2685e]
+- Updated dependencies [4789d60]
+- Updated dependencies [60291ff]
+- Updated dependencies [bd75f93]
+- Updated dependencies [7709f59]
+- Updated dependencies [905a8e0]
+- Updated dependencies [5bed02d]
+- Updated dependencies [26f9185]
+- Updated dependencies [a33b066]
+- Updated dependencies [2780661]
+- Updated dependencies [69d7656]
+- Updated dependencies [4609c5d]
+- Updated dependencies [a05fdce]
+  - @skip-go/widget@3.1.8
+
 ## 0.1.35
 
 ### Patch Changes
@@ -29,7 +51,6 @@
 
 - Updated dependencies [0622dcd]
   - @skip-go/widget@3.1.5
-
 
 ## 0.1.32
 
