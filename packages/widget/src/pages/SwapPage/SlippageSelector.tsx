@@ -42,7 +42,6 @@ const SlippageSelector: React.FC = () => {
         {SLIPPAGE_OPTIONS.map((option) => (
           <StyledSettingsOptionLabel
             key={option}
-            monospace
             selected={option === slippage && !isInputFocused}
             onClick={() => setSlippage(option)}
           >
@@ -73,7 +72,6 @@ const SlippageSelector: React.FC = () => {
             </>
           ) : (
             <StyledSettingsOptionLabel
-              monospace
               selected={isCustomSlippage && !isInputFocused}
               onClick={() => setIsInputFocused(true)}
             >

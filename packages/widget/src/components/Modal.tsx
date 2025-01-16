@@ -90,7 +90,7 @@ const fadeIn = keyframes`
       opacity: 0;
     }
     to {
-    opacity: 1;
+      opacity: 1;
     }
 `;
 
@@ -106,11 +106,11 @@ const fadeOut = keyframes`
 const fadeInAndSlideUp = keyframes`
   from {
       opacity: 0;
-    transform: translateY(100%);
+      transform: translateY(100%);
     }
     to {
-    opacity: 1;
-    transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
 `;
 
@@ -128,7 +128,7 @@ const fadeOutAndSlideDown = keyframes`
 const fadeInAndZoomOut = keyframes`
   from {
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
@@ -143,7 +143,7 @@ const fadeOutAndZoomIn = keyframes`
   }
   to {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.95);
   }
 `;
 
@@ -209,5 +209,5 @@ const StyledContent = styled(Dialog.Content)<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    150ms ease-in-out;
+    180ms cubic-bezier(0.5, 1, 0.89, 1);
 `;
