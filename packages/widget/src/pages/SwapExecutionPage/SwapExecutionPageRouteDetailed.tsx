@@ -83,7 +83,10 @@ export const SwapExecutionPageRouteDetailed = ({
       return status[0].status;
     }
 
-    if (swapExecutionState === SwapExecutionState.pending) {
+    if (
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
       return "pending";
     }
   };

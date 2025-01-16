@@ -38,7 +38,10 @@ export const SwapExecutionPageRouteSimple = ({
       return status[firstOperation.transferIndex].status;
     }
 
-    if (swapExecutionState === SwapExecutionState.pending) {
+    if (
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
       return "pending";
     }
   };
