@@ -28,12 +28,23 @@ export const SwapExecutionPageRouteSimple = ({
   const firstOperation = operations[0];
   const lastOperation = operations[operations.length - 1];
   const status = statusData?.transferEvents;
-  const sourceStatus =
-    swapExecutionState === SwapExecutionState.confirmed
-      ? "completed"
-      : swapExecutionState === SwapExecutionState.pending
-        ? "pending"
-        : status?.[firstOperation.transferIndex]?.status;
+
+  const getSourceStatus = () => {
+    if (swapExecutionState === SwapExecutionState.confirmed) {
+      return "completed";
+    }
+
+    if (status?.[firstOperation.transferIndex]?.status) {
+      return status[firstOperation.transferIndex].status;
+    }
+
+    if (swapExecutionState === SwapExecutionState.pending) {
+      return "pending";
+    }
+  };
+
+  const sourceStatus = getSourceStatus();
+
   const destinationStatus =
     swapExecutionState === SwapExecutionState.confirmed
       ? "completed"
