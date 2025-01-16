@@ -51,6 +51,7 @@ export const SwapExecutionPageRouteDetailed = ({
   statusData,
   onClickEditDestinationWallet,
   swapExecutionState,
+  sourceStatus,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
@@ -74,25 +75,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
-  const getFirstOpStatus = () => {
-    if (swapExecutionState === SwapExecutionState.confirmed) {
-      return "completed";
-    }
-
-    if (status?.[0]?.status) {
-      return status[0].status;
-    }
-
-    if (
-      swapExecutionState === SwapExecutionState.pending ||
-      swapExecutionState === SwapExecutionState.signaturesRemaining
-    ) {
-      return "pending";
-    }
-  };
-
-  const firstOpStatus = getFirstOpStatus();
-
   return (
     <StyledSwapExecutionPageRoute>
       <Column>
@@ -101,7 +83,7 @@ export const SwapExecutionPageRouteDetailed = ({
           denom={firstOperation.denomIn}
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
-          status={firstOpStatus}
+          status={sourceStatus}
           context="source"
           index={0}
         />
