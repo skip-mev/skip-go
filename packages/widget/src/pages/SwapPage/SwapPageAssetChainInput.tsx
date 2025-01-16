@@ -281,6 +281,10 @@ const StyledInput = styled.input<{
       opacity: 0.5;
     }
   }
+
+  @media (max-width: 767px) {
+    height: 45px;
+  }
 `;
 
 export const StyledAssetLabel = styled(Row).attrs({
