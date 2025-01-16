@@ -118,7 +118,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </StyledSymbolAndAmount>
         {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 
-        <Row align="center" gap={5}>
+        <Row align="center" height={18} gap={5}>
           <StyledChainName normalTextColor textWrap="nowrap">
             on {assetDetails.chainName}
           </StyledChainName>
@@ -154,6 +154,9 @@ const StyledSymbolAndAmount = styled(Text)`
   max-width: 325px;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 767px) {
+    font-size: 22px;
+  }
 `;
 
 const PlaceholderIcon = styled.div`

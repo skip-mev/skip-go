@@ -60,7 +60,6 @@ export const MainButton = ({
       <StyledMainButton
         align="center"
         justify="space-between"
-        padding={20}
         backgroundColor={backgroundColor}
         disabled={disabled}
         onClick={onClick}
@@ -68,28 +67,14 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <Text
-              fontWeight="bold"
-              fontSize={24}
-              color={textColor}
-              mainButtonColor={backgroundColor}
-              letterSpacing="-0.015em"
-              capitalize
-            >
+            <MainButtonText color={textColor} mainButtonColor={backgroundColor}>
               {label}
-            </Text>
+            </MainButtonText>
           </Row>
         ) : (
-          <Text
-            fontWeight="bold"
-            capitalize
-            fontSize={24}
-            color={textColor}
-            mainButtonColor={backgroundColor}
-            letterSpacing="-0.015em"
-          >
+          <MainButtonText capitalize color={textColor} mainButtonColor={backgroundColor}>
             {label}
-          </Text>
+          </MainButtonText>
         )}
 
         <Icon backgroundColor={textColor} color={backgroundColor} />
@@ -118,9 +103,7 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <Text fontWeight="bold" fontSize={24} style={{ opacity: 0.5 }} letterSpacing="-0.015em">
-        {label}
-      </Text>
+      <MainButtonText style={{ opacity: 0.5 }}>{label}</MainButtonText>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
           {extra}
@@ -130,6 +113,18 @@ export const LoadingButton = ({
     </StyledOverlay>
   </StyledLoadingButton>
 );
+
+const MainButtonText = styled(Text).attrs({
+  fontWeight: "bold",
+  capitalize: true,
+  letterSpacing: "-0.015em",
+})`
+  font-size: 24px;
+  letter-spacing: -0.015em;
+  @media (max-width: 767px) {
+    font-size: 20px;
+  }
+`;
 
 // on hover mask to lighten the button
 const MainButtonContainer = styled.div`
@@ -155,6 +150,7 @@ const StyledMainButton = styled(Row).attrs({
   border: none;
   background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
   height: 70px;
+  padding: 20px;
   width: 100%;
   border-radius: 25px;
   overflow: hidden;
@@ -172,6 +168,11 @@ const StyledMainButton = styled(Row).attrs({
         cursor: not-allowed;
       }
     `};
+
+  @media (max-width: 767px) {
+    height: 65px;
+    padding: 15px;
+  }
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
@@ -209,6 +210,10 @@ const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
       background-position: -100% 0;
     }
   }
+  @media (max-width: 767px) {
+    height: 65px;
+    padding: 15px;
+  }
 `;
 
 const StyledTimeRemaining = styled(Row)`
@@ -227,4 +232,8 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   width: calc(100% - 4px);
   border-radius: 24px;
   background-color: ${({ theme }) => theme.primary.background.normal};
+
+  @media (max-width: 767px) {
+    height: 61px;
+  }
 `;
