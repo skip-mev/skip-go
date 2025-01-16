@@ -156,7 +156,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             set(setOverallStatusAtom, "unconfirmed");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
-          transactionHash: lastTransaction?.txHash ?? "",
+          txHash: lastTransaction?.txHash ?? "",
           onClickContactSupport: () => {
             window.open("https://skip.build/discord", "_blank");
           },

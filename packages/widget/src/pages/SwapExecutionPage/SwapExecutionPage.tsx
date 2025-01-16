@@ -91,6 +91,26 @@ export const SwapExecutionPage = () => {
     }
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
+  const firstOperationStatus = useMemo(() => {
+    const status = statusData?.transferEvents;
+
+    if (swapExecutionState === SwapExecutionState.confirmed) {
+      return "completed";
+    }
+
+    if (status?.[0]?.status) {
+      return status[0].status;
+    }
+
+    if (
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
+      return "pending";
+    }
+
+  }, [statusData, swapExecutionState]);
+
   const onClickEditDestinationWallet = useMemo(() => {
     const loadingStates = [
       SwapExecutionState.pending,
@@ -138,6 +158,7 @@ export const SwapExecutionPage = () => {
         operations={clientOperations}
         statusData={statusData}
         swapExecutionState={swapExecutionState}
+        firstOperationStatus={firstOperationStatus}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}

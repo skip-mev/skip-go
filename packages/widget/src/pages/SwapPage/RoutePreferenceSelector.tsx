@@ -32,7 +32,6 @@ const RoutePreferenceSelector: React.FC = () => {
         {ROUTE_PREFERENCE_OPTIONS.map((option) => (
           <StyledSettingsOptionLabel
             key={option}
-            monospace
             selected={option === routePreference}
             onClick={() => setRoutePreference(option)}
           >

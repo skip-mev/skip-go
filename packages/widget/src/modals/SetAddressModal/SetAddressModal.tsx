@@ -16,6 +16,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
+import { isMobile } from "@/utils/os";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
@@ -46,21 +47,22 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const showWithdrawalWarning =
     new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
 
-  const walletList = [
-    ..._walletList,
-    {
-      onSelect: () => setShowManualAddressInput(true),
-      walletName: "Enter address manually",
-      rightContent: () => {
-        return (
-          <RightArrowIcon
-            color={theme?.primary?.background.normal}
-            backgroundColor={theme?.primary?.text.normal}
-          />
-        );
-      },
-    } as ManualWalletEntry,
-  ];
+  const mobile = isMobile();
+
+  const manualWalletEntry = {
+    onSelect: () => setShowManualAddressInput(true),
+    walletName: "Enter address manually",
+    rightContent: () => {
+      return (
+        <RightArrowIcon
+          color={theme?.primary?.background.normal}
+          backgroundColor={theme?.primary?.text.normal}
+        />
+      );
+    },
+  } as ManualWalletEntry;
+
+  const walletList = [..._walletList, manualWalletEntry];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setManualWalletAddress(e.target.value);
@@ -158,8 +160,8 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title="Destination wallet"
-          walletList={walletList}
+          title={mobile ? "Destination" : "Destination wallet"}
+          walletList={mobile ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
