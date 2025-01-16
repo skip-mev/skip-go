@@ -238,7 +238,7 @@ export const SwapPageAssetChainInput = ({
 
 const StyledOnChainGhostButton = styled(GhostButton)`
   @media (max-width: 767px) {
-    padding: unset;
+    padding: 0 5px;
   }
 `;
 
