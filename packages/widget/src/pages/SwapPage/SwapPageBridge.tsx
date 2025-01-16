@@ -31,14 +31,14 @@ export const SwapPageBridge = () => {
     >
       <BridgeIcon
         color={theme.primary.background.normal}
-        width={isMobileScreenSize ? 60 : undefined}
-        height={isMobileScreenSize ? 10 : undefined}
+        width={isMobileScreenSize ? 60 : 47}
+        height={isMobileScreenSize ? 10 : 7}
       />
       <StyledBridgeArrow
         spin={isSpinning}
         color={theme.primary.text.normal}
-        width={isMobileScreenSize ? 16 : undefined}
-        height={isMobileScreenSize ? 16 : undefined}
+        width={isMobileScreenSize ? 16 : 13}
+        height={isMobileScreenSize ? 16 : 13}
       />
     </Button>
   );
