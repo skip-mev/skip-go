@@ -31,7 +31,9 @@ export const SwapExecutionPageRouteSimple = ({
   const sourceStatus =
     swapExecutionState === SwapExecutionState.confirmed
       ? "completed"
-      : status?.[firstOperation.transferIndex]?.status;
+      : swapExecutionState === SwapExecutionState.pending
+        ? "pending"
+        : status?.[firstOperation.transferIndex]?.status;
   const destinationStatus =
     swapExecutionState === SwapExecutionState.confirmed
       ? "completed"

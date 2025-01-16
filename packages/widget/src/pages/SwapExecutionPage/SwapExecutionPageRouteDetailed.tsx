@@ -74,7 +74,11 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
   const firstOpStatus =
-    swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
+    swapExecutionState === SwapExecutionState.confirmed
+      ? "completed"
+      : swapExecutionState === SwapExecutionState.pending
+        ? "pending"
+        : status?.[0]?.status;
 
   return (
     <StyledSwapExecutionPageRoute>
