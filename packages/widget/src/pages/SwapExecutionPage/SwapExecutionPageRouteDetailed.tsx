@@ -51,7 +51,7 @@ export const SwapExecutionPageRouteDetailed = ({
   statusData,
   onClickEditDestinationWallet,
   swapExecutionState,
-  sourceStatus,
+  firstOperationStatus,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
@@ -83,7 +83,7 @@ export const SwapExecutionPageRouteDetailed = ({
           denom={firstOperation.denomIn}
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
-          status={sourceStatus}
+          status={firstOperationStatus}
           context="source"
           index={0}
         />

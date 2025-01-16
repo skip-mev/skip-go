@@ -91,7 +91,7 @@ export const SwapExecutionPage = () => {
     }
   }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
-  const sourceStatus = useMemo(() => {
+  const firstOperationStatus = useMemo(() => {
     const status = statusData?.transferEvents;
 
     if (swapExecutionState === SwapExecutionState.confirmed) {
@@ -158,7 +158,7 @@ export const SwapExecutionPage = () => {
         operations={clientOperations}
         statusData={statusData}
         swapExecutionState={swapExecutionState}
-        sourceStatus={sourceStatus}
+        firstOperationStatus={firstOperationStatus}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}
