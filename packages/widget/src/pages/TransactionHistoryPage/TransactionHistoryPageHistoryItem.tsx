@@ -121,7 +121,9 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("seconds", "secs")
       .replace("second", "sec")
       .replace("months", "mos")
-      .replace("month", "mo.");
+      .replace("month", "mo")
+      .replace("years", "yrs")
+      .replace("year", "yr");
   }, [historyStatus, timestamp]);
 
   return (
