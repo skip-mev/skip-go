@@ -73,8 +73,25 @@ export const SwapExecutionPageRouteDetailed = ({
 
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
-  const firstOpStatus =
-    swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
+
+  const getFirstOpStatus = () => {
+    if (swapExecutionState === SwapExecutionState.confirmed) {
+      return "completed";
+    }
+
+    if (status?.[0]?.status) {
+      return status[0].status;
+    }
+
+    if (
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
+      return "pending";
+    }
+  };
+
+  const firstOpStatus = getFirstOpStatus();
 
   return (
     <StyledSwapExecutionPageRoute>
