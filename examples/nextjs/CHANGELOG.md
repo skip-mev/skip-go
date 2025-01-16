@@ -30,6 +30,7 @@
 - Updated dependencies [0622dcd]
   - @skip-go/widget@3.1.5
 
+
 ## 0.1.32
 
 ### Patch Changes

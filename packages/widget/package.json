@@ -115,6 +115,7 @@
     "@tanstack/query-core": "^5.51.21",
     "@walletconnect/modal": "2.7.0",
     "@walletconnect/sign-client": "2.17.2",
+    "@walletconnect/solana-adapter": "^0.0.6",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",

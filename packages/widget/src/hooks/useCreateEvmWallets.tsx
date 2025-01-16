@@ -35,6 +35,9 @@ export const useCreateEvmWallets = () => {
       }
       const wallets: MinimalWallet[] = [];
       for (const connector of connectors) {
+        if (connector.id === "com.okex.wallet") {
+          continue;
+        }
         const isWalletFound =
           wallets.findIndex((wallet) => wallet.walletName === connector.id) !== -1;
         if (isWalletFound) {

@@ -41,7 +41,6 @@ export const ConnectedWalletContent = () => {
 
   return (
     <Row
-      gap={6}
       style={{
         paddingRight: 13,
       }}

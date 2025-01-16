@@ -29,7 +29,9 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
     (denom?: string, chainId?: string) => {
       if (!denom || !chainId) return;
       if (!assets) return;
-      return assets.find((a) => a.denom === denom && a.chainID === chainId);
+      return assets.find(
+        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+      );
     },
     [assets],
   );

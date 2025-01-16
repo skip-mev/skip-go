@@ -17,7 +17,9 @@ export const flexProps = css<FlexProps>`
   ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius}px`};
 `;
 
-export const Row = styled.div<FlexProps>`
+export const Row = styled.div<SpacerProps & FlexProps>`
+  ${({ width }) => width && `width: ${width}px`};
+  ${({ height }) => height && `height: ${height}px`};
   ${flexProps};
   flex-direction: row;
 `;
