@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.1.9
+
+### Patch Changes
+
+- a008f2b: add chainIdsToAffiliate to msgs and msgsDirect
+- Updated dependencies [a008f2b]
+  - @skip-go/client@0.16.5
+
 ## 3.1.8
 
 ### Patch Changes
