@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.1.10
+
+### Patch Changes
+
+- ad9b1e6: Proxy sentry requests to /api/sentry
+- 70d4811: Settings wheel size increased and opacity fix, plus settings bar css fixes
+
 ## 3.1.9
 
 ### Patch Changes
