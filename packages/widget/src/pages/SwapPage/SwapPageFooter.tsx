@@ -72,7 +72,7 @@ export const SwapPageFooterItems = ({
                 <SpeedometerIcon />
                 {estimatedTime}
                 <CogIconWrapper>
-                  <CogIcon height={13} width={13} />
+                  <CogIcon height={14} width={14} />
                   {settingsChanged && <SettingsChangedIndicator />}
                 </CogIconWrapper>
               </Row>
@@ -112,7 +112,7 @@ export const SwapPageFooterItems = ({
                 <SpeedometerIcon />
                 {estimatedTime}
                 <CogIconWrapper>
-                  <CogIcon height={13} width={13} />
+                  <CogIcon height={14} width={14} />
                   {settingsChanged && <SettingsChangedIndicator />}
                 </CogIconWrapper>
               </Row>
@@ -177,14 +177,18 @@ export const StyledSignatureRequiredContainer = styled(Row)`
 const CogIconWrapper = styled.div`
   position: relative;
   display: inline-block;
+
+  svg {
+    display: block;
+  }
 `;
 
 const SettingsChangedIndicator = styled.div`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -3px;
+  right: -3px;
   width: 4px;
   height: 4px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 50%;
 `;
