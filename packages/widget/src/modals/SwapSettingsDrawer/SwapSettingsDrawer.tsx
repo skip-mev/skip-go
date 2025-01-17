@@ -119,16 +119,16 @@ export const SwapSettingsDrawer = createModal(() => {
   }, [transferOperations, route]);
 
   return (
-    <StyledSwapPageSettings gap={20}>
+    <StyledSwapPageSettings gap={15}>
       <Column gap={10}>
-        <Row justify="space-between">
+        <Row justify="space-between" align="center">
           <SwapDetailText>Route</SwapDetailText>
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
               <Fragment key={index}>
                 <img
-                  width="20"
-                  height="20"
+                  width="25"
+                  height="25"
                   src={chain?.logoURI}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
@@ -141,9 +141,9 @@ export const SwapSettingsDrawer = createModal(() => {
           </Row>
         </Row>
         {Boolean(route?.swapPriceImpactPercent) && (
-          <Row justify="space-between">
+          <Row justify="space-between" align="center">
             <SwapDetailText>Price Impact</SwapDetailText>
-            <Row align="center" gap={5}>
+            <Row align="center" gap={5} height={25}>
               <SwapDetailText monospace>{route?.swapPriceImpactPercent}%</SwapDetailText>
             </Row>
           </Row>
@@ -152,7 +152,7 @@ export const SwapSettingsDrawer = createModal(() => {
       {fees.length > 0 && (
         <Column gap={10}>
           {fees.map(({ label, fee }, index) => (
-            <Row justify="space-between" key={index}>
+            <Row justify="space-between" align="center" key={index} height={25}>
               <SwapDetailText>{label}</SwapDetailText>
               <SwapDetailText monospace>
                 {fee.formattedAssetAmount} ({fee.formattedUsdAmount})
