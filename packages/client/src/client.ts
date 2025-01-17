@@ -263,6 +263,7 @@ export class SkipClient {
       amountOut: route.estimatedAmountOut || "0",
       addressList: addressList,
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
+      chainIDsToAffiliates: this.chainIDsToAffiliates,
     });
 
     if (beforeMsg && messages.txs.length > 0) {
@@ -932,11 +933,16 @@ export class SkipClient {
   }
 
   async messages(options: types.MsgsRequest): Promise<types.MsgsResponse> {
+    const optionsWithChainIdsToAffiliates = {
+      ...options,
+      chainIDsToAffiliates:
+        options.chainIDsToAffiliates || this.chainIDsToAffiliates,
+    };
     const response = await this.requestClient.post<
       types.MsgsResponseJSON,
       types.MsgsRequestJSON
     >("/v2/fungible/msgs", {
-      ...types.msgsRequestToJSON(options),
+      ...types.msgsRequestToJSON(optionsWithChainIdsToAffiliates),
       slippage_tolerance_percent: options.slippageTolerancePercent || "0",
     });
     return types.messageResponseFromJSON(response);
@@ -957,11 +963,16 @@ export class SkipClient {
   async msgsDirect(
     options: types.MsgsDirectRequest,
   ): Promise<types.MsgsDirectResponse> {
+    const optionsWithChainIdsToAffiliates = {
+      ...options,
+      chainIDsToAffiliates:
+        options.chainIDsToAffiliates || this.chainIDsToAffiliates,
+    };
     const response = await this.requestClient.post<
       types.MsgsDirectResponseJSON,
       types.MsgsDirectRequestJSON
     >("/v2/fungible/msgs_direct", {
-      ...msgsDirectRequestToJSON(options),
+      ...msgsDirectRequestToJSON(optionsWithChainIdsToAffiliates),
     });
 
     return {
