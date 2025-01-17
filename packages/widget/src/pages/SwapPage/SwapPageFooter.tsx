@@ -160,7 +160,7 @@ export const SwapPageFooter = ({
 } & SwapPageFooterItemsProps &
   React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <GhostButton gap={5} justify="space-between" onClick={onClick} {...props}>
+    <GhostButton gap={5} justify="space-between" align="center" onClick={onClick} height={35} {...props}>
       <SwapPageFooterItems
         rightContent={rightContent}
         showRouteInfo={showRouteInfo}

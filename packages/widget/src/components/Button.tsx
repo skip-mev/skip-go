@@ -5,6 +5,7 @@ import { removeButtonStyles, SmallText } from "@/components/Typography";
 export type GhostButtonProps = {
   secondary?: boolean;
   alwaysShowBackground?: boolean;
+  height?: number;
 } & FlexProps;
 
 export const GhostButton = styled(SmallText).attrs({
@@ -12,7 +13,7 @@ export const GhostButton = styled(SmallText).attrs({
 })<GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
-  height: 30px;
+  height: ${({ height }) => height || 30}px;
 
   ${({ alwaysShowBackground, theme, secondary }) => {
     if (alwaysShowBackground) {
