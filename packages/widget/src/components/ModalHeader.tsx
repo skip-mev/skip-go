@@ -16,10 +16,7 @@ export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHea
   return (
     <StyledHeader align="center" justify="space-between">
       <Button onClick={() => onClickBackButton()}>
-        <StyledLeftArrowIcon
-          color={theme?.primary.background.normal}
-          backgroundColor={theme?.primary.text.normal}
-        />
+        <StyledLeftArrowIcon color={theme?.primary.text.normal} />
       </Button>
       <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
       {rightContent?.()}

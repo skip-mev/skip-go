@@ -53,12 +53,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     onSelect: () => setShowManualAddressInput(true),
     walletName: "Enter address manually",
     rightContent: () => {
-      return (
-        <RightArrowIcon
-          color={theme?.primary?.background.normal}
-          backgroundColor={theme?.primary?.text.normal}
-        />
-      );
+      return <RightArrowIcon color={theme?.primary?.text.normal} />;
     },
   } as ManualWalletEntry;
 
