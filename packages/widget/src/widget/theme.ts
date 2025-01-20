@@ -3,6 +3,7 @@ import { opacityToHex } from "../utils/colors";
 
 export const defaultTheme = {
   brandColor: "#ff66ff",
+  brandTextColor: undefined,
   primary: {
     background: {
       normal: "#000",
@@ -36,6 +37,7 @@ export const defaultTheme = {
 
 export const lightTheme = {
   brandColor: "#ff66ff",
+  brandTextColor: undefined,
   primary: {
     background: {
       normal: "#ffffff",
@@ -70,12 +72,11 @@ export const lightTheme = {
 export type PartialTheme = Partial<Theme> | undefined;
 
 export type Theme = {
-  brandColor?: string;
+  brandColor: string;
   brandTextColor?: string;
   primary: {
     background: {
       normal: string;
-      transparent: string;
     };
     text: {
       normal: string;

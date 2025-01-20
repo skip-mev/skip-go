@@ -3,7 +3,6 @@ import { Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { useTheme } from "styled-components";
 import { ICONS, iconMap } from "@/icons";
-import { getBrandButtonTextColor } from "@/utils/colors";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
 
@@ -38,8 +37,6 @@ export const MainButton = ({
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
 
-  const textColor = getBrandButtonTextColor(backgroundColor);
-
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
 
@@ -66,18 +63,16 @@ export const MainButton = ({
       >
         {leftIcon ? (
           <Row align="center" gap={10}>
-            <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor} mainButtonColor={backgroundColor}>
-              {label}
-            </MainButtonText>
+            <LeftIcon backgroundColor={theme.brandTextColor} color={backgroundColor} />
+            <MainButtonText color={theme.brandTextColor}>{label}</MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={textColor} mainButtonColor={backgroundColor}>
+          <MainButtonText capitalize color={theme.brandTextColor}>
             {label}
           </MainButtonText>
         )}
 
-        <Icon color={textColor} />
+        <Icon color={theme.brandTextColor} />
       </StyledMainButton>
     </MainButtonContainer>
   );

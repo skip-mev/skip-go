@@ -6,7 +6,6 @@ import { Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
-import { getBrandButtonTextColor } from "@/utils/colors";
 
 const SlippageSelector: React.FC = () => {
   const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
@@ -148,8 +147,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
     flex: 1;
   }
 
-  color: ${({ selected, theme }) =>
-    selected ? getBrandButtonTextColor(theme.brandColor) : theme.primary.text.normal};
+  color: ${({ selected, theme }) => (selected ? theme.brandTextColor : theme.primary.text.normal)};
   &:hover {
     box-shadow: inset 0px 0px 0px 1px ${({ theme }) => theme.brandColor};
     opacity: 1;
@@ -193,7 +191,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   ${({ selected, theme }) =>
     selected &&
     css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
+      color: ${theme.brandTextColor};
       background: ${theme.brandColor};
       border: none;
     `}
@@ -211,7 +209,7 @@ const CustomSlippageInputRightIcon = styled(SmallText)<{ selected?: boolean }>`
   ${({ selected, theme }) =>
     selected &&
     css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
+      color: ${theme.brandTextColor};
     `}
 `;
 

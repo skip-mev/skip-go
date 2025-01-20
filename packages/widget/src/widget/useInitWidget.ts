@@ -18,6 +18,7 @@ import {
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 export const useInitWidget = (props: WidgetProps) => {
   useInitDefaultRoute(props.defaultRoute);
@@ -58,6 +59,11 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.brandColor) {
       theme.brandColor = props.brandColor;
     }
+
+    if (typeof props.theme !== "string" && props.theme?.brandTextColor === undefined) {
+      theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
+    }
+
     return theme;
   }, [props.brandColor, props.theme]);
 

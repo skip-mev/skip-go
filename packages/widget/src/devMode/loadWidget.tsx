@@ -41,6 +41,7 @@ const DevMode = () => {
         >
           <Widget
             theme={{
+              brandTextColor: "black",
               brandColor: "linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);",
             }}
           />
