@@ -47,6 +47,11 @@ export type WidgetProps = {
    * <Widget connectedAddresses={{ "cosmoshub-4": "cosmos1...", "1": "0x..." }} />
    * ```
    */
+  enableSentrySessionReplays?: boolean;
+  /**
+   * enables sentry session replays on the widget to help with troubleshooting errors
+   * https://docs.sentry.io/product/explore/session-replay/web/
+   */
   connectedAddresses?: Record<string, string | undefined>;
 } & Pick<
   NewSkipClientOptions,

@@ -19,8 +19,15 @@ import {
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
 import { getBrandButtonTextColor } from "@/utils/colors";
+import { initSentry } from "./initSentry";
+import { version } from "../../package.json";
+import { setTag } from "@sentry/react";
 
 export const useInitWidget = (props: WidgetProps) => {
+  if (props.enableSentrySessionReplays) {
+    initSentry();
+  }
+  setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
 
@@ -60,7 +67,7 @@ export const useInitWidget = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
 
-    if (typeof props.theme !== "string" && props.theme?.brandTextColor === undefined) {
+    if ((props.theme as Theme).brandTextColor === undefined) {
       theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
     }
 
