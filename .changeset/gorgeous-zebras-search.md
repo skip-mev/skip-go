@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add enableSentrySessionReplays prop
+Add enableSentrySessionReplays prop, add widget version as a tag
