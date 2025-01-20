@@ -39,8 +39,6 @@ export const MainButton = ({
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
 
   const textColor = getBrandButtonTextColor(backgroundColor);
-  console.log(textColor);
-  console.log(backgroundColor);
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -79,7 +77,7 @@ export const MainButton = ({
           </MainButtonText>
         )}
 
-        <Icon backgroundColor={textColor} color={backgroundColor} />
+        <Icon color={textColor} />
       </StyledMainButton>
     </MainButtonContainer>
   );

@@ -6,7 +6,6 @@ export const defaultTheme = {
   primary: {
     background: {
       normal: "#000",
-      transparent: "#000000" + opacityToHex(90),
     },
     text: {
       normal: "#fff",
@@ -40,7 +39,6 @@ export const lightTheme = {
   primary: {
     background: {
       normal: "#ffffff",
-      transparent: "#ffffff" + opacityToHex(95),
     },
     text: {
       normal: "#000000",
@@ -72,7 +70,8 @@ export const lightTheme = {
 export type PartialTheme = Partial<Theme> | undefined;
 
 export type Theme = {
-  brandColor: string;
+  brandColor?: string;
+  brandTextColor?: string;
   primary: {
     background: {
       normal: string;

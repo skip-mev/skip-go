@@ -75,7 +75,5 @@ export const getBrandButtonTextColor = (color: string) => {
   // Calculate perceived brightness
   const hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b));
 
-  console.log(hsp);
-
   return hsp > 127.5 ? "black" : "white";
 };
