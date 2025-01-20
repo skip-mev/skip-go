@@ -120,7 +120,7 @@ const AssetAndChainSelectorModalRowItemLeftContent = ({
 const StyledChainImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
+  ${({ theme }) => `background: ${theme.secondary.background.hover};`};
 `;
 
 export const Skeleton = () => {

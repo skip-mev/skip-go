@@ -49,5 +49,5 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) => `background-color: ${theme.secondary.background.hover};`};
+  ${({ theme }) => `background: ${theme.secondary.background.hover};`};
 `;

@@ -27,7 +27,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 8px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   left: 180px;
   top: 15px;
   width: 180px;

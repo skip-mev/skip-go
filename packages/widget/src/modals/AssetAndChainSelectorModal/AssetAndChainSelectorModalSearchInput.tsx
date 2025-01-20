@@ -122,5 +122,5 @@ const StyledSearchInput = styled(Text).attrs({
   border: none;
   outline: none;
   color: ${({ theme }) => theme.primary.text.normal};
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 `;

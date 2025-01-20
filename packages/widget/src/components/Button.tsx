@@ -18,7 +18,7 @@ export const GhostButton = styled(SmallText).attrs({
   ${({ alwaysShowBackground, theme, secondary }) => {
     if (alwaysShowBackground) {
       return css`
-        background-color: ${secondary
+        background: ${secondary
           ? theme.secondary.background.normal
           : theme.primary.ghostButtonHover};
       `;
@@ -29,7 +29,7 @@ export const GhostButton = styled(SmallText).attrs({
     if (onClick && !disabled) {
       return css`
         &:hover {
-          background-color: ${secondary
+          background: ${secondary
             ? theme.secondary.background.normal
             : theme.primary.ghostButtonHover};
           color: ${theme.primary.text.normal};
@@ -68,7 +68,7 @@ export const PillButton = styled(Button)`
   height: 28px;
   border-radius: 30px;
   box-sizing: border-box;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   gap: 10px;
   align-items: center;
   justify-content: center;

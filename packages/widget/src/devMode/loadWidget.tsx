@@ -39,7 +39,11 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          <Widget theme={theme} />
+          <Widget
+            theme={{
+              brandColor: "linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);",
+            }}
+          />
         </div>
       </Row>
     </Column>

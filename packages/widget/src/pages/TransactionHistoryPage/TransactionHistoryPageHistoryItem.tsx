@@ -185,9 +185,9 @@ const RenderAssetAmount = ({
 };
 
 const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
-  background-color: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};
+  background: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};
   &:hover {
-    background-color: ${({ theme }) => theme.secondary.background.normal};
+    background: ${({ theme }) => theme.secondary.background.normal};
   }
   border-radius: 6px;
 `;
@@ -203,7 +203,7 @@ const StyledHistoryItemRow = styled(Row)`
 const StyledGreenDot = styled.div`
   width: 10px;
   height: 10px;
-  background-color: ${({ theme }) => theme.success.text};
+  background: ${({ theme }) => theme.success.text};
   border-radius: 50%;
 `;
 

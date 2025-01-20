@@ -174,7 +174,7 @@ const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
   border-radius: 20px;
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
 `;
 
 const SwapDetailText = styled(Row).attrs({

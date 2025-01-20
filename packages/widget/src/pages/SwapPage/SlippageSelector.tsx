@@ -123,7 +123,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 13px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   top: -30px;
   left: 110px;
   width: 250px;
@@ -138,7 +138,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
   white-space: nowrap;
 
   @media (max-width: 767px) {
-    background-color: ${({ theme }) => theme.secondary.background.transparent};
+    background: ${({ theme }) => theme.secondary.background.transparent};
     padding: 7px 15px;
     border-radius: 15px;
     height: 40px;
@@ -159,7 +159,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
     selected &&
     css`
       & {
-        background-color: ${theme.brandColor};
+        background: ${theme.brandColor};
         opacity: 1;
       }
     `}
@@ -169,7 +169,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   as: "input",
 })<{ selected?: boolean }>`
   outline: none;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
   border-radius: 7px;
   color: ${({ theme }) => theme.primary.text.normal};
@@ -194,7 +194,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
     selected &&
     css`
       color: ${getBrandButtonTextColor(theme.brandColor)};
-      background-color: ${theme.brandColor};
+      background: ${theme.brandColor};
       border: none;
     `}
 

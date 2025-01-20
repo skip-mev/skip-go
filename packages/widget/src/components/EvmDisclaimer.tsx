@@ -31,5 +31,5 @@ export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
 const StyledEvmWarningMessage = styled.div`
   padding: 12px;
   border-radius: 5px;
-  background-color: ${({ theme }) => theme.warning.background};
+  background: ${({ theme }) => theme.warning.background};
 `;

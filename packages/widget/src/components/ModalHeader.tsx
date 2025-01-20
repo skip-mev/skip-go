@@ -33,7 +33,7 @@ export const StyledModalContainer = styled(Column)`
   gap: 10px;
   width: calc(100% - 20px);
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
   height: 100%;
 

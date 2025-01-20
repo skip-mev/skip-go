@@ -39,6 +39,8 @@ export const MainButton = ({
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
 
   const textColor = getBrandButtonTextColor(backgroundColor);
+  console.log(textColor);
+  console.log(backgroundColor);
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -148,7 +150,7 @@ const StyledMainButton = styled(Row).attrs({
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
+  background: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
   height: 70px;
   padding: 20px;
   width: 100%;
@@ -163,7 +165,7 @@ const StyledMainButton = styled(Row).attrs({
     props.disabled &&
     `
       opacity: 0.5;
-      background-color: ${props.theme.secondary.background.normal};
+      background: ${props.theme.secondary.background.normal};
       &:hover {
         cursor: not-allowed;
       }
@@ -176,7 +178,7 @@ const StyledMainButton = styled(Row).attrs({
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
@@ -217,7 +219,7 @@ const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
 `;
 
 const StyledTimeRemaining = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   padding: 16px;
   border-radius: 10px;
   height: 40px;
@@ -231,7 +233,7 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   right: 0;
   width: calc(100% - 4px);
   border-radius: 24px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 
   @media (max-width: 767px) {
     height: 61px;
