@@ -18,8 +18,12 @@ import {
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
+import { initSentry } from "./initSentry";
 
 export const useInitWidget = (props: WidgetProps) => {
+  if (props.enableSentrySessionReplays) {
+    initSentry();
+  }
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
 
