@@ -39,7 +39,7 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          <Widget theme={theme} />
+          <Widget theme={theme} enableSentrySessionReplays />
         </div>
       </Row>
     </Column>
