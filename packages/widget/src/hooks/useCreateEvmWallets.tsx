@@ -43,8 +43,20 @@ export const useCreateEvmWallets = () => {
         if (isWalletFound) {
           continue;
         }
+        const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
+          if (isWalletConnect) {
+            if (isEvmConnected) {
+              return evmAddress;
+            }
+            const res = await connectAsync({
+              connector,
+              chainId: Number(chainID),
+            });
+            await currentConnector?.disconnect();
+            return res.accounts[0];
+          }
           if (
             signRequired &&
             isEvmConnected &&
@@ -80,7 +92,7 @@ export const useCreateEvmWallets = () => {
           walletPrettyName: connector.name,
           walletChainType: ChainType.EVM,
           walletInfo: {
-            logo: connector.id === "walletConnect" ? walletConnectLogo : connector.icon,
+            logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
           connectEco: async () => {
             if (
