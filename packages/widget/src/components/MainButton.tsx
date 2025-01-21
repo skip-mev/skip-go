@@ -36,6 +36,7 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
+  const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -63,16 +64,16 @@ export const MainButton = ({
       >
         {leftIcon ? (
           <Row align="center" gap={10}>
-            <LeftIcon backgroundColor={theme.brandTextColor} color={backgroundColor} />
-            <MainButtonText color={theme.brandTextColor}>{label}</MainButtonText>
+            <LeftIcon backgroundColor={textColor} color={backgroundColor} />
+            <MainButtonText color={textColor}>{label}</MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={theme.brandTextColor}>
+          <MainButtonText capitalize color={textColor}>
             {label}
           </MainButtonText>
         )}
 
-        <Icon color={theme.brandTextColor} />
+        <Icon color={textColor} />
       </StyledMainButton>
     </MainButtonContainer>
   );
