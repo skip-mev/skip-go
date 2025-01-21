@@ -54,7 +54,7 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            await currentConnector?.disconnect();
+            await connector?.disconnect();
             setEvmWallet(undefined);
             return res.accounts[0];
           }
