@@ -82,6 +82,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   if (!route) return;
 
+  const {
+    requiredChainAddresses,
+    sourceAssetDenom,
+    sourceAssetChainID,
+    destAssetDenom,
+    destAssetChainID,
+  } = route;
+
+  const sourceAddress = requiredChainAddresses[0];
+  const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
+
   set(swapExecutionStateAtom, {
     userAddresses: [],
     transactionDetailsArray: [],
@@ -118,6 +129,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         chainId: txInfo.chainID,
         txHash: txInfo.txHash,
         explorerLink: explorerLink ?? "",
+        sourceAddress,
+        destinationAddress,
+        sourceAssetDenom,
+        sourceAssetChainID,
+        destAssetDenom,
+        destAssetChainID,
       });
     },
     onTransactionCompleted: async (chainId: string, txHash: string) => {
@@ -131,6 +148,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         chainId,
         txHash,
         explorerLink: explorerLink ?? "",
+        sourceAddress,
+        destinationAddress,
+        sourceAssetDenom,
+        sourceAssetChainID,
+        destAssetDenom,
+        destAssetChainID,
       });
     },
     onTransactionSigned: async () => {
