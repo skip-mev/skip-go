@@ -19,12 +19,13 @@ export const useCreateSolanaWallets = () => {
     const wallets: MinimalWallet[] = [];
 
     for (const wallet of solanaWallets) {
+      const isWalletConnect = wallet.name === "WalletConnect";
       const minimalWallet: MinimalWallet = {
         walletName: wallet.name,
         walletPrettyName: wallet.name,
         walletChainType: ChainType.SVM,
         walletInfo: {
-          logo: wallet.name === "WalletConnect" ? walletConnectLogo : wallet.icon,
+          logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
         connect: async () => {
           try {
@@ -73,6 +74,15 @@ export const useCreateSolanaWallets = () => {
           try {
             const isConnected = wallet.connected;
             if (!isConnected) {
+              if (isWalletConnect) {
+                await wallet.connect();
+                const address = wallet.publicKey;
+                if (!address) throw new Error("No address found");
+                await wallet.disconnect();
+                setSvmWallet(undefined);
+                return address.toBase58();
+              }
+
               await wallet.connect();
               setSvmWallet({
                 walletName: wallet.name,
