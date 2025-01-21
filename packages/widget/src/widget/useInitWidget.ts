@@ -67,9 +67,9 @@ export const useInitWidget = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
 
-    if ((props.theme as Theme)?.brandTextColor === undefined) {
-      theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
-    }
+    // if ((props.theme as Theme)?.brandTextColor === undefined) {
+    //   theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
+    // }
 
     return theme;
   }, [props.brandColor, props.theme]);
