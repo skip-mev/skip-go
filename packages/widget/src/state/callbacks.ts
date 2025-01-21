@@ -17,12 +17,24 @@ export type OnTransactionBroadcastedProps = {
   txHash: string;
   chainId: string;
   explorerLink: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 };
 
 export type OnTransactionCompleteProps = {
   txHash: string;
   chainId: string;
   explorerLink: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 };
 
 export type OnTransactionFailedProps = {
