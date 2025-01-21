@@ -9,7 +9,7 @@ export const ArrowIcon = ({
   color = "currentColor",
   direction = "right",
   className,
-}: IconProps & { id?: string }) => (
+}: IconProps) => (
   <svg
     className={className}
     width="40"
