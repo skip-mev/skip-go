@@ -67,7 +67,7 @@ export const useInitWidget = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
 
-    if ((props.theme as Theme).brandTextColor === undefined) {
+    if ((props.theme as Theme)?.brandTextColor === undefined) {
       theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
     }
 
