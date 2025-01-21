@@ -171,7 +171,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 10px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   box-sizing: border-box;
   z-index: 1;
 `;
@@ -188,7 +188,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
   gap: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;
 `;

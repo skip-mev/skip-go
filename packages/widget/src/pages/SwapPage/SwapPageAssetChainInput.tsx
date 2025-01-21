@@ -246,7 +246,7 @@ const StyledOnChainGhostButton = styled(GhostButton)`
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 100%;
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
   padding: 20px;
   @media (max-width: 767px) {
     padding: 15px;
@@ -266,7 +266,7 @@ const StyledInput = styled.input<{
   letter-spacing: -0.01em;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
 
   ${(props) =>
@@ -295,9 +295,9 @@ export const StyledAssetLabel = styled(Row).attrs({
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.primary.text.normal};
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
-  background-color: ${(props) => props.theme.brandColor};
+  background: ${(props) => props.theme.brandColor};
 `;

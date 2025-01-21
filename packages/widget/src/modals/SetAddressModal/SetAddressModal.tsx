@@ -53,12 +53,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     onSelect: () => setShowManualAddressInput(true),
     walletName: "Enter address manually",
     rightContent: () => {
-      return (
-        <RightArrowIcon
-          color={theme?.primary?.background.normal}
-          backgroundColor={theme?.primary?.text.normal}
-        />
-      );
+      return <RightArrowIcon color={theme?.primary?.text.normal} />;
     },
   } as ManualWalletEntry;
 
@@ -181,7 +176,7 @@ const StyledChainLogoContainerRow = styled(Row)`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
 `;
 
 const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
@@ -189,13 +184,13 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
   height: 11px;
   width: 11px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.primary.text.lowContrast};
+  background: ${({ theme }) => theme.primary.text.lowContrast};
 
   ${({ validAddress, theme }) =>
     validAddress === true
-      ? `background-color: ${theme.success.text}`
+      ? `background: ${theme.success.text}`
       : validAddress === false
-        ? `background-color: ${theme.error.text}`
+        ? `background: ${theme.error.text}`
         : ""};
 
   top: calc(50% - 11px / 2);
@@ -209,7 +204,7 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
   outline: none;
   padding: 8px 40px 8px 15px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 12px;
 
@@ -217,13 +212,13 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
     validAddress === false &&
     css`
       border-color: ${theme.error.text};
-      background-color: ${theme.error.background};
+      background: ${theme.error.background};
     `}
 `;
 
 export const StyledBrandButton = styled(Button)`
-  background-color: ${({ theme }) => theme.brandColor};
+  background: ${({ theme }) => theme.brandColor};
   height: 60px;
   border-radius: 12px;
-  ${({ disabled, theme }) => disabled && `background-color: ${theme.secondary.background.normal}`};
+  ${({ disabled, theme }) => disabled && `background: ${theme.secondary.background.normal}`};
 `;

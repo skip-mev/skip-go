@@ -308,7 +308,7 @@ const StyledLoadingOverlay = styled(Row)<{
   height: ${({ height }) => height}px;
   position: absolute;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 `;
 
 const StyledAssetAmount = styled(SmallText)`

@@ -18,6 +18,7 @@ import {
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
+import { getBrandButtonTextColor } from "@/utils/colors";
 import { initSentry } from "./initSentry";
 import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
@@ -65,6 +66,11 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.brandColor) {
       theme.brandColor = props.brandColor;
     }
+
+    if ((props.theme as Theme)?.brandTextColor === undefined && typeof document !== "undefined") {
+      theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
+    }
+
     return theme;
   }, [props.brandColor, props.theme]);
 

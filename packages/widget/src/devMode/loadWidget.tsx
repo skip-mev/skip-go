@@ -39,7 +39,12 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          <Widget theme={theme} enableSentrySessionReplays />
+          <Widget
+            theme={{
+              brandTextColor: "black",
+              brandColor: "linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);",
+            }}
+          />
         </div>
       </Row>
     </Column>

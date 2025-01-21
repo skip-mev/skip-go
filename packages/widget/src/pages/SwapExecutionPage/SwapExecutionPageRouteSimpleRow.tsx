@@ -163,7 +163,7 @@ const PlaceholderIcon = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   display: flex;
   align-items: center;
   justify-content: center;
