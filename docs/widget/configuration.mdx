@@ -207,11 +207,23 @@ onTransactionBroadcasted?: (params: {
   txHash: string;
   chainId: string;
   explorerLink?: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 }) => void;
 onTransactionComplete?: (params: {
   txHash: string;
   chainId: string;
   explorerLink?: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 }) => void;
 onTransactionFailed?: (params: { error: Error }) => void;
 ```
