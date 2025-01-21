@@ -156,7 +156,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title={mobile ? "Destination" : "Destination wallet"}
-          walletList={mobile ? [manualWalletEntry] : walletList}
+          walletList={walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
