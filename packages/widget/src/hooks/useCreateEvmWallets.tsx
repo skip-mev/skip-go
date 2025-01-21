@@ -10,6 +10,7 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
+import { isMobile } from "@/utils/os";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -27,6 +28,9 @@ export const useCreateEvmWallets = () => {
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
   const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
+
+  const mobile = isMobile();
+
   const createEvmWallets = useCallback(
     (chainID?: string) => {
       const isSei = chainID === "pacific-1";
@@ -46,7 +50,7 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
-          if (isWalletConnect) {
+          if (isWalletConnect && mobile) {
             if (isEvmConnected) {
               return evmAddress;
             }
@@ -216,18 +220,19 @@ export const useCreateEvmWallets = () => {
       return wallets;
     },
     [
-      callbacks,
-      assets,
-      chainId,
-      chains,
-      connectAsync,
       connectors,
-      currentConnector,
       currentEvmConnector?.id,
-      evmAddress,
+      mobile,
       isEvmConnected,
+      chainId,
+      evmAddress,
+      connectAsync,
       setEvmWallet,
+      currentConnector,
+      chains,
+      assets,
       setSourceAsset,
+      callbacks,
     ],
   );
 

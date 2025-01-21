@@ -7,6 +7,7 @@ import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
+import { isMobile } from "@/utils/os";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -14,6 +15,7 @@ export const useCreateSolanaWallets = () => {
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
+  const mobile = isMobile();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -74,7 +76,7 @@ export const useCreateSolanaWallets = () => {
           try {
             const isConnected = wallet.connected;
             if (!isConnected) {
-              if (isWalletConnect) {
+              if (isWalletConnect && mobile) {
                 await wallet.connect();
                 const address = wallet.publicKey;
                 if (!address) throw new Error("No address found");
