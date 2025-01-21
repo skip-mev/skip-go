@@ -14,6 +14,7 @@ const DevMode = () => {
       setTheme("dark");
     }
   };
+  console.log("test");
 
   return (
     <Column align="flex-end">
