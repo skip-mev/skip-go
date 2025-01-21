@@ -13,13 +13,13 @@ export const {
   debouncedValueAtom: debouncedSourceAssetAmountAtom,
   valueInitialized: debouncedSourceAssetAmountValueInitializedAtom,
   clearTimeoutAtom: cleanupDebouncedSourceAssetAmountAtom,
-} = atomWithDebounce<string | undefined>();
+} = atomWithDebounce<string | undefined>("");
 
 export const {
   debouncedValueAtom: debouncedDestinationAssetAmountAtom,
   valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
-} = atomWithDebounce<string | undefined>();
+} = atomWithDebounce<string | undefined>("");
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
