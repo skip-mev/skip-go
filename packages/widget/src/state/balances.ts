@@ -17,7 +17,9 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
     queryKey: ["skipBalances", params],
     queryFn: async () => {
       if (!params) {
-        return;
+        return {
+          chains: {},
+        };
       }
       return skip.balances(params);
     },

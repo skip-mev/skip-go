@@ -52,7 +52,9 @@ export const useFetchAllBalances = () => {
     queryKey: ["all-balances-request", allBalancesRequest],
     queryFn: () => {
       if (!allBalancesRequest || Object.keys(allBalancesRequest).length === 0) {
-        return;
+        return {
+          chains: {},
+        };
       }
       setSkipAllBalancesRequest({ chains: allBalancesRequest });
       return { chains: allBalancesRequest };
