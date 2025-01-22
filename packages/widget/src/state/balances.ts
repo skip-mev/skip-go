@@ -16,7 +16,6 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipBalances", params],
     queryFn: async () => {
-      console.log(params);
       if (!params) {
         throw new Error("No balance request provided");
       }
