@@ -548,7 +548,7 @@ export class SkipClient {
         ],
       });
 
-      if (allowance > BigInt(requiredApproval.amount)) {
+      if (allowance >= BigInt(requiredApproval.amount)) {
         continue;
       }
       onApproveAllowance?.({
