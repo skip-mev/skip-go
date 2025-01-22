@@ -60,6 +60,7 @@ export const useCreateEvmWallets = () => {
             });
             await disconnectAsync();
             setEvmWallet(undefined);
+            window.indexedDB.deleteDatabase("WALLET_CONNECT_V2_INDEXED_DB");
             return res.accounts[0];
           }
           if (
