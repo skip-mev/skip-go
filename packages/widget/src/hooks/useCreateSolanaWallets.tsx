@@ -82,6 +82,7 @@ export const useCreateSolanaWallets = () => {
                 if (!address) throw new Error("No address found");
                 await wallet.disconnect();
                 setSvmWallet(undefined);
+                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
                 return address.toBase58();
               }
 
@@ -118,6 +119,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [callbacks, assets, chains, setSourceAsset, setSvmWallet]);
+  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile]);
   return { createSolanaWallets };
 };
