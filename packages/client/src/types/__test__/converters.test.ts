@@ -2931,12 +2931,14 @@ test('transferAssetReleaseFromJSON', () => {
   const transferAssetReleaseJSON: TransferAssetReleaseJSON = {
     chain_id: 'osmosis-1',
     denom: 'uosmo',
+    amount: '999',
     released: true,
   };
 
   expect(transferAssetReleaseFromJSON(transferAssetReleaseJSON)).toEqual({
     chainID: 'osmosis-1',
     denom: 'uosmo',
+    amount: '999',
     released: true,
   });
 });
@@ -2945,12 +2947,14 @@ test('transferAssetReleaseToJSON', () => {
   const transferAssetRelease = {
     chainID: 'osmosis-1',
     denom: 'uosmo',
+    amount: '999',
     released: true,
   };
 
   expect(transferAssetReleaseToJSON(transferAssetRelease)).toEqual({
     chain_id: 'osmosis-1',
     denom: 'uosmo',
+    amount: '999',
     released: true,
   });
 });
@@ -3032,6 +3036,7 @@ test('txStatusResponseFromJSON', () => {
     transfer_asset_release: {
       chain_id: 'cosmoshub-4',
       denom: 'uatom',
+      amount: '999',
       released: true,
     },
     error: null,
@@ -3063,6 +3068,7 @@ test('txStatusResponseFromJSON', () => {
         transfer_asset_release: {
           chain_id: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
@@ -3146,6 +3152,7 @@ test('txStatusResponseFromJSON', () => {
     transferAssetRelease: {
       chainID: 'cosmoshub-4',
       denom: 'uatom',
+      amount: '999',
       released: true,
     },
     error: null,
@@ -3177,6 +3184,7 @@ test('txStatusResponseFromJSON', () => {
         transferAssetRelease: {
           chainID: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
@@ -3262,6 +3270,7 @@ test('txStatusResponseToJSON', () => {
     transferAssetRelease: {
       chainID: 'cosmoshub-4',
       denom: 'uatom',
+      amount: '999',
       released: true,
     },
     error: null,
@@ -3293,6 +3302,7 @@ test('txStatusResponseToJSON', () => {
         transferAssetRelease: {
           chainID: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
@@ -3376,6 +3386,7 @@ test('txStatusResponseToJSON', () => {
     transfer_asset_release: {
       chain_id: 'cosmoshub-4',
       denom: 'uatom',
+      amount: '999',
       released: true,
     },
     error: null,
@@ -3407,6 +3418,7 @@ test('txStatusResponseToJSON', () => {
         transfer_asset_release: {
           chain_id: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
