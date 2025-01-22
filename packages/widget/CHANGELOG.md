@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.1.11
+
+### Patch Changes
+
+- 9e60d75: Avoid throwing an error if gasPrice avg/high/low prices are not valid numbers
+- Updated dependencies [9e60d75]
+  - @skip-go/client@0.16.6
+
 ## 3.1.10
 
 ### Patch Changes
