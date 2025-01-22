@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
-import { fromBase64, fromBech32 } from "@cosmjs/encoding";
+import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
@@ -42,7 +42,7 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import { isAddress, maxUint256, publicActions, WalletClient } from "viem";
+import { maxUint256, publicActions, WalletClient } from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
 import {
@@ -69,7 +69,7 @@ import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, Transaction } from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 import { createCachingMiddleware, CustomCache } from "./cache";
 
@@ -256,13 +256,6 @@ export class SkipClient {
 
     if (!validLength) {
       raise("executeRoute error: invalid address list");
-    }
-
-    const isUserAddressesValid =
-      await this.validateUserAddresses(userAddresses);
-
-    if (!isUserAddressesValid) {
-      raise("executeRoute error: invalid user addresses");
     }
 
     const messages = await this.messages({
@@ -548,7 +541,7 @@ export class SkipClient {
         ],
       });
 
-      if (allowance >= BigInt(requiredApproval.amount)) {
+      if (allowance > BigInt(requiredApproval.amount)) {
         continue;
       }
       onApproveAllowance?.({
@@ -1414,6 +1407,8 @@ export class SkipClient {
       price = feeInfo.gasPrice.low;
     }
 
+    if (!price) return;
+
     return new GasPrice(
       Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
       feeInfo.denom,
@@ -1727,6 +1722,8 @@ export class SkipClient {
         if (price === "") {
           price = asset.gasPrice.low;
         }
+
+        if (!price) return;
         return new GasPrice(
           Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
           asset.denom,
@@ -1829,46 +1826,6 @@ export class SkipClient {
       );
     }
     return feeUsed;
-  }
-
-  async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
-    const chains = await this.chains({
-      includeEVM: true,
-      includeSVM: true,
-    });
-
-    const validations = userAddresses.map((userAddress) => {
-      const chain = chains.find(
-        (chain) => chain.chainID === userAddress.chainID,
-      );
-
-      switch (chain?.chainType) {
-        case types.ChainType.Cosmos:
-          try {
-            const { prefix } = fromBech32(userAddress.address);
-            return chain.bech32Prefix === prefix;
-          } catch (_error) {
-            return false;
-          }
-        case types.ChainType.EVM:
-          try {
-            return isAddress(userAddress.address);
-          } catch (_error) {
-            return false;
-          }
-        case types.ChainType.SVM:
-          try {
-            const publicKey = new PublicKey(userAddress.address);
-            return PublicKey.isOnCurve(publicKey);
-          } catch (_error) {
-            return false;
-          }
-        default:
-          return false;
-      }
-    });
-
-    return validations.every((validation) => validation);
   }
 }
 
