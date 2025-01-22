@@ -293,7 +293,7 @@ export type CCTPTransferJSON = {
   denom_in: string;
   denom_out: string;
   smart_relay: boolean;
-  smart_relay_fee_quote: SmartRelayFeeQuoteJSON;
+  smart_relay_fee_quote?: SmartRelayFeeQuoteJSON;
 };
 
 export type CCTPTransfer = {
@@ -304,7 +304,7 @@ export type CCTPTransfer = {
   denomIn: string;
   denomOut: string;
   smartRelay: boolean;
-  smartRelayFeeQuote: SmartRelayFeeQuote;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
 };
 
 export type HyperlaneTransferJSON = {
