@@ -65,6 +65,7 @@ export const useCreateEvmWallets = () => {
             await disconnectAsync();
             setEvmWallet(undefined);
             window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
             console.log("done getAddress wc");
             return res.accounts[0];
           }
