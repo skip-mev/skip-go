@@ -1414,6 +1414,8 @@ export class SkipClient {
       price = feeInfo.gasPrice.low;
     }
 
+    if (!price) return;
+
     return new GasPrice(
       Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
       feeInfo.denom,
@@ -1727,6 +1729,9 @@ export class SkipClient {
         if (price === "") {
           price = asset.gasPrice.low;
         }
+
+        if (!price) return;
+
         return new GasPrice(
           Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
           asset.denom,
