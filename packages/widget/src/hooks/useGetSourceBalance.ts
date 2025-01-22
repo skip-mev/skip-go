@@ -17,6 +17,8 @@ export const useGetSourceBalance = () => {
     address: sourceAccount?.address,
   });
 
+  console.log(isFetched || isLoading || cw20Balance.isLoading);
+
   const data = useMemo(() => {
     if (!sourceAsset || !sourceAccount || !skipBalances) return;
     const { chainID, denom } = sourceAsset;

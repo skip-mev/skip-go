@@ -51,10 +51,9 @@ export const useFetchAllBalances = () => {
   useQuery({
     queryKey: ["all-balances-request", allBalancesRequest],
     queryFn: () => {
+      console.log(allBalancesRequest, Object.keys(allBalancesRequest).length);
       if (!allBalancesRequest || Object.keys(allBalancesRequest).length === 0) {
-        return {
-          chains: {},
-        };
+        throw new Error("No balance request provided");
       }
       setSkipAllBalancesRequest({ chains: allBalancesRequest });
       return { chains: allBalancesRequest };

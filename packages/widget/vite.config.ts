@@ -32,12 +32,21 @@ export default defineConfig({
     nodePolyfills(),
   ],
   build: {
-    minify: true,
+    minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),
       formats: ["es"],
       name: "widget",
+    },
+    terserOptions: {
+      compress: {
+        // Preserve console.* calls
+        pure_funcs: [],
+        drop_console: false,
+        drop_debugger: false,
+      },
+      mangle: false,
     },
     sourcemap: false,
     rollupOptions: {
