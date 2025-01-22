@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.6
+
+### Patch Changes
+
+- 9e60d75: Avoid throwing an error if gasPrice avg/high/low prices are not valid numbers
+
 ## 0.16.5
 
 ### Patch Changes
