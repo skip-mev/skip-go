@@ -2573,11 +2573,17 @@ components:
         * `AXELAR` - Axelar Bridge
         * `CCTP` - CCTP Bridge
         * `HYPERLANE` - Hyperlane Bridge
+        * `OPINIT` - Opinit Bridge
+        * `GO_FAST` - Go Fast Bridge
+        * `STARGATE` - Stargate Bridge
       enum:
         - IBC
         - AXELAR
         - CCTP
         - HYPERLANE
+        - OPINIT
+        - GO_FAST
+        - STARGATE
     Chain:
       properties:
         chain_name:
