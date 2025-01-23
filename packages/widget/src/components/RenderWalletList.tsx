@@ -119,7 +119,6 @@ export const RenderWalletList = ({
       if (mobile) {
         switch (chainType) {
           case ChainType.EVM:
-            console.log("connect evm");
             if (walletAtom.cosmos) {
               const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
               await cosmosWallet.disable?.();
@@ -133,7 +132,6 @@ export const RenderWalletList = ({
             }
             break;
           case ChainType.SVM:
-            console.log("connect svm");
             if (walletAtom.evm) {
               const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
               await evmWallet?.disconnect?.();
@@ -147,7 +145,6 @@ export const RenderWalletList = ({
             }
             break;
           case ChainType.Cosmos:
-            console.log("connect cosmos");
             if (walletAtom.evm) {
               const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
               await evmWallet?.disconnect?.();
