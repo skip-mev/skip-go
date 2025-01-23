@@ -50,14 +50,10 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
-          console.log("evmGetAddress");
           if (isWalletConnect && mobile) {
-            console.log("isWalletConnect && mobile");
             if (isEvmConnected) {
-              console.log("isEvmConnected");
               return evmAddress;
             }
-            console.log("isEvmConnected false");
             const res = await connectAsync({
               connector,
               chainId: Number(chainID),
@@ -66,7 +62,6 @@ export const useCreateEvmWallets = () => {
             setEvmWallet(undefined);
             window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-            console.log("done getAddress wc");
             return res.accounts[0];
           }
           if (
@@ -96,7 +91,6 @@ export const useCreateEvmWallets = () => {
               chainType: ChainType.EVM,
             });
           }
-          console.log("done getAddress usual");
           return evmAddress;
         };
 
