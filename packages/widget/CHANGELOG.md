@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.1.12
+
+### Patch Changes
+
+- 57c333f: fix apiUrl not updated
+
 ## 3.1.11
 
 ### Patch Changes
