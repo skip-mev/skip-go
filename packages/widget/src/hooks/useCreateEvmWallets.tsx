@@ -1,7 +1,7 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
+import { evmWalletAtom, MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
@@ -18,6 +18,7 @@ export const useCreateEvmWallets = () => {
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
+  const svmWallet = useAtomValue(svmWalletAtom);
 
   const {
     connector: currentEvmConnector,
@@ -54,14 +55,30 @@ export const useCreateEvmWallets = () => {
             if (isEvmConnected) {
               return evmAddress;
             }
+            let currentWCDeepLinkChoice: string | undefined;
+            let currentWCRecentWalletData: string | undefined;
+            if (svmWallet) {
+              currentWCDeepLinkChoice =
+                window.localStorage.getItem("WALLETCONNECT_DEEPLINK_CHOICE") || undefined;
+              currentWCRecentWalletData =
+                window.localStorage.getItem("WCM_RECENT_WALLET_DATA") || undefined;
+            }
             const res = await connectAsync({
               connector,
               chainId: Number(chainID),
             });
             await disconnectAsync();
             setEvmWallet(undefined);
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+            if (currentWCDeepLinkChoice) {
+              window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", currentWCDeepLinkChoice);
+            } else {
+              window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+            }
+            if (currentWCRecentWalletData) {
+              window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
+            } else {
+              window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+            }
             return res.accounts[0];
           }
           if (
@@ -228,6 +245,7 @@ export const useCreateEvmWallets = () => {
       isEvmConnected,
       chainId,
       evmAddress,
+      svmWallet,
       connectAsync,
       disconnectAsync,
       setEvmWallet,

@@ -1,7 +1,7 @@
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
+import { MinimalWallet, evmWalletAtom, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
@@ -16,6 +16,7 @@ export const useCreateSolanaWallets = () => {
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const mobile = isMobile();
+  const evmWallet = useAtomValue(evmWalletAtom);
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -77,13 +78,32 @@ export const useCreateSolanaWallets = () => {
             const isConnected = wallet.connected;
             if (!isConnected) {
               if (isWalletConnect && mobile) {
+                let currentWCDeepLinkChoice: string | undefined;
+                let currentWCRecentWalletData: string | undefined;
+                if (evmWallet) {
+                  currentWCDeepLinkChoice =
+                    window.localStorage.getItem("WALLETCONNECT_DEEPLINK_CHOICE") || undefined;
+                  currentWCRecentWalletData =
+                    window.localStorage.getItem("WCM_RECENT_WALLET_DATA") || undefined;
+                }
                 await wallet.connect();
                 const address = wallet.publicKey;
                 if (!address) throw new Error("No address found");
                 await wallet.disconnect();
                 setSvmWallet(undefined);
-                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-                window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+                if (currentWCDeepLinkChoice) {
+                  window.localStorage.setItem(
+                    "WALLETCONNECT_DEEPLINK_CHOICE",
+                    currentWCDeepLinkChoice,
+                  );
+                } else {
+                  window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+                }
+                if (currentWCRecentWalletData) {
+                  window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
+                } else {
+                  window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+                }
                 return address.toBase58();
               }
 
@@ -120,6 +140,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile]);
+  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile, evmWallet]);
   return { createSolanaWallets };
 };
