@@ -43,7 +43,7 @@ export const initSentry = () => {
       }),
     ],
     // Session Replay
-    replaysSessionSampleRate: 0,
+    replaysSessionSampleRate: 1,
     replaysOnErrorSampleRate: 1,
   });
   isSentryInitialized = true;
