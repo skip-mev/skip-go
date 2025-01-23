@@ -98,11 +98,12 @@ export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
 export const skipAssetsAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipAssets", onlyTestnets],
+    queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
     queryFn: async () => {
       return skip
         .assets({
@@ -118,10 +119,11 @@ export const skipAssetsAtom = atomWithQuery((get) => {
 
 export const skipChainsAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipChains", onlyTestnets],
+    queryKey: ["skipChains", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
     queryFn: async (): Promise<Chain[]> => {
       return skip.chains({
         includeEVM: true,
@@ -134,8 +136,9 @@ export const skipChainsAtom = atomWithQuery((get) => {
 
 export const skipBridgesAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   return {
-    queryKey: ["skipBridges"],
+    queryKey: ["skipBridges", { apiURL, apiKey, cacheDurationMs }],
     queryFn: async () => {
       return skip.bridges();
     },
@@ -144,10 +147,11 @@ export const skipBridgesAtom = atomWithQuery((get) => {
 
 export const skipSwapVenuesAtom = atomWithQuery((get) => {
   const skip = get(skipClient);
+  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipSwapVenue", onlyTestnets],
+    queryKey: ["skipSwapVenue", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
     queryFn: async () => {
       return skip.venues(onlyTestnets);
     },
