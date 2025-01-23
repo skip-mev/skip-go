@@ -11,6 +11,7 @@ import { formatUSD } from "@/utils/intl";
 import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset,
@@ -35,6 +36,7 @@ export const AssetAndChainSelectorModalRowItem = ({
 }: AssetAndChainSelectorModalRowItemProps) => {
   const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
   const getBalance = useGetBalance();
+
   if (!item || isChainsLoading) return skeleton;
 
   if (isGroupedAsset(item)) {
@@ -43,7 +45,7 @@ export const AssetAndChainSelectorModalRowItem = ({
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
         style={{ margin: "5px 0" }}
-        leftContent={<AssetAndChainSelectorModalRowItemLeftContent item={item} context={context} />}
+        leftContent={<GroupedAssetRow item={item} context={context} />}
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
@@ -56,25 +58,13 @@ export const AssetAndChainSelectorModalRowItem = ({
     );
   }
   const balance = getBalance(item.asset.chainID, item.asset.denom);
+
   return (
     <ModalRowItem
       key={item.chainID}
       onClick={() => onSelect(item.asset)}
       style={{ margin: "5px 0" }}
-      leftContent={
-        <Row align="center" gap={8}>
-          <StyledChainImage
-            height={35}
-            width={35}
-            src={item?.logoURI}
-            alt={`${item.chainID} logo`}
-          />
-          <Row align="baseline" gap={8}>
-            <Text>{item.prettyName}</Text>
-            <SmallText lineHeight="22px">{item.chainID}</SmallText>
-          </Row>
-        </Row>
-      }
+      leftContent={<ChainWithAssetRow item={item} />}
       rightContent={
         balance &&
         Number(balance.amount) > 0 && (
@@ -90,28 +80,60 @@ export const AssetAndChainSelectorModalRowItem = ({
   );
 };
 
-const AssetAndChainSelectorModalRowItemLeftContent = ({
-  item,
-  context,
-}: {
-  item: GroupedAsset;
-  context: SelectorContext;
-}) => {
+const GroupedAssetRow = ({ item, context }: { item: GroupedAsset; context: SelectorContext }) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
+
+  const subText =
+    filteredChains.length > 1 ? (
+      <SmallText>{`${filteredChains.length} networks`}</SmallText>
+    ) : (
+      filteredChains.map((chain, index) => (
+        <Row key={index} align="center" gap={6}>
+          <SmallText>{chain.chainName}</SmallText>
+        </Row>
+      ))
+    );
+
+  return (
+    <RowLayout
+      image={<GroupedAssetImage height={35} width={35} groupedAsset={item} />}
+      mainText={item.assets[0].recommendedSymbol}
+      subText={subText}
+    />
+  );
+};
+
+const ChainWithAssetRow = ({ item }: { item: ChainWithAsset }) => {
+  return (
+    <RowLayout
+      image={
+        <StyledChainImage height={35} width={35} src={item?.logoURI} alt={`${item.chainID} logo`} />
+      }
+      mainText={item.prettyName}
+      subText={<SmallText>{item.chainID}</SmallText>}
+    />
+  );
+};
+
+type RowLayoutProps = {
+  image: React.ReactNode;
+  mainText?: React.ReactNode;
+  subText?: React.ReactNode;
+};
+
+const RowLayout = ({ image, mainText, subText }: RowLayoutProps) => {
+  const isMobileScreenSize = useIsMobileScreenSize();
+
   return (
     <Row align="center" gap={8}>
-      <GroupedAssetImage height={35} width={35} groupedAsset={item} />
-      <Row align="baseline" gap={8}>
-        <Text>{item.assets[0].recommendedSymbol}</Text>
-        {filteredChains.length > 1 ? (
-          <SmallText lineHeight="22px">{`${filteredChains.length} networks`}</SmallText>
-        ) : (
-          filteredChains.map((chain, index) => (
-            <Row key={index} align="center" gap={6}>
-              {<SmallText>{chain.chainName}</SmallText>}
-            </Row>
-          ))
-        )}
+      {image}
+      <Row
+        align="baseline"
+        flexDirection={isMobileScreenSize ? "column" : "row"}
+        gap={isMobileScreenSize ? undefined : 8}
+      >
+        <Text>{mainText}</Text>
+        {subText}
       </Row>
     </Row>
   );
