@@ -74,12 +74,12 @@ export const useCreateSolanaWallets = () => {
           }
         },
         getAddress: async ({ signRequired }) => {
+          let currentWCDeepLinkChoice: string | undefined;
+          let currentWCRecentWalletData: string | undefined;
           try {
             const isConnected = wallet.connected;
             if (!isConnected) {
               if (isWalletConnect && mobile) {
-                let currentWCDeepLinkChoice: string | undefined;
-                let currentWCRecentWalletData: string | undefined;
                 if (evmWallet) {
                   currentWCDeepLinkChoice =
                     window.localStorage.getItem("WALLETCONNECT_DEEPLINK_CHOICE") || undefined;
@@ -123,6 +123,12 @@ export const useCreateSolanaWallets = () => {
             }
             return address.toBase58();
           } catch (error) {
+            if (currentWCDeepLinkChoice) {
+              window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", currentWCDeepLinkChoice);
+            }
+            if (currentWCRecentWalletData) {
+              window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
+            }
             console.error(error);
           }
         },

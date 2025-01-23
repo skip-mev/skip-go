@@ -63,23 +63,38 @@ export const useCreateEvmWallets = () => {
               currentWCRecentWalletData =
                 window.localStorage.getItem("WCM_RECENT_WALLET_DATA") || undefined;
             }
-            const res = await connectAsync({
-              connector,
-              chainId: Number(chainID),
-            });
-            await disconnectAsync();
-            setEvmWallet(undefined);
-            if (currentWCDeepLinkChoice) {
-              window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", currentWCDeepLinkChoice);
-            } else {
-              window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+            try {
+              const res = await connectAsync({
+                connector,
+                chainId: Number(chainID),
+              });
+              await disconnectAsync();
+              setEvmWallet(undefined);
+              if (currentWCDeepLinkChoice) {
+                window.localStorage.setItem(
+                  "WALLETCONNECT_DEEPLINK_CHOICE",
+                  currentWCDeepLinkChoice,
+                );
+              } else {
+                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+              }
+              if (currentWCRecentWalletData) {
+                window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
+              } else {
+                window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+              }
+              return res.accounts[0];
+            } catch (_e) {
+              if (currentWCDeepLinkChoice) {
+                window.localStorage.setItem(
+                  "WALLETCONNECT_DEEPLINK_CHOICE",
+                  currentWCDeepLinkChoice,
+                );
+              }
+              if (currentWCRecentWalletData) {
+                window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
+              }
             }
-            if (currentWCRecentWalletData) {
-              window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
-            } else {
-              window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-            }
-            return res.accounts[0];
           }
           if (
             signRequired &&
