@@ -730,6 +730,11 @@ paths:
                 allow_unsafe:
                   type: boolean
                   description: Toggles whether the api should return routes that fail price safety checks.
+                experimental_features:
+                  type: array
+                  description: Array of experimental features to enable
+                  items:
+                    type: string
                 bridges:
                   type: array
                   description: Array of bridges to use
@@ -1325,6 +1330,11 @@ paths:
                 allow_unsafe:
                   type: boolean
                   description: Toggles whether the api should return routes that fail price safety checks.
+                experimental_features:
+                  type: array
+                  description: Array of experimental features to enable
+                  items:
+                    type: string
                 bridges:
                   type: array
                   description: Array of bridges to use
