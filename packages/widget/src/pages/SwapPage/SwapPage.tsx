@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { routeConfigAtom, skipRouteAtom } from "@/state/route";
+import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -35,7 +35,6 @@ import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
-import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 
 export const SwapPage = () => {
