@@ -1648,7 +1648,9 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     denomIn: value.denom_in,
     denomOut: value.denom_out,
     smartRelay: value.smart_relay,
-    smartRelayFeeQuote: smartRelayFeeQuoteFromJSON(value.smart_relay_fee_quote),
+    smartRelayFeeQuote: value?.smart_relay_fee_quote
+      ? smartRelayFeeQuoteFromJSON(value.smart_relay_fee_quote)
+      : undefined,
   };
 }
 
@@ -1661,7 +1663,9 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     denom_in: value.denomIn,
     denom_out: value.denomOut,
     smart_relay: value.smartRelay,
-    smart_relay_fee_quote: smartRelayFeeQuoteToJSON(value.smartRelayFeeQuote),
+    smart_relay_fee_quote: value?.smartRelayFeeQuote
+      ? smartRelayFeeQuoteToJSON(value.smartRelayFeeQuote)
+      : undefined,
   };
 }
 
