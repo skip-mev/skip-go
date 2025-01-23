@@ -1,4 +1,3 @@
-import { matchSorter } from "match-sorter";
 import { useMemo } from "react";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
 
@@ -36,26 +35,26 @@ export const useFilteredAssets = ({
       })
       .filter(Boolean) as GroupedAsset[];
 
-    return matchSorter(sanitizedAssets, searchQuery, {
-      keys: ["id", "name"],
-    }).sort((assetA, assetB) => {
-      const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
+    return sanitizedAssets
+      .filter((asset) => asset.id?.toLowerCase()?.includes(searchQuery.toLowerCase()))
+      .sort((assetA, assetB) => {
+        const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
 
-      if (bothHaveZeroBalance) {
-        const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
-        const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
+        if (bothHaveZeroBalance) {
+          const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
+          const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
 
-        const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
-        if (bothArePrivileged) {
-          return aPrivilegedIndex - bPrivilegedIndex;
+          const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
+          if (bothArePrivileged) {
+            return aPrivilegedIndex - bPrivilegedIndex;
+          }
+
+          if (bPrivilegedIndex !== -1) return 1;
+          if (aPrivilegedIndex !== -1) return -1;
         }
 
-        if (bPrivilegedIndex !== -1) return 1;
-        if (aPrivilegedIndex !== -1) return -1;
-      }
-
-      return assetB.totalUsd - assetA.totalUsd;
-    });
+        return assetB.totalUsd - assetA.totalUsd;
+      });
   }, [groupedAssetsByRecommendedSymbol, searchQuery]);
 
   return filteredAssets;
