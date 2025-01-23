@@ -35,7 +35,6 @@ import { Modals } from "@/modals/registerModals";
 import { useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
-import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 
 export const SwapPage = () => {
   const [container, setContainer] = useState<HTMLDivElement>();
@@ -61,7 +60,6 @@ export const SwapPage = () => {
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
-  useMobileRouteConfig();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
