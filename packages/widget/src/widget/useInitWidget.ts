@@ -22,6 +22,7 @@ import { getBrandButtonTextColor } from "@/utils/colors";
 import { initSentry } from "./initSentry";
 import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
+import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -30,6 +31,7 @@ export const useInitWidget = (props: WidgetProps) => {
   setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
+  useMobileRouteConfig();
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
