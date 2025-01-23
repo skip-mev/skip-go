@@ -18,6 +18,7 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
+import { isMobile } from "@/utils/os";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -33,6 +34,8 @@ export const useAutoSetAddress = () => {
   const { createSolanaWallets } = useCreateSolanaWallets();
 
   const connectedAddress = useAtomValue(connectedAddressesAtom);
+
+  const mobile = isMobile();
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
@@ -173,6 +176,9 @@ export const useAutoSetAddress = () => {
             try {
               const wallets = createEvmWallets(chainID);
               const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
+              if (wallet?.walletName === "walletConnect" && mobile) {
+                return;
+              }
               if (!wallet) {
                 if (!openModal) return;
                 NiceModal.show(Modals.SetAddressModal, {
@@ -218,18 +224,19 @@ export const useAutoSetAddress = () => {
       });
     },
     [
-      chains,
-      createCosmosWallets,
-      createEvmWallets,
-      createSolanaWallets,
       requiredChainAddresses,
-      setChainAddresses,
-      sourceWallet.cosmos,
-      sourceWallet.evm,
-      sourceWallet.svm,
+      chains,
       signRequiredChains,
-      chainAddresses,
       connectedAddress,
+      chainAddresses,
+      setChainAddresses,
+      createCosmosWallets,
+      sourceWallet.cosmos?.walletName,
+      sourceWallet.svm?.walletName,
+      sourceWallet.evm?.walletName,
+      createSolanaWallets,
+      createEvmWallets,
+      mobile,
     ],
   );
 
