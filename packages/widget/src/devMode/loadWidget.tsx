@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ShowWidget, Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
+import { defaultTheme, lightTheme } from "@/widget/theme";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -41,6 +42,7 @@ const DevMode = () => {
         >
           <Widget
             theme={{
+              ...(theme === "dark" ? defaultTheme : lightTheme),
               brandTextColor: "black",
               brandColor: "linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);",
             }}
