@@ -74,36 +74,17 @@ export const useCreateSolanaWallets = () => {
           }
         },
         getAddress: async ({ signRequired }) => {
-          let currentWCDeepLinkChoice: string | undefined;
-          let currentWCRecentWalletData: string | undefined;
           try {
             const isConnected = wallet.connected;
             if (!isConnected) {
               if (isWalletConnect && mobile) {
-                if (evmWallet) {
-                  currentWCDeepLinkChoice =
-                    window.localStorage.getItem("WALLETCONNECT_DEEPLINK_CHOICE") || undefined;
-                  currentWCRecentWalletData =
-                    window.localStorage.getItem("WCM_RECENT_WALLET_DATA") || undefined;
-                }
                 await wallet.connect();
                 const address = wallet.publicKey;
                 if (!address) throw new Error("No address found");
                 await wallet.disconnect();
                 setSvmWallet(undefined);
-                if (currentWCDeepLinkChoice) {
-                  window.localStorage.setItem(
-                    "WALLETCONNECT_DEEPLINK_CHOICE",
-                    currentWCDeepLinkChoice,
-                  );
-                } else {
-                  window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-                }
-                if (currentWCRecentWalletData) {
-                  window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
-                } else {
-                  window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-                }
+                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+                window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
                 return address.toBase58();
               }
 
@@ -123,12 +104,6 @@ export const useCreateSolanaWallets = () => {
             }
             return address.toBase58();
           } catch (error) {
-            if (currentWCDeepLinkChoice) {
-              window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", currentWCDeepLinkChoice);
-            }
-            if (currentWCRecentWalletData) {
-              window.localStorage.setItem("WCM_RECENT_WALLET_DATA", currentWCRecentWalletData);
-            }
             console.error(error);
           }
         },
