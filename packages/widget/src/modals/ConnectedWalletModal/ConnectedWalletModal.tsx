@@ -160,10 +160,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         account && account.wallet.name !== "injected" ? (
           renderDisconnectButton
         ) : (
-          <RightArrowIcon
-            color={theme?.primary?.background.normal}
-            backgroundColor={theme.primary.text.normal}
-          />
+          <RightArrowIcon color={theme.primary.text.normal} />
         )
       }
     />

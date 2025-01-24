@@ -16,10 +16,7 @@ export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHea
   return (
     <StyledHeader align="center" justify="space-between">
       <Button onClick={() => onClickBackButton()}>
-        <StyledLeftArrowIcon
-          color={theme?.primary.background.normal}
-          backgroundColor={theme?.primary.text.normal}
-        />
+        <StyledLeftArrowIcon color={theme?.primary.text.normal} />
       </Button>
       <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
       {rightContent?.()}
@@ -33,7 +30,7 @@ export const StyledModalContainer = styled(Column)`
   gap: 10px;
   width: calc(100% - 20px);
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   overflow: hidden;
   height: 100%;
 

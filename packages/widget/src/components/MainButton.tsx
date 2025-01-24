@@ -3,7 +3,6 @@ import { Row } from "@/components/Layout";
 import { SmallText, Text } from "@/components/Typography";
 import { useTheme } from "styled-components";
 import { ICONS, iconMap } from "@/icons";
-import { getBrandButtonTextColor } from "@/utils/colors";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
 
@@ -37,8 +36,7 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
-
-  const textColor = getBrandButtonTextColor(backgroundColor);
+  const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -67,17 +65,15 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor} mainButtonColor={backgroundColor}>
-              {label}
-            </MainButtonText>
+            <MainButtonText color={textColor}>{label}</MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={textColor} mainButtonColor={backgroundColor}>
+          <MainButtonText capitalize color={textColor}>
             {label}
           </MainButtonText>
         )}
 
-        <Icon backgroundColor={textColor} color={backgroundColor} />
+        <Icon color={textColor} />
       </StyledMainButton>
     </MainButtonContainer>
   );
@@ -148,7 +144,7 @@ const StyledMainButton = styled(Row).attrs({
 })<{ backgroundColor?: string; disabled?: boolean; loading?: boolean }>`
   position: relative;
   border: none;
-  background-color: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
+  background: ${({ theme, backgroundColor }) => backgroundColor ?? theme.brandColor};
   height: 70px;
   padding: 20px;
   width: 100%;
@@ -163,7 +159,7 @@ const StyledMainButton = styled(Row).attrs({
     props.disabled &&
     `
       opacity: 0.5;
-      background-color: ${props.theme.secondary.background.normal};
+      background: ${props.theme.secondary.background.normal};
       &:hover {
         cursor: not-allowed;
       }
@@ -176,7 +172,7 @@ const StyledMainButton = styled(Row).attrs({
 `;
 
 const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   &:hover {
     cursor: not-allowed;
   }
@@ -217,7 +213,7 @@ const StyledLoadingButton = styled(StyledMainButton)<{ isGoFast?: boolean }>`
 `;
 
 const StyledTimeRemaining = styled(Row)`
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   padding: 16px;
   border-radius: 10px;
   height: 40px;
@@ -231,7 +227,7 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   right: 0;
   width: calc(100% - 4px);
   border-radius: 24px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 
   @media (max-width: 767px) {
     height: 61px;

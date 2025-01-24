@@ -18,10 +18,20 @@ import {
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
+import { getBrandButtonTextColor } from "@/utils/colors";
+import { initSentry } from "./initSentry";
+import { version } from "../../package.json";
+import { setTag } from "@sentry/react";
+import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 
 export const useInitWidget = (props: WidgetProps) => {
+  if (props.enableSentrySessionReplays) {
+    initSentry();
+  }
+  setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
+  useMobileRouteConfig();
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
@@ -58,6 +68,11 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.brandColor) {
       theme.brandColor = props.brandColor;
     }
+
+    if ((props.theme as Theme)?.brandTextColor === undefined && typeof document !== "undefined") {
+      theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
+    }
+
     return theme;
   }, [props.brandColor, props.theme]);
 

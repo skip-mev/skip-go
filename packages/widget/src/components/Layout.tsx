@@ -6,6 +6,7 @@ export type FlexProps = {
   gap?: number;
   padding?: number;
   borderRadius?: number;
+  flexDirection?: "row" | "column";
 };
 
 export const flexProps = css<FlexProps>`
@@ -15,13 +16,14 @@ export const flexProps = css<FlexProps>`
   ${({ gap }) => gap && `gap: ${gap}px`};
   ${({ padding }) => padding && `padding: ${padding}px`};
   ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius}px`};
+  ${({ flexDirection }) => flexDirection && `flex-direction: ${flexDirection}`};
 `;
 
 export const Row = styled.div<SpacerProps & FlexProps>`
   ${({ width }) => width && `width: ${width}px`};
   ${({ height }) => height && `height: ${height}px`};
-  ${flexProps};
   flex-direction: row;
+  ${flexProps};
 `;
 
 export const Column = styled(Row)`

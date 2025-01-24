@@ -6,7 +6,6 @@ import { Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
-import { getBrandButtonTextColor } from "@/utils/colors";
 
 const SlippageSelector: React.FC = () => {
   const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
@@ -123,7 +122,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 13px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   top: -30px;
   left: 110px;
   width: 250px;
@@ -138,7 +137,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
   white-space: nowrap;
 
   @media (max-width: 767px) {
-    background-color: ${({ theme }) => theme.secondary.background.transparent};
+    background: ${({ theme }) => theme.secondary.background.transparent};
     padding: 7px 15px;
     border-radius: 15px;
     height: 40px;
@@ -148,8 +147,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
     flex: 1;
   }
 
-  color: ${({ selected, theme }) =>
-    selected ? getBrandButtonTextColor(theme.brandColor) : theme.primary.text.normal};
+  color: ${({ selected, theme }) => (selected ? theme.brandTextColor : theme.primary.text.normal)};
   &:hover {
     box-shadow: inset 0px 0px 0px 1px ${({ theme }) => theme.brandColor};
     opacity: 1;
@@ -159,7 +157,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
     selected &&
     css`
       & {
-        background-color: ${theme.brandColor};
+        background: ${theme.brandColor};
         opacity: 1;
       }
     `}
@@ -169,7 +167,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   as: "input",
 })<{ selected?: boolean }>`
   outline: none;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
   border-radius: 7px;
   color: ${({ theme }) => theme.primary.text.normal};
@@ -193,8 +191,8 @@ const CustomSlippageInput = styled(SmallText).attrs({
   ${({ selected, theme }) =>
     selected &&
     css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
-      background-color: ${theme.brandColor};
+      color: ${theme.brandTextColor};
+      background: ${theme.brandColor};
       border: none;
     `}
 
@@ -211,7 +209,7 @@ const CustomSlippageInputRightIcon = styled(SmallText)<{ selected?: boolean }>`
   ${({ selected, theme }) =>
     selected &&
     css`
-      color: ${getBrandButtonTextColor(theme.brandColor)};
+      color: ${theme.brandTextColor};
     `}
 `;
 

@@ -31,7 +31,7 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   height: 60px;
   border-radius: 12px;
   padding: 12px 15px;
-  ${({ theme }) => `background-color: ${theme.secondary.background.normal}`};
+  ${({ theme }) => `background: ${theme.secondary.background.normal}`};
 
   ${({ onClick, theme }) =>
     onClick &&
@@ -39,13 +39,13 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
       @media (min-width: 768px) {
         &:hover,
         &:focus {
-          background-color: ${theme.secondary.background.hover};
+          background: ${theme.secondary.background.hover};
           cursor: pointer;
         }
       }
       @media (max-width: 767px) {
         &:active {
-          background-color: ${theme.secondary.background.hover};
+          background: ${theme.secondary.background.hover};
           cursor: pointer;
         }
       }

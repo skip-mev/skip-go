@@ -120,6 +120,13 @@
       ]
     },
     {
+      "group": "Legal and Privacy",
+      "pages": [
+        "legal-and-privacy/terms-of-service",
+        "legal-and-privacy/privacy-policy"
+      ]
+    },
+    {
       "group": "Prod Endpoints",
       "pages": [
         {

@@ -63,7 +63,7 @@ const StyledErrorStateContainer = styled(Column)<{ backgroundColor?: string }>`
   width: 100%;
   height: 225px;
   border-radius: 25px;
-  ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor}`};
+  ${({ backgroundColor }) => backgroundColor && `background: ${backgroundColor}`};
 `;
 
 const StyledErrorTextInnerContainer = styled(Column)`

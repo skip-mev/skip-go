@@ -160,7 +160,14 @@ export const SwapPageFooter = ({
 } & SwapPageFooterItemsProps &
   React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <GhostButton gap={5} justify="space-between" align="center" onClick={onClick} height={35} {...props}>
+    <GhostButton
+      gap={5}
+      justify="space-between"
+      align="center"
+      onClick={onClick}
+      height={35}
+      {...props}
+    >
       <SwapPageFooterItems
         rightContent={rightContent}
         showRouteInfo={showRouteInfo}
@@ -189,6 +196,6 @@ const SettingsChangedIndicator = styled.div`
   right: -3px;
   width: 4px;
   height: 4px;
-  background-color: ${({ theme }) => theme.primary.text.normal};
+  background: ${({ theme }) => theme.primary.text.normal};
   border-radius: 50%;
 `;

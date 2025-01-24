@@ -17,6 +17,9 @@ export const useGetSourceBalance = () => {
     address: sourceAccount?.address,
   });
 
+  // this is to support both tanstack query v4/v5
+  const cw20BalanceIsLoading = cw20Balance.isPending && cw20Balance.isFetching;
+
   const data = useMemo(() => {
     if (!sourceAsset || !sourceAccount || !skipBalances) return;
     const { chainID, denom } = sourceAsset;
@@ -45,7 +48,7 @@ export const useGetSourceBalance = () => {
 
   return {
     data,
-    isLoading: !isFetched || isLoading || cw20Balance.isLoading,
+    isLoading: !isFetched || isLoading || cw20BalanceIsLoading,
     refetch: () => {
       refetch();
       cw20Balance.refetch();

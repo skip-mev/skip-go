@@ -1,18 +1,19 @@
 import { atom } from "jotai";
 import { SetStateAction } from "react";
 
-export function atomWithDebounce<T>(delayMilliseconds = 250) {
+export function atomWithDebounce<T>(initialValue?: T, delayMilliseconds = 250) {
   const prevTimeoutAtom = atom<NodeJS.Timeout | undefined>(undefined);
 
   // DO NOT EXPORT currentValueAtom as using this atom to set state can cause
   // inconsistent state between currentValueAtom and debouncedValueAtom
-  const _currentValueAtom = atom<T>();
+  // Initialize _currentValueAtom with the initial value
+  const _currentValueAtom = atom<T | undefined>(initialValue);
   const isDebouncingAtom = atom(false);
-  const valueInitialized = atom(false);
+  const valueInitialized = atom(initialValue !== undefined);
 
-  // Atom for debounced value
+  // Atom for debounced value, also initialized with initial value
   const debouncedValueAtom = atom(
-    undefined,
+    initialValue, // Set initial value here too
     (get, set, update: SetStateAction<T>, callback?: () => void, immediate?: boolean) => {
       clearTimeout(get(prevTimeoutAtom));
 

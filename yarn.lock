@@ -1901,7 +1901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.9, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.23.8, @babel/runtime@npm:^7.24.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.9, @babel/runtime@npm:^7.20.1, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.24.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4":
   version: 7.24.7
   resolution: "@babel/runtime@npm:7.24.7"
   dependencies:
@@ -2175,10 +2175,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.51":
-  version: 0.50.51
-  resolution: "@chain-registry/types@npm:0.50.51"
-  checksum: d4ad9d2dde637862b4196784ac47c08addfa473dd856a998386d185e5586d0dfc2774a1868256842982fc50b32c8da81d37513c1c63f0171e31923e27169ab1a
+"@chain-registry/types@npm:^0.50.55":
+  version: 0.50.55
+  resolution: "@chain-registry/types@npm:0.50.55"
+  checksum: f95386d587e31839f13162116e4aff8985d06526576486e9e56a72f78b5216481478d0de7eeb7de2c0c2b53a06f8f8e8e6e92375b100210451d6ccbfc0de5f3b
   languageName: node
   linkType: hard
 
@@ -7761,7 +7761,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
-    chain-registry: ^1.69.95
+    chain-registry: ^1.69.102
     cosmjs-types: ^0.9.0
     create-hash: ^1.2.0
     keccak: 3.0.4
@@ -7825,7 +7825,7 @@ __metadata:
     "@walletconnect/sign-client": 2.17.2
     "@walletconnect/solana-adapter": ^0.0.6
     buffer: ^6.0.3
-    chain-registry: ^1.69.95
+    chain-registry: ^1.69.102
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.2.1
@@ -7834,7 +7834,6 @@ __metadata:
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
     lodash.debounce: ^4.0.8
-    match-sorter: ^6.3.4
     node-polyfill-webpack-plugin: ^4.0.0
     pino-pretty: ^13.0.0
     pluralize: ^8.0.0
@@ -13289,12 +13288,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.95":
-  version: 1.69.95
-  resolution: "chain-registry@npm:1.69.95"
+"chain-registry@npm:^1.69.102":
+  version: 1.69.102
+  resolution: "chain-registry@npm:1.69.102"
   dependencies:
-    "@chain-registry/types": ^0.50.51
-  checksum: 326af96a9accd8cb1b1f05fc809df6036260eeec7461f3e9489dcc64aeab6e9d7b83a332b74262e58c438cd87d729ac7283cb2a2f6ba1377f6c5448a3da9e2ce
+    "@chain-registry/types": ^0.50.55
+  checksum: 20bc866764447b4cf52dbc97a2dffec113673865777b5160773a2566f651f5b65653cf42ed54c3ecc5af2358024e5c866f4ed13e11dc71d10c9e3696d860978c
   languageName: node
   linkType: hard
 
@@ -20404,16 +20403,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"match-sorter@npm:^6.3.4":
-  version: 6.3.4
-  resolution: "match-sorter@npm:6.3.4"
-  dependencies:
-    "@babel/runtime": ^7.23.8
-    remove-accents: 0.5.0
-  checksum: 950c1600173a639e216947559a389b64258d52f33aea3a6ddb97500589888b83c976a028f731f40bc08d9d8af20de7916992fabb403f38330183a1df44c7634b
-  languageName: node
-  linkType: hard
-
 "md5.js@npm:^1.3.4":
   version: 1.3.5
   resolution: "md5.js@npm:1.3.5"
@@ -24128,13 +24117,6 @@ __metadata:
     react:
       optional: true
   checksum: 2c3bcd72524bf47672640265e79cba785e0e6837b9b385ccb0a3ea7d00f55a439d9aed3e0ae71e991d88e0d4b2b3158457c92e75fff5ebf99cd46e280068ddeb
-  languageName: node
-  linkType: hard
-
-"remove-accents@npm:0.5.0":
-  version: 0.5.0
-  resolution: "remove-accents@npm:0.5.0"
-  checksum: 7045b37015acb03df406d21f9cbe93c3fcf2034189f5d2e33b1dace9c7d6bdcd839929905ced21a5d76c58553557e1a42651930728702312a5774179d5b9147b
   languageName: node
   linkType: hard
 
