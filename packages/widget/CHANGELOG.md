@@ -1,5 +1,26 @@
 ## 0.0.15
 
+## 3.1.13
+
+### Patch Changes
+
+- f78397a: update registries
+- 7040482: Update theme colors to use background instead of background-color to support gradients
+- 5e04b74: Update mobile Asset/Chain selector modal to avoid word wrapping with small screen widths
+- afcbdc3: Add enableSentrySessionReplays prop, add widget version as a tag
+- 749eea4: Simplify search to use substring search
+- 23ae20c: Turn on 100% session sample rate (if enableSentrySessionReplays = true)
+- bc0309a: Fix bug with pulsing 0 input onload
+- 1b84bb5: Fix infinite balance spinner if using tanstack/query v4
+- 22c5cc1: enable mobile wallets for getting the address
+- b64cf84: only single tx routes on mobile
+- 1479374: Fix disabled button text color
+- 48ea9f7: Add more data to tx callbacks
+- Updated dependencies [f78397a]
+- Updated dependencies [36a6930]
+- Updated dependencies [4492ab5]
+  - @skip-go/client@0.16.7
+
 ## 3.1.12
 
 ### Patch Changes

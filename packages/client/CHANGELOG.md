@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 0.16.7
+
+### Patch Changes
+
+- f78397a: update registries
+- 36a6930: Fix error with msgsDirect if smartRelay is false
+- 4492ab5: add userAddresses validation before executeRoute
+
 ## 0.16.6
 
 ### Patch Changes
