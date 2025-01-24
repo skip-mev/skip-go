@@ -1,4 +1,3 @@
-import { matchSorter } from "match-sorter";
 import { useMemo } from "react";
 import { ChainWithAsset, GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipChainsAtom } from "@/state/skipClient";
@@ -50,28 +49,30 @@ export const useFilteredChains = ({
         return isAllowedByFilter && isPenumbraAllowed;
       }) as ChainWithAsset[];
 
-    return matchSorter(chainsWithAssets, searchQuery, {
-      keys: ["prettyName", "chainName", "chainID"],
-    }).sort((chainWithAssetA, chainWithAssetB) => {
-      const usdValueA = Number(
-        getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.valueUSD ?? 0,
-      );
-      const usdValueB = Number(
-        getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.valueUSD ?? 0,
-      );
+    return chainsWithAssets
+      .filter((chainWithAsset) =>
+        chainWithAsset.chainName.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+      .sort((chainWithAssetA, chainWithAssetB) => {
+        const usdValueA = Number(
+          getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.valueUSD ?? 0,
+        );
+        const usdValueB = Number(
+          getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.valueUSD ?? 0,
+        );
 
-      // 1. Sort by USD value
-      if (usdValueB !== usdValueA) return usdValueB - usdValueA;
+        // 1. Sort by USD value
+        if (usdValueB !== usdValueA) return usdValueB - usdValueA;
 
-      const chainAIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
-      const chainBIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
+        const chainAIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
+        const chainBIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
 
-      // 2. If USD values are equal, sort by origin chain
-      if (chainBIsOrigin) return 1;
-      if (chainAIsOrigin) return -1;
+        // 2. If USD values are equal, sort by origin chain
+        if (chainBIsOrigin) return 1;
+        if (chainAIsOrigin) return -1;
 
-      return 0;
-    });
+        return 0;
+      });
   }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
 
   return filteredChains;
