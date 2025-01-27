@@ -18,6 +18,7 @@ export type MainButtonProps = {
   extra?: ReactNode;
   route?: RouteResponse;
   isGoFast?: boolean;
+  fontSize?: number;
 };
 
 type LoadingButtonProps = MainButtonProps & {};
@@ -33,6 +34,7 @@ export const MainButton = ({
   onClick,
   extra,
   isGoFast,
+  fontSize = 24,
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
@@ -65,10 +67,12 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor}>{label}</MainButtonText>
+            <MainButtonText color={textColor} fontSize={fontSize}>
+              {label}
+            </MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={textColor}>
+          <MainButtonText capitalize color={textColor} fontSize={fontSize}>
             {label}
           </MainButtonText>
         )}
@@ -115,7 +119,6 @@ const MainButtonText = styled(Text).attrs({
   capitalize: true,
   letterSpacing: "-0.015em",
 })`
-  font-size: 24px;
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
     font-size: 20px;
