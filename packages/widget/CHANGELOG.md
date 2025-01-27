@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.2.0
+
+### Minor Changes
+
+- 4434c09: graz is not a peer dependencies
+
+### Patch Changes
+
+- 2500502: fix mobile route config override bug
+- c410d7d: Fix initialization of undefined source/dest amount
+- 432c0d6: Remove importsNotUsedAsValues (export type) from build to fix issues with envs that don't recognize export type syntax
+- a04c9cd: Use smaller font for error messages
+- a44a8cf: fix image url issue in input search and error button text size
+
 ## 3.1.13
 
 ### Patch Changes
