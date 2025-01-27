@@ -23,6 +23,7 @@ import { initSentry } from "./initSentry";
 import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
+import { simulateTxAtom } from "@/state/swapExecutionPage";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -41,6 +42,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
+  const setSimulateTx = useSetAtom(simulateTxAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -109,6 +111,9 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
+    if (props.simulate !== undefined) {
+      setSimulateTx(props.simulate);
+    }
 
     const callbacks = {
       onWalletConnected: props.onWalletConnected,
@@ -133,12 +138,14 @@ export const useInitWidget = (props: WidgetProps) => {
     props.settings,
     props.settings?.slippage,
     props.walletConnect,
+    props.simulate,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
     setWalletConnect,
     setCallbacks,
+    setSimulateTx,
   ]);
 
   return { theme: mergedTheme };

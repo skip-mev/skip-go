@@ -32,6 +32,10 @@ export default defineConfig({
     nodePolyfills(),
   ],
   build: {
+    commonjsOptions: {
+      include: [/jotai-effect/, /node_modules/],
+      transformMixedEsModules: true,
+    },
     minify: true,
     lib: {
       // Could also be a dictionary or array of multiple entry points

@@ -12,6 +12,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "importsNotUsedAsValues": "remove",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
