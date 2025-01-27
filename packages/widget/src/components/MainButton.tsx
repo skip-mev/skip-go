@@ -114,10 +114,10 @@ const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
 })`
-  font-size: 18px;
+  font-size: 24px;
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
-    font-size: 16px;
+    font-size: 20px;
   }
 `;
 
