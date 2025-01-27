@@ -163,6 +163,22 @@ export const SwapSettingsDrawer = createModal(() => {
       )}
       <RoutePreferenceSelector />
       <SlippageSelector />
+      <Row gap={10}>
+        <SmallText
+          as="a"
+          href="https://docs.skip.build/go/legal-and-privacy/terms-of-service"
+          target="_blank"
+        >
+          <u>Terms of Service</u>
+        </SmallText>
+        <SmallText
+          as="a"
+          href="https://docs.skip.build/go/legal-and-privacy/privacy-policy"
+          target="_blank"
+        >
+          <u>Privacy Policy</u>
+        </SmallText>
+      </Row>
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>

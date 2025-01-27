@@ -152,7 +152,7 @@ export const AssetAndChainSelectorModal = createModal(
         <AssetAndChainSelectorModalSearchInput
           onSearch={handleSearch}
           onClickBack={onClickBack}
-          asset={groupedAssetSelected?.assets[0] || selectedAsset}
+          groupedAsset={groupedAssetSelected ?? selectedGroup}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
           onKeyDown={onKeyDown}
