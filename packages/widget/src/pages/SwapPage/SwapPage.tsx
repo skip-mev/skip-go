@@ -206,7 +206,13 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      return <MainButton label={routeError?.message ?? "No routes found"} disabled fontSize={18} />;
+      return (
+        <MainButton
+          label={routeError?.message ?? "No routes found"}
+          disabled
+          fontSize={routeError?.message ? 18 : 24}
+        />
+      );
     }
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
