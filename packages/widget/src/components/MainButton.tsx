@@ -113,12 +113,11 @@ export const LoadingButton = ({
 const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
-  letterSpacing: "-0.015em",
 })`
-  font-size: 24px;
+  font-size: 18px;
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
-    font-size: 20px;
+    font-size: 16px;
   }
 `;
 
