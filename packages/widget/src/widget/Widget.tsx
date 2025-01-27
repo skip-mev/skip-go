@@ -37,6 +37,11 @@ export type WidgetProps = {
   filter?: ChainFilter;
   walletConnect?: WalletConnect;
   /**
+   * enables sentry session replays on the widget to help with troubleshooting errors
+   * https://docs.sentry.io/product/explore/session-replay/web/
+   */
+  enableSentrySessionReplays?: boolean;
+  /**
    * Map of connected wallet addresses, allowing your app to pass pre-connected addresses to the widget.
    * This feature enables the widget to display a specific address as connected for a given chain.
    *
@@ -47,12 +52,12 @@ export type WidgetProps = {
    * <Widget connectedAddresses={{ "cosmoshub-4": "cosmos1...", "1": "0x..." }} />
    * ```
    */
-  enableSentrySessionReplays?: boolean;
-  /**
-   * enables sentry session replays on the widget to help with troubleshooting errors
-   * https://docs.sentry.io/product/explore/session-replay/web/
-   */
   connectedAddresses?: Record<string, string | undefined>;
+  /**
+   * Allow widget to simulate transactions before executing the route to validating gas and balances.
+   * @default true
+   */
+  simulate?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"

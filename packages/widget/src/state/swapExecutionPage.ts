@@ -294,12 +294,15 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   };
 });
 
+export const simulateTxAtom = atom<boolean>();
+
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const slippage = get(slippageAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
+  const simulateTx = get(simulateTxAtom);
 
   return {
     gcTime: Infinity,
@@ -311,7 +314,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           route,
           userAddresses,
           slippageTolerancePercent: slippage.toString(),
-          simulate: route.sourceAssetChainID !== "984122",
+          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainID !== "984122",
           getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
         });

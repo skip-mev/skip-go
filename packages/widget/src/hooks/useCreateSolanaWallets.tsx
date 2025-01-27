@@ -1,7 +1,7 @@
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { MinimalWallet, evmWalletAtom, svmWalletAtom } from "@/state/wallets";
+import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
@@ -16,7 +16,6 @@ export const useCreateSolanaWallets = () => {
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const mobile = isMobile();
-  const evmWallet = useAtomValue(evmWalletAtom);
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -121,6 +120,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile, evmWallet]);
+  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile]);
   return { createSolanaWallets };
 };
