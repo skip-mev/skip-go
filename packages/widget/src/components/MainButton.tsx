@@ -18,6 +18,7 @@ export type MainButtonProps = {
   extra?: ReactNode;
   route?: RouteResponse;
   isGoFast?: boolean;
+  fontSize?: number;
 };
 
 type LoadingButtonProps = MainButtonProps & {};
@@ -33,6 +34,7 @@ export const MainButton = ({
   onClick,
   extra,
   isGoFast,
+  fontSize = 24,
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
@@ -49,6 +51,7 @@ export const MainButton = ({
         loadingTimeString={loadingTimeString}
         extra={extra}
         isGoFast={isGoFast}
+        fontSize={fontSize}
       />
     );
   }
@@ -65,10 +68,12 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor}>{label}</MainButtonText>
+            <MainButtonText color={textColor} fontSize={fontSize}>
+              {label}
+            </MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={textColor}>
+          <MainButtonText capitalize color={textColor} fontSize={fontSize}>
             {label}
           </MainButtonText>
         )}
@@ -85,6 +90,7 @@ export const LoadingButton = ({
   loadingTimeString,
   isGoFast,
   extra,
+  fontSize,
 }: LoadingButtonProps) => (
   <StyledLoadingButton
     align="center"
@@ -99,7 +105,9 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <MainButtonText style={{ opacity: 0.5 }}>{label}</MainButtonText>
+      <MainButtonText style={{ opacity: 0.5 }} fontSize={fontSize}>
+        {label}
+      </MainButtonText>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
           {extra}
@@ -113,8 +121,8 @@ export const LoadingButton = ({
 const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
+  letterSpacing: "-0.015em",
 })`
-  font-size: 24px;
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
     font-size: 20px;
