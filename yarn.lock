@@ -7829,7 +7829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@skip-go/client@0.16.7, @skip-go/client@workspace:packages/client":
+"@skip-go/client@workspace:^, @skip-go/client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@skip-go/client@workspace:packages/client"
   dependencies:
@@ -7890,7 +7890,7 @@ __metadata:
     "@r2wc/react-to-web-component": ^2.0.3
     "@radix-ui/react-dialog": ^1.1.1
     "@sentry/react": ^8.46.0
-    "@skip-go/client": 0.16.7
+    "@skip-go/client": "workspace:^"
     "@solana/spl-token": ^0.4.8
     "@solana/wallet-adapter-backpack": ^0.1.14
     "@solana/wallet-adapter-coinbase": ^0.1.19
