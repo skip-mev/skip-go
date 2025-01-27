@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.1.13",
+  "version": "3.2.0",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
