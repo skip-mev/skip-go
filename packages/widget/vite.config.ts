@@ -33,7 +33,7 @@ export default defineConfig({
   ],
   build: {
     commonjsOptions: {
-      include: [/jotai-effect/],
+      include: [/jotai-effect/, /node_modules/],
       transformMixedEsModules: true,
     },
     minify: true,
