@@ -51,6 +51,7 @@ export const MainButton = ({
         loadingTimeString={loadingTimeString}
         extra={extra}
         isGoFast={isGoFast}
+        fontSize={fontSize}
       />
     );
   }
@@ -89,6 +90,7 @@ export const LoadingButton = ({
   loadingTimeString,
   isGoFast,
   extra,
+  fontSize,
 }: LoadingButtonProps) => (
   <StyledLoadingButton
     align="center"
@@ -103,7 +105,7 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <MainButtonText style={{ opacity: 0.5 }} fontSize={24}>
+      <MainButtonText style={{ opacity: 0.5 }} fontSize={fontSize}>
         {label}
       </MainButtonText>
       {loadingTimeString && (
@@ -119,6 +121,7 @@ export const LoadingButton = ({
 const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
+  letterSpacing: "-0.015em",
 })`
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
