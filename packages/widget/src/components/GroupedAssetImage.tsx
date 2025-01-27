@@ -13,7 +13,10 @@ export type GroupedAssetImageType = {
 export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetImageType) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  if (!groupedAsset?.assets) return <img height={height} width={width} />;
+  if (!groupedAsset?.assets || groupedAsset.assets.length === 0) {
+    return <StyledAssetImage height={height} width={width} src="" alt="No asset" />;
+  }
+
   const allLogoURIs = [
     groupedAsset.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
     ...groupedAsset.assets.map((asset) => asset.logoURI),
@@ -21,27 +24,29 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
 
   const dedupedLogoURIs = Array.from(new Set(allLogoURIs));
 
+  if (dedupedLogoURIs.length === 0) {
+    return <StyledAssetImage height={height} width={width} src="" alt="No valid URIs" />;
+  }
+
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (
+      currentImageIndex >= dedupedLogoURIs.length - 1 ||
+      currentImageIndex >= MAX_NUMBER_OF_IMAGES_TO_CHECK
+    ) {
+      e.currentTarget.onerror = null; // Prevent infinite loops in weird scenarios.
+      return;
+    }
+    setCurrentImageIndex((prev) => prev + 1);
+  };
+
   return (
     <StyledAssetImage
       height={height}
       width={width}
-      src={dedupedLogoURIs[0]}
+      src={dedupedLogoURIs[currentImageIndex]}
       loading="lazy"
-      onError={(e) => {
-        if (
-          currentImageIndex === dedupedLogoURIs.length - 1 ||
-          currentImageIndex === MAX_NUMBER_OF_IMAGES_TO_CHECK
-        ) {
-          e.currentTarget.onerror = null;
-          return;
-        }
-        const nextIndex = currentImageIndex + 1;
-        const img = e.currentTarget;
-        img.src = dedupedLogoURIs[nextIndex];
-
-        setCurrentImageIndex(nextIndex);
-      }}
-      alt={`${groupedAsset.assets[0].recommendedSymbol} logo`}
+      onError={handleError}
+      alt={`${groupedAsset.assets[0].recommendedSymbol || ""} logo`}
     />
   );
 };
@@ -49,5 +54,5 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
 const StyledAssetImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
-  ${({ theme }) => `background: ${theme.secondary.background.hover};`};
+  ${({ theme }) => `background: ${theme.secondary.background.hover};`}
 `;

@@ -34,17 +34,11 @@ export const initSentry = () => {
         networkDetailAllowUrls: [/^https:\/\/go\.skip\.build\//],
         networkRequestHeaders: ["X-Custom-Header"],
         networkResponseHeaders: ["X-Custom-Header"],
-        beforeErrorSampling(event) {
-          if (!event?.level || ["error", "fatal"].includes(event.level)) {
-            return false;
-          }
-          return true;
-        },
       }),
     ],
     // Session Replay
     replaysSessionSampleRate: 1,
-    replaysOnErrorSampleRate: 1,
+    replaysOnErrorSampleRate: 0,
   });
   isSentryInitialized = true;
 };
