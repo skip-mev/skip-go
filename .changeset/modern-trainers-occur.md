@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Transpile jotai-effect
+Remove importsNotUsedAsValues (export type) from build to fix issues with envs that don't recognize export type syntax
