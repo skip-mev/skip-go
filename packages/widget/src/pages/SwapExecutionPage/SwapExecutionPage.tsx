@@ -108,7 +108,6 @@ export const SwapExecutionPage = () => {
     ) {
       return "pending";
     }
-
   }, [statusData, swapExecutionState]);
 
   const onClickEditDestinationWallet = useMemo(() => {
