@@ -78,9 +78,6 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
-  console.log(sourceAmount, debouncedSourceAmount);
-  console.log(destinationAmount, debouncedDestinationAmount);
-
   if (direction === "swap-in") {
     return sourceAmountHasChanged || isLoading;
   } else if (direction === "swap-out") {
