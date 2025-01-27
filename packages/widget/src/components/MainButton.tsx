@@ -103,7 +103,9 @@ export const LoadingButton = ({
       padding={20}
       backgroundColor={backgroundColor}
     >
-      <MainButtonText style={{ opacity: 0.5 }}>{label}</MainButtonText>
+      <MainButtonText style={{ opacity: 0.5 }} fontSize={24}>
+        {label}
+      </MainButtonText>
       {loadingTimeString && (
         <StyledTimeRemaining align="center" justify="center">
           {extra}
