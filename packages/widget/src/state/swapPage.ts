@@ -13,13 +13,13 @@ export const {
   debouncedValueAtom: debouncedSourceAssetAmountAtom,
   valueInitialized: debouncedSourceAssetAmountValueInitializedAtom,
   clearTimeoutAtom: cleanupDebouncedSourceAssetAmountAtom,
-} = atomWithDebounce<string | undefined>("");
+} = atomWithDebounce<string | undefined>();
 
 export const {
   debouncedValueAtom: debouncedDestinationAssetAmountAtom,
   valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
-} = atomWithDebounce<string | undefined>("");
+} = atomWithDebounce<string | undefined>();
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
@@ -77,6 +77,9 @@ export const isWaitingForNewRouteAtom = atom((get) => {
 
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
+
+  console.log(sourceAmount, debouncedSourceAmount);
+  console.log(destinationAmount, debouncedDestinationAmount);
 
   if (direction === "swap-in") {
     return sourceAmountHasChanged || isLoading;
