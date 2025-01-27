@@ -1,7 +1,7 @@
 import { styled, useTheme } from "styled-components";
 import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
-import { SmallText, SmallTextButton } from "@/components/Typography";
+import { SmallText } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
 import { SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
