@@ -11,18 +11,20 @@ import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { isMobile } from "@/utils/os";
+import { GroupedAsset } from "./AssetAndChainSelectorModal";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
   onClickBack: () => void;
-  asset?: Asset;
+  groupedAsset?: GroupedAsset;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const AssetAndChainSelectorModalSearchInput = ({
-  asset,
+  groupedAsset,
   onSearch,
   onClickBack,
   searchTerm,
@@ -30,6 +32,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
   onKeyDown,
 }: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
+  const asset = groupedAsset?.assets[0] as Asset;
   const isMobileScreenSize = useIsMobileScreenSize();
   const mobile = isMobile();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +62,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
             <StyledLeftArrowIcon color={theme.primary.text.normal} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
-            <img src={asset.logoURI} width={20} height={20} />
+            <GroupedAssetImage groupedAsset={groupedAsset} width={20} height={20} />
             <Text>{asset?.recommendedSymbol}</Text>
           </StyledSelectedAsset>
         </>
