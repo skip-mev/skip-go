@@ -18,7 +18,7 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
   }
 
   const allLogoURIs = [
-    groupedAsset.assets.find((asset) => asset.logoURI?.includes("raw.githubusercontent"))?.logoURI,
+    groupedAsset.assets.find((asset) => asset.logoURI?.includes("chain-registry"))?.logoURI,
     ...groupedAsset.assets.map((asset) => asset.logoURI),
   ].filter((uri): uri is string => !!uri);
 
