@@ -2,7 +2,7 @@ import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useContext, useEffect, useState } from "react";
+import { ComponentType, useCallback, useContext, useEffect, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,6 +19,12 @@ export type ModalProps = {
 };
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
+  const [savedScrollPosition, setSavedScrollPosition] = useState(0);
+
+  const unlockScroll = useCallback(() => {
+    window.scrollTo(0, savedScrollPosition);
+  }, [savedScrollPosition]);
+
   const modal = useModal();
   const modalContext = useContext(NiceModal.NiceModalContext);
   const ModalsOpen = Object.entries(modalContext)
@@ -31,11 +37,14 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
 
   useEffect(() => {
+    const scrollPos = window.scrollY;
+    setSavedScrollPosition(scrollPos);
     onOpenChange?.(true);
+
     return () => {
       onOpenChange?.(false);
     };
-  }, [onOpenChange]);
+  }, [onOpenChange, savedScrollPosition, unlockScroll]);
 
   const delay = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -47,7 +56,10 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       open={modal.visible}
       onOpenChange={() => {
         setOpen(false);
-        delay(75).then(() => modal.remove());
+        delay(75).then(() => {
+          modal.remove();
+          unlockScroll();
+        });
       }}
     >
       <Dialog.Portal container={container}>
