@@ -79,7 +79,7 @@ export type TransferInfo = {
 export type TransferAssetReleaseJSON = {
   chain_id: string;
   denom: string;
-  amount: string | undefined;
+  amount?: string;
   released: boolean;
 };
 
