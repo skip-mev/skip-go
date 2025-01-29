@@ -1477,6 +1477,7 @@ export function transferAssetReleaseFromJSON(
   return {
     chainID: transferAssetReleaseJSON.chain_id,
     denom: transferAssetReleaseJSON.denom,
+    amount: transferAssetReleaseJSON.amount,
     released: transferAssetReleaseJSON.released,
   };
 }
@@ -1487,6 +1488,7 @@ export function transferAssetReleaseToJSON(
   return {
     chain_id: transferAssetRelease.chainID,
     denom: transferAssetRelease.denom,
+    amount: transferAssetRelease.amount,
     released: transferAssetRelease.released,
   };
 }
