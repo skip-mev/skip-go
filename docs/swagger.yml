@@ -3590,7 +3590,7 @@ components:
         state:
           $ref: '#/components/schemas/TransactionState'
         transfer_asset_release:
-          description: Indicates location and denom of transfer asset release.
+          description: Indicates location, denom, and amount of asset release.
           nullable: true
           properties:
             chain_id:
@@ -3601,6 +3601,10 @@ components:
             denom:
               description: The denom of the asset that is released.
               type: string
+            amount:
+              type: string
+              nullable: true
+              description: Amount out of the route received by the user (optional)
             released:
               description: Indicates whether assets have been released and are accessible. The assets may still be in transit.
           type: object
