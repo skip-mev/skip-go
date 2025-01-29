@@ -206,7 +206,7 @@ export const SwapPageAssetChainInput = ({
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
             <SmallTextButton
-              color={badPriceWarning ? theme.error.text : undefined}
+              color={priceChangeColor}
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >

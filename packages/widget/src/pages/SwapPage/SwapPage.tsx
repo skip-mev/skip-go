@@ -170,6 +170,14 @@ export const SwapPage = () => {
     });
   }, [destinationAsset?.chainID, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
 
+  const priceChangePercentage = useMemo(() => {
+    if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
+      return;
+    }
+
+    return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
+  }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
+
   const swapButton = useMemo(() => {
     if (!sourceAccount?.address) {
       return (
@@ -235,7 +243,10 @@ export const SwapPage = () => {
             });
             return;
           }
-          if (route?.warning?.type === "BAD_PRICE_WARNING") {
+          if (
+            route?.warning?.type === "BAD_PRICE_WARNING" &&
+            Number(priceChangePercentage ?? 0) < 0
+          ) {
             setError({
               errorType: ErrorType.TradeWarning,
               onClickContinue: () => {
@@ -259,32 +270,25 @@ export const SwapPage = () => {
       />
     );
   }, [
+    sourceAccount?.address,
     sourceAsset?.chainID,
-    isSwapOperation,
     sourceAsset?.amount,
     destinationAsset?.chainID,
     destinationAsset?.amount,
     isWaitingForNewRoute,
-    sourceAccount?.address,
     isRouteError,
     isLoadingBalances,
     insufficientBalance,
+    isSwapOperation,
     route,
     routeError?.message,
     showCosmosLedgerWarning,
+    priceChangePercentage,
     setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     setError,
   ]);
-
-  const priceChangePercentage = useMemo(() => {
-    if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
-      return;
-    }
-
-    return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
-  }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   return (
     <>
