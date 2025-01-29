@@ -30,7 +30,7 @@ import { accountParser } from "./registry";
 import {
   ChainRestAuthApi,
   ChainRestTendermintApi,
-} from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
+} from "@injectivelabs/sdk-ts/dist/esm/client/chain/rest";
 import {
   BigNumberInBase,
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
