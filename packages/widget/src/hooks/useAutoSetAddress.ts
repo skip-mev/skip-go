@@ -80,6 +80,13 @@ export const useAutoSetAddress = () => {
           }));
           return;
         }
+        const showSetAddressModal = () => {
+          NiceModal.show(Modals.SetAddressModal, {
+            signRequired: isSignRequired,
+            chainId: chainID,
+            chainAddressIndex: index,
+          });
+        };
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
@@ -90,11 +97,7 @@ export const useAutoSetAddress = () => {
               const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
               if (!wallet) {
                 if (!openModal) return;
-                NiceModal.show(Modals.SetAddressModal, {
-                  signRequired: isSignRequired,
-                  chainId: chainID,
-                  chainAddressIndex: index,
-                });
+                showSetAddressModal();
                 return;
               }
               const address = await wallet?.getAddress?.({
@@ -120,11 +123,7 @@ export const useAutoSetAddress = () => {
               }));
             } catch (_) {
               if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-                chainAddressIndex: index,
-              });
+              showSetAddressModal();
             }
             break;
           }
@@ -134,10 +133,7 @@ export const useAutoSetAddress = () => {
               const wallet = wallets.find((w) => w.walletName === sourceWallet.svm?.walletName);
               if (!wallet) {
                 if (!openModal) return;
-                NiceModal.show(Modals.SetAddressModal, {
-                  signRequired: isSignRequired,
-                  chainId: chainID,
-                });
+                showSetAddressModal();
                 return;
               }
               const address = await wallet?.getAddress?.({
@@ -163,11 +159,7 @@ export const useAutoSetAddress = () => {
               }));
             } catch (_) {
               if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-                chainAddressIndex: index,
-              });
+              showSetAddressModal();
             }
 
             break;
@@ -181,10 +173,7 @@ export const useAutoSetAddress = () => {
               }
               if (!wallet) {
                 if (!openModal) return;
-                NiceModal.show(Modals.SetAddressModal, {
-                  signRequired: isSignRequired,
-                  chainId: chainID,
-                });
+                showSetAddressModal();
                 return;
               }
               const address = await wallet?.getAddress?.({
@@ -210,11 +199,7 @@ export const useAutoSetAddress = () => {
               }));
             } catch (_) {
               if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-                chainAddressIndex: index,
-              });
+              showSetAddressModal();
             }
             break;
           }
