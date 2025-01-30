@@ -137,6 +137,7 @@ export const useCreateCosmosWallets = () => {
         const isWC = isWalletConnect(wallet);
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
+        console.log(wallet, isWC);
         const initialChainIds = (() => {
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
