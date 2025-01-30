@@ -9,6 +9,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { themeAtom } from "@/state/skipClient";
+import { createPortal } from "react-dom";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -35,11 +36,16 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     .map((entries) => entries[0]);
 
   const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
+  console.log(ModalsOpen);
 
   useEffect(() => {
     const scrollPos = window.scrollY;
     setSavedScrollPosition(scrollPos);
+    console.log(scrollPos);
     onOpenChange?.(true);
+    setTimeout(() => {
+      window.scrollTo(0, scrollPos);
+    }, 10);
 
     return () => {
       onOpenChange?.(false);
@@ -51,27 +57,28 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   };
   const [open, setOpen] = useState(true);
 
-  return (
-    <Dialog.Root
-      open={modal.visible}
-      onOpenChange={() => {
-        setOpen(false);
-        delay(75).then(() => {
-          modal.remove();
-          unlockScroll();
-        });
-      }}
-    >
-      <Dialog.Portal container={container}>
-        <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay drawer={drawer} open={open} invisible={isNotFirstModalVisible}>
-            <StyledContent drawer={drawer} open={open}>
-              {children}
-            </StyledContent>
-          </StyledOverlay>
-        </ShadowDomAndProviders>
-      </Dialog.Portal>
-    </Dialog.Root>
+  console.log(container);
+
+  return createPortal(
+    <ShadowDomAndProviders theme={theme}>
+      <StyledOverlay
+        onClick={() => {
+          setOpen(false);
+          delay(75).then(() => {
+            modal.remove();
+            unlockScroll();
+          });
+        }}
+        drawer={drawer}
+        open={open}
+        invisible={isNotFirstModalVisible}
+      >
+        <StyledContent drawer={drawer} open={open} onClick={(e) => e.stopPropagation()}>
+          {children}
+        </StyledContent>
+      </StyledOverlay>
+    </ShadowDomAndProviders>,
+    container ?? document.body,
   );
 };
 
@@ -159,7 +166,7 @@ const fadeOutAndZoomIn = keyframes`
   }
 `;
 
-const StyledOverlay = styled(Dialog.Overlay)<{
+const StyledOverlay = styled.div<{
   drawer?: boolean;
   invisible?: boolean;
   open?: boolean;
@@ -202,7 +209,7 @@ const StyledOverlay = styled(Dialog.Overlay)<{
     `};
 `;
 
-const StyledContent = styled(Dialog.Content)<{
+const StyledContent = styled.div<{
   drawer?: boolean;
   open?: boolean;
 }>`
