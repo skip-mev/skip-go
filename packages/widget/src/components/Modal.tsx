@@ -1,8 +1,7 @@
 import { css, keyframes, styled } from "styled-components";
-import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -21,12 +20,12 @@ export type ModalProps = {
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
-  const modalRef = useRef<HTMLDivElement>(null);
   const [savedScrollPosition, setSavedScrollPosition] = useState(0);
+  const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
 
   const closeModal = useCallback(() => {
-    onOpenChange?.(false); // Close modal if clicked outside
+    onOpenChange?.(false);
     modal.remove();
     window.scrollTo(0, savedScrollPosition);
   }, [modal, onOpenChange, savedScrollPosition]);
@@ -39,7 +38,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (!modalRef.current?.contains(event.target as Node)) {
         closeModal();
       }
     };
@@ -55,11 +54,11 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     }, 10);
 
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("click", handleClickOutside); // Add click event listener
+    window.addEventListener("click", handleClickOutside);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("click", handleClickOutside); // Cleanup on unmount
+      window.removeEventListener("click", handleClickOutside);
       onOpenChange?.(false);
       document.body.style.overflow = prevOverflowStyle;
     };
