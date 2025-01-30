@@ -7653,6 +7653,7 @@ __metadata:
     "@walletconnect/solana-adapter": ^0.0.6
     buffer: ^6.0.3
     chain-registry: ^1.69.106
+    eruda: ^3.4.1
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.2.1
@@ -15235,6 +15236,13 @@ __metadata:
   version: 0.1.0
   resolution: "errx@npm:0.1.0"
   checksum: 96dc94ff92e6f665b7c1ec49bfe38dcee69e9234b2dfb2c51d994fa26089a8690bcee44fc46ca27b8c3314e102db3b743fbaf07575e1d44c2b16ab898ac67889
+  languageName: node
+  linkType: hard
+
+"eruda@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "eruda@npm:3.4.1"
+  checksum: ff6762d839877d5dcd77830718a23b3bf21e9aaa4a8f029fdb9ba9e422d6439ab1b15eaee84552c6544cfdae3a9c97b75038504f9279c1789cb1d9ba16384fe4
   languageName: node
   linkType: hard
 

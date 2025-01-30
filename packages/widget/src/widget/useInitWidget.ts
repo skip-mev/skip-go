@@ -24,8 +24,10 @@ import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
+import eruda from "eruda";
 
 export const useInitWidget = (props: WidgetProps) => {
+  eruda.init();
   if (props.enableSentrySessionReplays) {
     initSentry();
   }
