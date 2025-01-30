@@ -1,14 +1,14 @@
 import { css, keyframes, styled } from "styled-components";
-import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useCallback, useContext, useEffect, useState } from "react";
+import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { themeAtom } from "@/state/skipClient";
+import { createPortal } from "react-dom";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -19,59 +19,67 @@ export type ModalProps = {
 };
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
-  const [savedScrollPosition, setSavedScrollPosition] = useState(0);
-
-  const unlockScroll = useCallback(() => {
-    window.scrollTo(0, savedScrollPosition);
-  }, [savedScrollPosition]);
-
+  const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
+  const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
-  const modalContext = useContext(NiceModal.NiceModalContext);
-  const ModalsOpen = Object.entries(modalContext)
-    .filter((entries) => {
-      const [_modalId, modalState] = entries;
-      return modalState.visible;
-    })
-    .map((entries) => entries[0]);
-
-  const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
-
-  useEffect(() => {
-    const scrollPos = window.scrollY;
-    setSavedScrollPosition(scrollPos);
-    onOpenChange?.(true);
-
-    return () => {
-      onOpenChange?.(false);
-    };
-  }, [onOpenChange, savedScrollPosition, unlockScroll]);
+  const [wasVisible, setWasVisible] = useState(modal.visible);
 
   const delay = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
-  const [open, setOpen] = useState(true);
 
-  return (
-    <Dialog.Root
-      open={modal.visible}
-      onOpenChange={() => {
-        setOpen(false);
-        delay(75).then(() => {
-          modal.remove();
-          unlockScroll();
-        });
-      }}
-    >
-      <Dialog.Portal container={container}>
-        <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay drawer={drawer} open={open} invisible={isNotFirstModalVisible}>
-            <StyledContent drawer={drawer} open={open}>
-              {children}
-            </StyledContent>
-          </StyledOverlay>
-        </ShadowDomAndProviders>
-      </Dialog.Portal>
-    </Dialog.Root>
+  const closeModal = useCallback(() => {
+    onOpenChange?.(false);
+    delay(140).then(() => {
+      modal.remove();
+    });
+  }, [modal, onOpenChange]);
+
+  useEffect(() => {
+    if (wasVisible && !modal.visible) {
+      closeModal();
+    }
+    setWasVisible(modal.visible);
+  }, [closeModal, modal.visible, wasVisible]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        modal.hide();
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        modal.hide();
+      }
+    };
+
+    onOpenChange?.(true);
+    const prevOverflowStyle = window.getComputedStyle(document.body).overflow;
+    setPrevOverflowStyle(prevOverflowStyle);
+    document.body.style.overflow = "hidden";
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleClickOutside);
+      onOpenChange?.(false);
+      document.body.style.overflow = prevOverflowStyle;
+    };
+  }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
+
+  return createPortal(
+    <ShadowDomAndProviders theme={theme}>
+      <StyledOverlay ref={modalRef} drawer={drawer} open={modal.visible}>
+        <StyledContent drawer={drawer} open={modal.visible} onClick={(e) => e.stopPropagation()}>
+          {children}
+        </StyledContent>
+      </StyledOverlay>
+    </ShadowDomAndProviders>,
+    container ?? document.body,
   );
 };
 
@@ -159,12 +167,11 @@ const fadeOutAndZoomIn = keyframes`
   }
 `;
 
-const StyledOverlay = styled(Dialog.Overlay)<{
+const StyledOverlay = styled.div<{
   drawer?: boolean;
-  invisible?: boolean;
   open?: boolean;
 }>`
-  ${({ invisible }) => (invisible ? "" : "background: rgba(0 0 0 / 0.5);")}
+  background: rgba(0 0 0 / 0.5);
   position: fixed;
   top: 0;
   left: 0;
@@ -202,7 +209,7 @@ const StyledOverlay = styled(Dialog.Overlay)<{
     `};
 `;
 
-const StyledContent = styled(Dialog.Content)<{
+const StyledContent = styled.div<{
   drawer?: boolean;
   open?: boolean;
 }>`
@@ -221,5 +228,5 @@ const StyledContent = styled(Dialog.Content)<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    180ms cubic-bezier(0.5, 1, 0.89, 1);
+    150ms cubic-bezier(0.5, 1, 0.89, 1);
 `;

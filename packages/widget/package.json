@@ -103,7 +103,6 @@
     "@penumbra-zone/protobuf": "^6.0.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@r2wc/react-to-web-component": "^2.0.3",
-    "@radix-ui/react-dialog": "^1.1.1",
     "@sentry/react": "^8.46.0",
     "@skip-go/client": "workspace:^",
     "@solana/spl-token": "^0.4.8",
