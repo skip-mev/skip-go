@@ -149,6 +149,7 @@ export const useCreateCosmosWallets = () => {
               .map((y) => y.chainID)
               .includes(x) && mainnetChains.map((c) => c.chainId).includes(x),
         );
+        console.log(chainID, initialChainIds);
         const connectEco = async () => {
           try {
             await connect({
