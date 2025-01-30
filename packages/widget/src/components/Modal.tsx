@@ -38,7 +38,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (!modalRef.current?.contains(event.target as Node)) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         closeModal();
       }
     };
