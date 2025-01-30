@@ -2,7 +2,7 @@ import { css, keyframes, styled } from "styled-components";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useCallback, useContext, useEffect, useState } from "react";
+import { ComponentType, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -20,6 +20,11 @@ export type ModalProps = {
 };
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
+  const [open, setOpen] = useState(true);
+  const delay = async (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+  const modalRef = useRef<HTMLDivElement>(null);
   const [savedScrollPosition, setSavedScrollPosition] = useState(0);
 
   const unlockScroll = useCallback(() => {
@@ -36,43 +41,47 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     .map((entries) => entries[0]);
 
   const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
-  console.log(ModalsOpen);
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onOpenChange?.(false); // Close modal on Escape key
+        modal.remove();
+        unlockScroll();
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if the click is outside the modal
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onOpenChange?.(false); // Close modal if clicked outside
+        modal.remove();
+        unlockScroll();
+      }
+    };
+
     const scrollPos = window.scrollY;
     setSavedScrollPosition(scrollPos);
-    console.log(scrollPos);
     onOpenChange?.(true);
+    document.body.style.overflow = "hidden";
     setTimeout(() => {
       window.scrollTo(0, scrollPos);
     }, 10);
 
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("click", handleClickOutside); // Add click event listener
+
     return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleClickOutside); // Cleanup on unmount
       onOpenChange?.(false);
+      document.body.style.overflow = "unset";
     };
-  }, [onOpenChange, savedScrollPosition, unlockScroll]);
-
-  const delay = async (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-  const [open, setOpen] = useState(true);
-
-  console.log(container);
+  }, [modal, onOpenChange, savedScrollPosition, unlockScroll]);
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay
-        onClick={() => {
-          setOpen(false);
-          delay(75).then(() => {
-            modal.remove();
-            unlockScroll();
-          });
-        }}
-        drawer={drawer}
-        open={open}
-        invisible={isNotFirstModalVisible}
-      >
+      <StyledOverlay ref={modalRef} drawer={drawer} open={open} invisible={isNotFirstModalVisible}>
         <StyledContent drawer={drawer} open={open} onClick={(e) => e.stopPropagation()}>
           {children}
         </StyledContent>
