@@ -23,7 +23,7 @@ export default function Home() {
         display: 'flex',
         flexDirection: 'row',
         width: '100vw',
-        height: '100vh',
+        height: '150vh',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundImage: `url('${theme === 'dark' ? '/gobg-dark.svg' : '/gobg-light.svg'

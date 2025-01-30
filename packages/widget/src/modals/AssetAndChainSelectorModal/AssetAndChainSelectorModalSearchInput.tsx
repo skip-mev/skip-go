@@ -72,7 +72,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
 
       <StyledSearchInput
         ref={inputRef}
-        autoFocus={mobile ? true : false}
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
         placeholder={asset ? "Search networks" : "Search for an asset"}
