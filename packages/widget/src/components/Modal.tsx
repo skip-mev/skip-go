@@ -20,49 +20,35 @@ export type ModalProps = {
 };
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
-  const [open, setOpen] = useState(true);
-  const delay = async (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
+  const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const [savedScrollPosition, setSavedScrollPosition] = useState(0);
-
-  const unlockScroll = useCallback(() => {
-    window.scrollTo(0, savedScrollPosition);
-  }, [savedScrollPosition]);
-
   const modal = useModal();
-  const modalContext = useContext(NiceModal.NiceModalContext);
-  const ModalsOpen = Object.entries(modalContext)
-    .filter((entries) => {
-      const [_modalId, modalState] = entries;
-      return modalState.visible;
-    })
-    .map((entries) => entries[0]);
 
-  const isNotFirstModalVisible = ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
+  const closeModal = useCallback(() => {
+    onOpenChange?.(false); // Close modal if clicked outside
+    modal.remove();
+    window.scrollTo(0, savedScrollPosition);
+  }, [modal, onOpenChange, savedScrollPosition]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onOpenChange?.(false); // Close modal on Escape key
-        modal.remove();
-        unlockScroll();
+        closeModal();
       }
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click is outside the modal
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onOpenChange?.(false); // Close modal if clicked outside
-        modal.remove();
-        unlockScroll();
+        closeModal();
       }
     };
 
     const scrollPos = window.scrollY;
     setSavedScrollPosition(scrollPos);
     onOpenChange?.(true);
+    const prevOverflowStyle = getComputedStyle(document.body).overflow;
+    setPrevOverflowStyle(prevOverflowStyle);
     document.body.style.overflow = "hidden";
     setTimeout(() => {
       window.scrollTo(0, scrollPos);
@@ -75,14 +61,14 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("click", handleClickOutside); // Cleanup on unmount
       onOpenChange?.(false);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = prevOverflowStyle;
     };
-  }, [modal, onOpenChange, savedScrollPosition, unlockScroll]);
+  }, [closeModal, modal, onOpenChange, prevOverflowStyle, savedScrollPosition]);
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay ref={modalRef} drawer={drawer} open={open} invisible={isNotFirstModalVisible}>
-        <StyledContent drawer={drawer} open={open} onClick={(e) => e.stopPropagation()}>
+      <StyledOverlay ref={modalRef} drawer={drawer} open={modal.visible}>
+        <StyledContent drawer={drawer} open={modal.visible} onClick={(e) => e.stopPropagation()}>
           {children}
         </StyledContent>
       </StyledOverlay>
@@ -177,10 +163,9 @@ const fadeOutAndZoomIn = keyframes`
 
 const StyledOverlay = styled.div<{
   drawer?: boolean;
-  invisible?: boolean;
   open?: boolean;
 }>`
-  ${({ invisible }) => (invisible ? "" : "background: rgba(0 0 0 / 0.5);")}
+  background: rgba(0 0 0 / 0.5);
   position: fixed;
   top: 0;
   left: 0;

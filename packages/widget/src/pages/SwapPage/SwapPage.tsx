@@ -98,7 +98,7 @@ export const SwapPage = () => {
         }));
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [
@@ -126,7 +126,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
@@ -150,7 +150,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAsset]);
@@ -163,7 +163,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainID),
       selectChain: true,
