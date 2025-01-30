@@ -153,13 +153,15 @@ export const useCreateCosmosWallets = () => {
         console.log(chainID, initialChainIds);
         const connectEco = async () => {
           try {
-            await connect({
+            const response = await connect({
               chainId: initialChainIds,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
+            console.log(error);
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add the ${chainID} chain to your wallet`,
@@ -180,13 +182,15 @@ export const useCreateCosmosWallets = () => {
         const connectSingleChainId = async () => {
           try {
             if (!chainID) throw new Error("Chain ID is required");
-            await connect({
+            const response = await connect({
               chainId: chainID,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
+            console.log(error);
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add ${chainID} chain in your wallet`,
