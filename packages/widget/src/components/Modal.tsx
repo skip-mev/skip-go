@@ -20,31 +20,41 @@ export type ModalProps = {
 
 export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
-  const [savedScrollPosition, setSavedScrollPosition] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
+  const [wasVisible, setWasVisible] = useState(modal.visible);
+
+  const delay = async (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
   const closeModal = useCallback(() => {
     onOpenChange?.(false);
-    modal.remove();
-    window.scrollTo(0, savedScrollPosition);
-  }, [modal, onOpenChange, savedScrollPosition]);
+    delay(140).then(() => {
+      modal.remove();
+    });
+  }, [modal, onOpenChange]);
+
+  useEffect(() => {
+    if (wasVisible && !modal.visible) {
+      closeModal();
+    }
+    setWasVisible(modal.visible);
+  }, [closeModal, modal.visible, wasVisible]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        closeModal();
+        modal.hide();
       }
     };
 
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        closeModal();
+        modal.hide();
       }
     };
 
-    const scrollPos = window.scrollY;
-    setSavedScrollPosition(scrollPos);
     onOpenChange?.(true);
     const prevOverflowStyle = getComputedStyle(document.body).overflow;
     setPrevOverflowStyle(prevOverflowStyle);
@@ -59,7 +69,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       onOpenChange?.(false);
       document.body.style.overflow = prevOverflowStyle;
     };
-  }, [closeModal, modal, onOpenChange, prevOverflowStyle, savedScrollPosition]);
+  }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
@@ -218,5 +228,5 @@ const StyledContent = styled.div<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    180ms cubic-bezier(0.5, 1, 0.89, 1);
+    150ms cubic-bezier(0.5, 1, 0.89, 1);
 `;
