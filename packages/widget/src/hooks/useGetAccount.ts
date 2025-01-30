@@ -130,11 +130,22 @@ export const useGetAccount = () => {
             },
           };
         }
-        case ChainType.EVM:
+        case ChainType.EVM: {
           if (!wallet.evm) return;
           if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
           if (!evmAccount.connector) return;
+
+          const getLogo = () => {
+            if (evmAccount?.connector?.id === "walletConnect") {
+              return walletConnectLogo;
+            }
+
+            if (evmAccount?.connector?.id.includes("keplr")) {
+              return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
+            }
+            return connectors.find((item) => item.id === evmAccount.connector?.id)?.icon;
+          };
           return {
             address: evmAccount.address as string,
             currentConnectedEVMChainId: String(evmAccount.chainId),
@@ -142,12 +153,10 @@ export const useGetAccount = () => {
             wallet: {
               name: evmAccount.connector.id,
               prettyName: evmAccount.connector.name,
-              logo:
-                evmAccount.connector.id === "walletConnect"
-                  ? walletConnectLogo
-                  : connectors.find((item) => item.id === evmAccount.connector?.id)?.icon,
+              logo: getLogo(),
             },
           };
+        }
         case ChainType.SVM: {
           if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
