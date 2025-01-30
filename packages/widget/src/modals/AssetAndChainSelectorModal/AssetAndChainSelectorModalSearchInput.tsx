@@ -47,8 +47,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
   );
 
   useEffect(() => {
-    if (mobile) return;
-    if (isMobileScreenSize) return;
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
