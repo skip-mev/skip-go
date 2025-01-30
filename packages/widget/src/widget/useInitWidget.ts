@@ -27,7 +27,10 @@ import { simulateTxAtom } from "@/state/swapExecutionPage";
 import eruda from "eruda";
 
 export const useInitWidget = (props: WidgetProps) => {
-  eruda.init();
+  useEffect(() => {
+    if (window === undefined) return;
+    eruda.init();
+  }, []);
   if (props.enableSentrySessionReplays) {
     initSentry();
   }
