@@ -46,7 +46,7 @@ export const GhostButton = styled(SmallText).attrs({
 
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
-  line - height: initial;
+  line-height: initial;
   ${({ disabled }) =>
     disabled
       ? css`

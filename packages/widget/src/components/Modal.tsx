@@ -49,9 +49,6 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     const prevOverflowStyle = getComputedStyle(document.body).overflow;
     setPrevOverflowStyle(prevOverflowStyle);
     document.body.style.overflow = "hidden";
-    setTimeout(() => {
-      window.scrollTo(0, scrollPos);
-    }, 10);
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("click", handleClickOutside);
