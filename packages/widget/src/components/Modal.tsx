@@ -56,7 +56,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     onOpenChange?.(true);
-    const prevOverflowStyle = getComputedStyle(document.body).overflow;
+    const prevOverflowStyle = window.getComputedStyle(document.body).overflow;
     setPrevOverflowStyle(prevOverflowStyle);
     document.body.style.overflow = "hidden";
 
