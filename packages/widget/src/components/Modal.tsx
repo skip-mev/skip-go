@@ -172,7 +172,6 @@ const StyledOverlay = styled(Dialog.Overlay)<{
   bottom: 0;
   display: grid;
   place-items: center;
-  overflow-y: auto;
   z-index: 10;
   animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
   /* For Chrome */
