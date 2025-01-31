@@ -1692,6 +1692,10 @@ export class SkipClient {
     const estimatedGasAmount = await (async () => {
       try {
         if (!simulate) throw new Error("simulate");
+        // Skip gas estimation for noble-1 in multi tx route
+        if (txIndex !== 0 && chainID === "noble-1") {
+          return "0";
+        }
         const estimatedGas = await getCosmosGasAmountForMessage(
           client,
           signerAddress,
