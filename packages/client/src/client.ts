@@ -1776,6 +1776,8 @@ export class SkipClient {
         };
       }
 
+      console.log(txIndex, chainID);
+
       // Skip fee validation for noble-1 in multi tx route
       if (txIndex !== 0 && chainID === "noble-1") {
         return {
@@ -1784,6 +1786,9 @@ export class SkipClient {
           fee,
         };
       }
+
+      console.log("not skipping validation hmmm thinking");
+      console.log(feeBalance);
 
       const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
 
@@ -1807,6 +1812,7 @@ export class SkipClient {
         const feeAmount = new BigNumber(parseFloat(fee.amount[0]?.amount))
           .shiftedBy(-decimal)
           .toFixed(decimal);
+        console.log(userAmount, feeAmount);
         return {
           error: `Insufficient balance for gas on ${chain?.prettyName}. Need ${feeAmount} ${symbol} but only have ${userAmount} ${symbol}.`,
           asset,
