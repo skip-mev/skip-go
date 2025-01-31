@@ -171,10 +171,10 @@ export const useAutoSetAddress = () => {
               const wallets = createEvmWallets(chainID);
               const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
               console.log(wallets, wallet);
-              if (wallet?.walletName === "walletConnect" && mobile) {
-                console.log("return if wallet connect and mobile");
-                return;
-              }
+              // if (wallet?.walletName === "walletConnect" && mobile) {
+              //   console.log("return if wallet connect and mobile");
+              //   return;
+              // }
               if (!wallet) {
                 if (!openModal) return;
                 showSetAddressModal();
