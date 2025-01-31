@@ -58,10 +58,12 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            await disconnectAsync();
-            setEvmWallet(undefined);
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+            // await disconnectAsync();
+            // setEvmWallet(undefined);
+            const deeplink = window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+            const recentWalletData = window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+            console.log(deeplink);
+            console.log(recentWalletData);
             return res.accounts[0];
           }
           if (
