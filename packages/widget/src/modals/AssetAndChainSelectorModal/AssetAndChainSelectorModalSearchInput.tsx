@@ -77,7 +77,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
-
       <Row align="center" gap={5}>
         {!isMobileScreenSize && (
           <>
