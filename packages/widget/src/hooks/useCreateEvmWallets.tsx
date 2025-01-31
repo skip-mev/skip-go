@@ -58,7 +58,7 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            await disconnectAsync();
+            // await disconnectAsync();
             // setEvmWallet(undefined);
             const deeplink = window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             const recentWalletData = window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");

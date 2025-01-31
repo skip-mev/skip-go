@@ -80,10 +80,11 @@ export const useCreateSolanaWallets = () => {
                 await wallet.connect();
                 const address = wallet.publicKey;
                 if (!address) throw new Error("No address found");
-                await wallet.disconnect();
-                setSvmWallet(undefined);
-                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-                window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+                // await wallet.disconnect();
+                const deeplink = window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+                const recentWalletData = window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
+                console.log(deeplink);
+                console.log(recentWalletData);
                 return address.toBase58();
               }
 
