@@ -561,7 +561,7 @@ export class SkipClient {
         abi: erc20ABI,
         functionName: "approve",
         args: [requiredApproval.spender as `0x${string}`, maxUint256],
-        chain: signer.chain,
+        chain: message.chainID,
       });
       const receipt = await extendedSigner.waitForTransactionReceipt({
         hash: txHash,
