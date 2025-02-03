@@ -42,7 +42,13 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import { isAddress, maxUint256, publicActions, WalletClient } from "viem";
+import {
+  Chain,
+  isAddress,
+  maxUint256,
+  publicActions,
+  WalletClient,
+} from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
 import {
@@ -561,7 +567,7 @@ export class SkipClient {
         abi: erc20ABI,
         functionName: "approve",
         args: [requiredApproval.spender as `0x${string}`, maxUint256],
-        chain: signer.chain,
+        chain: { ...signer.chain, id: Number(message.chainID) } as Chain,
       });
       const receipt = await extendedSigner.waitForTransactionReceipt({
         hash: txHash,
