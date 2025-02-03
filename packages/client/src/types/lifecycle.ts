@@ -470,6 +470,38 @@ export type StargateTransferInfo = {
   txs: StargateTransferTransactions;
 };
 
+export type LayerZeroTransferState =
+  | 'LAYER_ZERO_TRANSFER_UNKNOWN'
+  | 'LAYER_ZERO_TRANSFER_SENT'
+  | 'LAYER_ZERO_TRANSFER_RECEIVED'
+  | 'LAYER_ZERO_TRANSFER_FAILED';
+
+export type LayerZeroTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+  error_tx: ChainTransactionJSON | null;
+};
+
+export type LayerZeroTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+  errorTx: ChainTransaction | null;
+};
+
+export type LayerZeroTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: LayerZeroTransferState;
+  txs: LayerZeroTransferTransactionsJSON;
+};
+
+export type LayerZeroTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: LayerZeroTransferState;
+  txs: LayerZeroTransferTransactions;
+};
+
 export type OPInitTransferState =
   | 'OPINIT_TRANSFER_UNKNOWN'
   | 'OPINIT_TRANSFER_SENT'
@@ -511,7 +543,8 @@ export type TransferEventJSON =
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
   | { op_init_transfer: OPInitTransferInfoJSON }
   | { go_fast_transfer: GoFastTransferInfoJSON }
-  | { stargate_transfer: StargateTransferInfoJSON };
+  | { stargate_transfer: StargateTransferInfoJSON }
+  | { layer_zero_transfer: LayerZeroTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -522,7 +555,8 @@ export type TransferEvent =
   | { hyperlaneTransfer: HyperlaneTransferInfo }
   | { opInitTransfer: OPInitTransferInfo }
   | { goFastTransfer: GoFastTransferInfo }
-  | { stargateTransfer: StargateTransferInfo };
+  | { stargateTransfer: StargateTransferInfo }
+  | { layerZeroTransfer: LayerZeroTransferInfo };
 
 type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {

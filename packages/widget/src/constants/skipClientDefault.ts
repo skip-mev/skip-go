@@ -9,4 +9,4 @@ export const endpointOptions = {
   },
 };
 
-export const prodApiUrl = `${appUrl}/api/skip`;
+export const prodApiUrl = "http://localhost:8080";

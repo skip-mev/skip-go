@@ -43,6 +43,8 @@ import {
   ChainAffiliates,
   StargateTransferJSON,
   StargateTransfer,
+  LayerZeroTransferJSON,
+  LayerZeroTransfer,
 } from './shared';
 
 export type AssetsRequestJSON = {
@@ -293,7 +295,8 @@ export type OperationJSON =
   | (BaseOperationJSON & { evm_swap: EvmSwapJSON })
   | (BaseOperationJSON & { op_init_transfer: OPInitTransferJSON })
   | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON })
-  | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON });
+  | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON })
+  | (BaseOperationJSON & { layer_zero_transfer: LayerZeroTransferJSON });
 
 interface BaseOperation {
   txIndex: number;
@@ -311,7 +314,8 @@ export type Operation =
   | (BaseOperation & { evmSwap: EvmSwap })
   | (BaseOperation & { opInitTransfer: OPInitTransfer })
   | (BaseOperation & { goFastTransfer: GoFastTransfer })
-  | (BaseOperation & { stargateTransfer: StargateTransfer });
+  | (BaseOperation & { stargateTransfer: StargateTransfer })
+  | (BaseOperation & { layerZeroTransfer: LayerZeroTransfer });
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
