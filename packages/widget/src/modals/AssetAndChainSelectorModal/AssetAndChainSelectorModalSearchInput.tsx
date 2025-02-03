@@ -11,18 +11,20 @@ import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { isMobile } from "@/utils/os";
+import { GroupedAsset } from "./AssetAndChainSelectorModal";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;
   onClickBack: () => void;
-  asset?: Asset;
+  groupedAsset?: GroupedAsset;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const AssetAndChainSelectorModalSearchInput = ({
-  asset,
+  groupedAsset,
   onSearch,
   onClickBack,
   searchTerm,
@@ -30,6 +32,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
   onKeyDown,
 }: AssetAndChainSelectorModalSearchInputProps) => {
   const theme = useTheme();
+  const asset = groupedAsset?.assets[0] as Asset;
   const isMobileScreenSize = useIsMobileScreenSize();
   const mobile = isMobile();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,12 +43,10 @@ export const AssetAndChainSelectorModalSearchInput = ({
       setSearchTerm(term);
       onSearch(term);
     },
-    [onSearch, setSearchTerm]
+    [onSearch, setSearchTerm],
   );
 
   useEffect(() => {
-    if (mobile) return;
-    if (isMobileScreenSize) return;
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -59,7 +60,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
             <StyledLeftArrowIcon color={theme.primary.text.normal} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
-            <img src={asset.logoURI} width={20} height={20} />
+            <GroupedAssetImage groupedAsset={groupedAsset} width={20} height={20} />
             <Text>{asset?.recommendedSymbol}</Text>
           </StyledSelectedAsset>
         </>
@@ -69,7 +70,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
 
       <StyledSearchInput
         ref={inputRef}
-        autoFocus
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
         placeholder={asset ? "Search networks" : "Search for an asset"}
@@ -77,7 +77,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
-
       <Row align="center" gap={5}>
         {!isMobileScreenSize && (
           <>
@@ -113,7 +112,7 @@ const StyledSearchInputContainer = styled(Row)`
 `;
 
 const StyledSearchInput = styled(Text).attrs({
-  as: "input"
+  as: "input",
 })`
   height: 40px;
   box-sizing: border-box;
@@ -122,5 +121,5 @@ const StyledSearchInput = styled(Text).attrs({
   border: none;
   outline: none;
   color: ${({ theme }) => theme.primary.text.normal};
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 `;

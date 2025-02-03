@@ -66,10 +66,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
           address: selected?.address,
-          image:
-            (selected?.source === "wallet" &&
-              selected.wallet.walletInfo.logo) ||
-            undefined,
+          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
         };
       }
     }
@@ -121,16 +118,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
         </StyledSymbolAndAmount>
         {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 
-        <Row align="center" gap={5}>
+        <Row align="center" height={18} gap={5}>
           <StyledChainName normalTextColor textWrap="nowrap">
             on {assetDetails.chainName}
           </StyledChainName>
 
-          <Button
-            align="center"
-            gap={3}
-            onClick={() => copyToClipboard(source.address)}
-          >
+          <Button align="center" gap={3} onClick={() => copyToClipboard(source.address)}>
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
@@ -161,19 +154,22 @@ const StyledSymbolAndAmount = styled(Text)`
   max-width: 325px;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 767px) {
+    font-size: 22px;
+  }
 `;
 
 const PlaceholderIcon = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: ${props => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: ${props => props.theme.primary.text.normal};
-  border: 1px solid ${props => props.theme.primary.text.normal};
+  color: ${(props) => props.theme.primary.text.normal};
+  border: 1px solid ${(props) => props.theme.primary.text.normal};
 `;
 
 const StyledChainName = styled(SmallText)`

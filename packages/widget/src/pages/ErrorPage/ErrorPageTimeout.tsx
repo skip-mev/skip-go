@@ -15,23 +15,16 @@ import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 export type ErrorPageTimeoutProps = {
-  txHash: string
+  txHash: string;
   explorerLink?: string;
   onClickBack: () => void;
 };
 
-export const ErrorPageTimeout = ({
-  txHash,
-  explorerLink,
-  onClickBack,
-}: ErrorPageTimeoutProps) => {
+export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
   const [error, setError] = useAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const {
-    route,
-    transactionDetailsArray,
-  } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
 
   const { data } = useBroadcastedTxsStatus({

@@ -65,7 +65,7 @@ import {
   FeeAssetJSON,
   IbcCapabilities,
   IbcCapabilitiesJSON,
-} from './routing';
+} from "./routing";
 import {
   Affiliate,
   AffiliateJSON,
@@ -198,7 +198,7 @@ import {
   RouteResponseJSON,
   Tx,
   TxJSON,
-} from './unified';
+} from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
   return {
@@ -257,7 +257,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
 }
 
 export function assetRecommendationFromJSON(
-  assetRecommendationJSON: AssetRecommendationJSON
+  assetRecommendationJSON: AssetRecommendationJSON,
 ): AssetRecommendation {
   return {
     asset: assetFromJSON(assetRecommendationJSON.asset),
@@ -266,7 +266,7 @@ export function assetRecommendationFromJSON(
 }
 
 export function assetRecommendationToJSON(
-  assetRecommendation: AssetRecommendation
+  assetRecommendation: AssetRecommendation,
 ): AssetRecommendationJSON {
   return {
     asset: assetToJSON(assetRecommendation.asset),
@@ -275,7 +275,7 @@ export function assetRecommendationToJSON(
 }
 
 export function assetsFromSourceRequestFromJSON(
-  assetsFromSourceRequestJSON: AssetsFromSourceRequestJSON
+  assetsFromSourceRequestJSON: AssetsFromSourceRequestJSON,
 ): AssetsFromSourceRequest {
   return {
     sourceAssetDenom: assetsFromSourceRequestJSON.source_asset_denom,
@@ -286,7 +286,7 @@ export function assetsFromSourceRequestFromJSON(
 }
 
 export function assetsFromSourceRequestToJSON(
-  assetsFromSourceRequest: AssetsFromSourceRequest
+  assetsFromSourceRequest: AssetsFromSourceRequest,
 ): AssetsFromSourceRequestJSON {
   return {
     source_asset_denom: assetsFromSourceRequest.sourceAssetDenom,
@@ -297,7 +297,7 @@ export function assetsFromSourceRequestToJSON(
 }
 
 export function assetsRequestFromJSON(
-  assetsRequestJSON: AssetsRequestJSON
+  assetsRequestJSON: AssetsRequestJSON,
 ): AssetsRequest {
   return {
     chainIDs: assetsRequestJSON.chain_ids,
@@ -311,7 +311,7 @@ export function assetsRequestFromJSON(
 }
 
 export function assetsRequestToJSON(
-  assetsRequest: AssetsRequest
+  assetsRequest: AssetsRequest,
 ): AssetsRequestJSON {
   return {
     chain_ids: assetsRequest.chainIDs,
@@ -326,7 +326,7 @@ export function assetsRequestToJSON(
 }
 
 export function chainsRequestToJSON(
-  chainsRequest: ChainsRequest
+  chainsRequest: ChainsRequest,
 ): ChainsRequestJSON {
   return {
     include_evm: chainsRequest.includeEVM,
@@ -389,7 +389,7 @@ export function feeAssetToJSON(feeAsset: FeeAsset): FeeAssetJSON {
 }
 
 export function ibcCapabilitiesFromJSON(
-  ibcCapabilitiesJSON: IbcCapabilitiesJSON
+  ibcCapabilitiesJSON: IbcCapabilitiesJSON,
 ): IbcCapabilities {
   return {
     cosmosPfm: ibcCapabilitiesJSON.cosmos_pfm,
@@ -400,7 +400,7 @@ export function ibcCapabilitiesFromJSON(
 }
 
 export function ibcCapabilitiesToJSON(
-  ibcCapabilities: IbcCapabilities
+  ibcCapabilities: IbcCapabilities,
 ): IbcCapabilitiesJSON {
   return {
     cosmos_pfm: ibcCapabilities.cosmosPfm,
@@ -411,49 +411,49 @@ export function ibcCapabilitiesToJSON(
 }
 
 export function recommendAssetsRequestFromJSON(
-  recommendAssetsRequestJSON: RecommendAssetsRequestJSON
+  recommendAssetsRequestJSON: RecommendAssetsRequestJSON,
 ): RecommendAssetsRequest {
   return {
     requests: recommendAssetsRequestJSON.requests.map(
-      assetRecommendationRequestFromJSON
+      assetRecommendationRequestFromJSON,
     ),
   };
 }
 
 export function recommendAssetsRequestToJSON(
-  recommendAssetsRequest: RecommendAssetsRequest
+  recommendAssetsRequest: RecommendAssetsRequest,
 ): RecommendAssetsRequestJSON {
   return {
     requests: recommendAssetsRequest.requests.map(
-      assetRecommendationRequestToJSON
+      assetRecommendationRequestToJSON,
     ),
   };
 }
 
 export function recommendAssetsResponseFromJSON(
-  value: RecommendAssetsResponseJSON
+  value: RecommendAssetsResponseJSON,
 ): RecommendAssetsResponse {
   return {
     recommendations: value.recommendations.map(assetRecommendationFromJSON),
     recommendationEntries: value.recommendation_entries.map(
-      recommendationEntryFromJSON
+      recommendationEntryFromJSON,
     ),
   };
 }
 
 export function recommendAssetsResponseToJSON(
-  value: RecommendAssetsResponse
+  value: RecommendAssetsResponse,
 ): RecommendAssetsResponseJSON {
   return {
     recommendations: value.recommendations.map(assetRecommendationToJSON),
     recommendation_entries: value.recommendationEntries.map(
-      recommendationEntryToJSON
+      recommendationEntryToJSON,
     ),
   };
 }
 
 export function recommendationEntryFromJSON(
-  value: RecommendationEntryJSON
+  value: RecommendationEntryJSON,
 ): RecommendationEntry {
   return {
     recommendations: value.recommendations.map(assetRecommendationFromJSON),
@@ -462,7 +462,7 @@ export function recommendationEntryFromJSON(
 }
 
 export function recommendationEntryToJSON(
-  value: RecommendationEntry
+  value: RecommendationEntry,
 ): RecommendationEntryJSON {
   return {
     recommendations: value.recommendations.map(assetRecommendationToJSON),
@@ -471,7 +471,7 @@ export function recommendationEntryToJSON(
 }
 
 export function estimatedFeeFromJSON(
-  estimatedFeeJSON: EstimatedFeeJSON
+  estimatedFeeJSON: EstimatedFeeJSON,
 ): EstimatedFee {
   return {
     amount: estimatedFeeJSON.amount,
@@ -488,7 +488,7 @@ export function estimatedFeeFromJSON(
 }
 
 export function estimatedFeeToJSON(
-  estimatedFee: EstimatedFee
+  estimatedFee: EstimatedFee,
 ): EstimatedFeeJSON {
   return {
     amount: estimatedFee.amount,
@@ -520,7 +520,7 @@ export function swapVenueToJSON(swapVenue: SwapVenue): SwapVenueJSON {
 }
 
 export function swapVenueRequestFromJSON(
-  SwapVenueRequestJSON: SwapVenueRequestJSON
+  SwapVenueRequestJSON: SwapVenueRequestJSON,
 ): SwapVenueRequest {
   return {
     name: SwapVenueRequestJSON.name,
@@ -529,7 +529,7 @@ export function swapVenueRequestFromJSON(
 }
 
 export function swapVenueRequestToJSON(
-  swapVenueRequest: SwapVenueRequest
+  swapVenueRequest: SwapVenueRequest,
 ): SwapVenueRequestJSON {
   return {
     name: swapVenueRequest.name,
@@ -537,11 +537,12 @@ export function swapVenueRequestToJSON(
   };
 }
 
-
 export function routeRequestFromJSON(
-  routeRequestJSON: RouteRequestJSON
+  routeRequestJSON: RouteRequestJSON,
 ): RouteRequest {
-  const swapVenues = routeRequestJSON.swap_venues?.map(swapVenueRequestFromJSON);
+  const swapVenues = routeRequestJSON.swap_venues?.map(
+    swapVenueRequestFromJSON,
+  );
 
   return {
     sourceAssetDenom: routeRequestJSON.source_asset_denom,
@@ -569,9 +570,8 @@ export function routeRequestFromJSON(
   };
 }
 
-
 export function routeRequestToJSON(
-  routeRequest: RouteRequest
+  routeRequest: RouteRequest,
 ): RouteRequestJSON {
   const swapVenues = routeRequest.swapVenues?.map(swapVenueRequestToJSON);
 
@@ -582,7 +582,9 @@ export function routeRequestToJSON(
     dest_asset_chain_id: routeRequest.destAssetChainID,
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
-    swap_venue: routeRequest.swapVenue ? swapVenueRequestToJSON(routeRequest.swapVenue) : undefined,
+    swap_venue: routeRequest.swapVenue
+      ? swapVenueRequestToJSON(routeRequest.swapVenue)
+      : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
     experimental_features: routeRequest.experimentalFeatures,
@@ -594,11 +596,9 @@ export function routeRequestToJSON(
       : undefined,
     allow_swaps: routeRequest.allowSwaps,
     go_fast: routeRequest.goFast,
-    ...(
-      routeRequest.amountIn !== undefined
-        ? { amount_in: routeRequest.amountIn }
-        : { amount_out: routeRequest.amountOut }
-    ),
+    ...(routeRequest.amountIn !== undefined
+      ? { amount_in: routeRequest.amountIn }
+      : { amount_out: routeRequest.amountOut }),
   };
 }
 
@@ -651,7 +651,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 }
 
 export function swapOperationFromJSON(
-  swapOperationJSON: SwapOperationJSON
+  swapOperationJSON: SwapOperationJSON,
 ): SwapOperation {
   return {
     pool: swapOperationJSON.pool,
@@ -662,7 +662,7 @@ export function swapOperationFromJSON(
 }
 
 export function swapOperationToJSON(
-  swapOperation: SwapOperation
+  swapOperation: SwapOperation,
 ): SwapOperationJSON {
   return {
     pool: swapOperation.pool,
@@ -689,12 +689,12 @@ export function swapRouteToJSON(swapRoute: SwapRoute): SwapRouteJSON {
 }
 
 export function swapExactCoinInFromJSON(
-  swapExactCoinInJSON: SwapExactCoinInJSON
+  swapExactCoinInJSON: SwapExactCoinInJSON,
 ): SwapExactCoinIn {
   return {
     swapVenue: swapVenueFromJSON(swapExactCoinInJSON.swap_venue),
     swapOperations: swapExactCoinInJSON.swap_operations.map(
-      swapOperationFromJSON
+      swapOperationFromJSON,
     ),
     swapAmountIn: swapExactCoinInJSON.swap_amount_in,
     priceImpactPercent: swapExactCoinInJSON.price_impact_percent,
@@ -703,7 +703,7 @@ export function swapExactCoinInFromJSON(
 }
 
 export function swapExactCoinInToJSON(
-  swapExactCoinIn: SwapExactCoinIn
+  swapExactCoinIn: SwapExactCoinIn,
 ): SwapExactCoinInJSON {
   return {
     swap_venue: swapVenueToJSON(swapExactCoinIn.swapVenue),
@@ -715,7 +715,7 @@ export function swapExactCoinInToJSON(
 }
 
 export function smartSwapExactCoinInFromJSON(
-  smartSwapExactCoinInJSON: SmartSwapExactCoinInJSON
+  smartSwapExactCoinInJSON: SmartSwapExactCoinInJSON,
 ): SmartSwapExactCoinIn {
   return {
     swapVenue: swapVenueFromJSON(smartSwapExactCoinInJSON.swap_venue),
@@ -725,7 +725,7 @@ export function smartSwapExactCoinInFromJSON(
 }
 
 export function smartSwapExactCoinInToJSON(
-  smartSwapExactCoinIn: SmartSwapExactCoinIn
+  smartSwapExactCoinIn: SmartSwapExactCoinIn,
 ): SmartSwapExactCoinInJSON {
   return {
     swap_venue: swapVenueToJSON(smartSwapExactCoinIn.swapVenue),
@@ -735,12 +735,12 @@ export function smartSwapExactCoinInToJSON(
 }
 
 export function swapExactCoinOutFromJSON(
-  swapExactCoinOutJSON: SwapExactCoinOutJSON
+  swapExactCoinOutJSON: SwapExactCoinOutJSON,
 ): SwapExactCoinOut {
   return {
     swapVenue: swapVenueFromJSON(swapExactCoinOutJSON.swap_venue),
     swapOperations: swapExactCoinOutJSON.swap_operations.map(
-      swapOperationFromJSON
+      swapOperationFromJSON,
     ),
     swapAmountOut: swapExactCoinOutJSON.swap_amount_out,
     priceImpactPercent: swapExactCoinOutJSON.price_impact_percent,
@@ -748,7 +748,7 @@ export function swapExactCoinOutFromJSON(
 }
 
 export function swapExactCoinOutToJSON(
-  swapExactCoinOut: SwapExactCoinOut
+  swapExactCoinOut: SwapExactCoinOut,
 ): SwapExactCoinOutJSON {
   return {
     swap_venue: swapVenueToJSON(swapExactCoinOut.swapVenue),
@@ -768,12 +768,12 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
   };
 
-  if ('swap_in' in swapJSON) {
+  if ("swap_in" in swapJSON) {
     return {
       ...commonProps,
       swapIn: swapExactCoinInFromJSON(swapJSON.swap_in),
     };
-  } else if ('smart_swap_in' in swapJSON) {
+  } else if ("smart_swap_in" in swapJSON) {
     return {
       ...commonProps,
       smartSwapIn: smartSwapExactCoinInFromJSON(swapJSON.smart_swap_in),
@@ -796,12 +796,12 @@ export function swapToJSON(swap: Swap): SwapJSON {
     swap_venues: swap.swapVenues.map(swapVenueToJSON),
   };
 
-  if ('swapIn' in swap) {
+  if ("swapIn" in swap) {
     return {
       ...commonProps,
       swap_in: swapExactCoinInToJSON(swap.swapIn),
     };
-  } else if ('smartSwapIn' in swap) {
+  } else if ("smartSwapIn" in swap) {
     return {
       ...commonProps,
       smart_swap_in: smartSwapExactCoinInToJSON(swap.smartSwapIn),
@@ -864,7 +864,9 @@ export function goFastFeeFromJSON(goFastFeeJSON: GoFastFeeJSON): GoFastFee {
     destinationChainFeeUSD: goFastFeeJSON.destination_chain_fee_usd,
   };
 }
-export function goFastTransferToJSON(goFast: GoFastTransfer): GoFastTransferJSON {
+export function goFastTransferToJSON(
+  goFast: GoFastTransfer,
+): GoFastTransferJSON {
   return {
     from_chain_id: goFast.fromChainID,
     to_chain_id: goFast.toChainID,
@@ -874,11 +876,12 @@ export function goFastTransferToJSON(goFast: GoFastTransfer): GoFastTransferJSON
     denom_out: goFast.denomOut,
     source_domain: goFast.sourceDomain,
     destination_domain: goFast.destinationDomain,
-
   };
 }
 
-export function goFastTransferFromJSON(goFastJSON: GoFastTransferJSON): GoFastTransfer {
+export function goFastTransferFromJSON(
+  goFastJSON: GoFastTransferJSON,
+): GoFastTransfer {
   return {
     fromChainID: goFastJSON.from_chain_id,
     toChainID: goFastJSON.to_chain_id,
@@ -891,7 +894,9 @@ export function goFastTransferFromJSON(goFastJSON: GoFastTransferJSON): GoFastTr
   };
 }
 
-export function stargateTransferFromJSON(stargateTransferJSON: StargateTransferJSON): StargateTransfer {
+export function stargateTransferFromJSON(
+  stargateTransferJSON: StargateTransferJSON,
+): StargateTransfer {
   return {
     fromChainID: stargateTransferJSON.from_chain_id,
     toChainID: stargateTransferJSON.to_chain_id,
@@ -906,10 +911,12 @@ export function stargateTransferFromJSON(stargateTransferJSON: StargateTransferJ
     messagingFeeAmount: stargateTransferJSON.messaging_fee_amount,
     messagingFeeAmountUSD: stargateTransferJSON.messaging_fee_amount_usd,
     bridgeID: stargateTransferJSON.bridge_id,
-  }
+  };
 }
 
-export function stargateTransferToJSON(stargateTransfer: StargateTransfer): StargateTransferJSON {
+export function stargateTransferToJSON(
+  stargateTransfer: StargateTransfer,
+): StargateTransferJSON {
   return {
     from_chain_id: stargateTransfer.fromChainID,
     to_chain_id: stargateTransfer.toChainID,
@@ -924,7 +931,7 @@ export function stargateTransferToJSON(stargateTransfer: StargateTransfer): Star
     messaging_fee_amount: stargateTransfer.messagingFeeAmount,
     messaging_fee_amount_usd: stargateTransfer.messagingFeeAmountUSD,
     bridge_id: stargateTransfer.bridgeID,
-  }
+  };
 }
 
 export function layerZeroTransferFromJSON(layerZeroTransferJSON: LayerZeroTransferJSON): LayerZeroTransfer {
@@ -964,59 +971,63 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     amountOut: operationJSON.amount_out,
   };
 
-  if ('transfer' in operationJSON) {
+  if ("transfer" in operationJSON) {
     return {
       ...commonProps,
       transfer: transferFromJSON(operationJSON.transfer),
     };
   }
 
-  if ('bank_send' in operationJSON) {
+  if ("bank_send" in operationJSON) {
     return {
       ...commonProps,
       bankSend: bankSendFromJSON(operationJSON.bank_send),
     };
   }
 
-  if ('axelar_transfer' in operationJSON) {
+  if ("axelar_transfer" in operationJSON) {
     return {
       ...commonProps,
       axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
     };
   }
 
-  if ('cctp_transfer' in operationJSON) {
+  if ("cctp_transfer" in operationJSON) {
     return {
       ...commonProps,
       cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer),
     };
   }
 
-  if ('hyperlane_transfer' in operationJSON) {
+  if ("hyperlane_transfer" in operationJSON) {
     return {
       ...commonProps,
-      hyperlaneTransfer: hyperlaneTransferFromJSON(operationJSON.hyperlane_transfer),
+      hyperlaneTransfer: hyperlaneTransferFromJSON(
+        operationJSON.hyperlane_transfer,
+      ),
     };
   }
 
-  if ('op_init_transfer' in operationJSON) {
+  if ("op_init_transfer" in operationJSON) {
     return {
       ...commonProps,
       opInitTransfer: opInitTransferFromJSON(operationJSON.op_init_transfer),
     };
   }
 
-  if ('go_fast_transfer' in operationJSON) {
+  if ("go_fast_transfer" in operationJSON) {
     return {
       ...commonProps,
       goFastTransfer: goFastTransferFromJSON(operationJSON.go_fast_transfer),
     };
   }
 
-  if ('stargate_transfer' in operationJSON) {
+  if ("stargate_transfer" in operationJSON) {
     return {
       ...commonProps,
-      stargateTransfer: stargateTransferFromJSON(operationJSON.stargate_transfer),
+      stargateTransfer: stargateTransferFromJSON(
+        operationJSON.stargate_transfer,
+      ),
     };
   }
 
@@ -1034,14 +1045,14 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
-  if ('evm_swap' in operationJSON) {
+  if ("evm_swap" in operationJSON) {
     return {
       ...commonProps,
       evmSwap: evmSwapFromJSON(operationJSON.evm_swap),
     };
   }
 
-  throw new Error('Unknown operation type');
+  throw new Error("Unknown operation type");
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
@@ -1051,56 +1062,56 @@ export function operationToJSON(operation: Operation): OperationJSON {
     amount_out: operation.amountOut,
   };
 
-  if ('transfer' in operation) {
+  if ("transfer" in operation) {
     return {
       ...commonProps,
       transfer: transferToJSON(operation.transfer),
     };
   }
 
-  if ('bankSend' in operation) {
+  if ("bankSend" in operation) {
     return {
       ...commonProps,
       bank_send: bankSendToJSON(operation.bankSend),
     };
   }
 
-  if ('axelarTransfer' in operation) {
+  if ("axelarTransfer" in operation) {
     return {
       ...commonProps,
       axelar_transfer: axelarTransferToJSON(operation.axelarTransfer),
     };
   }
 
-  if ('cctpTransfer' in operation) {
+  if ("cctpTransfer" in operation) {
     return {
       ...commonProps,
       cctp_transfer: cctpTransferToJSON(operation.cctpTransfer),
     };
   }
 
-  if ('hyperlaneTransfer' in operation) {
+  if ("hyperlaneTransfer" in operation) {
     return {
       ...commonProps,
       hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
     };
   }
 
-  if ('opInitTransfer' in operation) {
+  if ("opInitTransfer" in operation) {
     return {
       ...commonProps,
       op_init_transfer: opInitTransferToJSON(operation.opInitTransfer),
     };
   }
 
-  if ('goFastTransfer' in operation) {
+  if ("goFastTransfer" in operation) {
     return {
       ...commonProps,
       go_fast_transfer: goFastTransferToJSON(operation.goFastTransfer),
     };
   }
 
-  if ('stargateTransfer' in operation) {
+  if ("stargateTransfer" in operation) {
     return {
       ...commonProps,
       stargate_transfer: stargateTransferToJSON(operation.stargateTransfer),
@@ -1120,18 +1131,17 @@ export function operationToJSON(operation: Operation): OperationJSON {
       swap: swapToJSON(operation.swap),
     };
   }
-  if ('evmSwap' in operation) {
+  if ("evmSwap" in operation) {
     return {
       ...commonProps,
       evm_swap: evmSwapToJSON(operation.evmSwap),
-    }
+    };
   }
-  throw new Error('Unknown operation type');
+  throw new Error("Unknown operation type");
 }
 
-
 export function routeResponseFromJSON(
-  routeResponseJSON: RouteResponseJSON
+  routeResponseJSON: RouteResponseJSON,
 ): RouteResponse {
   return {
     sourceAssetDenom: routeResponseJSON.source_asset_denom,
@@ -1167,7 +1177,7 @@ export function routeResponseFromJSON(
 }
 
 export function routeResponseToJSON(
-  routeResponse: RouteResponse
+  routeResponse: RouteResponse,
 ): RouteResponseJSON {
   return {
     source_asset_denom: routeResponse.sourceAssetDenom,
@@ -1195,7 +1205,7 @@ export function routeResponseToJSON(
 
     warning: routeResponse.warning,
     estimated_fees: routeResponse.estimatedFees.map((i) =>
-      estimatedFeeToJSON(i)
+      estimatedFeeToJSON(i),
     ),
     estimated_route_duration_seconds:
       routeResponse.estimatedRouteDurationSeconds,
@@ -1203,7 +1213,7 @@ export function routeResponseToJSON(
 }
 
 export function cosmWasmContractMsgFromJSON(
-  cosmWasmContractMsgJSON: CosmWasmContractMsgJSON
+  cosmWasmContractMsgJSON: CosmWasmContractMsgJSON,
 ): CosmWasmContractMsg {
   return {
     contractAddress: cosmWasmContractMsgJSON.contract_address,
@@ -1212,7 +1222,7 @@ export function cosmWasmContractMsgFromJSON(
 }
 
 export function cosmWasmContractMsgToJSON(
-  cosmWasmContractMsg: CosmWasmContractMsg
+  cosmWasmContractMsg: CosmWasmContractMsg,
 ): CosmWasmContractMsgJSON {
   return {
     contract_address: cosmWasmContractMsg.contractAddress,
@@ -1221,9 +1231,9 @@ export function cosmWasmContractMsgToJSON(
 }
 
 export function postHandlerFromJSON(
-  postHandlerJSON: PostHandlerJSON
+  postHandlerJSON: PostHandlerJSON,
 ): PostHandler {
-  if ('wasm_msg' in postHandlerJSON) {
+  if ("wasm_msg" in postHandlerJSON) {
     return {
       wasmMsg: cosmWasmContractMsgFromJSON(postHandlerJSON.wasm_msg),
     };
@@ -1235,7 +1245,7 @@ export function postHandlerFromJSON(
 }
 
 export function postHandlerToJSON(postHandler: PostHandler): PostHandlerJSON {
-  if ('wasmMsg' in postHandler) {
+  if ("wasmMsg" in postHandler) {
     return {
       wasm_msg: cosmWasmContractMsgToJSON(postHandler.wasmMsg),
     };
@@ -1247,7 +1257,7 @@ export function postHandlerToJSON(postHandler: PostHandler): PostHandlerJSON {
 }
 
 export function msgsRequestFromJSON(
-  msgsRequestJSON: MsgsRequestJSON
+  msgsRequestJSON: MsgsRequestJSON,
 ): MsgsRequest {
   return {
     sourceAssetDenom: msgsRequestJSON.source_asset_denom,
@@ -1297,7 +1307,7 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
 }
 
 export function multiChainMsgFromJSON(
-  multiChainMsgJSON: MultiChainMsgJSON
+  multiChainMsgJSON: MultiChainMsgJSON,
 ): MultiChainMsg {
   return {
     chainID: multiChainMsgJSON.chain_id,
@@ -1308,7 +1318,7 @@ export function multiChainMsgFromJSON(
 }
 
 export function multiChainMsgToJSON(
-  multiChainMsg: MultiChainMsg
+  multiChainMsg: MultiChainMsg,
 ): MultiChainMsgJSON {
   return {
     chain_id: multiChainMsg.chainID,
@@ -1333,7 +1343,7 @@ export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
 }
 
 export function submitTxRequestFromJSON(
-  submitTxRequestJSON: SubmitTxRequestJSON
+  submitTxRequestJSON: SubmitTxRequestJSON,
 ): SubmitTxRequest {
   return {
     tx: submitTxRequestJSON.tx,
@@ -1342,7 +1352,7 @@ export function submitTxRequestFromJSON(
 }
 
 export function submitTxRequestToJSON(
-  submitTxRequest: SubmitTxRequest
+  submitTxRequest: SubmitTxRequest,
 ): SubmitTxRequestJSON {
   return {
     tx: submitTxRequest.tx,
@@ -1351,7 +1361,7 @@ export function submitTxRequestToJSON(
 }
 
 export function submitTxResponseFromJSON(
-  submitTxResponseJSON: SubmitTxResponseJSON
+  submitTxResponseJSON: SubmitTxResponseJSON,
 ): SubmitTxResponse {
   return {
     txHash: submitTxResponseJSON.tx_hash,
@@ -1359,7 +1369,7 @@ export function submitTxResponseFromJSON(
 }
 
 export function submitTxResponseToJSON(
-  submitTxResponse: SubmitTxResponse
+  submitTxResponse: SubmitTxResponse,
 ): SubmitTxResponseJSON {
   return {
     tx_hash: submitTxResponse.txHash,
@@ -1367,7 +1377,7 @@ export function submitTxResponseToJSON(
 }
 
 export function trackTxRequestFromJSON(
-  trackRequestJSON: TrackTxRequestJSON
+  trackRequestJSON: TrackTxRequestJSON,
 ): TrackTxRequest {
   return {
     txHash: trackRequestJSON.tx_hash,
@@ -1376,7 +1386,7 @@ export function trackTxRequestFromJSON(
 }
 
 export function trackTxRequestToJSON(
-  trackRequest: TrackTxRequest
+  trackRequest: TrackTxRequest,
 ): TrackTxRequestJSON {
   return {
     tx_hash: trackRequest.txHash,
@@ -1385,7 +1395,7 @@ export function trackTxRequestToJSON(
 }
 
 export function trackTxResponseFromJSON(
-  trackResponseJSON: TrackTxResponseJSON
+  trackResponseJSON: TrackTxResponseJSON,
 ): TrackTxResponse {
   return {
     txHash: trackResponseJSON.tx_hash,
@@ -1394,7 +1404,7 @@ export function trackTxResponseFromJSON(
 }
 
 export function trackTxResponseToJSON(
-  trackResponse: TrackTxResponse
+  trackResponse: TrackTxResponse,
 ): TrackTxResponseJSON {
   return {
     tx_hash: trackResponse.txHash,
@@ -1403,7 +1413,7 @@ export function trackTxResponseToJSON(
 }
 
 export function txStatusRequestFromJSON(
-  txStatusRequestJSON: StatusRequestJSON
+  txStatusRequestJSON: StatusRequestJSON,
 ): StatusRequest {
   return {
     txHash: txStatusRequestJSON.tx_hash,
@@ -1412,7 +1422,7 @@ export function txStatusRequestFromJSON(
 }
 
 export function txStatusRequestToJSON(
-  txStatusRequest: StatusRequest
+  txStatusRequest: StatusRequest,
 ): StatusRequestJSON {
   return {
     tx_hash: txStatusRequest.txHash,
@@ -1421,7 +1431,7 @@ export function txStatusRequestToJSON(
 }
 
 export function chainTransactionFromJSON(
-  chainTransactionJSON: ChainTransactionJSON
+  chainTransactionJSON: ChainTransactionJSON,
 ): ChainTransaction {
   return {
     txHash: chainTransactionJSON.tx_hash,
@@ -1431,7 +1441,7 @@ export function chainTransactionFromJSON(
 }
 
 export function chainTransactionToJSON(
-  chainTransaction: ChainTransaction
+  chainTransaction: ChainTransaction,
 ): ChainTransactionJSON {
   return {
     tx_hash: chainTransaction.txHash,
@@ -1468,7 +1478,7 @@ export function packetToJSON(packet: Packet): PacketJSON {
 }
 
 export function transferInfoFromJSON(
-  transferInfoJSON: TransferInfoJSON
+  transferInfoJSON: TransferInfoJSON,
 ): TransferInfo {
   return {
     fromChainID: transferInfoJSON.from_chain_id,
@@ -1483,7 +1493,7 @@ export function transferInfoFromJSON(
 }
 
 export function transferInfoToJSON(
-  transferInfo: TransferInfo
+  transferInfo: TransferInfo,
 ): TransferInfoJSON {
   return {
     from_chain_id: transferInfo.fromChainID,
@@ -1496,7 +1506,7 @@ export function transferInfoToJSON(
 }
 
 export function nextBlockingTransferFromJSON(
-  nextBlockingTransferJSON: NextBlockingTransferJSON
+  nextBlockingTransferJSON: NextBlockingTransferJSON,
 ): NextBlockingTransfer {
   return {
     transferSequenceIndex: nextBlockingTransferJSON.transfer_sequence_index,
@@ -1504,7 +1514,7 @@ export function nextBlockingTransferFromJSON(
 }
 
 export function nextBlockingTransferToJSON(
-  nextBlockingTransfer: NextBlockingTransfer
+  nextBlockingTransfer: NextBlockingTransfer,
 ): NextBlockingTransferJSON {
   return {
     transfer_sequence_index: nextBlockingTransfer.transferSequenceIndex,
@@ -1512,27 +1522,29 @@ export function nextBlockingTransferToJSON(
 }
 
 export function transferAssetReleaseFromJSON(
-  transferAssetReleaseJSON: TransferAssetReleaseJSON
+  transferAssetReleaseJSON: TransferAssetReleaseJSON,
 ): TransferAssetRelease {
   return {
     chainID: transferAssetReleaseJSON.chain_id,
     denom: transferAssetReleaseJSON.denom,
+    amount: transferAssetReleaseJSON.amount,
     released: transferAssetReleaseJSON.released,
   };
 }
 
 export function transferAssetReleaseToJSON(
-  transferAssetRelease: TransferAssetRelease
+  transferAssetRelease: TransferAssetRelease,
 ): TransferAssetReleaseJSON {
   return {
     chain_id: transferAssetRelease.chainID,
     denom: transferAssetRelease.denom,
+    amount: transferAssetRelease.amount,
     released: transferAssetRelease.released,
   };
 }
 
 export function txStatusResponseFromJSON(
-  statusResponseJSON: TxStatusResponseJSON
+  statusResponseJSON: TxStatusResponseJSON,
 ): TxStatusResponse {
   return {
     status: statusResponseJSON.status,
@@ -1540,7 +1552,7 @@ export function txStatusResponseFromJSON(
       statusResponseJSON.next_blocking_transfer &&
       nextBlockingTransferFromJSON(statusResponseJSON.next_blocking_transfer),
     transferSequence: statusResponseJSON.transfer_sequence.map(
-      transferEventFromJSON
+      transferEventFromJSON,
     ),
     transferAssetRelease:
       statusResponseJSON.transfer_asset_release &&
@@ -1552,7 +1564,7 @@ export function txStatusResponseFromJSON(
 }
 
 export function txStatusResponseToJSON(
-  statusResponse: TxStatusResponse
+  statusResponse: TxStatusResponse,
 ): TxStatusResponseJSON {
   return {
     status: statusResponse.status,
@@ -1584,7 +1596,7 @@ export function ibcAddressToJSON(ibcAddress: IBCAddress): IBCAddressJSON {
 }
 
 export function axelarTransferFromJSON(
-  axelarTransferJSON: AxelarTransferJSON
+  axelarTransferJSON: AxelarTransferJSON,
 ): AxelarTransfer {
   return {
     fromChain: axelarTransferJSON.from_chain,
@@ -1613,7 +1625,7 @@ export function axelarTransferFromJSON(
 }
 
 export function axelarTransferToJSON(
-  axelarTransfer: AxelarTransfer
+  axelarTransfer: AxelarTransfer,
 ): AxelarTransferJSON {
   return {
     from_chain: axelarTransfer.fromChain,
@@ -1656,7 +1668,7 @@ export function bankSendToJSON(value: BankSend): BankSendJSON {
 }
 
 export function smartRelayFeeQuoteFromJSON(
-  value: SmartRelayFeeQuoteJSON
+  value: SmartRelayFeeQuoteJSON,
 ): SmartRelayFeeQuote {
   return {
     feeAmount: value.fee_amount,
@@ -1668,7 +1680,7 @@ export function smartRelayFeeQuoteFromJSON(
 }
 
 export function smartRelayFeeQuoteToJSON(
-  value: SmartRelayFeeQuote
+  value: SmartRelayFeeQuote,
 ): SmartRelayFeeQuoteJSON {
   return {
     fee_amount: value.feeAmount,
@@ -1688,7 +1700,9 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     denomIn: value.denom_in,
     denomOut: value.denom_out,
     smartRelay: value.smart_relay,
-    smartRelayFeeQuote: smartRelayFeeQuoteFromJSON(value.smart_relay_fee_quote),
+    smartRelayFeeQuote: value?.smart_relay_fee_quote
+      ? smartRelayFeeQuoteFromJSON(value.smart_relay_fee_quote)
+      : undefined,
   };
 }
 
@@ -1701,12 +1715,14 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     denom_in: value.denomIn,
     denom_out: value.denomOut,
     smart_relay: value.smartRelay,
-    smart_relay_fee_quote: smartRelayFeeQuoteToJSON(value.smartRelayFeeQuote),
+    smart_relay_fee_quote: value?.smartRelayFeeQuote
+      ? smartRelayFeeQuoteToJSON(value.smartRelayFeeQuote)
+      : undefined,
   };
 }
 
 export function hyperlaneTransferFromJSON(
-  value: HyperlaneTransferJSON
+  value: HyperlaneTransferJSON,
 ): HyperlaneTransfer {
   return {
     fromChainID: value.from_chain_id,
@@ -1723,7 +1739,7 @@ export function hyperlaneTransferFromJSON(
 }
 
 export function hyperlaneTransferToJSON(
-  value: HyperlaneTransfer
+  value: HyperlaneTransfer,
 ): HyperlaneTransferJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -1739,9 +1755,8 @@ export function hyperlaneTransferToJSON(
   };
 }
 
-
 export function opInitTransferFromJSON(
-  value: OPInitTransferJSON
+  value: OPInitTransferJSON,
 ): OPInitTransfer {
   return {
     fromChainID: value.from_chain_id,
@@ -1755,7 +1770,7 @@ export function opInitTransferFromJSON(
 }
 
 export function opInitTransferToJSON(
-  value: OPInitTransfer
+  value: OPInitTransfer,
 ): OPInitTransferJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -1769,7 +1784,7 @@ export function opInitTransferToJSON(
 }
 
 export function erc20ApprovalFromJSON(
-  erc20ApprovalJSON: ERC20ApprovalJSON
+  erc20ApprovalJSON: ERC20ApprovalJSON,
 ): ERC20Approval {
   return {
     tokenContract: erc20ApprovalJSON.token_contract,
@@ -1779,7 +1794,7 @@ export function erc20ApprovalFromJSON(
 }
 
 export function erc20ApprovalToJSON(
-  erc20Approval: ERC20Approval
+  erc20Approval: ERC20Approval,
 ): ERC20ApprovalJSON {
   return {
     token_contract: erc20Approval.tokenContract,
@@ -1811,7 +1826,7 @@ export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
     value: evmTxJSON.value,
     data: evmTxJSON.data,
     requiredERC20Approvals: evmTxJSON.required_erc20_approvals.map(
-      erc20ApprovalFromJSON
+      erc20ApprovalFromJSON,
     ),
     signerAddress: evmTxJSON.signer_address,
   };
@@ -1848,13 +1863,13 @@ export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
 }
 
 export function txFromJSON(txJSON: TxJSON): Tx {
-  if ('cosmos_tx' in txJSON) {
+  if ("cosmos_tx" in txJSON) {
     return {
       cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
       operationsIndices: txJSON.operations_indices,
     };
   }
-  if ('svm_tx' in txJSON) {
+  if ("svm_tx" in txJSON) {
     return {
       svmTx: svmTxFromJSON(txJSON.svm_tx),
       operationsIndices: txJSON.operations_indices,
@@ -1868,13 +1883,13 @@ export function txFromJSON(txJSON: TxJSON): Tx {
 }
 
 export function txToJSON(tx: Tx): TxJSON {
-  if ('cosmosTx' in tx) {
+  if ("cosmosTx" in tx) {
     return {
       cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
       operations_indices: tx.operationsIndices,
     };
   }
-  if ('svmTx' in tx) {
+  if ("svmTx" in tx) {
     return {
       svm_tx: svmTxToJSON(tx.svmTx),
       operations_indices: tx.operationsIndices,
@@ -1888,12 +1903,12 @@ export function txToJSON(tx: Tx): TxJSON {
 }
 
 export function msgFromJSON(msgJSON: MsgJSON): Msg {
-  if ('multi_chain_msg' in msgJSON) {
+  if ("multi_chain_msg" in msgJSON) {
     return {
       multiChainMsg: multiChainMsgFromJSON(msgJSON.multi_chain_msg),
     };
   }
-  if ('svm_tx' in msgJSON) {
+  if ("svm_tx" in msgJSON) {
     return {
       svmTx: svmTxFromJSON(msgJSON.svm_tx),
     };
@@ -1905,12 +1920,12 @@ export function msgFromJSON(msgJSON: MsgJSON): Msg {
 }
 
 export function msgToJSON(msg: Msg): MsgJSON {
-  if ('multiChainMsg' in msg) {
+  if ("multiChainMsg" in msg) {
     return {
       multi_chain_msg: multiChainMsgToJSON(msg.multiChainMsg),
     };
   }
-  if ('svmTx' in msg) {
+  if ("svmTx" in msg) {
     return {
       svm_tx: svmTxToJSON(msg.svmTx),
     };
@@ -1922,11 +1937,11 @@ export function msgToJSON(msg: Msg): MsgJSON {
 }
 
 export function messageResponseFromJSON(
-  response: MsgsResponseJSON
+  response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
     estimatedFees: response.estimated_fees?.map((fee) =>
-      estimatedFeeFromJSON(fee)
+      estimatedFeeFromJSON(fee),
     ),
     msgs: response.msgs.map((msg) => msgFromJSON(msg)),
     txs: response.txs?.map((tx) => txFromJSON(tx)),
@@ -1935,7 +1950,7 @@ export function messageResponseFromJSON(
 }
 
 export function sendTokenTransactionsFromJSON(
-  sendTokenTransactionsJSON: SendTokenTransactionsJSON
+  sendTokenTransactionsJSON: SendTokenTransactionsJSON,
 ): SendTokenTransactions {
   return {
     sendTx: sendTokenTransactionsJSON.send_tx
@@ -1952,7 +1967,7 @@ export function sendTokenTransactionsFromJSON(
 }
 
 export function sendTokenTransactionsToJSON(
-  sendTokenTransactions: SendTokenTransactions
+  sendTokenTransactions: SendTokenTransactions,
 ): SendTokenTransactionsJSON {
   return {
     send_tx: sendTokenTransactions.sendTx
@@ -1969,7 +1984,7 @@ export function sendTokenTransactionsToJSON(
 }
 
 export function contractCallWithTokenTransactionsFromJSON(
-  value: ContractCallWithTokenTransactionsJSON
+  value: ContractCallWithTokenTransactionsJSON,
 ): ContractCallWithTokenTransactions {
   return {
     sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
@@ -1990,7 +2005,7 @@ export function contractCallWithTokenTransactionsFromJSON(
 }
 
 export function contractCallWithTokenTransactionsToJSON(
-  value: ContractCallWithTokenTransactions
+  value: ContractCallWithTokenTransactions,
 ): ContractCallWithTokenTransactionsJSON {
   return {
     send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
@@ -2011,12 +2026,12 @@ export function contractCallWithTokenTransactionsToJSON(
 }
 
 export function axelarTransferTransactionsFromJSON(
-  value: AxelarTransferTransactionsJSON
+  value: AxelarTransferTransactionsJSON,
 ): AxelarTransferTransactions {
-  if ('contract_call_with_token_txs' in value) {
+  if ("contract_call_with_token_txs" in value) {
     return {
       contractCallWithTokenTxs: contractCallWithTokenTransactionsFromJSON(
-        value.contract_call_with_token_txs
+        value.contract_call_with_token_txs,
       ),
     };
   }
@@ -2027,12 +2042,12 @@ export function axelarTransferTransactionsFromJSON(
 }
 
 export function axelarTransferTransactionsToJSON(
-  value: AxelarTransferTransactions
+  value: AxelarTransferTransactions,
 ): AxelarTransferTransactionsJSON {
-  if ('contractCallWithTokenTxs' in value) {
+  if ("contractCallWithTokenTxs" in value) {
     return {
       contract_call_with_token_txs: contractCallWithTokenTransactionsToJSON(
-        value.contractCallWithTokenTxs
+        value.contractCallWithTokenTxs,
       ),
     };
   }
@@ -2043,7 +2058,7 @@ export function axelarTransferTransactionsToJSON(
 }
 
 export function axelarTransferInfoFromJSON(
-  value: AxelarTransferInfoJSON
+  value: AxelarTransferInfoJSON,
 ): AxelarTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2057,7 +2072,7 @@ export function axelarTransferInfoFromJSON(
   };
 }
 export function goFastTransferInfoFromJSON(
-  value: GoFastTransferInfoJSON
+  value: GoFastTransferInfoJSON,
 ): GoFastTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2069,7 +2084,7 @@ export function goFastTransferInfoFromJSON(
 }
 
 export function goFastTransferInfoToJson(
-  value: GoFastTransferInfo
+  value: GoFastTransferInfo,
 ): GoFastTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2081,7 +2096,7 @@ export function goFastTransferInfoToJson(
 }
 
 export function axelarTransferInfoToJSON(
-  value: AxelarTransferInfo
+  value: AxelarTransferInfo,
 ): AxelarTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2096,39 +2111,39 @@ export function axelarTransferInfoToJSON(
 }
 
 export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
-  if ('ibc_transfer' in value) {
+  if ("ibc_transfer" in value) {
     return {
       ibcTransfer: transferInfoFromJSON(value.ibc_transfer),
     };
   }
 
-  if ('cctp_transfer' in value) {
+  if ("cctp_transfer" in value) {
     return {
       cctpTransfer: cctpTransferInfoFromJSON(value.cctp_transfer),
     };
   }
 
-  if ('hyperlane_transfer' in value) {
+  if ("hyperlane_transfer" in value) {
     return {
       hyperlaneTransfer: hyperlaneTransferInfoFromJSON(
-        value.hyperlane_transfer
+        value.hyperlane_transfer,
       ),
     };
   }
 
-  if ('op_init_transfer' in value) {
+  if ("op_init_transfer" in value) {
     return {
       opInitTransfer: opInitTransferInfoFromJSON(value.op_init_transfer),
     };
   }
 
-  if ('go_fast_transfer' in value) {
+  if ("go_fast_transfer" in value) {
     return {
       goFastTransfer: goFastTransferInfoFromJSON(value.go_fast_transfer),
     };
   }
 
-  if ('stargate_transfer' in value) {
+  if ("stargate_transfer" in value) {
     return {
       stargateTransfer: stargateTransferInfoFromJSON(value.stargate_transfer),
     };
@@ -2146,36 +2161,36 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
 }
 
 export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
-  if ('ibcTransfer' in value) {
+  if ("ibcTransfer" in value) {
     return {
       ibc_transfer: transferInfoToJSON(value.ibcTransfer),
     };
   }
 
-  if ('cctpTransfer' in value) {
+  if ("cctpTransfer" in value) {
     return {
       cctp_transfer: cctpTransferInfoToJSON(value.cctpTransfer),
     };
   }
 
-  if ('hyperlaneTransfer' in value) {
+  if ("hyperlaneTransfer" in value) {
     return {
       hyperlane_transfer: hyperlaneTransferInfoToJSON(value.hyperlaneTransfer),
     };
   }
 
-  if ('opInitTransfer' in value) {
+  if ("opInitTransfer" in value) {
     return {
       op_init_transfer: opInitTransferInfoToJSON(value.opInitTransfer),
     };
   }
 
-  if ('goFastTransfer' in value) {
+  if ("goFastTransfer" in value) {
     return {
       go_fast_transfer: goFastTransferInfoToJson(value.goFastTransfer),
     };
   }
-  if ('stargateTransfer' in value) {
+  if ("stargateTransfer" in value) {
     return {
       stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
     };
@@ -2193,7 +2208,7 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
 }
 
 export function transferStatusFromJSON(
-  value: TransferStatusJSON
+  value: TransferStatusJSON,
 ): TransferStatus {
   return {
     transferSequence: value.transfer_sequence.map(transferEventFromJSON),
@@ -2209,7 +2224,7 @@ export function transferStatusFromJSON(
 }
 
 export function transferStatusToJSON(
-  value: TransferStatus
+  value: TransferStatus,
 ): TransferStatusJSON {
   return {
     transfer_sequence: value.transferSequence.map(transferEventToJSON),
@@ -2225,7 +2240,7 @@ export function transferStatusToJSON(
 }
 
 export function denomWithChainIDFromJSON(
-  value: DenomWithChainIDJSON
+  value: DenomWithChainIDJSON,
 ): DenomWithChainID {
   return {
     chainID: value.chain_id,
@@ -2234,7 +2249,7 @@ export function denomWithChainIDFromJSON(
 }
 
 export function denomWithChainIDToJSON(
-  value: DenomWithChainID
+  value: DenomWithChainID,
 ): DenomWithChainIDJSON {
   return {
     chain_id: value.chainID,
@@ -2243,7 +2258,7 @@ export function denomWithChainIDToJSON(
 }
 
 export function assetOrErrorFromJSON(value: AssetOrErrorJSON): AssetOrError {
-  if ('asset' in value) {
+  if ("asset" in value) {
     return { asset: assetFromJSON(value.asset) };
   }
 
@@ -2251,7 +2266,7 @@ export function assetOrErrorFromJSON(value: AssetOrErrorJSON): AssetOrError {
 }
 
 export function assetOrErrorToJSON(value: AssetOrError): AssetOrErrorJSON {
-  if ('asset' in value) {
+  if ("asset" in value) {
     return { asset: assetToJSON(value.asset) };
   }
 
@@ -2259,7 +2274,7 @@ export function assetOrErrorToJSON(value: AssetOrError): AssetOrErrorJSON {
 }
 
 export function originAssetsRequestFromJSON(
-  value: OriginAssetsRequestJSON
+  value: OriginAssetsRequestJSON,
 ): OriginAssetsRequest {
   return {
     assets: value.assets.map(denomWithChainIDFromJSON),
@@ -2267,7 +2282,7 @@ export function originAssetsRequestFromJSON(
 }
 
 export function originAssetsRequestToJSON(
-  value: OriginAssetsRequest
+  value: OriginAssetsRequest,
 ): OriginAssetsRequestJSON {
   return {
     assets: value.assets.map(denomWithChainIDToJSON),
@@ -2275,7 +2290,7 @@ export function originAssetsRequestToJSON(
 }
 
 export function originAssetsResponseFromJSON(
-  value: OriginAssetsResponseJSON
+  value: OriginAssetsResponseJSON,
 ): OriginAssetsResponse {
   return {
     originAssets: value.origin_assets.map(assetOrErrorFromJSON),
@@ -2283,7 +2298,7 @@ export function originAssetsResponseFromJSON(
 }
 
 export function originAssetsResponseToJSON(
-  value: OriginAssetsResponse
+  value: OriginAssetsResponse,
 ): OriginAssetsResponseJSON {
   return {
     origin_assets: value.originAssets.map(assetOrErrorToJSON),
@@ -2291,7 +2306,7 @@ export function originAssetsResponseToJSON(
 }
 
 export function assetBetweenChainsFromJSON(
-  value: AssetBetweenChainsJSON
+  value: AssetBetweenChainsJSON,
 ): AssetBetweenChains {
   return {
     assetOnSource: assetFromJSON(value.asset_on_source),
@@ -2302,7 +2317,7 @@ export function assetBetweenChainsFromJSON(
 }
 
 export function assetBetweenChainsToJSON(
-  value: AssetBetweenChains
+  value: AssetBetweenChains,
 ): AssetBetweenChainsJSON {
   return {
     asset_on_source: assetToJSON(value.assetOnSource),
@@ -2313,7 +2328,7 @@ export function assetBetweenChainsToJSON(
 }
 
 export function assetsBetweenChainsRequestFromJSON(
-  value: AssetsBetweenChainsRequestJSON
+  value: AssetsBetweenChainsRequestJSON,
 ): AssetsBetweenChainsRequest {
   return {
     sourceChainID: value.source_chain_id,
@@ -2326,7 +2341,7 @@ export function assetsBetweenChainsRequestFromJSON(
 }
 
 export function assetsBetweenChainsRequestToJSON(
-  value: AssetsBetweenChainsRequest
+  value: AssetsBetweenChainsRequest,
 ): AssetsBetweenChainsRequestJSON {
   return {
     source_chain_id: value.sourceChainID,
@@ -2339,17 +2354,17 @@ export function assetsBetweenChainsRequestToJSON(
 }
 
 export function assetsBetweenChainsResponseFromJSON(
-  value: AssetsBetweenChainsResponseJSON
+  value: AssetsBetweenChainsResponseJSON,
 ): AssetsBetweenChainsResponse {
   return {
     assetsBetweenChains: value.assets_between_chains.map(
-      assetBetweenChainsFromJSON
+      assetBetweenChainsFromJSON,
     ),
   };
 }
 
 export function assetRecommendationRequestFromJSON(
-  value: AssetRecommendationRequestJSON
+  value: AssetRecommendationRequestJSON,
 ): AssetRecommendationRequest {
   return {
     sourceAssetDenom: value.source_asset_denom,
@@ -2360,7 +2375,7 @@ export function assetRecommendationRequestFromJSON(
 }
 
 export function assetRecommendationRequestToJSON(
-  value: AssetRecommendationRequest
+  value: AssetRecommendationRequest,
 ): AssetRecommendationRequestJSON {
   return {
     source_asset_denom: value.sourceAssetDenom,
@@ -2371,7 +2386,7 @@ export function assetRecommendationRequestToJSON(
 }
 
 export function bridgesResponseFromJSON(
-  value: BridgesResponseJSON
+  value: BridgesResponseJSON,
 ): BridgesResponse {
   return {
     bridges: value.bridges.map(bridgeFromJSON),
@@ -2379,7 +2394,7 @@ export function bridgesResponseFromJSON(
 }
 
 export function bridgesResponseToJSON(
-  value: BridgesResponse
+  value: BridgesResponse,
 ): BridgesResponseJSON {
   return {
     bridges: value.bridges.map(bridgeToJSON),
@@ -2403,7 +2418,7 @@ export function bridgeToJSON(value: Bridge): BridgeJSON {
 }
 
 export function cctpTransferTransactionsFromJSON(
-  value: CCTPTransferTransactionsJSON
+  value: CCTPTransferTransactionsJSON,
 ): CCTPTransferTransactions {
   return {
     sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
@@ -2414,7 +2429,7 @@ export function cctpTransferTransactionsFromJSON(
 }
 
 export function cctpTransferTransactionsToJSON(
-  value: CCTPTransferTransactions
+  value: CCTPTransferTransactions,
 ): CCTPTransferTransactionsJSON {
   return {
     send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
@@ -2425,7 +2440,7 @@ export function cctpTransferTransactionsToJSON(
 }
 
 export function cctpTransferInfoFromJSON(
-  value: CCTPTransferInfoJSON
+  value: CCTPTransferInfoJSON,
 ): CCTPTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2438,7 +2453,7 @@ export function cctpTransferInfoFromJSON(
 }
 
 export function cctpTransferInfoToJSON(
-  value: CCTPTransferInfo
+  value: CCTPTransferInfo,
 ): CCTPTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2451,7 +2466,7 @@ export function cctpTransferInfoToJSON(
 }
 
 export function hyperlaneTransferTransactionsFromJSON(
-  value: HyperlaneTransferTransactionsJSON
+  value: HyperlaneTransferTransactionsJSON,
 ): HyperlaneTransferTransactions {
   return {
     sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
@@ -2462,7 +2477,7 @@ export function hyperlaneTransferTransactionsFromJSON(
 }
 
 export function hyperlaneTransferTransactionsToJSON(
-  value: HyperlaneTransferTransactions
+  value: HyperlaneTransferTransactions,
 ): HyperlaneTransferTransactionsJSON {
   return {
     send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
@@ -2473,29 +2488,45 @@ export function hyperlaneTransferTransactionsToJSON(
 }
 
 export function goFastTransferTransactionsToJSON(
-  value: GoFastTransferTransactions
+  value: GoFastTransferTransactions,
 ): GoFastTransferTransactionsJSON {
   return {
-    order_submitted_tx: value.orderSubmittedTx ? chainTransactionToJSON(value.orderSubmittedTx) : null,
-    order_refunded_tx: value.orderRefundedTx ? chainTransactionToJSON(value.orderRefundedTx) : null,
-    order_filled_tx: value.orderFilledTx ? chainTransactionToJSON(value.orderFilledTx) : null,
-    order_timeout_tx: value.orderTimeoutTx ? chainTransactionToJSON(value.orderTimeoutTx) : null,
+    order_submitted_tx: value.orderSubmittedTx
+      ? chainTransactionToJSON(value.orderSubmittedTx)
+      : null,
+    order_refunded_tx: value.orderRefundedTx
+      ? chainTransactionToJSON(value.orderRefundedTx)
+      : null,
+    order_filled_tx: value.orderFilledTx
+      ? chainTransactionToJSON(value.orderFilledTx)
+      : null,
+    order_timeout_tx: value.orderTimeoutTx
+      ? chainTransactionToJSON(value.orderTimeoutTx)
+      : null,
   };
 }
 
 export function goFastTransferTransactionsFromJSON(
-  value: GoFastTransferTransactionsJSON
+  value: GoFastTransferTransactionsJSON,
 ): GoFastTransferTransactions {
   return {
-    orderSubmittedTx: value.order_submitted_tx ? chainTransactionFromJSON(value.order_submitted_tx) : null,
-    orderRefundedTx: value.order_refunded_tx ? chainTransactionFromJSON(value.order_refunded_tx) : null,
-    orderFilledTx: value.order_filled_tx ? chainTransactionFromJSON(value.order_filled_tx) : null,
-    orderTimeoutTx: value.order_timeout_tx ? chainTransactionFromJSON(value.order_timeout_tx) : null,
+    orderSubmittedTx: value.order_submitted_tx
+      ? chainTransactionFromJSON(value.order_submitted_tx)
+      : null,
+    orderRefundedTx: value.order_refunded_tx
+      ? chainTransactionFromJSON(value.order_refunded_tx)
+      : null,
+    orderFilledTx: value.order_filled_tx
+      ? chainTransactionFromJSON(value.order_filled_tx)
+      : null,
+    orderTimeoutTx: value.order_timeout_tx
+      ? chainTransactionFromJSON(value.order_timeout_tx)
+      : null,
   };
 }
 
 export function hyperlaneTransferInfoFromJSON(
-  value: HyperlaneTransferInfoJSON
+  value: HyperlaneTransferInfoJSON,
 ): HyperlaneTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2506,7 +2537,7 @@ export function hyperlaneTransferInfoFromJSON(
 }
 
 export function hyperlaneTransferInfoToJSON(
-  value: HyperlaneTransferInfo
+  value: HyperlaneTransferInfo,
 ): HyperlaneTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2517,7 +2548,7 @@ export function hyperlaneTransferInfoToJSON(
 }
 
 export function opInitTransferTransactionsFromJSON(
-  value: OPInitTransferTransactionsJSON
+  value: OPInitTransferTransactionsJSON,
 ): OPInitTransferTransactions {
   return {
     sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
@@ -2528,7 +2559,7 @@ export function opInitTransferTransactionsFromJSON(
 }
 
 export function opInitTransferTransactionsToJSON(
-  value: OPInitTransferTransactions
+  value: OPInitTransferTransactions,
 ): OPInitTransferTransactionsJSON {
   return {
     send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
@@ -2539,7 +2570,7 @@ export function opInitTransferTransactionsToJSON(
 }
 
 export function stargateTransferTransactionsFromJSON(
-  value: StargateTransferTransactionsJSON
+  value: StargateTransferTransactionsJSON,
 ): StargateTransferTransactions {
   return {
     sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
@@ -2551,7 +2582,7 @@ export function stargateTransferTransactionsFromJSON(
 }
 
 export function stargateTransferTransactionsToJSON(
-  value: StargateTransferTransactions
+  value: StargateTransferTransactions,
 ): StargateTransferTransactionsJSON {
   return {
     send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
@@ -2605,7 +2636,7 @@ export function layerZeroTransferInfoToJSON(
 }
 
 export function opInitTransferInfoFromJSON(
-  value: OPInitTransferInfoJSON
+  value: OPInitTransferInfoJSON,
 ): OPInitTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2616,7 +2647,7 @@ export function opInitTransferInfoFromJSON(
 }
 
 export function opInitTransferInfoToJSON(
-  value: OPInitTransferInfo
+  value: OPInitTransferInfo,
 ): OPInitTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2627,7 +2658,7 @@ export function opInitTransferInfoToJSON(
 }
 
 export function stargateTransferInfoFromJSON(
-  value: StargateTransferInfoJSON
+  value: StargateTransferInfoJSON,
 ): StargateTransferInfo {
   return {
     fromChainID: value.from_chain_id,
@@ -2638,7 +2669,7 @@ export function stargateTransferInfoFromJSON(
 }
 
 export function stargateTransferInfoToJSON(
-  value: StargateTransferInfo
+  value: StargateTransferInfo,
 ): StargateTransferInfoJSON {
   return {
     from_chain_id: value.fromChainID,
@@ -2648,7 +2679,7 @@ export function stargateTransferInfoToJSON(
   };
 }
 export function msgsDirectRequestFromJSON(
-  msgDirectRequestJSON: MsgsDirectRequestJSON
+  msgDirectRequestJSON: MsgsDirectRequestJSON,
 ): MsgsDirectRequest {
   const baseRequest = {
     sourceAssetDenom: msgDirectRequestJSON.source_asset_denom,
@@ -2660,8 +2691,8 @@ export function msgsDirectRequestFromJSON(
     affiliates: msgDirectRequestJSON.affiliates?.map(affiliateFromJSON),
     chainIDsToAffiliates: msgDirectRequestJSON.chain_ids_to_affiliates
       ? chainIDsToAffiliatesMapFromJSON(
-        msgDirectRequestJSON.chain_ids_to_affiliates
-      )
+          msgDirectRequestJSON.chain_ids_to_affiliates,
+        )
       : undefined,
     timeoutSeconds: msgDirectRequestJSON.timeout_seconds,
     postRouteHandler:
@@ -2699,7 +2730,7 @@ export function msgsDirectRequestFromJSON(
   }
 }
 export function msgsDirectRequestToJSON(
-  msgDirectRequest: MsgsDirectRequest
+  msgDirectRequest: MsgsDirectRequest,
 ): MsgsDirectRequestJSON {
   const baseRequest = {
     source_asset_denom: msgDirectRequest.sourceAssetDenom,
@@ -2748,7 +2779,7 @@ export function msgsDirectRequestToJSON(
 }
 
 export function smartSwapOptionsFromJSON(
-  smartSwapOptionsJSON: SmartSwapOptionsJSON
+  smartSwapOptionsJSON: SmartSwapOptionsJSON,
 ): SmartSwapOptions {
   return {
     splitRoutes: Boolean(smartSwapOptionsJSON.split_routes),
@@ -2757,7 +2788,7 @@ export function smartSwapOptionsFromJSON(
 }
 
 export function smartSwapOptionsToJSON(
-  smartSwapOptions: SmartSwapOptions
+  smartSwapOptions: SmartSwapOptions,
 ): SmartSwapOptionsJSON {
   return {
     split_routes: Boolean(smartSwapOptions.splitRoutes),
@@ -2766,7 +2797,7 @@ export function smartSwapOptionsToJSON(
 }
 
 export function chainIDsToAffiliatesMapFromJSON(
-  value: Record<string, ChainAffiliatesJSON>
+  value: Record<string, ChainAffiliatesJSON>,
 ): Record<string, ChainAffiliates> {
   const result: Record<string, ChainAffiliates> = {};
   for (const key of Object.keys(value)) {
@@ -2776,7 +2807,7 @@ export function chainIDsToAffiliatesMapFromJSON(
 }
 
 export function chainIDsToAffiliatesMapToJSON(
-  value: Record<string, ChainAffiliates>
+  value: Record<string, ChainAffiliates>,
 ): Record<string, ChainAffiliatesJSON> {
   const result: Record<string, ChainAffiliatesJSON> = {};
   for (const key of Object.keys(value)) {
@@ -2786,7 +2817,7 @@ export function chainIDsToAffiliatesMapToJSON(
 }
 
 export function chainAffiliatesFromJSON(
-  value: ChainAffiliatesJSON
+  value: ChainAffiliatesJSON,
 ): ChainAffiliates {
   return {
     affiliates: value.affiliates.map(affiliateFromJSON),
@@ -2794,7 +2825,7 @@ export function chainAffiliatesFromJSON(
 }
 
 export function chainAffiliatesToJSON(
-  value: ChainAffiliates
+  value: ChainAffiliates,
 ): ChainAffiliatesJSON {
   return {
     affiliates: value.affiliates.map(affiliateToJSON),
@@ -2802,31 +2833,31 @@ export function chainAffiliatesToJSON(
 }
 
 export function balanceRequestChainEntryFromJSON(
-  value: BalanceRequestChainEntryJSON
+  value: BalanceRequestChainEntryJSON,
 ): BalanceRequestChainEntry {
   return value;
 }
 
 export function balanceRequestChainEntryToJSON(
-  value: BalanceRequestChainEntry
+  value: BalanceRequestChainEntry,
 ): BalanceRequestChainEntryJSON {
   return value;
 }
 
 export function balanceRequestFromJSON(
-  value: BalanceRequestJSON
+  value: BalanceRequestJSON,
 ): BalanceRequest {
   return value;
 }
 
 export function balanceRequestToJSON(
-  value: BalanceRequest
+  value: BalanceRequest,
 ): BalanceRequestJSON {
   return value;
 }
 
 export function balanceResponseDenomEntryFromJSON(
-  value: BalanceResponseDenomEntryJSON
+  value: BalanceResponseDenomEntryJSON,
 ): BalanceResponseDenomEntry {
   return {
     amount: value.amount,
@@ -2839,7 +2870,7 @@ export function balanceResponseDenomEntryFromJSON(
 }
 
 export function balanceResponseDenomEntryToJSON(
-  value: BalanceResponseDenomEntry
+  value: BalanceResponseDenomEntry,
 ): BalanceResponseDenomEntryJSON {
   return {
     amount: value.amount,
@@ -2852,7 +2883,7 @@ export function balanceResponseDenomEntryToJSON(
 }
 
 export function balanceResponseChainEntryFromJSON(
-  value: BalanceResponseChainEntryJSON
+  value: BalanceResponseChainEntryJSON,
 ): BalanceResponseChainEntry {
   const result: BalanceResponseChainEntry = {
     denoms: {},
@@ -2868,7 +2899,7 @@ export function balanceResponseChainEntryFromJSON(
 }
 
 export function balanceResponseChainEntryToJSON(
-  value: BalanceResponseChainEntry
+  value: BalanceResponseChainEntry,
 ): BalanceResponseChainEntryJSON {
   const result: BalanceResponseChainEntryJSON = {
     denoms: {},
@@ -2884,7 +2915,7 @@ export function balanceResponseChainEntryToJSON(
 }
 
 export function balanceResponseFromJSON(
-  value: BalanceResponseJSON
+  value: BalanceResponseJSON,
 ): BalanceResponse {
   const result: BalanceResponse = {
     chains: {},
@@ -2900,7 +2931,7 @@ export function balanceResponseFromJSON(
 }
 
 export function balanceResponseToJSON(
-  value: BalanceResponse
+  value: BalanceResponse,
 ): BalanceResponseJSON {
   const result: BalanceResponseJSON = {
     chains: {},

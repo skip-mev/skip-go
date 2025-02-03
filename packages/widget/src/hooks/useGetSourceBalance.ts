@@ -14,8 +14,11 @@ export const useGetSourceBalance = () => {
 
   const cw20Balance = useCW20Balance({
     asset: sourceAsset as ClientAsset,
-    address: sourceAccount?.address
+    address: sourceAccount?.address,
   });
+
+  // this is to support both tanstack query v4/v5
+  const cw20BalanceIsLoading = cw20Balance.isPending && cw20Balance.isFetching;
 
   const data = useMemo(() => {
     if (!sourceAsset || !sourceAccount || !skipBalances) return;
@@ -28,7 +31,7 @@ export const useGetSourceBalance = () => {
     if (sourceAsset.isCW20) {
       return {
         ...cw20Balance.data,
-        error: cw20Balance.error || undefined
+        error: cw20Balance.error || undefined,
       };
     }
 
@@ -37,7 +40,7 @@ export const useGetSourceBalance = () => {
         amount: 0,
         formattedAmount: "0",
         error: undefined,
-        decimals: undefined
+        decimals: undefined,
       };
     }
     return skipBalances?.chains?.[chainID]?.denoms?.[denom];
@@ -45,10 +48,10 @@ export const useGetSourceBalance = () => {
 
   return {
     data,
-    isLoading: !isFetched || isLoading || cw20Balance.isLoading,
+    isLoading: !isFetched || isLoading || cw20BalanceIsLoading,
     refetch: () => {
       refetch();
       cw20Balance.refetch();
-    }
+    },
   };
 };

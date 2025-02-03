@@ -1,5 +1,4 @@
 import { css, styled } from "styled-components";
-import { getBrandButtonTextColor } from "@/utils/colors";
 
 type TextProps = {
   fontSize?: number;
@@ -25,7 +24,7 @@ export const removeButtonStyles = css`
 `;
 
 export const textProps = css<TextProps>`
-  font-family: 'ABCDiatype', sans-serif;
+  font-family: "ABCDiatype", sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
   ${({ fontWeight }) => {
@@ -42,15 +41,13 @@ export const textProps = css<TextProps>`
     }
   }};
   ${({ textAlign }) => textAlign && `text-align: ${textAlign}`};
-  ${({ normalTextColor, theme }) =>
-    normalTextColor && `color: ${theme.primary.text.normal}`};
+  ${({ normalTextColor, theme }) => normalTextColor && `color: ${theme.primary.text.normal}`};
   ${({ color }) => color && `color: ${color}`};
   ${({ opacity }) => opacity && `opacity: ${opacity}`};
   ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight}`};
   ${({ textWrap }) => textWrap && `text-wrap: ${textWrap}`};
   ${({ monospace }) => monospace && "font-family: 'ABCDiatype-mono', monospace; letter-spacing: 0"};
-  ${({ mainButtonColor }) =>
-    mainButtonColor && `color: ${getBrandButtonTextColor(mainButtonColor)}`};
+  ${({ mainButtonColor, theme }) => mainButtonColor && `color: ${theme.brandTextColor}`};
   ${({ capitalize }) =>
     capitalize &&
     css`
@@ -68,7 +65,7 @@ export const textProps = css<TextProps>`
 `;
 
 export const SmallText = styled.p<TextProps>`
-  color: ${({ theme }) => theme.primary.text.lowContrast};
+  color: ${({ theme, color }) => color ?? theme.primary.text.lowContrast};
   margin: 0;
   font-size: 13px;
   font-weight: 500;
@@ -84,7 +81,7 @@ export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
 `;
 
 export const Text = styled(SmallText)`
-  color: ${(props) => props.theme.primary.text.normal};
+  color: ${({ color, theme }) => color ?? theme.primary.text.normal};
   font-size: 20px;
   font-weight: 500;
   letter-spacing: 0;

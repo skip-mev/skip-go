@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-} from "react";
+import { useEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, Theme } from "./theme";
 import { useSetAtom } from "jotai";
 import {
@@ -12,19 +9,30 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import {
-  chainFilterAtom,
-  defaultSwapSettings,
-  swapSettingsAtom,
-} from "@/state/swapPage";
+import { chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
-import { walletConnectAtom, getConnectedSignersAtom, connectedAddressesAtom } from "@/state/wallets";
+import {
+  walletConnectAtom,
+  getConnectedSignersAtom,
+  connectedAddressesAtom,
+} from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
+import { getBrandButtonTextColor } from "@/utils/colors";
+import { initSentry } from "./initSentry";
+import { version } from "../../package.json";
+import { setTag } from "@sentry/react";
+import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
+import { simulateTxAtom } from "@/state/swapExecutionPage";
 
 export const useInitWidget = (props: WidgetProps) => {
+  if (props.enableSentrySessionReplays) {
+    initSentry();
+  }
+  setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
   useInitGetSigners(props);
+  useMobileRouteConfig();
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
   const setTheme = useSetAtom(themeAtom);
@@ -34,6 +42,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
+  const setSimulateTx = useSetAtom(simulateTxAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -46,9 +55,7 @@ export const useInitWidget = (props: WidgetProps) => {
     // merge if not undefined
     return {
       apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
-      endpointOptions:
-        fromWidgetProps.endpointOptions ??
-        defaultSkipClientConfig.endpointOptions,
+      endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
       chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
@@ -63,6 +70,11 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.brandColor) {
       theme.brandColor = props.brandColor;
     }
+
+    if ((props.theme as Theme)?.brandTextColor === undefined && typeof document !== "undefined") {
+      theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
+    }
+
     return theme;
   }, [props.brandColor, props.theme]);
 
@@ -74,7 +86,6 @@ export const useInitWidget = (props: WidgetProps) => {
     });
     setTheme(mergedTheme);
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
-
 
   useEffect(() => {
     if (props.settings) {
@@ -100,6 +111,9 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
+    if (props.simulate !== undefined) {
+      setSimulateTx(props.simulate);
+    }
 
     const callbacks = {
       onWalletConnected: props.onWalletConnected,
@@ -112,7 +126,6 @@ export const useInitWidget = (props: WidgetProps) => {
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
       setCallbacks(callbacks);
     }
-
   }, [
     props.onTransactionFailed,
     props.onTransactionComplete,
@@ -125,12 +138,14 @@ export const useInitWidget = (props: WidgetProps) => {
     props.settings,
     props.settings?.slippage,
     props.walletConnect,
+    props.simulate,
     setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
     setWalletConnect,
-    setCallbacks
+    setCallbacks,
+    setSimulateTx,
   ]);
 
   return { theme: mergedTheme };

@@ -11,9 +11,7 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
   const params = get(skipAllBalancesRequestAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
 
-  const enabled = params &&
-    Object.keys(params).length > 0 &&
-    !isInvertingSwap;
+  const enabled = params && Object.keys(params).length > 0 && !isInvertingSwap;
 
   return {
     queryKey: ["skipBalances", params],
@@ -27,6 +25,6 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
     refetchInterval: 1000 * 60,
     retry: 1,
     gcTime: 0,
-    placeholderData: (prevData: BalanceResponse | undefined) => prevData
+    placeholderData: (prevData: BalanceResponse | undefined) => prevData,
   };
 });

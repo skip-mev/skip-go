@@ -2,7 +2,10 @@ type IconProps = {
   color?: string;
 };
 
-export const BridgeIcon = ({ color = "currentColor" }: IconProps) => (
+export const BridgeIcon = ({
+  color = "currentColor",
+  ...props
+}: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg
     width="47"
     height="7"
@@ -10,6 +13,7 @@ export const BridgeIcon = ({ color = "currentColor" }: IconProps) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+    {...props}
   >
     <path
       fillRule="evenodd"

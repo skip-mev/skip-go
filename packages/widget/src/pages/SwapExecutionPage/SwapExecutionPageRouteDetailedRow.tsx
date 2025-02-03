@@ -58,6 +58,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const getAccount = useGetAccount();
   const account = getAccount(chainId);
 
+  const shouldRenderEditDestinationWallet =
+    context === "destination" && onClickEditDestinationWallet !== undefined;
+
+  const renderingEditDestinationWalletOrExplorerLink =
+    shouldRenderEditDestinationWallet || explorerLink !== undefined;
+
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     switch (context) {
@@ -68,42 +74,26 @@ export const SwapExecutionPageRouteDetailedRow = ({
         };
       case "intermediary": {
         const selected = Object.values(chainAddresses).find(
-          (chainAddress) => chainAddress.chainID === chainId
+          (chainAddress) => chainAddress.chainID === chainId,
         );
         return {
           address: selected?.address,
-          image:
-            (selected?.source === "wallet" &&
-              selected.wallet.walletInfo.logo) ||
-            undefined,
+          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
         };
       }
       case "destination": {
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
           address: selected?.address,
-          image:
-            (selected?.source === "wallet" &&
-              selected.wallet.walletInfo.logo) ||
-            undefined,
+          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
         };
       }
     }
-  }, [
-    account?.address,
-    account?.wallet.logo,
-    chainAddresses,
-    chainId,
-    context,
-  ]);
+  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
 
   const renderAddress = useMemo(() => {
-    const shouldRenderEditDestinationWallet =
-      context === "destination" && onClickEditDestinationWallet;
     const Container = shouldRenderEditDestinationWallet
-      ? ({ children }: { children: React.ReactNode }) => (
-        <Row gap={5}>{children}</Row>
-      )
+      ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
     if (!source.address) return;
     return (
@@ -137,9 +127,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
-    context,
     isMobileScreenSize,
     onClickEditDestinationWallet,
+    shouldRenderEditDestinationWallet,
     source.address,
     source.image,
     theme.primary.text.lowContrast,
@@ -191,10 +181,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {removeTrailingZeros(assetDetails?.amount)}
               </StyledAssetAmount>
-              <StyledSymbol normalTextColor>
-                {assetDetails?.symbol}
-              </StyledSymbol>
+              <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
               <StyledChainName
+                renderingEditDestinationWalletOrExplorerLink={
+                  renderingEditDestinationWalletOrExplorerLink
+                }
                 title={assetDetails?.chainName}
                 textWrap="nowrap"
               >
@@ -203,11 +194,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               </StyledChainName>
               {renderExplorerLink}
             </Row>{" "}
-            {isSignRequired && (
-              <SmallText color={theme.warning.text}>
-                Signature required
-              </SmallText>
-            )}
+            {isSignRequired && <SmallText color={theme.warning.text}>Signature required</SmallText>}
           </Column>
           {renderAddress}
         </Row>
@@ -218,12 +205,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledSymbol = styled(SmallText)`
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const StyledChainImage = styled.img`
@@ -267,7 +248,7 @@ export const StyledAnimatedBorder = ({
   </StyledLoadingContainer>
 );
 
-const StyledLoadingContainer = styled(Row) <{
+const StyledLoadingContainer = styled(Row)<{
   height: number;
   width: number;
   borderSize: number;
@@ -292,13 +273,13 @@ const StyledLoadingContainer = styled(Row) <{
   border-radius: 50%;
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     height: ${({ height }) => `${height + 20}px;`};
     width: ${({ width }) => `${width + 20}px;`};
     ${({ status, backgroundColor, theme }) =>
-    status === "pending" &&
-    css`
+      status === "pending" &&
+      css`
         background-image: conic-gradient(
           transparent,
           transparent,
@@ -318,7 +299,7 @@ const StyledLoadingContainer = styled(Row) <{
   }
 `;
 
-const StyledLoadingOverlay = styled(Row) <{
+const StyledLoadingOverlay = styled(Row)<{
   backgroundColor?: string;
   width: number;
   height: number;
@@ -327,18 +308,71 @@ const StyledLoadingOverlay = styled(Row) <{
   height: ${({ height }) => height}px;
   position: absolute;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
 `;
 
 const StyledAssetAmount = styled(SmallText)`
-  max-width: 90px;
+  max-width: 60px;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  @media (max-width: 767px) {
+    max-width: 80px;
+  }
+
+  @media (max-width: 400px) {
+    max-width: 55px;
+  }
 `;
 
-const StyledChainName = styled(SmallText)`
+const StyledSymbol = styled(SmallText)`
+  max-width: 55px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 400px) {
+    max-width: 40px;
+  }
+`;
+
+const StyledChainName = styled(SmallText)<{
+  renderingEditDestinationWalletOrExplorerLink: boolean;
+}>`
   max-width: 95px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
+  @media (min-width: 500px) and (max-width: 767px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 120px;
+          `
+        : css`
+            max-width: 140px;
+          `};
+  }
+
+  @media (min-width: 400px) and (max-width: 500px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 55px;
+          `
+        : css`
+            max-width: 85px;
+          `};
+  }
+
+  @media (max-width: 400px) {
+    ${({ renderingEditDestinationWalletOrExplorerLink }) =>
+      renderingEditDestinationWalletOrExplorerLink
+        ? css`
+            max-width: 65px;
+          `
+        : css`
+            max-width: 100px;
+          `};
+  }
 `;

@@ -1,21 +1,21 @@
-import { OfflineAminoSigner } from '@cosmjs/amino';
+import { OfflineAminoSigner } from "@cosmjs/amino";
 import {
   GeneratedType,
   OfflineDirectSigner,
   OfflineSigner,
-} from '@cosmjs/proto-signing';
+} from "@cosmjs/proto-signing";
 import {
   AminoConverters,
   GasPrice,
   SignerData,
   StdFee,
-} from '@cosmjs/stargate';
+} from "@cosmjs/stargate";
 
-import { WalletClient } from 'viem';
+import { WalletClient } from "viem";
 
-import * as types from './types';
-import { Adapter } from '@solana/wallet-adapter-base';
-import { TransactionCallbacks } from './types';
+import * as types from "./types";
+import { Adapter } from "@solana/wallet-adapter-base";
+import { TransactionCallbacks } from "./types";
 
 /** Common Types */
 export interface UserAddress {
@@ -32,24 +32,30 @@ export type Gas = {
   error: null;
   asset: types.FeeAsset;
   fee: StdFee;
-}
+};
 
 /** Signer Getters */
 export interface SignerGetters {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineAminoSigner & OfflineDirectSigner | OfflineAminoSigner | OfflineDirectSigner>;
+  getCosmosSigner?: (
+    chainID: string,
+  ) => Promise<
+    | (OfflineAminoSigner & OfflineDirectSigner)
+    | OfflineAminoSigner
+    | OfflineDirectSigner
+  >;
   getSVMSigner?: () => Promise<Adapter>;
 }
 
 /** Gas Options */
 export type GetFallbackGasAmount = (
   chainID: string,
-  chainType: types.ChainType
+  chainType: types.ChainType,
 ) => Promise<number | undefined>;
 
 export type GetGasPrice = (
   chainID: string,
-  chainType: types.ChainType
+  chainType: types.ChainType,
 ) => Promise<GasPrice | undefined>;
 
 interface GasOptions {
@@ -91,12 +97,17 @@ export type ExecuteRouteOptions = SignerGetters &
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
- * Arbitrary Tx to be executed before or after route msgs
- */
+     * Arbitrary Tx to be executed before or after route msgs
+     */
     beforeMsg?: types.CosmosMsg;
     afterMsg?: types.CosmosMsg;
+    /**
+     * If `skipApproval` is set to `true`, the router will bypass checking whether
+     * the signer has granted approval for the specified token contract on an EVM chain.
+     * This can be useful if approval has already been handled externally or there are race conditions.
+     */
+    bypassApprovalCheck?: boolean;
   };
-
 
 export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
@@ -107,12 +118,12 @@ export type ExecuteCosmosMessageOptions = {
 
 export type ExecuteCosmosMessage = GasOptions & {
   signerAddress: string;
-  getCosmosSigner?: SignerGetters['getCosmosSigner'];
+  getCosmosSigner?: SignerGetters["getCosmosSigner"];
   chainID: string;
   messages: types.CosmosMsg[];
-  gas: Gas
-  onTransactionSigned?: TransactionCallbacks['onTransactionSigned'];
-  onTransactionBroadcast?: TransactionCallbacks['onTransactionBroadcast'];
+  gas: Gas;
+  onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
+  onTransactionBroadcast?: TransactionCallbacks["onTransactionBroadcast"];
 };
 
 interface SignCosmosMessageOptionsBase {
@@ -123,12 +134,10 @@ interface SignCosmosMessageOptionsBase {
   signerData: SignerData;
 }
 
-export type SignCosmosMessageDirectOptions =
-  SignCosmosMessageOptionsBase & {
-    signer: OfflineDirectSigner;
-  };
+export type SignCosmosMessageDirectOptions = SignCosmosMessageOptionsBase & {
+  signer: OfflineDirectSigner;
+};
 
-export type SignCosmosMessageAminoOptions =
-  SignCosmosMessageOptionsBase & {
-    signer: OfflineAminoSigner;
-  };
+export type SignCosmosMessageAminoOptions = SignCosmosMessageOptionsBase & {
+  signer: OfflineAminoSigner;
+};

@@ -3,7 +3,7 @@ import { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
 export const withBoundProps = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  boundProps: Partial<P>
+  boundProps: Partial<P>,
 ) => {
   return (props: Partial<P>): React.ReactElement => {
     const combinedProps = {
@@ -40,9 +40,5 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
     },
   };
 
-  return atomWithStorage<T>(
-    storageKey,
-    initialValue,
-    defaultStorage,
-  );
+  return atomWithStorage<T>(storageKey, initialValue, defaultStorage);
 }

@@ -1,11 +1,7 @@
 import { createModal, ModalProps } from "@/components/Modal";
 import { Column } from "@/components/Layout";
 import { useAtomValue } from "jotai";
-import {
-  ClientAsset,
-  skipAssetsAtom,
-  skipChainsAtom,
-} from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useListHeight, VirtualList } from "@/components/VirtualList";
 import {
@@ -56,15 +52,13 @@ export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
-    const { data: assets, isLoading: isAssetsLoading } =
-      useAtomValue(skipAssetsAtom);
+    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = isAssetsLoading || isChainsLoading;
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [groupedAssetSelected, setGroupedAssetSelected] =
-      useState<GroupedAsset | null>(null);
+    const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);
 
     const listHeight = useListHeight(ITEM_HEIGHT + ITEM_GAP);
 
@@ -87,7 +81,7 @@ export const AssetAndChainSelectorModal = createModal(
         _onSelect(input);
         resetInput();
       },
-      [_onSelect]
+      [_onSelect],
     );
 
     const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
@@ -96,13 +90,9 @@ export const AssetAndChainSelectorModal = createModal(
       const asset = groupedAssetSelected?.assets[0] || selectedAsset;
       if (!asset) return;
       return groupedAssetsByRecommendedSymbol?.find(
-        (group) => group.id === asset.recommendedSymbol
+        (group) => group.id === asset.recommendedSymbol,
       );
-    }, [
-      groupedAssetSelected?.assets,
-      selectedAsset,
-      groupedAssetsByRecommendedSymbol,
-    ]);
+    }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
     const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
@@ -133,7 +123,7 @@ export const AssetAndChainSelectorModal = createModal(
           />
         );
       },
-      [context, onSelect]
+      [context, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {
@@ -162,7 +152,7 @@ export const AssetAndChainSelectorModal = createModal(
         <AssetAndChainSelectorModalSearchInput
           onSearch={handleSearch}
           onClickBack={onClickBack}
-          asset={groupedAssetSelected?.assets[0] || selectedAsset}
+          groupedAsset={groupedAssetSelected ?? selectedGroup}
           searchTerm={searchQuery}
           setSearchTerm={setSearchQuery}
           onKeyDown={onKeyDown}
@@ -177,20 +167,24 @@ export const AssetAndChainSelectorModal = createModal(
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
             itemHeight={ITEM_HEIGHT + ITEM_GAP}
-            itemKey={(item) => isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`}
+            itemKey={(item) =>
+              isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`
+            }
             renderItem={renderItem}
             empty={{
               header: selectedGroup ? "No networks found" : "No assets found",
-              details: selectedGroup ? "Looking for an asset? \n Select back to return to asset selection." : "Looking for a network? \n Select an asset first, then move to network selection.",
+              details: selectedGroup
+                ? "Looking for an asset? \n Select back to return to asset selection."
+                : "Looking for a network? \n Select an asset first, then move to network selection.",
             }}
           />
         )}
       </StyledModalContainer>
     );
-  }
+  },
 );
 
-const StyledColumn = styled(Column) <{
+const StyledColumn = styled(Column)<{
   height: number;
 }>`
   height: ${({ height }) => height}px;

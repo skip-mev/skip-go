@@ -32,7 +32,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
-          }
+          },
         }}
       />
       <ErrorPageContent

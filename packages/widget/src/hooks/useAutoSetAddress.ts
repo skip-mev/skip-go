@@ -37,9 +37,7 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = operations
-      .filter((o) => o.signRequired)
-      .map((o) => o.fromChainID);
+    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainID);
     return signRequiredChains;
   }, [route?.operations]);
 
@@ -79,25 +77,26 @@ export const useAutoSetAddress = () => {
           }));
           return;
         }
+        const showSetAddressModal = () => {
+          NiceModal.show(Modals.SetAddressModal, {
+            signRequired: isSignRequired,
+            chainId: chainID,
+            chainAddressIndex: index,
+          });
+        };
         const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
         switch (chainType) {
           case ChainType.Cosmos: {
-            const wallets = createCosmosWallets(chainID);
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.cosmos?.walletName
-            );
-            if (!wallet) {
-              if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-                chainAddressIndex: index,
-              });
-              return;
-            }
             try {
+              const wallets = createCosmosWallets(chainID);
+              const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
+              if (!wallet) {
+                if (!openModal) return;
+                showSetAddressModal();
+                return;
+              }
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -120,24 +119,20 @@ export const useAutoSetAddress = () => {
                 },
               }));
             } catch (_) {
-              return;
+              if (!openModal) return;
+              showSetAddressModal();
             }
             break;
           }
           case ChainType.SVM: {
-            const wallets = createSolanaWallets();
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.svm?.walletName
-            );
-            if (!wallet) {
-              if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-              });
-              return;
-            }
             try {
+              const wallets = createSolanaWallets();
+              const wallet = wallets.find((w) => w.walletName === sourceWallet.svm?.walletName);
+              if (!wallet) {
+                if (!openModal) return;
+                showSetAddressModal();
+                return;
+              }
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -160,25 +155,21 @@ export const useAutoSetAddress = () => {
                 },
               }));
             } catch (_) {
-              return;
+              if (!openModal) return;
+              showSetAddressModal();
             }
 
             break;
           }
           case ChainType.EVM: {
-            const wallets = createEvmWallets(chainID);
-            const wallet = wallets.find(
-              (w) => w.walletName === sourceWallet.evm?.walletName
-            );
-            if (!wallet) {
-              if (!openModal) return;
-              NiceModal.show(Modals.SetAddressModal, {
-                signRequired: isSignRequired,
-                chainId: chainID,
-              });
-              return;
-            }
             try {
+              const wallets = createEvmWallets(chainID);
+              const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
+              if (!wallet) {
+                if (!openModal) return;
+                showSetAddressModal();
+                return;
+              }
               const address = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
@@ -201,7 +192,8 @@ export const useAutoSetAddress = () => {
                 },
               }));
             } catch (_) {
-              return;
+              if (!openModal) return;
+              showSetAddressModal();
             }
             break;
           }
@@ -211,26 +203,31 @@ export const useAutoSetAddress = () => {
       });
     },
     [
-      chains,
-      createCosmosWallets,
-      createEvmWallets,
-      createSolanaWallets,
       requiredChainAddresses,
-      setChainAddresses,
-      sourceWallet.cosmos,
-      sourceWallet.evm,
-      sourceWallet.svm,
+      chains,
       signRequiredChains,
-      chainAddresses,
       connectedAddress,
-    ]
+      chainAddresses,
+      setChainAddresses,
+      createCosmosWallets,
+      sourceWallet.cosmos?.walletName,
+      sourceWallet.svm?.walletName,
+      sourceWallet.evm?.walletName,
+      createSolanaWallets,
+      createEvmWallets,
+    ],
   );
 
   useQuery({
     queryKey: [
       "auto-set-address",
       {
-        requiredChainAddresses, chains, sourceWallet, signRequiredChains, chainAddresses, connectedAddress,
+        requiredChainAddresses,
+        chains,
+        sourceWallet,
+        signRequiredChains,
+        chainAddresses,
+        connectedAddress,
       },
     ],
     enabled:

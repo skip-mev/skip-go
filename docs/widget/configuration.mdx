@@ -36,7 +36,7 @@ Customizes enabled route types.
 
 ```ts
 routeConfig?: {
-  experimentalFeatures?: ['hyperlane', 'cctp'];
+  experimentalFeatures?: ['hyperlane', 'cctp', 'stargate'];
   allowMultiTx?: boolean;
   allowUnsafe?: boolean;
   bridges?: ('IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'GO_FAST')[];
@@ -50,11 +50,11 @@ routeConfig?: {
 ```
 
 - `allowMultiTx`: Allow multi-transaction routes. Default: true.
-- `allowUnsafe`: Allow unsafe routes. Default: false. [More info](https://api-docs.skip.build/docs/allow_unsafe-preventing-handling-bad-execution).
+- `allowUnsafe`: Allow unsafe routes. Default: false. [More info](../advanced-swapping/allow_unsafe-preventing-handling-bad-execution).
 - `bridges`: Restrict routing to specific bridges. Default: empty (all bridges).
 - `swapVenues`: Restrict routing to specific swap venues. Default: empty (all venues).
 - `goFast`: Enable Go Fast transfers. Default: false. [More info](../advanced-transfer/go-fast).
-- `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](https://api-docs.skip.build/docs/smart-swap-options).
+- `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](../advanced-swapping/smart-swap-options).
 
 ### `filter`
 
@@ -116,10 +116,13 @@ endpointOptions?: {
 
 String to override default Skip Go API proxied endpoints. Whitelisting required, reach out [here](https://skip.build/discord).
 
+### `brandColor`
+
+Customizes the main highlight color of the widget
 
 ### `theme`
 
-Customize widget appearance.
+Advanced widget appearance customization options
 
 ```tsx
   theme? = {
@@ -127,7 +130,6 @@ Customize widget appearance.
     primary: {
       background: {
         normal: string;
-        transparent: string;
       };
       text: {
         normal: string;
@@ -207,11 +209,23 @@ onTransactionBroadcasted?: (params: {
   txHash: string;
   chainId: string;
   explorerLink?: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 }) => void;
 onTransactionComplete?: (params: {
   txHash: string;
   chainId: string;
   explorerLink?: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
 }) => void;
 onTransactionFailed?: (params: { error: Error }) => void;
 ```

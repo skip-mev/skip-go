@@ -16,6 +16,9 @@ import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -27,6 +30,7 @@ export type AssetChainInputProps = {
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
+  context: SelectorContext;
 };
 
 export const SwapPageAssetChainInput = ({
@@ -39,19 +43,23 @@ export const SwapPageAssetChainInput = ({
   priceChangePercentage,
   isWaitingToUpdateInputValue,
   badPriceWarning,
+  context,
 }: AssetChainInputProps) => {
   const theme = useTheme();
-  const [_showPriceChangePercentage, setShowPriceChangePercentage] =
-    useState(false);
+  const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const showPriceChangePercentage =
-    _showPriceChangePercentage || badPriceWarning;
+  const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
     chainId: selectedAsset?.chainID,
   });
+
+  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
+  const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
+    (group) => group.id === assetDetails.asset?.recommendedSymbol,
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!onChangeValue) return;
@@ -76,9 +84,7 @@ export const SwapPageAssetChainInput = ({
 
     const formattedValue = formatNumberWithoutCommas(latest);
 
-    onChangeValue?.(
-      limitDecimalsDisplayed(formattedValue, assetDetails?.decimals)
-    );
+    onChangeValue?.(limitDecimalsDisplayed(formattedValue, assetDetails?.decimals));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -88,19 +94,14 @@ export const SwapPageAssetChainInput = ({
 
     switch (event.key) {
       case "Escape":
-        if (
-          event.currentTarget.selectionStart ===
-          event.currentTarget.selectionEnd
-        ) {
+        if (event.currentTarget.selectionStart === event.currentTarget.selectionEnd) {
           event.currentTarget.select();
         }
         return;
 
       case "ArrowUp":
         event.preventDefault();
-        value = new BigNumber(
-          formatNumberWithoutCommas(event.currentTarget.value) || "0"
-        );
+        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
 
         if (event.shiftKey) {
           value = value.plus(10);
@@ -119,9 +120,7 @@ export const SwapPageAssetChainInput = ({
 
       case "ArrowDown":
         event.preventDefault();
-        value = new BigNumber(
-          formatNumberWithoutCommas(event.currentTarget.value) || "0"
-        );
+        value = new BigNumber(formatNumberWithoutCommas(event.currentTarget.value) || "0");
 
         if (event.shiftKey) {
           value = value.minus(10);
@@ -151,21 +150,12 @@ export const SwapPageAssetChainInput = ({
       return theme.success.text;
     }
     return theme.error.text;
-  }, [
-    priceChangePercentage,
-    theme.error.text,
-    theme.primary.text.normal,
-    theme.success.text,
-  ]);
+  }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
 
   const displayedValue = formatNumberWithCommas(value || "");
 
   return (
-    <StyledAssetChainInputWrapper
-      justify="space-between"
-      padding={20}
-      borderRadius={25}
-    >
+    <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
       <Row justify="space-between">
         <StyledInput
           type="text"
@@ -180,17 +170,27 @@ export const SwapPageAssetChainInput = ({
         <Button onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
-              <StyledImage src={assetDetails.assetImage} />
+              <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text>{assetDetails.symbol}</Text>
               {isMobileScreenSize && (
-                <ChevronIcon width="13px" height="8px" color={theme.primary.text.normal} noBackground />
+                <ChevronIcon
+                  width="13px"
+                  height="8px"
+                  color={theme.primary.text.normal}
+                  noBackground
+                />
               )}
             </StyledAssetLabel>
           ) : (
             <StyledSelectTokenLabel align="center" justify="center" gap={7}>
               <Text mainButtonColor={theme.brandColor}>Select asset</Text>
               {isMobileScreenSize && (
-                <ChevronIcon width="13px" height="8px" color={theme.primary.background.normal} noBackground />
+                <ChevronIcon
+                  width="13px"
+                  height="8px"
+                  color={theme.primary.background.normal}
+                  noBackground
+                />
               )}
             </StyledSelectTokenLabel>
           )}
@@ -206,7 +206,7 @@ export const SwapPageAssetChainInput = ({
         {priceChangePercentage ? (
           <Row align="center" gap={6}>
             <SmallTextButton
-              color={badPriceWarning ? theme.error.text : undefined}
+              color={priceChangeColor}
               onMouseEnter={() => setShowPriceChangePercentage(true)}
               onMouseLeave={() => setShowPriceChangePercentage(false)}
             >
@@ -218,23 +218,16 @@ export const SwapPageAssetChainInput = ({
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
             {showPriceChangePercentage && (
-              <SmallText color={priceChangeColor}>
-                {priceChangePercentage}%
-              </SmallText>
+              <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
           </Row>
         ) : (
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <GhostButton
-            onClick={handleChangeChain}
-            align="center"
-            secondary
-            gap={4}
-          >
+          <StyledOnChainGhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
             <SmallText>on {assetDetails?.chainName}</SmallText>
-          </GhostButton>
+          </StyledOnChainGhostButton>
         ) : (
           <Spacer />
         )}
@@ -243,10 +236,21 @@ export const SwapPageAssetChainInput = ({
   );
 };
 
+const StyledOnChainGhostButton = styled(GhostButton)`
+  @media (max-width: 767px) {
+    padding: 0 5px;
+    height: 25px;
+  }
+`;
+
 const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 100%;
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
+  padding: 20px;
+  @media (max-width: 767px) {
+    padding: 15px;
+  }
 `;
 
 const StyledInput = styled.input<{
@@ -262,12 +266,11 @@ const StyledInput = styled.input<{
   letter-spacing: -0.01em;
   width: 100%;
   color: ${(props) => props.theme.primary.text.normal};
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
 
   ${(props) =>
-    props.isWaitingToUpdateInputValue &&
-    "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+    props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
   @keyframes pulse {
     0% {
       opacity: 0.5;
@@ -279,6 +282,10 @@ const StyledInput = styled.input<{
       opacity: 0.5;
     }
   }
+
+  @media (max-width: 767px) {
+    height: 45px;
+  }
 `;
 
 export const StyledAssetLabel = styled(Row).attrs({
@@ -288,16 +295,9 @@ export const StyledAssetLabel = styled(Row).attrs({
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.primary.text.normal};
-  background-color: ${(props) => props.theme.secondary.background.normal};
+  background: ${(props) => props.theme.secondary.background.normal};
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
-  background-color: ${(props) => props.theme.brandColor};
-`;
-
-const StyledImage = styled.img`
-  border-radius: 50%;
-  width: 23px;
-  height: 23px;
-  object-fit: cover;
+  background: ${(props) => props.theme.brandColor};
 `;

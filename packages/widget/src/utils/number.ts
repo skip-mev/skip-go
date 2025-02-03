@@ -15,9 +15,12 @@ export function formatNumberWithoutCommas(str: string | number) {
 export const removeTrailingZeros = (input: string | undefined) => {
   if (input === "0") return input;
   return input?.replace(/0+$/, "").replace(/\.$/, "");
-}
+};
 
-export function limitDecimalsDisplayed(input: string | number | undefined, decimalPlaces = DEFAULT_DECIMAL_PLACES) {
+export function limitDecimalsDisplayed(
+  input: string | number | undefined,
+  decimalPlaces = DEFAULT_DECIMAL_PLACES,
+) {
   if (input === undefined) return "";
 
   if (typeof input === "string") {
@@ -35,7 +38,7 @@ export function limitDecimalsDisplayed(input: string | number | undefined, decim
   const decimalScalingFactor = Math.pow(10, decimalPlaces);
 
   const flooredAndLimitedDecimalPlacesNumber =
-    Math.floor((input) * decimalScalingFactor) / decimalScalingFactor;
+    Math.floor(input * decimalScalingFactor) / decimalScalingFactor;
 
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
@@ -43,15 +46,12 @@ export function limitDecimalsDisplayed(input: string | number | undefined, decim
 export function calculatePercentageChange(
   numberA: number | string,
   numberB: number | string,
-  absoluteValue?: boolean
+  absoluteValue?: boolean,
 ) {
   const bigNumberA = BigNumber(numberA);
   const bigNumberB = BigNumber(numberB);
 
-  const percentageDifference = bigNumberB
-    .minus(bigNumberA)
-    .dividedBy(bigNumberA)
-    .multipliedBy(100);
+  const percentageDifference = bigNumberB.minus(bigNumberA).dividedBy(bigNumberA).multipliedBy(100);
 
   if (absoluteValue) {
     return percentageDifference.absoluteValue().toFixed(0);
@@ -67,14 +67,8 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
   if (seconds < 60) {
     return `${seconds} ${pluralize("sec", seconds)}`;
   } else if (seconds < 3600) {
-    return `${Math.round(seconds / 60)} ${pluralize(
-      "min",
-      Math.round(seconds / 60)
-    )}`;
+    return `${Math.round(seconds / 60)} ${pluralize("min", Math.round(seconds / 60))}`;
   } else {
-    return `${Math.round(seconds / 3600)} ${pluralize(
-      "hr",
-      Math.round(seconds / 3600)
-    )}`;
+    return `${Math.round(seconds / 3600)} ${pluralize("hr", Math.round(seconds / 3600))}`;
   }
 };

@@ -14,22 +14,34 @@ import {
   isInvertingSwapAtom,
   debouncedSourceAssetAmountValueInitializedAtom,
   debouncedDestinationAssetAmountValueInitializedAtom,
+  routePreferenceAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
+import { RoutePreference } from "./types";
 
 export const initializeDebounceValuesEffect = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
-  const debouncedDestinationAssetInitialized = get(debouncedDestinationAssetAmountValueInitializedAtom);
+  const debouncedDestinationAssetInitialized = get(
+    debouncedDestinationAssetAmountValueInitializedAtom,
+  );
 
-  if (sourceAsset?.amount && !debouncedSourceAssetInitialized) {
-    set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
+  if (!debouncedSourceAssetInitialized) {
+    if (sourceAsset?.amount) {
+      set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
+    } else {
+      set(debouncedSourceAssetAmountAtom, "");
+    }
   }
 
-  if (destinationAsset?.amount && !debouncedDestinationAssetInitialized) {
-    set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
+  if (!debouncedDestinationAssetInitialized) {
+    if (destinationAsset?.amount) {
+      set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
+    } else {
+      set(debouncedDestinationAssetAmountAtom, "");
+    }
   }
 });
 
@@ -53,17 +65,17 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-        amountIn: convertHumanReadableAmountToCryptoAmount(
-          sourceAssetAmount ?? "0",
-          sourceAsset.decimals
-        ),
-      }
+          amountIn: convertHumanReadableAmountToCryptoAmount(
+            sourceAssetAmount ?? "0",
+            sourceAsset.decimals,
+          ),
+        }
       : {
-        amountOut: convertHumanReadableAmountToCryptoAmount(
-          destinationAssetAmount ?? "0",
-          destinationAsset.decimals
-        ),
-      };
+          amountOut: convertHumanReadableAmountToCryptoAmount(
+            destinationAssetAmount ?? "0",
+            destinationAsset.decimals,
+          ),
+        };
 
   return {
     ...amount,
@@ -80,17 +92,19 @@ type CaughtRouteError = {
 };
 
 export const routeConfigAtom = atom<WidgetRouteConfig>({
-  experimentalFeatures: ["hyperlane"],
+  experimentalFeatures: ["hyperlane", "stargate"],
   allowMultiTx: true,
   allowUnsafe: true,
   smartSwapOptions: {
     splitRoutes: true,
     evmSwaps: true,
   },
-  goFast: true
+  goFast: true,
 });
 
-export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig): RouteConfig => {
+export const convertWidgetRouteConfigToClientRouteConfig = (
+  params: WidgetRouteConfig,
+): RouteConfig => {
   return {
     ...params,
     swapVenues: params.swapVenues?.map((venue) => ({
@@ -104,7 +118,9 @@ export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteC
   };
 };
 
-export const convertClientRouteConfigToWidgetRouteConfig = (params: RouteConfig): WidgetRouteConfig => {
+export const convertClientRouteConfigToWidgetRouteConfig = (
+  params: RouteConfig,
+): WidgetRouteConfig => {
   return {
     ...params,
     swapVenues: params.swapVenues?.map((venue) => ({
@@ -125,6 +141,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const routeConfig = get(routeConfigAtom);
+  const routePreference = get(routePreferenceAtom);
 
   const queryEnabled =
     params !== undefined &&
@@ -134,7 +151,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
     error === undefined;
 
   return {
-    queryKey: ["skipRoute", params, routeConfig],
+    queryKey: ["skipRoute", params, routeConfig, routePreference],
     queryFn: async (): Promise<CaughtRouteError | RouteResponse> => {
       if (!params) {
         throw new Error("No route request provided");
@@ -145,6 +162,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
           ...params,
           smartRelay: true,
           ...skipRouteConfig,
+          goFast: routePreference === RoutePreference.FASTEST,
         });
         return response;
       } catch (error) {

@@ -1,19 +1,14 @@
 import { css, keyframes, styled } from "styled-components";
-import * as Dialog from "@radix-ui/react-dialog";
 import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import {
-  ComponentType,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { themeAtom } from "@/state/skipClient";
+import { createPortal } from "react-dom";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -23,65 +18,72 @@ export type ModalProps = {
   theme?: PartialTheme;
 };
 
-export const Modal = ({
-  children,
-  drawer,
-  container,
-  onOpenChange,
-  theme,
-}: ModalProps) => {
+export const Modal = ({ children, drawer, container, onOpenChange, theme }: ModalProps) => {
+  const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
+  const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
-  const modalContext = useContext(NiceModal.NiceModalContext);
-  const ModalsOpen = Object.entries(modalContext)
-    .filter((entries) => {
-      const [_modalId, modalState] = entries;
-      return modalState.visible;
-    })
-    .map((entries) => entries[0]);
-
-  const isNotFirstModalVisible =
-    ModalsOpen.findIndex((modalId) => modalId === modal.id) !== 0;
-
-  useEffect(() => {
-    onOpenChange?.(true);
-    return () => {
-      onOpenChange?.(false);
-    };
-  }, [onOpenChange]);
+  const [wasVisible, setWasVisible] = useState(modal.visible);
 
   const delay = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
-  const [open, setOpen] = useState(true);
 
-  return (
-    <Dialog.Root
-      open={modal.visible}
-      onOpenChange={() => {
-        setOpen(false);
-        delay(75).then(() => modal.remove());
-      }}
-    >
-      <Dialog.Portal container={container}>
-        <ShadowDomAndProviders theme={theme}>
-          <StyledOverlay
-            drawer={drawer}
-            open={open}
-            invisible={isNotFirstModalVisible}
-          >
-            <StyledContent drawer={drawer} open={open}>
-              {children}
-            </StyledContent>
-          </StyledOverlay>
-        </ShadowDomAndProviders>
-      </Dialog.Portal>
-    </Dialog.Root>
+  const closeModal = useCallback(() => {
+    onOpenChange?.(false);
+    delay(140).then(() => {
+      modal.remove();
+    });
+  }, [modal, onOpenChange]);
+
+  useEffect(() => {
+    if (wasVisible && !modal.visible) {
+      closeModal();
+    }
+    setWasVisible(modal.visible);
+  }, [closeModal, modal.visible, wasVisible]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        modal.hide();
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        modal.hide();
+      }
+    };
+
+    onOpenChange?.(true);
+    const prevOverflowStyle = window.getComputedStyle(document.body).overflow;
+    setPrevOverflowStyle(prevOverflowStyle);
+    document.body.style.overflow = "hidden";
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleClickOutside);
+      onOpenChange?.(false);
+      document.body.style.overflow = prevOverflowStyle;
+    };
+  }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
+
+  return createPortal(
+    <ShadowDomAndProviders theme={theme}>
+      <StyledOverlay ref={modalRef} drawer={drawer} open={modal.visible}>
+        <StyledContent drawer={drawer} open={modal.visible} onClick={(e) => e.stopPropagation()}>
+          {children}
+        </StyledContent>
+      </StyledOverlay>
+    </ShadowDomAndProviders>,
+    container ?? document.body,
   );
 };
 
-export const createModal = <T extends ModalProps>(
-  component: ComponentType<T>
-) => {
+export const createModal = <T extends ModalProps>(component: ComponentType<T>) => {
   const Component = component;
 
   const WrappedComponent = (props: T) => {
@@ -92,9 +94,7 @@ export const createModal = <T extends ModalProps>(
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) =>
-            setError({ errorType: ErrorType.Unexpected, error })
-          }
+          onError={(error) => setError({ errorType: ErrorType.Unexpected, error })}
         >
           <Component {...props} />
         </ErrorBoundary>
@@ -110,7 +110,7 @@ const fadeIn = keyframes`
       opacity: 0;
     }
     to {
-    opacity: 1;
+      opacity: 1;
     }
 `;
 
@@ -126,11 +126,11 @@ const fadeOut = keyframes`
 const fadeInAndSlideUp = keyframes`
   from {
       opacity: 0;
-    transform: translateY(100%);
+      transform: translateY(100%);
     }
     to {
-    opacity: 1;
-    transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
 `;
 
@@ -148,7 +148,7 @@ const fadeOutAndSlideDown = keyframes`
 const fadeInAndZoomOut = keyframes`
   from {
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
@@ -163,16 +163,15 @@ const fadeOutAndZoomIn = keyframes`
   }
   to {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.95);
   }
 `;
 
-const StyledOverlay = styled(Dialog.Overlay) <{
+const StyledOverlay = styled.div<{
   drawer?: boolean;
-  invisible?: boolean;
   open?: boolean;
 }>`
-  ${({ invisible }) => (invisible ? "" : "background: rgba(0 0 0 / 0.5);")}
+  background: rgba(0 0 0 / 0.5);
   position: fixed;
   top: 0;
   left: 0;
@@ -180,7 +179,6 @@ const StyledOverlay = styled(Dialog.Overlay) <{
   bottom: 0;
   display: grid;
   place-items: center;
-  overflow-y: auto;
   z-index: 10;
   animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
   /* For Chrome */
@@ -210,7 +208,7 @@ const StyledOverlay = styled(Dialog.Overlay) <{
     `};
 `;
 
-const StyledContent = styled(Dialog.Content) <{
+const StyledContent = styled.div<{
   drawer?: boolean;
   open?: boolean;
 }>`
@@ -222,12 +220,12 @@ const StyledContent = styled(Dialog.Content) <{
   justify-content: center;
   z-index: 100;
   animation: ${({ drawer, open }) =>
-    open
-      ? drawer
-        ? fadeInAndSlideUp
-        : fadeInAndZoomOut
-      : drawer
-        ? fadeOutAndSlideDown
-        : fadeOutAndZoomIn}
-    150ms ease-in-out;
+      open
+        ? drawer
+          ? fadeInAndSlideUp
+          : fadeInAndZoomOut
+        : drawer
+          ? fadeOutAndSlideDown
+          : fadeOutAndZoomIn}
+    150ms cubic-bezier(0.5, 1, 0.89, 1);
 `;

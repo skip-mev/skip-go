@@ -8,10 +8,7 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import {
-  removeTransactionHistoryItemAtom,
-  TransactionHistoryItem,
-} from "@/state/history";
+import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
 import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -43,9 +40,7 @@ export const TransactionHistoryPageHistoryItem = ({
     txsRequired: txHistoryItem.route.txsRequired,
   });
 
-  const removeTransactionHistoryItem = useSetAtom(
-    removeTransactionHistoryItemAtom
-  );
+  const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
   const {
     route: {
@@ -124,16 +119,16 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("hours", "hrs")
       .replace("hour", "hr")
       .replace("seconds", "secs")
-      .replace("second", "sec");
+      .replace("second", "sec")
+      .replace("months", "mos")
+      .replace("month", "mo")
+      .replace("years", "yrs")
+      .replace("year", "yr");
   }, [historyStatus, timestamp]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
-      <StyledHistoryItemRow
-        align="center"
-        justify="space-between"
-        onClick={onClickRow}
-      >
+      <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
         <StyledHistoryItemContainer gap={5} align="center">
           <RenderAssetAmount {...source} />
           <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
@@ -183,19 +178,16 @@ const RenderAssetAmount = ({
         {removeTrailingZeros(amount)}
       </SmallText>
       {!isMobileScreenSize && (
-        <SmallText normalTextColor>
-          {asset?.recommendedSymbol ?? asset?.symbol}
-        </SmallText>
+        <SmallText normalTextColor>{asset?.recommendedSymbol ?? asset?.symbol}</SmallText>
       )}
     </>
   );
 };
 
-const StyledHistoryContainer = styled(Column) <{ showDetails?: boolean }>`
-  background-color: ${({ theme, showDetails }) =>
-    showDetails && theme.secondary.background.normal};
+const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
+  background: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};
   &:hover {
-    background-color: ${({ theme }) => theme.secondary.background.normal};
+    background: ${({ theme }) => theme.secondary.background.normal};
   }
   border-radius: 6px;
 `;
@@ -211,7 +203,7 @@ const StyledHistoryItemRow = styled(Row)`
 const StyledGreenDot = styled.div`
   width: 10px;
   height: 10px;
-  background-color: ${({ theme }) => theme.success.text};
+  background: ${({ theme }) => theme.success.text};
   border-radius: 50%;
 `;
 

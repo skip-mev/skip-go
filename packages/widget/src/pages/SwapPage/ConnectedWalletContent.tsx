@@ -32,7 +32,7 @@ export const ConnectedWalletContent = () => {
     if (sourceBalance === undefined) return;
 
     const formattedBalanceAmount = limitDecimalsDisplayed(
-      removeTrailingZeros(sourceBalance?.formattedAmount)
+      removeTrailingZeros(sourceBalance?.formattedAmount),
     );
 
     return formattedBalanceAmount + symbol;
@@ -41,7 +41,6 @@ export const ConnectedWalletContent = () => {
 
   return (
     <Row
-      gap={6}
       style={{
         paddingRight: 13,
       }}
@@ -84,7 +83,9 @@ export const ConnectedWalletContent = () => {
       </GhostButton>
 
       <GhostButton
-        disabled={!sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"}
+        disabled={
+          !sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"
+        }
         onClick={handleMaxButton}
         align="center"
       >

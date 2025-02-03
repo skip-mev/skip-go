@@ -1,7 +1,7 @@
 import { skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { knownEthermintLikeChains } from "@/state/wallets"
-import { useAtomValue } from "jotai"
+import { knownEthermintLikeChains } from "@/state/wallets";
+import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { ChainType } from "@skip-go/client";
 import { useGetAccount } from "./useGetAccount";
@@ -18,10 +18,6 @@ export const useShowCosmosLedgerWarning = () => {
     if (!account?.address) return false;
     if (!sourceAsset?.chainID) return false;
     if (!knownEthermintLikeChains.includes(sourceAsset?.chainID)) return false;
-    return !!account?.wallet.isLedger
-  }, [
-    sourceAsset?.chainID,
-    chainType,
-    getAccount,
-  ])
-}
+    return !!account?.wallet.isLedger;
+  }, [sourceAsset?.chainID, chainType, getAccount]);
+};

@@ -1,5 +1,124 @@
 ## 0.0.15
 
+## 3.2.0
+
+### Minor Changes
+
+- 4434c09: graz is not a peer dependencies
+
+### Patch Changes
+
+- 2500502: fix mobile route config override bug
+- c410d7d: Fix initialization of undefined source/dest amount
+- 432c0d6: Remove importsNotUsedAsValues (export type) from build to fix issues with envs that don't recognize export type syntax
+- a04c9cd: Use smaller font for error messages
+- a44a8cf: fix image url issue in input search and error button text size
+
+## 3.1.13
+
+### Patch Changes
+
+- f78397a: update registries
+- 7040482: Update theme colors to use background instead of background-color to support gradients
+- 5e04b74: Update mobile Asset/Chain selector modal to avoid word wrapping with small screen widths
+- afcbdc3: Add enableSentrySessionReplays prop, add widget version as a tag
+- 749eea4: Simplify search to use substring search
+- 23ae20c: Turn on 100% session sample rate (if enableSentrySessionReplays = true)
+- bc0309a: Fix bug with pulsing 0 input onload
+- 1b84bb5: Fix infinite balance spinner if using tanstack/query v4
+- 22c5cc1: enable mobile wallets for getting the address
+- b64cf84: only single tx routes on mobile
+- 1479374: Fix disabled button text color
+- 48ea9f7: Add more data to tx callbacks
+- Updated dependencies [f78397a]
+- Updated dependencies [36a6930]
+- Updated dependencies [4492ab5]
+  - @skip-go/client@0.16.7
+
+## 3.1.12
+
+### Patch Changes
+
+- 57c333f: fix apiUrl not updated
+
+## 3.1.11
+
+### Patch Changes
+
+- 9e60d75: Avoid throwing an error if gasPrice avg/high/low prices are not valid numbers
+- Updated dependencies [9e60d75]
+  - @skip-go/client@0.16.6
+
+## 3.1.10
+
+### Patch Changes
+
+- ad9b1e6: Proxy sentry requests to /api/sentry
+- 70d4811: Settings wheel size increased and opacity fix, plus settings bar css fixes
+
+## 3.1.9
+
+### Patch Changes
+
+- a008f2b: add chainIdsToAffiliate to msgs and msgsDirect
+- Updated dependencies [a008f2b]
+  - @skip-go/client@0.16.5
+
+## 3.1.8
+
+### Patch Changes
+
+- f88389b: Prevent non-error/fatal level events from being sent to sentry
+- e5c31f2: Disable sentry globalHandlers and browserApiErrors default integrations
+- 6d1f93d: Fix connect wallet styling, fix history page to have default min-height
+- 8d2685e: Mobile styling updates
+- 4789d60: Start loading green circle immediately after signing
+- 60291ff: fix default route
+- bd75f93: only manual address on mobile
+- 7709f59: single walletconnect instance
+- 905a8e0: refactor source status
+- 5bed02d: filter 0.2 ntrn swap fees
+- 26f9185: fix history truncation
+- a33b066: mobile: disconnect before connect
+- 2780661: Mobile styling updates
+- 69d7656: Fix set recovery address not working if chainid isnt supported by wallet
+- 4609c5d: hide okx wallet on evm
+- a05fdce: add solana walletconnect
+
+## 3.1.7
+
+### Patch Changes
+
+- 9965900: Fix handling of transaction failed status
+- 9965900: add network details to sentry
+- 9965900: fix okx wallet override
+- 9965900: Add Smarter asset image loading
+
+## 3.1.6
+
+### Patch Changes
+
+- 7f3ede7: Convert globalStyles to stylesheet before passing to react-shadow-scope
+- 7f3ede7: Fix routePreference bug
+- 7f3ede7: Add sentry integration (session replay, error tracking)
+- 7f3ede7: Fix okxWallet eco connection
+- 7f3ede7: enable evm walletconnect for desktop
+- 7f3ede7: add stargate to experimental features
+- 7f3ede7: Track error in sentry if the transaction fails
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+  - @skip-go/client@0.16.4
+
+## 3.1.5
+
+### Patch Changes
+
+- 0622dcd: Convert globalStyles to stylesheet before passing to react-shadow-scope
+- Updated dependencies [0622dcd]
+- Updated dependencies [0622dcd]
+  - @skip-go/client@0.16.3
+
 ## 3.1.4
 
 ### Patch Changes

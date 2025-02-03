@@ -35,20 +35,16 @@ export const SwapPageFooterItems = ({
     );
   }, [swapSettings]);
 
-  const estimatedTime = convertSecondsToMinutesOrHours(
-    route?.estimatedRouteDurationSeconds
-  );
+  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
-  const routeRequiresMultipleSignatures =
-    route?.txsRequired && route.txsRequired > 1;
+  const routeRequiresMultipleSignatures = route?.txsRequired && route.txsRequired > 1;
 
   const renderSignatureRequired = useMemo(() => {
     return (
       <Row gap={4} align="center">
         <StyledSignatureRequiredContainer gap={5} align="center">
           <SignatureIcon />
-          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)}{" "}
-          required
+          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)} required
         </StyledSignatureRequiredContainer>
       </Row>
     );
@@ -76,7 +72,7 @@ export const SwapPageFooterItems = ({
                 <SpeedometerIcon />
                 {estimatedTime}
                 <CogIconWrapper>
-                  <CogIcon height={13} width={13} />
+                  <CogIcon height={14} width={14} />
                   {settingsChanged && <SettingsChangedIndicator />}
                 </CogIconWrapper>
               </Row>
@@ -110,15 +106,13 @@ export const SwapPageFooterItems = ({
       if (showRouteInfo && route) {
         return (
           <Row align="center" gap={8}>
-            {!isMobileScreenSize &&
-              routeRequiresMultipleSignatures &&
-              renderSignatureRequired}
+            {!isMobileScreenSize && routeRequiresMultipleSignatures && renderSignatureRequired}
             {showEstimatedTime && estimatedTime && (
               <Row gap={6} align="center">
                 <SpeedometerIcon />
                 {estimatedTime}
                 <CogIconWrapper>
-                  <CogIcon height={13} width={13} />
+                  <CogIcon height={14} width={14} />
                   {settingsChanged && <SettingsChangedIndicator />}
                 </CogIconWrapper>
               </Row>
@@ -166,7 +160,14 @@ export const SwapPageFooter = ({
 } & SwapPageFooterItemsProps &
   React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <GhostButton gap={5} justify="space-between" onClick={onClick} {...props}>
+    <GhostButton
+      gap={5}
+      justify="space-between"
+      align="center"
+      onClick={onClick}
+      height={35}
+      {...props}
+    >
       <SwapPageFooterItems
         rightContent={rightContent}
         showRouteInfo={showRouteInfo}
@@ -183,14 +184,18 @@ export const StyledSignatureRequiredContainer = styled(Row)`
 const CogIconWrapper = styled.div`
   position: relative;
   display: inline-block;
+
+  svg {
+    display: block;
+  }
 `;
 
 const SettingsChangedIndicator = styled.div`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -3px;
+  right: -3px;
   width: 4px;
   height: 4px;
-  background-color: white;
+  background: ${({ theme }) => theme.primary.text.normal};
   border-radius: 50%;
 `;

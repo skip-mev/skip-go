@@ -2,7 +2,13 @@ import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom, skipClient, skipSwapVenuesAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { TransactionCallbacks, RouteResponse, TxStatusResponse, UserAddress, ChainType } from "@skip-go/client";
+import {
+  TransactionCallbacks,
+  RouteResponse,
+  TxStatusResponse,
+  UserAddress,
+  ChainType,
+} from "@skip-go/client";
 import { MinimalWallet } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
@@ -10,15 +16,16 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, swapSettingsAtom } from "./swapPage";
+import { CosmosGasAmount, slippageAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
+import { setUser } from "@sentry/react";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
   txIndex?: number;
-  status: "success" | "error" | "pending" | "completed"
-}
+  status: "success" | "error" | "pending" | "completed";
+};
 
 type SwapExecutionState = {
   userAddresses: UserAddress[];
@@ -26,24 +33,23 @@ type SwapExecutionState = {
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
   overallStatus: SimpleStatus;
-  isValidatingGasBalance?: ValidatingGasBalanceData
+  isValidatingGasBalance?: ValidatingGasBalanceData;
 };
-
 
 export type ChainAddress = {
   chainID: string;
   chainType?: ChainType;
   address?: string;
 } & (
-    | { source?: "input" | "parent" | "injected" }
-    | {
+  | { source?: "input" | "parent" | "injected" }
+  | {
       source?: "wallet";
       wallet: Pick<
         MinimalWallet,
         "walletName" | "walletPrettyName" | "walletChainType" | "walletInfo"
       >;
     }
-  );
+);
 
 /**
  * route.requiredChainAddresses is a list of chainIDs that are required to have an address associated with them
@@ -60,7 +66,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     transactionHistoryIndex: 0,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
-  }
+  },
 );
 
 export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
@@ -75,6 +81,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const transactionHistoryIndex = transactionHistory.length;
 
   if (!route) return;
+
+  const {
+    requiredChainAddresses,
+    sourceAssetDenom,
+    sourceAssetChainID,
+    destAssetDenom,
+    destAssetChainID,
+  } = route;
+
+  const sourceAddress = requiredChainAddresses[0];
+  const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
 
   set(swapExecutionStateAtom, {
     userAddresses: [],
@@ -96,22 +113,47 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onTransactionBroadcast: async (txInfo) => {
+      setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
-      const explorerLink = createExplorerLink({ chainID: txInfo.chainID, chainType: chain?.chainType, txHash: txInfo.txHash });
-      set(setTransactionDetailsAtom, { ...txInfo, explorerLink, status: undefined }, transactionHistoryIndex);
+      const explorerLink = createExplorerLink({
+        chainID: txInfo.chainID,
+        chainType: chain?.chainType,
+        txHash: txInfo.txHash,
+      });
+      set(
+        setTransactionDetailsAtom,
+        { ...txInfo, explorerLink, status: undefined },
+        transactionHistoryIndex,
+      );
       callbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainID,
         txHash: txInfo.txHash,
         explorerLink: explorerLink ?? "",
+        sourceAddress,
+        destinationAddress,
+        sourceAssetDenom,
+        sourceAssetChainID,
+        destAssetDenom,
+        destAssetChainID,
       });
     },
     onTransactionCompleted: async (chainId: string, txHash: string) => {
       const chain = chains?.find((chain) => chain.chainID === chainId);
-      const explorerLink = createExplorerLink({ chainID: chainId, chainType: chain?.chainType, txHash });
+      const explorerLink = createExplorerLink({
+        chainID: chainId,
+        chainType: chain?.chainType,
+        txHash,
+      });
       callbacks?.onTransactionComplete?.({
         chainId,
         txHash,
         explorerLink: explorerLink ?? "",
+        sourceAddress,
+        destinationAddress,
+        sourceAssetDenom,
+        sourceAssetChainID,
+        destAssetDenom,
+        destAssetChainID,
       });
     },
     onTransactionSigned: async () => {
@@ -128,7 +170,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
-          }
+          },
         });
       } else if (lastTransaction?.explorerLink) {
         set(errorAtom, {
@@ -137,10 +179,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             set(setOverallStatusAtom, "unconfirmed");
           },
           explorerLink: lastTransaction?.explorerLink ?? "",
-          transactionHash: lastTransaction?.txHash ?? "",
+          txHash: lastTransaction?.txHash ?? "",
           onClickContactSupport: () => {
             window.open("https://skip.build/discord", "_blank");
-          }
+          },
         });
       } else {
         set(errorAtom, {
@@ -158,9 +200,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
 });
 
-export const setValidatingGasBalanceAtom = atom(null, (_get, set, isValidatingGasBalance: ValidatingGasBalanceData) => {
-  set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
-});
+export const setValidatingGasBalanceAtom = atom(
+  null,
+  (_get, set, isValidatingGasBalance: ValidatingGasBalanceData) => {
+    set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
+  },
+);
 
 export const setTransactionDetailsAtom = atom(
   null,
@@ -171,7 +216,7 @@ export const setTransactionDetailsAtom = atom(
     const newTransactionDetailsArray = transactionDetailsArray;
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
-      (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase()
+      (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase(),
     );
     if (transactionIndexFound !== -1) {
       newTransactionDetailsArray[transactionIndexFound] = {
@@ -192,13 +237,13 @@ export const setTransactionDetailsAtom = atom(
       timestamp: Date.now(),
       status: "unconfirmed",
     });
-  }
+  },
 );
 
 export const chainAddressEffectAtom = atomEffect((get, set) => {
   const chainAddresses = get(chainAddressesAtom);
   const addressesMatch = Object.values(chainAddresses).every(
-    (chainAddress) => !!chainAddress.address
+    (chainAddress) => !!chainAddress.address,
   );
   if (!addressesMatch) return;
 
@@ -227,9 +272,7 @@ type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
   onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
 };
 
-export const submitSwapExecutionCallbacksAtom = atom<
-  SubmitSwapExecutionCallbacks | undefined
->();
+export const submitSwapExecutionCallbacksAtom = atom<SubmitSwapExecutionCallbacks | undefined>();
 
 export const fallbackGasAmountFnAtom = atom((get) => {
   const swapVenues = get(skipSwapVenuesAtom)?.data;
@@ -237,8 +280,10 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
     if (chainType !== ChainType.Cosmos) return undefined;
 
-    const isSwapChain = swapVenues?.some(venue => venue.chainID === chainId) ?? false;
-    const defaultGasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
+    const isSwapChain = swapVenues?.some((venue) => venue.chainID === chainId) ?? false;
+    const defaultGasAmount = Math.ceil(
+      isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT,
+    );
 
     // Special case for carbon-1
     if (chainId === "carbon-1") {
@@ -249,12 +294,15 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   };
 });
 
+export const simulateTxAtom = atom<boolean>();
+
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
-  const swapSettings = get(swapSettingsAtom);
+  const slippage = get(slippageAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
+  const simulateTx = get(simulateTxAtom);
 
   return {
     gcTime: Infinity,
@@ -265,8 +313,8 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         await skip.executeRoute({
           route,
           userAddresses,
-          slippageTolerancePercent: swapSettings.slippage.toString(),
-          simulate: route.sourceAssetChainID !== "984122",
+          slippageTolerancePercent: slippage.toString(),
+          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainID !== "984122",
           getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
         });

@@ -6,7 +6,7 @@ import {
   evmWalletAtom,
   svmWalletAtom,
   walletsAtom,
-  connectedAddressesAtom
+  connectedAddressesAtom,
 } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtom, useAtomValue } from "jotai";
@@ -27,9 +27,7 @@ export const useGetAccount = () => {
     multiChain: true,
   });
 
-  const solanaWallet = solanaWallets.find(
-    (w) => w.name === wallet.svm?.walletName
-  );
+  const solanaWallet = solanaWallets.find((w) => w.name === wallet.svm?.walletName);
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
@@ -68,7 +66,7 @@ export const useGetAccount = () => {
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean) => {
-      if (!chainId) return
+      if (!chainId) return;
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
         return {
@@ -78,7 +76,7 @@ export const useGetAccount = () => {
             name: "injected",
             prettyName: "injected",
           },
-        }
+        };
       }
       switch (chainType) {
         case ChainType.Cosmos:
@@ -119,9 +117,7 @@ export const useGetAccount = () => {
         case ChainType.Cosmos: {
           if (!cosmosAccount) return;
           if (!wallet.cosmos) return;
-          const walletInfo = getCosmosWalletInfo(
-            wallet.cosmos.walletName as WalletType
-          );
+          const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
           return {
             address: cosmosAccount.bech32Address,
@@ -134,11 +130,22 @@ export const useGetAccount = () => {
             },
           };
         }
-        case ChainType.EVM:
+        case ChainType.EVM: {
           if (!wallet.evm) return;
           if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
           if (!evmAccount.connector) return;
+
+          const getLogo = () => {
+            if (evmAccount?.connector?.id === "walletConnect") {
+              return walletConnectLogo;
+            }
+
+            if (evmAccount?.connector?.id.includes("keplr")) {
+              return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
+            }
+            return connectors.find((item) => item.id === evmAccount.connector?.id)?.icon;
+          };
           return {
             address: evmAccount.address as string,
             currentConnectedEVMChainId: String(evmAccount.chainId),
@@ -146,11 +153,10 @@ export const useGetAccount = () => {
             wallet: {
               name: evmAccount.connector.id,
               prettyName: evmAccount.connector.name,
-              logo: evmAccount.connector.id === "walletConnect" ? walletConnectLogo : connectors.find(
-                (item) => item.id === evmAccount.connector?.id
-              )?.icon,
+              logo: getLogo(),
             },
           };
+        }
         case ChainType.SVM: {
           if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
@@ -160,7 +166,7 @@ export const useGetAccount = () => {
             wallet: {
               name: solanaWallet.name as string,
               prettyName: solanaWallet.name as string,
-              logo: solanaWallet.icon,
+              logo: solanaWallet.name === "WalletConnect" ? walletConnectLogo : solanaWallet.icon,
             },
           };
         }
@@ -187,7 +193,7 @@ export const useGetAccount = () => {
       wallet.svm,
       connectors,
       connectedAddress,
-    ]
+    ],
   );
 
   return getAccount;

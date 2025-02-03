@@ -1,5 +1,116 @@
 # nextjs
 
+## 0.1.42
+
+### Patch Changes
+
+- Updated dependencies [4434c09]
+- Updated dependencies [2500502]
+- Updated dependencies [c410d7d]
+- Updated dependencies [432c0d6]
+- Updated dependencies [a04c9cd]
+- Updated dependencies [a44a8cf]
+  - @skip-go/widget@3.2.0
+
+## 0.1.41
+
+### Patch Changes
+
+- Updated dependencies [f78397a]
+- Updated dependencies [7040482]
+- Updated dependencies [5e04b74]
+- Updated dependencies [afcbdc3]
+- Updated dependencies [749eea4]
+- Updated dependencies [23ae20c]
+- Updated dependencies [bc0309a]
+- Updated dependencies [1b84bb5]
+- Updated dependencies [22c5cc1]
+- Updated dependencies [b64cf84]
+- Updated dependencies [1479374]
+- Updated dependencies [48ea9f7]
+  - @skip-go/widget@3.1.13
+
+## 0.1.40
+
+### Patch Changes
+
+- Updated dependencies [57c333f]
+  - @skip-go/widget@3.1.12
+
+## 0.1.39
+
+### Patch Changes
+
+- Updated dependencies [9e60d75]
+  - @skip-go/widget@3.1.11
+
+## 0.1.38
+
+### Patch Changes
+
+- Updated dependencies [ad9b1e6]
+- Updated dependencies [70d4811]
+  - @skip-go/widget@3.1.10
+
+## 0.1.37
+
+### Patch Changes
+
+- Updated dependencies [a008f2b]
+  - @skip-go/widget@3.1.9
+
+## 0.1.36
+
+### Patch Changes
+
+- Updated dependencies [f88389b]
+- Updated dependencies [e5c31f2]
+- Updated dependencies [6d1f93d]
+- Updated dependencies [8d2685e]
+- Updated dependencies [4789d60]
+- Updated dependencies [60291ff]
+- Updated dependencies [bd75f93]
+- Updated dependencies [7709f59]
+- Updated dependencies [905a8e0]
+- Updated dependencies [5bed02d]
+- Updated dependencies [26f9185]
+- Updated dependencies [a33b066]
+- Updated dependencies [2780661]
+- Updated dependencies [69d7656]
+- Updated dependencies [4609c5d]
+- Updated dependencies [a05fdce]
+  - @skip-go/widget@3.1.8
+
+## 0.1.35
+
+### Patch Changes
+
+- Updated dependencies [9965900]
+- Updated dependencies [9965900]
+- Updated dependencies [9965900]
+- Updated dependencies [9965900]
+  - @skip-go/widget@3.1.7
+
+## 0.1.34
+
+### Patch Changes
+
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+- Updated dependencies [7f3ede7]
+  - @skip-go/widget@3.1.6
+
+## 0.1.33
+
+### Patch Changes
+
+- Updated dependencies [0622dcd]
+  - @skip-go/widget@3.1.5
+
 ## 0.1.32
 
 ### Patch Changes

@@ -3,10 +3,10 @@ import { opacityToHex } from "../utils/colors";
 
 export const defaultTheme = {
   brandColor: "#ff66ff",
+  brandTextColor: undefined,
   primary: {
     background: {
       normal: "#000",
-      transparent: "#000000" + opacityToHex(90),
     },
     text: {
       normal: "#fff",
@@ -37,10 +37,10 @@ export const defaultTheme = {
 
 export const lightTheme = {
   brandColor: "#ff66ff",
+  brandTextColor: undefined,
   primary: {
     background: {
       normal: "#ffffff",
-      transparent: "#ffffff" + opacityToHex(95),
     },
     text: {
       normal: "#000000",
@@ -73,10 +73,10 @@ export type PartialTheme = Partial<Theme> | undefined;
 
 export type Theme = {
   brandColor: string;
+  brandTextColor?: string;
   primary: {
     background: {
       normal: string;
-      transparent: string;
     };
     text: {
       normal: string;
@@ -107,5 +107,5 @@ export type Theme = {
 
 declare module "styled-components" {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions, @typescript-eslint/no-empty-object-type
-  export interface DefaultTheme extends Theme { }
+  export interface DefaultTheme extends Theme {}
 }

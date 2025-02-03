@@ -10,12 +10,10 @@ export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const usesEvmInOperations = useMemo(() => {
-    return route?.requiredChainAddresses?.find(
-      (chainId) => {
-        const chainType = chains?.find(chain => chain.chainID === chainId)?.chainType;
-        return chainType === "evm";
-      }
-    );
+    return route?.requiredChainAddresses?.find((chainId) => {
+      const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+      return chainType === "evm";
+    });
   }, [chains, route?.requiredChainAddresses]);
 
   if (usesEvmInOperations) {
@@ -33,5 +31,5 @@ export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
 const StyledEvmWarningMessage = styled.div`
   padding: 12px;
   border-radius: 5px;
-  background-color: ${({ theme }) => theme.warning.background};
+  background: ${({ theme }) => theme.warning.background};
 `;

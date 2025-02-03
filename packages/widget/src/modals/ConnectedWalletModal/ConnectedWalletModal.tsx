@@ -55,13 +55,7 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
   );
 });
 
-const ConnectEco = ({
-  chainType,
-  chainID,
-}: {
-  chainType: ChainType;
-  chainID: string;
-}) => {
+const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: string }) => {
   const theme = useTheme();
   const getAccount = useGetAccount();
   const isMobileScreenSize = useIsMobileScreenSize();
@@ -76,14 +70,9 @@ const ConnectEco = ({
     return getAccount(_chainID, true);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
-  const truncatedAddress = getTruncatedAddress(
-    account?.address,
-    isMobileScreenSize
-  );
+  const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
-  const connectedWallet = wallets.find(
-    (wallet) => wallet.walletName === account?.wallet.name
-  );
+  const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.wallet.name);
 
   const renderDisconnectButton = useMemo(() => {
     if (isMobileScreenSize) {
@@ -139,8 +128,7 @@ const ConnectEco = ({
                 alt={`${account?.wallet.prettyName} logo`}
                 title={account?.wallet.prettyName}
               />
-            )
-            }
+            )}
             <Row align="baseline" gap={8}>
               <TextButton
                 fontSize={isMobileScreenSize ? 13 : undefined}
@@ -153,9 +141,7 @@ const ConnectEco = ({
                 {truncatedAddress}
               </TextButton>
               {chainType === "evm" && (
-                <EvmChainIndicator
-                  chainId={account?.currentConnectedEVMChainId}
-                />
+                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
               )}
             </Row>
           </Row>
@@ -171,11 +157,10 @@ const ConnectEco = ({
         )
       }
       rightContent={
-        (account && account.wallet.name !== "injected") ? renderDisconnectButton : (
-          <RightArrowIcon
-            color={theme?.primary?.background.normal}
-            backgroundColor={theme.primary.text.normal}
-          />
+        account && account.wallet.name !== "injected" ? (
+          renderDisconnectButton
+        ) : (
+          <RightArrowIcon color={theme.primary.text.normal} />
         )
       }
     />

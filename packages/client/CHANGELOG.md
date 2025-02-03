@@ -1,5 +1,40 @@
 # @skip-go/client
 
+## 0.16.7
+
+### Patch Changes
+
+- f78397a: update registries
+- 36a6930: Fix error with msgsDirect if smartRelay is false
+- 4492ab5: add userAddresses validation before executeRoute
+
+## 0.16.6
+
+### Patch Changes
+
+- 9e60d75: Avoid throwing an error if gasPrice avg/high/low prices are not valid numbers
+
+## 0.16.5
+
+### Patch Changes
+
+- a008f2b: add chainIdsToAffiliate to msgs and msgsDirect
+
+## 0.16.4
+
+### Patch Changes
+
+- 7f3ede7: no longer override timeout in signCosmosMessageAmino
+- 7f3ede7: update stargate fee types
+- 7f3ede7: add stargate to experimental features
+
+## 0.16.3
+
+### Patch Changes
+
+- 0622dcd: no longer override timeout in signCosmosMessageAmino
+- 0622dcd: update stargate fee types
+
 ## 0.16.2
 
 ### Patch Changes

@@ -11,25 +11,25 @@ export type WalletSelectorModalProps = ModalProps & {
   connectEco?: boolean;
 };
 
-export const WalletSelectorModal = createModal(
-  (modalProps: WalletSelectorModalProps) => {
-    const { chainId, chainType, connectEco } = modalProps;
-    const walletList = useWalletList({ chainID: chainId, chainType });
+export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalProps) => {
+  const { chainId, chainType, connectEco } = modalProps;
+  const walletList = useWalletList({ chainID: chainId, chainType });
 
-    const handleOnClickBackButton = () => {
-      NiceModal.remove(Modals.WalletSelectorModal);
-      if (connectEco) {
-        NiceModal.show(Modals.ConnectedWalletModal);
-      }
-    };
+  const handleOnClickBackButton = () => {
+    NiceModal.remove(Modals.WalletSelectorModal);
+    if (connectEco) {
+      NiceModal.show(Modals.ConnectedWalletModal);
+    }
+  };
 
-    return (
-      <RenderWalletList
-        title="Connect wallet"
-        walletList={walletList}
-        onClickBackButton={handleOnClickBackButton}
-        isConnectEco={connectEco}
-      />
-    );
-  }
-);
+  return (
+    <RenderWalletList
+      title="Connect wallet"
+      walletList={walletList}
+      onClickBackButton={handleOnClickBackButton}
+      isConnectEco={connectEco}
+      chainType={chainType}
+      chainId={chainId}
+    />
+  );
+});

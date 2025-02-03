@@ -4,17 +4,27 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { SmallText, Text } from "@/components/Typography";
-import { MinimalWallet } from "@/state/wallets";
+import {
+  MinimalWallet,
+  cosmosWalletAtom,
+  evmWalletAtom,
+  svmWalletAtom,
+  walletsAtom,
+} from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
+import { isMobile } from "@/utils/os";
+import { WalletType, getWallet, useDisconnect } from "graz";
+import { solanaWallets } from "@/constants/solana";
+import { useConnectors } from "wagmi";
 
 export type RenderWalletListProps = {
   title: string;
@@ -34,13 +44,13 @@ export type ManualWalletEntry = {
 };
 
 export const isManualWalletEntry = (
-  wallet: ManualWalletEntry | MinimalWallet
+  wallet: ManualWalletEntry | MinimalWallet,
 ): wallet is ManualWalletEntry => {
   return (wallet as ManualWalletEntry).onSelect !== undefined;
 };
 
 export const isMinimalWallet = (
-  wallet: ManualWalletEntry | MinimalWallet
+  wallet: ManualWalletEntry | MinimalWallet,
 ): wallet is MinimalWallet => {
   return (wallet as MinimalWallet).connect !== undefined;
 };
@@ -56,20 +66,28 @@ export const RenderWalletList = ({
   chainId,
   chainType,
   isConnectEco,
-  chainAddressIndex
+  chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
+  const walletAtom = useAtomValue(walletsAtom);
+  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
+  const setEVMWallet = useSetAtom(evmWalletAtom);
+  const setSVMWallet = useSetAtom(svmWalletAtom);
+
   const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
-      (wallet) => isManualWalletEntry(wallet) || wallet?.isAvailable !== false
+      (wallet) => isManualWalletEntry(wallet) || wallet?.isAvailable !== false,
     );
 
     return filteredWallets.length === 1 ? walletList : filteredWallets;
   }, [walletList]);
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
+
+  const connectors = useConnectors();
+  const { disconnectAsync } = useDisconnect();
 
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
@@ -97,6 +115,52 @@ export const RenderWalletList = ({
         });
         return null;
       }
+      const mobile = isMobile();
+      if (mobile) {
+        switch (chainType) {
+          case ChainType.EVM:
+            if (walletAtom.cosmos) {
+              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
+              await cosmosWallet.disable?.();
+              await disconnectAsync();
+              setCosmosWallet(undefined);
+            }
+            if (walletAtom.svm) {
+              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
+              await svmWallet?.disconnect?.();
+              setSVMWallet(undefined);
+            }
+            break;
+          case ChainType.SVM:
+            if (walletAtom.evm) {
+              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
+              await evmWallet?.disconnect?.();
+              setEVMWallet(undefined);
+            }
+            if (walletAtom.cosmos) {
+              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
+              await cosmosWallet.disable?.();
+              await disconnectAsync();
+              setCosmosWallet(undefined);
+            }
+            break;
+          case ChainType.Cosmos:
+            if (walletAtom.evm) {
+              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
+              await evmWallet?.disconnect?.();
+              setEVMWallet(undefined);
+            }
+            if (walletAtom.svm) {
+              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
+              await svmWallet?.disconnect?.();
+              setSVMWallet(undefined);
+            }
+            break;
+          default:
+            break;
+        }
+      }
+
       if (isConnectEco) {
         clearAssetInputAmounts();
         return await wallet.connectEco();
@@ -115,7 +179,7 @@ export const RenderWalletList = ({
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
       const name = isMinimalWallet(wallet)
-        ? wallet.walletPrettyName ?? wallet.walletName
+        ? (wallet.walletPrettyName ?? wallet.walletName)
         : wallet.walletName;
 
       const imageUrl = isMinimalWallet(wallet) ? wallet?.walletInfo?.logo : undefined;
@@ -148,7 +212,9 @@ export const RenderWalletList = ({
             {imageElement}
             <Text>{name}</Text>
           </Row>
-          {isAvailable !== undefined && <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>}
+          {isAvailable !== undefined && (
+            <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>
+          )}
         </Row>
       );
 
@@ -162,21 +228,18 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation]
+    [connectMutation],
   );
 
   const height = useMemo(() => {
     return Math.min(530, displayWallets.length * (ITEM_HEIGHT + ITEM_GAP));
   }, [displayWallets.length]);
 
-
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
     if (connectMutation.isError || connectMutation.isPending) {
-      const titleText = connectMutation.isError
-        ? "Failed to connect"
-        : "Connecting to";
+      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
       return (
-        <StyledModalInnerContainer height={height}>
+        <StyledModalInnerContainer>
           <StyledLoadingContainer>
             <StyledAnimatedBorder
               width={80}
@@ -191,15 +254,11 @@ export const RenderWalletList = ({
                 alt={`${connectMutation.variables?.walletPrettyName} logo`}
               />
             </StyledAnimatedBorder>
-            <Text color={theme.primary.text.lowContrast}>
+            <Text color={theme.primary.text.lowContrast} textAlign="center">
               {titleText} {connectMutation.variables?.walletPrettyName}
             </Text>
             {connectMutation.error && (
-              <Text
-                textAlign="center"
-                fontSize={14}
-                color={theme.primary.text.lowContrast}
-              >
+              <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>
                 {connectMutation.error.message}
               </Text>
             )}
@@ -253,4 +312,5 @@ const StyledLoadingContainer = styled(Column)`
   justify-content: center;
   gap: 10px;
   padding-bottom: 10px;
+  padding: 20px;
 `;

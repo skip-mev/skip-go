@@ -5,36 +5,37 @@ import { removeButtonStyles, SmallText } from "@/components/Typography";
 export type GhostButtonProps = {
   secondary?: boolean;
   alwaysShowBackground?: boolean;
+  height?: number;
 } & FlexProps;
 
 export const GhostButton = styled(SmallText).attrs({
   as: "button",
-}) <GhostButtonProps>`
+})<GhostButtonProps>`
   ${removeButtonStyles};
   line-height: 13px;
-  height: 30px;
+  height: ${({ height }) => height || 30}px;
 
   ${({ alwaysShowBackground, theme, secondary }) => {
     if (alwaysShowBackground) {
-      return (css`
-        background-color: ${secondary
+      return css`
+        background: ${secondary
           ? theme.secondary.background.normal
           : theme.primary.ghostButtonHover};
-      `);
+      `;
     }
   }}
 
   ${({ onClick, disabled, secondary, theme }) => {
     if (onClick && !disabled) {
       return css`
-          &:hover {
-            background-color: ${secondary
-          ? theme.secondary.background.normal
-          : theme.primary.ghostButtonHover};
-            color: ${theme.primary.text.normal};
-            cursor: pointer;
-          }
-        `;
+        &:hover {
+          background: ${secondary
+            ? theme.secondary.background.normal
+            : theme.primary.ghostButtonHover};
+          color: ${theme.primary.text.normal};
+          cursor: pointer;
+        }
+      `;
     }
   }}
  
@@ -45,7 +46,7 @@ export const GhostButton = styled(SmallText).attrs({
 
 export const Button = styled.button<FlexProps>`
   ${removeButtonStyles}
-  line - height: initial;
+  line-height: initial;
   ${({ disabled }) =>
     disabled
       ? css`
@@ -67,7 +68,7 @@ export const PillButton = styled(Button)`
   height: 28px;
   border-radius: 30px;
   box-sizing: border-box;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   gap: 10px;
   align-items: center;
   justify-content: center;

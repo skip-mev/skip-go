@@ -3,10 +3,7 @@ import { Row } from "@/components/Layout";
 import { css, styled, useTheme } from "styled-components";
 import { useCallback, useMemo, useState } from "react";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
-import {
-  RenderWalletList,
-  ManualWalletEntry,
-} from "@/components/RenderWalletList";
+import { RenderWalletList, ManualWalletEntry } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
 import { useAtom, useAtomValue } from "jotai";
@@ -19,10 +16,11 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
+import { isMobile } from "@/utils/os";
 
 export type SetAddressModalProps = ModalProps & {
-  chainId: string
-  chainAddressIndex?: number
+  chainId: string;
+  chainAddressIndex?: number;
 };
 
 export enum WalletSource {
@@ -37,7 +35,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find(c => c.chainID === chainId);
+  const chain = chains?.find((c) => c.chainID === chainId);
   const chainName = chain?.prettyName;
   const chainLogo = chain?.logoURI;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
@@ -46,32 +44,24 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
 
   // If not same chain transaction, show warning
-  const showWithdrawalWarning = (
-    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID))
-  ).size > 1;
+  const showWithdrawalWarning =
+    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
 
-  const walletList = [
-    ..._walletList,
-    {
-      onSelect: () => setShowManualAddressInput(true),
-      walletName: "Enter address manually",
-      rightContent: () => {
-        return (
-          <RightArrowIcon
-            color={theme?.primary?.background.normal}
-            backgroundColor={theme?.primary?.text.normal}
-          />
-        );
-      },
-    } as ManualWalletEntry,
-  ];
+  const mobile = isMobile();
 
-  const handleChangeAddress = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setManualWalletAddress(e.target.value);
+  const manualWalletEntry = {
+    onSelect: () => setShowManualAddressInput(true),
+    walletName: "Enter address manually",
+    rightContent: () => {
+      return <RightArrowIcon color={theme?.primary?.text.normal} />;
     },
-    []
-  );
+  } as ManualWalletEntry;
+
+  const walletList = [..._walletList, manualWalletEntry];
+
+  const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setManualWalletAddress(e.target.value);
+  }, []);
 
   const addressIsValid = useMemo(() => {
     if (!chain || manualWalletAddress.length === 0) return;
@@ -79,7 +69,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     return isValidWalletAddress({
       address: manualWalletAddress,
       bech32Prefix,
-      chainType
+      chainType,
     });
   }, [chain, manualWalletAddress]);
 
@@ -155,9 +145,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
             onClick={onConfirmSetManualAddress}
           >
             <Text
-              mainButtonColor={
-                addressIsValid === true ? theme?.brandColor : undefined
-              }
+              mainButtonColor={addressIsValid === true ? theme?.brandColor : undefined}
               opacity={addressIsValid ? 1 : 0.5}
               fontSize={24}
             >
@@ -167,7 +155,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title="Destination wallet"
+          title={mobile ? "Destination" : "Destination wallet"}
           walletList={walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
@@ -188,7 +176,7 @@ const StyledChainLogoContainerRow = styled(Row)`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
 `;
 
 const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
@@ -196,13 +184,13 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
   height: 11px;
   width: 11px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.primary.text.lowContrast};
+  background: ${({ theme }) => theme.primary.text.lowContrast};
 
   ${({ validAddress, theme }) =>
     validAddress === true
-      ? `background-color: ${theme.success.text}`
+      ? `background: ${theme.success.text}`
       : validAddress === false
-        ? `background-color: ${theme.error.text}`
+        ? `background: ${theme.error.text}`
         : ""};
 
   top: calc(50% - 11px / 2);
@@ -216,7 +204,7 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
   outline: none;
   padding: 8px 40px 8px 15px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   color: ${({ theme }) => theme.primary.text.normal};
   border-radius: 12px;
 
@@ -224,14 +212,13 @@ const StyledInput = styled.input<{ validAddress?: boolean }>`
     validAddress === false &&
     css`
       border-color: ${theme.error.text};
-      background-color: ${theme.error.background};
+      background: ${theme.error.background};
     `}
 `;
 
 export const StyledBrandButton = styled(Button)`
-  background-color: ${({ theme }) => theme.brandColor};
+  background: ${({ theme }) => theme.brandColor};
   height: 60px;
   border-radius: 12px;
-  ${({ disabled, theme }) =>
-    disabled && `background-color: ${theme.secondary.background.normal}`};
+  ${({ disabled, theme }) => disabled && `background: ${theme.secondary.background.normal}`};
 `;

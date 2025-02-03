@@ -5,9 +5,12 @@ import { invertSwapAtom } from "@/state/swapPage";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "@/components/Button";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
+  const isMobileScreenSize = useIsMobileScreenSize();
+
   const [isSpinning, setIsSpinning] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
   const onInvertSwap = () => {
@@ -26,13 +29,22 @@ export const SwapPageBridge = () => {
       onClick={onInvertSwap}
       disabled={isSpinning}
     >
-      <BridgeIcon color={theme.primary.background.normal} />
-      <StyledBridgeArrow spin={isSpinning} color={theme.primary.text.normal} />
+      <BridgeIcon
+        color={theme.primary.background.normal}
+        width={isMobileScreenSize ? 60 : 47}
+        height={isMobileScreenSize ? 10 : 7}
+      />
+      <StyledBridgeArrow
+        spin={isSpinning}
+        color={theme.primary.text.normal}
+        width={isMobileScreenSize ? 16 : 13}
+        height={isMobileScreenSize ? 16 : 13}
+      />
     </Button>
   );
 };
 
-const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
+const StyledBridgeArrow = styled(BridgeArrowIcon)<{ spin?: boolean }>`
   position: absolute;
   left: 50%;
   top: 50%;
@@ -47,6 +59,5 @@ const StyledBridgeArrow = styled(BridgeArrowIcon) <{ spin?: boolean }>`
     }
   }
 
-  ${({ spin }) =>
-    spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
+  ${({ spin }) => spin && "animation: spin 0.5s cubic-bezier(.18,.89,.32,1.27);"};
 `;

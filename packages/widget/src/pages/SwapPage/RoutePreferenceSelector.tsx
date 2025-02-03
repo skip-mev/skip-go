@@ -23,8 +23,8 @@ const RoutePreferenceSelector: React.FC = () => {
         />
         {showTooltip && (
           <Tooltip>
-            Choose if Skip:Go should prioritize faster routes or routes
-            with the lowest possible fees.
+            Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
+            fees.
           </Tooltip>
         )}
       </PreferenceText>
@@ -32,7 +32,6 @@ const RoutePreferenceSelector: React.FC = () => {
         {ROUTE_PREFERENCE_OPTIONS.map((option) => (
           <StyledSettingsOptionLabel
             key={option}
-            monospace
             selected={option === routePreference}
             onClick={() => setRoutePreference(option)}
           >
@@ -69,7 +68,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 13px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   top: -30px;
   left: 130px;
   width: 250px;

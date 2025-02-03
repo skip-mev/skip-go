@@ -21,9 +21,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) =>
-      chains?.find((chain) => chain.chainID === chainID)
-    );
+    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
   }, [route, chains]);
 
   const clientOperations = getClientOperations(route?.operations);
@@ -35,7 +33,7 @@ export const SwapSettingsDrawer = createModal(() => {
         OperationType.axelarTransfer,
         OperationType.hyperlaneTransfer,
         OperationType.goFastTransfer,
-      ].includes(item.type)
+      ].includes(item.type),
     );
   }, [clientOperations]);
 
@@ -45,18 +43,28 @@ export const SwapSettingsDrawer = createModal(() => {
       const goFastFee = operation.fee;
       if (!goFastFee) return;
 
-      const { feeAsset, sourceChainFeeAmount, destinationChainFeeAmount,
-        bpsFeeAmount, sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD }
-        = goFastFee;
+      const {
+        feeAsset,
+        sourceChainFeeAmount,
+        destinationChainFeeAmount,
+        bpsFeeAmount,
+        sourceChainFeeUSD,
+        destinationChainFeeUSD,
+        bpsFeeUSD,
+      } = goFastFee;
 
-      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
-        .reduce((sum, amount) => sum + Number(amount), 0);
-      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD]
-        .reduce((sum, amount) => sum + Number(amount), 0);
+      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount].reduce(
+        (sum, amount) => sum + Number(amount),
+        0,
+      );
+      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD].reduce(
+        (sum, amount) => sum + Number(amount),
+        0,
+      );
 
       const computed = convertTokenAmountToHumanReadableAmount(
         totalFeeAmount.toString(),
-        feeAsset.decimals
+        feeAsset.decimals,
       );
       return {
         assetAmount: Number(computed),
@@ -67,10 +75,7 @@ export const SwapSettingsDrawer = createModal(() => {
       const { feeAmount, feeAsset, usdFeeAmount } = operation;
       if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
 
-      const computed = convertTokenAmountToHumanReadableAmount(
-        feeAmount,
-        feeAsset.decimals
-      );
+      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
 
       return {
         assetAmount: Number(computed),
@@ -105,10 +110,7 @@ export const SwapSettingsDrawer = createModal(() => {
     });
 
     const isSmartRelay = checkIsSmartRelay(route);
-    const smartRelayFee = calculateSmartRelayFee(
-      isSmartRelay,
-      route?.estimatedFees
-    );
+    const smartRelayFee = calculateSmartRelayFee(isSmartRelay, route?.estimatedFees);
 
     if (smartRelayFee) {
       feeList.push({ label: "Relayer Fee", fee: smartRelayFee });
@@ -117,16 +119,16 @@ export const SwapSettingsDrawer = createModal(() => {
   }, [transferOperations, route]);
 
   return (
-    <StyledSwapPageSettings gap={20}>
+    <StyledSwapPageSettings gap={15}>
       <Column gap={10}>
-        <Row justify="space-between">
+        <Row justify="space-between" align="center">
           <SwapDetailText>Route</SwapDetailText>
           <Row align="center" gap={5}>
             {chainsRoute?.map((chain, index) => (
               <Fragment key={index}>
                 <img
-                  width="20"
-                  height="20"
+                  width="25"
+                  height="25"
                   src={chain?.logoURI}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
@@ -139,12 +141,10 @@ export const SwapSettingsDrawer = createModal(() => {
           </Row>
         </Row>
         {Boolean(route?.swapPriceImpactPercent) && (
-          <Row justify="space-between">
+          <Row justify="space-between" align="center">
             <SwapDetailText>Price Impact</SwapDetailText>
-            <Row align="center" gap={5}>
-              <SwapDetailText monospace>
-                {route?.swapPriceImpactPercent}%
-              </SwapDetailText>
+            <Row align="center" gap={5} height={25}>
+              <SwapDetailText monospace>{route?.swapPriceImpactPercent}%</SwapDetailText>
             </Row>
           </Row>
         )}
@@ -152,9 +152,9 @@ export const SwapSettingsDrawer = createModal(() => {
       {fees.length > 0 && (
         <Column gap={10}>
           {fees.map(({ label, fee }, index) => (
-            <Row justify="space-between" key={index}>
+            <Row justify="space-between" align="center" key={index} height={25}>
               <SwapDetailText>{label}</SwapDetailText>
-              <SwapDetailText monospace>
+              <SwapDetailText textAlign="right" monospace>
                 {fee.formattedAssetAmount} ({fee.formattedUsdAmount})
               </SwapDetailText>
             </Row>
@@ -163,6 +163,22 @@ export const SwapSettingsDrawer = createModal(() => {
       )}
       <RoutePreferenceSelector />
       <SlippageSelector />
+      <Row gap={10}>
+        <SmallText
+          as="a"
+          href="https://docs.skip.build/go/legal-and-privacy/terms-of-service"
+          target="_blank"
+        >
+          <u>Terms of Service</u>
+        </SmallText>
+        <SmallText
+          as="a"
+          href="https://docs.skip.build/go/legal-and-privacy/privacy-policy"
+          target="_blank"
+        >
+          <u>Privacy Policy</u>
+        </SmallText>
+      </Row>
       <SwapDetailText justify="space-between">
         <SwapPageFooterItems showRouteInfo />
       </SwapDetailText>
@@ -174,7 +190,7 @@ const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
   border-radius: 20px;
-  background-color: ${(props) => props.theme.primary.background.normal};
+  background: ${(props) => props.theme.primary.background.normal};
 `;
 
 const SwapDetailText = styled(Row).attrs({

@@ -118,14 +118,14 @@ export type ChainsRequest = {
   includeSVM?: boolean;
   onlyTestnets?: boolean;
   chainIDs?: string[];
-}
+};
 
 export type ChainsRequestJSON = {
   include_evm?: boolean;
   include_svm?: boolean;
   only_testnets?: boolean;
-  chain_ids?: string[]
-}
+  chain_ids?: string[];
+};
 
 export type RecommendAssetsRequestJSON = {
   requests: AssetRecommendationRequestJSON[];
@@ -223,7 +223,6 @@ export type RouteConfig = {
   goFast?: boolean;
 };
 
-
 export type RouteRequestGivenIn = RouteRequestBase & {
   amountIn: string;
   amountOut?: never;
@@ -236,12 +235,12 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
-export type RouteWarningType = 'LOW_INFO_WARNING' | 'BAD_PRICE_WARNING';
+export type RouteWarningType = "LOW_INFO_WARNING" | "BAD_PRICE_WARNING";
 export type MsgsWarningType =
-  | 'INSUFFICIENT_GAS_AT_DEST_EOA'
-  | 'INSUFFICIENT_GAS_AT_INTERMEDIATE';
+  | "INSUFFICIENT_GAS_AT_DEST_EOA"
+  | "INSUFFICIENT_GAS_AT_INTERMEDIATE";
 
-export type ExperimentalFeature = 'cctp' | 'hyperlane';
+export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate";
 
 export type RouteWarning = {
   type: RouteWarningType;
@@ -254,9 +253,9 @@ export type MsgsWarning = {
 };
 
 export enum FeeType {
-  SMART_RELAY = 'SMART_RELAY',
-  BRIDGE = 'BRIDGE',
-};
+  SMART_RELAY = "SMART_RELAY",
+  BRIDGE = "BRIDGE",
+}
 
 export type EstimatedFee = {
   feeType: FeeType;
@@ -455,7 +454,6 @@ export type MsgsDirectRequestJSON =
   | MsgsDirectRequestGivenInJSON
   | MsgsDirectRequestGivenOutJSON;
 
-
 export type MsgsDirectRequestBase = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
@@ -535,18 +533,25 @@ export type MsgsResponse = {
   warning?: MsgsWarning;
 };
 
-export type BridgeType = 'IBC' | 'AXELAR' | 'CCTP' | 'HYPERLANE' | 'OPINIT' | 'GO_FAST' | 'STARGATE';
+export type BridgeType =
+  | "IBC"
+  | "AXELAR"
+  | "CCTP"
+  | "HYPERLANE"
+  | "OPINIT"
+  | "GO_FAST"
+  | "STARGATE";
 
 export enum ChainType {
-  Cosmos = 'cosmos',
-  EVM = 'evm',
-  SVM = 'svm',
+  Cosmos = "cosmos",
+  EVM = "evm",
+  SVM = "svm",
 }
 
 export type TxResult = {
-  txHash: string
-  chainID: string
-}
+  txHash: string;
+  chainID: string;
+};
 
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;

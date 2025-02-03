@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { routeConfigAtom, skipRouteAtom } from "@/state/route";
+import { skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
@@ -36,12 +36,12 @@ export const sourceAssetAmountAtom = atom(
       set(destinationAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
       set(debouncedDestinationAssetAmountAtom, newAmount, undefined, true);
     }
-  }
+  },
 );
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "destinationAsset",
-  undefined
+  undefined,
 );
 
 export const destinationAssetAmountAtom = atom(
@@ -55,7 +55,7 @@ export const destinationAssetAmountAtom = atom(
       set(sourceAssetAtom, (prev) => ({ ...prev, amount: newAmount }));
       set(debouncedSourceAssetAmountAtom, newAmount, undefined, true);
     }
-  }
+  },
 );
 
 export const clearAssetInputAmountsAtom = atom(null, (_get, set) => {
@@ -89,7 +89,7 @@ export type SwapDirection = "swap-in" | "swap-out";
 
 export const swapDirectionAtom = atomWithStorageNoCrossTabSync<SwapDirection>(
   "swapDirection",
-  "swap-in"
+  "swap-in",
 );
 
 export const isInvertingSwapAtom = atom(false);
@@ -105,8 +105,7 @@ export const invertSwapAtom = atom(null, (get, set) => {
 
   set(destinationAssetAtom, { ...sourceAsset });
   set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
-    const newSwapDirection =
-      swapDirection === "swap-in" ? "swap-out" : "swap-in";
+    const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
     set(swapDirectionAtom, newSwapDirection);
     set(isInvertingSwapAtom, false);
   });
@@ -123,21 +122,24 @@ export const CosmosGasAmount = {
   DEFAULT: 300_000,
   SWAP: 2_800_000,
   CARBON: 1_000_000,
-}
+};
 
 export const defaultSwapSettings = {
   slippage: 1,
   routePreference: RoutePreference.FASTEST,
 };
 
-export const swapSettingsAtom = atomWithStorageNoCrossTabSync("swapSettingsAtom", defaultSwapSettings);
+export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
+  "swapSettingsAtom",
+  defaultSwapSettings,
+);
 
 export const slippageAtom = atom(
   (get) => get(swapSettingsAtom).slippage,
   (get, set, newSlippage: number) => {
     const currentSettings = get(swapSettingsAtom);
     set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });
-  }
+  },
 );
 
 export const routePreferenceAtom = atom(
@@ -145,6 +147,5 @@ export const routePreferenceAtom = atom(
   (get, set, newRoutePreference: RoutePreference) => {
     const currentSettings = get(swapSettingsAtom);
     set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
-    set(routeConfigAtom, (prev) => ({ ...prev, goFast: newRoutePreference === RoutePreference.FASTEST }));
-  }
+  },
 );

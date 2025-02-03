@@ -1,8 +1,6 @@
 import { styled } from "styled-components";
 import { Column, Row } from "@/components/Layout";
-import {
-  SwapExecutionPageRouteDetailedRow,
-} from "./SwapExecutionPageRouteDetailedRow";
+import { SwapExecutionPageRouteDetailedRow } from "./SwapExecutionPageRouteDetailedRow";
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
@@ -53,6 +51,7 @@ export const SwapExecutionPageRouteDetailed = ({
   statusData,
   onClickEditDestinationWallet,
   swapExecutionState,
+  firstOperationStatus,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
@@ -75,8 +74,6 @@ export const SwapExecutionPageRouteDetailed = ({
 
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
-  const firstOpStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[0]?.status;
-
 
   return (
     <StyledSwapExecutionPageRoute>
@@ -86,20 +83,19 @@ export const SwapExecutionPageRouteDetailed = ({
           denom={firstOperation.denomIn}
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
-          status={firstOpStatus}
+          status={firstOperationStatus}
           context="source"
           index={0}
         />
         {operations.map((operation, index) => {
-          const simpleOperationType =
-            operationTypeToSimpleOperationType[operation.type];
+          const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
 
           const getBridgeSwapVenue = () => {
             const swapVenueId = operation.swapVenues?.[0]?.chainID;
             const bridgeId = operation.bridgeID;
 
-            const bridge = bridges?.find(bridge => bridge.id === bridgeId);
-            const swapVenue = swapVenues?.find(swapVenue => swapVenue.chainID === swapVenueId);
+            const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
+            const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainID === swapVenueId);
 
             const bridgeOrSwapVenue = {
               name: bridge?.name ?? swapVenue?.name,
@@ -118,12 +114,20 @@ export const SwapExecutionPageRouteDetailed = ({
             chainId: operation.toChainID ?? operation.chainID,
           };
 
-          const explorerLink = operation.isSwap ? status?.[operation.transferIndex]?.fromExplorerLink : status?.[operation.transferIndex]?.toExplorerLink;
-          const opStatus = swapExecutionState === SwapExecutionState.confirmed ? "completed" : status?.[operation.transferIndex]?.status;
+          const explorerLink = operation.isSwap
+            ? status?.[operation.transferIndex]?.fromExplorerLink
+            : status?.[operation.transferIndex]?.toExplorerLink;
+          const opStatus =
+            swapExecutionState === SwapExecutionState.confirmed
+              ? "completed"
+              : status?.[operation.transferIndex]?.status;
 
           return (
             <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
-              <StyledOperationTypeAndTooltipContainer style={{ height: "25px", position: "relative" }} align="center">
+              <StyledOperationTypeAndTooltipContainer
+                style={{ height: "25px", position: "relative" }}
+                align="center"
+              >
                 <OperationTypeIconContainer
                   onMouseEnter={() => handleMouseEnterOperationType(index)}
                   onMouseLeave={() => handleMouseLeaveOperationType(index)}
@@ -134,7 +138,11 @@ export const SwapExecutionPageRouteDetailed = ({
                 {tooltipMap?.[index] && (
                   <Tooltip>
                     {simpleOperationType} with {bridgeOrSwapVenue.name}
-                    <StyledSwapVenueOrBridgeImage width="10" height="10" src={bridgeOrSwapVenue.image} />
+                    <StyledSwapVenueOrBridgeImage
+                      width="10"
+                      height="10"
+                      src={bridgeOrSwapVenue.image}
+                    />
                   </Tooltip>
                 )}
               </StyledOperationTypeAndTooltipContainer>
@@ -163,7 +171,7 @@ const Tooltip = styled(SmallText).attrs({
   padding: 10px;
   border-radius: 13px;
   border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background-color: ${({ theme }) => theme.secondary.background.normal};
+  background: ${({ theme }) => theme.secondary.background.normal};
   box-sizing: border-box;
   z-index: 1;
 `;
@@ -180,7 +188,7 @@ const OperationTypeIconContainer = styled(Column).attrs({
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
   gap: 20px;
-  background-color: ${({ theme }) => theme.primary.background.normal};
+  background: ${({ theme }) => theme.primary.background.normal};
   border-radius: 25px;
   min-height: 225px;
 `;
