@@ -1267,6 +1267,7 @@ describe('client', () => {
               transfer_asset_release: {
                 chain_id: 'cosmoshub-4',
                 denom: 'uatom',
+                amount: '999',
                 released: true,
               },
               error: null,
@@ -1298,6 +1299,7 @@ describe('client', () => {
                   transfer_asset_release: {
                     chain_id: 'cosmoshub-4',
                     denom: 'uatom',
+                    amount: '999',
                     released: true,
                   },
                   error: null,
@@ -1381,6 +1383,7 @@ describe('client', () => {
         transferAssetRelease: {
           chainID: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
@@ -1412,6 +1415,7 @@ describe('client', () => {
             transferAssetRelease: {
               chainID: 'cosmoshub-4',
               denom: 'uatom',
+              amount: '999',
               released: true,
             },
             error: null,
@@ -1493,6 +1497,7 @@ describe('client', () => {
                 transfer_asset_release: {
                   chain_id: 'cosmoshub-4',
                   denom: 'uatom',
+                  amount: '999',
                   released: true,
                 },
                 error: null,
@@ -1524,6 +1529,7 @@ describe('client', () => {
                     transfer_asset_release: {
                       chain_id: 'cosmoshub-4',
                       denom: 'uatom',
+                      amount: '999',
                       released: true,
                     },
                     error: null,
@@ -1623,6 +1629,7 @@ describe('client', () => {
         transferAssetRelease: {
           chainID: 'cosmoshub-4',
           denom: 'uatom',
+          amount: '999',
           released: true,
         },
         error: null,
@@ -1654,6 +1661,7 @@ describe('client', () => {
             transferAssetRelease: {
               chainID: 'cosmoshub-4',
               denom: 'uatom',
+              amount: '999',
               released: true,
             },
             error: null,
@@ -1735,6 +1743,7 @@ describe('client', () => {
                 transfer_asset_release: {
                   chain_id: 'cosmoshub-4',
                   denom: 'uatom',
+                  amount: '999',
                   released: true,
                 },
                 error: null,
@@ -1766,6 +1775,7 @@ describe('client', () => {
                     transfer_asset_release: {
                       chain_id: 'cosmoshub-4',
                       denom: 'uatom',
+                      amount: '999',
                       released: true,
                     },
                     error: null,

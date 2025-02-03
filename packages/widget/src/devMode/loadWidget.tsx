@@ -17,7 +17,7 @@ const DevMode = () => {
   };
 
   return (
-    <Column align="flex-end">
+    <Column align="flex-end" style={{ height: "100vh" }}>
       <Column gap={5} style={{ width: 200 }}>
         <ShowWidget />
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>

@@ -47,8 +47,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
   );
 
   useEffect(() => {
-    if (mobile) return;
-    if (isMobileScreenSize) return;
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -72,7 +70,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
 
       <StyledSearchInput
         ref={inputRef}
-        autoFocus
         style={{ paddingLeft: asset ? undefined : 30 }}
         type="text"
         placeholder={asset ? "Search networks" : "Search for an asset"}
@@ -80,7 +77,6 @@ export const AssetAndChainSelectorModalSearchInput = ({
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
-
       <Row align="center" gap={5}>
         {!isMobileScreenSize && (
           <>
