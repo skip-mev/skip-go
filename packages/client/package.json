@@ -31,11 +31,11 @@
     "@cosmjs/faucet": "0.32.3",
     "@cosmjs/faucet-client": "0.32.3",
     "@cosmology/telescope": "1.8.3",
-    "@initia/initia-registry": "^0.2.1",
+    "@initia/initia-registry": "^0.2.2",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^1.69.106",
+    "chain-registry": "^1.69.113",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "vitest": "^1.2.2"
