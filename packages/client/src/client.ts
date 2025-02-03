@@ -42,7 +42,13 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import { isAddress, maxUint256, publicActions, WalletClient } from "viem";
+import {
+  Chain,
+  isAddress,
+  maxUint256,
+  publicActions,
+  WalletClient,
+} from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
 import {
@@ -1699,6 +1705,10 @@ export class SkipClient {
     const estimatedGasAmount = await (async () => {
       try {
         if (!simulate) throw new Error("simulate");
+        // Skip gas estimation for noble-1 in multi tx route
+        if (txIndex !== 0 && chainID === "noble-1") {
+          return "0";
+        }
         const estimatedGas = await getCosmosGasAmountForMessage(
           client,
           signerAddress,
