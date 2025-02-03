@@ -538,52 +538,59 @@ export class SkipClient {
         "executeEVMTransaction error: failed to retrieve account from signer",
       );
     }
-    const { onApproveAllowance, onTransactionSigned } = options;
 
+    const { onApproveAllowance, onTransactionSigned, bypassApprovalCheck } =
+      options;
     const extendedSigner = signer.extend(publicActions);
 
-    // check for approvals
-    for (const requiredApproval of message.requiredERC20Approvals) {
-      const allowance = await extendedSigner.readContract({
-        address: requiredApproval.tokenContract as `0x${string}`,
-        abi: erc20ABI,
-        functionName: "allowance",
-        args: [
-          signer.account.address as `0x${string}`,
-          requiredApproval.spender as `0x${string}`,
-        ],
-      });
+    // Check for approvals unless bypassApprovalCheck is enabled
+    if (!bypassApprovalCheck) {
+      for (const requiredApproval of message.requiredERC20Approvals) {
+        const allowance = await extendedSigner.readContract({
+          address: requiredApproval.tokenContract as `0x${string}`,
+          abi: erc20ABI,
+          functionName: "allowance",
+          args: [
+            signer.account.address as `0x${string}`,
+            requiredApproval.spender as `0x${string}`,
+          ],
+        });
 
-      if (allowance >= BigInt(requiredApproval.amount)) {
-        continue;
+        if (allowance >= BigInt(requiredApproval.amount)) {
+          continue;
+        }
+
+        onApproveAllowance?.({
+          status: "pending",
+          allowance: requiredApproval,
+        });
+
+        const txHash = await extendedSigner.writeContract({
+          account: signer.account,
+          address: requiredApproval.tokenContract as `0x${string}`,
+          abi: erc20ABI,
+          functionName: "approve",
+          args: [requiredApproval.spender as `0x${string}`, maxUint256],
+          chain: signer.chain,
+        });
+
+        const receipt = await extendedSigner.waitForTransactionReceipt({
+          hash: txHash,
+        });
+
+        if (receipt.status === "reverted") {
+          throw new Error(
+            `executeEVMTransaction error: evm tx reverted for hash ${receipt.transactionHash}`,
+          );
+        }
       }
+
       onApproveAllowance?.({
-        status: "pending",
-        allowance: requiredApproval,
+        status: "completed",
       });
-      const txHash = await extendedSigner.writeContract({
-        account: signer.account,
-        address: requiredApproval.tokenContract as `0x${string}`,
-        abi: erc20ABI,
-        functionName: "approve",
-        args: [requiredApproval.spender as `0x${string}`, maxUint256],
-        chain: { ...signer.chain, id: Number(message.chainID) } as Chain,
-      });
-      const receipt = await extendedSigner.waitForTransactionReceipt({
-        hash: txHash,
-      });
-
-      if (receipt.status === "reverted") {
-        throw new Error(
-          `executeEVMTransaction error: evm tx reverted for hash ${receipt.transactionHash}`,
-        );
-      }
     }
-    onApproveAllowance?.({
-      status: "completed",
-    });
 
-    // execute tx
+    // Execute the transaction
     const txHash = await extendedSigner.sendTransaction({
       account: signer.account,
       to: message.to as `0x${string}`,
