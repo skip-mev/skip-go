@@ -168,6 +168,7 @@ export const useCreateCosmosWallets = () => {
             // });
           } catch (e) {
             const error = e as Error;
+            console.log(error);
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add the ${chainID} chain to your wallet`,
@@ -198,6 +199,7 @@ export const useCreateCosmosWallets = () => {
             });
           } catch (e) {
             const error = e as Error;
+            console.log(error);
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add ${chainID} chain in your wallet`,
