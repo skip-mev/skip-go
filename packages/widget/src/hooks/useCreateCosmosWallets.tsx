@@ -137,7 +137,6 @@ export const useCreateCosmosWallets = () => {
         const isWC = isWalletConnect(wallet);
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
-        console.log(wallet, isWC);
         const initialChainIds = (() => {
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
@@ -150,11 +149,11 @@ export const useCreateCosmosWallets = () => {
               .map((y) => y.chainID)
               .includes(x) && mainnetChains.map((c) => c.chainId).includes(x),
         );
-        console.log(chainID, initialChainIds);
         const connectEco = async () => {
           try {
             const test = await getWallet(WalletType.KEPLR).enable("cosmoshub-4");
             console.log(test);
+            console.log(chainID, initialChainIds);
 
             const response = await connect({
               chainId: initialChainIds,
