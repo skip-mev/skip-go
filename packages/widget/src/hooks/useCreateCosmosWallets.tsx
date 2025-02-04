@@ -49,6 +49,8 @@ export const useCreateCosmosWallets = () => {
       const mobile = isMobile();
 
       const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
+      const keplrWalletAvailable = checkWallet(WalletType.KEPLR);
+
       const browserWallets = [
         WalletType.KEPLR,
         WalletType.LEAP,
@@ -67,15 +69,16 @@ export const useCreateCosmosWallets = () => {
         browserWallets.push(WalletType.COSMIFRAME);
       }
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
-      const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter(
-        (x) => {
-          try {
-            return Boolean(getWallet(x));
-          } catch (_error) {
-            return false;
-          }
-        },
-      );
+      const availableMobileCosmosWallets = [
+        ...browserWallets,
+        ...(keplrWalletAvailable ? [] : mobileCosmosWallets),
+      ].filter((wallet) => {
+        try {
+          return Boolean(getWallet(wallet));
+        } catch (_error) {
+          return false;
+        }
+      });
       const cosmosWallets = mobile ? availableMobileCosmosWallets : browserWallets;
 
       const isPenumbra = chainID?.includes("penumbra");
@@ -140,7 +143,7 @@ export const useCreateCosmosWallets = () => {
         const initialChainIds = (() => {
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
-          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
+          if (wallet === WalletType.KEPLR) return keplrMainnetChainIdsInitialConnect;
           return walletMainnetChainIdsInitialConnect;
         })().filter(
           (x) =>
