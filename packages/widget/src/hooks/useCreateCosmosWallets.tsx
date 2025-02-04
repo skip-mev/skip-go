@@ -153,6 +153,9 @@ export const useCreateCosmosWallets = () => {
         console.log(chainID, initialChainIds);
         const connectEco = async () => {
           try {
+            const test = await getWallet(WalletType.KEPLR).enable("cosmoshub-4");
+            console.log(test);
+
             const response = await connect({
               chainId: initialChainIds,
               walletType: wallet,
@@ -182,6 +185,9 @@ export const useCreateCosmosWallets = () => {
         const connectSingleChainId = async () => {
           try {
             if (!chainID) throw new Error("Chain ID is required");
+            console.log("connect single chain id");
+            const test = await getWallet(WalletType.KEPLR).enable(chainID);
+            console.log(test);
             const response = await connect({
               chainId: chainID,
               walletType: wallet,
