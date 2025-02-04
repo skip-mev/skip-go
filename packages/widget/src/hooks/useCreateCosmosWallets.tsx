@@ -48,6 +48,11 @@ export const useCreateCosmosWallets = () => {
     (chainID?: string) => {
       const mobile = isMobile();
 
+      const keplrAvailable = checkWallet(WalletType.KEPLR);
+
+      console.log(keplrAvailable);
+      console.log(window);
+
       const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
       const browserWallets = [
         WalletType.KEPLR,
@@ -151,11 +156,16 @@ export const useCreateCosmosWallets = () => {
         );
         const connectEco = async () => {
           try {
-            await connect({
-              chainId: initialChainIds,
-              walletType: wallet,
-              autoReconnect: false,
-            });
+            console.log("connect eco");
+
+            const test = await getWallet(WalletType.KEPLR).enable("cosmoshub-4");
+            console.log(test);
+
+            // await connect({
+            //   chainId: initialChainIds,
+            //   walletType: wallet,
+            //   autoReconnect: false,
+            // });
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -178,6 +188,9 @@ export const useCreateCosmosWallets = () => {
         const connectSingleChainId = async () => {
           try {
             if (!chainID) throw new Error("Chain ID is required");
+            console.log("connect single chain id");
+            const test = await window?.keplr?.enable(chainID);
+            console.log(test);
             await connect({
               chainId: chainID,
               walletType: wallet,
