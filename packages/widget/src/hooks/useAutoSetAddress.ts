@@ -65,6 +65,7 @@ export const useAutoSetAddress = () => {
           return;
         }
         const isSignRequired = signRequiredChains?.includes(chainID);
+        console.log(connectedAddress, chainID);
         if (connectedAddress?.[chainID]) {
           setChainAddresses((prev) => ({
             ...prev,
@@ -92,6 +93,7 @@ export const useAutoSetAddress = () => {
             try {
               const wallets = createCosmosWallets(chainID);
               const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
+              console.log(wallets, wallet);
               if (!wallet) {
                 if (!openModal) return;
                 showSetAddressModal();

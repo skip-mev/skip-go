@@ -49,6 +49,8 @@ export const useCreateCosmosWallets = () => {
       const mobile = isMobile();
 
       const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
+      const keplrWalletAvailable = checkWallet(WalletType.KEPLR);
+
       const browserWallets = [
         WalletType.KEPLR,
         WalletType.LEAP,
@@ -68,9 +70,17 @@ export const useCreateCosmosWallets = () => {
       }
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter(
-        (x) => {
+        (wallet) => {
           try {
-            return Boolean(getWallet(x));
+            const keplrWalletExists = checkWallet(WalletType.KEPLR);
+            if (
+              mobile &&
+              [WalletType.WC_KEPLR_MOBILE, WalletType.WALLETCONNECT].includes(wallet) &&
+              keplrWalletExists
+            ) {
+              return false;
+            }
+            return Boolean(getWallet(wallet));
           } catch (_error) {
             return false;
           }
@@ -140,7 +150,7 @@ export const useCreateCosmosWallets = () => {
         const initialChainIds = (() => {
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
-          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
+          if (wallet === WalletType.KEPLR) return keplrMainnetChainIdsInitialConnect;
           return walletMainnetChainIdsInitialConnect;
         })().filter(
           (x) =>
@@ -151,13 +161,16 @@ export const useCreateCosmosWallets = () => {
         );
         const connectEco = async () => {
           try {
-            await connect({
+            const response = await connect({
               chainId: initialChainIds,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
+            console.log(error);
+            throw error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add the ${chainID} chain to your wallet`,
@@ -178,13 +191,16 @@ export const useCreateCosmosWallets = () => {
         const connectSingleChainId = async () => {
           try {
             if (!chainID) throw new Error("Chain ID is required");
-            await connect({
+            console.log("connect single chain id");
+            const response = await connect({
               chainId: chainID,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
+            throw error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
                 `There is no chain info for ${chainID}. Please add ${chainID} chain in your wallet`,

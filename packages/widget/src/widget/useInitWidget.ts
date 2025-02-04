@@ -26,6 +26,13 @@ import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
 
 export const useInitWidget = (props: WidgetProps) => {
+  useEffect(() => {
+    const initTerminal = async () => {
+      const eruda = (await import("eruda")).default;
+      eruda.init();
+    };
+    initTerminal();
+  }, []);
   if (props.enableSentrySessionReplays) {
     initSentry();
   }
