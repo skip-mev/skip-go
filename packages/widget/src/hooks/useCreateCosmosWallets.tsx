@@ -49,6 +49,8 @@ export const useCreateCosmosWallets = () => {
       const mobile = isMobile();
 
       const isIframeAvailable = checkWallet(WalletType.COSMIFRAME);
+      const keplrWalletAvailable = checkWallet(WalletType.KEPLR);
+
       const browserWallets = [
         WalletType.KEPLR,
         WalletType.LEAP,
