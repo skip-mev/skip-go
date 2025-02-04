@@ -1,5 +1,26 @@
 ## 0.0.15
 
+## 3.2.1
+
+### Patch Changes
+
+- 0ca751c: fix bug with evm recovery address not working on mobile
+- 0ca751c: various mobile ui fixes
+- 0ca751c: Autofocus input the same way on mobile
+- 0ca751c: Fix modal scrolling issues
+- 0ca751c: update registries
+- 0ca751c: Restore scroll position on modal close
+- 0ca751c: Fix autoSetAddress for evm on mobile
+- 0ca751c: Use same keplr logo for evm as cosmos
+- 0ca751c: Ensure priceChangePercentage is negative before pushing to TradeWarning Error
+- Updated dependencies [0ca751c]
+- Updated dependencies [0ca751c]
+- Updated dependencies [0ca751c]
+- Updated dependencies [0ca751c]
+- Updated dependencies [0ca751c]
+- Updated dependencies [0ca751c]
+  - @skip-go/client@0.16.8
+
 ## 3.2.0
 
 ### Minor Changes

@@ -101,6 +101,12 @@ export type ExecuteRouteOptions = SignerGetters &
      */
     beforeMsg?: types.CosmosMsg;
     afterMsg?: types.CosmosMsg;
+    /**
+     * If `skipApproval` is set to `true`, the router will bypass checking whether
+     * the signer has granted approval for the specified token contract on an EVM chain.
+     * This can be useful if approval has already been handled externally or there are race conditions.
+     */
+    bypassApprovalCheck?: boolean;
   };
 
 export type ExecuteCosmosMessageOptions = {

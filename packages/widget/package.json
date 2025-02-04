@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
-    "@initia/initia-registry": "^0.2.1",
+    "@initia/initia-registry": "^0.2.2",
     "@keplr-wallet/types": "^0.12.125",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
@@ -55,7 +55,7 @@
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
-    "chain-registry": "^1.69.106",
+    "chain-registry": "^1.69.113",
     "eruda": "^3.4.1",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
