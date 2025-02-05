@@ -33,6 +33,7 @@ export const useCreateSolanaWallets = () => {
           try {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+            console.log(chains);
             const chain = chains?.find((x) => x.chainID === "solana");
 
             const address = wallet.publicKey?.toBase58();
@@ -50,6 +51,8 @@ export const useCreateSolanaWallets = () => {
           try {
             await wallet.connect();
             setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+            console.log(chains);
+            console.log(assets);
             const chain = chains?.find((x) => x.chainID === "solana");
             const asset = assets?.find(
               (x) =>
