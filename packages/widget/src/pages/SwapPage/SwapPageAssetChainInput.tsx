@@ -19,6 +19,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { transition } from "@/utils/transitions";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -294,10 +295,35 @@ export const StyledAssetLabel = styled(Row).attrs({
   height: 40px;
   border-radius: 10px;
   white-space: nowrap;
+  position: relative;
+  
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.secondary.background.normal};
+
+  &::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    pointer-events: none;
+    border-radius: 10px;
+    ${transition(['background-color'], 'fast', 'easeOut')};
+    z-index: 0;
+  }
+  &:hover::after {
+    background-color: ${({theme}) => theme.secondary.background.hover};
+  }
+
+  img, p{
+    z-index: 1;
+  }
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background: ${(props) => props.theme.brandColor};
+
+  
 `;

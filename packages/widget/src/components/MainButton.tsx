@@ -5,6 +5,7 @@ import { useTheme } from "styled-components";
 import { ICONS, iconMap } from "@/icons";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
+import { transition } from "@/utils/transitions";
 
 export type MainButtonProps = {
   label: string;
@@ -23,6 +24,7 @@ export type MainButtonProps = {
 
 type LoadingButtonProps = MainButtonProps & {};
 
+
 export const MainButton = ({
   label,
   icon = ICONS.none,
@@ -40,7 +42,7 @@ export const MainButton = ({
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
   const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
 
-  const Icon = iconMap[icon];
+const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
 
   if (loading) {
@@ -78,7 +80,9 @@ export const MainButton = ({
           </MainButtonText>
         )}
 
-        <Icon color={textColor} />
+        <StyledIcon>
+          <Icon color={textColor} />
+        </StyledIcon>
       </StyledMainButton>
     </MainButtonContainer>
   );
@@ -123,6 +127,7 @@ const MainButtonText = styled(Text).attrs({
   capitalize: true,
   letterSpacing: "-0.015em",
 })`
+  z-index: 1;
   letter-spacing: -0.015em;
   @media (max-width: 767px) {
     font-size: 20px;
@@ -133,7 +138,7 @@ const MainButtonText = styled(Text).attrs({
 const MainButtonContainer = styled.div`
   position: relative;
   overflow: hidden;
-  &:hover::after {
+  &::after{
     content: "";
     position: absolute;
     top: 0;
@@ -141,8 +146,12 @@ const MainButtonContainer = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 25px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
+    ${transition(['background-color'], 'fast', 'easeOut')};
+  }
+  &:hover::after {
+    background-color: rgba(255, 255, 255, 0.1);
   }
 `;
 
@@ -238,5 +247,14 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
 
   @media (max-width: 767px) {
     height: 61px;
+  }
+`;
+
+
+const StyledIcon = styled.div`
+  z-index: 1;
+  
+  svg {
+    display: block;
   }
 `;
