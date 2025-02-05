@@ -58,10 +58,6 @@ export const useCreateEvmWallets = () => {
               connector,
               chainId: Number(chainID),
             });
-            await disconnectAsync();
-            setEvmWallet(undefined);
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
             return res.accounts[0];
           }
           if (
@@ -229,7 +225,6 @@ export const useCreateEvmWallets = () => {
       chainId,
       evmAddress,
       connectAsync,
-      disconnectAsync,
       setEvmWallet,
       currentConnector,
       chains,
