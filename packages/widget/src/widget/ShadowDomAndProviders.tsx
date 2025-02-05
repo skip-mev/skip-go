@@ -1,4 +1,4 @@
-import { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { ComponentType, ReactNode, useEffect, useMemo, useState } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { useCSS, Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
@@ -23,16 +23,13 @@ export const ShadowDomAndProviders = ({
   useInjectFontsToDocumentHead();
   const css = useCSS();
 
-  const [, setShadowDom] = useState<HTMLElement>();
-  const [styledComponentContainer, setStyledComponentContainer] = useState<HTMLElement>();
+  const [shadowRoot, setShadowRoot] = useState<ShadowRoot>();
 
-  const onShadowDomLoaded = useCallback((element: HTMLDivElement) => {
-    setShadowDom(element);
-  }, []);
-
-  const onStyledComponentContainerLoaded = useCallback((element: HTMLDivElement) => {
-    setStyledComponentContainer(element);
-  }, []);
+  const onShadowDomLoaded = (element: HTMLDivElement) => {
+    if (shadowRoot === undefined && element?.shadowRoot) {
+      setShadowRoot(element?.shadowRoot);
+    }
+  };
 
   const mergedThemes = useMemo(() => {
     return {
@@ -49,10 +46,11 @@ export const ShadowDomAndProviders = ({
           ${globalStyles}
         `}
       >
-        <div ref={onStyledComponentContainerLoaded}></div>
-        <StyleSheetManager shouldForwardProp={shouldForwardProp} target={styledComponentContainer}>
-          <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
-        </StyleSheetManager>
+        {shadowRoot && (
+          <StyleSheetManager shouldForwardProp={shouldForwardProp} target={shadowRoot}>
+            <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
+          </StyleSheetManager>
+        )}
       </Scope>
     </ClientOnly>
   );
