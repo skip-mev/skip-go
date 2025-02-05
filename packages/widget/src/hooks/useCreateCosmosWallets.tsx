@@ -68,9 +68,17 @@ export const useCreateCosmosWallets = () => {
       }
       const mobileCosmosWallets = [WalletType.WC_KEPLR_MOBILE];
       const availableMobileCosmosWallets = [...browserWallets, ...mobileCosmosWallets].filter(
-        (x) => {
+        (wallet) => {
           try {
-            return Boolean(getWallet(x));
+            const keplrWalletExists = checkWallet(WalletType.KEPLR);
+            if (
+              mobile &&
+              [WalletType.WC_KEPLR_MOBILE, WalletType.WALLETCONNECT].includes(wallet) &&
+              keplrWalletExists
+            ) {
+              return false;
+            }
+            return Boolean(getWallet(wallet));
           } catch (_error) {
             return false;
           }
@@ -140,7 +148,14 @@ export const useCreateCosmosWallets = () => {
         const initialChainIds = (() => {
           if (isWC) return walletConnectMainnetChainIdsInitialConnect;
           if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
-          if (wallet === WalletType.KEPLR && !mobile) return keplrMainnetChainIdsInitialConnect;
+          if (wallet === WalletType.KEPLR) {
+            if (mobile) {
+              return keplrMainnetChainIdsInitialConnect.filter(
+                (chainId) => chainId !== "wormchain",
+              );
+            }
+            return keplrMainnetChainIdsInitialConnect;
+          }
           return walletMainnetChainIdsInitialConnect;
         })().filter(
           (x) =>

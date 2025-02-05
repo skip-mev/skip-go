@@ -154,7 +154,7 @@ export const SwapSettingsDrawer = createModal(() => {
           {fees.map(({ label, fee }, index) => (
             <Row justify="space-between" align="center" key={index} height={25}>
               <SwapDetailText>{label}</SwapDetailText>
-              <SwapDetailText monospace>
+              <SwapDetailText textAlign="right" monospace>
                 {fee.formattedAssetAmount} ({fee.formattedUsdAmount})
               </SwapDetailText>
             </Row>
