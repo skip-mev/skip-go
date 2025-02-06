@@ -166,11 +166,12 @@ export const useCreateCosmosWallets = () => {
         );
         const connectEco = async () => {
           try {
-            await connect({
+            const response = await connect({
               chainId: initialChainIds,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -193,11 +194,12 @@ export const useCreateCosmosWallets = () => {
         const connectSingleChainId = async () => {
           try {
             if (!chainID) throw new Error("Chain ID is required");
-            await connect({
+            const response = await connect({
               chainId: chainID,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -218,6 +220,11 @@ export const useCreateCosmosWallets = () => {
           if (!chainID) throw new Error("Chain ID is required");
           const chainInfo = getChainInfo(chainID);
           const currentAddress = accounts?.[chainID]?.bech32Address;
+
+          console.log(currentAddress);
+
+          if (currentAddress) return currentAddress;
+
           if (wallet !== currentWallet && !currentAddress) {
             if (!chainInfo)
               throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
@@ -233,11 +240,13 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           } else if (currentAddress && isConnected && signRequired) {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           }
           if (!currentAddress) {
@@ -255,6 +264,7 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           }
           const address = (await getWallet(wallet).getKey(chainID)).bech32Address;
