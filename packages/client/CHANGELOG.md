@@ -1,5 +1,16 @@
 # @skip-go/client
 
+## 0.16.8
+
+### Patch Changes
+
+- 0ca751c: [API-3779] transfer asset release amount field
+- 0ca751c: Skip gas estimation for noble-1 in multi-tx routes
+- 0ca751c: update img preference for tokens denoms
+- 0ca751c: add bypass approve allowance option in execute route function
+- 0ca751c: Update chainId passed to executeEVMTransaction to be from message, instead of signer
+- 0ca751c: update registries
+
 ## 0.16.7
 
 ### Patch Changes
