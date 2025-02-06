@@ -50,6 +50,7 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
+          if (evmAddress) return evmAddress;
           if (isWalletConnect && mobile) {
             if (isEvmConnected) {
               return evmAddress;
