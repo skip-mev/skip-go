@@ -2,11 +2,11 @@ import { AccountParser, accountFromAny } from "@cosmjs/stargate";
 import { assert } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
 import { BaseAccount } from "./codegen/cosmos/auth/v1beta1/auth";
-import { EthAccount } from "@injectivelabs/core-proto-ts/esm/injective/types/v1beta1/account";
+import { InjectiveTypesV1Beta1Account } from "@injectivelabs/core-proto-ts";
 
 export const accountParser: AccountParser = (acc) => {
   switch (acc.typeUrl) {
-    case "/stride.vesting.StridePeriodicVestingAccount":
+    case "/stride.vesting.StridePeriodicVestingAccount": {
       const baseAccount = StridePeriodicVestingAccount.decode(acc.value)
         .baseVestingAccount?.baseAccount;
       assert(baseAccount);
@@ -14,8 +14,11 @@ export const accountParser: AccountParser = (acc) => {
         typeUrl: "/cosmos.auth.v1beta1.BaseAccount",
         value: BaseAccount.encode(baseAccount).finish(),
       });
-    case "/injective.types.v1beta1.EthAccount":
-      const injAccount = EthAccount.decode(acc.value as Uint8Array);
+    }
+    case "/injective.types.v1beta1.EthAccount": {
+      const injAccount = InjectiveTypesV1Beta1Account.EthAccount.decode(
+        acc.value as Uint8Array,
+      );
       const baseInjAccount = injAccount.baseAccount!;
       const pubKey = baseInjAccount.pubKey;
 
@@ -30,9 +33,11 @@ export const accountParser: AccountParser = (acc) => {
         accountNumber: Number(baseInjAccount.accountNumber),
         sequence: Number(baseInjAccount.sequence),
       };
-
-    case "/ethermint.types.v1.EthAccount":
-      const account = EthAccount.decode(acc.value as Uint8Array);
+    }
+    case "/ethermint.types.v1.EthAccount": {
+      const account = InjectiveTypesV1Beta1Account.EthAccount.decode(
+        acc.value as Uint8Array,
+      );
       const baseEthAccount = account.baseAccount!;
       const pubKeyEth = baseEthAccount.pubKey;
 
@@ -47,6 +52,7 @@ export const accountParser: AccountParser = (acc) => {
         accountNumber: Number(baseEthAccount.accountNumber),
         sequence: Number(baseEthAccount.sequence),
       };
+    }
     default:
       return accountFromAny(acc);
   }
