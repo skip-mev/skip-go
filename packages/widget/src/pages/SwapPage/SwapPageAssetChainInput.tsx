@@ -19,6 +19,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { transition } from "@/utils/transitions";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -167,7 +168,7 @@ export const SwapPageAssetChainInput = ({
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
         />
-        <Button onClick={handleChangeAsset} gap={5}>
+        <StyledAssetButton onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
@@ -196,11 +197,12 @@ export const SwapPageAssetChainInput = ({
           )}
           {!isMobileScreenSize && (
             <ChevronIcon
+              className="chevron-icon"
               color={theme.primary.background.normal}
               backgroundColor={theme.primary.text.normal}
             />
           )}
-        </Button>
+        </StyledAssetButton>
       </Row>
       <Row justify="space-between" align="center">
         {priceChangePercentage ? (
@@ -294,10 +296,47 @@ export const StyledAssetLabel = styled(Row).attrs({
   height: 40px;
   border-radius: 10px;
   white-space: nowrap;
+  position: relative;
+  
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.secondary.background.normal};
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    pointer-events: none;
+    border-radius: 10px;
+    ${transition(['background-color'], 'fast', 'easeOut')};
+    z-index: 0;
+  }
+
+  img, p {
+    z-index: 1;
+  }
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background: ${(props) => props.theme.brandColor};
+
+  &::after {
+    background-color: rgba(255, 255, 255, 0);
+  }
+`;
+
+export const StyledAssetButton = styled(Button)`
+
+  &:hover {
+    ${StyledAssetLabel}::after {
+      background-color: ${({theme}) => theme.secondary.background.hover};
+    }
+
+    ${StyledSelectTokenLabel}::after {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
 `;

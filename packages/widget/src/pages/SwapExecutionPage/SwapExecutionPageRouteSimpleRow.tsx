@@ -152,6 +152,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 const StyledSymbolAndAmount = styled(Text)`
   font-size: 24px;
   max-width: 325px;
+  height: 27px;
   overflow: hidden;
   text-overflow: ellipsis;
   @media (max-width: 767px) {

@@ -1,6 +1,7 @@
 import { css, styled } from "styled-components";
 import { FlexProps, flexProps } from "@/components/Layout";
 import { removeButtonStyles, SmallText } from "@/components/Typography";
+import { transition } from "@/utils/transitions";
 
 export type GhostButtonProps = {
   secondary?: boolean;
@@ -14,6 +15,7 @@ export const GhostButton = styled(SmallText).attrs({
   ${removeButtonStyles};
   line-height: 13px;
   height: ${({ height }) => height || 30}px;
+  ${transition(['background-color'], 'fast', 'easeOut')}
 
   ${({ alwaysShowBackground, theme, secondary }) => {
     if (alwaysShowBackground) {
@@ -39,7 +41,7 @@ export const GhostButton = styled(SmallText).attrs({
     }
   }}
  
-  padding: 8px 16px;
+  padding: 8px 15px;
   border-radius: 90px;
   ${flexProps};
 `;
@@ -49,8 +51,7 @@ export const Button = styled.button<FlexProps>`
   line-height: initial;
   ${({ disabled }) =>
     disabled
-      ? css`
-          &:hover {
+      ? css`          &:hover {
             cursor: not-allowed;
           }
         `
@@ -72,6 +73,10 @@ export const PillButton = styled(Button)`
   gap: 10px;
   align-items: center;
   justify-content: center;
+
+  &:hover{
+    background: ${({ theme }) => theme.secondary.background.hover};
+  }
 `;
 
 export const Link = styled(Button).attrs({
@@ -87,3 +92,4 @@ export const PillButtonLink = styled(PillButton).attrs({
   color: ${({ theme }) => theme.primary.text.lowContrast};
   text-decoration: none;
 `;
+
