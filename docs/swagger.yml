@@ -2951,6 +2951,85 @@ components:
         ibc_transfer:
           $ref: '#/components/schemas/TransferInfo'
       type: object
+    LayerZeroTransfer:
+      properties:
+        from_chain_id:
+          description: Canonical chain-id of the source chain of the bridge transaction
+          type: string
+        to_chain_id:
+          description: Canonical chain-id of the destination chain of the bridge transaction
+          type: string
+        denom_in:
+          description: Denom of the input asset
+          type: string
+        denom_out:
+          description: Denom of the output asset
+          type: string
+        source_oft_contract_address:
+          description: Contract address of the source of the LayerZero transfer
+          type: string
+        destination_endpoint_id:
+          description: LayerZero endpoint ID of the destination chain
+          type: string
+        messaging_fee_asset:
+          $ref: '#/components/schemas/Asset'
+        messaging_fee_amount:
+          description: Amount of the messaging fee asset to be paid as the LayerZero bridge fee. This is denominated in the messaging fee asset.
+          type: string
+        messaging_fee_amount_usd:
+          description: Amount of the messaging fee asset to be paid as the LayerZero bridge fee, converted to USD value
+          type: string
+        bridge_id:
+          $ref: '#/components/schemas/BridgeType'
+    LayerZeroTransferWrapper:
+      properties:
+        layer_zero_transfer:
+          $ref: '#/components/schemas/LayerZeroTransfer'
+      type: object
+    LayerZeroTransferState:
+      description: |
+        LayerZero transfer state:
+        * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
+        * `LAYER_ZERO_TRANSFER_SENT` - The LayerZero transfer transaction on the source chain has executed
+        * `LAYER_ZERO_TRANSFER_FAILED` - The LayerZero transfer failed
+        * `LAYER_ZERO_TRANSFER_RECEIVED` - The LayerZero transfer has been received at the destination chain
+      enum:
+        - LAYER_ZERO_TRANSFER_UNKNOWN
+        - LAYER_ZERO_TRANSFER_SENT
+        - LAYER_ZERO_TRANSFER_FAILED
+        - LAYER_ZERO_TRANSFER_RECEIVED
+      type: string
+    LayerZeroTransferTransactions:
+      properties:
+        send_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        receive_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        error_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+      type: object
+    LayerZeroTransferInfo:
+      properties:
+        layer_zero_transfer:
+          properties:
+            from_chain_id:
+              description: Chain ID of the source chain
+              type: string
+            to_chain_id:
+              description: Chain ID of the destination chain
+              type: string
+            state:
+              $ref: '#/components/schemas/LayerZeroTransferState'
+            txs:
+              $ref: '#/components/schemas/LayerZeroTransferTransactions'
+          type: object
+      type: object
     Msg:
       oneOf:
         - $ref: '#/components/schemas/MultiChainMsgWrapper'
@@ -3003,6 +3082,7 @@ components:
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
         - $ref: '#/components/schemas/StargateTransferWrapper'
+        - $ref: '#/components/schemas/LayerZeroTransferWrapper'
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3437,8 +3517,8 @@ components:
         pool_address:
           description: Stargate liquidity pool address used on the source chain
           type: string
-        destination_endpoint_id: LayerZero unique endpoint ID assigned to the destination chain
-          description: 
+        destination_endpoint_id:
+          description: LayerZero unique endpoint ID assigned to the destination chain
           type: integer
         oft_fee_asset:
           description: Asset to be paid as the oft transfer fee if applicable.
@@ -3589,6 +3669,7 @@ components:
         - $ref: '#/components/schemas/CCTPTransferInfo'
         - $ref: '#/components/schemas/HyperlaneTransferInfo'
         - $ref: '#/components/schemas/OPInitTransferInfo'
+        - $ref: '#/components/schemas/LayerZeroTransferInfo'
     TransferInfo:
       properties:
         to_chain_id:
