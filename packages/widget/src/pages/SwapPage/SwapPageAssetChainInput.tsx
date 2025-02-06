@@ -168,7 +168,7 @@ export const SwapPageAssetChainInput = ({
           onKeyDown={handleKeyDown}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
         />
-        <Button onClick={handleChangeAsset} gap={5}>
+        <StyledAssetButton onClick={handleChangeAsset} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
@@ -197,11 +197,12 @@ export const SwapPageAssetChainInput = ({
           )}
           {!isMobileScreenSize && (
             <ChevronIcon
+              className="chevron-icon"
               color={theme.primary.background.normal}
               backgroundColor={theme.primary.text.normal}
             />
           )}
-        </Button>
+        </StyledAssetButton>
       </Row>
       <Row justify="space-between" align="center">
         {priceChangePercentage ? (
@@ -300,7 +301,7 @@ export const StyledAssetLabel = styled(Row).attrs({
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.secondary.background.normal};
 
-  &::after{
+  &::after {
     content: "";
     position: absolute;
     top: 0;
@@ -313,11 +314,8 @@ export const StyledAssetLabel = styled(Row).attrs({
     ${transition(['background-color'], 'fast', 'easeOut')};
     z-index: 0;
   }
-  &:hover::after {
-    background-color: ${({theme}) => theme.secondary.background.hover};
-  }
 
-  img, p{
+  img, p {
     z-index: 1;
   }
 `;
@@ -325,5 +323,20 @@ export const StyledAssetLabel = styled(Row).attrs({
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background: ${(props) => props.theme.brandColor};
 
-  
+  &::after {
+    background-color: rgba(255, 255, 255, 0);
+  }
+`;
+
+export const StyledAssetButton = styled(Button)`
+
+  &:hover {
+    ${StyledAssetLabel}::after {
+      background-color: ${({theme}) => theme.secondary.background.hover};
+    }
+
+    ${StyledSelectTokenLabel}::after {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
 `;

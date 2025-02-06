@@ -151,7 +151,7 @@ const MainButtonContainer = styled.div`
     ${transition(['background-color'], 'fast', 'easeOut')};
   }
   &:hover::after {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
   }
 `;
 
