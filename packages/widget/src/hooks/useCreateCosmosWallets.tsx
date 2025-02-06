@@ -13,7 +13,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
-import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
 import { TransparentAddressRequest } from '@penumbra-zone/protobuf/penumbra/view/v1/view_pb';
 import { ChainType } from "@skip-go/client";
 import {
