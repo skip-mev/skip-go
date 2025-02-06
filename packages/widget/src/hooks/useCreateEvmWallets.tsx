@@ -84,12 +84,14 @@ export const useCreateEvmWallets = () => {
             setEvmWallet({
               walletName: connector.id,
               chainType: ChainType.EVM,
+              address: evmAddress,
             });
             return res.accounts[0];
           } else if (evmAddress && isEvmConnected && signRequired) {
             setEvmWallet({
               walletName: connector.id,
               chainType: ChainType.EVM,
+              address: evmAddress,
             });
           }
           return evmAddress;
@@ -121,6 +123,7 @@ export const useCreateEvmWallets = () => {
               setEvmWallet({
                 walletName: connector.id,
                 chainType: ChainType.EVM,
+                address: evmAddress,
               });
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
@@ -159,6 +162,7 @@ export const useCreateEvmWallets = () => {
               setEvmWallet({
                 walletName: connector.id,
                 chainType: ChainType.EVM,
+                address: evmAddress,
               });
               const account = await connector.getAccounts();
               callbacks?.onWalletConnected?.({

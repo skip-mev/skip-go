@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
 import { ChainType, SignerGetters } from "@skip-go/client";
+import { Key } from "@keplr-wallet/types";
 
 export type MinimalWallet = {
   walletName: string;
@@ -28,6 +29,8 @@ export type MinimalWallet = {
 type WalletState = {
   walletName: string;
   chainType: string;
+  addressMap?: Record<string, string | Key | undefined>;
+  address?: string;
 };
 
 export type WalletConnect = {

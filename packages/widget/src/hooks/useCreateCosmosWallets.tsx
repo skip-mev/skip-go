@@ -221,6 +221,8 @@ export const useCreateCosmosWallets = () => {
           const chainInfo = getChainInfo(chainID);
           const currentAddress = accounts?.[chainID]?.bech32Address;
 
+          console.log(currentAddress);
+
           if (currentAddress) return currentAddress;
 
           if (wallet !== currentWallet && !currentAddress) {
@@ -238,11 +240,13 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           } else if (currentAddress && isConnected && signRequired) {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           }
           if (!currentAddress) {
@@ -260,6 +264,7 @@ export const useCreateCosmosWallets = () => {
             setCosmosWallet({
               walletName: wallet,
               chainType: ChainType.Cosmos,
+              addressMap: accounts,
             });
           }
           const address = (await getWallet(wallet).getKey(chainID)).bech32Address;
