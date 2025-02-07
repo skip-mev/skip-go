@@ -63,7 +63,7 @@ export function useSwapExecutionState({
 
     return SwapExecutionState.ready;
   }, [
-    chainAddresses,
+    userAddresses,
     route?.requiredChainAddresses,
     overallStatus,
     isValidatingGasBalance,

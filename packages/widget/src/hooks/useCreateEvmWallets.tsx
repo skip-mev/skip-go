@@ -83,6 +83,7 @@ export const useCreateEvmWallets = () => {
             },
             address: address,
           });
+
           setEvmWallet({
             walletName: connector.id,
             walletPrettyName: connector.name,
@@ -112,14 +113,15 @@ export const useCreateEvmWallets = () => {
               await connector?.switchChain?.({
                 chainId: Number(1),
               });
+              const account = await connector.getAccounts();
+              updateWalletState(account[0]);
               return;
             }
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
               await currentConnector?.disconnect();
             }
             try {
-              console.log("connect");
-              const response = await connectAsync({ connector, chainId: Number(1) });
+              const response = await connectAsync({ connector });
               updateWalletState(response.accounts[0]);
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
@@ -148,15 +150,24 @@ export const useCreateEvmWallets = () => {
               await connector?.switchChain?.({
                 chainId: Number(chainID),
               });
+              const account = await connector.getAccounts();
+              updateWalletState(account[0]);
               return;
             }
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
               await currentConnector?.disconnect();
             }
+
             try {
               const response = await connectAsync({ connector, chainId: Number(chainID) });
               updateWalletState(response.accounts[0]);
               const account = await connector.getAccounts();
+
+              const provider = await connector.getProvider();
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const walletInfo = (provider as any).session?.peer;
+              console.log(walletInfo);
+
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,
                 chainId: chainID,
@@ -170,6 +181,7 @@ export const useCreateEvmWallets = () => {
             }
           },
           getAddress: async ({ signRequired, context }) => {
+            console.log("get address");
             try {
               const address = await evmGetAddress({ signRequired, context });
               return address;
@@ -228,7 +240,6 @@ export const useCreateEvmWallets = () => {
       evmWallet?.address,
       isEvmConnected,
       chainId,
-      evmAddress,
       connectAsync,
       setEvmWallet,
       currentConnector,
