@@ -68,13 +68,30 @@ export const useCreateEvmWallets = () => {
               chainId: Number(chainID),
             });
 
-            setEvmWallet({
-              walletName: connector.id,
-              chainType: ChainType.EVM,
-              address: res.accounts[0],
-            });
+            updateWalletState(res.accounts[0]);
             return res.accounts[0];
           }
+        };
+
+        const updateWalletState = (address?: string) => {
+          console.log({
+            walletName: connector.id,
+            walletPrettyName: connector.name,
+            walletChainType: ChainType.EVM,
+            walletInfo: {
+              logo: isWalletConnect ? walletConnectLogo : connector.icon,
+            },
+            address: address ?? evmAddress,
+          });
+          setEvmWallet({
+            walletName: connector.id,
+            walletPrettyName: connector.name,
+            walletChainType: ChainType.EVM,
+            walletInfo: {
+              logo: isWalletConnect ? walletConnectLogo : connector.icon,
+            },
+            address: evmAddress,
+          });
         };
 
         const minimalWallet: MinimalWallet = {
@@ -100,11 +117,7 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(1) });
-              setEvmWallet({
-                walletName: connector.id,
-                chainType: ChainType.EVM,
-                address: evmAddress,
-              });
+              updateWalletState();
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
@@ -139,11 +152,7 @@ export const useCreateEvmWallets = () => {
             }
             try {
               await connectAsync({ connector, chainId: Number(chainID) });
-              setEvmWallet({
-                walletName: connector.id,
-                chainType: ChainType.EVM,
-                address: evmAddress,
-              });
+              updateWalletState();
               const account = await connector.getAccounts();
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,
