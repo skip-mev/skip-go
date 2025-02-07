@@ -31,7 +31,7 @@ export type WalletState = {
   walletChainType: ChainType;
   walletPrettyName: string;
   walletInfo: {
-    logo: string;
+    logo?: string;
   };
   addressMap?: Record<string, string | Key | undefined>;
   address?: string;
