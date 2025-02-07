@@ -2,7 +2,7 @@ import { seiPrecompileAddrABI } from "@/constants/abis";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
@@ -16,7 +16,7 @@ export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
-  const setEvmWallet = useSetAtom(evmWalletAtom);
+  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
 
   const {
@@ -50,51 +50,34 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
-          if (evmAddress) return evmAddress;
-          if (isWalletConnect && mobile) {
-            if (isEvmConnected) {
+          if (evmWallet?.address) {
+            return evmWallet?.address;
+          } else {
+            const walletConnectedButNeedToSwitchChain =
+              signRequired &&
+              isEvmConnected &&
+              chainId !== Number(chainID) &&
+              connector.id === currentEvmConnector?.id;
+
+            if (walletConnectedButNeedToSwitchChain) {
+              await connector?.switchChain?.({
+                chainId: Number(chainID),
+              });
               return evmAddress;
             }
+
             const res = await connectAsync({
               connector,
               chainId: Number(chainID),
             });
-            await disconnectAsync();
-            setEvmWallet(undefined);
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-            return res.accounts[0];
-          }
-          if (
-            signRequired &&
-            isEvmConnected &&
-            chainId !== Number(chainID) &&
-            connector.id === currentEvmConnector?.id
-          ) {
-            await connector?.switchChain?.({
-              chainId: Number(chainID),
-            });
-            return evmAddress;
-          }
-          if (connector.id !== currentEvmConnector?.id || !isEvmConnected) {
-            const res = await connectAsync({
-              connector,
-              chainId: Number(chainID),
-            });
+
             setEvmWallet({
               walletName: connector.id,
               chainType: ChainType.EVM,
-              address: evmAddress,
+              address: res.accounts[0],
             });
             return res.accounts[0];
-          } else if (evmAddress && isEvmConnected && signRequired) {
-            setEvmWallet({
-              walletName: connector.id,
-              chainType: ChainType.EVM,
-              address: evmAddress,
-            });
           }
-          return evmAddress;
         };
 
         const minimalWallet: MinimalWallet = {
@@ -173,6 +156,8 @@ export const useCreateEvmWallets = () => {
             } catch (error) {
               console.error(error);
               throw error;
+            } finally {
+              window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             }
           },
           getAddress: async ({ signRequired, context }) => {
@@ -182,6 +167,8 @@ export const useCreateEvmWallets = () => {
             } catch (error) {
               console.error(error);
               throw error;
+            } finally {
+              window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             }
           },
           disconnect: async () => {
@@ -229,12 +216,11 @@ export const useCreateEvmWallets = () => {
     [
       connectors,
       currentEvmConnector?.id,
-      mobile,
+      evmWallet?.address,
       isEvmConnected,
       chainId,
       evmAddress,
       connectAsync,
-      disconnectAsync,
       setEvmWallet,
       currentConnector,
       chains,

@@ -2,7 +2,7 @@ import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
@@ -13,7 +13,7 @@ export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
-  const setSvmWallet = useSetAtom(svmWalletAtom);
+  const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const mobile = isMobile();
 
@@ -32,10 +32,10 @@ export const useCreateSolanaWallets = () => {
         connect: async () => {
           try {
             await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
             const chain = chains?.find((x) => x.chainID === "solana");
 
             const address = wallet.publicKey?.toBase58();
+            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM, address });
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
@@ -44,12 +44,14 @@ export const useCreateSolanaWallets = () => {
           } catch (error) {
             console.error(error);
             throw error;
+          } finally {
+            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
           }
         },
         connectEco: async () => {
           try {
             await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
+
             const chain = chains?.find((x) => x.chainID === "solana");
             const asset = assets?.find(
               (x) =>
@@ -62,6 +64,7 @@ export const useCreateSolanaWallets = () => {
               ...asset,
             });
             const address = wallet.publicKey?.toBase58();
+            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM, address });
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
@@ -72,38 +75,27 @@ export const useCreateSolanaWallets = () => {
             throw error;
           }
         },
-        getAddress: async ({ signRequired }) => {
+        getAddress: async () => {
           try {
-            const isConnected = wallet.connected;
-            if (!isConnected) {
-              if (isWalletConnect && mobile) {
-                await wallet.connect();
-                const address = wallet.publicKey;
-                if (!address) throw new Error("No address found");
-                await wallet.disconnect();
-                setSvmWallet(undefined);
-                window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-                window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-                return address.toBase58();
-              }
-
+            if (svmWallet?.address) {
+              return svmWallet.address;
+            } else {
               await wallet.connect();
+              const address = wallet.publicKey;
+              if (!address) throw new Error("No address found");
+
               setSvmWallet({
                 walletName: wallet.name,
                 chainType: ChainType.SVM,
+                address: wallet?.publicKey?.toBase58(),
               });
+
+              return address.toBase58();
             }
-            const address = wallet.publicKey;
-            if (!address) throw new Error("No address found");
-            if (signRequired) {
-              setSvmWallet({
-                walletName: wallet.name,
-                chainType: ChainType.SVM,
-              });
-            }
-            return address.toBase58();
           } catch (error) {
             console.error(error);
+          } finally {
+            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
           }
         },
         disconnect: async () => {
@@ -120,6 +112,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile]);
+  }, [chains, setSvmWallet, callbacks, assets, setSourceAsset, svmWallet?.address]);
   return { createSolanaWallets };
 };
