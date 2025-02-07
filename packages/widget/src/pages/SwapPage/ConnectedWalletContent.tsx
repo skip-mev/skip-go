@@ -42,7 +42,8 @@ export const ConnectedWalletContent = () => {
   return (
     <Row
       style={{
-        paddingRight: 13,
+        paddingRight: 8,
+        gap: 1
       }}
     >
       <GhostButton

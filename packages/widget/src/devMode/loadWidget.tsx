@@ -17,7 +17,7 @@ const DevMode = () => {
   };
 
   return (
-    <Column align="flex-end" style={{ height: "100vh" }}>
+    <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
         <ShowWidget />
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
@@ -44,7 +44,7 @@ const DevMode = () => {
             theme={{
               ...(theme === "dark" ? defaultTheme : lightTheme),
               brandTextColor: "black",
-              brandColor: "linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);",
+              brandColor: "#FF66FF",
             }}
           />
         </div>
