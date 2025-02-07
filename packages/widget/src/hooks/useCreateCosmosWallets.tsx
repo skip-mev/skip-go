@@ -8,6 +8,7 @@ import {
   connect,
   isWalletConnect,
   checkWallet,
+  Key,
 } from "graz";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
@@ -166,11 +167,13 @@ export const useCreateCosmosWallets = () => {
         );
         const connectEco = async () => {
           try {
-            await connect({
+            const response = await connect({
               chainId: initialChainIds,
               walletType: wallet,
               autoReconnect: false,
             });
+            console.log(response);
+            return response;
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -190,7 +193,7 @@ export const useCreateCosmosWallets = () => {
           }
         };
 
-        const updateWalletState = () => {
+        const updateWalletState = (addressMap: Record<string, Key>) => {
           console.log({
             walletName: wallet,
             walletPrettyName: walletInfo?.name,
@@ -198,7 +201,7 @@ export const useCreateCosmosWallets = () => {
             walletInfo: {
               logo: walletInfo?.imgSrc,
             },
-            addressMap: accounts,
+            addressMap: addressMap,
           });
           setCosmosWallet({
             walletName: wallet,
@@ -207,7 +210,7 @@ export const useCreateCosmosWallets = () => {
             walletInfo: {
               logo: walletInfo?.imgSrc,
             },
-            addressMap: accounts,
+            addressMap: addressMap,
           });
         };
 
@@ -236,9 +239,9 @@ export const useCreateCosmosWallets = () => {
         }) => {
           if (!chainID) throw new Error("Chain ID is required");
           const chainInfo = getChainInfo(chainID);
-          const currentAddress = cosmosWallet?.addressMap?.[chainID];
+          const currentAddress = cosmosWallet?.addressMap?.[chainID]?.bech32Address;
 
-          if (currentAddress) return currentAddress as string;
+          if (currentAddress) return currentAddress;
 
           if (!chainInfo) {
             throw new Error(`getAddress: Chain info not found for chainID: ${chainID}`);
@@ -252,8 +255,6 @@ export const useCreateCosmosWallets = () => {
           } else {
             await connectSingleChainId();
           }
-
-          updateWalletState();
 
           const address = (await getWallet(wallet).getKey(chainID)).bech32Address;
 
@@ -269,8 +270,12 @@ export const useCreateCosmosWallets = () => {
             logo: walletInfo?.imgSrc,
           },
           connectEco: async () => {
-            await connectEco();
-            updateWalletState();
+            const response = await connectEco();
+            console.log(response);
+            if (!response?.accounts) {
+              throw new Error("failed to get accounts from wallet");
+            }
+            updateWalletState(response.accounts);
             const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
             const asset = assets?.find((x) => x.denom === "uatom");
             setSourceAsset({
@@ -293,7 +298,12 @@ export const useCreateCosmosWallets = () => {
               }
               const isInitialConnect = initialChainIds.includes(chainID);
               if (isInitialConnect) {
-                await connectEco();
+                const response = await connectEco();
+                if (!response?.accounts) {
+                  throw new Error("failed to get accounts from wallet");
+                }
+
+                updateWalletState(response.accounts);
 
                 const chainIdToAddressMap = Object.fromEntries(
                   await Promise.all(
@@ -317,12 +327,10 @@ export const useCreateCosmosWallets = () => {
                   address,
                 });
               }
-              connectEco();
             } catch (error) {
               console.error(error);
               throw error;
             } finally {
-              updateWalletState();
               window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             }
           },
@@ -356,7 +364,6 @@ export const useCreateCosmosWallets = () => {
       chains,
       cosmosWallet?.addressMap,
       setCosmosWallet,
-      accounts,
       assets,
       setSourceAsset,
       disconnectAsync,

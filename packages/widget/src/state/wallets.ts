@@ -2,7 +2,8 @@ import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
 import { ChainType, SignerGetters } from "@skip-go/client";
-import { Key } from "@keplr-wallet/types";
+import { Key } from "graz";
+import { atomWithStorage } from "jotai/utils";
 
 export type MinimalWallet = {
   walletName: string;
@@ -28,12 +29,12 @@ export type MinimalWallet = {
 
 export type WalletState = {
   walletName: string;
-  walletChainType: ChainType;
-  walletPrettyName: string;
-  walletInfo: {
+  walletChainType?: ChainType;
+  walletPrettyName?: string;
+  walletInfo?: {
     logo?: string;
   };
-  addressMap?: Record<string, string | Key | undefined>;
+  addressMap?: Record<string, Key | undefined>;
   address?: string;
 };
 
@@ -52,9 +53,17 @@ export const walletConnectAtom = atom<WalletConnect>({
   },
 });
 
-export const evmWalletAtom = atom<WalletState>();
-export const cosmosWalletAtom = atom<WalletState>();
-export const svmWalletAtom = atom<WalletState>();
+const defaultWalletState = {
+  walletName: "",
+  walletPrettyName: "",
+  walletInfo: {
+    logo: "",
+  },
+};
+
+export const evmWalletAtom = atomWithStorage<WalletState>("evmWallet", defaultWalletState);
+export const cosmosWalletAtom = atomWithStorage<WalletState>("cosmosWallet", defaultWalletState);
+export const svmWalletAtom = atomWithStorage<WalletState>("svmWallet", defaultWalletState);
 
 export const walletsAtom = atom((get) => {
   return {

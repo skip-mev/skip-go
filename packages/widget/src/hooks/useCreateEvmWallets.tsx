@@ -73,7 +73,7 @@ export const useCreateEvmWallets = () => {
           }
         };
 
-        const updateWalletState = (address?: string) => {
+        const updateWalletState = (address: string) => {
           console.log({
             walletName: connector.id,
             walletPrettyName: connector.name,
@@ -81,7 +81,7 @@ export const useCreateEvmWallets = () => {
             walletInfo: {
               logo: isWalletConnect ? walletConnectLogo : connector.icon,
             },
-            address: address ?? evmAddress,
+            address: address,
           });
           setEvmWallet({
             walletName: connector.id,
@@ -90,7 +90,7 @@ export const useCreateEvmWallets = () => {
             walletInfo: {
               logo: isWalletConnect ? walletConnectLogo : connector.icon,
             },
-            address: evmAddress,
+            address: address,
           });
         };
 
@@ -116,8 +116,9 @@ export const useCreateEvmWallets = () => {
               await currentConnector?.disconnect();
             }
             try {
-              await connectAsync({ connector, chainId: Number(1) });
-              updateWalletState();
+              const response = await connectAsync({ connector, chainId: Number(1) });
+              console.log(response);
+              updateWalletState(response.accounts[0]);
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
@@ -151,8 +152,9 @@ export const useCreateEvmWallets = () => {
               await currentConnector?.disconnect();
             }
             try {
-              await connectAsync({ connector, chainId: Number(chainID) });
-              updateWalletState();
+              const response = await connectAsync({ connector, chainId: Number(chainID) });
+              console.log(response);
+              updateWalletState(response.accounts[0]);
               const account = await connector.getAccounts();
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,

@@ -40,16 +40,13 @@ export type ChainAddress = {
   chainID: string;
   chainType?: ChainType;
   address?: string;
-} & (
-  | { source?: "input" | "parent" | "injected" }
-  | {
-      source?: "wallet";
-      wallet: Pick<
-        MinimalWallet,
-        "walletName" | "walletPrettyName" | "walletChainType" | "walletInfo"
-      >;
-    }
-);
+} & {
+  source?: "wallet" | "input" | "parent" | "injected";
+  wallet?: Pick<
+    MinimalWallet,
+    "walletName" | "walletPrettyName" | "walletChainType" | "walletInfo"
+  >;
+};
 
 /**
  * route.requiredChainAddresses is a list of chainIDs that are required to have an address associated with them

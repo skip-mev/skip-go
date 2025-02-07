@@ -32,37 +32,6 @@ export const useGetAccount = () => {
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
 
-  useEffect(() => {
-    if (walletType && cosmosWallet === undefined) {
-      setCosmosWallet({
-        walletName: walletType,
-        chainType: ChainType.Cosmos,
-      });
-    }
-    if (solanaWallet && svmWallet === undefined) {
-      setSvmWallet({
-        walletName: solanaWallet.name,
-        chainType: ChainType.SVM,
-      });
-    }
-    if (evmAccount.connector && evmWallet === undefined) {
-      setEvmWallet({
-        walletName: evmAccount.connector.id,
-        chainType: ChainType.EVM,
-      });
-    }
-  }, [
-    walletType,
-    cosmosWallet,
-    solanaWallet,
-    svmWallet,
-    evmAccount.connector,
-    evmWallet,
-    setCosmosWallet,
-    setSvmWallet,
-    setEvmWallet,
-  ]);
-
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean) => {
@@ -77,34 +46,6 @@ export const useGetAccount = () => {
             prettyName: "injected",
           },
         };
-      }
-      switch (chainType) {
-        case ChainType.Cosmos:
-          if (walletType && cosmosWallet === undefined) {
-            setCosmosWallet({
-              walletName: walletType,
-              chainType: ChainType.Cosmos,
-            });
-          }
-          break;
-        case ChainType.SVM:
-          if (solanaWallet && svmWallet === undefined) {
-            setSvmWallet({
-              walletName: solanaWallet.name,
-              chainType: ChainType.SVM,
-            });
-          }
-          break;
-        case ChainType.EVM:
-          if (evmAccount.connector && evmWallet === undefined) {
-            setEvmWallet({
-              walletName: evmAccount.connector.id,
-              chainType: ChainType.EVM,
-            });
-          }
-          break;
-        default:
-          break;
       }
 
       const getCosmosAccount = () => {
