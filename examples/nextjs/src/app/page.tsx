@@ -3,8 +3,8 @@ import { Widget } from '@skip-go/widget';
 import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
-function loadRemoteDebuggingScript(ipAddress: string) {
-  const scriptSrc = `http://${ipAddress}:8080/target.js`;
+function loadRemoteDebuggingScript(ipAddress: string, port: string) {
+  const scriptSrc = `http://${ipAddress}:${port}/target.js`;
 
   const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
   if (existingScript) {
@@ -17,8 +17,9 @@ function loadRemoteDebuggingScript(ipAddress: string) {
   script.onload = () => {
       console.log('Script loaded successfully');
   };
-  script.onerror = () => {
-      console.error('Error loading the script');
+  script.onerror = (error) => {
+    console.log(error);
+    console.error('Error loading the script');
   };
 
   document.head.appendChild(script);
@@ -30,6 +31,7 @@ export default function Home() {
   // optional query params, not necessary for the widget to work
   const defaultRoute = useQueryParams();
   const [ipAddress, setIpAddress] = useState('');
+  const [port, setPort] = useState('8080');
 
   useEffect(() => {
     const initEruda = async () => {
@@ -72,8 +74,12 @@ export default function Home() {
           ip address for remote debugging:
         </label>
         <input value={ipAddress} onChange={(e) => setIpAddress(e.target.value)} />
-        <button onClick={() => loadRemoteDebuggingScript(ipAddress)}>
-          update ip address
+        <label>
+          port
+        </label>
+        <input value={port} onChange={(e) => setPort(e.target.value)} />
+        <button onClick={() => loadRemoteDebuggingScript(ipAddress, port)}>
+          update ip address / port
         </button>
       </div>
       <div
