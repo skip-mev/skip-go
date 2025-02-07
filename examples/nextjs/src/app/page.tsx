@@ -1,13 +1,43 @@
 'use client';
 import { Widget } from '@skip-go/widget';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
+
+function loadRemoteDebuggingScript(ipAddress: string) {
+  const scriptSrc = `http://${ipAddress}:8080/target.js`;
+
+  const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
+  if (existingScript) {
+    existingScript.remove();
+  }
+
+  const script = document.createElement('script');
+  script.src = scriptSrc;
+  script.async = true;
+  script.onload = () => {
+      console.log('Script loaded successfully');
+  };
+  script.onerror = () => {
+      console.error('Error loading the script');
+  };
+
+  document.head.appendChild(script);
+}
 
 export default function Home() {
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   // optional query params, not necessary for the widget to work
   const defaultRoute = useQueryParams();
+  const [ipAddress, setIpAddress] = useState('');
+
+  useEffect(() => {
+    const initEruda = async () => {
+      const eruda = (await import("eruda")).default;
+      eruda.init();
+    };
+    initEruda();
+  }, []);
 
   const toggleTheme = () => {
     if (theme === 'dark') {
@@ -32,12 +62,20 @@ export default function Home() {
         backgroundPosition: 'bottom',
       }}
     >
-      <button
-        style={{ position: 'absolute', top: 0, right: 0 }}
-        onClick={() => toggleTheme()}
-      >
-        Toggle theme (current theme: {theme})
-      </button>
+      <div style={{ position: 'absolute', top: 0, right: 0, display: 'flex', flexDirection: 'column' }}>
+        <button
+          onClick={() => toggleTheme()}
+        >
+          Toggle theme (current theme: {theme})
+        </button>
+        <label>
+          ip address for remote debugging:
+        </label>
+        <input value={ipAddress} onChange={(e) => setIpAddress(e.target.value)} />
+        <button onClick={() => loadRemoteDebuggingScript(ipAddress)}>
+          update ip address
+        </button>
+      </div>
       <div
         style={{
           position: 'absolute',
