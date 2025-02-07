@@ -15238,6 +15238,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eruda@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "eruda@npm:3.4.1"
+  checksum: ff6762d839877d5dcd77830718a23b3bf21e9aaa4a8f029fdb9ba9e422d6439ab1b15eaee84552c6544cfdae3a9c97b75038504f9279c1789cb1d9ba16384fe4
+  languageName: node
+  linkType: hard
+
 "es-define-property@npm:^1.0.0":
   version: 1.0.0
   resolution: "es-define-property@npm:1.0.0"
@@ -20936,6 +20943,7 @@ __metadata:
     "@types/node": ^20
     "@types/react": ^18
     "@types/react-dom": ^18
+    eruda: ^3.4.1
     next: 15.0.3
     react: ^18.2.0
     react-dom: ^18.2.0
