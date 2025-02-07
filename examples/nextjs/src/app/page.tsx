@@ -1,6 +1,6 @@
 'use client';
 import { Widget } from '@skip-go/widget';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
@@ -8,6 +8,37 @@ export default function Home() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   // optional query params, not necessary for the widget to work
   const defaultRoute = useQueryParams();
+
+  useEffect(() => {
+    const initEruda = async () => {
+      const eruda = (await import("eruda")).default;
+      eruda.init();
+    };
+
+    const loadRemoteDebuggingScript = () => {
+      const ipAddress = window.location.hostname;
+      // assume local ip addresses start with 192*
+      if (!ipAddress.startsWith('192')) return;
+
+      // port is arbitrary but it's easier to have it auto set
+      const scriptSrc = `http://${ipAddress}:1234/target.js`;
+    
+      const script = document.createElement('script');
+      script.src = scriptSrc;
+      script.async = true;
+      script.onload = () => {
+          console.log('Script loaded successfully');
+      };
+      script.onerror = (error) => {
+        console.log(error);
+        console.error('Error loading the script');
+      };
+    
+      document.head.appendChild(script);
+    }
+    initEruda();
+    loadRemoteDebuggingScript();
+  }, []);
 
   const toggleTheme = () => {
     if (theme === 'dark') {
