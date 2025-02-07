@@ -119,14 +119,14 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
       leftContent={
         account ? (
           <Row align="center" gap={10}>
-            {account?.wallet.logo && (
+            {account?.walletInfo?.logo && (
               <img
                 height={35}
                 width={35}
                 style={{ objectFit: "cover" }}
-                src={account?.wallet.logo}
-                alt={`${account?.wallet.prettyName} logo`}
-                title={account?.wallet.prettyName}
+                src={account?.walletInfo?.logo}
+                alt={`${account?.walletPrettyName} logo`}
+                title={account?.walletPrettyName}
               />
             )}
             <Row align="baseline" gap={8}>
