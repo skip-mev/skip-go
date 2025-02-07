@@ -97,6 +97,15 @@ const StyledLeftArrowIcon = styled(LeftArrowIcon)`
 
 const StyledSelectedAsset = styled(StyledAssetLabel)`
   height: auto;
+
+  &:after{
+    background-color: transparent;
+  }
+  &:hover{
+    &:after{
+      background-color: transparent;
+    }
+  }
 `;
 
 const StyledSearchIcon = styled(SearchIcon)`

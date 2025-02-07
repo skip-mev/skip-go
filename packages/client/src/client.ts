@@ -1438,11 +1438,7 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const [mainnetChains, testnetChains] = await Promise.all([
-      this.chains({}),
-      this.chains({ onlyTestnets: true }),
-    ]);
-    const skipChains = [...mainnetChains, ...testnetChains];
+    const skipChains = await this.getMainnetAndTestnetChains();
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
@@ -1671,11 +1667,6 @@ export class SkipClient {
     txIndex?: number;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
   }) {
-    const [mainnetChains, testnetChains] = await Promise.all([
-      this.chains(),
-      this.chains({ onlyTestnets: true }),
-    ]);
-
     const [assetsMainnet, assetsTestnet] = await Promise.all([
       this.assets({
         chainIDs: [chainID],
@@ -1692,8 +1683,8 @@ export class SkipClient {
 
     const chainAssets = assets[chainID];
 
-    const skipChains = [...mainnetChains, ...testnetChains];
-    const chain = skipChains.find((chain) => chain.chainID === chainID);
+    const chains = await this.getMainnetAndTestnetChains();
+    const chain = chains.find((chain) => chain.chainID === chainID);
     if (!chain) {
       throw new Error(`failed to find chain id for '${chainID}'`);
     }
@@ -1773,7 +1764,7 @@ export class SkipClient {
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
-      const chain = skipChains.find((x) => x.chainID === chainID);
+      const chain = chains.find((x) => x.chainID === chainID);
       const decimal = Number(chainAsset?.decimals);
       if (!chainAsset) {
         return {
@@ -1852,11 +1843,16 @@ export class SkipClient {
     return feeUsed;
   }
 
+  async getMainnetAndTestnetChains() {
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains({}),
+      this.chains({ onlyTestnets: true }),
+    ]);
+    return [...mainnetChains, ...testnetChains];
+  }
+
   async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
-    const chains = await this.chains({
-      includeEVM: true,
-      includeSVM: true,
-    });
+    const chains = await this.getMainnetAndTestnetChains();
 
     const validations = userAddresses.map((userAddress) => {
       const chain = chains.find(

@@ -1,6 +1,7 @@
 import { css, styled } from "styled-components";
 import { Row } from "@/components/Layout";
 import { removeButtonStyles, Text } from "@/components/Typography";
+import { transition } from "@/utils/transitions";
 
 export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
@@ -32,6 +33,8 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   border-radius: 12px;
   padding: 12px 15px;
   ${({ theme }) => `background: ${theme.secondary.background.normal}`};
+  ${transition(['background-color'], 'fast', 'easeOut')};
+
 
   ${({ onClick, theme }) =>
     onClick &&
