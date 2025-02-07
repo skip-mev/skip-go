@@ -1859,18 +1859,23 @@ export class SkipClient {
         (chain) => chain.chainID === userAddress.chainID,
       );
 
+      console.log(chain);
+      console.log(userAddresses);
+
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
             const { prefix } = fromBech32(userAddress.address);
             return chain.bech32Prefix === prefix;
           } catch (_error) {
+            console.log(_error);
             return false;
           }
         case types.ChainType.EVM:
           try {
             return isAddress(userAddress.address);
           } catch (_error) {
+            console.log(_error);
             return false;
           }
         case types.ChainType.SVM:
@@ -1878,6 +1883,7 @@ export class SkipClient {
             const publicKey = new PublicKey(userAddress.address);
             return PublicKey.isOnCurve(publicKey);
           } catch (_error) {
+            console.log(_error);
             return false;
           }
         default:

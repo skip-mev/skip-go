@@ -56,11 +56,16 @@ export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
 export const setUserAddressesAtom = atom(
   null,
-  (_get, set, userAddress: UserAddress, index: number) => {
+  (_get, set, userAddress: UserAddress, chainId: string) => {
     set(swapExecutionStateAtom, (state) => {
       const newUserAddress = state.userAddresses;
-      newUserAddress[index] = userAddress;
-      console.log(" update user address", newUserAddress);
+      const chainIdIndex = newUserAddress.findIndex(
+        (userAddress) => userAddress.chainID === chainId,
+      );
+      if (chainIdIndex > -1) {
+        newUserAddress[chainIdIndex] = userAddress;
+        console.log(" update user address", newUserAddress);
+      }
       return { ...state, userAddresses: newUserAddress };
     });
   },

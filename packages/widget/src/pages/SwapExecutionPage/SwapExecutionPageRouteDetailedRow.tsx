@@ -111,7 +111,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
     theme.primary.text.lowContrast,
-    walletInfo.logo,
+    walletInfo?.logo,
   ]);
 
   const renderExplorerLink = useMemo(() => {

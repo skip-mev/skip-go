@@ -13,8 +13,8 @@ export const useGetWalletStateFromAddress = () => {
       );
       if (addressFound) return cosmosWallet;
     }
-    if (evmWallet?.address === address) return evmWallet;
-    if (svmWallet?.address === address) return svmWallet;
+    if (evmWallet?.address?.toLowerCase() === address.toLowerCase()) return evmWallet;
+    if (svmWallet?.address?.toLowerCase() === address.toLowerCase()) return svmWallet;
   };
 
   return getWalletState;

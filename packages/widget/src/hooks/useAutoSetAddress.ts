@@ -78,9 +78,9 @@ export const useAutoSetAddress = () => {
         setUserAddresses(
           {
             chainID,
-            address,
+            address: address.toLowerCase(),
           },
-          index,
+          chainID,
         );
       } catch (_error) {
         console.error(_error);
