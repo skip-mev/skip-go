@@ -72,7 +72,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
-  const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.wallet.name);
+  const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.walletName);
 
   const renderDisconnectButton = useMemo(() => {
     if (isMobileScreenSize) {
@@ -140,9 +140,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
               >
                 {truncatedAddress}
               </TextButton>
-              {chainType === "evm" && (
-                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
-              )}
+              {chainType === "evm" && <EvmChainIndicator chainId={account?.chainId} />}
             </Row>
           </Row>
         ) : (
@@ -157,7 +155,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         )
       }
       rightContent={
-        account && account.wallet.name !== "injected" ? (
+        account && account.walletName !== "injected" ? (
           renderDisconnectButton
         ) : (
           <RightArrowIcon color={theme.primary.text.normal} />
@@ -167,7 +165,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
   );
 };
 
-const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
+const EvmChainIndicator = ({ chainId }: { chainId?: string | number }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((chain) => chain.chainID === chainId);

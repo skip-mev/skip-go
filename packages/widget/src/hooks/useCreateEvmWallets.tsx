@@ -101,16 +101,18 @@ export const useCreateEvmWallets = () => {
               logo: walletConnectMetadata?.icons[0] ?? connector.icon,
             },
             address: address,
+            chainId,
           });
 
           setEvmWallet({
-            walletName: connector.id,
-            walletPrettyName: connector.name,
+            walletName: walletConnectMetadata?.name ?? connector.name,
+            walletPrettyName: walletConnectMetadata?.name ?? connector.name,
             walletChainType: ChainType.EVM,
             walletInfo: {
-              logo: isWalletConnect ? walletConnectLogo : connector.icon,
+              logo: walletConnectMetadata?.icons[0] ?? connector.icon,
             },
             address: address,
+            chainId,
           });
         };
 

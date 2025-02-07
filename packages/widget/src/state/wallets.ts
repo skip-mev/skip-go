@@ -36,6 +36,7 @@ export type WalletState = {
   };
   addressMap?: Record<string, Key | undefined>;
   address?: string;
+  chainId?: string | number;
 };
 
 export type WalletConnect = {
