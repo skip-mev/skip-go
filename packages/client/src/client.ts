@@ -2,6 +2,7 @@
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64, fromBech32 } from "@cosmjs/encoding";
+import { bech32m } from "bech32";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
@@ -1866,7 +1867,9 @@ export class SkipClient {
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
-            const { prefix } = fromBech32(userAddress.address);
+            const prefix = chain.chainID.includes("penumbra")
+             ? bech32m.decode(userAddress.address)?.prefix
+             : fromBech32(userAddress.address).prefix;
             return chain.bech32Prefix === prefix;
           } catch (_error) {
             return false;
