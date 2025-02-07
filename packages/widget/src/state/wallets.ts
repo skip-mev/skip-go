@@ -26,9 +26,13 @@ export type MinimalWallet = {
   }) => Promise<string | undefined>;
 };
 
-type WalletState = {
+export type WalletState = {
   walletName: string;
-  chainType: string;
+  walletChainType: ChainType;
+  walletPrettyName?: string;
+  walletInfo?: {
+    logo?: string;
+  };
   addressMap?: Record<string, string | Key | undefined>;
   address?: string;
 };

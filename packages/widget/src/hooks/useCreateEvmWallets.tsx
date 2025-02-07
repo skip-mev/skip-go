@@ -6,11 +6,10 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount, useConnect, useConnectors, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-import { isMobile } from "@/utils/os";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -28,8 +27,6 @@ export const useCreateEvmWallets = () => {
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
   const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
-  const { disconnectAsync } = useDisconnect();
-  const mobile = isMobile();
 
   const createEvmWallets = useCallback(
     (chainID?: string) => {

@@ -5,7 +5,13 @@ import {
   chainAddressesAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
-import { connectedAddressesAtom } from "@/state/wallets";
+import {
+  connectedAddressesAtom,
+  cosmosWalletAtom,
+  evmWalletAtom,
+  svmWalletAtom,
+  WalletState,
+} from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
@@ -25,6 +31,10 @@ export const useAutoSetAddress = () => {
   const requiredChainAddresses = route?.requiredChainAddresses;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
+
+  const evmWallet = useAtomValue(evmWalletAtom);
+  const svmWallet = useAtomValue(svmWalletAtom);
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
 
   useAtom(chainAddressEffectAtom);
 
@@ -90,19 +100,25 @@ export const useAutoSetAddress = () => {
         switch (chainType) {
           case ChainType.Cosmos: {
             try {
-              const wallets = createCosmosWallets(chainID);
-              const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
-              if (!wallet) {
-                if (!openModal) return;
-                showSetAddressModal();
-                return;
-              }
-              const address = await wallet?.getAddress?.({
-                signRequired: isSignRequired,
-              });
+              let address = cosmosWallet?.addressMap?.[chainID] as string;
+              let wallet = cosmosWallet;
               if (!address) {
-                return;
+                const wallets = createCosmosWallets(chainID);
+                const foundWallet = wallets.find(
+                  (w) => w.walletName === sourceWallet.cosmos?.walletName,
+                );
+                if (foundWallet) wallet = foundWallet as WalletState;
+                if (!wallet) {
+                  if (!openModal) return;
+                  showSetAddressModal();
+                  return;
+                }
+                const foundAddress = await foundWallet?.getAddress?.({
+                  signRequired: isSignRequired,
+                });
+                if (foundAddress) address = foundAddress;
               }
+
               setChainAddresses((prev) => ({
                 ...prev,
                 [index]: {
@@ -111,10 +127,10 @@ export const useAutoSetAddress = () => {
                   chainType: ChainType.Cosmos,
                   source: WalletSource.Wallet,
                   wallet: {
-                    walletName: wallet?.walletName,
-                    walletPrettyName: wallet?.walletPrettyName,
-                    walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
+                    walletName: wallet?.walletName ?? "",
+                    walletPrettyName: wallet?.walletPrettyName ?? "",
+                    walletChainType: ChainType.Cosmos,
+                    walletInfo: wallet?.walletInfo ?? { logo: "" },
                   },
                 },
               }));

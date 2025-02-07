@@ -38,7 +38,7 @@ export const useCreateCosmosWallets = () => {
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
 
-  const { data: accounts, isConnected } = useAccount({
+  const { data: accounts } = useAccount({
     multiChain: true,
   });
 
@@ -305,9 +305,11 @@ export const useCreateCosmosWallets = () => {
                   address,
                 });
               }
+              const address = (await getWallet(wallet).getKey(chainID)).bech32Address;
               setCosmosWallet({
                 walletName: wallet,
                 chainType: ChainType.Cosmos,
+                addressMap: { ...cosmosWallet?.addressMap, chainID: address },
               });
               connectEco();
             } catch (error) {
