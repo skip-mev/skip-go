@@ -1,5 +1,32 @@
 ## 0.0.15
 
+## 3.3.0
+
+### Minor Changes
+
+- add5269: Transition util + hover states
+
+### Patch Changes
+
+- add5269: fix bug with evm recovery address not working on mobile
+- add5269: Update StylesheetManager to wait and target shadowRoot for stylesheet injection
+- add5269: Autofocus input the same way on mobile
+- add5269: Fix ability to connect keplr mobile app with in-app browser
+- add5269: Restore scroll position on modal close
+- add5269: Fix autoSetAddress for evm on mobile
+- add5269: Disable compression for sentry replays
+- add5269: Use same keplr logo for evm as cosmos
+- add5269: Ensure priceChangePercentage is negative before pushing to TradeWarning Error
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+- Updated dependencies [add5269]
+  - @skip-go/client@0.16.9
+
 ## 3.2.1
 
 ### Patch Changes
