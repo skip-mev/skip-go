@@ -1,24 +1,29 @@
-// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const fs = require('fs/promises');
-const path = require('path');
-const telescope = require('@cosmology/telescope').default;
-const protoDirs = require('../../../vendor');
-const outPath = path.resolve(__dirname, '../src/codegen/');
+const fs = require("fs/promises");
+const path = require("path");
+const telescope = require("@cosmology/telescope").default;
+const protoDirs = require("../../../vendor");
+const outPath = path.resolve(__dirname, "../src/codegen/");
 
 const registries = [
   {
-    packageName: 'chain-registry',
-    registryPath: path.resolve(__dirname, '../../../node_modules/chain-registry'),
+    packageName: "chain-registry",
+    registryPath: path.resolve(
+      __dirname,
+      "../../../node_modules/chain-registry",
+    ),
   },
   {
-    packageName: 'initia-registry',
-    registryPath: path.resolve(__dirname, '../../../node_modules/@initia/initia-registry/main'),
-  }
+    packageName: "initia-registry",
+    registryPath: path.resolve(
+      __dirname,
+      "../../../node_modules/@initia/initia-registry/main",
+    ),
+  },
 ];
 
-async function genTelescope () {
+async function genTelescope() {
   try {
     await telescope({
       protoDirs,
@@ -31,12 +36,12 @@ async function genTelescope () {
           enabled: true,
           exceptions: {
             // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L33
-            '/ethermint.crypto.v1.ethsecp256k1.PrivKey': {
-              aminoType: 'ethermint/PrivKeyEthSecp256k1',
+            "/ethermint.crypto.v1.ethsecp256k1.PrivKey": {
+              aminoType: "ethermint/PrivKeyEthSecp256k1",
             },
             // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L35
-            '/ethermint.crypto.v1.ethsecp256k1.PubKey': {
-              aminoType: 'ethermint/PubKeyEthSecp256k1',
+            "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
+              aminoType: "ethermint/PubKeyEthSecp256k1",
             },
           },
           typeUrlToAmino: (typeUrl) => {
@@ -54,8 +59,8 @@ async function genTelescope () {
             const { mod, submod, type } = typeUrl.match(matcher)?.groups ?? {};
 
             // https://github.com/circlefin/noble-cctp/blob/release-2024-01-09T183203/x/cctp/types/codec.go#L30-L56
-            if (typeUrl.startsWith('/circle.cctp.v1.Msg')) {
-              return typeUrl.replace('/circle.cctp.v1.Msg', 'cctp/');
+            if (typeUrl.startsWith("/circle.cctp.v1.Msg")) {
+              return typeUrl.replace("/circle.cctp.v1.Msg", "cctp/");
             }
 
             /**
@@ -69,18 +74,18 @@ async function genTelescope () {
              * @type {Record<string, string>}
              */
             const lookup = {
-              ethermint: 'evm',
-              evmos: 'revenue',
+              ethermint: "evm",
+              evmos: "revenue",
             };
 
             if (mod && lookup[mod]) {
-              if (type === 'MsgUpdateParams' && lookup[mod] === submod) {
+              if (type === "MsgUpdateParams" && lookup[mod] === submod) {
                 return `${mod}/MsgUpdateParams`;
               }
-              if (type === 'MsgUpdateParams') {
+              if (type === "MsgUpdateParams") {
                 return `${mod}/${submod}/MsgUpdateParams`;
               }
-              if (type?.startsWith('Msg')) {
+              if (type?.startsWith("Msg")) {
                 return `${mod}/${type}`;
               }
               return `${submod}/${type}`;
@@ -120,9 +125,9 @@ async function genTelescope () {
             customTypes: {
               useCosmosSDKDec: true,
             },
-            duration: 'duration',
-            num64: 'long',
-            timestamp: 'date',
+            duration: "duration",
+            num64: "long",
+            timestamp: "date",
             useDeepPartial: false,
             useExact: false,
           },
@@ -139,19 +144,22 @@ async function genTelescope () {
       },
     });
   } catch (err) {
-    console.error('Failed to generate telescope:', err);
+    console.error("Failed to generate telescope:", err);
   }
 }
 
-
 async function collectChains({ registryPath }) {
-  const mainnetDir = path.join(registryPath, 'mainnet');
-  const testnetDir = path.join(registryPath, 'testnet');
+  try {
+    const mainnetDir = path.join(registryPath, "mainnet");
+    const testnetDir = path.join(registryPath, "testnet");
 
-  const mainnetChains = await collectChainData(mainnetDir);
-  const testnetChains = await collectChainData(testnetDir);
+    const mainnetChains = await collectChainData(mainnetDir);
+    const testnetChains = await collectChainData(testnetDir);
 
-  return [...mainnetChains, ...testnetChains];
+    return [...mainnetChains, ...testnetChains];
+  } catch (error) {
+    console.log(`Error processing ${registryPath}:`, error);
+  }
 }
 
 async function collectChainData(directory) {
@@ -162,7 +170,7 @@ async function collectChainData(directory) {
     for (const dirent of dirEntries) {
       if (dirent.isDirectory()) {
         const chainName = dirent.name;
-        const chainJsPath = path.join(directory, chainName, 'chain.js');
+        const chainJsPath = path.join(directory, chainName, "chain.js");
         try {
           const chainModule = require(chainJsPath);
           const chainData = chainModule.default || chainModule;
@@ -199,7 +207,7 @@ async function codegen() {
     .rm(outPath, { recursive: true, force: true })
     .catch(() => {})
     .then(() => fs.mkdir(outPath, { recursive: true }))
-    .then(() => fs.writeFile(path.resolve(outPath, '.gitkeep'), '', 'utf-8'));
+    .then(() => fs.writeFile(path.resolve(outPath, ".gitkeep"), "", "utf-8"));
 
   await genTelescope();
 
@@ -211,9 +219,8 @@ async function codegen() {
   }
 
   // Write all chains to a single JSON file
-  const outputFilePath = path.resolve(outPath, 'chains.json');
-  await fs.writeFile(outputFilePath, JSON.stringify(allChains), 'utf-8');
-
+  const outputFilePath = path.resolve(outPath, "chains.json");
+  await fs.writeFile(outputFilePath, JSON.stringify(allChains), "utf-8");
 }
 
 void codegen();
