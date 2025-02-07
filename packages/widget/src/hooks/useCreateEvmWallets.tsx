@@ -11,6 +11,18 @@ import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
 
+type WalletConnectMetaData = {
+  name: string;
+  description: string;
+  icons: string[];
+  redirect: {
+    native: string;
+    universal: string;
+  };
+  url: string;
+  publicKey: string;
+};
+
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
@@ -68,18 +80,25 @@ export const useCreateEvmWallets = () => {
               chainId: Number(chainID),
             });
 
-            updateWalletState(res.accounts[0]);
+            const provider = await connector.getProvider();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+            updateWalletState(res.accounts[0], walletConnectMetadata);
             return res.accounts[0];
           }
         };
 
-        const updateWalletState = (address: string) => {
+        const updateWalletState = (
+          address: string,
+          walletConnectMetadata: WalletConnectMetaData,
+        ) => {
           console.log({
-            walletName: connector.id,
-            walletPrettyName: connector.name,
+            walletName: walletConnectMetadata?.name ?? connector.id,
+            walletPrettyName: walletConnectMetadata?.name ?? connector.name,
             walletChainType: ChainType.EVM,
             walletInfo: {
-              logo: isWalletConnect ? walletConnectLogo : connector.icon,
+              logo: walletConnectMetadata?.icons[0] ?? connector.icon,
             },
             address: address,
           });
@@ -114,7 +133,11 @@ export const useCreateEvmWallets = () => {
                 chainId: Number(1),
               });
               const account = await connector.getAccounts();
-              updateWalletState(account[0]);
+              const provider = await connector.getProvider();
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+              updateWalletState(account[0], walletConnectMetadata);
               return;
             }
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
@@ -122,7 +145,11 @@ export const useCreateEvmWallets = () => {
             }
             try {
               const response = await connectAsync({ connector });
-              updateWalletState(response.accounts[0]);
+              const provider = await connector.getProvider();
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+              updateWalletState(response.accounts[0], walletConnectMetadata);
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
               setSourceAsset({
@@ -151,7 +178,12 @@ export const useCreateEvmWallets = () => {
                 chainId: Number(chainID),
               });
               const account = await connector.getAccounts();
-              updateWalletState(account[0]);
+
+              const provider = await connector.getProvider();
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+              updateWalletState(account[0], walletConnectMetadata);
               return;
             }
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
@@ -160,13 +192,12 @@ export const useCreateEvmWallets = () => {
 
             try {
               const response = await connectAsync({ connector, chainId: Number(chainID) });
-              updateWalletState(response.accounts[0]);
               const account = await connector.getAccounts();
-
               const provider = await connector.getProvider();
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const walletInfo = (provider as any).session?.peer;
-              console.log(walletInfo);
+              const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+              updateWalletState(response.accounts[0], walletConnectMetadata);
 
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,
