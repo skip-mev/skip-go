@@ -24,15 +24,11 @@ export function useSwapExecutionState({
   const { userAddresses } = useAtomValue(swapExecutionStateAtom);
 
   return useMemo(() => {
-    if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
-    const requiredChainAddresses = route?.requiredChainAddresses;
-    if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
+    const destinationAddress = userAddresses[userAddresses.length - 1].address;
 
-    const allAddressesSet = requiredChainAddresses.every(
-      (_chainId, index) => chainAddresses[index]?.address,
+    const allAddressesSet = route?.requiredChainAddresses.every(
+      (_chainId, index) => userAddresses[index]?.address,
     );
-
-    const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
 
     if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
@@ -57,7 +53,7 @@ export function useSwapExecutionState({
       return SwapExecutionState.waitingForSigning;
     }
 
-    if (!lastChainAddress) {
+    if (!destinationAddress) {
       return SwapExecutionState.destinationAddressUnset;
     }
 
