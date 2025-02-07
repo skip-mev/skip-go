@@ -10,7 +10,7 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
@@ -43,6 +43,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { userAddresses } = useAtomValue(swapExecutionStateAtom);
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -55,7 +56,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const account = getAccount(chainId);
 
   const source = useMemo(() => {
-    const chainAddressArray = Object.values(chainAddresses);
     switch (context) {
       case "source":
         return {
@@ -63,14 +63,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
           image: account?.wallet.logo,
         };
       case "destination": {
-        const selected = chainAddressArray[chainAddressArray.length - 1];
+        const selected = userAddresses[userAddresses.length - 1];
         return {
           address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
         };
       }
     }
-  }, [account?.address, account?.wallet.logo, chainAddresses, context]);
+  }, [account?.address, account?.wallet.logo, context, userAddresses]);
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
