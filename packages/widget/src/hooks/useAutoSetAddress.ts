@@ -129,7 +129,7 @@ export const useAutoSetAddress = () => {
                   wallet: {
                     walletName: wallet?.walletName ?? "",
                     walletPrettyName: wallet?.walletPrettyName ?? "",
-                    walletChainType: ChainType.Cosmos,
+                    walletChainType: wallet?.walletChainType ?? ChainType.Cosmos,
                     walletInfo: wallet?.walletInfo ?? { logo: "" },
                   },
                 },
