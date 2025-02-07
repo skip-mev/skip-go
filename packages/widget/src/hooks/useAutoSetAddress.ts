@@ -225,6 +225,7 @@ export const useAutoSetAddress = () => {
       connectedAddress,
       chainAddresses,
       setChainAddresses,
+      cosmosWallet,
       createCosmosWallets,
       sourceWallet.cosmos?.walletName,
       sourceWallet.svm?.walletName,
