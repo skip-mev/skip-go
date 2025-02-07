@@ -74,6 +74,7 @@ export const useCreateEvmWallets = () => {
         };
 
         const updateWalletState = (address: string) => {
+          console.log(connector);
           console.log({
             walletName: connector.id,
             walletPrettyName: connector.name,
@@ -117,7 +118,6 @@ export const useCreateEvmWallets = () => {
             }
             try {
               const response = await connectAsync({ connector, chainId: Number(1) });
-              console.log(response);
               updateWalletState(response.accounts[0]);
               const chain = chains?.find((x) => x.chainID === "1");
               const asset = assets?.find((x) => x.denom === "ethereum-native");
@@ -153,7 +153,6 @@ export const useCreateEvmWallets = () => {
             }
             try {
               const response = await connectAsync({ connector, chainId: Number(chainID) });
-              console.log(response);
               updateWalletState(response.accounts[0]);
               const account = await connector.getAccounts();
               callbacks?.onWalletConnected?.({
