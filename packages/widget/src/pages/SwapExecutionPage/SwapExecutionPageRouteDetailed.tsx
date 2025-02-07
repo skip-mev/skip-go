@@ -12,6 +12,8 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
+import { ANIMATION_TIMINGS, EASINGS } from "@/utils/transitions";
+import { keyframes } from "styled-components";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -45,6 +47,15 @@ const operationTypeToSimpleOperationType = {
 };
 
 type tooltipMap = Record<number, boolean>;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
@@ -174,6 +185,7 @@ const Tooltip = styled(SmallText).attrs({
   background: ${({ theme }) => theme.secondary.background.normal};
   box-sizing: border-box;
   z-index: 1;
+  animation: ${fadeIn} ${ANIMATION_TIMINGS.medium} ${EASINGS.easeOut};
 `;
 
 const OperationTypeIconContainer = styled(Column).attrs({
