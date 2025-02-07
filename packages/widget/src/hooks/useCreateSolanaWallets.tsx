@@ -22,6 +22,19 @@ export const useCreateSolanaWallets = () => {
 
     for (const wallet of solanaWallets) {
       const isWalletConnect = wallet.name === "WalletConnect";
+
+      const updateWalletState = (address?: string) => {
+        setSvmWallet({
+          walletName: wallet.name,
+          walletChainType: ChainType.SVM,
+          walletPrettyName: wallet.name,
+          walletInfo: {
+            logo: isWalletConnect ? walletConnectLogo : wallet.icon,
+          },
+          address,
+        });
+      };
+
       const minimalWallet: MinimalWallet = {
         walletName: wallet.name,
         walletPrettyName: wallet.name,
@@ -35,7 +48,7 @@ export const useCreateSolanaWallets = () => {
             const chain = chains?.find((x) => x.chainID === "solana");
 
             const address = wallet.publicKey?.toBase58();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM, address });
+            updateWalletState(address);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
@@ -64,7 +77,7 @@ export const useCreateSolanaWallets = () => {
               ...asset,
             });
             const address = wallet.publicKey?.toBase58();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM, address });
+            updateWalletState(address);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
@@ -81,16 +94,12 @@ export const useCreateSolanaWallets = () => {
               return svmWallet.address;
             } else {
               await wallet.connect();
-              const address = wallet.publicKey;
+              const address = wallet.publicKey?.toBase58();
               if (!address) throw new Error("No address found");
 
-              setSvmWallet({
-                walletName: wallet.name,
-                chainType: ChainType.SVM,
-                address: wallet?.publicKey?.toBase58(),
-              });
+              updateWalletState(address);
 
-              return address.toBase58();
+              return address;
             }
           } catch (error) {
             console.error(error);

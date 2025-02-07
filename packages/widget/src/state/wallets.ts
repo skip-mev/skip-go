@@ -29,9 +29,9 @@ export type MinimalWallet = {
 export type WalletState = {
   walletName: string;
   walletChainType: ChainType;
-  walletPrettyName?: string;
-  walletInfo?: {
-    logo?: string;
+  walletPrettyName: string;
+  walletInfo: {
+    logo: string;
   };
   addressMap?: Record<string, string | Key | undefined>;
   address?: string;
