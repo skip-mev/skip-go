@@ -54,6 +54,18 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
+export const setUserAddressesAtom = atom(
+  null,
+  (_get, set, userAddress: UserAddress, index: number) => {
+    set(swapExecutionStateAtom, (state) => {
+      const newUserAddress = state.userAddresses;
+      newUserAddress[index] = userAddress;
+      console.log(" update user address", newUserAddress);
+      return { ...state, userAddresses: newUserAddress };
+    });
+  },
+);
+
 export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
   {
@@ -91,7 +103,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
 
   set(swapExecutionStateAtom, {
-    userAddresses: [],
+    userAddresses: route?.requiredChainAddresses.map((chainId) => ({
+      chainID: chainId,
+      address: "",
+    })),
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
@@ -244,6 +259,8 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
   );
   if (!addressesMatch) return;
 
+  console.log(chainAddresses);
+
   const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
     return {
       chainID: chainAddress.chainID,
@@ -306,7 +323,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
+
       try {
+        console.log(userAddresses);
         await skip.executeRoute({
           route,
           userAddresses,

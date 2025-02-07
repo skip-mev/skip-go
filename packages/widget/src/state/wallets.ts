@@ -53,17 +53,9 @@ export const walletConnectAtom = atom<WalletConnect>({
   },
 });
 
-const defaultWalletState = {
-  walletName: "",
-  walletPrettyName: "",
-  walletInfo: {
-    logo: "",
-  },
-};
-
-export const evmWalletAtom = atomWithStorage<WalletState>("evmWallet", defaultWalletState);
-export const cosmosWalletAtom = atomWithStorage<WalletState>("cosmosWallet", defaultWalletState);
-export const svmWalletAtom = atomWithStorage<WalletState>("svmWallet", defaultWalletState);
+export const evmWalletAtom = atomWithStorage<WalletState | undefined>("evmWallet", undefined);
+export const cosmosWalletAtom = atomWithStorage<WalletState | undefined>("cosmosWallet", undefined);
+export const svmWalletAtom = atomWithStorage<WalletState | undefined>("svmWallet", undefined);
 
 export const walletsAtom = atom((get) => {
   return {
