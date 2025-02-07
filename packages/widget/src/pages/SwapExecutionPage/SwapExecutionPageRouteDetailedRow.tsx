@@ -9,13 +9,14 @@ import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
+import { useGetWalletStateFromAddress } from "@/hooks/useGetWalletStateFromAddress";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -54,9 +55,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
     tokenAmount,
   });
 
-  const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
+  const { userAddresses } = useAtomValue(swapExecutionStateAtom);
+  const getWalletState = useGetWalletStateFromAddress();
 
   const shouldRenderEditDestinationWallet =
     context === "destination" && onClickEditDestinationWallet !== undefined;
@@ -64,44 +64,23 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderingEditDestinationWalletOrExplorerLink =
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
-  const source = useMemo(() => {
-    const chainAddressArray = Object.values(chainAddresses);
-    switch (context) {
-      case "source":
-        return {
-          address: account?.address,
-          image: account?.wallet.logo,
-        };
-      case "intermediary": {
-        const selected = Object.values(chainAddresses).find(
-          (chainAddress) => chainAddress.chainID === chainId,
-        );
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
-        };
-      }
-      case "destination": {
-        const selected = chainAddressArray[chainAddressArray.length - 1];
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
-        };
-      }
-    }
-  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
+  const userAddressIndex = userAddresses.findIndex(
+    (userAddress) => userAddress.chainID === chainId,
+  );
+  const address = userAddresses[userAddressIndex].address;
+  const walletInfo = getWalletState(address)?.walletInfo;
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
-    if (!source.address) return;
+    if (!address) return;
     return (
       <Container>
-        <PillButton onClick={() => copyToClipboard(source.address)}>
-          {source.image && (
+        <PillButton onClick={() => copyToClipboard(address)}>
+          {walletInfo?.logo && (
             <img
-              src={source.image}
+              src={walletInfo.logo}
               style={{
                 height: "100%",
               }}
@@ -110,8 +89,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
           {isMobileScreenSize ? (
             <CopyIcon color={theme.primary.text.lowContrast} />
           ) : (
-            <AddressText title={source.address} monospace textWrap="nowrap">
-              {getTruncatedAddress(source.address, isMobileScreenSize)}
+            <AddressText title={address} monospace textWrap="nowrap">
+              {getTruncatedAddress(address, isMobileScreenSize)}
             </AddressText>
           )}
         </PillButton>
@@ -127,12 +106,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
+    address,
     isMobileScreenSize,
     onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
-    source.address,
-    source.image,
     theme.primary.text.lowContrast,
+    walletInfo.logo,
   ]);
 
   const renderExplorerLink = useMemo(() => {

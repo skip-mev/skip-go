@@ -10,14 +10,14 @@ import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
-import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
-import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useGetWalletStateFromAddress } from "@/hooks/useGetWalletStateFromAddress";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -28,7 +28,6 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
   icon?: ICONS;
-  context: "source" | "destination";
 };
 
 export const SwapExecutionPageRouteSimpleRow = ({
@@ -39,11 +38,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
   status,
   onClickEditDestinationWallet,
   explorerLink,
-  context,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
   const { userAddresses } = useAtomValue(swapExecutionStateAtom);
+  const getWalletState = useGetWalletStateFromAddress();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -51,25 +50,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
     tokenAmount,
   });
 
-  const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
-
-  const source = useMemo(() => {
-    switch (context) {
-      case "source":
-        return {
-          address: account?.address,
-          image: account?.wallet.logo,
-        };
-      case "destination": {
-        const selected = userAddresses[userAddresses.length - 1];
-        return {
-          address: selected?.address,
-        };
-      }
-    }
-  }, [account?.address, account?.wallet.logo, context, userAddresses]);
+  const userAddressIndex = userAddresses.findIndex(
+    (userAddress) => userAddress.chainID === chainId,
+  );
+  const address = userAddresses[userAddressIndex].address;
+  const walletInfo = getWalletState(address)?.walletInfo;
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
@@ -122,11 +107,11 @@ export const SwapExecutionPageRouteSimpleRow = ({
             on {assetDetails.chainName}
           </StyledChainName>
 
-          <Button align="center" gap={3} onClick={() => copyToClipboard(source.address)}>
-            {source.image && <img height={10} width={10} src={source.image} />}
-            {source.address && (
-              <SmallText monospace title={source.address} textWrap="nowrap">
-                {getTruncatedAddress(source.address, isMobileScreenSize)}
+          <Button align="center" gap={3} onClick={() => copyToClipboard(address)}>
+            {walletInfo?.logo && <img height={10} width={10} src={walletInfo.logo} />}
+            {address && (
+              <SmallText monospace title={address} textWrap="nowrap">
+                {getTruncatedAddress(address, isMobileScreenSize)}
               </SmallText>
             )}
           </Button>

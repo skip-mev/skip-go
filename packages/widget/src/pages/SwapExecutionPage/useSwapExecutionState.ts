@@ -1,9 +1,10 @@
 // useSwapExecutionState.ts
 import { useMemo } from "react";
-import { ChainAddress } from "@/state/swapExecutionPage";
+import { ChainAddress, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { useAtomValue } from "jotai";
 
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
@@ -20,6 +21,8 @@ export function useSwapExecutionState({
   isValidatingGasBalance,
   signaturesRemaining,
 }: UseSwapExecutionStateParams): SwapExecutionState {
+  const { userAddresses } = useAtomValue(swapExecutionStateAtom);
+
   return useMemo(() => {
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
     const requiredChainAddresses = route?.requiredChainAddresses;
