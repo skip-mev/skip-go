@@ -1,9 +1,9 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import {
-  Msgs,
   MsgTransfer as MsgTransferInjective,
-  MsgExecuteContract as MsgExecuteContractInjective,
+  MsgExecuteContractCompat as MsgExecuteContractInjective,
+  Msgs,
 } from "@injectivelabs/sdk-ts";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
