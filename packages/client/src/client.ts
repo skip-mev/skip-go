@@ -1845,8 +1845,15 @@ export class SkipClient {
 
   async getMainnetAndTestnetChains() {
     const [mainnetChains, testnetChains] = await Promise.all([
-      this.chains({}),
-      this.chains({ onlyTestnets: true }),
+      this.chains({
+        includeEVM: true,
+        includeSVM: true,
+      }),
+      this.chains({
+        includeEVM: true,
+        includeSVM: true,
+        onlyTestnets: true,
+      }),
     ]);
     return [...mainnetChains, ...testnetChains];
   }
