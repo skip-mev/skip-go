@@ -1867,13 +1867,20 @@ export class SkipClient {
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
-            const prefix = chain.chainID.includes("penumbra")
-             ? bech32m.decode(userAddress.address)?.prefix
-             : fromBech32(userAddress.address).prefix;
-            return chain.bech32Prefix === prefix;
-          } catch (_error) {
+            if (chain.chainID.includes("penumbra")) {
+              try {
+                return chain.bech32Prefix === bech32m.decode(userAddress.address, 143)?.prefix;
+              } catch {
+                // The temporary solution to route around Noble address breakage.
+                // This can be entirely removed once `noble-1` upgrades.
+                return ["penumbracompat1", "tpenumbra"].includes(fromBech32(userAddress.address).prefix);
+              }
+            }
+            return chain.bech32Prefix === fromBech32(userAddress.address).prefix;
+          } catch {
             return false;
           }
+ 
         case types.ChainType.EVM:
           try {
             return isAddress(userAddress.address);
