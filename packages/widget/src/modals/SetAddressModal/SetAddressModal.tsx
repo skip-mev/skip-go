@@ -65,11 +65,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
 
   const addressIsValid = useMemo(() => {
     if (!chain || manualWalletAddress.length === 0) return;
-    const { chainType, bech32Prefix } = chain;
     return isValidWalletAddress({
       address: manualWalletAddress,
-      bech32Prefix,
-      chainType,
+      chain,
     });
   }, [chain, manualWalletAddress]);
 

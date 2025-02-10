@@ -1,7 +1,6 @@
 import { cosmosWalletAtom, MinimalWallet } from "@/state/wallets";
 import {
   getWallet,
-  useAccount,
   useActiveWalletType,
   useDisconnect,
   WalletType,
@@ -15,7 +14,7 @@ import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
-import { ChainType } from "@skip-go/client";
+import { Chain, ChainType } from "@skip-go/client";
 import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
@@ -34,14 +33,10 @@ import { callbacksAtom, OnWalletDisconnectedProps } from "@/state/callbacks";
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
+  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
-
-  const { data: accounts } = useAccount({
-    multiChain: true,
-  });
 
   const { disconnectAsync } = useDisconnect();
 
@@ -49,9 +44,10 @@ export const useCreateCosmosWallets = () => {
     (chainId?: string) => {
       const mobile = isMobile();
 
-      const cosmosWallets = getAvailableWallets(mobile);
+      const cosmosWallets = getAvailableWallets();
 
       const isPenumbra = chainId?.includes("penumbra");
+      console.log(chainId);
       if (isPenumbra && !mobile) {
         return handlePenumbraNetwork(callbacks?.onWalletDisconnected);
       }
@@ -62,36 +58,9 @@ export const useCreateCosmosWallets = () => {
         const isWC = isWalletConnect(wallet);
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
-        const initialChainIds = (() => {
-          if (isWC) return walletConnectMainnetChainIdsInitialConnect;
-          if (wallet === WalletType.OKX) return okxWalletChainIdsInitialConnect;
-          if (wallet === WalletType.KEPLR) {
-            if (mobile) {
-              return keplrMainnetChainIdsInitialConnect.filter(
-                (chainId) => chainId !== "wormchain",
-              );
-            }
-            return keplrMainnetChainIdsInitialConnect;
-          }
-          return walletMainnetChainIdsInitialConnect;
-        })().filter(
-          (x) =>
-            chains
-              ?.filter((z) => z.chainType === ChainType.Cosmos)
-              .map((y) => y.chainID)
-              .includes(x) && mainnetChains.map((c) => c.chainId).includes(x),
-        );
+        const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
 
         const updateWalletState = (addressMap: Record<string, Key>) => {
-          console.log({
-            walletName: wallet,
-            walletPrettyName: walletInfo?.name,
-            walletChainType: ChainType.Cosmos,
-            walletInfo: {
-              logo: walletInfo?.imgSrc,
-            },
-            addressMap: addressMap,
-          });
           setCosmosWallet({
             walletName: wallet,
             walletPrettyName: walletInfo?.name,
@@ -225,7 +194,39 @@ export const useCreateCosmosWallets = () => {
   return { createCosmosWallets };
 };
 
-const getAvailableWallets = (isMobile?: boolean) => {
+const getInitialChainIds = (wallet: WalletType) => {
+  const isWC = isWalletConnect(wallet);
+  const mobile = isMobile();
+
+  if (isWC) return walletConnectMainnetChainIdsInitialConnect;
+
+  switch (wallet) {
+    case WalletType.OKX:
+      return okxWalletChainIdsInitialConnect;
+    case WalletType.KEPLR:
+      return mobile
+        ? keplrMainnetChainIdsInitialConnect.filter((chainId) => chainId !== "wormchain")
+        : keplrMainnetChainIdsInitialConnect;
+    default:
+      return walletMainnetChainIdsInitialConnect;
+  }
+};
+
+const filterValidChainIds = (chainIds: string[], chains?: Chain[]) => {
+  const cosmosChainIds = chains
+    ?.filter((chain) => chain.chainType === ChainType.Cosmos)
+    .map((chain) => chain.chainID);
+
+  const mainnetChainIds = mainnetChains.map((chain) => chain.chainId);
+
+  return chainIds.filter(
+    (chainId) => cosmosChainIds?.includes(chainId) && mainnetChainIds.includes(chainId),
+  );
+};
+
+const getAvailableWallets = () => {
+  const mobile = isMobile();
+
   const browserWallets = [
     WalletType.KEPLR,
     WalletType.LEAP,
@@ -250,7 +251,7 @@ const getAvailableWallets = (isMobile?: boolean) => {
       try {
         const keplrWalletExists = checkWallet(WalletType.KEPLR);
         if (
-          isMobile &&
+          mobile &&
           [WalletType.WC_KEPLR_MOBILE, WalletType.WALLETCONNECT].includes(wallet) &&
           keplrWalletExists
         ) {
@@ -262,22 +263,22 @@ const getAvailableWallets = (isMobile?: boolean) => {
       }
     },
   );
-  return isMobile ? availableMobileCosmosWallets : browserWallets;
+  return mobile ? availableMobileCosmosWallets : browserWallets;
 };
 
 const penumbraBech32ChainIDs = ["noble-1", "grand-1"];
-const getPenumbraCompatibleAddress = ({
-  chainID,
-  address,
-}: {
-  chainID?: string;
-  address: { inner: Uint8Array };
-}): string => {
-  if (!chainID) return bech32mAddress(address);
-  return penumbraBech32ChainIDs.includes(chainID)
-    ? bech32CompatAddress(address)
-    : bech32mAddress(address);
-};
+// const getPenumbraCompatibleAddress = ({
+//   chainID,
+//   address,
+// }: {
+//   chainID?: string;
+//   address: { inner: Uint8Array };
+// }): string => {
+//   if (!chainID) return bech32mAddress(address);
+//   return penumbraBech32ChainIDs.includes(chainID)
+//     ? bech32CompatAddress(address)
+//     : bech32mAddress(address);
+// };
 
 const handlePenumbraNetwork = (
   onWalletDisconnected: ((props: OnWalletDisconnectedProps) => void) | undefined,
@@ -290,40 +291,42 @@ const handlePenumbraNetwork = (
       logo: "https://raw.githubusercontent.com/prax-wallet/web/e8b18f9b997708eab04f57e7a6c44f18b3cf13a8/apps/extension/public/prax-white-vertical.svg",
     },
     connect: async () => {
-      console.error("Prax wallet is not supported for connect");
+      console.error("Prax wallet is not supported");
+      throw new Error("Prax wallet is not supported");
     },
-    getAddress: async ({ praxWallet }) => {
-      const penumbraWalletIndex = praxWallet?.index;
-      const sourceChainID = praxWallet?.sourceChainID;
-      const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
-      const prax_origin = `chrome-extension://${prax_id}`;
-      const client = createPenumbraClient(prax_origin);
-      try {
-        await client.connect();
+    // getAddress: async ({ praxWallet }) => {
+    //   const penumbraWalletIndex = praxWallet?.index;
+    //   const sourceChainID = praxWallet?.sourceChainID;
+    //   const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
+    //   const prax_origin = `chrome-extension://${prax_id}`;
+    //   const client = createPenumbraClient(prax_origin);
+    //   try {
+    //     await client.connect();
 
-        const viewService = client.service(ViewService);
-        const address = await viewService.ephemeralAddress({
-          addressIndex: {
-            account: penumbraWalletIndex ? penumbraWalletIndex : 0,
-          },
-        });
-        if (!address.address) throw new Error("No address found");
-        const bech32Address = getPenumbraCompatibleAddress({
-          address: address.address,
-          chainID: sourceChainID,
-        });
-        return bech32Address;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
+    //     const viewService = client.service(ViewService);
+    //     const address = await viewService.ephemeralAddress({
+    //       addressIndex: {
+    //         account: penumbraWalletIndex ? penumbraWalletIndex : 0,
+    //       },
+    //     });
+    //     if (!address.address) throw new Error("No address found");
+    //     const bech32Address = getPenumbraCompatibleAddress({
+    //       address: address.address,
+    //       chainID: sourceChainID,
+    //     });
+    //     return bech32Address;
+    //   } catch (error) {
+    //     console.error(error);
+    //     throw error;
+    //   }
+    // },
     disconnect: async () => {
       console.error("Prax wallet is not supported");
       onWalletDisconnected?.({
         walletName: "Prax Wallet",
         chainType: ChainType.Cosmos,
       });
+      throw new Error("Prax wallet is not supported");
     },
     isWalletConnected: false,
   };

@@ -65,8 +65,8 @@ export const useCreateSolanaWallets = () => {
             }
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider.session.peer
-              .metadata;
+            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
+              ?.peer?.metadata;
 
             const address = wallet.publicKey?.toBase58();
             updateWalletState(address, walletConnectMetadata);
