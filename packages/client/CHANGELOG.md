@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.10
+
+### Patch Changes
+
+- 0b4e15d: hot fix address validation logic to include all chains
+
 ## 0.16.9
 
 ### Patch Changes
