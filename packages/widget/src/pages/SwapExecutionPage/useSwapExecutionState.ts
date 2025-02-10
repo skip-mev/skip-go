@@ -15,7 +15,6 @@ type UseSwapExecutionStateParams = {
 };
 
 export function useSwapExecutionState({
-  chainAddresses,
   route,
   overallStatus,
   isValidatingGasBalance,

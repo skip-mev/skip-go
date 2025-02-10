@@ -58,13 +58,13 @@ export const setUserAddressesAtom = atom(
   null,
   (_get, set, userAddress: UserAddress, chainId: string) => {
     set(swapExecutionStateAtom, (state) => {
-      const newUserAddress = state.userAddresses;
+      const newUserAddress = [...state.userAddresses];
       const chainIdIndex = newUserAddress.findIndex(
         (userAddress) => userAddress.chainID === chainId,
       );
       if (chainIdIndex > -1) {
         newUserAddress[chainIdIndex] = userAddress;
-        console.log(" update user address", newUserAddress);
+        console.log("update user address", newUserAddress);
       }
       return { ...state, userAddresses: newUserAddress };
     });

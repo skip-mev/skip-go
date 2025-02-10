@@ -98,7 +98,6 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         onClick={(e) => {
           e.stopPropagation();
           connectedWallet?.disconnect();
-          console.log("disconnect");
           NiceModal.remove(Modals.ConnectedWalletModal);
         }}
       >

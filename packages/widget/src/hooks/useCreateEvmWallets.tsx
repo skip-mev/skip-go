@@ -118,31 +118,32 @@ export const useCreateEvmWallets = () => {
           walletInfo: {
             logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
-          connect: async (connectChainId = 1) => {
+          connect: async (chainIdToConnect = "1") => {
             if (connector) {
               console.log(connector);
               await connector.disconnect();
             }
             if (
               isEvmConnected &&
-              chainId !== Number(connectChainId) &&
+              chainId !== Number(chainIdToConnect) &&
               connector.id === currentEvmConnector?.id
             ) {
               await connector?.switchChain?.({
-                chainId: Number(connectChainId),
+                chainId: Number(chainIdToConnect),
               });
               const account = await connector.getAccounts();
 
               const provider = await connector.getProvider();
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+              console.log(provider.connector);
 
               updateWalletState(account[0], walletConnectMetadata);
               return;
             }
 
             try {
-              const response = await connectAsync({ connector, chainId: Number(connectChainId) });
+              const response = await connectAsync({ connector, chainId: Number(chainIdToConnect) });
               const account = await connector.getAccounts();
               const provider = await connector.getProvider();
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,21 +173,7 @@ export const useCreateEvmWallets = () => {
               window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
             }
           },
-          getAddress: async ({ signRequired, context }) => {
-            console.log("get address");
-            try {
-              const address = await evmGetAddress({ signRequired, context });
-              return address;
-            } catch (error) {
-              console.error(error);
-              throw error;
-            } finally {
-              window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            }
-          },
           disconnect: async () => {
-            console.log("disconnect");
-            console.log(currentEvmConnector);
             await currentConnector?.disconnect();
             setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
@@ -194,7 +181,6 @@ export const useCreateEvmWallets = () => {
               chainType: ChainType.EVM,
             });
           },
-
           isWalletConnected: connector.id === currentEvmConnector?.id,
         };
 
@@ -231,17 +217,18 @@ export const useCreateEvmWallets = () => {
     },
     [
       connectors,
-      currentEvmConnector,
+      currentEvmConnector?.id,
       evmWallet?.address,
       isEvmConnected,
       chainId,
       connectAsync,
       setEvmWallet,
+      sourceAsset,
       callbacks,
-      currentConnector,
       chains,
       assets,
       setSourceAsset,
+      currentConnector,
     ],
   );
 

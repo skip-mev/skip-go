@@ -46,52 +46,29 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async () => {
+        connect: async (chainId?: string) => {
           try {
             await wallet.connect();
-            const chain = chains?.find((x) => x.chainID === "solana");
-            console.log(chain);
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider.session.peer
-              .metadata;
-
-            const address = wallet.publicKey?.toBase58();
-            updateWalletState(address, walletConnectMetadata);
-            callbacks?.onWalletConnected?.({
-              walletName: wallet.name,
-              chainId: chain?.chainID,
-              address,
-            });
-          } catch (error) {
-            console.error(error);
-            throw error;
-          } finally {
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-          }
-        },
-        connectEco: async () => {
-          try {
-            const response = await wallet.connect();
-            console.log(response);
-
             const chain = chains?.find((x) => x.chainID === "solana");
             const asset = assets?.find(
               (x) =>
                 x.denom.toLowerCase() ===
                 "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
             );
-            setSourceAsset({
-              chainID: chain?.chainID,
-              chainName: chain?.chainName,
-              ...asset,
-            });
-            const address = wallet.publicKey?.toBase58();
+
+            if (chainId === undefined) {
+              setSourceAsset({
+                chainID: chain?.chainID,
+                chainName: chain?.chainName,
+                ...asset,
+              });
+            }
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider.session.peer
               .metadata;
 
+            const address = wallet.publicKey?.toBase58();
             updateWalletState(address, walletConnectMetadata);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
@@ -101,27 +78,6 @@ export const useCreateSolanaWallets = () => {
           } catch (error) {
             console.error(error);
             throw error;
-          }
-        },
-        getAddress: async () => {
-          try {
-            if (svmWallet?.address) {
-              return svmWallet.address;
-            } else {
-              await wallet.connect();
-              const address = wallet.publicKey?.toBase58();
-              if (!address) throw new Error("No address found");
-
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider.session
-                .peer.metadata;
-
-              updateWalletState(address, walletConnectMetadata);
-
-              return address;
-            }
-          } catch (error) {
-            console.error(error);
           } finally {
             window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
           }
@@ -140,6 +96,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [chains, setSvmWallet, callbacks, assets, setSourceAsset, svmWallet?.address]);
+  }, [chains, setSvmWallet, callbacks, assets, setSourceAsset]);
   return { createSolanaWallets };
 };
