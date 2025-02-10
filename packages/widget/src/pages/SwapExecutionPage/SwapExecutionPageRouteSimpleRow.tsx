@@ -17,7 +17,7 @@ import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { useGetWalletStateFromAddress } from "@/hooks/useGetWalletStateFromAddress";
+import { useGetAccount } from "@/hooks/useGetAccount";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -42,7 +42,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
   const { userAddresses } = useAtomValue(swapExecutionStateAtom);
-  const getWalletState = useGetWalletStateFromAddress();
+  const getAccount = useGetAccount();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -54,7 +54,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
     (userAddress) => userAddress.chainID === chainId,
   );
   const address = userAddresses[userAddressIndex].address;
-  const walletInfo = getWalletState(address)?.walletInfo;
+  const walletInfo = getAccount(chainId)?.walletInfo;
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));

@@ -9,14 +9,13 @@ import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
-import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
-import { useGetWalletStateFromAddress } from "@/hooks/useGetWalletStateFromAddress";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -56,7 +55,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   });
 
   const { userAddresses } = useAtomValue(swapExecutionStateAtom);
-  const getWalletState = useGetWalletStateFromAddress();
+  const getAccount = useGetAccount();
 
   const shouldRenderEditDestinationWallet =
     context === "destination" && onClickEditDestinationWallet !== undefined;
@@ -68,7 +67,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     (userAddress) => userAddress.chainID === chainId,
   );
   const address = userAddresses[userAddressIndex].address;
-  const walletInfo = getWalletState(address)?.walletInfo;
+  const walletInfo = getAccount(chainId)?.walletInfo;
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet

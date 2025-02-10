@@ -67,11 +67,11 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
 
   const account = useMemo(() => {
     const _chainID = chainType === chain?.chainType ? sourceAsset?.chainID : chainID;
-    return getAccount(_chainID, true);
+    return getAccount(_chainID);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
-  const wallets = useWalletList({ chainType });
+  const wallets = useWalletList({ chainType, chainID });
   const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.walletName);
 
   const renderDisconnectButton = useMemo(() => {
@@ -98,6 +98,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         onClick={(e) => {
           e.stopPropagation();
           connectedWallet?.disconnect();
+          console.log("disconnect");
           NiceModal.remove(Modals.ConnectedWalletModal);
         }}
       >

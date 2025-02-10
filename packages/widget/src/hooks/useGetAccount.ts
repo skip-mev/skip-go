@@ -1,31 +1,24 @@
-import { getCosmosWalletInfo } from "@/constants/graz";
-import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
 import {
   cosmosWalletAtom,
   evmWalletAtom,
   svmWalletAtom,
-  walletsAtom,
   connectedAddressesAtom,
   WalletState,
 } from "@/state/wallets";
-import { useAccount as useCosmosAccount, WalletType } from "graz";
-import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect } from "react";
-import { useAccount as useEvmAccount, useConnectors } from "wagmi";
+import { useAtomValue } from "jotai";
+import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
-import { walletConnectLogo } from "@/constants/wagmi";
 
 export const useGetAccount = () => {
-  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
-  const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
-  const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
+  const evmWallet = useAtomValue(evmWalletAtom);
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
+  const svmWallet = useAtomValue(svmWalletAtom);
   const connectedAddress = useAtomValue(connectedAddressesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const getAccount = useCallback(
-    // if checkChainType is true, it only check wallet connected no chainId is dependent
-    (chainId?: string, checkChainType?: boolean) => {
+    (chainId?: string) => {
       if (!chainId) return;
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
@@ -40,7 +33,10 @@ export const useGetAccount = () => {
       switch (chainType) {
         case ChainType.Cosmos: {
           if (!cosmosWallet) return;
-          return cosmosWallet;
+          return {
+            ...cosmosWallet,
+            address: cosmosWallet?.addressMap?.[chainId]?.bech32Address,
+          };
         }
         case ChainType.EVM: {
           if (!evmWallet) return;

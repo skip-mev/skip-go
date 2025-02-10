@@ -37,6 +37,8 @@ export type WalletState = {
   addressMap?: Record<string, Key | undefined>;
   address?: string;
   chainId?: string | number;
+  isLedger?: boolean;
+  disconnect?: () => Promise<void>;
 };
 
 export type WalletConnect = {
