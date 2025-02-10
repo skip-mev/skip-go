@@ -13,7 +13,7 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
 } from "@/state/swapPage";
-import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
+import { setSwapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
@@ -56,7 +56,6 @@ export const SwapPage = () => {
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
 
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
@@ -215,14 +214,11 @@ export const SwapPage = () => {
 
     if (isRouteError) {
       // special case for multi-tx routes on mobile
-      const errMsg = routeError?.message.startsWith("no single-tx routes found") 
-        ? "Multiple signature routes are currently only supported on the Skip:Go desktop app" : routeError?.message;
+      const errMsg = routeError?.message.startsWith("no single-tx routes found")
+        ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
+        : routeError?.message;
       return (
-        <MainButton
-          label={errMsg ?? "No routes found"}
-          disabled
-          fontSize={errMsg ? 18 : 24}
-        />
+        <MainButton label={errMsg ?? "No routes found"} disabled fontSize={errMsg ? 18 : 24} />
       );
     }
     if (isLoadingBalances) {
@@ -254,7 +250,6 @@ export const SwapPage = () => {
               errorType: ErrorType.TradeWarning,
               onClickContinue: () => {
                 setError(undefined);
-                setChainAddresses({});
                 setCurrentPage(Routes.SwapExecutionPage);
                 setSwapExecutionState();
               },
@@ -265,7 +260,6 @@ export const SwapPage = () => {
             });
             return;
           }
-          setChainAddresses({});
           setCurrentPage(Routes.SwapExecutionPage);
           setUser({ username: sourceAccount?.address });
           setSwapExecutionState();
@@ -287,7 +281,6 @@ export const SwapPage = () => {
     routeError?.message,
     showCosmosLedgerWarning,
     priceChangePercentage,
-    setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
     setError,

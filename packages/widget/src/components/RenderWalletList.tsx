@@ -4,27 +4,15 @@ import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { SmallText, Text } from "@/components/Typography";
-import {
-  MinimalWallet,
-  cosmosWalletAtom,
-  evmWalletAtom,
-  svmWalletAtom,
-  walletsAtom,
-} from "@/state/wallets";
+import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useAtomValue, useSetAtom } from "jotai";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
-import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
-import { isMobile } from "@/utils/os";
-import { WalletType, getWallet, useDisconnect } from "graz";
-import { solanaWallets } from "@/constants/solana";
-import { useConnectors } from "wagmi";
 
 export type RenderWalletListProps = {
   title: string;
@@ -69,12 +57,6 @@ export const RenderWalletList = ({
   chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
-  const walletAtom = useAtomValue(walletsAtom);
-  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
-  const setEVMWallet = useSetAtom(evmWalletAtom);
-  const setSVMWallet = useSetAtom(svmWalletAtom);
-
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -86,8 +68,6 @@ export const RenderWalletList = ({
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
-  const connectors = useConnectors();
-  const { disconnectAsync } = useDisconnect();
   console.log("render wallet list");
 
   const connectMutation = useMutation({

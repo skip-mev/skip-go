@@ -6,12 +6,12 @@ import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { RenderWalletList, ManualWalletEntry } from "@/components/RenderWalletList";
 import { Button } from "@/components/Button";
 import { SmallText, Text } from "@/components/Typography";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader, StyledModalContainer } from "@/components/ModalHeader";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { setUserAddressAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -32,7 +32,6 @@ export enum WalletSource {
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { chainId, chainAddressIndex } = modalProps;
-  // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((c) => c.chainID === chainId);
@@ -41,11 +40,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
   const _walletList = useWalletList({ chainID: chainId, destinationWalletList: true });
-  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
+  const { userAddresses } = useAtomValue(swapExecutionStateAtom);
+  const setUserAddress = useSetAtom(setUserAddressAtom);
 
   // If not same chain transaction, show warning
   const showWithdrawalWarning =
-    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
+    new Set(Object.values(userAddresses).map(({ chainID }) => chainID)).size > 1;
 
   const mobile = isMobile();
 
@@ -90,17 +90,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const onConfirmSetManualAddress = () => {
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
-    setChainAddresses((prev) => {
-      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
-      return {
-        ...prev,
-        [destinationIndex]: {
-          chainID: chainId,
-          chainType: chainType as ChainType,
-          address: manualWalletAddress,
-          source: WalletSource.Input,
-        },
-      };
+    setUserAddress({
+      chainID: chainId,
+      address: manualWalletAddress,
     });
     NiceModal.remove(Modals.SetAddressModal);
   };

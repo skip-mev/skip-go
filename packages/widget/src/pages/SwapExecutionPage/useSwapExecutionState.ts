@@ -1,13 +1,12 @@
 // useSwapExecutionState.ts
 import { useMemo } from "react";
-import { ChainAddress, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useAtomValue } from "jotai";
 
 type UseSwapExecutionStateParams = {
-  chainAddresses: Record<number, ChainAddress>;
   route?: RouteResponse;
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: { status: string };

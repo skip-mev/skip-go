@@ -54,22 +54,19 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const setUserAddressesAtom = atom(
-  null,
-  (_get, set, userAddress: UserAddress, chainId: string) => {
-    set(swapExecutionStateAtom, (state) => {
-      const newUserAddress = [...state.userAddresses];
-      const chainIdIndex = newUserAddress.findIndex(
-        (userAddress) => userAddress.chainID === chainId,
-      );
-      if (chainIdIndex > -1) {
-        newUserAddress[chainIdIndex] = userAddress;
-        console.log("update user address", newUserAddress);
-      }
-      return { ...state, userAddresses: newUserAddress };
-    });
-  },
-);
+export const setUserAddressAtom = atom(null, (_get, set, userAddress: UserAddress) => {
+  set(swapExecutionStateAtom, (state) => {
+    const newUserAddress = [...state.userAddresses];
+    const chainIdIndex = newUserAddress.findIndex(
+      (address) => address.chainID === userAddress.chainID,
+    );
+    if (chainIdIndex > -1) {
+      newUserAddress[chainIdIndex] = userAddress;
+      console.log("update user address", newUserAddress);
+    }
+    return { ...state, userAddresses: newUserAddress };
+  });
+});
 
 export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
@@ -256,28 +253,6 @@ export const setTransactionDetailsAtom = atom(
     });
   },
 );
-
-export const chainAddressEffectAtom = atomEffect((get, set) => {
-  const chainAddresses = get(chainAddressesAtom);
-  const addressesMatch = Object.values(chainAddresses).every(
-    (chainAddress) => !!chainAddress.address,
-  );
-  if (!addressesMatch) return;
-
-  console.log(chainAddresses);
-
-  const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
-    return {
-      chainID: chainAddress.chainID,
-      address: chainAddress.address as string,
-    };
-  });
-
-  set(swapExecutionStateAtom, (prev) => ({
-    ...prev,
-    userAddresses,
-  }));
-});
 
 export type TransactionDetails = {
   txHash: string;

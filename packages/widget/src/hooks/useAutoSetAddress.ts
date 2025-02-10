@@ -1,5 +1,5 @@
 import { skipChainsAtom } from "@/state/skipClient";
-import { setUserAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { setUserAddressAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import {
   connectedAddressesAtom,
   cosmosWalletAtom,
@@ -15,7 +15,7 @@ import { ChainType } from "@skip-go/client";
 
 export const useAutoSetAddress = () => {
   const { route, userAddresses } = useAtomValue(swapExecutionStateAtom);
-  const setUserAddresses = useSetAtom(setUserAddressesAtom);
+  const setUserAddress = useSetAtom(setUserAddressAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const evmWallet = useAtomValue(evmWalletAtom);
@@ -75,13 +75,10 @@ export const useAutoSetAddress = () => {
           );
         }
 
-        setUserAddresses(
-          {
-            chainID,
-            address: address.toLowerCase(),
-          },
+        setUserAddress({
           chainID,
-        );
+          address: address.toLowerCase(),
+        });
       } catch (_error) {
         console.error(_error);
         showSetAddressModal();
@@ -95,7 +92,7 @@ export const useAutoSetAddress = () => {
     evmWallet,
     svmWallet,
     connectedAddress,
-    setUserAddresses,
+    setUserAddress,
   ]);
 
   return { connectRequiredChains };

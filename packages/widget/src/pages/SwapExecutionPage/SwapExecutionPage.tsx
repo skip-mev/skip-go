@@ -8,11 +8,7 @@ import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
-import {
-  chainAddressesAtom,
-  skipSubmitSwapExecutionAtom,
-  swapExecutionStateAtom,
-} from "@/state/swapExecutionPage";
+import { skipSubmitSwapExecutionAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
@@ -42,7 +38,6 @@ export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
     useAtomValue(swapExecutionStateAtom);
-  const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
@@ -74,7 +69,6 @@ export const SwapExecutionPage = () => {
   const lastOperation = clientOperations[clientOperations.length - 1];
 
   const swapExecutionState = useSwapExecutionState({
-    chainAddresses,
     route,
     overallStatus,
     isValidatingGasBalance,
