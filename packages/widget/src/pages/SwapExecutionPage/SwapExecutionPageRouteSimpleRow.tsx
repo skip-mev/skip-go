@@ -28,6 +28,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
   icon?: ICONS;
+  index: number;
 };
 
 export const SwapExecutionPageRouteSimpleRow = ({
@@ -38,6 +39,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   status,
   onClickEditDestinationWallet,
   explorerLink,
+  index,
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
@@ -50,10 +52,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
     tokenAmount,
   });
 
-  const userAddressIndex = userAddresses.findIndex(
-    (userAddress) => userAddress.chainID === chainId,
-  );
-  const address = userAddresses[userAddressIndex].address;
+  const address = userAddresses[index].address;
   const walletInfo = getAccount(chainId)?.walletInfo;
 
   const displayAmount = useMemo(() => {

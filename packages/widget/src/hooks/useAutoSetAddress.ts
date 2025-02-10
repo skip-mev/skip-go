@@ -1,26 +1,26 @@
 import { skipChainsAtom } from "@/state/skipClient";
 import { setUserAddressAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
-import {
-  connectedAddressesAtom,
-  cosmosWalletAtom,
-  evmWalletAtom,
-  svmWalletAtom,
-} from "@/state/wallets";
+import { connectedAddressesAtom, walletsAtom } from "@/state/wallets";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
+import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
+import { useCreateEvmWallets } from "./useCreateEvmWallets";
+import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 
 export const useAutoSetAddress = () => {
   const { route, userAddresses } = useAtomValue(swapExecutionStateAtom);
   const setUserAddress = useSetAtom(setUserAddressAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const evmWallet = useAtomValue(evmWalletAtom);
-  const svmWallet = useAtomValue(svmWalletAtom);
-  const cosmosWallet = useAtomValue(cosmosWalletAtom);
+  const sourceWallet = useAtomValue(walletsAtom);
+
+  const { createCosmosWallets } = useCreateCosmosWallets();
+  const { createEvmWallets } = useCreateEvmWallets();
+  const { createSolanaWallets } = useCreateSolanaWallets();
 
   const connectedAddress = useAtomValue(connectedAddressesAtom);
 
@@ -51,12 +51,21 @@ export const useAutoSetAddress = () => {
 
       const getWallet = (chainType: ChainType) => {
         switch (chainType) {
-          case ChainType.Cosmos:
-            return cosmosWallet;
-          case ChainType.EVM:
-            return evmWallet;
-          case ChainType.SVM:
-            return svmWallet;
+          case ChainType.Cosmos: {
+            const wallets = createCosmosWallets(chainID);
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
+            return wallet;
+          }
+          case ChainType.EVM: {
+            const wallets = createEvmWallets(chainID);
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
+            return wallet;
+          }
+          case ChainType.SVM: {
+            const wallets = createSolanaWallets();
+            const wallet = wallets.find((w) => w.walletName === sourceWallet.svm?.walletName);
+            return wallet;
+          }
           default:
             return undefined;
         }
@@ -64,10 +73,9 @@ export const useAutoSetAddress = () => {
 
       try {
         const wallet = getWallet(chainType);
+        console.log("auto set address");
         const address =
-          connectedAddress?.[chainID] ??
-          (wallet?.addressMap?.[chainID]?.bech32Address as string) ??
-          wallet?.address;
+          connectedAddress?.[chainID] ?? (await wallet?.getAddress?.({ chainId: chainID }));
 
         if (!address) {
           throw new Error(
@@ -75,10 +83,13 @@ export const useAutoSetAddress = () => {
           );
         }
 
-        setUserAddress({
-          chainID,
-          address: address.toLowerCase(),
-        });
+        setUserAddress(
+          {
+            chainID,
+            address: address.toLowerCase(),
+          },
+          index,
+        );
       } catch (_error) {
         console.error(_error);
         showSetAddressModal();
@@ -88,9 +99,12 @@ export const useAutoSetAddress = () => {
     userAddresses,
     chains,
     signRequiredChains,
-    cosmosWallet,
-    evmWallet,
-    svmWallet,
+    createCosmosWallets,
+    sourceWallet.cosmos?.walletName,
+    sourceWallet.evm?.walletName,
+    sourceWallet.svm?.walletName,
+    createEvmWallets,
+    createSolanaWallets,
     connectedAddress,
     setUserAddress,
   ]);

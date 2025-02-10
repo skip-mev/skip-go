@@ -63,10 +63,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderingEditDestinationWalletOrExplorerLink =
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
-  const userAddressIndex = userAddresses.findIndex(
-    (userAddress) => userAddress.chainID === chainId,
-  );
-  const address = userAddresses[userAddressIndex].address;
+  const address = userAddresses[index]?.address;
   const walletInfo = getAccount(chainId)?.walletInfo;
 
   const renderAddress = useMemo(() => {

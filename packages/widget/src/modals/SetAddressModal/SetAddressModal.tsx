@@ -90,10 +90,15 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   const onConfirmSetManualAddress = () => {
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
-    setUserAddress({
-      chainID: chainId,
-      address: manualWalletAddress,
-    });
+    if (!chainAddressIndex) throw new Error("chain address index is required");
+    console.log("on confirm set manual address");
+    setUserAddress(
+      {
+        chainID: chainId,
+        address: manualWalletAddress,
+      },
+      chainAddressIndex,
+    );
     NiceModal.remove(Modals.SetAddressModal);
   };
   return (

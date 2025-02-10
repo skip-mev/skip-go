@@ -59,6 +59,7 @@ export const SwapExecutionPageRouteSimple = ({
         {...source}
         status={firstOperationStatus}
         explorerLink={sourceExplorerLink}
+        index={0}
       />
       <StyledBridgeArrowIcon color={theme.primary.text.normal} />
       <SwapExecutionPageRouteSimpleRow
@@ -67,6 +68,7 @@ export const SwapExecutionPageRouteSimple = ({
         status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={destinationExplorerLink}
+        index={(route?.requiredChainAddresses.length ?? 0) - 1}
       />
     </StyledSwapExecutionPageRoute>
   );

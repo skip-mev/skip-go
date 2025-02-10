@@ -13,6 +13,7 @@ import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
+import { setUserAddressAtom } from "@/state/swapExecutionPage";
 
 export type RenderWalletListProps = {
   title: string;
@@ -57,6 +58,7 @@ export const RenderWalletList = ({
   chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
+  const setUserAddress = useSetAtom(setUserAddressAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -73,75 +75,21 @@ export const RenderWalletList = ({
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
-      console.log("connect mutation");
-      // if (isDestinationAddress) {
-      //   if (!chainId || !chainType) return;
-      //   console.log("isDestinationAddress", isDestinationAddress);
-      //   setChainAddresses((prev) => {
-      //     const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
-      //     return {
-      //       ...prev,
-      //       [destinationIndex]: {
-      //         chainID: chainId,
-      //         chainType,
-      //         address: "",
-      //         source: WalletSource.Wallet,
-      //         wallet: {
-      //           walletName: wallet.walletName,
-      //           walletPrettyName: wallet.walletPrettyName,
-      //           walletChainType: wallet.walletChainType,
-      //           walletInfo: wallet.walletInfo,
-      //         },
-      //       },
-      //     };
-      //   });
-      //   return null;
-      // }
-      // const mobile = isMobile();
-      // if (mobile) {
-      //   switch (chainType) {
-      //     case ChainType.EVM:
-      //       if (walletAtom.cosmos) {
-      //         const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-      //         await cosmosWallet.disable?.();
-      //         await disconnectAsync();
-      //         setCosmosWallet(undefined);
-      //       }
-      //       if (walletAtom.svm) {
-      //         const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-      //         await svmWallet?.disconnect?.();
-      //         setSVMWallet(undefined);
-      //       }
-      //       break;
-      //     case ChainType.SVM:
-      //       if (walletAtom.evm) {
-      //         const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-      //         await evmWallet?.disconnect?.();
-      //         setEVMWallet(undefined);
-      //       }
-      //       if (walletAtom.cosmos) {
-      //         const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-      //         await cosmosWallet.disable?.();
-      //         await disconnectAsync();
-      //         setCosmosWallet(undefined);
-      //       }
-      //       break;
-      //     case ChainType.Cosmos:
-      //       if (walletAtom.evm) {
-      //         const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-      //         await evmWallet?.disconnect?.();
-      //         setEVMWallet(undefined);
-      //       }
-      //       if (walletAtom.svm) {
-      //         const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-      //         await svmWallet?.disconnect?.();
-      //         setSVMWallet(undefined);
-      //       }
-      //       break;
-      //     default:
-      //       break;
-      //   }
-      // }
+      console.log("connect wallet");
+      console.log(chainAddressIndex);
+      if (chainAddressIndex) {
+        const address = await wallet.getAddress?.({ chainId });
+        if (!address || !chainId) return;
+        console.log(chainAddressIndex, address);
+
+        setUserAddress(
+          {
+            chainID: chainId,
+            address: address,
+          },
+          chainAddressIndex,
+        );
+      }
 
       if (isConnectEco) {
         clearAssetInputAmounts();

@@ -12,18 +12,19 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string;
   };
-  connect: (chainId?: string) => Promise<void>;
+  connect: (chainId?: string) => Promise<string | undefined>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
-  // getAddress?: (props: {
-  //   signRequired?: boolean;
-  //   context?: "recovery" | "destination";
-  //   praxWallet?: {
-  //     index?: number;
-  //     sourceChainID?: string;
-  //   };
-  // }) => Promise<string | undefined>;
+  getAddress?: (props: {
+    chainId?: string;
+    signRequired?: boolean;
+    context?: "recovery" | "destination";
+    praxWallet?: {
+      index?: number;
+      sourceChainID?: string;
+    };
+  }) => Promise<string | undefined>;
 };
 
 export type WalletState = {

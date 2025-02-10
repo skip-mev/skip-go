@@ -47,7 +47,6 @@ export const useCreateCosmosWallets = () => {
       const cosmosWallets = getAvailableWallets();
 
       const isPenumbra = chainId?.includes("penumbra");
-      console.log(chainId);
       if (isPenumbra && !mobile) {
         return handlePenumbraNetwork(callbacks?.onWalletDisconnected);
       }
@@ -73,10 +72,9 @@ export const useCreateCosmosWallets = () => {
         };
 
         const connectWallet = async (chainIdToConnect?: string) => {
+          const connectToInitialChainId =
+            !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
           try {
-            if (chainIdToConnect && initialChainIds.includes(chainIdToConnect)) {
-              chainIdToConnect = undefined;
-            }
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
@@ -87,7 +85,7 @@ export const useCreateCosmosWallets = () => {
             }
 
             const response = await connect({
-              chainId: chainIdToConnect ?? initialChainIds,
+              chainId: connectToInitialChainId ? initialChainIds : chainIdToConnect,
               walletType: wallet,
               autoReconnect: false,
             });
@@ -127,6 +125,8 @@ export const useCreateCosmosWallets = () => {
               chainIdToAddressMap,
               address,
             });
+
+            return address;
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -140,7 +140,7 @@ export const useCreateCosmosWallets = () => {
                 walletType: wallet,
                 autoReconnect: false,
               });
-              return Promise.resolve();
+              return Promise.resolve(undefined);
             }
             throw e;
           } finally {
@@ -163,6 +163,14 @@ export const useCreateCosmosWallets = () => {
               walletName: wallet,
               chainType: ChainType.Cosmos,
             });
+          },
+          getAddress: async ({ chainId }) => {
+            const walletIsConnected = currentWallet === wallet;
+            console.log("get address", walletIsConnected, chainId);
+            if (walletIsConnected && chainId) {
+              return (await getWallet(wallet).getKey(chainId)).bech32Address;
+            }
+            return connectWallet(chainId);
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {
@@ -267,18 +275,18 @@ const getAvailableWallets = () => {
 };
 
 const penumbraBech32ChainIDs = ["noble-1", "grand-1"];
-// const getPenumbraCompatibleAddress = ({
-//   chainID,
-//   address,
-// }: {
-//   chainID?: string;
-//   address: { inner: Uint8Array };
-// }): string => {
-//   if (!chainID) return bech32mAddress(address);
-//   return penumbraBech32ChainIDs.includes(chainID)
-//     ? bech32CompatAddress(address)
-//     : bech32mAddress(address);
-// };
+const getPenumbraCompatibleAddress = ({
+  chainID,
+  address,
+}: {
+  chainID?: string;
+  address: { inner: Uint8Array };
+}): string => {
+  if (!chainID) return bech32mAddress(address);
+  return penumbraBech32ChainIDs.includes(chainID)
+    ? bech32CompatAddress(address)
+    : bech32mAddress(address);
+};
 
 const handlePenumbraNetwork = (
   onWalletDisconnected: ((props: OnWalletDisconnectedProps) => void) | undefined,
@@ -294,32 +302,32 @@ const handlePenumbraNetwork = (
       console.error("Prax wallet is not supported");
       throw new Error("Prax wallet is not supported");
     },
-    // getAddress: async ({ praxWallet }) => {
-    //   const penumbraWalletIndex = praxWallet?.index;
-    //   const sourceChainID = praxWallet?.sourceChainID;
-    //   const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
-    //   const prax_origin = `chrome-extension://${prax_id}`;
-    //   const client = createPenumbraClient(prax_origin);
-    //   try {
-    //     await client.connect();
+    getAddress: async ({ praxWallet }) => {
+      const penumbraWalletIndex = praxWallet?.index;
+      const sourceChainID = praxWallet?.sourceChainID;
+      const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
+      const prax_origin = `chrome-extension://${prax_id}`;
+      const client = createPenumbraClient(prax_origin);
+      try {
+        await client.connect();
 
-    //     const viewService = client.service(ViewService);
-    //     const address = await viewService.ephemeralAddress({
-    //       addressIndex: {
-    //         account: penumbraWalletIndex ? penumbraWalletIndex : 0,
-    //       },
-    //     });
-    //     if (!address.address) throw new Error("No address found");
-    //     const bech32Address = getPenumbraCompatibleAddress({
-    //       address: address.address,
-    //       chainID: sourceChainID,
-    //     });
-    //     return bech32Address;
-    //   } catch (error) {
-    //     console.error(error);
-    //     throw error;
-    //   }
-    // },
+        const viewService = client.service(ViewService);
+        const address = await viewService.ephemeralAddress({
+          addressIndex: {
+            account: penumbraWalletIndex ? penumbraWalletIndex : 0,
+          },
+        });
+        if (!address.address) throw new Error("No address found");
+        const bech32Address = getPenumbraCompatibleAddress({
+          address: address.address,
+          chainID: sourceChainID,
+        });
+        return bech32Address;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
     disconnect: async () => {
       console.error("Prax wallet is not supported");
       onWalletDisconnected?.({

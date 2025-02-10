@@ -36,14 +36,14 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
+  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance, userAddresses } =
     useAtomValue(swapExecutionStateAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
   useEffect(() => {
     connectRequiredChains();
-  }, [connectRequiredChains]);
+  }, []);
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -124,9 +124,10 @@ export const SwapExecutionPage = () => {
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
         chainId: route?.destAssetChainID,
+        chainAddressIndex: userAddresses.length - 1,
       });
     };
-  }, [swapExecutionState, route?.destAssetChainID]);
+  }, [swapExecutionState, route?.destAssetChainID, userAddresses.length]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
