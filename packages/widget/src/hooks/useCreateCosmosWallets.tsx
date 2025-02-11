@@ -58,14 +58,20 @@ export const useCreateCosmosWallets = () => {
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
 
-        const updateWalletState = () => {
+        const updateSourceWallet = () => {
           setCosmosWallet({
             walletName: wallet,
             chainType: ChainType.Cosmos,
           });
         };
 
-        const connectWallet = async (chainIdToConnect?: string) => {
+        const connectWallet = async ({
+          chainIdToConnect,
+          shouldUpdateSourceWallet = true,
+        }: {
+          chainIdToConnect?: string;
+          shouldUpdateSourceWallet?: boolean;
+        }) => {
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
           try {
@@ -87,8 +93,6 @@ export const useCreateCosmosWallets = () => {
             if (!response?.accounts) {
               throw new Error("failed to get accounts from wallet");
             }
-
-            updateWalletState();
 
             if (sourceAsset === undefined) {
               const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
@@ -114,11 +118,14 @@ export const useCreateCosmosWallets = () => {
               address = (await getWallet(wallet).getKey(chainIdToConnect ?? "")).bech32Address;
             }
 
-            callbacks?.onWalletConnected?.({
-              walletName: wallet,
-              chainIdToAddressMap,
-              address,
-            });
+            if (shouldUpdateSourceWallet) {
+              updateSourceWallet();
+              callbacks?.onWalletConnected?.({
+                walletName: wallet,
+                chainIdToAddressMap,
+                address,
+              });
+            }
 
             return address;
           } catch (e) {
@@ -150,7 +157,9 @@ export const useCreateCosmosWallets = () => {
           walletInfo: {
             logo: walletInfo?.imgSrc,
           },
-          connect: async (chainId) => connectWallet(chainId),
+          connect: async (chainId) => {
+            return connectWallet({ chainIdToConnect: chainId });
+          },
           disconnect: async () => {
             await disconnectAsync();
             setCosmosWallet(undefined);
@@ -160,10 +169,15 @@ export const useCreateCosmosWallets = () => {
             });
           },
           getAddress: async () => {
-            if (wallet && chainId) {
-              return (await getWallet(wallet).getKey(chainId)).bech32Address;
+            try {
+              if (!chainId) {
+                throw new Error("no chain id");
+              }
+              const address = (await getWallet(wallet).getKey(chainId)).bech32Address;
+              return address;
+            } catch (_error) {
+              return connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: false });
             }
-            return connectWallet(chainId);
           },
           isWalletConnected: currentWallet === wallet,
           isAvailable: (() => {

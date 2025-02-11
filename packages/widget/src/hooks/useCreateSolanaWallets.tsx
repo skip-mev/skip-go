@@ -22,7 +22,7 @@ export const useCreateSolanaWallets = () => {
     for (const wallet of solanaWallets) {
       const isWalletConnect = wallet.name === "WalletConnect";
 
-      const updateWalletState = (walletConnectMetadata?: WalletConnectMetaData) => {
+      const updateSourceWallet = (walletConnectMetadata?: WalletConnectMetaData) => {
         setSvmWallet({
           walletName: walletConnectMetadata?.name ?? wallet.name,
           chainType: ChainType.SVM,
@@ -30,7 +30,13 @@ export const useCreateSolanaWallets = () => {
         });
       };
 
-      const connectWallet = async (chainId?: string) => {
+      const connectWallet = async ({
+        chainIdToConnect,
+        shouldUpdateSourceWallet = true,
+      }: {
+        chainIdToConnect?: string;
+        shouldUpdateSourceWallet?: boolean;
+      }) => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
@@ -40,7 +46,7 @@ export const useCreateSolanaWallets = () => {
               "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
           );
 
-          if (chainId === undefined) {
+          if (chainIdToConnect === undefined) {
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
@@ -48,17 +54,20 @@ export const useCreateSolanaWallets = () => {
             });
           }
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
-            ?.metadata;
-
           const address = wallet.publicKey?.toBase58();
-          updateWalletState(walletConnectMetadata);
-          callbacks?.onWalletConnected?.({
-            walletName: wallet.name,
-            chainId: chain?.chainID,
-            address,
-          });
+
+          if (shouldUpdateSourceWallet) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
+              ?.peer?.metadata;
+            updateSourceWallet(walletConnectMetadata);
+            callbacks?.onWalletConnected?.({
+              walletName: wallet.name,
+              chainId: chain?.chainID,
+              address,
+            });
+          }
+
           return address;
         } catch (error) {
           console.error(error);
@@ -75,16 +84,17 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) => connectWallet(chainId),
+        connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
         getAddress: async () => {
           try {
             const address = wallet.publicKey;
-            if (address) {
-              return address.toBase58();
+            if (!address) {
+              throw new Error("Address not found");
             }
-            return connectWallet();
+            return address.toBase58();
           } catch (error) {
             console.error(error);
+            return connectWallet({ shouldUpdateSourceWallet: false });
           }
         },
         disconnect: async () => {
