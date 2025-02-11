@@ -13,7 +13,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
-import { bech32CompatAddress } from "@penumbra-zone/bech32m/penumbracompat1";
+import { TransparentAddressRequest } from '@penumbra-zone/protobuf/penumbra/view/v1/view_pb';
 import { ChainType } from "@skip-go/client";
 import {
   getCosmosWalletInfo,
@@ -109,19 +109,31 @@ export const useCreateCosmosWallets = () => {
             const client = createPenumbraClient(prax_origin);
             try {
               await client.connect();
-
               const viewService = client.service(ViewService);
-              const address = await viewService.ephemeralAddress({
+
+              // To deposit into penumbra, we generate an ephemeral address
+              // this is a randomized address that is generated for each deposit.
+              // 
+              // Noble Mainnet is the exception to this rule.
+              // If the chain is noble-1, we use a transparent address.
+              // This means that the address is the same for all deposits.
+              // 
+              // Note: once Noble upgrades their network, this special casing can be removed.
+              // And all addresses can be ephemeral with bech32m encoding.
+              if (sourceChainID === "noble-1") {
+                const address = await viewService.transparentAddress(new TransparentAddressRequest({}));
+                if (!address.address) throw new Error("No address found");
+                // The view service did the work of encoding the address for us.
+                return address.encoding;
+              } else {
+              const ephemeralAddress = await viewService.ephemeralAddress({
                 addressIndex: {
                   account: penumbraWalletIndex ? penumbraWalletIndex : 0,
                 },
               });
-              if (!address.address) throw new Error("No address found");
-              const bech32Address = getPenumbraCompatibleAddress({
-                address: address.address,
-                chainID: sourceChainID,
-              });
-              return bech32Address;
+              if (!ephemeralAddress.address) throw new Error("No address found");
+              return bech32mAddress(ephemeralAddress.address);
+              }
             } catch (error) {
               console.error(error);
               throw error;
@@ -366,18 +378,4 @@ export const useCreateCosmosWallets = () => {
   );
 
   return { createCosmosWallets };
-};
-
-const penumbraBech32ChainIDs = ["noble-1", "grand-1"];
-const getPenumbraCompatibleAddress = ({
-  chainID,
-  address,
-}: {
-  chainID?: string;
-  address: { inner: Uint8Array };
-}): string => {
-  if (!chainID) return bech32mAddress(address);
-  return penumbraBech32ChainIDs.includes(chainID)
-    ? bech32CompatAddress(address)
-    : bech32mAddress(address);
 };
