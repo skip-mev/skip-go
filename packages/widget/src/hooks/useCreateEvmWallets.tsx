@@ -6,11 +6,10 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount, useConnect, useConnectors, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-import { isMobile } from "@/utils/os";
 
 export type WalletConnectMetaData = {
   name: string;
