@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.3.3
+
+### Patch Changes
+
+- 667c41a: support noble intermediary chain to penumbra
+
 ## 3.3.2
 
 ### Patch Changes
