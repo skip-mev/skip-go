@@ -14,6 +14,7 @@ import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
 import { ANIMATION_TIMINGS, EASINGS } from "@/utils/transitions";
 import { keyframes } from "styled-components";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -66,6 +67,7 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
 
   const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
 
@@ -95,12 +97,14 @@ export const SwapExecutionPageRouteDetailed = ({
           chainId={firstOperation.fromChainID}
           explorerLink={status?.[0]?.fromExplorerLink}
           status={firstOperationStatus}
-          context="source"
-          index={0}
+          userAddressIndex={0}
         />
         {operations.map((operation, index) => {
           const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
-
+          const userAddressIndex =
+            index === operations.length - 1
+              ? (route?.requiredChainAddresses?.length ?? 0) - 1
+              : index;
           const getBridgeSwapVenue = () => {
             const swapVenueId = operation.swapVenues?.[0]?.chainID;
             const bridgeId = operation.bridgeID;
@@ -159,9 +163,8 @@ export const SwapExecutionPageRouteDetailed = ({
               </StyledOperationTypeAndTooltipContainer>
               <SwapExecutionPageRouteDetailedRow
                 {...asset}
-                index={index}
+                userAddressIndex={userAddressIndex}
                 onClickEditDestinationWallet={onClickEditDestinationWallet}
-                context={index === operations.length - 1 ? "destination" : "intermediary"}
                 isSignRequired={nextOperation?.signRequired}
                 status={opStatus}
                 explorerLink={explorerLink}

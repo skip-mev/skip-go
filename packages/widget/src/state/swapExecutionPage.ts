@@ -40,22 +40,33 @@ export type ChainAddress = {
   chainID: string;
   chainType?: ChainType;
   address?: string;
-} & (
-  | { source?: "input" | "parent" | "injected" }
-  | {
-      source?: "wallet";
-      wallet: Pick<
-        MinimalWallet,
-        "walletName" | "walletPrettyName" | "walletChainType" | "walletInfo"
-      >;
-    }
-);
+} & {
+  source?: "wallet" | "input" | "parent" | "injected";
+  wallet?: Pick<
+    MinimalWallet,
+    "walletName" | "walletPrettyName" | "walletChainType" | "walletInfo"
+  >;
+};
 
 /**
  * route.requiredChainAddresses is a list of chainIDs that are required to have an address associated with them
  * the key in this atom is the index of the chainID in the requiredChainAddresses array
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
+
+export const setUserAddressAtom = atom(
+  null,
+  (_get, set, userAddress: UserAddress, index: number) => {
+    set(swapExecutionStateAtom, (state) => {
+      const newUserAddress = [...state.userAddresses];
+      if (index > -1) {
+        newUserAddress[index] = userAddress;
+        console.log("update user address", newUserAddress);
+      }
+      return { ...state, userAddresses: newUserAddress };
+    });
+  },
+);
 
 export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
   "swapExecutionState",
@@ -94,7 +105,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
 
   set(swapExecutionStateAtom, {
-    userAddresses: [],
+    userAddresses: route?.requiredChainAddresses.map((chainId) => ({
+      chainID: chainId,
+      address: "",
+    })),
     transactionDetailsArray: [],
     route,
     transactionHistoryIndex,
@@ -240,26 +254,6 @@ export const setTransactionDetailsAtom = atom(
   },
 );
 
-export const chainAddressEffectAtom = atomEffect((get, set) => {
-  const chainAddresses = get(chainAddressesAtom);
-  const addressesMatch = Object.values(chainAddresses).every(
-    (chainAddress) => !!chainAddress.address,
-  );
-  if (!addressesMatch) return;
-
-  const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
-    return {
-      chainID: chainAddress.chainID,
-      address: chainAddress.address as string,
-    };
-  });
-
-  set(swapExecutionStateAtom, (prev) => ({
-    ...prev,
-    userAddresses,
-  }));
-});
-
 export type TransactionDetails = {
   txHash: string;
   chainID: string;
@@ -309,7 +303,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
+
       try {
+        console.log(userAddresses);
         await skip.executeRoute({
           route,
           userAddresses,

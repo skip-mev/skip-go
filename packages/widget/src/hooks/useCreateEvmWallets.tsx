@@ -2,21 +2,32 @@ import { seiPrecompileAddrABI } from "@/constants/abis";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
-import { useAccount, useConnect, useConnectors, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-import { isMobile } from "@/utils/os";
+
+export type WalletConnectMetaData = {
+  name: string;
+  description: string;
+  icons: string[];
+  redirect: {
+    native: string;
+    universal: string;
+  };
+  url: string;
+  publicKey: string;
+};
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setSourceAsset = useSetAtom(sourceAssetAtom);
-  const setEvmWallet = useSetAtom(evmWalletAtom);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
 
   const {
@@ -28,8 +39,6 @@ export const useCreateEvmWallets = () => {
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
   const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
-  const { disconnectAsync } = useDisconnect();
-  const mobile = isMobile();
 
   const createEvmWallets = useCallback(
     (chainID?: string) => {
@@ -50,48 +59,101 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
-          if (isWalletConnect && mobile) {
-            if (isEvmConnected) {
-              return evmAddress;
-            }
-            const res = await connectAsync({
-              connector,
-              chainId: Number(chainID),
-            });
-            await disconnectAsync();
-            setEvmWallet(undefined);
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
-            return res.accounts[0];
-          }
-          if (
+          const walletConnectedButNeedToSwitchChain =
             signRequired &&
             isEvmConnected &&
             chainId !== Number(chainID) &&
-            connector.id === currentEvmConnector?.id
-          ) {
+            connector.id === currentEvmConnector?.id;
+          console.log("walletConnectedButNeedToSwitchChain", walletConnectedButNeedToSwitchChain);
+          if (walletConnectedButNeedToSwitchChain) {
             await connector?.switchChain?.({
               chainId: Number(chainID),
             });
             return evmAddress;
           }
-          if (connector.id !== currentEvmConnector?.id || !isEvmConnected) {
-            const res = await connectAsync({
-              connector,
-              chainId: Number(chainID),
-            });
-            setEvmWallet({
-              walletName: connector.id,
-              chainType: ChainType.EVM,
-            });
-            return res.accounts[0];
-          } else if (evmAddress && isEvmConnected && signRequired) {
-            setEvmWallet({
-              walletName: connector.id,
-              chainType: ChainType.EVM,
-            });
+
+          const res = await connectAsync({
+            connector,
+            chainId: Number(chainID),
+          });
+
+          const provider = await connector.getProvider();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+          updateWalletState(res.accounts[0], walletConnectMetadata);
+          return res.accounts[0];
+        };
+
+        const updateWalletState = (
+          address: string,
+          walletConnectMetadata: WalletConnectMetaData,
+        ) => {
+          setEvmWallet({
+            walletName: connector.id,
+            walletPrettyName: walletConnectMetadata?.name ?? connector.name,
+            walletChainType: ChainType.EVM,
+            walletInfo: {
+              logo: walletConnectMetadata?.icons[0] ?? connector.icon,
+            },
+            chainId: chainID,
+          });
+        };
+
+        const connectWallet = async (chainIdToConnect = "1") => {
+          if (connector) {
+            console.log(connector);
+            await connector.disconnect();
           }
-          return evmAddress;
+          if (
+            isEvmConnected &&
+            chainId !== Number(chainIdToConnect) &&
+            connector.id === currentEvmConnector?.id
+          ) {
+            await connector?.switchChain?.({
+              chainId: Number(chainIdToConnect),
+            });
+            const account = await connector.getAccounts();
+
+            const provider = await connector.getProvider();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+            updateWalletState(account[0], walletConnectMetadata);
+            return account[0];
+          }
+
+          try {
+            const response = await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+            const account = await connector.getAccounts();
+            const provider = await connector.getProvider();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+            updateWalletState(response.accounts[0], walletConnectMetadata);
+
+            if (!sourceAsset) {
+              const chain = chains?.find((x) => x.chainID === "1");
+              const asset = assets?.find((x) => x.denom === "ethereum-native");
+              setSourceAsset({
+                chainID: chain?.chainID,
+                chainName: chain?.chainName,
+                ...asset,
+              });
+            }
+
+            callbacks?.onWalletConnected?.({
+              walletName: connector.name,
+              chainId: chainID,
+              address: account[0],
+            });
+            return account[0];
+          } catch (error) {
+            console.error(error);
+            throw error;
+          } finally {
+            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
+          }
         };
 
         const minimalWallet: MinimalWallet = {
@@ -101,84 +163,7 @@ export const useCreateEvmWallets = () => {
           walletInfo: {
             logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
-          connectEco: async () => {
-            if (
-              isEvmConnected &&
-              chainId !== Number(1) &&
-              connector.id === currentEvmConnector?.id
-            ) {
-              await connector?.switchChain?.({
-                chainId: Number(1),
-              });
-              return;
-            }
-            if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
-              await currentConnector?.disconnect();
-            }
-            try {
-              await connectAsync({ connector, chainId: Number(1) });
-              setEvmWallet({
-                walletName: connector.id,
-                chainType: ChainType.EVM,
-              });
-              const chain = chains?.find((x) => x.chainID === "1");
-              const asset = assets?.find((x) => x.denom === "ethereum-native");
-              setSourceAsset({
-                chainID: chain?.chainID,
-                chainName: chain?.chainName,
-                ...asset,
-              });
-              const account = await connector.getAccounts();
-              callbacks?.onWalletConnected?.({
-                walletName: connector.name,
-                chainId: chain?.chainID,
-                address: account[0],
-              });
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          },
-          connect: async () => {
-            if (
-              isEvmConnected &&
-              chainId !== Number(chainID) &&
-              connector.id === currentEvmConnector?.id
-            ) {
-              await connector?.switchChain?.({
-                chainId: Number(chainID),
-              });
-              return;
-            }
-            if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
-              await currentConnector?.disconnect();
-            }
-            try {
-              await connectAsync({ connector, chainId: Number(chainID) });
-              setEvmWallet({
-                walletName: connector.id,
-                chainType: ChainType.EVM,
-              });
-              const account = await connector.getAccounts();
-              callbacks?.onWalletConnected?.({
-                walletName: connector.name,
-                chainId: chainID,
-                address: account[0],
-              });
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          },
-          getAddress: async ({ signRequired, context }) => {
-            try {
-              const address = await evmGetAddress({ signRequired, context });
-              return address;
-            } catch (error) {
-              console.error(error);
-              throw error;
-            }
-          },
+          connect: async (chainId) => connectWallet(chainId),
           disconnect: async () => {
             await currentConnector?.disconnect();
             setEvmWallet(undefined);
@@ -186,6 +171,17 @@ export const useCreateEvmWallets = () => {
               walletName: connector.name,
               chainType: ChainType.EVM,
             });
+          },
+          getAddress: async ({ chainId }) => {
+            try {
+              const account = await connector.getAccounts();
+              if (account.length > 0) {
+                return account[0];
+              }
+              throw new Error("address not found in connected wallet");
+            } catch {
+              return await connectWallet(chainId);
+            }
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,
         };
@@ -224,18 +220,17 @@ export const useCreateEvmWallets = () => {
     [
       connectors,
       currentEvmConnector?.id,
-      mobile,
+      evmWallet?.address,
       isEvmConnected,
       chainId,
-      evmAddress,
       connectAsync,
-      disconnectAsync,
       setEvmWallet,
-      currentConnector,
+      sourceAsset,
+      callbacks,
       chains,
       assets,
       setSourceAsset,
-      callbacks,
+      currentConnector,
     ],
   );
 

@@ -1,12 +1,12 @@
 // useSwapExecutionState.ts
 import { useMemo } from "react";
-import { ChainAddress } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { useAtomValue } from "jotai";
 
 type UseSwapExecutionStateParams = {
-  chainAddresses: Record<number, ChainAddress>;
   route?: RouteResponse;
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: { status: string };
@@ -14,22 +14,19 @@ type UseSwapExecutionStateParams = {
 };
 
 export function useSwapExecutionState({
-  chainAddresses,
   route,
   overallStatus,
   isValidatingGasBalance,
   signaturesRemaining,
 }: UseSwapExecutionStateParams): SwapExecutionState {
+  const { userAddresses } = useAtomValue(swapExecutionStateAtom);
+
   return useMemo(() => {
-    if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
-    const requiredChainAddresses = route?.requiredChainAddresses;
-    if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
+    const destinationAddress = userAddresses[userAddresses.length - 1].address;
 
-    const allAddressesSet = requiredChainAddresses.every(
-      (_chainId, index) => chainAddresses[index]?.address,
+    const allAddressesSet = route?.requiredChainAddresses.every(
+      (_chainId, index) => userAddresses[index]?.address,
     );
-
-    const lastChainAddress = chainAddresses[requiredChainAddresses.length - 1]?.address;
 
     if (overallStatus === "completed") {
       return SwapExecutionState.confirmed;
@@ -54,7 +51,7 @@ export function useSwapExecutionState({
       return SwapExecutionState.waitingForSigning;
     }
 
-    if (!lastChainAddress) {
+    if (!destinationAddress) {
       return SwapExecutionState.destinationAddressUnset;
     }
 
@@ -64,7 +61,7 @@ export function useSwapExecutionState({
 
     return SwapExecutionState.ready;
   }, [
-    chainAddresses,
+    userAddresses,
     route?.requiredChainAddresses,
     overallStatus,
     isValidatingGasBalance,

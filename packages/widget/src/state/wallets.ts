@@ -2,6 +2,8 @@ import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
 import { ChainType, SignerGetters } from "@skip-go/client";
+import { Key } from "graz";
+import { atomWithStorage } from "jotai/utils";
 
 export type MinimalWallet = {
   walletName: string;
@@ -10,12 +12,12 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string;
   };
-  connectEco: () => Promise<void>;
-  connect: () => Promise<void>;
+  connect: (chainId?: string) => Promise<string | undefined>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
   getAddress?: (props: {
+    chainId?: string;
     signRequired?: boolean;
     context?: "recovery" | "destination";
     praxWallet?: {
@@ -25,9 +27,15 @@ export type MinimalWallet = {
   }) => Promise<string | undefined>;
 };
 
-type WalletState = {
+export type WalletState = {
   walletName: string;
-  chainType: string;
+  walletChainType?: ChainType;
+  walletPrettyName?: string;
+  walletInfo?: {
+    logo?: string;
+  };
+  chainId?: string | number;
+  isLedger?: boolean;
 };
 
 export type WalletConnect = {
@@ -45,9 +53,9 @@ export const walletConnectAtom = atom<WalletConnect>({
   },
 });
 
-export const evmWalletAtom = atom<WalletState>();
-export const cosmosWalletAtom = atom<WalletState>();
-export const svmWalletAtom = atom<WalletState>();
+export const evmWalletAtom = atom<WalletState | undefined>();
+export const cosmosWalletAtom = atom<WalletState | undefined>();
+export const svmWalletAtom = atom<WalletState | undefined>();
 
 export const walletsAtom = atom((get) => {
   return {

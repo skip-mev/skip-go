@@ -1,4 +1,4 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ShowWidget, Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
@@ -15,6 +15,31 @@ const DevMode = () => {
       setTheme("dark");
     }
   };
+
+  useEffect(() => {
+    const loadRemoteDebuggingScript = () => {
+      const ipAddress = window.location.hostname;
+      // assume local ip addresses start with 192*
+      if (!ipAddress.startsWith("192")) return;
+
+      // port is arbitrary but it's easier to have it auto set
+      const scriptSrc = `http://${ipAddress}:1234/target.js`;
+
+      const script = document.createElement("script");
+      script.src = scriptSrc;
+      script.async = true;
+      script.onload = () => {
+        console.log("Script loaded successfully");
+      };
+      script.onerror = (error) => {
+        console.log(error);
+        console.error("Error loading the script");
+      };
+
+      document.head.appendChild(script);
+    };
+    loadRemoteDebuggingScript();
+  }, []);
 
   return (
     <Column align="flex-end">

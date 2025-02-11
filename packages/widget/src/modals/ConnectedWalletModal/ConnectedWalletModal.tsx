@@ -67,12 +67,12 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
 
   const account = useMemo(() => {
     const _chainID = chainType === chain?.chainType ? sourceAsset?.chainID : chainID;
-    return getAccount(_chainID, true);
+    return getAccount(_chainID);
   }, [chain?.chainType, chainID, chainType, getAccount, sourceAsset?.chainID]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
-  const wallets = useWalletList({ chainType });
-  const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.wallet.name);
+  const wallets = useWalletList({ chainType, chainID });
+  const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.walletName);
 
   const renderDisconnectButton = useMemo(() => {
     if (isMobileScreenSize) {
@@ -119,14 +119,14 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
       leftContent={
         account ? (
           <Row align="center" gap={10}>
-            {account?.wallet.logo && (
+            {account?.walletInfo?.logo && (
               <img
                 height={35}
                 width={35}
                 style={{ objectFit: "cover" }}
-                src={account?.wallet.logo}
-                alt={`${account?.wallet.prettyName} logo`}
-                title={account?.wallet.prettyName}
+                src={account?.walletInfo?.logo}
+                alt={`${account?.walletPrettyName} logo`}
+                title={account?.walletPrettyName}
               />
             )}
             <Row align="baseline" gap={8}>
@@ -140,9 +140,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
               >
                 {truncatedAddress}
               </TextButton>
-              {chainType === "evm" && (
-                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
-              )}
+              {chainType === "evm" && <EvmChainIndicator chainId={account?.chainId} />}
             </Row>
           </Row>
         ) : (
@@ -157,7 +155,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         )
       }
       rightContent={
-        account && account.wallet.name !== "injected" ? (
+        account && account.walletName !== "injected" ? (
           renderDisconnectButton
         ) : (
           <RightArrowIcon color={theme.primary.text.normal} />
@@ -167,7 +165,7 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
   );
 };
 
-const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
+const EvmChainIndicator = ({ chainId }: { chainId?: string | number }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((chain) => chain.chainID === chainId);

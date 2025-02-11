@@ -43,7 +43,7 @@ export const ConnectedWalletContent = () => {
     <Row
       style={{
         paddingRight: 8,
-        gap: 1
+        gap: 1,
       }}
     >
       <GhostButton
@@ -53,10 +53,10 @@ export const ConnectedWalletContent = () => {
         align="center"
         gap={8}
       >
-        {sourceAccount?.wallet.logo && (
+        {sourceAccount?.walletInfo?.logo && (
           <img
             style={{ objectFit: "cover" }}
-            src={sourceAccount?.wallet.logo}
+            src={sourceAccount?.walletInfo?.logo}
             height={16}
             width={16}
           />

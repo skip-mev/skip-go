@@ -1,18 +1,14 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ClientOperation, getClientOperations } from "@/utils/clientType";
-import {
-  chainAddressesAtom,
-  skipSubmitSwapExecutionAtom,
-  swapExecutionStateAtom,
-} from "@/state/swapExecutionPage";
+import { skipSubmitSwapExecutionAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAutoSetAddress } from "@/hooks/useAutoSetAddress";
 import { useBroadcastedTxsStatus } from "./useBroadcastedTxs";
 import { useHandleTransactionTimeout } from "./useHandleTransactionTimeout";
@@ -40,11 +36,14 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
+  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance, userAddresses } =
     useAtomValue(swapExecutionStateAtom);
-  const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
+
+  useEffect(() => {
+    connectRequiredChains();
+  }, []);
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -70,7 +69,6 @@ export const SwapExecutionPage = () => {
   const lastOperation = clientOperations[clientOperations.length - 1];
 
   const swapExecutionState = useSwapExecutionState({
-    chainAddresses,
     route,
     overallStatus,
     isValidatingGasBalance,
@@ -126,9 +124,10 @@ export const SwapExecutionPage = () => {
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
         chainId: route?.destAssetChainID,
+        chainAddressIndex: userAddresses.length - 1,
       });
     };
-  }, [swapExecutionState, route?.destAssetChainID]);
+  }, [swapExecutionState, route?.destAssetChainID, userAddresses.length]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
