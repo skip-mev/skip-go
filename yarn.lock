@@ -6651,35 +6651,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/bech32m@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@penumbra-zone/bech32m@npm:7.0.0"
+"@penumbra-zone/bech32m@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "@penumbra-zone/bech32m@npm:13.0.0"
   dependencies:
     bech32: ^2.0.0
   peerDependencies:
-    "@penumbra-zone/protobuf": 6.0.0
-  checksum: 61261e725b9bf1a78c374e79b9400c2ca3795fe3895f0406aee72fb3ce45ab398604c3ef8de00386c0eb243eaec7424a0c5747713bd95459ee669b0ee8a27b10
+    "@penumbra-zone/protobuf": 7.2.0
+  checksum: b9d16419dd5d6e19545317a8d298a8a59ee78c2bdbe7df5d2890173f28f45ea1d4d75171394a3fc429d1ae0bbf2188da7bad2a65a0a9d96cb8edcca3d773d495
   languageName: node
   linkType: hard
 
-"@penumbra-zone/client@npm:^18.1.0":
-  version: 18.1.0
-  resolution: "@penumbra-zone/client@npm:18.1.0"
+"@penumbra-zone/client@npm:^24.0.0":
+  version: 24.0.0
+  resolution: "@penumbra-zone/client@npm:24.0.0"
   peerDependencies:
     "@bufbuild/protobuf": ^1.10.0
     "@connectrpc/connect": ^1.4.0
-    "@penumbra-zone/protobuf": 6.0.0
+    "@penumbra-zone/protobuf": 7.2.0
     "@penumbra-zone/transport-dom": 7.5.0
-  checksum: 90532ad9236db5ddefc8b53d9c05a8f6822366ed5f520cd2bf2bd6cf6fe19185bcb9da0bd10acfc6cbf4774142178d26bdfa6dd82ab9892c0a2cc63323d28b1f
+  checksum: 97de58d0ca2276903a0f89fadc7d9f6f2a5bedd156ad3f115f52f53038d1f4d8affdd36e35ed06b130b566aac69940f881ae036bc71a3451f4947c42e4214552
   languageName: node
   linkType: hard
 
-"@penumbra-zone/protobuf@npm:^6.0.0":
-  version: 6.1.0
-  resolution: "@penumbra-zone/protobuf@npm:6.1.0"
+"@penumbra-zone/protobuf@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@penumbra-zone/protobuf@npm:7.2.0"
   peerDependencies:
     "@bufbuild/protobuf": ^1.10.0
-  checksum: 46e3fb7f772bab341f0b199b7839f6f6407a9c11a45c1d9b12d17ec94fbec5ceed063c79f9177480b4d4da92f9f7fbb749b12345b3b5c0b17c30e479905cc6ff
+  checksum: 691b4805d52615bb73e13054817f46ccd4e644e40ba281314c0f79817c64c3f7ee7d282f7e544c7c35b32fe9bc875ccadb8546abc8d523e3b358376e14233e0c
   languageName: node
   linkType: hard
 
@@ -7616,9 +7616,9 @@ __metadata:
     "@initia/initia-registry": ^0.2.3
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
-    "@penumbra-zone/bech32m": ^7.0.0
-    "@penumbra-zone/client": ^18.1.0
-    "@penumbra-zone/protobuf": ^6.0.0
+    "@penumbra-zone/bech32m": ^13.0.0
+    "@penumbra-zone/client": ^24.0.0
+    "@penumbra-zone/protobuf": ^7.2.0
     "@penumbra-zone/transport-dom": ^7.5.0
     "@r2wc/react-to-web-component": ^2.0.3
     "@sentry/react": ^8.46.0
