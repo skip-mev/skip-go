@@ -7652,6 +7652,7 @@ __metadata:
     "@walletconnect/modal": 2.7.0
     "@walletconnect/sign-client": 2.17.2
     "@walletconnect/solana-adapter": ^0.0.6
+    bech32: ^2.0.0
     buffer: ^6.0.3
     chain-registry: ^1.69.117
     eslint: ^9.9.0
