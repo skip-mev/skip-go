@@ -59,7 +59,7 @@ export const useCreateCosmosWallets = () => {
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
 
-        const updateWalletState = (addressMap: Record<string, Key>) => {
+        const updateWalletState = () => {
           setCosmosWallet({
             walletName: wallet,
             walletPrettyName: walletInfo?.name,
@@ -67,7 +67,6 @@ export const useCreateCosmosWallets = () => {
             walletInfo: {
               logo: walletInfo?.imgSrc,
             },
-            addressMap: addressMap,
           });
         };
 

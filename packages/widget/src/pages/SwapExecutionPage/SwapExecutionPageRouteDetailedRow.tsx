@@ -25,8 +25,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
   isSignRequired?: boolean;
-  index: number;
-  context: "source" | "destination" | "intermediary";
+  userAddressIndex: number;
   account?: {
     address: string;
     image?: string;
@@ -41,8 +40,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   onClickEditDestinationWallet,
   explorerLink,
   isSignRequired,
-  index,
-  context,
+  userAddressIndex,
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
@@ -57,13 +55,15 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const { userAddresses } = useAtomValue(swapExecutionStateAtom);
   const getAccount = useGetAccount();
 
+  const isLastOperation = userAddressIndex === userAddresses.length - 1;
+
   const shouldRenderEditDestinationWallet =
-    context === "destination" && onClickEditDestinationWallet !== undefined;
+    isLastOperation && onClickEditDestinationWallet !== undefined;
 
   const renderingEditDestinationWalletOrExplorerLink =
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
-  const address = userAddresses[index]?.address;
+  const address = userAddresses[userAddressIndex]?.address;
   const walletInfo = getAccount(chainId)?.walletInfo;
 
   const renderAddress = useMemo(() => {

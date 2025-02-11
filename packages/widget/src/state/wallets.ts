@@ -34,8 +34,6 @@ export type WalletState = {
   walletInfo?: {
     logo?: string;
   };
-  addressMap?: Record<string, Key | undefined>;
-  address?: string;
   chainId?: string | number;
   isLedger?: boolean;
 };
@@ -55,9 +53,9 @@ export const walletConnectAtom = atom<WalletConnect>({
   },
 });
 
-export const evmWalletAtom = atomWithStorage<WalletState | undefined>("evmWallet", undefined);
-export const cosmosWalletAtom = atomWithStorage<WalletState | undefined>("cosmosWallet", undefined);
-export const svmWalletAtom = atomWithStorage<WalletState | undefined>("svmWallet", undefined);
+export const evmWalletAtom = atom<WalletState | undefined>();
+export const cosmosWalletAtom = atom<WalletState | undefined>();
+export const svmWalletAtom = atom<WalletState | undefined>();
 
 export const walletsAtom = atom((get) => {
   return {

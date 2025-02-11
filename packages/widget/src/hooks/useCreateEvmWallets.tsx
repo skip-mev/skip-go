@@ -30,7 +30,12 @@ export const useCreateEvmWallets = () => {
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
 
-  const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
+  const {
+    connector: currentEvmConnector,
+    address: evmAddress,
+    isConnected: isEvmConnected,
+    chainId,
+  } = useAccount();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
   const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
@@ -54,51 +59,36 @@ export const useCreateEvmWallets = () => {
         const isWalletConnect = connector.id === "walletConnect";
 
         const evmGetAddress: MinimalWallet["getAddress"] = async ({ signRequired }) => {
-          if (evmWallet?.address) {
-            return evmWallet?.address;
-          } else {
-            const walletConnectedButNeedToSwitchChain =
-              signRequired &&
-              isEvmConnected &&
-              chainId !== Number(chainID) &&
-              connector.id === currentEvmConnector?.id;
-            console.log("walletConnectedButNeedToSwitchChain", walletConnectedButNeedToSwitchChain);
-            if (walletConnectedButNeedToSwitchChain) {
-              await connector?.switchChain?.({
-                chainId: Number(chainID),
-              });
-              return evmWallet?.address;
-            }
-
-            const res = await connectAsync({
-              connector,
+          const walletConnectedButNeedToSwitchChain =
+            signRequired &&
+            isEvmConnected &&
+            chainId !== Number(chainID) &&
+            connector.id === currentEvmConnector?.id;
+          console.log("walletConnectedButNeedToSwitchChain", walletConnectedButNeedToSwitchChain);
+          if (walletConnectedButNeedToSwitchChain) {
+            await connector?.switchChain?.({
               chainId: Number(chainID),
             });
-
-            const provider = await connector.getProvider();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const walletConnectMetadata = (provider as any).session?.peer?.metadata;
-
-            updateWalletState(res.accounts[0], walletConnectMetadata);
-            return res.accounts[0];
+            return evmAddress;
           }
+
+          const res = await connectAsync({
+            connector,
+            chainId: Number(chainID),
+          });
+
+          const provider = await connector.getProvider();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+
+          updateWalletState(res.accounts[0], walletConnectMetadata);
+          return res.accounts[0];
         };
 
         const updateWalletState = (
           address: string,
           walletConnectMetadata: WalletConnectMetaData,
         ) => {
-          console.log({
-            walletName: connector.id,
-            walletPrettyName: walletConnectMetadata?.name ?? connector.name,
-            walletChainType: ChainType.EVM,
-            walletInfo: {
-              logo: walletConnectMetadata?.icons[0] ?? connector.icon,
-            },
-            address: address,
-            chainId,
-          });
-
           setEvmWallet({
             walletName: connector.id,
             walletPrettyName: walletConnectMetadata?.name ?? connector.name,
@@ -106,7 +96,6 @@ export const useCreateEvmWallets = () => {
             walletInfo: {
               logo: walletConnectMetadata?.icons[0] ?? connector.icon,
             },
-            address: address.toLowerCase(),
             chainId: chainID,
           });
         };

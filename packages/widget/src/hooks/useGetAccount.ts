@@ -5,20 +5,30 @@ import {
   svmWalletAtom,
   connectedAddressesAtom,
   WalletState,
+  walletsAtom,
 } from "@/state/wallets";
 import { useAtomValue } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
+import { useAccount as useCosmosAccount, WalletType } from "graz";
+import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 
 export const useGetAccount = () => {
+  const wallets = useAtomValue(walletsAtom);
   const evmWallet = useAtomValue(evmWalletAtom);
   const cosmosWallet = useAtomValue(cosmosWalletAtom);
   const svmWallet = useAtomValue(svmWalletAtom);
   const connectedAddress = useAtomValue(connectedAddressesAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
+  const evmAccount = useEvmAccount();
+
+  const { data: cosmosAccounts, walletType } = useCosmosAccount({
+    multiChain: true,
+  });
+
   const getAccount = useCallback(
-    (chainId?: string) => {
+    (chainId?: string, checkChainType?: boolean) => {
       if (!chainId) return;
       const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
@@ -30,17 +40,29 @@ export const useGetAccount = () => {
         } as WalletState;
       }
 
+      const getCosmosAccount = () => {
+        if (!cosmosAccounts || !chainId) return;
+        return cosmosAccounts[chainId];
+      };
+      const cosmosAccount = getCosmosAccount();
+
       switch (chainType) {
         case ChainType.Cosmos: {
-          if (!cosmosWallet) return;
+          if (!cosmosAccount) return;
+          if (!wallets.cosmos) return;
+
           return {
             ...cosmosWallet,
-            address: cosmosWallet?.addressMap?.[chainId]?.bech32Address,
+            address: cosmosAccount.bech32Address,
           };
         }
         case ChainType.EVM: {
-          if (!evmWallet) return;
-          return evmWallet;
+          if (!wallets.evm) return;
+          if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
+          if (!evmAccount.address) return;
+          if (!evmAccount.connector) return;
+
+          return { ...evmWallet, address: evmAccount.address as string };
         }
         case ChainType.SVM: {
           if (!svmWallet) return;
@@ -50,7 +72,7 @@ export const useGetAccount = () => {
           return undefined;
       }
     },
-    [chains, connectedAddress, cosmosWallet, evmWallet, svmWallet],
+    [chains, connectedAddress, cosmosAccounts, cosmosWallet, evmWallet, svmWallet, wallets.cosmos],
   );
 
   return getAccount;
