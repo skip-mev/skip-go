@@ -96,7 +96,9 @@ export const RenderWalletList = ({
         if (!chainId || !chainType) return;
         const address = await wallet.getAddress?.({
           praxWallet: {
-            sourceChainID: chainAddresses[0]?.chainID,
+            sourceChainID: chainAddressIndex
+              ? chainAddresses[chainAddressIndex - 1]?.chainID
+              : undefined,
           },
         });
         setChainAddresses((prev) => {
