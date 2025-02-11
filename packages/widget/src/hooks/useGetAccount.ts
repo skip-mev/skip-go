@@ -84,6 +84,7 @@ export const useGetAccount = () => {
     setEvmWallet,
     updateEvmWallet,
     updateSvmWallet,
+    cosmosAccounts,
   ]);
 
   const getAccount = useCallback(
@@ -101,35 +102,6 @@ export const useGetAccount = () => {
           },
         };
       }
-      // switch (chainType) {
-      //   case ChainType.Cosmos:
-      //     if (walletType && cosmosWallet === undefined) {
-      //       setCosmosWallet({
-      //         walletName: walletType,
-      //         chainType: ChainType.Cosmos,
-      //       });
-      //     }
-      //     break;
-      //   case ChainType.SVM:
-      //     if (solanaWallet && svmWallet === undefined) {
-      //       setSvmWallet({
-      //         walletName: solanaWallet.name,
-      //         chainType: ChainType.SVM,
-      //       });
-      //     }
-      //     break;
-      //   case ChainType.EVM:
-      //     if (evmAccount.connector && evmWallet === undefined) {
-      //       setEvmWallet((prev) => ({
-      //         ...prev,
-      //         walletName: prev?.walletName ?? evmAccount.connector?.id ?? "",
-      //         chainType: ChainType.EVM,
-      //       }));
-      //     }
-      //     break;
-      //   default:
-      //     break;
-      // }
 
       const getCosmosAccount = () => {
         if (!cosmosAccounts || !chainId) return;
@@ -184,13 +156,22 @@ export const useGetAccount = () => {
         case ChainType.SVM: {
           if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
+
+          const getLogo = () => {
+            if (solanaWallet.name === "WalletConnect") {
+              return svmWallet?.logo ?? walletConnectLogo;
+            }
+
+            return solanaWallet.icon;
+          };
+
           return {
             address: solanaWallet.publicKey.toBase58(),
             chainType,
             wallet: {
               name: solanaWallet.name as string,
               prettyName: solanaWallet.name as string,
-              logo: solanaWallet.name === "WalletConnect" ? walletConnectLogo : solanaWallet.icon,
+              logo: getLogo(),
             },
           };
         }
