@@ -115,57 +115,12 @@ export const RenderWalletList = ({
         });
         return null;
       }
-      const mobile = isMobile();
-      if (mobile) {
-        switch (chainType) {
-          case ChainType.EVM:
-            if (walletAtom.cosmos) {
-              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-              await cosmosWallet.disable?.();
-              await disconnectAsync();
-              setCosmosWallet(undefined);
-            }
-            if (walletAtom.svm) {
-              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-              await svmWallet?.disconnect?.();
-              setSVMWallet(undefined);
-            }
-            break;
-          case ChainType.SVM:
-            if (walletAtom.evm) {
-              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-              await evmWallet?.disconnect?.();
-              setEVMWallet(undefined);
-            }
-            if (walletAtom.cosmos) {
-              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-              await cosmosWallet.disable?.();
-              await disconnectAsync();
-              setCosmosWallet(undefined);
-            }
-            break;
-          case ChainType.Cosmos:
-            if (walletAtom.evm) {
-              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-              await evmWallet?.disconnect?.();
-              setEVMWallet(undefined);
-            }
-            if (walletAtom.svm) {
-              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-              await svmWallet?.disconnect?.();
-              setSVMWallet(undefined);
-            }
-            break;
-          default:
-            break;
-        }
-      }
 
       if (isConnectEco) {
         clearAssetInputAmounts();
-        return await wallet.connectEco();
+        return await wallet.connect();
       }
-      return await wallet.connect();
+      return await wallet.connect(chainId);
     },
     onSuccess: () => {
       if (isConnectEco) {

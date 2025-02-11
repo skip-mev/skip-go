@@ -10,8 +10,7 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string;
   };
-  connectEco: () => Promise<void>;
-  connect: () => Promise<void>;
+  connect: (chainId?: string) => Promise<string | undefined>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
@@ -28,6 +27,7 @@ export type MinimalWallet = {
 type WalletState = {
   walletName: string;
   chainType: string;
+  logo?: string;
 };
 
 export type WalletConnect = {

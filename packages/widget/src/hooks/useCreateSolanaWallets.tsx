@@ -2,12 +2,13 @@ import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { isMobile } from "@/utils/os";
+import { WalletConnectMetaData } from "./useCreateEvmWallets";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -22,6 +23,15 @@ export const useCreateSolanaWallets = () => {
 
     for (const wallet of solanaWallets) {
       const isWalletConnect = wallet.name === "WalletConnect";
+
+      const updateWalletState = (walletConnectMetadata?: WalletConnectMetaData) => {
+        setSvmWallet({
+          walletName: walletConnectMetadata?.name ?? wallet.name,
+          chainType: ChainType.SVM,
+          logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
+        });
+      };
+
       const minimalWallet: MinimalWallet = {
         walletName: wallet.name,
         walletPrettyName: wallet.name,
@@ -29,47 +39,41 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async () => {
+        connect: async (chainId?: string) => {
           try {
             await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
-            const chain = chains?.find((x) => x.chainID === "solana");
-
-            const address = wallet.publicKey?.toBase58();
-            callbacks?.onWalletConnected?.({
-              walletName: wallet.name,
-              chainId: chain?.chainID,
-              address,
-            });
-          } catch (error) {
-            console.error(error);
-            throw error;
-          }
-        },
-        connectEco: async () => {
-          try {
-            await wallet.connect();
-            setSvmWallet({ walletName: wallet.name, chainType: ChainType.SVM });
             const chain = chains?.find((x) => x.chainID === "solana");
             const asset = assets?.find(
               (x) =>
                 x.denom.toLowerCase() ===
                 "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
             );
-            setSourceAsset({
-              chainID: chain?.chainID,
-              chainName: chain?.chainName,
-              ...asset,
-            });
+
+            if (chainId === undefined) {
+              setSourceAsset({
+                chainID: chain?.chainID,
+                chainName: chain?.chainName,
+                ...asset,
+              });
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
+              ?.peer?.metadata;
+
             const address = wallet.publicKey?.toBase58();
+            updateWalletState(address, walletConnectMetadata);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
               address,
             });
+            return address;
           } catch (error) {
             console.error(error);
             throw error;
+          } finally {
+            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
           }
         },
         getAddress: async ({ signRequired }) => {
@@ -120,6 +124,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, callbacks, assets, setSourceAsset, mobile]);
+  }, [setSvmWallet, chains, assets, callbacks, setSourceAsset, mobile]);
   return { createSolanaWallets };
 };
