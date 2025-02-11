@@ -7585,6 +7585,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
+    bech32: ^2.0.0
     chain-registry: ^1.69.117
     cosmjs-types: ^0.9.0
     create-hash: ^1.2.0
@@ -24961,7 +24962,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.21.0
     "@typescript-eslint/parser": ^6.21.0
     axios: 1.x
-    bech32: ^2.0.0
     cosmjs-types: 0.9.0
     eslint: ^8.56.0
     eslint-config-prettier: ^9.1.0
