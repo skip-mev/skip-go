@@ -2,21 +2,33 @@ import { fromBech32 } from "@cosmjs/encoding";
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 import { ChainType } from "@skip-go/client";
+import { bech32m } from "bech32";
 
 type isValidWalletAddressProps = {
   address: string;
   chainType: ChainType | string;
   bech32Prefix: string;
+  chainId?: string;
 };
 
 export const isValidWalletAddress = ({
   address,
   chainType,
   bech32Prefix,
+  chainId,
 }: isValidWalletAddressProps) => {
   switch (chainType) {
     case ChainType.Cosmos:
       try {
+        if (chainId?.includes("penumbra")) {
+          try {
+            return bech32Prefix === bech32m.decode(address, 143)?.prefix;
+          } catch {
+            // The temporary solution to route around Noble address breakage.
+            // This can be entirely removed once `noble-1` upgrades.
+            return ["penumbracompat1", "tpenumbra"].includes(fromBech32(address).prefix);
+          }
+        }
         const { prefix } = fromBech32(address);
         return bech32Prefix === prefix;
       } catch (_error) {
