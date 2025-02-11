@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.3.2
+
+### Patch Changes
+
+- 04fe86d: penumbra wallet address fixes
+- Updated dependencies [04fe86d]
+  - @skip-go/client@0.16.11
+
 ## 3.3.1
 
 ### Patch Changes
