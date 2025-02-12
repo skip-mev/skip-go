@@ -8,7 +8,7 @@ import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
@@ -60,7 +60,7 @@ export const RenderWalletList = ({
 }: RenderWalletListProps) => {
   const theme = useTheme();
 
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -77,7 +77,13 @@ export const RenderWalletList = ({
     mutationFn: async (wallet: MinimalWallet) => {
       if (isDestinationAddress) {
         if (!chainId || !chainType) return;
-        const address = await wallet.getAddress?.({});
+        const address = await wallet.getAddress?.({
+          praxWallet: {
+            sourceChainID: chainAddressIndex
+              ? chainAddresses[chainAddressIndex - 1]?.chainID
+              : undefined,
+          },
+        });
         setChainAddresses((prev) => {
           const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
           return {

@@ -6651,7 +6651,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/bech32m@npm:13.0.0":
+"@penumbra-zone/bech32m@npm:^13.0.0":
   version: 13.0.0
   resolution: "@penumbra-zone/bech32m@npm:13.0.0"
   dependencies:
@@ -6662,7 +6662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/client@npm:24.0.0":
+"@penumbra-zone/client@npm:^24.0.0":
   version: 24.0.0
   resolution: "@penumbra-zone/client@npm:24.0.0"
   peerDependencies:
@@ -6674,7 +6674,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@penumbra-zone/protobuf@npm:7.2.0":
+"@penumbra-zone/protobuf@npm:^7.2.0":
   version: 7.2.0
   resolution: "@penumbra-zone/protobuf@npm:7.2.0"
   peerDependencies:
@@ -7585,6 +7585,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     axios: 1.x
+    bech32: ^2.0.0
     chain-registry: ^1.69.117
     cosmjs-types: ^0.9.0
     create-hash: ^1.2.0
@@ -7616,9 +7617,9 @@ __metadata:
     "@initia/initia-registry": ^0.2.3
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
-    "@penumbra-zone/bech32m": 13.0.0
-    "@penumbra-zone/client": 24.0.0
-    "@penumbra-zone/protobuf": 7.2.0
+    "@penumbra-zone/bech32m": ^13.0.0
+    "@penumbra-zone/client": ^24.0.0
+    "@penumbra-zone/protobuf": ^7.2.0
     "@penumbra-zone/transport-dom": ^7.5.0
     "@r2wc/react-to-web-component": ^2.0.3
     "@sentry/react": ^8.46.0
@@ -7651,6 +7652,7 @@ __metadata:
     "@walletconnect/modal": 2.7.0
     "@walletconnect/sign-client": 2.17.2
     "@walletconnect/solana-adapter": ^0.0.6
+    bech32: ^2.0.0
     buffer: ^6.0.3
     chain-registry: ^1.69.117
     eslint: ^9.9.0

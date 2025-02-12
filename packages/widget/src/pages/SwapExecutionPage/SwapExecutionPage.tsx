@@ -126,9 +126,10 @@ export const SwapExecutionPage = () => {
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
         chainId: route?.destAssetChainID,
+        chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };
-  }, [swapExecutionState, route?.destAssetChainID]);
+  }, [swapExecutionState, route]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple

@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.3.1",
+  "version": "3.3.4",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -98,9 +98,9 @@
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
-    "@penumbra-zone/bech32m": "13.0.0",
-    "@penumbra-zone/client": "24.0.0",
-    "@penumbra-zone/protobuf": "7.2.0",
+    "@penumbra-zone/bech32m": "^13.0.0",
+    "@penumbra-zone/client": "^24.0.0",
+    "@penumbra-zone/protobuf": "^7.2.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@r2wc/react-to-web-component": "^2.0.3",
     "@sentry/react": "^8.46.0",
@@ -118,6 +118,7 @@
     "@walletconnect/modal": "2.7.0",
     "@walletconnect/sign-client": "2.17.2",
     "@walletconnect/solana-adapter": "^0.0.6",
+    "bech32": "^2.0.0",
     "graz": "^0.1.30",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",

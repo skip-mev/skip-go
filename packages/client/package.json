@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.16.10",
+  "version": "0.16.11",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -57,6 +57,7 @@
     "@keplr-wallet/unit": "^0.12.143",
     "@solana/wallet-adapter-base": "^0.9.23",
     "axios": "1.x",
+    "bech32": "^2.0.0",
     "cosmjs-types": "^0.9.0",
     "create-hash": "^1.2.0",
     "keccak": "3.0.4"

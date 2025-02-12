@@ -2,6 +2,7 @@
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64, fromBech32 } from "@cosmjs/encoding";
+import { bech32m } from "bech32";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
@@ -42,13 +43,7 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import {
-  Chain,
-  isAddress,
-  maxUint256,
-  publicActions,
-  WalletClient,
-} from "viem";
+import { isAddress, maxUint256, publicActions, WalletClient } from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
 import {
@@ -1869,11 +1864,27 @@ export class SkipClient {
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
-            const { prefix } = fromBech32(userAddress.address);
-            return chain.bech32Prefix === prefix;
-          } catch (_error) {
+            if (chain.chainID.includes("penumbra")) {
+              try {
+                return (
+                  chain.bech32Prefix ===
+                  bech32m.decode(userAddress.address, 143)?.prefix
+                );
+              } catch {
+                // The temporary solution to route around Noble address breakage.
+                // This can be entirely removed once `noble-1` upgrades.
+                return ["penumbracompat1", "tpenumbra"].includes(
+                  fromBech32(userAddress.address).prefix,
+                );
+              }
+            }
+            return (
+              chain.bech32Prefix === fromBech32(userAddress.address).prefix
+            );
+          } catch {
             return false;
           }
+
         case types.ChainType.EVM:
           try {
             return isAddress(userAddress.address);
