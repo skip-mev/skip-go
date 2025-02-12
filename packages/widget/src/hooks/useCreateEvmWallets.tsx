@@ -103,7 +103,7 @@ export const useCreateEvmWallets = () => {
             if (shouldUpdateSourceWallet) {
               const provider = await connector.getProvider();
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+              const walletConnectMetadata = (provider as any)?.session?.peer?.metadata;
 
               updateSourceWallet(walletConnectMetadata);
               callbacks?.onWalletConnected?.({
