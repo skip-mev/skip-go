@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
-import { SpeedometerIcon } from "@/icons/SpeedometerIcon";
 import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
@@ -10,8 +9,7 @@ import { SignatureIcon } from "@/icons/SignatureIcon";
 import pluralize from "pluralize";
 import { styled } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
-import { swapSettingsAtom, defaultSwapSettings } from "@/state/swapPage";
-import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useSettingsChanged } from "@/hooks/useSettingsChanged";
 
 export type SwapPageFooterItemsProps = {
   rightContent?: React.ReactNode;
@@ -25,128 +23,55 @@ export const SwapPageFooterItems = ({
   showEstimatedTime,
 }: SwapPageFooterItemsProps) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
-  const swapSettings = useAtomValue(swapSettingsAtom);
-  const isMobileScreenSize = useIsMobileScreenSize();
+  const settingsChanged = useSettingsChanged();
 
-  const settingsChanged = useMemo(() => {
-    return (
-      swapSettings.slippage !== defaultSwapSettings.slippage ||
-      swapSettings.routePreference !== defaultSwapSettings.routePreference
-    );
-  }, [swapSettings]);
-
-  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
+  const estimatedTime = convertSecondsToMinutesOrHours(
+    route?.estimatedRouteDurationSeconds
+  );
 
   const routeRequiresMultipleSignatures = route?.txsRequired && route.txsRequired > 1;
 
   const renderSignatureRequired = useMemo(() => {
+    if (!route?.txsRequired) return null;
     return (
       <Row gap={4} align="center">
         <StyledSignatureRequiredContainer gap={5} align="center">
+          {route.txsRequired} {pluralize("Signature", route.txsRequired)} required
           <SignatureIcon />
-          {route?.txsRequired} {pluralize("Signature", route?.txsRequired)} required
         </StyledSignatureRequiredContainer>
       </Row>
     );
   }, [route?.txsRequired]);
 
-  const renderMobileContent = useMemo(() => {
-    const renderLeftContent = () => {
-      if (showRouteInfo && routeRequiresMultipleSignatures) {
-        return renderSignatureRequired;
-      }
-      return (
-        <Row align="center" gap={5}>
-          Powered by <SkipLogoIcon />
+  const poweredBy = (
+    <Row align="center" gap={5}>
+      Powered by <SkipLogoIcon />
+    </Row>
+  );
+
+  const rightContentRendered = rightContent ? (
+    rightContent
+  ) : !isLoading && showRouteInfo && route ? (
+    <Row align="center" gap={8}>
+      {routeRequiresMultipleSignatures && renderSignatureRequired}
+      {showEstimatedTime && estimatedTime && (
+        <Row gap={8}  align="center">
+          {estimatedTime}
+          <CogIconWrapper>
+            <CogIcon height={15} width={14} />
+            {settingsChanged && <SettingsChangedIndicator />}
+          </CogIconWrapper>
         </Row>
-      );
-    };
-    const renderRightContent = () => {
-      if (rightContent) return rightContent;
-      if (isLoading) return;
-      if (showRouteInfo && route) {
-        return (
-          <Row align="center" gap={8}>
-            {showEstimatedTime && estimatedTime && (
-              <Row gap={6} align="center">
-                <SpeedometerIcon />
-                {estimatedTime}
-                <CogIconWrapper>
-                  <CogIcon height={14} width={14} />
-                  {settingsChanged && <SettingsChangedIndicator />}
-                </CogIconWrapper>
-              </Row>
-            )}
-          </Row>
-        );
-      }
-    };
-    return (
-      <>
-        {renderLeftContent()}
-        {renderRightContent()}
-      </>
-    );
-  }, [
-    estimatedTime,
-    isLoading,
-    renderSignatureRequired,
-    rightContent,
-    route,
-    routeRequiresMultipleSignatures,
-    settingsChanged,
-    showEstimatedTime,
-    showRouteInfo,
-  ]);
+      )}
+    </Row>
+  ) : null;
 
-  const renderDesktopContent = useMemo(() => {
-    const renderRightContent = () => {
-      if (rightContent) return rightContent;
-      if (isLoading) return;
-      if (showRouteInfo && route) {
-        return (
-          <Row align="center" gap={8}>
-            {!isMobileScreenSize && routeRequiresMultipleSignatures && renderSignatureRequired}
-            {showEstimatedTime && estimatedTime && (
-              <Row gap={6} align="center">
-                <SpeedometerIcon />
-                {estimatedTime}
-                <CogIconWrapper>
-                  <CogIcon height={14} width={14} />
-                  {settingsChanged && <SettingsChangedIndicator />}
-                </CogIconWrapper>
-              </Row>
-            )}
-          </Row>
-        );
-      }
-    };
-    return (
-      <>
-        <Row align="center" gap={5}>
-          Powered by <SkipLogoIcon />
-        </Row>
-        {renderRightContent()}
-      </>
-    );
-  }, [
-    estimatedTime,
-    isLoading,
-    isMobileScreenSize,
-    renderSignatureRequired,
-    rightContent,
-    route,
-    routeRequiresMultipleSignatures,
-    settingsChanged,
-    showEstimatedTime,
-    showRouteInfo,
-  ]);
-
-  if (isMobileScreenSize) {
-    return renderMobileContent;
-  }
-
-  return renderDesktopContent;
+  return (
+    <FooterItemsContainer>
+      {poweredBy}
+      {rightContentRendered}
+    </FooterItemsContainer>
+  );
 };
 
 export const SwapPageFooter = ({
@@ -157,8 +82,7 @@ export const SwapPageFooter = ({
   ...props
 }: {
   onClick?: () => void;
-} & SwapPageFooterItemsProps &
-  React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+} & SwapPageFooterItemsProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <GhostButton
       gap={5}
@@ -176,6 +100,12 @@ export const SwapPageFooter = ({
     </GhostButton>
   );
 };
+
+const FooterItemsContainer = styled(Row)`
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};

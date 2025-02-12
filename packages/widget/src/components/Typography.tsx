@@ -14,6 +14,7 @@ type TextProps = {
   capitalize?: boolean;
   overflowEllipsis?: boolean;
   letterSpacing?: string;
+  border?: boolean;
 };
 
 export const removeButtonStyles = css`
@@ -74,10 +75,19 @@ export const SmallText = styled.p<TextProps>`
 `;
 
 export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
+  color: ${({ color, theme }) => color ?? theme.primary.text.normal};
   line-height: 15px;
   ${removeButtonStyles}
   cursor: pointer;
   letter-spacing: 0.01em;
+
+  ${({ border, color, theme }) =>
+    border &&
+    css`
+      border: 1px solid ${color ?? theme.primary.text.normal};
+      border-radius: 10px;
+      padding: 6px;
+    `}
 `;
 
 export const Text = styled(SmallText)`

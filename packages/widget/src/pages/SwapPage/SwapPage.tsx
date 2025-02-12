@@ -12,6 +12,7 @@ import {
   sourceAssetAmountAtom,
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
+  goFastWarningAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageFooter } from "./SwapPageFooter";
@@ -32,7 +33,7 @@ import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { useIsSwapOperation } from "@/hooks/useIsGoFast";
+import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 
@@ -55,6 +56,8 @@ export const SwapPage = () => {
   const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
+  const showGoFastWarning = useAtomValue(goFastWarningAtom);
+  const isGoFast = useIsGoFast(route)
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -231,45 +234,65 @@ export const SwapPage = () => {
     if (insufficientBalance) {
       return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
     }
+
+    const onClick = () => {
+      if (showCosmosLedgerWarning) {
+        setError({
+          errorType: ErrorType.CosmosLedgerWarning,
+          onClickBack: () => {
+            setError(undefined);
+          },
+        });
+        return;
+      }
+      if (
+        route?.warning?.type === "BAD_PRICE_WARNING" &&
+        Number(priceChangePercentage ?? 0) < 0
+      ) {
+        setError({
+          errorType: ErrorType.TradeWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setError(undefined);
+          },
+          route: { ...route },
+        });
+        return;
+      }
+
+      if (showGoFastWarning !== false && isGoFast) {
+        setError({
+          errorType: ErrorType.GoFastWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setCurrentPage(Routes.SwapPage);
+            setError(undefined);
+          },
+        });
+        return;
+      }
+      setChainAddresses({});
+      setCurrentPage(Routes.SwapExecutionPage);
+      setUser({ username: sourceAccount?.address });
+      setSwapExecutionState();
+    };
+
     return (
       <MainButton
         label={isSwapOperation ? "Swap" : "Send"}
         icon={ICONS.swap}
         disabled={!route}
-        onClick={() => {
-          if (showCosmosLedgerWarning) {
-            setError({
-              errorType: ErrorType.CosmosLedgerWarning,
-              onClickBack: () => {
-                setError(undefined);
-              },
-            });
-            return;
-          }
-          if (
-            route?.warning?.type === "BAD_PRICE_WARNING" &&
-            Number(priceChangePercentage ?? 0) < 0
-          ) {
-            setError({
-              errorType: ErrorType.TradeWarning,
-              onClickContinue: () => {
-                setError(undefined);
-                setChainAddresses({});
-                setCurrentPage(Routes.SwapExecutionPage);
-                setSwapExecutionState();
-              },
-              onClickBack: () => {
-                setError(undefined);
-              },
-              route: { ...route },
-            });
-            return;
-          }
-          setChainAddresses({});
-          setCurrentPage(Routes.SwapExecutionPage);
-          setUser({ username: sourceAccount?.address });
-          setSwapExecutionState();
-        }}
+        onClick={onClick}
       />
     );
   }, [

@@ -5,17 +5,22 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "@/state/errorPage";
+import { goFastWarningAtom } from "@/state/swapPage";
+import { SmallTextButton } from "@/components/Typography";
 
-export type ErrorPageAuthFailedProps = {
+export type ErrorPageGoFastWarningProps = {
   onClickBack: () => void;
+  onClickContinue: () => void;
 };
 
-export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) => {
+export const ErrorPageGoFastWarning = ({ onClickBack, onClickContinue }: ErrorPageGoFastWarningProps) => {
   const setErrorAtom = useSetAtom(errorAtom);
+  const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom)
   const theme = useTheme();
 
   const handleOnClickBack = () => {
     setErrorAtom(undefined);
+    setShowGoFastErrorAtom(false);
     onClickBack?.();
   };
 
@@ -29,8 +34,17 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
         }}
       />
       <ErrorPageContent
-        title="Transaction failed"
-        description="User rejected authentication request"
+        title="This route uses the GoFast protocol"
+        description={
+          
+          <SmallTextButton border onClick={() => {
+            onClickContinue?.()
+            setShowGoFastErrorAtom(false)
+          }
+          } color={theme.primary.text.lowContrast}>
+              I know the risk, continue anyway
+          </SmallTextButton>
+        }
         icon={ICONS.triangleWarning}
         backgroundColor={theme.warning.background}
         textColor={theme.warning.text}
