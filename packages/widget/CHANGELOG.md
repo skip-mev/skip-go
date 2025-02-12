@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.3.4
+
+### Patch Changes
+
+- d306a00: hotfix noble to penumbra address
+
 ## 3.3.3
 
 ### Patch Changes
