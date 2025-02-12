@@ -104,26 +104,17 @@ export const useCreateCosmosWallets = () => {
               });
             }
 
-            const chainIdToAddressMap = Object.fromEntries(
-              await Promise.all(
-                initialChainIds.map(async (chainId) => [
-                  chainId,
-                  (await getWallet(wallet).getKey(chainId)).bech32Address,
-                ]),
-              ),
+            const chainIdToAddressMap: Record<string, string> = Object.fromEntries(
+              Object.entries(response.accounts).map(([key, value]) => [key, value.bech32Address]),
             );
-            let address = undefined;
-
-            if (chainIdToConnect) {
-              address = (await getWallet(wallet).getKey(chainIdToConnect ?? "")).bech32Address;
-            }
+            const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
 
             if (shouldUpdateSourceWallet) {
               updateSourceWallet();
               callbacks?.onWalletConnected?.({
                 walletName: wallet,
-                chainIdToAddressMap,
-                address,
+                chainIdToAddressMap: chainIdToAddressMap,
+                address: address,
               });
             }
 
@@ -144,9 +135,6 @@ export const useCreateCosmosWallets = () => {
               return Promise.resolve(undefined);
             }
             throw e;
-          } finally {
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
           }
         };
 
