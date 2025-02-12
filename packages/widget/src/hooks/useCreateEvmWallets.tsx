@@ -30,7 +30,7 @@ export const useCreateEvmWallets = () => {
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
-  const { storeWalletConnectLocalStorageValues, restoreWalletConnectLocalStorageValues } =
+  const { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage } =
     useStoreAndRestoreWalletConnectLocalStorage();
 
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
@@ -148,12 +148,12 @@ export const useCreateEvmWallets = () => {
               return account[0];
             } catch (error) {
               console.error(error);
-              storeWalletConnectLocalStorageValues();
+              storeWalletConnectLocalStorage();
               const address = connectWallet({
                 chainIdToConnect: chainID,
                 shouldUpdateSourceWallet: false,
               });
-              restoreWalletConnectLocalStorageValues();
+              restoreWalletConnectLocalStorage();
               return address;
             }
           },

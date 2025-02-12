@@ -16,7 +16,7 @@ export const useCreateSolanaWallets = () => {
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
-  const { storeWalletConnectLocalStorageValues, restoreWalletConnectLocalStorageValues } =
+  const { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage } =
     useStoreAndRestoreWalletConnectLocalStorage();
 
   const createSolanaWallets = useCallback(() => {
@@ -97,9 +97,9 @@ export const useCreateSolanaWallets = () => {
             return address.toBase58();
           } catch (error) {
             console.error(error);
-            storeWalletConnectLocalStorageValues();
+            storeWalletConnectLocalStorage();
             const address = connectWallet({ shouldUpdateSourceWallet: false });
-            restoreWalletConnectLocalStorageValues();
+            restoreWalletConnectLocalStorage();
             return address;
           }
         },

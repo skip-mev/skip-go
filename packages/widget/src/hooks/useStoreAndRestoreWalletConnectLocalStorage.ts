@@ -7,7 +7,7 @@ export const useStoreAndRestoreWalletConnectLocalStorage = () => {
   const [walletConnectDeeplinkChoice, setWalletConnectDeeplinkChoice] = useState<string>();
   const [wcmRecentWalletData, setWcmRecentWalletData] = useState<string>();
 
-  const storeWalletConnectLocalStorageValues = () => {
+  const storeWalletConnectLocalStorage = () => {
     const walletConnectDeeplinkChoice = window.localStorage.getItem(DEEPLINK_CHOICE);
     const wcmRecentWalletData = window.localStorage.getItem(RECENT_WALLET_DATA);
 
@@ -19,7 +19,7 @@ export const useStoreAndRestoreWalletConnectLocalStorage = () => {
     }
   };
 
-  const restoreWalletConnectLocalStorageValues = () => {
+  const restoreWalletConnectLocalStorage = () => {
     if (walletConnectDeeplinkChoice) {
       window.localStorage.setItem(DEEPLINK_CHOICE, walletConnectDeeplinkChoice);
     }
@@ -28,5 +28,5 @@ export const useStoreAndRestoreWalletConnectLocalStorage = () => {
     }
   };
 
-  return { storeWalletConnectLocalStorageValues, restoreWalletConnectLocalStorageValues };
+  return { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage };
 };
