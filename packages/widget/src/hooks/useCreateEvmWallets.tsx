@@ -10,6 +10,7 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
+import { useStoreAndRestoreWalletConnectLocalStorage } from "./useStoreAndRestoreWalletConnectLocalStorage";
 
 export type WalletConnectMetaData = {
   name: string;
@@ -29,6 +30,8 @@ export const useCreateEvmWallets = () => {
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
+  const { storeWalletConnectLocalStorageValues, restoreWalletConnectLocalStorageValues } =
+    useStoreAndRestoreWalletConnectLocalStorage();
 
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
   const { connectAsync } = useConnect();
@@ -145,10 +148,13 @@ export const useCreateEvmWallets = () => {
               return account[0];
             } catch (error) {
               console.error(error);
-              return connectWallet({
+              storeWalletConnectLocalStorageValues();
+              const address = connectWallet({
                 chainIdToConnect: chainID,
                 shouldUpdateSourceWallet: false,
               });
+              restoreWalletConnectLocalStorageValues();
+              return address;
             }
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,

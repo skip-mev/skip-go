@@ -8,6 +8,7 @@ import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { WalletConnectMetaData } from "./useCreateEvmWallets";
+import { useStoreAndRestoreWalletConnectLocalStorage } from "./useStoreAndRestoreWalletConnectLocalStorage";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -15,6 +16,8 @@ export const useCreateSolanaWallets = () => {
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
+  const { storeWalletConnectLocalStorageValues, restoreWalletConnectLocalStorageValues } =
+    useStoreAndRestoreWalletConnectLocalStorage();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -94,7 +97,10 @@ export const useCreateSolanaWallets = () => {
             return address.toBase58();
           } catch (error) {
             console.error(error);
-            return connectWallet({ shouldUpdateSourceWallet: false });
+            storeWalletConnectLocalStorageValues();
+            const address = connectWallet({ shouldUpdateSourceWallet: false });
+            restoreWalletConnectLocalStorageValues();
+            return address;
           }
         },
         disconnect: async () => {
