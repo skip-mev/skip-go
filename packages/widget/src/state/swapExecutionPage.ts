@@ -93,6 +93,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const sourceAddress = requiredChainAddresses[0];
   const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
 
+  const initialChainAddresses: Record<number, ChainAddress> = {};
+
+  route?.requiredChainAddresses?.forEach((chainID, index) => {
+    initialChainAddresses[index] = {
+      chainID,
+      address: "",
+    };
+  });
+
+  set(chainAddressesAtom, initialChainAddresses);
+
   set(swapExecutionStateAtom, {
     userAddresses: [],
     transactionDetailsArray: [],
