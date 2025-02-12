@@ -61,6 +61,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             NiceModal.show(Modals.SetAddressModal, {
               signRequired: lastOperation.signRequired,
               chainId: destinationChainID,
+              chainAddressIndex: route.requiredChainAddresses.length - 1,
             });
           }}
         />
