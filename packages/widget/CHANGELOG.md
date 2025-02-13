@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.3.5
+
+### Patch Changes
+
+- 947ee9d: fix validation address issue
+- Updated dependencies [947ee9d]
+  - @skip-go/client@0.16.12
+
 ## 3.3.4
 
 ### Patch Changes
