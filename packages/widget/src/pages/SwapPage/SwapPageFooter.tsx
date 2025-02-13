@@ -25,9 +25,7 @@ export const SwapPageFooterItems = ({
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const settingsChanged = useSettingsChanged();
 
-  const estimatedTime = convertSecondsToMinutesOrHours(
-    route?.estimatedRouteDurationSeconds
-  );
+  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
   const routeRequiresMultipleSignatures = route?.txsRequired && route.txsRequired > 1;
 
@@ -55,7 +53,7 @@ export const SwapPageFooterItems = ({
     <Row align="center" gap={8}>
       {routeRequiresMultipleSignatures && renderSignatureRequired}
       {showEstimatedTime && estimatedTime && (
-        <Row gap={8}  align="center">
+        <Row gap={8} align="center">
           {estimatedTime}
           <CogIconWrapper>
             <CogIcon height={15} width={14} />
@@ -82,7 +80,8 @@ export const SwapPageFooter = ({
   ...props
 }: {
   onClick?: () => void;
-} & SwapPageFooterItemsProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+} & SwapPageFooterItemsProps &
+  React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <GhostButton
       gap={5}
