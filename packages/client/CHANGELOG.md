@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.12
+
+### Patch Changes
+
+- 947ee9d: fix validation address issue
+
 ## 0.16.11
 
 ### Patch Changes
