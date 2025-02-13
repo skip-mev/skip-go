@@ -17,6 +17,10 @@ export const isValidWalletAddress = ({
   bech32Prefix,
   chainId,
 }: isValidWalletAddressProps) => {
+  console.log("address", address);
+  console.log("chainType", chainType);
+  console.log("bech32Prefix", bech32Prefix);
+  console.log("chainId", chainId);
   switch (chainType) {
     case ChainType.Cosmos:
       try {
@@ -30,6 +34,7 @@ export const isValidWalletAddress = ({
           }
         }
         const { prefix } = fromBech32(address);
+        console.log("prefix", prefix);
         return bech32Prefix === prefix;
       } catch (_error) {
         return false;
