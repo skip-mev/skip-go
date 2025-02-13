@@ -3,7 +3,7 @@ import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { poweredBySkipGo, SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
+import { poweredBySkipGo } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
@@ -183,7 +183,6 @@ export const SwapSettingsDrawer = createModal(() => {
       </Row>
       <Row justify="space-between">
         <SmallTextButton
-          color={theme.primary.text.lowContrast}
           onClick={() => {
             NiceModal.hide(Modals.SwapSettingsDrawer);
           }}
