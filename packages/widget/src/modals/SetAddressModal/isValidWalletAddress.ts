@@ -16,10 +16,6 @@ export const isValidWalletAddress = ({
   bech32Prefix,
   chainId,
 }: isValidWalletAddressProps) => {
-  console.log("address", address);
-  console.log("chainType", chainType);
-  console.log("bech32Prefix", bech32Prefix);
-  console.log("chainId", chainId);
   if (chainId?.includes("penumbra")) {
     try {
       return bech32Prefix === bech32m.decode(address, 143)?.prefix;
@@ -32,13 +28,9 @@ export const isValidWalletAddress = ({
   switch (chainType) {
     case ChainType.Cosmos:
       try {
-        console.log("cosmos");
-        console.log("fromBech32(address)", bech32.decode(address));
         const { prefix } = bech32.decode(address);
-        console.log("prefix", prefix);
         return bech32Prefix === prefix;
       } catch (_error) {
-        console.log("error", _error);
         return false;
       }
     case ChainType.EVM:
@@ -55,7 +47,6 @@ export const isValidWalletAddress = ({
         return false;
       }
     default:
-      console.log("default");
       return false;
   }
 };

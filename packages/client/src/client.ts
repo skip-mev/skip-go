@@ -1,8 +1,8 @@
 /* eslint-disable prefer-const */
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
-import { fromBase64, fromBech32 } from "@cosmjs/encoding";
-import { bech32m } from "bech32";
+import { fromBase64 } from "@cosmjs/encoding";
+import { bech32m, bech32 } from "bech32";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
@@ -1874,12 +1874,12 @@ export class SkipClient {
                 // The temporary solution to route around Noble address breakage.
                 // This can be entirely removed once `noble-1` upgrades.
                 return ["penumbracompat1", "tpenumbra"].includes(
-                  fromBech32(userAddress.address).prefix,
+                  bech32.decode(userAddress.address).prefix,
                 );
               }
             }
             return (
-              chain.bech32Prefix === fromBech32(userAddress.address).prefix
+              chain.bech32Prefix === bech32.decode(userAddress.address).prefix
             );
           } catch {
             return false;
