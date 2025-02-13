@@ -259,7 +259,7 @@ export const SwapPage = () => {
         return;
       }
 
-      if (true ?? (showGoFastWarning !== false && isGoFast)) {
+      if (showGoFastWarning !== false && isGoFast) {
         setError({
           errorType: ErrorType.GoFastWarning,
           onClickContinue: () => {

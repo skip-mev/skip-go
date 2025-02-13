@@ -1,9 +1,9 @@
 import { styled, useTheme } from "styled-components";
 import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
-import { SmallText } from "@/components/Typography";
+import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
+import { poweredBySkipGo, SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
@@ -14,6 +14,8 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
 import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -179,9 +181,17 @@ export const SwapSettingsDrawer = createModal(() => {
           <u>Privacy Policy</u>
         </SmallText>
       </Row>
-      <SwapDetailText justify="space-between">
-        <SwapPageFooterItems showRouteInfo />
-      </SwapDetailText>
+      <Row justify="space-between">
+        <SmallTextButton
+          color={theme.primary.text.lowContrast}
+          onClick={() => {
+            NiceModal.hide(Modals.SwapSettingsDrawer);
+          }}
+        >
+          Close
+        </SmallTextButton>
+        <SmallText>{poweredBySkipGo}</SmallText>
+      </Row>
     </StyledSwapPageSettings>
   );
 });

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
@@ -10,20 +10,29 @@ import pluralize from "pluralize";
 import { styled } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { useSettingsChanged } from "@/hooks/useSettingsChanged";
+import { routePreferenceAtom } from "@/state/swapPage";
+import { RoutePreference } from "@/state/types";
 
 export type SwapPageFooterItemsProps = {
-  rightContent?: React.ReactNode;
+  content?: React.ReactNode;
   showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
 };
 
+export const poweredBySkipGo = (
+  <Row align="center" gap={5}>
+    Powered by <SkipLogoIcon />
+  </Row>
+);
+
 export const SwapPageFooterItems = ({
-  rightContent = null,
+  content = null,
   showRouteInfo,
   showEstimatedTime,
 }: SwapPageFooterItemsProps) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const settingsChanged = useSettingsChanged();
+  const routePreference = useAtomValue(routePreferenceAtom);
 
   const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
@@ -41,40 +50,50 @@ export const SwapPageFooterItems = ({
     );
   }, [route?.txsRequired]);
 
-  const poweredBy = (
-    <Row align="center" gap={5}>
-      Powered by <SkipLogoIcon />
-    </Row>
-  );
+  const renderRoutePreference = useMemo(() => {
+    switch (routePreference) {
+      case RoutePreference.FASTEST:
+        return "Fastest route";
+      case RoutePreference.CHEAPEST:
+        return "Cheapest route";
+    }
+  }, [routePreference]);
 
-  const rightContentRendered = rightContent ? (
-    rightContent
+  const renderContent = content ? (
+    content
   ) : !isLoading && showRouteInfo && route ? (
-    <Row align="center" gap={8}>
-      {routeRequiresMultipleSignatures && renderSignatureRequired}
+    <Row align="flex-end" gap={10} height={13}>
       {showEstimatedTime && estimatedTime && (
-        <Row gap={8} align="center">
-          {estimatedTime}
-          <CogIconWrapper>
-            <CogIcon height={15} width={14} />
-            {settingsChanged && <SettingsChangedIndicator />}
-          </CogIconWrapper>
-        </Row>
+        <>
+          <Row align="flex-end" gap={3}>
+            <CogIconWrapper>
+              <CogIcon />
+              {settingsChanged && <SettingsChangedIndicator />}
+            </CogIconWrapper>
+            Settings
+          </Row>
+          <Row gap={8} align="flex-end">
+            {estimatedTime}
+          </Row>
+        </>
       )}
+      {routeRequiresMultipleSignatures ? renderSignatureRequired : renderRoutePreference}
     </Row>
-  ) : null;
+  ) : (
+    <div></div>
+  );
 
   return (
     <FooterItemsContainer>
-      {poweredBy}
-      {rightContentRendered}
+      {renderContent}
+      {poweredBySkipGo}
     </FooterItemsContainer>
   );
 };
 
 export const SwapPageFooter = ({
   onClick,
-  rightContent,
+  content,
   showRouteInfo,
   showEstimatedTime,
   ...props
@@ -92,7 +111,7 @@ export const SwapPageFooter = ({
       {...props}
     >
       <SwapPageFooterItems
-        rightContent={rightContent}
+        content={content}
         showRouteInfo={showRouteInfo}
         showEstimatedTime={showEstimatedTime}
       />
@@ -110,9 +129,8 @@ export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
 `;
 
-const CogIconWrapper = styled.div`
+const CogIconWrapper = styled(Row)`
   position: relative;
-  display: inline-block;
 
   svg {
     display: block;
