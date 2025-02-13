@@ -15,7 +15,6 @@ import {
   goFastWarningAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
-import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
