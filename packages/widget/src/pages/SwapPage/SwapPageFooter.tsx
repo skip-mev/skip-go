@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
@@ -12,6 +12,8 @@ import { CogIcon } from "@/icons/CogIcon";
 import { useSettingsChanged } from "@/hooks/useSettingsChanged";
 import { routePreferenceAtom } from "@/state/swapPage";
 import { RoutePreference } from "@/state/types";
+import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
@@ -33,6 +35,8 @@ export const SwapPageFooterItems = ({
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const settingsChanged = useSettingsChanged();
   const routePreference = useAtomValue(routePreferenceAtom);
+  const isMobileScreenSize = useIsMobileScreenSize();
+  const isGoFast = useIsGoFast(route);
 
   const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
@@ -42,7 +46,7 @@ export const SwapPageFooterItems = ({
     if (!route?.txsRequired) return null;
     return (
       <Row gap={4} align="center">
-        <StyledSignatureRequiredContainer gap={5} align="center">
+        <StyledSignatureRequiredContainer gap={5} align="flex-end">
           {route.txsRequired} {pluralize("Signature", route.txsRequired)} required
           <SignatureIcon />
         </StyledSignatureRequiredContainer>
@@ -59,36 +63,110 @@ export const SwapPageFooterItems = ({
     }
   }, [routePreference]);
 
-  const renderContent = content ? (
-    content
-  ) : !isLoading && showRouteInfo && route ? (
-    <Row align="flex-end" gap={10} height={13}>
-      {showEstimatedTime && estimatedTime && (
-        <>
-          <Row align="flex-end" gap={3}>
-            <CogIconWrapper>
-              <CogIcon />
-              {settingsChanged && <SettingsChangedIndicator />}
-            </CogIconWrapper>
-            Settings
+  const renderMobileContent = useMemo(() => {
+    const renderRightContent = () => {
+      if (isGoFast) {
+        return renderRoutePreference;
+      }
+      return poweredBySkipGo;
+    };
+    const renderLeftContent = () => {
+      if (content) return content;
+      if (isLoading) return;
+      if (showRouteInfo && route) {
+        return (
+          <Row align="flex-end" gap={8}>
+            {showEstimatedTime && estimatedTime && (
+              <>
+                <Row align="flex-end" gap={3}>
+                  <CogIconWrapper>
+                    <CogIcon />
+                    {settingsChanged && <SettingsChangedIndicator />}
+                  </CogIconWrapper>
+                  Settings
+                </Row>
+                <Row gap={8} align="flex-end">
+                  {estimatedTime}
+                </Row>
+              </>
+            )}
           </Row>
-          <Row gap={8} align="flex-end">
-            {estimatedTime}
-          </Row>
-        </>
-      )}
-      {routeRequiresMultipleSignatures ? renderSignatureRequired : renderRoutePreference}
-    </Row>
-  ) : (
-    <div></div>
-  );
+        );
+      }
+    };
+    return (
+      <>
+        {renderLeftContent() ?? <div />}
+        {renderRightContent()}
+      </>
+    );
+  }, [
+    content,
+    estimatedTime,
+    isGoFast,
+    isLoading,
+    renderRoutePreference,
+    route,
+    settingsChanged,
+    showEstimatedTime,
+    showRouteInfo,
+  ]);
 
-  return (
-    <FooterItemsContainer>
-      {renderContent}
-      {poweredBySkipGo}
-    </FooterItemsContainer>
-  );
+  const renderDesktopContent = useMemo(() => {
+    const renderLeftContent = () => {
+      if (content) return content;
+      if (isLoading) return;
+      if (showRouteInfo && route) {
+        return (
+          <Row align="flex-end" gap={10} height={13}>
+            {showEstimatedTime && estimatedTime && (
+              <>
+                <Row align="flex-end" gap={3}>
+                  <CogIconWrapper>
+                    <CogIcon />
+                    {settingsChanged && <SettingsChangedIndicator />}
+                  </CogIconWrapper>
+                  Settings
+                </Row>
+                <Row gap={8} align="flex-end">
+                  {estimatedTime}
+                </Row>
+              </>
+            )}
+            {routeRequiresMultipleSignatures
+              ? renderSignatureRequired
+              : isGoFast
+                ? renderRoutePreference
+                : null}
+          </Row>
+        );
+      }
+    };
+    return (
+      <>
+        {renderLeftContent() ?? <div />}
+        {poweredBySkipGo}
+      </>
+    );
+  }, [
+    content,
+    estimatedTime,
+    isGoFast,
+    isLoading,
+    renderRoutePreference,
+    renderSignatureRequired,
+    route,
+    routeRequiresMultipleSignatures,
+    settingsChanged,
+    showEstimatedTime,
+    showRouteInfo,
+  ]);
+
+  if (isMobileScreenSize) {
+    return renderMobileContent;
+  }
+
+  return renderDesktopContent;
 };
 
 export const SwapPageFooter = ({
@@ -118,12 +196,6 @@ export const SwapPageFooter = ({
     </GhostButton>
   );
 };
-
-const FooterItemsContainer = styled(Row)`
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
