@@ -139,8 +139,11 @@ export const useCreateEvmWallets = () => {
               chainType: ChainType.EVM,
             });
           },
-          getAddress: async () => {
+          getAddress: async ({ signRequired }) => {
             try {
+              if (signRequired) {
+                throw new Error("always prompt wallet connection");
+              }
               const account = await connector.getAccounts();
               if (account.length === 0) {
                 throw new Error("No accounts found");
@@ -197,16 +200,18 @@ export const useCreateEvmWallets = () => {
     [
       connectors,
       currentEvmConnector?.id,
+      setEvmWallet,
       isEvmConnected,
       chainId,
-      connectAsync,
-      setEvmWallet,
       sourceAsset,
-      callbacks,
       currentConnector,
+      connectAsync,
       chains,
       assets,
       setSourceAsset,
+      callbacks,
+      storeWalletConnectLocalStorage,
+      restoreWalletConnectLocalStorage,
     ],
   );
 

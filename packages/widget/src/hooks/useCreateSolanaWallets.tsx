@@ -88,8 +88,11 @@ export const useCreateSolanaWallets = () => {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
         connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
-        getAddress: async () => {
+        getAddress: async ({ signRequired }) => {
           try {
+            if (signRequired) {
+              throw new Error("always prompt wallet connection");
+            }
             const address = wallet.publicKey;
             if (!address) {
               throw new Error("Address not found");
@@ -117,6 +120,14 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, assets, callbacks, setSourceAsset]);
+  }, [
+    setSvmWallet,
+    chains,
+    assets,
+    setSourceAsset,
+    callbacks,
+    storeWalletConnectLocalStorage,
+    restoreWalletConnectLocalStorage,
+  ]);
   return { createSolanaWallets };
 };

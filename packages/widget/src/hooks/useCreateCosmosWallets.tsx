@@ -156,8 +156,11 @@ export const useCreateCosmosWallets = () => {
               chainType: ChainType.Cosmos,
             });
           },
-          getAddress: async () => {
+          getAddress: async ({ signRequired }) => {
             try {
+              if (signRequired) {
+                throw new Error("always prompt wallet connection");
+              }
               if (!chainId) {
                 throw new Error("no chain id");
               }
