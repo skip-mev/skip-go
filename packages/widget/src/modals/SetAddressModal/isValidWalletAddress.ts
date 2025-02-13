@@ -39,6 +39,7 @@ export const isValidWalletAddress = ({
         console.log("prefix", prefix);
         return bech32Prefix === prefix;
       } catch (_error) {
+        console.log("error", _error);
         return false;
       }
     case ChainType.EVM:
