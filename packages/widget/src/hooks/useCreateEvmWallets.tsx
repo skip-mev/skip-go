@@ -1,7 +1,11 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { evmWalletAtom, MinimalWallet } from "@/state/wallets";
+import {
+  evmWalletAtom,
+  MinimalWallet,
+  setWalletConnectDeepLinkByChainTypeAtom,
+} from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
@@ -10,7 +14,6 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-import { useStoreAndRestoreWalletConnectLocalStorage } from "./useStoreAndRestoreWalletConnectLocalStorage";
 
 export type WalletConnectMetaData = {
   name: string;
@@ -30,8 +33,7 @@ export const useCreateEvmWallets = () => {
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setEvmWallet = useSetAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
-  const { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage } =
-    useStoreAndRestoreWalletConnectLocalStorage();
+  const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
   const { connectAsync } = useConnect();
@@ -106,6 +108,7 @@ export const useCreateEvmWallets = () => {
               const walletConnectMetadata = (provider as any)?.session?.peer?.metadata;
 
               updateSourceWallet(walletConnectMetadata);
+              setWCDeepLinkByChainType(ChainType.EVM);
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,
                 chainId: chainID,
@@ -150,12 +153,10 @@ export const useCreateEvmWallets = () => {
               return account[0];
             } catch (error) {
               console.error(error);
-              storeWalletConnectLocalStorage();
               const address = connectWallet({
                 chainIdToConnect: chainID,
                 shouldUpdateSourceWallet: false,
               });
-              restoreWalletConnectLocalStorage();
               return address;
             }
           },
@@ -208,9 +209,8 @@ export const useCreateEvmWallets = () => {
       chains,
       assets,
       setSourceAsset,
+      setWCDeepLinkByChainType,
       callbacks,
-      storeWalletConnectLocalStorage,
-      restoreWalletConnectLocalStorage,
     ],
   );
 

@@ -1,14 +1,17 @@
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
+import {
+  MinimalWallet,
+  setWalletConnectDeepLinkByChainTypeAtom,
+  svmWalletAtom,
+} from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { WalletConnectMetaData } from "./useCreateEvmWallets";
-import { useStoreAndRestoreWalletConnectLocalStorage } from "./useStoreAndRestoreWalletConnectLocalStorage";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -16,8 +19,7 @@ export const useCreateSolanaWallets = () => {
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
-  const { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage } =
-    useStoreAndRestoreWalletConnectLocalStorage();
+  const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -63,6 +65,7 @@ export const useCreateSolanaWallets = () => {
             const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
               ?.peer?.metadata;
             updateSourceWallet(walletConnectMetadata);
+            setWCDeepLinkByChainType(ChainType.SVM);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
@@ -99,11 +102,9 @@ export const useCreateSolanaWallets = () => {
             return address.toBase58();
           } catch (error) {
             console.error(error);
-            storeWalletConnectLocalStorage();
             const address = connectWallet({
               shouldUpdateSourceWallet: false,
             });
-            restoreWalletConnectLocalStorage();
             return address;
           }
         },
@@ -127,9 +128,8 @@ export const useCreateSolanaWallets = () => {
     assets,
     sourceAsset,
     setSourceAsset,
+    setWCDeepLinkByChainType,
     callbacks,
-    storeWalletConnectLocalStorage,
-    restoreWalletConnectLocalStorage,
   ]);
   return { createSolanaWallets };
 };
