@@ -2,7 +2,7 @@ import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
@@ -13,7 +13,7 @@ import { useStoreAndRestoreWalletConnectLocalStorage } from "./useStoreAndRestor
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage } =
@@ -34,12 +34,11 @@ export const useCreateSolanaWallets = () => {
       };
 
       const connectWallet = async ({
-        chainIdToConnect,
-        shouldUpdateSourceWallet = true,
+        shouldUpdateSourceWallet = false,
       }: {
         chainIdToConnect?: string;
         shouldUpdateSourceWallet?: boolean;
-      }) => {
+      } = {}) => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
@@ -49,7 +48,7 @@ export const useCreateSolanaWallets = () => {
               "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
           );
 
-          if (chainIdToConnect === undefined) {
+          if (sourceAsset === undefined) {
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
@@ -69,6 +68,8 @@ export const useCreateSolanaWallets = () => {
               chainId: chain?.chainID,
               address,
             });
+          } else {
+            await wallet.disconnect();
           }
 
           return address;
@@ -85,7 +86,8 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
+        connect: async (chainId) =>
+          connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: true }),
         getAddress: async ({ signRequired }) => {
           try {
             if (signRequired) {
@@ -99,7 +101,7 @@ export const useCreateSolanaWallets = () => {
           } catch (error) {
             console.error(error);
             storeWalletConnectLocalStorage();
-            const address = connectWallet({ shouldUpdateSourceWallet: false });
+            const address = connectWallet();
             restoreWalletConnectLocalStorage();
             return address;
           }
@@ -122,6 +124,7 @@ export const useCreateSolanaWallets = () => {
     setSvmWallet,
     chains,
     assets,
+    sourceAsset,
     setSourceAsset,
     callbacks,
     storeWalletConnectLocalStorage,
