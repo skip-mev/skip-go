@@ -75,8 +75,6 @@ export const useCreateSolanaWallets = () => {
         } catch (error) {
           console.error(error);
           throw error;
-        } finally {
-          window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
         }
       };
 

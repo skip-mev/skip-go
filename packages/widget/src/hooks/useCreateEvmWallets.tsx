@@ -117,9 +117,6 @@ export const useCreateEvmWallets = () => {
           } catch (error) {
             console.error(error);
             throw error;
-          } finally {
-            window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
-            window.localStorage.removeItem("WCM_RECENT_WALLET_DATA");
           }
         };
 
