@@ -3,9 +3,9 @@ import { Modals } from "@/modals/registerModals";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { skipRouteAtom } from "@/state/route";
 import { shadowRootAtom } from "@/state/shadowRoot";
-import { isWaitingForNewRouteAtom } from "@/state/swapPage";
+import { goFastWarningAtom, isWaitingForNewRouteAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import React, { ReactNode, useState } from "react";
 
 export const useSettingsDrawer = () => {
@@ -13,10 +13,12 @@ export const useSettingsDrawer = () => {
   const shadowRoot = useAtomValue(shadowRootAtom);
   const { isError: isRouteError } = useAtomValue(skipRouteAtom);
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
+  const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
 
   const SettingsDrawerPageContainer = ({ children }: { children?: ReactNode }) => {
     const openSettingsDrawer = () => {
       const container = shadowRoot?.getElementById("settings-drawer");
+      setShowGoFastErrorAtom(false);
       NiceModal.show(Modals.SwapSettingsDrawer, {
         drawer: true,
         container: container,

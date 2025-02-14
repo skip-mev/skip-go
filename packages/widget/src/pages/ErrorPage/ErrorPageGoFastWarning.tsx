@@ -10,6 +10,7 @@ import styled, { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
 import { Row } from "@/components/Layout";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
+import { useEffect } from "react";
 
 export type ErrorPageGoFastWarningProps = {
   onClickBack: () => void;
@@ -25,9 +26,12 @@ export const ErrorPageGoFastWarning = ({
   const { SettingsDrawerPageContainer } = useSettingsDrawer();
   const theme = useTheme();
 
+  useEffect(() => {
+    setShowGoFastErrorAtom(false);
+  }, [setShowGoFastErrorAtom]);
+
   const handleOnClickBack = () => {
     setErrorAtom(undefined);
-    setShowGoFastErrorAtom(false);
     onClickBack?.();
   };
 
