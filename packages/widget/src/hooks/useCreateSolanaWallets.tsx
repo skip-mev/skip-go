@@ -34,7 +34,7 @@ export const useCreateSolanaWallets = () => {
       };
 
       const connectWallet = async ({
-        shouldUpdateSourceWallet = false,
+        shouldUpdateSourceWallet = true,
       }: {
         chainIdToConnect?: string;
         shouldUpdateSourceWallet?: boolean;
@@ -86,8 +86,7 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) =>
-          connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: true }),
+        connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
         getAddress: async ({ signRequired }) => {
           try {
             if (signRequired) {
@@ -101,7 +100,9 @@ export const useCreateSolanaWallets = () => {
           } catch (error) {
             console.error(error);
             storeWalletConnectLocalStorage();
-            const address = connectWallet();
+            const address = connectWallet({
+              shouldUpdateSourceWallet: false,
+            });
             restoreWalletConnectLocalStorage();
             return address;
           }

@@ -66,7 +66,7 @@ export const useCreateEvmWallets = () => {
 
         const connectWallet = async ({
           chainIdToConnect = "1",
-          shouldUpdateSourceWallet = false,
+          shouldUpdateSourceWallet = true,
         }: {
           chainIdToConnect?: string;
           shouldUpdateSourceWallet?: boolean;
@@ -153,6 +153,7 @@ export const useCreateEvmWallets = () => {
               storeWalletConnectLocalStorage();
               const address = connectWallet({
                 chainIdToConnect: chainID,
+                shouldUpdateSourceWallet: false,
               });
               restoreWalletConnectLocalStorage();
               return address;
