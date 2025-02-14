@@ -32,6 +32,33 @@ export const useGetAccount = () => {
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
 
+  const updateEvmWallet = useCallback(async () => {
+    const provider = await evmAccount.connector?.getProvider?.();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const walletConnectMetadata = (provider as any)?.session?.peer?.metadata;
+    if (evmAccount.connector) {
+      setEvmWallet({
+        walletName: evmAccount.connector.id,
+        chainType: ChainType.EVM,
+        logo: walletConnectMetadata?.icons[0] ?? evmAccount.connector?.icon,
+      });
+    }
+  }, [evmAccount.connector, setEvmWallet]);
+
+  const updateSvmWallet = useCallback(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const walletConnectMetadata = (solanaWallet as any)?._wallet?._UniversalProvider?.session?.peer
+      ?.metadata;
+
+    if (solanaWallet) {
+      setSvmWallet({
+        walletName: solanaWallet.name,
+        chainType: ChainType.SVM,
+        logo: walletConnectMetadata?.icons[0] ?? solanaWallet.icon,
+      });
+    }
+  }, [setSvmWallet, solanaWallet]);
+
   useEffect(() => {
     if (walletType && cosmosWallet === undefined) {
       setCosmosWallet({
@@ -40,16 +67,10 @@ export const useGetAccount = () => {
       });
     }
     if (solanaWallet && svmWallet === undefined) {
-      setSvmWallet({
-        walletName: solanaWallet.name,
-        chainType: ChainType.SVM,
-      });
+      updateSvmWallet();
     }
     if (evmAccount.connector && evmWallet === undefined) {
-      setEvmWallet({
-        walletName: evmAccount.connector.id,
-        chainType: ChainType.EVM,
-      });
+      updateEvmWallet();
     }
   }, [
     walletType,
@@ -61,6 +82,9 @@ export const useGetAccount = () => {
     setCosmosWallet,
     setSvmWallet,
     setEvmWallet,
+    updateEvmWallet,
+    updateSvmWallet,
+    cosmosAccounts,
   ]);
 
   const getAccount = useCallback(
@@ -77,34 +101,6 @@ export const useGetAccount = () => {
             prettyName: "injected",
           },
         };
-      }
-      switch (chainType) {
-        case ChainType.Cosmos:
-          if (walletType && cosmosWallet === undefined) {
-            setCosmosWallet({
-              walletName: walletType,
-              chainType: ChainType.Cosmos,
-            });
-          }
-          break;
-        case ChainType.SVM:
-          if (solanaWallet && svmWallet === undefined) {
-            setSvmWallet({
-              walletName: solanaWallet.name,
-              chainType: ChainType.SVM,
-            });
-          }
-          break;
-        case ChainType.EVM:
-          if (evmAccount.connector && evmWallet === undefined) {
-            setEvmWallet({
-              walletName: evmAccount.connector.id,
-              chainType: ChainType.EVM,
-            });
-          }
-          break;
-        default:
-          break;
       }
 
       const getCosmosAccount = () => {
@@ -138,7 +134,7 @@ export const useGetAccount = () => {
 
           const getLogo = () => {
             if (evmAccount?.connector?.id === "walletConnect") {
-              return walletConnectLogo;
+              return evmWallet?.logo ?? walletConnectLogo;
             }
 
             if (evmAccount?.connector?.id.includes("keplr")) {
@@ -160,13 +156,22 @@ export const useGetAccount = () => {
         case ChainType.SVM: {
           if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
+
+          const getLogo = () => {
+            if (solanaWallet.name === "WalletConnect") {
+              return svmWallet?.logo ?? walletConnectLogo;
+            }
+
+            return solanaWallet.icon;
+          };
+
           return {
             address: solanaWallet.publicKey.toBase58(),
             chainType,
             wallet: {
               name: solanaWallet.name as string,
               prettyName: solanaWallet.name as string,
-              logo: solanaWallet.name === "WalletConnect" ? walletConnectLogo : solanaWallet.icon,
+              logo: getLogo(),
             },
           };
         }
@@ -176,23 +181,20 @@ export const useGetAccount = () => {
     },
     [
       chains,
-      walletType,
-      cosmosWallet,
-      solanaWallet,
-      svmWallet,
-      evmAccount.connector,
+      connectedAddress,
+      cosmosAccounts,
+      wallet.cosmos,
+      wallet.evm,
+      wallet.svm,
       evmAccount.chainId,
       evmAccount.address,
-      evmWallet,
-      setCosmosWallet,
-      setSvmWallet,
-      setEvmWallet,
-      cosmosAccounts,
-      wallet.evm,
-      wallet.cosmos,
-      wallet.svm,
+      evmAccount.connector,
       connectors,
-      connectedAddress,
+      evmWallet?.logo,
+      solanaWallet?.publicKey,
+      solanaWallet?.name,
+      solanaWallet?.icon,
+      svmWallet?.logo,
     ],
   );
 

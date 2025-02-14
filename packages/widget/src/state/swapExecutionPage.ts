@@ -9,14 +9,14 @@ import {
   UserAddress,
   ChainType,
 } from "@skip-go/client";
-import { MinimalWallet } from "./wallets";
+import { MinimalWallet, walletConnectDeepLinkByChainTypeAtom } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, slippageAtom } from "./swapPage";
+import { CosmosGasAmount, slippageAtom, sourceAssetAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser } from "@sentry/react";
@@ -303,6 +303,19 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const slippage = get(slippageAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
   const simulateTx = get(simulateTxAtom);
+
+  const { data: chains } = get(skipChainsAtom);
+  const sourceAsset = get(sourceAssetAtom);
+  const walletConnectDeepLinkByChainType = get(walletConnectDeepLinkByChainTypeAtom);
+
+  const chainType = chains?.find((chain) => chain.chainID === sourceAsset?.chainID)?.chainType;
+
+  if (chainType) {
+    const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
+    console.log(deeplink, recentWalletData);
+    window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", deeplink);
+    window.localStorage.setItem("WCM_RECENT_WALLET_DATA", recentWalletData);
+  }
 
   return {
     gcTime: Infinity,
