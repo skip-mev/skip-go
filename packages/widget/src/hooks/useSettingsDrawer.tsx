@@ -1,6 +1,6 @@
 import { Column } from "@/components/Layout";
 import { Modals } from "@/modals/registerModals";
-import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
+import { SwapPageFooter, SwapPageFooterItemsProps } from "@/pages/SwapPage/SwapPageFooter";
 import { skipRouteAtom } from "@/state/route";
 import { shadowRootAtom } from "@/state/shadowRoot";
 import { goFastWarningAtom, isWaitingForNewRouteAtom } from "@/state/swapPage";
@@ -15,7 +15,11 @@ export const useSettingsDrawer = () => {
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
 
-  const SettingsDrawerPageContainer = ({ children }: { children?: ReactNode }) => {
+  const SettingsDrawerPageContainer = ({
+    children,
+    content,
+    ...props
+  }: { children?: ReactNode } & SwapPageFooterItemsProps) => {
     const openSettingsDrawer = () => {
       const container = shadowRoot?.getElementById("settings-drawer");
       setShowGoFastErrorAtom(false);
@@ -40,6 +44,7 @@ export const useSettingsDrawer = () => {
             showRouteInfo
             showEstimatedTime
             onClick={openSettingsDrawer}
+            {...props}
           />
         </Column>
       </React.Fragment>

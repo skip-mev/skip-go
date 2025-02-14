@@ -37,7 +37,7 @@ export const ErrorPageGoFastWarning = ({
 
   return (
     <>
-      <SettingsDrawerPageContainer>
+      <SettingsDrawerPageContainer highlightSettings>
         <SwapPageHeader
           leftButton={{
             label: "Back",

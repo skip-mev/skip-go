@@ -14,11 +14,13 @@ import { routePreferenceAtom } from "@/state/swapPage";
 import { RoutePreference } from "@/state/types";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { SmallText } from "@/components/Typography";
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
   showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
+  highlightSettings?: boolean;
 };
 
 export const poweredBySkipGo = (
@@ -31,7 +33,9 @@ export const SwapPageFooterItems = ({
   content = null,
   showRouteInfo,
   showEstimatedTime,
+  highlightSettings,
 }: SwapPageFooterItemsProps) => {
+  console.log(highlightSettings);
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const settingsChanged = useSettingsChanged();
   const routePreference = useAtomValue(routePreferenceAtom);
@@ -78,13 +82,17 @@ export const SwapPageFooterItems = ({
           <Row align="flex-end" gap={8}>
             {showEstimatedTime && estimatedTime && (
               <>
-                <Row align="flex-end" gap={3}>
+                <StyledSettingsContainer
+                  align="flex-end"
+                  gap={3}
+                  highlightSettings={highlightSettings}
+                >
                   <CogIconWrapper>
                     <CogIcon />
                     {settingsChanged && <SettingsChangedIndicator />}
                   </CogIconWrapper>
                   Settings
-                </Row>
+                </StyledSettingsContainer>
                 <Row gap={8} align="flex-end">
                   {estimatedTime}
                 </Row>
@@ -121,13 +129,17 @@ export const SwapPageFooterItems = ({
           <Row align="flex-end" gap={10} height={13}>
             {showEstimatedTime && estimatedTime && (
               <>
-                <Row align="flex-end" gap={3}>
+                <StyledSettingsContainer
+                  align="flex-end"
+                  gap={3}
+                  highlightSettings={highlightSettings}
+                >
                   <CogIconWrapper>
                     <CogIcon />
                     {settingsChanged && <SettingsChangedIndicator />}
                   </CogIconWrapper>
                   Settings
-                </Row>
+                </StyledSettingsContainer>
                 <Row gap={8} align="flex-end">
                   {estimatedTime}
                 </Row>
@@ -174,6 +186,7 @@ export const SwapPageFooter = ({
   content,
   showRouteInfo,
   showEstimatedTime,
+  highlightSettings,
   ...props
 }: {
   onClick?: () => void;
@@ -192,6 +205,7 @@ export const SwapPageFooter = ({
         content={content}
         showRouteInfo={showRouteInfo}
         showEstimatedTime={showEstimatedTime}
+        highlightSettings={highlightSettings}
       />
     </GhostButton>
   );
@@ -199,6 +213,14 @@ export const SwapPageFooter = ({
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
+`;
+
+const StyledSettingsContainer = styled(Row)<{ highlightSettings?: boolean }>`
+  ${({ highlightSettings, theme }) => {
+    if (highlightSettings) {
+      return `color: ${theme.primary.text.normal}`;
+    }
+  }}
 `;
 
 const CogIconWrapper = styled(Row)`
