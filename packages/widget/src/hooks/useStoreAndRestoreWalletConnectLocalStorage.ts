@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";
 const RECENT_WALLET_DATA = "WCM_RECENT_WALLET_DATA";
@@ -19,14 +19,14 @@ export const useStoreAndRestoreWalletConnectLocalStorage = () => {
     }
   };
 
-  const restoreWalletConnectLocalStorage = () => {
+  const restoreWalletConnectLocalStorage = useCallback(() => {
     if (walletConnectDeeplinkChoice) {
       window.localStorage.setItem(DEEPLINK_CHOICE, walletConnectDeeplinkChoice);
     }
     if (wcmRecentWalletData) {
       window.localStorage.setItem(RECENT_WALLET_DATA, wcmRecentWalletData);
     }
-  };
+  }, [walletConnectDeeplinkChoice, wcmRecentWalletData]);
 
   return { storeWalletConnectLocalStorage, restoreWalletConnectLocalStorage };
 };
