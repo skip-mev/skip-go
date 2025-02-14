@@ -5,13 +5,13 @@ import {
   MinimalWallet,
   setWalletConnectDeepLinkByChainTypeAtom,
   svmWalletAtom,
+  WalletConnectMetaData,
 } from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
-import { WalletConnectMetaData } from "./useCreateEvmWallets";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -60,10 +60,11 @@ export const useCreateSolanaWallets = () => {
 
           const address = wallet.publicKey?.toBase58();
 
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
+            ?.metadata as WalletConnectMetaData;
+
           if (shouldUpdateSourceWallet) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
-              ?.peer?.metadata;
             updateSourceWallet(walletConnectMetadata);
             setWCDeepLinkByChainType(ChainType.SVM);
             callbacks?.onWalletConnected?.({
@@ -75,7 +76,7 @@ export const useCreateSolanaWallets = () => {
             await wallet.disconnect();
           }
 
-          return address;
+          return { address, logo: walletConnectMetadata?.icons?.[0] };
         } catch (error) {
           console.error(error);
           throw error;
@@ -89,7 +90,9 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
+        connect: async (chainId) => {
+          connectWallet({ chainIdToConnect: chainId });
+        },
         getAddress: async ({ signRequired }) => {
           try {
             if (signRequired) {
@@ -99,13 +102,12 @@ export const useCreateSolanaWallets = () => {
             if (!address) {
               throw new Error("Address not found");
             }
-            return address.toBase58();
+            return { address: address.toBase58() };
           } catch (error) {
             console.error(error);
-            const address = connectWallet({
+            return connectWallet({
               shouldUpdateSourceWallet: false,
             });
-            return address;
           }
         },
         disconnect: async () => {

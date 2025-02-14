@@ -77,13 +77,15 @@ export const RenderWalletList = ({
     mutationFn: async (wallet: MinimalWallet) => {
       if (isDestinationAddress) {
         if (!chainId || !chainType) return;
-        const address = await wallet.getAddress?.({
+        const response = await wallet.getAddress?.({
           praxWallet: {
             sourceChainID: chainAddressIndex
               ? chainAddresses[chainAddressIndex - 1]?.chainID
               : undefined,
           },
         });
+        const address = response?.address;
+        const logo = response?.logo;
         setChainAddresses((prev) => {
           const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
           return {
@@ -97,7 +99,9 @@ export const RenderWalletList = ({
                 walletName: wallet.walletName,
                 walletPrettyName: wallet.walletPrettyName,
                 walletChainType: wallet.walletChainType,
-                walletInfo: wallet.walletInfo,
+                walletInfo: {
+                  logo: logo ?? wallet.walletInfo?.logo,
+                },
               },
             },
           };

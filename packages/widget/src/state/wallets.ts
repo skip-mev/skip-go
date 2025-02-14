@@ -4,6 +4,18 @@ import { WalletConnectModalConfig } from "@walletconnect/modal";
 import { ChainType, SignerGetters } from "@skip-go/client";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 
+export type WalletConnectMetaData = {
+  name: string;
+  description: string;
+  icons: string[];
+  redirect: {
+    native: string;
+    universal: string;
+  };
+  url: string;
+  publicKey: string;
+};
+
 export type MinimalWallet = {
   walletName: string;
   walletPrettyName: string;
@@ -11,7 +23,7 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string;
   };
-  connect: (chainId?: string) => Promise<string | undefined>;
+  connect: (chainId?: string) => Promise<void>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
@@ -22,7 +34,7 @@ export type MinimalWallet = {
       index?: number;
       sourceChainID?: string;
     };
-  }) => Promise<string | undefined>;
+  }) => Promise<{ address: string | undefined; logo?: string }>;
 };
 
 type WalletState = {

@@ -5,6 +5,7 @@ import {
   evmWalletAtom,
   MinimalWallet,
   setWalletConnectDeepLinkByChainTypeAtom,
+  WalletConnectMetaData,
 } from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
@@ -14,18 +15,6 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
-
-export type WalletConnectMetaData = {
-  name: string;
-  description: string;
-  icons: string[];
-  redirect: {
-    native: string;
-    universal: string;
-  };
-  url: string;
-  publicKey: string;
-};
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -62,7 +51,7 @@ export const useCreateEvmWallets = () => {
           setEvmWallet({
             walletName: connector.id,
             chainType: ChainType.EVM,
-            logo: walletConnectMetadata?.icons[0] ?? connector.icon,
+            logo: walletConnectMetadata?.icons?.[0] ?? connector.icon,
           });
         };
 
@@ -102,11 +91,12 @@ export const useCreateEvmWallets = () => {
 
             const account = await connector.getAccounts();
 
-            if (shouldUpdateSourceWallet) {
-              const provider = await connector.getProvider();
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const walletConnectMetadata = (provider as any)?.session?.peer?.metadata;
+            const provider = await connector.getProvider();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const walletConnectMetadata = (provider as any)?.session?.peer
+              ?.metadata as WalletConnectMetaData;
 
+            if (shouldUpdateSourceWallet) {
               updateSourceWallet(walletConnectMetadata);
               setWCDeepLinkByChainType(ChainType.EVM);
               callbacks?.onWalletConnected?.({
@@ -118,7 +108,7 @@ export const useCreateEvmWallets = () => {
               await currentConnector?.disconnect();
             }
 
-            return account[0];
+            return { address: account[0], logo: walletConnectMetadata?.icons?.[0] };
           } catch (error) {
             console.error(error);
             throw error;
@@ -132,7 +122,9 @@ export const useCreateEvmWallets = () => {
           walletInfo: {
             logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
-          connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
+          connect: async (chainId) => {
+            connectWallet({ chainIdToConnect: chainId });
+          },
           disconnect: async () => {
             await currentConnector?.disconnect();
             setEvmWallet(undefined);
@@ -150,14 +142,12 @@ export const useCreateEvmWallets = () => {
               if (account.length === 0) {
                 throw new Error("No accounts found");
               }
-              return account[0];
-            } catch (error) {
-              console.error(error);
-              const address = connectWallet({
+              return { address: account[0] };
+            } catch (_error) {
+              return connectWallet({
                 chainIdToConnect: chainID,
                 shouldUpdateSourceWallet: false,
               });
-              return address;
             }
           },
           isWalletConnected: connector.id === currentEvmConnector?.id,
