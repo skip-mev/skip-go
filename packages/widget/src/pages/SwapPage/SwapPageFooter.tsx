@@ -14,7 +14,6 @@ import { routePreferenceAtom } from "@/state/swapPage";
 import { RoutePreference } from "@/state/types";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
-import { SmallText } from "@/components/Typography";
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
@@ -35,7 +34,6 @@ export const SwapPageFooterItems = ({
   showEstimatedTime,
   highlightSettings,
 }: SwapPageFooterItemsProps) => {
-  console.log(highlightSettings);
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const settingsChanged = useSettingsChanged();
   const routePreference = useAtomValue(routePreferenceAtom);
@@ -111,6 +109,7 @@ export const SwapPageFooterItems = ({
   }, [
     content,
     estimatedTime,
+    highlightSettings,
     isGoFast,
     isLoading,
     renderRoutePreference,
@@ -163,6 +162,7 @@ export const SwapPageFooterItems = ({
   }, [
     content,
     estimatedTime,
+    highlightSettings,
     isGoFast,
     isLoading,
     renderRoutePreference,
