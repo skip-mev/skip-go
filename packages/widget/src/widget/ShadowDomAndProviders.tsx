@@ -5,6 +5,8 @@ import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
+import { shadowRootAtom } from "@/state/shadowRoot";
+import { useAtom } from "jotai";
 
 function shouldForwardProp(propName: string, target: string | ComponentType<unknown>) {
   if (typeof target === "string") {
@@ -16,18 +18,25 @@ function shouldForwardProp(propName: string, target: string | ComponentType<unkn
 export const ShadowDomAndProviders = ({
   children,
   theme,
+  shouldSetMainShadowRoot,
 }: {
   children: ReactNode;
   theme?: PartialTheme;
+  shouldSetMainShadowRoot?: boolean;
 }) => {
   useInjectFontsToDocumentHead();
   const css = useCSS();
 
-  const [shadowRoot, setShadowRoot] = useState<ShadowRoot>();
+  const [localShadowRoot, setLocalShadowRoot] = useState<ShadowRoot>();
+  const [mainShadowRoot, setMainShadowRoot] = useAtom(shadowRootAtom);
 
   const onShadowDomLoaded = (element: HTMLDivElement) => {
-    if (shadowRoot === undefined && element?.shadowRoot) {
-      setShadowRoot(element?.shadowRoot);
+    if (!element?.shadowRoot) return;
+    if (!localShadowRoot) {
+      setLocalShadowRoot(element?.shadowRoot);
+    }
+    if (!mainShadowRoot && shouldSetMainShadowRoot) {
+      setMainShadowRoot(element?.shadowRoot);
     }
   };
 
@@ -46,8 +55,8 @@ export const ShadowDomAndProviders = ({
           ${globalStyles}
         `}
       >
-        {shadowRoot && (
-          <StyleSheetManager shouldForwardProp={shouldForwardProp} target={shadowRoot}>
+        {localShadowRoot && (
+          <StyleSheetManager shouldForwardProp={shouldForwardProp} target={localShadowRoot}>
             <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
           </StyleSheetManager>
         )}

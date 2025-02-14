@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAtom } from "jotai";
 import { routePreferenceAtom } from "@/state/swapPage";
 import { ROUTE_PREFERENCE_OPTIONS } from "@/constants/widget";
-import { Row, Spacer } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled from "styled-components";
@@ -43,14 +43,10 @@ const RoutePreferenceSelector: React.FC = () => {
   );
 };
 
-const Container = styled(Row)`
+const Container = styled(Column)`
   justify-content: space-between;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
+  align-items: flex-start;
+  gap: 15px;
 `;
 
 const PreferenceText = styled(Row).attrs({
@@ -76,9 +72,7 @@ const Tooltip = styled(SmallText).attrs({
 `;
 
 const OptionsContainer = styled(Row)`
-  @media (max-width: 767px) {
-    width: 100%;
-  }
+  width: 100%;
 `;
 
 export default RoutePreferenceSelector;

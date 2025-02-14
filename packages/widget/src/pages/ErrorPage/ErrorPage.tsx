@@ -10,6 +10,7 @@ import { ErrorPageTimeout } from "./ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
 import { ErrorPageCosmosLedgerWarning } from "./ErrorPageCosmosLedgerWarning";
+import { ErrorPageGoFastWarning } from "./ErrorPageGoFastWarning";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -18,6 +19,8 @@ export const ErrorPage = () => {
     switch (error?.errorType) {
       case ErrorType.AuthFailed:
         return <ErrorPageAuthFailed {...error} />;
+      case ErrorType.GoFastWarning:
+        return <ErrorPageGoFastWarning {...error} />;
       case ErrorType.Timeout:
         return <ErrorPageTimeout {...error} />;
       case ErrorType.AdditionalSigningRequired:

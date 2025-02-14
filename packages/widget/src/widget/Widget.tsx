@@ -88,7 +88,7 @@ export const queryClient = new QueryClient();
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <ShadowDomAndProviders theme={theme}>
+    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
       <WalletProviders>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <NiceModal.Provider>
@@ -105,7 +105,7 @@ export const Widget = (props: WidgetProps) => {
 export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <ShadowDomAndProviders theme={theme}>
+    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
       <WalletProviders>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <WidgetWrapper>
@@ -135,7 +135,10 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   }, []);
   return (
     <WidgetContainer>
-      <ClientOnly>{children}</ClientOnly>
+      <ClientOnly>
+        {children}
+        <div id="settings-drawer"></div>
+      </ClientOnly>
     </WidgetContainer>
   );
 };

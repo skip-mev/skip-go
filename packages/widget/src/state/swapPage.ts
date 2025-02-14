@@ -149,3 +149,5 @@ export const routePreferenceAtom = atom(
     set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
   },
 );
+
+export const goFastWarningAtom = atomWithStorageNoCrossTabSync("showGoFastWarning", true);
