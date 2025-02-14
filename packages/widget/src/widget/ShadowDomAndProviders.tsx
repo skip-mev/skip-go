@@ -6,7 +6,7 @@ import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
 import { shadowRootAtom } from "@/state/shadowRoot";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 
 function shouldForwardProp(propName: string, target: string | ComponentType<unknown>) {
   if (typeof target === "string") {
