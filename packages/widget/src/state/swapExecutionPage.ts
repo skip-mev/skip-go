@@ -312,7 +312,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
   if (chainType) {
     const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
-    console.log(deeplink, recentWalletData);
     window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", deeplink);
     window.localStorage.setItem("WCM_RECENT_WALLET_DATA", recentWalletData);
   }
