@@ -97,12 +97,14 @@ export const useAutoSetAddress = () => {
                 showSetAddressModal();
                 return;
               }
-              const address = await wallet?.getAddress?.({
+              const response = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
-              if (!address) {
+              if (!response?.address) {
                 return;
               }
+              const address = response?.address;
+              const logo = response?.logo ?? wallet.walletInfo.logo;
               setChainAddresses((prev) => ({
                 ...prev,
                 [index]: {
@@ -114,7 +116,9 @@ export const useAutoSetAddress = () => {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
                     walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
+                    walletInfo: {
+                      logo: logo,
+                    },
                   },
                 },
               }));
@@ -133,12 +137,14 @@ export const useAutoSetAddress = () => {
                 showSetAddressModal();
                 return;
               }
-              const address = await wallet?.getAddress?.({
+              const response = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
-              if (!address) {
+              if (!response?.address) {
                 return;
               }
+              const address = response?.address;
+              const logo = response?.logo ?? wallet.walletInfo.logo;
               setChainAddresses((prev) => ({
                 ...prev,
                 [index]: {
@@ -150,7 +156,9 @@ export const useAutoSetAddress = () => {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
                     walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
+                    walletInfo: {
+                      logo: logo,
+                    },
                   },
                 },
               }));
@@ -170,12 +178,14 @@ export const useAutoSetAddress = () => {
                 showSetAddressModal();
                 return;
               }
-              const address = await wallet?.getAddress?.({
+              const response = await wallet?.getAddress?.({
                 signRequired: isSignRequired,
               });
-              if (!address) {
+              if (!response?.address) {
                 return;
               }
+              const address = response?.address;
+              const logo = response?.logo ?? wallet.walletInfo.logo;
               setChainAddresses((prev) => ({
                 ...prev,
                 [index]: {
@@ -187,7 +197,9 @@ export const useAutoSetAddress = () => {
                     walletName: wallet?.walletName,
                     walletPrettyName: wallet?.walletPrettyName,
                     walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
+                    walletInfo: {
+                      logo: logo,
+                    },
                   },
                 },
               }));
