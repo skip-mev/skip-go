@@ -29,7 +29,7 @@ export const useCreateSolanaWallets = () => {
 
       const updateSourceWallet = (walletConnectMetadata?: WalletConnectMetaData) => {
         setSvmWallet({
-          walletName: walletConnectMetadata?.name ?? wallet.name,
+          walletName: wallet.name,
           chainType: ChainType.SVM,
           logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
         });
