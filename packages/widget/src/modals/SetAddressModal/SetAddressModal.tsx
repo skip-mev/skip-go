@@ -95,10 +95,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
+      const lastIndex = Object.values(prev).length - 1;
+      const index = chainAddressIndex || lastIndex;
       return {
         ...prev,
-        [destinationIndex]: {
+        [index]: {
           chainID: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
@@ -129,10 +130,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const address = response?.address;
     const logo = response?.logo;
     setChainAddresses((prev) => {
-      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
+      const lastIndex = Object.values(prev).length - 1;
+      const index = chainAddressIndex || lastIndex;
       return {
         ...prev,
-        [destinationIndex]: {
+        [index]: {
           chainID: chainId,
           chainType: chain?.chainType,
           address,
