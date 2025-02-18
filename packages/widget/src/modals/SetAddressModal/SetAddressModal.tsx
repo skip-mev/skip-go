@@ -109,6 +109,15 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     NiceModal.remove(Modals.SetAddressModal);
   };
 
+  const walletListTitle = useMemo(() => {
+    const isDestinationIndex = chainAddressIndex === Object.values(chainAddresses).length - 1;
+    const title = isDestinationIndex ? "Destination" : "Recovery";
+    if (mobile) {
+      return title;
+    }
+    return `${title} wallet`;
+  }, [chainAddressIndex, chainAddresses, mobile]);
+
   const onSelectWallet = async (wallet: MinimalWallet) => {
     const response = await wallet.getAddress?.({
       praxWallet: {
@@ -190,7 +199,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title={mobile ? "Destination" : "Destination wallet"}
+          title={walletListTitle}
           walletList={walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
