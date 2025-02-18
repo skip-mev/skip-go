@@ -2,6 +2,19 @@ import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
 import { ChainType, SignerGetters } from "@skip-go/client";
+import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+
+export type WalletConnectMetaData = {
+  name: string;
+  description: string;
+  icons: string[];
+  redirect: {
+    native: string;
+    universal: string;
+  };
+  url: string;
+  publicKey: string;
+};
 
 export type MinimalWallet = {
   walletName: string;
@@ -10,7 +23,7 @@ export type MinimalWallet = {
   walletInfo: {
     logo?: string;
   };
-  connect: (chainId?: string) => Promise<string | undefined>;
+  connect: (chainId?: string) => Promise<void>;
   disconnect: () => Promise<void>;
   isWalletConnected: boolean;
   isAvailable?: boolean;
@@ -21,7 +34,7 @@ export type MinimalWallet = {
       index?: number;
       sourceChainID?: string;
     };
-  }) => Promise<string | undefined>;
+  }) => Promise<{ address: string | undefined; logo?: string }>;
 };
 
 type WalletState = {
@@ -65,6 +78,43 @@ export const knownEthermintLikeChains = [
   "haqq_11235-1",
   "shido_9008-1",
 ];
+
+export const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";
+export const RECENT_WALLET_DATA = "WCM_RECENT_WALLET_DATA";
+
+export const walletConnectDeepLinkByChainTypeAtom = atomWithStorageNoCrossTabSync(
+  "WC_DEEPLINK_BY_CHAIN_TYPE",
+  {
+    [ChainType.Cosmos]: {
+      deeplink: "",
+      recentWalletData: "",
+    },
+    [ChainType.EVM]: {
+      deeplink: "",
+      recentWalletData: "",
+    },
+    [ChainType.SVM]: {
+      deeplink: "",
+      recentWalletData: "",
+    },
+  },
+);
+
+export const setWalletConnectDeepLinkByChainTypeAtom = atom(
+  null,
+  (_get, set, chainType: string) => {
+    const walletConnectDeeplinkChoice = window.localStorage.getItem(DEEPLINK_CHOICE);
+    const wcmRecentWalletData = window.localStorage.getItem(RECENT_WALLET_DATA);
+
+    set(walletConnectDeepLinkByChainTypeAtom, (prev) => ({
+      ...prev,
+      [chainType]: {
+        deeplink: walletConnectDeeplinkChoice,
+        recentWalletData: wcmRecentWalletData,
+      },
+    }));
+  },
+);
 
 export const getConnectedSignersAtom = atom<SignerGetters>();
 

@@ -1,20 +1,25 @@
 import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { MinimalWallet, svmWalletAtom } from "@/state/wallets";
-import { useAtomValue, useSetAtom } from "jotai";
+import {
+  MinimalWallet,
+  setWalletConnectDeepLinkByChainTypeAtom,
+  svmWalletAtom,
+  WalletConnectMetaData,
+} from "@/state/wallets";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
-import { WalletConnectMetaData } from "./useCreateEvmWallets";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
+  const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -24,19 +29,18 @@ export const useCreateSolanaWallets = () => {
 
       const updateSourceWallet = (walletConnectMetadata?: WalletConnectMetaData) => {
         setSvmWallet({
-          walletName: walletConnectMetadata?.name ?? wallet.name,
+          walletName: wallet.name,
           chainType: ChainType.SVM,
           logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
         });
       };
 
       const connectWallet = async ({
-        chainIdToConnect,
         shouldUpdateSourceWallet = true,
       }: {
         chainIdToConnect?: string;
         shouldUpdateSourceWallet?: boolean;
-      }) => {
+      } = {}) => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
@@ -46,7 +50,7 @@ export const useCreateSolanaWallets = () => {
               "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
           );
 
-          if (chainIdToConnect === undefined) {
+          if (sourceAsset === undefined) {
             setSourceAsset({
               chainID: chain?.chainID,
               chainName: chain?.chainName,
@@ -56,24 +60,26 @@ export const useCreateSolanaWallets = () => {
 
           const address = wallet.publicKey?.toBase58();
 
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
+            ?.metadata as WalletConnectMetaData;
+
           if (shouldUpdateSourceWallet) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session
-              ?.peer?.metadata;
             updateSourceWallet(walletConnectMetadata);
+            setWCDeepLinkByChainType(ChainType.SVM);
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
               chainId: chain?.chainID,
               address,
             });
+          } else {
+            await wallet.disconnect();
           }
 
-          return address;
+          return { address, logo: walletConnectMetadata?.icons?.[0] };
         } catch (error) {
           console.error(error);
           throw error;
-        } finally {
-          window.localStorage.removeItem("WALLETCONNECT_DEEPLINK_CHOICE");
         }
       };
 
@@ -84,17 +90,24 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) => connectWallet({ chainIdToConnect: chainId }),
-        getAddress: async () => {
+        connect: async (chainId) => {
+          connectWallet({ chainIdToConnect: chainId });
+        },
+        getAddress: async ({ signRequired }) => {
           try {
+            if (signRequired) {
+              throw new Error("always prompt wallet connection");
+            }
             const address = wallet.publicKey;
             if (!address) {
               throw new Error("Address not found");
             }
-            return address.toBase58();
+            return { address: address.toBase58() };
           } catch (error) {
             console.error(error);
-            return connectWallet({ shouldUpdateSourceWallet: false });
+            return connectWallet({
+              shouldUpdateSourceWallet: false,
+            });
           }
         },
         disconnect: async () => {
@@ -111,6 +124,14 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [setSvmWallet, chains, assets, callbacks, setSourceAsset]);
+  }, [
+    setSvmWallet,
+    chains,
+    assets,
+    sourceAsset,
+    setSourceAsset,
+    setWCDeepLinkByChainType,
+    callbacks,
+  ]);
   return { createSolanaWallets };
 };

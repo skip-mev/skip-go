@@ -35,7 +35,7 @@ export const useGetAccount = () => {
   const updateEvmWallet = useCallback(async () => {
     const provider = await evmAccount.connector?.getProvider?.();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const walletConnectMetadata = (provider as any).session?.peer?.metadata;
+    const walletConnectMetadata = (provider as any)?.session?.peer?.metadata;
     if (evmAccount.connector) {
       setEvmWallet({
         walletName: evmAccount.connector.id,
