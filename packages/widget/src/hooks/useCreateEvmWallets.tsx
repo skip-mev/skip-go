@@ -160,7 +160,7 @@ export const useCreateEvmWallets = () => {
             connector.name.toLowerCase().includes("cosmostation");
           minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async () => {
-            const address = await connectWallet({
+            const { address } = await connectWallet({
               chainIdToConnect: chainID,
               shouldUpdateSourceWallet: false,
             });
@@ -175,7 +175,7 @@ export const useCreateEvmWallets = () => {
                 abi: seiPrecompileAddrABI,
                 functionName: "getSeiAddr",
               });
-              return seiAddress;
+              return { address: seiAddress };
             } catch (error) {
               console.error(error);
               throw new Error(`Your EVM address (0x) has not been associated on chain yet. Please visit https://app.sei.io/ to associate your SEI address.

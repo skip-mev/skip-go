@@ -120,7 +120,7 @@ export const useCreateCosmosWallets = () => {
               await disconnectAsync();
             }
 
-            return address;
+            return { address };
           } catch (e) {
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
@@ -129,12 +129,16 @@ export const useCreateCosmosWallets = () => {
               );
             }
             if (error?.message?.toLowerCase().includes("no ethereum public key")) {
-              await connect({
+              const response = await connect({
                 chainId: keplrMainnetWithoutEthermintChainIdsInitialConnect,
                 walletType: wallet,
                 autoReconnect: false,
               });
-              return Promise.resolve(undefined);
+              return {
+                address: chainIdToConnect
+                  ? response?.accounts[chainIdToConnect].bech32Address
+                  : undefined,
+              };
             }
             throw e;
           }
@@ -148,7 +152,7 @@ export const useCreateCosmosWallets = () => {
             logo: walletInfo?.imgSrc,
           },
           connect: async (chainId) => {
-            return connectWallet({ chainIdToConnect: chainId });
+            connectWallet({ chainIdToConnect: chainId });
           },
           disconnect: async () => {
             await disconnectAsync();
@@ -167,7 +171,7 @@ export const useCreateCosmosWallets = () => {
                 throw new Error("no chain id");
               }
               const address = (await getWallet(wallet).getKey(chainId)).bech32Address;
-              return address;
+              return { address };
             } catch (_error) {
               return connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: false });
             }
@@ -310,7 +314,7 @@ const handlePenumbraNetwork = (
           const address = await viewService.transparentAddress(new TransparentAddressRequest({}));
           if (!address.address) throw new Error("No address found");
           // The view service did the work of encoding the address for us.
-          return address.encoding;
+          return { address: address.encoding };
         } else {
           const ephemeralAddress = await viewService.ephemeralAddress({
             addressIndex: {
@@ -318,7 +322,7 @@ const handlePenumbraNetwork = (
             },
           });
           if (!ephemeralAddress.address) throw new Error("No address found");
-          return bech32mAddress(ephemeralAddress.address);
+          return { address: bech32mAddress(ephemeralAddress.address) };
         }
       } catch (error) {
         console.error(error);
