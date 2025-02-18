@@ -21,7 +21,7 @@ import { MinimalWallet } from "@/state/wallets";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
-  chainAddressIndex?: number;
+  chainAddressIndex: number;
 };
 
 export enum WalletSource {
@@ -33,7 +33,9 @@ export enum WalletSource {
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { chainId, chainAddressIndex } = modalProps;
-  // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
+  if (modalProps.chainAddressIndex === undefined) {
+    throw new Error("chain address index cannot be undefined");
+  }
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((c) => c.chainID === chainId);
@@ -95,11 +97,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const lastIndex = Object.values(prev).length - 1;
-      const index = chainAddressIndex || lastIndex;
       return {
         ...prev,
-        [index]: {
+        [chainAddressIndex]: {
           chainID: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
@@ -130,11 +130,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const address = response?.address;
     const logo = response?.logo;
     setChainAddresses((prev) => {
-      const lastIndex = Object.values(prev).length - 1;
-      const index = chainAddressIndex || lastIndex;
       return {
         ...prev,
-        [index]: {
+        [chainAddressIndex]: {
           chainID: chainId,
           chainType: chain?.chainType,
           address,
