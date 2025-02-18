@@ -9,7 +9,12 @@ import {
   UserAddress,
   ChainType,
 } from "@skip-go/client";
-import { MinimalWallet, walletConnectDeepLinkByChainTypeAtom } from "./wallets";
+import {
+  DEEPLINK_CHOICE,
+  MinimalWallet,
+  RECENT_WALLET_DATA,
+  walletConnectDeepLinkByChainTypeAtom,
+} from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
@@ -312,8 +317,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
   if (chainType) {
     const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
-    window.localStorage.setItem("WALLETCONNECT_DEEPLINK_CHOICE", deeplink);
-    window.localStorage.setItem("WCM_RECENT_WALLET_DATA", recentWalletData);
+    if (chainType === ChainType.Cosmos) {
+      window.localStorage.removeItem(DEEPLINK_CHOICE);
+      window.localStorage.removeItem(RECENT_WALLET_DATA);
+    } else {
+      window.localStorage.setItem(DEEPLINK_CHOICE, deeplink);
+      window.localStorage.setItem(RECENT_WALLET_DATA, recentWalletData);
+    }
   }
 
   return {

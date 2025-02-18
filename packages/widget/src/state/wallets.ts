@@ -79,8 +79,8 @@ export const knownEthermintLikeChains = [
   "shido_9008-1",
 ];
 
-const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";
-const RECENT_WALLET_DATA = "WCM_RECENT_WALLET_DATA";
+export const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";
+export const RECENT_WALLET_DATA = "WCM_RECENT_WALLET_DATA";
 
 export const walletConnectDeepLinkByChainTypeAtom = atomWithStorageNoCrossTabSync(
   "WC_DEEPLINK_BY_CHAIN_TYPE",
