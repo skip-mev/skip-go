@@ -12,18 +12,14 @@ import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { ChainType } from "@skip-go/client";
 
 export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
   onSelectWallet?: (wallet: MinimalWallet) => void;
-  isUpdatingChainAddress?: boolean;
   chainId?: string;
-  chainType?: ChainType;
   isConnectEco?: boolean;
-  chainAddressIndex?: number;
 };
 
 export type ManualWalletEntry = {

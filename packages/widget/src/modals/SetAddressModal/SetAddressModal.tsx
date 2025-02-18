@@ -194,9 +194,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           walletList={walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
-          chainType={chain?.chainType}
           onSelectWallet={onSelectWallet}
-          chainAddressIndex={chainAddressIndex}
         />
       )}
     </>
