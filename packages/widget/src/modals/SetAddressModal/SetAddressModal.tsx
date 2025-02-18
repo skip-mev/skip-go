@@ -17,6 +17,7 @@ import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 import { isMobile } from "@/utils/os";
+import { MinimalWallet } from "@/state/wallets";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
@@ -107,6 +108,39 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     });
     NiceModal.remove(Modals.SetAddressModal);
   };
+
+  const onSelectWallet = async (wallet: MinimalWallet) => {
+    const response = await wallet.getAddress?.({
+      praxWallet: {
+        sourceChainID: chainAddressIndex
+          ? chainAddresses[chainAddressIndex - 1]?.chainID
+          : undefined,
+      },
+    });
+    const address = response?.address;
+    const logo = response?.logo;
+    setChainAddresses((prev) => {
+      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
+      return {
+        ...prev,
+        [destinationIndex]: {
+          chainID: chainId,
+          chainType: chain?.chainType,
+          address,
+          source: WalletSource.Wallet,
+          wallet: {
+            walletName: wallet.walletName,
+            walletPrettyName: wallet.walletPrettyName,
+            walletChainType: wallet.walletChainType,
+            walletInfo: {
+              logo: logo ?? wallet.walletInfo?.logo,
+            },
+          },
+        },
+      };
+    });
+  };
+
   return (
     <>
       {showManualAddressInput ? (
@@ -161,7 +195,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           chainType={chain?.chainType}
-          isDestinationAddress
+          onSelectWallet={onSelectWallet}
           chainAddressIndex={chainAddressIndex}
         />
       )}

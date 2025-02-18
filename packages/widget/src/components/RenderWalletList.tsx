@@ -8,19 +8,18 @@ import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useAtom, useSetAtom } from "jotai";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ChainType } from "@skip-go/client";
-import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
 
 export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
-  isDestinationAddress?: boolean;
+  onSelectWallet?: (wallet: MinimalWallet) => void;
+  isUpdatingChainAddress?: boolean;
   chainId?: string;
   chainType?: ChainType;
   isConnectEco?: boolean;
@@ -52,15 +51,11 @@ export const RenderWalletList = ({
   title,
   walletList,
   onClickBackButton,
-  isDestinationAddress,
+  onSelectWallet,
   chainId,
-  chainType,
   isConnectEco,
-  chainAddressIndex,
 }: RenderWalletListProps) => {
   const theme = useTheme();
-
-  const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -75,40 +70,6 @@ export const RenderWalletList = ({
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
-      if (isDestinationAddress) {
-        if (!chainId || !chainType) return;
-        const response = await wallet.getAddress?.({
-          praxWallet: {
-            sourceChainID: chainAddressIndex
-              ? chainAddresses[chainAddressIndex - 1]?.chainID
-              : undefined,
-          },
-        });
-        const address = response?.address;
-        const logo = response?.logo;
-        setChainAddresses((prev) => {
-          const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
-          return {
-            ...prev,
-            [destinationIndex]: {
-              chainID: chainId,
-              chainType,
-              address,
-              source: WalletSource.Wallet,
-              wallet: {
-                walletName: wallet.walletName,
-                walletPrettyName: wallet.walletPrettyName,
-                walletChainType: wallet.walletChainType,
-                walletInfo: {
-                  logo: logo ?? wallet.walletInfo?.logo,
-                },
-              },
-            },
-          };
-        });
-        return null;
-      }
-
       if (isConnectEco) {
         clearAssetInputAmounts();
         return await wallet.connect();
@@ -147,10 +108,15 @@ export const RenderWalletList = ({
       ) : null;
 
       const onClickConnectWallet = () => {
-        if (isMinimalWallet(wallet)) {
-          connectMutation.mutate(wallet);
-        } else {
+        if (!isMinimalWallet(wallet)) {
           wallet.onSelect();
+        } else if (onSelectWallet) {
+          onSelectWallet(wallet);
+          NiceModal.remove(Modals.SetAddressModal);
+          NiceModal.remove(Modals.WalletSelectorModal);
+          return;
+        } else {
+          connectMutation.mutate(wallet);
         }
       };
 
@@ -176,7 +142,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation],
+    [connectMutation, onSelectWallet],
   );
 
   const height = useMemo(() => {
