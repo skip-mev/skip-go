@@ -16,9 +16,7 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
 
   const handleOnClickBack = () => {
     setErrorAtom(undefined);
-    if (onClickBack) {
-      onClickBack();
-    }
+    onClickBack?.();
   };
 
   return (
@@ -34,14 +32,14 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
         title="Transaction failed"
         description="User rejected authentication request"
         icon={ICONS.triangleWarning}
-        backgroundColor={theme.error.background}
-        textColor={theme.error.text}
+        backgroundColor={theme.warning.background}
+        textColor={theme.warning.text}
       />
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
         onClick={handleOnClickBack}
-        backgroundColor={theme.error.text}
+        backgroundColor={theme.warning.text}
       />
     </>
   );
