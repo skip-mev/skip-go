@@ -30,6 +30,7 @@ export const initSentry = () => {
         maskAllText: false,
         maskAllInputs: false,
         blockAllMedia: false,
+        networkDetailAllowUrls: [/^https:\/\/go\.skip\.build\//],
         networkRequestHeaders: ["X-Custom-Header"],
         networkResponseHeaders: ["X-Custom-Header"],
         useCompression: false,
