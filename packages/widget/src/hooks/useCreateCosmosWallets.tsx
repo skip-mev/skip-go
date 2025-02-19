@@ -177,8 +177,8 @@ export const useCreateCosmosWallets = () => {
             } catch (_error) {
               return connectWallet({
                 chainIdToConnect: chainId,
-                keepConnected: true,
-                shouldUpdateSourceWallet: signRequired,
+                keepConnected: signRequired,
+                shouldUpdateSourceWallet: false,
               });
             }
           },
