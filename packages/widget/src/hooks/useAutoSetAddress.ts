@@ -1,6 +1,5 @@
 import { skipChainsAtom } from "@/state/skipClient";
 import {
-  ChainAddress,
   chainAddressEffectAtom,
   chainAddressesAtom,
   swapExecutionStateAtom,
@@ -9,15 +8,15 @@ import { connectedAddressesAtom } from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
-import { useCreateEvmWallets } from "./useCreateEvmWallets";
-import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { ChainType } from "@skip-go/client";
 import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
+import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
+import { useCreateEvmWallets } from "./useCreateEvmWallets";
+import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
+import { ChainType } from "@skip-go/client";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -26,11 +25,11 @@ export const useAutoSetAddress = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
 
-  useAtom(chainAddressEffectAtom);
-
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
+
+  useAtom(chainAddressEffectAtom);
 
   const connectedAddress = useAtomValue(connectedAddressesAtom);
 
@@ -41,180 +40,85 @@ export const useAutoSetAddress = () => {
     return signRequiredChains;
   }, [route?.operations]);
 
-  useEffect(() => {
-    const res: Record<number, ChainAddress> = {};
-    if (!route?.operations) return;
-    route?.requiredChainAddresses?.forEach((chainID, index) => {
-      res[index] = {
-        chainID,
-        address: chainAddresses[index]?.address,
-        chainType: chainAddresses[index]?.chainType,
-      };
-    });
-    setChainAddresses(res);
-    //  we only want to run this once to preserve the chainAddresses chainID
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {
+      const createWallets = {
+        [ChainType.Cosmos]: createCosmosWallets,
+        [ChainType.EVM]: createEvmWallets,
+        [ChainType.SVM]: createSolanaWallets,
+      };
+
       if (!requiredChainAddresses) return;
       requiredChainAddresses.forEach(async (chainID, index) => {
         const chain = chains?.find((c) => c.chainID === chainID);
         if (!chain) {
           return;
         }
-        const isSignRequired = signRequiredChains?.includes(chainID);
-        if (connectedAddress?.[chainID]) {
-          setChainAddresses((prev) => ({
-            ...prev,
-            [index]: {
-              chainID,
-              address: connectedAddress[chainID],
-              chainType: chains?.find((c) => c.chainID === chainID)?.chainType,
-              source: WalletSource.Injected,
-            },
-          }));
-          return;
-        }
         const showSetAddressModal = () => {
+          const isSignRequired = signRequiredChains?.includes(chainID);
           NiceModal.show(Modals.SetAddressModal, {
             signRequired: isSignRequired,
             chainId: chainID,
             chainAddressIndex: index,
           });
         };
-        const chainType = chain.chainType;
         // If already set by manual entry do not auto set
         if (chainAddresses[index]?.address) return;
-        switch (chainType) {
-          case ChainType.Cosmos: {
-            try {
-              const wallets = createCosmosWallets(chainID);
-              const wallet = wallets.find((w) => w.walletName === sourceWallet.cosmos?.walletName);
-              if (!wallet) {
-                if (!openModal) return;
-                showSetAddressModal();
-                return;
-              }
-              const address = await wallet?.getAddress?.({
-                signRequired: isSignRequired,
-              });
-              if (!address) {
-                return;
-              }
-              setChainAddresses((prev) => ({
-                ...prev,
-                [index]: {
-                  chainID,
-                  address,
-                  chainType: ChainType.Cosmos,
-                  source: WalletSource.Wallet,
-                  wallet: {
-                    walletName: wallet?.walletName,
-                    walletPrettyName: wallet?.walletPrettyName,
-                    walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
-                  },
-                },
-              }));
-            } catch (_) {
-              if (!openModal) return;
-              showSetAddressModal();
-            }
-            break;
-          }
-          case ChainType.SVM: {
-            try {
-              const wallets = createSolanaWallets();
-              const wallet = wallets.find((w) => w.walletName === sourceWallet.svm?.walletName);
-              if (!wallet) {
-                if (!openModal) return;
-                showSetAddressModal();
-                return;
-              }
-              const address = await wallet?.getAddress?.({
-                signRequired: isSignRequired,
-              });
-              if (!address) {
-                return;
-              }
-              setChainAddresses((prev) => ({
-                ...prev,
-                [index]: {
-                  chainID,
-                  address,
-                  chainType: ChainType.SVM,
-                  source: WalletSource.Wallet,
-                  wallet: {
-                    walletName: wallet?.walletName,
-                    walletPrettyName: wallet?.walletPrettyName,
-                    walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
-                  },
-                },
-              }));
-            } catch (_) {
-              if (!openModal) return;
-              showSetAddressModal();
-            }
 
-            break;
+        try {
+          const chainType = chain.chainType;
+          const wallets = createWallets[chainType](chainID);
+          const walletName = sourceWallet[chainType]?.walletName;
+          const wallet = wallets.find((w) => w.walletName === walletName);
+          const isSignRequired = signRequiredChains?.includes(chainID);
+
+          const response = await wallet?.getAddress?.({ signRequired: isSignRequired });
+
+          const isInjectedWallet = connectedAddress?.[chainID];
+
+          const address = connectedAddress?.[chainID] ?? response?.address;
+
+          if (!address || !wallet) {
+            throw new Error(
+              "Address not found in connected wallets. \n Opening modal for user to enter address",
+            );
           }
-          case ChainType.EVM: {
-            try {
-              const wallets = createEvmWallets(chainID);
-              const wallet = wallets.find((w) => w.walletName === sourceWallet.evm?.walletName);
-              if (!wallet) {
-                if (!openModal) return;
-                showSetAddressModal();
-                return;
-              }
-              const address = await wallet?.getAddress?.({
-                signRequired: isSignRequired,
-              });
-              if (!address) {
-                return;
-              }
-              setChainAddresses((prev) => ({
-                ...prev,
-                [index]: {
-                  chainID,
-                  address,
-                  chainType: ChainType.EVM,
-                  source: WalletSource.Wallet,
-                  wallet: {
-                    walletName: wallet?.walletName,
-                    walletPrettyName: wallet?.walletPrettyName,
-                    walletChainType: wallet?.walletChainType,
-                    walletInfo: wallet?.walletInfo,
-                  },
+
+          setChainAddresses((prev) => ({
+            ...prev,
+            [index]: {
+              chainID,
+              address,
+              chainType: chainType,
+              source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
+              wallet: {
+                walletName: wallet?.walletName,
+                walletPrettyName: wallet?.walletPrettyName,
+                walletChainType: chainType,
+                walletInfo: {
+                  logo: response?.logo ?? wallet?.walletInfo?.logo,
                 },
-              }));
-            } catch (_) {
-              if (!openModal) return;
-              showSetAddressModal();
-            }
-            break;
-          }
-          default:
-            break;
+              },
+            },
+          }));
+        } catch (_error) {
+          console.error(_error);
+          if (!openModal) return;
+          showSetAddressModal();
         }
       });
     },
     [
+      createCosmosWallets,
+      createEvmWallets,
+      createSolanaWallets,
       requiredChainAddresses,
       chains,
-      signRequiredChains,
-      connectedAddress,
       chainAddresses,
+      signRequiredChains,
+      sourceWallet,
+      connectedAddress,
       setChainAddresses,
-      createCosmosWallets,
-      sourceWallet.cosmos?.walletName,
-      sourceWallet.svm?.walletName,
-      sourceWallet.evm?.walletName,
-      createSolanaWallets,
-      createEvmWallets,
     ],
   );
 

@@ -9,14 +9,19 @@ import {
   UserAddress,
   ChainType,
 } from "@skip-go/client";
-import { MinimalWallet } from "./wallets";
+import {
+  DEEPLINK_CHOICE,
+  MinimalWallet,
+  RECENT_WALLET_DATA,
+  walletConnectDeepLinkByChainTypeAtom,
+} from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, slippageAtom } from "./swapPage";
+import { CosmosGasAmount, slippageAtom, sourceAssetAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser } from "@sentry/react";
@@ -92,6 +97,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   const sourceAddress = requiredChainAddresses[0];
   const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
+
+  const initialChainAddresses: Record<number, ChainAddress> = {};
+
+  route?.requiredChainAddresses?.forEach((chainID, index) => {
+    initialChainAddresses[index] = {
+      chainID,
+      address: "",
+    };
+  });
+
+  set(chainAddressesAtom, initialChainAddresses);
 
   set(swapExecutionStateAtom, {
     userAddresses: [],
@@ -303,6 +319,23 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const slippage = get(slippageAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
   const simulateTx = get(simulateTxAtom);
+
+  const { data: chains } = get(skipChainsAtom);
+  const sourceAsset = get(sourceAssetAtom);
+  const walletConnectDeepLinkByChainType = get(walletConnectDeepLinkByChainTypeAtom);
+
+  const chainType = chains?.find((chain) => chain.chainID === sourceAsset?.chainID)?.chainType;
+
+  if (chainType) {
+    const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
+    if (chainType === ChainType.Cosmos) {
+      window.localStorage.removeItem(DEEPLINK_CHOICE);
+      window.localStorage.removeItem(RECENT_WALLET_DATA);
+    } else {
+      window.localStorage.setItem(DEEPLINK_CHOICE, deeplink);
+      window.localStorage.setItem(RECENT_WALLET_DATA, recentWalletData);
+    }
+  }
 
   return {
     gcTime: Infinity,
