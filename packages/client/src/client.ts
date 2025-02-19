@@ -1244,9 +1244,7 @@ export class SkipClient {
     const client = await StargateClient.connect(endpoint, {
       accountParser,
     });
-    console.log(client);
     const account = await client.getAccount(address);
-    console.log(account);
     if (!account) {
       throw new Error(
         "getAccountNumberAndSequence: failed to retrieve account",
