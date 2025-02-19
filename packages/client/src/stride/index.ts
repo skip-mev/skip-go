@@ -1,14 +1,13 @@
-import { BaseAccount } from 'cosmjs-types/cosmos/auth/v1beta1/auth';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import Long from 'long';
-import * as _m0 from 'protobufjs/minimal';
+import { BinaryReader, BinaryWriter } from "cosmjs-types/binary";
+import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
+import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
 
 export type BaseVestingAccount = {
   baseAccount: BaseAccount;
   originalVesting: Coin[];
   delegatedFree: Coin[];
   delegatedVesting: Coin[];
-  endTime: Long;
+  endTime: bigint;
 };
 
 export interface StridePeriodicVestingAccount {
@@ -23,14 +22,20 @@ const createBaseVestingAccount = (): BaseVestingAccount => {
     originalVesting: [],
     delegatedFree: [],
     delegatedVesting: [],
-    endTime: Long.ZERO,
+    endTime: BigInt(0),
   };
-}
+};
 
 export const BaseVestingAccount = {
-  encode(message: BaseVestingAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: BaseVestingAccount,
+    writer: BinaryWriter = BinaryWriter.create(),
+  ): BinaryWriter {
     if (message.baseAccount !== undefined) {
-      BaseAccount.encode(message.baseAccount, writer.uint32(10).fork()).ldelim();
+      BaseAccount.encode(
+        message.baseAccount,
+        writer.uint32(10).fork(),
+      ).ldelim();
     }
 
     for (const v of message.originalVesting) {
@@ -45,15 +50,19 @@ export const BaseVestingAccount = {
       Coin.encode(v!, writer.uint32(34).fork()).ldelim();
     }
 
-    if (!message.endTime.isZero()) {
+    if (message.endTime !== BigInt(0)) {
       writer.uint32(40).int64(message.endTime);
     }
 
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): BaseVestingAccount {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): BaseVestingAccount {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseVestingAccount();
 
@@ -78,7 +87,7 @@ export const BaseVestingAccount = {
           break;
 
         case 5:
-          message.endTime = reader.int64() as Long;
+          message.endTime = reader.int64();
           break;
 
         default:
@@ -92,28 +101,31 @@ export const BaseVestingAccount = {
 };
 
 export interface Period {
-  startTime: Long;
-  length: Long;
+  startTime: bigint;
+  length: bigint;
   amount: Coin[];
   actionType: number;
 }
 
 function createBasePeriod(): Period {
   return {
-    startTime: Long.ZERO,
-    length: Long.ZERO,
+    startTime: BigInt(0),
+    length: BigInt(0),
     amount: [],
     actionType: 0,
   };
 }
 
 export const Period = {
-  encode(message: Period, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (!message.startTime.isZero()) {
+  encode(
+    message: Period,
+    writer: BinaryWriter = BinaryWriter.create(),
+  ): BinaryWriter {
+    if (message.startTime !== BigInt(0)) {
       writer.uint32(8).int64(message.startTime);
     }
 
-    if (!message.length.isZero()) {
+    if (message.length !== BigInt(0)) {
       writer.uint32(16).int64(message.length);
     }
 
@@ -127,8 +139,9 @@ export const Period = {
 
     return writer;
   },
-  decode(input: _m0.Reader | Uint8Array, length?: number): Period {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(input: BinaryReader | Uint8Array, length?: number): Period {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
     const message = createBasePeriod();
 
@@ -137,11 +150,11 @@ export const Period = {
 
       switch (tag >>> 3) {
         case 1:
-          message.startTime = reader.int64() as Long;
+          message.startTime = reader.int64();
           break;
 
         case 2:
-          message.length = reader.int64() as Long;
+          message.length = reader.int64();
           break;
 
         case 3:
@@ -172,9 +185,15 @@ function createBaseStridePeriodicVestingAccount(): StridePeriodicVestingAccount 
 }
 
 export const StridePeriodicVestingAccount = {
-  encode(message: StridePeriodicVestingAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: StridePeriodicVestingAccount,
+    writer: BinaryWriter = BinaryWriter.create(),
+  ): BinaryWriter {
     if (message.baseVestingAccount !== undefined) {
-      BaseVestingAccount.encode(message.baseVestingAccount, writer.uint32(10).fork()).ldelim();
+      BaseVestingAccount.encode(
+        message.baseVestingAccount,
+        writer.uint32(10).fork(),
+      ).ldelim();
     }
 
     for (const v of message.vestingPeriods) {
@@ -184,8 +203,12 @@ export const StridePeriodicVestingAccount = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): StridePeriodicVestingAccount {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+  decode(
+    input: BinaryReader | Uint8Array,
+    length?: number,
+  ): StridePeriodicVestingAccount {
+    const reader =
+      input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseStridePeriodicVestingAccount();
 
@@ -196,7 +219,10 @@ export const StridePeriodicVestingAccount = {
         case 1:
           //eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
-          message.baseVestingAccount = BaseVestingAccount.decode(reader, reader.uint32());
+          message.baseVestingAccount = BaseVestingAccount.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
 
         case 3:
