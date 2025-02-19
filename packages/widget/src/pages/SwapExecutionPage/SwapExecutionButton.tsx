@@ -50,20 +50,20 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         swapExecutionState,
       )
     ) {
-      const timer = createCountdownTimer({
+      const countdownTimer = createCountdownTimer({
         duration: estimatedDurationSeconds,
         onUpdate: (remainingTime) => {
           setCountdown(parseInt(remainingTime.toString()));
         },
       });
-      setTimer(timer);
-      timer.startCountdown();
+      setTimer(countdownTimer);
+      countdownTimer.startCountdown();
     }
 
     return () => {
       timer?.stopCountdown();
     };
-  }, [countdown, route?.estimatedRouteDurationSeconds, swapExecutionState, timer]);
+  }, [route?.estimatedRouteDurationSeconds, swapExecutionState, timer]);
 
   const theme = useTheme();
   const setError = useSetAtom(errorAtom);
