@@ -58,17 +58,19 @@ export const useCreateEvmWallets = () => {
         const connectWallet = async ({
           chainIdToConnect = "1",
           shouldUpdateSourceWallet = true,
+          keepConnected,
         }: {
           chainIdToConnect?: string;
           shouldUpdateSourceWallet?: boolean;
+          keepConnected?: boolean;
         }) => {
+          const walletIsCurrentlyConnected = connector.id === currentEvmConnector?.id;
+
           const walletConnectedButNeedToSwitchChain =
-            isEvmConnected &&
-            chainId !== Number(chainIdToConnect) &&
-            connector.id === currentEvmConnector?.id;
+            isEvmConnected && chainId !== Number(chainIdToConnect) && walletIsCurrentlyConnected;
 
           try {
-            if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
+            if (isEvmConnected && !walletIsCurrentlyConnected) {
               await currentConnector?.disconnect();
             }
             if (walletConnectedButNeedToSwitchChain) {
@@ -104,7 +106,7 @@ export const useCreateEvmWallets = () => {
                 chainId: chainID,
                 address: account[0],
               });
-            } else {
+            } else if (!keepConnected && !walletIsCurrentlyConnected) {
               await currentConnector?.disconnect();
             }
 
@@ -147,6 +149,7 @@ export const useCreateEvmWallets = () => {
               return connectWallet({
                 chainIdToConnect: chainID,
                 shouldUpdateSourceWallet: false,
+                keepConnected: signRequired,
               });
             }
           },

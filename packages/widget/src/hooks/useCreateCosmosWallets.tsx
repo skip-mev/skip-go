@@ -68,9 +68,11 @@ export const useCreateCosmosWallets = () => {
         const connectWallet = async ({
           chainIdToConnect,
           shouldUpdateSourceWallet = true,
+          keepConnected,
         }: {
           chainIdToConnect?: string;
           shouldUpdateSourceWallet?: boolean;
+          keepConnected?: boolean;
         }) => {
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
@@ -116,7 +118,7 @@ export const useCreateCosmosWallets = () => {
                 chainIdToAddressMap: chainIdToAddressMap,
                 address: address,
               });
-            } else {
+            } else if (!keepConnected && currentWallet !== wallet) {
               await disconnectAsync();
             }
 
@@ -173,7 +175,11 @@ export const useCreateCosmosWallets = () => {
               const address = (await getWallet(wallet).getKey(chainId)).bech32Address;
               return { address };
             } catch (_error) {
-              return connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: false });
+              return connectWallet({
+                chainIdToConnect: chainId,
+                keepConnected: true,
+                shouldUpdateSourceWallet: signRequired,
+              });
             }
           },
           isWalletConnected: currentWallet === wallet,
