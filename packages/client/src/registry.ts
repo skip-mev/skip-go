@@ -1,14 +1,16 @@
-import { AccountParser, accountFromAny } from '@cosmjs/stargate';
+import { AccountParser, accountFromAny } from "@cosmjs/stargate";
 import { assert } from "@cosmjs/utils";
-import { StridePeriodicVestingAccount } from './stride';
-import { BaseAccount } from './codegen/cosmos/auth/v1beta1/auth';
-import { EthAccount } from '@injectivelabs/core-proto-ts/cjs/injective/types/v1beta1/account';
+import { StridePeriodicVestingAccount } from "./stride";
+import { BaseAccount } from "./codegen/cosmos/auth/v1beta1/auth";
+import { EthAccount } from "@injectivelabs/core-proto-ts/cjs/injective/types/v1beta1/account";
 
 export const accountParser: AccountParser = (acc) => {
+  console.log(acc);
   switch (acc.typeUrl) {
     case "/stride.vesting.StridePeriodicVestingAccount":
       const baseAccount = StridePeriodicVestingAccount.decode(acc.value)
         .baseVestingAccount?.baseAccount;
+      console.log(baseAccount);
       assert(baseAccount);
       return accountFromAny({
         typeUrl: "/cosmos.auth.v1beta1.BaseAccount",
@@ -23,9 +25,9 @@ export const accountParser: AccountParser = (acc) => {
         address: baseInjAccount.address,
         pubkey: pubKey
           ? {
-            type: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
-            value: Buffer.from(pubKey.value).toString("base64"),
-          }
+              type: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+              value: Buffer.from(pubKey.value).toString("base64"),
+            }
           : null,
         accountNumber: Number(baseInjAccount.accountNumber),
         sequence: Number(baseInjAccount.sequence),
@@ -40,9 +42,9 @@ export const accountParser: AccountParser = (acc) => {
         address: baseEthAccount.address,
         pubkey: pubKeyEth
           ? {
-            type: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-            value: Buffer.from(pubKeyEth.value).toString("base64"),
-          }
+              type: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+              value: Buffer.from(pubKeyEth.value).toString("base64"),
+            }
           : null,
         accountNumber: Number(baseEthAccount.accountNumber),
         sequence: Number(baseEthAccount.sequence),

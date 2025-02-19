@@ -1,7 +1,7 @@
-import { BaseAccount } from 'cosmjs-types/cosmos/auth/v1beta1/auth';
-import { Coin } from 'cosmjs-types/cosmos/base/v1beta1/coin';
-import Long from 'long';
-import * as _m0 from 'protobufjs/minimal';
+import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
+import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
+import Long from "long";
+import * as _m0 from "protobufjs/minimal";
 
 export type BaseVestingAccount = {
   baseAccount: BaseAccount;
@@ -25,12 +25,18 @@ const createBaseVestingAccount = (): BaseVestingAccount => {
     delegatedVesting: [],
     endTime: Long.ZERO,
   };
-}
+};
 
 export const BaseVestingAccount = {
-  encode(message: BaseVestingAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: BaseVestingAccount,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.baseAccount !== undefined) {
-      BaseAccount.encode(message.baseAccount, writer.uint32(10).fork()).ldelim();
+      BaseAccount.encode(
+        message.baseAccount,
+        writer.uint32(10).fork(),
+      ).ldelim();
     }
 
     for (const v of message.originalVesting) {
@@ -108,7 +114,10 @@ function createBasePeriod(): Period {
 }
 
 export const Period = {
-  encode(message: Period, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Period,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (!message.startTime.isZero()) {
       writer.uint32(8).int64(message.startTime);
     }
@@ -172,9 +181,15 @@ function createBaseStridePeriodicVestingAccount(): StridePeriodicVestingAccount 
 }
 
 export const StridePeriodicVestingAccount = {
-  encode(message: StridePeriodicVestingAccount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: StridePeriodicVestingAccount,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.baseVestingAccount !== undefined) {
-      BaseVestingAccount.encode(message.baseVestingAccount, writer.uint32(10).fork()).ldelim();
+      BaseVestingAccount.encode(
+        message.baseVestingAccount,
+        writer.uint32(10).fork(),
+      ).ldelim();
     }
 
     for (const v of message.vestingPeriods) {
@@ -184,19 +199,34 @@ export const StridePeriodicVestingAccount = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): StridePeriodicVestingAccount {
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number,
+  ): StridePeriodicVestingAccount {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    const end = length === undefined ? reader.len : reader.pos + length;
+    const end = length !== undefined ? reader.pos + length : reader.len;
     const message = createBaseStridePeriodicVestingAccount();
+
+    console.log("input", input);
+    console.log("length", length);
+
+    console.log("reader", reader);
+    console.log("end", end);
+    console.log("message", message);
 
     while (reader.pos < end) {
       const tag = reader.uint32();
+
+      console.log("tag bit shifted by 3", tag >>> 3);
 
       switch (tag >>> 3) {
         case 1:
           //eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
-          message.baseVestingAccount = BaseVestingAccount.decode(reader, reader.uint32());
+          message.baseVestingAccount = BaseVestingAccount.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
 
         case 3:
