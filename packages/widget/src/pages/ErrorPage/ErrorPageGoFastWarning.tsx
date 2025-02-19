@@ -11,6 +11,7 @@ import { CogIcon } from "@/icons/CogIcon";
 import { Row } from "@/components/Layout";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
+import { setTag } from "@sentry/react";
 
 export type ErrorPageGoFastWarningProps = {
   onClickBack: () => void;
@@ -28,6 +29,7 @@ export const ErrorPageGoFastWarning = ({
 
   useEffect(() => {
     setShowGoFastErrorAtom(false);
+    setTag("goFastWarning", true);
   }, [setShowGoFastErrorAtom]);
 
   const handleOnClickBack = () => {
