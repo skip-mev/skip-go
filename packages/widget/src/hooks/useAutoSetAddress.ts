@@ -6,9 +6,8 @@ import {
 } from "@/state/swapExecutionPage";
 import { connectedAddressesAtom } from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
-import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
@@ -122,30 +121,10 @@ export const useAutoSetAddress = () => {
     ],
   );
 
-  useQuery({
-    queryKey: [
-      "auto-set-address",
-      {
-        requiredChainAddresses,
-        chains,
-        sourceWallet,
-        signRequiredChains,
-        chainAddresses,
-        connectedAddress,
-      },
-    ],
-    enabled:
-      !!requiredChainAddresses &&
-      !!chains &&
-      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm || !!connectedAddress),
-    queryFn: async () => {
-      if (!requiredChainAddresses) return;
-      await connectRequiredChains();
-      return null;
-    },
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  useEffect(() => {
+    connectRequiredChains();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return { connectRequiredChains };
 };
