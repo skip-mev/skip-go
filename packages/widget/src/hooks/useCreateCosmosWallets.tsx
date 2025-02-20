@@ -13,7 +13,7 @@ import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
 import { TransparentAddressRequest } from "@penumbra-zone/protobuf/penumbra/view/v1/view_pb";
-import { ChainType } from "@skip-go/client";
+import { Chain, ChainType } from "@skip-go/client";
 import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
