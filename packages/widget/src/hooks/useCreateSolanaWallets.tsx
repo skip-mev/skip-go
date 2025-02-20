@@ -27,14 +27,6 @@ export const useCreateSolanaWallets = () => {
     for (const wallet of solanaWallets) {
       const isWalletConnect = wallet.name === "WalletConnect";
 
-      const updateSourceWallet = (walletConnectMetadata?: WalletConnectMetaData) => {
-        setSvmWallet({
-          walletName: wallet.name,
-          chainType: ChainType.SVM,
-          logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
-        });
-      };
-
       const connectWallet = async () => {
         try {
           await wallet.connect();
@@ -59,17 +51,12 @@ export const useCreateSolanaWallets = () => {
           const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
             ?.metadata as WalletConnectMetaData;
 
-          if (svmWallet === undefined) {
-            updateSourceWallet(walletConnectMetadata);
-            setWCDeepLinkByChainType(ChainType.SVM);
-            callbacks?.onWalletConnected?.({
-              walletName: wallet.name,
-              chainId: chain?.chainID,
-              address,
-            });
-          } else {
-            await wallet.disconnect();
-          }
+          setWCDeepLinkByChainType(ChainType.SVM);
+          callbacks?.onWalletConnected?.({
+            walletName: wallet.name,
+            chainId: chain?.chainID,
+            address,
+          });
 
           return { address, logo: walletConnectMetadata?.icons?.[0] };
         } catch (error) {

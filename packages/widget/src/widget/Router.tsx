@@ -7,8 +7,10 @@ import { Routes, currentPageAtom } from "@/state/router";
 import { useAtom } from "jotai";
 import { ErrorBoundary } from "react-error-boundary";
 import { captureException } from "@sentry/browser";
+import { useKeepWalletStateSynced } from "@/hooks/useKeepWalletStateSynced";
 
 export const Router = () => {
+  useKeepWalletStateSynced();
   const [currentPage] = useAtom(currentPageAtom);
   const [error, setError] = useAtom(errorAtom);
 

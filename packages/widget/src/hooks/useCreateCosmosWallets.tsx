@@ -58,13 +58,6 @@ export const useCreateCosmosWallets = () => {
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
 
-        const updateSourceWallet = () => {
-          setCosmosWallet({
-            walletName: wallet,
-            chainType: ChainType.Cosmos,
-          });
-        };
-
         const connectWallet = async ({ chainIdToConnect }: { chainIdToConnect?: string }) => {
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
@@ -103,14 +96,11 @@ export const useCreateCosmosWallets = () => {
             );
             const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
 
-            if (cosmosWallet === undefined) {
-              updateSourceWallet();
-              callbacks?.onWalletConnected?.({
-                walletName: wallet,
-                chainIdToAddressMap: chainIdToAddressMap,
-                address: address,
-              });
-            }
+            callbacks?.onWalletConnected?.({
+              walletName: wallet,
+              chainIdToAddressMap: chainIdToAddressMap,
+              address: address,
+            });
 
             return { address };
           } catch (e) {

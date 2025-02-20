@@ -38,6 +38,7 @@ export type MinimalWallet = {
 };
 
 type WalletState = {
+  id?: string;
   walletName: string;
   chainType: string;
   logo?: string;
