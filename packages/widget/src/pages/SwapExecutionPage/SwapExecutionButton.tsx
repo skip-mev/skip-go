@@ -56,13 +56,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           label="Set destination address"
           icon={ICONS.rightArrow}
           onClick={() => {
-            const destinationChainID = route?.destAssetChainID;
-            if (!destinationChainID) return;
-            NiceModal.show(Modals.SetAddressModal, {
-              signRequired: lastOperation.signRequired,
-              chainId: destinationChainID,
-              chainAddressIndex: route.requiredChainAddresses.length - 1,
-            });
+            connectRequiredChains(true);
           }}
         />
       );
