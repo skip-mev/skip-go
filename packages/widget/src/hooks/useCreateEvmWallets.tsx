@@ -155,7 +155,6 @@ export const useCreateEvmWallets = () => {
           minimalWallet.getAddress = async () => {
             const { address } = await connectWallet({
               chainIdToConnect: chainID,
-              shouldUpdateSourceWallet: false,
             });
             const publicClient = createPublicClient({
               chain: sei,
