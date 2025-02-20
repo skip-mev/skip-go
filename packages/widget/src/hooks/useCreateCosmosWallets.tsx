@@ -32,7 +32,7 @@ import { callbacksAtom, OnWalletDisconnectedProps } from "@/state/callbacks";
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
+  const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
@@ -65,13 +65,7 @@ export const useCreateCosmosWallets = () => {
           });
         };
 
-        const connectWallet = async ({
-          chainIdToConnect,
-          shouldUpdateSourceWallet = true,
-        }: {
-          chainIdToConnect?: string;
-          shouldUpdateSourceWallet?: boolean;
-        }) => {
+        const connectWallet = async ({ chainIdToConnect }: { chainIdToConnect?: string }) => {
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
           try {
@@ -109,15 +103,13 @@ export const useCreateCosmosWallets = () => {
             );
             const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
 
-            if (shouldUpdateSourceWallet) {
+            if (cosmosWallet === undefined) {
               updateSourceWallet();
               callbacks?.onWalletConnected?.({
                 walletName: wallet,
                 chainIdToAddressMap: chainIdToAddressMap,
                 address: address,
               });
-            } else {
-              await disconnectAsync();
             }
 
             return { address };
@@ -164,16 +156,17 @@ export const useCreateCosmosWallets = () => {
           },
           getAddress: async ({ signRequired }) => {
             try {
-              if (signRequired) {
-                throw new Error("always prompt wallet connection");
+              const getAddressWithoutConnectingWallet =
+                cosmosWallet && currentWallet !== wallet && !signRequired && chainId;
+
+              if (getAddressWithoutConnectingWallet) {
+                const address = (await getWallet(wallet).getKey(chainId)).bech32Address;
+                return { address };
               }
-              if (!chainId) {
-                throw new Error("no chain id");
-              }
-              const address = (await getWallet(wallet).getKey(chainId)).bech32Address;
-              return { address };
+
+              throw new Error("connect wallet");
             } catch (_error) {
-              return connectWallet({ chainIdToConnect: chainId, shouldUpdateSourceWallet: false });
+              return connectWallet({ chainIdToConnect: chainId });
             }
           },
           isWalletConnected: currentWallet === wallet,
