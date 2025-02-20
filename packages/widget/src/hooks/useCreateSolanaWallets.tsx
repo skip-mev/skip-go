@@ -4,7 +4,6 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import {
   MinimalWallet,
   setWalletConnectDeepLinkByChainTypeAtom,
-  svmWalletAtom,
   WalletConnectMetaData,
 } from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -17,7 +16,6 @@ export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
@@ -26,14 +24,6 @@ export const useCreateSolanaWallets = () => {
 
     for (const wallet of solanaWallets) {
       const isWalletConnect = wallet.name === "WalletConnect";
-
-      const updateSourceWallet = (walletConnectMetadata?: WalletConnectMetaData) => {
-        setSvmWallet({
-          walletName: wallet.name,
-          chainType: ChainType.SVM,
-          logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
-        });
-      };
 
       const connectWallet = async () => {
         try {
@@ -59,17 +49,12 @@ export const useCreateSolanaWallets = () => {
           const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
             ?.metadata as WalletConnectMetaData;
 
-          if (svmWallet === undefined) {
-            updateSourceWallet(walletConnectMetadata);
-            setWCDeepLinkByChainType(ChainType.SVM);
-            callbacks?.onWalletConnected?.({
-              walletName: wallet.name,
-              chainId: chain?.chainID,
-              address,
-            });
-          } else {
-            await wallet.disconnect();
-          }
+          setWCDeepLinkByChainType(ChainType.SVM);
+          callbacks?.onWalletConnected?.({
+            walletName: wallet.name,
+            chainId: chain?.chainID,
+            address,
+          });
 
           return { address, logo: walletConnectMetadata?.icons?.[0] };
         } catch (error) {
@@ -105,7 +90,6 @@ export const useCreateSolanaWallets = () => {
         },
         disconnect: async () => {
           await wallet.disconnect();
-          setSvmWallet(undefined);
           callbacks?.onWalletDisconnected?.({
             walletName: wallet.name,
             chainType: ChainType.SVM,
@@ -117,15 +101,6 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [
-    setSvmWallet,
-    chains,
-    assets,
-    sourceAsset,
-    svmWallet,
-    setSourceAsset,
-    setWCDeepLinkByChainType,
-    callbacks,
-  ]);
+  }, [chains, assets, sourceAsset, setSourceAsset, setWCDeepLinkByChainType, callbacks]);
   return { createSolanaWallets };
 };

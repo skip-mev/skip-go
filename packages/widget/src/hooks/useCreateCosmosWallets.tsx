@@ -32,7 +32,7 @@ import { callbacksAtom, OnWalletDisconnectedProps } from "@/state/callbacks";
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
@@ -57,13 +57,6 @@ export const useCreateCosmosWallets = () => {
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
-
-        const updateSourceWallet = () => {
-          setCosmosWallet({
-            walletName: wallet,
-            chainType: ChainType.Cosmos,
-          });
-        };
 
         const connectWallet = async ({ chainIdToConnect }: { chainIdToConnect?: string }) => {
           const connectToInitialChainId =
@@ -103,14 +96,11 @@ export const useCreateCosmosWallets = () => {
             );
             const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
 
-            if (cosmosWallet === undefined) {
-              updateSourceWallet();
-              callbacks?.onWalletConnected?.({
-                walletName: wallet,
-                chainIdToAddressMap: chainIdToAddressMap,
-                address: address,
-              });
-            }
+            callbacks?.onWalletConnected?.({
+              walletName: wallet,
+              chainIdToAddressMap: chainIdToAddressMap,
+              address: address,
+            });
 
             return { address };
           } catch (e) {
@@ -148,7 +138,6 @@ export const useCreateCosmosWallets = () => {
           },
           disconnect: async () => {
             await disconnectAsync();
-            setCosmosWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: wallet,
               chainType: ChainType.Cosmos,
@@ -188,7 +177,6 @@ export const useCreateCosmosWallets = () => {
       callbacks,
       chains,
       currentWallet,
-      setCosmosWallet,
       sourceAsset,
       cosmosWallet,
       assets,

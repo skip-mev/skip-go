@@ -6,9 +6,8 @@ import {
 } from "@/state/swapExecutionPage";
 import { connectedAddressesAtom } from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
-import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
@@ -17,6 +16,7 @@ import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { ChainType } from "@skip-go/client";
+import { useGetAccount } from "./useGetAccount";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -24,6 +24,9 @@ export const useAutoSetAddress = () => {
   const requiredChainAddresses = route?.requiredChainAddresses;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
+
+  const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
+  const getAccount = useGetAccount();
 
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
@@ -63,7 +66,7 @@ export const useAutoSetAddress = () => {
           });
         };
         // If already set by manual entry do not auto set
-        if (chainAddresses[index]?.address) return;
+        if (chainAddresses[index].source === WalletSource.Input) return;
 
         try {
           const chainType = chain.chainType;
@@ -122,30 +125,26 @@ export const useAutoSetAddress = () => {
     ],
   );
 
-  useQuery({
-    queryKey: [
-      "auto-set-address",
-      {
-        requiredChainAddresses,
-        chains,
-        sourceWallet,
-        signRequiredChains,
-        chainAddresses,
-        connectedAddress,
-      },
-    ],
-    enabled:
-      !!requiredChainAddresses &&
-      !!chains &&
-      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm || !!connectedAddress),
-    queryFn: async () => {
-      if (!requiredChainAddresses) return;
-      await connectRequiredChains();
-      return null;
-    },
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  useEffect(() => {
+    if (!requiredChainAddresses) return;
+    const cosmosWalletChanged = sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id;
+    const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
+    const svmWalletChanged = sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
+
+    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged) {
+      connectRequiredChains();
+      setCurrentSourceWallets(sourceWallet);
+    }
+  }, [
+    connectRequiredChains,
+    currentSourceWallets?.cosmos?.id,
+    currentSourceWallets?.evm?.id,
+    currentSourceWallets?.svm?.id,
+    getAccount,
+    requiredChainAddresses,
+    sourceWallet,
+    sourceWallet.cosmos,
+  ]);
 
   return { connectRequiredChains };
 };
