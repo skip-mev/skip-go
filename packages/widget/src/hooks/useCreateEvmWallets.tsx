@@ -20,7 +20,7 @@ export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const setEvmWallet = useSetAtom(evmWalletAtom);
+  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
@@ -55,13 +55,7 @@ export const useCreateEvmWallets = () => {
           });
         };
 
-        const connectWallet = async ({
-          chainIdToConnect = "1",
-          shouldUpdateSourceWallet = true,
-        }: {
-          chainIdToConnect?: string;
-          shouldUpdateSourceWallet?: boolean;
-        }) => {
+        const connectWallet = async ({ chainIdToConnect = "1" }: { chainIdToConnect?: string }) => {
           const walletConnectedButNeedToSwitchChain =
             isEvmConnected &&
             chainId !== Number(chainIdToConnect) &&
@@ -96,7 +90,7 @@ export const useCreateEvmWallets = () => {
             const walletConnectMetadata = (provider as any)?.session?.peer
               ?.metadata as WalletConnectMetaData;
 
-            if (shouldUpdateSourceWallet) {
+            if (evmWallet === undefined) {
               updateSourceWallet(walletConnectMetadata);
               setWCDeepLinkByChainType(ChainType.EVM);
               callbacks?.onWalletConnected?.({
@@ -146,7 +140,6 @@ export const useCreateEvmWallets = () => {
             } catch (_error) {
               return connectWallet({
                 chainIdToConnect: chainID,
-                shouldUpdateSourceWallet: false,
               });
             }
           },
