@@ -7,7 +7,7 @@ import {
 import { connectedAddressesAtom } from "@/state/wallets";
 import { walletsAtom } from "@/state/wallets";
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { getClientOperations } from "@/utils/clientType";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
@@ -32,10 +32,6 @@ export const useAutoSetAddress = () => {
   useAtom(chainAddressEffectAtom);
 
   const connectedAddress = useAtomValue(connectedAddressesAtom);
-
-  const allAddressesSet = requiredChainAddresses?.every(
-    (_chainId, index) => chainAddresses[index]?.address,
-  );
 
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
@@ -124,7 +120,10 @@ export const useAutoSetAddress = () => {
         connectedAddress,
       },
     ],
-    enabled: !allAddressesSet,
+    enabled:
+      !!requiredChainAddresses &&
+      !!chains &&
+      (!!sourceWallet.cosmos || !!sourceWallet.evm || !!sourceWallet.svm || !!connectedAddress),
     queryFn: async () => {
       if (!requiredChainAddresses) return;
       await connectRequiredChains();
