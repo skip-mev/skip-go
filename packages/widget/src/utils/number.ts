@@ -60,7 +60,7 @@ export function calculatePercentageChange(
   return percentageDifference.toFixed(0);
 }
 
-export const convertSecondsToMinutesOrHours = (seconds?: number) => {
+export const convertSecondsToMinutesOrHours = (seconds?: number, alwaysShowSeconds = false) => {
   if (!seconds) {
     return;
   }
@@ -69,8 +69,21 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
   } else if (seconds < 3600) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")} ${pluralize("min", Math.round(seconds / 60))}`;
+
+    if (alwaysShowSeconds) {
+      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")} ${pluralize("min", minutes)}`;
+    }
+
+    return `${minutes} ${pluralize("min", minutes)}`;
   } else {
-    return `${Math.round(seconds / 3600)} ${pluralize("hr", Math.round(seconds / 3600))}`;
+    const hours = Math.floor(seconds / 3600);
+    const remainingMinutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    if (alwaysShowSeconds) {
+      return `${hours}:${remainingMinutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")} ${pluralize("hr", hours)}`;
+    }
+
+    return `${hours} ${pluralize("hr", hours)}`;
   }
 };

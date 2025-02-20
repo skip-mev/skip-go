@@ -125,7 +125,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           loading
           isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
-          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown, true)}
         />
       );
     case SwapExecutionState.signaturesRemaining:
@@ -136,7 +136,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             signaturesRemaining,
           )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
           loading
-          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown, true)}
         />
       );
     case SwapExecutionState.confirmed:
