@@ -187,6 +187,7 @@ export const useCreateEvmWallets = () => {
       isEvmConnected,
       chainId,
       sourceAsset,
+      evmWallet,
       currentConnector,
       connectAsync,
       chains,
