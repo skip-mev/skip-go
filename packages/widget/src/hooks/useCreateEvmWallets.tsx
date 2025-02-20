@@ -2,7 +2,6 @@ import { seiPrecompileAddrABI } from "@/constants/abis";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import {
-  evmWalletAtom,
   MinimalWallet,
   setWalletConnectDeepLinkByChainTypeAtom,
   WalletConnectMetaData,
@@ -20,7 +19,6 @@ export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
@@ -108,7 +106,6 @@ export const useCreateEvmWallets = () => {
           },
           disconnect: async () => {
             await currentConnector?.disconnect();
-            setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: connector.name,
               chainType: ChainType.EVM,
@@ -169,7 +166,6 @@ export const useCreateEvmWallets = () => {
     [
       connectors,
       currentEvmConnector?.id,
-      setEvmWallet,
       isEvmConnected,
       chainId,
       sourceAsset,
