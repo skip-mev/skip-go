@@ -67,7 +67,9 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
   if (seconds < 60) {
     return `${seconds} ${pluralize("sec", seconds)}`;
   } else if (seconds < 3600) {
-    return `${Math.round(seconds / 60)} ${pluralize("min", Math.round(seconds / 60))}`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")} ${pluralize("min", Math.round(seconds / 60))}`;
   } else {
     return `${Math.round(seconds / 3600)} ${pluralize("hr", Math.round(seconds / 3600))}`;
   }
