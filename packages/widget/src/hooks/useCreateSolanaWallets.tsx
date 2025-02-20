@@ -17,7 +17,7 @@ export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const setSvmWallet = useSetAtom(svmWalletAtom);
+  const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
@@ -35,12 +35,7 @@ export const useCreateSolanaWallets = () => {
         });
       };
 
-      const connectWallet = async ({
-        shouldUpdateSourceWallet = true,
-      }: {
-        chainIdToConnect?: string;
-        shouldUpdateSourceWallet?: boolean;
-      } = {}) => {
+      const connectWallet = async () => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
@@ -64,7 +59,7 @@ export const useCreateSolanaWallets = () => {
           const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
             ?.metadata as WalletConnectMetaData;
 
-          if (shouldUpdateSourceWallet) {
+          if (svmWallet === undefined) {
             updateSourceWallet(walletConnectMetadata);
             setWCDeepLinkByChainType(ChainType.SVM);
             callbacks?.onWalletConnected?.({
@@ -90,8 +85,8 @@ export const useCreateSolanaWallets = () => {
         walletInfo: {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
-        connect: async (chainId) => {
-          connectWallet({ chainIdToConnect: chainId });
+        connect: async () => {
+          connectWallet();
         },
         getAddress: async ({ signRequired }) => {
           try {
@@ -105,9 +100,7 @@ export const useCreateSolanaWallets = () => {
             return { address: address.toBase58() };
           } catch (error) {
             console.error(error);
-            return connectWallet({
-              shouldUpdateSourceWallet: false,
-            });
+            return connectWallet();
           }
         },
         disconnect: async () => {
@@ -129,6 +122,7 @@ export const useCreateSolanaWallets = () => {
     chains,
     assets,
     sourceAsset,
+    svmWallet,
     setSourceAsset,
     setWCDeepLinkByChainType,
     callbacks,
