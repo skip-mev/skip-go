@@ -38,7 +38,7 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 
 export const SwapPage = () => {
-  const { SettingsDrawerPageContainer } = useSettingsDrawer();
+  const { SettingsFooter, drawerOpen } = useSettingsDrawer();
 
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
@@ -312,47 +312,51 @@ export const SwapPage = () => {
   ]);
 
   return (
-    <>
-      <SettingsDrawerPageContainer>
-        <SwapPageHeader
-          leftButton={
-            txHistory.length === 0
-              ? undefined
-              : {
-                  label: "History",
-                  icon: ICONS.history,
-                  onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-                }
-          }
-          rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
+    <Column
+      gap={5}
+      style={{
+        opacity: drawerOpen ? 0.3 : 1,
+      }}
+    >
+      <SwapPageHeader
+        leftButton={
+          txHistory.length === 0
+            ? undefined
+            : {
+                label: "History",
+                icon: ICONS.history,
+                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+              }
+        }
+        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
+      />
+      <Column align="center">
+        <SwapPageAssetChainInput
+          selectedAsset={sourceAsset}
+          handleChangeAsset={handleChangeSourceAsset}
+          handleChangeChain={handleChangeSourceChain}
+          isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
+          value={sourceAsset?.amount}
+          usdValue={route?.usdAmountIn}
+          onChangeValue={setSourceAssetAmount}
+          context="source"
         />
-        <Column align="center">
-          <SwapPageAssetChainInput
-            selectedAsset={sourceAsset}
-            handleChangeAsset={handleChangeSourceAsset}
-            handleChangeChain={handleChangeSourceChain}
-            isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
-            value={sourceAsset?.amount}
-            usdValue={route?.usdAmountIn}
-            onChangeValue={setSourceAssetAmount}
-            context="source"
-          />
-          <SwapPageBridge />
-          <SwapPageAssetChainInput
-            selectedAsset={destinationAsset}
-            handleChangeAsset={handleChangeDestinationAsset}
-            handleChangeChain={handleChangeDestinationChain}
-            isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
-            usdValue={route?.usdAmountOut}
-            value={destinationAsset?.amount}
-            priceChangePercentage={Number(priceChangePercentage)}
-            badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
-            onChangeValue={setDestinationAssetAmount}
-            context="destination"
-          />
-        </Column>
-        {swapButton}
-      </SettingsDrawerPageContainer>
-    </>
+        <SwapPageBridge />
+        <SwapPageAssetChainInput
+          selectedAsset={destinationAsset}
+          handleChangeAsset={handleChangeDestinationAsset}
+          handleChangeChain={handleChangeDestinationChain}
+          isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
+          usdValue={route?.usdAmountOut}
+          value={destinationAsset?.amount}
+          priceChangePercentage={Number(priceChangePercentage)}
+          badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
+          onChangeValue={setDestinationAssetAmount}
+          context="destination"
+        />
+      </Column>
+      {swapButton}
+      <SettingsFooter />
+    </Column>
   );
 };

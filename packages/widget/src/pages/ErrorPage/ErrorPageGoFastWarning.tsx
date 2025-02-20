@@ -8,7 +8,7 @@ import { goFastWarningAtom } from "@/state/swapPage";
 import { SmallText } from "@/components/Typography";
 import styled, { useTheme } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
-import { Row } from "@/components/Layout";
+import { Column, Row } from "@/components/Layout";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
@@ -24,7 +24,7 @@ export const ErrorPageGoFastWarning = ({
 }: ErrorPageGoFastWarningProps) => {
   const setErrorAtom = useSetAtom(errorAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
-  const { SettingsDrawerPageContainer } = useSettingsDrawer();
+  const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   const theme = useTheme();
 
   useEffect(() => {
@@ -38,33 +38,37 @@ export const ErrorPageGoFastWarning = ({
   };
 
   return (
-    <>
-      <SettingsDrawerPageContainer highlightSettings>
-        <SwapPageHeader
-          leftButton={{
-            label: "Back",
-            icon: ICONS.thinArrow,
-            onClick: handleOnClickBack,
-          }}
-        />
-        <ErrorPageContent
-          title="You're on the fastest route"
-          description={
-            <SmallText textAlign="center" textWrap="balance" lineHeight="17px">
-              Faster routes may have higher transaction fees. <br />
-              You can choose between Fastest and Cheapest routes in the <br />
-              <StyledSettingsContainer gap={3}>
-                <CogIcon color={theme.primary.text.normal} />
-                <SmallText normalTextColor>Settings</SmallText>
-                <SmallText>drawer.</SmallText>
-              </StyledSettingsContainer>
-            </SmallText>
-          }
-          icon={ICONS.goFast}
-        />
-        <MainButton label="Continue" icon={ICONS.rightArrow} onClick={onClickContinue} />
-      </SettingsDrawerPageContainer>
-    </>
+    <Column
+      gap={5}
+      style={{
+        opacity: drawerOpen ? 0.3 : 1,
+      }}
+    >
+      <SwapPageHeader
+        leftButton={{
+          label: "Back",
+          icon: ICONS.thinArrow,
+          onClick: handleOnClickBack,
+        }}
+      />
+      <ErrorPageContent
+        title="You're on the fastest route"
+        description={
+          <SmallText textAlign="center" textWrap="balance" lineHeight="17px">
+            Faster routes may have higher transaction fees. <br />
+            You can choose between Fastest and Cheapest routes in the <br />
+            <StyledSettingsContainer gap={3}>
+              <CogIcon color={theme.primary.text.normal} />
+              <SmallText normalTextColor>Settings</SmallText>
+              <SmallText>drawer.</SmallText>
+            </StyledSettingsContainer>
+          </SmallText>
+        }
+        icon={ICONS.goFast}
+      />
+      <MainButton label="Continue" icon={ICONS.rightArrow} onClick={onClickContinue} />
+      <SettingsFooter highlightSettings />
+    </Column>
   );
 };
 
