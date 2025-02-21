@@ -15,6 +15,7 @@ import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { useCountdown } from "./useCountdown";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -33,6 +34,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   connectRequiredChains,
   submitExecuteRouteMutation,
 }) => {
+  const countdown = useCountdown({
+    estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
+    swapExecutionState,
+  });
+
   const theme = useTheme();
   const setError = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -93,7 +99,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           loading
           isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
-          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
         />
       );
     case SwapExecutionState.signaturesRemaining:
@@ -104,7 +110,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             signaturesRemaining,
           )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
           loading
-          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
         />
       );
     case SwapExecutionState.confirmed:
