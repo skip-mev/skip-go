@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAtom } from "jotai";
 import { routePreferenceAtom } from "@/state/swapPage";
 import { ROUTE_PREFERENCE_OPTIONS } from "@/constants/widget";
@@ -7,9 +7,9 @@ import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled from "styled-components";
 import { StyledSettingsOptionLabel } from "./SlippageSelector";
+import { Tooltip } from "@/components/Tooltip";
 
 const RoutePreferenceSelector: React.FC = () => {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [routePreference, setRoutePreference] = useAtom(routePreferenceAtom);
 
   return (
@@ -17,16 +17,16 @@ const RoutePreferenceSelector: React.FC = () => {
       <PreferenceText align="center">
         Route Preference
         <Spacer width={5} />
-        <QuestionMarkIcon
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        />
-        {showTooltip && (
-          <Tooltip>
-            Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
-            fees.
-          </Tooltip>
-        )}
+        <Tooltip
+          content={
+            <SmallText normalTextColor style={{ width: 250 }}>
+              Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
+              fees.
+            </SmallText>
+          }
+        >
+          <QuestionMarkIcon />
+        </Tooltip>
       </PreferenceText>
       <OptionsContainer gap={5}>
         {ROUTE_PREFERENCE_OPTIONS.map((option) => (
@@ -55,20 +55,6 @@ const PreferenceText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
-`;
-
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  padding: 13px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background: ${({ theme }) => theme.secondary.background.normal};
-  top: -30px;
-  left: 130px;
-  width: 250px;
-  z-index: 1;
 `;
 
 const OptionsContainer = styled(Row)`

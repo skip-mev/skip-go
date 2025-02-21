@@ -12,10 +12,10 @@ import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { copyToClipboard } from "@/utils/misc";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -47,6 +47,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -96,9 +97,25 @@ export const SwapExecutionPageRouteDetailedRow = ({
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
     if (!source.address) return;
+
+    const renderContent = () => {
+      const copiedToClipboardText = isMobileScreenSize ? "Copied!" : "Address copied!";
+
+      if (isShowingCopyAddressFeedback) {
+        return <SmallText>{copiedToClipboardText}</SmallText>;
+      }
+      if (isMobileScreenSize) {
+        return <CopyIcon color={theme.primary.text.lowContrast} />;
+      }
+      return (
+        <AddressText title={source.address} monospace textWrap="nowrap">
+          {getTruncatedAddress(source.address, isMobileScreenSize)}
+        </AddressText>
+      );
+    };
     return (
       <Container>
-        <PillButton onClick={() => copyToClipboard(source.address)}>
+        <PillButton onClick={() => copyAddress(source?.address)}>
           {source.image && (
             <img
               src={source.image}
@@ -107,13 +124,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               }}
             />
           )}
-          {isMobileScreenSize ? (
-            <CopyIcon color={theme.primary.text.lowContrast} />
-          ) : (
-            <AddressText title={source.address} monospace textWrap="nowrap">
-              {getTruncatedAddress(source.address, isMobileScreenSize)}
-            </AddressText>
-          )}
+          {renderContent()}
         </PillButton>
         {shouldRenderEditDestinationWallet && (
           <Button
@@ -127,7 +138,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
+    copyAddress,
     isMobileScreenSize,
+    isShowingCopyAddressFeedback,
     onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
     source.address,

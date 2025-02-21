@@ -31,7 +31,6 @@ export const StyledModalContainer = styled(Column)`
   width: calc(100% - 20px);
   border-radius: 20px;
   background: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
   height: 100%;
 
   @media (max-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
