@@ -15,8 +15,7 @@ import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
-import { useEffect, useState } from "react";
-import { createCountdownTimer } from "@/utils/countdownTimer";
+import { useCountdown } from "./useCountdown";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -35,35 +34,10 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   connectRequiredChains,
   submitExecuteRouteMutation,
 }) => {
-  const [countdown, setCountdown] = useState<number | undefined>(
-    route?.estimatedRouteDurationSeconds,
-  );
-  const [timer, setTimer] = useState<ReturnType<typeof createCountdownTimer> | undefined>();
-
-  useEffect(() => {
-    const estimatedDurationSeconds = route?.estimatedRouteDurationSeconds;
-    if (
-      !timer &&
-      estimatedDurationSeconds &&
-      swapExecutionState &&
-      [SwapExecutionState.pending, SwapExecutionState.signaturesRemaining].includes(
-        swapExecutionState,
-      )
-    ) {
-      const countdownTimer = createCountdownTimer({
-        duration: estimatedDurationSeconds,
-        onUpdate: (remainingTime) => {
-          setCountdown(parseInt(remainingTime.toString()));
-        },
-      });
-      setTimer(countdownTimer);
-      countdownTimer.startCountdown();
-    }
-
-    return () => {
-      timer?.stopCountdown();
-    };
-  }, [route?.estimatedRouteDurationSeconds, swapExecutionState, timer]);
+  const countdown = useCountdown({
+    estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
+    swapExecutionState,
+  });
 
   const theme = useTheme();
   const setError = useSetAtom(errorAtom);
