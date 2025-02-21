@@ -32,9 +32,9 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void }>`
   height: 60px;
   border-radius: 12px;
   padding: 12px 15px;
+  margin-top: 5px;
   ${({ theme }) => `background: ${theme.secondary.background.normal}`};
-  ${transition(['background-color'], 'fast', 'easeOut')};
-
+  ${transition(["background-color"], "fast", "easeOut")};
 
   ${({ onClick, theme }) =>
     onClick &&
