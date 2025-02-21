@@ -7,16 +7,15 @@ import {
   StyledModalInnerContainer,
 } from "@/components/ModalHeader";
 import { ModalRowItem } from "@/components/ModalRowItem";
-import { SmallText, Text, TextButton } from "@/components/Typography";
+import { Text, TextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { copyToClipboard } from "@/utils/misc";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
@@ -26,6 +25,7 @@ import { XIcon } from "@/icons/XIcon";
 import { ChainType } from "@skip-go/client";
 import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -57,10 +57,8 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
   );
 });
 
-const COPY_TO_CLIPBOARD_TEXT = ["Copy to clipboard", "Address copied!"];
-
 const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: string }) => {
-  const [copyToClipboardText, setCopyToClipboardText] = useState(COPY_TO_CLIPBOARD_TEXT[0]);
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const theme = useTheme();
   const getAccount = useGetAccount();
@@ -139,17 +137,15 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
               <Tooltip content={account?.address}>
                 <Text>{truncatedAddress}</Text>
               </Tooltip>
-              <Tooltip content={copyToClipboardText}>
+              <Tooltip
+                content={isShowingCopyAddressFeedback ? "Address copied!" : "Copy to clipboard"}
+              >
                 <StyledCopyIconButton
                   align="center"
                   justify="center"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setCopyToClipboardText(COPY_TO_CLIPBOARD_TEXT[1]);
-                    setTimeout(() => {
-                      setCopyToClipboardText(COPY_TO_CLIPBOARD_TEXT[0]);
-                    }, 1000);
-                    copyToClipboard(account?.address);
+                    copyAddress(account?.address);
                   }}
                 >
                   <CopyIcon width="10" height="10" color={theme.primary.text.lowContrast} />

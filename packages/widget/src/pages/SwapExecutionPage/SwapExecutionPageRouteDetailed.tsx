@@ -4,7 +4,6 @@ import { SwapExecutionPageRouteDetailedRow } from "./SwapExecutionPageRouteDetai
 import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
-import { useState } from "react";
 import { SmallText } from "@/components/Typography";
 import { OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
@@ -12,7 +11,6 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
-import { keyframes } from "styled-components";
 import { Tooltip } from "@/components/Tooltip";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -45,17 +43,6 @@ const operationTypeToSimpleOperationType = {
   goFastTransfer: "Bridged",
   stargateTransfer: "Bridged",
 };
-
-type tooltipMap = Record<number, boolean>;
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
 
 export const SwapExecutionPageRouteDetailed = ({
   operations,
