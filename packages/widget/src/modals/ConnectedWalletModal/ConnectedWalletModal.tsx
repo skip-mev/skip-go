@@ -7,7 +7,7 @@ import {
   StyledModalInnerContainer,
 } from "@/components/ModalHeader";
 import { ModalRowItem } from "@/components/ModalRowItem";
-import { Text, TextButton } from "@/components/Typography";
+import { SmallText, Text, TextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
@@ -16,14 +16,16 @@ import { getTruncatedAddress } from "@/utils/crypto";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { copyToClipboard } from "@/utils/misc";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
-import { useMemo } from "react";
-import { useTheme } from "styled-components";
+import { useMemo, useState } from "react";
+import styled, { useTheme } from "styled-components";
 import { skipChainsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { XIcon } from "@/icons/XIcon";
 import { ChainType } from "@skip-go/client";
+import { Tooltip } from "@/components/Tooltip";
+import { CopyIcon } from "@/icons/CopyIcon";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -55,7 +57,11 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
   );
 });
 
+const COPY_TO_CLIPBOARD_TEXT = ["Copy to clipboard", "Address copied!"];
+
 const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: string }) => {
+  const [copyToClipboardText, setCopyToClipboardText] = useState(COPY_TO_CLIPBOARD_TEXT[0]);
+
   const theme = useTheme();
   const getAccount = useGetAccount();
   const isMobileScreenSize = useIsMobileScreenSize();
@@ -130,16 +136,25 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
               />
             )}
             <Row align="baseline" gap={8}>
-              <TextButton
-                fontSize={isMobileScreenSize ? 13 : undefined}
-                title={account?.address}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyToClipboard(account?.address);
-                }}
-              >
-                {truncatedAddress}
-              </TextButton>
+              <Tooltip content={account?.address}>
+                <Text>{truncatedAddress}</Text>
+              </Tooltip>
+              <Tooltip content={copyToClipboardText}>
+                <StyledCopyIconButton
+                  align="center"
+                  justify="center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCopyToClipboardText(COPY_TO_CLIPBOARD_TEXT[1]);
+                    setTimeout(() => {
+                      setCopyToClipboardText(COPY_TO_CLIPBOARD_TEXT[0]);
+                    }, 1000);
+                    copyToClipboard(account?.address);
+                  }}
+                >
+                  <CopyIcon width="10" height="10" color={theme.primary.text.lowContrast} />
+                </StyledCopyIconButton>
+              </Tooltip>
               {chainType === "evm" && (
                 <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
               )}
@@ -177,3 +192,12 @@ const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
     </Text>
   );
 };
+
+const StyledCopyIconButton = styled(Row)`
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  &:hover {
+    background-color: ${({ theme }) => theme.primary.background.normal};
+  }
+`;

@@ -12,8 +12,8 @@ import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React from "react";
-import { ANIMATION_TIMINGS, EASINGS } from "@/utils/transitions";
 import { keyframes } from "styled-components";
+import { Tooltip } from "@/components/Tooltip";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
 
@@ -66,22 +66,6 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
-
-  const [tooltipMap, setTooltipMap] = useState<tooltipMap>({});
-
-  const handleMouseEnterOperationType = (index: number) => {
-    setTooltipMap((old) => ({
-      ...old,
-      [index]: true,
-    }));
-  };
-
-  const handleMouseLeaveOperationType = (index: number) => {
-    setTooltipMap((old) => ({
-      ...old,
-      [index]: false,
-    }));
-  };
 
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
@@ -139,23 +123,22 @@ export const SwapExecutionPageRouteDetailed = ({
                 style={{ height: "25px", position: "relative" }}
                 align="center"
               >
-                <OperationTypeIconContainer
-                  onMouseEnter={() => handleMouseEnterOperationType(index)}
-                  onMouseLeave={() => handleMouseLeaveOperationType(index)}
-                  justify="center"
+                <Tooltip
+                  content={
+                    <SmallText normalTextColor textWrap="nowrap">
+                      {simpleOperationType} with {bridgeOrSwapVenue.name}
+                      <StyledSwapVenueOrBridgeImage
+                        width="10"
+                        height="10"
+                        src={bridgeOrSwapVenue.image}
+                      />
+                    </SmallText>
+                  }
                 >
-                  {operationTypeToIcon[operation.type]}
-                </OperationTypeIconContainer>
-                {tooltipMap?.[index] && (
-                  <Tooltip>
-                    {simpleOperationType} with {bridgeOrSwapVenue.name}
-                    <StyledSwapVenueOrBridgeImage
-                      width="10"
-                      height="10"
-                      src={bridgeOrSwapVenue.image}
-                    />
-                  </Tooltip>
-                )}
+                  <OperationTypeIconContainer justify="center">
+                    {operationTypeToIcon[operation.type]}
+                  </OperationTypeIconContainer>
+                </Tooltip>
               </StyledOperationTypeAndTooltipContainer>
               <SwapExecutionPageRouteDetailedRow
                 {...asset}
@@ -173,20 +156,6 @@ export const SwapExecutionPageRouteDetailed = ({
     </StyledSwapExecutionPageRoute>
   );
 };
-
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  left: 30px;
-  padding: 10px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background: ${({ theme }) => theme.secondary.background.normal};
-  box-sizing: border-box;
-  z-index: 1;
-  animation: ${fadeIn} ${ANIMATION_TIMINGS.medium} ${EASINGS.easeOut};
-`;
 
 const OperationTypeIconContainer = styled(Column).attrs({
   as: Column,
