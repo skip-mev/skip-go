@@ -5,7 +5,7 @@ import { LedgerWalletAdapter } from "@solana/wallet-adapter-ledger";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
 import { TrustWalletAdapter } from "@solana/wallet-adapter-trust";
-import { WalletConnectWalletAdapter } from '@walletconnect/solana-adapter'
+import { WalletConnectWalletAdapter } from "@walletconnect/solana-adapter";
 
 export const solanaWallets = [
   new PhantomWalletAdapter(),
