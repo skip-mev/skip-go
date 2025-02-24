@@ -103,6 +103,14 @@ export const useCreateSolanaWallets = () => {
       wallets.push(minimalWallet);
     }
     return wallets;
-  }, [chains, assets, sourceAsset, setSourceAsset, setWCDeepLinkByChainType, callbacks]);
+  }, [
+    solanaWallets,
+    chains,
+    assets,
+    sourceAsset,
+    setWCDeepLinkByChainType,
+    callbacks,
+    setSourceAsset,
+  ]);
   return { createSolanaWallets };
 };
