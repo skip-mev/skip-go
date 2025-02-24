@@ -1,5 +1,4 @@
 import { getCosmosWalletInfo } from "@/constants/graz";
-import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom } from "@/state/skipClient";
 import { evmWalletAtom, svmWalletAtom, walletsAtom, connectedAddressesAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount, WalletType } from "graz";
@@ -8,6 +7,7 @@ import { useCallback } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
@@ -20,7 +20,9 @@ export const useGetAccount = () => {
     multiChain: true,
   });
 
-  const solanaWallet = solanaWallets.find((w) => w.name === wallet.svm?.walletName);
+  const { wallets: solanaWallets } = useWallet();
+
+  const solanaWallet = solanaWallets.find((wallet) => wallet.adapter.connected === true)?.adapter;
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();
@@ -65,7 +67,6 @@ export const useGetAccount = () => {
           };
         }
         case ChainType.EVM: {
-          if (!wallet.evm) return;
           if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
           if (!evmAccount.connector) return;
@@ -92,7 +93,6 @@ export const useGetAccount = () => {
           };
         }
         case ChainType.SVM: {
-          if (!wallet.svm) return;
           if (!solanaWallet?.publicKey) return;
 
           const getLogo = () => {
@@ -122,8 +122,6 @@ export const useGetAccount = () => {
       connectedAddress,
       cosmosAccounts,
       wallet.cosmos,
-      wallet.evm,
-      wallet.svm,
       evmAccount.chainId,
       evmAccount.address,
       evmAccount.connector,

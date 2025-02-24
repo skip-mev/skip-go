@@ -1,4 +1,3 @@
-import { solanaWallets } from "@/constants/solana";
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import {
@@ -11,6 +10,7 @@ import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -18,11 +18,13 @@ export const useCreateSolanaWallets = () => {
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
+  const { wallets: solanaWallets } = useWallet();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
-    for (const wallet of solanaWallets) {
+    for (const solWallet of solanaWallets) {
+      const wallet = solWallet.adapter;
       const isWalletConnect = wallet.name === "WalletConnect";
 
       const connectWallet = async () => {
