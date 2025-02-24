@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.13
+
+### Patch Changes
+
+- 4b3e488: Fix stride encode/decode logic
+
 ## 0.16.12
 
 ### Patch Changes
