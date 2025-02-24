@@ -44,7 +44,6 @@ export const AssetAndChainSelectorModalRowItem = ({
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
-        style={{ margin: "5px 0" }}
         leftContent={<GroupedAssetRow item={item} context={context} />}
         rightContent={
           Number(item.totalAmount) > 0 && (
@@ -63,7 +62,6 @@ export const AssetAndChainSelectorModalRowItem = ({
     <ModalRowItem
       key={item.chainID}
       onClick={() => onSelect(item.asset)}
-      style={{ margin: "5px 0" }}
       leftContent={<ChainWithAssetRow item={item} />}
       rightContent={
         balance &&

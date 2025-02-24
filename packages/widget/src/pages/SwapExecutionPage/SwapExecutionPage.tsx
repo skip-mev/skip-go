@@ -1,7 +1,7 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -21,9 +21,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
-import { StyledSignatureRequiredContainer } from "@/pages/SwapPage/SwapPageFooter";
-import { SignatureIcon } from "@/icons/SignatureIcon";
-import pluralize from "pluralize";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 
 export enum SwapExecutionState {
@@ -79,17 +76,6 @@ export const SwapExecutionPage = () => {
 
   useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
   useHandleTransactionTimeout(swapExecutionState);
-
-  const renderSignaturesStillRequired = useMemo(() => {
-    if (shouldDisplaySignaturesRemaining && signaturesRemaining) {
-      return (
-        <StyledSignatureRequiredContainer gap={5} align="center">
-          <SignatureIcon />
-          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)} still required
-        </StyledSignatureRequiredContainer>
-      );
-    }
-  }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
 
   const firstOperationStatus = useMemo(() => {
     const status = statusData?.transferEvents;
@@ -168,10 +154,7 @@ export const SwapExecutionPage = () => {
         connectRequiredChains={connectRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
-      <SwapPageFooter
-        showRouteInfo={overallStatus === undefined}
-        rightContent={renderSignaturesStillRequired}
-      />
+      <SwapPageFooter showRouteInfo={overallStatus === "unconfirmed"} />
     </Column>
   );
 };

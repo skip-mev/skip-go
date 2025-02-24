@@ -6,9 +6,9 @@ import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
+import { Tooltip } from "@/components/Tooltip";
 
 const SlippageSelector: React.FC = () => {
-  const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [customSlippageInput, setCustomSlippageInput] = useState("");
   const [slippage, setSlippage] = useAtom(slippageAtom);
@@ -26,16 +26,16 @@ const SlippageSelector: React.FC = () => {
       <SwapDetailText align="center">
         Max Slippage
         <Spacer width={5} />
-        <QuestionMarkIcon
-          onMouseEnter={() => setShowMaxSlippageTooltip(true)}
-          onMouseLeave={() => setShowMaxSlippageTooltip(false)}
-        />
-        {showMaxSlippageTooltip && (
-          <Tooltip>
-            If price changes unfavorably during the transaction by more than this amount, the
-            transaction will revert.
-          </Tooltip>
-        )}
+        <Tooltip
+          content={
+            <SmallText normalTextColor style={{ width: 250 }}>
+              If price changes unfavorably during the transaction by more than this amount, the
+              transaction will revert.
+            </SmallText>
+          }
+        >
+          <QuestionMarkIcon />
+        </Tooltip>
       </SwapDetailText>
       <StyledSlippageOptionsContainer gap={5}>
         {SLIPPAGE_OPTIONS.map((option) => (
@@ -105,20 +105,6 @@ const SwapDetailText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
-`;
-
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  padding: 13px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background: ${({ theme }) => theme.secondary.background.normal};
-  top: -30px;
-  left: 110px;
-  width: 250px;
-  z-index: 1;
 `;
 
 export const StyledSettingsOptionLabel = styled(SmallText)<{

@@ -120,6 +120,12 @@
       ]
     },
     {
+      "group": "Eureka",
+      "pages": [
+        "eureka/devnet-testing-guide"
+      ]
+    },
+    {
       "group": "Legal and Privacy",
       "pages": [
         "legal-and-privacy/terms-of-service",
