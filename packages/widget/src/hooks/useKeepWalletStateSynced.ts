@@ -1,13 +1,12 @@
-import { solanaWallets } from "@/constants/solana";
-import { cosmosWalletAtom, evmWalletAtom, svmWalletAtom, walletsAtom } from "@/state/wallets";
+import { cosmosWalletAtom, evmWalletAtom, svmWalletAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount } from "graz";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 import { ChainType } from "@skip-go/client";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const useKeepWalletStateSynced = () => {
-  const wallet = useAtomValue(walletsAtom);
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
@@ -16,7 +15,9 @@ export const useKeepWalletStateSynced = () => {
     multiChain: true,
   });
 
-  const solanaWallet = solanaWallets.find((w) => w.name === wallet.svm?.walletName);
+  const { wallets: solanaWallets } = useWallet();
+
+  const solanaWallet = solanaWallets.find((wallet) => wallet.adapter.connected === true)?.adapter;
 
   const evmAccount = useEvmAccount();
 
@@ -69,7 +70,7 @@ export const useKeepWalletStateSynced = () => {
     if (walletType && cosmosWallet?.id !== currentCosmosId) {
       updateCosmosWallet();
     }
-    if (solanaWallet && svmWallet?.id !== currentSolanaId) {
+    if (solanaWallet?.connected && svmWallet?.id !== currentSolanaId) {
       updateSvmWallet();
     }
     if (evmAccount.connector && evmWallet?.id !== currentEvmId) {
