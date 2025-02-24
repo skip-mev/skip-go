@@ -32,10 +32,9 @@ export type WidgetProps = {
      * @default 1
      */
     slippage?: number;
-
-        /**
-      * Set allowance amount to max if EVM transaction requires allowance approval 
-      */
+    /**
+     * Set allowance amount to max if EVM transaction requires allowance approval
+     */
     useUnlimitedApproval?: boolean;
   };
   routeConfig?: WidgetRouteConfig;
