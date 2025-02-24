@@ -534,8 +534,12 @@ export class SkipClient {
       );
     }
 
-    const { onApproveAllowance, onTransactionSigned, bypassApprovalCheck } =
-      options;
+    const {
+      onApproveAllowance,
+      onTransactionSigned,
+      bypassApprovalCheck,
+      useUnlimitedApproval,
+    } = options;
     const extendedSigner = signer.extend(publicActions);
 
     // Check for approvals unless bypassApprovalCheck is enabled
@@ -565,7 +569,10 @@ export class SkipClient {
           address: requiredApproval.tokenContract as `0x${string}`,
           abi: erc20ABI,
           functionName: "approve",
-          args: [requiredApproval.spender as `0x${string}`, maxUint256],
+          args: [
+            requiredApproval.spender as `0x${string}`,
+            useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount),
+          ],
           chain: signer.chain,
         });
 

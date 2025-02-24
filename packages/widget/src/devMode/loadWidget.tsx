@@ -46,6 +46,9 @@ const DevMode = () => {
               brandTextColor: "black",
               brandColor: "#FF66FF",
             }}
+            settings={{
+              useUnlimitedApproval: true,
+            }}
           />
         </div>
       </Row>

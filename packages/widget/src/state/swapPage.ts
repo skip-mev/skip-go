@@ -127,6 +127,7 @@ export const CosmosGasAmount = {
 export const defaultSwapSettings = {
   slippage: 1,
   routePreference: RoutePreference.FASTEST,
+  useUnlimitedApproval: false,
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
