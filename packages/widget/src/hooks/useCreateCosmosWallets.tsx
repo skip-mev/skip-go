@@ -178,10 +178,11 @@ export const useCreateCosmosWallets = () => {
       chains,
       currentWallet,
       sourceAsset,
-      cosmosWallet,
       assets,
       setSourceAsset,
       disconnectAsync,
+      setCosmosWallet,
+      cosmosWallet,
     ],
   );
 
