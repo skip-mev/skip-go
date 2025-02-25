@@ -114,9 +114,11 @@ go run ./ relay_tx 0xed13b2567a00eae7d0a6c8e24d1cf6342116d1d89d72ff9b52b690cdd3a
   --cosmos-rpc="https://eureka-devnet-node-01-rpc.dev.skip.build:443"
 ```
 
-### Transfer Tokens from Ethereum to Cosmos (Back Again!)
+## Transfer Tokens from Cosmos to Ethereum (Back Again!)
 
-You'll need the IBC denom of the token, beginning with `transfer/08-wasm-0/0x` (from the `balance` command below) to send from Cosmos back to Ethereum.
+Depending on if the token is native to the chain (uatom for the Cosmos Devnet) or is an IBC'd token from Ethereum Sepolia, the denom to use in the command is as follows:
+1. If IBC transferring a token native to the chain, you can use the denom you expect (uatom) in the command.
+2. If IBC transferring a token that was already IBC transferred from Ethereum, you'll use the IBC denom of the token, beginning with `transfer/08-wasm-0/0x` (from the `balance` command below).
 
 Format:
 
@@ -124,7 +126,13 @@ Format:
 go run ./ transfer-from-cosmos-to-eth [amount] [denom] [to-ethereum-address] [flags]
 ```
 
-Example:
+Example (Native token):
+
+```bash
+go run ./ transfer-from-cosmos-to-eth 1 uatom 0x94B00F484232D55Cc892BbE0b0C1c4a9ad112098
+```
+
+Example (IBC token):
 
 ```bash
 go run ./ transfer-from-cosmos-to-eth 1 transfer/08-wasm-0/0xa4ff49eb6e2ea77d7d8091f1501385078642603f 0x94B00F484232D55Cc892BbE0b0C1c4a9ad112098
@@ -132,7 +140,7 @@ go run ./ transfer-from-cosmos-to-eth 1 transfer/08-wasm-0/0xa4ff49eb6e2ea77d7d8
 
 This will give you a `tx hash` in the output, needed for relaying.
 
-### Relay the Transaction from Cosmos to Ethereum
+## Relay the Transaction from Cosmos to Ethereum
 
 Format:
 
@@ -150,7 +158,7 @@ go run ./ relay_tx 28D0B356557DC625D62649E7B1E05B8730898389B8D888E9C920BED33429D
 
 This is the same as the previous relay, but from the format of the `txHash`, the relayer knows in which direction the relay needs to happen.
 
-### Check Balance of Cosmos Account
+## Check Balance of Cosmos Account
 
 To check the balance on Cosmos, enter a Cosmos `cosmos1` address into the `[address]` flag.
 
@@ -195,17 +203,14 @@ Example Output:
 ETH: 0.092298623946995983
 ```
 
-
-You can make an equivalent query using `gaiad` with:
-
-```bash
-gaiad query bank balances cosmos1u5d4hk8294fs9pq556jxmlju2ceh4jmurcpfv7 --chain-id=highway-dev-1 --node=https://eureka-devnet-node-01-rpc.dev.skip.build:443 --output json
-```
-
 ---
-
-Please reach out to the Interchain Labs team if you have any issues!
 
 # Coming Soon
 
 1. Deployment of CosmWasm forwarding contracts to test Ethereum → Cosmos Chain A → Cosmos Chain B.
+
+# Contact Us
+
+Please reach out to the Interchain Labs team if you have any issues using the Telegram handles below, reaching out to us on any established communication channels, or by opening up a support ticket in our Discord via the Support button in the left side menu!
+
+Tg: @OllieGilbey, @NotJeremyLiu
