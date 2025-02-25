@@ -32,7 +32,7 @@ import { callbacksAtom, OnWalletDisconnectedProps } from "@/state/callbacks";
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const cosmosWallet = useAtomValue(cosmosWalletAtom);
+  const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
@@ -138,6 +138,7 @@ export const useCreateCosmosWallets = () => {
           },
           disconnect: async () => {
             await disconnectAsync();
+            setCosmosWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: wallet,
               chainType: ChainType.Cosmos,
@@ -145,8 +146,7 @@ export const useCreateCosmosWallets = () => {
           },
           getAddress: async ({ signRequired }) => {
             try {
-              const getAddressWithoutConnectingWallet =
-                cosmosWallet && currentWallet !== wallet && !signRequired && chainId;
+              const getAddressWithoutConnectingWallet = cosmosWallet && !signRequired && chainId;
 
               if (getAddressWithoutConnectingWallet) {
                 const address = (await getWallet(wallet).getKey(chainId)).bech32Address;

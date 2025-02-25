@@ -3,6 +3,7 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import {
   MinimalWallet,
   setWalletConnectDeepLinkByChainTypeAtom,
+  svmWalletAtom,
   WalletConnectMetaData,
 } from "@/state/wallets";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -16,6 +17,7 @@ export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const setSvmWallet = useSetAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
   const { wallets: solanaWallets } = useWallet();
@@ -92,6 +94,7 @@ export const useCreateSolanaWallets = () => {
         },
         disconnect: async () => {
           await wallet.disconnect();
+          setSvmWallet(undefined);
           callbacks?.onWalletDisconnected?.({
             walletName: wallet.name,
             chainType: ChainType.SVM,
