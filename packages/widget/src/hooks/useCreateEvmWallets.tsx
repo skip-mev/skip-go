@@ -58,10 +58,12 @@ export const useCreateEvmWallets = () => {
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
               await currentConnector?.disconnect();
             }
-            switchChain?.({
-              chainId: Number(chainIdToConnect),
-            });
-            await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+            console.log(connector, chainIdToConnect);
+            await connector.connect({ chainId: Number(chainIdToConnect) });
+
+            // switchChain?.({
+            //   chainId: Number(chainIdToConnect),
+            // });
 
             if (sourceAsset === undefined) {
               const chain = chains?.find((x) => x.chainID === "1");
