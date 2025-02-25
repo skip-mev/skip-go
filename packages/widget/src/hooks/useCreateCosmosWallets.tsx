@@ -18,7 +18,6 @@ import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
   keplrMainnetChainIdsInitialConnect,
-  walletConnectMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
   okxWalletChainIdsInitialConnect,
 } from "@/constants/graz";
@@ -193,7 +192,7 @@ const getInitialChainIds = (wallet: WalletType) => {
   const isWC = isWalletConnect(wallet);
   const mobile = isMobile();
 
-  if (isWC) return walletConnectMainnetChainIdsInitialConnect;
+  if (isWC) return keplrMainnetChainIdsInitialConnect.filter((chainId) => chainId !== "wormchain");
 
   switch (wallet) {
     case WalletType.OKX:
