@@ -67,8 +67,6 @@ export const useKeepWalletStateSynced = () => {
     const currentEvmId = evmAccount.address;
     const currentSolanaId = solanaWallet?.publicKey?.toBase58();
 
-    console.log(evmAccount, evmWallet?.id, currentEvmId);
-
     if (walletType && cosmosWallet?.id !== currentCosmosId) {
       updateCosmosWallet();
     }
