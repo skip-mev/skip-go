@@ -108,6 +108,7 @@ export const useCreateEvmWallets = () => {
           },
           disconnect: async () => {
             await currentConnector?.disconnect();
+            setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: connector.name,
               chainType: ChainType.EVM,
@@ -171,13 +172,14 @@ export const useCreateEvmWallets = () => {
       isEvmConnected,
       chainId,
       sourceAsset,
+      setWCDeepLinkByChainType,
+      callbacks,
       currentConnector,
       connectAsync,
       chains,
       assets,
       setSourceAsset,
-      setWCDeepLinkByChainType,
-      callbacks,
+      setEvmWallet,
     ],
   );
 
