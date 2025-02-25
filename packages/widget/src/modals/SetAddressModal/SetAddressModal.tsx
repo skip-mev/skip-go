@@ -60,6 +60,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     },
   } as ManualWalletEntry;
 
+  const isShowManualWalletEntry =
+    chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
+
   const walletList = [..._walletList, manualWalletEntry];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,7 +203,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title={walletListTitle}
-          walletList={walletList}
+          walletList={isShowManualWalletEntry ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
           onSelectWallet={onSelectWallet}
