@@ -134,7 +134,7 @@ export const useCreateCosmosWallets = () => {
             logo: walletInfo?.imgSrc,
           },
           connect: async (chainId) => {
-            connectWallet({ chainIdToConnect: chainId });
+            await connectWallet({ chainIdToConnect: chainId });
           },
           disconnect: async () => {
             await disconnectAsync();

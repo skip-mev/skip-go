@@ -104,7 +104,7 @@ export const useCreateEvmWallets = () => {
             logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
           connect: async (chainId) => {
-            connectWallet({ chainIdToConnect: chainId });
+            await connectWallet({ chainIdToConnect: chainId });
           },
           disconnect: async () => {
             await currentConnector?.disconnect();
