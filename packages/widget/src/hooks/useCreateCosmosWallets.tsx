@@ -18,7 +18,6 @@ import {
   getCosmosWalletInfo,
   keplrMainnetWithoutEthermintChainIdsInitialConnect,
   keplrMainnetChainIdsInitialConnect,
-  walletConnectMainnetChainIdsInitialConnect,
   walletMainnetChainIdsInitialConnect,
   okxWalletChainIdsInitialConnect,
 } from "@/constants/graz";
