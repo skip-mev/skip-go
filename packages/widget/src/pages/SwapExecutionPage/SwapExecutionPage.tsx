@@ -33,6 +33,7 @@ export enum SwapExecutionState {
   confirmed,
   validatingGasBalance,
   approving,
+  pendingGettingAddresses,
 }
 
 export const SwapExecutionPage = () => {
@@ -40,7 +41,7 @@ export const SwapExecutionPage = () => {
   const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
     useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { connectRequiredChains } = useAutoSetAddress();
+  const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -72,6 +73,7 @@ export const SwapExecutionPage = () => {
     overallStatus,
     isValidatingGasBalance,
     signaturesRemaining,
+    isLoading,
   });
 
   useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);

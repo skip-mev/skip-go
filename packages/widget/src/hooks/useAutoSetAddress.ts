@@ -24,6 +24,7 @@ export const useAutoSetAddress = () => {
   const requiredChainAddresses = route?.requiredChainAddresses;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
   const getAccount = useGetAccount();
@@ -45,6 +46,7 @@ export const useAutoSetAddress = () => {
 
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {
+      setIsLoading(true);
       const createWallets = {
         [ChainType.Cosmos]: createCosmosWallets,
         [ChainType.EVM]: createEvmWallets,
@@ -108,6 +110,8 @@ export const useAutoSetAddress = () => {
           console.error(_error);
           if (!openModal) return;
           showSetAddressModal();
+        } finally {
+          setIsLoading(false);
         }
       });
     },
@@ -146,5 +150,5 @@ export const useAutoSetAddress = () => {
     sourceWallet.cosmos,
   ]);
 
-  return { connectRequiredChains };
+  return { connectRequiredChains, isLoading };
 };
