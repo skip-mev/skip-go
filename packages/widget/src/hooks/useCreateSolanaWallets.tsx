@@ -75,7 +75,7 @@ export const useCreateSolanaWallets = () => {
           logo: isWalletConnect ? walletConnectLogo : wallet.icon,
         },
         connect: async () => {
-          connectWallet();
+          await connectWallet();
         },
         getAddress: async ({ signRequired }) => {
           try {
