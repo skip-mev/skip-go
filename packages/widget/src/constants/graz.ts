@@ -13,7 +13,6 @@ export const okxWalletChainIdsInitialConnect = [
 ];
 
 export const keplrMainnetChainIdsInitialConnect = [
-  "agoric-3",
   "akashnet-2",
   "axelar-dojo-1",
   "celestia",
@@ -77,7 +76,6 @@ export const walletConnectMainnetChainIdsInitialConnect = [
 ];
 
 export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
-  "agoric-3",
   "akashnet-2",
   "axelar-dojo-1",
   "celestia",
