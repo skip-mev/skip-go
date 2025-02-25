@@ -116,7 +116,7 @@ go run ./ relay_tx 0xed13b2567a00eae7d0a6c8e24d1cf6342116d1d89d72ff9b52b690cdd3a
 
 ### Transfer Tokens from Ethereum to Cosmos (Back Again!)
 
-You'll need the IBC Denom (from the `balance` command above) to send from Cosmos back to Ethereum.
+You'll need the IBC denom of the token, beginning with `transfer/08-wasm-0/0x` (from the `balance` command below) to send from Cosmos back to Ethereum.
 
 Format:
 
@@ -127,7 +127,7 @@ go run ./ transfer-from-cosmos-to-eth [amount] [denom] [to-ethereum-address] [fl
 Example:
 
 ```bash
-go run ./ transfer-from-cosmos-to-eth 1 ibc/2351096B1729B2C64AED9F6AFD4A4BC28EB56F624881556947A8C48EDB9ED444 0x94B00F484232D55Cc892BbE0b0C1c4a9ad112098
+go run ./ transfer-from-cosmos-to-eth 1 transfer/08-wasm-0/0xa4ff49eb6e2ea77d7d8091f1501385078642603f 0x94B00F484232D55Cc892BbE0b0C1c4a9ad112098
 ```
 
 This will give you a `tx hash` in the output, needed for relaying.
@@ -149,6 +149,28 @@ go run ./ relay_tx 28D0B356557DC625D62649E7B1E05B8730898389B8D888E9C920BED33429D
 ```
 
 This is the same as the previous relay, but from the format of the `txHash`, the relayer knows in which direction the relay needs to happen.
+
+### Check Balance of Cosmos Account
+
+To check the balance on Cosmos, enter a Cosmos `cosmos1` address into the `[address]` flag.
+
+```bash
+#Usage:
+go run ./ balance [address] [optional-denom-or-erc20-address] [flags]
+```
+
+Example:
+
+```bash
+go run ./ balance cosmos1u5d4hk8294fs9pq556jxmlju2ceh4jmurcpfv7
+```
+
+Output:
+
+```bash
+IBC Denom: ibc/2351096B1729B2C64AED9F6AFD4A4BC28EB56F624881556947A8C48EDB9ED444
+transfer/08-wasm-0/0xa4ff49eb6e2ea77d7d8091f1501385078642603f: 1
+```
 
 ## Check Balance of Ethereum Sepolia Account
 
@@ -173,27 +195,6 @@ Example Output:
 ETH: 0.092298623946995983
 ```
 
-### Check Balance of Cosmos Account
-
-To check the balance on Cosmos, enter a Cosmos `cosmos1` address into the `[address]` flag.
-
-```bash
-#Usage:
-go run ./ balance [address] [optional-denom-or-erc20-address] [flags]
-```
-
-Example:
-
-```bash
-go run ./ balance cosmos1u5d4hk8294fs9pq556jxmlju2ceh4jmurcpfv7
-```
-
-Output:
-
-```bash
-IBC Denom: ibc/2351096B1729B2C64AED9F6AFD4A4BC28EB56F624881556947A8C48EDB9ED444
-transfer/08-wasm-0/0xa4ff49eb6e2ea77d7d8091f1501385078642603f: 1
-```
 
 You can make an equivalent query using `gaiad` with:
 
