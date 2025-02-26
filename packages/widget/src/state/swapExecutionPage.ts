@@ -1,6 +1,6 @@
 import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom, skipClient, skipSwapVenuesAtom } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import {
   TransactionCallbacks,
@@ -321,6 +321,8 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const simulateTx = get(simulateTxAtom);
   const swapSettings = get(swapSettingsAtom);
 
+  const { timeoutSeconds } = get(routeConfigAtom);
+
   const { data: chains } = get(skipChainsAtom);
   const sourceAsset = get(sourceAssetAtom);
   const walletConnectDeepLinkByChainType = get(walletConnectDeepLinkByChainTypeAtom);
@@ -347,6 +349,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
         await skip.executeRoute({
           route,
           userAddresses,
+          timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainID !== "984122",

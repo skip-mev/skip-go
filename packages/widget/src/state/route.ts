@@ -100,6 +100,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
     evmSwaps: true,
   },
   goFast: true,
+  timeoutSeconds: undefined,
 });
 
 export const convertWidgetRouteConfigToClientRouteConfig = (

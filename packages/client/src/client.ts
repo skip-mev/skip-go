@@ -234,7 +234,8 @@ export class SkipClient {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const { route, userAddresses, beforeMsg, afterMsg } = options;
+    const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } =
+      options;
 
     let addressList: string[] = [];
     let i = 0;
@@ -268,6 +269,7 @@ export class SkipClient {
 
     const messages = await this.messages({
       ...route,
+      timeoutSeconds,
       amountOut: route.estimatedAmountOut || "0",
       addressList: addressList,
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
