@@ -15,8 +15,7 @@ import { WalletClient } from "viem";
 
 import * as types from "./types";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { TransactionCallbacks } from "./types";
-import { MsgsRequest } from "dist";
+import { MsgsRequest, TransactionCallbacks } from "./types";
 
 /** Common Types */
 export interface UserAddress {
