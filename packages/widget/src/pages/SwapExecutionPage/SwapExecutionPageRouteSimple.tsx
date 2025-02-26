@@ -8,6 +8,7 @@ import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { useMemo } from "react";
 
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
@@ -31,10 +32,15 @@ export const SwapExecutionPageRouteSimple = ({
   const lastOperation = operations[operations.length - 1];
   const status = statusData?.transferEvents;
 
-  const destinationStatus =
-    swapExecutionState === SwapExecutionState.confirmed
-      ? "completed"
-      : status?.[lastOperation.transferIndex]?.status;
+  const destinationStatus = useMemo(() => {
+    if (swapExecutionState === SwapExecutionState.confirmed) {
+      return "completed";
+    }
+    if (firstOperationStatus === "completed") {
+      return "pending";
+    }
+    return status?.[lastOperation.transferIndex]?.status;
+  }, [firstOperationStatus, lastOperation.transferIndex, status, swapExecutionState]);
 
   const source = {
     denom: firstOperation.denomIn,
