@@ -33,13 +33,16 @@ export const SwapExecutionPageRouteSimple = ({
   const status = statusData?.transferEvents;
 
   const destinationStatus = useMemo(() => {
+    const destinationStatus = status?.[lastOperation.transferIndex]?.status;
     if (swapExecutionState === SwapExecutionState.confirmed) {
       return "completed";
     }
+
+    if (destinationStatus) return destinationStatus;
+
     if (firstOperationStatus === "completed") {
       return "pending";
     }
-    return status?.[lastOperation.transferIndex]?.status;
   }, [firstOperationStatus, lastOperation.transferIndex, status, swapExecutionState]);
 
   const source = {
