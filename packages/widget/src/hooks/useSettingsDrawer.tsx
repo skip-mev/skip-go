@@ -10,7 +10,6 @@ import React, { useState } from "react";
 export const useSettingsDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const shadowRoot = useAtomValue(shadowRootAtom);
-
   const { isError: isRouteError, data: route } = useAtomValue(skipRouteAtom);
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
