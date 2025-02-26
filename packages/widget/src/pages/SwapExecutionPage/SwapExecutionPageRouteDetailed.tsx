@@ -5,12 +5,12 @@ import { SwapExecutionBridgeIcon } from "@/icons/SwapExecutionBridgeIcon";
 import { SwapExecutionSendIcon } from "@/icons/SwapExecutionSendIcon";
 import { SwapExecutionSwapIcon } from "@/icons/SwapExecutionSwapIcon";
 import { SmallText } from "@/components/Typography";
-import { OperationType } from "@/utils/clientType";
+import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 
 type operationTypeToIcon = Record<OperationType, JSX.Element>;
@@ -57,6 +57,112 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
+  const getBridgeSwapVenue = useCallback(
+    (operation: ClientOperation) => {
+      const swapVenueId = operation.swapVenues?.[0]?.chainID;
+      const bridgeId = operation.bridgeID;
+
+      const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
+      const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainID === swapVenueId);
+      const imageUrl = bridge?.logoURI ?? swapVenue?.logoUri;
+      const isSvg = imageUrl?.endsWith(".svg");
+
+      const bridgeOrSwapVenue = {
+        name: bridge?.name ?? swapVenue?.name,
+        image: imageUrl,
+        isSvg,
+      };
+
+      return bridgeOrSwapVenue;
+    },
+    [bridges, swapVenues],
+  );
+
+  const getOperationStatus = useCallback(
+    (operation: ClientOperation) => {
+      const currentOperationStatus = status?.[operation.transferIndex]?.status;
+      const previousOperationStatus = status?.[operation.transferIndex - 1]?.status;
+
+      if (swapExecutionState === SwapExecutionState.confirmed) {
+        return "completed";
+      }
+
+      if (currentOperationStatus) return currentOperationStatus;
+
+      if (previousOperationStatus === "completed") {
+        return "pending";
+      }
+    },
+    [status, swapExecutionState],
+  );
+
+  const renderTooltip = useCallback(
+    (operation: ClientOperation) => {
+      const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
+
+      const bridgeOrSwapVenue = getBridgeSwapVenue(operation);
+
+      return (
+        <StyledOperationTypeAndTooltipContainer align="center">
+          <Tooltip
+            content={
+              <SmallText normalTextColor textWrap="nowrap">
+                {simpleOperationType} with {bridgeOrSwapVenue.name}
+                {bridgeOrSwapVenue.isSvg ? (
+                  <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
+                ) : (
+                  <StyledSwapVenueOrBridgeImage
+                    width="10"
+                    height="10"
+                    src={bridgeOrSwapVenue.image}
+                  />
+                )}
+              </SmallText>
+            }
+          >
+            <OperationTypeIconContainer justify="center">
+              {operationTypeToIcon[operation.type]}
+            </OperationTypeIconContainer>
+          </Tooltip>
+        </StyledOperationTypeAndTooltipContainer>
+      );
+    },
+    [getBridgeSwapVenue],
+  );
+
+  const renderOperations = useMemo(() => {
+    return operations.map((operation, index) => {
+      const nextOperation = operations[index + 1];
+
+      const asset = {
+        tokenAmount: operation.amountOut,
+        denom: operation.denomOut,
+        chainId: operation.toChainID ?? operation.chainID,
+      };
+
+      const explorerLink = operation.isSwap
+        ? status?.[operation.transferIndex]?.fromExplorerLink
+        : status?.[operation.transferIndex]?.toExplorerLink;
+
+      const operationStatus = getOperationStatus(operation);
+
+      return (
+        <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
+          {renderTooltip(operation)}
+          <SwapExecutionPageRouteDetailedRow
+            {...asset}
+            index={index}
+            onClickEditDestinationWallet={onClickEditDestinationWallet}
+            context={index === operations.length - 1 ? "destination" : "intermediary"}
+            isSignRequired={nextOperation?.signRequired}
+            status={operationStatus}
+            explorerLink={explorerLink}
+          />
+        </React.Fragment>
+      );
+    });
+  }, [getOperationStatus, onClickEditDestinationWallet, operations, renderTooltip, status]);
+
   return (
     <StyledSwapExecutionPageRoute>
       <Column>
@@ -69,83 +175,7 @@ export const SwapExecutionPageRouteDetailed = ({
           context="source"
           index={0}
         />
-        {operations.map((operation, index) => {
-          const simpleOperationType = operationTypeToSimpleOperationType[operation.type];
-
-          const getBridgeSwapVenue = () => {
-            const swapVenueId = operation.swapVenues?.[0]?.chainID;
-            const bridgeId = operation.bridgeID;
-
-            const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
-            const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainID === swapVenueId);
-            const imageUrl = bridge?.logoURI ?? swapVenue?.logoUri;
-            const isSvg = imageUrl?.endsWith(".svg");
-
-            const bridgeOrSwapVenue = {
-              name: bridge?.name ?? swapVenue?.name,
-              image: imageUrl,
-              isSvg,
-            };
-
-            return bridgeOrSwapVenue;
-          };
-
-          const bridgeOrSwapVenue = getBridgeSwapVenue();
-          const nextOperation = operations[index + 1];
-
-          const asset = {
-            tokenAmount: operation.amountOut,
-            denom: operation.denomOut,
-            chainId: operation.toChainID ?? operation.chainID,
-          };
-
-          const explorerLink = operation.isSwap
-            ? status?.[operation.transferIndex]?.fromExplorerLink
-            : status?.[operation.transferIndex]?.toExplorerLink;
-          const opStatus =
-            swapExecutionState === SwapExecutionState.confirmed
-              ? "completed"
-              : status?.[operation.transferIndex]?.status;
-
-          return (
-            <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
-              <StyledOperationTypeAndTooltipContainer
-                style={{ height: "25px", position: "relative" }}
-                align="center"
-              >
-                <Tooltip
-                  content={
-                    <SmallText normalTextColor textWrap="nowrap">
-                      {simpleOperationType} with {bridgeOrSwapVenue.name}
-                      {bridgeOrSwapVenue.isSvg ? (
-                        <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
-                      ) : (
-                        <StyledSwapVenueOrBridgeImage
-                          width="10"
-                          height="10"
-                          src={bridgeOrSwapVenue.image}
-                        />
-                      )}
-                    </SmallText>
-                  }
-                >
-                  <OperationTypeIconContainer justify="center">
-                    {operationTypeToIcon[operation.type]}
-                  </OperationTypeIconContainer>
-                </Tooltip>
-              </StyledOperationTypeAndTooltipContainer>
-              <SwapExecutionPageRouteDetailedRow
-                {...asset}
-                index={index}
-                onClickEditDestinationWallet={onClickEditDestinationWallet}
-                context={index === operations.length - 1 ? "destination" : "intermediary"}
-                isSignRequired={nextOperation?.signRequired}
-                status={opStatus}
-                explorerLink={explorerLink}
-              />
-            </React.Fragment>
-          );
-        })}
+        {renderOperations}
       </Column>
     </StyledSwapExecutionPageRoute>
   );
