@@ -179,7 +179,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
 });
 
 export const skipRouteAtom = atom((get) => {
-  const { data, isError, error, isLoading } = get(_skipRouteAtom);
+  const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
@@ -194,6 +194,6 @@ export const skipRouteAtom = atom((get) => {
     data: routeResponse,
     isError,
     error,
-    isLoading,
+    isLoading: isFetching && isPending,
   };
 });

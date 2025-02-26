@@ -51,9 +51,9 @@ export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
-    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
+    const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
-    const isLoading = isAssetsLoading || isChainsLoading;
+    const isLoading = (isFetching && isPending) || isChainsLoading;
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
