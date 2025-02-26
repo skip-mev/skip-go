@@ -43,7 +43,7 @@ export const ConnectedWalletContent = () => {
     <Row
       style={{
         paddingRight: 8,
-        gap: 1
+        gap: 1,
       }}
     >
       <GhostButton

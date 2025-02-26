@@ -1,9 +1,6 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/proto-signing/pubkey.ts
 
-import {
-  Pubkey,
-  encodeSecp256k1Pubkey,
-} from "@cosmjs/amino";
+import { Pubkey, encodeSecp256k1Pubkey } from "@cosmjs/amino";
 import { fromBase64 } from "@cosmjs/encoding";
 import { encodePubkey as cosmEncodePubkey } from "@cosmjs/proto-signing";
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
@@ -19,10 +16,15 @@ export function makePubkeyAnyFromAccount(
   const algo = `${account.algo}`;
   // Some impl use `eth_secp256k1` and some use `ethsecp256k1`, so we check for both
   const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
-  const isEthermint = chainId?.includes("shido") || chainId?.includes("dymension") || chainId?.includes("haqq");
-  const pubkey = (isEthSecp256k1 || isEthermint)
-    ? encodeEthSecp256k1Pubkey(account.pubkey)
-    : encodeSecp256k1Pubkey(account.pubkey);
+  const isEthermint =
+    chainId?.includes("shido") ||
+    chainId?.includes("dymension") ||
+    chainId?.includes("haqq") ||
+    chainId?.includes("titan");
+  const pubkey =
+    isEthSecp256k1 || isEthermint
+      ? encodeEthSecp256k1Pubkey(account.pubkey)
+      : encodeSecp256k1Pubkey(account.pubkey);
 
   const pubkeyAny = encodePubkeyToAny(pubkey, chainId);
 
@@ -31,7 +33,12 @@ export function makePubkeyAnyFromAccount(
 
 export function encodePubkeyToAny(pubkey: Pubkey, chainId?: string): Any {
   if (isEthSecp256k1Pubkey(pubkey)) {
-    const isEthermint = chainId?.includes("shido") || chainId?.includes("dymension") || chainId?.includes("haqq");
+    const isEthermint =
+      chainId?.includes("shido") ||
+      chainId?.includes("dymension") ||
+      chainId?.includes("haqq") ||
+      chainId?.includes("titan");
+
     const pubkeyProto = PubKey.fromPartial({
       key: fromBase64(pubkey.value),
     });

@@ -17,10 +17,11 @@ import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 import { isMobile } from "@/utils/os";
+import { MinimalWallet } from "@/state/wallets";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
-  chainAddressIndex?: number;
+  chainAddressIndex: number;
 };
 
 export enum WalletSource {
@@ -32,7 +33,9 @@ export enum WalletSource {
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { chainId, chainAddressIndex } = modalProps;
-  // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
+  if (modalProps.chainAddressIndex === undefined) {
+    throw new Error("chain address index cannot be undefined");
+  }
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((c) => c.chainID === chainId);
@@ -56,6 +59,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       return <RightArrowIcon color={theme?.primary?.text.normal} />;
     },
   } as ManualWalletEntry;
+
+  const isShowManualWalletEntry =
+    chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
 
   const walletList = [..._walletList, manualWalletEntry];
 
@@ -94,10 +100,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
       return {
         ...prev,
-        [destinationIndex]: {
+        [chainAddressIndex]: {
           chainID: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
@@ -107,6 +112,47 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     });
     NiceModal.remove(Modals.SetAddressModal);
   };
+
+  const walletListTitle = useMemo(() => {
+    const isDestinationIndex = chainAddressIndex === Object.values(chainAddresses).length - 1;
+    const title = isDestinationIndex ? "Destination" : "Recovery";
+    if (mobile) {
+      return title;
+    }
+    return `${title} wallet`;
+  }, [chainAddressIndex, chainAddresses, mobile]);
+
+  const onSelectWallet = async (wallet: MinimalWallet) => {
+    const response = await wallet.getAddress?.({
+      praxWallet: {
+        sourceChainID: chainAddressIndex
+          ? chainAddresses[chainAddressIndex - 1]?.chainID
+          : undefined,
+      },
+    });
+    const address = response?.address;
+    const logo = response?.logo;
+    setChainAddresses((prev) => {
+      return {
+        ...prev,
+        [chainAddressIndex]: {
+          chainID: chainId,
+          chainType: chain?.chainType,
+          address,
+          source: WalletSource.Wallet,
+          wallet: {
+            walletName: wallet.walletName,
+            walletPrettyName: wallet.walletPrettyName,
+            walletChainType: wallet.walletChainType,
+            walletInfo: {
+              logo: logo ?? wallet.walletInfo?.logo,
+            },
+          },
+        },
+      };
+    });
+  };
+
   return (
     <>
       {showManualAddressInput ? (
@@ -156,13 +202,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title={mobile ? "Destination" : "Destination wallet"}
-          walletList={walletList}
+          title={walletListTitle}
+          walletList={isShowManualWalletEntry ? [manualWalletEntry] : walletList}
           onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
           chainId={chainId}
-          chainType={chain?.chainType}
-          isDestinationAddress
-          chainAddressIndex={chainAddressIndex}
+          onSelectWallet={onSelectWallet}
         />
       )}
     </>

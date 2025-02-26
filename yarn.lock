@@ -2175,10 +2175,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.66":
-  version: 0.50.66
-  resolution: "@chain-registry/types@npm:0.50.66"
-  checksum: d5dfe4621ddf2f123c9c1fd97ced4447e2abf2109147309214d0d5083a92f6b0ea80ed8310f85eacc8f44b384e63fd23efd86ecf1674d28017dd2197dacc37d6
+"@chain-registry/types@npm:^0.50.76":
+  version: 0.50.76
+  resolution: "@chain-registry/types@npm:0.50.76"
+  checksum: 42fc99467237791b8389b25394300d697089f948db801c3302374feb2b3dc3fff49e77edca8075dd61c5c9e370e0753e7366ee72c4d05440d3b99478b0b597cc
   languageName: node
   linkType: hard
 
@@ -7586,7 +7586,7 @@ __metadata:
     "@types/keccak": 3.0.4
     axios: 1.x
     bech32: ^2.0.0
-    chain-registry: ^1.69.117
+    chain-registry: ^1.69.128
     cosmjs-types: ^0.9.0
     create-hash: ^1.2.0
     keccak: 3.0.4
@@ -7654,7 +7654,7 @@ __metadata:
     "@walletconnect/solana-adapter": ^0.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.117
+    chain-registry: ^1.69.128
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.2.1
@@ -13108,12 +13108,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.117":
-  version: 1.69.117
-  resolution: "chain-registry@npm:1.69.117"
+"chain-registry@npm:^1.69.128":
+  version: 1.69.128
+  resolution: "chain-registry@npm:1.69.128"
   dependencies:
-    "@chain-registry/types": ^0.50.66
-  checksum: 4e48d3a3af853877133afdefbff07451327172ad551b21987fc3d132d96643dc8c67893a460d679eca1e2509869fcb6e5c9398d3f21ee00376c5f9dcad24c7f0
+    "@chain-registry/types": ^0.50.76
+  checksum: fb6b2d4cb46caf0bd51637b54f8d2cbf923f67dcf99f0df268095a4b3bc554f3396ee3ddff97534ca181dfb8f0d85d963413ed8e3b1765de90778ac4aa9f6737
   languageName: node
   linkType: hard
 

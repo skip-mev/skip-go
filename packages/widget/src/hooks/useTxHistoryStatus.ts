@@ -12,7 +12,11 @@ export const useTxHistoryStatus = ({
   }[];
   txsRequired: number;
 }) => {
-  const { data: statusData, isLoading } = useBroadcastedTxsStatus({
+  const {
+    data: statusData,
+    isFetching,
+    isPending,
+  } = useBroadcastedTxsStatus({
     txsRequired: txsRequired,
     txs,
     enabled: txs.length === txsRequired,
@@ -23,7 +27,7 @@ export const useTxHistoryStatus = ({
     queryFn: () => {
       // Incomplete is when multiple transactions are required but not all txs are signed/tracked
       if (txs.length !== txsRequired) return "incomplete";
-      if (isLoading) return "unconfirmed";
+      if (isFetching && isPending) return "unconfirmed";
       if (statusData?.isSuccess) return "completed";
       if (statusData?.isSettled && !statusData?.isSuccess) return "failed";
       return "pending";

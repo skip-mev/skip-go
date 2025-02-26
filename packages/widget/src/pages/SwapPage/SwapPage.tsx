@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -12,9 +12,10 @@ import {
   sourceAssetAmountAtom,
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
+  goFastWarningAtom,
+  onRouteUpdatedEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
-import { SwapPageFooter } from "./SwapPageFooter";
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
@@ -32,13 +33,14 @@ import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { useIsSwapOperation } from "@/hooks/useIsGoFast";
+import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
+import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 
 export const SwapPage = () => {
-  const [container, setContainer] = useState<HTMLDivElement>();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { SettingsFooter, drawerOpen } = useSettingsDrawer();
+  useAtom(onRouteUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
@@ -52,9 +54,12 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
-  const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
+  const { isFetching, isPending } = useAtomValue(skipAllBalancesAtom);
+  const isLoadingBalances = isFetching && isPending;
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
+  const showGoFastWarning = useAtomValue(goFastWarningAtom);
+  const isGoFast = useIsGoFast(route);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -215,14 +220,11 @@ export const SwapPage = () => {
 
     if (isRouteError) {
       // special case for multi-tx routes on mobile
-      const errMsg = routeError?.message.startsWith("no single-tx routes found") 
-        ? "Multiple signature routes are currently only supported on the Skip:Go desktop app" : routeError?.message;
+      const errMsg = routeError?.message.startsWith("no single-tx routes found")
+        ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
+        : routeError?.message;
       return (
-        <MainButton
-          label={errMsg ?? "No routes found"}
-          disabled
-          fontSize={errMsg ? 18 : 24}
-        />
+        <MainButton label={errMsg ?? "No routes found"} disabled fontSize={errMsg ? 18 : 24} />
       );
     }
     if (isLoadingBalances) {
@@ -231,45 +233,62 @@ export const SwapPage = () => {
     if (insufficientBalance) {
       return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
     }
+
+    const onClick = () => {
+      if (showCosmosLedgerWarning) {
+        setError({
+          errorType: ErrorType.CosmosLedgerWarning,
+          onClickBack: () => {
+            setError(undefined);
+          },
+        });
+        return;
+      }
+      if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
+        setError({
+          errorType: ErrorType.TradeWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setError(undefined);
+          },
+          route: { ...route },
+        });
+        return;
+      }
+
+      if (showGoFastWarning && isGoFast) {
+        setError({
+          errorType: ErrorType.GoFastWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setCurrentPage(Routes.SwapPage);
+            setError(undefined);
+          },
+        });
+        return;
+      }
+      setChainAddresses({});
+      setCurrentPage(Routes.SwapExecutionPage);
+      setUser({ username: sourceAccount?.address });
+      setSwapExecutionState();
+    };
+
     return (
       <MainButton
         label={isSwapOperation ? "Swap" : "Send"}
         icon={ICONS.swap}
         disabled={!route}
-        onClick={() => {
-          if (showCosmosLedgerWarning) {
-            setError({
-              errorType: ErrorType.CosmosLedgerWarning,
-              onClickBack: () => {
-                setError(undefined);
-              },
-            });
-            return;
-          }
-          if (
-            route?.warning?.type === "BAD_PRICE_WARNING" &&
-            Number(priceChangePercentage ?? 0) < 0
-          ) {
-            setError({
-              errorType: ErrorType.TradeWarning,
-              onClickContinue: () => {
-                setError(undefined);
-                setChainAddresses({});
-                setCurrentPage(Routes.SwapExecutionPage);
-                setSwapExecutionState();
-              },
-              onClickBack: () => {
-                setError(undefined);
-              },
-              route: { ...route },
-            });
-            return;
-          }
-          setChainAddresses({});
-          setCurrentPage(Routes.SwapExecutionPage);
-          setUser({ username: sourceAccount?.address });
-          setSwapExecutionState();
-        }}
+        onClick={onClick}
       />
     );
   }, [
@@ -287,6 +306,8 @@ export const SwapPage = () => {
     routeError?.message,
     showCosmosLedgerWarning,
     priceChangePercentage,
+    showGoFastWarning,
+    isGoFast,
     setChainAddresses,
     setCurrentPage,
     setSwapExecutionState,
@@ -294,72 +315,51 @@ export const SwapPage = () => {
   ]);
 
   return (
-    <>
-      <Column
-        gap={5}
-        style={{
-          opacity: drawerOpen ? 0.3 : 1,
-        }}
-      >
-        <SwapPageHeader
-          leftButton={
-            txHistory.length === 0
-              ? undefined
-              : {
-                  label: "History",
-                  icon: ICONS.history,
-                  onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
-                }
-          }
-          rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
+    <Column
+      gap={5}
+      style={{
+        opacity: drawerOpen ? 0.3 : 1,
+      }}
+    >
+      <SwapPageHeader
+        leftButton={
+          txHistory.length === 0
+            ? undefined
+            : {
+                label: "History",
+                icon: ICONS.history,
+                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+              }
+        }
+        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
+      />
+      <Column align="center">
+        <SwapPageAssetChainInput
+          selectedAsset={sourceAsset}
+          handleChangeAsset={handleChangeSourceAsset}
+          handleChangeChain={handleChangeSourceChain}
+          isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
+          value={sourceAsset?.amount}
+          usdValue={route?.usdAmountIn}
+          onChangeValue={setSourceAssetAmount}
+          context="source"
         />
-        <Column align="center">
-          <SwapPageAssetChainInput
-            selectedAsset={sourceAsset}
-            handleChangeAsset={handleChangeSourceAsset}
-            handleChangeChain={handleChangeSourceChain}
-            isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
-            value={sourceAsset?.amount}
-            usdValue={route?.usdAmountIn}
-            onChangeValue={setSourceAssetAmount}
-            context="source"
-          />
-          <SwapPageBridge />
-          <SwapPageAssetChainInput
-            selectedAsset={destinationAsset}
-            handleChangeAsset={handleChangeDestinationAsset}
-            handleChangeChain={handleChangeDestinationChain}
-            isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
-            usdValue={route?.usdAmountOut}
-            value={destinationAsset?.amount}
-            priceChangePercentage={Number(priceChangePercentage)}
-            badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
-            onChangeValue={setDestinationAssetAmount}
-            context="destination"
-          />
-        </Column>
-        {swapButton}
-        <SwapPageFooter
-          showRouteInfo
-          disabled={isRouteError || isWaitingForNewRoute}
-          showEstimatedTime
-          onClick={() =>
-            NiceModal.show(Modals.SwapSettingsDrawer, {
-              drawer: true,
-              container,
-              onOpenChange: (open: boolean) => (open ? setDrawerOpen(true) : setDrawerOpen(false)),
-            })
-          }
+        <SwapPageBridge />
+        <SwapPageAssetChainInput
+          selectedAsset={destinationAsset}
+          handleChangeAsset={handleChangeDestinationAsset}
+          handleChangeChain={handleChangeDestinationChain}
+          isWaitingToUpdateInputValue={swapDirection === "swap-in" && isWaitingForNewRoute}
+          usdValue={route?.usdAmountOut}
+          value={destinationAsset?.amount}
+          priceChangePercentage={Number(priceChangePercentage)}
+          badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
+          onChangeValue={setDestinationAssetAmount}
+          context="destination"
         />
       </Column>
-      <div
-        id="swap-flow-settings-container"
-        ref={(element) => {
-          if (element && container === undefined) {
-            setContainer(element);
-          }
-        }}
-      ></div>
-    </>
+      {swapButton}
+      <SettingsFooter />
+    </Column>
   );
 };

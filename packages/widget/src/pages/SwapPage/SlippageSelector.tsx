@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { slippageAtom } from "@/state/swapPage";
 import { SLIPPAGE_OPTIONS } from "@/constants/widget";
-import { Row, Spacer } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
+import { Tooltip } from "@/components/Tooltip";
 
 const SlippageSelector: React.FC = () => {
-  const [showMaxSlippageTooltip, setShowMaxSlippageTooltip] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [customSlippageInput, setCustomSlippageInput] = useState("");
   const [slippage, setSlippage] = useAtom(slippageAtom);
@@ -26,16 +26,16 @@ const SlippageSelector: React.FC = () => {
       <SwapDetailText align="center">
         Max Slippage
         <Spacer width={5} />
-        <QuestionMarkIcon
-          onMouseEnter={() => setShowMaxSlippageTooltip(true)}
-          onMouseLeave={() => setShowMaxSlippageTooltip(false)}
-        />
-        {showMaxSlippageTooltip && (
-          <Tooltip>
-            If price changes unfavorably during the transaction by more than this amount, the
-            transaction will revert.
-          </Tooltip>
-        )}
+        <Tooltip
+          content={
+            <SmallText normalTextColor style={{ width: 250 }}>
+              If price changes unfavorably during the transaction by more than this amount, the
+              transaction will revert.
+            </SmallText>
+          }
+        >
+          <QuestionMarkIcon />
+        </Tooltip>
       </SwapDetailText>
       <StyledSlippageOptionsContainer gap={5}>
         {SLIPPAGE_OPTIONS.map((option) => (
@@ -83,28 +83,20 @@ const SlippageSelector: React.FC = () => {
   );
 };
 
-const Container = styled(Row)`
+const Container = styled(Column)`
   justify-content: space-between;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
+  align-items: flex-start;
+  gap: 15px;
 `;
 
 const StyledSlippageOptionsContainer = styled(Row)`
-  @media (max-width: 767px) {
-    width: 100%;
-  }
+  width: 100%;
 `;
 
 const CustomSlippageContainer = styled.div`
   position: relative;
   width: 60px;
-  @media (max-width: 767px) {
-    width: 100%;
-  }
+  width: 100%;
 `;
 
 const SwapDetailText = styled(Row).attrs({
@@ -115,37 +107,19 @@ const SwapDetailText = styled(Row).attrs({
   letter-spacing: 0.26px;
 `;
 
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  padding: 13px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background: ${({ theme }) => theme.secondary.background.normal};
-  top: -30px;
-  left: 110px;
-  width: 250px;
-  z-index: 1;
-`;
-
 export const StyledSettingsOptionLabel = styled(SmallText)<{
   selected?: boolean;
 }>`
-  border-radius: 7px;
-  padding: 4px 7px;
   white-space: nowrap;
 
-  @media (max-width: 767px) {
-    background: ${({ theme }) => theme.secondary.background.transparent};
-    padding: 7px 15px;
-    border-radius: 15px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-  }
+  background: ${({ theme }) => theme.secondary.background.transparent};
+  padding: 7px 15px;
+  border-radius: 15px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 
   color: ${({ selected, theme }) => (selected ? theme.brandTextColor : theme.primary.text.normal)};
   &:hover {
@@ -169,7 +143,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   outline: none;
   background: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
-  border-radius: 7px;
+  border-radius: 15px;
   color: ${({ theme }) => theme.primary.text.normal};
   width: 100%;
   height: 100%;
@@ -195,10 +169,6 @@ const CustomSlippageInput = styled(SmallText).attrs({
       background: ${theme.brandColor};
       border: none;
     `}
-
-  @media (max-width: 767px) {
-    border-radius: 15px;
-  }
 `;
 
 const CustomSlippageInputRightIcon = styled(SmallText)<{ selected?: boolean }>`

@@ -6,6 +6,8 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { useEffect } from "react";
+import { setTag } from "@sentry/react";
 
 export type ErrorPageUnexpectedProps = {
   error?: Error;
@@ -16,6 +18,10 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
   const theme = useTheme();
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+
+  useEffect(() => {
+    setTag("errorMessage", error?.message);
+  }, [error?.message]);
 
   const onClickRetry = () => {
     setErrorAtom(undefined);

@@ -46,21 +46,20 @@ export type AssetAndChainSelectorModalProps = ModalProps & {
 };
 
 const ITEM_HEIGHT = 65;
-const ITEM_GAP = 5;
 
 export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
-    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
+    const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
-    const isLoading = isAssetsLoading || isChainsLoading;
+    const isLoading = (isFetching && isPending) || isChainsLoading;
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);
 
-    const listHeight = useListHeight(ITEM_HEIGHT + ITEM_GAP);
+    const listHeight = useListHeight(ITEM_HEIGHT);
 
     const resetInput = () => {
       setSearchQuery("");
@@ -142,8 +141,14 @@ export const AssetAndChainSelectorModal = createModal(
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const firstAssetOrChain = listOfAssetsOrChains?.[0] ?? null;
+      const asset = (firstAssetOrChain as ChainWithAsset)?.asset;
+      const groupedAsset = firstAssetOrChain as GroupedAsset;
       if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
         setGroupedAssetSelected(null);
+      }
+      if (event.key === "Enter" && listOfAssetsOrChains?.length === 1) {
+        onSelect(asset ?? groupedAsset);
       }
     };
 
@@ -166,7 +171,7 @@ export const AssetAndChainSelectorModal = createModal(
         ) : (
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
-            itemHeight={ITEM_HEIGHT + ITEM_GAP}
+            itemHeight={ITEM_HEIGHT}
             itemKey={(item) =>
               isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`
             }
