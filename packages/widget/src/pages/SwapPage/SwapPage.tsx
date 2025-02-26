@@ -52,7 +52,8 @@ export const SwapPage = () => {
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
-  const { isLoading: isLoadingBalances } = useAtomValue(skipAllBalancesAtom);
+  const { isFetching, isPending } = useAtomValue(skipAllBalancesAtom);
+  const isLoadingBalances = isFetching && isPending;
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
   const showGoFastWarning = useAtomValue(goFastWarningAtom);

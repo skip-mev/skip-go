@@ -34,7 +34,8 @@ export const AssetAndChainSelectorModalRowItem = ({
   onSelect,
   context,
 }: AssetAndChainSelectorModalRowItemProps) => {
-  const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
+  const { isFetching, isPending } = useAtomValue(skipChainsAtom);
+  const isChainsLoading = isFetching && isPending;
   const getBalance = useGetBalance();
 
   if (!item || isChainsLoading) return skeleton;
