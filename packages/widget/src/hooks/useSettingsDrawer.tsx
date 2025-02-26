@@ -10,7 +10,8 @@ import React, { useState } from "react";
 export const useSettingsDrawer = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const shadowRoot = useAtomValue(shadowRootAtom);
-  const { isError: isRouteError } = useAtomValue(skipRouteAtom);
+
+  const { isError: isRouteError, data: route } = useAtomValue(skipRouteAtom);
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
 
@@ -27,7 +28,7 @@ export const useSettingsDrawer = () => {
 
     return (
       <SwapPageFooter
-        disabled={isRouteError || isWaitingForNewRoute}
+        disabled={isRouteError || isWaitingForNewRoute || route === undefined}
         showRouteInfo
         showEstimatedTime
         onClick={openSettingsDrawer}
