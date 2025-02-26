@@ -64,10 +64,13 @@ export const SwapExecutionPageRouteDetailed = ({
 
       const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
       const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainID === swapVenueId);
+      const imageUrl = bridge?.logoURI ?? swapVenue?.logoUri;
+      const isSvg = imageUrl?.endsWith(".svg");
 
       const bridgeOrSwapVenue = {
         name: bridge?.name ?? swapVenue?.name,
-        image: bridge?.logoURI ?? swapVenue?.logoUri,
+        image: imageUrl,
+        isSvg,
       };
 
       return bridgeOrSwapVenue;
@@ -105,11 +108,15 @@ export const SwapExecutionPageRouteDetailed = ({
             content={
               <SmallText normalTextColor textWrap="nowrap">
                 {simpleOperationType} with {bridgeOrSwapVenue.name}
-                <StyledSwapVenueOrBridgeImage
-                  width="10"
-                  height="10"
-                  src={bridgeOrSwapVenue.image}
-                />
+                {bridgeOrSwapVenue.isSvg ? (
+                  <StyledSwapVenueOrBridgeSvg svg={bridgeOrSwapVenue.image} />
+                ) : (
+                  <StyledSwapVenueOrBridgeImage
+                    width="10"
+                    height="10"
+                    src={bridgeOrSwapVenue.image}
+                  />
+                )}
               </SmallText>
             }
           >
@@ -196,6 +203,16 @@ const StyledSwapVenueOrBridgeImage = styled.img`
   object-fit: contain;
   width: 10px;
   height: 10px;
+`;
+
+const StyledSwapVenueOrBridgeSvg = styled.div<{ svg?: string }>`
+  display: inline-block;
+  margin-left: 5px;
+  width: 10px;
+  height: 10px;
+
+  background-color: ${({ theme }) => theme.primary.text.normal};
+  ${({ svg }) => svg && `mask: url(${svg}) no-repeat center / contain;`};
 `;
 
 const StyledOperationTypeAndTooltipContainer = styled(Row)`
