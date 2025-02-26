@@ -383,6 +383,7 @@ export type MsgsRequestJSON = {
   post_route_handler?: PostHandlerJSON;
 
   enable_gas_warnings?: boolean;
+  timeout_seconds?: string;
 };
 
 export type MsgsRequest = {
@@ -406,6 +407,8 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   enableGasWarnings?: boolean;
+
+  timeoutSeconds?: string;
 };
 export type MsgsDirectRequestBaseJSON = {
   source_asset_denom: string;
