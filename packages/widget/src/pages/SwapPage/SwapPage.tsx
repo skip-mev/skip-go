@@ -13,6 +13,7 @@ import {
   destinationAssetAmountAtom,
   isWaitingForNewRouteAtom,
   goFastWarningAtom,
+  onRouteUpdatedEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -39,6 +40,7 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
+  useAtom(onRouteUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);

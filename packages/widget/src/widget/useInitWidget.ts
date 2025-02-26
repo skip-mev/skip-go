@@ -121,6 +121,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionBroadcasted: props.onTransactionBroadcasted,
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
+      onRouteUpdated: props.onRouteUpdated,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -146,6 +147,7 @@ export const useInitWidget = (props: WidgetProps) => {
     setWalletConnect,
     setCallbacks,
     setSimulateTx,
+    props.onRouteUpdated,
   ]);
 
   return { theme: mergedTheme };

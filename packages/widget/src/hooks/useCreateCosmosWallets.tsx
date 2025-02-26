@@ -26,7 +26,7 @@ import { useCallback } from "react";
 import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { isMobile } from "@/utils/os";
-import { callbacksAtom, OnWalletDisconnectedProps } from "@/state/callbacks";
+import { callbacksAtom, onWalletDisconnectedProps } from "@/state/callbacks";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -261,7 +261,7 @@ const getAvailableWallets = () => {
 };
 
 const handlePenumbraNetwork = (
-  onWalletDisconnected: ((props: OnWalletDisconnectedProps) => void) | undefined,
+  onWalletDisconnected: ((props: onWalletDisconnectedProps) => void) | undefined,
 ) => {
   const praxWallet: MinimalWallet = {
     walletName: "prax",

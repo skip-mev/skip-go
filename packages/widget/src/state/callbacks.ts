@@ -1,19 +1,19 @@
 import { ChainType } from "@skip-go/client";
 import { atom } from "jotai";
 
-export type OnWalletConnectedProps = {
+export type onWalletConnectedProps = {
   walletName: string;
   chainIdToAddressMap?: Record<string, string>;
   chainId?: string;
   address?: string;
 };
 
-export type OnWalletDisconnectedProps = {
+export type onWalletDisconnectedProps = {
   walletName: string;
   chainType?: ChainType;
 };
 
-export type OnTransactionBroadcastedProps = {
+export type onTransactionBroadcastedProps = {
   txHash: string;
   chainId: string;
   explorerLink: string;
@@ -25,7 +25,7 @@ export type OnTransactionBroadcastedProps = {
   destAssetChainID: string;
 };
 
-export type OnTransactionCompleteProps = {
+export type onTransactionCompleteProps = {
   txHash: string;
   chainId: string;
   explorerLink: string;
@@ -37,16 +37,26 @@ export type OnTransactionCompleteProps = {
   destAssetChainID: string;
 };
 
-export type OnTransactionFailedProps = {
+export type onTransactionFailedProps = {
   error: string;
 };
 
+export type onRouteUpdatedProps = {
+  srcChainId?: string;
+  srcAssetDenom?: string;
+  destChainId?: string;
+  destAssetDenom?: string;
+  amountIn?: string;
+  amountOut?: string;
+};
+
 export type Callbacks = {
-  onWalletConnected?: (props: OnWalletConnectedProps) => void;
-  onWalletDisconnected?: (props: OnWalletDisconnectedProps) => void;
-  onTransactionBroadcasted?: (props: OnTransactionBroadcastedProps) => void;
-  onTransactionComplete?: (props: OnTransactionCompleteProps) => void;
-  onTransactionFailed?: (props: OnTransactionFailedProps) => void;
+  onWalletConnected?: (props: onWalletConnectedProps) => void;
+  onWalletDisconnected?: (props: onWalletDisconnectedProps) => void;
+  onTransactionBroadcasted?: (props: onTransactionBroadcastedProps) => void;
+  onTransactionComplete?: (props: onTransactionCompleteProps) => void;
+  onTransactionFailed?: (props: onTransactionFailedProps) => void;
+  onRouteUpdated?: (props: onRouteUpdatedProps) => void;
 };
 
 export const callbacksAtom = atom<Callbacks>();

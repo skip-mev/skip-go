@@ -4,6 +4,8 @@ import { skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
+import { atomEffect } from "jotai-effect";
+import { callbacksAtom } from "./callbacks";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -20,6 +22,23 @@ export const {
   valueInitialized: debouncedDestinationAssetAmountValueInitializedAtom,
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
+
+export const onRouteUpdatedEffect = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  const callbacks = get(callbacksAtom);
+
+  if (callbacks?.onRouteUpdated) {
+    callbacks?.onRouteUpdated({
+      srcChainId: sourceAsset?.chainID,
+      srcAssetDenom: sourceAsset?.denom,
+      destChainId: destinationAsset?.chainID,
+      destAssetDenom: destinationAsset?.denom,
+      amountIn: sourceAsset?.amount,
+      amountOut: destinationAsset?.amount,
+    });
+  }
+});
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",

@@ -49,6 +49,7 @@ const DevMode = () => {
             settings={{
               useUnlimitedApproval: true,
             }}
+            onRouteUpdated={(props) => console.log(props)}
           />
         </div>
       </Row>

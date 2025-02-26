@@ -97,6 +97,7 @@ export default function Home() {
             onTransactionBroadcasted={(props) => console.log('onTransactionBroadcasted', { ...props })}
             onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
             onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
+            onRouteUpdated={(props) => console.log('onRouteUpdated', props)}
           />
         </div>
       </div>
