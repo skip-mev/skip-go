@@ -141,8 +141,14 @@ export const AssetAndChainSelectorModal = createModal(
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      const firstAssetOrChain = listOfAssetsOrChains?.[0] ?? null;
+      const asset = (firstAssetOrChain as ChainWithAsset)?.asset;
+      const groupedAsset = firstAssetOrChain as GroupedAsset;
       if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
         setGroupedAssetSelected(null);
+      }
+      if (event.key === "Enter" && listOfAssetsOrChains?.length === 1) {
+        onSelect(asset ?? groupedAsset);
       }
     };
 
