@@ -1,5 +1,37 @@
 ## 0.0.15
 
+## 3.3.7
+
+### Patch Changes
+
+- c07aee3: disable swapfooter when route === undefined
+- 2e3f7ed: Add reusable Tooltip component, Add copy to clipboard UI feedback
+- 4fd1a1b: fix route details icon coloring for dark mode
+- 5d234ce: add useUnlimitedApproval default to false in client and widget
+- 1a9ebed: Remove agoric from initialChainIds to connect
+- 2289c4b: Reduce gap between Asset/Chain row items
+- 642439b: Bring back wallet connection pending animation
+- 0ac0b74: Fix solana wallet detection in useKeepWalletStateSynced
+- a3d6433: titan chain ethermint pubkey
+- a7c2728: add loading state in useAutoSetAddress
+- 983802e: Refactor isLoading as isFetching && isPending to support tanstackQuery v4
+- ee4f29f: Refactor useCreate(Cosmos/Evm/Svm)Wallets hooks
+- e255f41: Always show spinner on if source(or previous operation) has completed
+- c981e6d: connect more chainIds when wallet type is wallet connect
+- 9abebe6: fix getAddressWithoutConnectingWallet logic
+- 9c84691: go fast warning page for first tx and minor styling changes
+- 7bda9e1: only show manual entry if same chain type in evm and svm
+- e39a6b2: Make estimated time count down
+- f31a18e: Add ability to select asset/chain by pressing enter when only one option is left
+- f4cc413: Add 3 tags to sentry
+- 2a90d05: Always update sourceWallet if it's undefined when connecting wallet
+- fb9b5e0: fix ability for recovery addresses to be auto updated when wallet is changed
+- 37bc145: Add onRouteUpdated callback
+- Updated dependencies [18a00bc]
+- Updated dependencies [5d234ce]
+- Updated dependencies [a3d6433]
+  - @skip-go/client@0.16.14
+
 ## 3.3.6
 
 ### Patch Changes

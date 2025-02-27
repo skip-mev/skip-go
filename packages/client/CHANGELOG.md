@@ -1,5 +1,13 @@
 # @skip-go/client
 
+## 0.16.14
+
+### Patch Changes
+
+- 18a00bc: Fix stride encode/decode logic
+- 5d234ce: add useUnlimitedApproval default to false in client and widget
+- a3d6433: titan chain ethermint pubkey
+
 ## 0.16.13
 
 ### Patch Changes
