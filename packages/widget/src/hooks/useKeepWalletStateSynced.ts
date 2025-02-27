@@ -92,5 +92,6 @@ export const useKeepWalletStateSynced = () => {
     cosmosAccounts,
     evmAccount.address,
     updateCosmosWallet,
+    currentCosmosId,
   ]);
 };
