@@ -20,7 +20,7 @@ export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const setEvmWallet = useSetAtom(evmWalletAtom);
+  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
@@ -83,11 +83,23 @@ export const useCreateEvmWallets = () => {
               ?.metadata as WalletConnectMetaData;
 
             setWCDeepLinkByChainType(ChainType.EVM);
-            callbacks?.onWalletConnected?.({
-              walletName: connector.name,
-              chainId: chainID,
-              address: account[0],
-            });
+
+            if (evmWallet === undefined) {
+              const address = account[0];
+
+              callbacks?.onWalletConnected?.({
+                walletName: connector.name,
+                chainId: chainID,
+                address,
+              });
+
+              setEvmWallet({
+                id: address,
+                walletName: connector.id,
+                chainType: ChainType.EVM,
+                logo: walletConnectMetadata?.icons?.[0] ?? connector.icon,
+              });
+            }
 
             return { address: account[0], logo: walletConnectMetadata?.icons?.[0] };
           } catch (error) {
