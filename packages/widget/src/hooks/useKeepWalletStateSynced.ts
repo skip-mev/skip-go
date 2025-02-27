@@ -15,6 +15,8 @@ export const useKeepWalletStateSynced = () => {
     multiChain: true,
   });
 
+  const currentCosmosId = cosmosAccounts ? Object.keys(cosmosAccounts)[0] : "";
+
   const { wallets: solanaWallets } = useWallet();
 
   const solanaWallet = solanaWallets.find((wallet) => wallet.adapter.connected === true)?.adapter;
@@ -22,8 +24,6 @@ export const useKeepWalletStateSynced = () => {
   const evmAccount = useEvmAccount();
 
   const updateCosmosWallet = useCallback(async () => {
-    const currentCosmosId = cosmosAccounts?.["cosmoshub-4"]?.bech32Address;
-
     if (cosmosAccounts && walletType) {
       setCosmosWallet({
         id: currentCosmosId,
@@ -31,7 +31,7 @@ export const useKeepWalletStateSynced = () => {
         chainType: ChainType.Cosmos,
       });
     }
-  }, [cosmosAccounts, setCosmosWallet, walletType]);
+  }, [cosmosAccounts, currentCosmosId, setCosmosWallet, walletType]);
 
   const updateEvmWallet = useCallback(async () => {
     const provider = await evmAccount.connector?.getProvider?.();
@@ -63,7 +63,6 @@ export const useKeepWalletStateSynced = () => {
   }, [setSvmWallet, solanaWallet]);
 
   useEffect(() => {
-    const currentCosmosId = cosmosAccounts?.["cosmoshub-4"]?.bech32Address;
     const currentEvmId = evmAccount.address;
     const currentSolanaId = solanaWallet?.publicKey?.toBase58();
 
@@ -91,5 +90,6 @@ export const useKeepWalletStateSynced = () => {
     cosmosAccounts,
     evmAccount.address,
     updateCosmosWallet,
+    currentCosmosId,
   ]);
 };
