@@ -27,6 +27,7 @@ import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { isMobile } from "@/utils/os";
 import { callbacksAtom, onWalletDisconnectedProps } from "@/state/callbacks";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -58,6 +59,10 @@ export const useCreateCosmosWallets = () => {
         const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
 
         const connectWallet = async ({ chainIdToConnect }: { chainIdToConnect?: string }) => {
+          amplitude.track("connect wallet", {
+            walletName: wallet,
+            chainId: chainIdToConnect,
+          });
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
           try {
@@ -100,9 +105,10 @@ export const useCreateCosmosWallets = () => {
               chainIdToAddressMap: chainIdToAddressMap,
               address: address,
             });
-
+            amplitude.track("wallet connected");
             return { address };
           } catch (e) {
+            amplitude.track("connect error");
             const error = e as Error;
             if (error?.message?.toLowerCase().includes("no chain info")) {
               throw new Error(
