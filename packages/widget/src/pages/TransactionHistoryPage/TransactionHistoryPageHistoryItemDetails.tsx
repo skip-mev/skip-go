@@ -69,31 +69,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   };
 
   const renderTransactionIds = useMemo(() => {
-    const initialTxHash = transactionDetails?.[0]?.txHash;
-    const chainId = transactionDetails?.[0]?.chainID;
-    const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
-    const explorerLink = createExplorerLink({
-      txHash: transactionDetails?.[0]?.txHash,
-      chainID: chainId,
-      chainType,
-    });
-
-    if (explorerLinks?.length === 0) {
-      return (
-        <StyledHistoryItemDetailRow align="center">
-          <StyledDetailsLabel>Initial transaction</StyledDetailsLabel>
-          <Link
-            onClick={() => handleClickingLinkIfNoExplorerLink(initialTxHash, explorerLink)}
-            href={explorerLink}
-            title={initialTxHash}
-            target="_blank"
-            gap={5}
-          >
-            <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
-          </Link>
-        </StyledHistoryItemDetailRow>
-      );
-    }
     return explorerLinks?.map((link, index) => {
       const txHash = getTxHashFromLink(link);
       const getTransactionIdLabel = () => {
