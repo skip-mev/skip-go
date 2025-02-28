@@ -42,6 +42,6 @@ export const useTxHistory = ({
   });
   return {
     status: query.data as SimpleStatus,
-    explorerLinks: Array.from(explorerLinks).filter((link) => link),
+    explorerLinks: Array.from(explorerLinks).filter((link) => link) as string[],
   };
 };

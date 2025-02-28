@@ -32,7 +32,7 @@ export const TransactionHistoryPageHistoryItem = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const { status, explorerLinks } = useTxHistory({
+  const { status: historyStatus, explorerLinks } = useTxHistory({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
@@ -80,7 +80,7 @@ export const TransactionHistoryPageHistoryItem = ({
   };
 
   const renderStatus = useMemo(() => {
-    switch (status) {
+    switch (historyStatus) {
       case "unconfirmed":
       case "pending":
         return (
@@ -97,7 +97,7 @@ export const TransactionHistoryPageHistoryItem = ({
       case "failed":
         return <XIcon color={theme.error.text} />;
     }
-  }, [status, theme.error.text, theme.primary.text.normal]);
+  }, [historyStatus, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -108,7 +108,7 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (status === "pending") {
+    if (historyStatus === "pending") {
       return "In Progress";
     }
     return formatDistanceStrict(new Date(timestamp), new Date(), {
@@ -124,7 +124,7 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [status, timestamp]);
+  }, [historyStatus, timestamp]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -149,7 +149,7 @@ export const TransactionHistoryPageHistoryItem = ({
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={status}
+          status={historyStatus}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
