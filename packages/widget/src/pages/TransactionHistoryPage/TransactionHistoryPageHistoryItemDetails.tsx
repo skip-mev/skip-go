@@ -10,6 +10,9 @@ import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { TransactionDetails } from "@/state/swapExecutionPage";
 import { copyToClipboard } from "@/utils/misc";
+import { createExplorerLink } from "@/utils/explorerLink";
+import { skipChainsAtom } from "@/state/skipClient";
+import { useAtomValue } from "jotai";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
@@ -42,6 +45,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   explorerLinks,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
+  const { data: chains } = useAtomValue(skipChainsAtom);
 
   const statusColor = useMemo(() => {
     if (status === "failed" || status === "incomplete") {
@@ -66,13 +70,21 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
   const renderTransactionIds = useMemo(() => {
     const initialTxHash = transactionDetails?.[0]?.txHash;
+    const chainId = transactionDetails?.[0]?.chainID;
+    const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+    const explorerLink = createExplorerLink({
+      txHash: transactionDetails?.[0]?.txHash,
+      chainID: chainId,
+      chainType,
+    });
 
     if (explorerLinks?.length === 0) {
       return (
         <StyledHistoryItemDetailRow align="center">
           <StyledDetailsLabel>Initial transaction</StyledDetailsLabel>
           <Link
-            onClick={() => handleClickingLinkIfNoExplorerLink(initialTxHash)}
+            onClick={() => handleClickingLinkIfNoExplorerLink(initialTxHash, explorerLink)}
+            href={explorerLink}
             title={initialTxHash}
             target="_blank"
             gap={5}
