@@ -14,7 +14,7 @@ import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
 import { removeTrailingZeros } from "@/utils/number";
-import { useTxHistoryStatus } from "@/hooks/useTxHistoryStatus";
+import { useTxHistory } from "@/hooks/useTxHistory";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -32,13 +32,15 @@ export const TransactionHistoryPageHistoryItem = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const historyStatus = useTxHistoryStatus({
+  const { status, explorerLinks } = useTxHistory({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
     })),
     txsRequired: txHistoryItem.route.txsRequired,
   });
+
+  console.log(explorerLinks);
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
@@ -80,7 +82,7 @@ export const TransactionHistoryPageHistoryItem = ({
   };
 
   const renderStatus = useMemo(() => {
-    switch (historyStatus) {
+    switch (status) {
       case "unconfirmed":
       case "pending":
         return (
@@ -97,7 +99,7 @@ export const TransactionHistoryPageHistoryItem = ({
       case "failed":
         return <XIcon color={theme.error.text} />;
     }
-  }, [historyStatus, theme.error.text, theme.primary.text.normal]);
+  }, [status, theme.error.text, theme.primary.text.normal]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -108,7 +110,7 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (historyStatus === "pending") {
+    if (status === "pending") {
       return "In Progress";
     }
     return formatDistanceStrict(new Date(timestamp), new Date(), {
@@ -124,7 +126,7 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [historyStatus, timestamp]);
+  }, [status, timestamp]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -149,7 +151,7 @@ export const TransactionHistoryPageHistoryItem = ({
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={historyStatus}
+          status={status}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
