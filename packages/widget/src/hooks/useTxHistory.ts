@@ -40,5 +40,8 @@ export const useTxHistory = ({
       return "pending";
     },
   });
-  return { status: query.data as SimpleStatus, explorerLinks: Array.from(explorerLinks) };
+  return {
+    status: query.data as SimpleStatus,
+    explorerLinks: Array.from(explorerLinks).filter((link) => link),
+  };
 };

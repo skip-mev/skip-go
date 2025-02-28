@@ -40,8 +40,6 @@ export const TransactionHistoryPageHistoryItem = ({
     txsRequired: txHistoryItem.route.txsRequired,
   });
 
-  console.log(explorerLinks);
-
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
   const {
@@ -157,6 +155,7 @@ export const TransactionHistoryPageHistoryItem = ({
           absoluteTimeString={absoluteTimeString}
           transactionDetails={transactionDetails}
           onClickDelete={() => removeTransactionHistoryItem(index)}
+          explorerLinks={explorerLinks}
         />
       )}
     </StyledHistoryContainer>

@@ -18,6 +18,7 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   absoluteTimeString: string;
   transactionDetails: TransactionDetails[];
   onClickDelete?: () => void;
+  explorerLinks?: string[];
 };
 
 const statusMap = {
@@ -38,6 +39,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   absoluteTimeString,
   transactionDetails,
   onClickDelete,
+  explorerLinks,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -50,11 +52,69 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     return;
   }, [status, theme]);
 
-  const handleClickingLinkIfNoExplorerLink = (txHash: string, explorerLink?: string) => {
+  const handleClickingLinkIfNoExplorerLink = (txHash?: string, explorerLink?: string) => {
     if (!explorerLink) {
       copyToClipboard(txHash);
     }
   };
+
+  const getTxHashFromLink = (link?: string) => {
+    const splitLinkBySlash = link?.split("/");
+    if (!splitLinkBySlash) return;
+    return splitLinkBySlash[splitLinkBySlash.length - 1];
+  };
+
+  const renderTransactionIds = useMemo(() => {
+    const initialTxHash = transactionDetails?.[0]?.txHash;
+
+    if (explorerLinks?.length === 0) {
+      return (
+        <StyledHistoryItemDetailRow align="center">
+          <StyledDetailsLabel>Initial transaction</StyledDetailsLabel>
+          <Link
+            onClick={() => handleClickingLinkIfNoExplorerLink(initialTxHash)}
+            title={initialTxHash}
+            target="_blank"
+            gap={5}
+          >
+            <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
+          </Link>
+        </StyledHistoryItemDetailRow>
+      );
+    }
+    return explorerLinks?.map((link, index) => {
+      const txHash = getTxHashFromLink(link);
+      const getTransactionIdLabel = () => {
+        if (index === 0) {
+          return "Initial transaction ";
+        }
+        if (index === explorerLinks.length - 1) {
+          return "Final transaction ";
+        }
+        return "Transaction ";
+      };
+      return (
+        <StyledHistoryItemDetailRow key={`${index}-${txHash}`} align="center">
+          <StyledDetailsLabel key={`${index}-${txHash}`}>
+            {getTransactionIdLabel()}
+          </StyledDetailsLabel>
+          <Link
+            onClick={() => handleClickingLinkIfNoExplorerLink(txHash, link)}
+            key={`${index}-${txHash}`}
+            href={link}
+            title={txHash}
+            target="_blank"
+            gap={5}
+          >
+            <SmallText normalTextColor>{getTruncatedAddress(txHash)}</SmallText>
+            <SmallText>
+              <ChainIcon />
+            </SmallText>
+          </Link>
+        </StyledHistoryItemDetailRow>
+      );
+    });
+  }, [explorerLinks, transactionDetails]);
 
   return (
     <Column padding={20} gap={10} style={{ paddingTop: 10 }}>
@@ -76,69 +136,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </Row>
       </StyledHistoryItemDetailRow>
 
-      {transactionDetails.length === 1 ? (
-        <StyledHistoryItemDetailRow align="center">
-          <StyledDetailsLabel>Transaction ID</StyledDetailsLabel>
-          <Link
-            onClick={() =>
-              handleClickingLinkIfNoExplorerLink(
-                transactionDetails?.[0]?.txHash,
-                transactionDetails?.[0]?.explorerLink,
-              )
-            }
-            href={transactionDetails?.[0]?.explorerLink}
-            title={transactionDetails?.[0]?.txHash}
-            target="_blank"
-            gap={5}
-          >
-            <SmallText normalTextColor>
-              {getTruncatedAddress(transactionDetails?.[0]?.txHash)}
-            </SmallText>
-            <SmallText>
-              <ChainIcon />
-            </SmallText>
-          </Link>
-        </StyledHistoryItemDetailRow>
-      ) : (
-        transactionDetails.map((transactionDetail, index) => {
-          const getTransactionIdLabel = () => {
-            if (index === 0) {
-              return "Initial transaction";
-            }
-            if (index === transactionDetails.length - 1) {
-              return "Final transaction";
-            }
-            return "Transaction";
-          };
-          return (
-            <StyledHistoryItemDetailRow key={`${index}-${transactionDetail.txHash}`} align="center">
-              <StyledDetailsLabel key={`${index}-${transactionDetail.txHash}`}>
-                {getTransactionIdLabel()}
-              </StyledDetailsLabel>
-              <Link
-                onClick={() =>
-                  handleClickingLinkIfNoExplorerLink(
-                    transactionDetail.txHash,
-                    transactionDetail.explorerLink,
-                  )
-                }
-                key={`${index}-${transactionDetail.txHash}`}
-                href={transactionDetail.explorerLink}
-                title={transactionDetail?.txHash}
-                target="_blank"
-                gap={5}
-              >
-                <SmallText normalTextColor>
-                  {getTruncatedAddress(transactionDetail.txHash)}
-                </SmallText>
-                <SmallText>
-                  <ChainIcon />
-                </SmallText>
-              </Link>
-            </StyledHistoryItemDetailRow>
-          );
-        })
-      )}
+      {renderTransactionIds}
 
       <Row align="center" style={{ marginTop: 10 }}>
         <Button onClick={onClickDelete} gap={5} align="center">
@@ -154,7 +152,9 @@ const StyledDetailsLabel = styled(SmallText)`
   width: 100px;
 `;
 
-const StyledHistoryItemDetailRow = styled(Row)`
+const StyledHistoryItemDetailRow = styled(Row).attrs({
+  gap: 5,
+})`
   @media (max-width: 767px) {
     flex-direction: column;
     align-items: flex-start;
