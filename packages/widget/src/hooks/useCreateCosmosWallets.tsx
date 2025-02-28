@@ -95,11 +95,21 @@ export const useCreateCosmosWallets = () => {
             );
             const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
 
-            callbacks?.onWalletConnected?.({
-              walletName: wallet,
-              chainIdToAddressMap: chainIdToAddressMap,
-              address: address,
-            });
+            if (cosmosWallet === undefined) {
+              callbacks?.onWalletConnected?.({
+                walletName: wallet,
+                chainIdToAddressMap: chainIdToAddressMap,
+                address: address,
+              });
+              const currentCosmosId =
+                response?.accounts[Object.keys(response?.accounts)[0]]?.bech32Address;
+
+              setCosmosWallet({
+                id: currentCosmosId,
+                walletName: wallet,
+                chainType: ChainType.SVM,
+              });
+            }
 
             return { address };
           } catch (e) {
