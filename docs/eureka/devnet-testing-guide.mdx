@@ -10,6 +10,7 @@ IBC Eureka is the official native implementation of IBC v2
 It leverages the Cosmos Hub and Interchain Labs contracts, relayers, and infrastructure to enable seamless cross-chain user and liquidity mobility.
 
 The following guide explains how to test IBC Eureka's Devnet deployment via a CLI tool developed to interact with IBC Eureka, enabling trust-minimized token transfers between Ethereum and Cosmos chains.
+This guide currently shows the steps for transactions between Ethereum Sepolia Testnet and a Cosmos Hub Devnet we spun up for the purpose.
 
 # Prerequisites
 
@@ -27,10 +28,10 @@ The following guide explains how to test IBC Eureka's Devnet deployment via a CL
 git clone https://github.com/cosmos/solidity-ibc-eureka
 ```
 
-2. Navigate to where the repo now lives on your machine, and move into the cmd folder to build the CLI
+2. Change directory into the folder you just cloned:
 
 ```bash
-cd solidity-ibc-eureka/e2e/interchaintestv8/cmd
+cd solidity-ibc-eureka
 ```
 
 3. Fetch and checkout the `devenet-deployment` [sic] branch that contains the CLI tool:
@@ -40,7 +41,13 @@ git fetch
 git checkout gjermund/devenet-deployment
 ```
 
-4. Build the CLI tool to test transferring and relaying Eureka packets on devnet
+4. Navigate to where the repo now lives on your machine, and move into the cmd folder to build the CLI
+
+```bash
+cd e2e/interchaintestv8/cmd
+```
+
+5. Build the CLI tool to test transferring and relaying Eureka packets on devnet
 
 ```bash
 go build -o eureka-cli
