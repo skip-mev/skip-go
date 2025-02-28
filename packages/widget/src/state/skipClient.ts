@@ -9,7 +9,7 @@ import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { defaultTheme, Theme } from "@/widget/theme";
-import { Wallet } from "@solana/wallet-adapter-react";
+import { solanaWallets } from "@/constants/solana";
 
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
@@ -25,14 +25,10 @@ export const skipClientConfigAtom = atom<SkipClientOptions>({
 
 export const themeAtom = atom<Theme>(defaultTheme);
 
-export const solanaWalletsAtom = atom<Wallet[]>();
-
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
-
-  const solanaWallets = get(solanaWalletsAtom);
 
   return new SkipClient({
     ...options,
@@ -69,7 +65,7 @@ export const skipClient = atom((get) => {
       }
       const walletName = wallets.svm?.walletName;
       if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
-      const solanaWallet = solanaWallets?.find((w) => w.adapter.name === walletName)?.adapter;
+      const solanaWallet = solanaWallets.find((w) => w.name === walletName);
       if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },

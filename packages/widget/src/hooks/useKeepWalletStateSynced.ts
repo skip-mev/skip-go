@@ -4,8 +4,8 @@ import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 import { ChainType } from "@skip-go/client";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { solanaWalletsAtom } from "@/state/skipClient";
+import { solanaWallets } from "@/constants/solana";
 
 export const useKeepWalletStateSynced = () => {
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
@@ -21,9 +21,7 @@ export const useKeepWalletStateSynced = () => {
     ? cosmosAccounts[Object.keys(cosmosAccounts)[0]]?.bech32Address
     : "";
 
-  const { wallets: solanaWallets } = useWallet();
-
-  const solanaWallet = solanaWallets.find((wallet) => wallet.adapter.connected === true)?.adapter;
+  const solanaWallet = solanaWallets.find((wallet) => wallet.connected === true);
 
   const evmAccount = useEvmAccount();
 
@@ -67,10 +65,6 @@ export const useKeepWalletStateSynced = () => {
   }, [setSvmWallet, solanaWallet]);
 
   useEffect(() => {
-    setSolanaWallets(solanaWallets);
-  }, [setSolanaWallets, solanaWallets]);
-
-  useEffect(() => {
     const currentEvmId = evmAccount.address;
     const currentSolanaId = solanaWallet?.publicKey?.toBase58();
 
@@ -99,7 +93,6 @@ export const useKeepWalletStateSynced = () => {
     evmAccount.address,
     updateCosmosWallet,
     currentCosmosId,
-    solanaWallets,
     setSolanaWallets,
   ]);
 };
