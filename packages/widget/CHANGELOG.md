@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.3.8
+
+### Patch Changes
+
+- f98435f: change currentCosmosId to be based on the first cosmosAccount
+
 ## 3.3.7
 
 ### Patch Changes
