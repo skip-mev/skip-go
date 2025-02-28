@@ -37,6 +37,7 @@ import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
+import { track } from "@amplitude/analytics-browser";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -235,6 +236,7 @@ export const SwapPage = () => {
     }
 
     const onClick = () => {
+      track("SwapPage continue", { route, type: isSwapOperation ? "swap" : "send" });
       if (showCosmosLedgerWarning) {
         setError({
           errorType: ErrorType.CosmosLedgerWarning,

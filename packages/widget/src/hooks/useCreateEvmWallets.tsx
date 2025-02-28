@@ -15,6 +15,7 @@ import { useAccount, useConnect, useConnectors } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
+import { track } from "@amplitude/analytics-browser";
 
 export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -99,10 +100,23 @@ export const useCreateEvmWallets = () => {
               });
             }
 
+            track("wallet connected", {
+              walletName: connector.name,
+              chainId: chainIdToConnect,
+              ChainType: ChainType.EVM,
+            });
+
             return { address: account[0], logo: walletConnectMetadata?.icons?.[0] };
-          } catch (error) {
+          } catch (e) {
+            const error = e as Error;
+            track("connect wallet error", {
+              walletName: connector.name,
+              chainId: chainIdToConnect,
+              ChainType: ChainType.EVM,
+              errorMessage: error?.message,
+            });
             console.error(error);
-            throw error;
+            throw e;
           }
         };
 
@@ -118,6 +132,11 @@ export const useCreateEvmWallets = () => {
           },
           disconnect: async () => {
             await currentConnector?.disconnect();
+            track("wallet disconnected", {
+              walletName: connector.name,
+              chainId: chainID,
+              ChainType: ChainType.EVM,
+            });
             setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: connector.name,
