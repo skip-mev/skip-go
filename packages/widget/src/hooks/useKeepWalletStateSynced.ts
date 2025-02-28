@@ -1,15 +1,17 @@
 import { cosmosWalletAtom, evmWalletAtom, svmWalletAtom } from "@/state/wallets";
 import { useAccount as useCosmosAccount } from "graz";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { useAccount as useEvmAccount } from "wagmi";
 import { ChainType } from "@skip-go/client";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { solanaWalletsAtom } from "@/state/skipClient";
 
 export const useKeepWalletStateSynced = () => {
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
+  const setSolanaWallets = useSetAtom(solanaWalletsAtom);
 
   const { data: cosmosAccounts, walletType } = useCosmosAccount({
     multiChain: true,
@@ -73,6 +75,7 @@ export const useKeepWalletStateSynced = () => {
     }
     if (solanaWallet?.connected && svmWallet?.id !== currentSolanaId) {
       updateSvmWallet();
+      setSolanaWallets(solanaWallets);
     }
     if (evmAccount.connector && evmWallet?.id !== currentEvmId) {
       updateEvmWallet();
@@ -93,5 +96,7 @@ export const useKeepWalletStateSynced = () => {
     evmAccount.address,
     updateCosmosWallet,
     currentCosmosId,
+    solanaWallets,
+    setSolanaWallets,
   ]);
 };

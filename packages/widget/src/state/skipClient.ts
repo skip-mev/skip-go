@@ -10,6 +10,7 @@ import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { solanaWallets } from "@/constants/solana";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { Wallet } from "@solana/wallet-adapter-react";
 
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
@@ -24,6 +25,8 @@ export const skipClientConfigAtom = atom<SkipClientOptions>({
 });
 
 export const themeAtom = atom<Theme>(defaultTheme);
+
+export const solanaWalletsAtom = atom<Wallet[]>();
 
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
