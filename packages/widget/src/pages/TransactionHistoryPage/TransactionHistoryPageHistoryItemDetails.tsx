@@ -10,9 +10,6 @@ import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { TransactionDetails } from "@/state/swapExecutionPage";
 import { copyToClipboard } from "@/utils/misc";
-import { createExplorerLink } from "@/utils/explorerLink";
-import { skipChainsAtom } from "@/state/skipClient";
-import { useAtomValue } from "jotai";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
@@ -45,7 +42,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   explorerLinks,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
-  const { data: chains } = useAtomValue(skipChainsAtom);
 
   const statusColor = useMemo(() => {
     if (status === "failed" || status === "incomplete") {
@@ -101,7 +97,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </StyledHistoryItemDetailRow>
       );
     });
-  }, [explorerLinks, transactionDetails]);
+  }, [explorerLinks]);
 
   return (
     <Column padding={20} gap={10} style={{ paddingTop: 10 }}>
