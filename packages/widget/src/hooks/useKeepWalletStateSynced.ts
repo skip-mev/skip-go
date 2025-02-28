@@ -76,6 +76,7 @@ export const useKeepWalletStateSynced = () => {
     if (solanaWallet?.connected && svmWallet?.id !== currentSolanaId) {
       updateSvmWallet();
       setSolanaWallets(solanaWallets);
+      console.log(solanaWallets);
     }
     if (evmAccount.connector && evmWallet?.id !== currentEvmId) {
       updateEvmWallet();
