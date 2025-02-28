@@ -16,7 +16,7 @@ export const useKeepWalletStateSynced = () => {
   });
 
   const currentCosmosId = cosmosAccounts
-    ? cosmosAccounts[Object.keys(cosmosAccounts)[0]]?.address
+    ? cosmosAccounts[Object.keys(cosmosAccounts)[0]]?.bech32Address
     : "";
 
   const { wallets: solanaWallets } = useWallet();
