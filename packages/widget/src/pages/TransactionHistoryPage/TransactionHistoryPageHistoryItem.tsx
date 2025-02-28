@@ -1,5 +1,5 @@
 import { SmallText } from "@/components/Typography";
-import { ClientAsset } from "@/state/skipClient";
+import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { XIcon } from "@/icons/XIcon";
@@ -9,12 +9,13 @@ import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPa
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
 import { removeTrailingZeros } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
+import { createExplorerLink } from "@/utils/explorerLink";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -31,8 +32,9 @@ export const TransactionHistoryPageHistoryItem = ({
 }: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { status: historyStatus, explorerLinks } = useTxHistory({
+  const { status: historyStatus, explorerLinks: links } = useTxHistory({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
@@ -54,6 +56,22 @@ export const TransactionHistoryPageHistoryItem = ({
     timestamp,
     transactionDetails,
   } = txHistoryItem;
+
+  const initialTxHash = transactionDetails?.[0]?.txHash;
+  const chainId = transactionDetails?.[0]?.chainID;
+  const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+  const derivedExplorerLink = createExplorerLink({
+    txHash: initialTxHash,
+    chainID: chainId,
+    chainType,
+  });
+
+  const explorerLinks = useMemo(() => {
+    if (!links && derivedExplorerLink) {
+      return [derivedExplorerLink];
+    }
+    return links;
+  }, [derivedExplorerLink, links]);
 
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
