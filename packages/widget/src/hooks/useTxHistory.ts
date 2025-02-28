@@ -1,7 +1,8 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
+import { SimpleStatus } from "@/utils/clientType";
 import { useQuery } from "@tanstack/react-query";
 
-export const useTxHistoryStatus = ({
+export const useTxHistory = ({
   txs,
   txsRequired,
 }: {
@@ -22,6 +23,12 @@ export const useTxHistoryStatus = ({
     enabled: txs.length === txsRequired,
   });
 
+  const explorerLinks = new Set();
+  statusData?.transferEvents.forEach((transferEvent) => {
+    explorerLinks.add(transferEvent.fromExplorerLink);
+    explorerLinks.add(transferEvent.toExplorerLink);
+  });
+
   const query = useQuery({
     queryKey: ["tx-history-status", { txs, txsRequired, statusData }],
     queryFn: () => {
@@ -33,5 +40,8 @@ export const useTxHistoryStatus = ({
       return "pending";
     },
   });
-  return query.data;
+  return {
+    status: query.data as SimpleStatus,
+    explorerLinks: Array.from(explorerLinks).filter((link) => link) as string[],
+  };
 };

@@ -11,7 +11,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader, StyledModalContainer } from "@/components/ModalHeader";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -33,6 +33,8 @@ export enum WalletSource {
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { chainId, chainAddressIndex } = modalProps;
+  const { route } = useAtomValue(swapExecutionStateAtom);
+  const requiredChainAddresses = route?.requiredChainAddresses;
   if (modalProps.chainAddressIndex === undefined) {
     throw new Error("chain address index cannot be undefined");
   }
@@ -133,6 +135,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const address = response?.address;
     const logo = response?.logo;
     setChainAddresses((prev) => {
+      if (
+        JSON.stringify(requiredChainAddresses) !==
+        JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
+      ) {
+        return prev;
+      }
       return {
         ...prev,
         [chainAddressIndex]: {
