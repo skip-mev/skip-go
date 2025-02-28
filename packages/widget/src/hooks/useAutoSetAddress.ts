@@ -89,23 +89,31 @@ export const useAutoSetAddress = () => {
             );
           }
 
-          setChainAddresses((prev) => ({
-            ...prev,
-            [index]: {
-              chainID,
-              address,
-              chainType: chainType,
-              source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
-              wallet: {
-                walletName: wallet?.walletName,
-                walletPrettyName: wallet?.walletPrettyName,
-                walletChainType: chainType,
-                walletInfo: {
-                  logo: response?.logo ?? wallet?.walletInfo?.logo,
+          setChainAddresses((prev) => {
+            if (
+              JSON.stringify(requiredChainAddresses) !==
+              JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
+            ) {
+              return prev;
+            }
+            return {
+              ...prev,
+              [index]: {
+                chainID,
+                address,
+                chainType: chainType,
+                source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
+                wallet: {
+                  walletName: wallet?.walletName,
+                  walletPrettyName: wallet?.walletPrettyName,
+                  walletChainType: chainType,
+                  walletInfo: {
+                    logo: response?.logo ?? wallet?.walletInfo?.logo,
+                  },
                 },
               },
-            },
-          }));
+            };
+          });
         } catch (_error) {
           console.error(_error);
           if (!openModal) return;
