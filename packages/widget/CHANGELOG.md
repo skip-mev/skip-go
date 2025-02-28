@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.3.9
+
+### Patch Changes
+
+- b3306ef: Fix tx history showing all explorer links
+- 283ff43: Fix solana signers
+- 77f8781: fix incorrect address displayed
+- 8584f49: Fix blinking confirm button
+- fafc730: Bring back manually setting wallet state when connecting
+
 ## 3.3.8
 
 ### Patch Changes
