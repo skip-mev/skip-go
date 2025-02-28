@@ -24,6 +24,7 @@ import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
+import { init } from "@amplitude/analytics-browser";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -77,6 +78,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
     return theme;
   }, [props.brandColor, props.theme]);
+
+  useEffect(() => {
+    init("2e487bbb0d7e871dd64d66087298fa7d", { autocapture: true, appVersion: version });
+  }, []);
 
   useEffect(() => {
     setSkipClientConfig({
