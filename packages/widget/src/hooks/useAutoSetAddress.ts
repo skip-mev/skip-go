@@ -18,7 +18,7 @@ import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { ChainType } from "@skip-go/client";
 import { useGetAccount } from "./useGetAccount";
 
-export const useAutoSetAddress = () => {
+export const useAutoSetAddress = (props: { abortSignal: AbortSignal }) => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
   const { route } = useAtomValue(swapExecutionStateAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
@@ -65,6 +65,7 @@ export const useAutoSetAddress = () => {
             signRequired: isSignRequired,
             chainId: chainID,
             chainAddressIndex: index,
+            abortSignal: props.abortSignal,
           });
         };
         // If already set by manual entry do not auto set
@@ -78,7 +79,7 @@ export const useAutoSetAddress = () => {
           const isSignRequired = signRequiredChains?.includes(chainID);
 
           const response = await wallet?.getAddress?.({ signRequired: isSignRequired });
-
+          props.abortSignal.throwIfAborted();
           const isInjectedWallet = connectedAddress?.[chainID];
 
           const address = connectedAddress?.[chainID] ?? response?.address;
@@ -123,6 +124,7 @@ export const useAutoSetAddress = () => {
       chains,
       chainAddresses,
       signRequiredChains,
+      props.abortSignal,
       sourceWallet,
       connectedAddress,
       setChainAddresses,

@@ -41,7 +41,10 @@ export const SwapExecutionPage = () => {
   const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
     useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { connectRequiredChains, isLoading } = useAutoSetAddress();
+  const swapExecutionAbortController = new AbortController();
+  const { connectRequiredChains, isLoading } = useAutoSetAddress({
+    abortSignal: swapExecutionAbortController.signal,
+  });
   const [simpleRoute, setSimpleRoute] = useState(true);
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -64,8 +67,6 @@ export const SwapExecutionPage = () => {
     if (!route?.operations) return [] as ClientOperation[];
     return getClientOperations(route.operations);
   }, [route?.operations]);
-
-  const lastOperation = clientOperations[clientOperations.length - 1];
 
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
@@ -115,9 +116,10 @@ export const SwapExecutionPage = () => {
       NiceModal.show(Modals.SetAddressModal, {
         chainId: route?.destAssetChainID,
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
+        abortSignal: swapExecutionAbortController.signal,
       });
     };
-  }, [swapExecutionState, route]);
+  }, [swapExecutionState, route, swapExecutionAbortController.signal]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
@@ -131,7 +133,10 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Back",
                 icon: ICONS.thinArrow,
-                onClick: () => setCurrentPage(Routes.SwapPage),
+                onClick: () => {
+                  swapExecutionAbortController.abort();
+                  setCurrentPage(Routes.SwapPage);
+                },
               }
             : undefined
         }
@@ -152,9 +157,9 @@ export const SwapExecutionPage = () => {
         swapExecutionState={swapExecutionState}
         route={route}
         signaturesRemaining={signaturesRemaining}
-        lastOperation={lastOperation}
         connectRequiredChains={connectRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
+        abortSignal={swapExecutionAbortController.signal}
       />
       <SwapPageFooter showRouteInfo={overallStatus === "unconfirmed"} />
     </Column>

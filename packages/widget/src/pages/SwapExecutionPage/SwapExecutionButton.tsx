@@ -12,7 +12,6 @@ import { errorAtom, ErrorType } from "@/state/errorPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { RouteResponse } from "@skip-go/client";
-import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
@@ -21,18 +20,18 @@ type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
   route: RouteResponse | undefined;
   signaturesRemaining: number;
-  lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
   submitExecuteRouteMutation: () => void;
+  abortSignal?: AbortSignal;
 };
 
 export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   swapExecutionState,
   route,
   signaturesRemaining,
-  lastOperation,
   connectRequiredChains,
   submitExecuteRouteMutation,
+  abortSignal,
 }) => {
   const countdown = useCountdown({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
@@ -65,9 +64,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             const destinationChainID = route?.destAssetChainID;
             if (!destinationChainID) return;
             NiceModal.show(Modals.SetAddressModal, {
-              signRequired: lastOperation.signRequired,
               chainId: destinationChainID,
               chainAddressIndex: route.requiredChainAddresses.length - 1,
+              abortSignal: abortSignal,
             });
           }}
         />

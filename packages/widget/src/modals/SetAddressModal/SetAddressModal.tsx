@@ -22,6 +22,7 @@ import { MinimalWallet } from "@/state/wallets";
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
   chainAddressIndex: number;
+  abortSignal: AbortSignal;
 };
 
 export enum WalletSource {
@@ -122,36 +123,47 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     return `${title} wallet`;
   }, [chainAddressIndex, chainAddresses, mobile]);
 
-  const onSelectWallet = async (wallet: MinimalWallet) => {
-    const response = await wallet.getAddress?.({
-      praxWallet: {
-        sourceChainID: chainAddressIndex
-          ? chainAddresses[chainAddressIndex - 1]?.chainID
-          : undefined,
-      },
-    });
-    const address = response?.address;
-    const logo = response?.logo;
-    setChainAddresses((prev) => {
-      return {
-        ...prev,
-        [chainAddressIndex]: {
-          chainID: chainId,
-          chainType: chain?.chainType,
-          address,
-          source: WalletSource.Wallet,
-          wallet: {
-            walletName: wallet.walletName,
-            walletPrettyName: wallet.walletPrettyName,
-            walletChainType: wallet.walletChainType,
-            walletInfo: {
-              logo: logo ?? wallet.walletInfo?.logo,
+  const onSelectWallet = useCallback(
+    async (wallet: MinimalWallet) => {
+      const response = await wallet.getAddress?.({
+        praxWallet: {
+          sourceChainID: chainAddressIndex
+            ? chainAddresses[chainAddressIndex - 1]?.chainID
+            : undefined,
+        },
+      });
+      modalProps.abortSignal.throwIfAborted();
+      const address = response?.address;
+      const logo = response?.logo;
+      setChainAddresses((prev) => {
+        return {
+          ...prev,
+          [chainAddressIndex]: {
+            chainID: chainId,
+            chainType: chain?.chainType,
+            address,
+            source: WalletSource.Wallet,
+            wallet: {
+              walletName: wallet.walletName,
+              walletPrettyName: wallet.walletPrettyName,
+              walletChainType: wallet.walletChainType,
+              walletInfo: {
+                logo: logo ?? wallet.walletInfo?.logo,
+              },
             },
           },
-        },
-      };
-    });
-  };
+        };
+      });
+    },
+    [
+      chainAddressIndex,
+      chainAddresses,
+      modalProps.abortSignal,
+      setChainAddresses,
+      chainId,
+      chain?.chainType,
+    ],
+  );
 
   return (
     <>
