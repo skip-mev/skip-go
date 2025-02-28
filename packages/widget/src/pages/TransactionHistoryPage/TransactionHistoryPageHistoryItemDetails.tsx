@@ -8,7 +8,6 @@ import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { TransactionDetails } from "@/state/swapExecutionPage";
 import { copyToClipboard } from "@/utils/misc";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
@@ -16,7 +15,6 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
-  transactionDetails: TransactionDetails[];
   onClickDelete?: () => void;
   explorerLinks?: string[];
 };
@@ -37,7 +35,6 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   sourceChainName,
   destinationChainName,
   absoluteTimeString,
-  transactionDetails,
   onClickDelete,
   explorerLinks,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {

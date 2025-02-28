@@ -34,7 +34,7 @@ export const TransactionHistoryPageHistoryItem = ({
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { status: historyStatus, explorerLinks: links } = useTxHistory({
+  const { status: historyStatus, explorerLinks: txHistoryExplorerLinks } = useTxHistory({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
@@ -67,11 +67,11 @@ export const TransactionHistoryPageHistoryItem = ({
   });
 
   const explorerLinks = useMemo(() => {
-    if (links.length === 0 && derivedExplorerLink) {
+    if (txHistoryExplorerLinks.length === 0 && derivedExplorerLink) {
       return [derivedExplorerLink];
     }
-    return links;
-  }, [derivedExplorerLink, links]);
+    return txHistoryExplorerLinks;
+  }, [derivedExplorerLink, txHistoryExplorerLinks]);
 
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
@@ -171,7 +171,6 @@ export const TransactionHistoryPageHistoryItem = ({
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
-          transactionDetails={transactionDetails}
           onClickDelete={() => removeTransactionHistoryItem(index)}
           explorerLinks={explorerLinks}
         />
