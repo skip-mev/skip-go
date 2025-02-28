@@ -67,6 +67,10 @@ export const useKeepWalletStateSynced = () => {
   }, [setSvmWallet, solanaWallet]);
 
   useEffect(() => {
+    setSolanaWallets(solanaWallets);
+  }, [setSolanaWallets, solanaWallets]);
+
+  useEffect(() => {
     const currentEvmId = evmAccount.address;
     const currentSolanaId = solanaWallet?.publicKey?.toBase58();
 
@@ -75,8 +79,6 @@ export const useKeepWalletStateSynced = () => {
     }
     if (solanaWallet?.connected && svmWallet?.id !== currentSolanaId) {
       updateSvmWallet();
-      setSolanaWallets(solanaWallets);
-      console.log(solanaWallets);
     }
     if (evmAccount.connector && evmWallet?.id !== currentEvmId) {
       updateEvmWallet();

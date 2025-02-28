@@ -20,7 +20,7 @@ export const useCreateEvmWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
-  const [evmWallet, setEvmWallet] = useSetAtom(evmWalletAtom);
+  const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
