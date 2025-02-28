@@ -8,8 +8,8 @@ import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
-import { solanaWallets } from "@/constants/solana";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { solanaWallets } from "@/constants/solana";
 
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
