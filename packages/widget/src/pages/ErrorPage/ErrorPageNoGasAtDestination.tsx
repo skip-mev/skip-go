@@ -40,8 +40,8 @@ export const ErrorPageNoGasAtDestination = ({
         description={
           <>
             <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
-              Insufficient BABY to transact on Babylon, use the link to BABY below to interact with
-              your bridged funds
+              Insufficient BABY to transact on Babylon, use the link to send BABY to your account to
+              pay for gas
             </SmallText>
             <SmallText as="a" href={link} target="_blank" color={theme.primary.text.lowContrast}>
               click here
