@@ -16,6 +16,7 @@ import { getMobileDateFormat } from "@/utils/date";
 import { removeTrailingZeros } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { createExplorerLink } from "@/utils/explorerLink";
+import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -34,7 +35,11 @@ export const TransactionHistoryPageHistoryItem = ({
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { status: historyStatus, explorerLinks: txHistoryExplorerLinks } = useTxHistory({
+  const {
+    status: historyStatus,
+    explorerLinks: txHistoryExplorerLinks,
+    transferAssetRelease,
+  } = useTxHistory({
     txs: txHistoryItem.transactionDetails.map((tx) => ({
       chainID: tx.chainID,
       txHash: tx.txHash,
@@ -112,10 +117,19 @@ export const TransactionHistoryPageHistoryItem = ({
       case "completed":
         return <StyledGreenDot />;
       case "incomplete":
-      case "failed":
-        return <XIcon color={theme.error.text} />;
+      case "failed": {
+        if (transferAssetRelease) {
+          return <FilledWarningIcon backgroundColor={theme.warning.text} />;
+        } else return <XIcon color={theme.error.text} />;
+      }
     }
-  }, [historyStatus, theme.error.text, theme.primary.text.normal]);
+  }, [
+    historyStatus,
+    theme.error.text,
+    theme.primary.text.normal,
+    theme.warning.text,
+    transferAssetRelease,
+  ]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -162,7 +176,9 @@ export const TransactionHistoryPageHistoryItem = ({
         </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
-          {renderStatus}
+          <Row width={20} align="center" justify="center">
+            {renderStatus}
+          </Row>
         </Row>
       </StyledHistoryItemRow>
       {showDetails && (
@@ -173,6 +189,7 @@ export const TransactionHistoryPageHistoryItem = ({
           absoluteTimeString={absoluteTimeString}
           onClickDelete={() => removeTransactionHistoryItem(index)}
           explorerLinks={explorerLinks}
+          transferAssetRelease={transferAssetRelease}
         />
       )}
     </StyledHistoryContainer>
@@ -211,6 +228,7 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
 `;
 
 const StyledHistoryItemRow = styled(Row)`
+  gap: 5px;
   padding: 0 10px;
   height: 40px;
   &:hover {

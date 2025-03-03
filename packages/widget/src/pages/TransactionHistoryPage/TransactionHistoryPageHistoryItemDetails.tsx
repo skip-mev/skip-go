@@ -9,6 +9,8 @@ import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { copyToClipboard } from "@/utils/misc";
+import { TransferAssetRelease } from "@skip-go/client";
+import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
@@ -17,6 +19,7 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
   absoluteTimeString: string;
   onClickDelete?: () => void;
   explorerLinks?: string[];
+  transferAssetRelease?: TransferAssetRelease;
 };
 
 const statusMap = {
@@ -27,7 +30,7 @@ const statusMap = {
   completed: "Completed",
   failed: "Failed",
   approving: "Approving allowance",
-  incomplete: "Incomplete",
+  incomplete: "Not completed",
 };
 
 export const TransactionHistoryPageHistoryItemDetails = ({
@@ -37,17 +40,21 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   absoluteTimeString,
   onClickDelete,
   explorerLinks,
+  transferAssetRelease,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
   const statusColor = useMemo(() => {
     if (status === "failed" || status === "incomplete") {
+      if (transferAssetRelease) {
+        return theme.warning.text;
+      }
       return theme.error.text;
     } else if (status === "completed") {
       return theme.success.text;
     }
     return;
-  }, [status, theme]);
+  }, [status, theme.error.text, theme.success.text, theme.warning.text, transferAssetRelease]);
 
   const handleClickingLinkIfNoExplorerLink = (txHash?: string, explorerLink?: string) => {
     if (!explorerLink) {
@@ -95,14 +102,35 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       );
     });
   }, [explorerLinks]);
+  const showTransferAssetRelease =
+    transferAssetRelease &&
+    transferAssetRelease.released &&
+    (status === "failed" || status === "incomplete");
+
+  const transferAssetReleaseAsset = useGetAssetDetails({
+    assetDenom: transferAssetRelease?.denom,
+    chainId: transferAssetRelease?.chainID,
+  });
 
   return (
-    <Column padding={20} gap={10} style={{ paddingTop: 10 }}>
+    <Column padding={10} gap={10} style={{ paddingTop: showTransferAssetRelease ? 0 : 10 }}>
+      {showTransferAssetRelease && (
+        <StyledTransferAssetRelease>
+          <SmallText color={theme.warning.text}>
+            This transaction did not complete. Your assets have been released as:{" "}
+            {transferAssetReleaseAsset?.symbol} on {transferAssetReleaseAsset?.chainName}
+          </SmallText>
+        </StyledTransferAssetRelease>
+      )}
       <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Status</StyledDetailsLabel>
         <Row gap={5} align="center">
           <SmallText normalTextColor color={statusColor}>
-            {status ? statusMap[status] : "Loading..."}
+            {status
+              ? showTransferAssetRelease
+                ? "Not completed"
+                : statusMap[status]
+              : "Loading..."}
           </SmallText>
           <SmallText>at {absoluteTimeString}</SmallText>
         </Row>
@@ -118,7 +146,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
       {renderTransactionIds}
 
-      <Row align="center" style={{ marginTop: 10 }}>
+      <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">
           <SmallText color={theme.error.text}>Delete</SmallText>
           <TrashIcon color={theme.error.text} />
@@ -132,9 +160,18 @@ const StyledDetailsLabel = styled(SmallText)`
   width: 100px;
 `;
 
-const StyledHistoryItemDetailRow = styled(Row).attrs({
-  gap: 5,
-})`
+const StyledHistoryItemDetailRow = styled(Row)`
+  padding: 0px 10px;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const StyledTransferAssetRelease = styled(Row)`
+  background-color: ${({ theme }) => theme.warning.background};
+  padding: 10px;
+  border-radius: 5px;
   @media (max-width: 767px) {
     flex-direction: column;
     align-items: flex-start;
