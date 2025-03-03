@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add resetSwapPage
+Export resetSwapPage function to enable resetting selected source/destination assets
