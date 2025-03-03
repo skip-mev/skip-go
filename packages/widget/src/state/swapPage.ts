@@ -1,4 +1,4 @@
-import { atom, createStore } from "jotai";
+import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
@@ -55,7 +55,7 @@ export const resetSwapPageState = atom(null, (_get, set) => {
 });
 
 export const resetSwapPage = () => {
-  (jotaiStore as ReturnType<typeof createStore>).set(resetSwapPageState);
+  jotaiStore.set(resetSwapPageState);
 };
 
 export const sourceAssetAmountAtom = atom(
