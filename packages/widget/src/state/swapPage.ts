@@ -23,19 +23,31 @@ export const {
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
-export const onRouteUpdatedEffect = atomEffect((get) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
+export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const { data } = get(skipRouteAtom);
+
+  if (!data) return;
+  const {
+    usdAmountIn,
+    usdAmountOut,
+    sourceAssetChainID,
+    sourceAssetDenom,
+    destAssetChainID,
+    destAssetDenom,
+    requiredChainAddresses,
+  } = data;
+
   const callbacks = get(callbacksAtom);
 
   if (callbacks?.onRouteUpdated) {
     callbacks?.onRouteUpdated({
-      srcChainId: sourceAsset?.chainID,
-      srcAssetDenom: sourceAsset?.denom,
-      destChainId: destinationAsset?.chainID,
-      destAssetDenom: destinationAsset?.denom,
-      amountIn: sourceAsset?.amount,
-      amountOut: destinationAsset?.amount,
+      srcChainId: sourceAssetChainID,
+      srcAssetDenom: sourceAssetDenom,
+      destChainId: destAssetChainID,
+      destAssetDenom: destAssetDenom,
+      amountIn: usdAmountIn,
+      amountOut: usdAmountOut,
+      requiredChainAddresses,
     });
   }
 });
