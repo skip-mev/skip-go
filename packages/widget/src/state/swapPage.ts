@@ -6,6 +6,7 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
 import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
+import { jotaiStore } from "@/widget/Widget";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -23,7 +24,7 @@ export const {
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
-export const onRouteUpdatedEffect = atomEffect((get) => {
+export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const callbacks = get(callbacksAtom);
@@ -44,6 +45,18 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   "sourceAsset",
   undefined,
 );
+
+export const resetSwapPageState = atom(null, (_get, set) => {
+  set(sourceAssetAtom, undefined);
+  set(debouncedSourceAssetAmountAtom, "", undefined, true);
+  set(swapDirectionAtom, "swap-in");
+  set(destinationAssetAtom, undefined);
+  set(debouncedDestinationAssetAmountAtom, "", undefined, true);
+});
+
+export const resetSwapPage = () => {
+  jotaiStore.set(resetSwapPageState);
+};
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount ?? "",
