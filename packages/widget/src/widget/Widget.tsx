@@ -90,7 +90,7 @@ export type ShowSwapWidget = {
 
 export const queryClient = new QueryClient();
 
-export const jotaiStore = createStore();
+export const jotaiStore: ReturnType<typeof createStore> = createStore();
 
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
