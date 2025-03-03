@@ -6,6 +6,7 @@ import {
   OverallStatus,
 } from "@/utils/clientType";
 import { captureException } from "@sentry/react";
+import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState, useMemo } from "react";
@@ -15,6 +16,7 @@ export type TxsStatus = {
   isSettled: boolean;
   transferEvents: ClientTransferEvent[];
   lastTxStatus?: OverallStatus;
+  transferAssetRelease?: TransferAssetRelease;
 };
 
 export const useBroadcastedTxsStatus = ({
@@ -70,11 +72,16 @@ export const useBroadcastedTxsStatus = ({
         captureException("TransactionFailed");
       }
 
+      const transferAssetRelease = results
+        .reverse()
+        .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
+
       const resData: TxsStatus = {
         isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
         lastTxStatus,
         isSettled: isRouteSettled,
         transferEvents,
+        transferAssetRelease: transferAssetRelease || undefined,
       };
       setPrevData(resData);
       return resData;
