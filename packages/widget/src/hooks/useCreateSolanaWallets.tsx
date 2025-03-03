@@ -11,12 +11,8 @@ import { useCallback } from "react";
 import { ChainType } from "@skip-go/client";
 import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
-<<<<<<< HEAD
 import { solanaWallets } from "@/constants/solana";
-=======
-import { useWallet } from "@solana/wallet-adapter-react";
 import { track } from "@amplitude/analytics-browser";
->>>>>>> 9f43362e (wallet connection)
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);

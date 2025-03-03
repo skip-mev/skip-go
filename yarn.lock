@@ -19186,6 +19186,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-base64@npm:^3.7.5":
+  version: 3.7.7
+  resolution: "js-base64@npm:3.7.7"
+  checksum: d1b02971db9dc0fd35baecfaf6ba499731fb44fe3373e7e1d6681fbd3ba665f29e8d9d17910254ef8104e2cb8b44117fe4202d3dc54c7cafe9ba300fe5433358
+  languageName: node
+  linkType: hard
+
 "js-levenshtein@npm:^1.1.6":
   version: 1.1.6
   resolution: "js-levenshtein@npm:1.1.6"
