@@ -228,6 +228,7 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
 `;
 
 const StyledHistoryItemRow = styled(Row)`
+  gap: 5px;
   padding: 0 10px;
   height: 40px;
   &:hover {
