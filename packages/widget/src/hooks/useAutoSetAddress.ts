@@ -145,7 +145,7 @@ export const useAutoSetAddress = () => {
     const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
     const svmWalletChanged = sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
 
-    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged) {
+    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged || isLoading) {
       connectRequiredChains();
       setCurrentSourceWallets(sourceWallet);
     }
@@ -155,6 +155,7 @@ export const useAutoSetAddress = () => {
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
     getAccount,
+    isLoading,
     requiredChainAddresses,
     sourceWallet,
     sourceWallet.cosmos,
