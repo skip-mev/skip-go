@@ -23,9 +23,11 @@ export const {
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
-export const onRouteUpdatedEffect = atomEffect((get) => {
+export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const { data } = get(skipRouteAtom);
+
   const callbacks = get(callbacksAtom);
 
   if (callbacks?.onRouteUpdated) {
@@ -36,6 +38,7 @@ export const onRouteUpdatedEffect = atomEffect((get) => {
       destAssetDenom: destinationAsset?.denom,
       amountIn: sourceAsset?.amount,
       amountOut: destinationAsset?.amount,
+      requiredChainAddresses: data?.requiredChainAddresses,
     });
   }
 });

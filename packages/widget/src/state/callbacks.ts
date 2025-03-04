@@ -48,6 +48,7 @@ export type onRouteUpdatedProps = {
   destAssetDenom?: string;
   amountIn?: string;
   amountOut?: string;
+  requiredChainAddresses?: string[];
 };
 
 export type Callbacks = {
