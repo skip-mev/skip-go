@@ -13,14 +13,13 @@ import {
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
 import { useMemo, useState } from "react";
-import { AssetAtom, sourceAssetAtom } from "@/state/swapPage";
+import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
-import { useAtomValue } from "jotai";
 
 export type AssetChainInputProps = {
   value?: string;
