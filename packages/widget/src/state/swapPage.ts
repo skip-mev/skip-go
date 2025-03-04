@@ -104,13 +104,15 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
+  const sourceAmountIsValidNumber = !isNaN(parseFloat(sourceAmount));
+  const destinationAmountIsValidNumber = !isNaN(parseFloat(destinationAmount));
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
   if (direction === "swap-in") {
-    return sourceAmountHasChanged || isLoading;
+    return (sourceAmountHasChanged && sourceAmountIsValidNumber) || isLoading;
   } else if (direction === "swap-out") {
-    return destinationAmountHasChanged || isLoading;
+    return (destinationAmountHasChanged && destinationAmountIsValidNumber) || isLoading;
   }
 });
 
