@@ -89,26 +89,28 @@ export const destinationAssetAmountAtom = atom(
 
 export const clearAssetInputAmountsAtom = atom(null, (_get, set) => {
   set(sourceAssetAtom, (prev) => ({ ...prev, amount: "" }));
-  set(debouncedSourceAssetAmountAtom, undefined, undefined, true);
+  set(debouncedSourceAssetAmountAtom, "", undefined, true);
 
   set(destinationAssetAtom, (prev) => ({ ...prev, amount: "" }));
-  set(debouncedDestinationAssetAmountAtom, undefined, undefined, true);
+  set(debouncedDestinationAssetAmountAtom, "", undefined, true);
 });
 
 export const isWaitingForNewRouteAtom = atom((get) => {
   const sourceAmount = get(sourceAssetAmountAtom);
   const destinationAmount = get(destinationAssetAmountAtom);
+  const debouncedSourceAmount = get(debouncedSourceAssetAmountAtom);
+  const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
 
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
-  const sourceAmountIsValidNumber = !isNaN(Number(sourceAmount));
-  const destinationAmountIsValidNumber = !isNaN(Number(destinationAmount));
+  const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
+  const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
   if (direction === "swap-in") {
-    return isLoading && sourceAmountIsValidNumber;
+    return sourceAmountHasChanged || isLoading;
   } else if (direction === "swap-out") {
-    return isLoading && destinationAmountIsValidNumber;
+    return destinationAmountHasChanged || isLoading;
   }
 });
 
