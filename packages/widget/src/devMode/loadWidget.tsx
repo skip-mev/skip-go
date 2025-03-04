@@ -4,7 +4,7 @@ import { ShowWidget, Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
-import { resetSwapPage } from "@/state/swapPage";
+import { resetWidget } from "@/state/swapPage";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -15,7 +15,6 @@ const DevMode = () => {
     } else {
       setTheme("dark");
     }
-    resetSwapPage();
   };
 
   return (
@@ -23,7 +22,7 @@ const DevMode = () => {
       <Column gap={5} style={{ width: 200 }}>
         <ShowWidget />
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
-        <button onClick={() => resetSwapPage()}> reset swapPageState </button>
+        <button onClick={() => resetWidget()}> reset widget </button>
       </Column>
       <Row
         style={{

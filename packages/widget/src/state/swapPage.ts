@@ -7,6 +7,8 @@ import { RoutePreference } from "./types";
 import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
+import { currentPageAtom, Routes } from "./router";
+import { errorAtom } from "./errorPage";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -46,16 +48,11 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   undefined,
 );
 
-export const resetSwapPageState = atom(null, (_get, set) => {
-  set(sourceAssetAtom, undefined);
-  set(debouncedSourceAssetAmountAtom, undefined, undefined, true);
-  set(swapDirectionAtom, "swap-in");
-  set(destinationAssetAtom, undefined);
-  set(debouncedDestinationAssetAmountAtom, undefined, undefined, true);
-});
-
-export const resetSwapPage = () => {
-  jotaiStore.set(resetSwapPageState);
+export const resetWidget = () => {
+  const { set } = jotaiStore;
+  set(clearAssetInputAmountsAtom);
+  set(currentPageAtom, Routes.SwapPage);
+  set(errorAtom, undefined);
 };
 
 export const sourceAssetAmountAtom = atom(

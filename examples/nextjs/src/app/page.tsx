@@ -1,5 +1,5 @@
 'use client';
-import { Widget, resetSwapPage } from '@skip-go/widget';
+import { Widget, resetWidget } from '@skip-go/widget';
 import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -49,7 +49,7 @@ export default function Home() {
   };
 
   const resetState = () => {
-    resetSwapPage();
+    resetWidget();
   }
 
   return (
