@@ -83,7 +83,7 @@ export const useAutoSetAddress = () => {
 
           const address = connectedAddress?.[chainID] ?? response?.address;
 
-          if (!address || !wallet) {
+          if (!address) {
             throw new Error(
               "Address not found in connected wallets. \n Opening modal for user to enter address",
             );
@@ -103,14 +103,16 @@ export const useAutoSetAddress = () => {
                 address,
                 chainType: chainType,
                 source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
-                wallet: {
-                  walletName: wallet?.walletName,
-                  walletPrettyName: wallet?.walletPrettyName,
-                  walletChainType: chainType,
-                  walletInfo: {
-                    logo: response?.logo ?? wallet?.walletInfo?.logo,
-                  },
-                },
+                wallet: wallet
+                  ? {
+                      walletName: wallet?.walletName,
+                      walletPrettyName: wallet?.walletPrettyName,
+                      walletChainType: chainType,
+                      walletInfo: {
+                        logo: response?.logo ?? wallet?.walletInfo?.logo,
+                      },
+                    }
+                  : undefined,
               },
             };
           });
@@ -143,7 +145,7 @@ export const useAutoSetAddress = () => {
     const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
     const svmWalletChanged = sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
 
-    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged) {
+    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged || isLoading) {
       connectRequiredChains();
       setCurrentSourceWallets(sourceWallet);
     }
@@ -153,6 +155,7 @@ export const useAutoSetAddress = () => {
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
     getAccount,
+    isLoading,
     requiredChainAddresses,
     sourceWallet,
     sourceWallet.cosmos,

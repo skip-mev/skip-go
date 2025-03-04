@@ -79,7 +79,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         );
         return {
           address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
+          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
       }
       case "destination": {
