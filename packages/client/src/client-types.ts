@@ -15,7 +15,7 @@ import { WalletClient } from "viem";
 
 import * as types from "./types";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { TransactionCallbacks } from "./types";
+import { MsgsRequest, TransactionCallbacks } from "./types";
 
 /** Common Types */
 export interface UserAddress {
@@ -88,7 +88,8 @@ export interface SkipClientOptions extends SignerGetters {
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
   GasOptions &
-  types.TransactionCallbacks & {
+  types.TransactionCallbacks &
+  Pick<MsgsRequest, "timeoutSeconds"> & {
     route: types.RouteResponse;
     /**
      * Addresses should be in the same order with the `chainIDs` in the `route`

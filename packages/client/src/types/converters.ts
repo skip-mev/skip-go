@@ -1242,7 +1242,7 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     amount_out: msgsRequest.amountOut,
     address_list: msgsRequest.addressList,
     operations: msgsRequest.operations.map(operationToJSON),
-
+    timeout_seconds: msgsRequest.timeoutSeconds,
     estimated_amount_out: msgsRequest.estimatedAmountOut,
     slippage_tolerance_percent: msgsRequest.slippageTolerancePercent,
     affiliates: msgsRequest.affiliates?.map(affiliateToJSON),

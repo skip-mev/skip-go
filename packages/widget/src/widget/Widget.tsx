@@ -5,7 +5,7 @@ import { createModal } from "@/components/Modal";
 import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
+import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import { ChainFilter } from "@/state/swapPage";
 import { RouteConfig } from "@skip-go/client";
@@ -20,7 +20,7 @@ import { createStore, Provider } from "jotai";
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
-};
+} & Pick<MsgsRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
