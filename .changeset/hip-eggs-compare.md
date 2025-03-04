@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Export resetSwapPage function to enable resetting selected source/destination assets
+Export resetWidget function to enable resetting widget state at any time arbitrarily
