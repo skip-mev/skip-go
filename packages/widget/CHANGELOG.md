@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.3.11
+
+### Patch Changes
+
+- 45df099: revert reset widget functionality
+
 ## 3.3.10
 
 ### Patch Changes
