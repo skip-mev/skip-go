@@ -86,7 +86,7 @@ type CaughtRouteError = {
 };
 
 export const routeConfigAtom = atom<WidgetRouteConfig>({
-  experimentalFeatures: ["hyperlane", "stargate"],
+  experimentalFeatures: ["hyperlane", "stargate", "layer_zero"],
   allowMultiTx: true,
   allowUnsafe: true,
   smartSwapOptions: {
