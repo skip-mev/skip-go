@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.16.15
+
+### Patch Changes
+
+- a5e3017: update registries
+- 8191a9b: Add timeoutSeconds to routeConfig to customize IBC transfer timeout
+
 ## 0.16.14
 
 ### Patch Changes

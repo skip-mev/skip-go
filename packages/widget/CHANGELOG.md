@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.3.10
+
+### Patch Changes
+
+- 3b30c70: history page: add transfer asset release
+- 133a3fa: Export resetWidget function to enable resetting widget state at any time arbitrarily
+- a5e3017: update registries
+- 8191a9b: Add timeoutSeconds to routeConfig to customize IBC transfer timeout
+- 35752af: Fix injected wallets
+- 20adf5e: Add locked to defaultRouteConfig to allow preventing editing of src or dest assets
+- Updated dependencies [a5e3017]
+- Updated dependencies [8191a9b]
+  - @skip-go/client@0.16.15
+
 ## 3.3.9
 
 ### Patch Changes
