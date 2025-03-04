@@ -1,5 +1,5 @@
 'use client';
-import { Widget } from '@skip-go/widget';
+import { Widget, resetWidget } from '@skip-go/widget';
 import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -48,6 +48,10 @@ export default function Home() {
     }
   };
 
+  const resetState = () => {
+    resetWidget();
+  }
+
   return (
     <div
       style={{
@@ -69,6 +73,9 @@ export default function Home() {
           onClick={() => toggleTheme()}
         >
           Toggle theme (current theme: {theme})
+        </button>
+        <button onClick={() => resetState()}>
+          Reset state
         </button>
       </div>
       <div
