@@ -6,6 +6,9 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
 import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
+import { jotaiStore } from "@/widget/Widget";
+import { currentPageAtom, Routes } from "./router";
+import { errorAtom } from "./errorPage";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -48,6 +51,13 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   "sourceAsset",
   undefined,
 );
+
+export const resetWidget = () => {
+  const { set } = jotaiStore;
+  set(clearAssetInputAmountsAtom);
+  set(currentPageAtom, Routes.SwapPage);
+  set(errorAtom, undefined);
+};
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount ?? "",
@@ -98,13 +108,15 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
+  const sourceAmountIsValidNumber = !isNaN(parseFloat(sourceAmount));
+  const destinationAmountIsValidNumber = !isNaN(parseFloat(destinationAmount));
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
   if (direction === "swap-in") {
-    return sourceAmountHasChanged || isLoading;
+    return (sourceAmountHasChanged && sourceAmountIsValidNumber) || isLoading;
   } else if (direction === "swap-out") {
-    return destinationAmountHasChanged || isLoading;
+    return (destinationAmountHasChanged && destinationAmountIsValidNumber) || isLoading;
   }
 });
 

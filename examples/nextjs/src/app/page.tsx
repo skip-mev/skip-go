@@ -1,5 +1,5 @@
 'use client';
-import { Widget } from '@skip-go/widget';
+import { Widget, resetWidget } from '@skip-go/widget';
 import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -48,6 +48,10 @@ export default function Home() {
     }
   };
 
+  const resetState = () => {
+    resetWidget();
+  }
+
   return (
     <div
       style={{
@@ -63,12 +67,17 @@ export default function Home() {
         backgroundPosition: 'bottom',
       }}
     >
-      <button
-        style={{ position: 'absolute', top: 0, right: 0 }}
-        onClick={() => toggleTheme()}
-      >
-        Toggle theme (current theme: {theme})
-      </button>
+      <div 
+        style={{ position: 'absolute', top: 0, right: 0, display: 'flex', flexDirection: "column" }}>
+        <button
+          onClick={() => toggleTheme()}
+        >
+          Toggle theme (current theme: {theme})
+        </button>
+        <button onClick={() => resetState()}>
+          Reset state
+        </button>
+      </div>
       <div
         style={{
           position: 'absolute',
