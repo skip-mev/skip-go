@@ -15,6 +15,8 @@ export type DefaultRouteConfig = {
   srcAssetDenom?: string;
   destChainId?: string;
   destAssetDenom?: string;
+  srcLocked?: boolean;
+  destLocked?: boolean;
 };
 
 export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
@@ -45,10 +47,12 @@ export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
       const destinationAsset = getClientAsset(destAssetDenom, destChainId);
       setDestinationAsset({
         ...destinationAsset,
+        locked: defaultRoute?.destLocked,
         amount: amountOut?.toString(),
       });
       setSourceAsset({
         ...sourceAsset,
+        locked: defaultRoute?.srcLocked,
         amount: amountIn?.toString(),
       });
       if (amountIn) {

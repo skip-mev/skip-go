@@ -20,30 +20,24 @@ import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
 
-export const initializeDebounceValuesEffect = atomEffect((get, set) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const destinationAsset = get(destinationAssetAtom);
-  const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
-  const debouncedDestinationAssetInitialized = get(
-    debouncedDestinationAssetAmountValueInitializedAtom,
-  );
+export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
+  (get, set) => {
+    const sourceAsset = get(sourceAssetAtom);
+    const destinationAsset = get(destinationAssetAtom);
+    const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
+    const debouncedDestinationAssetInitialized = get(
+      debouncedDestinationAssetAmountValueInitializedAtom,
+    );
 
-  if (!debouncedSourceAssetInitialized) {
-    if (sourceAsset?.amount) {
-      set(debouncedSourceAssetAmountAtom, sourceAsset.amount);
-    } else {
-      set(debouncedSourceAssetAmountAtom, "");
+    if (!debouncedSourceAssetInitialized && sourceAsset?.amount) {
+      set(debouncedSourceAssetAmountAtom, sourceAsset.amount, undefined, true);
     }
-  }
 
-  if (!debouncedDestinationAssetInitialized) {
-    if (destinationAsset?.amount) {
-      set(debouncedDestinationAssetAmountAtom, destinationAsset.amount);
-    } else {
-      set(debouncedDestinationAssetAmountAtom, "");
+    if (!debouncedDestinationAssetInitialized && destinationAsset?.amount) {
+      set(debouncedDestinationAssetAmountAtom, destinationAsset.amount, undefined, true);
     }
-  }
-});
+  },
+);
 
 const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const sourceAsset = get(sourceAssetAtom);
@@ -100,6 +94,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
     evmSwaps: true,
   },
   goFast: true,
+  timeoutSeconds: undefined,
 });
 
 export const convertWidgetRouteConfigToClientRouteConfig = (

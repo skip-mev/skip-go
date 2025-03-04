@@ -6,9 +6,13 @@ import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
 import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
+import { jotaiStore } from "@/widget/Widget";
+import { currentPageAtom, Routes } from "./router";
+import { errorAtom } from "./errorPage";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
+  locked?: boolean;
 };
 
 export const {
@@ -23,9 +27,11 @@ export const {
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
-export const onRouteUpdatedEffect = atomEffect((get) => {
+export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const { data } = get(skipRouteAtom);
+
   const callbacks = get(callbacksAtom);
 
   if (callbacks?.onRouteUpdated) {
@@ -36,6 +42,7 @@ export const onRouteUpdatedEffect = atomEffect((get) => {
       destAssetDenom: destinationAsset?.denom,
       amountIn: sourceAsset?.amount,
       amountOut: destinationAsset?.amount,
+      requiredChainAddresses: data?.requiredChainAddresses,
     });
   }
 });
@@ -44,6 +51,13 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   "sourceAsset",
   undefined,
 );
+
+export const resetWidget = () => {
+  const { set } = jotaiStore;
+  set(clearAssetInputAmountsAtom);
+  set(currentPageAtom, Routes.SwapPage);
+  set(errorAtom, undefined);
+};
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount ?? "",
@@ -94,13 +108,15 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
+  const sourceAmountIsValidNumber = !isNaN(parseFloat(sourceAmount));
+  const destinationAmountIsValidNumber = !isNaN(parseFloat(destinationAmount));
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
   if (direction === "swap-in") {
-    return sourceAmountHasChanged || isLoading;
+    return (sourceAmountHasChanged && sourceAmountIsValidNumber) || isLoading;
   } else if (direction === "swap-out") {
-    return destinationAmountHasChanged || isLoading;
+    return (destinationAmountHasChanged && destinationAmountIsValidNumber) || isLoading;
   }
 });
 

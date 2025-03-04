@@ -1,5 +1,6 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { SimpleStatus } from "@/utils/clientType";
+import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
 
 export const useTxHistory = ({
@@ -12,7 +13,11 @@ export const useTxHistory = ({
     txHash: string;
   }[];
   txsRequired: number;
-}) => {
+}): {
+  status?: SimpleStatus;
+  transferAssetRelease?: TransferAssetRelease;
+  explorerLinks: string[];
+} => {
   const {
     data: statusData,
     isFetching,
@@ -43,5 +48,6 @@ export const useTxHistory = ({
   return {
     status: query.data as SimpleStatus,
     explorerLinks: Array.from(explorerLinks).filter((link) => link) as string[],
+    transferAssetRelease: statusData?.transferAssetRelease,
   };
 };

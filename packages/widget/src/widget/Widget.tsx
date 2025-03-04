@@ -5,7 +5,7 @@ import { createModal } from "@/components/Modal";
 import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
+import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import { ChainFilter } from "@/state/swapPage";
 import { RouteConfig } from "@skip-go/client";
@@ -15,11 +15,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
+import { createStore, Provider } from "jotai";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
-};
+} & Pick<MsgsRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   theme?: PartialTheme | "light" | "dark";
@@ -89,35 +90,41 @@ export type ShowSwapWidget = {
 
 export const queryClient = new QueryClient();
 
+export const jotaiStore: ReturnType<typeof createStore> = createStore();
+
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-      <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <NiceModal.Provider>
-            <WidgetWrapper>
-              <Router />
-            </WidgetWrapper>
-          </NiceModal.Provider>
-        </QueryClientProvider>
-      </WalletProviders>
-    </ShadowDomAndProviders>
+    <Provider store={jotaiStore}>
+      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
+        <WalletProviders>
+          <QueryClientProvider client={queryClient} key={"skip-widget"}>
+            <NiceModal.Provider>
+              <WidgetWrapper>
+                <Router />
+              </WidgetWrapper>
+            </NiceModal.Provider>
+          </QueryClientProvider>
+        </WalletProviders>
+      </ShadowDomAndProviders>
+    </Provider>
   );
 };
 
 export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-      <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <WidgetWrapper>
-            <Router />
-          </WidgetWrapper>
-        </QueryClientProvider>
-      </WalletProviders>
-    </ShadowDomAndProviders>
+    <Provider store={jotaiStore}>
+      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
+        <WalletProviders>
+          <QueryClientProvider client={queryClient} key={"skip-widget"}>
+            <WidgetWrapper>
+              <Router />
+            </WidgetWrapper>
+          </QueryClientProvider>
+        </WalletProviders>
+      </ShadowDomAndProviders>
+    </Provider>
   );
 };
 
