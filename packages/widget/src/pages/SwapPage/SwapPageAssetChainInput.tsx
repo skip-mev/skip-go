@@ -32,6 +32,7 @@ export type AssetChainInputProps = {
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
   context: SelectorContext;
+  disabled?: boolean;
 };
 
 export const SwapPageAssetChainInput = ({
@@ -45,6 +46,7 @@ export const SwapPageAssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
   context,
+  disabled,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
@@ -166,9 +168,10 @@ export const SwapPageAssetChainInput = ({
           placeholder="0"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          disabled={disabled}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
         />
-        <StyledAssetButton onClick={handleChangeAsset} gap={5}>
+        <StyledAssetButton onClick={handleChangeAsset} disabled={disabled} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
@@ -227,7 +230,13 @@ export const SwapPageAssetChainInput = ({
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <StyledOnChainGhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
+          <StyledOnChainGhostButton
+            disabled={disabled}
+            onClick={handleChangeChain}
+            align="center"
+            secondary
+            gap={4}
+          >
             <SmallText>on {assetDetails?.chainName}</SmallText>
           </StyledOnChainGhostButton>
         ) : (
@@ -243,6 +252,7 @@ const StyledOnChainGhostButton = styled(GhostButton)`
     padding: 0 5px;
     height: 25px;
   }
+  ${({ disabled }) => disabled && "cursor: not-allowed"};
 `;
 
 const StyledAssetChainInputWrapper = styled(Column)`
@@ -267,6 +277,7 @@ const StyledInput = styled.input<{
   font-weight: 400;
   letter-spacing: -0.01em;
   width: 100%;
+  ${({ disabled }) => disabled && "cursor: not-allowed"};
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
@@ -297,7 +308,7 @@ export const StyledAssetLabel = styled(Row).attrs({
   border-radius: 10px;
   white-space: nowrap;
   position: relative;
-  
+
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.secondary.background.normal};
 
@@ -311,11 +322,12 @@ export const StyledAssetLabel = styled(Row).attrs({
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
     border-radius: 10px;
-    ${transition(['background-color'], 'fast', 'easeOut')};
+    ${transition(["background-color"], "fast", "easeOut")};
     z-index: 0;
   }
 
-  img, p {
+  img,
+  p {
     z-index: 1;
   }
 `;
@@ -329,10 +341,9 @@ const StyledSelectTokenLabel = styled(StyledAssetLabel)`
 `;
 
 export const StyledAssetButton = styled(Button)`
-
   &:hover {
     ${StyledAssetLabel}::after {
-      background-color: ${({theme}) => theme.secondary.background.hover};
+      background-color: ${({ theme }) => theme.secondary.background.hover};
     }
 
     ${StyledSelectTokenLabel}::after {

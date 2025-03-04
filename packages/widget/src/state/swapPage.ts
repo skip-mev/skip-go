@@ -9,6 +9,7 @@ import { callbacksAtom } from "./callbacks";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
+  locked?: boolean;
 };
 
 export const {
