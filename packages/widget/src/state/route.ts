@@ -202,9 +202,7 @@ export const setRouteToDefaultRouteAtom = atom(null, (get, set, assets?: ClientA
   const defaultRoute = get(defaultRouteAtom);
   const { data } = get(skipAssetsAtom);
 
-  if (!assets) {
-    assets = data;
-  }
+  assets ??= data;
 
   const getClientAsset = (denom?: string, chainId?: string) => {
     if (!denom || !chainId) return;

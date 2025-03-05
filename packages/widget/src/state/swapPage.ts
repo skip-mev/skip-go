@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { defaultRouteAtom, setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
+import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
