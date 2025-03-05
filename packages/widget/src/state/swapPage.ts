@@ -52,9 +52,19 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   undefined,
 );
 
-export const resetWidget = () => {
+export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: boolean } = {}) => {
   const { set } = jotaiStore;
-  set(clearAssetInputAmountsAtom);
+
+  if (onlyClearInputValues) {
+    set(clearAssetInputAmountsAtom);
+  } else {
+    set(sourceAssetAtom, undefined);
+    set(debouncedSourceAssetAmountAtom, "", undefined, true);
+
+    set(destinationAssetAtom, undefined);
+    set(debouncedDestinationAssetAmountAtom, "", undefined, true);
+  }
+
   set(currentPageAtom, Routes.SwapPage);
   set(errorAtom, undefined);
 };
