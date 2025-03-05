@@ -195,6 +195,7 @@ export const SwapPage = () => {
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
+            track("SwapPage connect wallet button clicked");
             if (!sourceAsset?.chainID) {
               NiceModal.show(Modals.ConnectedWalletModal);
             } else {
