@@ -24,7 +24,6 @@ export type MainButtonProps = {
 
 type LoadingButtonProps = MainButtonProps & {};
 
-
 export const MainButton = ({
   label,
   icon = ICONS.none,
@@ -42,7 +41,7 @@ export const MainButton = ({
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
   const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
 
-const Icon = iconMap[icon];
+  const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
 
   if (loading) {
@@ -138,7 +137,7 @@ const MainButtonText = styled(Text).attrs({
 const MainButtonContainer = styled.div`
   position: relative;
   overflow: hidden;
-  &::after{
+  &::after {
     content: "";
     position: absolute;
     top: 0;
@@ -148,7 +147,7 @@ const MainButtonContainer = styled.div`
     border-radius: 25px;
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
-    ${transition(['background-color'], 'fast', 'easeOut')};
+    ${transition(["background-color"], "fast", "easeOut")};
   }
   &:hover::after {
     background-color: rgba(255, 255, 255, 0.15);
@@ -250,10 +249,9 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   }
 `;
 
-
 const StyledIcon = styled.div`
   z-index: 1;
-  
+
   svg {
     display: block;
   }
