@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { defaultRouteAtom, setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
@@ -65,6 +65,7 @@ export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: b
     set(debouncedDestinationAssetAmountAtom, "", undefined, true);
   }
 
+  set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
   set(errorAtom, undefined);
 };

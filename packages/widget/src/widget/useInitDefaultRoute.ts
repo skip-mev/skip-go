@@ -1,3 +1,4 @@
+import { defaultRouteAtom, setRouteToDefaultRouteAtom } from "@/state/route";
 import { skipAssetsAtom } from "@/state/skipClient";
 import {
   sourceAssetAtom,
@@ -6,7 +7,7 @@ import {
   destinationAssetAmountAtom,
 } from "@/state/swapPage";
 import { useSetAtom, useAtom } from "jotai";
-import { useCallback, useLayoutEffect } from "react";
+import { useCallback, useEffect, useLayoutEffect } from "react";
 
 export type DefaultRouteConfig = {
   amountIn?: number;
@@ -20,54 +21,13 @@ export type DefaultRouteConfig = {
 };
 
 export const useInitDefaultRoute = (defaultRoute?: DefaultRouteConfig) => {
-  const setSourceAsset = useSetAtom(sourceAssetAtom);
-  const setDestinationAsset = useSetAtom(destinationAssetAtom);
-  const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
-  const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
-
+  const setDefaultRoute = useSetAtom(defaultRouteAtom);
+  const setRouteToDefaultRoute = useSetAtom(setRouteToDefaultRouteAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const getClientAsset = useCallback(
-    (denom?: string, chainId?: string) => {
-      if (!denom || !chainId) return;
-      if (!assets) return;
-      return assets.find(
-        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
-      );
-    },
-    [assets],
-  );
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!defaultRoute) return;
-    if (defaultRoute && assets) {
-      const { srcAssetDenom, srcChainId, destAssetDenom, destChainId, amountIn, amountOut } =
-        defaultRoute;
-      const sourceAsset = getClientAsset(srcAssetDenom, srcChainId);
-      const destinationAsset = getClientAsset(destAssetDenom, destChainId);
-      setDestinationAsset({
-        ...destinationAsset,
-        locked: defaultRoute?.destLocked,
-        amount: amountOut?.toString(),
-      });
-      setSourceAsset({
-        ...sourceAsset,
-        locked: defaultRoute?.srcLocked,
-        amount: amountIn?.toString(),
-      });
-      if (amountIn) {
-        setSourceAssetAmount(amountIn?.toString());
-      } else if (amountOut) {
-        setDestinationAssetAmount(amountOut?.toString());
-      }
-    }
-  }, [
-    assets,
-    defaultRoute,
-    getClientAsset,
-    setDestinationAsset,
-    setDestinationAssetAmount,
-    setSourceAsset,
-    setSourceAssetAmount,
-  ]);
+    setDefaultRoute(defaultRoute);
+    setRouteToDefaultRoute(assets);
+  }, [assets, defaultRoute, setDefaultRoute, setRouteToDefaultRoute]);
 };
