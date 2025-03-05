@@ -23,7 +23,7 @@ export const copyToClipboard = (string?: string) => {
 export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValue: T) {
   const defaultStorage: SyncStorage<T> = {
     getItem: (key) => {
-      if (!localStorage) return;
+      if (typeof window === "undefined") return;
       const storedValue = localStorage.getItem(key);
       if (!storedValue) return initialValue;
 
@@ -34,11 +34,11 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
       }
     },
     setItem: (key, newValue) => {
-      if (!localStorage) return;
+      if (typeof window === "undefined") return;
       localStorage.setItem(key, JSON.stringify(newValue));
     },
     removeItem: (key) => {
-      if (!localStorage) return;
+      if (typeof window === "undefined") return;
       localStorage.delete(key);
     },
   };
