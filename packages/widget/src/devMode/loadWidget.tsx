@@ -1,6 +1,6 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ShowWidget, Widget } from "@/widget/Widget";
+import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
@@ -20,7 +20,6 @@ const DevMode = () => {
   return (
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
-        <ShowWidget />
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
         <button onClick={() => resetWidget()}> reset widget </button>
       </Column>
