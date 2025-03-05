@@ -273,6 +273,7 @@ export const SwapPage = () => {
           onClickBack: () => {
             setError(undefined);
           },
+          route: { ...route },
         });
         return;
       }
