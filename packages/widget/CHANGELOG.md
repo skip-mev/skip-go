@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.4.0
+
+### Minor Changes
+
+- 6d33daf: Add reset widget back
+
+### Patch Changes
+
+- 8aa63c0: transaction tracking watch for state
+- 6b1e1cb: Update atomWithStorage so localStorage values are fetched immediately
+- 831d24a: add low information trade warning
+- Updated dependencies [8aa63c0]
+  - @skip-go/client@0.16.16
+
 ## 3.3.11
 
 ### Patch Changes
