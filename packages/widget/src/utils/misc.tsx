@@ -40,5 +40,5 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
     },
   };
 
-  return atomWithStorage<T>(storageKey, initialValue, defaultStorage);
+  return atomWithStorage<T>(storageKey, initialValue, defaultStorage, { getOnInit: true });
 }
