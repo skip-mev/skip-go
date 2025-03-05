@@ -11,6 +11,7 @@ import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditio
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
 import { ErrorPageCosmosLedgerWarning } from "./ErrorPageCosmosLedgerWarning";
 import { ErrorPageGoFastWarning } from "./ErrorPageGoFastWarning";
+import { ErrorPageLowInfoWarning } from "./ErrorPageLowInfoWarning";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -35,6 +36,8 @@ export const ErrorPage = () => {
         return <ErrorPageUnexpected error={error.error} />;
       case ErrorType.CosmosLedgerWarning:
         return <ErrorPageCosmosLedgerWarning {...error} />;
+      case ErrorType.LowInfoWarning:
+        return <ErrorPageLowInfoWarning {...error} />;
       default:
         return;
     }

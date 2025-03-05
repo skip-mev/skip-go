@@ -8,6 +8,7 @@ import { ErrorPageTransactionFailedProps } from "@/pages/ErrorPage/ErrorPageTran
 import { ErrorPageTransactionRevertedProps } from "@/pages/ErrorPage/ErrorPageTransactionReverted";
 import { ErrorPageUnexpectedProps } from "@/pages/ErrorPage/ErrorPageUnexpected";
 import { atomWithReset } from "jotai/utils";
+import { ErrorPageLowInfoWarningProps } from "@/pages/ErrorPage/ErrorPageLowInfoWarning";
 
 export const errorAtom = atomWithReset<ErrorPageVariants | undefined>(undefined);
 
@@ -22,7 +23,8 @@ export type ErrorPageVariants =
   | ({ errorType: ErrorType.TransactionFailed } & ErrorPageTransactionFailedProps)
   | ({ errorType: ErrorType.TransactionReverted } & ErrorPageTransactionRevertedProps)
   | ({ errorType: ErrorType.Unexpected } & ErrorPageUnexpectedProps)
-  | ({ errorType: ErrorType.GoFastWarning } & ErrorPageGoFastWarningProps);
+  | ({ errorType: ErrorType.GoFastWarning } & ErrorPageGoFastWarningProps)
+  | ({ errorType: ErrorType.LowInfoWarning } & ErrorPageLowInfoWarningProps);
 
 export enum ErrorType {
   AuthFailed,
@@ -34,4 +36,5 @@ export enum ErrorType {
   Unexpected,
   CosmosLedgerWarning,
   GoFastWarning,
+  LowInfoWarning,
 }

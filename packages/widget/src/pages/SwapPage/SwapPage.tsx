@@ -261,6 +261,22 @@ export const SwapPage = () => {
         return;
       }
 
+      if (route?.warning?.type === "LOW_INFO_WARNING") {
+        setError({
+          errorType: ErrorType.LowInfoWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setError(undefined);
+          },
+        });
+        return;
+      }
+
       if (showGoFastWarning && isGoFast) {
         setError({
           errorType: ErrorType.GoFastWarning,
