@@ -230,11 +230,26 @@ export const SwapPage = () => {
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
     }
-    if (insufficientBalance) {
-      return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
-    }
+    // if (insufficientBalance) {
+    //   return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
+    // }
 
     const onClick = () => {
+      setError({
+        errorType: ErrorType.NoGasAtDestination,
+        onClickBack: () => {
+          setError(undefined);
+          setCurrentPage(Routes.SwapPage);
+        },
+        onClickContinue: () => {
+          setError(undefined);
+          setChainAddresses({});
+          setCurrentPage(Routes.SwapExecutionPage);
+          setSwapExecutionState();
+        },
+        link: "https://www.google.com/",
+      });
+      return;
       if (showCosmosLedgerWarning) {
         setError({
           errorType: ErrorType.CosmosLedgerWarning,
