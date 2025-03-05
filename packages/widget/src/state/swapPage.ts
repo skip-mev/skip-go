@@ -172,17 +172,15 @@ export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
 
 export const slippageAtom = atom(
   (get) => get(swapSettingsAtom).slippage,
-  (get, set, newSlippage: number) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });
+  (_get, set, newSlippage: number) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, slippage: newSlippage }));
   },
 );
 
 export const routePreferenceAtom = atom(
   (get) => get(swapSettingsAtom).routePreference,
-  (get, set, newRoutePreference: RoutePreference) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
+  (_get, set, newRoutePreference: RoutePreference) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, routePreference: newRoutePreference }));
   },
 );
 
