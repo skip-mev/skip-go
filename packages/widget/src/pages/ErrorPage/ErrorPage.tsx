@@ -1,6 +1,6 @@
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { useAtom } from "jotai";
-import { ErrorPageTradeWarning } from "./ErrorPageTradeWarning";
+import { ErrorPageBadPriceWarning } from "./ErrorPageBadPriceWarning";
 import { ErrorPageAuthFailed } from "./ErrorPageAuthFailed";
 import { ErrorPageTransactionFailed } from "./ErrorPageTransactionFailed";
 import { ErrorPageUnexpected } from "./ErrorPageUnexpected";
@@ -25,8 +25,8 @@ export const ErrorPage = () => {
         return <ErrorPageTimeout {...error} />;
       case ErrorType.AdditionalSigningRequired:
         return <ErrorPageTradeAdditionalSigningRequired {...error} />;
-      case ErrorType.TradeWarning:
-        return <ErrorPageTradeWarning {...error} />;
+      case ErrorType.BadPriceWarning:
+        return <ErrorPageBadPriceWarning {...error} />;
       case ErrorType.TransactionFailed:
         return <ErrorPageTransactionFailed {...error} />;
       case ErrorType.TransactionReverted:
