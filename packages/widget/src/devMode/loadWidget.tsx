@@ -22,6 +22,9 @@ const DevMode = () => {
       <Column gap={5} style={{ width: 200 }}>
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
         <button onClick={() => resetWidget()}> reset widget </button>
+        <button onClick={() => resetWidget({ onlyClearInputValues: true })}>
+          reset widget only clear input values
+        </button>
       </Column>
       <Row
         style={{
