@@ -15,7 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
-import { createStore, Provider } from "jotai";
+import { createStore } from "jotai";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -95,36 +95,32 @@ export const jotaiStore: ReturnType<typeof createStore> = createStore();
 export const Widget = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <Provider store={jotaiStore}>
-      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-        <WalletProviders>
-          <QueryClientProvider client={queryClient} key={"skip-widget"}>
-            <NiceModal.Provider>
-              <WidgetWrapper>
-                <Router />
-              </WidgetWrapper>
-            </NiceModal.Provider>
-          </QueryClientProvider>
-        </WalletProviders>
-      </ShadowDomAndProviders>
-    </Provider>
+    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <NiceModal.Provider>
+            <WidgetWrapper>
+              <Router />
+            </WidgetWrapper>
+          </NiceModal.Provider>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
   );
 };
 
 export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
   const { theme } = useInitWidget(props);
   return (
-    <Provider store={jotaiStore}>
-      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-        <WalletProviders>
-          <QueryClientProvider client={queryClient} key={"skip-widget"}>
-            <WidgetWrapper>
-              <Router />
-            </WidgetWrapper>
-          </QueryClientProvider>
-        </WalletProviders>
-      </ShadowDomAndProviders>
-    </Provider>
+    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <WidgetWrapper>
+            <Router />
+          </WidgetWrapper>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
   );
 };
 
