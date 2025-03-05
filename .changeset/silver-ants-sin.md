@@ -1,5 +1,5 @@
 ---
-"@skip-go/widget": patch
+"@skip-go/widget": minor
 ---
 
 Add reset widget back
