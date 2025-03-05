@@ -8,17 +8,17 @@ import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 
-export type ErrorPageTradeWarningProps = {
+export type ErrorPageBadPriceWarningProps = {
   onClickContinue: () => void;
   onClickBack: () => void;
   route: RouteResponse;
 };
 
-export const ErrorPageTradeWarning = ({
+export const ErrorPageBadPriceWarning = ({
   onClickContinue,
   onClickBack,
   route,
-}: ErrorPageTradeWarningProps) => {
+}: ErrorPageBadPriceWarningProps) => {
   const theme = useTheme();
   const {
     amountIn,

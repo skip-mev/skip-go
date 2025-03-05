@@ -246,7 +246,24 @@ export const SwapPage = () => {
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
         setError({
-          errorType: ErrorType.TradeWarning,
+          errorType: ErrorType.BadPriceWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setError(undefined);
+          },
+          route: { ...route },
+        });
+        return;
+      }
+
+      if (route?.warning?.type === "LOW_INFO_WARNING") {
+        setError({
+          errorType: ErrorType.LowInfoWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
