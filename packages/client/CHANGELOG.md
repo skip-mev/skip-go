@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.16
+
+### Patch Changes
+
+- 8aa63c0: transaction tracking watch for state
+
 ## 0.16.15
 
 ### Patch Changes
