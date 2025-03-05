@@ -1,13 +1,7 @@
 import { defaultRouteAtom, setRouteToDefaultRouteAtom } from "@/state/route";
 import { skipAssetsAtom } from "@/state/skipClient";
-import {
-  sourceAssetAtom,
-  destinationAssetAtom,
-  sourceAssetAmountAtom,
-  destinationAssetAmountAtom,
-} from "@/state/swapPage";
 import { useSetAtom, useAtom } from "jotai";
-import { useCallback, useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 
 export type DefaultRouteConfig = {
   amountIn?: number;
