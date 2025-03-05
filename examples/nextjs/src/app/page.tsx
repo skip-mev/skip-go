@@ -1,5 +1,5 @@
 'use client';
-import { Widget } from '@skip-go/widget';
+import { Widget, resetWidget } from '@skip-go/widget';
 import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -69,6 +69,16 @@ export default function Home() {
           onClick={() => toggleTheme()}
         >
           Toggle theme (current theme: {theme})
+        </button>
+        <button
+          onClick={() => resetWidget()}
+        >
+          Reset state
+        </button>
+        <button
+          onClick={() => resetWidget({ onlyClearInputValues: true})}
+        >
+          Reset state only clear input values
         </button>
       </div>
       <div

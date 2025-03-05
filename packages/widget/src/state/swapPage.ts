@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
@@ -52,9 +52,20 @@ export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefin
   undefined,
 );
 
-export const resetWidget = () => {
+export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: boolean } = {}) => {
   const { set } = jotaiStore;
-  set(clearAssetInputAmountsAtom);
+
+  if (onlyClearInputValues) {
+    set(clearAssetInputAmountsAtom);
+  } else {
+    set(sourceAssetAtom, undefined);
+    set(debouncedSourceAssetAmountAtom, "", undefined, true);
+
+    set(destinationAssetAtom, undefined);
+    set(debouncedDestinationAssetAmountAtom, "", undefined, true);
+  }
+
+  set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
   set(errorAtom, undefined);
 };
