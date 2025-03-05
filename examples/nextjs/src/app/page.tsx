@@ -75,6 +75,11 @@ export default function Home() {
         >
           Reset state
         </button>
+        <button
+          onClick={() => resetWidget({ onlyClearInputValues: true})}
+        >
+          Reset state only clear input values
+        </button>
       </div>
       <div
         style={{
