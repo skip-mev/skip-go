@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
+import { chainFilterAtom, swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -89,10 +89,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
   useEffect(() => {
     if (props.settings) {
-      setSwapSettings({
-        ...defaultSwapSettings,
+      setSwapSettings((prev) => ({
+        ...prev,
         ...props.settings,
-      });
+      }));
     }
     if (props.routeConfig) {
       setRouteConfig((prev) => {

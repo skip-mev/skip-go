@@ -184,6 +184,10 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
+    if (!sourceAsset?.chainID) {
+      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
+    }
+
     if (!sourceAccount?.address) {
       return (
         <MainButton
@@ -200,10 +204,6 @@ export const SwapPage = () => {
           }}
         />
       );
-    }
-
-    if (!sourceAsset?.chainID) {
-      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
     if (!destinationAsset?.chainID) {
@@ -246,7 +246,24 @@ export const SwapPage = () => {
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
         setError({
-          errorType: ErrorType.TradeWarning,
+          errorType: ErrorType.BadPriceWarning,
+          onClickContinue: () => {
+            setError(undefined);
+            setChainAddresses({});
+            setCurrentPage(Routes.SwapExecutionPage);
+            setSwapExecutionState();
+          },
+          onClickBack: () => {
+            setError(undefined);
+          },
+          route: { ...route },
+        });
+        return;
+      }
+
+      if (route?.warning?.type === "LOW_INFO_WARNING") {
+        setError({
+          errorType: ErrorType.LowInfoWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});

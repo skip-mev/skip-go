@@ -3,11 +3,12 @@ import { ErrorCosmosLedgerWarningProps } from "@/pages/ErrorPage/ErrorPageCosmos
 import { ErrorPageGoFastWarningProps } from "@/pages/ErrorPage/ErrorPageGoFastWarning";
 import { ErrorPageTimeoutProps } from "@/pages/ErrorPage/ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequiredProps } from "@/pages/ErrorPage/ErrorPageTradeAdditionalSigningRequired";
-import { ErrorPageTradeWarningProps } from "@/pages/ErrorPage/ErrorPageTradeWarning";
+import { ErrorPageBadPriceWarningProps } from "@/pages/ErrorPage/ErrorPageBadPriceWarning";
 import { ErrorPageTransactionFailedProps } from "@/pages/ErrorPage/ErrorPageTransactionFailed";
 import { ErrorPageTransactionRevertedProps } from "@/pages/ErrorPage/ErrorPageTransactionReverted";
 import { ErrorPageUnexpectedProps } from "@/pages/ErrorPage/ErrorPageUnexpected";
 import { atomWithReset } from "jotai/utils";
+import { ErrorPageLowInfoWarningProps } from "@/pages/ErrorPage/ErrorPageLowInfoWarning";
 
 export const errorAtom = atomWithReset<ErrorPageVariants | undefined>(undefined);
 
@@ -17,21 +18,23 @@ export type ErrorPageVariants =
   | ({
       errorType: ErrorType.AdditionalSigningRequired;
     } & ErrorPageTradeAdditionalSigningRequiredProps)
-  | ({ errorType: ErrorType.TradeWarning } & ErrorPageTradeWarningProps)
+  | ({ errorType: ErrorType.BadPriceWarning } & ErrorPageBadPriceWarningProps)
   | ({ errorType: ErrorType.CosmosLedgerWarning } & ErrorCosmosLedgerWarningProps)
   | ({ errorType: ErrorType.TransactionFailed } & ErrorPageTransactionFailedProps)
   | ({ errorType: ErrorType.TransactionReverted } & ErrorPageTransactionRevertedProps)
   | ({ errorType: ErrorType.Unexpected } & ErrorPageUnexpectedProps)
-  | ({ errorType: ErrorType.GoFastWarning } & ErrorPageGoFastWarningProps);
+  | ({ errorType: ErrorType.GoFastWarning } & ErrorPageGoFastWarningProps)
+  | ({ errorType: ErrorType.LowInfoWarning } & ErrorPageLowInfoWarningProps);
 
 export enum ErrorType {
   AuthFailed,
   Timeout,
   AdditionalSigningRequired,
-  TradeWarning,
+  BadPriceWarning,
   TransactionFailed,
   TransactionReverted,
   Unexpected,
   CosmosLedgerWarning,
-  GoFastWarning
+  GoFastWarning,
+  LowInfoWarning,
 }

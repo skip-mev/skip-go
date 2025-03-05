@@ -1,8 +1,7 @@
 import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
-import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import { createModal } from "@/components/Modal";
-import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
+import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
@@ -15,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
-import { createStore } from "jotai";
+import { createStore, Provider } from "jotai";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -93,6 +92,14 @@ export const queryClient = new QueryClient();
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
 
 export const Widget = (props: WidgetProps) => {
+  return (
+    <Provider store={jotaiStore}>
+      <WidgetWithinProvider props={props} />
+    </Provider>
+  );
+};
+
+export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
   return (
     <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
@@ -107,33 +114,6 @@ export const Widget = (props: WidgetProps) => {
       </WalletProviders>
     </ShadowDomAndProviders>
   );
-};
-
-export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const { theme } = useInitWidget(props);
-  return (
-    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-      <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <WidgetWrapper>
-            <Router />
-          </WidgetWrapper>
-        </QueryClientProvider>
-      </WalletProviders>
-    </ShadowDomAndProviders>
-  );
-};
-
-export const ShowWidget = ({ button = <button>show widget</button>, ...props }: ShowSwapWidget) => {
-  const modal = useModal(createModal(() => <WidgetWithoutNiceModalProvider {...props} />));
-
-  const handleClick = () => {
-    modal.show();
-  };
-
-  const Element = cloneElement(button, { onClick: handleClick });
-
-  return <>{Element}</>;
 };
 
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {

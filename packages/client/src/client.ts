@@ -1227,8 +1227,16 @@ export class SkipClient {
         txHash,
       });
 
-      if (txStatusResponse.status === "STATE_COMPLETED") {
+      if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
         return txStatusResponse;
+      }
+      if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
+        throw new Error(
+          `${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`,
+        );
+      }
+      if (txStatusResponse.state === "STATE_ABANDONED") {
+        throw new Error("Tracking for the transaction has been abandoned");
       }
 
       await wait(1000);
