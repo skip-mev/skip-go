@@ -86,7 +86,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
           address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
+          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
       }
     }
