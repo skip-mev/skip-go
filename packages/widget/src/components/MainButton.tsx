@@ -6,7 +6,6 @@ import { ICONS, iconMap } from "@/icons";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { transition } from "@/utils/transitions";
-import { getBrandButtonTextColor } from "@/utils/colors";
 
 export type MainButtonProps = {
   label: string;
@@ -40,9 +39,7 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
-  const textColor = disabled
-    ? getBrandButtonTextColor(theme.secondary.background.normal)
-    : theme.brandTextColor;
+  const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
