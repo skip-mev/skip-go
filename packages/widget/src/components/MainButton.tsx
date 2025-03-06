@@ -6,6 +6,7 @@ import { ICONS, iconMap } from "@/icons";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { transition } from "@/utils/transitions";
+import { getBrandButtonTextColor } from "@/utils/colors";
 
 export type MainButtonProps = {
   label: string;
@@ -39,7 +40,9 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
-  const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
+  const textColor = disabled
+    ? getBrandButtonTextColor(theme.secondary.background.normal)
+    : theme.brandTextColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -69,12 +72,12 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor} fontSize={fontSize}>
+            <MainButtonText color={textColor} disabled={disabled} fontSize={fontSize}>
               {label}
             </MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize color={textColor} fontSize={fontSize}>
+          <MainButtonText capitalize disabled={disabled} color={textColor} fontSize={fontSize}>
             {label}
           </MainButtonText>
         )}
@@ -125,9 +128,10 @@ const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
   letterSpacing: "-0.015em",
-})`
+})<{ disabled?: boolean }>`
   z-index: 1;
   letter-spacing: -0.015em;
+  ${({ disabled }) => disabled && "opacity: 0.5"};
   @media (max-width: 767px) {
     font-size: 20px;
   }
@@ -173,7 +177,6 @@ const StyledMainButton = styled(Row).attrs({
   ${(props) =>
     props.disabled &&
     `
-      opacity: 0.5;
       background: ${props.theme.secondary.background.normal};
       &:hover {
         cursor: not-allowed;
