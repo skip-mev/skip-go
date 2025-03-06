@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Update main button styling
+Update remove opacity from disabled main button
