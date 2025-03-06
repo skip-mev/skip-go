@@ -135,6 +135,8 @@ import {
   GoFastFeeJSON,
   StargateTransferJSON,
   StargateTransfer,
+  EurekaTransferJSON,
+  EurekaTransfer,
 } from "./shared";
 import {
   AssetBetweenChains,
@@ -928,6 +930,46 @@ export function stargateTransferToJSON(
   };
 }
 
+export function eurekaTransferFromJSON(
+  eurekaTransferJSON: EurekaTransferJSON,
+): EurekaTransfer {
+  return {
+    destinationPort: eurekaTransferJSON.destination_port,
+    sourceClient: eurekaTransferJSON.source_client,
+    fromChainID: eurekaTransferJSON.from_chain_id,
+    toChainID: eurekaTransferJSON.to_chain_id,
+    pfmEnabled: eurekaTransferJSON.pfm_enabled,
+    supportsMemo: eurekaTransferJSON.supports_memo,
+    denomIn: eurekaTransferJSON.denom_in,
+    denomOut: eurekaTransferJSON.denom_out,
+    bridgeID: eurekaTransferJSON.bridge_id,
+    smartRelay: eurekaTransferJSON.smart_relay,
+    smartRelayFeeQuote: eurekaTransferJSON?.smart_relay_fee_quote
+      ? smartRelayFeeQuoteFromJSON(eurekaTransferJSON.smart_relay_fee_quote)
+      : undefined,
+  };
+}
+
+export function eurekaTransferToJSON(
+  eurekaTransfer: EurekaTransfer,
+): EurekaTransferJSON {
+  return {
+    destination_port: eurekaTransfer.destinationPort,
+    source_client: eurekaTransfer.sourceClient,
+    from_chain_id: eurekaTransfer.fromChainID,
+    to_chain_id: eurekaTransfer.toChainID,
+    pfm_enabled: eurekaTransfer.pfmEnabled,
+    supports_memo: eurekaTransfer.supportsMemo,
+    denom_in: eurekaTransfer.denomIn,
+    denom_out: eurekaTransfer.denomOut,
+    bridge_id: eurekaTransfer.bridgeID,
+    smart_relay: eurekaTransfer.smartRelay,
+    smart_relay_fee_quote: eurekaTransfer?.smartRelayFeeQuote
+      ? smartRelayFeeQuoteToJSON(eurekaTransfer.smartRelayFeeQuote)
+      : undefined,
+  };
+}
+
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   const commonProps = {
     txIndex: operationJSON.tx_index,
@@ -1009,6 +1051,15 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
+  if ("eureka_transfer" in operationJSON) {
+    return {
+      ...commonProps,
+      eurekaTransfer: eurekaTransferFromJSON(
+        operationJSON.eureka_transfer,
+      ),
+    };
+  }
+
   throw new Error("Unknown operation type");
 }
 
@@ -1087,6 +1138,14 @@ export function operationToJSON(operation: Operation): OperationJSON {
       evm_swap: evmSwapToJSON(operation.evmSwap),
     };
   }
+
+  if ("eurekaTransfer" in operation) {
+    return {
+      ...commonProps,
+      eureka_transfer: eurekaTransferToJSON(operation.eurekaTransfer),
+    };
+  }
+
   throw new Error("Unknown operation type");
 }
 
