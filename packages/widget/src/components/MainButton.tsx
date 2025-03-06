@@ -22,7 +22,7 @@ export type MainButtonProps = {
   fontSize?: number;
 };
 
-type LoadingButtonProps = MainButtonProps & {};
+type LoadingButtonProps = MainButtonProps;
 
 export const MainButton = ({
   label,
@@ -39,7 +39,7 @@ export const MainButton = ({
 }: MainButtonProps) => {
   const theme = useTheme();
   backgroundColor ??= disabled ? theme.secondary.background.normal : theme.brandColor;
-  const textColor = disabled ? theme.primary.text.normal : theme.brandTextColor;
+  const textColor = disabled ? theme.primary.text.ultraLowContrast : theme.brandTextColor;
 
   const Icon = iconMap[icon];
   const LeftIcon = iconMap[leftIcon];
@@ -69,12 +69,12 @@ export const MainButton = ({
         {leftIcon ? (
           <Row align="center" gap={10}>
             <LeftIcon backgroundColor={textColor} color={backgroundColor} />
-            <MainButtonText color={textColor} disabled={disabled} fontSize={fontSize}>
+            <MainButtonText color={textColor} fontSize={fontSize}>
               {label}
             </MainButtonText>
           </Row>
         ) : (
-          <MainButtonText capitalize disabled={disabled} color={textColor} fontSize={fontSize}>
+          <MainButtonText capitalize color={textColor} fontSize={fontSize}>
             {label}
           </MainButtonText>
         )}
@@ -94,41 +94,43 @@ export const LoadingButton = ({
   isGoFast,
   extra,
   fontSize,
-}: LoadingButtonProps) => (
-  <StyledLoadingButton
-    align="center"
-    justify="center"
-    backgroundColor={backgroundColor}
-    isGoFast={isGoFast}
-  >
-    <StyledOverlay
-      className="overlay"
-      justify="space-between"
+}: LoadingButtonProps) => {
+  const theme = useTheme();
+  return (
+    <StyledLoadingButton
       align="center"
-      padding={20}
+      justify="center"
       backgroundColor={backgroundColor}
+      isGoFast={isGoFast}
     >
-      <MainButtonText style={{ opacity: 0.5 }} fontSize={fontSize}>
-        {label}
-      </MainButtonText>
-      {loadingTimeString && (
-        <StyledTimeRemaining align="center" justify="center">
-          {extra}
-          <SmallText>{loadingTimeString}.</SmallText>
-        </StyledTimeRemaining>
-      )}
-    </StyledOverlay>
-  </StyledLoadingButton>
-);
+      <StyledOverlay
+        className="overlay"
+        justify="space-between"
+        align="center"
+        padding={20}
+        backgroundColor={backgroundColor}
+      >
+        <MainButtonText color={theme.primary.text.ultraLowContrast} fontSize={fontSize}>
+          {label}
+        </MainButtonText>
+        {loadingTimeString && (
+          <StyledTimeRemaining align="center" justify="center">
+            {extra}
+            <SmallText>{loadingTimeString}.</SmallText>
+          </StyledTimeRemaining>
+        )}
+      </StyledOverlay>
+    </StyledLoadingButton>
+  );
+};
 
 const MainButtonText = styled(Text).attrs({
   fontWeight: "bold",
   capitalize: true,
   letterSpacing: "-0.015em",
-})<{ disabled?: boolean }>`
+})`
   z-index: 1;
   letter-spacing: -0.015em;
-  ${({ disabled }) => disabled && "opacity: 0.5"};
   @media (max-width: 767px) {
     font-size: 20px;
   }
