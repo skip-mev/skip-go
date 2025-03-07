@@ -25,6 +25,7 @@ import { CosmosGasAmount, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
+import { track } from "@amplitude/analytics-browser";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -180,6 +181,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
+        track("error page: user rejected request");
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
@@ -187,6 +189,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
+        track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
@@ -199,6 +202,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else {
+        track("error page: unexpected error");
         set(errorAtom, {
           errorType: ErrorType.Unexpected,
           error: error as Error,

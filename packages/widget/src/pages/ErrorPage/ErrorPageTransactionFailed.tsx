@@ -12,6 +12,7 @@ import { useSetAtom } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { captureException } from "@sentry/browser";
 import { useEffect } from "react";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageTransactionFailedProps = {
   txHash: string;
@@ -41,6 +42,7 @@ export const ErrorPageTransactionFailed = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
+            track("error page: transaction failed - header back button clicked");
             setErrorAtom(undefined);
             if (onClickBack) {
               onClickBack();
@@ -59,7 +61,10 @@ export const ErrorPageTransactionFailed = ({
             <Row
               as={SmallTextButton}
               gap={5}
-              onClick={() => window.open(explorerLink, "_blank")}
+              onClick={() => {
+                track("error page: transaction failed - explorer link clicked");
+                window.open(explorerLink, "_blank");
+              }}
               color={theme.primary.text.lowContrast}
             >
               Transaction: <u>{getTruncatedAddress(txHash)}</u>
@@ -74,7 +79,10 @@ export const ErrorPageTransactionFailed = ({
       <MainButton
         label="Contact support"
         icon={ICONS.rightArrow}
-        onClick={onClickContactSupport}
+        onClick={() => {
+          track("error page: transaction failed - contact support button clicked");
+          onClickContactSupport();
+        }}
         backgroundColor={theme.error.text}
       />
     </>

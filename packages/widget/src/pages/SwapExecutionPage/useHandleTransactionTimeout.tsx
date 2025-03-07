@@ -3,6 +3,7 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
+import { track } from "@amplitude/analytics-browser";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
@@ -22,6 +23,7 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
       const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
       const timeoutTimer = setTimeout(
         () => {
+          track("error page: transaction overtime", { route });
           setError({
             errorType: ErrorType.Timeout,
             onClickBack: () => {

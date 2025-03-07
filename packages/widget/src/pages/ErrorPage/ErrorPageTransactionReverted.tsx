@@ -13,6 +13,7 @@ import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
 import { captureException } from "@sentry/react";
 import { useEffect } from "react";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
@@ -52,6 +53,7 @@ export const ErrorPageTransactionReverted = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
+            track("error page: transaction reverted - header back button clicked");
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -76,7 +78,10 @@ export const ErrorPageTransactionReverted = ({
                 gap={5}
                 align="center"
                 as={SmallTextButton}
-                onClick={() => window.open(explorerUrl, "_blank")}
+                onClick={() => {
+                  track("error page: transaction reverted - view on explorer clicked");
+                  window.open(explorerUrl, "_blank");
+                }}
                 color={theme.primary.text.lowContrast}
               >
                 <ChainIcon color={theme.primary.text.lowContrast} />
@@ -93,7 +98,10 @@ export const ErrorPageTransactionReverted = ({
         label="Continue transaction"
         backgroundColor={theme.warning.text}
         icon={ICONS.rightArrow}
-        onClick={onClickContinueTransaction}
+        onClick={() => {
+          track("error page: transaction reverted - main continue button clicked");
+          onClickContinueTransaction();
+        }}
       />
     </>
   );

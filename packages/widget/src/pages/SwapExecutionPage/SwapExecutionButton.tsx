@@ -16,6 +16,7 @@ import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
+import { track } from "@amplitude/analytics-browser";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -52,6 +53,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           label="Set recovery address"
           icon={ICONS.rightArrow}
           onClick={() => {
+            track("swap execution page: set recovery address button - clicked");
             connectRequiredChains(true);
           }}
         />
@@ -62,6 +64,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           label="Set destination address"
           icon={ICONS.rightArrow}
           onClick={() => {
+            track("swap execution page: set destination address button - clicked");
             const destinationChainID = route?.destAssetChainID;
             if (!destinationChainID) return;
             NiceModal.show(Modals.SetAddressModal, {
@@ -75,6 +78,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.ready: {
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
+          track("error page: additional signing required", { route });
           setError({
             errorType: ErrorType.AdditionalSigningRequired,
             onClickContinue: () => submitExecuteRouteMutation(),
@@ -120,6 +124,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {
+            track("swap execution page: go again button - clicked");
             clearAssetInputAmounts();
             setCurrentPage(Routes.SwapPage);
           }}
