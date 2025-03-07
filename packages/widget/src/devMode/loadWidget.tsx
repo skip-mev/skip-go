@@ -53,7 +53,6 @@ const DevMode = () => {
             settings={{
               useUnlimitedApproval: true,
             }}
-            enableAmplitudeAnalytics={true}
           />
         </div>
       </Row>
