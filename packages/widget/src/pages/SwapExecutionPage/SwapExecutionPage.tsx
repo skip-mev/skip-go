@@ -100,6 +100,7 @@ export const SwapExecutionPage = () => {
   }, [statusData, swapExecutionState]);
 
   const onClickEditDestinationWallet = useMemo(() => {
+    track("swap execution page: edit destination address button - clicked");
     const loadingStates = [
       SwapExecutionState.pending,
       SwapExecutionState.waitingForSigning,

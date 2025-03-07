@@ -170,6 +170,11 @@ export const useCreateCosmosWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
+            track("get address", {
+              walletName: wallet,
+              ChainType: ChainType.Cosmos,
+              chainId,
+            });
             try {
               const getAddressWithoutConnectingWallet = cosmosWallet && !signRequired && chainId;
 
@@ -301,6 +306,11 @@ const handlePenumbraNetwork = (
       throw new Error("Prax wallet is not supported");
     },
     getAddress: async ({ praxWallet }) => {
+      track("get address", {
+        walletName: "prax",
+        ChainType: ChainType.Cosmos,
+        chainId: "penumbra",
+      });
       const penumbraSubaccountIndex = praxWallet?.index;
       const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
       const prax_origin = `chrome-extension://${prax_id}`;
@@ -311,16 +321,23 @@ const handlePenumbraNetwork = (
         // To deposit into penumbra, we generate an "ephemeral address",
         // this is an address that is generated for each deposit,
         // randomized each time, but tied to the same wallet.
-          const ephemeralAddress = await viewService.ephemeralAddress({
-            addressIndex: {
-              // This is the subaccount of the wallet.
-              // Default is zero.
-              account: penumbraSubaccountIndex ? penumbraSubaccountIndex : 0,
-            },
-          });
-          if (!ephemeralAddress.address) throw new Error("No address found");
-          return { address: bech32mAddress(ephemeralAddress.address) };
-      } catch (error) {
+        const ephemeralAddress = await viewService.ephemeralAddress({
+          addressIndex: {
+            // This is the subaccount of the wallet.
+            // Default is zero.
+            account: penumbraSubaccountIndex ? penumbraSubaccountIndex : 0,
+          },
+        });
+        if (!ephemeralAddress.address) throw new Error("No address found");
+        return { address: bech32mAddress(ephemeralAddress.address) };
+      } catch (e) {
+        const error = e as Error;
+        track("get address error", {
+          walletName: "prax",
+          ChainType: ChainType.Cosmos,
+          chainId: "penumbra",
+          errorMessage: error?.message,
+        });
         console.error(error);
         throw error;
       }

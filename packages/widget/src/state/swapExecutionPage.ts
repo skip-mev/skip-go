@@ -117,16 +117,19 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
+      track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {
         set(setTransactionDetailsAtom, txInfo, transactionHistoryIndex);
       }
     },
     onApproveAllowance: async ({ status, allowance }) => {
+      track("execute route: approve allowance", { status, allowance });
       if (allowance && status === "pending") {
         set(setOverallStatusAtom, "approving");
       }
     },
     onTransactionBroadcast: async (txInfo) => {
+      track("execute route: transaction broadcasted", { txInfo });
       setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({
@@ -151,7 +154,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         destAssetChainID,
       });
     },
-    onTransactionCompleted: async (chainId: string, txHash: string) => {
+    onTransactionCompleted: async (chainId: string, txHash: string, status) => {
+      track("execute route: transaction completed", { chainId, txHash, status });
       setTag("txCompleted", true);
       const chain = chains?.find((chain) => chain.chainID === chainId);
       const explorerLink = createExplorerLink({
@@ -172,9 +176,11 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       });
     },
     onTransactionSigned: async () => {
+      track("execute route: transaction signed");
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      track("execute route: error", { error });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
@@ -213,6 +219,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onValidateGasBalance: async (props) => {
+      track("execute route: validate gas balance", { props });
       set(setValidatingGasBalanceAtom, props);
     },
   });

@@ -37,7 +37,7 @@ import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
-import { track } from "@amplitude/analytics-browser";
+import { setUserId, track } from "@amplitude/analytics-browser";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -249,6 +249,7 @@ export const SwapPage = () => {
         route,
         type: isSwapOperation ? "swap" : "send",
       });
+      setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
         track("error page: cosmos ledger warning", { route });
         setError({

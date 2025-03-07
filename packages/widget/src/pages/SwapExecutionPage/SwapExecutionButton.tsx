@@ -76,6 +76,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
         />
       );
     case SwapExecutionState.ready: {
+      track("swap execution page: confirm button - clicked", { route });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
           track("error page: additional signing required", { route });
