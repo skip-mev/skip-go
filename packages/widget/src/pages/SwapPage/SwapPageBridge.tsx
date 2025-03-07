@@ -46,11 +46,10 @@ export const SwapPageBridge = () => {
   );
 };
 
-const StyledSwapPageBridgeButton = styled(Button)<{ disabled?: boolean }>`
+const StyledSwapPageBridgeButton = styled(Button)`
   position: relative;
   cursor: pointer;
   height: 5px;
-  ${({ disabled }) => disabled && "cursor: not-allowed"};
 `;
 
 const StyledBridgeArrow = styled(BridgeArrowIcon)<{ spin?: boolean }>`
