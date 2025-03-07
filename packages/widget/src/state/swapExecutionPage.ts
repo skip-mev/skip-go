@@ -349,7 +349,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
-          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainID !== "984122",
+          simulate: false,
           getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
         });

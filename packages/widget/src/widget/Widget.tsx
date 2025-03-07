@@ -1,7 +1,7 @@
 import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import React, { ReactElement, ReactNode, useEffect } from "react";
+import { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
