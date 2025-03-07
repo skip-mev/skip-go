@@ -1,0 +1,57 @@
+---
+title: "Security properties"
+id: eureka-security-properties
+# description: "This document describes how to test IBC Eureka on Devnet"
+---
+
+Depending on where it is deployed, IBC Eureka might have different security properties compared to the ones in IBC Classic. This is mainly because
+EVM chains do not have any form of governance, whereas Cosmos chains do.
+
+To guarantee protocol and fund safety at launch, IBC Eureka is going to launch in stages, delineated by improved security guarantees at each stage.
+
+## Launch stage (0)
+
+At launch, IBC Eureka is going to be deployed on two blockchains: Ethereum and Cosmos Hub mainnet. On the Cosmos Hub side, the security properties remain
+the same as in IBC Classic - governance has ultimate control over the chain, light client and channels.
+
+On the Ethereum mainnet side, it is different - a security council will have control over contract upgradeability, pausing and light client upgrades.
+
+### Security council
+
+The Eureka Security Council is designated as a 5-of-7 council that can take actions such as:
+- upgrading the `ICS20Transfer`, `ICS26Router`, `IBCERC20` and `Escrow` contracts
+- migrating light clients in case of freezing due to misbehaviour, expiration or security vulnerabilities/incidents
+- designating specific canonical names for IBC applications and light clients on Ethereum mainnet
+
+The security council cannot take these actions instantly - the actions are timelocked using a standard OpenZeppelin `TimelockController` contract with a minimum
+delay of three days. The delay gives an opportunity for the Cosmos Hub to halt inbound / outbound transfers in case of a malicious action taken by the Security Council.
+
+The security council is composed of individuals associated with well-respected and trusted entities in the Ethereum and Cosmos communities:
+- Wildcat Finance
+- Informal
+- Hypha
+- ZK Validator
+- Chorus One
+- Coinbase Cloud
+- Interchain Labs
+
+### Pausing council
+
+The pausing council is designated for rapid-response to a security incident. The only actions that the pausing council can take are pausing and unpausing transfers out of the Ethereum-side contracts.
+
+The council is composed of a subset of people in the Security Council who are going to be rapidly responding to security incidents related to canonical IBC Eureka deployments. The actions of the pausing council are not time-locked
+to allow for a quick response time.
+
+## Governance stage (1)
+
+After the protocol has successfully launched, the next step in the IBC Eureka roadmap is to allow general contract message passing between chains.
+
+This will enable canonical EVM Eureka deployments to be controlled by Cosmos Hub governance. As such, the security council will increase the minimum delay of the `TimelockController`
+to be longer than the time it takes to pass a governance proposal on the Cosmos Hub.
+
+This means that the security council will be much closer to becoming obsolete, while allowing the Cosmos Hub to override actions taken by the security council.
+
+## Pausing stage (2)
+
+After a trial period of allowing the Cosmos Hub to govern the canonical Eureka deployments, the security council will revoke its' rights and controls over canonical deployments,
+fully allowing the Cosmos Hub to take over its' responsibilities.
