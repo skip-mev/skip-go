@@ -4,6 +4,7 @@ import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorCosmosLedgerWarningProps = {
   onClickBack: () => void;
@@ -18,7 +19,10 @@ export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerW
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            track("error page: cosmos ledger warning - header back button clicked");
+            onClickBack();
+          },
         }}
       />
       <ErrorPageContent
@@ -38,7 +42,10 @@ export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerW
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
-        onClick={onClickBack}
+        onClick={() => {
+          track("error page: cosmos ledger warning - main back button clicked");
+          onClickBack();
+        }}
         backgroundColor={theme.error.text}
       />
     </>

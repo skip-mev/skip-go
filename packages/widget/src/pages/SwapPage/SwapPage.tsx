@@ -14,6 +14,8 @@ import {
   isWaitingForNewRouteAtom,
   goFastWarningAtom,
   onRouteUpdatedEffect,
+  routePreferenceAtom,
+  slippageAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -37,6 +39,7 @@ import { useIsGoFast, useIsSwapOperation } from "@/hooks/useIsGoFast";
 import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
+import { setUserId, track } from "@amplitude/analytics-browser";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -60,6 +63,8 @@ export const SwapPage = () => {
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
   const showGoFastWarning = useAtomValue(goFastWarningAtom);
   const isGoFast = useIsGoFast(route);
+  const routePreference = useAtomValue(routePreferenceAtom);
+  const slippage = useAtomValue(slippageAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -87,9 +92,11 @@ export const SwapPage = () => {
   );
 
   const handleChangeSourceAsset = useCallback(() => {
+    track("swap page: source asset button - clicked");
     NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
+        track("swap page: source asset selected", { asset });
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
         if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
@@ -117,9 +124,11 @@ export const SwapPage = () => {
   ]);
 
   const handleChangeSourceChain = useCallback(() => {
+    track("swap page: source chain button - clicked");
     NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
+        track("swap page: source chain selected", { asset });
         // if evm chain is selected and the user is connected to an evm chain, switch the chain
         const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
         if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
@@ -148,9 +157,11 @@ export const SwapPage = () => {
   ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
+    track("swap page: destination asset button - clicked");
     NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
       onSelect: (asset: ClientAsset | null) => {
+        track("swap page: destination asset selected", { asset });
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
@@ -161,9 +172,11 @@ export const SwapPage = () => {
   }, [setDestinationAsset]);
 
   const handleChangeDestinationChain = useCallback(() => {
+    track("swap page: destination chain button - clicked");
     NiceModal.show(Modals.AssetAndChainSelectorModal, {
       context: "destination",
       onSelect: (asset: ClientAsset | null) => {
+        track("swap page: destination chain selected", { asset });
         setDestinationAsset((old) => ({
           ...old,
           ...asset,
@@ -194,6 +207,7 @@ export const SwapPage = () => {
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
+            track("swap page: connect wallet button - clicked");
             if (!sourceAsset?.chainID) {
               NiceModal.show(Modals.ConnectedWalletModal);
             } else {
@@ -235,7 +249,15 @@ export const SwapPage = () => {
     }
 
     const onClick = () => {
+      track("swap page: continue button - clicked", {
+        route,
+        type: isSwapOperation ? "swap" : "send",
+        routePreference,
+        slippage,
+      });
+      setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
+        track("error page: cosmos ledger warning", { route });
         setError({
           errorType: ErrorType.CosmosLedgerWarning,
           onClickBack: () => {
@@ -245,6 +267,7 @@ export const SwapPage = () => {
         return;
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
+        track("error page: bad price warning", { route });
         setError({
           errorType: ErrorType.BadPriceWarning,
           onClickContinue: () => {
@@ -262,6 +285,7 @@ export const SwapPage = () => {
       }
 
       if (route?.warning?.type === "LOW_INFO_WARNING") {
+        track("error page: low info warning", { route });
         setError({
           errorType: ErrorType.LowInfoWarning,
           onClickContinue: () => {
@@ -279,6 +303,7 @@ export const SwapPage = () => {
       }
 
       if (showGoFastWarning && isGoFast) {
+        track("error page: go fast warning", { route });
         setError({
           errorType: ErrorType.GoFastWarning,
           onClickContinue: () => {
@@ -309,9 +334,9 @@ export const SwapPage = () => {
       />
     );
   }, [
-    sourceAccount?.address,
     sourceAsset?.chainID,
     sourceAsset?.amount,
+    sourceAccount?.address,
     destinationAsset?.chainID,
     destinationAsset?.amount,
     isWaitingForNewRoute,
@@ -321,6 +346,8 @@ export const SwapPage = () => {
     isSwapOperation,
     route,
     routeError?.message,
+    routePreference,
+    slippage,
     showCosmosLedgerWarning,
     priceChangePercentage,
     showGoFastWarning,
@@ -345,7 +372,10 @@ export const SwapPage = () => {
             : {
                 label: "History",
                 icon: ICONS.history,
-                onClick: () => setCurrentPage(Routes.TransactionHistoryPage),
+                onClick: () => {
+                  track("swap page: history button - clicked");
+                  setCurrentPage(Routes.TransactionHistoryPage);
+                },
               }
         }
         rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
@@ -358,7 +388,10 @@ export const SwapPage = () => {
           isWaitingToUpdateInputValue={swapDirection === "swap-out" && isWaitingForNewRoute}
           value={sourceAsset?.amount}
           usdValue={route?.usdAmountIn}
-          onChangeValue={setSourceAssetAmount}
+          onChangeValue={(v) => {
+            track("swap page: source asset amount input - changed", { amount: v });
+            setSourceAssetAmount(v);
+          }}
           context="source"
           disabled={sourceAsset?.locked}
         />
@@ -372,7 +405,10 @@ export const SwapPage = () => {
           value={destinationAsset?.amount}
           priceChangePercentage={Number(priceChangePercentage)}
           badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
-          onChangeValue={setDestinationAssetAmount}
+          onChangeValue={(v) => {
+            track("swap page: destination asset amount input - changed", { amount: v });
+            setDestinationAssetAmount(v);
+          }}
           context="destination"
           disabled={destinationAsset?.locked}
         />
