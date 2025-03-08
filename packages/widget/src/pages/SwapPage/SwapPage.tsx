@@ -14,6 +14,8 @@ import {
   isWaitingForNewRouteAtom,
   goFastWarningAtom,
   onRouteUpdatedEffect,
+  routePreferenceAtom,
+  slippageAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -61,6 +63,8 @@ export const SwapPage = () => {
   const showCosmosLedgerWarning = useShowCosmosLedgerWarning();
   const showGoFastWarning = useAtomValue(goFastWarningAtom);
   const isGoFast = useIsGoFast(route);
+  const routePreference = useAtomValue(routePreferenceAtom);
+  const slippage = useAtomValue(slippageAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -248,6 +252,8 @@ export const SwapPage = () => {
       track("swap page: continue button - clicked", {
         route,
         type: isSwapOperation ? "swap" : "send",
+        routePreference,
+        slippage,
       });
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
@@ -328,9 +334,9 @@ export const SwapPage = () => {
       />
     );
   }, [
-    sourceAccount?.address,
     sourceAsset?.chainID,
     sourceAsset?.amount,
+    sourceAccount?.address,
     destinationAsset?.chainID,
     destinationAsset?.amount,
     isWaitingForNewRoute,
@@ -340,6 +346,8 @@ export const SwapPage = () => {
     isSwapOperation,
     route,
     routeError?.message,
+    routePreference,
+    slippage,
     showCosmosLedgerWarning,
     priceChangePercentage,
     showGoFastWarning,
