@@ -12,7 +12,6 @@ import { useAtom, useAtomValue } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
-import { TransparentAddressRequest } from "@penumbra-zone/protobuf/penumbra/view/v1/view_pb";
 import { Chain, ChainType } from "@skip-go/client";
 import {
   getCosmosWalletInfo,
@@ -285,37 +284,25 @@ const handlePenumbraNetwork = (
       throw new Error("Prax wallet is not supported");
     },
     getAddress: async ({ praxWallet }) => {
-      const penumbraWalletIndex = praxWallet?.index;
-      const sourceChainID = praxWallet?.sourceChainID;
+      const penumbraSubaccountIndex = praxWallet?.index;
       const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
       const prax_origin = `chrome-extension://${prax_id}`;
       const client = createPenumbraClient(prax_origin);
       try {
         await client.connect();
         const viewService = client.service(ViewService);
-        // To deposit into penumbra, we generate an ephemeral address
-        // this is a randomized address that is generated for each deposit.
-        //
-        // Noble Mainnet is the exception to this rule.
-        // If the chain is noble-1, we use a transparent address.
-        // This means that the address is the same for all deposits.
-        //
-        // Note: once Noble upgrades their network, this special casing can be removed.
-        // And all addresses can be ephemeral with bech32m encoding.
-        if (sourceChainID === "noble-1") {
-          const address = await viewService.transparentAddress(new TransparentAddressRequest({}));
-          if (!address.address) throw new Error("No address found");
-          // The view service did the work of encoding the address for us.
-          return { address: address.encoding };
-        } else {
+        // To deposit into penumbra, we generate an "ephemeral address",
+        // this is an address that is generated for each deposit,
+        // randomized each time, but tied to the same wallet.
           const ephemeralAddress = await viewService.ephemeralAddress({
             addressIndex: {
-              account: penumbraWalletIndex ? penumbraWalletIndex : 0,
+              // This is the subaccount of the wallet.
+              // Default is zero.
+              account: penumbraSubaccountIndex ? penumbraSubaccountIndex : 0,
             },
           });
           if (!ephemeralAddress.address) throw new Error("No address found");
           return { address: bech32mAddress(ephemeralAddress.address) };
-        }
       } catch (error) {
         console.error(error);
         throw error;
