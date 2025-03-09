@@ -360,6 +360,7 @@ export type EurekaTransferJSON = {
   to_chain_id: string;
   pfm_enabled: boolean;
   supports_memo: boolean;
+  entry_contract_address: string;
 
   denom_in: string;
   denom_out: string;
@@ -376,7 +377,8 @@ export type EurekaTransfer = {
   toChainID: string;
   pfmEnabled: boolean;
   supportsMemo: boolean;
-
+  entryContractAddress: string;
+  
   denomIn: string;
   denomOut: string;
 
