@@ -238,6 +238,38 @@ export type StargateTransfer = {
   bridgeID: BridgeType;
 };
 
+export type LayerZeroTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  denom_in: string;
+  denom_out: string;
+
+  source_oft_contract_address: string;
+  destination_endpoint_id: number;
+
+  messaging_fee_asset: AssetJSON;
+  messaging_fee_amount: string;
+  messaging_fee_amount_usd: string;
+
+  bridge_id: BridgeType;
+};
+
+export type LayerZeroTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  denomIn: string;
+  denomOut: string;
+
+  sourceOFTContractAddress: string;
+  destinationEndpointID: number;
+
+  messagingFeeAsset: Asset;
+  messagingFeeAmount: string;
+  messagingFeeAmountUSD: string;
+
+  bridgeID: BridgeType;
+};
+
 export type BankSendJSON = {
   chain_id: string;
   denom: string;
