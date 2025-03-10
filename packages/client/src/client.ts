@@ -89,9 +89,9 @@ export class SkipClient {
   static chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
   static cumulativeAffiliateFeeBPS?: string = "0";
 
-  private static skipChains: types.Chain[];
-  private static skipAssets: Record<string, types.Asset[]>;
-  private static skipBalances: types.BalanceResponse;
+  private static skipChains?: types.Chain[];
+  private static skipAssets?: Record<string, types.Asset[]>;
+  private static skipBalances?: types.BalanceResponse;
   private static stargateClient: SigningStargateClient;
   private static cosmosGasFee: clientTypes.Gas[];
 
@@ -718,6 +718,26 @@ export class SkipClient {
       stargateClient: SkipClient.stargateClient,
       signer: await getOfflineSigner(chainId),
     };
+  }
+
+  async getAssets(chainId?: string) {
+    if (SkipClient.skipAssets) return SkipClient.skipAssets;
+
+    const [assetsMainnet, assetsTestnet] = await Promise.all([
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+      }),
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+        onlyTestnets: true,
+      }),
+    ]);
+    SkipClient.skipAssets = {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
+
+    return SkipClient.skipAssets;
   }
 
   async getChains() {
@@ -1707,7 +1727,7 @@ export class SkipClient {
     txIndex?: number;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
   }) {
-    const chainAssets = SkipClient.skipAssets[chainID];
+    const chainAssets = (await this.getAssets(chainID))?.[chainID];
 
     const chain = (await this.getChains()).find(
       (chain) => chain.chainID === chainID,
@@ -1780,7 +1800,16 @@ export class SkipClient {
       }
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
-    const feeBalance = SkipClient.skipBalances;
+    const feeBalance =
+      SkipClient.skipBalances ??
+      (await this.balances({
+        chains: {
+          [chainID]: {
+            address: signerAddress,
+            denoms: feeAssets.map((asset) => asset.denom),
+          },
+        },
+      }));
     const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
