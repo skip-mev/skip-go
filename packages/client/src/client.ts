@@ -293,7 +293,6 @@ export class SkipClient {
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
     });
-    console.timeEnd("validateGasBalances");
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -307,7 +306,6 @@ export class SkipClient {
           options,
           index: i,
         });
-        console.timeEnd("executeCosmosTx");
       } else if ("evmTx" in tx) {
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
