@@ -332,29 +332,6 @@ export class SkipClient {
     }
   }
 
-  async waitForVariable<T>(
-    variable: () => T | undefined,
-    timeout: number = 30000,
-    interval: number = 100,
-  ): Promise<T> {
-    const startTime = Date.now();
-
-    return new Promise((resolve, reject) => {
-      const checkVariable = setInterval(() => {
-        const value = variable();
-        if (value !== undefined) {
-          clearInterval(checkVariable);
-          resolve(value); // Resolve with the value of type T
-        }
-
-        if (Date.now() - startTime > timeout) {
-          clearInterval(checkVariable);
-          reject(new Error("Timeout waiting for variable to be defined"));
-        }
-      }, interval);
-    });
-  }
-
   private async executeCosmosTx({
     tx,
     options,
@@ -369,7 +346,7 @@ export class SkipClient {
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gas = await this.waitForVariable(() => SkipClient.cosmosGasFee);
+    const gas = await waitForVariable(() => SkipClient.cosmosGasFee);
 
     const gasUsed = gas[index];
     if (!gasUsed) {
@@ -683,7 +660,7 @@ export class SkipClient {
     }
   }
 
-  async getStargateClient({
+  private async getStargateClient({
     chainId,
     getOfflineSigner,
   }: {
@@ -720,27 +697,13 @@ export class SkipClient {
     };
   }
 
-  async getAssets(chainId?: string) {
+  private async getAssets(chainId?: string) {
     if (SkipClient.skipAssets) return SkipClient.skipAssets;
 
-    const [assetsMainnet, assetsTestnet] = await Promise.all([
-      this.assets({
-        chainIDs: chainId ? [chainId] : undefined,
-      }),
-      this.assets({
-        chainIDs: chainId ? [chainId] : undefined,
-        onlyTestnets: true,
-      }),
-    ]);
-    SkipClient.skipAssets = {
-      ...assetsMainnet,
-      ...assetsTestnet,
-    };
-
-    return SkipClient.skipAssets;
+    return await this.getMainnetAndTestnetAssets(chainId);
   }
 
-  async getChains() {
+  private async getChains() {
     if (SkipClient.skipChains) return SkipClient.skipChains;
 
     return await this.getMainnetAndTestnetChains();
@@ -1517,9 +1480,9 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const skipChain = (await this.getChains()).find(
-      (chain) => chain.chainID === chainID,
-    );
+    const skipChains = await this.getMainnetAndTestnetChains();
+
+    const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
     if (!skipChain) {
       return undefined;
@@ -1909,6 +1872,26 @@ export class SkipClient {
     return [...mainnetChains, ...testnetChains];
   }
 
+  async getMainnetAndTestnetAssets(chainId?: string) {
+    const [assetsMainnet, assetsTestnet] = await Promise.all([
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+      }),
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+        onlyTestnets: true,
+      }),
+    ]);
+    SkipClient.skipAssets = {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
+    return {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
+  }
+
   async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
     const chains = await this.getChains();
     const validations = userAddresses.map((userAddress) => {
@@ -2011,4 +1994,27 @@ function raise(message?: string, options?: ErrorOptions): never {
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function waitForVariable<T>(
+  variable: () => T | undefined,
+  timeout: number = 30000,
+  interval: number = 100,
+): Promise<T> {
+  const startTime = Date.now();
+
+  return new Promise((resolve, reject) => {
+    const checkVariable = setInterval(() => {
+      const value = variable();
+      if (value !== undefined) {
+        clearInterval(checkVariable);
+        resolve(value);
+      }
+
+      if (Date.now() - startTime > timeout) {
+        clearInterval(checkVariable);
+        reject(new Error("Timeout waiting for variable to be defined"));
+      }
+    }, interval);
+  });
 }
