@@ -1645,6 +1645,7 @@ export class SkipClient {
               signerAddress: tx.cosmosTx.signerAddress,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
+              getOfflineSigner: getOfflineSigner,
               txIndex: i,
               simulate,
             });
@@ -1686,12 +1687,14 @@ export class SkipClient {
     signerAddress,
     messages,
     getFallbackGasAmount,
+    getOfflineSigner,
     txIndex,
     simulate,
   }: {
     chainID: string;
     signerAddress: string;
     messages?: types.CosmosMsg[];
+    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     txIndex?: number;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
@@ -1718,6 +1721,7 @@ export class SkipClient {
         }
         const { stargateClient } = await this.getStargateClient({
           chainId: chainID,
+          getOfflineSigner,
         });
         const estimatedGas = await getCosmosGasAmountForMessage(
           stargateClient,
