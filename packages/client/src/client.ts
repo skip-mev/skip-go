@@ -351,6 +351,9 @@ export class SkipClient {
     const { userAddresses, getCosmosSigner } = options;
 
     const gas = await waitForVariable(() => SkipClient.cosmosGasFee);
+    if (gas[0]?.error !== null) {
+      throw new Error(gas[0]?.error);
+    }
 
     const gasUsed = gas[index];
     if (!gasUsed) {
@@ -1619,7 +1622,7 @@ export class SkipClient {
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
   }) {
     if (txs.every((tx) => "cosmosTx" in tx === undefined)) {
-      return [];
+      return;
     }
     onValidateGasBalance?.({
       status: "pending",
@@ -1662,6 +1665,7 @@ export class SkipClient {
       onValidateGasBalance?.({
         status: "error",
       });
+      SkipClient.cosmosGasFee = validateResult as unknown as clientTypes.Gas[];
       throw new Error(`${txError.error}`);
     }
     onValidateGasBalance?.({
@@ -2002,7 +2006,7 @@ function wait(ms: number) {
 
 function waitForVariable<T>(
   variable: () => T | undefined,
-  timeout: number = 30000,
+  timeout: number = 5000,
   interval: number = 100,
 ): Promise<T> {
   const startTime = Date.now();
