@@ -89,9 +89,9 @@ export class SkipClient {
   static chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
   static cumulativeAffiliateFeeBPS?: string = "0";
 
-  private static skipChains: types.Chain[] = [];
-  private static skipAssets: Record<string, types.Asset[]> = {};
-  private static skipBalances: types.BalanceResponse = { chains: {} };
+  private static skipChains: types.Chain[];
+  private static skipAssets: Record<string, types.Asset[]>;
+  private static skipBalances: types.BalanceResponse;
   private static stargateClient: SigningStargateClient;
   private static cosmosGasFee: clientTypes.Gas[];
 
@@ -1876,6 +1876,7 @@ export class SkipClient {
         onlyTestnets: true,
       }),
     ]);
+    SkipClient.skipChains = [...mainnetChains, ...testnetChains];
     return [...mainnetChains, ...testnetChains];
   }
 
