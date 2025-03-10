@@ -1814,12 +1814,12 @@ export class SkipClient {
         };
       }
 
-      const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
+      let balance = feeBalance.chains[chainID]?.denoms[asset.denom];
 
       if (!balance) {
-        return {
-          error: `(${chain?.prettyName}) Unable to find balance for ${symbol}`,
-          asset,
+        balance = {
+          amount: "0",
+          formattedAmount: "0",
         };
       }
       if (!fee.amount[0]?.amount) {

@@ -9,6 +9,7 @@ import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
+import { walletsAtom } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -50,7 +51,8 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
 export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const skip = get(skipClient);
-  if (sourceAsset?.chainID) {
+  const wallets = get(walletsAtom);
+  if (sourceAsset?.chainID && wallets.cosmos) {
     skip.getStargateClient({
       chainId: sourceAsset?.chainID,
     });
