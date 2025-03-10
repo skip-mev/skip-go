@@ -349,7 +349,7 @@ export class SkipClient {
 
   async waitForVariable<T>(
     variable: () => T | undefined,
-    timeout: number = 5000,
+    timeout: number = 30000,
     interval: number = 100,
   ): Promise<T> {
     const startTime = Date.now();
