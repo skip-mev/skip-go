@@ -1,5 +1,17 @@
 ## 0.0.15
 
+## 3.4.1
+
+### Patch Changes
+
+- 68ebc8d: fix last tx complete show not completed
+- 45c3c33: update registries
+- 15aebde: Fix edge case with locked assets
+- b788119: Update remove opacity from disabled main button
+- 4260d98: add analytics
+- Updated dependencies [45c3c33]
+  - @skip-go/client@0.16.17
+
 ## 3.4.0
 
 ### Minor Changes
