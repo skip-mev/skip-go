@@ -193,9 +193,8 @@ export const skipRouteAtom = atom((get) => {
     };
   } else {
     if (routeResponse?.txsRequired) {
-      const chainIds = [routeResponse.sourceAssetChainID];
-      skip.preloadStargateClients({
-        chainIds,
+      skip.getStargateClient({
+        chainId: routeResponse.sourceAssetChainID,
       });
     }
   }

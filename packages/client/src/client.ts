@@ -664,16 +664,6 @@ export class SkipClient {
     }
   }
 
-  async preloadStargateClients({ chainIds }: { chainIds: string[] }) {
-    for (const chainId of chainIds) {
-      if (!SkipClient.stargateClientByChainId?.[chainId]) {
-        this.getStargateClient({
-          chainId,
-        });
-      }
-    }
-  }
-
   async getStargateClient({
     chainId,
     getOfflineSigner,
