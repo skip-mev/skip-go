@@ -290,6 +290,7 @@ export class SkipClient {
     this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
+      getOfflineSigner: options.getCosmosSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
     });
@@ -353,7 +354,7 @@ export class SkipClient {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
 
-    const { signer } = await this.getStargateClient({
+    const { stargateClient, signer } = await this.getStargateClient({
       chainId: tx.cosmosTx.chainID,
       getOfflineSigner: options.getCosmosSigner,
     });
@@ -374,7 +375,7 @@ export class SkipClient {
       getCosmosSigner,
       signerAddress: currentUserAddress,
       gas: gasUsed,
-      stargateClient: SkipClient.stargateClient,
+      stargateClient: stargateClient,
       signer,
       ...options,
     });
@@ -1608,9 +1609,11 @@ export class SkipClient {
     txs,
     onValidateGasBalance,
     getFallbackGasAmount,
+    getOfflineSigner,
     simulate,
   }: {
     txs: types.Tx[];
+    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions["onValidateGasBalance"];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
@@ -1631,11 +1634,16 @@ export class SkipClient {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
 
+          const { stargateClient } = await this.getStargateClient({
+            chainId: tx.cosmosTx.chainID,
+            getOfflineSigner,
+          });
+
           try {
             const res = await this.validateCosmosGasBalance({
               chainID: tx.cosmosTx.chainID,
               signerAddress: tx.cosmosTx.signerAddress,
-              client: SkipClient.stargateClient,
+              client: stargateClient,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
               txIndex: i,
