@@ -720,6 +720,12 @@ export class SkipClient {
     };
   }
 
+  async getChains() {
+    if (SkipClient.skipChains) return SkipClient.skipChains;
+
+    return await this.getMainnetAndTestnetChains();
+  }
+
   async signCosmosMessageDirect(
     options: clientTypes.SignCosmosMessageDirectOptions,
   ): Promise<TxRaw> {
@@ -1491,7 +1497,7 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const skipChain = SkipClient.skipChains.find(
+    const skipChain = (await this.getChains()).find(
       (chain) => chain.chainID === chainID,
     );
 
@@ -1703,7 +1709,7 @@ export class SkipClient {
   }) {
     const chainAssets = SkipClient.skipAssets[chainID];
 
-    const chain = SkipClient.skipChains.find(
+    const chain = (await this.getChains()).find(
       (chain) => chain.chainID === chainID,
     );
     if (!chain) {
@@ -1775,10 +1781,11 @@ export class SkipClient {
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
     const feeBalance = SkipClient.skipBalances;
+    const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
-      const chain = SkipClient.skipChains.find((x) => x.chainID === chainID);
+      const chain = skipChains.find((x) => x.chainID === chainID);
       const decimal = Number(chainAsset?.decimals);
       if (!chainAsset) {
         return {
@@ -1873,8 +1880,9 @@ export class SkipClient {
   }
 
   async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
+    const chains = await this.getChains();
     const validations = userAddresses.map((userAddress) => {
-      const chain = SkipClient.skipChains.find(
+      const chain = chains.find(
         (chain) => chain.chainID === userAddress.chainID,
       );
 
