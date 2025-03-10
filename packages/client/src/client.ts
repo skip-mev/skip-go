@@ -96,7 +96,7 @@ export class SkipClient {
     string,
     SigningStargateClient
   > = {};
-  private static cosmosGasFee: clientTypes.Gas[];
+  private static cosmosGasFee?: clientTypes.Gas[];
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     SkipClient.requestClient = new RequestClient({
@@ -1621,6 +1621,7 @@ export class SkipClient {
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
   }) {
+    SkipClient.cosmosGasFee = undefined;
     if (txs.every((tx) => "cosmosTx" in tx === undefined)) {
       return;
     }
