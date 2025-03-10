@@ -2272,10 +2272,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.85":
-  version: 0.50.85
-  resolution: "@chain-registry/types@npm:0.50.85"
-  checksum: fade1de6216c76902ff0b9522be6e163cd059e965929ab9b19dc8f894166ccdca7d2f8136a781122d967c1f1ec6a1058e663d2d75281b581d002be6cddfdda3b
+"@chain-registry/types@npm:^0.50.90":
+  version: 0.50.90
+  resolution: "@chain-registry/types@npm:0.50.90"
+  checksum: a881d82e8ca63dbcc5bfee795ea334ea397aacbece0dca814a48f6e3a5770abde786d58dcc2eafa866a00ffd130815b0ff7f0c29b1ca0abbf3f96971ca9d8664
   languageName: node
   linkType: hard
 
@@ -7672,7 +7672,7 @@ __metadata:
     "@types/keccak": 3.0.4
     axios: 1.x
     bech32: ^2.0.0
-    chain-registry: ^1.69.141
+    chain-registry: ^1.69.148
     cosmjs-types: ^0.9.0
     create-hash: ^1.2.0
     keccak: 3.0.4
@@ -7741,7 +7741,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.141
+    chain-registry: ^1.69.148
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
     eslint-plugin-prettier: ^5.2.1
@@ -13047,12 +13047,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.141":
-  version: 1.69.141
-  resolution: "chain-registry@npm:1.69.141"
+"chain-registry@npm:^1.69.148":
+  version: 1.69.148
+  resolution: "chain-registry@npm:1.69.148"
   dependencies:
-    "@chain-registry/types": ^0.50.85
-  checksum: a6988cc5efd1bdb80b3879c9d4c546b882a1ef808ea2768e37ca865af403f1e6dfb3559b09c0f9fa29aa78b3972d7ef93d0696bced1c136e20e409a0094cf057
+    "@chain-registry/types": ^0.50.90
+  checksum: 40733d06b2c20110975d3a977c0eacc5ffc6a62c2da8411cee0485fcf31fb6df9554aed8d30d6bc40a8c74b2cd289eb1970c018e2f72dfe262c1242da06f67ff
   languageName: node
   linkType: hard
 
