@@ -12,6 +12,7 @@ import { Column, Row } from "@/components/Layout";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageGoFastWarningProps = {
   onClickBack: () => void;
@@ -48,7 +49,10 @@ export const ErrorPageGoFastWarning = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: handleOnClickBack,
+          onClick: () => {
+            track("error page: go fast warning - header back button clicked");
+            handleOnClickBack();
+          },
         }}
       />
       <ErrorPageContent
@@ -66,7 +70,14 @@ export const ErrorPageGoFastWarning = ({
         }
         icon={ICONS.goFast}
       />
-      <MainButton label="Continue" icon={ICONS.rightArrow} onClick={onClickContinue} />
+      <MainButton
+        label="Continue"
+        icon={ICONS.rightArrow}
+        onClick={() => {
+          track("error page: go fast warning - main continue button clicked");
+          onClickContinue();
+        }}
+      />
       <SettingsFooter highlightSettings />
     </Column>
   );

@@ -8,6 +8,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageUnexpectedProps = {
   error?: Error;
@@ -35,6 +36,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
+            track("error page: unexpected error - header back button clicked");
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -51,7 +53,10 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
       <MainButton
         label="Retry"
         icon={ICONS.rightArrow}
-        onClick={onClickRetry}
+        onClick={() => {
+          track("error page: unexpected error - retry button clicked");
+          onClickRetry();
+        }}
         backgroundColor={theme.error.text}
       />
     </>

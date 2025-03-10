@@ -25,6 +25,7 @@ import { CosmosGasAmount, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
+import { track } from "@amplitude/analytics-browser";
 
 type ValidatingGasBalanceData = {
   chainID?: string;
@@ -116,16 +117,19 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
+      track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {
         set(setTransactionDetailsAtom, txInfo, transactionHistoryIndex);
       }
     },
     onApproveAllowance: async ({ status, allowance }) => {
+      track("execute route: approve allowance", { status, allowance });
       if (allowance && status === "pending") {
         set(setOverallStatusAtom, "approving");
       }
     },
     onTransactionBroadcast: async (txInfo) => {
+      track("execute route: transaction broadcasted", { txInfo });
       setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
       const explorerLink = createExplorerLink({
@@ -150,7 +154,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         destAssetChainID,
       });
     },
-    onTransactionCompleted: async (chainId: string, txHash: string) => {
+    onTransactionCompleted: async (chainId: string, txHash: string, status) => {
+      track("execute route: transaction completed", { chainId, txHash, status });
       setTag("txCompleted", true);
       const chain = chains?.find((chain) => chain.chainID === chainId);
       const explorerLink = createExplorerLink({
@@ -171,15 +176,18 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       });
     },
     onTransactionSigned: async () => {
+      track("execute route: transaction signed");
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      track("execute route: error", { error });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
 
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
+        track("error page: user rejected request");
         set(errorAtom, {
           errorType: ErrorType.AuthFailed,
           onClickBack: () => {
@@ -187,6 +195,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
+        track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
@@ -199,6 +208,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else {
+        track("error page: unexpected error");
         set(errorAtom, {
           errorType: ErrorType.Unexpected,
           error: error as Error,
@@ -209,6 +219,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       }
     },
     onValidateGasBalance: async (props) => {
+      track("execute route: validate gas balance", { props });
       set(setValidatingGasBalanceAtom, props);
     },
   });

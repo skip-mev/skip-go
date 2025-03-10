@@ -39,6 +39,7 @@ export const useTxHistory = ({
     queryFn: () => {
       // Incomplete is when multiple transactions are required but not all txs are signed/tracked
       if (txs.length !== txsRequired) return "incomplete";
+      if (statusData?.lastTxStatus === "success") return "completed";
       if (isFetching && isPending) return "unconfirmed";
       if (statusData?.isSuccess) return "completed";
       if (statusData?.isSettled && !statusData?.isSuccess) return "failed";

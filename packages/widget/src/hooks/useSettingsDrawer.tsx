@@ -3,6 +3,7 @@ import { SwapPageFooter, SwapPageFooterItemsProps } from "@/pages/SwapPage/SwapP
 import { skipRouteAtom } from "@/state/route";
 import { shadowRootAtom } from "@/state/shadowRoot";
 import { goFastWarningAtom, isWaitingForNewRouteAtom } from "@/state/swapPage";
+import { track } from "@amplitude/analytics-browser";
 import NiceModal from "@ebay/nice-modal-react";
 import { useAtomValue, useSetAtom } from "jotai";
 import React, { useState } from "react";
@@ -16,12 +17,20 @@ export const useSettingsDrawer = () => {
 
   const SettingsFooter = ({ content, ...props }: SwapPageFooterItemsProps) => {
     const openSettingsDrawer = () => {
+      track("settings drawer - clicked");
       const container = shadowRoot?.getElementById("settings-drawer");
       setShowGoFastErrorAtom(false);
       NiceModal.show(Modals.SwapSettingsDrawer, {
         drawer: true,
         container: container,
-        onOpenChange: (open: boolean) => (open ? setDrawerOpen(true) : setDrawerOpen(false)),
+        onOpenChange: (open: boolean) => {
+          if (open) {
+            setDrawerOpen(true);
+          } else {
+            track("settings drawer - closed");
+            setDrawerOpen(false);
+          }
+        },
       });
     };
 
