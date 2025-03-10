@@ -1,8 +1,5 @@
 /* eslint-disable prefer-const */
-import {
-  makeSignDoc as makeSignDocAmino,
-  OfflineAminoSigner,
-} from "@cosmjs/amino";
+import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { bech32m, bech32 } from "bech32";
@@ -58,10 +55,7 @@ import {
   evmosProtoRegistry,
 } from "./codegen/evmos/client";
 import { erc20ABI } from "./constants/abis";
-import {
-  DEFAULT_GAS_DENOM_OVERRIDES,
-  DEFAULT_CACHE_DURATION,
-} from "./constants/constants";
+import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -75,7 +69,6 @@ import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
-import { createCachingMiddleware, CustomCache } from "./cache";
 
 export const SKIP_API_URL = "https://api.skip.build";
 
@@ -85,9 +78,7 @@ export class SkipClient {
   protected static aminoTypes: AminoTypes;
   protected static registry: Registry;
 
-  protected cacheDurationMs?: number;
-
-  static endpointOptions: {
+  protected static endpointOptions: {
     endpoints?: Record<string, clientTypes.EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
@@ -296,7 +287,6 @@ export class SkipClient {
       onTransactionCompleted,
       simulate = true,
     } = options;
-    console.time("validateGasBalances");
     this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
@@ -312,7 +302,6 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        console.time("executeCosmosTx");
         txResult = await this.executeCosmosTx({
           tx,
           options,
@@ -495,12 +484,10 @@ export class SkipClient {
 
     const fee = gas.fee;
 
-    console.time("getAccountNumberAndSequence");
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
       chainID,
     );
-    console.timeEnd("getAccountNumberAndSequence");
 
     let rawTx: TxRaw;
 
@@ -516,7 +503,6 @@ export class SkipClient {
       },
     };
 
-    console.time("signCosmosMessageDirect");
     if (isOfflineDirectSigner(signer)) {
       rawTx = await this.signCosmosMessageDirect({
         ...commonRawTxBody,
@@ -525,7 +511,6 @@ export class SkipClient {
     } else {
       rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
     }
-    console.timeEnd("signCosmosMessageDirect");
 
     onTransactionSigned?.({
       chainID,
@@ -533,9 +518,7 @@ export class SkipClient {
 
     const txBytes = TxRaw.encode(rawTx).finish();
 
-    console.time("broadcastTx");
     const tx = await stargateClient.broadcastTx(txBytes);
-    console.timeEnd("broadcastTx");
 
     return tx;
   }
@@ -1662,7 +1645,6 @@ export class SkipClient {
           }
 
           try {
-            console.time("validateCosmosGasBalance");
             const res = await this.validateCosmosGasBalance({
               chainID: tx.cosmosTx.chainID,
               signerAddress: tx.cosmosTx.signerAddress,
@@ -1673,7 +1655,6 @@ export class SkipClient {
               simulate,
             });
 
-            console.timeEnd("validateCosmosGasBalance");
             return res;
           } catch (e) {
             const error = e as Error;
