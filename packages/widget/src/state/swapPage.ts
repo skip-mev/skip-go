@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
+import { ClientAsset, skipClient } from "@/state/skipClient";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
@@ -43,6 +43,16 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
       amountIn: sourceAsset?.amount,
       amountOut: destinationAsset?.amount,
       requiredChainAddresses: data?.requiredChainAddresses,
+    });
+  }
+});
+
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const skip = get(skipClient);
+  if (sourceAsset?.chainID) {
+    skip.getStargateClient({
+      chainId: sourceAsset?.chainID,
     });
   }
 });

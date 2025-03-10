@@ -183,7 +183,6 @@ export const skipRouteAtom = atom((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
-  const skip = get(skipClient);
   if (caughtError?.isError) {
     return {
       data: undefined,
@@ -191,12 +190,6 @@ export const skipRouteAtom = atom((get) => {
       error: caughtError.error as Error,
       isLoading: false,
     };
-  } else {
-    if (routeResponse?.txsRequired) {
-      skip.getStargateClient({
-        chainId: routeResponse.sourceAssetChainID,
-      });
-    }
   }
   return {
     data: routeResponse,
