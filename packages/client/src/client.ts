@@ -157,7 +157,6 @@ export class SkipClient {
       {} as Record<string, types.Asset[]>,
     );
     SkipClient.skipAssets = responseCamelCase;
-    console.log(SkipClient.skipAssets);
     return responseCamelCase;
   }
 
@@ -169,7 +168,6 @@ export class SkipClient {
       types.chainFromJSON(chain),
     );
     SkipClient.skipChains = responseCamelCase;
-    console.log(SkipClient.skipChains);
     return responseCamelCase;
   }
 
@@ -357,7 +355,6 @@ export class SkipClient {
     return new Promise((resolve, reject) => {
       const checkVariable = setInterval(() => {
         const value = variable();
-        console.log(value);
         if (value !== undefined) {
           clearInterval(checkVariable);
           resolve(value); // Resolve with the value of type T
@@ -484,7 +481,6 @@ export class SkipClient {
       stargateClient,
       signer,
     } = options;
-    console.log("gas", gas);
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -1898,7 +1894,6 @@ export class SkipClient {
   }
 
   async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
-    console.log(SkipClient.skipChains, userAddresses);
     const validations = userAddresses.map((userAddress) => {
       const chain = SkipClient.skipChains.find(
         (chain) => chain.chainID === userAddress.chainID,
