@@ -30,7 +30,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
 
   const closeModal = useCallback(() => {
     onOpenChange?.(false);
-    delay(140).then(() => {
+    delay(75).then(() => {
       modal.remove();
     });
   }, [modal, onOpenChange]);

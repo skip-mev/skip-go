@@ -6,6 +6,7 @@ import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageTradeAdditionalSigningRequiredProps = {
   onClickContinue: () => void;
@@ -39,7 +40,10 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: handleOnClickBack,
+          onClick: () => {
+            track("error page: additional signing required - header back button clicked");
+            handleOnClickBack();
+          },
         }}
       />
       <ErrorPageContent
@@ -57,7 +61,10 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
       <MainButton
         label="Continue"
         icon={ICONS.rightArrow}
-        onClick={handleOnClickContinue}
+        onClick={() => {
+          track("error page: additional signing required - main continue button clicked");
+          handleOnClickContinue();
+        }}
         backgroundColor={theme.warning.text}
       />
     </>

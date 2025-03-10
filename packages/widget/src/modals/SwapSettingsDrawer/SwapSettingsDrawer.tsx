@@ -16,6 +16,7 @@ import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { track } from "@amplitude/analytics-browser";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -184,6 +185,7 @@ export const SwapSettingsDrawer = createModal(() => {
       <Row justify="space-between">
         <SmallTextButton
           onClick={() => {
+            track("settings drawer: close button - clicked");
             NiceModal.hide(Modals.SwapSettingsDrawer);
           }}
         >

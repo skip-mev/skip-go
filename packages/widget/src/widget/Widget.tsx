@@ -46,6 +46,10 @@ export type WidgetProps = {
    */
   enableSentrySessionReplays?: boolean;
   /**
+   * Enable Amplitude analytics for the widget to improve user experience.
+   */
+  enableAmplitudeAnalytics?: boolean;
+  /**
    * Map of connected wallet addresses, allowing your app to pass pre-connected addresses to the widget.
    * This feature enables the widget to display a specific address as connected for a given chain.
    *

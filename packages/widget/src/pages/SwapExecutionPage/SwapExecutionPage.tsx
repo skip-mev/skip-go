@@ -22,6 +22,7 @@ import { Modals } from "@/modals/registerModals";
 import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
+import { track } from "@amplitude/analytics-browser";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -99,6 +100,7 @@ export const SwapExecutionPage = () => {
   }, [statusData, swapExecutionState]);
 
   const onClickEditDestinationWallet = useMemo(() => {
+    track("swap execution page: edit destination address button - clicked");
     const loadingStates = [
       SwapExecutionState.pending,
       SwapExecutionState.waitingForSigning,
@@ -131,14 +133,22 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Back",
                 icon: ICONS.thinArrow,
-                onClick: () => setCurrentPage(Routes.SwapPage),
+                onClick: () => {
+                  track("swap execution page: back button - clicked");
+                  setCurrentPage(Routes.SwapPage);
+                },
               }
             : undefined
         }
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
-          onClick: () => setSimpleRoute(!simpleRoute),
+          onClick: () => {
+            track("swap execution page: toggle route details button - clicked", {
+              shown: simpleRoute ? "simple" : "detailed",
+            });
+            setSimpleRoute(!simpleRoute);
+          },
         }}
       />
       <SwapExecutionPageRoute

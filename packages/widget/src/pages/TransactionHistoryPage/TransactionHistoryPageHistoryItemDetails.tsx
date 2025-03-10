@@ -102,10 +102,11 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       );
     });
   }, [explorerLinks]);
-  const showTransferAssetRelease =
+  const showTransferAssetRelease = Boolean(
     transferAssetRelease &&
-    transferAssetRelease.released &&
-    (status === "failed" || status === "incomplete");
+      transferAssetRelease.released &&
+      (status === "failed" || status === "incomplete"),
+  );
 
   const transferAssetReleaseAsset = useGetAssetDetails({
     assetDenom: transferAssetRelease?.denom,
