@@ -25,12 +25,15 @@ export const skipClientConfigAtom = atom<SkipClientOptions>({
 
 export const themeAtom = atom<Theme>(defaultTheme);
 
+export const skipClientInstanceAtom = atom(new SkipClient());
+
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
+  const skipClientInstance = get(skipClientInstanceAtom);
 
-  return new SkipClient({
+  skipClientInstance.updateOptions({
     ...options,
     getCosmosSigner: async (chainID) => {
       if (getSigners?.getCosmosSigner) {
@@ -70,6 +73,8 @@ export const skipClient = atom((get) => {
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
   });
+
+  return skipClientInstance;
 });
 
 export type ClientAsset = Asset & {
