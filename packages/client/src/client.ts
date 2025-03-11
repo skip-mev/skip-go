@@ -89,6 +89,7 @@ export class SkipClient {
   chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
   cumulativeAffiliateFeeBPS?: string = "0";
 
+  private clientOptions: clientTypes.SkipClientOptions;
   private skipChains?: types.Chain[];
   private skipAssets?: Record<string, types.Asset[]>;
   private skipBalances?: types.BalanceResponse;
@@ -96,6 +97,7 @@ export class SkipClient {
   private cosmosGasFee: clientTypes.Gas[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
+    this.clientOptions = options;
     this.requestClient = new RequestClient({
       baseURL: options.apiURL || SKIP_API_URL,
       apiKey: options.apiKey,
@@ -133,28 +135,37 @@ export class SkipClient {
   }
 
   updateOptions(options: clientTypes.SkipClientOptions = {}) {
-    this.requestClient = new RequestClient({
-      baseURL: options.apiURL || SKIP_API_URL,
-      apiKey: options.apiKey,
-    });
+    if (
+      this.clientOptions.apiURL !== options.apiURL ||
+      this.clientOptions.apiKey !== options.apiKey
+    ) {
+      this.requestClient = new RequestClient({
+        baseURL: options.apiURL || SKIP_API_URL,
+        apiKey: options.apiKey,
+      });
+    }
 
-    this.aminoTypes = new AminoTypes({
-      ...createDefaultAminoConverters(),
-      ...createWasmAminoConverters(),
-      ...circleAminoConverters,
-      ...evmosAminoConverters,
-      ...(options.aminoTypes ?? {}),
-    });
+    if (this.clientOptions.aminoTypes !== options.aminoTypes) {
+      this.aminoTypes = new AminoTypes({
+        ...createDefaultAminoConverters(),
+        ...createWasmAminoConverters(),
+        ...circleAminoConverters,
+        ...evmosAminoConverters,
+        ...(options.aminoTypes ?? {}),
+      });
+    }
 
-    this.registry = new Registry([
-      ...defaultRegistryTypes,
-      ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-      ["/initia.move.v1.MsgExecute", MsgExecute],
-      ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
-      ...circleProtoRegistry,
-      ...evmosProtoRegistry,
-      ...(options.registryTypes ?? []),
-    ]);
+    if (this.clientOptions.registryTypes !== options.registryTypes) {
+      this.registry = new Registry([
+        ...defaultRegistryTypes,
+        ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+        ["/initia.move.v1.MsgExecute", MsgExecute],
+        ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
+        ...circleProtoRegistry,
+        ...evmosProtoRegistry,
+        ...(options.registryTypes ?? []),
+      ]);
+    }
 
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
