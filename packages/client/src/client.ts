@@ -274,13 +274,8 @@ export class SkipClient {
       types.balanceRequestToJSON(request),
     );
     const responseCamelCase = types.balanceResponseFromJSON(response);
-    const mergedBalances = {
-      ...(this.skipBalances?.chains ?? {}),
-      ...responseCamelCase.chains,
-    };
-    this.skipBalances = {
-      chains: mergedBalances,
-    };
+
+    this.skipBalances = responseCamelCase;
     return types.balanceResponseFromJSON(response);
   }
 
