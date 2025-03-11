@@ -179,5 +179,10 @@
   "footerSocials": {
     "twitter": "https://twitter.com/skipprotocol",
     "discord": "https://discord.com/invite/hFeHVAE26P"
+  },
+  "integrations": {
+    "gtm": {
+      "tagId": "GTM-"
+    }
   }
 }
