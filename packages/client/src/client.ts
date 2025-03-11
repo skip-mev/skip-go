@@ -213,13 +213,10 @@ export class SkipClient {
     const responseCamelCase = response.chains.map((chain) =>
       types.chainFromJSON(chain),
     );
-    const uniqueChains = new Set([
-      ...(this.skipChains ?? []),
-      ...responseCamelCase,
-    ]);
-    if (uniqueChains) {
-      this.skipChains = Array.from(uniqueChains);
+    if (options?.includeEVM && options?.includeSVM) {
+      this.skipChains = responseCamelCase;
     }
+
     return responseCamelCase;
   }
 
