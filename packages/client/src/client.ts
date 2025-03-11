@@ -1879,7 +1879,7 @@ export class SkipClient {
         };
       }
 
-      let balance = feeBalance.chains[chainID]?.denoms[asset.denom];
+      let balance = feeBalance?.chains[chainID]?.denoms[asset.denom];
 
       if (!balance) {
         balance = {
