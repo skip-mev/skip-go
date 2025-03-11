@@ -195,7 +195,7 @@ export class SkipClient {
       },
       {} as Record<string, types.Asset[]>,
     );
-    console.log(responseCamelCase);
+
     if (
       options.includeEvmAssets &&
       options.includeSvmAssets &&
@@ -213,9 +213,12 @@ export class SkipClient {
     const responseCamelCase = response.chains.map((chain) =>
       types.chainFromJSON(chain),
     );
-    console.log(responseCamelCase);
-    if (options?.includeEVM && options?.includeSVM) {
-      this.skipChains = responseCamelCase;
+    const uniqueChains = new Set([
+      ...(this.skipChains ?? []),
+      ...responseCamelCase,
+    ]);
+    if (uniqueChains) {
+      this.skipChains = Array.from(uniqueChains);
     }
     return responseCamelCase;
   }
@@ -273,8 +276,16 @@ export class SkipClient {
       "/v2/info/balances",
       types.balanceRequestToJSON(request),
     );
-    console.log(types.balanceResponseFromJSON(response));
-    this.skipBalances = types.balanceResponseFromJSON(response);
+    const responseCamelCase = types.balanceResponseFromJSON(response);
+    const mergedBalances = {
+      ...(this.skipBalances?.chains ?? {}),
+      ...responseCamelCase.chains,
+    };
+    if (mergedBalances) {
+      this.skipBalances = {
+        chains: mergedBalances,
+      };
+    }
     return types.balanceResponseFromJSON(response);
   }
 
