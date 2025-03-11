@@ -1834,7 +1834,7 @@ export class SkipClient {
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
 
-    const feeAssetFoundInSkipBalances = feeAssets.some((asset) => {
+    const feeAssetFoundInSkipBalances = feeAssets.every((asset) => {
       return (
         this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
         undefined
