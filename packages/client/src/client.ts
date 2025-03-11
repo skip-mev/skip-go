@@ -1836,16 +1836,16 @@ export class SkipClient {
         undefined
       );
     });
-    const feeBalance =
-      feeAssetFoundInSkipBalances ??
-      (await this.balances({
-        chains: {
-          [chainID]: {
-            address: signerAddress,
-            denoms: feeAssets.map((asset) => asset.denom),
+    const feeBalance = feeAssetFoundInSkipBalances
+      ? this.skipBalances
+      : await this.balances({
+          chains: {
+            [chainID]: {
+              address: signerAddress,
+              denoms: feeAssets.map((asset) => asset.denom),
+            },
           },
-        },
-      }));
+        });
     const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
