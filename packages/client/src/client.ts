@@ -96,7 +96,7 @@ export class SkipClient {
     string,
     SigningStargateClient
   > = {};
-  private static cosmosGasFee?: clientTypes.Gas[];
+  private static cosmosGasFee: clientTypes.Gas[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     SkipClient.requestClient = new RequestClient({
