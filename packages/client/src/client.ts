@@ -93,7 +93,10 @@ export class SkipClient {
   private skipChains?: types.Chain[];
   private skipAssets?: Record<string, types.Asset[]>;
   private skipBalances?: types.BalanceResponse;
-  private stargateClientByChainId: Record<string, SigningStargateClient> = {};
+  private signingStargateClientByChainId: Record<
+    string,
+    SigningStargateClient
+  > = {};
   private cosmosGasFee: clientTypes.Gas[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
@@ -736,12 +739,12 @@ export class SkipClient {
         "'getCosmosSigner' is not provided or configured in skip router",
       );
     }
-    if (!this.stargateClientByChainId?.[chainId]) {
+    if (!this.signingStargateClientByChainId?.[chainId]) {
       const [signer, endpoint] = await Promise.all([
         getOfflineSigner(chainId),
         this.getRpcEndpointForChain(chainId),
       ]);
-      this.stargateClientByChainId[chainId] =
+      this.signingStargateClientByChainId[chainId] =
         await SigningStargateClient.connectWithSigner(endpoint, signer, {
           aminoTypes: this.aminoTypes,
           registry: this.registry,
@@ -750,7 +753,7 @@ export class SkipClient {
     }
 
     return {
-      stargateClient: this.stargateClientByChainId[
+      stargateClient: this.signingStargateClientByChainId[
         chainId
       ] as SigningStargateClient,
       signer: await getOfflineSigner(chainId),
@@ -1345,7 +1348,7 @@ export class SkipClient {
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client =
-      this.stargateClientByChainId[chainID] ??
+      this.signingStargateClientByChainId[chainID] ??
       (await StargateClient.connect(endpoint, {
         accountParser,
       }));
