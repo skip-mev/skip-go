@@ -53,7 +53,7 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
   const skip = get(skipClient);
   const wallets = get(walletsAtom);
   if (sourceAsset?.chainID && wallets.cosmos) {
-    skip.getStargateClient({
+    skip.getSigningStargateClient({
       chainId: sourceAsset?.chainID,
     });
   }

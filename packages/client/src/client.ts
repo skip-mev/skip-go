@@ -419,7 +419,7 @@ export class SkipClient {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
 
-    const { stargateClient, signer } = await this.getStargateClient({
+    const { stargateClient, signer } = await this.getSigningStargateClient({
       chainId: tx.cosmosTx.chainID,
       getOfflineSigner: options.getCosmosSigner,
     });
@@ -726,7 +726,7 @@ export class SkipClient {
     }
   }
 
-  async getStargateClient({
+  async getSigningStargateClient({
     chainId,
     getOfflineSigner,
   }: {
@@ -1776,7 +1776,7 @@ export class SkipClient {
         if (txIndex !== 0 && chainID === "noble-1") {
           return "0";
         }
-        const { stargateClient } = await this.getStargateClient({
+        const { stargateClient } = await this.getSigningStargateClient({
           chainId: chainID,
           getOfflineSigner,
         });
