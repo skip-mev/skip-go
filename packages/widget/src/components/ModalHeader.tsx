@@ -32,11 +32,8 @@ export const StyledModalContainer = styled(Column)`
   border-radius: 20px;
   background: ${({ theme }) => theme.primary.background.normal};
   height: 100%;
-
-  @media (max-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
-    max-height: 600px;
-  }
 `;
+
 export const StyledModalInnerContainer = styled(Column)`
   width: 100%;
   align-items: center;
