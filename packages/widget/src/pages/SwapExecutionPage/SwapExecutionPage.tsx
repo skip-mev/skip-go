@@ -77,7 +77,7 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
-  useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
+  useHandleTransactionFailed(statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
