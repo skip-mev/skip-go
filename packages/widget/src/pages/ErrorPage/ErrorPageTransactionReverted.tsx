@@ -5,7 +5,6 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
-import { ClientOperation } from "@/utils/clientType";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
@@ -14,19 +13,18 @@ import { useSetAtom } from "jotai";
 import { captureException } from "@sentry/react";
 import { useEffect } from "react";
 import { track } from "@amplitude/analytics-browser";
+import { TransferAssetRelease } from "@skip-go/client";
 
 export type ErrorPageTransactionRevertedProps = {
   explorerUrl: string;
-  revertedOperation: ClientOperation;
-  recoveryAddress: string;
+  transferAssetRelease?: TransferAssetRelease;
   onClickContinueTransaction: () => void;
-  onClickBack: () => void;
+  onClickBack?: () => void;
 };
 
 export const ErrorPageTransactionReverted = ({
   explorerUrl,
-  revertedOperation,
-  recoveryAddress,
+  transferAssetRelease,
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
@@ -38,12 +36,10 @@ export const ErrorPageTransactionReverted = ({
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
 
-  const assetDenom = revertedOperation.denomIn ?? revertedOperation.denom;
-
   const assetDetails = useGetAssetDetails({
-    assetDenom: assetDenom,
-    tokenAmount: revertedOperation.amountIn,
-    chainId: revertedOperation?.fromChainID ?? revertedOperation.chainID,
+    assetDenom: transferAssetRelease?.denom,
+    tokenAmount: transferAssetRelease?.amount,
+    chainId: transferAssetRelease?.chainID,
   });
 
   return (
@@ -71,7 +67,7 @@ export const ErrorPageTransactionReverted = ({
             </SmallText>
             <SmallText color={theme.primary.text.lowContrast} textAlign="center" textWrap="balance">
               Current asset location: {assetDetails?.amount} {assetDetails?.symbol} on{" "}
-              {assetDetails?.chainName} ({recoveryAddress})
+              {assetDetails?.chainName}
             </SmallText>
             <Row gap={25} justify="center">
               <Row
