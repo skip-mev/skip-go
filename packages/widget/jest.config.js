@@ -25,7 +25,7 @@ const config = {
   },
   transformIgnorePatterns: ["/node_modules/", "\\.(woff|woff2|ttf|otf)$"],
   moduleDirectories: ["node_modules", "src"],
-  setupFiles: ["<rootDir>/setup.jest.ts"],
+  setupFiles: ["<rootDir>/setup.jest.mjs"],
   extensionsToTreatAsEsm: [".ts", ".tsx"],
 };
 
