@@ -240,7 +240,7 @@ export type MsgsWarningType =
   | "INSUFFICIENT_GAS_AT_DEST_EOA"
   | "INSUFFICIENT_GAS_AT_INTERMEDIATE";
 
-export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate";
+export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate" | "eureka";
 
 export type RouteWarning = {
   type: RouteWarningType;
