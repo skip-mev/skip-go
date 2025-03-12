@@ -8,12 +8,18 @@ const config = {
   clearMocks: true,
   testEnvironment: "jsdom",
   transform: {
-    "\\.[jt]sx?$": "ts-jest",
+    "\\.[jt]sx?$": [
+      "ts-jest",
+      {
+        tsconfig: "tsconfig.jest.json",
+      },
+    ],
   },
+  rootDir: "src",
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src$1",
+    "^@/(.*)$": "<rootDir>/$1",
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-      "<rootDir>/src/__mocks__/fileMock.js",
+      "<rootDir>/__mocks__/fileMock.js",
   },
 };
 
