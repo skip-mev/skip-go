@@ -27,6 +27,7 @@ const operationTypeToIcon: operationTypeToIcon = {
   [OperationType.opInitTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.goFastTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.stargateTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.eurekaTransfer]: <SwapExecutionBridgeIcon width={34} />,
   // send icon
   [OperationType.bankSend]: <SwapExecutionSendIcon width={34} />,
 };
@@ -42,6 +43,7 @@ const operationTypeToSimpleOperationType = {
   bankSend: "Sent",
   goFastTransfer: "Bridged",
   stargateTransfer: "Bridged",
+  eurekaTransfer: "Bridged",
 };
 
 export const SwapExecutionPageRouteDetailed = ({
