@@ -145,8 +145,12 @@ const WidgetContainer = styled.div`
   width: 100%;
   position: relative;
 
-  * {
+  div,
+  p {
     box-sizing: border-box;
+  }
+
+  * {
     font-family: "ABCDiatype", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

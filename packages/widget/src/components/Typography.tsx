@@ -25,6 +25,7 @@ export const removeButtonStyles = css`
 
 export const textProps = css<TextProps>`
   text-align: left;
+  box-sizing: border-box;
   font-family: "ABCDiatype", sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};

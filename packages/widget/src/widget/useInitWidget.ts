@@ -120,7 +120,7 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.simulate !== undefined) {
       setSimulateTx(props.simulate);
     }
-    if (props.disableShadowDom) {
+    if (props.disableShadowDom !== undefined) {
       setDisableShadowDom(props.disableShadowDom);
     }
 

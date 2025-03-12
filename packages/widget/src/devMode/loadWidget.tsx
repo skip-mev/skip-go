@@ -8,7 +8,7 @@ import { resetWidget } from "@/state/swapPage";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [shadowDom, setShadowDom] = useState(true);
+  const [disableShadowDom, setDisableShadowDom] = useState(false);
 
   const toggleTheme = () => {
     if (theme === "dark") {
@@ -22,8 +22,8 @@ const DevMode = () => {
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
-        <button onClick={() => setShadowDom((prev) => !prev)}>
-          toggle shadow dom (current: shadow dom:{shadowDom.toString()})
+        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+          shadow dom:{(!disableShadowDom).toString()}
         </button>
         <button onClick={() => resetWidget()}> reset widget </button>
         <button onClick={() => resetWidget({ onlyClearInputValues: true })}>
@@ -42,7 +42,7 @@ const DevMode = () => {
         justify="center"
       >
         <div
-          key={shadowDom.toString()}
+          key={disableShadowDom.toString()}
           style={{
             width: "100%",
             maxWidth: 500,
@@ -58,7 +58,7 @@ const DevMode = () => {
             settings={{
               useUnlimitedApproval: true,
             }}
-            disableShadowDom={!shadowDom}
+            disableShadowDom={disableShadowDom}
           />
         </div>
       </Row>
