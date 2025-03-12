@@ -268,7 +268,7 @@ const StyledAssetChainInputWrapper = styled(Column)`
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
 }>`
-  all: unset;
+  border: none;
 
   font-size: 38px;
   @media (max-width: 767px) {

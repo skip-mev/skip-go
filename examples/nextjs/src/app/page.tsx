@@ -6,6 +6,7 @@ import { useQueryParams } from '@/hooks/useURLQueryParams';
 export default function Home() {
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [disableShadowDom, setDisableShadowDom] = useState(false);
   // optional query params, not necessary for the widget to work
   const defaultRoute = useQueryParams();
 
@@ -80,6 +81,9 @@ export default function Home() {
         >
           Reset state only clear input values
         </button>
+        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+          toggle shadow dom
+        </button>
       </div>
       <div
         style={{
@@ -110,6 +114,7 @@ export default function Home() {
             onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
             onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
             onRouteUpdated={(props) => console.log('onRouteUpdated', props)}
+            disableShadowDom={disableShadowDom}
           />
         </div>
       </div>

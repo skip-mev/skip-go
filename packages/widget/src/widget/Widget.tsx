@@ -14,7 +14,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
-import { createStore, Provider } from "jotai";
+import { createStore, Provider, useSetAtom } from "jotai";
+import { settingsDrawerAtom } from "@/state/settingsDrawer";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -66,6 +67,7 @@ export type WidgetProps = {
    * @default true
    */
   simulate?: boolean;
+  disableShadowDom?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"
@@ -106,7 +108,7 @@ export const Widget = (props: WidgetProps) => {
 export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
   return (
-    <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
+    <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <NiceModal.Provider>
@@ -121,15 +123,20 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
 };
 
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+  const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
+
   useEffect(() => {
     registerModals();
   }, []);
+
+  const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {
+    setSettingsDrawerContainer(element);
+  };
+
   return (
     <WidgetContainer>
-      <ClientOnly>
-        {children}
-        <div id="settings-drawer"></div>
-      </ClientOnly>
+      {children}
+      <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>
   );
 };
@@ -137,4 +144,12 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 const WidgetContainer = styled.div`
   width: 100%;
   position: relative;
+
+  * {
+    box-sizing: border-box;
+    font-family: "ABCDiatype", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 `;

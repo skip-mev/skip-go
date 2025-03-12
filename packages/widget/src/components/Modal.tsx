@@ -1,5 +1,5 @@
 import { css, keyframes, styled } from "styled-components";
-import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
+import { disableShadowDomAtom, ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
@@ -50,7 +50,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (modalRef.current !== event.target && modal.visible) {
         modal.hide();
       }
     };
@@ -73,8 +73,13 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay ref={modalRef} drawer={drawer} open={modal.visible}>
-        <StyledContent drawer={drawer} open={modal.visible} onClick={(e) => e.stopPropagation()}>
+      <StyledOverlay drawer={drawer} open={modal.visible}>
+        <StyledContent
+          ref={modalRef}
+          drawer={drawer}
+          open={modal.visible}
+          onClick={(e) => e.stopPropagation()}
+        >
           {children}
         </StyledContent>
       </StyledOverlay>

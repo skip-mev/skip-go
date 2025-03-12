@@ -25,6 +25,7 @@ import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
+import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -47,6 +48,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
+  const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -117,6 +119,9 @@ export const useInitWidget = (props: WidgetProps) => {
     }
     if (props.simulate !== undefined) {
       setSimulateTx(props.simulate);
+    }
+    if (props.disableShadowDom) {
+      setDisableShadowDom(props.disableShadowDom);
     }
 
     const callbacks = {
