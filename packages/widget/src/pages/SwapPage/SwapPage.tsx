@@ -16,6 +16,7 @@ import {
   onRouteUpdatedEffect,
   routePreferenceAtom,
   slippageAtom,
+  onSourceAssetUpdatedEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -44,6 +45,7 @@ import { setUserId, track } from "@amplitude/analytics-browser";
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
+  useAtom(onSourceAssetUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
