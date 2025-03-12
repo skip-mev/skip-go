@@ -269,6 +269,7 @@ const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
 }>`
   border: none;
+  outline: none;
 
   font-size: 38px;
   @media (max-width: 767px) {
