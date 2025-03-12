@@ -82,7 +82,7 @@ export default function Home() {
           Reset state only clear input values
         </button>
         <button onClick={() => setDisableShadowDom((prev) => !prev)}>
-          toggle shadow dom
+          shadow dom:{(!disableShadowDom).toString()}
         </button>
       </div>
       <div
@@ -98,6 +98,7 @@ export default function Home() {
       >
         {/* widget will cohere to the parent container's width */}
         <div
+          key={disableShadowDom.toString()}
           style={{
             width: '100%',
             maxWidth: 500,
