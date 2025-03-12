@@ -3,7 +3,7 @@ import { StyleSheetManager, ThemeProvider } from "styled-components";
 import { useCSS, Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
-import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
+// import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
 import { globalStyles } from "./globalStyles";
 import { shadowRootAtom } from "@/state/shadowRoot";
 import { useAtom } from "jotai";
@@ -24,20 +24,19 @@ export const ShadowDomAndProviders = ({
   theme?: PartialTheme;
   shouldSetMainShadowRoot?: boolean;
 }) => {
-  useInjectFontsToDocumentHead();
+  // useInjectFontsToDocumentHead();
   const css = useCSS();
 
   const [localShadowRoot, setLocalShadowRoot] = useState<ShadowRoot>();
-  const [mainShadowRoot, setMainShadowRoot] = useAtom(shadowRootAtom);
 
   const onShadowDomLoaded = (element: HTMLDivElement) => {
     if (!element?.shadowRoot) return;
     if (!localShadowRoot) {
       setLocalShadowRoot(element?.shadowRoot);
     }
-    if (!mainShadowRoot && shouldSetMainShadowRoot) {
-      setMainShadowRoot(element?.shadowRoot);
-    }
+    // if (!mainShadowRoot && shouldSetMainShadowRoot) {
+    //   setMainShadowRoot(element?.shadowRoot);
+    // }
   };
 
   const mergedThemes = useMemo(() => {

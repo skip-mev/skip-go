@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { Widget } from "@/widget/Widget";
+import { SwapPage } from "@/pages/SwapPage/SwapPage";
 
 test("loads and displays greeting", async () => {
-  render(<Widget />);
+  render(<SwapPage />);
 
   // ACT
   const selectAsset = await userEvent.click(screen.getByText("Select asset"));

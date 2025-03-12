@@ -37,7 +37,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
   backgroundColor?: string;
 };
 
-type IconMap = Record<ICONS, (props: IconProps) => JSX.Element | null>;
+type IconMap = Record<ICONS, (props: IconProps) => React.ReactElement | null>;
 
 export const iconMap: IconMap = {
   [ICONS.none]: () => null,
