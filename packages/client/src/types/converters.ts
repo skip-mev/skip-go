@@ -53,6 +53,8 @@ import {
   StargateTransferInfoJSON,
   StargateTransferTransactionsJSON,
   StargateTransferTransactions,
+  EurekaTransferInfo,
+  EurekaTransferInfoJSON,
 } from "./lifecycle";
 import {
   Chain,
@@ -2162,6 +2164,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("eureka_transfer" in value) {
+    return {
+      eurekaTransfer: eurekaTransferInfoFromJSON(value.eureka_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -2200,6 +2208,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("stargateTransfer" in value) {
     return {
       stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
+    };
+  }
+
+  if ("eurekaTransfer" in value) {
+    return {
+      eureka_transfer: eurekaTransferInfoToJSON(value.eurekaTransfer),
     };
   }
 
@@ -2637,6 +2651,29 @@ export function stargateTransferInfoToJSON(
     txs: value.txs && stargateTransferTransactionsToJSON(value.txs),
   };
 }
+
+export function eurekaTransferInfoFromJSON(
+  value: EurekaTransferInfoJSON,
+): EurekaTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    packetTxs: value.packet_txs && packetFromJSON(value.packet_txs),
+  };
+}
+
+export function eurekaTransferInfoToJSON(
+  value: EurekaTransferInfo,
+): EurekaTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    packet_txs: value.packetTxs && packetToJSON(value.packetTxs),
+  };
+}
+
 export function msgsDirectRequestFromJSON(
   msgDirectRequestJSON: MsgsDirectRequestJSON,
 ): MsgsDirectRequest {
