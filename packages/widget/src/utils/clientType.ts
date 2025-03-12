@@ -29,6 +29,8 @@ import {
   TxStatusResponse,
   SwapExactCoinIn,
   SwapExactCoinOut,
+  EurekaTransfer,
+  EurekaTransferInfo,
 } from "@skip-go/client";
 
 export type OverallStatus = "pending" | "success" | "failed";
@@ -44,6 +46,7 @@ export enum OperationType {
   bankSend = "bankSend",
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
+  eurekaTransfer = "eurekaTransfer",
 }
 
 type CombinedOperation = {
@@ -60,6 +63,7 @@ type CombinedOperation = {
   opInitTransfer?: OPInitTransfer;
   goFastTransfer?: GoFastTransfer;
   stargateTransfer?: StargateTransfer;
+  eurekaTransfer?: EurekaTransfer;
 };
 
 type OperationDetails = CombineObjectTypes<
@@ -72,7 +76,8 @@ type OperationDetails = CombineObjectTypes<
     EvmSwap &
     StargateTransfer &
     OPInitTransfer &
-    GoFastTransfer
+    GoFastTransfer &
+    EurekaTransfer
 > & {
   swapIn?: SwapExactCoinIn;
   swapOut?: SwapExactCoinOut;
@@ -240,6 +245,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
   const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
   const stargateTransfer = combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
+  const eurekaTransfer = combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -256,6 +262,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.goFastTransfer;
   } else if (stargateTransfer) {
     transferType = TransferType.stargateTransfer;
+  } else if (eurekaTransfer) {
+    transferType = TransferType.eurekaTransfer;
   }
 
   const getExplorerLink = (type: "send" | "receive") => {
@@ -375,6 +383,7 @@ type CombinedTransferEvent = {
   [TransferType.opInitTransfer]: OPInitTransferInfo;
   [TransferType.goFastTransfer]: GoFastTransferInfo;
   [TransferType.stargateTransfer]: StargateTransferInfo;
+  [TransferType.eurekaTransfer]: EurekaTransferInfo;
 };
 
 export enum TransferType {
@@ -385,6 +394,7 @@ export enum TransferType {
   opInitTransfer = "opInitTransfer",
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
+  eurekaTransfer = "eurekaTransfer",
 }
 
 export type SimpleStatus =
