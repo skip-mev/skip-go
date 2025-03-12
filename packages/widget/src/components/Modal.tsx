@@ -22,7 +22,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
-  const [wasVisible, setWasVisible] = useState(modal.visible);
+  const [wasVisible, setWasVisible] = useState<boolean>();
 
   const delay = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -70,6 +70,9 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       document.body.style.overflow = prevOverflowStyle;
     };
   }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
+
+  // this fixes a flickering animation when modals are opened
+  if (wasVisible === undefined) return null;
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
