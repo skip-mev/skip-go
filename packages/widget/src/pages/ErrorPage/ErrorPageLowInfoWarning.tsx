@@ -6,6 +6,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { RouteResponse } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageLowInfoWarningProps = {
   onClickContinue: () => void;
@@ -45,7 +46,10 @@ export const ErrorPageLowInfoWarning = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            track("error page: low info warning - header back button clicked");
+            onClickBack();
+          },
         }}
       />
       <ErrorPageContent
@@ -59,7 +63,13 @@ export const ErrorPageLowInfoWarning = ({
               {sourceDetails.amount} {sourceDetails.symbol} → {destinationDetails.amount}{" "}
               {destinationDetails.symbol}
             </SmallText>
-            <SmallTextButton onClick={onClickContinue} color={theme.primary.text.lowContrast}>
+            <SmallTextButton
+              onClick={() => {
+                track("error page: low info warning - continue anyway clicked");
+                onClickContinue();
+              }}
+              color={theme.primary.text.lowContrast}
+            >
               I know the risk, continue anyway
             </SmallTextButton>
           </>
@@ -71,7 +81,10 @@ export const ErrorPageLowInfoWarning = ({
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
-        onClick={onClickBack}
+        onClick={() => {
+          track("error page: low info warning - main back button clicked");
+          onClickBack();
+        }}
         backgroundColor={theme.warning.text}
       />
     </>

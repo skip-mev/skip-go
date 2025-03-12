@@ -27,6 +27,7 @@ export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = ato
   (get, set) => {
     const sourceAsset = get(sourceAssetAtom);
     const destinationAsset = get(destinationAssetAtom);
+    const defaultRoute = get(defaultRouteAtom);
     const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
     const debouncedDestinationAssetInitialized = get(
       debouncedDestinationAssetAmountValueInitializedAtom,
@@ -34,10 +35,12 @@ export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = ato
 
     if (!debouncedSourceAssetInitialized && sourceAsset?.amount) {
       set(debouncedSourceAssetAmountAtom, sourceAsset.amount, undefined, true);
+      set(sourceAssetAtom, (prev) => ({ ...prev, locked: defaultRoute?.srcLocked }));
     }
 
     if (!debouncedDestinationAssetInitialized && destinationAsset?.amount) {
       set(debouncedDestinationAssetAmountAtom, destinationAsset.amount, undefined, true);
+      set(destinationAssetAtom, (prev) => ({ ...prev, locked: defaultRoute?.destLocked }));
     }
   },
 );

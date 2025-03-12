@@ -18,6 +18,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
+import { track } from "@amplitude/analytics-browser";
 
 export type GroupedAsset = {
   id: string;
@@ -106,7 +107,10 @@ export const AssetAndChainSelectorModal = createModal(
       setSearchQuery("");
     }, [modal.visible]);
 
+    const componentName = `${context} ${selectChain ? "chain" : "asset"} modal`;
+
     const handleSearch = (term: string) => {
+      track(`${componentName}: search input - changed`, { term });
       setSearchQuery(term);
     };
 
@@ -133,6 +137,7 @@ export const AssetAndChainSelectorModal = createModal(
     }, [filteredAssets, filteredChains, groupedAssetSelected, selectChain]);
 
     const onClickBack = () => {
+      track(`${componentName}: header back button - clicked`);
       if (groupedAssetSelected === null) {
         NiceModal.remove(Modals.AssetAndChainSelectorModal);
       } else {
@@ -141,6 +146,7 @@ export const AssetAndChainSelectorModal = createModal(
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      track(`${componentName}: keyboard - pressed`, { key: event.key });
       const firstAssetOrChain = listOfAssetsOrChains?.[0] ?? null;
       const asset = (firstAssetOrChain as ChainWithAsset)?.asset;
       const groupedAsset = firstAssetOrChain as GroupedAsset;

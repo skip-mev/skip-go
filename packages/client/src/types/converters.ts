@@ -53,6 +53,8 @@ import {
   StargateTransferInfoJSON,
   StargateTransferTransactionsJSON,
   StargateTransferTransactions,
+  EurekaTransferInfo,
+  EurekaTransferInfoJSON,
 } from "./lifecycle";
 import {
   Chain,
@@ -135,6 +137,8 @@ import {
   GoFastFeeJSON,
   StargateTransferJSON,
   StargateTransfer,
+  EurekaTransferJSON,
+  EurekaTransfer,
 } from "./shared";
 import {
   AssetBetweenChains,
@@ -928,6 +932,50 @@ export function stargateTransferToJSON(
   };
 }
 
+export function eurekaTransferFromJSON(
+  eurekaTransferJSON: EurekaTransferJSON,
+): EurekaTransfer {
+  return {
+    destinationPort: eurekaTransferJSON.destination_port,
+    sourceClient: eurekaTransferJSON.source_client,
+    fromChainID: eurekaTransferJSON.from_chain_id,
+    toChainID: eurekaTransferJSON.to_chain_id,
+    pfmEnabled: eurekaTransferJSON.pfm_enabled,
+    supportsMemo: eurekaTransferJSON.supports_memo,
+    entryContractAddress: eurekaTransferJSON.entry_contract_address,
+    callbackAdapterContractAddress: eurekaTransferJSON.callback_adapter_contract_address,
+    denomIn: eurekaTransferJSON.denom_in,
+    denomOut: eurekaTransferJSON.denom_out,
+    bridgeID: eurekaTransferJSON.bridge_id,
+    smartRelay: eurekaTransferJSON.smart_relay,
+    smartRelayFeeQuote: eurekaTransferJSON?.smart_relay_fee_quote
+      ? smartRelayFeeQuoteFromJSON(eurekaTransferJSON.smart_relay_fee_quote)
+      : undefined,
+  };
+}
+
+export function eurekaTransferToJSON(
+  eurekaTransfer: EurekaTransfer,
+): EurekaTransferJSON {
+  return {
+    destination_port: eurekaTransfer.destinationPort,
+    source_client: eurekaTransfer.sourceClient,
+    from_chain_id: eurekaTransfer.fromChainID,
+    to_chain_id: eurekaTransfer.toChainID,
+    pfm_enabled: eurekaTransfer.pfmEnabled,
+    supports_memo: eurekaTransfer.supportsMemo,
+    entry_contract_address: eurekaTransfer.entryContractAddress,
+    callback_adapter_contract_address: eurekaTransfer.callbackAdapterContractAddress,
+    denom_in: eurekaTransfer.denomIn,
+    denom_out: eurekaTransfer.denomOut,
+    bridge_id: eurekaTransfer.bridgeID,
+    smart_relay: eurekaTransfer.smartRelay,
+    smart_relay_fee_quote: eurekaTransfer?.smartRelayFeeQuote
+      ? smartRelayFeeQuoteToJSON(eurekaTransfer.smartRelayFeeQuote)
+      : undefined,
+  };
+}
+
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   const commonProps = {
     txIndex: operationJSON.tx_index,
@@ -1009,6 +1057,15 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
+  if ("eureka_transfer" in operationJSON) {
+    return {
+      ...commonProps,
+      eurekaTransfer: eurekaTransferFromJSON(
+        operationJSON.eureka_transfer,
+      ),
+    };
+  }
+
   throw new Error("Unknown operation type");
 }
 
@@ -1087,6 +1144,14 @@ export function operationToJSON(operation: Operation): OperationJSON {
       evm_swap: evmSwapToJSON(operation.evmSwap),
     };
   }
+
+  if ("eurekaTransfer" in operation) {
+    return {
+      ...commonProps,
+      eureka_transfer: eurekaTransferToJSON(operation.eurekaTransfer),
+    };
+  }
+
   throw new Error("Unknown operation type");
 }
 
@@ -2099,6 +2164,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("eureka_transfer" in value) {
+    return {
+      eurekaTransfer: eurekaTransferInfoFromJSON(value.eureka_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -2137,6 +2208,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("stargateTransfer" in value) {
     return {
       stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
+    };
+  }
+
+  if ("eurekaTransfer" in value) {
+    return {
+      eureka_transfer: eurekaTransferInfoToJSON(value.eurekaTransfer),
     };
   }
 
@@ -2574,6 +2651,29 @@ export function stargateTransferInfoToJSON(
     txs: value.txs && stargateTransferTransactionsToJSON(value.txs),
   };
 }
+
+export function eurekaTransferInfoFromJSON(
+  value: EurekaTransferInfoJSON,
+): EurekaTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    packetTxs: value.packet_txs && packetFromJSON(value.packet_txs),
+  };
+}
+
+export function eurekaTransferInfoToJSON(
+  value: EurekaTransferInfo,
+): EurekaTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    packet_txs: value.packetTxs && packetToJSON(value.packetTxs),
+  };
+}
+
 export function msgsDirectRequestFromJSON(
   msgDirectRequestJSON: MsgsDirectRequestJSON,
 ): MsgsDirectRequest {

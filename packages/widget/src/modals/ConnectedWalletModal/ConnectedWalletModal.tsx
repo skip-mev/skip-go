@@ -26,6 +26,7 @@ import { ChainType } from "@skip-go/client";
 import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { track } from "@amplitude/analytics-browser";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -41,7 +42,10 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
     <StyledModalContainer gap={15}>
       <ModalHeader
         title="Wallets"
-        onClickBackButton={() => NiceModal.remove(Modals.ConnectedWalletModal)}
+        onClickBackButton={() => {
+          track("connect eco modal: header back button - clicked");
+          NiceModal.remove(Modals.ConnectedWalletModal);
+        }}
         rightContent={() => {
           return sourceAsset?.chainID ? (
             <img src={chainImage} height={36} width={36} title={chainName} />
@@ -87,6 +91,10 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
           style={{ width: 35, height: 35 }}
           onClick={(e) => {
             e.stopPropagation();
+            track("connect eco modal: disconnect button - clicked", {
+              chainType,
+              wallet: account?.wallet.name,
+            });
             connectedWallet?.disconnect();
             NiceModal.remove(Modals.ConnectedWalletModal);
           }}
@@ -101,6 +109,10 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         justify="center"
         onClick={(e) => {
           e.stopPropagation();
+          track("connect eco modal: disconnect button - clicked", {
+            chainType,
+            wallet: account?.wallet.name,
+          });
           connectedWallet?.disconnect();
           NiceModal.remove(Modals.ConnectedWalletModal);
         }}
@@ -108,12 +120,21 @@ const ConnectEco = ({ chainType, chainID }: { chainType: ChainType; chainID: str
         Disconnect
       </GhostButton>
     );
-  }, [connectedWallet, isMobileScreenSize, theme?.primary?.text?.ultraLowContrast]);
+  }, [
+    account?.wallet.name,
+    chainType,
+    connectedWallet,
+    isMobileScreenSize,
+    theme?.primary?.text?.ultraLowContrast,
+  ]);
 
   return (
     <ModalRowItem
       style={{ marginTop: ITEM_GAP }}
       onClick={() => {
+        track("connect eco modal: eco button - clicked", {
+          chainType,
+        });
         NiceModal.remove(Modals.ConnectedWalletModal);
         NiceModal.show(Modals.WalletSelectorModal, {
           chainType,

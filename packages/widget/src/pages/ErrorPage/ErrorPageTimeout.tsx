@@ -13,6 +13,7 @@ import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs"
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageTimeoutProps = {
   txHash: string;
@@ -34,6 +35,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
 
   useEffect(() => {
     if (error && data?.isSettled) {
+      track("error page: transaction timeover - transaction settled");
       setError(undefined);
     }
   }, [data?.isSettled, error, setError]);
@@ -45,6 +47,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
+            track("error page: transaction timeover - header back button clicked");
             setError(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -66,7 +69,10 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
               gap={5}
               align="center"
               as={SmallTextButton}
-              onClick={() => explorerLink && window.open(explorerLink, "_blank")}
+              onClick={() => {
+                track("error page: transaction timeover - view on explorer clicked");
+                window.open(explorerLink, "_blank");
+              }}
               color={theme.primary.text.lowContrast}
             >
               <ChainIcon color={theme.primary.text.lowContrast} />

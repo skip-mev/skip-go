@@ -502,6 +502,20 @@ export type OPInitTransferInfo = {
   txs: OPInitTransferTransactions;
 };
 
+export type EurekaTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: TransferState;
+  packet_txs: PacketJSON;
+}
+
+export type EurekaTransferInfo= {
+  fromChainID: string;
+  toChainID: string;
+  state: TransferState;
+  packetTxs: Packet;
+}
+
 export type TransferEventJSON =
   | {
     ibc_transfer: TransferInfoJSON;
@@ -513,7 +527,8 @@ export type TransferEventJSON =
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
   | { op_init_transfer: OPInitTransferInfoJSON }
   | { go_fast_transfer: GoFastTransferInfoJSON }
-  | { stargate_transfer: StargateTransferInfoJSON };
+  | { stargate_transfer: StargateTransferInfoJSON }
+  | { eureka_transfer: EurekaTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -524,7 +539,8 @@ export type TransferEvent =
   | { hyperlaneTransfer: HyperlaneTransferInfo }
   | { opInitTransfer: OPInitTransferInfo }
   | { goFastTransfer: GoFastTransferInfo }
-  | { stargateTransfer: StargateTransferInfo };
+  | { stargateTransfer: StargateTransferInfo }
+  | { eurekaTransfer: EurekaTransferInfo };
 
 type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
 export interface TransactionCallbacks {

@@ -10,6 +10,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { transactionHistoryAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
+import { track } from "@amplitude/analytics-browser";
 
 export const TransactionHistoryPage = () => {
   const theme = useTheme();
@@ -28,7 +29,10 @@ export const TransactionHistoryPage = () => {
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: () => setCurrentPage(Routes.SwapPage),
+          onClick: () => {
+            track("transaction history page: header back button - clicked");
+            setCurrentPage(Routes.SwapPage);
+          },
         }}
       />
       <StyledContainer gap={5}>
@@ -46,9 +50,12 @@ export const TransactionHistoryPage = () => {
               index={index}
               txHistoryItem={item}
               showDetails={index === itemIndexToShowDetail}
-              onClickRow={() =>
-                setItemIndexToShowDetail((prev) => (prev === index ? undefined : index))
-              }
+              onClickRow={() => {
+                track("transaction history page: transaction row - clicked", {
+                  item,
+                });
+                setItemIndexToShowDetail((prev) => (prev === index ? undefined : index));
+              }}
             />
           )}
           itemKey={(item) => item.transactionDetails[0].txHash}

@@ -8,6 +8,7 @@ import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled from "styled-components";
 import { StyledSettingsOptionLabel } from "./SlippageSelector";
 import { Tooltip } from "@/components/Tooltip";
+import { track } from "@amplitude/analytics-browser";
 
 const RoutePreferenceSelector: React.FC = () => {
   const [routePreference, setRoutePreference] = useAtom(routePreferenceAtom);
@@ -33,7 +34,10 @@ const RoutePreferenceSelector: React.FC = () => {
           <StyledSettingsOptionLabel
             key={option}
             selected={option === routePreference}
-            onClick={() => setRoutePreference(option)}
+            onClick={() => {
+              track("settings drawer: route preference - changed", { routePreference: option });
+              setRoutePreference(option);
+            }}
           >
             {option.charAt(0).toUpperCase() + option.slice(1)}
           </StyledSettingsOptionLabel>
