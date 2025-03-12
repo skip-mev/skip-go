@@ -1,4 +1,4 @@
-import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
 import React, { ReactElement, ReactNode, useEffect } from "react";

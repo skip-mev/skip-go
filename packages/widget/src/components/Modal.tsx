@@ -1,5 +1,5 @@
 import { css, keyframes, styled } from "styled-components";
-import { disableShadowDomAtom, ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
+import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";

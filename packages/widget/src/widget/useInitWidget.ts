@@ -157,6 +157,8 @@ export const useInitWidget = (props: WidgetProps) => {
     setCallbacks,
     setSimulateTx,
     props.onRouteUpdated,
+    props.disableShadowDom,
+    setDisableShadowDom,
   ]);
 
   return { theme: mergedTheme };
