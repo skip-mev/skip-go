@@ -361,7 +361,7 @@ export type EurekaTransferJSON = {
   pfm_enabled: boolean;
   supports_memo: boolean;
   entry_contract_address: string;
-  destination_callback_adapter_contract_address: string;
+  callback_adapter_contract_address: string;
 
   denom_in: string;
   denom_out: string;
@@ -379,7 +379,7 @@ export type EurekaTransfer = {
   pfmEnabled: boolean;
   supportsMemo: boolean;
   entryContractAddress: string;
-  destinationCallbackAdapterContractAddress: string;
+  callbackAdapterContractAddress: string;
   
   denomIn: string;
   denomOut: string;
