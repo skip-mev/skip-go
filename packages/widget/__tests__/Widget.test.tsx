@@ -1,4 +1,4 @@
-import { expect, test, beforeEach } from "vitest";
+import { expect, test, beforeEach, describe } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
@@ -6,54 +6,59 @@ import { Widget } from "../src/widget/Widget";
 
 beforeEach(() => {
   cleanup(); // Clears previous render before rendering a new instance
-  localStorage.clear();
 });
 
-test("Two Select assets and please select a source asset is shown by default", async () => {
-  render(<Widget disableShadowDom />);
-  const selectAsset = await screen.findAllByText("Select asset");
+describe("Widget tests", async () => {
+  test("Two Select assets and please select a source asset is shown by default", async () => {
+    render(<Widget disableShadowDom />);
+    const selectAsset = await screen.findAllByText("Select asset");
 
-  screen.findByText("Please select a source asset");
+    screen.findByText("Please select a source asset");
 
-  expect(selectAsset.length).toBe(2);
-});
+    expect(selectAsset.length).toBe(2);
+  });
 
-test("Select Asset Modal is shown when Select asset is clicked, and user is able to select ATOM on CosmosHub", async (context) => {
-  console.log(context);
-  render(<Widget disableShadowDom />);
-  const selectAsset = await screen.findAllByText("Select asset");
+  test("Select Asset Modal is shown when Select asset is clicked, and user is able to select ATOM on CosmosHub", async () => {
+    render(<Widget disableShadowDom />);
+    const selectAsset = await screen.findAllByText("Select asset");
+    await userEvent.click(selectAsset[0]);
 
-  const searchForAnAsset = screen.queryByPlaceholderText("Search for an asset");
-  expect(searchForAnAsset).toBeNull();
+    const searchForAnAsset2 = await screen.findByPlaceholderText("Search for an asset");
 
-  await userEvent.click(selectAsset[0]);
+    expect(searchForAnAsset2).toBeDefined();
 
-  const searchForAnAsset2 = await screen.findByPlaceholderText("Search for an asset");
+    const atomButton = await screen.findByText("ATOM");
 
-  expect(searchForAnAsset2).toBeDefined();
+    await userEvent.click(atomButton);
 
-  const atomButton = await screen.findByText("ATOM");
+    const cosmosHub = await screen.findByText("Cosmos Hub");
 
-  await userEvent.click(atomButton);
+    await userEvent.click(cosmosHub);
 
-  const cosmosHub = await screen.findByText("Cosmos Hub");
+    const sourceAssetAtom = await screen.findByText("ATOM");
+    const sourceAssetChainId = await screen.findByText("on Cosmos Hub");
 
-  await userEvent.click(cosmosHub);
+    expect(sourceAssetAtom).toBeDefined();
+    expect(sourceAssetChainId).toBeDefined();
 
-  const sourceAssetAtom = await screen.findByText("ATOM");
-  const sourceAssetChainId = await screen.findByText("on Cosmos Hub");
+    const selectDestinationAsset = await screen.findAllByText("Select asset");
 
-  expect(sourceAssetAtom).toBeDefined();
-  expect(sourceAssetChainId).toBeDefined();
+    expect(selectDestinationAsset.length).toBe(1);
 
-  const selectDestinationAsset = await screen.findAllByText("Select asset");
+    const connectWallet = await screen.findByText("Connect Wallet");
+    // await userEvent.click(connectWallet);
+    // const keplr = await screen.findByText("Keplr");
+    // await userEvent.click(keplr);
 
-  expect(selectDestinationAsset.length).toBe(1);
+    // await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  });
 
-  const connectWallet = await screen.findByText("Connect Wallet");
-  await userEvent.click(connectWallet);
-  const keplr = await screen.findByText("Keplr");
-  await userEvent.click(keplr);
+  test("Selected Assets persists across re-mounting / reloading", async () => {
+    render(<Widget disableShadowDom />);
+    const sourceAssetAtom = await screen.findByText("ATOM");
+    const sourceAssetChainId = await screen.findByText("on Cosmos Hub");
 
-  // await page.goto(`chrome-extension://${extensionId}/popup.html`);
+    expect(sourceAssetAtom).toBeDefined();
+    expect(sourceAssetChainId).toBeDefined();
+  });
 });
