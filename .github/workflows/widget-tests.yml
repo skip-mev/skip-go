@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: build client
+        yarn run build:client
+
       - name: Install playwright browsers
         run: yarn playwright install
         working-directory: ./packages/widget
