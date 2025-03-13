@@ -6,6 +6,7 @@ import { Widget } from "../src/widget/Widget";
 
 beforeEach(() => {
   cleanup(); // Clears previous render before rendering a new instance
+  localStorage.clear();
 });
 
 test("Two Select assets and please select a source asset is shown by default", async () => {
@@ -17,7 +18,8 @@ test("Two Select assets and please select a source asset is shown by default", a
   expect(selectAsset.length).toBe(2);
 });
 
-test("Select Asset Modal is shown when Select asset is clicked, and user is able to select ATOM on CosmosHub", async () => {
+test("Select Asset Modal is shown when Select asset is clicked, and user is able to select ATOM on CosmosHub", async (context) => {
+  console.log(context);
   render(<Widget disableShadowDom />);
   const selectAsset = await screen.findAllByText("Select asset");
 
@@ -48,5 +50,10 @@ test("Select Asset Modal is shown when Select asset is clicked, and user is able
 
   expect(selectDestinationAsset.length).toBe(1);
 
-  await screen.findByText("Connect Wallet");
+  const connectWallet = await screen.findByText("Connect Wallet");
+  await userEvent.click(connectWallet);
+  const keplr = await screen.findByText("Keplr");
+  await userEvent.click(keplr);
+
+  // await page.goto(`chrome-extension://${extensionId}/popup.html`);
 });
