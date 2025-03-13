@@ -21,6 +21,7 @@ jobs:
 
       - name: Install playwright browsers
         run: yarn playwright install
+        working-directory: ./packages/widget
       
       - name: Test widget
         run: yarn test-widget
