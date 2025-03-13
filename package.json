@@ -22,7 +22,7 @@
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",
     "test": "yarn workspace @skip-go/client run test",
-    "test-widget": "yarn workspace @skip-go/widget run test:browser",
+    "test-widget": "yarn workspace @skip-go/widget run test",
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule deinit -f --all",
     "submodule:update": "git submodule update --init --recursive",

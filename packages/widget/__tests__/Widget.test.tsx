@@ -3,7 +3,6 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { Widget } from "../src/widget/Widget";
-import { page } from "@vitest/browser/context";
 
 beforeEach(() => {
   cleanup(); // Clears previous render before rendering a new instance
@@ -16,8 +15,6 @@ describe("Widget tests", async () => {
     const selectAsset = await screen.findAllByText("Select asset");
 
     screen.findByText("Please select a source asset");
-
-    await page.screenshot();
 
     expect(selectAsset.length).toBe(2);
   });
@@ -49,8 +46,6 @@ describe("Widget tests", async () => {
 
     expect(selectDestinationAsset.length).toBe(1);
 
-    await page.screenshot();
-
     const connectWallet = await screen.findByText("Connect Wallet");
     // await userEvent.click(connectWallet);
     // const keplr = await screen.findByText("Keplr");
@@ -68,7 +63,5 @@ describe("Widget tests", async () => {
 
     expect(sourceAssetAtom).toBeDefined();
     expect(sourceAssetChainId).toBeDefined();
-
-    await page.screenshot();
   });
 });
