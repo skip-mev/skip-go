@@ -26,6 +26,10 @@ jobs:
       - name: Test client
         run: yarn run test
         working-directory: ./packages/client
+
+      - name: Install playwright browsers
+        run: yarn playwright install
+        working-directory: ./packages/widget
       
       - name: Test widget
         run: yarn run test:browser
