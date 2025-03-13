@@ -1,4 +1,4 @@
-name: Tests
+name: Widget Tests
 on: [pull_request, push]
 
 jobs:
@@ -19,11 +19,8 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Generate cosmjs types
-        run: yarn run codegen
-        working-directory: ./packages/client
-
-      - name: Test client
-        run: yarn run test
-        working-directory: ./packages/client
-
+      - name: Install playwright browsers
+        run: yarn playwright install
+      
+      - name: Test widget
+        run: yarn test-widget

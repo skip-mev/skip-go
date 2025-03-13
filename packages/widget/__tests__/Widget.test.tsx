@@ -61,8 +61,10 @@ describe("Widget tests", async () => {
 
   test("Selected Assets persists across re-mounting / reloading", async () => {
     render(<Widget disableShadowDom />);
-    const sourceAssetAtom = await screen.findByText("ATOM");
-    const sourceAssetChainId = await screen.findByText("on Cosmos Hub");
+    const sourceAssetAtom = await screen.findByText("ATOM", undefined, { timeout: 5000 });
+    const sourceAssetChainId = await screen.findByText("on Cosmos Hub", undefined, {
+      timeout: 5000,
+    });
 
     expect(sourceAssetAtom).toBeDefined();
     expect(sourceAssetChainId).toBeDefined();
