@@ -20,7 +20,7 @@ jobs:
         run: yarn
 
       - name: build client
-        yarn run build:client
+        run: yarn run build:client
 
       - name: Install playwright browsers
         run: yarn playwright install
