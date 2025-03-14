@@ -57,8 +57,14 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     onOpenChange?.(true);
-    if (!drawer) {
-      const prevOverflowStyle = window.getComputedStyle(document.documentElement).overflow;
+
+    const hasScrollbar = () => {
+      const htmlElement = document.documentElement;
+      return htmlElement.scrollHeight > htmlElement.clientHeight;
+    };
+
+    const prevOverflowStyle = window.getComputedStyle(document.documentElement).overflow;
+    if (!drawer || !hasScrollbar()) {
       setPrevOverflowStyle(prevOverflowStyle);
       document.documentElement.style.overflow = "hidden";
     }
@@ -70,9 +76,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("click", handleClickOutside);
       onOpenChange?.(false);
-      if (!drawer) {
-        document.documentElement.style.overflow = prevOverflowStyle;
-      }
+      document.documentElement.style.overflow = prevOverflowStyle;
     };
   }, [closeModal, drawer, modal, onOpenChange, prevOverflowStyle]);
 
