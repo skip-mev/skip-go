@@ -57,11 +57,9 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     onOpenChange?.(true);
-    if (!drawer) {
-      const prevOverflowStyle = window.getComputedStyle(document.body).overflow;
-      setPrevOverflowStyle(prevOverflowStyle);
-      document.body.style.overflow = "hidden";
-    }
+    const prevOverflowStyle = window.getComputedStyle(document.documentElement).overflow;
+    setPrevOverflowStyle(prevOverflowStyle);
+    document.documentElement.style.overflow = "hidden";
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("click", handleClickOutside);
@@ -70,11 +68,9 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("click", handleClickOutside);
       onOpenChange?.(false);
-      if (!drawer) {
-        document.body.style.overflow = prevOverflowStyle;
-      }
+      document.documentElement.style.overflow = prevOverflowStyle;
     };
-  }, [closeModal, drawer, modal, onOpenChange, prevOverflowStyle]);
+  }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
 
   // this fixes a flickering animation when modals are opened
   if (disableShadowDom && wasVisible === undefined) return null;
