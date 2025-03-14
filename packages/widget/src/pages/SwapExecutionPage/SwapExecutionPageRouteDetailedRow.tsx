@@ -56,8 +56,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
   });
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
 
   const shouldRenderEditDestinationWallet =
     context === "destination" && onClickEditDestinationWallet !== undefined;
@@ -65,38 +63,24 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderingEditDestinationWalletOrExplorerLink =
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
-  const source = useMemo(() => {
-    const chainAddressArray = Object.values(chainAddresses);
-    switch (context) {
-      case "source":
-        return {
-          address: account?.address,
-          image: account?.wallet.logo,
-        };
-      case "intermediary": {
-        const selected = Object.values(chainAddresses).find(
-          (chainAddress) => chainAddress.chainID === chainId,
-        );
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
-        };
-      }
-      case "destination": {
-        const selected = chainAddressArray[chainAddressArray.length - 1];
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
-        };
-      }
-    }
-  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
+  const chainAddressWallet = useMemo(() => {
+    const selectedChainAddress = Object.values(chainAddresses).find(
+      (chainAddress) => chainAddress.chainID === chainId,
+    );
+    return {
+      address: selectedChainAddress?.address,
+      image:
+        (selectedChainAddress?.source === "wallet" &&
+          selectedChainAddress?.wallet?.walletInfo.logo) ||
+        undefined,
+    };
+  }, [chainAddresses, chainId]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
-    if (!source.address) return;
+    if (!chainAddressWallet.address) return;
 
     const renderContent = () => {
       const copiedToClipboardText = isMobileScreenSize ? "Copied!" : "Address copied!";
@@ -108,17 +92,17 @@ export const SwapExecutionPageRouteDetailedRow = ({
         return <CopyIcon color={theme.primary.text.lowContrast} />;
       }
       return (
-        <AddressText title={source.address} monospace textWrap="nowrap">
-          {getTruncatedAddress(source.address, isMobileScreenSize)}
+        <AddressText title={chainAddressWallet.address} monospace textWrap="nowrap">
+          {getTruncatedAddress(chainAddressWallet.address, isMobileScreenSize)}
         </AddressText>
       );
     };
     return (
       <Container>
-        <PillButton onClick={() => copyAddress(source?.address)}>
-          {source.image && (
+        <PillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
+          {chainAddressWallet.image && (
             <img
-              src={source.image}
+              src={chainAddressWallet.image}
               style={{
                 height: "100%",
               }}
@@ -143,8 +127,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
     isShowingCopyAddressFeedback,
     onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
-    source.address,
-    source.image,
+    chainAddressWallet.address,
+    chainAddressWallet.image,
     theme.primary.text.lowContrast,
   ]);
 
