@@ -2,6 +2,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import {
   chainAddressEffectAtom,
   chainAddressesAtom,
+  skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
 import { connectedAddressesAtom } from "@/state/wallets";
@@ -32,6 +33,7 @@ export const useAutoSetAddress = () => {
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
   const { createSolanaWallets } = useCreateSolanaWallets();
+  const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   useAtom(chainAddressEffectAtom);
 
@@ -46,6 +48,7 @@ export const useAutoSetAddress = () => {
 
   const connectRequiredChains = useCallback(
     async (openModal?: boolean) => {
+      if (isPending) return;
       setIsLoading(true);
       const createWallets = {
         [ChainType.Cosmos]: createCosmosWallets,
