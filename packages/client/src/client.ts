@@ -1989,12 +1989,13 @@ export class SkipClient {
                 // The temporary solution to route around Noble address breakage.
                 // This can be entirely removed once `noble-1` upgrades.
                 return ["penumbracompat1", "tpenumbra"].includes(
-                  bech32.decode(userAddress.address).prefix,
+                  bech32.decode(userAddress.address, 1023).prefix,
                 );
               }
             }
             return (
-              chain.bech32Prefix === bech32.decode(userAddress.address).prefix
+              chain.bech32Prefix ===
+              bech32.decode(userAddress.address, 1023).prefix
             );
           } catch {
             return false;

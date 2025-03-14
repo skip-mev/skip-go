@@ -1,7 +1,7 @@
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 import { ChainType } from "@skip-go/client";
-import { bech32m, bech32 } from "bech32";
+import { bech32m, bech32 } from "@/utils/bech32";
 
 type isValidWalletAddressProps = {
   address: string;
@@ -22,7 +22,9 @@ export const isValidWalletAddress = ({
     } catch {
       // The temporary solution to route around Noble address breakage.
       // This can be entirely removed once `noble-1` upgrades.
-      return ["penumbracompat1", "tpenumbra"].includes(bech32.decode(address).prefix);
+      return ["penumbracompat1", "tpenumbra"].includes(
+        bech32.decode(address).prefix,
+      );
     }
   }
   switch (chainType) {
