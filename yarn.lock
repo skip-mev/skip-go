@@ -26002,6 +26002,7 @@ __metadata:
     minimatch: ^9.0.3
     msw: ^1.2.3
     p-map: ^7.0.2
+    playwright: ^1.51.0
     postcss-prefixwrap: ^1.49.0
     proxy-from-env: ^1.1.0
     react: ^18.0.0
