@@ -122,6 +122,8 @@
     {
       "group": "Eureka",
       "pages": [
+        "eureka/eureka-overview",
+        "eureka/eureka-tech-overview",
         "eureka/devnet-testing-guide"
       ]
     },
