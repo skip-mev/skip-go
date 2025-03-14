@@ -1,0 +1,205 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Skip",
+  "colors": {
+    "primary": "#0E0E0E",
+    "light": "#FAFAFA",
+    "dark": "#0E0E0E"
+  },
+  "favicon": "/favicon.png",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "General API Docs",
+            "pages": [
+              "general/getting-started",
+              "general/quickstart-guide",
+              "general/overview-and-typical-usage",
+              "general/supported-ecosystems-and-bridges",
+              "general/multi-chain-realtime-transaction-and-packet-tracking",
+              "general/api-keys",
+              "general/smart-relay",
+              "general/post-route-actions",
+              "general/affiliate-fees",
+              "general/fee-info",
+              "general/faq",
+              "general/upcoming-features"
+            ]
+          },
+          {
+            "group": "Skip Go Widget",
+            "pages": [
+              "widget/getting-started",
+              "widget/configuration",
+              "widget/web-component",
+              "widget/migration-guide",
+              "widget/faq"
+            ]
+          },
+          {
+            "group": "Skip Go Client",
+            "pages": [
+              "client/getting-started",
+              "client/balance-gas-and-fee-tooling",
+              "client/advanced-features",
+              "client/migration-guide"
+            ]
+          },
+          {
+            "group": "Advanced Transfer",
+            "pages": [
+              "advanced-transfer/handling-cross-chain-failure-cases",
+              "advanced-transfer/ibc-routing-algorithm",
+              "advanced-transfer/evm-transactions",
+              "advanced-transfer/svm-transaction-details",
+              "advanced-transfer/cw20-swaps",
+              "advanced-transfer/experimental-features",
+              "advanced-transfer/go-fast"
+            ]
+          },
+          {
+            "group": "Advanced Swapping",
+            "pages": [
+              "advanced-swapping/understanding-quote-quality-metrics",
+              "advanced-swapping/allow_unsafe-preventing-handling-bad-execution",
+              "advanced-swapping/safe-swapping-how-to-protect-users-from-harming-themselves",
+              "advanced-swapping/smart-swap-options"
+            ]
+          },
+          {
+            "group": "Support Requirements",
+            "pages": [
+              "support-requirements/chain-support-requirements",
+              "support-requirements/token-support-requirements",
+              "support-requirements/swap-venue-requirements"
+            ]
+          },
+          {
+            "group": "Eureka",
+            "pages": [
+              "eureka/devnet-testing-guide"
+            ]
+          },
+          {
+            "group": "Legal and Privacy",
+            "pages": [
+              "legal-and-privacy/terms-of-service",
+              "legal-and-privacy/privacy-policy"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Prod Endpoints",
+            "pages": [
+              {
+                "group": "Info",
+                "pages": [
+                  "api-reference/prod/info/get-v2infochains",
+                  "api-reference/prod/info/get-v2infobridges",
+                  "api-reference/prod/info/post-v2infobalances"
+                ]
+              },
+              {
+                "group": "Fungible",
+                "pages": [
+                  "api-reference/prod/fungible/get-v2fungiblevenues",
+                  "api-reference/prod/fungible/get-v2fungibleassets",
+                  "api-reference/prod/fungible/post-v2fungibleassets_from_source",
+                  "api-reference/prod/fungible/post-v2fungibleroute",
+                  "api-reference/prod/fungible/post-v2fungiblemsgs",
+                  "api-reference/prod/fungible/post-v2fungiblemsgs_direct",
+                  "api-reference/prod/fungible/post-v2fungibleibc_origin_assets",
+                  "api-reference/prod/fungible/post-v2fungibleassets_between_chains"
+                ]
+              },
+              {
+                "group": "Transaction",
+                "pages": [
+                  "api-reference/prod/transaction/post-v2txsubmit",
+                  "api-reference/prod/transaction/post-v2txtrack",
+                  "api-reference/prod/transaction/get-v2txstatus"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Release Notes",
+        "groups": [
+          {
+            "group": "Release Notes",
+            "pages": [
+              "release-notes/overview",
+              "release-notes/client",
+              "release-notes/widget",
+              "release-notes/api"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Support",
+          "href": "https://discord.com/channels/1010553709987639406/1210022796797677589",
+          "icon": "headset"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": false
+    }
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "background": {
+    "color": {
+      "dark": "#151617"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Skip:Connect",
+        "href": "https://docs.skip.build/connect"
+      },
+      {
+        "label": "Research",
+        "href": "https://ideas.skip.build"
+      },
+      {
+        "label": "Jobs",
+        "href": "https://jobs.skip.build"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "twitter": "https://twitter.com/skipprotocol",
+      "discord": "https://discord.com/invite/hFeHVAE26P"
+    }
+  },
+  "integrations": {
+    "gtm": {
+      "tagId": "GTM-5XMZ695Z"
+    }
+  }
+}
