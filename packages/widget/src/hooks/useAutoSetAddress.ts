@@ -20,7 +20,7 @@ import { useGetAccount } from "./useGetAccount";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
-  const { route } = useAtomValue(swapExecutionStateAtom);
+  const { route, overallStatus } = useAtomValue(swapExecutionStateAtom);
   const requiredChainAddresses = route?.requiredChainAddresses;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
@@ -140,6 +140,7 @@ export const useAutoSetAddress = () => {
   );
 
   useEffect(() => {
+    if (overallStatus !== "unconfirmed") return;
     if (!requiredChainAddresses) return;
     const cosmosWalletChanged = sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id;
     const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
@@ -156,6 +157,7 @@ export const useAutoSetAddress = () => {
     currentSourceWallets?.svm?.id,
     getAccount,
     isLoading,
+    overallStatus,
     requiredChainAddresses,
     sourceWallet,
     sourceWallet.cosmos,
