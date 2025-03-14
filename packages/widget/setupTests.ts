@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 global.window.matchMedia =
   global.window.matchMedia ||
   (() => {

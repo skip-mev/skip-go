@@ -17,7 +17,9 @@ describe("Widget tests", async () => {
 
     screen.findByText("Please select a source asset");
 
-    await page.screenshot();
+    await page.screenshot({
+      path: "./Widget/default-widget.png",
+    });
 
     expect(selectAsset.length).toBe(2);
   });
@@ -49,14 +51,9 @@ describe("Widget tests", async () => {
 
     expect(selectDestinationAsset.length).toBe(1);
 
-    await page.screenshot();
-
-    const connectWallet = await screen.findByText("Connect Wallet");
-    // await userEvent.click(connectWallet);
-    // const keplr = await screen.findByText("Keplr");
-    // await userEvent.click(keplr);
-
-    // await page.goto(`chrome-extension://${extensionId}/popup.html`);
+    await page.screenshot({
+      path: "./Widget/select-atom.png",
+    });
   });
 
   test("Selected Assets persists across re-mounting / reloading", async () => {
@@ -68,7 +65,5 @@ describe("Widget tests", async () => {
 
     expect(sourceAssetAtom).toBeDefined();
     expect(sourceAssetChainId).toBeDefined();
-
-    await page.screenshot();
   });
 });
