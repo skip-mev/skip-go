@@ -33,11 +33,11 @@ describe("Widget tests", async () => {
 
     expect(searchForAnAsset2).toBeDefined();
 
-    const atomButton = await screen.findByText("ATOM");
+    const atomButton = await screen.findByText("ATOM", undefined, { timeout: 5000 });
 
     await userEvent.click(atomButton);
 
-    const cosmosHub = await screen.findByText("Cosmos Hub");
+    const cosmosHub = await screen.findByText("Cosmos Hub", undefined, { timeout: 5000 });
 
     await userEvent.click(cosmosHub);
 

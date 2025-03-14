@@ -23,7 +23,7 @@ jobs:
         run: yarn run codegen
         working-directory: ./packages/client
 
-      - name: Test client
+      - name: Test
         run: yarn run test
         working-directory: ./packages/client
 
