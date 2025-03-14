@@ -1,5 +1,23 @@
 ## 0.0.15
 
+## 3.4.2
+
+### Patch Changes
+
+- bf12e02: fix wallet address shows incorrectly while executing route
+- 8308e9c: Add eureka types
+- 38c1a8c: Improve executeRoute performance
+- efb3cba: Fix mobile styling flickering
+- ac9a85f: Add ability to disable shadowDOM
+- 112db78: add transaction reverted error page
+- c600209: update dependencies
+- 30525ce: No longer lock scrollbar when opening drawer
+- Updated dependencies [fb7887e]
+- Updated dependencies [8308e9c]
+- Updated dependencies [38c1a8c]
+- Updated dependencies [c600209]
+  - @skip-go/client@0.16.18
+
 ## 3.4.1
 
 ### Patch Changes

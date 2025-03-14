@@ -1,5 +1,14 @@
 # @skip-go/client
 
+## 0.16.18
+
+### Patch Changes
+
+- fb7887e: add eureka to experimental feature
+- 8308e9c: Add eureka types
+- 38c1a8c: Improve executeRoute performance
+- c600209: update dependencies
+
 ## 0.16.17
 
 ### Patch Changes
