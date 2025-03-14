@@ -6,6 +6,9 @@ import { useQueryParams } from '@/hooks/useURLQueryParams';
 export default function Home() {
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [disableShadowDom, setDisableShadowDom] = useState(false);
+  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
+  const [testnet, setTestnet] = useState<boolean>(false);
   // optional query params, not necessary for the widget to work
   const defaultRoute = useQueryParams();
 
@@ -22,7 +25,7 @@ export default function Home() {
 
       // port is arbitrary but it's easier to have it auto set
       const scriptSrc = `http://${ipAddress}:1234/target.js`;
-    
+
       const script = document.createElement('script');
       script.src = scriptSrc;
       script.async = true;
@@ -33,7 +36,7 @@ export default function Home() {
         console.log(error);
         console.error('Error loading the script');
       };
-    
+
       document.head.appendChild(script);
     }
     initEruda();
@@ -63,7 +66,7 @@ export default function Home() {
         backgroundPosition: 'bottom',
       }}
     >
-      <div 
+      <div
         style={{ position: 'absolute', top: 0, right: 0, display: 'flex', flexDirection: "column" }}>
         <button
           onClick={() => toggleTheme()}
@@ -80,6 +83,13 @@ export default function Home() {
         >
           Reset state only clear input values
         </button>
+        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+          shadow dom:{(!disableShadowDom).toString()}
+        </button>
+        <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
+        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
+          {apiUrl === "prod" ? "prod" : "dev"}
+        </button>
       </div>
       <div
         style={{
@@ -94,6 +104,7 @@ export default function Home() {
       >
         {/* widget will cohere to the parent container's width */}
         <div
+          key={disableShadowDom.toString()}
           style={{
             width: '100%',
             maxWidth: 500,
@@ -110,6 +121,16 @@ export default function Home() {
             onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
             onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
             onRouteUpdated={(props) => console.log('onRouteUpdated', props)}
+            disableShadowDom={disableShadowDom}
+            onlyTestnet={testnet}
+            routeConfig={{
+              experimentalFeatures: ["eureka"],
+            }}
+            apiUrl={
+              apiUrl === "prod"
+                ? "https://go.skip.build/api/skip"
+                : "https://dev.go.skip.build/api/skip"
+            }
           />
         </div>
       </div>

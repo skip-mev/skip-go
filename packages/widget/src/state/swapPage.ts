@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
+import { ClientAsset, skipClient } from "@/state/skipClient";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
@@ -9,6 +9,7 @@ import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
+import { walletsAtom } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -43,6 +44,17 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
       amountIn: sourceAsset?.amount,
       amountOut: destinationAsset?.amount,
       requiredChainAddresses: data?.requiredChainAddresses,
+    });
+  }
+});
+
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const skip = get(skipClient);
+  const wallets = get(walletsAtom);
+  if (sourceAsset?.chainID && wallets.cosmos) {
+    skip.getSigningStargateClient({
+      chainId: sourceAsset?.chainID,
     });
   }
 });

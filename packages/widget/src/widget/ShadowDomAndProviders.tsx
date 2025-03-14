@@ -1,12 +1,10 @@
 import { ComponentType, ReactNode, useEffect, useMemo, useState } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
-import { useCSS, Scope } from "react-shadow-scope";
+import { Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
-import { globalStyles } from "./globalStyles";
-import { shadowRootAtom } from "@/state/shadowRoot";
-import { useAtom } from "jotai";
+import { atom, useAtomValue } from "jotai";
 
 function shouldForwardProp(propName: string, target: string | ComponentType<unknown>) {
   if (typeof target === "string") {
@@ -15,28 +13,24 @@ function shouldForwardProp(propName: string, target: string | ComponentType<unkn
   return true;
 }
 
+export const disableShadowDomAtom = atom<boolean>(false);
+
 export const ShadowDomAndProviders = ({
   children,
   theme,
-  shouldSetMainShadowRoot,
 }: {
   children: ReactNode;
   theme?: PartialTheme;
-  shouldSetMainShadowRoot?: boolean;
 }) => {
+  const disableShadowDom = useAtomValue(disableShadowDomAtom);
   useInjectFontsToDocumentHead();
-  const css = useCSS();
 
   const [localShadowRoot, setLocalShadowRoot] = useState<ShadowRoot>();
-  const [mainShadowRoot, setMainShadowRoot] = useAtom(shadowRootAtom);
 
   const onShadowDomLoaded = (element: HTMLDivElement) => {
     if (!element?.shadowRoot) return;
     if (!localShadowRoot) {
       setLocalShadowRoot(element?.shadowRoot);
-    }
-    if (!mainShadowRoot && shouldSetMainShadowRoot) {
-      setMainShadowRoot(element?.shadowRoot);
     }
   };
 
@@ -47,14 +41,17 @@ export const ShadowDomAndProviders = ({
     };
   }, [theme]);
 
+  if (disableShadowDom) {
+    return (
+      <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+        <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
+      </StyleSheetManager>
+    );
+  }
+
   return (
     <ClientOnly>
-      <Scope
-        ref={onShadowDomLoaded}
-        stylesheet={css`
-          ${globalStyles}
-        `}
-      >
+      <Scope ref={onShadowDomLoaded}>
         {localShadowRoot && (
           <StyleSheetManager shouldForwardProp={shouldForwardProp} target={localShadowRoot}>
             <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>

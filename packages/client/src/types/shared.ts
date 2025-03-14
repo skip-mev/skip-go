@@ -353,6 +353,42 @@ export type OPInitTransfer = {
   smartRelay: boolean;
 };
 
+export type EurekaTransferJSON = {
+  destination_port: string;
+  source_client: string;
+  from_chain_id: string;
+  to_chain_id: string;
+  pfm_enabled: boolean;
+  supports_memo: boolean;
+  entry_contract_address: string;
+  callback_adapter_contract_address: string;
+
+  denom_in: string;
+  denom_out: string;
+
+  bridge_id: BridgeType;
+  smart_relay: boolean;
+  smart_relay_fee_quote?: SmartRelayFeeQuoteJSON;
+};
+
+export type EurekaTransfer = {
+  destinationPort: string;
+  sourceClient: string;
+  fromChainID: string;
+  toChainID: string;
+  pfmEnabled: boolean;
+  supportsMemo: boolean;
+  entryContractAddress: string;
+  callbackAdapterContractAddress: string;
+  
+  denomIn: string;
+  denomOut: string;
+
+  bridgeID: BridgeType;
+  smartRelay: boolean;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
+};
+
 export type SmartRelayFeeQuoteJSON = {
   fee_amount: string;
   relayer_address: string;

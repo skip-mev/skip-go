@@ -172,14 +172,14 @@ export const SwapSettingsDrawer = createModal(() => {
           href="https://docs.skip.build/go/legal-and-privacy/terms-of-service"
           target="_blank"
         >
-          <u>Terms of Service</u>
+          <UnderlineText>Terms of Service</UnderlineText>
         </SmallText>
         <SmallText
           as="a"
           href="https://docs.skip.build/go/legal-and-privacy/privacy-policy"
           target="_blank"
         >
-          <u>Privacy Policy</u>
+          <UnderlineText>Privacy Policy</UnderlineText>
         </SmallText>
       </Row>
       <Row justify="space-between">
@@ -210,4 +210,8 @@ const SwapDetailText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
+`;
+
+const UnderlineText = styled.u`
+  text-decoration-line: unset;
 `;
