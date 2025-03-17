@@ -270,9 +270,9 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     switch (transferType) {
       case TransferType.ibcTransfer:
         if (type === "send") {
-          return ibcTransfer.packetTXs.sendTx?.explorerLink;
+          return ibcTransfer.packetTxs.sendTx?.explorerLink;
         }
-        return ibcTransfer.packetTXs.receiveTx?.explorerLink;
+        return ibcTransfer.packetTxs.receiveTx?.explorerLink;
       case TransferType.eurekaTransfer:
         if (type === "send") {
           return eurekaTransfer.packetTxs.sendTx?.explorerLink;
