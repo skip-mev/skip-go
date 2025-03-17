@@ -27,4 +27,6 @@ jobs:
         working-directory: ./packages/widget
       
       - name: Test widget
-        run: yarn run dev:widget && yarn test-widget
+        run: yarn run dev:widget &
+        sleep 5
+        yarn test-widget
