@@ -1,0 +1,30 @@
+name: Widget Tests
+on: [pull_request, push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Fetch submodule
+        run: git submodule update --init --recursive
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: build client
+        run: yarn run build:client
+
+      - name: Install playwright browsers
+        run: yarn playwright install
+        working-directory: ./packages/widget
+      
+      - name: Test widget
+        run: yarn test-widget
