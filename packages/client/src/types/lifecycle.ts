@@ -69,10 +69,19 @@ export type TransferInfo = {
   fromChainID: string;
   toChainID: string;
   state: TransferState;
-  packetTXs: Packet;
+  packetTxs: Packet;
 
-  // Deprecated
+  /**
+   * Deprecated use `packetTxs` instead
+   */
+  packetTXs: Packet;
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
@@ -264,8 +273,13 @@ export type AxelarTransferInfo = {
   txs: AxelarTransferTransactions;
   axelarScanLink: string;
 
-  // Deprecated
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
@@ -366,8 +380,13 @@ export type CCTPTransferInfo = {
   state: CCTPTransferState;
   txs: CCTPTransferTransactions;
 
-  // Deprecated
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
