@@ -2837,6 +2837,31 @@ test("transferInfoFromJSON", () => {
       timeoutTx: null,
       error: null,
     },
+    packetTxs: {
+      sendTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        explorerLink:
+          "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      },
+      receiveTx: {
+        chainID: "osmosis-1",
+        txHash:
+          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        explorerLink:
+          "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      },
+      acknowledgeTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        explorerLink:
+          "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      },
+      timeoutTx: null,
+      error: null,
+    },
   });
 });
 
@@ -3137,6 +3162,31 @@ test("txStatusResponseFromJSON", () => {
             timeoutTx: null,
             error: null,
           },
+          packetTxs: {
+            sendTx: {
+              chainID: "axelar-dojo-1",
+              txHash:
+                "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              explorerLink:
+                "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+            },
+            receiveTx: {
+              chainID: "osmosis-1",
+              txHash:
+                "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              explorerLink:
+                "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+            },
+            acknowledgeTx: {
+              chainID: "axelar-dojo-1",
+              txHash:
+                "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              explorerLink:
+                "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+            },
+            timeoutTx: null,
+            error: null,
+          },
         },
       },
       {
@@ -3147,6 +3197,31 @@ test("txStatusResponseFromJSON", () => {
           dstChainID: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
+            sendTx: {
+              chainID: "osmosis-1",
+              txHash:
+                "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              explorerLink:
+                "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+            },
+            receiveTx: {
+              chainID: "cosmoshub-4",
+              txHash:
+                "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              explorerLink:
+                "https://cosmos.bigdipper.live/transactions/913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+            },
+            acknowledgeTx: {
+              chainID: "osmosis-1",
+              txHash:
+                "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              explorerLink:
+                "https://osmosis.zone/tx/1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+            },
+            timeoutTx: null,
+            error: null,
+          },
+          packetTxs: {
             sendTx: {
               chainID: "osmosis-1",
               txHash:
@@ -3195,6 +3270,13 @@ test("txStatusResponseFromJSON", () => {
               dstChainID: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
+                sendTx: null,
+                receiveTx: null,
+                acknowledgeTx: null,
+                timeoutTx: null,
+                error: null,
+              },
+              packetTxs: {
                 sendTx: null,
                 receiveTx: null,
                 acknowledgeTx: null,
