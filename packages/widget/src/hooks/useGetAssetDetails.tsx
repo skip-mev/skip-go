@@ -70,7 +70,10 @@ export const useGetAssetDetails = ({
     }
     return chain.chainID === asset?.chainID;
   });
-  const chainName = chain?.prettyName ?? chain?.chainName;
+  const chainPrettyName =
+    chain?.prettyName && chain?.prettyName.length !== 0 ? chain.prettyName : undefined;
+  const chainName = chain?.chainName && chain?.chainName.length !== 0 ? chain.chainName : undefined;
+
   const chainImage = chain?.logoURI;
   const decimals = asset?.decimals;
 
@@ -91,7 +94,7 @@ export const useGetAssetDetails = ({
     asset,
     chain,
     assetImage,
-    chainName,
+    chainName: chainPrettyName ?? chainName ?? chainId,
     chainImage,
     symbol,
     amount,
