@@ -16,13 +16,9 @@ export const test = base.extend<{ context: BrowserContext }>({
       "--remote-debugging-port=9222",
     ];
 
-    if (process.env.CI) {
-      browserArgs.push("--disable-gpu");
-    }
+    browserArgs.push("--disable-gpu");
 
-    if (process.env.HEADLESS_MODE) {
-      browserArgs.push("--headless=new");
-    }
+    browserArgs.push("--headless=new");
 
     // launch browser
     const context = await chromium.launchPersistentContext("", {

@@ -1,15 +1,35 @@
 import { test } from "./setup/fixtures";
-import { connectSource, expectPageLoaded, initKeplr, selectAsset } from "./setup/utils";
+import { expectPageLoaded, initKeplr, selectAsset } from "./setup/utils";
 
 test.describe("Widget tests", () => {
   test("Noble USDC -> Injective INJ", async ({ page }) => {
     await initKeplr();
     await expectPageLoaded(page);
 
+    await page.waitForTimeout(100);
+    await page.screenshot({
+      animations: "disabled",
+      path: "__tests__/Widget/default-widget.png",
+    });
+
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
+
+    await page.waitForTimeout(100);
+    await page.screenshot({
+      animations: "disabled",
+      path: "__tests__/Widget/usdc-noble-selected.png",
+    });
+
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
 
-    await connectSource(page);
+    await page.waitForTimeout(100);
+    await page.screenshot({
+      animations: "disabled",
+      path: "__tests__/Widget/both-assets-selected.png",
+    });
+
+    await page.getByText("Connect Wallet").click();
+    await page.getByText("Keplr").click();
 
     await page.waitForTimeout(5_000);
 

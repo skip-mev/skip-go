@@ -29,9 +29,9 @@ async function importWallet(secretWords: string, password: string) {
 
   const inputs = await keplrWindow.getByRole("textbox").all();
 
-  for (const [index, word] of secretWords.split(" ").entries()) {
-    await inputs[index].waitFor({ state: "visible" });
+  await keplrWindow.waitForTimeout(1000);
 
+  for (const [index, word] of secretWords.split(" ").entries()) {
     await inputs[index].fill(word);
     // keplrWindow.fill()
     // await playwright.waitAndType(
