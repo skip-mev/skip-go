@@ -82,12 +82,9 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       };
       return (
         <StyledHistoryItemDetailRow key={`${index}-${txHash}`} align="center">
-          <StyledDetailsLabel key={`${index}-${txHash}`}>
-            {getTransactionIdLabel()}
-          </StyledDetailsLabel>
+          <StyledDetailsLabel>{getTransactionIdLabel()}</StyledDetailsLabel>
           <Link
             onClick={() => handleClickingLinkIfNoExplorerLink(txHash, link)}
-            key={`${index}-${txHash}`}
             href={link}
             title={txHash}
             target="_blank"
@@ -102,10 +99,11 @@ export const TransactionHistoryPageHistoryItemDetails = ({
       );
     });
   }, [explorerLinks]);
-  const showTransferAssetRelease =
+  const showTransferAssetRelease = Boolean(
     transferAssetRelease &&
-    transferAssetRelease.released &&
-    (status === "failed" || status === "incomplete");
+      transferAssetRelease.released &&
+      (status === "failed" || status === "incomplete"),
+  );
 
   const transferAssetReleaseAsset = useGetAssetDetails({
     assetDenom: transferAssetRelease?.denom,

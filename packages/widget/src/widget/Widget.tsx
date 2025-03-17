@@ -1,8 +1,7 @@
-import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
-import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import { createModal } from "@/components/Modal";
-import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
+import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
@@ -15,7 +14,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
-import { createStore, Provider } from "jotai";
+import { createStore, Provider, useSetAtom } from "jotai";
+import { settingsDrawerAtom } from "@/state/settingsDrawer";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -47,6 +47,10 @@ export type WidgetProps = {
    */
   enableSentrySessionReplays?: boolean;
   /**
+   * Enable Amplitude analytics for the widget to improve user experience.
+   */
+  enableAmplitudeAnalytics?: boolean;
+  /**
    * Map of connected wallet addresses, allowing your app to pass pre-connected addresses to the widget.
    * This feature enables the widget to display a specific address as connected for a given chain.
    *
@@ -63,6 +67,7 @@ export type WidgetProps = {
    * @default true
    */
   simulate?: boolean;
+  disableShadowDom?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"
@@ -93,63 +98,45 @@ export const queryClient = new QueryClient();
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
 
 export const Widget = (props: WidgetProps) => {
-  const { theme } = useInitWidget(props);
   return (
     <Provider store={jotaiStore}>
-      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-        <WalletProviders>
-          <QueryClientProvider client={queryClient} key={"skip-widget"}>
-            <NiceModal.Provider>
-              <WidgetWrapper>
-                <Router />
-              </WidgetWrapper>
-            </NiceModal.Provider>
-          </QueryClientProvider>
-        </WalletProviders>
-      </ShadowDomAndProviders>
+      <WidgetWithinProvider props={props} />
     </Provider>
   );
 };
 
-export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
+export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
   return (
-    <Provider store={jotaiStore}>
-      <ShadowDomAndProviders theme={theme} shouldSetMainShadowRoot>
-        <WalletProviders>
-          <QueryClientProvider client={queryClient} key={"skip-widget"}>
+    <ShadowDomAndProviders theme={theme}>
+      <WalletProviders>
+        <QueryClientProvider client={queryClient} key={"skip-widget"}>
+          <NiceModal.Provider>
             <WidgetWrapper>
               <Router />
             </WidgetWrapper>
-          </QueryClientProvider>
-        </WalletProviders>
-      </ShadowDomAndProviders>
-    </Provider>
+          </NiceModal.Provider>
+        </QueryClientProvider>
+      </WalletProviders>
+    </ShadowDomAndProviders>
   );
 };
 
-export const ShowWidget = ({ button = <button>show widget</button>, ...props }: ShowSwapWidget) => {
-  const modal = useModal(createModal(() => <WidgetWithoutNiceModalProvider {...props} />));
-
-  const handleClick = () => {
-    modal.show();
-  };
-
-  const Element = cloneElement(button, { onClick: handleClick });
-
-  return <>{Element}</>;
-};
-
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+  const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
+
   useEffect(() => {
     registerModals();
   }, []);
+
+  const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {
+    setSettingsDrawerContainer(element);
+  };
+
   return (
     <WidgetContainer>
-      <ClientOnly>
-        {children}
-        <div id="settings-drawer"></div>
-      </ClientOnly>
+      {children}
+      <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>
   );
 };
@@ -157,4 +144,16 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 const WidgetContainer = styled.div`
   width: 100%;
   position: relative;
+
+  div,
+  p {
+    box-sizing: border-box;
+  }
+
+  * {
+    font-family: "ABCDiatype", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 `;

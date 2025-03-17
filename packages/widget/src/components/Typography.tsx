@@ -24,6 +24,8 @@ export const removeButtonStyles = css`
 `;
 
 export const textProps = css<TextProps>`
+  text-align: left;
+  box-sizing: border-box;
   font-family: "ABCDiatype", sans-serif;
   ${({ fontSize }) => fontSize && `font-size: ${fontSize}px`};
   ${({ fontWeight }) => fontWeight && `font-weight: ${fontWeight}`};
@@ -68,7 +70,7 @@ export const SmallText = styled.p<TextProps>`
   color: ${({ theme, color }) => color ?? theme.primary.text.lowContrast};
   margin: 0;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.01em;
   ${textProps}
 `;
@@ -83,7 +85,7 @@ export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
 export const Text = styled(SmallText)`
   color: ${({ color, theme }) => color ?? theme.primary.text.normal};
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0;
   ${textProps}
 `;

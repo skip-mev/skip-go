@@ -7,18 +7,19 @@ import { calculatePercentageChange } from "@/utils/number";
 import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { track } from "@amplitude/analytics-browser";
 
-export type ErrorPageTradeWarningProps = {
+export type ErrorPageBadPriceWarningProps = {
   onClickContinue: () => void;
   onClickBack: () => void;
   route: RouteResponse;
 };
 
-export const ErrorPageTradeWarning = ({
+export const ErrorPageBadPriceWarning = ({
   onClickContinue,
   onClickBack,
   route,
-}: ErrorPageTradeWarningProps) => {
+}: ErrorPageBadPriceWarningProps) => {
   const theme = useTheme();
   const {
     amountIn,
@@ -54,7 +55,10 @@ export const ErrorPageTradeWarning = ({
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: onClickBack,
+          onClick: () => {
+            track("error page: bad price warning - header back button clicked");
+            onClickBack();
+          },
         }}
       />
       <ErrorPageContent
@@ -69,7 +73,13 @@ export const ErrorPageTradeWarning = ({
               Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (
               {usdAmountOut})
             </SmallText>
-            <SmallTextButton onClick={onClickContinue} color={theme.primary.text.lowContrast}>
+            <SmallTextButton
+              onClick={() => {
+                track("error page: bad price warning - continue anyway button clicked");
+                onClickContinue();
+              }}
+              color={theme.primary.text.lowContrast}
+            >
               I know the risk, continue anyway
             </SmallTextButton>
           </>
@@ -81,7 +91,10 @@ export const ErrorPageTradeWarning = ({
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
-        onClick={onClickBack}
+        onClick={() => {
+          track("error page: bad price warning - main back button clicked");
+          onClickBack();
+        }}
         backgroundColor={theme.error.text}
       />
     </>

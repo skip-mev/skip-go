@@ -12,7 +12,6 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
-import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
 import { copyToClipboard } from "@/utils/misc";
@@ -51,17 +50,17 @@ export const SwapExecutionPageRouteSimpleRow = ({
   });
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
 
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     switch (context) {
-      case "source":
+      case "source": {
+        const selected = chainAddressArray[0];
         return {
-          address: account?.address,
-          image: account?.wallet.logo,
+          address: selected?.address,
+          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
+      }
       case "destination": {
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
@@ -70,7 +69,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
         };
       }
     }
-  }, [account?.address, account?.wallet.logo, chainAddresses, context]);
+  }, [chainAddresses, context]);
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));

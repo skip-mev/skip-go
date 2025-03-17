@@ -1,7 +1,7 @@
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
 import { ChainType } from "@skip-go/client";
-import { bech32m, bech32 } from "bech32";
+import { bech32m, bech32 } from "@/utils/bech32";
 
 type isValidWalletAddressProps = {
   address: string;

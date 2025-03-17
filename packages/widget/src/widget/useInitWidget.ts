@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
+import { chainFilterAtom, swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -24,10 +24,15 @@ import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
+import { initAmplitude } from "./initAmplitude";
+import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
     initSentry();
+  }
+  if (props.enableAmplitudeAnalytics) {
+    initAmplitude();
   }
   setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
@@ -43,6 +48,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
+  const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -89,10 +95,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
   useEffect(() => {
     if (props.settings) {
-      setSwapSettings({
-        ...defaultSwapSettings,
+      setSwapSettings((prev) => ({
+        ...prev,
         ...props.settings,
-      });
+      }));
     }
     if (props.routeConfig) {
       setRouteConfig((prev) => {
@@ -113,6 +119,9 @@ export const useInitWidget = (props: WidgetProps) => {
     }
     if (props.simulate !== undefined) {
       setSimulateTx(props.simulate);
+    }
+    if (props.disableShadowDom !== undefined) {
+      setDisableShadowDom(props.disableShadowDom);
     }
 
     const callbacks = {
@@ -148,6 +157,8 @@ export const useInitWidget = (props: WidgetProps) => {
     setCallbacks,
     setSimulateTx,
     props.onRouteUpdated,
+    props.disableShadowDom,
+    setDisableShadowDom,
   ]);
 
   return { theme: mergedTheme };

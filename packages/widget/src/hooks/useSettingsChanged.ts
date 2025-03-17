@@ -9,6 +9,6 @@ export const useSettingsChanged = () => {
     () =>
       swapSettings.slippage !== defaultSwapSettings.slippage ||
       swapSettings.routePreference !== defaultSwapSettings.routePreference,
-    [swapSettings]
+    [swapSettings],
   );
 };

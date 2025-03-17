@@ -16,6 +16,7 @@ import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
+import { track } from "@amplitude/analytics-browser";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -171,19 +172,20 @@ export const SwapSettingsDrawer = createModal(() => {
           href="https://docs.skip.build/go/legal-and-privacy/terms-of-service"
           target="_blank"
         >
-          <u>Terms of Service</u>
+          <UnderlineText>Terms of Service</UnderlineText>
         </SmallText>
         <SmallText
           as="a"
           href="https://docs.skip.build/go/legal-and-privacy/privacy-policy"
           target="_blank"
         >
-          <u>Privacy Policy</u>
+          <UnderlineText>Privacy Policy</UnderlineText>
         </SmallText>
       </Row>
       <Row justify="space-between">
         <SmallTextButton
           onClick={() => {
+            track("settings drawer: close button - clicked");
             NiceModal.hide(Modals.SwapSettingsDrawer);
           }}
         >
@@ -208,4 +210,8 @@ const SwapDetailText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
+`;
+
+const UnderlineText = styled.u`
+  text-decoration-line: unset;
 `;

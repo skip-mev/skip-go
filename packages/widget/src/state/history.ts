@@ -16,6 +16,7 @@ export type TransactionHistoryItem = {
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   "transactionHistory",
   [],
+  undefined,
 );
 
 export const setTransactionHistoryAtom = atom(

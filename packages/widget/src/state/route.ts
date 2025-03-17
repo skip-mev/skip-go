@@ -4,7 +4,7 @@ import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { errorAtom } from "./errorPage";
 import { currentPageAtom, Routes } from "./router";
-import { skipClient } from "./skipClient";
+import { ClientAsset, skipAssetsAtom, skipClient } from "./skipClient";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -15,15 +15,19 @@ import {
   debouncedSourceAssetAmountValueInitializedAtom,
   debouncedDestinationAssetAmountValueInitializedAtom,
   routePreferenceAtom,
+  sourceAssetAmountAtom,
+  destinationAssetAmountAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
+import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
     const sourceAsset = get(sourceAssetAtom);
     const destinationAsset = get(destinationAssetAtom);
+    const defaultRoute = get(defaultRouteAtom);
     const debouncedSourceAssetInitialized = get(debouncedSourceAssetAmountValueInitializedAtom);
     const debouncedDestinationAssetInitialized = get(
       debouncedDestinationAssetAmountValueInitializedAtom,
@@ -31,10 +35,12 @@ export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = ato
 
     if (!debouncedSourceAssetInitialized && sourceAsset?.amount) {
       set(debouncedSourceAssetAmountAtom, sourceAsset.amount, undefined, true);
+      set(sourceAssetAtom, (prev) => ({ ...prev, locked: defaultRoute?.srcLocked }));
     }
 
     if (!debouncedDestinationAssetInitialized && destinationAsset?.amount) {
       set(debouncedDestinationAssetAmountAtom, destinationAsset.amount, undefined, true);
+      set(destinationAssetAtom, (prev) => ({ ...prev, locked: defaultRoute?.destLocked }));
     }
   },
 );
@@ -191,4 +197,47 @@ export const skipRouteAtom = atom((get) => {
     error,
     isLoading: isFetching && isPending,
   };
+});
+
+export const defaultRouteAtom = atom<DefaultRouteConfig>();
+
+export const setRouteToDefaultRouteAtom = atom(null, (get, set, assets?: ClientAsset[]) => {
+  const defaultRoute = get(defaultRouteAtom);
+  const { data } = get(skipAssetsAtom);
+
+  assets ??= data;
+
+  const getClientAsset = (denom?: string, chainId?: string) => {
+    if (!denom || !chainId) return;
+    if (!assets) return;
+    return assets.find(
+      (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+    );
+  };
+
+  if (!defaultRoute || !assets) return;
+
+  const { srcAssetDenom, srcChainId, destAssetDenom, destChainId, amountIn, amountOut } =
+    defaultRoute;
+
+  const sourceAsset = getClientAsset(srcAssetDenom, srcChainId);
+  const destinationAsset = getClientAsset(destAssetDenom, destChainId);
+
+  set(destinationAssetAtom, {
+    ...destinationAsset,
+    locked: defaultRoute?.destLocked,
+    amount: amountOut?.toString(),
+  });
+
+  set(sourceAssetAtom, {
+    ...sourceAsset,
+    locked: defaultRoute?.srcLocked,
+    amount: amountIn?.toString(),
+  });
+
+  if (amountIn) {
+    set(sourceAssetAmountAtom, amountIn?.toString());
+  } else if (amountOut) {
+    set(destinationAssetAmountAtom, amountOut?.toString());
+  }
 });

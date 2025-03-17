@@ -5,6 +5,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "@/state/errorPage";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageAuthFailedProps = {
   onClickBack: () => void;
@@ -15,6 +16,7 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
   const theme = useTheme();
 
   const handleOnClickBack = () => {
+    track("error page: user rejected request - back button clicked");
     setErrorAtom(undefined);
     onClickBack?.();
   };

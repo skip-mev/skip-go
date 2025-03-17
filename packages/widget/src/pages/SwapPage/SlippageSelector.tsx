@@ -7,6 +7,7 @@ import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
 import { Tooltip } from "@/components/Tooltip";
+import { track } from "@amplitude/analytics-browser";
 
 const SlippageSelector: React.FC = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -42,7 +43,10 @@ const SlippageSelector: React.FC = () => {
           <StyledSettingsOptionLabel
             key={option}
             selected={option === slippage && !isInputFocused}
-            onClick={() => setSlippage(option)}
+            onClick={() => {
+              track("settings drawer: slippage - changed", { slippage: option });
+              setSlippage(option);
+            }}
           >
             {option}%
           </StyledSettingsOptionLabel>
@@ -60,6 +64,7 @@ const SlippageSelector: React.FC = () => {
                   const value = parseFloat(customSlippageInput);
                   if (!isNaN(value) && value >= 0 && value <= 100) {
                     setSlippage(value);
+                    track("settings drawer: slippage custom - changed", { slippage: value });
                   }
                   setIsInputFocused(false);
                 }}
@@ -72,7 +77,10 @@ const SlippageSelector: React.FC = () => {
           ) : (
             <StyledSettingsOptionLabel
               selected={isCustomSlippage && !isInputFocused}
-              onClick={() => setIsInputFocused(true)}
+              onClick={() => {
+                track("settings drawer: slippage custom button - clicked", { slippage: "custom" });
+                setIsInputFocused(true);
+              }}
             >
               Custom
             </StyledSettingsOptionLabel>

@@ -1,6 +1,6 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { ClientAsset, skipClient } from "@/state/skipClient";
+import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
@@ -9,6 +9,7 @@ import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
+import { walletsAtom } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -47,14 +48,36 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
   }
 });
 
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const skip = get(skipClient);
+  const wallets = get(walletsAtom);
+  if (sourceAsset?.chainID && wallets.cosmos) {
+    skip.getSigningStargateClient({
+      chainId: sourceAsset?.chainID,
+    });
+  }
+});
+
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
   undefined,
 );
 
-export const resetWidget = () => {
+export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: boolean } = {}) => {
   const { set } = jotaiStore;
-  set(clearAssetInputAmountsAtom);
+
+  if (onlyClearInputValues) {
+    set(clearAssetInputAmountsAtom);
+  } else {
+    set(sourceAssetAtom, undefined);
+    set(debouncedSourceAssetAmountAtom, "", undefined, true);
+
+    set(destinationAssetAtom, undefined);
+    set(debouncedDestinationAssetAmountAtom, "", undefined, true);
+  }
+
+  set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
   set(errorAtom, undefined);
 };
@@ -172,17 +195,15 @@ export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
 
 export const slippageAtom = atom(
   (get) => get(swapSettingsAtom).slippage,
-  (get, set, newSlippage: number) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });
+  (_get, set, newSlippage: number) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, slippage: newSlippage }));
   },
 );
 
 export const routePreferenceAtom = atom(
   (get) => get(swapSettingsAtom).routePreference,
-  (get, set, newRoutePreference: RoutePreference) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
+  (_get, set, newRoutePreference: RoutePreference) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, routePreference: newRoutePreference }));
   },
 );
 

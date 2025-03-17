@@ -1,6 +1,6 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ShowWidget, Widget } from "@/widget/Widget";
+import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
@@ -8,6 +8,9 @@ import { resetWidget } from "@/state/swapPage";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
+  const [testnet, setTestnet] = useState<boolean>(false);
+  const [disableShadowDom, setDisableShadowDom] = useState(false);
 
   const toggleTheme = () => {
     if (theme === "dark") {
@@ -20,9 +23,18 @@ const DevMode = () => {
   return (
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
-        <ShowWidget />
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
+        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+          shadow dom:{(!disableShadowDom).toString()}
+        </button>
         <button onClick={() => resetWidget()}> reset widget </button>
+        <button onClick={() => resetWidget({ onlyClearInputValues: true })}>
+          reset widget only clear input values
+        </button>
+        <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
+        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
+          {apiUrl === "prod" ? "prod" : "dev"}
+        </button>
       </Column>
       <Row
         style={{
@@ -36,6 +48,7 @@ const DevMode = () => {
         justify="center"
       >
         <div
+          key={disableShadowDom.toString()}
           style={{
             width: "100%",
             maxWidth: 500,
@@ -51,6 +64,16 @@ const DevMode = () => {
             settings={{
               useUnlimitedApproval: true,
             }}
+            disableShadowDom={disableShadowDom}
+            onlyTestnet={testnet}
+            routeConfig={{
+              experimentalFeatures: ["eureka"],
+            }}
+            apiUrl={
+              apiUrl === "prod"
+                ? "https://go.skip.build/api/skip"
+                : "https://dev.go.skip.build/api/skip"
+            }
           />
         </div>
       </Row>

@@ -1,5 +1,55 @@
 ## 0.0.15
 
+## 3.4.2
+
+### Patch Changes
+
+- bf12e02: fix wallet address shows incorrectly while executing route
+- 8308e9c: Add eureka types
+- 38c1a8c: Improve executeRoute performance
+- efb3cba: Fix mobile styling flickering
+- ac9a85f: Add ability to disable shadowDOM
+- 112db78: add transaction reverted error page
+- c600209: update dependencies
+- 30525ce: No longer lock scrollbar when opening drawer
+- Updated dependencies [fb7887e]
+- Updated dependencies [8308e9c]
+- Updated dependencies [38c1a8c]
+- Updated dependencies [c600209]
+  - @skip-go/client@0.16.18
+
+## 3.4.1
+
+### Patch Changes
+
+- 68ebc8d: fix last tx complete show not completed
+- 45c3c33: update registries
+- 15aebde: Fix edge case with locked assets
+- b788119: Update remove opacity from disabled main button
+- 4260d98: add analytics
+- Updated dependencies [45c3c33]
+  - @skip-go/client@0.16.17
+
+## 3.4.0
+
+### Minor Changes
+
+- 6d33daf: Add reset widget back
+
+### Patch Changes
+
+- 8aa63c0: transaction tracking watch for state
+- 6b1e1cb: Update atomWithStorage so localStorage values are fetched immediately
+- 831d24a: add low information trade warning
+- Updated dependencies [8aa63c0]
+  - @skip-go/client@0.16.16
+
+## 3.3.11
+
+### Patch Changes
+
+- 45df099: revert reset widget functionality
+
 ## 3.3.10
 
 ### Patch Changes

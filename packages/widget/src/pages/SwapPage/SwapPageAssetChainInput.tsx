@@ -268,7 +268,8 @@ const StyledAssetChainInputWrapper = styled(Column)`
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
 }>`
-  all: unset;
+  border: none;
+  outline: none;
 
   font-size: 38px;
   @media (max-width: 767px) {
@@ -283,16 +284,20 @@ const StyledInput = styled.input<{
   height: 50px;
 
   ${(props) =>
-    props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+    props.isWaitingToUpdateInputValue &&
+    `
+      color: ${props.theme.primary.text.ultraLowContrast};
+      animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;
+  `}
   @keyframes pulse {
     0% {
-      opacity: 0.5;
+      opacity: 0.8;
     }
     50% {
       opacity: 1;
     }
     100% {
-      opacity: 0.5;
+      opacity: 0.8;
     }
   }
 
