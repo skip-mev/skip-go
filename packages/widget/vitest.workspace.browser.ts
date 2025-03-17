@@ -8,7 +8,7 @@ export default defineWorkspace([
     test: {
       browser: {
         enabled: true,
-        headless: true,
+        headless: false,
         provider: "playwright",
         instances: [{ browser: "chromium" }],
       },
