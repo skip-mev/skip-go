@@ -1,4 +1,5 @@
 import { test } from "./setup/fixtures";
+import { approveInKeplr } from "./setup/playwright";
 import {
   connectDestination,
   connectSource,
@@ -17,13 +18,15 @@ test("Noble USDC -> Injective INJ", async ({ page }) => {
   await selectAsset({ page, asset: "USDC", chain: "Noble" });
   await selectAsset({ page, asset: "INJ", chain: "Injective" });
 
-  await page.waitForTimeout(70000000);
-
   await connectSource(page);
 
-  // await fillAmount(page, "5");
+  await page.waitForTimeout(5_000);
 
-  // await connectDestination(page);
+  await page.screenshot({
+    path: "__tests__/Widget/connect-keplr.png",
+  });
+
+  // await fillAmount(page, "5");
 
   // await e2eTest(page);
 });

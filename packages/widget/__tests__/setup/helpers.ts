@@ -36,8 +36,6 @@ async function getKeplrReleases() {
   const downloadUrl = responseJson[0].assets[0].browser_download_url;
   const tagName = responseJson[0].tag_name;
 
-  console.log(filename, downloadUrl, tagName);
-
   return {
     filename,
     downloadUrl,
