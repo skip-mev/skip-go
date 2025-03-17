@@ -13,7 +13,7 @@ import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 
-type operationTypeToIcon = Record<OperationType, JSX.Element>;
+type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
 const operationTypeToIcon: operationTypeToIcon = {
   // swap icon
