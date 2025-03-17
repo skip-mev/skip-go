@@ -273,6 +273,11 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           return ibcTransfer.packetTXs.sendTx?.explorerLink;
         }
         return ibcTransfer.packetTXs.receiveTx?.explorerLink;
+      case TransferType.eurekaTransfer:
+        if (type === "send") {
+          return eurekaTransfer.packetTxs.sendTx?.explorerLink;
+        }
+        return eurekaTransfer.packetTxs.receiveTx?.explorerLink;
       case TransferType.goFastTransfer:
         if (type === "send") {
           return goFastTransfer.txs.orderSubmittedTx?.explorerLink;
@@ -305,6 +310,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...opInitTransfer,
     ...goFastTransfer,
     ...stargateTransfer,
+    ...eurekaTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
