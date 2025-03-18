@@ -48,7 +48,7 @@ const DevMode = () => {
         justify="center"
       >
         <div
-          key={disableShadowDom.toString()}
+          key={disableShadowDom.toString() + testnet.toString() + apiUrl}
           style={{
             width: "100%",
             maxWidth: 500,

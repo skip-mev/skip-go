@@ -4,13 +4,29 @@ import { useEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
+  // optional query params, not necessary for the widget to work
+  const {defaultRoute, otherParams} = useQueryParams();
+
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [disableShadowDom, setDisableShadowDom] = useState(false);
-  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
-  const [testnet, setTestnet] = useState<boolean>(false);
-  // optional query params, not necessary for the widget to work
-  const defaultRoute = useQueryParams();
+  const [apiUrl, setApiUrl] = useState<"prod" | "dev">(otherParams?.api ?? "prod");
+  const [testnet, setTestnet] = useState<boolean>(otherParams?.testnet ?? false);
+
+  useEffect(() => {
+    if (otherParams?.api !== undefined) {
+      setApiUrl(otherParams?.api);
+    }
+    if (otherParams?.testnet  !== undefined) {
+      setTestnet(otherParams.testnet);
+    }
+    if (otherParams?.shadowDom !== undefined) {
+      setDisableShadowDom(!otherParams?.shadowDom);
+    }
+    if (otherParams?.theme !== undefined) {
+      setTheme(otherParams?.theme);
+    }
+  }, [otherParams]);
 
   useEffect(() => {
     const initEruda = async () => {
@@ -44,11 +60,9 @@ export default function Home() {
   }, []);
 
   const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    updateURLParam('theme', newTheme);
   };
 
   return (
@@ -69,7 +83,9 @@ export default function Home() {
       <div
         style={{ position: 'absolute', top: 0, right: 0, display: 'flex', flexDirection: "column" }}>
         <button
-          onClick={() => toggleTheme()}
+          onClick={() => {
+            toggleTheme();
+          }}
         >
           Toggle theme (current theme: {theme})
         </button>
@@ -83,12 +99,24 @@ export default function Home() {
         >
           Reset state only clear input values
         </button>
-        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+        <button onClick={() => {
+          const newDisableShadowDom = !disableShadowDom;
+          setDisableShadowDom(newDisableShadowDom);
+          updateURLParam('shadowDom', (!newDisableShadowDom).toString());
+        }}>
           shadow dom:{(!disableShadowDom).toString()}
         </button>
-        <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
-        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
-          {apiUrl === "prod" ? "prod" : "dev"}
+        <button onClick={() => {
+          const newTestnet = !testnet;
+          setTestnet(newTestnet);
+          updateURLParam('testnet', (newTestnet).toString());
+        }}>{testnet ? "testnet" : "mainnet"}</button>
+        <button onClick={() => {
+          const newApiUrl = apiUrl === "prod" ? "dev" : "prod";
+          setApiUrl(newApiUrl);
+          updateURLParam('api', newApiUrl);
+        }}>
+          {apiUrl}
         </button>
       </div>
       <div
@@ -104,7 +132,7 @@ export default function Home() {
       >
         {/* widget will cohere to the parent container's width */}
         <div
-          key={disableShadowDom.toString()}
+          key={disableShadowDom.toString() + testnet.toString() + apiUrl}
           style={{
             width: '100%',
             maxWidth: 500,
@@ -136,4 +164,16 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+function updateURLParam(key: string, value: string | null) {
+  const url = new URL(window.location.href);
+
+  if (value === null) {
+    url.searchParams.delete(key);
+  } else {
+    url.searchParams.set(key, value);
+  }
+
+  window.history.replaceState({}, "", url.toString());
 }
