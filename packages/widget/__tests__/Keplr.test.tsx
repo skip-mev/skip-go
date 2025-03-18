@@ -1,4 +1,5 @@
 import { test } from "./setup/fixtures";
+import { approveInKeplr, getBrowser } from "./setup/playwright";
 import { expectPageLoaded, initKeplr, selectAsset } from "./setup/utils";
 
 test.describe("Widget tests", () => {
@@ -31,11 +32,18 @@ test.describe("Widget tests", () => {
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
 
-    await page.waitForTimeout(5000);
+    await approveInKeplr();
 
-    await page.screenshot({
-      path: "__tests__/Widget/connect-keplr.png",
-    });
+    // const localHostPage = getBrowser()
+    //   .contexts()[0]
+    //   ?.pages()
+    //   .find((page) => page.url().includes("localhost"));
+
+    // await page.waitForTimeout(5000);
+
+    // await page.screenshot({
+    //   path: "__tests__/Widget/connect-keplr.png",
+    // });
 
     // await fillAmount(page, "5");
 

@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 
-import { init, watchKeplrPopupApproveWindow } from "./playwright";
+import { init } from "./playwright";
 
 export async function selectAsset({
   page,
@@ -28,7 +28,6 @@ export async function selectAsset({
 }
 export async function initKeplr() {
   await init();
-  watchKeplrPopupApproveWindow();
 }
 export async function expectPageLoaded(page: Page) {
   page.setViewportSize({
