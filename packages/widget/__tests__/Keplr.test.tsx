@@ -31,11 +31,11 @@ test.describe("Widget tests", () => {
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
 
-    // await page.waitForTimeout(5_000);
+    await page.waitForTimeout(5000);
 
-    // await page.screenshot({
-    //   path: "__tests__/Widget/connect-keplr.png",
-    // });
+    await page.screenshot({
+      path: "__tests__/Widget/connect-keplr.png",
+    });
 
     // await fillAmount(page, "5");
 

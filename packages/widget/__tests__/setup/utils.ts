@@ -33,7 +33,7 @@ export async function initKeplr() {
 export async function expectPageLoaded(page: Page) {
   page.setViewportSize({
     height: 800,
-    width: 700,
+    width: 800,
   });
   await page.goto(process.env.PLAYWRIGHT_TEST_BASE_URL || "http://localhost:5173/");
 }
