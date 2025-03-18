@@ -52,7 +52,11 @@ export const useGetAssetDetails = ({
   const asset = useMemo(() => {
     if (!assetDenom || !chainId) return;
     if (!assets) return;
-    return assets.find((a) => a.denom === assetDenom && a.chainID === chainId);
+    return assets.find(
+      (a) =>
+        a.denom.toLowerCase() === assetDenom.toLowerCase() &&
+        a.chainID.toLowerCase() === chainId.toLowerCase(),
+    );
   }, [assets, assetDenom, chainId]);
 
   if (!amount && tokenAmount) {
