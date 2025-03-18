@@ -149,7 +149,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.assetImage && (
+      {assetDetails?.assetImage ? (
         <StyledAnimatedBorder
           width={30}
           height={30}
@@ -163,6 +163,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
             title={assetDetails?.asset?.name}
           />
         </StyledAnimatedBorder>
+      ) : (
+        <PlaceholderIcon> ? </PlaceholderIcon>
       )}
 
       <Column
@@ -198,6 +200,19 @@ export const SwapExecutionPageRouteDetailedRow = ({
     </Row>
   );
 };
+
+const PlaceholderIcon = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.secondary.background.normal};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: ${(props) => props.theme.primary.text.normal};
+  border: 1px solid ${(props) => props.theme.primary.text.normal};
+`;
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
