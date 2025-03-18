@@ -152,9 +152,13 @@ export const SwapExecutionPageRouteDetailed = ({
         : status?.[operation.transferIndex]?.toExplorerLink;
 
       const operationStatus = getOperationStatus(operation);
+      const numberOfTransferEvents = statusData?.transferEvents.length;
+      const latestStatus = status?.[status.length - 1]?.status;
 
       return (
-        <React.Fragment key={`row-${operation.fromChain}-${operation.toChainID}-${index}`}>
+        <React.Fragment
+          key={`row-${operation.fromChain}-${operation.toChainID}-${index}-${numberOfTransferEvents}-${latestStatus}`}
+        >
           {renderTooltip(operation)}
           <SwapExecutionPageRouteDetailedRow
             {...asset}
@@ -168,7 +172,14 @@ export const SwapExecutionPageRouteDetailed = ({
         </React.Fragment>
       );
     });
-  }, [getOperationStatus, onClickEditDestinationWallet, operations, renderTooltip, status]);
+  }, [
+    getOperationStatus,
+    onClickEditDestinationWallet,
+    operations,
+    renderTooltip,
+    status,
+    statusData?.transferEvents.length,
+  ]);
 
   return (
     <StyledSwapExecutionPageRoute>
