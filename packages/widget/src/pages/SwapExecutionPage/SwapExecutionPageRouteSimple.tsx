@@ -25,7 +25,6 @@ export const SwapExecutionPageRouteSimple = ({
   onClickEditDestinationWallet,
   swapExecutionState,
   firstOperationStatus,
-  secondOperationStatus,
 }: SwapExecutionPageRouteProps) => {
   const theme = useTheme();
   const { route } = useAtomValue(swapExecutionStateAtom);
@@ -76,7 +75,7 @@ export const SwapExecutionPageRouteSimple = ({
       <SwapExecutionPageRouteSimpleRow
         {...destination}
         icon={ICONS.pen}
-        status={secondOperationStatus}
+        status={destinationStatus}
         onClickEditDestinationWallet={onClickEditDestinationWallet}
         explorerLink={destinationExplorerLink}
         context="destination"
