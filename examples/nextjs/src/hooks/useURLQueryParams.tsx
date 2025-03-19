@@ -10,7 +10,7 @@ type OtherParams = {
 
 export const useQueryParams = () => {
   const [defaultRoute, setDefaultRoute] = useState<WidgetProps['defaultRoute']>(undefined);
-  const [otherParams, setOtherParams] = useState<OtherParams>();
+  const [otherParams, setOtherParams] = useState<OtherParams | undefined>(undefined);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -57,6 +57,8 @@ export const useQueryParams = () => {
           }
         }
       });
+
+      if (!Object.keys(otherParams).length) return;
 
       setOtherParams(otherParams);
 

@@ -111,9 +111,9 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.filter) {
       setChainFilter(props.filter);
     }
-    if (props.onlyTestnet) {
-      setOnlyTestnets(props.onlyTestnet);
-    }
+
+    setOnlyTestnets(props.onlyTestnet ?? false);
+
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }

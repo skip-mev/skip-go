@@ -1,32 +1,33 @@
 'use client';
 import { Widget, resetWidget } from '@skip-go/widget';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
   // optional query params, not necessary for the widget to work
-  const {defaultRoute, otherParams} = useQueryParams();
+  const {defaultRoute, otherParams } = useQueryParams();
+  const [urlParamsLoaded, setUrlParamsLoaded] = useState(false);
 
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [disableShadowDom, setDisableShadowDom] = useState(false);
-  const [apiUrl, setApiUrl] = useState<"prod" | "dev">(otherParams?.api ?? "prod");
-  const [testnet, setTestnet] = useState<boolean>(otherParams?.testnet ?? false);
+  const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
+  const [testnet, setTestnet] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (otherParams?.api !== undefined) {
-      setApiUrl(otherParams?.api);
+  useLayoutEffect(() => {
+    if (otherParams !== undefined) {
+      const {api, testnet, shadowDom, theme} = otherParams;
+      if (api !== undefined) setApiUrl(api);
+      if (testnet !== undefined) setTestnet(testnet);
+      if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
+      if (theme !== undefined) setTheme(theme);
+      console.log('set params')
     }
-    if (otherParams?.testnet  !== undefined) {
-      setTestnet(otherParams.testnet);
+    if (apiUrl === otherParams?.api && testnet === otherParams?.testnet) {
+      console.log('url params loaded');
+      setUrlParamsLoaded(true);
     }
-    if (otherParams?.shadowDom !== undefined) {
-      setDisableShadowDom(!otherParams?.shadowDom);
-    }
-    if (otherParams?.theme !== undefined) {
-      setTheme(otherParams?.theme);
-    }
-  }, [otherParams]);
+  }, [otherParams, apiUrl, testnet]);
 
   useEffect(() => {
     const initEruda = async () => {
@@ -140,7 +141,8 @@ export default function Home() {
             boxSizing: 'border-box',
           }}
         >
-          <Widget
+          {
+            urlParamsLoaded && <Widget
             theme={theme}
             defaultRoute={defaultRoute}
             onWalletConnected={(props) => console.log('onWalletConnected', { ...props })}
@@ -160,6 +162,7 @@ export default function Home() {
                 : "https://dev.go.skip.build/api/skip"
             }
           />
+          }
         </div>
       </div>
     </div>

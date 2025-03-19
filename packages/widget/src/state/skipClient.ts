@@ -119,6 +119,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
         })
         .then((v) => flattenData(v, chains.data));
     },
+    enabled: onlyTestnets !== undefined,
   };
 });
 
@@ -136,6 +137,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
         onlyTestnets,
       });
     },
+    enabled: onlyTestnets !== undefined,
   };
 });
 
@@ -160,6 +162,7 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
     queryFn: async () => {
       return skip.venues(onlyTestnets);
     },
+    enabled: onlyTestnets !== undefined,
   };
 });
 
