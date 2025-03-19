@@ -114,7 +114,7 @@ export const useCreateCosmosWallets = () => {
             track("wallet connected", {
               walletName: wallet,
               chainId: chainIdToConnect,
-              ChainType: ChainType.Cosmos,
+              chainType: ChainType.Cosmos,
             });
 
             return { address };
