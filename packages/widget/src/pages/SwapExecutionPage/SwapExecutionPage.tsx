@@ -81,6 +81,16 @@ export const SwapExecutionPage = () => {
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
+    if (
+      swapExecutionState === SwapExecutionState.confirmed ||
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
+      return "completed";
+    }
+  }, [swapExecutionState]);
+
+  const secondOperationStatus = useMemo(() => {
     const status = statusData?.transferEvents;
 
     if (swapExecutionState === SwapExecutionState.confirmed) {
@@ -157,6 +167,7 @@ export const SwapExecutionPage = () => {
         statusData={statusData}
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
+        secondOperationStatus={secondOperationStatus}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}

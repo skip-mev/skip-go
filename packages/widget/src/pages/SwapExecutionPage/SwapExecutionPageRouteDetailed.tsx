@@ -52,6 +52,7 @@ export const SwapExecutionPageRouteDetailed = ({
   onClickEditDestinationWallet,
   swapExecutionState,
   firstOperationStatus,
+  secondOperationStatus,
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
@@ -89,13 +90,17 @@ export const SwapExecutionPageRouteDetailed = ({
         return "completed";
       }
 
+      if (operation.transferIndex === 0) {
+        return secondOperationStatus;
+      }
+
       if (currentOperationStatus) return currentOperationStatus;
 
       if (previousOperationStatus === "completed") {
         return "pending";
       }
     },
-    [status, swapExecutionState],
+    [secondOperationStatus, status, swapExecutionState],
   );
 
   const renderTooltip = useCallback(
@@ -159,11 +164,19 @@ export const SwapExecutionPageRouteDetailed = ({
             isSignRequired={nextOperation?.signRequired}
             status={operationStatus}
             explorerLink={explorerLink}
+            statusData={statusData}
           />
         </React.Fragment>
       );
     });
-  }, [getOperationStatus, onClickEditDestinationWallet, operations, renderTooltip, status]);
+  }, [
+    getOperationStatus,
+    onClickEditDestinationWallet,
+    operations,
+    renderTooltip,
+    status,
+    statusData,
+  ]);
 
   return (
     <StyledSwapExecutionPageRoute>

@@ -15,6 +15,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -30,6 +31,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
     address: string;
     image?: string;
   };
+  statusData?: TxsStatus;
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -42,6 +44,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   isSignRequired,
   index,
   context,
+  statusData,
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
@@ -147,6 +150,9 @@ export const SwapExecutionPageRouteDetailedRow = ({
     );
   }, [explorerLink, isMobileScreenSize]);
 
+  const numberOfTransferEvents = statusData?.transferEvents.length;
+  const latestStatus = statusData?.transferEvents?.[statusData?.transferEvents.length - 1]?.status;
+
   return (
     <Row gap={15} align="center" {...props}>
       {assetDetails?.assetImage ? (
@@ -155,6 +161,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           height={30}
           backgroundColor={theme.success.text}
           status={status}
+          key={`${numberOfTransferEvents}-${latestStatus}`}
         >
           <StyledChainImage
             height={30}
