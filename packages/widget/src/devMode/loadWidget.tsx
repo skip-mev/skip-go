@@ -10,7 +10,7 @@ const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
-  const [disableShadowDom, setDisableShadowDom] = useState(false);
+  const [disableShadowDom, setDisableShadowDom] = useState(true);
 
   const toggleTheme = () => {
     if (theme === "dark") {
