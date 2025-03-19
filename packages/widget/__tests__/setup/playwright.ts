@@ -76,11 +76,10 @@ export async function approveInKeplr() {
       if (_keplrPopupWindow) {
         clearInterval(findKeplr);
 
-        console.log(_keplrPopupWindow);
-        const approveButton = _keplrPopupWindow.getByText("Approve");
+        const approveButton = _keplrPopupWindow.getByRole("button", { name: "Approve" });
         await approveButton.click();
-        console.log(approveButton);
 
+        _keplrPopupWindow = undefined;
         await _mainWindow.bringToFront();
         resolve("approved");
       }

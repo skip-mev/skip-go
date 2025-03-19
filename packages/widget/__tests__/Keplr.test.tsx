@@ -1,8 +1,10 @@
 import { test } from "./setup/fixtures";
-import { approveInKeplr, getBrowser } from "./setup/playwright";
+import { approveInKeplr } from "./setup/playwright";
 import { expectPageLoaded, initKeplr, selectAsset } from "./setup/utils";
 
 test.describe("Widget tests", () => {
+  test.setTimeout(120_000);
+
   test("Noble USDC -> Injective INJ", async ({ page }) => {
     await initKeplr();
     await expectPageLoaded(page);
@@ -42,12 +44,51 @@ test.describe("Widget tests", () => {
     const input = page.getByRole("textbox");
 
     await input.first().fill("1");
-    await input.first().blur();
 
     await page.getByText("Swap").click();
 
     await page.getByText("Confirm").click();
 
     await approveInKeplr();
+
+    await page.getByText(/go again/i).click({ timeout: 120_000 });
+  });
+
+  test("Injective INJ -> Cosmoshub ATOM", async ({ page }) => {
+    localStorage.clear();
+    await page.reload();
+
+    await selectAsset({ page, asset: "INJ", chain: "Injective" });
+
+    await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
+
+    await page.getByText(/Max/i).click();
+
+    await page.getByText("Swap").click();
+
+    await page.getByText("Confirm").click();
+
+    await approveInKeplr();
+
+    await page.getByText(/go again/i).click({ timeout: 120_000 });
+  });
+
+  test("Cosmoshub ATOM -> Noble USDC", async ({ page }) => {
+    localStorage.clear();
+    await page.reload();
+
+    await selectAsset({ page, asset: "INJ", chain: "Injective" });
+
+    await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
+
+    await page.getByText(/Max/i).click();
+
+    await page.getByText("Swap").click();
+
+    await page.getByText("Confirm").click();
+
+    await approveInKeplr();
+
+    await page.getByText(/go again/i).click({ timeout: 120_000 });
   });
 });
