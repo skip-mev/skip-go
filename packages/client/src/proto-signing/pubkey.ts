@@ -7,15 +7,13 @@ import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { Any } from "cosmjs-types/google/protobuf/any";
 import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
 import { AccountData } from "./signer";
-import { getKeyAlgos } from "src/chains";
+import { getIsEthermint } from "src/chains";
 
 export function makePubkeyAnyFromAccount(
   account: AccountData,
   chainId: string,
 ) {
-  const keyAlgos = getKeyAlgos(chainId);
-
-  const isEthermint = Boolean(keyAlgos?.includes("ethsecp256k1"));
+  const isEthermint = getIsEthermint(chainId);
 
   const pubkey = isEthermint
     ? encodeEthSecp256k1Pubkey(account.pubkey)

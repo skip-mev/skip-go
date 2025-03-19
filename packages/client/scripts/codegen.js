@@ -200,6 +200,7 @@ function extractProperties(chain) {
       rpc: chain.apis?.rpc || [],
     },
     key_algos: chain.key_algos,
+    extra_codecs: chain.extra_codecs,
   };
 }
 
