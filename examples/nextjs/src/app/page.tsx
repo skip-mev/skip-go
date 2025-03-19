@@ -21,10 +21,8 @@ export default function Home() {
       if (testnet !== undefined) setTestnet(testnet);
       if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
       if (theme !== undefined) setTheme(theme);
-      console.log('set params')
     }
-    if (apiUrl === otherParams?.api && testnet === otherParams?.testnet) {
-      console.log('url params loaded');
+    if (otherParams === undefined || apiUrl === otherParams?.api && testnet === otherParams?.testnet) {
       setUrlParamsLoaded(true);
     }
   }, [otherParams, apiUrl, testnet]);
