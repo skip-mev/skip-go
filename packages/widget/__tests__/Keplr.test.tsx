@@ -1,20 +1,24 @@
 import { test } from "./setup/fixtures";
-import { approveInKeplr } from "./setup/playwright";
-import { expectPageLoaded, initKeplr, selectAsset } from "./setup/utils";
+import { approveInKeplr, init } from "./setup/playwright";
+import { expectPageLoaded, selectAsset } from "./setup/utils";
+import { initKeplr } from "./setup/keplr";
 
-test.describe("Widget tests", () => {
+test.beforeAll(async ({ page }) => {
   test.setTimeout(120_000);
 
+  await initKeplr();
+  await init();
+  await expectPageLoaded(page);
+
+  await page.waitForTimeout(100);
+  await page.screenshot({
+    animations: "disabled",
+    path: "__tests__/Widget/default-widget.png",
+  });
+});
+
+test.describe("Widget tests", () => {
   test("Noble USDC -> Injective INJ", async ({ page }) => {
-    await initKeplr();
-    await expectPageLoaded(page);
-
-    await page.waitForTimeout(100);
-    await page.screenshot({
-      animations: "disabled",
-      path: "__tests__/Widget/default-widget.png",
-    });
-
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
 
     await page.waitForTimeout(100);

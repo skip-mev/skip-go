@@ -1,22 +1,12 @@
-import { BrowserType } from "@playwright/test";
+import { assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
 
-import { init, assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
-
-export async function initialSetup(playwrightInstance: BrowserType) {
-  if (playwrightInstance) {
-    await init(playwrightInstance);
-  } else {
-    await init();
-  }
-
+export async function initKeplr() {
   await assignWindows();
   await assignActiveTabName("keplr");
   const phrase =
     process.env.WORD_PHRASE_KEY ||
     "cream olympic crucial rifle hobby improve swallow innocent kid asthma balance order usage range disagree pear bacon matrix crater alert grain total shadow gossip";
   await importWallet(phrase, "Tester@1234");
-
-  // keplrWindow
 }
 
 async function importWallet(secretWords: string, password: string) {

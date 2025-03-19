@@ -1,7 +1,5 @@
 import { Page } from "@playwright/test";
 
-import { init } from "./playwright";
-
 export async function selectAsset({
   page,
   asset,
@@ -26,9 +24,7 @@ export async function selectAsset({
     })
     .click();
 }
-export async function initKeplr() {
-  await init();
-}
+
 export async function expectPageLoaded(page: Page) {
   page.setViewportSize({
     height: 800,

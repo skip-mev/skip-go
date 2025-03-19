@@ -2,6 +2,7 @@ import { type BrowserContext, chromium, test as base } from "@playwright/test";
 
 import { initialSetup } from "./keplr";
 import { prepareKeplr } from "./helpers";
+import { init } from "./playwright";
 
 export const test = base.extend<{ context: BrowserContext }>({
   // eslint-disable-next-line no-empty-pattern
@@ -28,7 +29,7 @@ export const test = base.extend<{ context: BrowserContext }>({
 
     await context.pages()[0].waitForTimeout(3000);
 
-    await initialSetup(chromium);
+    await init();
 
     await use(context);
 
