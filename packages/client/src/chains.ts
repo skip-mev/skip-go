@@ -62,6 +62,12 @@ export function chains(): Chain[] {
   return [...(chainRegistryChains as Chain[]), ...newChains];
 }
 
+export const getKeyAlgos = (chainId: string) => {
+  const chain = chains().find((c) => c.chain_id === chainId);
+  if (!chain) return undefined;
+  return chain.key_algos;
+};
+
 export async function findFirstWorkingEndpoint(
   endpoints: string[],
   type: "rpc" | "rest",

@@ -6,46 +6,39 @@ import { encodePubkey as cosmEncodePubkey } from "@cosmjs/proto-signing";
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { Any } from "cosmjs-types/google/protobuf/any";
 import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
-import { isEthSecp256k1Pubkey } from "../amino/pubkey";
 import { AccountData } from "./signer";
+import { getKeyAlgos } from "src/chains";
 
 export function makePubkeyAnyFromAccount(
   account: AccountData,
-  chainId?: string,
+  chainId: string,
 ) {
-  const algo = `${account.algo}`;
-  // Some impl use `eth_secp256k1` and some use `ethsecp256k1`, so we check for both
-  const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
-  const isEthermint =
-    chainId?.includes("shido") ||
-    chainId?.includes("dymension") ||
-    chainId?.includes("haqq") ||
-    chainId?.includes("titan");
-  const pubkey =
-    isEthSecp256k1 || isEthermint
-      ? encodeEthSecp256k1Pubkey(account.pubkey)
-      : encodeSecp256k1Pubkey(account.pubkey);
+  const keyAlgos = getKeyAlgos(chainId);
 
-  const pubkeyAny = encodePubkeyToAny(pubkey, chainId);
+  const isEthermint = Boolean(keyAlgos?.includes("ethsecp256k1"));
+
+  const pubkey = isEthermint
+    ? encodeEthSecp256k1Pubkey(account.pubkey)
+    : encodeSecp256k1Pubkey(account.pubkey);
+
+  const pubkeyAny = encodePubkeyToAny(pubkey, chainId, isEthermint);
 
   return pubkeyAny;
 }
 
-export function encodePubkeyToAny(pubkey: Pubkey, chainId?: string): Any {
-  if (isEthSecp256k1Pubkey(pubkey)) {
-    const isEthermint =
-      chainId?.includes("shido") ||
-      chainId?.includes("dymension") ||
-      chainId?.includes("haqq") ||
-      chainId?.includes("titan");
-
+export function encodePubkeyToAny(
+  pubkey: Pubkey,
+  chainId: string,
+  isEthermint: boolean,
+): Any {
+  if (isEthermint) {
     const pubkeyProto = PubKey.fromPartial({
       key: fromBase64(pubkey.value),
     });
     let typeUrl = "";
     if (chainId?.includes("injective")) {
       typeUrl = "/injective.crypto.v1beta1.ethsecp256k1.PubKey";
-    } else if (isEthermint) {
+    } else {
       typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
     }
     return Any.fromPartial({

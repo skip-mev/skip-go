@@ -199,6 +199,7 @@ function extractProperties(chain) {
     apis: {
       rpc: chain.apis?.rpc || [],
     },
+    key_algos: chain.key_algos,
   };
 }
 
