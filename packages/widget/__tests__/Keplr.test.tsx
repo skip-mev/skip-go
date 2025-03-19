@@ -34,19 +34,20 @@ test.describe("Widget tests", () => {
 
     await approveInKeplr();
 
-    // const localHostPage = getBrowser()
-    //   .contexts()[0]
-    //   ?.pages()
-    //   .find((page) => page.url().includes("localhost"));
+    await page.waitForTimeout(100);
+    await page.screenshot({
+      path: "__tests__/Widget/connect-keplr.png",
+    });
 
-    // await page.waitForTimeout(5000);
+    const input = page.getByRole("textbox");
 
-    // await page.screenshot({
-    //   path: "__tests__/Widget/connect-keplr.png",
-    // });
+    await input.first().fill("1");
+    await input.first().blur();
 
-    // await fillAmount(page, "5");
+    await page.getByText("Swap").click();
 
-    // await e2eTest(page);
+    await page.getByText("Confirm").click();
+
+    await approveInKeplr();
   });
 });

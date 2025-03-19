@@ -74,9 +74,14 @@ export async function approveInKeplr() {
     const findKeplr = setInterval(async () => {
       assignWindows();
       if (_keplrPopupWindow) {
-        await _keplrPopupWindow.getByRole("button", { name: "Approve" }).click();
-
         clearInterval(findKeplr);
+
+        console.log(_keplrPopupWindow);
+        const approveButton = _keplrPopupWindow.getByText("Approve");
+        await approveButton.click();
+        console.log(approveButton);
+
+        await _mainWindow.bringToFront();
         resolve("approved");
       }
     }, 100);

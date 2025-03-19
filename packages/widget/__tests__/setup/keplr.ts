@@ -74,7 +74,7 @@ async function importWallet(secretWords: string, password: string) {
     })
     .click();
 
-  keplrWindow.close();
+  // keplrWindow.close();
 
   // await keplrWindow.pause();
 }
