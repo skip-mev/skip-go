@@ -5,7 +5,7 @@ import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
   // optional query params, not necessary for the widget to work
-  const {defaultRoute, otherParams } = useQueryParams();
+  const {defaultRoute, otherParams, loaded } = useQueryParams();
   const [urlParamsLoaded, setUrlParamsLoaded] = useState(false);
 
   // optional theme, widget will be dark mode be default
@@ -22,10 +22,10 @@ export default function Home() {
       if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
       if (theme !== undefined) setTheme(theme);
     }
-    if (otherParams === undefined || apiUrl === otherParams?.api && testnet === otherParams?.testnet) {
+    if (loaded) {
       setUrlParamsLoaded(true);
     }
-  }, [otherParams, apiUrl, testnet]);
+  }, [otherParams, apiUrl, testnet, disableShadowDom, theme, loaded]);
 
   useEffect(() => {
     const initEruda = async () => {

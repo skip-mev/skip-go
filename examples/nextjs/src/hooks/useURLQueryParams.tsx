@@ -11,6 +11,7 @@ type OtherParams = {
 export const useQueryParams = () => {
   const [defaultRoute, setDefaultRoute] = useState<WidgetProps['defaultRoute']>(undefined);
   const [otherParams, setOtherParams] = useState<OtherParams | undefined>(undefined);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -58,15 +59,22 @@ export const useQueryParams = () => {
         }
       });
 
-      if (!Object.keys(otherParams).length) return;
 
-      setOtherParams(otherParams);
+      if (!Object.keys(otherParams).length) {
+        setOtherParams(undefined);
+      } else {
+        setOtherParams(otherParams);
+      }
 
-      if (!Object.keys(defaultRouteResult).length) return;
 
-      setDefaultRoute(defaultRouteResult as WidgetProps['defaultRoute']);
+      if (!Object.keys(defaultRouteResult).length) {
+        setDefaultRoute(undefined);
+      } else {
+        setDefaultRoute(defaultRouteResult as WidgetProps['defaultRoute']);
+      }
+      setLoaded(true);
     }
   }, []);
 
-  return {defaultRoute, otherParams};
+  return {defaultRoute, otherParams, loaded};
 };
