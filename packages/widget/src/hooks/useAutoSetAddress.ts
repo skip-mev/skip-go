@@ -140,7 +140,10 @@ export const useAutoSetAddress = () => {
   );
 
   useEffect(() => {
-    if (overallStatus !== "unconfirmed") return;
+    if (overallStatus !== "unconfirmed") {
+      setIsLoading(false);
+      return;
+    }
     if (!requiredChainAddresses) return;
     const cosmosWalletChanged = sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id;
     const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
