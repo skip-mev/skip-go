@@ -14,9 +14,9 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { copyToClipboard } from "@/utils/misc";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -42,6 +42,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -122,11 +123,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
             on {assetDetails.chainName}
           </StyledChainName>
 
-          <Button align="center" gap={3} onClick={() => copyToClipboard(source.address)}>
+          <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
-                {getTruncatedAddress(source.address, isMobileScreenSize)}
+                {isShowingCopyAddressFeedback
+                  ? "Address copied!"
+                  : getTruncatedAddress(source.address, isMobileScreenSize)}
               </SmallText>
             )}
           </Button>
