@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.19
+
+### Patch Changes
+
+- c709da5: Fix 2 cctp tx throwing error
+
 ## 0.16.18
 
 ### Patch Changes
