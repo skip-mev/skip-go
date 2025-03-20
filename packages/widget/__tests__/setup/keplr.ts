@@ -46,7 +46,7 @@ export async function initialSetup(playwrightInstance: BrowserType) {
   await assignActiveTabName("keplr");
   const phrase =
     process.env.WORD_PHRASE_KEY ||
-    "cream olympic crucial rifle hobby improve swallow innocent kid asthma balance order usage range disagree pear bacon matrix crater alert grain total shadow gossip";
+    "test test test test test test test test test test test test test test test test test test test test test test test test";
   await importWallet(phrase, "Tester@1234");
 
   // keplrWindow
@@ -54,8 +54,6 @@ export async function initialSetup(playwrightInstance: BrowserType) {
 
 async function importWallet(secretWords: string, password: string) {
   const keplrWindow = getKeplrWindow();
-
-  // await keplrWindow.pause();
 
   await keplrWindow.getByText(/import an existing wallet/i).click();
 

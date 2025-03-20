@@ -6,12 +6,8 @@ import { initKeplr, setupBrowserContext } from "./setup/keplr";
 let page: Page;
 test.describe("Widget tests", async () => {
   test("Noble USDC -> Injective INJ", async () => {
-    page = await setupBrowserContext();
     test.setTimeout(120_000);
-
-    console.log("keplr setup complete");
-    // await expectPageLoaded(page);
-    // console.log("load page");
+    page = await setupBrowserContext();
 
     await page.waitForTimeout(100);
     await page.screenshot({
@@ -59,7 +55,7 @@ test.describe("Widget tests", async () => {
   });
 
   test("Injective INJ -> Cosmoshub ATOM", async () => {
-    // await page.evaluate(() => window.localStorage.clear());
+    await page.evaluate(() => window.localStorage.clear());
     await page.reload();
 
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
