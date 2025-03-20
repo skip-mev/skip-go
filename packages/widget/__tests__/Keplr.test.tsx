@@ -1,24 +1,24 @@
-import { test } from "./setup/fixtures";
+import { Page, test } from "@playwright/test";
 import { approveInKeplr, init } from "./setup/playwright";
 import { expectPageLoaded, selectAsset } from "./setup/utils";
-import { initKeplr } from "./setup/keplr";
+import { initKeplr, setupBrowserContext } from "./setup/keplr";
 
-test.beforeAll(async ({ page }) => {
-  test.setTimeout(120_000);
+let page: Page;
+test.describe("Widget tests", async () => {
+  test("Noble USDC -> Injective INJ", async () => {
+    page = await setupBrowserContext();
+    test.setTimeout(120_000);
 
-  await initKeplr();
-  await init();
-  await expectPageLoaded(page);
+    console.log("keplr setup complete");
+    // await expectPageLoaded(page);
+    // console.log("load page");
 
-  await page.waitForTimeout(100);
-  await page.screenshot({
-    animations: "disabled",
-    path: "__tests__/Widget/default-widget.png",
-  });
-});
+    await page.waitForTimeout(100);
+    await page.screenshot({
+      animations: "disabled",
+      path: "__tests__/Widget/default-widget.png",
+    });
 
-test.describe("Widget tests", () => {
-  test("Noble USDC -> Injective INJ", async ({ page }) => {
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
 
     await page.waitForTimeout(100);
@@ -58,8 +58,8 @@ test.describe("Widget tests", () => {
     await page.getByText(/go again/i).click({ timeout: 120_000 });
   });
 
-  test("Injective INJ -> Cosmoshub ATOM", async ({ page }) => {
-    localStorage.clear();
+  test("Injective INJ -> Cosmoshub ATOM", async () => {
+    // await page.evaluate(() => window.localStorage.clear());
     await page.reload();
 
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
@@ -77,8 +77,8 @@ test.describe("Widget tests", () => {
     await page.getByText(/go again/i).click({ timeout: 120_000 });
   });
 
-  test("Cosmoshub ATOM -> Noble USDC", async ({ page }) => {
-    localStorage.clear();
+  test("Cosmoshub ATOM -> Noble USDC", async () => {
+    // await page.evaluate(() => window.localStorage.clear());
     await page.reload();
 
     await selectAsset({ page, asset: "INJ", chain: "Injective" });

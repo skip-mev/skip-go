@@ -1,12 +1,55 @@
-import { assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
+import { BrowserContext, BrowserType, chromium } from "@playwright/test";
 
-export async function initKeplr() {
+import { init, assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
+import { prepareKeplr } from "./helpers";
+
+export async function setupBrowserContext() {
+  const keplrPath = await prepareKeplr();
+
+  // Prepare browser args
+  const browserArgs = [
+    `--disable-extensions-except=${keplrPath}`,
+    `--load-extension=${keplrPath}`,
+    "--remote-debugging-port=9222",
+    "--disable-gpu",
+    // "--headless=new",
+  ];
+
+  // Launch browser
+  const context = await chromium.launchPersistentContext("", {
+    headless: false,
+    args: browserArgs,
+  });
+
+  // Wait for initial setup
+  await context.pages()[0]?.waitForTimeout(3000);
+  await initialSetup(chromium);
+
+  const page = await context.newPage();
+  page.setViewportSize({
+    height: 800,
+    width: 800,
+  });
+  await page.goto("http://localhost:5173/");
+
+  return page;
+}
+
+export async function initialSetup(playwrightInstance: BrowserType) {
+  if (playwrightInstance) {
+    await init(playwrightInstance);
+  } else {
+    await init();
+  }
+
   await assignWindows();
   await assignActiveTabName("keplr");
   const phrase =
     process.env.WORD_PHRASE_KEY ||
     "cream olympic crucial rifle hobby improve swallow innocent kid asthma balance order usage range disagree pear bacon matrix crater alert grain total shadow gossip";
   await importWallet(phrase, "Tester@1234");
+
+  // keplrWindow
 }
 
 async function importWallet(secretWords: string, password: string) {
@@ -67,7 +110,10 @@ async function importWallet(secretWords: string, password: string) {
     })
     .click();
 
-  // keplrWindow.close();
-
-  // await keplrWindow.pause();
+  return await keplrWindow
+    .getByRole("button", {
+      name: "Finish",
+      exact: true,
+    })
+    .click();
 }

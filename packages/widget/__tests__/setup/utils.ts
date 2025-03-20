@@ -30,5 +30,5 @@ export async function expectPageLoaded(page: Page) {
     height: 800,
     width: 800,
   });
-  await page.goto(process.env.PLAYWRIGHT_TEST_BASE_URL || "http://localhost:5173/");
+  await page.goto("http://localhost:5173/");
 }
