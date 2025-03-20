@@ -409,12 +409,15 @@ export class SkipClient {
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gas = await waitForVariable(() => this.cosmosGasFee);
-    if (gas[0]?.error !== null) {
-      throw new Error(gas[0]?.error);
+    const gasArray = await waitForVariable(() => this.cosmosGasFee);
+    const gas = gasArray.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
     }
 
-    const gasUsed = gas[index];
+    const gasUsed = gasArray[index];
     if (!gasUsed) {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
