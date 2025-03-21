@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.4.5
+
+### Patch Changes
+
+- aebae07: Left align address text in detailed view
+
 ## 3.4.4
 
 ### Patch Changes
