@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.20
+
+### Patch Changes
+
+- 8bd8d07: Force client lib update for packetTxs refactor
+
 ## 0.16.19
 
 ### Patch Changes

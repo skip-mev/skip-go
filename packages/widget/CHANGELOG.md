@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.4.6
+
+### Patch Changes
+
+- Updated dependencies [8bd8d07]
+  - @skip-go/client@0.16.20
+
 ## 3.4.5
 
 ### Patch Changes
