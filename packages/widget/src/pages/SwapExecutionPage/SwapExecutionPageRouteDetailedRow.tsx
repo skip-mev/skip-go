@@ -215,6 +215,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 };
 
 const AddressPillButton = styled(PillButton)`
+  justify-content: flex-start;
   @media (min-width: 768px) {
     width: 160px;
   }
