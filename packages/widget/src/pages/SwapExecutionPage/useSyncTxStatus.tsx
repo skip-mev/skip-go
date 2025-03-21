@@ -21,7 +21,7 @@ export const useSyncTxStatus = ({
   const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
     useAtomValue(swapExecutionStateAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
-  const txHistory = useAtomValue(transactionHistoryAtom)
+  const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -77,13 +77,10 @@ export const useSyncTxStatus = ({
   useEffect(() => {
     if (computedSwapStatus) {
       const index = historyIndex ?? transactionHistoryIndex;
-      setTransactionHistory(
-        historyIndex ?? transactionHistoryIndex,
-        ({
-          ...txHistory[index],
-          status: computedSwapStatus,
-        })
-      );
+      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
+        ...txHistory[index],
+        status: computedSwapStatus,
+      });
       if (!historyIndex) {
         setOverallStatus(computedSwapStatus);
       }
@@ -97,5 +94,6 @@ export const useSyncTxStatus = ({
     setTransactionHistory,
     transactionHistoryIndex,
     historyIndex,
+    txHistory,
   ]);
 };
