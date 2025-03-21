@@ -101,7 +101,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     };
     return (
       <Container>
-        <PillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
+        <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
           {chainAddressWallet.image && (
             <img
               src={chainAddressWallet.image}
@@ -111,7 +111,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
             />
           )}
           {renderContent()}
-        </PillButton>
+        </AddressPillButton>
         {shouldRenderEditDestinationWallet && (
           <Button
             as={isMobileScreenSize ? PillButton : undefined}
@@ -207,6 +207,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
     </Row>
   );
 };
+
+const AddressPillButton = styled(PillButton)`
+  @media (min-width: 768px) {
+    width: 160px;
+  }
+`;
 
 const LeftContent = styled(Column)`
   width: 55%;
