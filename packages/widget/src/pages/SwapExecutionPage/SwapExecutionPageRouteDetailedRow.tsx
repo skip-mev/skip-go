@@ -180,8 +180,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
         }}
         justify="space-between"
       >
-        <Row align="center" justify="space-between">
-          <Column>
+        <Row align="center">
+          <LeftContent>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {removeTrailingZeros(assetDetails?.amount)}
@@ -200,13 +200,20 @@ export const SwapExecutionPageRouteDetailedRow = ({
               {renderExplorerLink}
             </Row>{" "}
             {isSignRequired && <SmallText color={theme.warning.text}>Signature required</SmallText>}
-          </Column>
+          </LeftContent>
           {renderAddress}
         </Row>
       </Column>
     </Row>
   );
 };
+
+const LeftContent = styled(Column)`
+  width: 55%;
+  @media (max-width: 767px) {
+    width: 75%;
+  }
+`;
 
 const PlaceholderIcon = styled.div`
   width: 30px;
@@ -330,13 +337,9 @@ const StyledLoadingOverlay = styled(Row)<{
 `;
 
 const StyledAssetAmount = styled(SmallText)`
-  max-width: 60px;
+  max-width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  @media (max-width: 767px) {
-    max-width: 80px;
-  }
 
   @media (max-width: 400px) {
     max-width: 55px;
