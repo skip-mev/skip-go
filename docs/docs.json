@@ -81,7 +81,10 @@
           {
             "group": "Eureka",
             "pages": [
-              "eureka/devnet-testing-guide"
+              "eureka/eureka-overview",
+              "eureka/eureka-tech-overview",
+              "eureka/devnet-testing-guide",
+              "eureka/security-properties"
             ]
           },
           {

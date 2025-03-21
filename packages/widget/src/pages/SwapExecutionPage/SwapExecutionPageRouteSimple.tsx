@@ -16,6 +16,7 @@ export type SwapExecutionPageRouteProps = {
   statusData?: TxsStatus;
   swapExecutionState?: SwapExecutionState;
   firstOperationStatus?: SimpleStatus | undefined;
+  secondOperationStatus?: SimpleStatus | undefined;
 };
 
 export const SwapExecutionPageRouteSimple = ({

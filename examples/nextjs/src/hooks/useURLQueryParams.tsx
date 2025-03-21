@@ -1,45 +1,80 @@
 import { useState, useEffect } from 'react';
 import { WidgetProps } from '@skip-go/widget';
 
+type OtherParams = {
+  shadowDom?: boolean;
+  testnet?: boolean;
+  api?: "prod" | "dev";
+  theme?: "light" | "dark";
+}
+
 export const useQueryParams = () => {
-  const [params, setParams] = useState<WidgetProps['defaultRoute']>(undefined);
+  const [defaultRoute, setDefaultRoute] = useState<WidgetProps['defaultRoute']>(undefined);
+  const [otherParams, setOtherParams] = useState<OtherParams | undefined>(undefined);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const queryString = window.location.search.substring(1);
       const pairs = queryString.split('&');
-      const keys = ['src_asset', 'src_chain', 'dest_chain', 'dest_asset', 'amount_in', 'amount_out'];
-      const result: Partial<WidgetProps['defaultRoute']> = {};
+      const keys = ['src_asset', 'src_chain', 'dest_chain', 'dest_asset', 'amount_in', 'amount_out', 'testnet', "api", "shadowDom", "theme"];
+      const defaultRouteResult: Partial<WidgetProps['defaultRoute']> = {};
+      const otherParams = {} as OtherParams;
 
       pairs.forEach((pair) => {
         const [rawKey, rawValue] = pair.split('=');
+
+        const value = decodeURIComponent(rawValue);
         if (rawKey && rawValue && keys.includes(rawKey)) {
           if (rawKey === 'src_asset') {
-            result.srcAssetDenom = decodeURIComponent(rawValue);
+            defaultRouteResult.srcAssetDenom = value;
           }
           if (rawKey === 'src_chain') {
-            result.srcChainId = decodeURIComponent(rawValue);
+            defaultRouteResult.srcChainId = value;
           }
           if (rawKey === 'dest_chain') {
-            result.destChainId = decodeURIComponent(rawValue);
+            defaultRouteResult.destChainId = value;
           }
           if (rawKey === 'dest_asset') {
-            result.destAssetDenom = decodeURIComponent(rawValue);
+            defaultRouteResult.destAssetDenom = value;
           }
           if (rawKey === 'amount_in') {
-            result.amountIn = parseFloat(decodeURIComponent(rawValue));
+            defaultRouteResult.amountIn = parseFloat(value);
           }
           if (rawKey === 'amount_out') {
-            result.amountOut = parseFloat(decodeURIComponent(rawValue));
+            defaultRouteResult.amountOut = parseFloat(value);
+          }
+          if (rawKey === "shadowDom") {
+            otherParams.shadowDom = JSON.parse(value) as boolean;
+          }
+          if (rawKey === "testnet") {
+            otherParams.testnet = JSON.parse(value) as boolean;
+          }
+          if (rawKey === "api" && ["prod", "dev"].includes(value)) {
+            otherParams.api = value as "prod" | "dev";
+          }
+          if (rawKey === "theme" && ["light", "dark"].includes(value)) {
+            otherParams.theme = value as "light" | "dark";
           }
         }
       });
 
-      if (!Object.keys(result).length) return;
 
-      setParams(result as WidgetProps['defaultRoute']);
+      if (!Object.keys(otherParams).length) {
+        setOtherParams(undefined);
+      } else {
+        setOtherParams(otherParams);
+      }
+
+
+      if (!Object.keys(defaultRouteResult).length) {
+        setDefaultRoute(undefined);
+      } else {
+        setDefaultRoute(defaultRouteResult as WidgetProps['defaultRoute']);
+      }
+      setLoaded(true);
     }
   }, []);
 
-  return params;
+  return {defaultRoute, otherParams, loaded};
 };

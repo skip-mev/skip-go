@@ -22,12 +22,13 @@
     "build:client": "yarn workspace @skip-go/client build",
     "codegen": "yarn workspace @skip-go/client codegen",
     "test": "yarn workspace @skip-go/client run test",
+    "test-widget": "yarn workspace @skip-go/widget run test:browser",
     "submodule": "yarn run submodule:init && yarn run submodule:update",
     "submodule:init": "git submodule deinit -f --all",
     "submodule:update": "git submodule update --init --recursive",
     "release": "yarn run build && yarn workspace @skip-go/widget run pre && changeset publish",
     "swagger": "npx open-swagger-ui --open docs/swagger.yml",
-    "postinstall": "yarn run submodule",
+    "postinstall": "yarn run submodule && yarn playwright install",
     "update-registries": "yarn workspace @skip-go/client run update-registries && yarn workspace @skip-go/widget run update-registries && yarn run build"
   },
   "devDependencies": {
@@ -68,6 +69,7 @@
     "minimatch": "^9.0.3",
     "msw": "^1.2.3",
     "p-map": "^7.0.2",
+    "playwright": "^1.51.0",
     "postcss-prefixwrap": "^1.49.0",
     "proxy-from-env": "^1.1.0",
     "react": "^18.0.0",

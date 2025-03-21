@@ -15,6 +15,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -30,6 +31,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
     address: string;
     image?: string;
   };
+  statusData?: TxsStatus;
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -42,6 +44,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   isSignRequired,
   index,
   context,
+  statusData,
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
@@ -63,9 +66,15 @@ export const SwapExecutionPageRouteDetailedRow = ({
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
   const chainAddressWallet = useMemo(() => {
-    const selectedChainAddress = Object.values(chainAddresses).find(
+    const chainAddressArray = Object.values(chainAddresses);
+    const firstChainAddressFoundForChainId = chainAddressArray.find(
       (chainAddress) => chainAddress.chainID === chainId,
     );
+    const lastChainAddress = chainAddressArray[chainAddressArray.length - 1];
+
+    const selectedChainAddress =
+      context === "destination" ? lastChainAddress : firstChainAddressFoundForChainId;
+
     return {
       address: selectedChainAddress?.address,
       image:
@@ -73,7 +82,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           selectedChainAddress?.wallet?.walletInfo.logo) ||
         undefined,
     };
-  }, [chainAddresses, chainId]);
+  }, [chainAddresses, chainId, context]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
@@ -98,7 +107,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
     };
     return (
       <Container>
-        <PillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
+        <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
           {chainAddressWallet.image && (
             <img
               src={chainAddressWallet.image}
@@ -108,7 +117,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
             />
           )}
           {renderContent()}
-        </PillButton>
+        </AddressPillButton>
         {shouldRenderEditDestinationWallet && (
           <Button
             as={isMobileScreenSize ? PillButton : undefined}
@@ -147,14 +156,18 @@ export const SwapExecutionPageRouteDetailedRow = ({
     );
   }, [explorerLink, isMobileScreenSize]);
 
+  const numberOfTransferEvents = statusData?.transferEvents.length;
+  const latestStatus = statusData?.transferEvents?.[statusData?.transferEvents.length - 1]?.status;
+
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.assetImage && (
+      {assetDetails?.assetImage ? (
         <StyledAnimatedBorder
           width={30}
           height={30}
           backgroundColor={theme.success.text}
           status={status}
+          key={`${numberOfTransferEvents}-${latestStatus}`}
         >
           <StyledChainImage
             height={30}
@@ -163,6 +176,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
             title={assetDetails?.asset?.name}
           />
         </StyledAnimatedBorder>
+      ) : (
+        <PlaceholderIcon> ? </PlaceholderIcon>
       )}
 
       <Column
@@ -171,8 +186,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
         }}
         justify="space-between"
       >
-        <Row align="center" justify="space-between">
-          <Column>
+        <Row align="center">
+          <LeftContent>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {removeTrailingZeros(assetDetails?.amount)}
@@ -191,13 +206,39 @@ export const SwapExecutionPageRouteDetailedRow = ({
               {renderExplorerLink}
             </Row>{" "}
             {isSignRequired && <SmallText color={theme.warning.text}>Signature required</SmallText>}
-          </Column>
+          </LeftContent>
           {renderAddress}
         </Row>
       </Column>
     </Row>
   );
 };
+
+const AddressPillButton = styled(PillButton)`
+  @media (min-width: 768px) {
+    width: 160px;
+  }
+`;
+
+const LeftContent = styled(Column)`
+  width: 55%;
+  @media (max-width: 767px) {
+    width: 75%;
+  }
+`;
+
+const PlaceholderIcon = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.secondary.background.normal};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: ${(props) => props.theme.primary.text.normal};
+  border: 1px solid ${(props) => props.theme.primary.text.normal};
+`;
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
@@ -308,13 +349,9 @@ const StyledLoadingOverlay = styled(Row)<{
 `;
 
 const StyledAssetAmount = styled(SmallText)`
-  max-width: 60px;
+  max-width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  @media (max-width: 767px) {
-    max-width: 80px;
-  }
 
   @media (max-width: 400px) {
     max-width: 55px;

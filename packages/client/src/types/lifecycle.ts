@@ -1,4 +1,4 @@
-import { ERC20Approval } from '../types';
+import { ERC20Approval } from "../types";
 
 export type SubmitTxRequestJSON = {
   tx: string;
@@ -19,15 +19,15 @@ export type SubmitTxResponse = {
 };
 
 export type StatusState =
-  | 'STATE_UNKNOWN'
-  | 'STATE_SUBMITTED'
-  | 'STATE_PENDING'
-  | 'STATE_RECEIVED'
-  | 'STATE_COMPLETED'
-  | 'STATE_ABANDONED'
-  | 'STATE_COMPLETED_SUCCESS'
-  | 'STATE_COMPLETED_ERROR'
-  | 'STATE_PENDING_ERROR';
+  | "STATE_UNKNOWN"
+  | "STATE_SUBMITTED"
+  | "STATE_PENDING"
+  | "STATE_RECEIVED"
+  | "STATE_COMPLETED"
+  | "STATE_ABANDONED"
+  | "STATE_COMPLETED_SUCCESS"
+  | "STATE_COMPLETED_ERROR"
+  | "STATE_PENDING_ERROR";
 
 export type NextBlockingTransferJSON = {
   transfer_sequence_index: number;
@@ -48,11 +48,11 @@ export type StatusRequest = {
 };
 
 export type TransferState =
-  | 'TRANSFER_UNKNOWN'
-  | 'TRANSFER_PENDING'
-  | 'TRANSFER_RECEIVED'
-  | 'TRANSFER_SUCCESS'
-  | 'TRANSFER_FAILURE';
+  | "TRANSFER_UNKNOWN"
+  | "TRANSFER_PENDING"
+  | "TRANSFER_RECEIVED"
+  | "TRANSFER_SUCCESS"
+  | "TRANSFER_FAILURE";
 
 export type TransferInfoJSON = {
   from_chain_id: string;
@@ -69,10 +69,19 @@ export type TransferInfo = {
   fromChainID: string;
   toChainID: string;
   state: TransferState;
-  packetTXs: Packet;
+  packetTxs: Packet;
 
-  // Deprecated
+  /**
+   * Deprecated use `packetTxs` instead
+   */
+  packetTXs: Packet;
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
@@ -145,9 +154,9 @@ export type Packet = {
 };
 
 export type StatusErrorType =
-  | 'STATUS_ERROR_UNKNOWN'
-  | 'STATUS_ERROR_TRANSACTION_EXECUTION'
-  | 'STATUS_ERROR_INDEXING';
+  | "STATUS_ERROR_UNKNOWN"
+  | "STATUS_ERROR_TRANSACTION_EXECUTION"
+  | "STATUS_ERROR_INDEXING";
 
 export type TransactionExecutionError = {
   code: number;
@@ -173,9 +182,9 @@ export type StatusError = {
 };
 
 export type PacketErrorType =
-  | 'PACKET_ERROR_UNKNOWN'
-  | 'PACKET_ERROR_ACKNOWLEDGEMENT'
-  | 'PACKET_ERROR_TIMEOUT';
+  | "PACKET_ERROR_UNKNOWN"
+  | "PACKET_ERROR_ACKNOWLEDGEMENT"
+  | "PACKET_ERROR_TIMEOUT";
 
 export type AcknowledgementError = {
   message: string;
@@ -233,15 +242,15 @@ export type TrackTxResponse = {
 };
 
 export type AxelarTransferType =
-  | 'AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN'
-  | 'AXELAR_TRANSFER_SEND_TOKEN';
+  | "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN"
+  | "AXELAR_TRANSFER_SEND_TOKEN";
 
 export type AxelarTransferState =
-  | 'AXELAR_TRANSFER_UNKNOWN'
-  | 'AXELAR_TRANSFER_PENDING_CONFIRMATION'
-  | 'AXELAR_TRANSFER_PENDING_RECEIPT'
-  | 'AXELAR_TRANSFER_SUCCESS'
-  | 'AXELAR_TRANSFER_FAILURE';
+  | "AXELAR_TRANSFER_UNKNOWN"
+  | "AXELAR_TRANSFER_PENDING_CONFIRMATION"
+  | "AXELAR_TRANSFER_PENDING_RECEIPT"
+  | "AXELAR_TRANSFER_SUCCESS"
+  | "AXELAR_TRANSFER_FAILURE";
 
 export type AxelarTransferInfoJSON = {
   from_chain_id: string;
@@ -264,26 +273,31 @@ export type AxelarTransferInfo = {
   txs: AxelarTransferTransactions;
   axelarScanLink: string;
 
-  // Deprecated
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
 export type AxelarTransferTransactionsJSON =
   | {
-    contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
-  }
+      contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
+    }
   | {
-    send_token_txs: SendTokenTransactionsJSON;
-  };
+      send_token_txs: SendTokenTransactionsJSON;
+    };
 
 export type AxelarTransferTransactions =
   | {
-    contractCallWithTokenTxs: ContractCallWithTokenTransactions;
-  }
+      contractCallWithTokenTxs: ContractCallWithTokenTransactions;
+    }
   | {
-    sendTokenTxs: SendTokenTransactions;
-  };
+      sendTokenTxs: SendTokenTransactions;
+    };
 
 export type ContractCallWithTokenTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -309,7 +323,7 @@ export type ContractCallWithTokenError = {
 };
 
 export type ContractCallWithTokenErrorType =
-  'CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR';
+  "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR";
 
 export type SendTokenTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -325,7 +339,7 @@ export type SendTokenTransactions = {
   error: SendTokenError | null;
 };
 
-export type SendTokenErrorType = 'SEND_TOKEN_EXECUTION_ERROR';
+export type SendTokenErrorType = "SEND_TOKEN_EXECUTION_ERROR";
 
 export type SendTokenError = {
   message: string;
@@ -333,11 +347,11 @@ export type SendTokenError = {
 };
 
 export type CCTPTransferState =
-  | 'CCTP_TRANSFER_UNKNOWN'
-  | 'CCTP_TRANSFER_SENT'
-  | 'CCTP_TRANSFER_PENDING_CONFIRMATION'
-  | 'CCTP_TRANSFER_CONFIRMED'
-  | 'CCTP_TRANSFER_RECEIVED';
+  | "CCTP_TRANSFER_UNKNOWN"
+  | "CCTP_TRANSFER_SENT"
+  | "CCTP_TRANSFER_PENDING_CONFIRMATION"
+  | "CCTP_TRANSFER_CONFIRMED"
+  | "CCTP_TRANSFER_RECEIVED";
 
 export type CCTPTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -366,16 +380,21 @@ export type CCTPTransferInfo = {
   state: CCTPTransferState;
   txs: CCTPTransferTransactions;
 
-  // Deprecated
+  /**
+   * Deprecated use `fromChainID` instead
+   */
   srcChainID: string;
+  /**
+   * Deprecated use `toChainID` instead
+   */
   dstChainID: string;
 };
 
 export type HyperlaneTransferState =
-  | 'HYPERLANE_TRANSFER_UNKNOWN'
-  | 'HYPERLANE_TRANSFER_SENT'
-  | 'HYPERLANE_TRANSFER_FAILED'
-  | 'HYPERLANE_TRANSFER_RECEIVED';
+  | "HYPERLANE_TRANSFER_UNKNOWN"
+  | "HYPERLANE_TRANSFER_SENT"
+  | "HYPERLANE_TRANSFER_FAILED"
+  | "HYPERLANE_TRANSFER_RECEIVED";
 
 export type HyperlaneTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -421,7 +440,7 @@ export type GoFastTransferState =
   | "GO_FAST_POST_ACTION_FAILED"
   | "GO_FAST_TRANSFER_TIMEOUT"
   | "GO_FAST_TRANSFER_FILLED"
-  | "GO_FAST_TRANSFER_REFUNDED"
+  | "GO_FAST_TRANSFER_REFUNDED";
 
 export type GoFastTransferInfoJSON = {
   from_chain_id: string;
@@ -443,8 +462,7 @@ export type StargateTransferState =
   | "STARGATE_TRANSFER_UNKNOWN"
   | "STARGATE_TRANSFER_SENT"
   | "STARGATE_TRANSFER_RECEIVED"
-  | "STARGATE_TRANSFER_FAILED"
-
+  | "STARGATE_TRANSFER_FAILED";
 
 export type StargateTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -473,10 +491,9 @@ export type StargateTransferInfo = {
 };
 
 export type OPInitTransferState =
-  | 'OPINIT_TRANSFER_UNKNOWN'
-  | 'OPINIT_TRANSFER_SENT'
-  | 'OPINIT_TRANSFER_RECEIVED';
-
+  | "OPINIT_TRANSFER_UNKNOWN"
+  | "OPINIT_TRANSFER_SENT"
+  | "OPINIT_TRANSFER_RECEIVED";
 
 export type OPInitTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -507,22 +524,18 @@ export type EurekaTransferInfoJSON = {
   to_chain_id: string;
   state: TransferState;
   packet_txs: PacketJSON;
-}
+};
 
-export type EurekaTransferInfo= {
+export type EurekaTransferInfo = {
   fromChainID: string;
   toChainID: string;
   state: TransferState;
   packetTxs: Packet;
-}
+};
 
 export type TransferEventJSON =
-  | {
-    ibc_transfer: TransferInfoJSON;
-  }
-  | {
-    axelar_transfer: AxelarTransferInfoJSON;
-  }
+  | { ibc_transfer: TransferInfoJSON }
+  | { axelar_transfer: AxelarTransferInfoJSON }
   | { cctp_transfer: CCTPTransferInfoJSON }
   | { hyperlane_transfer: HyperlaneTransferInfoJSON }
   | { op_init_transfer: OPInitTransferInfoJSON }
@@ -531,9 +544,7 @@ export type TransferEventJSON =
   | { eureka_transfer: EurekaTransferInfoJSON };
 
 export type TransferEvent =
-  | {
-    ibcTransfer: TransferInfo;
-  }
+  | { ibcTransfer: TransferInfo }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
   | { hyperlaneTransfer: HyperlaneTransferInfo }
@@ -542,11 +553,9 @@ export type TransferEvent =
   | { stargateTransfer: StargateTransferInfo }
   | { eurekaTransfer: EurekaTransferInfo };
 
-type CallbackStatus = 'success' | 'error' | 'pending' | 'completed';
+type CallbackStatus = "success" | "error" | "pending" | "completed";
 export interface TransactionCallbacks {
-  onTransactionSigned?: (txInfo: {
-    chainID: string;
-  }) => Promise<void>;
+  onTransactionSigned?: (txInfo: { chainID: string }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {
     txHash: string;
     chainID: string;
@@ -559,7 +568,7 @@ export interface TransactionCallbacks {
   onTransactionCompleted?: (
     chainID: string,
     txHash: string,
-    status: TxStatusResponse
+    status: TxStatusResponse,
   ) => Promise<void>;
   onValidateGasBalance?: (value: {
     chainID?: string;
@@ -567,7 +576,7 @@ export interface TransactionCallbacks {
     status: CallbackStatus;
   }) => Promise<void>;
   onApproveAllowance?: (value: {
-    allowance?: ERC20Approval,
-    status: CallbackStatus
+    allowance?: ERC20Approval;
+    status: CallbackStatus;
   }) => Promise<void>;
 }

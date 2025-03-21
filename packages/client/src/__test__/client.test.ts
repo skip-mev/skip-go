@@ -33,6 +33,7 @@ describe("client", () => {
                 {
                   chain_name: "osmosis",
                   chain_id: "osmosis-1",
+                  pretty_name: "Osmosis",
                   pfm_enabled: true,
                   cosmos_sdk_version: "v0.47.3",
                   chain_type: "cosmos",
@@ -96,6 +97,7 @@ describe("client", () => {
         {
           chainName: "osmosis",
           chainID: "osmosis-1",
+          prettyName: "Osmosis",
           pfmEnabled: true,
           cosmosSDKVersion: "v0.47.3",
           chainType: "cosmos",
@@ -681,6 +683,7 @@ describe("client", () => {
                   },
                 ],
                 swapAmountIn: "1000000",
+                estimatedAmountOut: "",
               },
               estimatedAffiliateFee: "1000000",
               chainID: "neutron-1",
@@ -776,6 +779,7 @@ describe("client", () => {
               },
             ],
             swap_amount_in: "1000000",
+            estimated_amount_out: "",
           },
           estimated_affiliate_fee: "1000000",
           chain_id: "neutron-1",
@@ -828,6 +832,7 @@ describe("client", () => {
     ],
     txs_required: 1,
     estimated_fees: [],
+    estimated_route_duration_seconds: 0,
   };
 
   describe("/v2/fungible/route", () => {
@@ -877,6 +882,7 @@ describe("client", () => {
                   },
                 ],
                 swapAmountIn: "1000000",
+                estimatedAmountOut: "",
               },
               estimatedAffiliateFee: "1000000",
               chainID: "neutron-1",
@@ -929,6 +935,7 @@ describe("client", () => {
         ],
         estimatedFees: [],
         txsRequired: 1,
+        estimatedRouteDurationSeconds: 0,
       };
 
       expect(response).toEqual(routeResponse);
@@ -1041,107 +1048,101 @@ describe("client", () => {
           return res(
             ctx.status(200),
             ctx.json({
-              status: "STATE_COMPLETED",
-              transfer_sequence: [
-                {
-                  ibc_transfer: {
-                    from_chain_id: "axelar-dojo-1",
-                    to_chain_id: "osmosis-1",
-                    src_chain_id: "axelar-dojo-1",
-                    dst_chain_id: "osmosis-1",
-                    state: "TRANSFER_SUCCESS",
-                    packet_txs: {
-                      send_tx: {
-                        chain_id: "axelar-dojo-1",
-                        tx_hash:
-                          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
-                      },
-                      receive_tx: {
-                        chain_id: "osmosis-1",
-                        tx_hash:
-                          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-                      },
-                      acknowledge_tx: {
-                        chain_id: "axelar-dojo-1",
-                        tx_hash:
-                          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
-                      },
-                      timeout_tx: null,
-                      error: null,
-                    },
-                  },
-                },
-                {
-                  ibc_transfer: {
-                    from_chain_id: "osmosis-1",
-                    to_chain_id: "cosmoshub-4",
-                    src_chain_id: "osmosis-1",
-                    dst_chain_id: "cosmoshub-4",
-                    state: "TRANSFER_SUCCESS",
-                    packet_txs: {
-                      send_tx: {
-                        chain_id: "osmosis-1",
-                        tx_hash:
-                          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-                      },
-                      receive_tx: {
-                        chain_id: "cosmoshub-4",
-                        tx_hash:
-                          "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
-                      },
-                      acknowledge_tx: {
-                        chain_id: "osmosis-1",
-                        tx_hash:
-                          "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
-                      },
-                      timeout_tx: null,
-                      error: null,
-                    },
-                  },
-                },
-              ],
-              next_blocking_transfer: null,
-              transfer_asset_release: {
-                chain_id: "cosmoshub-4",
-                denom: "uatom",
-                amount: "999",
-                released: true,
-              },
-              error: null,
-              state: "STATE_COMPLETED",
               transfers: [
                 {
                   state: "STATE_COMPLETED_SUCCESS",
                   transfer_sequence: [
                     {
                       ibc_transfer: {
-                        from_chain_id: "src-chain",
-                        to_chain_id: "dest-chain",
-                        src_chain_id: "src-chain",
-                        dst_chain_id: "dest-chain",
+                        from_chain_id: "noble-1",
+                        to_chain_id: "neutron-1",
                         state: "TRANSFER_SUCCESS",
                         packet_txs: {
-                          send_tx: null,
-                          receive_tx: null,
-                          acknowledge_tx: null,
+                          send_tx: {
+                            chain_id: "noble-1",
+                            tx_hash:
+                              "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                            explorer_link:
+                              "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                          },
+                          receive_tx: {
+                            chain_id: "neutron-1",
+                            tx_hash:
+                              "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                            explorer_link:
+                              "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                          },
+                          acknowledge_tx: {
+                            chain_id: "noble-1",
+                            tx_hash:
+                              "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                            explorer_link:
+                              "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                          },
                           timeout_tx: null,
                           error: null,
                         },
+                        src_chain_id: "noble-1",
+                        dst_chain_id: "neutron-1",
                       },
                     },
                   ],
-                  next_blocking_transfer: {
-                    transfer_sequence_index: 1,
-                  },
+                  next_blocking_transfer: null,
                   transfer_asset_release: {
-                    chain_id: "cosmoshub-4",
-                    denom: "uatom",
-                    amount: "999",
+                    chain_id: "neutron-1",
+                    denom:
+                      "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                     released: true,
                   },
                   error: null,
                 },
               ],
+              state: "STATE_COMPLETED_SUCCESS",
+              transfer_sequence: [
+                {
+                  ibc_transfer: {
+                    from_chain_id: "noble-1",
+                    to_chain_id: "neutron-1",
+                    state: "TRANSFER_SUCCESS",
+                    packet_txs: {
+                      send_tx: {
+                        chain_id: "noble-1",
+                        tx_hash:
+                          "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                        explorer_link:
+                          "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      },
+                      receive_tx: {
+                        chain_id: "neutron-1",
+                        tx_hash:
+                          "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                        explorer_link:
+                          "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      },
+                      acknowledge_tx: {
+                        chain_id: "noble-1",
+                        tx_hash:
+                          "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                        explorer_link:
+                          "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      },
+                      timeout_tx: null,
+                      error: null,
+                    },
+                    src_chain_id: "noble-1",
+                    dst_chain_id: "neutron-1",
+                  },
+                },
+              ],
+              next_blocking_transfer: null,
+              transfer_asset_release: {
+                chain_id: "neutron-1",
+                denom:
+                  "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                released: true,
+              },
+              error: null,
+              status: "STATE_COMPLETED",
             }),
           );
         }),
@@ -1158,104 +1159,148 @@ describe("client", () => {
 
       expect(response).toEqual({
         status: "STATE_COMPLETED",
+        nextBlockingTransfer: null,
         transferSequence: [
           {
             ibcTransfer: {
-              fromChainID: "axelar-dojo-1",
-              toChainID: "osmosis-1",
-              srcChainID: "axelar-dojo-1",
-              dstChainID: "osmosis-1",
+              fromChainID: "noble-1",
+              toChainID: "neutron-1",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
-                  chainID: "axelar-dojo-1",
                   txHash:
-                    "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainID: "neutron-1",
+                  explorerLink:
+                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  chainID: "axelar-dojo-1",
                   txHash:
-                    "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
-            },
-          },
-          {
-            ibcTransfer: {
-              fromChainID: "osmosis-1",
-              toChainID: "cosmoshub-4",
-              srcChainID: "osmosis-1",
-              dstChainID: "cosmoshub-4",
-              state: "TRANSFER_SUCCESS",
-              packetTXs: {
+              packetTxs: {
                 sendTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  chainID: "cosmoshub-4",
                   txHash:
-                    "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainID: "neutron-1",
+                  explorerLink:
+                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
+              srcChainID: "noble-1",
+              dstChainID: "neutron-1",
             },
           },
         ],
-        nextBlockingTransfer: null,
         transferAssetRelease: {
-          chainID: "cosmoshub-4",
-          denom: "uatom",
-          amount: "999",
+          chainID: "neutron-1",
+          denom:
+            "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
           released: true,
         },
         error: null,
-        state: "STATE_COMPLETED",
+        state: "STATE_COMPLETED_SUCCESS",
         transfers: [
           {
-            state: "STATE_COMPLETED_SUCCESS",
             transferSequence: [
               {
                 ibcTransfer: {
-                  fromChainID: "src-chain",
-                  toChainID: "dest-chain",
-                  srcChainID: "src-chain",
-                  dstChainID: "dest-chain",
+                  fromChainID: "noble-1",
+                  toChainID: "neutron-1",
                   state: "TRANSFER_SUCCESS",
                   packetTXs: {
-                    sendTx: null,
-                    receiveTx: null,
-                    acknowledgeTx: null,
+                    sendTx: {
+                      txHash:
+                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                    },
+                    receiveTx: {
+                      txHash:
+                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainID: "neutron-1",
+                      explorerLink:
+                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                    },
+                    acknowledgeTx: {
+                      txHash:
+                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                    },
                     timeoutTx: null,
                     error: null,
                   },
+                  packetTxs: {
+                    sendTx: {
+                      txHash:
+                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                    },
+                    receiveTx: {
+                      txHash:
+                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainID: "neutron-1",
+                      explorerLink:
+                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                    },
+                    acknowledgeTx: {
+                      txHash:
+                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                    },
+                    timeoutTx: null,
+                    error: null,
+                  },
+                  srcChainID: "noble-1",
+                  dstChainID: "neutron-1",
                 },
               },
             ],
-            nextBlockingTransfer: {
-              transferSequenceIndex: 1,
-            },
             transferAssetRelease: {
-              chainID: "cosmoshub-4",
-              denom: "uatom",
-              amount: "999",
+              chainID: "neutron-1",
+              denom:
+                "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
               released: true,
             },
             error: null,
+            state: "STATE_COMPLETED_SUCCESS",
+            nextBlockingTransfer: null,
           },
         ],
       });
@@ -1271,107 +1316,101 @@ describe("client", () => {
             return res(
               ctx.status(200),
               ctx.json({
-                status: "STATE_COMPLETED",
-                transfer_sequence: [
-                  {
-                    ibc_transfer: {
-                      from_chain_id: "axelar-dojo-1",
-                      to_chain_id: "osmosis-1",
-                      src_chain_id: "axelar-dojo-1",
-                      dst_chain_id: "osmosis-1",
-                      state: "TRANSFER_SUCCESS",
-                      packet_txs: {
-                        send_tx: {
-                          chain_id: "axelar-dojo-1",
-                          tx_hash:
-                            "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
-                        },
-                        receive_tx: {
-                          chain_id: "osmosis-1",
-                          tx_hash:
-                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-                        },
-                        acknowledge_tx: {
-                          chain_id: "axelar-dojo-1",
-                          tx_hash:
-                            "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
-                        },
-                        timeout_tx: null,
-                        error: null,
-                      },
-                    },
-                  },
-                  {
-                    ibc_transfer: {
-                      from_chain_id: "osmosis-1",
-                      to_chain_id: "cosmoshub-4",
-                      src_chain_id: "osmosis-1",
-                      dst_chain_id: "cosmoshub-4",
-                      state: "TRANSFER_SUCCESS",
-                      packet_txs: {
-                        send_tx: {
-                          chain_id: "osmosis-1",
-                          tx_hash:
-                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-                        },
-                        receive_tx: {
-                          chain_id: "cosmoshub-4",
-                          tx_hash:
-                            "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
-                        },
-                        acknowledge_tx: {
-                          chain_id: "osmosis-1",
-                          tx_hash:
-                            "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
-                        },
-                        timeout_tx: null,
-                        error: null,
-                      },
-                    },
-                  },
-                ],
-                next_blocking_transfer: null,
-                transfer_asset_release: {
-                  chain_id: "cosmoshub-4",
-                  denom: "uatom",
-                  amount: "999",
-                  released: true,
-                },
-                error: null,
-                state: "STATE_COMPLETED",
                 transfers: [
                   {
                     state: "STATE_COMPLETED_SUCCESS",
                     transfer_sequence: [
                       {
                         ibc_transfer: {
-                          from_chain_id: "src-chain",
-                          to_chain_id: "dest-chain",
-                          src_chain_id: "src-chain",
-                          dst_chain_id: "dest-chain",
+                          from_chain_id: "noble-1",
+                          to_chain_id: "neutron-1",
                           state: "TRANSFER_SUCCESS",
                           packet_txs: {
-                            send_tx: null,
-                            receive_tx: null,
-                            acknowledge_tx: null,
+                            send_tx: {
+                              chain_id: "noble-1",
+                              tx_hash:
+                                "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                              explorer_link:
+                                "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                            },
+                            receive_tx: {
+                              chain_id: "neutron-1",
+                              tx_hash:
+                                "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                              explorer_link:
+                                "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                            },
+                            acknowledge_tx: {
+                              chain_id: "noble-1",
+                              tx_hash:
+                                "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                              explorer_link:
+                                "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                            },
                             timeout_tx: null,
                             error: null,
                           },
+                          src_chain_id: "noble-1",
+                          dst_chain_id: "neutron-1",
                         },
                       },
                     ],
-                    next_blocking_transfer: {
-                      transfer_sequence_index: 1,
-                    },
+                    next_blocking_transfer: null,
                     transfer_asset_release: {
-                      chain_id: "cosmoshub-4",
-                      denom: "uatom",
-                      amount: "999",
+                      chain_id: "neutron-1",
+                      denom:
+                        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                       released: true,
                     },
                     error: null,
                   },
                 ],
+                state: "STATE_COMPLETED_SUCCESS",
+                transfer_sequence: [
+                  {
+                    ibc_transfer: {
+                      from_chain_id: "noble-1",
+                      to_chain_id: "neutron-1",
+                      state: "TRANSFER_SUCCESS",
+                      packet_txs: {
+                        send_tx: {
+                          chain_id: "noble-1",
+                          tx_hash:
+                            "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                          explorer_link:
+                            "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                        },
+                        receive_tx: {
+                          chain_id: "neutron-1",
+                          tx_hash:
+                            "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                          explorer_link:
+                            "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                        },
+                        acknowledge_tx: {
+                          chain_id: "noble-1",
+                          tx_hash:
+                            "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                          explorer_link:
+                            "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                        },
+                        timeout_tx: null,
+                        error: null,
+                      },
+                      src_chain_id: "noble-1",
+                      dst_chain_id: "neutron-1",
+                    },
+                  },
+                ],
+                next_blocking_transfer: null,
+                transfer_asset_release: {
+                  chain_id: "neutron-1",
+                  denom:
+                    "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                  released: true,
+                },
+                error: null,
+                status: "STATE_COMPLETED",
               }),
             );
           }
@@ -1404,104 +1443,148 @@ describe("client", () => {
 
       expect(response).toEqual({
         status: "STATE_COMPLETED",
+        nextBlockingTransfer: null,
         transferSequence: [
           {
             ibcTransfer: {
-              fromChainID: "axelar-dojo-1",
-              toChainID: "osmosis-1",
-              srcChainID: "axelar-dojo-1",
-              dstChainID: "osmosis-1",
+              fromChainID: "noble-1",
+              toChainID: "neutron-1",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
-                  chainID: "axelar-dojo-1",
                   txHash:
-                    "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainID: "neutron-1",
+                  explorerLink:
+                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  chainID: "axelar-dojo-1",
                   txHash:
-                    "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
-            },
-          },
-          {
-            ibcTransfer: {
-              fromChainID: "osmosis-1",
-              toChainID: "cosmoshub-4",
-              srcChainID: "osmosis-1",
-              dstChainID: "cosmoshub-4",
-              state: "TRANSFER_SUCCESS",
-              packetTXs: {
+              packetTxs: {
                 sendTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  chainID: "cosmoshub-4",
                   txHash:
-                    "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainID: "neutron-1",
+                  explorerLink:
+                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  chainID: "osmosis-1",
                   txHash:
-                    "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainID: "noble-1",
+                  explorerLink:
+                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
+              srcChainID: "noble-1",
+              dstChainID: "neutron-1",
             },
           },
         ],
-        nextBlockingTransfer: null,
         transferAssetRelease: {
-          chainID: "cosmoshub-4",
-          denom: "uatom",
-          amount: "999",
+          chainID: "neutron-1",
+          denom:
+            "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
           released: true,
         },
         error: null,
-        state: "STATE_COMPLETED",
+        state: "STATE_COMPLETED_SUCCESS",
         transfers: [
           {
-            state: "STATE_COMPLETED_SUCCESS",
             transferSequence: [
               {
                 ibcTransfer: {
-                  fromChainID: "src-chain",
-                  toChainID: "dest-chain",
-                  srcChainID: "src-chain",
-                  dstChainID: "dest-chain",
+                  fromChainID: "noble-1",
+                  toChainID: "neutron-1",
                   state: "TRANSFER_SUCCESS",
                   packetTXs: {
-                    sendTx: null,
-                    receiveTx: null,
-                    acknowledgeTx: null,
+                    sendTx: {
+                      txHash:
+                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                    },
+                    receiveTx: {
+                      txHash:
+                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainID: "neutron-1",
+                      explorerLink:
+                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                    },
+                    acknowledgeTx: {
+                      txHash:
+                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                    },
                     timeoutTx: null,
                     error: null,
                   },
+                  packetTxs: {
+                    sendTx: {
+                      txHash:
+                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                    },
+                    receiveTx: {
+                      txHash:
+                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainID: "neutron-1",
+                      explorerLink:
+                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                    },
+                    acknowledgeTx: {
+                      txHash:
+                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainID: "noble-1",
+                      explorerLink:
+                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                    },
+                    timeoutTx: null,
+                    error: null,
+                  },
+                  srcChainID: "noble-1",
+                  dstChainID: "neutron-1",
                 },
               },
             ],
-            nextBlockingTransfer: {
-              transferSequenceIndex: 1,
-            },
             transferAssetRelease: {
-              chainID: "cosmoshub-4",
-              denom: "uatom",
-              amount: "999",
+              chainID: "neutron-1",
+              denom:
+                "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
               released: true,
             },
             error: null,
+            state: "STATE_COMPLETED_SUCCESS",
+            nextBlockingTransfer: null,
           },
         ],
       });
@@ -1833,7 +1916,7 @@ describe("client", () => {
               affiliates: [
                 {
                   address: "address",
-                } as any,
+                } as never,
               ],
             },
           },
@@ -1861,7 +1944,7 @@ describe("client", () => {
               affiliates: [
                 {
                   address: "",
-                } as any,
+                } as never,
               ],
             },
           },
@@ -1985,7 +2068,7 @@ describe("client", () => {
     it("does not return an error when affiliate bps are exactly the same", async () => {
       let errorOccurred = false;
       try {
-        const client = new SkipClient({
+        new SkipClient({
           chainIDsToAffiliates: {
             chain1: {
               affiliates: [

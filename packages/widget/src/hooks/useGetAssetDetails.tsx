@@ -52,7 +52,11 @@ export const useGetAssetDetails = ({
   const asset = useMemo(() => {
     if (!assetDenom || !chainId) return;
     if (!assets) return;
-    return assets.find((a) => a.denom === assetDenom && a.chainID === chainId);
+    return assets.find(
+      (a) =>
+        a.denom.toLowerCase() === assetDenom.toLowerCase() &&
+        a.chainID.toLowerCase() === chainId.toLowerCase(),
+    );
   }, [assets, assetDenom, chainId]);
 
   if (!amount && tokenAmount) {
@@ -70,7 +74,10 @@ export const useGetAssetDetails = ({
     }
     return chain.chainID === asset?.chainID;
   });
-  const chainName = chain?.prettyName ?? chain?.chainName;
+  const chainPrettyName =
+    chain?.prettyName && chain?.prettyName.length !== 0 ? chain.prettyName : undefined;
+  const chainName = chain?.chainName && chain?.chainName.length !== 0 ? chain.chainName : undefined;
+
   const chainImage = chain?.logoURI;
   const decimals = asset?.decimals;
 
@@ -91,7 +98,7 @@ export const useGetAssetDetails = ({
     asset,
     chain,
     assetImage,
-    chainName,
+    chainName: chainPrettyName ?? chainName ?? chainId,
     chainImage,
     symbol,
     amount,
