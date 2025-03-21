@@ -333,6 +333,15 @@ export const SwapPage = () => {
         }
         rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
       />
+      <button onClick={() => {
+        // @ts-ignore
+  setTransactionHistory([{
+    "status" : "pending"
+  }]);
+
+      }}>
+        CLICK
+      </button>
       <Column align="center">
         <SwapPageAssetChainInput
           selectedAsset={sourceAsset}
