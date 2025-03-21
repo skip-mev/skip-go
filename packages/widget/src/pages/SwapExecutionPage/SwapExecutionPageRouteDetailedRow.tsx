@@ -66,9 +66,15 @@ export const SwapExecutionPageRouteDetailedRow = ({
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
   const chainAddressWallet = useMemo(() => {
-    const selectedChainAddress = Object.values(chainAddresses).find(
+    const chainAddressArray = Object.values(chainAddresses);
+    const firstChainAddressFoundForChainId = chainAddressArray.find(
       (chainAddress) => chainAddress.chainID === chainId,
     );
+    const lastChainAddress = chainAddressArray[chainAddressArray.length - 1];
+
+    const selectedChainAddress =
+      context === "destination" ? lastChainAddress : firstChainAddressFoundForChainId;
+
     return {
       address: selectedChainAddress?.address,
       image:
@@ -76,7 +82,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           selectedChainAddress?.wallet?.walletInfo.logo) ||
         undefined,
     };
-  }, [chainAddresses, chainId]);
+  }, [chainAddresses, chainId, context]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
