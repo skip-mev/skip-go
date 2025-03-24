@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.4.7
+
+### Patch Changes
+
+- 1e510c5: update registries
+- Updated dependencies [1e510c5]
+  - @skip-go/client@0.16.21
+
 ## 3.4.6
 
 ### Patch Changes
