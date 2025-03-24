@@ -4,9 +4,8 @@ import { selectAsset } from "./setup/utils";
 import { setupBrowserContext } from "./setup/keplr";
 
 test.describe("Widget tests", async () => {
-  let page: Page;
   test("Noble USDC -> Injective INJ", async () => {
-    page = await setupBrowserContext();
+    const page = await setupBrowserContext();
     await page.waitForTimeout(100);
     await page.screenshot({
       animations: "disabled",
@@ -48,6 +47,7 @@ test.describe("Widget tests", async () => {
   });
 
   test("Injective INJ -> Cosmoshub ATOM", async () => {
+    const page = await setupBrowserContext();
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
@@ -62,6 +62,7 @@ test.describe("Widget tests", async () => {
   });
 
   test("Cosmoshub ATOM -> Noble USDC", async () => {
+    const page = await setupBrowserContext();
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
     await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
