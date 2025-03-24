@@ -27,6 +27,29 @@ jobs:
       - name: build client
         run: yarn run build:client
 
+      - name: Install playwright dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-4-1 \
+            libgraphene-1.0-0 \
+            libwoff1 \
+            libvpx7 \
+            libevent-2.1-7 \
+            libopus0 \
+            libgstreamer1.0-0 \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            libgstreamer-plugins-bad1.0-0 \
+            libflite1 \
+            libavif13 \
+            libharfbuzz-icu0 \
+            libsecret-1-0 \
+            libhyphen0 \
+            libmanette-0.2-0 \
+            libgles2 \
+            x264
+
       - name: Install playwright browsers
         run: yarn playwright install
         working-directory: ./packages/widget
