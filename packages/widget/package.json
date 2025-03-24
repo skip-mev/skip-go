@@ -22,7 +22,7 @@
     "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",
-    "test": "yarn playwright test Keplr.test.tsx"
+    "test": "yarn playwright test"
   },
   "exports": {
     ".": {

@@ -1,9 +1,11 @@
-import { BrowserContext, BrowserType, chromium } from "@playwright/test";
+import { BrowserType, chromium } from "@playwright/test";
+import dotenv from "dotenv";
 
 import { init, assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
 import { prepareKeplr } from "./helpers";
 
 export async function setupBrowserContext() {
+  dotenv.config();
   const keplrPath = await prepareKeplr();
 
   // Prepare browser args

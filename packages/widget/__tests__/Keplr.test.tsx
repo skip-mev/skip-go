@@ -6,8 +6,11 @@ import { setupBrowserContext } from "./setup/keplr";
 let page: Page;
 
 test.beforeAll(async () => {
-  test.setTimeout(180_000);
   page = await setupBrowserContext();
+});
+
+test.beforeEach(() => {
+  test.setTimeout(180_000);
 });
 
 test.describe("Widget tests", async () => {
@@ -56,7 +59,9 @@ test.describe("Widget tests", async () => {
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
-    await selectAsset({ page, asset: "ATOM", chain: "cosmoshub" });
+    await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
+    await page.getByText("Connect Wallet").click();
+    await page.getByText("Keplr").click();
     await page.getByText(/Max/i).click();
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
@@ -67,8 +72,10 @@ test.describe("Widget tests", async () => {
   test("Cosmoshub ATOM -> Noble USDC", async () => {
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
-    await selectAsset({ page, asset: "ATOM", chain: "cosmoshub" });
+    await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
+    await page.getByText("Connect Wallet").click();
+    await page.getByText("Keplr").click();
     await page.getByText(/Max/i).click();
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
