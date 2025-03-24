@@ -8349,7 +8349,6 @@ __metadata:
     eslint-plugin-prettier: ^5.2.1
     eslint-plugin-react-hooks: ^4.6.2
     fs-extra: ^11.3.0
-    fs.promises: ^0.1.2
     graz: ^0.1.30
     jotai: ^2.10.1
     jotai-effect: ^1.0.2
@@ -18013,13 +18012,6 @@ __metadata:
   dependencies:
     minipass: ^7.0.3
   checksum: 8722a41109130851d979222d3ec88aabaceeaaf8f57b2a8f744ef8bd2d1ce95453b04a61daa0078822bc5cd21e008814f06fe6586f56fef511e71b8d2394d802
-  languageName: node
-  linkType: hard
-
-"fs.promises@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "fs.promises@npm:0.1.2"
-  checksum: bf5c6cc58029f4d8af726f2d9048e371c8d6dd6dbc14285f81712cd93200a5c755a9eeecefd1974907221a9ecc8f4f2f4f226086e732363c727a408ca1a39521
   languageName: node
   linkType: hard
 

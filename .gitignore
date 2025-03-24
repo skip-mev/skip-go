@@ -39,3 +39,4 @@ yalc.lock
 .env
 
 packages/widget/__tests__/downloads*
+packages/widget/test-results*

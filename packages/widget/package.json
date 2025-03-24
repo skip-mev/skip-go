@@ -67,7 +67,6 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "fs-extra": "^11.3.0",
-    "fs.promises": "^0.1.2",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "pino-pretty": "^13.0.0",
     "postcss-loader": "^8.1.1",
