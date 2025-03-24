@@ -19,7 +19,7 @@ export async function setupBrowserContext() {
 
   // Launch browser
   const context = await chromium.launchPersistentContext("", {
-    headless: false,
+    headless: true,
     args: browserArgs,
   });
 
