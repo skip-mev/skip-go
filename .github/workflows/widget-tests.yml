@@ -34,7 +34,6 @@ jobs:
             libgtk-4-1 \
             libgraphene-1.0-0 \
             libwoff1 \
-            libvpx7 \
             libevent-2.1-7 \
             libopus0 \
             libgstreamer1.0-0 \
@@ -42,7 +41,6 @@ jobs:
             gstreamer1.0-plugins-good \
             libgstreamer-plugins-bad1.0-0 \
             libflite1 \
-            libavif13 \
             libharfbuzz-icu0 \
             libsecret-1-0 \
             libhyphen0 \
