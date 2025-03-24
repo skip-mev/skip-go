@@ -69,6 +69,8 @@ export type TransferJSON = {
   bridge_id: BridgeType;
   smart_relay: boolean;
 
+  to_chain_callback_contract_address?: string;
+
   /**
    * @deprecated use `from_chain_id` and `to_chain_id` instead
    */
@@ -98,6 +100,8 @@ export type Transfer = {
   bridgeID: BridgeType;
   smartRelay: boolean;
 
+  
+  toChainCallbackContractAddress?: string;
   /**
    * @deprecated use `fromChainID` and `toChainID` instead
    */
@@ -369,6 +373,7 @@ export type EurekaTransferJSON = {
   bridge_id: BridgeType;
   smart_relay: boolean;
   smart_relay_fee_quote?: SmartRelayFeeQuoteJSON;
+  to_chain_callback_contract_address?: string;
 };
 
 export type EurekaTransfer = {
@@ -387,6 +392,7 @@ export type EurekaTransfer = {
   bridgeID: BridgeType;
   smartRelay: boolean;
   smartRelayFeeQuote?: SmartRelayFeeQuote;
+  toChainCallbackContractAddress?: string;
 };
 
 export type SmartRelayFeeQuoteJSON = {

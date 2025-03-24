@@ -1,5 +1,23 @@
 # @skip-go/client
 
+## 0.16.21
+
+### Patch Changes
+
+- 1e510c5: update registries
+
+## 0.16.20
+
+### Patch Changes
+
+- 8bd8d07: Force client lib update for packetTxs refactor
+
+## 0.16.19
+
+### Patch Changes
+
+- c709da5: Fix 2 cctp tx throwing error
+
 ## 0.16.18
 
 ### Patch Changes

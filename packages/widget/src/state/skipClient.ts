@@ -19,8 +19,8 @@ export const defaultSkipClientConfig = {
 };
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: defaultSkipClientConfig.apiUrl,
-  endpointOptions: defaultSkipClientConfig.endpointOptions,
+  apiURL: undefined,
+  endpointOptions: undefined,
 });
 
 export const themeAtom = atom<Theme>(defaultTheme);
@@ -119,6 +119,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
         })
         .then((v) => flattenData(v, chains.data));
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
@@ -136,6 +137,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
         onlyTestnets,
       });
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
@@ -160,6 +162,7 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
     queryFn: async () => {
       return skip.venues(onlyTestnets);
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 

@@ -17,6 +17,8 @@ import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { ChainType } from "@skip-go/client";
 import { useGetAccount } from "./useGetAccount";
+import { getCosmosWalletInfo } from "@/constants/graz";
+import { WalletType } from "graz";
 
 export const useAutoSetAddress = () => {
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
@@ -96,6 +98,13 @@ export const useAutoSetAddress = () => {
             ) {
               return prev;
             }
+            const getLogo = () => {
+              if (wallet?.walletChainType === "evm" && wallet?.walletName === "app.keplr") {
+                return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
+              }
+              return response?.logo ?? wallet?.walletInfo?.logo;
+            };
+
             return {
               ...prev,
               [index]: {
@@ -109,7 +118,7 @@ export const useAutoSetAddress = () => {
                       walletPrettyName: wallet?.walletPrettyName,
                       walletChainType: chainType,
                       walletInfo: {
-                        logo: response?.logo ?? wallet?.walletInfo?.logo,
+                        logo: getLogo(),
                       },
                     }
                   : undefined,
@@ -140,7 +149,10 @@ export const useAutoSetAddress = () => {
   );
 
   useEffect(() => {
-    if (overallStatus !== "unconfirmed") return;
+    if (overallStatus !== "unconfirmed") {
+      setIsLoading(false);
+      return;
+    }
     if (!requiredChainAddresses) return;
     const cosmosWalletChanged = sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id;
     const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;

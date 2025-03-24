@@ -1,0 +1,90 @@
+---
+title: "Overview"
+id: eureka-overview
+description: "An overview of IBC Eureka for developers"
+---
+
+# IBC Eureka: Fast, Cheap, and Seamless Interoperability between Cosmos and Ethereum
+
+## What is IBC Eureka?
+
+IBC Eureka is the canonical implementation of IBC v2 that enables seamless interoperability between Cosmos and Ethereum ecosystem. As a subset of the proven Inter-Blockchain Communication (IBC) protocol, Eureka extends the reach of 115+ Cosmos chains to Ethereum (Q1 2025) with support for Layer 2 networks such as Base and Arbitrum or Solana to be added soon.
+
+<CardGroup cols={2}>
+  <Card title="Connect Your Chain" icon="ethereum">
+    Connect your Cosmos chain to Ethereum and other EVM chains with minimal cost and battle-tested security.
+  </Card>
+  <Card title="Instant Compatibility" icon="puzzle">
+    If your chain already uses IBC, is connected to the Cosmos Hub and has been onboarded to the Skip API, you can immediately connect to Ethereum through Eureka with no new dependencies.
+  </Card>
+</CardGroup>
+
+## Integration Options
+
+There are multiple ways to integrate with Eureka, depending on your requirements:
+
+### 1. Chain-to-Eureka Integration
+
+If you're running a Cosmos-based blockchain, you can connect directly to Eureka through the Cosmos Hub:
+
+- Requires an IBC connection to the Cosmos Hub and onboarding to the Skip API
+- No chain upgrade needed if you're already using IBC
+- Enables your users to transfer assets to and from Ethereum
+
+### 2. Frontend-to-Eureka Integration
+
+For application developers looking to enable cross-chain functionality in their applications:
+
+- Leverage the Skip Widget for a simplified integration
+- Integrate with 50+ wallets and frontends on day one
+- Enable seamless asset transfers without handling complex relayer infrastructure
+
+### 3. User-to-Eureka Use
+
+For end-users who need to use the interoperability functionality of Eureka:
+
+- Implement the Skip Go widget in your application
+- Provide one-click experience for users to transfer assets
+- Access all IBC-connected chains and Ethereum from a single integration
+
+### 4. Frontend/Custodian-to-Eureka
+
+For custodial applications and exchanges:
+
+- Implement direct API access to Eureka's functionality
+- Enable high-volume, automated cross-chain operations
+
+## Getting Started
+
+To start using Eureka, you have several options:
+
+<Steps>
+  <Step title="Understand the Tech">
+    Read the [Technical Overview](/eureka/eureka-tech-overview) to see how Eureka works.
+  </Step>
+  <Step title="Explore the Devnet">
+    Follow our [Devnet Testing Guide](/eureka/devnet-testing-guide) to test Eureka's functionality using our CLI tool.
+  </Step>
+  <Step title="Integrate with Skip Go">
+    If you're building a frontend application, consider using the [Skip Go API](/client/skip-api) for a simplified integration.
+  </Step>
+  <Step title="Connect Your Chain">
+    If you're running a Cosmos chain, consider setting up an IBC connection to the Cosmos Hub and reach out to our team below for configuration assistance.
+  </Step>
+</Steps>
+
+## Coming Soon
+
+- **Testnet Launch**: March, 2025
+- **Ethereum Mainnet Integration**: End of Q1 2025
+- **Additional EVM Chain Support**: Base, Arbitrum, and Optimism in Q2 2025
+
+## Support and Resources
+
+Need help with your Eureka integration? Our team is ready to assist:
+
+- Join our [Discord](https://discord.gg/cosmos) and find the support channel
+- Contact us directly: [@OllieGilbey](https://t.me/OllieGilbey) or [@NotJeremyLiu](https://t.me/NotJeremyLiu) on Telegram
+- Email: susannah@interchainlabs.io
+
+For technical specifications, visit the [IBC v2 Specification](https://github.com/cosmos/ibc/blob/main/spec/eureka/README.md).

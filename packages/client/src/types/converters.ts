@@ -621,6 +621,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
     destDenom: transferJSON.dest_denom,
     chainID: transferJSON.chain_id,
     smartRelay: transferJSON.smart_relay,
+    toChainCallbackContractAddress: transferJSON.to_chain_callback_contract_address,
   };
 }
 
@@ -644,7 +645,8 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 
     dest_denom: transfer.destDenom,
     chain_id: transfer.chainID,
-    smart_relay: transfer.smartRelay,
+    smart_relay: transfer.smartRelay, 
+    to_chain_callback_contract_address: transfer.toChainCallbackContractAddress,
   };
 }
 
@@ -943,7 +945,8 @@ export function eurekaTransferFromJSON(
     pfmEnabled: eurekaTransferJSON.pfm_enabled,
     supportsMemo: eurekaTransferJSON.supports_memo,
     entryContractAddress: eurekaTransferJSON.entry_contract_address,
-    callbackAdapterContractAddress: eurekaTransferJSON.callback_adapter_contract_address,
+    callbackAdapterContractAddress:
+      eurekaTransferJSON.callback_adapter_contract_address,
     denomIn: eurekaTransferJSON.denom_in,
     denomOut: eurekaTransferJSON.denom_out,
     bridgeID: eurekaTransferJSON.bridge_id,
@@ -951,6 +954,7 @@ export function eurekaTransferFromJSON(
     smartRelayFeeQuote: eurekaTransferJSON?.smart_relay_fee_quote
       ? smartRelayFeeQuoteFromJSON(eurekaTransferJSON.smart_relay_fee_quote)
       : undefined,
+    toChainCallbackContractAddress: eurekaTransferJSON.to_chain_callback_contract_address,
   };
 }
 
@@ -965,7 +969,8 @@ export function eurekaTransferToJSON(
     pfm_enabled: eurekaTransfer.pfmEnabled,
     supports_memo: eurekaTransfer.supportsMemo,
     entry_contract_address: eurekaTransfer.entryContractAddress,
-    callback_adapter_contract_address: eurekaTransfer.callbackAdapterContractAddress,
+    callback_adapter_contract_address:
+      eurekaTransfer.callbackAdapterContractAddress,
     denom_in: eurekaTransfer.denomIn,
     denom_out: eurekaTransfer.denomOut,
     bridge_id: eurekaTransfer.bridgeID,
@@ -973,6 +978,7 @@ export function eurekaTransferToJSON(
     smart_relay_fee_quote: eurekaTransfer?.smartRelayFeeQuote
       ? smartRelayFeeQuoteToJSON(eurekaTransfer.smartRelayFeeQuote)
       : undefined,
+      to_chain_callback_contract_address: eurekaTransfer.toChainCallbackContractAddress,
   };
 }
 
@@ -1060,9 +1066,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
   if ("eureka_transfer" in operationJSON) {
     return {
       ...commonProps,
-      eurekaTransfer: eurekaTransferFromJSON(
-        operationJSON.eureka_transfer,
-      ),
+      eurekaTransfer: eurekaTransferFromJSON(operationJSON.eureka_transfer),
     };
   }
 
@@ -1502,6 +1506,9 @@ export function transferInfoFromJSON(
     packetTXs:
       transferInfoJSON.packet_txs &&
       packetFromJSON(transferInfoJSON.packet_txs),
+    packetTxs:
+      transferInfoJSON.packet_txs &&
+      packetFromJSON(transferInfoJSON.packet_txs),
     srcChainID: transferInfoJSON.src_chain_id,
     dstChainID: transferInfoJSON.dst_chain_id,
   };
@@ -1514,7 +1521,7 @@ export function transferInfoToJSON(
     from_chain_id: transferInfo.fromChainID,
     to_chain_id: transferInfo.toChainID,
     state: transferInfo.state,
-    packet_txs: transferInfo.packetTXs && packetToJSON(transferInfo.packetTXs),
+    packet_txs: transferInfo.packetTxs && packetToJSON(transferInfo.packetTxs),
     src_chain_id: transferInfo.srcChainID,
     dst_chain_id: transferInfo.dstChainID,
   };

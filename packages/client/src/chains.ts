@@ -62,6 +62,17 @@ export function chains(): Chain[] {
   return [...(chainRegistryChains as Chain[]), ...newChains];
 }
 
+export const getIsEthermint = (chainId: string) => {
+  const chain = chains().find((c) => c.chain_id === chainId);
+  if (!chain) return false;
+  const keyAlgos = chain.key_algos;
+  const extraCodecs = chain.extra_codecs;
+  return (
+    Boolean(keyAlgos?.includes("ethsecp256k1")) ||
+    Boolean(extraCodecs?.includes("ethermint"))
+  );
+};
+
 export async function findFirstWorkingEndpoint(
   endpoints: string[],
   type: "rpc" | "rest",

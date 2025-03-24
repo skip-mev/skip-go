@@ -1,16 +1,31 @@
 'use client';
 import { Widget, resetWidget } from '@skip-go/widget';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
 export default function Home() {
+  // optional query params, not necessary for the widget to work
+  const {defaultRoute, otherParams, loaded } = useQueryParams();
+  const [urlParamsLoaded, setUrlParamsLoaded] = useState(false);
+
   // optional theme, widget will be dark mode be default
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [disableShadowDom, setDisableShadowDom] = useState(false);
   const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
-  // optional query params, not necessary for the widget to work
-  const defaultRoute = useQueryParams();
+
+  useLayoutEffect(() => {
+    if (otherParams !== undefined) {
+      const {api, testnet, shadowDom, theme} = otherParams;
+      if (api !== undefined) setApiUrl(api);
+      if (testnet !== undefined) setTestnet(testnet);
+      if (shadowDom !== undefined) setDisableShadowDom(!shadowDom);
+      if (theme !== undefined) setTheme(theme);
+    }
+    if (loaded) {
+      setUrlParamsLoaded(true);
+    }
+  }, [otherParams, apiUrl, testnet, disableShadowDom, theme, loaded]);
 
   useEffect(() => {
     const initEruda = async () => {
@@ -44,11 +59,9 @@ export default function Home() {
   }, []);
 
   const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    updateURLParam('theme', newTheme);
   };
 
   return (
@@ -69,7 +82,9 @@ export default function Home() {
       <div
         style={{ position: 'absolute', top: 0, right: 0, display: 'flex', flexDirection: "column" }}>
         <button
-          onClick={() => toggleTheme()}
+          onClick={() => {
+            toggleTheme();
+          }}
         >
           Toggle theme (current theme: {theme})
         </button>
@@ -83,12 +98,24 @@ export default function Home() {
         >
           Reset state only clear input values
         </button>
-        <button onClick={() => setDisableShadowDom((prev) => !prev)}>
+        <button onClick={() => {
+          const newDisableShadowDom = !disableShadowDom;
+          setDisableShadowDom(newDisableShadowDom);
+          updateURLParam('shadowDom', (!newDisableShadowDom).toString());
+        }}>
           shadow dom:{(!disableShadowDom).toString()}
         </button>
-        <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
-        <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
-          {apiUrl === "prod" ? "prod" : "dev"}
+        <button onClick={() => {
+          const newTestnet = !testnet;
+          setTestnet(newTestnet);
+          updateURLParam('testnet', (newTestnet).toString());
+        }}>{testnet ? "testnet" : "mainnet"}</button>
+        <button onClick={() => {
+          const newApiUrl = apiUrl === "prod" ? "dev" : "prod";
+          setApiUrl(newApiUrl);
+          updateURLParam('api', newApiUrl);
+        }}>
+          {apiUrl}
         </button>
       </div>
       <div
@@ -104,7 +131,7 @@ export default function Home() {
       >
         {/* widget will cohere to the parent container's width */}
         <div
-          key={disableShadowDom.toString()}
+          key={disableShadowDom.toString() + testnet.toString() + apiUrl}
           style={{
             width: '100%',
             maxWidth: 500,
@@ -112,7 +139,8 @@ export default function Home() {
             boxSizing: 'border-box',
           }}
         >
-          <Widget
+          {
+            urlParamsLoaded && <Widget
             theme={theme}
             defaultRoute={defaultRoute}
             onWalletConnected={(props) => console.log('onWalletConnected', { ...props })}
@@ -132,8 +160,21 @@ export default function Home() {
                 : "https://dev.go.skip.build/api/skip"
             }
           />
+          }
         </div>
       </div>
     </div>
   );
+}
+
+function updateURLParam(key: string, value: string | null) {
+  const url = new URL(window.location.href);
+
+  if (value === null) {
+    url.searchParams.delete(key);
+  } else {
+    url.searchParams.set(key, value);
+  }
+
+  window.history.replaceState({}, "", url.toString());
 }

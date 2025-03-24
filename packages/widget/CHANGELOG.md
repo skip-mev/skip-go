@@ -1,5 +1,47 @@
 ## 0.0.15
 
+## 3.4.7
+
+### Patch Changes
+
+- 1e510c5: update registries
+- Updated dependencies [1e510c5]
+  - @skip-go/client@0.16.21
+
+## 3.4.6
+
+### Patch Changes
+
+- Updated dependencies [8bd8d07]
+  - @skip-go/client@0.16.20
+
+## 3.4.5
+
+### Patch Changes
+
+- aebae07: Left align address text in detailed view
+
+## 3.4.4
+
+### Patch Changes
+
+- beb1fd9: update useGetAssetDetails to use case-insensitive search
+- 25566c5: Styling updates to detailed route view
+- 22bc453: Always set useAutoSetAddress loading false if overallStatus !== "unconfirmed"
+- df95b5a: validate transactionhistory storage entries
+- 8d73a42: fix balance not updated when there is no addresses
+- 0836961: Simplify loading states, fix loading spinners sometimes being out of sync
+- 286fc80: Delay initial api calls until onlyTestnet is defined to avoid double fetching if onlyTestnet is passed
+- a0c977c: Add address copied feedback to simple view
+- 7965323: Fix destination address shown in detailed view
+
+## 3.4.3
+
+### Patch Changes
+
+- Updated dependencies [c709da5]
+  - @skip-go/client@0.16.19
+
 ## 3.4.2
 
 ### Patch Changes
