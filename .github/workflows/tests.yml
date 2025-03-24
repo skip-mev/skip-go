@@ -1,9 +1,10 @@
 name: Tests
 on:
-  pull_request: # Trigger on pull requests to any branch
+  pull_request:
   push:
     branches:
-      - main  # Trigger only on pushes to the main branch
+      - main
+      - staging
 
 jobs:
   test:
