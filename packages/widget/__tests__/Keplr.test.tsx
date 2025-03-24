@@ -7,8 +7,8 @@ let page: Page;
 
 test.describe("Widget tests", async () => {
   test.beforeAll(async () => {
-    test.setTimeout(180_000);
     page = await setupBrowserContext();
+    return page;
   });
 
   test.beforeEach(() => {
