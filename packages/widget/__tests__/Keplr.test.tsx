@@ -3,9 +3,9 @@ import { approveInKeplr } from "./setup/playwright";
 import { selectAsset } from "./setup/utils";
 import { setupBrowserContext } from "./setup/keplr";
 
-let page: Page;
-
 test.describe.serial("Widget tests", async () => {
+  let page: Page;
+
   test("Noble USDC -> Injective INJ", async () => {
     page = await setupBrowserContext();
     await page.waitForTimeout(100);
