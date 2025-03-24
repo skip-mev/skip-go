@@ -51,7 +51,7 @@ jobs:
             x264
 
       - name: Install playwright browsers
-        run: yarn playwright install
+        run: yarn playwright install --with-deps
         working-directory: ./packages/widget
       
       - name: Test widget
