@@ -27,6 +27,9 @@ jobs:
       - name: build client
         run: yarn run build:client
 
+      - name: Install xvfb
+        run: sudo apt-get install -y xvfb
+
       - name: Install playwright browsers
         run: yarn playwright install --with-deps
         working-directory: ./packages/widget
@@ -34,7 +37,7 @@ jobs:
       - name: Test widget
         run: |
           yarn run dev:widget &
-          yarn test-widget --debug
+          yarn xvfb-run test-widget --debug
         env:
           DEBUG: pw:api # Shows Playwright API calls
           PWDEBUG: 1 # Enables debug mode
