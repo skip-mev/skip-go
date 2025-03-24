@@ -37,7 +37,6 @@ jobs:
       - name: Test widget
         run: |
           yarn run dev:widget &
-          yarn xvfb-run test-widget --debug
-        env:
-          DEBUG: pw:api # Shows Playwright API calls
-          PWDEBUG: 1 # Enables debug mode
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          export DISPLAY=:99 &
+          yarn test-widget
