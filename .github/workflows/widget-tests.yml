@@ -33,6 +33,5 @@ jobs:
       
       - name: Test widget
         run: |
-          yarn run dev:widget &  
-          sleep 5               
+          yarn run dev:widget &
           yarn test-widget
