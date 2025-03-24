@@ -6,11 +6,8 @@ import { setupBrowserContext } from "./setup/keplr";
 let page: Page;
 
 test.describe.serial("Widget tests", async () => {
-  test.beforeAll(async () => {
-    page = await setupBrowserContext();
-  });
-
   test("Noble USDC -> Injective INJ", async () => {
+    page = await setupBrowserContext();
     await page.waitForTimeout(100);
     await page.screenshot({
       animations: "disabled",
