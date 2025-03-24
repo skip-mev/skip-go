@@ -1,5 +1,9 @@
 name: Tests
-on: [pull_request, push]
+on:
+  pull_request: # Trigger on pull requests to any branch
+  push:
+    branches:
+      - main  # Trigger only on pushes to the main branch
 
 jobs:
   test:

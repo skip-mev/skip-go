@@ -18,6 +18,10 @@ const extensionsData: Record<
   }
 > = {};
 
+export function getBrowser() {
+  return browser;
+}
+
 export function getKeplrWindow() {
   return _keplrWindow;
 }
@@ -65,6 +69,24 @@ export async function watchKeplrPopupApproveWindow() {
   }
 }
 
+export async function approveInKeplr() {
+  return new Promise((resolve) => {
+    const findKeplr = setInterval(async () => {
+      assignWindows();
+      if (_keplrPopupWindow) {
+        clearInterval(findKeplr);
+
+        const approveButton = _keplrPopupWindow.getByRole("button", { name: "Approve" });
+        await approveButton.click();
+
+        _keplrPopupWindow = undefined;
+        await _mainWindow.bringToFront();
+        resolve("approved");
+      }
+    }, 100);
+  });
+}
+
 export async function assignActiveTabName(tabName: string) {
   _activeTabName = tabName;
 }
@@ -75,10 +97,11 @@ export async function assignWindows() {
   const keplrExtensionData = extensionsData.keplr;
 
   const pages = await browser.contexts()[0]?.pages();
+
   if (!pages) return;
 
   for (const page of pages) {
-    if (page.url().includes("specs/runner")) {
+    if (page.url().includes("localhost")) {
       _mainWindow = page;
     } else if (page.url().includes(`chrome-extension://${keplrExtensionData.id}/register.html`)) {
       _keplrWindow = page;

@@ -1,6 +1,39 @@
-import { BrowserType } from "@playwright/test";
+import { BrowserContext, BrowserType, chromium } from "@playwright/test";
 
 import { init, assignWindows, assignActiveTabName, getKeplrWindow } from "./playwright";
+import { prepareKeplr } from "./helpers";
+
+export async function setupBrowserContext() {
+  const keplrPath = await prepareKeplr();
+
+  // Prepare browser args
+  const browserArgs = [
+    `--disable-extensions-except=${keplrPath}`,
+    `--load-extension=${keplrPath}`,
+    "--remote-debugging-port=9222",
+    "--disable-gpu",
+    // "--headless=new",
+  ];
+
+  // Launch browser
+  const context = await chromium.launchPersistentContext("", {
+    headless: false,
+    args: browserArgs,
+  });
+
+  // Wait for initial setup
+  await context.pages()[0]?.waitForTimeout(3000);
+  await initialSetup(chromium);
+
+  const page = await context.newPage();
+  page.setViewportSize({
+    height: 800,
+    width: 800,
+  });
+  await page.goto("http://localhost:5173/");
+
+  return page;
+}
 
 export async function initialSetup(playwrightInstance: BrowserType) {
   if (playwrightInstance) {
@@ -12,7 +45,8 @@ export async function initialSetup(playwrightInstance: BrowserType) {
   await assignWindows();
   await assignActiveTabName("keplr");
   const phrase =
-    process.env.WORD_PHRASE_KEY || "test test test test test test test test test test test junk";
+    process.env.WORD_PHRASE_KEY ||
+    "test test test test test test test test test test test test test test test test test test test test test test test test";
   await importWallet(phrase, "Tester@1234");
 
   // keplrWindow
@@ -21,17 +55,17 @@ export async function initialSetup(playwrightInstance: BrowserType) {
 async function importWallet(secretWords: string, password: string) {
   const keplrWindow = getKeplrWindow();
 
-  // await keplrWindow.pause();
-
   await keplrWindow.getByText(/import an existing wallet/i).click();
 
   await keplrWindow.getByText(/use recovery phrase or private key/i).click();
 
+  await keplrWindow.getByText(/24 words/i).click();
+
   const inputs = await keplrWindow.getByRole("textbox").all();
 
-  for (const [index, word] of secretWords.split(" ").entries()) {
-    await inputs[index].waitFor({ state: "visible" });
+  await keplrWindow.waitForTimeout(1000);
 
+  for (const [index, word] of secretWords.split(" ").entries()) {
     await inputs[index].fill(word);
     // keplrWindow.fill()
     // await playwright.waitAndType(
@@ -74,5 +108,10 @@ async function importWallet(secretWords: string, password: string) {
     })
     .click();
 
-  // await keplrWindow.pause();
+  return await keplrWindow
+    .getByRole("button", {
+      name: "Finish",
+      exact: true,
+    })
+    .click();
 }
