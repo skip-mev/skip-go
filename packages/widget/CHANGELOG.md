@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.4.8
+
+### Patch Changes
+
+- 74fb9fd: Remove mars-1 from chainIds to connect
+
 ## 3.4.7
 
 ### Patch Changes
