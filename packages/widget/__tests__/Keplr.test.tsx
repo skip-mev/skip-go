@@ -6,14 +6,8 @@ import { setupBrowserContext } from "./setup/keplr";
 let page: Page;
 
 test.describe("Widget tests", async () => {
-  test.beforeAll(async () => {
-    page = await setupBrowserContext();
-    return page;
-  });
-
-  test.beforeEach(() => {
-    test.setTimeout(180_000);
-  });
+  page = await setupBrowserContext();
+  test.setTimeout(180_000);
 
   test("Noble USDC -> Injective INJ", async () => {
     await page.waitForTimeout(100);
