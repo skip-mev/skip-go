@@ -14,8 +14,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
-import { createStore, Provider, useSetAtom } from "jotai";
+import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
+import { rootIdAtom } from "@/state/skipClient";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -23,6 +24,11 @@ export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & 
 } & Pick<MsgsRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
+  /**
+   * If specified, add a `data-root-id` attribute to all root elements of the widget, including portals.
+   * This can be used to style or document.querySelector specific parts of the widget.
+   */
+  rootId?: string;
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   onlyTestnet?: boolean;
@@ -107,6 +113,9 @@ export const Widget = (props: WidgetProps) => {
 
 export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
+  const setRootId = useSetAtom(rootIdAtom);
+  setRootId(props.rootId);
+
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
@@ -124,6 +133,7 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
 
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
+  const rootId = useAtomValue(rootIdAtom);
 
   useEffect(() => {
     registerModals();
@@ -134,7 +144,7 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WidgetContainer>
+    <WidgetContainer data-root-id={rootId}>
       {children}
       <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>

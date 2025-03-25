@@ -119,4 +119,18 @@ describe("Widget tests", async () => {
 
     expect(selectAsset.length).toBe(2);
   });
+
+  test("rootId sets data-root-id attribute on widget root element and modal root elements", async () => {
+    render(<Widget disableShadowDom rootId="--test-root-id" />);
+
+    expect(document.querySelectorAll('[data-root-id="--test-root-id"]')).toHaveLength(1);
+
+    const selectAsset = await screen.findAllByText("Select asset");
+    await userEvent.click(selectAsset[0]);
+
+    const searchForAnAsset2 = await screen.findByPlaceholderText("Search for an asset");
+
+    expect(searchForAnAsset2).toBeDefined();
+    expect(document.querySelectorAll('[data-root-id="--test-root-id"]')).toHaveLength(2);
+  });
 });
