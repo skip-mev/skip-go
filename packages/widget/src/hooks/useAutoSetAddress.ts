@@ -91,13 +91,15 @@ export const useAutoSetAddress = () => {
             );
           }
 
+          if (
+            JSON.stringify(requiredChainAddresses) !==
+            JSON.stringify(Object.values(chainAddresses).map((chain) => chain.chainID))
+          ) {
+            setIsLoading(false);
+            return;
+          }
+
           setChainAddresses((prev) => {
-            if (
-              JSON.stringify(requiredChainAddresses) !==
-              JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
-            ) {
-              return prev;
-            }
             const getLogo = () => {
               if (wallet?.walletChainType === "evm" && wallet?.walletName === "app.keplr") {
                 return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
@@ -159,8 +161,9 @@ export const useAutoSetAddress = () => {
     const svmWalletChanged = sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
 
     if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged || isLoading) {
-      connectRequiredChains();
+      console.log(isLoading, svmWalletChanged, cosmosWalletChanged, evmWalletChanged);
       setCurrentSourceWallets(sourceWallet);
+      connectRequiredChains();
     }
   }, [
     connectRequiredChains,
