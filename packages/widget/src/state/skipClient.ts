@@ -23,6 +23,8 @@ export const skipClientConfigAtom = atom<SkipClientOptions>({
   endpointOptions: undefined,
 });
 
+export const rootIdAtom = atom<string | undefined>(undefined);
+
 export const themeAtom = atom<Theme>(defaultTheme);
 
 export const skipClientInstanceAtom = atom(new SkipClient());
