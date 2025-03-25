@@ -640,6 +640,9 @@ export class SkipClient {
         });
 
         if (simulate) {
+          options.onValidateGasBalance?.({
+            status: "pending",
+          });
           await this.validateEvmTokenApprovalBalance({
             signer: signer,
             contractAddress: requiredApproval.tokenContract,
@@ -647,6 +650,9 @@ export class SkipClient {
             amount: useUnlimitedApproval
               ? maxUint256
               : BigInt(requiredApproval.amount),
+          });
+          options.onValidateGasBalance?.({
+            status: "completed",
           });
         }
 
@@ -679,9 +685,15 @@ export class SkipClient {
     }
 
     if (simulate) {
+      options.onValidateGasBalance?.({
+        status: "pending",
+      });
       await this.validateEvmGasBalance({
         signer,
         tx: message,
+      });
+      options.onValidateGasBalance?.({
+        status: "completed",
       });
     }
 
