@@ -26,7 +26,7 @@ export const useAutoSetAddress = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
   const [isLoading, setIsLoading] = useState(true);
-  const [walletHasChanged, setWalletHasChanged] = useState(true);
+  const [walletHasChanged, setWalletHasChanged] = useState(false);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
 
@@ -161,6 +161,7 @@ export const useAutoSetAddress = () => {
 
     if (hasWalletChanged) {
       setCurrentSourceWallets(sourceWallet);
+      setWalletHasChanged(true);
     }
   }, [
     connectRequiredChains,
