@@ -639,7 +639,6 @@ export class SkipClient {
           allowance: requiredApproval,
         });
 
-        // TODO: validate token approval gas balance
         if (simulate) {
           await this.validateEvmTokenApprovalBalance({
             signer: signer,
