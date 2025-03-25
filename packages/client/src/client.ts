@@ -43,7 +43,13 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import { isAddress, maxUint256, publicActions, WalletClient } from "viem";
+import {
+  formatEther,
+  isAddress,
+  maxUint256,
+  publicActions,
+  WalletClient,
+} from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
 import {
@@ -62,12 +68,20 @@ import {
   getEncodeObjectFromCosmosMessage,
   getEncodeObjectFromCosmosMessageInjective,
   getCosmosGasAmountForMessage,
+  getEVMGasAmountForMessage,
+  getSVMGasAmountForMessage,
+  getEVMGasAmountForTokenApproval,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+} from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
@@ -97,7 +111,7 @@ export class SkipClient {
     string,
     SigningStargateClient
   > = {};
-  private cosmosGasFee: clientTypes.Gas[] | undefined;
+  private gasFee: clientTypes.Gas[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.clientOptions = options;
@@ -352,7 +366,7 @@ export class SkipClient {
     this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
-      getOfflineSigner: options.getCosmosSigner,
+      getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
     });
@@ -409,7 +423,7 @@ export class SkipClient {
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gasArray = await waitForVariable(() => this.cosmosGasFee);
+    const gasArray = await waitForVariable(() => this.gasFee);
     const gas = gasArray.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
@@ -458,6 +472,13 @@ export class SkipClient {
     tx: { svmTx: types.SvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ): Promise<{ chainID: string; txHash: string }> {
+    const gasArray = await waitForVariable(() => this.gasFee);
+    const gas = gasArray.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
+    }
     const { svmTx } = tx;
     const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
     if (!getSVMSigner) {
@@ -522,11 +543,16 @@ export class SkipClient {
 
     if (!accountFromSigner) {
       throw new Error(
-        "executeMultiChainMessage error: failed to retrieve account from signer",
+        "executeCosmosMessage error: failed to retrieve account from signer",
       );
     }
 
     const fee = gas.fee;
+    if (!fee) {
+      throw new Error(
+        "executeCosmosMessage error: failed to retrieve fee from gas",
+      );
+    }
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
@@ -587,6 +613,7 @@ export class SkipClient {
       onTransactionSigned,
       bypassApprovalCheck,
       useUnlimitedApproval,
+      simulate = true,
     } = options;
     const extendedSigner = signer.extend(publicActions);
 
@@ -611,6 +638,18 @@ export class SkipClient {
           status: "pending",
           allowance: requiredApproval,
         });
+
+        // TODO: validate token approval gas balance
+        if (simulate) {
+          await this.validateEvmTokenApprovalBalance({
+            signer: signer,
+            contractAddress: requiredApproval.tokenContract,
+            spender: requiredApproval.spender,
+            amount: useUnlimitedApproval
+              ? maxUint256
+              : BigInt(requiredApproval.amount),
+          });
+        }
 
         const txHash = await extendedSigner.writeContract({
           account: signer.account,
@@ -637,6 +676,13 @@ export class SkipClient {
 
       onApproveAllowance?.({
         status: "completed",
+      });
+    }
+
+    if (simulate) {
+      await this.validateEvmGasBalance({
+        signer,
+        tx: message,
       });
     }
 
@@ -1672,19 +1718,23 @@ export class SkipClient {
     txs,
     onValidateGasBalance,
     getFallbackGasAmount,
-    getOfflineSigner,
+    getCosmosSigner,
     simulate,
   }: {
     txs: types.Tx[];
-    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions["onValidateGasBalance"];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
-  }) {
-    this.cosmosGasFee = undefined;
-    if (txs.every((tx) => "cosmosTx" in tx === undefined)) {
+  } & Pick<clientTypes.SignerGetters, "getCosmosSigner">) {
+    this.gasFee = undefined;
+    // cosmos or svm tx in txs
+    if (
+      txs.every((tx) => "cosmosTx" in tx === undefined) ||
+      txs.every((tx) => "svmTx" in tx === undefined)
+    ) {
       return;
     }
+
     onValidateGasBalance?.({
       status: "pending",
     });
@@ -1705,11 +1755,27 @@ export class SkipClient {
               signerAddress: tx.cosmosTx.signerAddress,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
-              getOfflineSigner: getOfflineSigner,
+              getOfflineSigner: getCosmosSigner,
               txIndex: i,
               simulate,
             });
 
+            return res;
+          } catch (e) {
+            const error = e as Error;
+            return {
+              error: error.message,
+              asset: null,
+              fee: null,
+            };
+          }
+        }
+
+        if ("svmTx" in tx) {
+          try {
+            const res = await this.validateSvmGasBalance({
+              tx: tx.svmTx,
+            });
             return res;
           } catch (e) {
             const error = e as Error;
@@ -1727,14 +1793,14 @@ export class SkipClient {
       onValidateGasBalance?.({
         status: "error",
       });
-      this.cosmosGasFee = validateResult as unknown as clientTypes.Gas[];
+      this.gasFee = validateResult as unknown as clientTypes.Gas[];
       throw new Error(`${txError.error}`);
     }
     onValidateGasBalance?.({
       status: "completed",
     });
 
-    this.cosmosGasFee = validateResult as unknown as clientTypes.Gas[];
+    this.gasFee = validateResult as unknown as clientTypes.Gas[];
   }
 
   /**
@@ -1934,6 +2000,126 @@ export class SkipClient {
       );
     }
     return feeUsed;
+  }
+
+  async validateEvmGasBalance({
+    signer,
+    tx,
+  }: {
+    signer: WalletClient;
+    tx: types.EvmTx;
+  }) {
+    const gasAmount = await getEVMGasAmountForMessage(signer, tx);
+
+    if (!signer.account?.address)
+      throw new Error("validateEvmGasBalance: Signer address not found");
+    const skipBalances =
+      this.skipBalances ||
+      (await this.balances({
+        chains: {
+          [tx.chainID]: {
+            address: signer.account?.address,
+          },
+        },
+      }));
+    const balances = skipBalances.chains[tx.chainID]?.denoms;
+    const gasBalance =
+      balances &&
+      Object.entries(balances).find(([denom]) =>
+        denom.includes("-native"),
+      )?.[1];
+
+    if (!gasBalance)
+      throw new Error("validateEvmGasBalance: Gas balance not found");
+    if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
+      throw new Error(
+        `Insufficient balance for gas on ${tx.chainID}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+      );
+    }
+  }
+
+  async validateEvmTokenApprovalBalance({
+    signer,
+    contractAddress,
+    spender,
+    amount,
+  }: {
+    signer: WalletClient;
+    contractAddress: string;
+    spender: string;
+    amount: bigint;
+  }) {
+    const chainId = signer.chain?.id;
+    if (!chainId) throw new Error("Chain ID not found");
+    const gasAmount = await getEVMGasAmountForTokenApproval(
+      signer,
+      contractAddress,
+      spender,
+      amount,
+    );
+    if (!signer.account?.address)
+      throw new Error(
+        "validateEvmTokenApprovalBalance: Signer address not found",
+      );
+    const skipBalances =
+      this.skipBalances ||
+      (await this.balances({
+        chains: {
+          [chainId]: {
+            address: signer.account?.address,
+          },
+        },
+      }));
+    const balances = skipBalances.chains[chainId]?.denoms;
+    const gasBalance =
+      balances &&
+      Object.entries(balances).find(([denom]) =>
+        denom.includes("-native"),
+      )?.[1];
+
+    if (!gasBalance)
+      throw new Error("validateEvmTokenApprovalBalance: Gas balance not found");
+    if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
+      throw new Error(
+        `Insufficient balance for gas on ${chainId}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+      );
+    }
+  }
+
+  async validateSvmGasBalance({ tx }: { tx: types.SvmTx }) {
+    const endpoint = await this.getRpcEndpointForChain(tx.chainID);
+    const connection = new Connection(endpoint);
+    if (!connection) throw new Error("Signer not found");
+    const gasAmount = await getSVMGasAmountForMessage(connection, tx);
+
+    const skipBalances = this.skipBalances?.chains["solana"]?.denoms[
+      "solana-native"
+    ]
+      ? this.skipBalances
+      : await this.balances({
+          chains: {
+            solana: {
+              address: tx.signerAddress,
+              denoms: ["solana-native"],
+            },
+          },
+        });
+    const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
+    if (!gasBalance) {
+      return {
+        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL.`,
+        asset: null,
+        fee: null,
+      };
+    }
+
+    if (BigNumber(gasBalance.amount).lt(gasAmount)) {
+      return {
+        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL but only have ${gasBalance.formattedAmount} SOL.`,
+        asset: null,
+        fee: null,
+      };
+    }
   }
 
   async getMainnetAndTestnetChains() {
