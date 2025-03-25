@@ -2008,6 +2008,12 @@ export class SkipClient {
     signer: WalletClient;
     tx: types.EvmTx;
   }) {
+    const chain = (await this.getChains()).find(
+      (chain) => chain.chainID === tx.chainID,
+    );
+    if (!chain) {
+      throw new Error(`failed to find chain id for '${tx.chainID}'`);
+    }
     const gasAmount = await getEVMGasAmountForMessage(signer, tx);
 
     if (!signer.account?.address)
@@ -2032,7 +2038,7 @@ export class SkipClient {
       throw new Error("validateEvmGasBalance: Gas balance not found");
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
       throw new Error(
-        `Insufficient balance for gas on ${tx.chainID}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
       );
     }
   }
@@ -2049,6 +2055,12 @@ export class SkipClient {
     amount: bigint;
   }) {
     const chainId = signer.chain?.id;
+    const chain = (await this.getChains()).find(
+      (chain) => chain.chainID === String(chainId),
+    );
+    if (!chain) {
+      throw new Error(`failed to find chain id for '${chainId}'`);
+    }
     if (!chainId) throw new Error("Chain ID not found");
     const gasAmount = await getEVMGasAmountForTokenApproval(
       signer,
@@ -2080,7 +2092,7 @@ export class SkipClient {
       throw new Error("validateEvmTokenApprovalBalance: Gas balance not found");
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
       throw new Error(
-        `Insufficient balance for gas on ${chainId}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
       );
     }
   }
