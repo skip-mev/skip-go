@@ -15,8 +15,6 @@ export async function setupBrowserContext() {
     "--remote-debugging-port=9222",
     "--disable-gpu",
     "--headless=new",
-    "--disable-dev-shm-usage",
-    "--disable-setuid-sandbox",
   ];
 
   // Launch browser
