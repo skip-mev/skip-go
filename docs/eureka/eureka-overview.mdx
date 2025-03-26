@@ -21,38 +21,39 @@ IBC Eureka is the canonical implementation of IBC v2 that enables seamless inter
 
 ## Integration Options
 
-There are multiple ways to integrate with Eureka, depending on your requirements:
+There are three components to consider in any Eureka integration:
 
-### 1. Chain-to-Eureka Integration
+1. The chain level integration - the underlying connection between blockchains that want to use Eureka
+2. The asset level integration - ensuring the assets you care about being imported and exported are setup in the Skip API
+3. The interface level integration - how end users will interact with Eureka 
 
-If you're running a Cosmos-based blockchain, you can connect directly to Eureka through the Cosmos Hub:
+### 1. Chain Level Integration
 
-- Requires an IBC connection to the Cosmos Hub and onboarding to the Skip API
-- No chain upgrade needed if you're already using IBC
-- Enables your users to transfer assets to and from Ethereum
+If you're running a Cosmos-based blockchain, the easiest way to use Eureka is through the Cosmos Hub:
 
-### 2. Frontend-to-Eureka Integration
+- Requires an IBC (classic) connection to the Cosmos Hub
+- No chain upgrade is needed if you're already using IBC
+- Users benefit from reduced cost of asset transfers between Eureka enabled domains through batching
+- Chains only need to maintain a single relayer to the Cosmos Hub to reach the entire Eureka and IBC network
 
-For application developers looking to enable cross-chain functionality in their applications:
+If you interested in a direct Eureka connection to Ethereum, or L2s/ Solana coming later this year, 
+please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) directly as additional integration work is required.
 
-- Leverage the Skip Widget for a simplified integration
-- Integrate with 50+ wallets and frontends on day one
-- Enable seamless asset transfers without handling complex relayer infrastructure
+### 2. Asset Level Integration
 
-### 3. User-to-Eureka Use
+For application developers looking to import or export assets across different blockchains:
 
-For end-users who need to use the interoperability functionality of Eureka:
+- Ensure you are setup with the [Skip API](/support-requirements/chain-support-requirements)
+- Let us know which assets you want to import/export so we can setup the routing in the API
 
-- Implement the Skip Go widget in your application
-- Provide one-click experience for users to transfer assets
+### 3. Interface Level Integration
+
+To support end-users who need to use the interoperability functionality of Eureka:
+
+- Integrate the [widget](/widget/getting-started) (easiest and fastest integration), or [client library](/client/getting-started) (more customization) to enable you users to interact with Eureka
+- The integration provides a one-click experience for users to transfer assets
 - Access all IBC-connected chains and Ethereum from a single integration
-
-### 4. Frontend/Custodian-to-Eureka
-
-For custodial applications and exchanges:
-
-- Implement direct API access to Eureka's functionality
-- Enable high-volume, automated cross-chain operations
+- Your integration is distributed to 50+ wallets and frontends on day 1, that already use the Skip API
 
 ## Getting Started
 
@@ -65,11 +66,11 @@ To start using Eureka, you have several options:
   <Step title="Explore the Devnet">
     Follow our [Devnet Testing Guide](/eureka/devnet-testing-guide) to test Eureka's functionality using our CLI tool.
   </Step>
-  <Step title="Integrate with Skip Go">
-    If you're building a frontend application, consider using the [Skip Go API](/client/skip-api) for a simplified integration.
+  <Step title="Connect with Us">
+    If you're interested in integrating Eureka, [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) to walk through the details
   </Step>
-  <Step title="Connect Your Chain">
-    If you're running a Cosmos chain, consider setting up an IBC connection to the Cosmos Hub and reach out to our team below for configuration assistance.
+  <Step title="Integrate Eureka">
+    Follow the steps outlined on this page to get setup
   </Step>
 </Steps>
 
@@ -84,7 +85,7 @@ To start using Eureka, you have several options:
 Need help with your Eureka integration? Our team is ready to assist:
 
 - Join our [Discord](https://discord.gg/cosmos) and find the support channel
-- Contact us directly: [@OllieGilbey](https://t.me/OllieGilbey) or [@NotJeremyLiu](https://t.me/NotJeremyLiu) on Telegram
+- Contact us directly: [@OllieGilbey](https://t.me/OllieGilbey), [@NotJeremyLiu](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) on Telegram
 - Email: susannah@interchainlabs.io
 
-For technical specifications, visit the [IBC v2 Specification](https://github.com/cosmos/ibc/blob/main/spec/eureka/README.md).
+For technical specifications, visit the [IBC v2 Specification](https://github.com/cosmos/ibc/pull/1143).
