@@ -2050,8 +2050,27 @@ export class SkipClient {
           denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
 
-    if (!gasBalance)
-      throw new Error("validateEvmGasBalance: Gas balance not found");
+    if (!gasBalance) {
+      const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
+        tx.chainID
+      ];
+      const asset = chainAssets?.find(
+        (x) =>
+          x.denom.includes("-native") ||
+          x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+      );
+      if (!asset?.decimals) {
+        throw new Error(
+          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
+        );
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
+      throw new Error(
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
+      );
+    }
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
       const chainAssets = (await this.getAssets(tx.chainID))?.[tx.chainID];
       const asset = chainAssets?.find(
@@ -2120,8 +2139,25 @@ export class SkipClient {
           denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
 
-    if (!gasBalance)
-      throw new Error("validateEvmTokenApprovalBalance: Gas balance not found");
+    if (!gasBalance) {
+      const chainAssets = (await this.getAssets(String(chainId)))?.[chainId];
+      const asset = chainAssets?.find(
+        (x) =>
+          x.denom.includes("-native") ||
+          x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+      );
+      if (!asset?.decimals) {
+        throw new Error(
+          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
+        );
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
+      throw new Error(
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
+      );
+    }
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
       const chainAssets = (await this.getAssets(String(chainId)))?.[chainId];
       const asset = chainAssets?.find(
