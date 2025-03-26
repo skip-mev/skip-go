@@ -44,4 +44,4 @@ jobs:
           yarn run dev &
           npx wait-on http://localhost:5173
       - name: Run your tests
-        run: npx playwright test
+        run: yarn test-widget
