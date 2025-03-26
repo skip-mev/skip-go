@@ -44,7 +44,7 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
 import {
-  formatEther,
+  formatUnits,
   isAddress,
   maxUint256,
   publicActions,
@@ -630,7 +630,7 @@ export class SkipClient {
           ],
         });
 
-        if (allowance >= BigInt(requiredApproval.amount)) {
+        if (allowance > BigInt(requiredApproval.amount)) {
           continue;
         }
 
@@ -663,7 +663,9 @@ export class SkipClient {
           functionName: "approve",
           args: [
             requiredApproval.spender as `0x${string}`,
-            useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount),
+            useUnlimitedApproval
+              ? maxUint256
+              : BigInt(requiredApproval.amount) + BigInt(1000),
           ],
           chain: signer.chain,
         });
@@ -2042,15 +2044,31 @@ export class SkipClient {
     const balances = skipBalances.chains[tx.chainID]?.denoms;
     const gasBalance =
       balances &&
-      Object.entries(balances).find(([denom]) =>
-        denom.includes("-native"),
+      Object.entries(balances).find(
+        ([denom]) =>
+          denom.includes("-native") ||
+          denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
 
     if (!gasBalance)
       throw new Error("validateEvmGasBalance: Gas balance not found");
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
+      const chainAssets = (await this.getAssets(tx.chainID))?.[tx.chainID];
+      const asset = chainAssets?.find(
+        (x) =>
+          x.denom.includes("-native") ||
+          x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+      );
+      if (!asset?.decimals) {
+        throw new Error(
+          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
+        );
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
       throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
       );
     }
   }
@@ -2096,15 +2114,31 @@ export class SkipClient {
     const balances = skipBalances.chains[chainId]?.denoms;
     const gasBalance =
       balances &&
-      Object.entries(balances).find(([denom]) =>
-        denom.includes("-native"),
+      Object.entries(balances).find(
+        ([denom]) =>
+          denom.includes("-native") ||
+          denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
 
     if (!gasBalance)
       throw new Error("validateEvmTokenApprovalBalance: Gas balance not found");
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
+      const chainAssets = (await this.getAssets(String(chainId)))?.[chainId];
+      const asset = chainAssets?.find(
+        (x) =>
+          x.denom.includes("-native") ||
+          x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+      );
+      if (!asset?.decimals) {
+        throw new Error(
+          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
+        );
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
       throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formatEther(gasAmount)} ETH but only have ${gasBalance.formattedAmount} ETH.`,
+        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
       );
     }
   }
