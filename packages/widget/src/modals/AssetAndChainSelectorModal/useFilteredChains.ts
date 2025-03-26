@@ -50,9 +50,16 @@ export const useFilteredChains = ({
       }) as ChainWithAsset[];
 
     return chainsWithAssets
-      .filter((chainWithAsset) =>
-        chainWithAsset.chainName.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+      .filter((chainWithAsset) => {
+        const { chainName, prettyName } = chainWithAsset;
+        const chainNameIncludesSearchQuery = chainName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const prettyNameIncludesSearchQuery = prettyName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        return chainNameIncludesSearchQuery || prettyNameIncludesSearchQuery;
+      })
       .sort((chainWithAssetA, chainWithAssetB) => {
         const usdValueA = Number(
           getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.valueUSD ?? 0,
