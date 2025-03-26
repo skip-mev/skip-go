@@ -14,7 +14,7 @@ export async function setupBrowserContext() {
     `--load-extension=${keplrPath}`,
     "--remote-debugging-port=9222",
     "--disable-gpu",
-    "--headless=new",
+    // "--headless=new",
   ];
 
   // Launch browser
