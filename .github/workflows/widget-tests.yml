@@ -25,4 +25,6 @@ jobs:
       - name: build client lib
         run: yarn run build:client
       - name: Run e2e tests
+        env:
+          WORD_PHRASE_KEY: ${{ secrets.WORD_PHRASE_KEY }}
         run: yarn test-widget
