@@ -21,6 +21,6 @@ jobs:
         with:
           node-version: lts/*
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable --immutable-cache --check-cache
       - name: Run your tests
         run: yarn test-widget
