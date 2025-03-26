@@ -41,7 +41,7 @@ test.describe.serial("Widget tests", async () => {
     });
 
     const input = page.getByRole("textbox");
-    await input.first().fill("1");
+    await input.first().fill("0.01");
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
@@ -55,7 +55,8 @@ test.describe.serial("Widget tests", async () => {
     await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
-    await page.getByText(/Max/i).click();
+    const input = page.getByRole("textbox");
+    await input.first().fill("0.01");
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
@@ -69,7 +70,8 @@ test.describe.serial("Widget tests", async () => {
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
-    await page.getByText(/Max/i).click();
+    const input = page.getByRole("textbox");
+    await input.first().fill("0.01");
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
