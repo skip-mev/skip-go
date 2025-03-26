@@ -29,9 +29,9 @@ export type EndpointOptions = {
 };
 
 export type Gas = {
-  error: null;
-  asset: types.FeeAsset;
-  fee: StdFee;
+  error: null | string;
+  asset: types.FeeAsset | null;
+  fee: StdFee | null;
 };
 
 /** Signer Getters */

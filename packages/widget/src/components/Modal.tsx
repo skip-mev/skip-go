@@ -7,7 +7,7 @@ import { PartialTheme } from "@/widget/theme";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { themeAtom } from "@/state/skipClient";
+import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 
 export type ModalProps = {
@@ -24,6 +24,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const modal = useModal();
   const [wasVisible, setWasVisible] = useState<boolean>();
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
+  const rootId = useAtomValue(rootIdAtom);
 
   const delay = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -85,7 +86,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay drawer={drawer} open={modal.visible}>
+      <StyledOverlay drawer={drawer} open={modal.visible} data-root-id={rootId}>
         <StyledContent
           ref={modalRef}
           drawer={drawer}
