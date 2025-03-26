@@ -59,8 +59,8 @@ export type SnakeKey<S extends string> = S extends `${infer T}${infer U}`
   : S;
 
 export type CamelKey<S extends string> = S extends `${infer T}_${infer U}`
-  ? `${T}${Capitalize<CamelKey<U>>}`
-  : S;
+  ? `${Lowercase<T>}${Capitalize<CamelKey<U>>}`
+  : Uncapitalize<S>;
 
 export type Snake<T> = T extends (infer U)[]
   ? Snake<U>[]
@@ -86,7 +86,7 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
   return convertKeys(obj, (key) =>
-    key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()),
+    key.toLowerCase().replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()),
   );
 }
 

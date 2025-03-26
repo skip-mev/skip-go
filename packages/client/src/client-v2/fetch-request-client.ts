@@ -7,24 +7,9 @@ export const createRequestClient = ({
   baseURL,
   apiKey,
 }: RequestClientOptions) => {
-  let currentController: AbortController | null = null;
-
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
     ...(apiKey ? { Authorization: apiKey } : {}),
-  };
-
-  const cancel = () => {
-    if (currentController) {
-      currentController.abort();
-      currentController = null;
-    }
-  };
-
-  const createController = () => {
-    cancel(); // Cancel any ongoing request
-    currentController = new AbortController();
-    return currentController.signal;
   };
 
   const handleResponse = async (response: Response) => {
@@ -46,6 +31,7 @@ export const createRequestClient = ({
   const get = async <ResponseType = unknown, RequestParams = unknown>(
     path: string,
     params?: RequestParams,
+    signal?: AbortSignal,
   ): Promise<ResponseType> => {
     const url = new URL(path, baseURL);
 
@@ -60,7 +46,7 @@ export const createRequestClient = ({
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: defaultHeaders,
-      signal: createController(),
+      signal,
     });
 
     return handleResponse(response);
@@ -69,16 +55,17 @@ export const createRequestClient = ({
   const post = async <ResponseType = unknown, Body = unknown>(
     path: string,
     data: Body = {} as Body,
+    signal?: AbortSignal,
   ): Promise<ResponseType> => {
     const response = await fetch(new URL(path, baseURL).toString(), {
       method: "POST",
       headers: defaultHeaders,
       body: JSON.stringify(data),
-      signal: createController(),
+      signal,
     });
 
     return handleResponse(response);
   };
 
-  return { get, post, cancel };
+  return { get, post };
 };

@@ -1,14 +1,38 @@
-import { Api } from "../types/types";
-import { Camel, toSnake } from "./convert";
+import { Api, Asset } from "../types/types";
+import { Camel, toCamel, toSnake } from "./convert";
+import { ClientState } from "./state";
 
 type GetAssets = Camel<Parameters<InstanceType<typeof Api>["getAssets"]>[0]>;
 
-export const getAssets = async (options: GetAssets) => {
-  if (!options) return;
+type GetAssetsReturn = Awaited<
+  ReturnType<InstanceType<typeof Api>["getAssets"]>
+>;
 
-  const api = new Api();
+export const getAssets = (options: GetAssets = {}) => {
+  const controller = new AbortController();
   const snakeCaseOptions = toSnake(options);
-  const response = await api.getAssets(snakeCaseOptions);
 
-  return response;
+  const request = async () => {
+    try {
+      const response = await ClientState.requestClient.get<GetAssetsReturn>(
+        "/v2/fungible/assets",
+        snakeCaseOptions,
+        controller.signal,
+      );
+
+      return toCamel(response);
+    } catch (error) {
+      if ((error as Error).name === "AbortError") {
+        console.log("Request was cancelled");
+      } else {
+        console.error("Error:", error);
+      }
+      throw error;
+    }
+  };
+
+  return {
+    request,
+    cancel: () => controller.abort(),
+  };
 };

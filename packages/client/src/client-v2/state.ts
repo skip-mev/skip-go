@@ -3,6 +3,7 @@ import { AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
 import * as clientTypes from "../client-types";
 import * as types from "../types";
 import { createRequestClient } from "./fetch-request-client";
+import { Asset } from "src/types/types";
 
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
@@ -23,7 +24,7 @@ export class ClientState {
 
   static clientOptions: clientTypes.SkipClientOptions;
   static skipChains?: types.Chain[];
-  static skipAssets?: Record<string, types.Asset[]>;
+  static skipAssets?: Record<string, Asset[]>;
   static skipBalances?: types.BalanceResponse;
   static signingStargateClientByChainId: Record<string, SigningStargateClient> =
     {};
