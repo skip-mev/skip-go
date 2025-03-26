@@ -1,3 +1,6 @@
+import { toCamel, toSnake } from "./convert";
+import { ClientState } from "./state";
+
 type RequestClientOptions = {
   baseURL: string;
   apiKey?: string;
@@ -69,3 +72,42 @@ export const createRequestClient = ({
 
   return { get, post };
 };
+
+type OnSuccessCallback<Result> = (result: Result) => void;
+
+export function createRequest<
+  Params extends object = object,
+  Result extends object = object,
+>(path: string, options?: Params, onSuccess?: OnSuccessCallback<Result>) {
+  const controller = new AbortController();
+
+  const request = async (): Promise<Result> => {
+    try {
+      const response = await ClientState.requestClient.get<Result>(
+        path,
+        options ? toSnake(options) : undefined,
+        controller.signal,
+      );
+
+      const camelCased = toCamel(response) as Result;
+
+      if (onSuccess) {
+        onSuccess(camelCased);
+      }
+
+      return camelCased;
+    } catch (error) {
+      if ((error as Error).name === "AbortError") {
+        console.log("Request was cancelled");
+      } else {
+        console.error("Error:", error);
+      }
+      throw error;
+    }
+  };
+
+  return {
+    request,
+    cancel: (reason?: string) => controller.abort(reason),
+  };
+}
