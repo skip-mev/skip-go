@@ -630,7 +630,7 @@ export class SkipClient {
           ],
         });
 
-        if (allowance >= BigInt(requiredApproval.amount)) {
+        if (allowance > BigInt(requiredApproval.amount)) {
           continue;
         }
 
@@ -663,7 +663,9 @@ export class SkipClient {
           functionName: "approve",
           args: [
             requiredApproval.spender as `0x${string}`,
-            useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount),
+            useUnlimitedApproval
+              ? maxUint256
+              : BigInt(requiredApproval.amount) + BigInt(1),
           ],
           chain: signer.chain,
         });
