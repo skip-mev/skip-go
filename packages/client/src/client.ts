@@ -665,7 +665,7 @@ export class SkipClient {
             requiredApproval.spender as `0x${string}`,
             useUnlimitedApproval
               ? maxUint256
-              : BigInt(requiredApproval.amount) + BigInt(1),
+              : BigInt(requiredApproval.amount) + BigInt(1000),
           ],
           chain: signer.chain,
         });
