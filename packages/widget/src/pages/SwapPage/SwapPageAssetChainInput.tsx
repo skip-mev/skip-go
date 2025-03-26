@@ -280,7 +280,7 @@ const StyledInput = styled.input<{
     font-size: 30px;
   }
   
-  /* Reduced font sizes for large numbers */
+  /* Reduced font sizes applied when data-large-number="true" */
   &[data-large-number="true"] {
     font-size: 30px;
     @media (max-width: 767px) {

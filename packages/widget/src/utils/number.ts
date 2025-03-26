@@ -8,11 +8,6 @@ export function formatNumberWithCommas(str: string | number) {
   return parts.join(".");
 }
 
-/**
- * Determines if a number needs size reduction based on length
- * Returns 0.8 scale (80% size) for numbers with more than 10 digits (excluding commas)
- */
-
 
 export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
@@ -89,6 +84,6 @@ export function shouldReduceFontSize(value: string | number | undefined): boolea
   // Convert to string and remove commas
   const valueWithoutCommas = value.toString().replace(/,/g, "");
   
-  // If the total character count is 14 or more, return true
+  // Return true if character count is 14 or more
   return valueWithoutCommas.length >= 14;
 }
