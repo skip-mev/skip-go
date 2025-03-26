@@ -51,7 +51,7 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Confirm").click();
     await approveInKeplr();
 
-    await expect(page.getByText(/go again/i)).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({ timeout: 300_000 });
   });
 
   test("Injective INJ -> Cosmoshub ATOM", async () => {
@@ -74,7 +74,7 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Confirm").click();
     await approveInKeplr();
 
-    await expect(page.getByText(/go again/i)).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({ timeout: 300_000 });
   });
 
   test("Cosmoshub ATOM -> Noble USDC", async () => {
@@ -97,6 +97,6 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Confirm").click();
     await approveInKeplr();
 
-    await expect(page.getByText(/go again/i)).toBeVisible({ timeout: 300_000 });
+    await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({ timeout: 300_000 });
   });
 });
