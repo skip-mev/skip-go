@@ -9,6 +9,7 @@ import {
   formatNumberWithCommas,
   formatNumberWithoutCommas,
   limitDecimalsDisplayed,
+  shouldReduceFontSize
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
@@ -156,6 +157,7 @@ export const SwapPageAssetChainInput = ({
   }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
 
   const displayedValue = formatNumberWithCommas(value || "");
+  const isLargeNumber = shouldReduceFontSize(value);
 
   return (
     <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
@@ -170,6 +172,7 @@ export const SwapPageAssetChainInput = ({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
+          isLargeNumber={isLargeNumber}
         />
         <StyledAssetButton onClick={handleChangeAsset} disabled={disabled} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
@@ -267,14 +270,25 @@ const StyledAssetChainInputWrapper = styled(Column)`
 
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
+  isLargeNumber?: boolean;
 }>`
   border: none;
   outline: none;
 
+  /* Default font sizes */
   font-size: 38px;
   @media (max-width: 767px) {
     font-size: 30px;
   }
+  
+  /* Reduced font sizes for large numbers */
+  ${props => props.isLargeNumber && `
+    font-size: 30px;
+    @media (max-width: 767px) {
+      font-size: 24px;
+    }
+  `}
+  
   font-weight: 400;
   letter-spacing: -0.01em;
   width: 100%;
@@ -282,7 +296,7 @@ const StyledInput = styled.input<{
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
-
+  
   ${(props) =>
     props.isWaitingToUpdateInputValue &&
     `
