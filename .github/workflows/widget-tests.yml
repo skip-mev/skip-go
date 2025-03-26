@@ -22,5 +22,7 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: yarn install
-      - name: Run your tests
+      - name: build client lib
+        run: yarn run build:client
+      - name: Run e2e tests
         run: yarn test-widget
