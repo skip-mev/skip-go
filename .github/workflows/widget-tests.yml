@@ -28,11 +28,3 @@ jobs:
         env:
           WORD_PHRASE_KEY: ${{ secrets.WORD_PHRASE_KEY }}
         run: yarn test-widget
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: Upload screenshots and test-results
-          path:  |
-            packages/widget/__tests__/Widget/
-            test-results/
-          retention-days: 30
