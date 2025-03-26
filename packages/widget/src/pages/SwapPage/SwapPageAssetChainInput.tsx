@@ -172,7 +172,7 @@ export const SwapPageAssetChainInput = ({
           onKeyDown={handleKeyDown}
           disabled={disabled}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
-          data-large-number={isLargeNumber.toString()}
+          isLargeNumber={isLargeNumber}
         />
         <StyledAssetButton onClick={handleChangeAsset} disabled={disabled} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
@@ -270,23 +270,24 @@ const StyledAssetChainInputWrapper = styled(Column)`
 
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
+  isLargeNumber?: boolean;
 }>`
   border: none;
   outline: none;
 
-  /* Base font sizes */
+  /* Default font sizes */
   font-size: 38px;
   @media (max-width: 767px) {
     font-size: 30px;
   }
   
-  /* Reduced font sizes applied when data-large-number="true" */
-  &[data-large-number="true"] {
+  /* Reduced font sizes for large numbers */
+  ${props => props.isLargeNumber && `
     font-size: 30px;
     @media (max-width: 767px) {
       font-size: 24px;
     }
-  }
+  `}
   
   font-weight: 400;
   letter-spacing: -0.01em;
