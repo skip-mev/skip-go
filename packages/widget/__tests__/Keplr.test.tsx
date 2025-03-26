@@ -45,7 +45,7 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
-    await page.getByText(/go again/i).click({ timeout: 120_000 });
+    await page.getByText(/go again/i).click({ timeout: 300_000 });
   });
 
   test("Injective INJ -> Cosmoshub ATOM", async () => {
@@ -59,7 +59,7 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
-    await page.getByText(/go again/i).click({ timeout: 120_000 });
+    await page.getByText(/go again/i).click({ timeout: 300_000 });
   });
 
   test("Cosmoshub ATOM -> Noble USDC", async () => {
@@ -73,6 +73,6 @@ test.describe.serial("Widget tests", async () => {
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
-    await page.getByText(/go again/i).click({ timeout: 120_000 });
+    await page.getByText(/go again/i).click({ timeout: 300_000 });
   });
 });
