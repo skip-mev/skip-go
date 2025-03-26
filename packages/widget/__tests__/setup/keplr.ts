@@ -79,6 +79,7 @@ async function importWallet(secretWords: string, password: string) {
   await keplrWindow
     .getByRole("button", {
       name: "Import",
+      exact: true,
     })
     .click();
 
@@ -98,18 +99,21 @@ async function importWallet(secretWords: string, password: string) {
   await keplrWindow
     .getByRole("button", {
       name: "Next",
+      exact: true,
     })
     .click();
 
   await keplrWindow
     .getByRole("button", {
       name: "Save",
+      exact: true,
     })
     .click();
 
   return await keplrWindow
     .getByRole("button", {
       name: "Finish",
+      exact: true,
     })
     .click();
 }
