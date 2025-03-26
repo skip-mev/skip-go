@@ -5,7 +5,7 @@ import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import { getAssets, setClientOptions } from "@skip-go/client";
+import { getAssets, setClientOptions, getChains } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -22,18 +22,30 @@ const DevMode = () => {
   };
 
   useEffect(() => {
-    let cancelRequest: () => void;
-    const test = async () => {
+    let cancelRequest: (reason: string) => void;
+    let cancelChainsRequest: (reason: string) => void;
+    const asset = async () => {
       setClientOptions();
       const { request, cancel } = getAssets();
       cancelRequest = cancel;
       const response = await request();
-      console.log(response);
+      console.log(response.chainToAssetsMap);
     };
-    test();
+
+    const chains = async () => {
+      setClientOptions();
+      const { request, cancel } = getChains();
+      cancelChainsRequest = cancel;
+      const response = await request();
+      console.log(response.chains);
+    };
+
+    asset();
+    chains();
 
     return () => {
-      cancelRequest?.();
+      cancelRequest?.("duplicate asset request");
+      cancelChainsRequest?.("duplicate chains request");
     };
   }, []);
   return (

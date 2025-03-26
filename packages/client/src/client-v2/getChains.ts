@@ -2,22 +2,23 @@ import { Api } from "../types/types";
 import { Camel, toCamel, toSnake } from "./convert";
 import { ClientState } from "./state";
 
-type GetAssets = Camel<Parameters<InstanceType<typeof Api>["getAssets"]>[0]>;
+type GetChains = Camel<Parameters<InstanceType<typeof Api>["getChains"]>[0]>;
 
-type GetAssetsReturn = Awaited<
-  ReturnType<InstanceType<typeof Api>["getAssets"]>
+type GetChainsReturnValue = Awaited<
+  ReturnType<InstanceType<typeof Api>["getChains"]>
 >["data"];
 
-export const getAssets = (options: GetAssets = {}) => {
+export const getChains = (options: GetChains = {}) => {
   const controller = new AbortController();
 
   const request = async () => {
     try {
-      const response = await ClientState.requestClient.get<GetAssetsReturn>(
-        "/v2/fungible/assets",
-        toSnake(options),
-        controller.signal,
-      );
+      const response =
+        await ClientState.requestClient.get<GetChainsReturnValue>(
+          "/v2/info/chains",
+          toSnake(options),
+          controller.signal,
+        );
 
       return toCamel(response);
     } catch (error) {
