@@ -22,9 +22,5 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Start server
-        run: |
-          yarn run dev &
-          npx wait-on http://localhost:5173
       - name: Run your tests
         run: yarn test-widget
