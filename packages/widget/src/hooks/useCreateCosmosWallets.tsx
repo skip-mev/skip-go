@@ -63,9 +63,7 @@ export const useCreateCosmosWallets = () => {
           try {
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
-              if (!chainInfo)
-                throw new Error(`connect: Chain info not found for chainID: ${chainId}`);
-              if (!mobile && !isWC) {
+              if (!mobile && !isWC && chainInfo) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
             }
