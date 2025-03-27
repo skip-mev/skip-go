@@ -124,7 +124,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
 
   const walletListTitle = useMemo(() => {
     const isDestinationIndex = chainAddressIndex === Object.values(chainAddresses).length - 1;
-    const title = isDestinationIndex ? "Destination" : "Recovery";
+    const title = isDestinationIndex ? "Destination" : "Intermediary";
     if (mobile) {
       return title;
     }
