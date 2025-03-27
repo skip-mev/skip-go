@@ -2582,6 +2582,7 @@ components:
         * `OPINIT` - Opinit Bridge
         * `GO_FAST` - Go Fast Bridge
         * `STARGATE` - Stargate Bridge
+        * `EUREKA` - IBC Eureka Bridge
       enum:
         - IBC
         - AXELAR
@@ -2590,6 +2591,7 @@ components:
         - OPINIT
         - GO_FAST
         - STARGATE
+        - EUREKA
     Chain:
       properties:
         chain_name:
