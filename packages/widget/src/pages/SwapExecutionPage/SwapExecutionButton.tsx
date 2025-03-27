@@ -50,7 +50,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
-          label="Set recovery address"
+          label="Set intermediary address"
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set recovery address button - clicked");

@@ -23,6 +23,7 @@ import { track } from "@amplitude/analytics-browser";
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
   chainAddressIndex: number;
+  signRequired?: boolean;
 };
 
 export enum WalletSource {
@@ -64,7 +65,9 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   } as ManualWalletEntry;
 
   const isShowManualWalletEntry =
-    chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
+    chain?.chainType === chainAddresses[0]?.chainType &&
+    chain?.chainType !== ChainType.Cosmos &&
+    !modalProps.signRequired;
 
   const walletList = [..._walletList, manualWalletEntry];
 
