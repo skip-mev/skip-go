@@ -22,8 +22,7 @@
     "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",
-    "test": "vitest",
-    "test:browser": "vitest --workspace=vitest.workspace.browser.ts"
+    "test": "yarn playwright test"
   },
   "exports": {
     ".": {
@@ -41,6 +40,7 @@
     "@eslint/js": "^9.9.0",
     "@initia/initia-registry": "^0.2.3",
     "@keplr-wallet/types": "^0.12.125",
+    "@playwright/test": "^1.51.1",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
@@ -58,16 +58,16 @@
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "@vitest/browser": "^3.0.8",
     "buffer": "^6.0.3",
     "chain-registry": "^1.69.160",
+    "download": "^8.0.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "fs-extra": "^11.3.0",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "pino-pretty": "^13.0.0",
-    "playwright": "^1.51.0",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.4.2",
     "process": "^0.11.10",
@@ -83,8 +83,6 @@
     "vite": "^5.3.4",
     "vite-plugin-dts": "^4.0.0-beta.1",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vitest": "^3.0.8",
-    "vitest-browser-react": "^0.1.1",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"
   },

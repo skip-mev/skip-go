@@ -17,6 +17,7 @@ import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
 import { track } from "@amplitude/analytics-browser";
+import { useCallback } from "react";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -46,11 +47,18 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route);
 
+  const getDestinationAddreessUnsetText = useCallback(() => {
+    if (lastOperation.signRequired && route?.txsRequired === 2) {
+      return "Set second signing address";
+    }
+    return "Set destination address";
+  }, [lastOperation.signRequired, route?.txsRequired]);
+
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
-          label="Set recovery address"
+          label="Set intermediary address"
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set recovery address button - clicked");
@@ -61,7 +69,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.destinationAddressUnset:
       return (
         <MainButton
-          label="Set destination address"
+          label={getDestinationAddreessUnsetText()}
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set destination address button - clicked");

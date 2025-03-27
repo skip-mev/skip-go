@@ -16,7 +16,6 @@ import { useCreateCosmosWallets } from "./useCreateCosmosWallets";
 import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { ChainType } from "@skip-go/client";
-import { useGetAccount } from "./useGetAccount";
 import { getCosmosWalletInfo } from "@/constants/graz";
 import { WalletType } from "graz";
 
@@ -27,9 +26,9 @@ export const useAutoSetAddress = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const sourceWallet = useAtomValue(walletsAtom);
   const [isLoading, setIsLoading] = useState(true);
+  const [walletHasChanged, setWalletHasChanged] = useState(false);
 
   const [currentSourceWallets, setCurrentSourceWallets] = useState<typeof sourceWallet>();
-  const getAccount = useGetAccount();
 
   const { createCosmosWallets } = useCreateCosmosWallets();
   const { createEvmWallets } = useCreateEvmWallets();
@@ -91,13 +90,15 @@ export const useAutoSetAddress = () => {
             );
           }
 
+          if (
+            JSON.stringify(requiredChainAddresses) !==
+            JSON.stringify(Object.values(chainAddresses).map((chain) => chain.chainID))
+          ) {
+            setIsLoading(false);
+            return;
+          }
+
           setChainAddresses((prev) => {
-            if (
-              JSON.stringify(requiredChainAddresses) !==
-              JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
-            ) {
-              return prev;
-            }
             const getLogo = () => {
               if (wallet?.walletChainType === "evm" && wallet?.walletName === "app.keplr") {
                 return getCosmosWalletInfo(WalletType.KEPLR).imgSrc;
@@ -153,27 +154,32 @@ export const useAutoSetAddress = () => {
       setIsLoading(false);
       return;
     }
-    if (!requiredChainAddresses) return;
-    const cosmosWalletChanged = sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id;
-    const evmWalletChanged = sourceWallet.evm?.id !== currentSourceWallets?.evm?.id;
-    const svmWalletChanged = sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
+    const hasWalletChanged =
+      sourceWallet.cosmos?.id !== currentSourceWallets?.cosmos?.id ||
+      sourceWallet.evm?.id !== currentSourceWallets?.evm?.id ||
+      sourceWallet.svm?.id !== currentSourceWallets?.svm?.id;
 
-    if (cosmosWalletChanged || evmWalletChanged || svmWalletChanged || isLoading) {
-      connectRequiredChains();
+    if (hasWalletChanged) {
       setCurrentSourceWallets(sourceWallet);
+      setWalletHasChanged(true);
     }
   }, [
     connectRequiredChains,
     currentSourceWallets?.cosmos?.id,
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
-    getAccount,
     isLoading,
     overallStatus,
     requiredChainAddresses,
     sourceWallet,
-    sourceWallet.cosmos,
   ]);
+
+  useEffect(() => {
+    if (walletHasChanged) {
+      connectRequiredChains();
+      setWalletHasChanged(false);
+    }
+  }, [connectRequiredChains, walletHasChanged]);
 
   return { connectRequiredChains, isLoading };
 };
