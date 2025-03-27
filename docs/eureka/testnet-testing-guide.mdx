@@ -1,7 +1,7 @@
 ---
-title: "Devnet Testing Guide"
+title: "Testnet Testing Guide"
 id: eureka-cli
-description: "This document describes how to test IBC Eureka on Devnet"
+description: "This document describes how to test IBC Eureka on Testnet"
 ---
 
 # Background
@@ -9,8 +9,8 @@ description: "This document describes how to test IBC Eureka on Devnet"
 IBC Eureka is the official native implementation of IBC v2.
 It leverages the Cosmos Hub and Interchain Labs contracts, relayers, and infrastructure to enable seamless cross-chain user and liquidity mobility.
 
-The following guide explains how to test IBC Eureka's Devnet deployment via a CLI tool developed to interact with IBC Eureka, enabling trust-minimized token transfers between Ethereum and Cosmos chains.
-This guide currently shows the steps for transactions between Ethereum Sepolia Testnet and a Cosmos Hub Devnet we spun up for the purpose.
+The following guide explains how to test IBC Eureka's Testnet deployment via a CLI tool developed to interact with IBC Eureka, enabling trust-minimized token transfers between Ethereum and Cosmos chains.
+This guide currently shows the steps for transactions between Ethereum Sepolia Testnet and a Cosmos Hub `provider` testnet.
 
 # Prerequisites
 
@@ -28,10 +28,10 @@ This guide currently shows the steps for transactions between Ethereum Sepolia T
         git clone https://github.com/cosmos/solidity-ibc-eureka && cd solidity-ibc-eureka
         ```
     </Step>
-    <Step title="Checkout the devnet branch">
+    <Step title="Checkout the testnet branch">
         ```bash
         git fetch
-        git checkout gjermund/devnet-3
+        git checkout gjermund/hub-testnet
         ```
     </Step>
     <Step title="Change to the cmd folder">
@@ -50,19 +50,21 @@ This guide currently shows the steps for transactions between Ethereum Sepolia T
 
 <Warning>**Do not use mainnet keys for the testing CLI**</Warning>
 
-Once the CLI is built, the next steps are to set up the Ethereum Sepolia and Cosmos devnet keys and addresses to use. Currently, you'll need to store your private keys for both Cosmos and Ethereum as environment variables.
+Once the CLI is built, the next steps are to set up the Ethereum Sepolia and Cosmos testnet keys and addresses to use. Currently, you'll need to store your private keys for both Cosmos and Ethereum as environment variables.
 
 There are **three** accounts required:
 
 1. `ETH_PRIVATE_KEY` - You can retrieve an Ethereum private key from within Metamask by creating a new account > navigating to "Account details" > and pressing "Show private key"
-   - To test a transfer from Ethereum Sepolia to the Cosmos Devnet, you'll need to have testnet ETH on this account. You can use any Ethereum Sepolia faucet for this, an example is: [Google Cloud Ethereum Sepolia Faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
-   - You'll also be transferring an ERC20 token. You can use [Token Tool](https://tokentool.bitbond.com/create-token/erc20-token/ethereum-sepolia) to create a new ERC20 token on Ethereum Sepolia Testnet and use that in your command to do a Eureka transfer from Sepolia Testnet to Cosmos Devnet.
-2. `COSMOS_PRIVATE_KEY` - This will be used as the initiator of a transfer in the other direction. You can retrieve a Cosmos `unarmored-hex` private key by following the following steps:
+   - To test a transfer from Ethereum Sepolia to the Cosmos Testnet, you'll need to have testnet ETH on this account. You can use any Ethereum Sepolia faucet for this, an example is: [Google Cloud Ethereum Sepolia Faucet](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
+   - You'll also be transferring an ERC20 token. You can use [Token Tool](https://tokentool.bitbond.com/create-token/erc20-token/ethereum-sepolia) to create a new ERC20 token on Ethereum Sepolia Testnet and use that in your command to do a Eureka transfer from Sepolia Testnet to Cosmos Testnet.
+2. `COSMOS_PRIVATE_KEY` - This will be used as the initiator of a transfer in the other direction. You can retrieve a Cosmos `unarmored-hex` private key by following these steps:
    1. Installing a node daemon CLI: `simd` or <code><a href="https://github.com/cosmos/gaia">gaiad</a></code>.
    2. Adding keys to the daemon CLI: `gaiad keys add <account-name> --recover`
    3. Entering the BIP-39 mnemonic for the account you want to add. (Remove `--recover` to generate new)
    4. Exporting the unarmored hex: `gaiad keys export <account-name> --unarmored-hex --unsafe`
-3. `RELAYER_WALLET` - For devnet, we are providing relayer keys manually. Reach out to the Interchain Labs team, and we will provide the private key for your use.
+   - To test a transfer from Cosmos to Ethereum Sepolia, you'll need to have testnet ATOM. You can use the [Cosmos Testnet Faucet on Discord](discord.gg/interchain) for this.
+   - You'll need the Dev role on Discord, which you can acquire simply by clicking the `interchain` drop down and selecting "Linked Roles" > "Dev", then connecting your GitHub account. This will give access to the `🚰 | testnet-faucet` channel.
+3. `RELAYER_WALLET` - For testnet, we are providing relayer keys manually. Reach out to the Interchain Labs team, and we will provide the private key for your use.
 
 Once all the necessary private keys are obtained, run the following command to set them as environment variables:
 
@@ -79,6 +81,10 @@ export RELAYER_WALLET="ask-icl-team-for-the-testing-key"
 
 # Commands
 
+<Note>
+  **Note:** The `[flags]` all have default values set, and can be seen in `cmd/main.go`.
+</Note>
+
 <AccordionGroup>
     <Accordion title="Transfer ERC20 tokens from Etheruem to Cosmos">
         <CodeGroup>
@@ -87,10 +93,7 @@ export RELAYER_WALLET="ask-icl-team-for-the-testing-key"
             ```
 
             ```bash Example
-            go run ./ transfer-from-eth-to-cosmos 1 0xA4ff49eb6E2Ea77d7D8091f1501385078642603f cosmos1u5d4hk8294fs9pq556jxmlju2ceh4jmurcpfv7 \
-              --eth-rpc="https://ethereum-sepolia-rpc.publicnode.com" \
-              --ics20-address="0xbb87C1ACc6306ad2233a4c7BBE75a1230409b358" \
-              --source-client-id="client-0"
+            go run ./ transfer-from-eth-to-cosmos 1 0xA4ff49eb6E2Ea77d7D8091f1501385078642603f cosmos1u5d4hk8294fs9pq556jxmlju2ceh4jmurcpfv7
             ```
         </CodeGroup>
 
@@ -104,13 +107,11 @@ export RELAYER_WALLET="ask-icl-team-for-the-testing-key"
 
             ```bash Example
             go run ./ relay-tx 0xed13b2567a00eae7d0a6c8e24d1cf6342116d1d89d72ff9b52b690cdd3a5dd98 \
-              --eth-rpc="https://ethereum-sepolia-rpc.publicnode.com" \
-              --cosmos-rpc="https://eureka-devnet-node-01-rpc.dev.skip.build:443"
             ```
         </CodeGroup>
     </Accordion>
     <Accordion title="Transfer tokens back from Cosmos to Ethereum">
-        Depending on if the token is native to the chain (uatom for the Cosmos Devnet) or is an IBC'd token from Ethereum Sepolia, the denom to use in the command is as follows:
+        Depending on if the token is native to the chain (uatom for the Cosmos testnet) or is an IBC'd token from Ethereum Sepolia, the denom to use in the command is as follows:
         1. If IBC transferring a token native to the chain, you can use the denom you expect (uatom) in the command.
         2. If IBC transferring a token that was already IBC transferred from Ethereum, you'll use the IBC denom of the token, beginning with `transfer/08-wasm-0/0x` (from the `balance` command below).
 
@@ -133,13 +134,11 @@ export RELAYER_WALLET="ask-icl-team-for-the-testing-key"
     <Accordion title="Relay the transaction from Cosmos to Ethereum">
         <CodeGroup>
             ```bash Usage
-            go run ./ relay_tx [txHash] [flags]
+            go run ./ relay-tx [txHash] [flags]
             ```
 
             ```bash Example
-            go run ./ relay_tx 28D0B356557DC625D62649E7B1E05B8730898389B8D888E9C920BED33429D9EB \
-              --eth-rpc="https://ethereum-sepolia-rpc.publicnode.com" \
-              --cosmos-rpc="https://eureka-devnet-node-01-rpc.dev.skip.build:443"
+            go run ./ relay-tx 28D0B356557DC625D62649E7B1E05B8730898389B8D888E9C920BED33429D9EB
             ```
         </CodeGroup>
 
@@ -179,10 +178,6 @@ export RELAYER_WALLET="ask-icl-team-for-the-testing-key"
         </CodeGroup>
     </Accordion>
 </AccordionGroup>
-
-# Coming Soon
-
-1. Deployment of CosmWasm forwarding contracts to test Ethereum → Cosmos Chain A → Cosmos Chain B.
 
 # Contact Us
 
