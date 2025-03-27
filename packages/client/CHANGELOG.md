@@ -1,5 +1,15 @@
 # @skip-go/client
 
+## 0.16.22
+
+### Patch Changes
+
+- 9515033: Update default timeout for waitForVariable to be 10seconds
+- ab7ebdf: Add to_chain_entry_contract_address to eureka transfer and trasfer types and converters
+- 9b642eb: modify evm gas balance error message
+- 17f6fb3: evm and svm gas balance validation
+- b2fb0ab: fix asset evm validation
+
 ## 0.16.21
 
 ### Patch Changes
