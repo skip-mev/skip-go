@@ -1,10 +1,11 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
+import { getAssets, setClientOptions, getChains } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -20,6 +21,33 @@ const DevMode = () => {
     }
   };
 
+  useEffect(() => {
+    let cancelRequest: (reason: string) => void;
+    let cancelChainsRequest: (reason: string) => void;
+    const asset = async () => {
+      setClientOptions();
+      const { request, cancel } = getAssets();
+      cancelRequest = cancel;
+      const response = await request();
+      console.log(response.chainToAssetsMap);
+    };
+
+    const chains = async () => {
+      setClientOptions();
+      const { request, cancel } = getChains();
+      cancelChainsRequest = cancel;
+      const response = await request();
+      console.log(response.chains);
+    };
+
+    asset();
+    chains();
+
+    return () => {
+      cancelRequest?.("duplicate asset request");
+      cancelChainsRequest?.("duplicate chains request");
+    };
+  }, []);
   return (
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>
