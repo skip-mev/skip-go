@@ -64,12 +64,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     },
   } as ManualWalletEntry;
 
-  const isShowManualWalletEntry =
-    chain?.chainType === chainAddresses[0]?.chainType &&
-    chain?.chainType !== ChainType.Cosmos &&
-    !modalProps.signRequired;
+  const onlyShowManualWalletEntry =
+    chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
 
-  const walletList = [..._walletList, manualWalletEntry];
+  const hideManualWalletEntry = modalProps.signRequired;
+
+  const walletList = [..._walletList, ...(hideManualWalletEntry ? [] : [manualWalletEntry])];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setManualWalletAddress(e.target.value);
@@ -222,7 +222,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title={walletListTitle}
-          walletList={isShowManualWalletEntry ? [manualWalletEntry] : walletList}
+          walletList={onlyShowManualWalletEntry ? [manualWalletEntry] : walletList}
           onClickBackButton={() => {
             track("set address modal: back button - clicked");
             NiceModal.remove(Modals.SetAddressModal);
