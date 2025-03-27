@@ -2322,7 +2322,7 @@ function wait(ms: number) {
 
 function waitForVariable<T>(
   variable: () => T | undefined,
-  timeout: number = 5000,
+  timeout: number = 10_000,
   interval: number = 100,
 ): Promise<T> {
   const startTime = Date.now();
