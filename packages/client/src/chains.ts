@@ -50,7 +50,31 @@ const SOLANA_CHAIN = {
   ],
 };
 
-const additionalChains = [SOLANA_CHAIN] as Chain[];
+const lombardTestnet: Chain = {
+  chain_id: "localnet",
+  apis: {
+    rpc: [
+      {
+        address: "https://node0.ibc.lb-mgt.com:443",
+      },
+    ],
+  },
+  fees: {
+    fee_tokens: [
+      {
+        denom: "ulom",
+        fixed_min_gas_price: 100,
+        low_gas_price: 100,
+        average_gas_price: 100,
+        high_gas_price: 100,
+      },
+    ],
+  },
+  chain_name: "Ledger",
+  chain_type: "cosmos",
+};
+
+const additionalChains = [SOLANA_CHAIN, lombardTestnet] as Chain[];
 const existingChainIds = new Set(
   chainRegistryChains.map((chain) => chain.chain_id),
 );
