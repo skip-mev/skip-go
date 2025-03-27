@@ -143,16 +143,13 @@ export const useCreateEvmWallets = () => {
               chainType: ChainType.EVM,
             });
           },
-          getAddress: async ({ signRequired }) => {
+          getAddress: async () => {
             track("get address", {
               walletName: connector.name,
               chainId: chainID,
               ChainType: ChainType.EVM,
             });
             try {
-              if (signRequired) {
-                throw new Error("always prompt wallet connection");
-              }
               const account = await connector.getAccounts();
               if (account.length === 0) {
                 throw new Error("No accounts found");

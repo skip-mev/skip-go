@@ -2272,10 +2272,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.98":
-  version: 0.50.98
-  resolution: "@chain-registry/types@npm:0.50.98"
-  checksum: 61622cc848397d48bf1bd2233061c753767070a120ee0c9c584c07b482546e92acfd6875607ee128948428e0f4378633b518adac3b7ea79d4956eba85e869f0d
+"@chain-registry/types@npm:^0.50.101":
+  version: 0.50.101
+  resolution: "@chain-registry/types@npm:0.50.101"
+  checksum: f527d8a9c26644429fe2709a435384e4669cdd91b2222de5528ae9500270e39e01d3a05be0134a460741b728f9f31c2b79b783f2862e25ce8e4996b86a1ec3ea
   languageName: node
   linkType: hard
 
@@ -4878,21 +4878,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry-types@npm:^0.0.22":
-  version: 0.0.22
-  resolution: "@initia/initia-registry-types@npm:0.0.22"
+"@initia/initia-registry-types@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@initia/initia-registry-types@npm:1.0.1"
   dependencies:
     zod: ^3.22.4
-  checksum: 0d713ce40a3d3c2234feb6cfab86dd945aaecbff298a2ab9f3b88fcbfe36455bc2419873a677dd4274693e627ef8c72e95b2e3f1ad76037be5843662cf2b806c
+  checksum: 4d6dcf50daa8d4514820ce2a4a2aaadebea79f71c4d88b83b8b1c2443800fa7aee6c70848edfcd68caf09bb7d3ac472291e07420bb6768909c40ae3761f7f226
   languageName: node
   linkType: hard
 
-"@initia/initia-registry@npm:^0.2.3":
-  version: 0.2.3
-  resolution: "@initia/initia-registry@npm:0.2.3"
+"@initia/initia-registry@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "@initia/initia-registry@npm:0.2.4"
   dependencies:
-    "@initia/initia-registry-types": ^0.0.22
-  checksum: d4ea6273da8854eaed1ff582b6cc2c989c4b77a334a79fd0ab2d00336d3b23931b6ac64d5740c4d2e9a3d95e9ae06008818a528b2543228939ea6bc8f069fd81
+    "@initia/initia-registry-types": ^1.0.1
+  checksum: 83186ba610747bb09c4c0aaa297c23a9491a5e93411a583473b221e9c3dd188225f82b033b14782b24f02134de92cf5b6f4c99fc5d0028c8daf38c2c00d0fe1e
   languageName: node
   linkType: hard
 
@@ -7831,7 +7831,7 @@ __metadata:
     "@cosmjs/stargate": 0.33.1
     "@cosmjs/tendermint-rpc": 0.33.1
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": ^0.2.3
+    "@initia/initia-registry": ^0.2.4
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.143
@@ -7841,7 +7841,7 @@ __metadata:
     "@types/keccak": 3.0.4
     axios: 1.x
     bech32: ^2.0.0
-    chain-registry: ^1.69.160
+    chain-registry: ^1.69.165
     cosmjs-types: ^0.9.0
     keccak: 3.0.4
     minimatch: ^9.0.3
@@ -7869,7 +7869,7 @@ __metadata:
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
-    "@initia/initia-registry": ^0.2.3
+    "@initia/initia-registry": ^0.2.4
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^13.0.0
@@ -7912,7 +7912,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.160
+    chain-registry: ^1.69.165
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -13314,12 +13314,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.160":
-  version: 1.69.160
-  resolution: "chain-registry@npm:1.69.160"
+"chain-registry@npm:^1.69.165":
+  version: 1.69.165
+  resolution: "chain-registry@npm:1.69.165"
   dependencies:
-    "@chain-registry/types": ^0.50.98
-  checksum: 1734c2804c1d78226cb4f06fbefc1e5b24893e3ec1af16d55659154c7e721c2df47300712b84e47d6ab3b78ca7057c4f70e7560f80466f78d6e5b8f1d9d71594
+    "@chain-registry/types": ^0.50.101
+  checksum: a632055406130512c60815aee40dcc1adc2a76e5b8b91d20ac3f1f8ebbff695a476fe4bd6fe832acb09ff7209db8071d7c0bfc27b3dd7a4939a6a8e320b454f8
   languageName: node
   linkType: hard
 
