@@ -823,6 +823,10 @@ export class SkipClient {
   }
 
   private async getAssets(chainId?: string) {
+    if (chainId) {
+      if (this.skipAssets?.[chainId]) return this.skipAssets;
+      return await this.getMainnetAndTestnetAssets(chainId);
+    }
     if (this.skipAssets) return this.skipAssets;
 
     return await this.getMainnetAndTestnetAssets(chainId);
