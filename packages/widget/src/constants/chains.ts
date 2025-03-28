@@ -40,6 +40,14 @@ const lombardTestnet: ChainInfo = {
     coinMinimalDenom: "ulom",
     coinDecimals: 6,
   },
+  bech32Config: {
+    bech32PrefixAccAddr: "lom",
+    bech32PrefixAccPub: "lompub",
+    bech32PrefixValAddr: "lomvaloper",
+    bech32PrefixValPub: "lomvaloperpub",
+    bech32PrefixConsAddr: "lomvalcons",
+    bech32PrefixConsPub: "lomvalconspub",
+  },
 };
 
 export const mainnetChains = _mainnetChains as unknown as ChainInfo[];
