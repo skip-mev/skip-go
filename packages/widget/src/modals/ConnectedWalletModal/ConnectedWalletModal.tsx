@@ -17,7 +17,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { RightArrowIcon } from "@/icons/ArrowIcon";
 import { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
-import { skipChainsAtom } from "@/state/skipClient";
+import { onlyTestnetsAtom, skipChainsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
@@ -33,6 +33,7 @@ const ITEM_GAP = 5;
 
 export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
+  const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const { chainImage, chainName } = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     chainId: sourceAsset?.chainID,
@@ -53,9 +54,21 @@ export const ConnectedWalletModal = createModal((_modalProps: ModalProps) => {
         }}
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <ConnectEco key={ChainType.Cosmos} chainID="cosmoshub-4" chainType={ChainType.Cosmos} />
-        <ConnectEco key={ChainType.EVM} chainID="1" chainType={ChainType.EVM} />
-        <ConnectEco key={ChainType.SVM} chainID="solana" chainType={ChainType.SVM} />
+        <ConnectEco
+          key={ChainType.Cosmos}
+          chainID={onlyTestnets ? "provider" : "cosmoshub-4"}
+          chainType={ChainType.Cosmos}
+        />
+        <ConnectEco
+          key={ChainType.EVM}
+          chainID={onlyTestnets ? "11155111" : "1"}
+          chainType={ChainType.EVM}
+        />
+        <ConnectEco
+          key={ChainType.SVM}
+          chainID={onlyTestnets ? "solana-devnet" : "solana"}
+          chainType={ChainType.SVM}
+        />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );
