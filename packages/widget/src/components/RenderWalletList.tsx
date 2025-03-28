@@ -66,11 +66,14 @@ export const RenderWalletList = ({
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
-      if (isConnectEco) {
-        clearAssetInputAmounts();
-        return await wallet.connect();
+      // If a specific chainId is provided, connect to that chain
+      // This is used when connecting from a specific chain context
+      if (chainId) {
+        return await wallet.connect(chainId);
       }
-      return await wallet.connect(chainId);
+      // Otherwise, connect without specifying a chain
+      // This will use the wallet's default behavior
+      return await wallet.connect();
     },
     onSuccess: () => {
       if (isConnectEco) {

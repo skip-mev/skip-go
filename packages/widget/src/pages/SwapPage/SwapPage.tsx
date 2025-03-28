@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -82,6 +82,23 @@ export const SwapPage = () => {
     return evmChainId ? getAccount(String(evmChainId))?.address : undefined;
   }, [evmChainId, getAccount]);
 
+  // Utility function to handle chain switching for EVM chains
+  const switchToEvmChainIfNeeded = useCallback((targetChainId?: string) => {
+    if (targetChainId && chains && evmAddress && connector) {
+      const isEvm = chains.find((c) => c.chainID === targetChainId)?.chainType === "evm";
+      if (isEvm && targetChainId !== String(evmChainId)) {
+        connector.switchChain?.({
+          chainId: Number(targetChainId),
+        });
+      }
+    }
+  }, [chains, connector, evmAddress, evmChainId]);
+
+  // Effect to automatically switch chain when source asset changes (including direction reversal)
+  useEffect(() => {
+    switchToEvmChainIfNeeded(sourceAsset?.chainID);
+  }, [sourceAsset?.chainID, switchToEvmChainIfNeeded]);
+
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
       if (!denom || !chainId) return;
@@ -99,12 +116,9 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source asset selected", { asset });
-        // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
-        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
-          connector.switchChain?.({
-            chainId: Number(asset.chainID),
-          });
+        // Use the utility function to handle chain switching
+        if (asset) {
+          switchToEvmChainIfNeeded(asset.chainID);
         }
         setSourceAsset((old) => ({
           ...old,
@@ -116,10 +130,7 @@ export const SwapPage = () => {
       },
     });
   }, [
-    chains,
-    connector,
-    evmAddress,
-    evmChainId,
+    switchToEvmChainIfNeeded,
     setDestinationAssetAmount,
     setSourceAsset,
     setSourceAssetAmount,
@@ -131,12 +142,9 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source chain selected", { asset });
-        // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
-        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
-          connector.switchChain?.({
-            chainId: Number(asset.chainID),
-          });
+        // Use the utility function to handle chain switching
+        if (asset) {
+          switchToEvmChainIfNeeded(asset.chainID);
         }
         setSourceAsset((old) => ({
           ...old,
@@ -148,10 +156,7 @@ export const SwapPage = () => {
       selectChain: true,
     });
   }, [
-    chains,
-    connector,
-    evmAddress,
-    evmChainId,
+    switchToEvmChainIfNeeded,
     getClientAsset,
     setSourceAsset,
     sourceAsset?.chainID,
@@ -210,13 +215,12 @@ export const SwapPage = () => {
           icon={ICONS.plus}
           onClick={() => {
             track("swap page: connect wallet button - clicked");
-            if (!sourceAsset?.chainID) {
-              NiceModal.show(Modals.ConnectedWalletModal);
-            } else {
-              NiceModal.show(Modals.WalletSelectorModal, {
-                chainId: sourceAsset?.chainID,
-              });
-            }
+            // Pass the source asset's chainID to the ConnectedWalletModal
+            // This allows the ecosystem selector to pre-select the appropriate ecosystem
+            // based on the chain type
+            NiceModal.show(Modals.ConnectedWalletModal, {
+              chainId: sourceAsset?.chainID
+            });
           }}
         />
       );
