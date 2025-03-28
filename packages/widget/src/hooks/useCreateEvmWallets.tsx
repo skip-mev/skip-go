@@ -63,7 +63,9 @@ export const useCreateEvmWallets = () => {
                 chainId: Number(chainIdToConnect),
               });
             } else {
-              await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+              if (!isEvmConnected) {
+                await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+              }
             }
 
             if (sourceAsset === undefined) {
@@ -143,7 +145,12 @@ export const useCreateEvmWallets = () => {
               chainType: ChainType.EVM,
             });
           },
-          getAddress: async () => {
+          getAddress: async ({ signRequired }) => {
+            if (signRequired) {
+              return connectWallet({
+                chainIdToConnect: chainID,
+              });
+            }
             track("get address", {
               walletName: connector.name,
               chainId: chainID,
