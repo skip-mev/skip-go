@@ -3,4 +3,4 @@
 "@skip-go/widget": patch
 ---
 
-fix asset evm validation
+fix evm get address and add lombard testnet

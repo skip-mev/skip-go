@@ -1,5 +1,28 @@
 ## 0.0.15
 
+## 3.5.0
+
+### Minor Changes
+
+- 2a116b4: - Added automatic text resizing for large numbers in input fields to prevent overflow
+
+### Patch Changes
+
+- 8e3a140: Fix issue with infinitely calling connectRequiredChains
+- 9515033: Update default timeout for waitForVariable to be 10seconds
+- 7ef5613: Remove mars-1 from chainIds to connect
+- 28269a2: Disable manual address for signRequired chains, and update set recovery address to say set intermediary address
+- 9b642eb: modify evm gas balance error message
+- 17f6fb3: evm and svm gas balance validation
+- 3c027ae: Add rootId to WidgetContainer and Modals
+- b2fb0ab: fix asset evm validation
+- Updated dependencies [9515033]
+- Updated dependencies [ab7ebdf]
+- Updated dependencies [9b642eb]
+- Updated dependencies [17f6fb3]
+- Updated dependencies [b2fb0ab]
+  - @skip-go/client@0.16.22
+
 ## 3.4.8
 
 ### Patch Changes
