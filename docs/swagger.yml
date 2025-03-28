@@ -2582,6 +2582,7 @@ components:
         * `OPINIT` - Opinit Bridge
         * `GO_FAST` - Go Fast Bridge
         * `STARGATE` - Stargate Bridge
+        * `EUREKA` - IBC Eureka Bridge
       enum:
         - IBC
         - AXELAR
@@ -2590,6 +2591,7 @@ components:
         - OPINIT
         - GO_FAST
         - STARGATE
+        - EUREKA
     Chain:
       properties:
         chain_name:
@@ -3008,6 +3010,7 @@ components:
         - $ref: '#/components/schemas/HyperlaneTransferWrapper'
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
+        - $ref: '#/components/schemas/EurekaTransferWrapper'
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3547,6 +3550,7 @@ components:
         - $ref: '#/components/schemas/CCTPTransferInfo'
         - $ref: '#/components/schemas/HyperlaneTransferInfo'
         - $ref: '#/components/schemas/OPInitTransferInfo'
+        - $ref: '#/components/schemas/EurekaTransferInfo'
     TransferInfo:
       properties:
         to_chain_id:
@@ -3620,6 +3624,78 @@ components:
       properties:
         transfer:
           $ref: '#/components/schemas/Transfer'
+      type: object
+    EurekaTransfer:
+      description: An IBC Eureka transfer
+      properties:
+        destination_port:
+          description: Port on the destination chain
+          type: string
+        source_client:
+          description: Client on the source chain
+          type: string
+        from_chain_id:
+          description: Chain-id on which the transfer is initiated
+          type: string
+        to_chain_id:
+          description: Chain-id on which the transfer is received
+          type: string
+        pfm_enabled:
+          description: Whether pfm is enabled on the chain where the transfer is initiated
+          type: boolean
+        supports_memo:
+          description: Whether the transfer chain supports a memo
+          type: boolean
+        denom_in:
+          description: Denom of the input asset of the transfer
+          type: string
+        denom_out:
+          description: Denom of the output asset of the transfer
+          type: string
+        entry_contract_address:
+          description: Address of the Eureka entry contract on the source chain
+          type: string
+        callback_adapter_contract_address:
+          description: Optional address of the Eureka callback adapter contract on the source chain
+          type: string
+          nullable: true
+        bridge_id:
+          $ref: '#/components/schemas/BridgeType'
+        smart_relay:
+          type: boolean
+          description: Indicates whether this transfer is relayed via Smart Relay
+        smart_relay_fee_quote:
+          allOf:
+            - $ref: '#/components/schemas/SmartRelayFeeQuote'
+          nullable: true
+        to_chain_callback_contract_address:
+          description: Optional address of the Eureka callback contract on the destination chain
+          type: string
+          nullable: true
+        to_chain_entry_contract_address:
+          description: Optional address of the Eureka entry contract on the destination chain
+          type: string
+          nullable: true
+      type: object
+    EurekaTransferInfo:
+      properties:
+        eureka_transfer:
+          properties:
+            from_chain_id:
+              description: Chain ID of the source chain
+              type: string
+            to_chain_id:
+              description: Chain ID of the destination chain
+              type: string
+            state:
+              $ref: '#/components/schemas/TransferState'
+            packet_txs:
+              $ref: '#/components/schemas/Packet'
+          type: object
+    EurekaTransferWrapper:
+      properties:
+        eureka_transfer:
+          $ref: '#/components/schemas/EurekaTransfer'
       type: object
     RecommendationRequest:
       properties:
