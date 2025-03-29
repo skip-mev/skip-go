@@ -363,12 +363,43 @@ export class SkipClient {
       onTransactionCompleted,
       simulate = true,
     } = options;
+    const chainIds = txs.map((tx) => {
+      if ("cosmosTx" in tx) {
+        return {
+          chainType: "cosmos",
+          chainID: tx.cosmosTx.chainID,
+        };
+      }
+      if ("svmTx" in tx) {
+        return {
+          chainType: "svm",
+          chainID: tx.svmTx.chainID,
+        };
+      }
+      return {
+        chainType: "evm",
+        chainID: tx.evmTx.chainID,
+      };
+    });
+
+    const GAS_STATION_CHAIN_IDS = ["bbn-test-5"];
+
+    const isGasStationSourceEVM = chainIds.find((item, i, array) => {
+      return (
+        GAS_STATION_CHAIN_IDS.includes(item.chainID) &&
+        array[i - 1]?.chainType === "evm"
+      );
+    });
+
     this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
       getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
+      disabledChainIds: isGasStationSourceEVM
+        ? GAS_STATION_CHAIN_IDS
+        : undefined,
     });
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
@@ -378,10 +409,25 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
+        // workaround if gas balance haven't arrived yet
+        // if (isGasStationSourceEVM) {
+        //   await wait(5000);
+        // }
+        this.validateGasBalances({
+          txs,
+          getFallbackGasAmount: options.getFallbackGasAmount,
+          getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+          onValidateGasBalance: options.onValidateGasBalance,
+          simulate: simulate,
+          enabledChainIds: isGasStationSourceEVM
+            ? GAS_STATION_CHAIN_IDS
+            : undefined,
+        });
         txResult = await this.executeCosmosTx({
           tx,
           options,
           index: i,
+          gasTimeOut: isGasStationSourceEVM ? 30_000 : undefined,
         });
       } else if ("evmTx" in tx) {
         const txResponse = await this.executeEvmMsg(tx, options);
@@ -390,6 +436,16 @@ export class SkipClient {
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
+        this.validateGasBalances({
+          txs,
+          getFallbackGasAmount: options.getFallbackGasAmount,
+          getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+          onValidateGasBalance: options.onValidateGasBalance,
+          simulate: simulate,
+          enabledChainIds: isGasStationSourceEVM
+            ? GAS_STATION_CHAIN_IDS
+            : undefined,
+        });
         txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
@@ -413,6 +469,7 @@ export class SkipClient {
     tx,
     options,
     index,
+    gasTimeOut,
   }: {
     tx: {
       cosmosTx: types.CosmosTx;
@@ -420,10 +477,11 @@ export class SkipClient {
     };
     options: clientTypes.ExecuteRouteOptions;
     index: number;
+    gasTimeOut?: number;
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gasArray = await waitForVariable(() => this.gasFee);
+    const gasArray = await waitForVariable(() => this.gasFee, gasTimeOut);
     const gas = gasArray.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
@@ -1737,11 +1795,17 @@ export class SkipClient {
     getFallbackGasAmount,
     getCosmosSigner,
     simulate,
+    disabledChainIds,
+    enabledChainIds,
   }: {
     txs: types.Tx[];
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions["onValidateGasBalance"];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
+    // skip gas validation for specific chainId
+    disabledChainIds?: string[];
+    // run gas validation for specific chainId
+    enabledChainIds?: string[];
   } & Pick<clientTypes.SignerGetters, "getCosmosSigner">) {
     this.gasFee = undefined;
     // cosmos or svm tx in txs
@@ -1761,7 +1825,12 @@ export class SkipClient {
         if (!tx) {
           raise(`invalid tx at index ${i}`);
         }
-        if ("cosmosTx" in tx) {
+        if (
+          "cosmosTx" in tx &&
+          !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
+          (!enabledChainIds || enabledChainIds.includes(tx.cosmosTx.chainID))
+        ) {
+          console.log("validating cosmos gas balance", i, tx.cosmosTx.chainID);
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
@@ -1788,7 +1857,11 @@ export class SkipClient {
           }
         }
 
-        if ("svmTx" in tx) {
+        if (
+          "svmTx" in tx &&
+          !disabledChainIds?.includes(tx.svmTx.chainID) &&
+          (!enabledChainIds || enabledChainIds.includes(tx.svmTx.chainID))
+        ) {
           try {
             const res = await this.validateSvmGasBalance({
               tx: tx.svmTx,
@@ -1923,7 +1996,9 @@ export class SkipClient {
     const feeAssetFoundInSkipBalances = feeAssets.every((asset) => {
       return (
         this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
-        undefined
+          undefined &&
+        this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
+          "0"
       );
     });
     const feeBalance = feeAssetFoundInSkipBalances
@@ -1937,8 +2012,11 @@ export class SkipClient {
           },
         });
     const skipChains = await this.getChains();
+    console.log("feeAssets", feeAssets);
+    console.log("feeBalance", feeBalance);
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
+      console.log("chainAsset", chainAsset);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
       const decimal = Number(chainAsset?.decimals);
