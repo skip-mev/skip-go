@@ -1133,6 +1133,13 @@ export class SkipClient {
       types.RouteRequestJSON
     >("/v2/fungible/route", {
       ...types.routeRequestToJSON(options),
+      experimental_features: [
+        ...new Set([
+          "stargate",
+          "eureka",
+          ...(options.experimentalFeatures || []),
+        ]),
+      ] as types.ExperimentalFeature[],
       cumulative_affiliate_fee_bps: this.cumulativeAffiliateFeeBPS,
     });
 
