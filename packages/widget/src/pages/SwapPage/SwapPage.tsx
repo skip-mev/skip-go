@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom, onlyTestnetsAtom } from "@/state/skipClient"; // Added onlyTestnetsAtom
+import { ClientAsset, skipAssetsAtom, skipChainsAtom, onlyTestnetsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -30,7 +30,7 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useAccount } from "wagmi";
-import { ChainType } from "@skip-go/client"; // Added import
+import { ChainType } from "@skip-go/client";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
@@ -49,7 +49,7 @@ export const SwapPage = () => {
   useAtom(onSourceAssetUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const onlyTestnets = useAtomValue(onlyTestnetsAtom); // Added
+  const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -205,7 +205,6 @@ export const SwapPage = () => {
     return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
-  // --- Calculate connection statuses outside swapButton memo ---
   const representativeChainIDs = useMemo(() => ({
       [ChainType.Cosmos]: onlyTestnets ? "provider" : "cosmoshub-4",
       [ChainType.EVM]: onlyTestnets ? "11155111" : "1",
@@ -215,7 +214,6 @@ export const SwapPage = () => {
   const isEvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.EVM], true), [getAccount, representativeChainIDs]);
   const isCosmosConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.Cosmos], true), [getAccount, representativeChainIDs]);
   const isSvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.SVM], true), [getAccount, representativeChainIDs]);
-  // --- End connection status calculation ---
 
   const swapButton = useMemo(() => {
     if (!sourceAsset?.chainID) {
@@ -223,24 +221,16 @@ export const SwapPage = () => {
     }
 
     if (!sourceAccount?.address) {
-      const sourceChainType = chains?.find((c) => c.chainID === sourceAsset?.chainID)?.chainType;
-
-      // Use pre-calculated connection statuses
-      const showPriorityModal =
-        (sourceChainType === ChainType.EVM && (isCosmosConnected || isSvmConnected)) ||
-        (sourceChainType === ChainType.Cosmos && (isEvmConnected || isSvmConnected)) ||
-        (sourceChainType === ChainType.SVM && (isEvmConnected || isCosmosConnected));
-
       return (
         <MainButton
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
             track("swap page: connect wallet button - clicked", {
-              modalType: showPriorityModal ? "priority" : "standard",
+              modalType: sourceAsset?.chainID ? "priority" : "connected",
             });
-            if (showPriorityModal) {
-              NiceModal.show(Modals.PriorityWalletConnectModal, { sourceAsset });
+            if (sourceAsset?.chainID) {
+              NiceModal.show(Modals.WalletSelectorModal, { sourceAsset, showPriorityView: true });
             } else {
               NiceModal.show(Modals.ConnectedWalletModal);
             }
@@ -385,7 +375,6 @@ export const SwapPage = () => {
     setCurrentPage,
       setSwapExecutionState,
       setError,
-      // Added connection statuses to dependency array
       isEvmConnected,
       isCosmosConnected,
       isSvmConnected,
