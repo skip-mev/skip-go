@@ -271,6 +271,8 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
 `;
 
 const StyledInput = styled.input<{ validAddress?: boolean }>`
+  font-size: 20px;
+  font-family: "ABCDiatype", sans-serif;
   height: 60px;
   width: 100%;
   box-sizing: border-box;
