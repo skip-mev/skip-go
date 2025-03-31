@@ -218,9 +218,7 @@ export const SwapPage = () => {
             // Pass the source asset's chainID to the ConnectedWalletModal
             // This allows the ecosystem selector to pre-select the appropriate ecosystem
             // based on the chain type
-            NiceModal.show(Modals.ConnectedWalletModal, {
-              chainId: sourceAsset?.chainID
-            });
+            NiceModal.show(Modals.ConnectedWalletModal);
           }}
         />
       );

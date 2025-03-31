@@ -31,12 +31,9 @@ import { track } from "@amplitude/analytics-browser";
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 
-export type ConnectedWalletModalProps = ModalProps & {
-  chainId?: string;
-};
+export type ConnectedWalletModalProps = ModalProps;
 
 export const ConnectedWalletModal = createModal((modalProps: ConnectedWalletModalProps) => {
-  const { chainId } = modalProps;
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const { chainImage, chainName } = useGetAssetDetails({
@@ -63,19 +60,16 @@ export const ConnectedWalletModal = createModal((modalProps: ConnectedWalletModa
           key={ChainType.Cosmos}
           chainID={onlyTestnets ? "provider" : "cosmoshub-4"}
           chainType={ChainType.Cosmos}
-          passedChainId={chainId}
         />
         <ConnectEco
           key={ChainType.EVM}
           chainID={onlyTestnets ? "11155111" : "1"}
           chainType={ChainType.EVM}
-          passedChainId={chainId}
         />
         <ConnectEco
           key={ChainType.SVM}
           chainID={onlyTestnets ? "solana-devnet" : "solana"}
           chainType={ChainType.SVM}
-          passedChainId={chainId}
         />
       </StyledModalInnerContainer>
     </StyledModalContainer>
@@ -85,11 +79,9 @@ export const ConnectedWalletModal = createModal((modalProps: ConnectedWalletModa
 const ConnectEco = ({ 
   chainType, 
   chainID,
-  passedChainId
-}: { 
-  chainType: ChainType; 
+}: {
+  chainType: ChainType;
   chainID: string;
-  passedChainId?: string;
 }) => {
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
@@ -104,14 +96,14 @@ const ConnectEco = ({
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainIdForWallet = useMemo(() => {
-    if (!passedChainId || !chains) return undefined;
-    
-    const chainInfo = chains.find(c => c.chainID === passedChainId);
+    if (!sourceAsset?.chainID || !chains) return undefined;
+
+    const chainInfo = chains.find((c) => c.chainID === sourceAsset.chainID);
     if (chainInfo?.chainType === chainType) {
-      return passedChainId;
+      return sourceAsset.chainID;
     }
     return undefined;
-  }, [passedChainId, chains, chainType]);
+  }, [sourceAsset?.chainID, chains, chainType]);
 
   const account = useMemo(() => {
     const _chainID = chainType === chain?.chainType ? sourceAsset?.chainID : chainID;
