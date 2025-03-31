@@ -7,7 +7,6 @@ import {
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
-import { onlyTestnetsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
@@ -20,7 +19,6 @@ export type ConnectedWalletModalProps = ModalProps;
 
 export const ConnectedWalletModal = createModal(() => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const { chainImage, chainName } = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     chainId: sourceAsset?.chainID,
