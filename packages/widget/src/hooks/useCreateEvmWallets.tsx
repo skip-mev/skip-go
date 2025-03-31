@@ -63,7 +63,9 @@ export const useCreateEvmWallets = () => {
                 chainId: Number(chainIdToConnect),
               });
             } else {
-              await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+              if (!isEvmConnected) {
+                await connectAsync({ connector, chainId: Number(chainIdToConnect) });
+              }
             }
 
             if (sourceAsset === undefined) {
@@ -144,15 +146,17 @@ export const useCreateEvmWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
+            if (signRequired) {
+              return connectWallet({
+                chainIdToConnect: chainID,
+              });
+            }
             track("get address", {
               walletName: connector.name,
               chainId: chainID,
               ChainType: ChainType.EVM,
             });
             try {
-              if (signRequired) {
-                throw new Error("always prompt wallet connection");
-              }
               const account = await connector.getAccounts();
               if (account.length === 0) {
                 throw new Error("No accounts found");

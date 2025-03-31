@@ -19,42 +19,6 @@ IBC Eureka is the canonical implementation of IBC v2 that enables seamless inter
   </Card>
 </CardGroup>
 
-## Integration Options
-
-There are three components to consider in any Eureka integration:
-
-1. The chain level integration - the underlying connection between blockchains that want to use Eureka
-2. The asset level integration - ensuring the assets you care about being imported and exported are set up in the Skip API
-3. The interface level integration - how end users will interact with Eureka 
-
-### 1. Chain Level Integration
-
-If you're running a Cosmos-based blockchain, the easiest way to use Eureka is through the Cosmos Hub:
-
-- Requires an IBC (classic) connection to the Cosmos Hub
-- No chain upgrade is needed if you're already using IBC
-- Users benefit from reduced cost of asset transfers between Eureka-enabled domains through batching
-- Chains only need to maintain a single relayer to the Cosmos Hub to reach the entire Eureka and IBC network
-
-If you are interested in a direct Eureka connection to Ethereum, or L2s/ Solana coming later this year, 
-please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) directly as additional integration work is required.
-
-### 2. Asset Level Integration
-
-For application developers looking to import or export assets across different blockchains:
-
-- Ensure you are set up with the [Skip API](/support-requirements/chain-support-requirements)
-- Let us know which assets you want to import/export so we can set up the routing in the API
-
-### 3. Interface Level Integration
-
-To support end-users who need to use the interoperability functionality of Eureka:
-
-- Integrate the [widget](/widget/getting-started) (easiest and fastest integration), or [client library](/client/getting-started) (more customization) to enable your users to interact with Eureka
-- The integration provides a one-click experience for users to transfer assets
-- Access all IBC-connected chains and Ethereum from a single integration
-- Your integration is distributed to 50+ wallets and frontends on day 1, that already use the Skip API
-
 ## Getting Started
 
 To start using Eureka, you have several options:
@@ -67,10 +31,10 @@ To start using Eureka, you have several options:
     Follow our [Testnet Testing Guide](/eureka/testnet-testing-guide) to test Eureka's functionality using our CLI tool.
   </Step>
   <Step title="Connect with Us">
-    If you're interested in integrating Eureka, contact [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) to walk through the details
+    If you're interested in integrating Eureka, contact [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) to walk through the details.
   </Step>
   <Step title="Integrate Eureka">
-    Follow the steps outlined on this page to get set up
+    Follow the steps outlined in the [Integration Guide](/eureka/integration-guide) to get set up!
   </Step>
 </Steps>
 

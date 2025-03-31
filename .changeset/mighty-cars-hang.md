@@ -3,4 +3,4 @@
 "@skip-go/widget": patch
 ---
 
-evm and svm gas balance validation
+fix evm get address and add lombard testnet
