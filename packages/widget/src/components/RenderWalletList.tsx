@@ -18,8 +18,18 @@ export type RenderWalletListProps = {
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
   onSelectWallet?: (wallet: MinimalWallet) => void;
-  chainId?: string;
-  isConnectEco?: boolean;
+  chainId?: string; 
+  isConnectEco?: boolean; 
+ 
+  connectFn?: (wallet: MinimalWallet) => Promise<void> | void; 
+  connectionState?: {
+    isPending: boolean;
+    isError: boolean;
+    error: Error | null;
+    variables?: { walletPrettyName?: string; walletInfo?: { logo?: string } };
+  };
+  headerRightContent?: () => React.ReactNode;
+  onItemClick?: (wallet: MinimalWallet | ManualWalletEntry) => void;
 };
 
 export type ManualWalletEntry = {
@@ -50,6 +60,10 @@ export const RenderWalletList = ({
   onSelectWallet,
   chainId,
   isConnectEco,
+  connectFn,
+  connectionState,
+  headerRightContent,
+  onItemClick,
 }: RenderWalletListProps) => {
   const theme = useTheme();
 
@@ -63,6 +77,7 @@ export const RenderWalletList = ({
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
+  // Internal mutation only used if connectFn is NOT provided
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
@@ -83,6 +98,15 @@ export const RenderWalletList = ({
       NiceModal.remove(Modals.WalletSelectorModal);
     },
   });
+
+  const currentConnectionState = useMemo(() => {
+    return connectionState ?? {
+      isPending: connectMutation.isPending,
+      isError: connectMutation.isError,
+      error: connectMutation.error,
+      variables: connectMutation.variables,
+    };
+  }, [connectionState, connectMutation.isPending, connectMutation.isError, connectMutation.error, connectMutation.variables]);
 
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
@@ -107,14 +131,21 @@ export const RenderWalletList = ({
       ) : null;
 
       const onClickConnectWallet = () => {
+        // Call external click handler if provided
+        onItemClick?.(wallet);
+
         if (!isMinimalWallet(wallet)) {
           wallet.onSelect();
+        } else if (connectFn) {
+          // Use external connect function if provided
+          connectFn(wallet);
         } else if (onSelectWallet) {
+          // Fallback to onSelectWallet if provided (for specific selection use cases)
           onSelectWallet(wallet);
           NiceModal.remove(Modals.SetAddressModal);
           NiceModal.remove(Modals.WalletSelectorModal);
-          return;
         } else {
+          // Fallback to internal mutation if no external connectFn or onSelectWallet provided
           connectMutation.mutate(wallet);
         }
       };
@@ -141,7 +172,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation, onSelectWallet],
+    [connectMutation, onSelectWallet, connectFn, onItemClick], // Add dependencies
   );
 
   const height = useMemo(() => {
@@ -149,8 +180,9 @@ export const RenderWalletList = ({
   }, [displayWallets.length]);
 
   const renderWalletListOrWalletConnectionStatus = useMemo(() => {
-    if (connectMutation.isError || connectMutation.isPending) {
-      const titleText = connectMutation.isError ? "Failed to connect" : "Connecting to";
+    // Use currentConnectionState here
+    if (currentConnectionState.isError || currentConnectionState.isPending) {
+      const titleText = currentConnectionState.isError ? "Failed to connect" : "Connecting to";
       return (
         <StyledModalInnerContainer>
           <StyledLoadingContainer>
@@ -158,21 +190,26 @@ export const RenderWalletList = ({
               width={80}
               height={80}
               backgroundColor={theme.primary.text.normal}
-              status={connectMutation.isError ? "failed" : "pending"}
+              status={currentConnectionState.isError ? "failed" : "pending"}
               borderSize={8}
             >
-              <img
-                style={{ objectFit: "cover" }}
-                src={connectMutation.variables?.walletInfo.logo}
-                alt={`${connectMutation.variables?.walletPrettyName} logo`}
-              />
+              {/* Use currentConnectionState.variables */}
+              {currentConnectionState.variables?.walletInfo?.logo && (
+                 <img
+                   style={{ objectFit: "cover" }}
+                   src={currentConnectionState.variables.walletInfo.logo}
+                   alt={`${currentConnectionState.variables?.walletPrettyName} logo`}
+                 />
+              )}
             </StyledAnimatedBorder>
+            {/* Use currentConnectionState.variables */}
             <Text color={theme.primary.text.lowContrast} textAlign="center">
-              {titleText} {connectMutation.variables?.walletPrettyName}
+              {titleText} {currentConnectionState.variables?.walletPrettyName}
             </Text>
-            {connectMutation.error && (
+            {/* Use currentConnectionState.error */}
+            {currentConnectionState.error && (
               <Text textAlign="center" fontSize={14} color={theme.primary.text.lowContrast}>
-                {connectMutation.error.message}
+                {currentConnectionState.error.message}
               </Text>
             )}
           </StyledLoadingContainer>
@@ -193,11 +230,11 @@ export const RenderWalletList = ({
       />
     );
   }, [
-    connectMutation.error,
-    connectMutation.isError,
-    connectMutation.isPending,
-    connectMutation.variables?.walletInfo.logo,
-    connectMutation.variables?.walletPrettyName,
+    currentConnectionState.error,
+    currentConnectionState.isError,
+    currentConnectionState.isPending,
+    currentConnectionState.variables?.walletInfo?.logo,
+    currentConnectionState.variables?.walletPrettyName,
     height,
     renderItem,
     theme.primary.text.lowContrast,
@@ -205,15 +242,28 @@ export const RenderWalletList = ({
     displayWallets,
   ]);
 
+  // Determine back button behavior based on whether external state is used
+  const handleBackButton = useCallback(() => {
+    if (connectionState) {
+      // If external state is provided, the parent should handle reset if needed. Just call back.
+      onClickBackButton();
+    } else {
+      // If internal state is used, check if we need to reset the internal mutation
+      if (connectMutation.isPending || connectMutation.isError) {
+        connectMutation.reset();
+      } else {
+        onClickBackButton();
+      }
+    }
+  }, [connectionState, onClickBackButton, connectMutation]);
+
+
   return (
     <StyledModalContainer gap={15}>
       <ModalHeader
         title={title}
-        onClickBackButton={
-          connectMutation.isPending || connectMutation.isError
-            ? connectMutation.reset
-            : onClickBackButton
-        }
+        onClickBackButton={handleBackButton}
+        rightContent={headerRightContent} 
       />
       {renderWalletListOrWalletConnectionStatus}
     </StyledModalContainer>

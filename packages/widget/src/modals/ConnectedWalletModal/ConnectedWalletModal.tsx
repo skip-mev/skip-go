@@ -10,9 +10,8 @@ import { useAtomValue } from "jotai";
 import { onlyTestnetsAtom } from "@/state/skipClient";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
-import { ChainType } from "@skip-go/client";
 import { track } from "@amplitude/analytics-browser";
-import { ConnectEco } from "@/components/ConnectEcoRow";
+import { EcosystemConnectors } from "@/components/EcosystemConnectors";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -42,21 +41,7 @@ export const ConnectedWalletModal = createModal(() => {
         }}
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <ConnectEco
-          key={ChainType.Cosmos}
-          chainID={onlyTestnets ? "provider" : "cosmoshub-4"}
-          chainType={ChainType.Cosmos}
-        />
-        <ConnectEco
-          key={ChainType.EVM}
-          chainID={onlyTestnets ? "11155111" : "1"}
-          chainType={ChainType.EVM}
-        />
-        <ConnectEco
-          key={ChainType.SVM}
-          chainID={onlyTestnets ? "solana-devnet" : "solana"}
-          chainType={ChainType.SVM}
-        />
+        <EcosystemConnectors />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );
