@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom, onlyTestnetsAtom } from "@/state/skipClient"; // Added onlyTestnetsAtom
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -30,6 +30,7 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useAccount } from "wagmi";
+import { ChainType } from "@skip-go/client"; // Added import
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
@@ -48,6 +49,7 @@ export const SwapPage = () => {
   useAtom(onSourceAssetUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const onlyTestnets = useAtomValue(onlyTestnetsAtom); // Added
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -203,22 +205,45 @@ export const SwapPage = () => {
     return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
+  // --- Calculate connection statuses outside swapButton memo ---
+  const representativeChainIDs = useMemo(() => ({
+      [ChainType.Cosmos]: onlyTestnets ? "provider" : "cosmoshub-4",
+      [ChainType.EVM]: onlyTestnets ? "11155111" : "1",
+      [ChainType.SVM]: onlyTestnets ? "solana-devnet" : "solana",
+  }), [onlyTestnets]);
+
+  const isEvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.EVM], true), [getAccount, representativeChainIDs]);
+  const isCosmosConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.Cosmos], true), [getAccount, representativeChainIDs]);
+  const isSvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.SVM], true), [getAccount, representativeChainIDs]);
+  // --- End connection status calculation ---
+
   const swapButton = useMemo(() => {
     if (!sourceAsset?.chainID) {
       return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
     if (!sourceAccount?.address) {
+      const sourceChainType = chains?.find((c) => c.chainID === sourceAsset?.chainID)?.chainType;
+
+      // Use pre-calculated connection statuses
+      const showPriorityModal =
+        (sourceChainType === ChainType.EVM && (isCosmosConnected || isSvmConnected)) ||
+        (sourceChainType === ChainType.Cosmos && (isEvmConnected || isSvmConnected)) ||
+        (sourceChainType === ChainType.SVM && (isEvmConnected || isCosmosConnected));
+
       return (
         <MainButton
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
-            track("swap page: connect wallet button - clicked");
-            // Pass the source asset's chainID to the ConnectedWalletModal
-            // This allows the ecosystem selector to pre-select the appropriate ecosystem
-            // based on the chain type
-            NiceModal.show(Modals.ConnectedWalletModal);
+            track("swap page: connect wallet button - clicked", {
+              modalType: showPriorityModal ? "priority" : "standard",
+            });
+            if (showPriorityModal) {
+              NiceModal.show(Modals.PriorityWalletConnectModal, { sourceAsset });
+            } else {
+              NiceModal.show(Modals.ConnectedWalletModal);
+            }
           }}
         />
       );
@@ -358,11 +383,15 @@ export const SwapPage = () => {
     isGoFast,
     setChainAddresses,
     setCurrentPage,
-    setSwapExecutionState,
-    setError,
-  ]);
+      setSwapExecutionState,
+      setError,
+      // Added connection statuses to dependency array
+      isEvmConnected,
+      isCosmosConnected,
+      isSvmConnected,
+    ]);
 
-  return (
+    return (
     <Column
       gap={5}
       style={{

@@ -33,7 +33,8 @@ const ITEM_GAP = 5;
 
 export type ConnectedWalletModalProps = ModalProps;
 
-export const ConnectedWalletModal = createModal((modalProps: ConnectedWalletModalProps) => {
+// Removed unused modalProps parameter
+export const ConnectedWalletModal = createModal(() => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const { chainImage, chainName } = useGetAssetDetails({
