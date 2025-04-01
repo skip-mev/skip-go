@@ -3,7 +3,6 @@ import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
 import { decodePubkey } from "@cosmjs/proto-signing";
 import { accountEthParser } from "@injectivelabs/sdk-ts";
-
 export const accountParser: AccountParser = (acc) => {
   switch (acc.typeUrl) {
     case "/stride.vesting.StridePeriodicVestingAccount": {
