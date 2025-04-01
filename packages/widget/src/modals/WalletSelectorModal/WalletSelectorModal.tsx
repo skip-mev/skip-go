@@ -57,7 +57,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     NiceModal.remove(Modals.WalletSelectorModal);
     if (connectedWalletModal) {
       NiceModal.show(Modals.ConnectedWalletModal);
-    } else if (selectedEco) {
+    } else {
       setSelectedEco(sourceAssetChain?.chainType);
       NiceModal.show(Modals.WalletSelectorModal, {
         chainId: sourceAssetChain?.chainID,
