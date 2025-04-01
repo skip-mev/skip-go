@@ -19,11 +19,11 @@ import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConn
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
   chainType?: ChainType;
-  openingFromConnectedWalletModal?: boolean;
+  fromConnectedWalletModal?: boolean;
 };
 
 export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalProps) => {
-  const { chainId, chainType, openingFromConnectedWalletModal } = modalProps;
+  const { chainId, chainType, fromConnectedWalletModal } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
   const setSourceAsset = useUpdateSourceAssetToDefaultForChainType();
   const walletList = useWalletList({ chainID: chainId, chainType });
@@ -55,7 +55,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
 
   const handleOnClickBackButton = () => {
     NiceModal.remove(Modals.WalletSelectorModal);
-    if (openingFromConnectedWalletModal) {
+    if (fromConnectedWalletModal) {
       NiceModal.show(Modals.ConnectedWalletModal);
     } else {
       setSelectedEco(sourceAssetChain?.chainType);
@@ -89,7 +89,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       title={title}
       walletList={walletList}
       onClickBackButton={handleOnClickBackButton}
-      isConnectEco={openingFromConnectedWalletModal}
+      isConnectEco={fromConnectedWalletModal}
       chainId={chainId}
       onWalletConnected={onWalletConnected}
       headerRightContent={
