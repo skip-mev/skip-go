@@ -172,7 +172,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation, onSelectWallet, connectFn, onItemClick], // Add dependencies
+    [connectMutation, onSelectWallet, connectFn, onItemClick],
   );
 
   const height = useMemo(() => {
@@ -242,7 +242,6 @@ export const RenderWalletList = ({
     displayWallets,
   ]);
 
-  // Determine back button behavior based on whether external state is used
   const handleBackButton = useCallback(() => {
     if (connectionState) {
       // If external state is provided, the parent should handle reset if needed. Just call back.

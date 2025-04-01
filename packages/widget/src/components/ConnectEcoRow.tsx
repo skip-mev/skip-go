@@ -22,7 +22,7 @@ import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
 
-const ITEM_HEIGHT = 60; // Consider making these constants shared if used elsewhere
+const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 const STANDARD_ICON_SIZE = 35;
 
@@ -31,7 +31,7 @@ export const ConnectEco = ({
   chainID,
 }: {
   chainType: ChainType;
-  chainID: string; // This is the representative chain ID for the ecosystem
+  chainID: string;
 }) => {
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
@@ -39,15 +39,12 @@ export const ConnectEco = ({
   const getAccount = useGetAccount();
   const isMobileScreenSize = useIsMobileScreenSize();
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  // Removed unused 'chain' destructuring from useGetAssetDetails
   useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     chainId: sourceAsset?.chainID,
   });
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  // Determine if the source asset's chain matches this ecosystem type
-  // If so, use the source asset's chain ID for wallet selection modal
   const chainIdForWalletSelector = useMemo(() => {
     if (!sourceAsset?.chainID || !chains) return undefined;
 
@@ -55,10 +52,9 @@ export const ConnectEco = ({
     if (sourceChainInfo?.chainType === chainType) {
       return sourceAsset.chainID;
     }
-    return undefined; // Use default behavior (just chainType) if no match
+    return undefined;
   }, [sourceAsset?.chainID, chains, chainType]);
 
-  // Get account info using the representative chainID for display
   const account = useMemo(() => {
     return getAccount(chainID, true);
   }, [chainID, getAccount]);
@@ -68,7 +64,7 @@ export const ConnectEco = ({
   const connectedWallet = wallets.find((wallet) => wallet.walletName === account?.wallet.name);
 
   const renderDisconnectButton = useMemo(() => {
-    if (!account || !connectedWallet) return null; // Added check for connectedWallet
+    if (!account || !connectedWallet) return null;
 
     if (isMobileScreenSize) {
       return (
@@ -78,12 +74,11 @@ export const ConnectEco = ({
           style={{ width: 35, height: 35 }}
           onClick={(e) => {
             e.stopPropagation();
-            track("connect eco row: disconnect button - clicked", { // Generic tracking
+            track("connect eco row: disconnect button - clicked", {
               chainType,
               wallet: account?.wallet.name,
             });
             connectedWallet?.disconnect();
-            // Don't remove modal here, let the parent modal handle it
           }}
         >
           <XIcon height="22" width="22" color={theme?.primary?.text?.ultraLowContrast} />
@@ -96,19 +91,18 @@ export const ConnectEco = ({
         justify="center"
         onClick={(e) => {
           e.stopPropagation();
-          track("connect eco row: disconnect button - clicked", { // Generic tracking
+          track("connect eco row: disconnect button - clicked", {
             chainType,
             wallet: account?.wallet.name,
           });
           connectedWallet?.disconnect();
-          // Don't remove modal here
         }}
       >
         Disconnect
       </GhostButton>
     );
   }, [
-    account, // Updated dependency
+    account,
     chainType,
     connectedWallet,
     isMobileScreenSize,
@@ -116,28 +110,27 @@ export const ConnectEco = ({
   ]);
 
   const handleConnectClick = () => {
-    track("connect eco row: connect button - clicked", { // Generic tracking
+    track("connect eco row: connect button - clicked", {
       chainType,
     });
-    // Always show WalletSelectorModal when clicking connect
     NiceModal.show(Modals.WalletSelectorModal, {
       chainType,
-      connectEco: true, // Indicate it came from this flow
-      chainId: chainIdForWalletSelector, // Pass specific chain if source matches eco
+      connectEco: true,
+      chainId: chainIdForWalletSelector,
     });
   };
 
   return (
     <ModalRowItem
-      style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }} // Added minHeight
-      onClick={handleConnectClick} // Connect action on the whole row if not connected
+      style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }}
+      onClick={handleConnectClick}
       leftContent={
         account ? (
           <Row align="center" gap={10}>
             {account?.wallet.logo && (
               <img
-                height={STANDARD_ICON_SIZE} // Use constant
-                width={STANDARD_ICON_SIZE} // Use constant
+                height={STANDARD_ICON_SIZE}
+                width={STANDARD_ICON_SIZE}
                 style={{ objectFit: "cover" }}
                 src={account?.wallet.logo}
                 alt={`${account?.wallet.prettyName} logo`}
@@ -155,7 +148,7 @@ export const ConnectEco = ({
                   align="center"
                   justify="center"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent row click
+                    e.stopPropagation();
                     copyAddress(account?.address);
                   }}
                 >
@@ -181,9 +174,9 @@ export const ConnectEco = ({
       rightContent={
         account && account.wallet.name !== "injected" ? (
           renderDisconnectButton
-        ) : !account ? ( // Only show arrow if not connected
+        ) : !account ? (
           <RightArrowIcon color={theme.primary.text.normal} />
-        ) : null // Hide arrow for injected wallets
+        ) : null
       }
     />
   );
@@ -193,7 +186,7 @@ export const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((chain) => chain.chainID === chainId);
-  if (!chain) return null; // Return null if chain not found
+  if (!chain) return null;
   return (
     <Text fontSize={12} color={theme.primary.text.lowContrast}>
       {chain?.prettyName}
