@@ -10,9 +10,7 @@ import { useAtomValue } from "jotai";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
-import { ConnectEco } from "@/components/ConnectEcoRow";
-import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
-import { ChainType } from "@skip-go/client";
+import { EcosystemConnectors } from "@/components/EcosystemConnectors";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -25,8 +23,6 @@ export const ConnectedWalletModal = createModal(() => {
     assetDenom: sourceAsset?.denom,
     chainId: sourceAsset?.chainID,
   });
-
-  const primaryChainIdForChainType = usePrimaryChainIdForChainType();
 
   return (
     <StyledModalContainer gap={15}>
@@ -43,24 +39,7 @@ export const ConnectedWalletModal = createModal(() => {
         }
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <ConnectEco
-          key={ChainType.Cosmos}
-          chainID={primaryChainIdForChainType[ChainType.Cosmos]}
-          chainType={ChainType.Cosmos}
-          connectedWalletModal
-        />
-        <ConnectEco
-          key={ChainType.EVM}
-          chainID={primaryChainIdForChainType[ChainType.EVM]}
-          chainType={ChainType.EVM}
-          connectedWalletModal
-        />
-        <ConnectEco
-          key={ChainType.SVM}
-          chainID={primaryChainIdForChainType[ChainType.SVM]}
-          chainType={ChainType.SVM}
-          connectedWalletModal
-        />
+        <EcosystemConnectors connectedWalletModal />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );
