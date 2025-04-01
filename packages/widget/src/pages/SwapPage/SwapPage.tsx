@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -29,7 +29,6 @@ import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
@@ -41,13 +40,13 @@ import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
+import { useSwitchEvmChainIfNeeded } from "@/hooks/useSwitchEvmChainIfNeeded";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
-  const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -72,35 +71,11 @@ export const SwapPage = () => {
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
+  useSwitchEvmChainIfNeeded();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
   const isSwapOperation = useIsSwapOperation(route);
-
-  const { chainId: evmChainId, connector } = useAccount();
-  const evmAddress = useMemo(() => {
-    return evmChainId ? getAccount(String(evmChainId))?.address : undefined;
-  }, [evmChainId, getAccount]);
-
-  // Utility function to handle chain switching for EVM chains
-  const switchToEvmChainIfNeeded = useCallback(
-    (targetChainId?: string) => {
-      if (targetChainId && chains && evmAddress && connector) {
-        const isEvm = chains.find((c) => c.chainID === targetChainId)?.chainType === "evm";
-        if (isEvm && targetChainId !== String(evmChainId)) {
-          connector.switchChain?.({
-            chainId: Number(targetChainId),
-          });
-        }
-      }
-    },
-    [chains, connector, evmAddress, evmChainId],
-  );
-
-  // Effect to automatically switch chain when source asset changes (including direction reversal)
-  useEffect(() => {
-    switchToEvmChainIfNeeded(sourceAsset?.chainID);
-  }, [sourceAsset?.chainID, switchToEvmChainIfNeeded]);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -119,10 +94,6 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source asset selected", { asset });
-        // Use the utility function to handle chain switching
-        if (asset) {
-          switchToEvmChainIfNeeded(asset.chainID);
-        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
@@ -132,7 +103,7 @@ export const SwapPage = () => {
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [switchToEvmChainIfNeeded, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -140,10 +111,6 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source chain selected", { asset });
-        // Use the utility function to handle chain switching
-        if (asset) {
-          switchToEvmChainIfNeeded(asset.chainID);
-        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
@@ -153,13 +120,7 @@ export const SwapPage = () => {
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
     });
-  }, [
-    switchToEvmChainIfNeeded,
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-  ]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
