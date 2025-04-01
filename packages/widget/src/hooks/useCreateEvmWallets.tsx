@@ -1,5 +1,4 @@
 import { seiPrecompileAddrABI } from "@/constants/abis";
-import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import {
   evmWalletAtom,

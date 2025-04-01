@@ -120,11 +120,10 @@ export const useCreateSolanaWallets = () => {
     return wallets;
   }, [
     chains,
-    assets,
     sourceAsset,
     setWCDeepLinkByChainType,
     svmWallet,
-    setSourceAsset,
+    setDefaultSourceAsset,
     callbacks,
     setSvmWallet,
   ]);
