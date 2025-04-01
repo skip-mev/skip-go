@@ -139,7 +139,7 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     registerModals();
     // eslint-disable-next-line no-console
-    console.info(`Loaded SkipGo Widget Version ${packageJson.version}`);
+    console.info(`Loaded skip-go widget version ${packageJson.version}`);
   }, []);
 
   const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {
