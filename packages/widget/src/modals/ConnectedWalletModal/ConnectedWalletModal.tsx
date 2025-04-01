@@ -10,7 +10,9 @@ import { useAtomValue } from "jotai";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
-import { EcosystemConnectors } from "@/components/EcosystemConnectors";
+import { ConnectEco } from "@/components/ConnectEcoRow";
+import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
+import { ChainType } from "@skip-go/client";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -24,6 +26,8 @@ export const ConnectedWalletModal = createModal(() => {
     chainId: sourceAsset?.chainID,
   });
 
+  const primaryChainIdForChainType = usePrimaryChainIdForChainType();
+
   return (
     <StyledModalContainer gap={15}>
       <ModalHeader
@@ -32,14 +36,31 @@ export const ConnectedWalletModal = createModal(() => {
           track("connect eco modal: header back button - clicked");
           NiceModal.remove(Modals.ConnectedWalletModal);
         }}
-        rightContent={() => {
-          return sourceAsset?.chainID ? (
+        rightContent={
+          sourceAsset?.chainID ? (
             <img src={chainImage} height={36} width={36} title={chainName} />
-          ) : null;
-        }}
+          ) : null
+        }
       />
       <StyledModalInnerContainer height={(ITEM_HEIGHT + ITEM_GAP) * 3}>
-        <EcosystemConnectors />
+        <ConnectEco
+          key={ChainType.Cosmos}
+          chainID={primaryChainIdForChainType[ChainType.Cosmos]}
+          chainType={ChainType.Cosmos}
+          connectedWalletModal
+        />
+        <ConnectEco
+          key={ChainType.EVM}
+          chainID={primaryChainIdForChainType[ChainType.EVM]}
+          chainType={ChainType.EVM}
+          connectedWalletModal
+        />
+        <ConnectEco
+          key={ChainType.SVM}
+          chainID={primaryChainIdForChainType[ChainType.SVM]}
+          chainType={ChainType.SVM}
+          connectedWalletModal
+        />
       </StyledModalInnerContainer>
     </StyledModalContainer>
   );

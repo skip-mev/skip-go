@@ -13,6 +13,7 @@ import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
 import { track } from "@amplitude/analytics-browser";
+import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -21,6 +22,8 @@ export const useCreateSolanaWallets = () => {
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
+
+  const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -32,18 +35,9 @@ export const useCreateSolanaWallets = () => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
-          const asset = assets?.find(
-            (x) =>
-              x.denom.toLowerCase() ===
-              "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
-          );
 
           if (sourceAsset === undefined) {
-            setSourceAsset({
-              chainID: chain?.chainID,
-              chainName: chain?.chainName,
-              ...asset,
-            });
+            setDefaultSourceAsset(ChainType.SVM);
           }
 
           const address = wallet.publicKey?.toBase58();

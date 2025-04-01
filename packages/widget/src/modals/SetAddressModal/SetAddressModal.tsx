@@ -179,11 +179,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           <ModalHeader
             title={isMobileScreenSize ? "Enter an address" : `Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
-            rightContent={() => (
+            rightContent={
               <StyledChainLogoContainerRow align="center" justify="center">
                 <img width="25px" height="25px" src={chainLogo} />
               </StyledChainLogoContainerRow>
-            )}
+            }
           />
           {showWithdrawalWarning && (
             <SmallText color={theme?.error?.text} textAlign="center">

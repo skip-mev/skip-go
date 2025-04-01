@@ -16,14 +16,15 @@ import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
+import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
 
 export const useCreateEvmWallets = () => {
-  const { data: chains } = useAtomValue(skipChainsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
   const [evmWallet, setEvmWallet] = useAtom(evmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
+
+  const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
   const { connectAsync } = useConnect();
@@ -69,13 +70,7 @@ export const useCreateEvmWallets = () => {
             }
 
             if (sourceAsset === undefined) {
-              const chain = chains?.find((x) => x.chainID === "1");
-              const asset = assets?.find((x) => x.denom === "ethereum-native");
-              setSourceAsset({
-                chainID: chain?.chainID,
-                chainName: chain?.chainName,
-                ...asset,
-              });
+              setDefaultSourceAsset(ChainType.EVM);
             }
 
             const account = await connector.getAccounts();
@@ -226,9 +221,7 @@ export const useCreateEvmWallets = () => {
       evmWallet,
       currentConnector,
       connectAsync,
-      chains,
-      assets,
-      setSourceAsset,
+      setDefaultSourceAsset,
       callbacks,
       setEvmWallet,
     ],

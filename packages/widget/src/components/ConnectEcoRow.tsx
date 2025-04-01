@@ -29,9 +29,13 @@ const STANDARD_ICON_SIZE = 35;
 export const ConnectEco = ({
   chainType,
   chainID,
+  onClick,
+  connectedWalletModal = false,
 }: {
   chainType: ChainType;
-  chainID: string;
+  chainID: string; // This is the representative chain ID for the ecosystem
+  onClick?: () => void;
+  connectedWalletModal?: boolean;
 }) => {
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
@@ -113,11 +117,15 @@ export const ConnectEco = ({
     track("connect eco row: connect button - clicked", {
       chainType,
     });
+
+    NiceModal.remove(Modals.ConnectedWalletModal);
     NiceModal.show(Modals.WalletSelectorModal, {
       chainType,
-      connectEco: true,
+      connectedWalletModal,
       chainId: chainIdForWalletSelector,
     });
+
+    onClick?.();
   };
 
   return (

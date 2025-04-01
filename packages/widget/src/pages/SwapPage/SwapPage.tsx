@@ -49,7 +49,6 @@ export const SwapPage = () => {
   useAtom(onSourceAssetUpdatedEffect);
 
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const onlyTestnets = useAtomValue(onlyTestnetsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -85,16 +84,19 @@ export const SwapPage = () => {
   }, [evmChainId, getAccount]);
 
   // Utility function to handle chain switching for EVM chains
-  const switchToEvmChainIfNeeded = useCallback((targetChainId?: string) => {
-    if (targetChainId && chains && evmAddress && connector) {
-      const isEvm = chains.find((c) => c.chainID === targetChainId)?.chainType === "evm";
-      if (isEvm && targetChainId !== String(evmChainId)) {
-        connector.switchChain?.({
-          chainId: Number(targetChainId),
-        });
+  const switchToEvmChainIfNeeded = useCallback(
+    (targetChainId?: string) => {
+      if (targetChainId && chains && evmAddress && connector) {
+        const isEvm = chains.find((c) => c.chainID === targetChainId)?.chainType === "evm";
+        if (isEvm && targetChainId !== String(evmChainId)) {
+          connector.switchChain?.({
+            chainId: Number(targetChainId),
+          });
+        }
       }
-    }
-  }, [chains, connector, evmAddress, evmChainId]);
+    },
+    [chains, connector, evmAddress, evmChainId],
+  );
 
   // Effect to automatically switch chain when source asset changes (including direction reversal)
   useEffect(() => {
@@ -131,12 +133,7 @@ export const SwapPage = () => {
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [
-    switchToEvmChainIfNeeded,
-    setDestinationAssetAmount,
-    setSourceAsset,
-    setSourceAssetAmount,
-  ]);
+  }, [switchToEvmChainIfNeeded, setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -205,16 +202,6 @@ export const SwapPage = () => {
     return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
-  const representativeChainIDs = useMemo(() => ({
-      [ChainType.Cosmos]: onlyTestnets ? "provider" : "cosmoshub-4",
-      [ChainType.EVM]: onlyTestnets ? "11155111" : "1",
-      [ChainType.SVM]: onlyTestnets ? "solana-devnet" : "solana",
-  }), [onlyTestnets]);
-
-  const isEvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.EVM], true), [getAccount, representativeChainIDs]);
-  const isCosmosConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.Cosmos], true), [getAccount, representativeChainIDs]);
-  const isSvmConnected = useMemo(() => !!getAccount(representativeChainIDs[ChainType.SVM], true), [getAccount, representativeChainIDs]);
-
   const swapButton = useMemo(() => {
     if (!sourceAsset?.chainID) {
       return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
@@ -230,7 +217,9 @@ export const SwapPage = () => {
               modalType: sourceAsset?.chainID ? "priority" : "connected",
             });
             if (sourceAsset?.chainID) {
-              NiceModal.show(Modals.WalletSelectorModal, { sourceAsset, showPriorityView: true });
+              NiceModal.show(Modals.WalletSelectorModal, {
+                chainId: sourceAsset?.chainID,
+              });
             } else {
               NiceModal.show(Modals.ConnectedWalletModal);
             }
@@ -353,8 +342,7 @@ export const SwapPage = () => {
       />
     );
   }, [
-    sourceAsset?.chainID,
-    sourceAsset?.amount,
+    sourceAsset,
     sourceAccount?.address,
     destinationAsset?.chainID,
     destinationAsset?.amount,
@@ -373,14 +361,11 @@ export const SwapPage = () => {
     isGoFast,
     setChainAddresses,
     setCurrentPage,
-      setSwapExecutionState,
-      setError,
-      isEvmConnected,
-      isCosmosConnected,
-      isSvmConnected,
-    ]);
+    setSwapExecutionState,
+    setError,
+  ]);
 
-    return (
+  return (
     <Column
       gap={5}
       style={{
