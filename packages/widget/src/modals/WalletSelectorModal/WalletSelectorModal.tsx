@@ -66,7 +66,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
   };
 
   const onWalletConnected = (wallet?: MinimalWallet) => {
-    if (wallet?.walletChainType) {
+    if (wallet?.walletChainType && wallet?.walletChainType !== sourceAssetChain?.chainType) {
       setSourceAsset(wallet.walletChainType);
     }
   };
