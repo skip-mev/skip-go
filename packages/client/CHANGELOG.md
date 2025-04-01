@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.16.23
+
+### Patch Changes
+
+- 12035c1: disable gas validation on gas station chains
+- 7416025: fix evm get address and add lombard testnet
+
 ## 0.16.22
 
 ### Patch Changes

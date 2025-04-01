@@ -1,5 +1,20 @@
 ## 0.0.15
 
+## 3.5.1
+
+### Patch Changes
+
+- 12035c1: disable gas validation on gas station chains
+- 1fe4217: Enable eureka in client library by default
+- d6632de: Fix ConnectedWalletModal for testnet
+- 7416025: fix evm get address and add lombard testnet
+- 8fa8306: Update fontSize and fontFamily of manual address input
+- 75c18eb: add lombard bech32 config
+- 51f89dc: fix evm getAddress not switching chain
+- Updated dependencies [12035c1]
+- Updated dependencies [7416025]
+  - @skip-go/client@0.16.23
+
 ## 3.5.0
 
 ### Minor Changes
