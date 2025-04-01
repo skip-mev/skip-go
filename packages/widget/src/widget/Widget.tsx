@@ -17,6 +17,7 @@ import { Callbacks } from "@/state/callbacks";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
 import { rootIdAtom } from "@/state/skipClient";
+import packageJson from "../../package.json";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -137,6 +138,8 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     registerModals();
+    // eslint-disable-next-line no-console
+    console.info(`Loaded SkipGo Widget Version ${packageJson.version}`);
   }, []);
 
   const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {
