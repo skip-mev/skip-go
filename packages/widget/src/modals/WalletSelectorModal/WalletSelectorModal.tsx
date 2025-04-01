@@ -4,7 +4,6 @@ import { useWalletList } from "@/hooks/useWalletList";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { ChainType } from "@skip-go/client";
-import { ConnectEco } from "@/components/ConnectEcoRow";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
@@ -15,6 +14,7 @@ import { Column, Row } from "@/components/Layout";
 import { useUpdateSourceAssetToDefaultForChainType } from "@/hooks/useUpdateSourceAssetToDefaultForChainType";
 import { MinimalWallet } from "@/state/wallets";
 import { sourceAssetAtom } from "@/state/swapPage";
+import { EcosystemConnectors } from "@/components/EcosystemConnectors";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
@@ -68,12 +68,6 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     }
   };
 
-  const chainTypesExcludingSourceAssetChainType = [
-    ChainType.Cosmos,
-    ChainType.EVM,
-    ChainType.SVM,
-  ].filter((chainType) => chainType !== sourceAssetChainType);
-
   const onWalletConnected = (wallet?: MinimalWallet) => {
     if (wallet?.walletChainType) {
       setSourceAsset(wallet.walletChainType);
@@ -114,14 +108,10 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
         showOtherEcosytems && (
           <Column>
             <StyledDivider />
-            {chainTypesExcludingSourceAssetChainType.map((chainType) => (
-              <ConnectEco
-                key={chainType}
-                chainType={chainType}
-                chainID={primaryChainIdForChainType[chainType]}
-                onClick={() => setSelectedEco(chainType)}
-              />
-            ))}
+            <EcosystemConnectors
+              excludeChainType={sourceAssetChainType}
+              onClick={() => setSelectedEco(chainType)}
+            />
           </Column>
         )
       }
