@@ -1,4 +1,4 @@
-import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import {
   MinimalWallet,
