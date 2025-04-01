@@ -25,10 +25,12 @@ export type WalletSelectorModalProps = ModalProps & {
 export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalProps) => {
   const { chainId, chainType, connectedWalletModal } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
-
+  const setSourceAsset = useUpdateSourceAssetToDefaultForChainType();
   const walletList = useWalletList({ chainID: chainId, chainType });
-
   const sourceAsset = useAtomValue(sourceAssetAtom);
+  const getAccount = useGetAccount();
+  const sourceAccount = getAccount(sourceAsset?.chainID);
+
   const sourceAssetChain = chains?.find((chain) => {
     return chain.chainID === sourceAsset?.chainID;
   });
@@ -44,11 +46,6 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       return chain.chainID === primaryChainIdForChainType[selectedEco];
     }
   });
-
-  const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
-
-  const setSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const showOtherEcosytems = !sourceAccount && selectedEco === sourceAssetChain?.chainType;
 
