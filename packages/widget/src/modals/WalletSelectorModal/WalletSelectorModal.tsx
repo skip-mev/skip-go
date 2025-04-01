@@ -108,10 +108,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
         showOtherEcosytems && (
           <Column>
             <StyledDivider />
-            <EcosystemConnectors
-              excludeChainType={sourceAssetChainType}
-              onClick={() => setSelectedEco(chainType)}
-            />
+            <EcosystemConnectors excludeChainType={sourceAssetChainType} onClick={setSelectedEco} />
           </Column>
         )
       }

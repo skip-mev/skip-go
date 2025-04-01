@@ -5,7 +5,7 @@ import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChain
 
 type EcosystemConnectorsProps = {
   excludeChainType?: ChainType;
-  onClick?: () => void;
+  onClick?: (chainType: ChainType) => void;
 };
 
 const ALL_ECOSYSTEMS: ChainType[] = [ChainType.Cosmos, ChainType.EVM, ChainType.SVM];
@@ -19,12 +19,12 @@ export const EcosystemConnectors = ({ excludeChainType, onClick }: EcosystemConn
 
   return (
     <>
-      {ecosystemsToRender.map((ecoType) => (
+      {ecosystemsToRender.map((chainType) => (
         <ConnectEco
-          key={ecoType}
-          chainType={ecoType}
-          chainID={primarychainIdFOrChainType[ecoType]}
-          onClick={onClick}
+          key={chainType}
+          chainType={chainType}
+          chainID={primarychainIdFOrChainType[chainType]}
+          onClick={() => onClick?.(chainType)}
         />
       ))}
     </>
