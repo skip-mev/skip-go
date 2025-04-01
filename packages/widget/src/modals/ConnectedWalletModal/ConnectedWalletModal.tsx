@@ -10,7 +10,7 @@ import { useAtomValue } from "jotai";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
-import { EcosystemConnectors } from "@/components/EcosystemConnectors";
+import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;

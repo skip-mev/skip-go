@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ChainType } from "@skip-go/client";
-import { ConnectEco } from "@/components/ConnectEcoRow";
+import { ConnectEco } from "@/modals/ConnectedWalletModal/ConnectEcoRow";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 
 type EcosystemConnectorsProps = {

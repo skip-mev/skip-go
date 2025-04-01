@@ -14,7 +14,7 @@ import { Column, Row } from "@/components/Layout";
 import { useUpdateSourceAssetToDefaultForChainType } from "@/hooks/useUpdateSourceAssetToDefaultForChainType";
 import { MinimalWallet } from "@/state/wallets";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { EcosystemConnectors } from "@/components/EcosystemConnectors";
+import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
