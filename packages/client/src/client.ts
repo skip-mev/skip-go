@@ -409,10 +409,6 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        // workaround if gas balance haven't arrived yet
-        // if (isGasStationSourceEVM) {
-        //   await wait(5000);
-        // }
         this.validateGasBalances({
           txs,
           getFallbackGasAmount: options.getFallbackGasAmount,
@@ -1830,7 +1826,6 @@ export class SkipClient {
           !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
           (!enabledChainIds || enabledChainIds.includes(tx.cosmosTx.chainID))
         ) {
-          console.log("validating cosmos gas balance", i, tx.cosmosTx.chainID);
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
@@ -2012,11 +2007,8 @@ export class SkipClient {
           },
         });
     const skipChains = await this.getChains();
-    console.log("feeAssets", feeAssets);
-    console.log("feeBalance", feeBalance);
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
-      console.log("chainAsset", chainAsset);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
       const chain = skipChains.find((x) => x.chainID === chainID);
       const decimal = Number(chainAsset?.decimals);
