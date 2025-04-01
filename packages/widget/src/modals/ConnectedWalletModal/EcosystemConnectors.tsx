@@ -28,7 +28,7 @@ export const EcosystemConnectors = ({
         <ConnectEco
           key={chainType}
           chainType={chainType}
-          chainID={primarychainIdFOrChainType[chainType]}
+          chainId={primarychainIdFOrChainType[chainType]}
           onClick={() => onClick?.(chainType)}
           connectedWalletModal={connectedWalletModal}
         />

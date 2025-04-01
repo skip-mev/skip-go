@@ -28,12 +28,12 @@ const STANDARD_ICON_SIZE = 35;
 
 export const ConnectEco = ({
   chainType,
-  chainID,
+  chainId,
   onClick,
   connectedWalletModal = false,
 }: {
   chainType: ChainType;
-  chainID: string; // This is the representative chain ID for the ecosystem
+  chainId: string; // This is the representative chain ID for the ecosystem
   onClick?: () => void;
   connectedWalletModal?: boolean;
 }) => {
@@ -60,8 +60,8 @@ export const ConnectEco = ({
   }, [sourceAsset?.chainID, chains, chainType]);
 
   const account = useMemo(() => {
-    return getAccount(chainID, true);
-  }, [chainID, getAccount]);
+    return getAccount(chainId, true);
+  }, [chainId, getAccount]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
