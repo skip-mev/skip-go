@@ -17,8 +17,7 @@ import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAsse
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
