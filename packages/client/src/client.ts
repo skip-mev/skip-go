@@ -382,7 +382,7 @@ export class SkipClient {
       };
     });
 
-    const GAS_STATION_CHAIN_IDS = ["bbn-test-5"];
+    const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
 
     const isGasStationSourceEVM = chainIds.find((item, i, array) => {
       return (
