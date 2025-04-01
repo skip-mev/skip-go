@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom, onlyTestnetsAtom } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -30,7 +30,6 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useAccount } from "wagmi";
-import { ChainType } from "@skip-go/client";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
@@ -213,9 +212,7 @@ export const SwapPage = () => {
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
-            track("swap page: connect wallet button - clicked", {
-              modalType: sourceAsset?.chainID ? "priority" : "connected",
-            });
+            track("swap page: connect wallet button - clicked");
             if (sourceAsset?.chainID) {
               NiceModal.show(Modals.WalletSelectorModal, {
                 chainId: sourceAsset?.chainID,
