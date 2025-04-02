@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { useAtomValue } from "jotai";
 
 export type useFilteredAssetsProps = {
   groupedAssetsByRecommendedSymbol: GroupedAsset[] | undefined;
@@ -17,6 +19,8 @@ export const useFilteredAssets = ({
   groupedAssetsByRecommendedSymbol,
   searchQuery,
 }: useFilteredAssetsProps) => {
+  const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
+
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;
 
@@ -38,24 +42,48 @@ export const useFilteredAssets = ({
     return sanitizedAssets
       .filter((asset) => asset.id?.toLowerCase()?.includes(searchQuery.toLowerCase()))
       .sort((assetA, assetB) => {
-        const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
-
-        if (bothHaveZeroBalance) {
-          const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
-          const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
-
-          const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
-          if (bothArePrivileged) {
-            return aPrivilegedIndex - bPrivilegedIndex;
-          }
-
-          if (bPrivilegedIndex !== -1) return 1;
-          if (aPrivilegedIndex !== -1) return -1;
+        if (assetB.totalUsd !== 0 || assetA.totalUsd !== 0) {
+          return assetB.totalUsd - assetA.totalUsd;
         }
 
-        return assetB.totalUsd - assetA.totalUsd;
+        if (assetB.totalAmount !== 0 || assetA.totalAmount !== 0) {
+          return assetB.totalAmount - assetA.totalAmount;
+        }
+
+        const assetAIbcEureka = assetA.assets.find((asset) =>
+          ibcEurekaHighlightedAssets.includes(asset.denom),
+        );
+        const assetBIbcEureka = assetB.assets.find((asset) =>
+          ibcEurekaHighlightedAssets.includes(asset.denom),
+        );
+        const assetAIbcEurekaIndex = assetAIbcEureka?.denom
+          ? ibcEurekaHighlightedAssets.indexOf(assetAIbcEureka.denom)
+          : -1;
+        const assetBIbcEurekaIndex = assetBIbcEureka?.denom
+          ? ibcEurekaHighlightedAssets.indexOf(assetBIbcEureka.denom)
+          : -1;
+
+        if (assetAIbcEurekaIndex !== -1 && assetBIbcEurekaIndex !== -1) {
+          return assetAIbcEurekaIndex - assetBIbcEurekaIndex;
+        }
+
+        if (assetAIbcEurekaIndex !== -1) return 1;
+        if (assetBIbcEurekaIndex !== -1) return -1;
+
+        const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
+        const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
+
+        const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
+        if (bothArePrivileged) {
+          return aPrivilegedIndex - bPrivilegedIndex;
+        }
+
+        if (bPrivilegedIndex !== -1) return 1;
+        if (aPrivilegedIndex !== -1) return -1;
+
+        return 0;
       });
-  }, [groupedAssetsByRecommendedSymbol, searchQuery]);
+  }, [groupedAssetsByRecommendedSymbol, ibcEurekaHighlightedAssets, searchQuery]);
 
   return filteredAssets;
 };

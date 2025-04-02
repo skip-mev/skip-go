@@ -74,6 +74,7 @@ export type WidgetProps = {
    */
   simulate?: boolean;
   disableShadowDom?: boolean;
+  ibcEurekaHighlightedAssets?: string[];
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"

@@ -5,6 +5,7 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { chainFilterAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -20,6 +21,8 @@ export const useFilteredChains = ({
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainFilter = useAtomValue(chainFilterAtom);
   const getBalance = useGetBalance();
+
+  const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
 
   const filteredChains = useMemo(() => {
     if (!selectedGroup || !chains) return;
@@ -68,19 +71,53 @@ export const useFilteredChains = ({
           getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.valueUSD ?? 0,
         );
 
-        // 1. Sort by USD value
-        if (usdValueB !== usdValueA) return usdValueB - usdValueA;
+        const amountA = Number(
+          getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.amount ?? 0,
+        );
+
+        const amountB = Number(
+          getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.amount ?? 0,
+        );
+
+        if (usdValueB !== 0 || usdValueA !== 0) {
+          return usdValueB - usdValueA;
+        }
+
+        if (amountB !== 0 || amountA !== 0) {
+          return amountB - amountA;
+        }
+
+        const assetAIbcEurekaIndex = ibcEurekaHighlightedAssets.indexOf(
+          chainWithAssetA.asset.denom,
+        );
+        const assetBIbcEurekaIndex = ibcEurekaHighlightedAssets.indexOf(
+          chainWithAssetB.asset.denom,
+        );
+
+        if (assetAIbcEurekaIndex !== -1 && assetBIbcEurekaIndex !== -1) {
+          return assetAIbcEurekaIndex - assetBIbcEurekaIndex;
+        }
+
+        if (assetAIbcEurekaIndex !== -1) return 1;
+        if (assetBIbcEurekaIndex !== -1) return -1;
 
         const chainAIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
         const chainBIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
 
-        // 2. If USD values are equal, sort by origin chain
         if (chainBIsOrigin) return 1;
         if (chainAIsOrigin) return -1;
 
         return 0;
       });
-  }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
+  }, [
+    chainFilter,
+    chains,
+    context,
+    getBalance,
+    ibcEurekaHighlightedAssets,
+    searchQuery,
+    selectedGroup,
+  ]);
 
   return filteredChains;
 };

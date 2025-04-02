@@ -77,7 +77,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
-      <Row align="center" gap={5}>
+      <Row align="center" gap={5} data-logo="skip-go">
         {!isMobileScreenSize && (
           <>
             <SmallText textWrap="nowrap"> Powered by </SmallText>
@@ -98,11 +98,11 @@ const StyledLeftArrowIcon = styled(LeftArrowIcon)`
 const StyledSelectedAsset = styled(StyledAssetLabel)`
   height: auto;
 
-  &:after{
+  &:after {
     background-color: transparent;
   }
-  &:hover{
-    &:after{
+  &:hover {
+    &:after {
       background-color: transparent;
     }
   }
