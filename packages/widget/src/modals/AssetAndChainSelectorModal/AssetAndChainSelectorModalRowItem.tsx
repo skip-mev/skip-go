@@ -102,7 +102,7 @@ const GroupedAssetRow = ({
     ) : (
       filteredChains.map((chain, index) => (
         <Row key={index} align="center" gap={6}>
-          <SmallText>{chain.chainName}</SmallText>
+          <SmallText>on {chain.chainName}</SmallText>
         </Row>
       ))
     );
