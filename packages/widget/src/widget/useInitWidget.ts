@@ -173,6 +173,8 @@ export const useInitWidget = (props: WidgetProps) => {
     setDisableShadowDom,
     props.ibcEurekaHighlightedAssets,
     setIbcEurekaHighlightedAssets,
+    props.assetSymbolsSortedToTop,
+    setAssetSymbolsSortedToTop,
   ]);
 
   return { theme: mergedTheme };
