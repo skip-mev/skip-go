@@ -90,14 +90,6 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
             -webkit-mask-composite: xor;
             mask-composite: exclude;
           }
-
-          &:after {
-            content: "";
-            position: absolute;
-            inset: 2px;
-            z-index: -1;
-            border-radius: 13px;
-          }
         `
       : "";
   }}
