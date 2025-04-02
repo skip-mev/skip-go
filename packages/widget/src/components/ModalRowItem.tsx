@@ -87,7 +87,6 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
             -webkit-mask:
               linear-gradient(#fff 0 0) content-box,
               linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
             mask-composite: exclude;
           }
         `
