@@ -22,19 +22,21 @@ import {
 } from "@/constants/graz";
 import { mainnetChains, getChainInfo } from "@/constants/chains";
 import { useCallback } from "react";
-import { skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { isMobile } from "@/utils/os";
 import { callbacksAtom, onWalletDisconnectedProps } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
+import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
   const [cosmosWallet, setCosmosWallet] = useAtom(cosmosWalletAtom);
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
+
+  const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const { disconnectAsync } = useDisconnect();
 
@@ -81,13 +83,7 @@ export const useCreateCosmosWallets = () => {
             }
 
             if (sourceAsset === undefined) {
-              const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
-              const asset = assets?.find((x) => x.denom === "uatom");
-              setSourceAsset({
-                chainID: chain?.chainID,
-                chainName: chain?.chainName,
-                ...asset,
-              });
+              setDefaultSourceAsset(ChainType.Cosmos);
             }
 
             const chainIdToAddressMap: Record<string, string> = Object.fromEntries(
@@ -208,11 +204,10 @@ export const useCreateCosmosWallets = () => {
       chains,
       currentWallet,
       sourceAsset,
-      assets,
-      setSourceAsset,
-      disconnectAsync,
-      setCosmosWallet,
       cosmosWallet,
+      setDefaultSourceAsset,
+      setCosmosWallet,
+      disconnectAsync,
     ],
   );
 
