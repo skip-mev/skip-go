@@ -193,7 +193,7 @@ export const SwapExecutionPageRouteDetailed = ({
           index={0}
         />
         {renderOperations}
-        {true && 
+        {isGasStationTx && 
         <StyledGasStationTxText>
           Transactions from EVM to Babylon have gas provided automatically.
         </StyledGasStationTxText>
@@ -243,10 +243,9 @@ const StyledOperationTypeAndTooltipContainer = styled(Row)`
 `;
 
 const StyledGasStationTxText = styled(SmallText)`
-  margin-top: 15px;
+  margin-top: 10px;
   color: ${({ theme }) => theme.error.text}; 
   background: ${({ theme }) => theme.secondary.background.transparent};
-  padding: 5px;
+  padding: 12px;
   border-radius: 6px;
-  
 `;
