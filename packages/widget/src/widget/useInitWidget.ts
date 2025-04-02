@@ -27,6 +27,7 @@ import { simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -51,6 +52,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setSimulateTx = useSetAtom(simulateTxAtom);
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
   const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
+  const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -128,6 +130,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
     if (props.ibcEurekaHighlightedAssets) {
       setIbcEurekaHighlightedAssets(props.ibcEurekaHighlightedAssets);
+    }
+
+    if (props.assetSymbolsSortedToTop) {
+      setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
     }
 
     const callbacks = {

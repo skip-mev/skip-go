@@ -74,38 +74,50 @@ export const useFilteredChains = ({
         const amountA = Number(
           getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.amount ?? 0,
         );
-
         const amountB = Number(
           getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.amount ?? 0,
         );
 
-        if (usdValueB !== 0 || usdValueA !== 0) {
+        // 1. Sort by USD value descending
+        if (usdValueA !== usdValueB) {
           return usdValueB - usdValueA;
         }
 
-        if (amountB !== 0 || amountA !== 0) {
+        // 2. Sort by raw amount descending
+        if (amountA !== amountB) {
           return amountB - amountA;
         }
 
-        const assetAIbcEurekaIndex = ibcEurekaHighlightedAssets.indexOf(
-          chainWithAssetA.asset.denom,
-        );
-        const assetBIbcEurekaIndex = ibcEurekaHighlightedAssets.indexOf(
-          chainWithAssetB.asset.denom,
-        );
+        // 3. Sort by ibcEurekaHighlightedAssets index
+        const indexA = ibcEurekaHighlightedAssets.indexOf(chainWithAssetA.asset.denom);
+        const indexB = ibcEurekaHighlightedAssets.indexOf(chainWithAssetB.asset.denom);
 
-        if (assetAIbcEurekaIndex !== -1 && assetBIbcEurekaIndex !== -1) {
-          return assetAIbcEurekaIndex - assetBIbcEurekaIndex;
+        const aIsHighlighted = indexA !== -1;
+        const bIsHighlighted = indexB !== -1;
+
+        if (aIsHighlighted && bIsHighlighted) {
+          return indexA - indexB;
         }
+        if (aIsHighlighted) return -1;
+        if (bIsHighlighted) return 1;
 
-        if (assetAIbcEurekaIndex !== -1) return 1;
-        if (assetBIbcEurekaIndex !== -1) return -1;
+        // 4. Sort by chainName including asset denom/symbol
+        const aMatchesName = chainWithAssetA.chainName
+          ?.toLowerCase()
+          .includes(chainWithAssetA.asset.recommendedSymbol?.toLowerCase() ?? "");
+        const bMatchesName = chainWithAssetB.chainName
+          ?.toLowerCase()
+          .includes(chainWithAssetB.asset.recommendedSymbol?.toLowerCase() ?? "");
 
-        const chainAIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
-        const chainBIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
+        if (aMatchesName && !bMatchesName) return -1;
+        if (bMatchesName && !aMatchesName) return 1;
 
-        if (chainBIsOrigin) return 1;
-        if (chainAIsOrigin) return -1;
+        // 5. Sort by origin chain
+        const aIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
+        const bIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
+
+        if (aIsOrigin && !bIsOrigin) return -1;
+        if (bIsOrigin && !aIsOrigin) return 1;
 
         return 0;
       });
