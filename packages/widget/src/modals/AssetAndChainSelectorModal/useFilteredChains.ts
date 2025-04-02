@@ -10,12 +10,14 @@ export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
   searchQuery?: string;
   context: "source" | "destination";
+  accounts: { cosmosAccount: unknown; evmAccount: unknown };
 };
 
 export const useFilteredChains = ({
   selectedGroup,
   searchQuery = "",
   context,
+  accounts,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainFilter = useAtomValue(chainFilterAtom);
@@ -49,7 +51,7 @@ export const useFilteredChains = ({
         return isAllowedByFilter && isPenumbraAllowed;
       }) as ChainWithAsset[];
 
-    return chainsWithAssets
+    const filtered = chainsWithAssets
       .filter((chainWithAsset) => {
         const { chainName, prettyName } = chainWithAsset;
         const chainNameIncludesSearchQuery = chainName
@@ -79,6 +81,27 @@ export const useFilteredChains = ({
         if (chainAIsOrigin) return -1;
 
         return 0;
+      });
+
+    return filtered
+      .filter((chainWithAsset) => {
+        if (chainWithAsset.chainName === "sei") {
+          // If the user does not have a cosmos wallet connected and the asset is the "cosmos" version of SEI, then hide it.
+          return !(!accounts?.cosmosAccount && chainWithAsset.chainType === "cosmos");
+        }
+        return true;
+      })
+      .map((chainWithAsset) => {
+        if (chainWithAsset.chainName === "sei") {
+          // If the user has a cosmos wallet connected, then it will show both types of SEI
+          if (accounts?.cosmosAccount) {
+            chainWithAsset.prettyName = `SEI via ${chainWithAsset.chainType === "cosmos" ? "Cosmos" : "EVM"}`;
+          } else {
+            // Remove confusing "Sei - EVM" when they only ever see EVM stuff
+            chainWithAsset.prettyName = "SEI";
+          }
+        }
+        return chainWithAsset;
       });
   }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
 
