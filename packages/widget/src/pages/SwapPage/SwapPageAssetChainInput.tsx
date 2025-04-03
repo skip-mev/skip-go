@@ -9,7 +9,7 @@ import {
   formatNumberWithCommas,
   formatNumberWithoutCommas,
   limitDecimalsDisplayed,
-  shouldReduceFontSize
+  shouldReduceFontSize,
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
@@ -204,8 +204,8 @@ export const SwapPageAssetChainInput = ({
           {!isMobileScreenSize && (
             <ChevronIcon
               className="chevron-icon"
-              color={theme.primary.background.normal}
-              backgroundColor={theme.primary.text.normal}
+              color={theme.primary.text.normal}
+              backgroundColor={theme.secondary.background.normal}
             />
           )}
         </StyledAssetButton>
@@ -280,15 +280,17 @@ const StyledInput = styled.input<{
   @media (max-width: 767px) {
     font-size: 30px;
   }
-  
+
   /* Reduced font sizes for large numbers */
-  ${props => props.isLargeNumber && `
+  ${(props) =>
+    props.isLargeNumber &&
+    `
     font-size: 30px;
     @media (max-width: 767px) {
       font-size: 24px;
     }
   `}
-  
+
   font-weight: 400;
   letter-spacing: -0.01em;
   width: 100%;
@@ -296,7 +298,7 @@ const StyledInput = styled.input<{
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
-  
+
   ${(props) =>
     props.isWaitingToUpdateInputValue &&
     `

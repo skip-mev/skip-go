@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { styled, useTheme } from "styled-components";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
@@ -20,6 +20,9 @@ export type RenderWalletListProps = {
   onSelectWallet?: (wallet: MinimalWallet) => void;
   chainId?: string;
   isConnectEco?: boolean;
+  bottomContent?: ReactNode;
+  headerRightContent?: ReactNode;
+  onWalletConnected?: (wallet: MinimalWallet) => void;
 };
 
 export type ManualWalletEntry = {
@@ -50,8 +53,12 @@ export const RenderWalletList = ({
   onSelectWallet,
   chainId,
   isConnectEco,
+  onWalletConnected,
+  bottomContent,
+  headerRightContent,
 }: RenderWalletListProps) => {
   const theme = useTheme();
+  const [selectedWallet, setSelectedWallet] = useState<MinimalWallet>();
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -66,11 +73,14 @@ export const RenderWalletList = ({
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
-      if (isConnectEco) {
-        clearAssetInputAmounts();
-        return await wallet.connect();
+      // If a specific chainId is provided, connect to that chain
+      // This is used when connecting from a specific chain context
+      if (chainId) {
+        return await wallet.connect(chainId);
       }
-      return await wallet.connect(chainId);
+      // Otherwise, connect without specifying a chain
+      // This will use the wallet's default behavior
+      return await wallet.connect();
     },
     onSuccess: () => {
       if (isConnectEco) {
@@ -78,6 +88,9 @@ export const RenderWalletList = ({
       }
       NiceModal.remove(Modals.SetAddressModal);
       NiceModal.remove(Modals.WalletSelectorModal);
+      if (selectedWallet) {
+        onWalletConnected?.(selectedWallet);
+      }
     },
   });
 
@@ -110,8 +123,8 @@ export const RenderWalletList = ({
           onSelectWallet(wallet);
           NiceModal.remove(Modals.SetAddressModal);
           NiceModal.remove(Modals.WalletSelectorModal);
-          return;
         } else {
+          setSelectedWallet(wallet);
           connectMutation.mutate(wallet);
         }
       };
@@ -158,11 +171,13 @@ export const RenderWalletList = ({
               status={connectMutation.isError ? "failed" : "pending"}
               borderSize={8}
             >
-              <img
-                style={{ objectFit: "cover" }}
-                src={connectMutation.variables?.walletInfo.logo}
-                alt={`${connectMutation.variables?.walletPrettyName} logo`}
-              />
+              {connectMutation.variables?.walletInfo?.logo && (
+                <img
+                  style={{ objectFit: "cover" }}
+                  src={connectMutation.variables.walletInfo.logo}
+                  alt={`${connectMutation.variables?.walletPrettyName} logo`}
+                />
+              )}
             </StyledAnimatedBorder>
             <Text color={theme.primary.text.lowContrast} textAlign="center">
               {titleText} {connectMutation.variables?.walletPrettyName}
@@ -193,7 +208,7 @@ export const RenderWalletList = ({
     connectMutation.error,
     connectMutation.isError,
     connectMutation.isPending,
-    connectMutation.variables?.walletInfo.logo,
+    connectMutation.variables?.walletInfo?.logo,
     connectMutation.variables?.walletPrettyName,
     height,
     renderItem,
@@ -211,8 +226,10 @@ export const RenderWalletList = ({
             ? connectMutation.reset
             : onClickBackButton
         }
+        rightContent={headerRightContent}
       />
       {renderWalletListOrWalletConnectionStatus}
+      {bottomContent}
     </StyledModalContainer>
   );
 };

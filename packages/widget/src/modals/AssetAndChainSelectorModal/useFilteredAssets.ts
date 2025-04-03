@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
+import { useAtomValue } from "jotai";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 
 export type useFilteredAssetsProps = {
   groupedAssetsByRecommendedSymbol: GroupedAsset[] | undefined;
   searchQuery: string;
 };
-
-const PRIVILEGED_ASSETS = ["ATOM", "USDC", "USDT", "ETH", "TIA", "OSMO", "NTRN", "INJ"];
 
 export const EXCLUDED_TOKEN_COMBINATIONS: {
   id: string;
@@ -17,6 +17,8 @@ export const useFilteredAssets = ({
   groupedAssetsByRecommendedSymbol,
   searchQuery,
 }: useFilteredAssetsProps) => {
+  const assetSymbolsSortedToTop = useAtomValue(assetSymbolsSortedToTopAtom);
+
   const filteredAssets = useMemo(() => {
     if (!groupedAssetsByRecommendedSymbol) return;
 
@@ -38,24 +40,29 @@ export const useFilteredAssets = ({
     return sanitizedAssets
       .filter((asset) => asset.id?.toLowerCase()?.includes(searchQuery.toLowerCase()))
       .sort((assetA, assetB) => {
-        const bothHaveZeroBalance = assetA.totalUsd === 0 && assetB.totalUsd === 0;
-
-        if (bothHaveZeroBalance) {
-          const aPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetA.id);
-          const bPrivilegedIndex = PRIVILEGED_ASSETS.indexOf(assetB.id);
-
-          const bothArePrivileged = aPrivilegedIndex !== -1 && bPrivilegedIndex !== -1;
-          if (bothArePrivileged) {
-            return aPrivilegedIndex - bPrivilegedIndex;
-          }
-
-          if (bPrivilegedIndex !== -1) return 1;
-          if (aPrivilegedIndex !== -1) return -1;
+        // 1. Sort by totalUsd descending
+        if (assetA.totalUsd !== assetB.totalUsd) {
+          return assetB.totalUsd - assetA.totalUsd;
         }
 
-        return assetB.totalUsd - assetA.totalUsd;
+        // 2. Sort by totalAmount descending
+        if (assetA.totalAmount !== assetB.totalAmount) {
+          return assetB.totalAmount - assetA.totalAmount;
+        }
+
+        // 3. Sort by privileged asset
+        const privA = assetSymbolsSortedToTop.indexOf(assetA.id);
+        const privB = assetSymbolsSortedToTop.indexOf(assetB.id);
+
+        if (privA !== -1 && privB !== -1) {
+          return privA - privB;
+        }
+        if (privA !== -1) return -1;
+        if (privB !== -1) return 1;
+
+        return 0;
       });
-  }, [groupedAssetsByRecommendedSymbol, searchQuery]);
+  }, [assetSymbolsSortedToTop, groupedAssetsByRecommendedSymbol, searchQuery]);
 
   return filteredAssets;
 };

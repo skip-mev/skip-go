@@ -74,6 +74,18 @@ const DevMode = () => {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
+            ibcEurekaHighlightedAssets={["0x8236a87084f8B84306f72007F36F2618A5634494"]}
+            assetSymbolsSortedToTop={[
+              "LBTC",
+              "ATOM",
+              "USDC",
+              "USDT",
+              "ETH",
+              "TIA",
+              "OSMO",
+              "NTRN",
+              "INJ",
+            ]}
           />
         </div>
       </Row>

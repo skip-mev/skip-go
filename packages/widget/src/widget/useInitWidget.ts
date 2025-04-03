@@ -26,6 +26,8 @@ import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -49,6 +51,8 @@ export const useInitWidget = (props: WidgetProps) => {
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
+  const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
+  const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -124,6 +128,14 @@ export const useInitWidget = (props: WidgetProps) => {
       setDisableShadowDom(props.disableShadowDom);
     }
 
+    if (props.ibcEurekaHighlightedAssets) {
+      setIbcEurekaHighlightedAssets(props.ibcEurekaHighlightedAssets);
+    }
+
+    if (props.assetSymbolsSortedToTop) {
+      setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
+    }
+
     const callbacks = {
       onWalletConnected: props.onWalletConnected,
       onWalletDisconnected: props.onWalletDisconnected,
@@ -159,6 +171,10 @@ export const useInitWidget = (props: WidgetProps) => {
     props.onRouteUpdated,
     props.disableShadowDom,
     setDisableShadowDom,
+    props.ibcEurekaHighlightedAssets,
+    setIbcEurekaHighlightedAssets,
+    props.assetSymbolsSortedToTop,
+    setAssetSymbolsSortedToTop,
   ]);
 
   return { theme: mergedTheme };
