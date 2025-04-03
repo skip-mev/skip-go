@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.24
+
+### Patch Changes
+
+- 6ec520a: Add eth sepolia to gas validation bypass
+
 ## 0.16.23
 
 ### Patch Changes
