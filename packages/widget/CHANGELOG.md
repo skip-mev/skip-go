@@ -1,5 +1,20 @@
 ## 0.0.15
 
+## 3.6.0
+
+### Minor Changes
+
+- 6ec520a: allow connecting to any ecosystem wallet regardless of selected chain
+
+### Patch Changes
+
+- 6ec520a: Add ibcEurekaHighlightedAssets and assetSymbolsSortedToTop props
+- 6ec520a: update number of signatures remaining message to update instantly once tx is signed
+- 6ec520a: Add eth sepolia to gas validation bypass
+- 6ec520a: Add logging widget version onload
+- Updated dependencies [6ec520a]
+  - @skip-go/client@0.16.24
+
 ## 3.5.1
 
 ### Patch Changes
