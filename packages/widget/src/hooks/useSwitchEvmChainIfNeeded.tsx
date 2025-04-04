@@ -14,7 +14,7 @@ export const useSwitchEvmChainIfNeeded = () => {
 
   const switchToEvmChainIfNeeded = useCallback(
     (targetChainId?: string) => {
-      if (targetChainId && chains && evmWallet?.id && connector) {
+      if (targetChainId && chains && evmWallet && connector) {
         const isEvm = chains.find((c) => c.chainID === targetChainId)?.chainType === "evm";
 
         if (isEvm && targetChainId !== String(evmChainId)) {
@@ -24,7 +24,7 @@ export const useSwitchEvmChainIfNeeded = () => {
         }
       }
     },
-    [chains, connector, evmChainId, evmWallet?.id],
+    [chains, connector, evmChainId, evmWallet],
   );
 
   // Effect to automatically switch chain when source asset changes (including direction reversal)
