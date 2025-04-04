@@ -21,7 +21,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "core-1",
   "cosmoshub-4",
   "crypto-org-chain-mainnet-1",
-  "dimension_37-1",
   "dydx-mainnet-1",
   "dymension_1100-1",
   "evmos_9001-2",
@@ -29,7 +28,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "juno-1",
   "kava_2222-10",
   "kyve-1",
-  "lava-mainnet-1",
   "neutron-1",
   "noble-1",
   "omniflixhub-1",
@@ -48,7 +46,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain",
 ];
 
 // other wallets not the keplr wallet

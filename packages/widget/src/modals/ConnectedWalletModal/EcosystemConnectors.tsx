@@ -30,7 +30,7 @@ export const EcosystemConnectors = ({
           chainType={chainType}
           chainId={primarychainIdFOrChainType[chainType]}
           onClick={() => onClick?.(chainType)}
-          openingFromConnectedWalletModal={connectedWalletModal}
+          connectedWalletModal={connectedWalletModal}
         />
       ))}
     </>

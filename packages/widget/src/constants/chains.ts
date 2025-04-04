@@ -15,9 +15,9 @@ export type Explorer = {
 
 const lombardTestnet: ChainInfo = {
   chainName: "Ledger",
-  chainId: "localnet",
-  rpc: "https://node0.ibc.lb-mgt.com:443",
-  rest: "http://node0-1317.ibc.lb-mgt.com",
+  chainId: "ledger-testnet-1",
+  rpc: "https://rpc-gastald.lb-mgt.com:443",
+  rest: "https://rpc-gastald.lb-mgt.com/ipc",
   bip44: {
     coinType: 118,
   },
