@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.6.1
+
+### Patch Changes
+
+- 580fda7: Reduce Keplr initial chain connect list
+- a4f3617: Fix evm disconnect, fix useSwitchChainIfNeeded
+
 ## 3.6.0
 
 ### Minor Changes
