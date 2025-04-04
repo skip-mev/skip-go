@@ -59,7 +59,8 @@ routeConfig?: {
 
 ### `filter`
 
-Limits source and destination chains and assets.
+Key value pair of chainIds or specific asset denoms allowed
+on source and destination assets
 
 ```ts
   filter?: {
@@ -73,12 +74,43 @@ Example:
 ```ts
 {
   source: {
+    // only this chainId is allowed
     'noble-1': undefined,
   },
   destination: {
+    // these assets on this chainId are allowed
     'cosmoshub-4': ['uatom', 'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86'],
+    // these assets on this chainId are allowed
     'agoric-3': ['ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9'],
+    // any asset on this chainId are allowed
     'osmosis-1': undefined,
+  }
+}
+```
+
+### `filterOut`
+
+Opposite of filter.
+Key value pair of chainIds not allowed or specific asset denoms not allowed
+
+```ts
+  filter?: {
+    source?: Record<string, string[] | undefined>;
+    destination?: Record<string, string[] | undefined>;
+  };
+```
+
+Example:
+
+```ts
+{
+  source: {
+    // disallow all assets on this chainId
+    'noble-1': undefined,
+  },
+  destination: {
+    //disallow specific asset
+    'cosmoshub-4': ['uatom', 'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86'],
   }
 }
 ```
