@@ -3,7 +3,7 @@ import { ChainWithAsset, GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { chainFilterAtom } from "@/state/swapPage";
+import { filterAtom, filterOutAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 
@@ -19,7 +19,8 @@ export const useFilteredChains = ({
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainFilter = useAtomValue(chainFilterAtom);
+  const filter = useAtomValue(filterAtom);
+  const filterOut = useAtomValue(filterOutAtom);
   const getBalance = useGetBalance();
 
   const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
@@ -43,13 +44,15 @@ export const useFilteredChains = ({
       .filter((chain) => {
         if (!chain) return false;
 
-        const isAllowedByFilter =
-          !chainFilter?.[context] || Object.keys(chainFilter[context]).includes(chain.chainID);
+        const allowedChainIds = filter?.[context];
+        const blockedChainIds = filterOut?.[context];
 
-        // For source context, exclude Penumbra chains
+        const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
+        const isFilteredOutByFilter = !!blockedChainIds && chain.chainID in blockedChainIds;
+
         const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
 
-        return isAllowedByFilter && isPenumbraAllowed;
+        return isAllowedByFilter && !isFilteredOutByFilter && isPenumbraAllowed;
       }) as ChainWithAsset[];
 
     return chainsWithAssets
@@ -122,13 +125,14 @@ export const useFilteredChains = ({
         return 0;
       });
   }, [
-    chainFilter,
+    selectedGroup,
     chains,
+    filter,
     context,
+    filterOut,
+    searchQuery,
     getBalance,
     ibcEurekaHighlightedAssets,
-    searchQuery,
-    selectedGroup,
   ]);
 
   return filteredChains;

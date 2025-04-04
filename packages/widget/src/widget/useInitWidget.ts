@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { chainFilterAtom, swapSettingsAtom } from "@/state/swapPage";
+import { filterAtom, filterOutAtom, swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -45,7 +45,8 @@ export const useInitWidget = (props: WidgetProps) => {
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
-  const setChainFilter = useSetAtom(chainFilterAtom);
+  const setFilter = useSetAtom(filterAtom);
+  const setFilterOut = useSetAtom(filterOutAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
@@ -113,7 +114,11 @@ export const useInitWidget = (props: WidgetProps) => {
       });
     }
     if (props.filter) {
-      setChainFilter(props.filter);
+      setFilter(props.filter);
+    }
+
+    if (props.filterOut) {
+      setFilterOut(props.filterOut);
     }
 
     setOnlyTestnets(props.onlyTestnet ?? false);
@@ -161,7 +166,6 @@ export const useInitWidget = (props: WidgetProps) => {
     props.settings?.slippage,
     props.walletConnect,
     props.simulate,
-    setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
@@ -175,6 +179,9 @@ export const useInitWidget = (props: WidgetProps) => {
     setIbcEurekaHighlightedAssets,
     props.assetSymbolsSortedToTop,
     setAssetSymbolsSortedToTop,
+    props.filterOut,
+    setFilter,
+    setFilterOut,
   ]);
 
   return { theme: mergedTheme };

@@ -47,6 +47,7 @@ export type WidgetProps = {
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
+  filterOut?: ChainFilter;
   walletConnect?: WalletConnect;
   /**
    * enables sentry session replays on the widget to help with troubleshooting errors
