@@ -124,7 +124,16 @@ export const useFilteredChains = ({
 
         return 0;
       });
-  }, [filter, chains, context, getBalance, ibcEurekaHighlightedAssets, searchQuery, selectedGroup]);
+  }, [
+    selectedGroup,
+    chains,
+    filter,
+    context,
+    filterOut,
+    searchQuery,
+    getBalance,
+    ibcEurekaHighlightedAssets,
+  ]);
 
   return filteredChains;
 };
