@@ -44,11 +44,11 @@ export const useFilteredChains = ({
       .filter((chain) => {
         if (!chain) return false;
 
-        const allowedChainIDs = filter?.[context];
-        const blockedChainIDs = filterOut?.[context];
+        const allowedChainIds = filter?.[context];
+        const blockedChainIds = filterOut?.[context];
 
-        const isAllowedByFilter = !allowedChainIDs || chain.chainID in allowedChainIDs;
-        const isFilteredOutByFilter = !!blockedChainIDs && chain.chainID in blockedChainIDs;
+        const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
+        const isFilteredOutByFilter = !!blockedChainIds && chain.chainID in blockedChainIds;
 
         const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
 
