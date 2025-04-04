@@ -74,7 +74,7 @@ Example:
 ```ts
 {
   source: {
-    // only this chainId is allowed
+    // only assets on this chainId is allowed
     'noble-1': undefined,
   },
   destination: {
@@ -105,11 +105,11 @@ Example:
 ```ts
 {
   source: {
-    // disallow all assets on this chainId
+    // only assets on this chainId is not allowed
     'noble-1': undefined,
   },
   destination: {
-    //disallow specific asset
+    // these assets on this chainId are not allowed
     'cosmoshub-4': ['uatom', 'ibc/2181AAB0218EAC24BC9F86BD1364FBBFA3E6E3FCC25E88E3E68C15DC6E752D86'],
   }
 }
