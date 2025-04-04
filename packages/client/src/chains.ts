@@ -51,11 +51,21 @@ const SOLANA_CHAIN = {
 };
 
 const lombardTestnet: Chain = {
-  chain_id: "localnet",
+  chain_id: "ledger-testnet-1",
   apis: {
     rpc: [
       {
-        address: "https://node0.ibc.lb-mgt.com:443",
+        address: "https://rpc-gastald.lb-mgt.com:443",
+      },
+    ],
+    rest: [
+      {
+        address: "https://rpc-gastald.lb-mgt.com/ipc",
+      },
+    ],
+    grpc: [
+      {
+        address: "https://grpc-gastald.lb-mgt.com:443",
       },
     ],
   },
@@ -63,10 +73,10 @@ const lombardTestnet: Chain = {
     fee_tokens: [
       {
         denom: "ulom",
-        fixed_min_gas_price: 100,
-        low_gas_price: 100,
-        average_gas_price: 100,
-        high_gas_price: 100,
+        fixed_min_gas_price: 1,
+        low_gas_price: 1,
+        average_gas_price: 1,
+        high_gas_price: 1,
       },
     ],
   },
