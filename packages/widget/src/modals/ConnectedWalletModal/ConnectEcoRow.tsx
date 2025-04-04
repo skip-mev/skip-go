@@ -83,6 +83,7 @@ export const ConnectEco = ({
               wallet: account?.wallet.name,
             });
             connectedWallet?.disconnect();
+            NiceModal.remove(Modals.ConnectedWalletModal);
           }}
         >
           <XIcon height="22" width="22" color={theme?.primary?.text?.ultraLowContrast} />
@@ -100,6 +101,7 @@ export const ConnectEco = ({
             wallet: account?.wallet.name,
           });
           connectedWallet?.disconnect();
+          NiceModal.remove(Modals.ConnectedWalletModal);
         }}
       >
         Disconnect
@@ -121,7 +123,7 @@ export const ConnectEco = ({
     NiceModal.remove(Modals.ConnectedWalletModal);
     NiceModal.show(Modals.WalletSelectorModal, {
       chainType,
-      openingFromConnectedWalletModal: connectedWalletModal,
+      fromConnectedWalletModal: connectedWalletModal,
       chainId: chainIdForWalletSelector,
     });
 
