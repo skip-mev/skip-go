@@ -683,7 +683,7 @@ export class SkipClient {
             requiredApproval.spender as `0x${string}`,
           ],
         });
-
+        console.log(requiredApproval, BigInt(requiredApproval.amount));
         if (allowance > BigInt(requiredApproval.amount)) {
           continue;
         }
@@ -697,6 +697,8 @@ export class SkipClient {
           options.onValidateGasBalance?.({
             status: "pending",
           });
+
+          console.log("validate evm token approval balance");
           await this.validateEvmTokenApprovalBalance({
             signer: signer,
             contractAddress: requiredApproval.tokenContract,
@@ -744,6 +746,7 @@ export class SkipClient {
       options.onValidateGasBalance?.({
         status: "pending",
       });
+      console.log("validate evm gas balance");
       await this.validateEvmGasBalance({
         signer,
         tx: message,
@@ -752,6 +755,8 @@ export class SkipClient {
         status: "completed",
       });
     }
+
+    console.log("send tx", message, message.value);
 
     // Execute the transaction
     const txHash = await extendedSigner.sendTransaction({
@@ -2130,6 +2135,8 @@ export class SkipClient {
           denom.includes("-native") ||
           denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
+
+    console.log(balances, gasBalance);
 
     if (!gasBalance) {
       const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
