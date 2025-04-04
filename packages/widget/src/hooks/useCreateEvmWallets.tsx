@@ -126,13 +126,13 @@ export const useCreateEvmWallets = () => {
             await connectWallet({ chainIdToConnect: chainId });
           },
           disconnect: async () => {
-            setEvmWallet(undefined);
             await disconnect(config);
             track("wallet disconnected", {
               walletName: connector.name,
               chainId: chainID,
               ChainType: ChainType.EVM,
             });
+            setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: connector.name,
               chainType: ChainType.EVM,
