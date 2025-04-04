@@ -123,7 +123,7 @@ export const ConnectEco = ({
     NiceModal.remove(Modals.ConnectedWalletModal);
     NiceModal.show(Modals.WalletSelectorModal, {
       chainType,
-      openingFromConnectedWalletModal: connectedWalletModal,
+      fromConnectedWalletModal: connectedWalletModal,
       chainId: chainIdForWalletSelector,
     });
 
