@@ -21,11 +21,18 @@ export default defineConfig({
       "vite-plugin-node-polyfills/shims/global",
       "vite-plugin-node-polyfills/shims/process",
     ],
+    // exclude: ["@skip-go/client"],
+  },
+  server: {
+    fs: {
+      allow: [".."],
+    },
   },
   resolve: {
     preserveSymlinks: true,
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // "@skip-go/client": path.resolve(__dirname, "../client/src/index.ts"),
     },
   },
   plugins: [

@@ -203,6 +203,7 @@ export async function getEVMGasAmountForMessage(
   const { to, data, value } = tx;
   if (!signer.account) throw new Error("estimateGasForEvmTx: No account found");
   const extendedSigner = signer.extend(publicActions);
+  console.log(value);
   const gasAmount = await extendedSigner.estimateGas({
     account: signer.account,
     to: to as `0x${string}`,
