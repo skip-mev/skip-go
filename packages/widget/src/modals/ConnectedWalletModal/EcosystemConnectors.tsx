@@ -16,7 +16,7 @@ export const EcosystemConnectors = ({
   onClick,
   connectedWalletModal,
 }: EcosystemConnectorsProps) => {
-  const primarychainIdFOrChainType = usePrimaryChainIdForChainType();
+  const primarychainIdForChainType = usePrimaryChainIdForChainType();
 
   const ecosystemsToRender = useMemo(() => {
     return ALL_ECOSYSTEMS.filter((eco) => eco !== excludeChainType);
@@ -28,7 +28,7 @@ export const EcosystemConnectors = ({
         <ConnectEco
           key={chainType}
           chainType={chainType}
-          chainId={primarychainIdFOrChainType[chainType]}
+          chainId={primarychainIdForChainType[chainType]}
           onClick={() => onClick?.(chainType)}
           connectedWalletModal={connectedWalletModal}
         />

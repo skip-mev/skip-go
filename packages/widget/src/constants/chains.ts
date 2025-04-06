@@ -51,8 +51,8 @@ const lombardTestnet: ChainInfo = {
 };
 
 export const mainnetChains = _mainnetChains as unknown as ChainInfo[];
-export const testnetChains = _testnetChains as unknown as ChainInfo[];
-const allChains = [...mainnetChains, ...testnetChains, lombardTestnet];
+export const testnetChains = [...(_testnetChains as unknown as ChainInfo[]), lombardTestnet];
+const allChains = [...mainnetChains, ...testnetChains];
 
 export const explorers = _explorers as unknown as {
   chainId: string;
