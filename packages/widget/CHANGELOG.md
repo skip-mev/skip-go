@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.6.2
+
+### Patch Changes
+
+- 7da5d2e: update testnetChains to include lombardTestnet
+
 ## 3.6.1
 
 ### Patch Changes
