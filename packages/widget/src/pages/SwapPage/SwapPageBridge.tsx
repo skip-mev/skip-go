@@ -1,16 +1,19 @@
 import { useTheme, styled } from "styled-components";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { BridgeIcon } from "@/icons/BridgeIcon";
-import { invertSwapAtom } from "@/state/swapPage";
+import { destinationAssetAtom, invertSwapAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "@/components/Button";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { defaultRouteAtom } from "@/state/route";
+import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const switchEvmChainId = useSwitchEvmChain();
+  const destinationAsset = useAtomValue(destinationAssetAtom);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
@@ -18,11 +21,15 @@ export const SwapPageBridge = () => {
   const lockedRoute = defaultRoute?.srcLocked || defaultRoute?.destLocked;
   const onInvertSwap = () => {
     invertSwap();
+    switchEvmChainId(destinationAsset?.chainID);
 
     let spinTimeout = undefined;
     clearTimeout(spinTimeout);
     setIsSpinning(true);
-    spinTimeout = setTimeout(() => setIsSpinning(false), 500);
+
+    spinTimeout = setTimeout(() => {
+      setIsSpinning(false);
+    }, 500);
   };
 
   return (
