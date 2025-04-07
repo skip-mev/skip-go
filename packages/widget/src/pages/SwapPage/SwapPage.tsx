@@ -304,8 +304,10 @@ export const SwapPage = () => {
       />
     );
   }, [
-    sourceAsset,
+    sourceAsset?.chainID,
+    sourceAsset?.amount,
     sourceAccount?.address,
+    isInvertingSwap,
     destinationAsset?.chainID,
     destinationAsset?.amount,
     isWaitingForNewRoute,
