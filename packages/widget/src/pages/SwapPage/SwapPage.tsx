@@ -17,6 +17,7 @@ import {
   routePreferenceAtom,
   slippageAtom,
   onSourceAssetUpdatedEffect,
+  isInvertingSwapAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -40,7 +41,7 @@ import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
-import { useSwitchEvmChainIfNeeded } from "@/hooks/useSwitchEvmChainIfNeeded";
+import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -55,6 +56,7 @@ export const SwapPage = () => {
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const isInvertingSwap = useAtomValue(isInvertingSwapAtom);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
@@ -71,7 +73,7 @@ export const SwapPage = () => {
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
-  useSwitchEvmChainIfNeeded();
+  const switchEvmChainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
@@ -98,12 +100,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        switchEvmChainId(asset?.chainID);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmChainId]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -115,12 +118,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+        switchEvmChainId(asset?.chainID);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
     });
-  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, switchEvmChainId]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
@@ -167,7 +171,7 @@ export const SwapPage = () => {
       return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
-    if (!sourceAccount?.address) {
+    if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
           label="Connect Wallet"
