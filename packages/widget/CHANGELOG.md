@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.6.4
+
+### Patch Changes
+
+- c5f48e7: Add arrow maskedVersion prop, Fix WalletSelectorModal back button logic
+- 30df1d3: increase POL max amount
+- 7a399d5: update registries
+- df29c5d: update testnetChains to include lombardTestnet
+- ebdca25: Add filterOut prop
+- 76b8015: Prevent IBC Eureka from dropping to newline on mobile
+- Updated dependencies [7a399d5]
+  - @skip-go/client@0.16.25
+
 ## 3.6.3
 
 ### Patch Changes
