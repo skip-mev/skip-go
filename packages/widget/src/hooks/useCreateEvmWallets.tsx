@@ -139,7 +139,7 @@ export const useCreateEvmWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
-            if (signRequired) {
+            if (signRequired && !isEvmConnected) {
               return connectWallet({
                 chainIdToConnect: chainID,
               });
