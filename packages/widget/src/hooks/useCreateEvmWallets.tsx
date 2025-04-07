@@ -29,7 +29,6 @@ export const useCreateEvmWallets = () => {
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
-  const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
 
   const createEvmWallets = useCallback(
     (chainID?: string) => {
@@ -217,7 +216,6 @@ export const useCreateEvmWallets = () => {
       sourceAsset,
       setWCDeepLinkByChainType,
       evmWallet,
-      currentConnector,
       connectAsync,
       setDefaultSourceAsset,
       callbacks,
