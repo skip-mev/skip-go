@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.6.3
+
+### Patch Changes
+
+- fcc815a: Dont attempt to connect wallet if already connected when signRequired is passed to getAddress
+
 ## 3.6.2
 
 ### Patch Changes
