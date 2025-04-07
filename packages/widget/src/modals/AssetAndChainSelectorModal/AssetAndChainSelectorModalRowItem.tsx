@@ -100,11 +100,7 @@ const GroupedAssetRow = ({
     filteredChains.length > 1 ? (
       <SmallText>{`${filteredChains.length} networks`}</SmallText>
     ) : (
-      filteredChains.map((chain, index) => (
-        <Row key={index} align="center" gap={6}>
-          <SmallText>on {chain.chainName}</SmallText>
-        </Row>
-      ))
+      <SmallText>on {filteredChains[0].chainName}</SmallText>
     );
 
   return (
@@ -149,8 +145,10 @@ const RowLayout = ({ image, mainText, subText, eureka }: RowLayoutProps) => {
         gap={isMobileScreenSize ? undefined : 8}
       >
         <Text>{mainText}</Text>
-        {subText}
-        {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
+        <Row align="center" gap={6}>
+          {subText}
+          {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
+        </Row>
       </Row>
     </Row>
   );
