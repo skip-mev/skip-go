@@ -84,7 +84,45 @@ const lombardTestnet: Chain = {
   chain_type: "cosmos",
 };
 
-const additionalChains = [SOLANA_CHAIN, lombardTestnet] as Chain[];
+const lombardMainnet: Chain = {
+  chain_id: "ledger-mainnet-1",
+  apis: {
+    rpc: [
+      {
+        address: "https://rpc-mainnet.lb-mgt.com:443",
+      },
+    ],
+    rest: [
+      {
+        address: "http://rpc-mainnet.lb-mgt.com:1317",
+      },
+    ],
+    grpc: [
+      {
+        address: "https://grpc-mainnet.lb-mgt.com:443",
+      },
+    ],
+  },
+  fees: {
+    fee_tokens: [
+      {
+        denom: "ulom",
+        fixed_min_gas_price: 100,
+        low_gas_price: 100,
+        average_gas_price: 100,
+        high_gas_price: 100,
+      },
+    ],
+  },
+  chain_name: "Ledger",
+  chain_type: "cosmos",
+};
+
+const additionalChains = [
+  SOLANA_CHAIN,
+  lombardTestnet,
+  lombardMainnet,
+] as Chain[];
 const existingChainIds = new Set(
   chainRegistryChains.map((chain) => chain.chain_id),
 );

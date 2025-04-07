@@ -5,7 +5,7 @@ import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { chainFilterAtom } from "@/state/swapPage";
+import { filterAtom, filterOutAtom } from "@/state/swapPage";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
@@ -16,25 +16,37 @@ export const useGroupedAssetByRecommendedSymbol = ({
 }: useGroupedAssetByRecommendedSymbolProps) => {
   const { data: _assets } = useAtomValue(skipAssetsAtom);
   const getBalance = useGetBalance();
-  const chainFilter = useAtomValue(chainFilterAtom);
+  const filter = useAtomValue(filterAtom);
+  const filterOut = useAtomValue(filterOutAtom);
 
   const assets = useMemo(() => {
-    if (!chainFilter || !chainFilter[context]) return _assets;
-    const chainIdAndDenomsAllowed = Object.entries(chainFilter[context]);
-    if (chainIdAndDenomsAllowed) {
-      return _assets?.filter((asset) =>
-        chainIdAndDenomsAllowed.some((entries) => {
-          const [chainId, denoms] = entries;
+    const allowed = filter?.[context];
+    const blocked = filterOut?.[context];
+
+    return _assets?.filter((asset) => {
+      const isAllowed =
+        !allowed ||
+        Object.entries(allowed).some(([chainId, denoms]) => {
           if (denoms) {
-            return denoms.includes(asset.denom) && chainId === asset.chainID;
-          } else if (chainId) {
+            return chainId === asset.chainID && denoms.includes(asset.denom);
+          } else {
             return chainId === asset.chainID;
           }
-        }),
-      );
-    }
-    return _assets;
-  }, [_assets, chainFilter, context]);
+        });
+
+      const isBlocked =
+        !!blocked &&
+        Object.entries(blocked).some(([chainId, denoms]) => {
+          if (denoms) {
+            return chainId === asset.chainID && denoms.includes(asset.denom);
+          } else {
+            return chainId === asset.chainID;
+          }
+        });
+
+      return isAllowed && !isBlocked;
+    });
+  }, [_assets, filter, filterOut, context]);
 
   const groupedAssetsByRecommendedSymbol = useMemo(() => {
     if (!assets) return;
