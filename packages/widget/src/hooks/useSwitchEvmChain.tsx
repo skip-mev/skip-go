@@ -8,12 +8,12 @@ export const useSwitchEvmChain = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const switchEvmChainId = useCallback(
-    (targetChainId?: string) => {
-      const isEvm = chains?.find((c) => c.chainID === targetChainId)?.chainType === "evm";
+    (chainId?: string) => {
+      const isEvmChainId = chains?.find((c) => c.chainID === chainId)?.chainType === "evm";
 
-      if (isEvm) {
+      if (isEvmChainId) {
         connector?.switchChain?.({
-          chainId: Number(targetChainId),
+          chainId: Number(chainId),
         });
       }
     },
