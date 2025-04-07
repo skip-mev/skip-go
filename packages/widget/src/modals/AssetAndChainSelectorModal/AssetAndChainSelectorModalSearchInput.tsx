@@ -57,7 +57,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
       {asset ? (
         <>
           <Button onClick={onClickBack}>
-            <StyledLeftArrowIcon color={theme.primary.text.normal} />
+            <StyledLeftArrowIcon color={theme.primary.text.normal} maskedVersion={false} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
             <GroupedAssetImage groupedAsset={groupedAsset} width={20} height={20} />
