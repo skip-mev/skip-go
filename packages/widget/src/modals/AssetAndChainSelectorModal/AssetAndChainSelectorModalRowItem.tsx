@@ -100,7 +100,7 @@ const GroupedAssetRow = ({
     filteredChains.length > 1 ? (
       <SmallText>{`${filteredChains.length} networks`}</SmallText>
     ) : (
-      <SmallText>on {filteredChains[0].chainName}</SmallText>
+      <SmallText>on {filteredChains[0]?.chainName}</SmallText>
     );
 
   return (

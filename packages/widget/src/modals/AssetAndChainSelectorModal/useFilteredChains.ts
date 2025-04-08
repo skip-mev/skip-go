@@ -48,11 +48,13 @@ export const useFilteredChains = ({
         const blockedChainIds = filterOut?.[context];
 
         const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
-        const isFilteredOutByFilter = !!blockedChainIds && chain.chainID in blockedChainIds;
+        const isFilteredOutByFilter = Boolean(
+          blockedChainIds?.[chain.chainID] && blockedChainIds?.[chain.chainID] === undefined,
+        );
 
         const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
 
-        return isAllowedByFilter && !isFilteredOutByFilter && isPenumbraAllowed;
+        return isAllowedByFilter && isPenumbraAllowed && !isFilteredOutByFilter;
       }) as ChainWithAsset[];
 
     return chainsWithAssets
