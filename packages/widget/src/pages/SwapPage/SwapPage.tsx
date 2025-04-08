@@ -203,12 +203,18 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      // special case for multi-tx routes on mobile
-      const errMsg = routeError?.message.startsWith("no single-tx routes found")
+      const message = routeError?.message ?? "";
+      const errMsg = message.startsWith("no single-tx routes found")
         ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
-        : routeError?.message;
+        : message;
+
+      const fontSize = errMsg.length > 36 ? 18 : 24;
       return (
-        <MainButton label={errMsg ?? "No routes found"} disabled fontSize={errMsg ? 18 : 24} />
+        <MainButton
+          label={errMsg || "No routes found"}
+          disabled
+          fontSize={fontSize}
+        />
       );
     }
     if (isLoadingBalances) {
