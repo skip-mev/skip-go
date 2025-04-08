@@ -11,8 +11,9 @@ import { useCallback } from "react";
 import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
+import { disconnect } from "@wagmi/core";
 import { ChainType } from "@skip-go/client";
-import { walletConnectLogo } from "@/constants/wagmi";
+import { config, walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
 import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
@@ -28,7 +29,6 @@ export const useCreateEvmWallets = () => {
   const { connector: currentEvmConnector, isConnected: isEvmConnected, chainId } = useAccount();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
-  const currentConnector = connectors.find((connector) => connector.id === currentEvmConnector?.id);
 
   const createEvmWallets = useCallback(
     (chainID?: string) => {
@@ -56,17 +56,15 @@ export const useCreateEvmWallets = () => {
 
           try {
             if (isEvmConnected && connector.id !== currentEvmConnector?.id) {
-              await currentConnector?.disconnect();
+              await disconnect(config);
             }
             if (walletConnectedButNeedToSwitchChain) {
               await connector?.switchChain?.({
                 chainId: Number(chainIdToConnect),
               });
-            } else {
-              if (!isEvmConnected) {
-                await connectAsync({ connector, chainId: Number(chainIdToConnect) });
-              }
             }
+
+            await connectAsync({ connector, chainId: Number(chainIdToConnect) });
 
             if (sourceAsset === undefined) {
               setDefaultSourceAsset(ChainType.EVM);
@@ -127,7 +125,7 @@ export const useCreateEvmWallets = () => {
             await connectWallet({ chainIdToConnect: chainId });
           },
           disconnect: async () => {
-            await currentConnector?.disconnect();
+            await disconnect(config);
             track("wallet disconnected", {
               walletName: connector.name,
               chainId: chainID,
@@ -140,7 +138,7 @@ export const useCreateEvmWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
-            if (signRequired) {
+            if (signRequired && !isEvmConnected) {
               return connectWallet({
                 chainIdToConnect: chainID,
               });
@@ -218,7 +216,6 @@ export const useCreateEvmWallets = () => {
       sourceAsset,
       setWCDeepLinkByChainType,
       evmWallet,
-      currentConnector,
       connectAsync,
       setDefaultSourceAsset,
       callbacks,

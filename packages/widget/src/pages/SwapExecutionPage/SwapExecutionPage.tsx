@@ -39,8 +39,13 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
-    useAtomValue(swapExecutionStateAtom);
+  const {
+    route,
+    overallStatus,
+    transactionDetailsArray,
+    isValidatingGasBalance,
+    transactionsSigned,
+  } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
@@ -49,7 +54,7 @@ export const SwapExecutionPage = () => {
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
-    ? route.txsRequired - (transactionDetailsArray?.length ?? 0)
+    ? route.txsRequired - transactionsSigned
     : 0;
 
   const { data: statusData } = useBroadcastedTxsStatus({

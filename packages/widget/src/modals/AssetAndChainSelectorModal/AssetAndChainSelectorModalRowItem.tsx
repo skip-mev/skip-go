@@ -25,6 +25,7 @@ export type AssetAndChainSelectorModalRowItemProps = {
   skeleton: React.ReactElement;
   onSelect: (token: ClientAsset | GroupedAsset | null) => void;
   context: SelectorContext;
+  eureka?: boolean;
 };
 
 export const AssetAndChainSelectorModalRowItem = ({
@@ -33,6 +34,7 @@ export const AssetAndChainSelectorModalRowItem = ({
   skeleton,
   onSelect,
   context,
+  eureka,
 }: AssetAndChainSelectorModalRowItemProps) => {
   const { isFetching, isPending } = useAtomValue(skipChainsAtom);
   const isChainsLoading = isFetching && isPending;
@@ -45,7 +47,8 @@ export const AssetAndChainSelectorModalRowItem = ({
       <ModalRowItem
         key={`${index}${item.id}`}
         onClick={() => onSelect(item)}
-        leftContent={<GroupedAssetRow item={item} context={context} />}
+        leftContent={<GroupedAssetRow item={item} context={context} eureka={eureka} />}
+        eureka={eureka}
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
@@ -62,8 +65,9 @@ export const AssetAndChainSelectorModalRowItem = ({
   return (
     <ModalRowItem
       key={item.chainID}
+      eureka={eureka}
       onClick={() => onSelect(item.asset)}
-      leftContent={<ChainWithAssetRow item={item} />}
+      leftContent={<ChainWithAssetRow item={item} eureka={eureka} />}
       rightContent={
         balance &&
         Number(balance.amount) > 0 && (
@@ -71,7 +75,9 @@ export const AssetAndChainSelectorModalRowItem = ({
             <SmallText normalTextColor>
               {convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals)}
             </SmallText>
-            {balance.valueUSD && <SmallText>{formatUSD(balance.valueUSD)}</SmallText>}
+            {balance.valueUSD && Number(balance.valueUSD) > 0 && (
+              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            )}
           </Column>
         )
       }
@@ -79,18 +85,22 @@ export const AssetAndChainSelectorModalRowItem = ({
   );
 };
 
-const GroupedAssetRow = ({ item, context }: { item: GroupedAsset; context: SelectorContext }) => {
+const GroupedAssetRow = ({
+  item,
+  context,
+  eureka,
+}: {
+  item: GroupedAsset;
+  context: SelectorContext;
+  eureka?: boolean;
+}) => {
   const filteredChains = useFilteredChains({ selectedGroup: item, context }) ?? [];
 
   const subText =
     filteredChains.length > 1 ? (
       <SmallText>{`${filteredChains.length} networks`}</SmallText>
     ) : (
-      filteredChains.map((chain, index) => (
-        <Row key={index} align="center" gap={6}>
-          <SmallText>{chain.chainName}</SmallText>
-        </Row>
-      ))
+      <SmallText>on {filteredChains[0].chainName}</SmallText>
     );
 
   return (
@@ -98,11 +108,12 @@ const GroupedAssetRow = ({ item, context }: { item: GroupedAsset; context: Selec
       image={<GroupedAssetImage height={35} width={35} groupedAsset={item} />}
       mainText={item.assets[0].recommendedSymbol}
       subText={subText}
+      eureka={eureka}
     />
   );
 };
 
-const ChainWithAssetRow = ({ item }: { item: ChainWithAsset }) => {
+const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: boolean }) => {
   return (
     <RowLayout
       image={
@@ -110,6 +121,7 @@ const ChainWithAssetRow = ({ item }: { item: ChainWithAsset }) => {
       }
       mainText={item.prettyName}
       subText={<SmallText>{item.chainID}</SmallText>}
+      eureka={eureka}
     />
   );
 };
@@ -118,9 +130,10 @@ type RowLayoutProps = {
   image: React.ReactNode;
   mainText?: React.ReactNode;
   subText?: React.ReactNode;
+  eureka?: boolean;
 };
 
-const RowLayout = ({ image, mainText, subText }: RowLayoutProps) => {
+const RowLayout = ({ image, mainText, subText, eureka }: RowLayoutProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
 
   return (
@@ -132,7 +145,10 @@ const RowLayout = ({ image, mainText, subText }: RowLayoutProps) => {
         gap={isMobileScreenSize ? undefined : 8}
       >
         <Text>{mainText}</Text>
-        {subText}
+        <Row align="center" gap={6}>
+          {subText}
+          {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
+        </Row>
       </Row>
     </Row>
   );
