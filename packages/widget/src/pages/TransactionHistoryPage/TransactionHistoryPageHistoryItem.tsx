@@ -35,32 +35,21 @@ export const TransactionHistoryPageHistoryItem = ({
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const {
-    status: historyStatus,
-    explorerLinks: txHistoryExplorerLinks,
-    transferAssetRelease,
-  } = useTxHistory({
-    txs: txHistoryItem.transactionDetails.map((tx) => ({
-      chainID: tx.chainID,
-      txHash: tx.txHash,
-    })),
-    txsRequired: txHistoryItem.route.txsRequired,
+  const { explorerLinks: txHistoryExplorerLinks, transferAssetRelease } = useTxHistory({
+    txHistoryItem,
+    index,
   });
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
-  const {
-    route: {
-      amountIn,
-      amountOut,
-      sourceAssetDenom,
-      sourceAssetChainID,
-      destAssetDenom,
-      destAssetChainID,
-    },
-    timestamp,
-    transactionDetails,
-  } = txHistoryItem;
+  const amountIn = txHistoryItem?.route?.amountIn;
+  const amountOut = txHistoryItem?.route?.amountOut;
+  const sourceAssetDenom = txHistoryItem?.route?.sourceAssetDenom;
+  const sourceAssetChainID = txHistoryItem?.route?.sourceAssetChainID;
+  const destAssetDenom = txHistoryItem?.route?.destAssetDenom;
+  const destAssetChainID = txHistoryItem?.route?.destAssetChainID;
+  const timestamp = txHistoryItem?.timestamp;
+  const transactionDetails = txHistoryItem?.transactionDetails;
 
   const initialTxHash = transactionDetails?.[0]?.txHash;
   const chainId = transactionDetails?.[0]?.chainID;
@@ -103,7 +92,7 @@ export const TransactionHistoryPageHistoryItem = ({
   };
 
   const renderStatus = useMemo(() => {
-    switch (historyStatus) {
+    switch (txHistoryItem.status) {
       case "unconfirmed":
       case "pending":
         return (
@@ -124,11 +113,11 @@ export const TransactionHistoryPageHistoryItem = ({
       }
     }
   }, [
-    historyStatus,
     theme.error.text,
     theme.primary.text.normal,
     theme.warning.text,
     transferAssetRelease,
+    txHistoryItem.status,
   ]);
 
   const absoluteTimeString = useMemo(() => {
@@ -140,9 +129,10 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (historyStatus === "pending") {
+    if (txHistoryItem.status === "pending") {
       return "In Progress";
     }
+    if (!timestamp) return;
     return formatDistanceStrict(new Date(timestamp), new Date(), {
       addSuffix: true,
     })
@@ -156,7 +146,7 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [historyStatus, timestamp]);
+  }, [timestamp, txHistoryItem.status]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
@@ -183,7 +173,7 @@ export const TransactionHistoryPageHistoryItem = ({
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={historyStatus}
+          status={txHistoryItem.status}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}

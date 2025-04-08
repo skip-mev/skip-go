@@ -56,7 +56,12 @@ export const useBroadcastedTxsStatus = ({
         );
       });
 
-      const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
+      const transferAssetRelease = results
+        .reverse()
+        .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
+
+      const isRouteSettled =
+        transferAssetRelease?.released || (txsRequired === results.length && _isAllTxSettled);
       if (isRouteSettled) {
         setIsSettled(true);
       }
@@ -71,10 +76,6 @@ export const useBroadcastedTxsStatus = ({
       if (lastTxStatus === "failed" && isRouteSettled) {
         captureException("TransactionFailed");
       }
-
-      const transferAssetRelease = results
-        .reverse()
-        .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
 
       const resData: TxsStatus = {
         isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
