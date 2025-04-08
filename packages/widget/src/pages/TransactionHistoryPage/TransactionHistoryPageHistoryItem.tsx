@@ -1,4 +1,4 @@
-import { SmallText } from "@/components/Typography";
+import { Text, SmallText } from "@/components/Typography";
 import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
@@ -35,21 +35,29 @@ export const TransactionHistoryPageHistoryItem = ({
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const { explorerLinks: txHistoryExplorerLinks, transferAssetRelease } = useTxHistory({
+  const {
+    status: historyStatus,
+    explorerLinks: txHistoryExplorerLinks,
+    transferAssetRelease,
+  } = useTxHistory({
     txHistoryItem,
     index,
   });
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
-  const amountIn = txHistoryItem?.route?.amountIn;
-  const amountOut = txHistoryItem?.route?.amountOut;
-  const sourceAssetDenom = txHistoryItem?.route?.sourceAssetDenom;
-  const sourceAssetChainID = txHistoryItem?.route?.sourceAssetChainID;
-  const destAssetDenom = txHistoryItem?.route?.destAssetDenom;
-  const destAssetChainID = txHistoryItem?.route?.destAssetChainID;
-  const timestamp = txHistoryItem?.timestamp;
-  const transactionDetails = txHistoryItem?.transactionDetails;
+  const {
+    route: {
+      amountIn,
+      amountOut,
+      sourceAssetDenom,
+      sourceAssetChainID,
+      destAssetDenom,
+      destAssetChainID,
+    },
+    timestamp,
+    transactionDetails,
+  } = txHistoryItem;
 
   const initialTxHash = transactionDetails?.[0]?.txHash;
   const chainId = transactionDetails?.[0]?.chainID;
@@ -92,7 +100,7 @@ export const TransactionHistoryPageHistoryItem = ({
   };
 
   const renderStatus = useMemo(() => {
-    switch (txHistoryItem.status) {
+    switch (historyStatus) {
       case "unconfirmed":
       case "pending":
         return (
@@ -117,7 +125,7 @@ export const TransactionHistoryPageHistoryItem = ({
     theme.primary.text.normal,
     theme.warning.text,
     transferAssetRelease,
-    txHistoryItem.status,
+    historyStatus,
   ]);
 
   const absoluteTimeString = useMemo(() => {
@@ -129,10 +137,10 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (txHistoryItem.status === "pending") {
+    if (historyStatus === "pending") {
       return "In Progress";
     }
-    if (!timestamp) return;
+    if (!timestamp) return "";
     return formatDistanceStrict(new Date(timestamp), new Date(), {
       addSuffix: true,
     })
@@ -146,23 +154,15 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [timestamp, txHistoryItem.status]);
+  }, [timestamp, historyStatus]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <StyledHistoryItemContainer gap={5} align="center">
+        <StyledHistoryItemContainer gap={8} align="center">
           <RenderAssetAmount {...source} />
           <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
           <RenderAssetAmount {...destination} />
-          <SmallText
-            normalTextColor
-            title={destinationAssetDetails.chainName}
-            textWrap="nowrap"
-            overflowEllipsis
-          >
-            on {destinationAssetDetails.chainName}
-          </SmallText>
         </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
@@ -173,7 +173,7 @@ export const TransactionHistoryPageHistoryItem = ({
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={txHistoryItem.status}
+          status={historyStatus}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
@@ -195,16 +195,17 @@ const RenderAssetAmount = ({
   asset?: ClientAsset;
   assetImage: string;
 }) => {
-  const isMobileScreenSize = useIsMobileScreenSize();
   return (
     <>
-      <img height={20} width={20} src={assetImage} />
-      <SmallText normalTextColor title={amount}>
-        {removeTrailingZeros(amount)}
-      </SmallText>
-      {!isMobileScreenSize && (
-        <SmallText normalTextColor>{asset?.recommendedSymbol ?? asset?.symbol}</SmallText>
-      )}
+      <img height={35} width={35} src={assetImage} />
+      <Column>
+        <Text normalTextColor title={amount}>
+          {removeTrailingZeros(amount)}
+        </Text>
+        <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
+          {asset?.chainName}
+        </SmallText>
+      </Column>
     </>
   );
 };
@@ -214,13 +215,15 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   &:hover {
     background: ${({ theme }) => theme.secondary.background.normal};
   }
+  min-height: 55px;
   border-radius: 6px;
+  justify-content: center;
 `;
 
 const StyledHistoryItemRow = styled(Row)`
   gap: 5px;
   padding: 0 10px;
-  height: 40px;
+  height: 55px;
   &:hover {
     cursor: pointer;
   }

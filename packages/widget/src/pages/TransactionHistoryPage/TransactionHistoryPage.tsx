@@ -44,7 +44,7 @@ export const TransactionHistoryPage = () => {
             details: "No transactions yet",
             icon: <HistoryIcon width={30} height={30} color={theme?.primary?.text.lowContrast} />,
           }}
-          itemHeight={1}
+          itemHeight={55}
           renderItem={(item, index) => (
             <TransactionHistoryPageHistoryItem
               index={index}
