@@ -13,10 +13,12 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
-import { removeTrailingZeros } from "@/utils/number";
+import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
+import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
+import { Tooltip } from "@/components/Tooltip";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -161,7 +163,7 @@ export const TransactionHistoryPageHistoryItem = ({
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
         <StyledHistoryItemContainer gap={8} align="center">
           <RenderAssetAmount {...source} />
-          <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
+          <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
           <RenderAssetAmount {...destination} />
         </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
@@ -199,9 +201,9 @@ const RenderAssetAmount = ({
     <>
       <img height={35} width={35} src={assetImage} />
       <Column>
-        <Text normalTextColor title={amount}>
-          {removeTrailingZeros(amount)}
-        </Text>
+        <Tooltip content={amount}>
+          <Text normalTextColor>{limitDecimalsDisplayed(amount, 2)}</Text>
+        </Tooltip>
         <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
           {asset?.chainName}
         </SmallText>
@@ -238,5 +240,4 @@ const StyledGreenDot = styled.div`
 
 const StyledHistoryItemContainer = styled(Row)`
   max-width: calc(100% - 100px);
-  overflow: hidden;
 `;
