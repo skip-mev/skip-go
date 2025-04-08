@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.6.6
+
+### Patch Changes
+
+- ad43417: expose Theme type
+- d13c452: update registries
+- Updated dependencies [d13c452]
+  - @skip-go/client@0.16.26
+
 ## 3.6.5
 
 ### Patch Changes
