@@ -161,10 +161,14 @@ export const TransactionHistoryPageHistoryItem = ({
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <StyledHistoryItemContainer gap={8} align="center">
-          <RenderAssetAmount {...source} />
+        <StyledHistoryItemContainer gap={15} align="center">
+          <StyledSourceAssetContainer gap={8}>
+            <RenderAssetAmount {...source} />
+          </StyledSourceAssetContainer>
           <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
-          <RenderAssetAmount {...destination} />
+          <StyledSourceAssetContainer gap={8}>
+            <RenderAssetAmount {...destination} />
+          </StyledSourceAssetContainer>
         </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
@@ -200,7 +204,7 @@ const RenderAssetAmount = ({
   return (
     <>
       <img height={35} width={35} src={assetImage} />
-      <Column>
+      <Column style={{ width: 95 }}>
         <Tooltip content={amount}>
           <Text normalTextColor>{limitDecimalsDisplayed(amount, 2)}</Text>
         </Tooltip>
@@ -211,6 +215,10 @@ const RenderAssetAmount = ({
     </>
   );
 };
+
+const StyledSourceAssetContainer = styled(Row)`
+  width: 120px;
+`;
 
 const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   background: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};

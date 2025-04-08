@@ -68,6 +68,8 @@ export const Tooltip = ({
 
 const StyledTooltipTriggerContainer = styled.span`
   position: relative;
+  display: flex;
+  width: min-content;
 `;
 
 const OFFSET_GAP = 5;
