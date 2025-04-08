@@ -1,7 +1,7 @@
 import { useTheme, styled } from "styled-components";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { BridgeIcon } from "@/icons/BridgeIcon";
-import { destinationAssetAtom, invertSwapAtom, sourceAssetAtom } from "@/state/swapPage";
+import { destinationAssetAtom, invertSwapAtom } from "@/state/swapPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "@/components/Button";
