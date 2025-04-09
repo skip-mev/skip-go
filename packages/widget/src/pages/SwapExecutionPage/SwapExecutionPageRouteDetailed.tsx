@@ -57,7 +57,7 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
-  const isGasStationTx = true
+  const isGasStationTx = useIsGasStationTx();
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
