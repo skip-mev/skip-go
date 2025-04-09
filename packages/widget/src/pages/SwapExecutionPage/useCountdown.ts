@@ -23,7 +23,7 @@ export const useCountdown = ({
       )
     ) {
       const countdownTimer = createCountdownTimer({
-        duration: estimatedDurationSeconds,
+        duration: estimatedDurationSeconds * 1_000,
         onUpdate: (remainingTime) => {
           setCountdown(parseInt(remainingTime.toString()));
         },
