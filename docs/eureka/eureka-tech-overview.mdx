@@ -17,13 +17,11 @@ Eureka implements the full IBC light client security model, providing trust-mini
 
 ```mermaid
 graph LR
-    A[Ethereum] --> |~$5 Fast, ~$2 Standard| B[Cosmos Hub]
+    A[Ethereum] --> |~$5 Fast, ~$1 Standard| B[Cosmos Hub]
     B --> |IBC Eureka| C[Your Cosmos Chain]
-    D[Layer 2s] --> |~$1-2| B
 ```
 
-- **Optimized Gas Consumption**: Transfer from Ethereum to your chain, via Cosmos Hub for approximately \$5 using fast mode and less than \$2 for standard transfers
-- **Layer 2 Efficiency**: Transfers from Layer 2s (Arbitrum, Optimism, Base) cost approximately $1-2
+- **Optimized Gas Consumption**: Transfer from Ethereum to your chain, via Cosmos Hub for approximately \$5 using fast mode and less than \$1 for standard transfers
 - **Fast Finality**: Assets arrive on destination chains in seconds, regardless of source chain finality times
 
 ## Native Asset Representation
@@ -46,6 +44,12 @@ Eureka connects blockchains through a combination of:
   was definitely sent from the source chain, using cryptographic verification
   rather than trusted third parties.
 </Note>
+
+## Permissioned Relay
+
+The initial rollout of IBC Eureka will use permissioned relayers for additional safety and security guarantees. 
+The IBC light clients will be used in the same way as when IBC is permissionless, the permissioning only means that liveness is 
+dependent on the permissioned relay set. Permissioning will be removed in the near future. 
 
 ## Architecture Overview
 
