@@ -19,7 +19,6 @@ import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
-import { useGetAccount } from "@/hooks/useGetAccount.ts";
 
 export type GroupedAsset = {
   id: string;
@@ -62,7 +61,6 @@ export const AssetAndChainSelectorModal = createModal(
     const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);
 
     const listHeight = useListHeight(ITEM_HEIGHT);
-    const getAccount = useGetAccount();
 
     const resetInput = () => {
       setSearchQuery("");
@@ -96,13 +94,8 @@ export const AssetAndChainSelectorModal = createModal(
       );
     }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
-    const accounts = {
-      evmAccount: getAccount("1329"),
-      cosmosAccount: getAccount("pacific-1"),
-    };
-
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context, accounts });
+    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
 
     useEffect(() => {
       if (!isLoading && assets) {

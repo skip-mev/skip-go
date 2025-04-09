@@ -5,23 +5,25 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { chainFilterAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
+import { cosmosWalletAtom } from "@/state/wallets";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
   searchQuery?: string;
   context: "source" | "destination";
-  accounts: { cosmosAccount: unknown; evmAccount: unknown };
 };
 
 export const useFilteredChains = ({
   selectedGroup,
   searchQuery = "",
   context,
-  accounts,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chainFilter = useAtomValue(chainFilterAtom);
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
   const getBalance = useGetBalance();
+
+  const cosmosWalletConnected = cosmosWallet !== undefined;
 
   const filteredChains = useMemo(() => {
     if (!selectedGroup || !chains) return;
@@ -85,8 +87,6 @@ export const useFilteredChains = ({
 
     return filtered
       .filter((chainWithAsset) => {
-        const cosmosWalletConnected = accounts?.cosmosAccount;
-
         if (
           !cosmosWalletConnected &&
           chainWithAsset.chainName === "sei" &&
@@ -98,23 +98,13 @@ export const useFilteredChains = ({
         return true;
       })
       .map((chainWithAsset) => {
-        if (chainWithAsset.chainName === "sei") {
-          if (!accounts?.cosmosAccount) {
-            // Remove confusing "Sei - EVM" when they only ever see EVM stuff
-            chainWithAsset.prettyName = "SEI";
-          }
+        if (chainWithAsset.chainName === "sei" && !cosmosWalletConnected) {
+          // Remove confusing "Sei - EVM" when they only ever see EVM stuff
+          chainWithAsset.prettyName = "SEI";
         }
         return chainWithAsset;
       });
-  }, [
-    accounts?.cosmosAccount,
-    chainFilter,
-    chains,
-    context,
-    getBalance,
-    searchQuery,
-    selectedGroup,
-  ]);
+  }, [chainFilter, chains, context, cosmosWalletConnected, getBalance, searchQuery, selectedGroup]);
 
   return filteredChains;
 };
