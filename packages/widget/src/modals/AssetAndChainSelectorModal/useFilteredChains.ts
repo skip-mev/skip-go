@@ -85,25 +85,36 @@ export const useFilteredChains = ({
 
     return filtered
       .filter((chainWithAsset) => {
-        if (chainWithAsset.chainName === "sei") {
+        const cosmosWalletConnected = accounts?.cosmosAccount;
+
+        if (
+          !cosmosWalletConnected &&
+          chainWithAsset.chainName === "sei" &&
+          chainWithAsset?.chainType === "cosmos"
+        ) {
           // If the user does not have a cosmos wallet connected and the asset is the "cosmos" version of SEI, then hide it.
-          return !(!accounts?.cosmosAccount && chainWithAsset.chainType === "cosmos");
+          return false;
         }
         return true;
       })
       .map((chainWithAsset) => {
         if (chainWithAsset.chainName === "sei") {
-          // If the user has a cosmos wallet connected, then it will show both types of SEI
-          if (accounts?.cosmosAccount) {
-            chainWithAsset.prettyName = `SEI via ${chainWithAsset.chainType === "cosmos" ? "Cosmos" : "EVM"}`;
-          } else {
+          if (!accounts?.cosmosAccount) {
             // Remove confusing "Sei - EVM" when they only ever see EVM stuff
             chainWithAsset.prettyName = "SEI";
           }
         }
         return chainWithAsset;
       });
-  }, [chainFilter, chains, context, getBalance, searchQuery, selectedGroup]);
+  }, [
+    accounts?.cosmosAccount,
+    chainFilter,
+    chains,
+    context,
+    getBalance,
+    searchQuery,
+    selectedGroup,
+  ]);
 
   return filteredChains;
 };
