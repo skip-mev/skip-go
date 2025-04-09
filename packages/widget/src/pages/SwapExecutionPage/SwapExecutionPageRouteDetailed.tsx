@@ -57,7 +57,7 @@ export const SwapExecutionPageRouteDetailed = ({
 }: SwapExecutionPageRouteProps) => {
   const { data: swapVenues } = useAtomValue(skipSwapVenuesAtom);
   const { data: bridges } = useAtomValue(skipBridgesAtom);
-  const isGasStationTx = useIsGasStationTx()
+  const isGasStationTx = true
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
@@ -244,7 +244,7 @@ const StyledOperationTypeAndTooltipContainer = styled(Row)`
 
 const StyledGasStationTxText = styled(SmallText)`
   margin-top: 10px;
-  color: ${({ theme }) => theme.error.text}; 
+  color: ${({ theme }) => theme.success.text}; 
   background: ${({ theme }) => theme.secondary.background.transparent};
   padding: 12px;
   border-radius: 6px;
