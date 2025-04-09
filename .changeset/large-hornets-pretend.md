@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-copy change to route preference settings
+copy change to tooltip to route preference settings
