@@ -40,6 +40,7 @@ type SwapExecutionState = {
   transactionHistoryIndex: number;
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData;
+  transactionsSigned: number;
 };
 
 export type ChainAddress = {
@@ -69,6 +70,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     transactionHistoryIndex: 0,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
+    transactionsSigned: 0,
   },
 );
 
@@ -114,6 +116,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionHistoryIndex,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
+    transactionsSigned: 0,
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
@@ -177,6 +180,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionSigned: async () => {
       track("execute route: transaction signed");
+
+      set(swapExecutionStateAtom, (prev) => ({
+        ...prev,
+        transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
+      }));
+
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
@@ -195,6 +204,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
+        if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
+          track("error page: unexpected error");
+          set(errorAtom, {
+            errorType: ErrorType.Unexpected,
+            error: error as Error,
+            onClickBack: () => {
+              set(setOverallStatusAtom, "unconfirmed");
+            },
+          });
+          return;
+        }
         track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,

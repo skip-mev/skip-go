@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import {
   sourceAssetAtom,
@@ -17,6 +17,7 @@ import {
   routePreferenceAtom,
   slippageAtom,
   onSourceAssetUpdatedEffect,
+  isInvertingSwapAtom,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -29,7 +30,6 @@ import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
-import { useAccount } from "wagmi";
 import { calculatePercentageChange } from "@/utils/number";
 import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
@@ -41,13 +41,13 @@ import { useShowCosmosLedgerWarning } from "@/hooks/useShowCosmosLedgerWarning";
 import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
+import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
-  const { data: chains } = useAtomValue(skipChainsAtom);
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
   const setDestinationAssetAmount = useSetAtom(destinationAssetAmountAtom);
@@ -56,6 +56,7 @@ export const SwapPage = () => {
   const [swapDirection] = useAtom(swapDirectionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
+  const isInvertingSwap = useAtomValue(isInvertingSwapAtom);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
   const setError = useSetAtom(errorAtom);
@@ -72,15 +73,11 @@ export const SwapPage = () => {
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
+  const switchEvmChainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
   const txHistory = useAtomValue(transactionHistoryAtom);
   const isSwapOperation = useIsSwapOperation(route);
-
-  const { chainId: evmChainId, connector } = useAccount();
-  const evmAddress = useMemo(() => {
-    return evmChainId ? getAccount(String(evmChainId))?.address : undefined;
-  }, [evmChainId, getAccount]);
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -99,31 +96,17 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source asset selected", { asset });
-        // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
-        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
-          connector.switchChain?.({
-            chainId: Number(asset.chainID),
-          });
-        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
         }));
+        switchEvmChainId(asset?.chainID);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [
-    chains,
-    connector,
-    evmAddress,
-    evmChainId,
-    setDestinationAssetAmount,
-    setSourceAsset,
-    setSourceAssetAmount,
-  ]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmChainId]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -131,32 +114,17 @@ export const SwapPage = () => {
       context: "source",
       onSelect: (asset: ClientAsset | null) => {
         track("swap page: source chain selected", { asset });
-        // if evm chain is selected and the user is connected to an evm chain, switch the chain
-        const isEvm = chains?.find((c) => c.chainID === asset?.chainID)?.chainType === "evm";
-        if (isEvm && evmAddress && asset && asset.chainID !== String(evmChainId) && connector) {
-          connector.switchChain?.({
-            chainId: Number(asset.chainID),
-          });
-        }
         setSourceAsset((old) => ({
           ...old,
           ...asset,
         }));
+        switchEvmChainId(asset?.chainID);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
       selectChain: true,
     });
-  }, [
-    chains,
-    connector,
-    evmAddress,
-    evmChainId,
-    getClientAsset,
-    setSourceAsset,
-    sourceAsset?.chainID,
-    sourceAsset?.denom,
-  ]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, switchEvmChainId]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
@@ -203,19 +171,19 @@ export const SwapPage = () => {
       return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
-    if (!sourceAccount?.address) {
+    if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
           label="Connect Wallet"
           icon={ICONS.plus}
           onClick={() => {
             track("swap page: connect wallet button - clicked");
-            if (!sourceAsset?.chainID) {
-              NiceModal.show(Modals.ConnectedWalletModal);
-            } else {
+            if (sourceAsset?.chainID) {
               NiceModal.show(Modals.WalletSelectorModal, {
                 chainId: sourceAsset?.chainID,
               });
+            } else {
+              NiceModal.show(Modals.ConnectedWalletModal);
             }
           }}
         />
@@ -235,12 +203,18 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      // special case for multi-tx routes on mobile
-      const errMsg = routeError?.message.startsWith("no single-tx routes found")
+      const message = routeError?.message ?? "";
+      const errMsg = message.startsWith("no single-tx routes found")
         ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
-        : routeError?.message;
+        : message;
+
+      const fontSize = errMsg.length > 36 ? 18 : 24;
       return (
-        <MainButton label={errMsg ?? "No routes found"} disabled fontSize={errMsg ? 18 : 24} />
+        <MainButton
+          label={errMsg || "No routes found"}
+          disabled
+          fontSize={fontSize}
+        />
       );
     }
     if (isLoadingBalances) {
@@ -339,6 +313,7 @@ export const SwapPage = () => {
     sourceAsset?.chainID,
     sourceAsset?.amount,
     sourceAccount?.address,
+    isInvertingSwap,
     destinationAsset?.chainID,
     destinationAsset?.amount,
     isWaitingForNewRoute,

@@ -74,6 +74,26 @@ const DevMode = () => {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
+            ibcEurekaHighlightedAssets={["0x8236a87084f8B84306f72007F36F2618A5634494"]}
+            assetSymbolsSortedToTop={[
+              "LBTC",
+              "ATOM",
+              "USDC",
+              "USDT",
+              "ETH",
+              "TIA",
+              "OSMO",
+              "NTRN",
+              "INJ",
+            ]}
+            filterOut={{
+              destination: {
+                "pacific-1": [
+                  "ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7",
+                ],
+                "1329": ["0xB75D0B03c06A926e488e2659DF1A861F860bD3d1"],
+              },
+            }}
           />
         </div>
       </Row>

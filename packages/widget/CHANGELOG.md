@@ -1,5 +1,67 @@
 ## 0.0.15
 
+## 3.6.6
+
+### Patch Changes
+
+- ad43417: expose Theme type
+- d13c452: update registries
+- Updated dependencies [d13c452]
+  - @skip-go/client@0.16.26
+
+## 3.6.5
+
+### Patch Changes
+
+- 1cb8972: fix filterOut filtering
+
+## 3.6.4
+
+### Patch Changes
+
+- c5f48e7: Add arrow maskedVersion prop, Fix WalletSelectorModal back button logic
+- 30df1d3: increase POL max amount
+- 7a399d5: update registries
+- df29c5d: update testnetChains to include lombardTestnet
+- ebdca25: Add filterOut prop
+- 76b8015: Prevent IBC Eureka from dropping to newline on mobile
+- Updated dependencies [7a399d5]
+  - @skip-go/client@0.16.25
+
+## 3.6.3
+
+### Patch Changes
+
+- fcc815a: Dont attempt to connect wallet if already connected when signRequired is passed to getAddress
+
+## 3.6.2
+
+### Patch Changes
+
+- 7da5d2e: update testnetChains to include lombardTestnet
+
+## 3.6.1
+
+### Patch Changes
+
+- 580fda7: Reduce Keplr initial chain connect list
+- a4f3617: Fix evm disconnect, fix useSwitchChainIfNeeded
+
+## 3.6.0
+
+### Minor Changes
+
+- 6ec520a: allow connecting to any ecosystem wallet regardless of selected chain
+
+### Patch Changes
+
+- 6ec520a: Add ibcEurekaHighlightedAssets and assetSymbolsSortedToTop props
+- 6ec520a: update number of signatures remaining message to update instantly once tx is signed
+- 6ec520a: Add eth sepolia to gas validation bypass
+- 6ec520a: Add logging widget version onload
+- Updated dependencies [6ec520a]
+  - @skip-go/client@0.16.24
+
 ## 3.5.1
 
 ### Patch Changes

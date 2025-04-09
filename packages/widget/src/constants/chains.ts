@@ -15,9 +15,9 @@ export type Explorer = {
 
 const lombardTestnet: ChainInfo = {
   chainName: "Ledger",
-  chainId: "localnet",
-  rpc: "https://node0.ibc.lb-mgt.com:443",
-  rest: "http://node0-1317.ibc.lb-mgt.com",
+  chainId: "ledger-testnet-1",
+  rpc: "https://rpc-gastald.lb-mgt.com:443",
+  rest: "https://rpc-gastald.lb-mgt.com/ipc",
   bip44: {
     coinType: 118,
   },
@@ -50,9 +50,46 @@ const lombardTestnet: ChainInfo = {
   },
 };
 
-export const mainnetChains = _mainnetChains as unknown as ChainInfo[];
-export const testnetChains = _testnetChains as unknown as ChainInfo[];
-const allChains = [...mainnetChains, ...testnetChains, lombardTestnet];
+const lombardMainnet: ChainInfo = {
+  chainName: "Ledger",
+  chainId: "ledger-mainnet-1",
+  rpc: "https://rpc-mainnet.lb-mgt.com:443",
+  rest: "http://rpc-mainnet.lb-mgt.com:1317",
+  bip44: {
+    coinType: 118,
+  },
+  currencies: [
+    {
+      coinDecimals: 6,
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+    },
+  ],
+  feeCurrencies: [
+    {
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+      coinDecimals: 6,
+    },
+  ],
+  stakeCurrency: {
+    coinDenom: "lom",
+    coinMinimalDenom: "ulom",
+    coinDecimals: 6,
+  },
+  bech32Config: {
+    bech32PrefixAccAddr: "lom",
+    bech32PrefixAccPub: "lompub",
+    bech32PrefixValAddr: "lomvaloper",
+    bech32PrefixValPub: "lomvaloperpub",
+    bech32PrefixConsAddr: "lomvalcons",
+    bech32PrefixConsPub: "lomvalconspub",
+  },
+};
+
+export const mainnetChains = [...(_mainnetChains as unknown as ChainInfo[]), lombardMainnet];
+export const testnetChains = [...(_testnetChains as unknown as ChainInfo[]), lombardTestnet];
+const allChains = [...mainnetChains, ...testnetChains];
 
 export const explorers = _explorers as unknown as {
   chainId: string;

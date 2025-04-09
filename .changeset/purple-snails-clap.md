@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add logging widget version onload
+fix error font sizes
