@@ -195,7 +195,7 @@ export const SwapExecutionPageRouteDetailed = ({
         {renderOperations}
         {isGasStationTx && 
         <StyledGasStationTxText>
-          Transactions from EVM to Babylon have gas provided automatically.
+          Transactions from EVM to Babylon have gas provided automatically if no gas tokens are found.
         </StyledGasStationTxText>
         }
       </Column>
