@@ -6,10 +6,10 @@ export const defaultTheme = {
   brandTextColor: undefined,
   primary: {
     background: {
-      normal: "#000",
+      normal: "#000000",
     },
     text: {
-      normal: "#fff",
+      normal: "#ffffff",
       lowContrast: "#ffffff" + opacityToHex(50),
       ultraLowContrast: "#ffffff" + opacityToHex(20),
     },

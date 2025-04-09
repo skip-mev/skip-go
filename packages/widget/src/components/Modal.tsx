@@ -9,6 +9,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
+import { createCountdownTimer } from "@/utils/countdownTimer";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -26,15 +27,15 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
 
-  const delay = async (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
   const closeModal = useCallback(() => {
     onOpenChange?.(false);
-    delay(75).then(() => {
-      modal.remove();
-    });
+
+    createCountdownTimer({
+      duration: 75,
+      onComplete: () => {
+        modal.remove();
+      },
+    }).startCountdown();
   }, [modal, onOpenChange]);
 
   useEffect(() => {
