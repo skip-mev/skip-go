@@ -21,8 +21,7 @@ const RoutePreferenceSelector: React.FC = () => {
         <Tooltip
           content={
             <SmallText normalTextColor style={{ width: 250 }}>
-              Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
-              fees.
+             Choose if faster or cheaper routes should be prioritized. Fast routes require a $50 minimum from Ethereum and may not be available if there is insufficient liquidity for an asset.
             </SmallText>
           }
         >

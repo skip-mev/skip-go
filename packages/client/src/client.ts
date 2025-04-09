@@ -86,6 +86,7 @@ import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
 
+export const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
 export class SkipClient {
   protected requestClient: RequestClient;
 
@@ -381,8 +382,6 @@ export class SkipClient {
         chainID: tx.evmTx.chainID,
       };
     });
-
-    const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1", "11155111"];
 
     const isGasStationSourceEVM = chainIds.find((item, i, array) => {
       return (

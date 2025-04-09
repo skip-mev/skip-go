@@ -204,6 +204,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
+        if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
+          track("error page: unexpected error");
+          set(errorAtom, {
+            errorType: ErrorType.Unexpected,
+            error: error as Error,
+            onClickBack: () => {
+              set(setOverallStatusAtom, "unconfirmed");
+            },
+          });
+          return;
+        }
         track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
