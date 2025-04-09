@@ -58,7 +58,7 @@ export const TransactionHistoryPage = () => {
               }}
             />
           )}
-          itemKey={(item) => item.transactionDetails[0].txHash}
+          itemKey={(item) => item.transactionDetails?.[0].txHash}
         />
       </StyledContainer>
       <SwapPageFooter />

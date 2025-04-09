@@ -1,4 +1,4 @@
-import { SmallText } from "@/components/Typography";
+import { Text, SmallText } from "@/components/Typography";
 import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
@@ -6,17 +6,18 @@ import { XIcon } from "@/icons/XIcon";
 import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
-import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
 import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
-import { removeTrailingZeros } from "@/utils/number";
+import { limitDecimalsDisplayed } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
+import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
+import { Tooltip } from "@/components/Tooltip";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -40,11 +41,8 @@ export const TransactionHistoryPageHistoryItem = ({
     explorerLinks: txHistoryExplorerLinks,
     transferAssetRelease,
   } = useTxHistory({
-    txs: txHistoryItem.transactionDetails.map((tx) => ({
-      chainID: tx.chainID,
-      txHash: tx.txHash,
-    })),
-    txsRequired: txHistoryItem.route.txsRequired,
+    txHistoryItem,
+    index,
   });
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
@@ -124,11 +122,11 @@ export const TransactionHistoryPageHistoryItem = ({
       }
     }
   }, [
-    historyStatus,
     theme.error.text,
     theme.primary.text.normal,
     theme.warning.text,
     transferAssetRelease,
+    historyStatus,
   ]);
 
   const absoluteTimeString = useMemo(() => {
@@ -143,6 +141,7 @@ export const TransactionHistoryPageHistoryItem = ({
     if (historyStatus === "pending") {
       return "In Progress";
     }
+    if (!timestamp) return "";
     return formatDistanceStrict(new Date(timestamp), new Date(), {
       addSuffix: true,
     })
@@ -156,23 +155,19 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [historyStatus, timestamp]);
+  }, [timestamp, historyStatus]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <StyledHistoryItemContainer gap={5} align="center">
-          <RenderAssetAmount {...source} />
-          <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
-          <RenderAssetAmount {...destination} />
-          <SmallText
-            normalTextColor
-            title={destinationAssetDetails.chainName}
-            textWrap="nowrap"
-            overflowEllipsis
-          >
-            on {destinationAssetDetails.chainName}
-          </SmallText>
+        <StyledHistoryItemContainer gap={15} align="center">
+          <StyledSourceAssetContainer gap={8}>
+            <RenderAssetAmount {...source} />
+          </StyledSourceAssetContainer>
+          <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
+          <StyledSourceAssetContainer gap={8}>
+            <RenderAssetAmount {...destination} />
+          </StyledSourceAssetContainer>
         </StyledHistoryItemContainer>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
@@ -205,32 +200,39 @@ const RenderAssetAmount = ({
   asset?: ClientAsset;
   assetImage: string;
 }) => {
-  const isMobileScreenSize = useIsMobileScreenSize();
   return (
     <>
-      <img height={20} width={20} src={assetImage} />
-      <SmallText normalTextColor title={amount}>
-        {removeTrailingZeros(amount)}
-      </SmallText>
-      {!isMobileScreenSize && (
-        <SmallText normalTextColor>{asset?.recommendedSymbol ?? asset?.symbol}</SmallText>
-      )}
+      <img height={35} width={35} src={assetImage} />
+      <Column style={{ width: 95 }}>
+        <Tooltip content={amount}>
+          <Text normalTextColor>{limitDecimalsDisplayed(amount, 2)}</Text>
+        </Tooltip>
+        <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
+          {asset?.chainName}
+        </SmallText>
+      </Column>
     </>
   );
 };
+
+const StyledSourceAssetContainer = styled(Row)`
+  width: 120px;
+`;
 
 const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   background: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};
   &:hover {
     background: ${({ theme }) => theme.secondary.background.normal};
   }
+  min-height: 55px;
   border-radius: 6px;
+  justify-content: center;
 `;
 
 const StyledHistoryItemRow = styled(Row)`
   gap: 5px;
   padding: 0 10px;
-  height: 40px;
+  height: 55px;
   &:hover {
     cursor: pointer;
   }
@@ -245,5 +247,4 @@ const StyledGreenDot = styled.div`
 
 const StyledHistoryItemContainer = styled(Row)`
   max-width: calc(100% - 100px);
-  overflow: hidden;
 `;
