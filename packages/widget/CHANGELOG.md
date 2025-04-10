@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.6.7
+
+### Patch Changes
+
+- 777a11d: show gas station provision message if gas station tx
+- e77efac: Use rAF timers to handle closeModal to avoid flickering
+- 04cf861: copy change to tooltip to route preference settings
+- 0e33fe7: fix evm gas simulation
+- 94f5424: fix error font sizes
+- c73fa16: Update default decimal places to 8
+- Updated dependencies [0d2e0c3]
+- Updated dependencies [0e33fe7]
+  - @skip-go/client@0.16.27
+
 ## 3.6.6
 
 ### Patch Changes
