@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.6.8
+
+### Patch Changes
+
+- 59f5f76: highlight all eureka asset
+- 6b5dfa1: fix filter
+
 ## 3.6.7
 
 ### Patch Changes

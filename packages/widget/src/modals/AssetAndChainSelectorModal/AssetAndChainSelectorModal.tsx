@@ -123,9 +123,14 @@ export const AssetAndChainSelectorModal = createModal(
         const groupedAssetContainsEurekaAsset = groupedAsset?.assets?.some(
           (asset) => ibcEurekaHighlightedAssets.includes(asset.denom) && asset.chainID === "1",
         );
-        const chainWithAssetContainsEurekaAsset =
-          ibcEurekaHighlightedAssets.includes(chainWithAsset?.asset?.denom) &&
-          chainWithAsset?.asset.chainID === "1";
+        const ethRepresent = assets?.find(
+          (asset) =>
+            asset.recommendedSymbol === chainWithAsset?.asset?.recommendedSymbol &&
+            asset.chainID === "1",
+        );
+        const chainWithAssetContainsEurekaAsset = Boolean(
+          ethRepresent?.denom && ibcEurekaHighlightedAssets.includes(ethRepresent?.denom),
+        );
 
         const eureka = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
 
@@ -140,7 +145,7 @@ export const AssetAndChainSelectorModal = createModal(
           />
         );
       },
-      [context, ibcEurekaHighlightedAssets, onSelect],
+      [assets, context, ibcEurekaHighlightedAssets, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {
