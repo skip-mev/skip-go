@@ -100,8 +100,12 @@ export const useFilteredChains = ({
         }
 
         // 3. Sort by ibcEurekaHighlightedAssets index
-        const indexA = ibcEurekaHighlightedAssets.indexOf(chainWithAssetA.asset.denom);
-        const indexB = ibcEurekaHighlightedAssets.indexOf(chainWithAssetB.asset.denom);
+        const indexA = Object.keys(ibcEurekaHighlightedAssets).indexOf(
+          chainWithAssetA.asset.recommendedSymbol || "",
+        );
+        const indexB = Object.keys(ibcEurekaHighlightedAssets).indexOf(
+          chainWithAssetB.asset.recommendedSymbol || "",
+        );
 
         const aIsHighlighted = indexA !== -1;
         const bIsHighlighted = indexB !== -1;
