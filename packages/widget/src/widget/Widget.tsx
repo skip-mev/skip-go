@@ -78,6 +78,7 @@ export type WidgetProps = {
   disableShadowDom?: boolean;
   ibcEurekaHighlightedAssets?: string[];
   assetSymbolsSortedToTop?: string[];
+  hideAssetsUnlessWalletTypeConnected?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"

@@ -5,7 +5,9 @@ import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { filterAtom, filterOutAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
+import { cosmosWalletAtom } from "@/state/wallets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -19,9 +21,13 @@ export const useFilteredChains = ({
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const hideAssetsUnlessWalletTypeConnected = useAtomValue(hideAssetsUnlessWalletTypeConnectedAtom);
+  const getBalance = useGetBalance();
+
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
+  const cosmosWalletConnected = cosmosWallet !== undefined;
   const filter = useAtomValue(filterAtom);
   const filterOut = useAtomValue(filterOutAtom);
-  const getBalance = useGetBalance();
 
   const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
 
@@ -57,7 +63,7 @@ export const useFilteredChains = ({
         return isAllowedByFilter && isPenumbraAllowed && !isFilteredOutByFilter;
       }) as ChainWithAsset[];
 
-    return chainsWithAssets
+    const filtered = chainsWithAssets
       .filter((chainWithAsset) => {
         const { chainName, prettyName } = chainWithAsset;
         const chainNameIncludesSearchQuery = chainName
@@ -126,15 +132,42 @@ export const useFilteredChains = ({
 
         return 0;
       });
+
+    return filtered
+      .filter((chainWithAsset) => {
+        if (
+          hideAssetsUnlessWalletTypeConnected &&
+          !cosmosWalletConnected &&
+          chainWithAsset?.chainName === "sei" &&
+          chainWithAsset?.chainType === "cosmos"
+        ) {
+          // If the user does not have a cosmos wallet connected and the asset is the "cosmos" version of SEI, then hide it.
+          return false;
+        }
+        return true;
+      })
+      .map((chainWithAsset) => {
+        if (
+          hideAssetsUnlessWalletTypeConnected &&
+          chainWithAsset.chainName === "sei" &&
+          !cosmosWalletConnected
+        ) {
+          // Remove confusing "Sei - EVM" when they only ever see EVM stuff
+          chainWithAsset.prettyName = "SEI";
+        }
+        return chainWithAsset;
+      });
   }, [
-    selectedGroup,
     chains,
-    filter,
     context,
+    cosmosWalletConnected,
+    filter,
     filterOut,
-    searchQuery,
     getBalance,
+    hideAssetsUnlessWalletTypeConnected,
     ibcEurekaHighlightedAssets,
+    searchQuery,
+    selectedGroup,
   ]);
 
   return filteredChains;
