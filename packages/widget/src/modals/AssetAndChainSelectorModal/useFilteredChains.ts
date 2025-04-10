@@ -7,6 +7,7 @@ import { filterAtom, filterOutAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
 import { cosmosWalletAtom } from "@/state/wallets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -20,6 +21,7 @@ export const useFilteredChains = ({
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const hideAssetsUnlessWalletTypeConnected = useAtomValue(hideAssetsUnlessWalletTypeConnectedAtom);
   const getBalance = useGetBalance();
 
   const cosmosWallet = useAtomValue(cosmosWalletAtom);
@@ -134,6 +136,7 @@ export const useFilteredChains = ({
     return filtered
       .filter((chainWithAsset) => {
         if (
+          hideAssetsUnlessWalletTypeConnected &&
           !cosmosWalletConnected &&
           chainWithAsset.chainName === "sei" &&
           chainWithAsset?.chainType === "cosmos"

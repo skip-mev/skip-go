@@ -28,6 +28,7 @@ import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -54,6 +55,9 @@ export const useInitWidget = (props: WidgetProps) => {
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
   const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
   const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
+  const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
+    hideAssetsUnlessWalletTypeConnectedAtom,
+  );
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -139,6 +143,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
     if (props.assetSymbolsSortedToTop) {
       setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
+    }
+
+    if (props.hideAssetsUnlessWalletTypeConnected) {
+      setHideAssetsUnlessWalletTypeConnected(props.hideAssetsUnlessWalletTypeConnected);
     }
 
     const callbacks = {
