@@ -160,6 +160,7 @@ export const useFilteredChains = ({
     filter,
     filterOut,
     getBalance,
+    hideAssetsUnlessWalletTypeConnected,
     ibcEurekaHighlightedAssets,
     searchQuery,
     selectedGroup,
