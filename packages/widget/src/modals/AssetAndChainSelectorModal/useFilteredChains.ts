@@ -147,7 +147,11 @@ export const useFilteredChains = ({
         return true;
       })
       .map((chainWithAsset) => {
-        if (chainWithAsset.chainName === "sei" && !cosmosWalletConnected) {
+        if (
+          hideAssetsUnlessWalletTypeConnected &&
+          chainWithAsset.chainName === "sei" &&
+          !cosmosWalletConnected
+        ) {
           // Remove confusing "Sei - EVM" when they only ever see EVM stuff
           chainWithAsset.prettyName = "SEI";
         }
