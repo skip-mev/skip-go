@@ -190,6 +190,8 @@ export const useInitWidget = (props: WidgetProps) => {
     props.filterOut,
     setFilter,
     setFilterOut,
+    props.hideAssetsUnlessWalletTypeConnected,
+    setHideAssetsUnlessWalletTypeConnected,
   ]);
 
   return { theme: mergedTheme };
