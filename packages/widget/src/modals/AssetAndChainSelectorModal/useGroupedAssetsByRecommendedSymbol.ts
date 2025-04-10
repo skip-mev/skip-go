@@ -28,7 +28,10 @@ export const useGroupedAssetByRecommendedSymbol = ({
         !allowed ||
         Object.entries(allowed).some(([chainId, denoms]) => {
           if (denoms) {
-            return chainId === asset.chainID && denoms.includes(asset.denom);
+            return (
+              chainId === asset.chainID &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+            );
           } else {
             return chainId === asset.chainID;
           }
@@ -38,7 +41,10 @@ export const useGroupedAssetByRecommendedSymbol = ({
         !!blocked &&
         Object.entries(blocked).some(([chainId, denoms]) => {
           if (denoms) {
-            return chainId === asset.chainID && denoms.includes(asset.denom);
+            return (
+              chainId === asset.chainID &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+            );
           } else {
             return chainId === asset.chainID;
           }
