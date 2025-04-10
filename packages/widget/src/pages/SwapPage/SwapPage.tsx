@@ -194,7 +194,10 @@ export const SwapPage = () => {
       return <MainButton label="Please select a destination asset" icon={ICONS.swap} disabled />;
     }
 
-    if (!sourceAsset?.amount && !destinationAsset?.amount) {
+    const amountsUndefined = !sourceAsset?.amount && !destinationAsset?.amount
+    const amountsAreZero = sourceAsset?.amount === "0" || destinationAsset?.amount === "0"
+
+    if (amountsUndefined || amountsAreZero) {
       return <MainButton label="Please enter a valid amount" icon={ICONS.swap} disabled />;
     }
 
