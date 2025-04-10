@@ -120,17 +120,22 @@ export const AssetAndChainSelectorModal = createModal(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         const groupedAsset = item as GroupedAsset;
         const chainWithAsset = item as ChainWithAsset;
-        const groupedAssetContainsEurekaAsset = groupedAsset?.assets?.some(
-          (asset) => ibcEurekaHighlightedAssets.includes(asset.denom) && asset.chainID === "1",
-        );
-        const ethRepresent = assets?.find(
-          (asset) =>
-            asset.recommendedSymbol === chainWithAsset?.asset?.recommendedSymbol &&
-            asset.chainID === "1",
-        );
-        const chainWithAssetContainsEurekaAsset = Boolean(
-          ethRepresent?.denom && ibcEurekaHighlightedAssets.includes(ethRepresent?.denom),
-        );
+
+        const highlightedSymbol =
+          ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
+
+        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
+
+        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
+          ? ibcEurekaHighlightedAssets &&
+            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
+            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
+            ? true
+            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
+              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
+                chainWithAsset.chainID,
+              )
+          : false;
 
         const eureka = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
 
@@ -145,7 +150,7 @@ export const AssetAndChainSelectorModal = createModal(
           />
         );
       },
-      [assets, context, ibcEurekaHighlightedAssets, onSelect],
+      [context, ibcEurekaHighlightedAssets, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {

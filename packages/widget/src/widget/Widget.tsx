@@ -18,6 +18,7 @@ import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
 import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
+import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -76,7 +77,7 @@ export type WidgetProps = {
    */
   simulate?: boolean;
   disableShadowDom?: boolean;
-  ibcEurekaHighlightedAssets?: string[];
+  ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
 } & Pick<

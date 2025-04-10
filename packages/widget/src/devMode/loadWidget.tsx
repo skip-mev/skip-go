@@ -74,30 +74,10 @@ const DevMode = () => {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
-            ibcEurekaHighlightedAssets={[
-              "0x7A56E1C57C7475CCf742a1832B028F0456652F97",
-              "0xd9D920AA40f578ab794426F5C90F6C731D159DEf",
-              "0xF469fBD2abcd6B9de8E169d128226C0Fc90a012e",
-              "0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3",
-              "0xbDf245957992bfBC62B07e344128a1EEc7b7eE3f",
-              "0x9356f6d95b8E109F4b7Ce3E49D672967d3B48383",
-              "0x657e8C867D8B37dCC18fA4Caead9C45EB088C642",
-              "0x6b7de496080e26ee8567a60b7b823b7e28ebe224",
-              "0x14862c03A0cACcC1aB328B062E64e31B2a1afcd7",
-              "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-              "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
-              "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-              "0x214BF9f07684459aCD56324e3D247b2e5e67D277",
-              "0xd7a25d995Cf5e4e7D295CF1Dbd0310d2981C50Bb",
-              "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
-              "0xbf6Bc6782f7EB580312CC09B976e9329f3e027B3",
-              "0x8236a87084f8B84306f72007F36F2618A5634494",
-              "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-              "0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a",
-              "0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD",
-              "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
-              "0x6b7de496080E26Ee8567a60b7b823b7E28ebE224",
-            ]}
+            ibcEurekaHighlightedAssets={{
+              USDC: ["cosmoshub-4"],
+              USDT: undefined,
+            }}
             assetSymbolsSortedToTop={[
               "LBTC",
               "ATOM",
