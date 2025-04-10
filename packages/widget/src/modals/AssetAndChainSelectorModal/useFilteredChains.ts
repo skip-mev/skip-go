@@ -138,7 +138,7 @@ export const useFilteredChains = ({
         if (
           hideAssetsUnlessWalletTypeConnected &&
           !cosmosWalletConnected &&
-          chainWithAsset.chainName === "sei" &&
+          chainWithAsset?.chainName === "sei" &&
           chainWithAsset?.chainType === "cosmos"
         ) {
           // If the user does not have a cosmos wallet connected and the asset is the "cosmos" version of SEI, then hide it.
