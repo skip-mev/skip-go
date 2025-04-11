@@ -97,7 +97,11 @@ export const AssetAndChainSelectorModal = createModal(
     }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
+    const filteredChains = useFilteredChains({
+      selectedGroup,
+      searchQuery,
+      context,
+    });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -218,6 +222,22 @@ export const AssetAndChainSelectorModal = createModal(
     );
   },
 );
+
+export const openAssetAndChainSelectorModal = ({
+  context,
+  onSelect,
+}: {
+  onSelect: (asset: ClientAsset | null) => void;
+  context: "source" | "destination";
+}) => {
+  NiceModal.show(Modals.AssetAndChainSelectorModal, {
+    context,
+    onSelect: (asset: ClientAsset | null) => {
+      onSelect(asset);
+      NiceModal.hide(Modals.AssetAndChainSelectorModal);
+    },
+  });
+};
 
 const StyledColumn = styled(Column)<{
   height: number;

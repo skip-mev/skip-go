@@ -194,8 +194,8 @@ export const SwapPage = () => {
       return <MainButton label="Please select a destination asset" icon={ICONS.swap} disabled />;
     }
 
-    const amountsUndefined = !sourceAsset?.amount && !destinationAsset?.amount
-    const amountsAreZero = sourceAsset?.amount === "0" || destinationAsset?.amount === "0"
+    const amountsUndefined = !sourceAsset?.amount && !destinationAsset?.amount;
+    const amountsAreZero = sourceAsset?.amount === "0" || destinationAsset?.amount === "0";
 
     if (amountsUndefined || amountsAreZero) {
       return <MainButton label="Please enter a valid amount" icon={ICONS.swap} disabled />;
@@ -212,13 +212,7 @@ export const SwapPage = () => {
         : message;
 
       const fontSize = errMsg.length > 36 ? 18 : 24;
-      return (
-        <MainButton
-          label={errMsg || "No routes found"}
-          disabled
-          fontSize={fontSize}
-        />
-      );
+      return <MainButton label={errMsg || "No routes found"} disabled fontSize={fontSize} />;
     }
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
