@@ -1,5 +1,6 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
+import "../web-component";
 import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
@@ -55,7 +56,7 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          <Widget
+          {/* <Widget
             theme={{
               ...(theme === "dark" ? defaultTheme : lightTheme),
               brandTextColor: "black",
@@ -101,7 +102,8 @@ const DevMode = () => {
                 "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
               },
             }}
-          />
+          /> */}
+          <skip-widget id="skip-widget"></skip-widget>
         </div>
       </Row>
     </Column>

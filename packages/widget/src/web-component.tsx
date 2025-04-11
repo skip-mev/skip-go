@@ -4,8 +4,8 @@ import toWebComponent from "@r2wc/react-to-web-component";
 import { Widget } from "./widget/Widget";
 
 type WebComponentProps = {
-  container: {
-    attributes: Record<string, string>[];
+  container?: {
+    attributes?: Record<string, string>[];
   };
 };
 
@@ -24,26 +24,36 @@ const camelize = (inputString: string) => {
 };
 
 const WidgetWithProvider = (props: WebComponentProps) => {
-  const parsedProps = Array.from(props.container.attributes).map(({ name, value }) => {
-    return { key: name, value };
-  });
+  const attributeProps = Array.isArray(props.container?.attributes)
+    ? props.container.attributes
+    : [];
 
-  const realProps = parsedProps.reduce(
-    (accumulator, initialValue) => {
-      const { key, value } = initialValue;
-
-      accumulator[camelize(key)] = isJsonString(value) ? JSON.parse(value) : value;
-      return accumulator;
+  const parsedFromAttributes = attributeProps.reduce(
+    (acc, { name, value }) => {
+      acc[camelize(name)] = isJsonString(value) ? JSON.parse(value) : value;
+      return acc;
     },
-    {} as Record<string, string>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as Record<string, any>,
   );
+
+  const { container, ...jsAssignedProps } = props;
+
+  const realProps = {
+    ...parsedFromAttributes,
+    ...jsAssignedProps,
+  };
 
   return <Widget {...realProps} />;
 };
 
 const WEB_COMPONENT_NAME = "skip-widget";
 
-const WebComponent = toWebComponent(WidgetWithProvider);
+const WebComponent = toWebComponent(WidgetWithProvider, {
+  props: {
+    onRouteUpdated: "function",
+  },
+});
 
 function initializeSkipWidget() {
   if (!customElements.get(WEB_COMPONENT_NAME)) {
