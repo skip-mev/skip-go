@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.28
+
+### Patch Changes
+
+- afd9530: add initia pubkey to account parser
+
 ## 0.16.27
 
 ### Patch Changes
