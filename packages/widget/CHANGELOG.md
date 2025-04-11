@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.7.1
+
+### Patch Changes
+
+- a7ba428: Fix "Set second signing address" showing incorrectly
+- 9515ad5: expose openAssetAndChainSelectorModal
+- 39235a6: Fix ConnectEcoRow to show sourceAsset address or defaultAddress or firstAddress found in cosmosAccounts, and add fallback connecting to defaultChainId
+- f26c654: Stop animation after it completes to fix modal flickering
+- afd9530: add initia pubkey to account parser
+- 8fce4a3: Fix sorting with eurekaHighlightedAssets
+- Updated dependencies [afd9530]
+  - @skip-go/client@0.16.28
+
 ## 3.7.0
 
 ### Minor Changes
