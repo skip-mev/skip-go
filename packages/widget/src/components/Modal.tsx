@@ -27,16 +27,14 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
 
+  useEffect(() => {
+    console.log("mounted");
+  }, []);
+
   const closeModal = useCallback(() => {
     onOpenChange?.(false);
-
-    createCountdownTimer({
-      duration: 75,
-      onComplete: () => {
-        modal.remove();
-      },
-    }).startCountdown();
-  }, [modal, onOpenChange]);
+    setWasVisible(undefined);
+  }, [onOpenChange]);
 
   useEffect(() => {
     if (wasVisible && !modal.visible) {
@@ -87,7 +85,17 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay drawer={drawer} open={modal.visible} data-root-id={rootId}>
+      <StyledOverlay
+        drawer={drawer}
+        open={modal.visible}
+        data-root-id={rootId}
+        onAnimationEnd={(e) => {
+          console.log("animation ended");
+          if (!modal.visible) {
+            modal.remove();
+          }
+        }}
+      >
         <StyledContent
           ref={modalRef}
           drawer={drawer}
