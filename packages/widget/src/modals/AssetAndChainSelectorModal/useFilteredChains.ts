@@ -3,11 +3,11 @@ import { ChainWithAsset, GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { filterAtom, filterOutAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
 import { cosmosWalletAtom } from "@/state/wallets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -22,6 +22,8 @@ export const useFilteredChains = ({
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
   const hideAssetsUnlessWalletTypeConnected = useAtomValue(hideAssetsUnlessWalletTypeConnectedAtom);
+  const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
+
   const getBalance = useGetBalance();
 
   const cosmosWallet = useAtomValue(cosmosWalletAtom);
@@ -52,6 +54,15 @@ export const useFilteredChains = ({
 
         const allowedChainIds = filter?.[context];
         const blockedChainIds = filterOut?.[context];
+        const blockedChainIdsUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
+
+        const hasBalance = getBalance(chain.asset.chainID, chain.asset.denom);
+
+        const isFilteredOutUnlessUserHasBalance = Boolean(
+          blockedChainIdsUnlessUserHasBalance?.[chain.chainID] &&
+            blockedChainIdsUnlessUserHasBalance?.[chain.chainID] === undefined &&
+            hasBalance === undefined,
+        );
 
         const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
         const isFilteredOutByFilter = Boolean(
@@ -60,7 +71,12 @@ export const useFilteredChains = ({
 
         const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
 
-        return isAllowedByFilter && isPenumbraAllowed && !isFilteredOutByFilter;
+        return (
+          isAllowedByFilter &&
+          isPenumbraAllowed &&
+          !isFilteredOutByFilter &&
+          !isFilteredOutUnlessUserHasBalance
+        );
       }) as ChainWithAsset[];
 
     const filtered = chainsWithAssets

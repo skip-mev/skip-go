@@ -5,7 +5,7 @@ import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { filterAtom, filterOutAtom } from "@/state/swapPage";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
@@ -18,10 +18,12 @@ export const useGroupedAssetByRecommendedSymbol = ({
   const getBalance = useGetBalance();
   const filter = useAtomValue(filterAtom);
   const filterOut = useAtomValue(filterOutAtom);
+  const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
 
   const assets = useMemo(() => {
     const allowed = filter?.[context];
     const blocked = filterOut?.[context];
+    const blockedUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
 
     return _assets?.filter((asset) => {
       const isAllowed =
@@ -50,9 +52,25 @@ export const useGroupedAssetByRecommendedSymbol = ({
           }
         });
 
-      return isAllowed && !isBlocked;
+      const hasBalance = getBalance(asset.chainID, asset.denom) !== undefined;
+
+      const isBlockedUnlessUserHasBalance =
+        !!blockedUnlessUserHasBalance &&
+        !hasBalance &&
+        Object.entries(blockedUnlessUserHasBalance).some(([chainId, denoms]) => {
+          if (denoms) {
+            return (
+              chainId === asset.chainID &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+            );
+          } else {
+            return chainId === asset.chainID;
+          }
+        });
+
+      return isAllowed && !isBlocked && !isBlockedUnlessUserHasBalance;
     });
-  }, [_assets, filter, filterOut, context]);
+  }, [filter, context, filterOut, filterOutUnlessUserHasBalance, _assets, getBalance]);
 
   const groupedAssetsByRecommendedSymbol = useMemo(() => {
     if (!assets) return;
