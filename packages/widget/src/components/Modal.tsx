@@ -9,7 +9,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
-import { createCountdownTimer } from "@/utils/countdownTimer";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -26,10 +25,6 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const [wasVisible, setWasVisible] = useState<boolean>();
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
-
-  useEffect(() => {
-    console.log("mounted");
-  }, []);
 
   const closeModal = useCallback(() => {
     onOpenChange?.(false);
@@ -89,8 +84,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
         drawer={drawer}
         open={modal.visible}
         data-root-id={rootId}
-        onAnimationEnd={(e) => {
-          console.log("animation ended");
+        onAnimationEnd={() => {
           if (!modal.visible) {
             modal.remove();
           }
@@ -207,7 +201,7 @@ const StyledOverlay = styled.div<{
   display: grid;
   place-items: center;
   z-index: 10;
-  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
+  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -223,7 +217,7 @@ const StyledOverlay = styled.div<{
       align-items: flex-end;
       position: absolute;
       background: rgba(255, 255, 255, 0);
-      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out;
+      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out forwards;
       /* For Chrome */
       &::-webkit-scrollbar {
         display: none;
@@ -254,5 +248,5 @@ const StyledContent = styled.div<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    150ms cubic-bezier(0.5, 1, 0.89, 1);
+    150ms cubic-bezier(0.5, 1, 0.89, 1) forwards;
 `;
