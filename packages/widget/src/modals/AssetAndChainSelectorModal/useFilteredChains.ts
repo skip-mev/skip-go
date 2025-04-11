@@ -110,11 +110,8 @@ export const useFilteredChains = ({
         const aIsHighlighted = indexA !== -1;
         const bIsHighlighted = indexB !== -1;
 
-        if (aIsHighlighted && bIsHighlighted) {
-          return indexA - indexB;
-        }
-        if (aIsHighlighted) return -1;
-        if (bIsHighlighted) return 1;
+        if (aIsHighlighted && !bIsHighlighted) return -1;
+        if (bIsHighlighted && !aIsHighlighted) return 1;
 
         // 4. Sort by chainName including asset denom/symbol
         const aMatchesName = chainWithAssetA.chainName
