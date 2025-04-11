@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.29
+
+### Patch Changes
+
+- dedd423: evm gas simulation at the start of the tx
+
 ## 0.16.28
 
 ### Patch Changes
