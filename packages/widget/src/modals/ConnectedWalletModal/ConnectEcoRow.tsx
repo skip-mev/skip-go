@@ -21,19 +21,18 @@ import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
 import { useAccount as useCosmosAccount } from "graz";
+import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 const STANDARD_ICON_SIZE = 35;
 
-export const ConnectEco = ({
+export const ConnectEcoRow = ({
   chainType,
-  chainId,
   onClick,
   connectedWalletModal = false,
 }: {
   chainType: ChainType;
-  chainId: string; // This is the representative chain ID for the ecosystem
   onClick?: () => void;
   connectedWalletModal?: boolean;
 }) => {
@@ -49,23 +48,27 @@ export const ConnectEco = ({
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
+  const primaryChainIdForChainType = usePrimaryChainIdForChainType();
+
+  const defaultChainId = primaryChainIdForChainType[chainType];
+
   const accountChainId = useMemo(() => {
     if (chainType !== ChainType.Cosmos) {
-      return chainId;
+      return defaultChainId;
     }
 
     if (sourceAsset?.chainID && cosmosAccounts?.[sourceAsset.chainID]) {
       return sourceAsset?.chainID;
     }
 
-    if (cosmosAccounts?.[chainId]) {
-      return chainId;
+    if (cosmosAccounts?.[defaultChainId]) {
+      return defaultChainId;
     }
 
     if (cosmosAccounts && Object.keys(cosmosAccounts)[0]) {
       return Object.keys(cosmosAccounts)[0];
     }
-  }, [chainId, chainType, cosmosAccounts, sourceAsset?.chainID]);
+  }, [chainType, cosmosAccounts, defaultChainId, sourceAsset?.chainID]);
 
   const chainIdForWalletSelector = useMemo(() => {
     if (!sourceAsset?.chainID || !chains) return undefined;
@@ -74,8 +77,8 @@ export const ConnectEco = ({
     if (sourceChainInfo?.chainType === chainType) {
       return sourceAsset.chainID;
     }
-    return chainId;
-  }, [sourceAsset?.chainID, chains, chainType, chainId]);
+    return defaultChainId;
+  }, [sourceAsset?.chainID, chains, chainType, defaultChainId]);
 
   const account = useMemo(() => {
     return getAccount(accountChainId, true);
