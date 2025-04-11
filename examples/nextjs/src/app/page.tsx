@@ -1,5 +1,5 @@
 'use client';
-import { Widget, resetWidget } from '@skip-go/widget';
+import { Widget, openAssetAndChainSelectorModal, resetWidget } from '@skip-go/widget';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -87,6 +87,16 @@ export default function Home() {
           }}
         >
           Toggle theme (current theme: {theme})
+        </button>
+        <button onClick={() => {
+          openAssetAndChainSelectorModal({
+            context: "source",
+            onSelect: (asset) => {
+              console.log('Selected asset:', asset);
+            },
+          })
+        }}>
+          open selector
         </button>
         <button
           onClick={() => resetWidget()}
