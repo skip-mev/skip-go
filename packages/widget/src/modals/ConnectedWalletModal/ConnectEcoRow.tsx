@@ -2,7 +2,6 @@ import { Button, GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text, TextButton } from "@/components/Typography";
-import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
@@ -21,6 +20,7 @@ import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
+import { useAccount as useCosmosAccount } from "graz";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -39,15 +39,33 @@ export const ConnectEco = ({
 }) => {
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
+  const { data: cosmosAccounts } = useCosmosAccount({
+    multiChain: true,
+  });
+
   const theme = useTheme();
   const getAccount = useGetAccount();
   const isMobileScreenSize = useIsMobileScreenSize();
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  useGetAssetDetails({
-    assetDenom: sourceAsset?.denom,
-    chainId: sourceAsset?.chainID,
-  });
   const { data: chains } = useAtomValue(skipChainsAtom);
+
+  const accountChainId = useMemo(() => {
+    if (chainType !== ChainType.Cosmos) {
+      return chainId;
+    }
+
+    if (sourceAsset?.chainID && cosmosAccounts?.[sourceAsset.chainID]) {
+      return sourceAsset?.chainID;
+    }
+
+    if (cosmosAccounts?.[chainId]) {
+      return chainId;
+    }
+
+    if (cosmosAccounts && Object.keys(cosmosAccounts)[0]) {
+      return Object.keys(cosmosAccounts)[0];
+    }
+  }, [chainId, chainType, cosmosAccounts, sourceAsset?.chainID]);
 
   const chainIdForWalletSelector = useMemo(() => {
     if (!sourceAsset?.chainID || !chains) return undefined;
@@ -56,12 +74,12 @@ export const ConnectEco = ({
     if (sourceChainInfo?.chainType === chainType) {
       return sourceAsset.chainID;
     }
-    return undefined;
-  }, [sourceAsset?.chainID, chains, chainType]);
+    return chainId;
+  }, [sourceAsset?.chainID, chains, chainType, chainId]);
 
   const account = useMemo(() => {
-    return getAccount(chainId, true);
-  }, [chainId, getAccount]);
+    return getAccount(accountChainId, true);
+  }, [accountChainId, getAccount]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
