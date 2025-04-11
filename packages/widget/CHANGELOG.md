@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.7.3
+
+### Patch Changes
+
+- ac50805: Add filterOutUnlessUserHasBalance prop
+- dedd423: evm gas simulation at the start of the tx
+- Updated dependencies [dedd423]
+  - @skip-go/client@0.16.29
+
 ## 3.7.2
 
 ### Patch Changes
