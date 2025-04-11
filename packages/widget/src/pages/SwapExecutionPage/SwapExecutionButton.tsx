@@ -48,11 +48,19 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   const isGoFast = useIsGoFast(route);
 
   const getDestinationAddreessUnsetText = useCallback(() => {
-    if (lastOperation.signRequired && route?.txsRequired === 2) {
+    const destinationChainIdHasSignRequired =
+      lastOperation.signRequired && lastOperation.fromChainID === route?.destAssetChainID;
+
+    if (destinationChainIdHasSignRequired && route?.txsRequired === 2) {
       return "Set second signing address";
     }
     return "Set destination address";
-  }, [lastOperation.signRequired, route?.txsRequired]);
+  }, [
+    lastOperation.fromChainID,
+    lastOperation.signRequired,
+    route?.destAssetChainID,
+    route?.txsRequired,
+  ]);
 
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
