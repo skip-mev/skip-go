@@ -4,7 +4,7 @@ import { Decimal } from "@cosmjs/math";
 import { GasPrice, calculateFee } from "@cosmjs/stargate";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "./useGetBalance";
-import { CosmosGasAmount, sourceAssetAtom } from "@/state/swapPage";
+import { COSMOS_GAS_AMOUNT, sourceAssetAtom } from "@/state/swapPage";
 import { BigNumber } from "bignumber.js";
 import { useMemo } from "react";
 import { useMaxAmountTokenMinusFees } from "@/pages/SwapPage/useSetMaxAmount";
@@ -29,7 +29,9 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         })();
         if (!gasPrice) return undefined;
         const isSwapChain = swapVenues?.map((venue) => venue.chainID).includes(chainId);
-        const gasAmount = Math.ceil(isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT);
+        const gasAmount = Math.ceil(
+          isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
+        );
         const fee = calculateFee(gasAmount, gasPrice);
         const feeAmount = fee.amount[0].amount;
 

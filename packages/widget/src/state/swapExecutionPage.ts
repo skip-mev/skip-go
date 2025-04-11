@@ -21,7 +21,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
+import { COSMOS_GAS_AMOUNT, EVM_GAS_AMOUNT, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
@@ -277,7 +277,8 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      route,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      route: route!,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
       status: "unconfirmed",
@@ -323,16 +324,19 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   const swapVenues = get(skipSwapVenuesAtom)?.data;
 
   return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
+    if (chainType === ChainType.EVM) {
+      return EVM_GAS_AMOUNT;
+    }
     if (chainType !== ChainType.Cosmos) return undefined;
 
     const isSwapChain = swapVenues?.some((venue) => venue.chainID === chainId) ?? false;
     const defaultGasAmount = Math.ceil(
-      isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT,
+      isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
     );
 
     // Special case for carbon-1
     if (chainId === "carbon-1") {
-      return CosmosGasAmount.CARBON;
+      return COSMOS_GAS_AMOUNT.CARBON;
     }
 
     return defaultGasAmount;
