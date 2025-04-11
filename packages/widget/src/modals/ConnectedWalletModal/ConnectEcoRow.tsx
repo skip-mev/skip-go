@@ -186,9 +186,8 @@ export const ConnectEcoRow = ({
                   <CopyIcon width="10" height="10" color={theme.primary.text.lowContrast} />
                 </StyledCopyIconButton>
               </Tooltip>
-              {chainType === "evm" && (
-                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
-              )}
+
+              <ChainIndicator chainId={accountChainId} />
             </Row>
           </Row>
         ) : (
@@ -213,7 +212,7 @@ export const ConnectEcoRow = ({
   );
 };
 
-export const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
+export const ChainIndicator = ({ chainId }: { chainId?: string }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((chain) => chain.chainID === chainId);

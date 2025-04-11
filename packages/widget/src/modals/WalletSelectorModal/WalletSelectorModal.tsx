@@ -93,7 +93,11 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       }
       bottomContent={
         showOtherEcosytems && (
-          <Column>
+          <Column
+            style={{
+              marginTop: "-5px",
+            }}
+          >
             <StyledDivider />
             <EcosystemConnectors excludeChainType={sourceAssetChainType} onClick={setSelectedEco} />
           </Column>
@@ -105,7 +109,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
 
 const StyledDivider = styled.div`
   height: 1px;
-  background-color: ${({ theme }) => theme.primary.text.ultraLowContrast};
+  background-color: ${({ theme }) => theme.secondary.background.transparent};
   margin: 10px;
 `;
 
