@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.7.0
+
+### Minor Changes
+
+- 2939b01: modify ibcEurekaHighlightedAssetsAtom interface
+
+### Patch Changes
+
+- a83f22f: Fix balances payload
+- 8815787: not changing routes when wallet connected
+
 ## 3.6.8
 
 ### Patch Changes
