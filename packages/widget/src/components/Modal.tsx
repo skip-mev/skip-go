@@ -26,17 +26,12 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
 
-  const closeModal = useCallback(() => {
-    onOpenChange?.(false);
-    setWasVisible(undefined);
-  }, [onOpenChange]);
-
   useEffect(() => {
     if (wasVisible && !modal.visible) {
-      closeModal();
+      onOpenChange?.(false);
     }
     setWasVisible(modal.visible);
-  }, [closeModal, modal.visible, wasVisible]);
+  }, [modal.visible, onOpenChange, wasVisible]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -73,7 +68,7 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       onOpenChange?.(false);
       document.documentElement.style.overflow = prevOverflowStyle;
     };
-  }, [closeModal, drawer, modal, onOpenChange, prevOverflowStyle]);
+  }, [drawer, modal, onOpenChange, prevOverflowStyle]);
 
   // this fixes a flickering animation when modals are opened
   if (disableShadowDom && wasVisible === undefined) return null;
