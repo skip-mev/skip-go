@@ -52,7 +52,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           }
         });
 
-      const hasBalance = getBalance(asset.chainID, asset.denom) !== undefined;
+      const hasBalance = Number(getBalance(asset.chainID, asset.denom)?.amount ?? 0) > 0;
 
       const isBlockedUnlessUserHasBalance =
         !!blockedUnlessUserHasBalance &&

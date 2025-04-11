@@ -56,7 +56,8 @@ export const useFilteredChains = ({
         const blockedChainIds = filterOut?.[context];
         const blockedChainIdsUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
 
-        const hasBalance = getBalance(chain.asset.chainID, chain.asset.denom);
+        const hasBalance =
+          Number(getBalance(chain.asset.chainID, chain.asset.denom)?.amount ?? 0) > 0;
 
         const isFilteredOutUnlessUserHasBalance = Boolean(
           blockedChainIdsUnlessUserHasBalance?.[chain.chainID] &&
