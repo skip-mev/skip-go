@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.7.1
+
+### Patch Changes
+
+- 9515ad5: expose openAssetAndChainSelectorModal
+
 ## 3.7.0
 
 ### Minor Changes
