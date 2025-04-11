@@ -2,7 +2,6 @@ import { Button, GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text, TextButton } from "@/components/Typography";
-import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
