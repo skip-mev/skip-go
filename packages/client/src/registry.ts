@@ -74,7 +74,6 @@ export const accountParser: AccountParser = (acc) => {
             sequence: Number(sequence),
           };
         }
-        return accountFromAny(acc);
       }
       return accountFromAny(acc);
     }
