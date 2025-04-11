@@ -1,4 +1,4 @@
-import { StrictMode, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "../web-component";
 import { Widget } from "@/widget/Widget";
@@ -20,6 +20,25 @@ const DevMode = () => {
       setTheme("dark");
     }
   };
+
+  useEffect(() => {
+    let skipWidget = document.getElementById("skip-widget");
+
+    const interval = setInterval(() => {
+      skipWidget = document.getElementById("skip-widget");
+      if (skipWidget) {
+        console.log("skipWidget found!", skipWidget);
+        skipWidget.attributes.theme = {
+          backgroundColor: "#191A1C",
+          textColor: "#E6EAE9",
+          borderColor: "#363B3F",
+          brandColor: "black",
+          highlightColor: "#1F2022",
+        };
+        clearInterval(interval);
+      }
+    }, 1000);
+  }, []);
 
   return (
     <Column align="flex-end">
