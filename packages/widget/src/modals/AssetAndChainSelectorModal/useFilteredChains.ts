@@ -181,6 +181,7 @@ export const useFilteredChains = ({
     cosmosWalletConnected,
     filter,
     filterOut,
+    filterOutUnlessUserHasBalance,
     getBalance,
     hideAssetsUnlessWalletTypeConnected,
     ibcEurekaHighlightedAssets,
