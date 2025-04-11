@@ -49,6 +49,7 @@ export const useGetAccount = () => {
 
       switch (chainType) {
         case ChainType.Cosmos: {
+          if (!cosmosAccount) return;
           if (!wallet.cosmos) return;
           const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
