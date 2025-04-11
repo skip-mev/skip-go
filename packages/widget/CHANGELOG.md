@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.7.2
+
+### Patch Changes
+
+- 78f9a6a: update style
+
 ## 3.7.1
 
 ### Patch Changes
