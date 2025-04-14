@@ -2,8 +2,8 @@ import { Registry } from "@cosmjs/proto-signing";
 import { AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
 import * as clientTypes from "../client-types";
 import * as types from "../types";
-import { createRequestClient } from "./fetch-request-client";
-import { Asset } from "src/types/types";
+import { createRequestClient } from "./requestClient";
+import { Chain, Asset } from "src/types/swaggerTypes";
 
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
@@ -23,7 +23,7 @@ export class ClientState {
   static cumulativeAffiliateFeeBPS?: string = "0";
 
   static clientOptions: clientTypes.SkipClientOptions;
-  static skipChains?: types.Chain[];
+  static skipChains?: Chain[];
   static skipAssets?: Record<string, Asset[]>;
   static skipBalances?: types.BalanceResponse;
   static signingStargateClientByChainId: Record<string, SigningStargateClient> =

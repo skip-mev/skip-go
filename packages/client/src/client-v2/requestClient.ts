@@ -73,12 +73,19 @@ export const createRequestClient = ({
   return { get, post };
 };
 
-type OnSuccessCallback<Result> = (result: Result) => void;
+export type OnSuccessCallback<Result, Params> = (
+  result: Result,
+  options: Params,
+) => void;
 
 export function createRequest<
   Params extends object = object,
   Result extends object = object,
->(path: string, options?: Params, onSuccess?: OnSuccessCallback<Result>) {
+>(
+  path: string,
+  options?: Params,
+  onSuccess?: OnSuccessCallback<Result, Params>,
+) {
   const controller = new AbortController();
 
   const request = async (): Promise<Result> => {
@@ -92,7 +99,7 @@ export function createRequest<
       const camelCased = toCamel(response) as Result;
 
       if (onSuccess) {
-        onSuccess(camelCased);
+        onSuccess(camelCased, options as Params);
       }
 
       return camelCased;

@@ -131,6 +131,7 @@ export interface AxelarTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
@@ -230,6 +231,7 @@ export interface CCTPTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
@@ -324,6 +326,7 @@ export interface Bridge {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   id?: BridgeType;
   /** Name of the bridge */
@@ -341,6 +344,7 @@ export interface Bridge {
  * * `OPINIT` - Opinit Bridge
  * * `GO_FAST` - Go Fast Bridge
  * * `STARGATE` - Stargate Bridge
+ * * `EUREKA` - IBC Eureka Bridge
  */
 export enum BridgeType {
   IBC = "IBC",
@@ -350,6 +354,7 @@ export enum BridgeType {
   OPINIT = "OPINIT",
   GO_FAST = "GO_FAST",
   STARGATE = "STARGATE",
+  EUREKA = "EUREKA",
 }
 
 export interface Chain {
@@ -580,6 +585,7 @@ export interface HyperlaneTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
@@ -665,6 +671,7 @@ export type Operation = (
   | HyperlaneTransferWrapper
   | EvmSwapWrapper
   | OPInitTransferWrapper
+  | EurekaTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
   txIndex?: number;
@@ -1000,6 +1007,7 @@ export interface OPInitTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
@@ -1080,6 +1088,7 @@ export interface Transfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
@@ -1091,7 +1100,8 @@ export type TransferEvent =
   | AxelarTransferInfo
   | CCTPTransferInfo
   | HyperlaneTransferInfo
-  | OPInitTransferInfo;
+  | OPInitTransferInfo
+  | EurekaTransferInfo;
 
 export interface TransferInfo {
   /** Chain ID of the destination chain */
@@ -1162,6 +1172,73 @@ export interface TransferWrapper {
   transfer?: Transfer;
 }
 
+/** An IBC Eureka transfer */
+export interface EurekaTransfer {
+  /** Port on the destination chain */
+  destinationPort?: string;
+  /** Client on the source chain */
+  sourceClient?: string;
+  /** Chain-id on which the transfer is initiated */
+  fromChainId?: string;
+  /** Chain-id on which the transfer is received */
+  toChainId?: string;
+  /** Whether pfm is enabled on the chain where the transfer is initiated */
+  pfmEnabled?: boolean;
+  /** Whether the transfer chain supports a memo */
+  supportsMemo?: boolean;
+  /** Denom of the input asset of the transfer */
+  denomIn?: string;
+  /** Denom of the output asset of the transfer */
+  denomOut?: string;
+  /** Address of the Eureka entry contract on the source chain */
+  entryContractAddress?: string;
+  /** Optional address of the Eureka callback adapter contract on the source chain */
+  callbackAdapterContractAddress?: string | null;
+  /**
+   * Bridge Type:
+   * * `IBC` - IBC Bridge
+   * * `AXELAR` - Axelar Bridge
+   * * `CCTP` - CCTP Bridge
+   * * `HYPERLANE` - Hyperlane Bridge
+   * * `OPINIT` - Opinit Bridge
+   * * `GO_FAST` - Go Fast Bridge
+   * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
+   */
+  bridgeId?: BridgeType;
+  /** Indicates whether this transfer is relayed via Smart Relay */
+  smartRelay?: boolean;
+  smartRelayFeeQuote?: SmartRelayFeeQuote | null;
+  /** Optional address of the Eureka callback contract on the destination chain */
+  toChainCallbackContractAddress?: string | null;
+  /** Optional address of the Eureka entry contract on the destination chain */
+  toChainEntryContractAddress?: string | null;
+}
+
+export interface EurekaTransferInfo {
+  eurekaTransfer?: {
+    /** Chain ID of the source chain */
+    fromChainId?: string;
+    /** Chain ID of the destination chain */
+    toChainId?: string;
+    /**
+     * Transfer state:
+     * * `TRANSFER_UNKNOWN` - Transfer state is not known.
+     * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+     * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
+     * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+     * * `TRANSFER_FAILURE`- The transfer has failed.
+     */
+    state?: TransferState;
+    packetTxs?: Packet;
+  };
+}
+
+export interface EurekaTransferWrapper {
+  /** An IBC Eureka transfer */
+  eurekaTransfer?: EurekaTransfer;
+}
+
 export interface RecommendationRequest {
   /** Denom of the source asset */
   sourceAssetDenom?: string;
@@ -1214,6 +1291,7 @@ export interface Fee {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
   /** Amount of the fee asset to be paid */

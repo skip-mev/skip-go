@@ -5,7 +5,13 @@ import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import { getAssets, setClientOptions, getChains } from "@skip-go/client";
+import {
+  getAssets,
+  setClientOptions,
+  getChains,
+  getAssetsWithCancel,
+  getChainsWithCancel,
+} from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -26,15 +32,15 @@ const DevMode = () => {
     let cancelChainsRequest: (reason: string) => void;
     const asset = async () => {
       setClientOptions();
-      const { request, cancel } = getAssets();
+      const { request, cancel } = getAssetsWithCancel();
       cancelRequest = cancel;
       const response = await request();
-      console.log(response.chainToAssetsMap);
+      console.log(response);
     };
 
     const chains = async () => {
       setClientOptions();
-      const { request, cancel } = getChains();
+      const { request, cancel } = getChainsWithCancel();
       cancelChainsRequest = cancel;
       const response = await request();
       console.log(response.chains);

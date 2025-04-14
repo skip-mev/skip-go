@@ -1,6 +1,6 @@
 import * as clientTypes from "../client-types";
 import { ClientState } from "./state";
-import { createRequestClient } from "./fetch-request-client";
+import { createRequestClient } from "./requestClient";
 import * as types from "../types";
 
 export const setClientOptions = (
