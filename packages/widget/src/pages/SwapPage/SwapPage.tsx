@@ -167,10 +167,6 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
-    if (!sourceAsset?.chainID) {
-      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
-    }
-
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
@@ -188,6 +184,10 @@ export const SwapPage = () => {
           }}
         />
       );
+    }
+
+    if (!sourceAsset?.chainID) {
+      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
     if (!destinationAsset?.chainID) {
