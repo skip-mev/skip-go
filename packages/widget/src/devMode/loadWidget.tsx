@@ -6,8 +6,6 @@ import "./global.css";
 import { resetWidget } from "@/state/swapPage";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { Widget, WidgetProps } from "@/widget/Widget";
-import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
-import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
