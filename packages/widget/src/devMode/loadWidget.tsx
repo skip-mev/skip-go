@@ -1,17 +1,20 @@
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "../web-component";
-import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
-import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
+import { defaultTheme, lightTheme } from "@/widget/theme";
+import { Widget, WidgetProps } from "@/widget/Widget";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [apiUrl, setApiUrl] = useState<"prod" | "dev">("prod");
   const [testnet, setTestnet] = useState<boolean>(false);
   const [disableShadowDom, setDisableShadowDom] = useState(true);
+  const [renderWebComponent, setRenderWebComponent] = useState(false);
 
   const toggleTheme = () => {
     if (theme === "dark") {
@@ -21,28 +24,62 @@ const DevMode = () => {
     }
   };
 
+  const widgetProps: WidgetProps = useMemo(() => {
+    return {
+      theme: {
+        ...(theme === "dark" ? defaultTheme : lightTheme),
+        brandTextColor: "black",
+        brandColor: "#FF66FF",
+      },
+      settings: {
+        useUnlimitedApproval: true,
+      },
+      disableShadowDom,
+      onlyTestnet: testnet,
+      routeConfig: {
+        experimentalFeatures: ["eureka"],
+      },
+      apiUrl:
+        apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
+      ibcEurekaHighlightedAssets: {
+        USDC: ["cosmoshub-4"],
+        USDT: undefined,
+      },
+      assetSymbolsSortedToTop: [
+        "LBTC",
+        "ATOM",
+        "USDC",
+        "USDT",
+        "ETH",
+        "TIA",
+        "OSMO",
+        "NTRN",
+        "INJ",
+      ],
+      filterOut: {
+        source: {
+          "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
+        },
+        destination: {
+          "pacific-1": ["ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7"],
+          "1329": ["0xB75D0B03c06A926e488e2659DF1A861F860bD3d1"],
+          "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
+        },
+      },
+    };
+  }, [apiUrl, disableShadowDom, testnet, theme]);
+
   useEffect(() => {
-    let skipWidget = document.getElementById("skip-widget");
-
-    const interval = setInterval(() => {
-      skipWidget = document.getElementById("skip-widget");
-      if (skipWidget) {
-        skipWidget.onRouteUpdated = (route) => {
-          console.log("route", route);
-        };
-        console.log("skipWidget found!", skipWidget);
-        skipWidget.theme = {
-          backgroundColor: "#191A1C",
-          textColor: "#E6EAE9",
-          borderColor: "#363B3F",
-          brandColor: "black",
-          highlightColor: "#1F2022",
-        };
-
-        clearInterval(interval);
-      }
-    }, 1000);
-  }, []);
+    const skipWidget = document.querySelector("skip-widget");
+    if (skipWidget) {
+      Object.entries(widgetProps).forEach(([key, value]) => {
+        // @ts-expect-error this is like the equivalent of
+        // spreading the props to the web-component
+        // but we dont expect users to do it like this
+        skipWidget[key as keyof WidgetProps] = value;
+      });
+    }
+  }, [widgetProps]);
 
   return (
     <Column align="flex-end">
@@ -58,6 +95,9 @@ const DevMode = () => {
         <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
         <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
           {apiUrl === "prod" ? "prod" : "dev"}
+        </button>
+        <button onClick={() => setRenderWebComponent((v) => !v)}>
+          web-component: {renderWebComponent.toString()}
         </button>
       </Column>
       <Row
@@ -79,54 +119,7 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          {/* <Widget
-            theme={{
-              ...(theme === "dark" ? defaultTheme : lightTheme),
-              brandTextColor: "black",
-              brandColor: "#FF66FF",
-            }}
-            settings={{
-              useUnlimitedApproval: true,
-            }}
-            disableShadowDom={disableShadowDom}
-            onlyTestnet={testnet}
-            routeConfig={{
-              experimentalFeatures: ["eureka"],
-            }}
-            apiUrl={
-              apiUrl === "prod"
-                ? "https://go.skip.build/api/skip"
-                : "https://dev.go.skip.build/api/skip"
-            }
-            ibcEurekaHighlightedAssets={{
-              USDC: ["cosmoshub-4"],
-              USDT: undefined,
-            }}
-            assetSymbolsSortedToTop={[
-              "LBTC",
-              "ATOM",
-              "USDC",
-              "USDT",
-              "ETH",
-              "TIA",
-              "OSMO",
-              "NTRN",
-              "INJ",
-            ]}
-            filterOut={{
-              source: {
-                "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
-              },
-              destination: {
-                "pacific-1": [
-                  "ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7",
-                ],
-                "1329": ["0xB75D0B03c06A926e488e2659DF1A861F860bD3d1"],
-                "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
-              },
-            }}
-          /> */}
-          <skip-widget id="skip-widget" disable-shadow-dom="true"></skip-widget>
+          {renderWebComponent ? <skip-widget /> : <Widget {...widgetProps} />}
         </div>
       </Row>
     </Column>

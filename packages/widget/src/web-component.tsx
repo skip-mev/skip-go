@@ -1,22 +1,55 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-/* eslint-disable @typescript-eslint/no-namespace */
-import toWebComponent from "@r2wc/react-to-web-component";
-import { Widget } from "./widget/Widget";
 
-type WebComponentProps = {
-  container?: {
-    attributes?: Record<string, string>[];
-  };
-};
+import toWebComponent from "@r2wc/react-to-web-component";
+import { NewSkipClientOptions, Widget, WidgetProps } from "./widget/Widget";
 
 const WEB_COMPONENT_NAME = "skip-widget";
 
+type WebComponentProps = WidgetProps & NewSkipClientOptions;
+
+type PropDescriptors = {
+  [K in keyof WebComponentProps]: "function" | "boolean" | "json" | "string" | "number";
+};
+
+const widgetPropTypes: Required<PropDescriptors> = {
+  rootId: "string",
+  theme: "json",
+  brandColor: "string",
+  onlyTestnet: "boolean",
+  defaultRoute: "json",
+  settings: "json",
+  routeConfig: "json",
+  filter: "json",
+  filterOut: "json",
+  walletConnect: "json",
+  enableSentrySessionReplays: "boolean",
+  enableAmplitudeAnalytics: "boolean",
+  connectedAddresses: "json",
+  simulate: "boolean",
+  disableShadowDom: "boolean",
+  ibcEurekaHighlightedAssets: "json",
+  assetSymbolsSortedToTop: "json",
+  hideAssetsUnlessWalletTypeConnected: "boolean",
+  apiUrl: "string",
+  apiKey: "string",
+  endpointOptions: "json",
+  aminoTypes: "json",
+  registryTypes: "json",
+  chainIdsToAffiliates: "json",
+  cacheDurationMs: "number",
+  getCosmosSigner: "json",
+  getEVMSigner: "json",
+  getSVMSigner: "json",
+  onWalletConnected: "function",
+  onWalletDisconnected: "function",
+  onTransactionBroadcasted: "function",
+  onTransactionComplete: "function",
+  onTransactionFailed: "function",
+  onRouteUpdated: "function",
+};
+
 const WebComponent = toWebComponent(Widget, {
-  props: {
-    onRouteUpdated: "function",
-    disableShadowDom: "boolean",
-    theme: "json",
-  },
+  props: widgetPropTypes,
 });
 
 function initializeSkipWidget() {
@@ -34,14 +67,10 @@ initializeSkipWidget();
 
 export default WebComponent;
 
-type Stringify<T> = {
-  [K in keyof T]?: string;
-};
-
 declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [WEB_COMPONENT_NAME]: Stringify<WebComponentProps>;
-    }
+  interface SkipWidgetElement extends HTMLElement, WidgetProps {}
+
+  interface HTMLElementTagNameMap {
+    [WEB_COMPONENT_NAME]: SkipWidgetElement;
   }
 }
