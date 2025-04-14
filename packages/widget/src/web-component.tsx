@@ -70,9 +70,7 @@ initializeSkipWidget();
 export default WebComponent;
 
 declare global {
-  interface SkipWidgetElement extends HTMLElement, WidgetProps {}
-
   interface HTMLElementTagNameMap {
-    [WEB_COMPONENT_NAME]: SkipWidgetElement;
+    [WEB_COMPONENT_NAME]: WidgetProps;
   }
 }
