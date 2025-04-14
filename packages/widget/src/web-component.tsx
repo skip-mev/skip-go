@@ -60,9 +60,7 @@ function initializeSkipWidget() {
   }
 
   // Upgrade any existing skip-widget elements
-  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => {
-    customElements.upgrade(el);
-  });
+  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => customElements.upgrade(el as Node));
 }
 
 initializeSkipWidget();
