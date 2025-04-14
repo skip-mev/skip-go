@@ -1,7 +1,7 @@
 import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
 import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import React, { ReactElement, ReactNode, useEffect, useRef } from "react";
+import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
@@ -138,16 +138,6 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
 };
 
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const host = ref.current?.parentElement as HTMLElement;
-
-    if (host) {
-      host.dispatchEvent(new CustomEvent("mounted", { detail: {}, bubbles: true }));
-    }
-  }, []);
-
   const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
   const rootId = useAtomValue(rootIdAtom);
 
@@ -162,7 +152,7 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WidgetContainer data-root-id={rootId} ref={ref}>
+    <WidgetContainer data-root-id={rootId}>
       {children}
       <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>
