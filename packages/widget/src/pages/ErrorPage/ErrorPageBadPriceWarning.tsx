@@ -81,9 +81,7 @@ export const ErrorPageBadPriceWarning = ({
           <>
             Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
             <br />
-            Input: {sourceDetails?.amount} {sourceDetails?.symbol}
-            <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+
           </>
         ),
       };
@@ -94,9 +92,7 @@ export const ErrorPageBadPriceWarning = ({
           <>
             This trade may result in a poor execution price. Please verify the amounts carefully.
             <br />
-            Input: {sourceDetails?.amount} {sourceDetails?.symbol}
-            <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+          
           </>
         ),
       };
