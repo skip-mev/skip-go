@@ -5,13 +5,7 @@ import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import {
-  getAssets,
-  setClientOptions,
-  getChains,
-  getAssetsWithCancel,
-  getChainsWithCancel,
-} from "@skip-go/client";
+import { postRoute, setClientOptions } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -28,31 +22,25 @@ const DevMode = () => {
   };
 
   useEffect(() => {
-    let cancelRequest: (reason: string) => void;
-    let cancelChainsRequest: (reason: string) => void;
-    const asset = async () => {
+    const routeFn = async () => {
       setClientOptions();
-      const { request, cancel } = getAssetsWithCancel();
-      cancelRequest = cancel;
-      const response = await request();
-      console.log(response);
-    };
 
-    const chains = async () => {
-      setClientOptions();
-      const { request, cancel } = getChainsWithCancel();
-      cancelChainsRequest = cancel;
-      const response = await request();
-      console.log(response.chains);
+      const route = await postRoute({
+        sourceAssetDenom: "uatom",
+        sourceAssetChainId: "cosmoshub-4",
+        destAssetDenom: "uusdc",
+        destAssetChainId: "noble-1",
+        allowUnsafe: true,
+        experimentalFeatures: ["stargate", "eureka"],
+        allowMultiTx: true,
+        smartRelay: true,
+        smartSwapOptions: { splitRoutes: true, evmSwaps: true },
+        goFast: true,
+        amountIn: "1000000",
+      });
+      console.log(route);
     };
-
-    asset();
-    chains();
-
-    return () => {
-      cancelRequest?.("duplicate asset request");
-      cancelChainsRequest?.("duplicate chains request");
-    };
+    routeFn();
   }, []);
   return (
     <Column align="flex-end">
