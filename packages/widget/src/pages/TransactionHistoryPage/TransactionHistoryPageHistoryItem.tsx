@@ -200,12 +200,22 @@ const RenderAssetAmount = ({
   asset?: ClientAsset;
   assetImage: string;
 }) => {
+  const formattedAmount = useMemo(() => {
+    const numberAfterLimitTwoDecimalPlaces = limitDecimalsDisplayed(amount, 2);
+    if (numberAfterLimitTwoDecimalPlaces === "0.00") {
+      return "< 0.01";
+    }
+    return numberAfterLimitTwoDecimalPlaces;
+  }, [amount]);
+
   return (
     <>
       <img height={35} width={35} src={assetImage} />
       <Column style={{ width: 95 }}>
         <Tooltip content={amount}>
-          <Text normalTextColor>{limitDecimalsDisplayed(amount, 2)}</Text>
+          <Text normalTextColor style={{ width: "max-content" }}>
+            {formattedAmount}
+          </Text>
         </Tooltip>
         <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
           {asset?.chainName}
