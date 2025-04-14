@@ -42,7 +42,7 @@ export const ErrorPageBadPriceWarning = ({
     ? `${calculatePercentageChange(usdAmountIn, usdAmountOut, true)}%`
     : null;
 
-  // Now we can safely access the property via the extended type
+
   const priceImpactPercentage = (() => {
     const impactString = route.swapPriceImpactPercent;
     if (!impactString) return null;

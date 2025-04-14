@@ -239,7 +239,6 @@ export const SwapPage = () => {
         });
         return;
       }
-      // Rely solely on API warning type, as priceChangePercentage might be unavailable
       if (route?.warning?.type === "BAD_PRICE_WARNING") {
         track("error page: bad price warning", { route });
         setError({
