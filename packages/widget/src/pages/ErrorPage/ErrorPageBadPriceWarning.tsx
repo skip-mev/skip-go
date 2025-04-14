@@ -60,7 +60,7 @@ export const ErrorPageBadPriceWarning = ({
     tokenAmount: amountOut,
   });
 
-  const { title, descriptionContent } = useMemo(() => {
+  const errorPageContent = useMemo(() => {
     if (hasUsdValues && swapDifferencePercentage) {
       return {
         title: `Warning: Bad trade (-${swapDifferencePercentage})`,
@@ -74,38 +74,40 @@ export const ErrorPageBadPriceWarning = ({
           </>
         ),
       };
-    } else if (priceImpactPercentage) {
+    }
+    if (priceImpactPercentage) {
       return {
         title: `Warning: High Price Impact (${priceImpactPercentage})`,
         descriptionContent: (
           <>
             Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
             <br />
-
-          </>
-        ),
-      };
-    } else {
-      return {
-        title: "Warning: Bad Trade",
-        descriptionContent: (
-          <>
-            This trade may result in a poor execution price. Please verify the amounts carefully.
-            <br />
-          
           </>
         ),
       };
     }
+    return {
+      title: "Warning: Bad Trade",
+      descriptionContent: (
+        <>
+          This trade may result in a poor execution price. Please verify the amounts carefully.
+          <br />
+        </>
+      ),
+    };
   }, [
+    destinationDetails?.amount,
+    destinationDetails?.symbol,
     hasUsdValues,
-    swapDifferencePercentage,
     priceImpactPercentage,
-    sourceDetails,
-    destinationDetails,
+    sourceDetails?.amount,
+    sourceDetails?.symbol,
+    swapDifferencePercentage,
     usdAmountIn,
     usdAmountOut,
   ]);
+
+  const { title, descriptionContent } = errorPageContent;
 
   return (
     <>
