@@ -1,5 +1,44 @@
 ## 0.0.15
 
+## 3.7.3
+
+### Patch Changes
+
+- ac50805: Add filterOutUnlessUserHasBalance prop
+- dedd423: evm gas simulation at the start of the tx
+- Updated dependencies [dedd423]
+  - @skip-go/client@0.16.29
+
+## 3.7.2
+
+### Patch Changes
+
+- 78f9a6a: update style
+
+## 3.7.1
+
+### Patch Changes
+
+- a7ba428: Fix "Set second signing address" showing incorrectly
+- 9515ad5: expose openAssetAndChainSelectorModal
+- 39235a6: Fix ConnectEcoRow to show sourceAsset address or defaultAddress or firstAddress found in cosmosAccounts, and add fallback connecting to defaultChainId
+- f26c654: Stop animation after it completes to fix modal flickering
+- afd9530: add initia pubkey to account parser
+- 8fce4a3: Fix sorting with eurekaHighlightedAssets
+- Updated dependencies [afd9530]
+  - @skip-go/client@0.16.28
+
+## 3.7.0
+
+### Minor Changes
+
+- 2939b01: modify ibcEurekaHighlightedAssetsAtom interface
+
+### Patch Changes
+
+- a83f22f: Fix balances payload
+- 8815787: not changing routes when wallet connected
+
 ## 3.6.8
 
 ### Patch Changes

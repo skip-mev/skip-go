@@ -49,11 +49,12 @@ export const useGetAccount = () => {
 
       switch (chainType) {
         case ChainType.Cosmos: {
+          if (!cosmosAccount) return;
           if (!wallet.cosmos) return;
           const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
           return {
-            address: cosmosAccount?.bech32Address ?? wallet.cosmos?.id,
+            address: cosmosAccount?.bech32Address,
             chainType,
             wallet: {
               name: wallet.cosmos.walletName,
