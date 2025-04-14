@@ -61,47 +61,46 @@ export const ErrorPageBadPriceWarning = ({
   });
 
   const { title, descriptionContent } = useMemo(() => {
-    let computedTitle = "Warning: Bad Trade";
-    let computedDescriptionContent: React.ReactNode = null;
-
     if (hasUsdValues && swapDifferencePercentage) {
-      computedTitle = `Warning: Bad trade (-${swapDifferencePercentage})`;
-      computedDescriptionContent = (
-        <>
-          You will lose {swapDifferencePercentage} of your input value with this trade
-          <br />
-          Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
-          <br />
-          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
-        </>
-      );
+      return {
+        title: `Warning: Bad trade (-${swapDifferencePercentage})`,
+        descriptionContent: (
+          <>
+            You will lose {swapDifferencePercentage} of your input value with this trade
+            <br />
+            Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
+            <br />
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
+          </>
+        ),
+      };
     } else if (priceImpactPercentage) {
-      computedTitle = `Warning: High Price Impact (${priceImpactPercentage})`;
-      computedDescriptionContent = (
-        <>
-          Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
-          <br />
-          Input: {sourceDetails?.amount} {sourceDetails?.symbol}
-          <br />
-          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
-        </>
-      );
+      return {
+        title: `Warning: High Price Impact (${priceImpactPercentage})`,
+        descriptionContent: (
+          <>
+            Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
+            <br />
+            Input: {sourceDetails?.amount} {sourceDetails?.symbol}
+            <br />
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+          </>
+        ),
+      };
     } else {
-      computedDescriptionContent = (
-        <>
-          This trade may result in a poor execution price. Please verify the amounts carefully.
-          <br />
-          Input: {sourceDetails?.amount} {sourceDetails?.symbol}
-          <br />
-          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
-        </>
-      );
+      return {
+        title: "Warning: Bad Trade",
+        descriptionContent: (
+          <>
+            This trade may result in a poor execution price. Please verify the amounts carefully.
+            <br />
+            Input: {sourceDetails?.amount} {sourceDetails?.symbol}
+            <br />
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+          </>
+        ),
+      };
     }
-
-    return {
-      title: computedTitle,
-      descriptionContent: computedDescriptionContent,
-    };
   }, [
     hasUsdValues,
     swapDifferencePercentage,
