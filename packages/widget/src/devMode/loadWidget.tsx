@@ -27,14 +27,18 @@ const DevMode = () => {
     const interval = setInterval(() => {
       skipWidget = document.getElementById("skip-widget");
       if (skipWidget) {
+        skipWidget.onRouteUpdated = (route) => {
+          console.log("route", route);
+        };
         console.log("skipWidget found!", skipWidget);
-        skipWidget.attributes.theme = {
+        skipWidget.theme = {
           backgroundColor: "#191A1C",
           textColor: "#E6EAE9",
           borderColor: "#363B3F",
           brandColor: "black",
           highlightColor: "#1F2022",
         };
+
         clearInterval(interval);
       }
     }, 1000);
@@ -122,7 +126,7 @@ const DevMode = () => {
               },
             }}
           /> */}
-          <skip-widget id="skip-widget"></skip-widget>
+          <skip-widget id="skip-widget" disable-shadow-dom="true"></skip-widget>
         </div>
       </Row>
     </Column>

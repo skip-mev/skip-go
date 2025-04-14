@@ -9,49 +9,13 @@ type WebComponentProps = {
   };
 };
 
-function isJsonString(str: string) {
-  try {
-    JSON.parse(str);
-  } catch (_err) {
-    return false;
-  }
-  return true;
-}
-
-const camelize = (inputString: string) => {
-  inputString = inputString.toLowerCase();
-  return inputString.replace(/-./g, (x) => x[1].toUpperCase());
-};
-
-const WidgetWithProvider = (props: WebComponentProps) => {
-  const attributeProps = Array.isArray(props.container?.attributes)
-    ? props.container.attributes
-    : [];
-
-  const parsedFromAttributes = attributeProps.reduce(
-    (acc, { name, value }) => {
-      acc[camelize(name)] = isJsonString(value) ? JSON.parse(value) : value;
-      return acc;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    {} as Record<string, any>,
-  );
-
-  const { container, ...jsAssignedProps } = props;
-
-  const realProps = {
-    ...parsedFromAttributes,
-    ...jsAssignedProps,
-  };
-
-  return <Widget {...realProps} />;
-};
-
 const WEB_COMPONENT_NAME = "skip-widget";
 
-const WebComponent = toWebComponent(WidgetWithProvider, {
+const WebComponent = toWebComponent(Widget, {
   props: {
     onRouteUpdated: "function",
+    disableShadowDom: "boolean",
+    theme: "json",
   },
 });
 
