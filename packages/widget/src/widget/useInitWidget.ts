@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { chainFilterAtom, swapSettingsAtom } from "@/state/swapPage";
+import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -26,6 +26,10 @@ import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -43,12 +47,19 @@ export const useInitWidget = (props: WidgetProps) => {
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
-  const setChainFilter = useSetAtom(chainFilterAtom);
+  const setFilter = useSetAtom(filterAtom);
+  const setFilterOut = useSetAtom(filterOutAtom);
+  const setFilterOutUnlessUserHasBalanceAtom = useSetAtom(filterOutUnlessUserHasBalanceAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
+  const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
+  const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
+  const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
+    hideAssetsUnlessWalletTypeConnectedAtom,
+  );
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -109,7 +120,13 @@ export const useInitWidget = (props: WidgetProps) => {
       });
     }
     if (props.filter) {
-      setChainFilter(props.filter);
+      setFilter(props.filter);
+    }
+    if (props.filterOut) {
+      setFilterOut(props.filterOut);
+    }
+    if (props.filterOutUnlessUserHasBalance) {
+      setFilterOutUnlessUserHasBalanceAtom(props.filterOutUnlessUserHasBalance);
     }
 
     setOnlyTestnets(props.onlyTestnet ?? false);
@@ -122,6 +139,18 @@ export const useInitWidget = (props: WidgetProps) => {
     }
     if (props.disableShadowDom !== undefined) {
       setDisableShadowDom(props.disableShadowDom);
+    }
+
+    if (props.ibcEurekaHighlightedAssets) {
+      setIbcEurekaHighlightedAssets(props.ibcEurekaHighlightedAssets);
+    }
+
+    if (props.assetSymbolsSortedToTop) {
+      setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
+    }
+
+    if (props.hideAssetsUnlessWalletTypeConnected) {
+      setHideAssetsUnlessWalletTypeConnected(props.hideAssetsUnlessWalletTypeConnected);
     }
 
     const callbacks = {
@@ -149,7 +178,6 @@ export const useInitWidget = (props: WidgetProps) => {
     props.settings?.slippage,
     props.walletConnect,
     props.simulate,
-    setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
@@ -159,6 +187,17 @@ export const useInitWidget = (props: WidgetProps) => {
     props.onRouteUpdated,
     props.disableShadowDom,
     setDisableShadowDom,
+    props.ibcEurekaHighlightedAssets,
+    setIbcEurekaHighlightedAssets,
+    props.assetSymbolsSortedToTop,
+    setAssetSymbolsSortedToTop,
+    props.filterOut,
+    setFilter,
+    setFilterOut,
+    props.hideAssetsUnlessWalletTypeConnected,
+    setHideAssetsUnlessWalletTypeConnected,
+    props.filterOutUnlessUserHasBalance,
+    setFilterOutUnlessUserHasBalanceAtom,
   ]);
 
   return { theme: mergedTheme };

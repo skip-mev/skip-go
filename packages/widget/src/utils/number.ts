@@ -8,6 +8,7 @@ export function formatNumberWithCommas(str: string | number) {
   return parts.join(".");
 }
 
+
 export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
 }
@@ -72,3 +73,17 @@ export const convertSecondsToMinutesOrHours = (seconds?: number) => {
     return `${Math.round(seconds / 3600)} ${pluralize("hr", Math.round(seconds / 3600))}`;
   }
 };
+
+/**
+ * Determines if a number needs size reduction based on its length
+ * Returns true if the number has 14 or more characters (including decimal point)
+ */
+export function shouldReduceFontSize(value: string | number | undefined): boolean {
+  if (!value) return false;
+  
+  // Convert to string and remove commas
+  const valueWithoutCommas = value.toString().replace(/,/g, "");
+  
+  // Return true if character count is 14 or more
+  return valueWithoutCommas.length >= 14;
+}

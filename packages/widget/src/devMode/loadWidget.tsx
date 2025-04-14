@@ -102,6 +102,35 @@ const DevMode = () => {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
+            ibcEurekaHighlightedAssets={{
+              USDC: ["cosmoshub-4"],
+              USDT: undefined,
+            }}
+            assetSymbolsSortedToTop={[
+              "LBTC",
+              "ATOM",
+              "USDC",
+              "USDT",
+              "ETH",
+              "TIA",
+              "OSMO",
+              "NTRN",
+              "INJ",
+            ]}
+            filterOut={{
+              destination: {
+                "pacific-1": [
+                  "ibc/6C00E4AA0CC7618370F81F7378638AE6C48EFF8C9203CE1C2357012B440EBDB7",
+                ],
+                "1329": ["0xB75D0B03c06A926e488e2659DF1A861F860bD3d1"],
+                "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
+              },
+            }}
+            filterOutUnlessUserHasBalance={{
+              source: {
+                "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
+              },
+            }}
           />
         </div>
       </Row>

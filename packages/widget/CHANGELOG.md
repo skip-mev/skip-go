@@ -1,5 +1,165 @@
 ## 0.0.15
 
+## 3.7.3
+
+### Patch Changes
+
+- ac50805: Add filterOutUnlessUserHasBalance prop
+- dedd423: evm gas simulation at the start of the tx
+- Updated dependencies [dedd423]
+  - @skip-go/client@0.16.29
+
+## 3.7.2
+
+### Patch Changes
+
+- 78f9a6a: update style
+
+## 3.7.1
+
+### Patch Changes
+
+- a7ba428: Fix "Set second signing address" showing incorrectly
+- 9515ad5: expose openAssetAndChainSelectorModal
+- 39235a6: Fix ConnectEcoRow to show sourceAsset address or defaultAddress or firstAddress found in cosmosAccounts, and add fallback connecting to defaultChainId
+- f26c654: Stop animation after it completes to fix modal flickering
+- afd9530: add initia pubkey to account parser
+- 8fce4a3: Fix sorting with eurekaHighlightedAssets
+- Updated dependencies [afd9530]
+  - @skip-go/client@0.16.28
+
+## 3.7.0
+
+### Minor Changes
+
+- 2939b01: modify ibcEurekaHighlightedAssetsAtom interface
+
+### Patch Changes
+
+- a83f22f: Fix balances payload
+- 8815787: not changing routes when wallet connected
+
+## 3.6.8
+
+### Patch Changes
+
+- 59f5f76: highlight all eureka asset
+- 6b5dfa1: fix filter
+
+## 3.6.7
+
+### Patch Changes
+
+- 777a11d: show gas station provision message if gas station tx
+- e77efac: Use rAF timers to handle closeModal to avoid flickering
+- 04cf861: copy change to tooltip to route preference settings
+- 0e33fe7: fix evm gas simulation
+- 94f5424: fix error font sizes
+- c73fa16: Update default decimal places to 8
+- Updated dependencies [0d2e0c3]
+- Updated dependencies [0e33fe7]
+  - @skip-go/client@0.16.27
+
+## 3.6.6
+
+### Patch Changes
+
+- ad43417: expose Theme type
+- d13c452: update registries
+- Updated dependencies [d13c452]
+  - @skip-go/client@0.16.26
+
+## 3.6.5
+
+### Patch Changes
+
+- 1cb8972: fix filterOut filtering
+
+## 3.6.4
+
+### Patch Changes
+
+- c5f48e7: Add arrow maskedVersion prop, Fix WalletSelectorModal back button logic
+- 30df1d3: increase POL max amount
+- 7a399d5: update registries
+- df29c5d: update testnetChains to include lombardTestnet
+- ebdca25: Add filterOut prop
+- 76b8015: Prevent IBC Eureka from dropping to newline on mobile
+- Updated dependencies [7a399d5]
+  - @skip-go/client@0.16.25
+
+## 3.6.3
+
+### Patch Changes
+
+- fcc815a: Dont attempt to connect wallet if already connected when signRequired is passed to getAddress
+
+## 3.6.2
+
+### Patch Changes
+
+- 7da5d2e: update testnetChains to include lombardTestnet
+
+## 3.6.1
+
+### Patch Changes
+
+- 580fda7: Reduce Keplr initial chain connect list
+- a4f3617: Fix evm disconnect, fix useSwitchChainIfNeeded
+
+## 3.6.0
+
+### Minor Changes
+
+- 6ec520a: allow connecting to any ecosystem wallet regardless of selected chain
+
+### Patch Changes
+
+- 6ec520a: Add ibcEurekaHighlightedAssets and assetSymbolsSortedToTop props
+- 6ec520a: update number of signatures remaining message to update instantly once tx is signed
+- 6ec520a: Add eth sepolia to gas validation bypass
+- 6ec520a: Add logging widget version onload
+- Updated dependencies [6ec520a]
+  - @skip-go/client@0.16.24
+
+## 3.5.1
+
+### Patch Changes
+
+- 12035c1: disable gas validation on gas station chains
+- 1fe4217: Enable eureka in client library by default
+- d6632de: Fix ConnectedWalletModal for testnet
+- 7416025: fix evm get address and add lombard testnet
+- 8fa8306: Update fontSize and fontFamily of manual address input
+- 75c18eb: add lombard bech32 config
+- 51f89dc: fix evm getAddress not switching chain
+- Updated dependencies [12035c1]
+- Updated dependencies [7416025]
+  - @skip-go/client@0.16.23
+
+## 3.5.0
+
+### Minor Changes
+
+- 2a116b4: - Added automatic text resizing for large numbers in input fields to prevent overflow
+
+### Patch Changes
+
+- 8e3a140: Fix issue with infinitely calling connectRequiredChains
+- 9515033: Update default timeout for waitForVariable to be 10seconds
+- 7ef5613: Remove mars-1 from chainIds to connect
+- 28269a2: Disable manual address for signRequired chains, and update set recovery address to say set intermediary address
+- 9b642eb: modify evm gas balance error message
+- 17f6fb3: evm and svm gas balance validation
+- 3c027ae: Add rootId to WidgetContainer and Modals
+- b2fb0ab: fix asset evm validation
+- Updated dependencies [9515033]
+- Updated dependencies [ab7ebdf]
+- Updated dependencies [9b642eb]
+- Updated dependencies [17f6fb3]
+- Updated dependencies [b2fb0ab]
+  - @skip-go/client@0.16.22
+
 ## 3.4.8
 
 ### Patch Changes

@@ -83,7 +83,7 @@
             "pages": [
               "eureka/eureka-overview",
               "eureka/eureka-tech-overview",
-              "eureka/devnet-testing-guide",
+              "eureka/integration-guide",
               "eureka/security-properties"
             ]
           },

@@ -7,7 +7,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
-import { CosmosMsg, EvmTx, SvmTx } from "./types";
+import { ChainType, CosmosMsg, EvmTx, SvmTx } from "./types";
 import {
   MsgDepositForBurn,
   MsgDepositForBurnWithCaller,
@@ -19,7 +19,7 @@ import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "./codegen/evmos/vesting/v2/vesting";
 import { WalletClient, publicActions } from "viem";
 import { Connection, Transaction } from "@solana/web3.js";
-import { erc20ABI } from "./constants/abis";
+import { GetFallbackGasAmount } from "./client-types";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
@@ -199,39 +199,32 @@ export async function getCosmosGasAmountForMessage(
 export async function getEVMGasAmountForMessage(
   signer: WalletClient,
   tx: EvmTx,
+  getFallbackGasAmount?: GetFallbackGasAmount,
 ) {
   const { to, data, value } = tx;
   if (!signer.account) throw new Error("estimateGasForEvmTx: No account found");
   const extendedSigner = signer.extend(publicActions);
-  const gasAmount = await extendedSigner.estimateGas({
-    account: signer.account,
-    to: to as `0x${string}`,
-    data: `0x${data}`,
-    value: value === "" ? undefined : BigInt(value),
-  });
+
   const fee = await extendedSigner.estimateFeesPerGas();
+  try {
+    const gasAmount = await extendedSigner.estimateGas({
+      account: signer.account,
+      to: to as `0x${string}`,
+      data: `0x${data}`,
+      value: value === "" ? undefined : BigInt(value),
+    });
 
-  return gasAmount * fee.maxFeePerGas;
-}
-
-export async function getEVMGasAmountForTokenApproval(
-  signer: WalletClient,
-  contractAddress: string,
-  spender: string,
-  amount: bigint,
-) {
-  if (!signer.account) throw new Error("estimateGasForEvmTx: No account found");
-  const extendedSigner = signer.extend(publicActions);
-  const gasAmount = await extendedSigner.estimateContractGas({
-    account: signer.account,
-    address: contractAddress as `0x${string}`,
-    abi: erc20ABI,
-    functionName: "approve",
-    args: [spender as `0x${string}`, amount],
-  });
-  const fee = await extendedSigner.estimateFeesPerGas();
-
-  return gasAmount * fee.maxFeePerGas;
+    return gasAmount * fee.maxFeePerGas;
+  } catch (error) {
+    const fallbackGasAmount = await getFallbackGasAmount?.(
+      tx.chainID,
+      ChainType.EVM,
+    );
+    if (fallbackGasAmount) {
+      return BigInt(fallbackGasAmount) * fee.maxFeePerGas;
+    }
+    throw error;
+  }
 }
 
 export async function getSVMGasAmountForMessage(

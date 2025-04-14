@@ -23,6 +23,7 @@ import { track } from "@amplitude/analytics-browser";
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
   chainAddressIndex: number;
+  signRequired?: boolean;
 };
 
 export enum WalletSource {
@@ -63,10 +64,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     },
   } as ManualWalletEntry;
 
-  const isShowManualWalletEntry =
+  const onlyShowManualWalletEntry =
     chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
 
-  const walletList = [..._walletList, manualWalletEntry];
+  const hideManualWalletEntry = modalProps.signRequired;
+
+  const walletList = [..._walletList, ...(hideManualWalletEntry ? [] : [manualWalletEntry])];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setManualWalletAddress(e.target.value);
@@ -121,7 +124,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
 
   const walletListTitle = useMemo(() => {
     const isDestinationIndex = chainAddressIndex === Object.values(chainAddresses).length - 1;
-    const title = isDestinationIndex ? "Destination" : "Recovery";
+    const title = isDestinationIndex ? "Destination" : "Intermediary";
     if (mobile) {
       return title;
     }
@@ -176,11 +179,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           <ModalHeader
             title={isMobileScreenSize ? "Enter an address" : `Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
-            rightContent={() => (
+            rightContent={
               <StyledChainLogoContainerRow align="center" justify="center">
                 <img width="25px" height="25px" src={chainLogo} />
               </StyledChainLogoContainerRow>
-            )}
+            }
           />
           {showWithdrawalWarning && (
             <SmallText color={theme?.error?.text} textAlign="center">
@@ -219,7 +222,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       ) : (
         <RenderWalletList
           title={walletListTitle}
-          walletList={isShowManualWalletEntry ? [manualWalletEntry] : walletList}
+          walletList={onlyShowManualWalletEntry ? [manualWalletEntry] : walletList}
           onClickBackButton={() => {
             track("set address modal: back button - clicked");
             NiceModal.remove(Modals.SetAddressModal);
@@ -268,6 +271,8 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
 `;
 
 const StyledInput = styled.input<{ validAddress?: boolean }>`
+  font-size: 20px;
+  font-family: "ABCDiatype", sans-serif;
   height: 60px;
   width: 100%;
   box-sizing: border-box;

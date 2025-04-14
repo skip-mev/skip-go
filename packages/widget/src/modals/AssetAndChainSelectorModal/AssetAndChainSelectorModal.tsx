@@ -19,6 +19,7 @@ import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 
 export type GroupedAsset = {
   id: string;
@@ -53,6 +54,7 @@ export const AssetAndChainSelectorModal = createModal(
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
     const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
+    const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
     const isLoading = (isFetching && isPending) || isChainsLoading;
 
@@ -95,7 +97,11 @@ export const AssetAndChainSelectorModal = createModal(
     }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
+    const filteredChains = useFilteredChains({
+      selectedGroup,
+      searchQuery,
+      context,
+    });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -116,6 +122,27 @@ export const AssetAndChainSelectorModal = createModal(
 
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
+        const groupedAsset = item as GroupedAsset;
+        const chainWithAsset = item as ChainWithAsset;
+
+        const highlightedSymbol =
+          ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
+
+        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
+
+        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
+          ? ibcEurekaHighlightedAssets &&
+            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
+            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
+            ? true
+            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
+              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
+                chainWithAsset.chainID,
+              )
+          : false;
+
+        const eureka = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
+
         return (
           <AssetAndChainSelectorModalRowItem
             item={item}
@@ -123,10 +150,11 @@ export const AssetAndChainSelectorModal = createModal(
             onSelect={onSelect}
             skeleton={<Skeleton />}
             context={context}
+            eureka={eureka}
           />
         );
       },
-      [context, onSelect],
+      [context, ibcEurekaHighlightedAssets, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {
@@ -194,6 +222,22 @@ export const AssetAndChainSelectorModal = createModal(
     );
   },
 );
+
+export const openAssetAndChainSelectorModal = ({
+  context,
+  onSelect,
+}: {
+  onSelect: (asset: ClientAsset | null) => void;
+  context: "source" | "destination";
+}) => {
+  NiceModal.show(Modals.AssetAndChainSelectorModal, {
+    context,
+    onSelect: (asset: ClientAsset | null) => {
+      onSelect(asset);
+      NiceModal.hide(Modals.AssetAndChainSelectorModal);
+    },
+  });
+};
 
 const StyledColumn = styled(Column)<{
   height: number;

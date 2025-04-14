@@ -6,7 +6,6 @@ import { PartialTheme } from "./theme";
 import { Router } from "./Router";
 import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
-import { ChainFilter } from "@/state/swapPage";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
@@ -17,6 +16,9 @@ import { Callbacks } from "@/state/callbacks";
 import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
 import { settingsDrawerAtom } from "@/state/settingsDrawer";
 import { rootIdAtom } from "@/state/skipClient";
+import packageJson from "../../package.json";
+import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
+import { ChainFilter } from "@/state/filters";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -46,6 +48,8 @@ export type WidgetProps = {
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
+  filterOut?: ChainFilter;
+  filterOutUnlessUserHasBalance?: ChainFilter;
   walletConnect?: WalletConnect;
   /**
    * enables sentry session replays on the widget to help with troubleshooting errors
@@ -74,6 +78,9 @@ export type WidgetProps = {
    */
   simulate?: boolean;
   disableShadowDom?: boolean;
+  ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
+  assetSymbolsSortedToTop?: string[];
+  hideAssetsUnlessWalletTypeConnected?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"
@@ -137,6 +144,8 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     registerModals();
+    // eslint-disable-next-line no-console
+    console.info(`Loaded skip-go widget version ${packageJson.version}`);
   }, []);
 
   const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {

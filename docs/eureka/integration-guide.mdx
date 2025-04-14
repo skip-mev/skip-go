@@ -1,0 +1,54 @@
+---
+title: "Integration Guide"
+id: eureka-technical
+description: "A guide on how to integrate IBC Eureka for chain developers, asset issuers, and application developers"
+---
+
+# Types of Integrators
+
+**There are three types of integrators of Eureka:**
+
+1. **Chain Developers** - ensuring that your chain is compatible with Eureka and can facilitate the bridging of assets to and from other chains in the Eureka ecosystem.
+2. **Asset Issuers** - ensuring the assets you care about being bridged over Eureka are properly set up in the protocol and in the Skip Go API for application developers to support easily.
+3. **Application Developers** - ensuring your end users have access to Eureka assets and bridging capabilities via the Skip Go API.
+
+## Chain Developers
+
+**If you're developing a Cosmos-based blockchain, the easiest way to unlock Eureka assets and bridging capabilities is by opening up an IBC connection to the Cosmos Hub:**
+
+- Requires an IBC (classic) connection to the Cosmos Hub
+- No chain upgrade is needed if you're already using IBC
+- Users benefit from reduced cost of asset transfers between Eureka-enabled domains through batching
+- Chains only need to maintain a single relayer to the Cosmos Hub to reach the entire Eureka and IBC network
+
+If you are interested in a direct Eureka connection to Ethereum or L2s/Solana coming later this year, please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) directly as additional integration work is required.
+
+## Asset Issuers
+
+**During the initial rollout of IBC Eureka, we will be working closely with asset issuers to ensure their tokens are bridged over and set up in the Skip Go API for application developers to support easily.**
+
+If you're an asset issuer looking to expand access to your token across different blockchains connected to the Eureka ecosystem, please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) so that we can help set you up!
+
+## Application Developers
+
+**If you're an application developer looking to give your users access to Eureka assets in your UI or to leverage them within your protocol, integrating into the Eureka ecosystem via Skip Go is super simple!**
+
+### New Skip Go Integrator
+
+If you're brand new to Skip Go, read about our cross-chain developer platform on the [Getting Started](/general/getting-started) page will be the best resource for you to get up to speed on the capabilities of Skip Go and the various integration options.
+
+- For the quickest and easiest integration, you can integrate the [Widget](/widget/getting-started) in minutes! For more control over the UI you provide your users, the [Client Library](/client/getting-started) is the way to go.
+- The integration provides a one-click experience for users to transfer assets across the Eureka ecosystem and beyond in a single integration (via Skip Go's aggregation and composability engine).
+
+### Current Skip Go Integrator
+
+Ensuring Eureka works with your Skip Go integration is the same easy process as any other bridge! Changes are as follows:
+1. `eureka_transfer` Operation type to be expected to be returned from the `/route` and `/msgs_direct` endpoints
+2. `eureka_transfer` Transfer type to be expected to be returned from the `/status` endpoint in the transfer sequence
+3. `eureka` bridge type returned from the `/bridges` endpoint
+4. To keep Eureka opt-in, integrators must pass `eureka` into the `experimental_features` array in the `/route` and `/msgs_direct` calls to enable Eureka routing
+
+**What this looks like for each type of Skip Go integration:**
+1. If you're using the Widget, make sure you're updated to version `3.5.0` or above and pass in `eureka` to the experimentalFeatures prop.
+2. If you're using the Client Library, make sure you're updated to version `0.16.22` or above and pass in `eureka` to the experimentalFeatures param.
+3. If you're integrated directly with the REST endpoints, you can find the relevant types in the API reference for the [Route Operation](/api-reference/prod/fungible/post-v2fungibleroute#response-operations) and for the [Lifecycle Tracking Transfer](/api-reference/prod/transaction/get-v2txstatus#response-transfers).

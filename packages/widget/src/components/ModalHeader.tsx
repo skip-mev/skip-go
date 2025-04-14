@@ -7,7 +7,7 @@ import { Button } from "./Button";
 type ModalHeaderProps = {
   title: string;
   onClickBackButton: () => void;
-  rightContent?: () => React.ReactNode;
+  rightContent?: React.ReactNode;
 };
 
 export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHeaderProps) => {
@@ -18,7 +18,7 @@ export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHea
         <StyledLeftArrowIcon color={theme?.primary.text.normal} />
       </Button>
       <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
-      {rightContent?.()}
+      {rightContent}
     </StyledHeader>
   );
 };

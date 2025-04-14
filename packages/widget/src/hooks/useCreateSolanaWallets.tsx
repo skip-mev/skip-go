@@ -1,4 +1,4 @@
-import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
 import {
   MinimalWallet,
@@ -13,14 +13,16 @@ import { callbacksAtom } from "@/state/callbacks";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
 import { track } from "@amplitude/analytics-browser";
+import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const { data: assets } = useAtomValue(skipAssetsAtom);
-  const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
   const [svmWallet, setSvmWallet] = useAtom(svmWalletAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
+
+  const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
@@ -32,18 +34,9 @@ export const useCreateSolanaWallets = () => {
         try {
           await wallet.connect();
           const chain = chains?.find((x) => x.chainID === "solana");
-          const asset = assets?.find(
-            (x) =>
-              x.denom.toLowerCase() ===
-              "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
-          );
 
           if (sourceAsset === undefined) {
-            setSourceAsset({
-              chainID: chain?.chainID,
-              chainName: chain?.chainName,
-              ...asset,
-            });
+            setDefaultSourceAsset(ChainType.SVM);
           }
 
           const address = wallet.publicKey?.toBase58();
@@ -126,11 +119,10 @@ export const useCreateSolanaWallets = () => {
     return wallets;
   }, [
     chains,
-    assets,
     sourceAsset,
     setWCDeepLinkByChainType,
     svmWallet,
-    setSourceAsset,
+    setDefaultSourceAsset,
     callbacks,
     setSvmWallet,
   ]);
