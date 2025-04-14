@@ -323,7 +323,6 @@ export const SwapPage = () => {
     routePreference,
     slippage,
     showCosmosLedgerWarning,
-    priceChangePercentage,
     showGoFastWarning,
     isGoFast,
     setChainAddresses,

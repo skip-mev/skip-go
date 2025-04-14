@@ -8,6 +8,7 @@ import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { track } from "@amplitude/analytics-browser";
+import { useMemo } from "react";
 
 export type ErrorPageBadPriceWarningProps = {
   onClickContinue: () => void;
@@ -42,12 +43,11 @@ export const ErrorPageBadPriceWarning = ({
     ? `${calculatePercentageChange(usdAmountIn, usdAmountOut, true)}%`
     : null;
 
-
-  const priceImpactPercentage = (() => {
+  const priceImpactPercentage = useMemo(() => {
     const impactString = route.swapPriceImpactPercent;
     if (!impactString) return null;
     return `${parseFloat(impactString).toFixed(2)}%`;
-  })();
+  }, [route.swapPriceImpactPercent]);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
@@ -60,37 +60,57 @@ export const ErrorPageBadPriceWarning = ({
     tokenAmount: amountOut,
   });
 
-  let title = "Warning: Bad Trade";
-  let descriptionContent: React.ReactNode = null;
+  const { title, descriptionContent } = useMemo(() => {
+    let computedTitle = "Warning: Bad Trade";
+    let computedDescriptionContent: React.ReactNode = null;
 
-  if (hasUsdValues && swapDifferencePercentage) {
-    title = `Warning: Bad trade (-${swapDifferencePercentage})`;
-    descriptionContent = (
-      <>
-        You will lose {swapDifferencePercentage} of your input value with this trade
-        <br />
-        Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
-        <br />
-        Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
-      </>
-    );
-  } else if (priceImpactPercentage) {
-    title = `Warning: High Price Impact (${priceImpactPercentage})`;
-    descriptionContent = (
-      <>
-        Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
-        <br />
-      </>
-    );
-  } else {
-    descriptionContent = (
-      <>
-        This trade may result in a poor execution price. Please verify the amounts carefully.
-        <br />
+    if (hasUsdValues && swapDifferencePercentage) {
+      computedTitle = `Warning: Bad trade (-${swapDifferencePercentage})`;
+      computedDescriptionContent = (
+        <>
+          You will lose {swapDifferencePercentage} of your input value with this trade
+          <br />
+          Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
+          <br />
+          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
+        </>
+      );
+    } else if (priceImpactPercentage) {
+      computedTitle = `Warning: High Price Impact (${priceImpactPercentage})`;
+      computedDescriptionContent = (
+        <>
+          Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
+          <br />
+          Input: {sourceDetails?.amount} {sourceDetails?.symbol}
+          <br />
+          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+        </>
+      );
+    } else {
+      computedDescriptionContent = (
+        <>
+          This trade may result in a poor execution price. Please verify the amounts carefully.
+          <br />
+          Input: {sourceDetails?.amount} {sourceDetails?.symbol}
+          <br />
+          Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol}
+        </>
+      );
+    }
 
-      </>
-    );
-  }
+    return {
+      title: computedTitle,
+      descriptionContent: computedDescriptionContent,
+    };
+  }, [
+    hasUsdValues,
+    swapDifferencePercentage,
+    priceImpactPercentage,
+    sourceDetails,
+    destinationDetails,
+    usdAmountIn,
+    usdAmountOut,
+  ]);
 
   return (
     <>
