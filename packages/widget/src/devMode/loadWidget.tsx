@@ -5,7 +5,7 @@ import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import { postRoute, setClientOptions } from "@skip-go/client";
+import { postRoute } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -23,8 +23,6 @@ const DevMode = () => {
 
   useEffect(() => {
     const routeFn = async () => {
-      setClientOptions();
-
       const route = await postRoute({
         sourceAssetDenom: "uatom",
         sourceAssetChainId: "cosmoshub-4",

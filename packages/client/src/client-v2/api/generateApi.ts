@@ -178,7 +178,8 @@ export type ApiProps<K extends ValidApiMethodKeys> = {
 };
 
 export function api<K extends ValidApiMethodKeys>({
-  methodName, // methodName is required to infer types
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  methodName,
   path,
   onSuccess,
   method = "get",
