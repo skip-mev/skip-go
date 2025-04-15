@@ -6,7 +6,6 @@ import { ClientTransferEvent, OverallStatus, SimpleStatus } from "@/utils/client
 import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { useMemo } from "react";
 
 type useTxHistoryProps = {
   index: number;
@@ -32,21 +31,6 @@ export const useTxHistory = ({
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
-  const txStatusFromTxHistoryItem = useMemo(() => {
-    // Incomplete is when multiple transactions are required but not all txs are signed/tracked
-    if (txs.length !== txsRequired) return "incomplete";
-    if (txHistoryItem?.lastTxStatus === "success") return "completed";
-    if (txHistoryItem?.isSuccess) return "completed";
-    if (txHistoryItem?.isSettled && !txHistoryItem?.isSuccess) return "failed";
-    return "pending";
-  }, [
-    txHistoryItem?.isSettled,
-    txHistoryItem?.isSuccess,
-    txHistoryItem?.lastTxStatus,
-    txs.length,
-    txsRequired,
-  ]);
-
   let statusData: {
     transferEvents: ClientTransferEvent[];
     lastTxStatus?: OverallStatus;
@@ -58,7 +42,7 @@ export const useTxHistory = ({
   const { data, isFetching, isPending } = useBroadcastedTxsStatus({
     txsRequired,
     txs,
-    enabled: txStatusFromTxHistoryItem === "pending" && chainIdFound,
+    enabled: !txHistoryItem.isSettled && chainIdFound,
   });
 
   if (data !== undefined) {

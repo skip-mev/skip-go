@@ -42,9 +42,13 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
+import { useTheme } from "styled-components";
+import { StyledAnimatedBorder } from "../SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
+  const theme = useTheme();
+
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
@@ -329,6 +333,37 @@ export const SwapPage = () => {
     setError,
   ]);
 
+  const historyPageButton = useMemo(() => {
+    if (txHistory.length === 0) return;
+
+    const getIcon = () => {
+      if (txHistory[0].isSettled === false) {
+        return (
+          <StyledAnimatedBorder
+            width={6}
+            height={6}
+            borderSize={4}
+            backgroundColor={theme.primary.text.normal}
+            status="pending"
+            style={{
+              maskImage: "radial-gradient(circle, transparent 55%, black 0%)",
+            }}
+          />
+        );
+      }
+      return ICONS.history;
+    };
+
+    return {
+      label: "History",
+      icon: getIcon(),
+      onClick: () => {
+        track("swap page: history button - clicked");
+        setCurrentPage(Routes.TransactionHistoryPage);
+      },
+    };
+  }, [setCurrentPage, theme.primary.text.normal, txHistory]);
+
   return (
     <Column
       gap={5}
@@ -337,18 +372,7 @@ export const SwapPage = () => {
       }}
     >
       <SwapPageHeader
-        leftButton={
-          txHistory.length === 0
-            ? undefined
-            : {
-                label: "History",
-                icon: ICONS.history,
-                onClick: () => {
-                  track("swap page: history button - clicked");
-                  setCurrentPage(Routes.TransactionHistoryPage);
-                },
-              }
-        }
+        leftButton={historyPageButton}
         rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
       />
       <Column align="center">

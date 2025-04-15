@@ -257,6 +257,7 @@ export const StyledAnimatedBorder = ({
   height,
   borderSize = 2,
   status,
+  style,
 }: {
   backgroundColor: string;
   children?: React.ReactNode;
@@ -264,6 +265,7 @@ export const StyledAnimatedBorder = ({
   height: number;
   borderSize?: number;
   status?: SimpleStatus;
+  style?: React.CSSProperties;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -273,6 +275,7 @@ export const StyledAnimatedBorder = ({
     borderSize={borderSize}
     status={status}
     backgroundColor={backgroundColor}
+    style={style}
   >
     <StyledLoadingOverlay
       className="overlay"
@@ -335,6 +338,11 @@ const StyledLoadingContainer = styled(Row)<{
       transform: rotate(360deg);
     }
   }
+  mask-composite: intersect;
+  mask-mode: alpha;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
 `;
 
 const StyledLoadingOverlay = styled(Row)<{
