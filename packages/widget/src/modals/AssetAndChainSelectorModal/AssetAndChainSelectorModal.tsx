@@ -97,7 +97,11 @@ export const AssetAndChainSelectorModal = createModal(
     }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
+    const filteredChains = useFilteredChains({
+      selectedGroup,
+      searchQuery,
+      context,
+    });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -120,12 +124,22 @@ export const AssetAndChainSelectorModal = createModal(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
         const groupedAsset = item as GroupedAsset;
         const chainWithAsset = item as ChainWithAsset;
-        const groupedAssetContainsEurekaAsset = groupedAsset?.assets?.some(
-          (asset) => ibcEurekaHighlightedAssets.includes(asset.denom) && asset.chainID === "1",
-        );
-        const chainWithAssetContainsEurekaAsset =
-          ibcEurekaHighlightedAssets.includes(chainWithAsset?.asset?.denom) &&
-          chainWithAsset?.asset.chainID === "1";
+
+        const highlightedSymbol =
+          ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
+
+        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
+
+        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
+          ? ibcEurekaHighlightedAssets &&
+            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
+            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
+            ? true
+            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
+              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
+                chainWithAsset.chainID,
+              )
+          : false;
 
         const eureka = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
 
@@ -208,6 +222,22 @@ export const AssetAndChainSelectorModal = createModal(
     );
   },
 );
+
+export const openAssetAndChainSelectorModal = ({
+  context,
+  onSelect,
+}: {
+  onSelect: (asset: ClientAsset | null) => void;
+  context: "source" | "destination";
+}) => {
+  NiceModal.show(Modals.AssetAndChainSelectorModal, {
+    context,
+    onSelect: (asset: ClientAsset | null) => {
+      onSelect(asset);
+      NiceModal.hide(Modals.AssetAndChainSelectorModal);
+    },
+  });
+};
 
 const StyledColumn = styled(Column)<{
   height: number;

@@ -1,5 +1,74 @@
 ## 0.0.15
 
+## 3.7.3
+
+### Patch Changes
+
+- ac50805: Add filterOutUnlessUserHasBalance prop
+- dedd423: evm gas simulation at the start of the tx
+- Updated dependencies [dedd423]
+  - @skip-go/client@0.16.29
+
+## 3.7.2
+
+### Patch Changes
+
+- 78f9a6a: update style
+
+## 3.7.1
+
+### Patch Changes
+
+- a7ba428: Fix "Set second signing address" showing incorrectly
+- 9515ad5: expose openAssetAndChainSelectorModal
+- 39235a6: Fix ConnectEcoRow to show sourceAsset address or defaultAddress or firstAddress found in cosmosAccounts, and add fallback connecting to defaultChainId
+- f26c654: Stop animation after it completes to fix modal flickering
+- afd9530: add initia pubkey to account parser
+- 8fce4a3: Fix sorting with eurekaHighlightedAssets
+- Updated dependencies [afd9530]
+  - @skip-go/client@0.16.28
+
+## 3.7.0
+
+### Minor Changes
+
+- 2939b01: modify ibcEurekaHighlightedAssetsAtom interface
+
+### Patch Changes
+
+- a83f22f: Fix balances payload
+- 8815787: not changing routes when wallet connected
+
+## 3.6.8
+
+### Patch Changes
+
+- 59f5f76: highlight all eureka asset
+- 6b5dfa1: fix filter
+
+## 3.6.7
+
+### Patch Changes
+
+- 777a11d: show gas station provision message if gas station tx
+- e77efac: Use rAF timers to handle closeModal to avoid flickering
+- 04cf861: copy change to tooltip to route preference settings
+- 0e33fe7: fix evm gas simulation
+- 94f5424: fix error font sizes
+- c73fa16: Update default decimal places to 8
+- Updated dependencies [0d2e0c3]
+- Updated dependencies [0e33fe7]
+  - @skip-go/client@0.16.27
+
+## 3.6.6
+
+### Patch Changes
+
+- ad43417: expose Theme type
+- d13c452: update registries
+- Updated dependencies [d13c452]
+  - @skip-go/client@0.16.26
+
 ## 3.6.5
 
 ### Patch Changes

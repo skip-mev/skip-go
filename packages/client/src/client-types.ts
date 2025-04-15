@@ -28,7 +28,7 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export type Gas = {
+export type ValidateGasResult = {
   error: null | string;
   asset: types.FeeAsset | null;
   fee: StdFee | null;
@@ -127,7 +127,7 @@ export type ExecuteCosmosMessage = GasOptions & {
   getCosmosSigner?: SignerGetters["getCosmosSigner"];
   chainID: string;
   messages: types.CosmosMsg[];
-  gas: Gas;
+  gas: ValidateGasResult;
   onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
   onTransactionBroadcast?: TransactionCallbacks["onTransactionBroadcast"];
 };

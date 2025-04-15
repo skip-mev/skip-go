@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { filterAtom, filterOutAtom, swapSettingsAtom } from "@/state/swapPage";
+import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -28,6 +28,8 @@ import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -47,6 +49,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setRouteConfig = useSetAtom(routeConfigAtom);
   const setFilter = useSetAtom(filterAtom);
   const setFilterOut = useSetAtom(filterOutAtom);
+  const setFilterOutUnlessUserHasBalanceAtom = useSetAtom(filterOutUnlessUserHasBalanceAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
@@ -54,6 +57,9 @@ export const useInitWidget = (props: WidgetProps) => {
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
   const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
   const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
+  const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
+    hideAssetsUnlessWalletTypeConnectedAtom,
+  );
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -116,9 +122,11 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.filter) {
       setFilter(props.filter);
     }
-
     if (props.filterOut) {
       setFilterOut(props.filterOut);
+    }
+    if (props.filterOutUnlessUserHasBalance) {
+      setFilterOutUnlessUserHasBalanceAtom(props.filterOutUnlessUserHasBalance);
     }
 
     setOnlyTestnets(props.onlyTestnet ?? false);
@@ -139,6 +147,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
     if (props.assetSymbolsSortedToTop) {
       setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
+    }
+
+    if (props.hideAssetsUnlessWalletTypeConnected) {
+      setHideAssetsUnlessWalletTypeConnected(props.hideAssetsUnlessWalletTypeConnected);
     }
 
     const callbacks = {
@@ -182,6 +194,10 @@ export const useInitWidget = (props: WidgetProps) => {
     props.filterOut,
     setFilter,
     setFilterOut,
+    props.hideAssetsUnlessWalletTypeConnected,
+    setHideAssetsUnlessWalletTypeConnected,
+    props.filterOutUnlessUserHasBalance,
+    setFilterOutUnlessUserHasBalanceAtom,
   ]);
 
   return { theme: mergedTheme };

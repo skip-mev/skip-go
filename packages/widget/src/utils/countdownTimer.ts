@@ -4,7 +4,7 @@ export function createCountdownTimer({
   onComplete,
 }: {
   duration: number;
-  onUpdate: (remainingTime: number) => void;
+  onUpdate?: (remainingTime: number) => void;
   onComplete?: () => void;
 }) {
   let start: number | null = null;
@@ -14,14 +14,14 @@ export function createCountdownTimer({
     if (!start) start = timestamp;
 
     const elapsed = timestamp - start;
-    const remainingTime = Math.max(duration * 1_000 - elapsed, 0);
+    const remainingTime = Math.max(duration - elapsed, 0);
 
-    onUpdate(remainingTime / 1_000);
+    onUpdate?.(remainingTime);
 
     if (remainingTime > 0) {
       animationFrameId = requestAnimationFrame(step);
     } else {
-      if (onComplete) onComplete();
+      onComplete?.();
     }
   }
 

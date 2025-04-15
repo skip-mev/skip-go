@@ -2,7 +2,6 @@ import { Button, GhostButton } from "@/components/Button";
 import { Row } from "@/components/Layout";
 import { ModalRowItem } from "@/components/ModalRowItem";
 import { Text, TextButton } from "@/components/Typography";
-import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useWalletList } from "@/hooks/useWalletList";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { useAtomValue } from "jotai";
@@ -21,33 +20,55 @@ import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
+import { useAccount as useCosmosAccount } from "graz";
+import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
 const STANDARD_ICON_SIZE = 35;
 
-export const ConnectEco = ({
+export const ConnectEcoRow = ({
   chainType,
-  chainId,
   onClick,
   connectedWalletModal = false,
 }: {
   chainType: ChainType;
-  chainId: string; // This is the representative chain ID for the ecosystem
   onClick?: () => void;
   connectedWalletModal?: boolean;
 }) => {
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
+  const { data: cosmosAccounts } = useCosmosAccount({
+    multiChain: true,
+  });
+
   const theme = useTheme();
   const getAccount = useGetAccount();
   const isMobileScreenSize = useIsMobileScreenSize();
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  useGetAssetDetails({
-    assetDenom: sourceAsset?.denom,
-    chainId: sourceAsset?.chainID,
-  });
   const { data: chains } = useAtomValue(skipChainsAtom);
+
+  const primaryChainIdForChainType = usePrimaryChainIdForChainType();
+
+  const defaultChainId = primaryChainIdForChainType[chainType];
+
+  const accountChainId = useMemo(() => {
+    if (chainType !== ChainType.Cosmos) {
+      return defaultChainId;
+    }
+
+    if (sourceAsset?.chainID && cosmosAccounts?.[sourceAsset.chainID]) {
+      return sourceAsset?.chainID;
+    }
+
+    if (cosmosAccounts?.[defaultChainId]) {
+      return defaultChainId;
+    }
+
+    if (cosmosAccounts && Object.keys(cosmosAccounts)[0]) {
+      return Object.keys(cosmosAccounts)[0];
+    }
+  }, [chainType, cosmosAccounts, defaultChainId, sourceAsset?.chainID]);
 
   const chainIdForWalletSelector = useMemo(() => {
     if (!sourceAsset?.chainID || !chains) return undefined;
@@ -56,12 +77,12 @@ export const ConnectEco = ({
     if (sourceChainInfo?.chainType === chainType) {
       return sourceAsset.chainID;
     }
-    return undefined;
-  }, [sourceAsset?.chainID, chains, chainType]);
+    return defaultChainId;
+  }, [sourceAsset?.chainID, chains, chainType, defaultChainId]);
 
   const account = useMemo(() => {
-    return getAccount(chainId, true);
-  }, [chainId, getAccount]);
+    return getAccount(accountChainId, true);
+  }, [accountChainId, getAccount]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
@@ -165,9 +186,8 @@ export const ConnectEco = ({
                   <CopyIcon width="10" height="10" color={theme.primary.text.lowContrast} />
                 </StyledCopyIconButton>
               </Tooltip>
-              {chainType === "evm" && (
-                <EvmChainIndicator chainId={account?.currentConnectedEVMChainId} />
-              )}
+
+              <ChainIndicator chainId={accountChainId} />
             </Row>
           </Row>
         ) : (
@@ -192,7 +212,7 @@ export const ConnectEco = ({
   );
 };
 
-export const EvmChainIndicator = ({ chainId }: { chainId?: string }) => {
+export const ChainIndicator = ({ chainId }: { chainId?: string }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((chain) => chain.chainID === chainId);
