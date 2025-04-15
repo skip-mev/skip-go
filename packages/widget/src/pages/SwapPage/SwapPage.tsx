@@ -339,14 +339,22 @@ export const SwapPage = () => {
     const getIcon = () => {
       if (!txHistory[txHistory.length - 1]?.isSettled) {
         return (
-          <SpinnerIcon
+          <div
             style={{
-              animation: "spin 1s linear infinite",
-              position: "absolute",
-              height: 14,
-              width: 14,
+              marginLeft: "8px",
+              marginRight: "8px",
+              position: "relative",
             }}
-          />
+          >
+            <SpinnerIcon
+              style={{
+                animation: "spin 1s linear infinite",
+                position: "absolute",
+                height: 14,
+                width: 14,
+              }}
+            />
+          </div>
         );
       }
       return ICONS.history;
