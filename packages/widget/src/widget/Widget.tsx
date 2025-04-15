@@ -97,7 +97,7 @@ type NewSwapVenueRequest = {
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
+export type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
   apiUrl?: string;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 };

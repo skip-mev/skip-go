@@ -2003,24 +2003,14 @@ export class SkipClient {
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
 
-    const feeAssetFoundInSkipBalances = feeAssets.every((asset) => {
-      return (
-        this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
-          undefined &&
-        this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
-          "0"
-      );
+    const feeBalance = await this.balances({
+      chains: {
+        [chainID]: {
+          address: signerAddress,
+          denoms: feeAssets.map((asset) => asset.denom),
+        },
+      },
     });
-    const feeBalance = feeAssetFoundInSkipBalances
-      ? this.skipBalances
-      : await this.balances({
-          chains: {
-            [chainID]: {
-              address: signerAddress,
-              denoms: feeAssets.map((asset) => asset.denom),
-            },
-          },
-        });
     const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
@@ -2128,15 +2118,14 @@ export class SkipClient {
     if (!signer.account?.address) {
       throw new Error("validateEvmGasBalance: Signer address not found");
     }
-    const skipBalances =
-      this.skipBalances ||
-      (await this.balances({
-        chains: {
-          [tx.chainID]: {
-            address: signer.account?.address,
-          },
+    const skipBalances = await this.balances({
+      chains: {
+        [tx.chainID]: {
+          address: signer.account?.address,
         },
-      }));
+      },
+    });
+
     const balances = skipBalances.chains[tx.chainID]?.denoms;
 
     const nativeGasBalance =
@@ -2212,18 +2201,14 @@ export class SkipClient {
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
     const gasAmount = await getSVMGasAmountForMessage(connection, tx);
 
-    const skipBalances = this.skipBalances?.chains["solana"]?.denoms[
-      "solana-native"
-    ]
-      ? this.skipBalances
-      : await this.balances({
-          chains: {
-            solana: {
-              address: tx.signerAddress,
-              denoms: ["solana-native"],
-            },
-          },
-        });
+    const skipBalances = await this.balances({
+      chains: {
+        solana: {
+          address: tx.signerAddress,
+          denoms: ["solana-native"],
+        },
+      },
+    });
     const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
     if (!gasBalance) {
       return {
