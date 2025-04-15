@@ -42,7 +42,7 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
-import { StyledAnimatedBorder } from "../SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
+import { SpinnerIcon } from "@/icons/SpinnerIcon";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -337,13 +337,12 @@ export const SwapPage = () => {
     const getIcon = () => {
       if (!txHistory[txHistory.length - 1]?.isSettled) {
         return (
-          <StyledAnimatedBorder
-            width={6}
-            height={6}
-            borderSize={4}
-            status="pending"
+          <SpinnerIcon
             style={{
-              maskImage: "radial-gradient(circle, transparent 55%, black 0%)",
+              animation: "spin 1s linear infinite",
+              position: "absolute",
+              height: 14,
+              width: 14,
             }}
           />
         );
