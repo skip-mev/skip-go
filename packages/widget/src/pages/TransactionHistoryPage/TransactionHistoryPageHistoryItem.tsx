@@ -160,15 +160,11 @@ export const TransactionHistoryPageHistoryItem = ({
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <StyledHistoryItemContainer gap={15} align="center">
-          <StyledSourceAssetContainer gap={8}>
-            <RenderAssetAmount {...source} />
-          </StyledSourceAssetContainer>
+        <Row gap={12} align="center">
+          <RenderAssetAmount {...source} sourceAsset />
           <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
-          <StyledSourceAssetContainer gap={8}>
-            <RenderAssetAmount {...destination} />
-          </StyledSourceAssetContainer>
-        </StyledHistoryItemContainer>
+          <RenderAssetAmount {...destination} />
+        </Row>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
           <Row width={20} align="center" justify="center">
@@ -195,11 +191,15 @@ const RenderAssetAmount = ({
   amount,
   asset,
   assetImage,
+  sourceAsset = false,
 }: {
   amount?: string;
   asset?: ClientAsset;
   assetImage: string;
+  sourceAsset?: boolean;
 }) => {
+  const isMobileScreenSize = useIsMobileScreenSize();
+
   const formattedAmount = useMemo(() => {
     const numberAfterLimitTwoDecimalPlaces = limitDecimalsDisplayed(amount, 2);
     if (numberAfterLimitTwoDecimalPlaces === "0.00") {
@@ -208,26 +208,29 @@ const RenderAssetAmount = ({
     return numberAfterLimitTwoDecimalPlaces;
   }, [amount]);
 
+  const subtitle = useMemo(() => {
+    if (sourceAsset || isMobileScreenSize) {
+      return asset?.recommendedSymbol;
+    }
+    return `${asset?.recommendedSymbol} on ${asset?.chainName}`;
+  }, [asset?.chainName, asset?.recommendedSymbol, isMobileScreenSize, sourceAsset]);
+
   return (
-    <>
+    <Row gap={8}>
       <img height={35} width={35} src={assetImage} />
-      <Column style={{ width: 95 }}>
+      <Column style={sourceAsset ? { width: 50 } : undefined}>
         <Tooltip content={amount}>
           <Text normalTextColor style={{ width: "max-content" }}>
             {formattedAmount}
           </Text>
         </Tooltip>
         <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
-          {asset?.chainName}
+          {subtitle}
         </SmallText>
       </Column>
-    </>
+    </Row>
   );
 };
-
-const StyledSourceAssetContainer = styled(Row)`
-  width: 120px;
-`;
 
 const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   background: ${({ theme, showDetails }) => showDetails && theme.secondary.background.normal};
@@ -253,8 +256,4 @@ const StyledGreenDot = styled.div`
   height: 10px;
   background: ${({ theme }) => theme.success.text};
   border-radius: 50%;
-`;
-
-const StyledHistoryItemContainer = styled(Row)`
-  max-width: calc(100% - 100px);
 `;
