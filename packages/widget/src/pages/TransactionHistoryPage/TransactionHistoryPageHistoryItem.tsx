@@ -196,11 +196,12 @@ const RenderAssetAmount = ({
   }, [amount]);
 
   const subtitle = useMemo(() => {
+    if (!asset) return;
     if (sourceAsset || isMobileScreenSize) {
       return asset?.recommendedSymbol;
     }
     return `${asset?.recommendedSymbol} on ${asset?.chainName}`;
-  }, [asset?.chainName, asset?.recommendedSymbol, isMobileScreenSize, sourceAsset]);
+  }, [asset, isMobileScreenSize, sourceAsset]);
 
   return (
     <Row gap={8}>
