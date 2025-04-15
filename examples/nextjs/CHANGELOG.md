@@ -1,5 +1,121 @@
 # nextjs
 
+## 0.1.79
+
+### Patch Changes
+
+- Updated dependencies [ac50805]
+- Updated dependencies [dedd423]
+  - @skip-go/widget@3.7.3
+
+## 0.1.78
+
+### Patch Changes
+
+- Updated dependencies [78f9a6a]
+  - @skip-go/widget@3.7.2
+
+## 0.1.77
+
+### Patch Changes
+
+- Updated dependencies [a7ba428]
+- Updated dependencies [9515ad5]
+- Updated dependencies [39235a6]
+- Updated dependencies [f26c654]
+- Updated dependencies [afd9530]
+- Updated dependencies [8fce4a3]
+  - @skip-go/widget@3.7.1
+
+## 0.1.76
+
+### Patch Changes
+
+- Updated dependencies [a83f22f]
+- Updated dependencies [2939b01]
+- Updated dependencies [8815787]
+  - @skip-go/widget@3.7.0
+
+## 0.1.75
+
+### Patch Changes
+
+- Updated dependencies [59f5f76]
+- Updated dependencies [6b5dfa1]
+  - @skip-go/widget@3.6.8
+
+## 0.1.74
+
+### Patch Changes
+
+- Updated dependencies [777a11d]
+- Updated dependencies [e77efac]
+- Updated dependencies [04cf861]
+- Updated dependencies [0e33fe7]
+- Updated dependencies [94f5424]
+- Updated dependencies [c73fa16]
+  - @skip-go/widget@3.6.7
+
+## 0.1.73
+
+### Patch Changes
+
+- Updated dependencies [ad43417]
+- Updated dependencies [d13c452]
+  - @skip-go/widget@3.6.6
+
+## 0.1.72
+
+### Patch Changes
+
+- Updated dependencies [1cb8972]
+  - @skip-go/widget@3.6.5
+
+## 0.1.71
+
+### Patch Changes
+
+- Updated dependencies [c5f48e7]
+- Updated dependencies [30df1d3]
+- Updated dependencies [7a399d5]
+- Updated dependencies [df29c5d]
+- Updated dependencies [ebdca25]
+- Updated dependencies [76b8015]
+  - @skip-go/widget@3.6.4
+
+## 0.1.70
+
+### Patch Changes
+
+- Updated dependencies [fcc815a]
+  - @skip-go/widget@3.6.3
+
+## 0.1.69
+
+### Patch Changes
+
+- Updated dependencies [7da5d2e]
+  - @skip-go/widget@3.6.2
+
+## 0.1.68
+
+### Patch Changes
+
+- Updated dependencies [580fda7]
+- Updated dependencies [a4f3617]
+  - @skip-go/widget@3.6.1
+
+## 0.1.67
+
+### Patch Changes
+
+- Updated dependencies [6ec520a]
+- Updated dependencies [6ec520a]
+- Updated dependencies [6ec520a]
+- Updated dependencies [6ec520a]
+- Updated dependencies [6ec520a]
+  - @skip-go/widget@3.6.0
+
 ## 0.1.66
 
 ### Patch Changes

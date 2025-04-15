@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { ChainType } from "@skip-go/client";
-import { ConnectEco } from "@/modals/ConnectedWalletModal/ConnectEcoRow";
-import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
+import { ConnectEcoRow } from "@/modals/ConnectedWalletModal/ConnectEcoRow";
 
 type EcosystemConnectorsProps = {
   excludeChainType?: ChainType;
@@ -16,8 +15,6 @@ export const EcosystemConnectors = ({
   onClick,
   connectedWalletModal,
 }: EcosystemConnectorsProps) => {
-  const primarychainIdFOrChainType = usePrimaryChainIdForChainType();
-
   const ecosystemsToRender = useMemo(() => {
     return ALL_ECOSYSTEMS.filter((eco) => eco !== excludeChainType);
   }, [excludeChainType]);
@@ -25,12 +22,11 @@ export const EcosystemConnectors = ({
   return (
     <>
       {ecosystemsToRender.map((chainType) => (
-        <ConnectEco
+        <ConnectEcoRow
           key={chainType}
           chainType={chainType}
-          chainId={primarychainIdFOrChainType[chainType]}
           onClick={() => onClick?.(chainType)}
-          openingFromConnectedWalletModal={connectedWalletModal}
+          connectedWalletModal={connectedWalletModal}
         />
       ))}
     </>

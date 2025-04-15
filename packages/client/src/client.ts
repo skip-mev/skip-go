@@ -70,7 +70,6 @@ import {
   getCosmosGasAmountForMessage,
   getEVMGasAmountForMessage,
   getSVMGasAmountForMessage,
-  getEVMGasAmountForTokenApproval,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
@@ -86,6 +85,7 @@ import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
 
+export const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
 export class SkipClient {
   protected requestClient: RequestClient;
 
@@ -111,7 +111,7 @@ export class SkipClient {
     string,
     SigningStargateClient
   > = {};
-  private gasFee: clientTypes.Gas[] | undefined;
+  private validateGasResults: clientTypes.ValidateGasResult[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
     this.clientOptions = options;
@@ -382,8 +382,6 @@ export class SkipClient {
       };
     });
 
-    const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
-
     const isGasStationSourceEVM = chainIds.find((item, i, array) => {
       return (
         GAS_STATION_CHAIN_IDS.includes(item.chainID) &&
@@ -395,12 +393,28 @@ export class SkipClient {
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
       getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+      getEVMSigner: options.getEVMSigner || this.getEVMSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
       disabledChainIds: isGasStationSourceEVM
         ? GAS_STATION_CHAIN_IDS
         : undefined,
     });
+
+    const validateEnabledChainIds = () => {
+      this.validateGasBalances({
+        txs,
+        getFallbackGasAmount: options.getFallbackGasAmount,
+        getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+        getEVMSigner: options.getEVMSigner || this.getEVMSigner,
+        onValidateGasBalance: options.onValidateGasBalance,
+        simulate: simulate,
+        enabledChainIds: isGasStationSourceEVM
+          ? GAS_STATION_CHAIN_IDS
+          : undefined,
+      });
+    };
+
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -409,16 +423,7 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        this.validateGasBalances({
-          txs,
-          getFallbackGasAmount: options.getFallbackGasAmount,
-          getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
-          onValidateGasBalance: options.onValidateGasBalance,
-          simulate: simulate,
-          enabledChainIds: isGasStationSourceEVM
-            ? GAS_STATION_CHAIN_IDS
-            : undefined,
-        });
+        validateEnabledChainIds();
         txResult = await this.executeCosmosTx({
           tx,
           options,
@@ -426,22 +431,14 @@ export class SkipClient {
           gasTimeOut: isGasStationSourceEVM ? 30_000 : undefined,
         });
       } else if ("evmTx" in tx) {
+        validateEnabledChainIds();
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
           chainID: tx.evmTx.chainID,
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
-        this.validateGasBalances({
-          txs,
-          getFallbackGasAmount: options.getFallbackGasAmount,
-          getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
-          onValidateGasBalance: options.onValidateGasBalance,
-          simulate: simulate,
-          enabledChainIds: isGasStationSourceEVM
-            ? GAS_STATION_CHAIN_IDS
-            : undefined,
-        });
+        validateEnabledChainIds();
         txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
@@ -477,7 +474,10 @@ export class SkipClient {
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gasArray = await waitForVariable(() => this.gasFee, gasTimeOut);
+    const gasArray = await waitForVariable(
+      () => this.validateGasResults,
+      gasTimeOut,
+    );
     const gas = gasArray.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
@@ -526,7 +526,7 @@ export class SkipClient {
     tx: { svmTx: types.SvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ): Promise<{ chainID: string; txHash: string }> {
-    const gasArray = await waitForVariable(() => this.gasFee);
+    const gasArray = await waitForVariable(() => this.validateGasResults);
     const gas = gasArray.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
@@ -558,6 +558,14 @@ export class SkipClient {
     message: { evmTx: types.EvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ) {
+    const gasArray = await waitForVariable(() => this.validateGasResults);
+    const gas = gasArray.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
+    }
+
     const { evmTx } = message;
 
     const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
@@ -667,7 +675,6 @@ export class SkipClient {
       onTransactionSigned,
       bypassApprovalCheck,
       useUnlimitedApproval,
-      simulate = true,
     } = options;
     const extendedSigner = signer.extend(publicActions);
 
@@ -692,23 +699,6 @@ export class SkipClient {
           status: "pending",
           allowance: requiredApproval,
         });
-
-        if (simulate) {
-          options.onValidateGasBalance?.({
-            status: "pending",
-          });
-          await this.validateEvmTokenApprovalBalance({
-            signer: signer,
-            contractAddress: requiredApproval.tokenContract,
-            spender: requiredApproval.spender,
-            amount: useUnlimitedApproval
-              ? maxUint256
-              : BigInt(requiredApproval.amount),
-          });
-          options.onValidateGasBalance?.({
-            status: "completed",
-          });
-        }
 
         const txHash = await extendedSigner.writeContract({
           account: signer.account,
@@ -736,19 +726,6 @@ export class SkipClient {
       }
 
       onApproveAllowance?.({
-        status: "completed",
-      });
-    }
-
-    if (simulate) {
-      options.onValidateGasBalance?.({
-        status: "pending",
-      });
-      await this.validateEvmGasBalance({
-        signer,
-        tx: message,
-      });
-      options.onValidateGasBalance?.({
         status: "completed",
       });
     }
@@ -1797,6 +1774,7 @@ export class SkipClient {
     onValidateGasBalance,
     getFallbackGasAmount,
     getCosmosSigner,
+    getEVMSigner,
     simulate,
     disabledChainIds,
     enabledChainIds,
@@ -1809,8 +1787,8 @@ export class SkipClient {
     disabledChainIds?: string[];
     // run gas validation for specific chainId
     enabledChainIds?: string[];
-  } & Pick<clientTypes.SignerGetters, "getCosmosSigner">) {
-    this.gasFee = undefined;
+  } & Pick<clientTypes.SignerGetters, "getCosmosSigner" | "getEVMSigner">) {
+    this.validateGasResults = undefined;
     // cosmos or svm tx in txs
     if (
       txs.every((tx) => "cosmosTx" in tx === undefined) ||
@@ -1860,6 +1838,34 @@ export class SkipClient {
         }
 
         if (
+          "evmTx" in tx &&
+          !disabledChainIds?.includes(tx.evmTx.chainID) &&
+          (!enabledChainIds || enabledChainIds.includes(tx.evmTx.chainID))
+        ) {
+          const signer = await getEVMSigner?.(tx.evmTx.chainID);
+          if (!signer) {
+            throw new Error(
+              `failed to get signer for chain ${tx.evmTx.chainID}`,
+            );
+          }
+          try {
+            const res = await this.validateEvmGasBalance({
+              tx: tx.evmTx,
+              signer,
+              getFallbackGasAmount,
+            });
+            return res;
+          } catch (e) {
+            const error = e as Error;
+            return {
+              error: error.message,
+              asset: null,
+              fee: null,
+            };
+          }
+        }
+
+        if (
           "svmTx" in tx &&
           !disabledChainIds?.includes(tx.svmTx.chainID) &&
           (!enabledChainIds || enabledChainIds.includes(tx.svmTx.chainID))
@@ -1885,14 +1891,16 @@ export class SkipClient {
       onValidateGasBalance?.({
         status: "error",
       });
-      this.gasFee = validateResult as unknown as clientTypes.Gas[];
+      this.validateGasResults =
+        validateResult as unknown as clientTypes.ValidateGasResult[];
       throw new Error(`${txError.error}`);
     }
     onValidateGasBalance?.({
       status: "completed",
     });
 
-    this.gasFee = validateResult as unknown as clientTypes.Gas[];
+    this.validateGasResults =
+      validateResult as unknown as clientTypes.ValidateGasResult[];
   }
 
   /**
@@ -2099,9 +2107,11 @@ export class SkipClient {
   async validateEvmGasBalance({
     signer,
     tx,
+    getFallbackGasAmount,
   }: {
     signer: WalletClient;
     tx: types.EvmTx;
+    getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
     const chain = (await this.getChains()).find(
       (chain) => chain.chainID === tx.chainID,
@@ -2109,10 +2119,15 @@ export class SkipClient {
     if (!chain) {
       throw new Error(`failed to find chain id for '${tx.chainID}'`);
     }
-    const gasAmount = await getEVMGasAmountForMessage(signer, tx);
+    const gasAmount = await getEVMGasAmountForMessage(
+      signer,
+      tx,
+      getFallbackGasAmount,
+    );
 
-    if (!signer.account?.address)
+    if (!signer.account?.address) {
       throw new Error("validateEvmGasBalance: Signer address not found");
+    }
     const skipBalances =
       this.skipBalances ||
       (await this.balances({
@@ -2123,34 +2138,48 @@ export class SkipClient {
         },
       }));
     const balances = skipBalances.chains[tx.chainID]?.denoms;
-    const gasBalance =
+
+    const nativeGasBalance =
+      balances &&
+      Object.entries(balances).find(([denom]) =>
+        denom.includes("-native"),
+      )?.[1];
+
+    const zeroAddressGasBalance =
       balances &&
       Object.entries(balances).find(
         ([denom]) =>
-          denom.includes("-native") ||
           denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
+    const gasBalance = nativeGasBalance || zeroAddressGasBalance;
 
     if (!gasBalance) {
       const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
         tx.chainID
       ];
-      const asset = chainAssets?.find(
+
+      const nativeAsset = chainAssets?.find((x) => x.denom.includes("-native"));
+      const zeroAddressAsset = chainAssets?.find(
         (x) =>
-          x.denom.includes("-native") ||
           x.denom.toLowerCase() ===
-            "0x0000000000000000000000000000000000000000",
+          "0x0000000000000000000000000000000000000000",
       );
+      const asset = nativeAsset || zeroAddressAsset;
       if (!asset?.decimals) {
-        throw new Error(
-          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
-        );
+        return {
+          error: `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
+          asset: null,
+          fee: null,
+        };
       }
 
       const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
-      throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
-      );
+
+      return {
+        error: `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
+        asset: null,
+        fee: null,
+      };
     }
     if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
       const chainAssets = (await this.getAssets(tx.chainID))?.[tx.chainID];
@@ -2161,109 +2190,26 @@ export class SkipClient {
             "0x0000000000000000000000000000000000000000",
       );
       if (!asset?.decimals) {
-        throw new Error(
-          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
-        );
+        return {
+          error: `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
+          asset: null,
+          fee: null,
+        };
       }
 
       const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
-      throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
-      );
-    }
-  }
-
-  async validateEvmTokenApprovalBalance({
-    signer,
-    contractAddress,
-    spender,
-    amount,
-  }: {
-    signer: WalletClient;
-    contractAddress: string;
-    spender: string;
-    amount: bigint;
-  }) {
-    const chainId = signer.chain?.id;
-    const chain = (await this.getChains()).find(
-      (chain) => chain.chainID === String(chainId),
-    );
-    if (!chain) {
-      throw new Error(`failed to find chain id for '${chainId}'`);
-    }
-    if (!chainId) throw new Error("Chain ID not found");
-    const gasAmount = await getEVMGasAmountForTokenApproval(
-      signer,
-      contractAddress,
-      spender,
-      amount,
-    );
-    if (!signer.account?.address)
-      throw new Error(
-        "validateEvmTokenApprovalBalance: Signer address not found",
-      );
-    const skipBalances =
-      this.skipBalances ||
-      (await this.balances({
-        chains: {
-          [chainId]: {
-            address: signer.account?.address,
-          },
-        },
-      }));
-    const balances = skipBalances.chains[chainId]?.denoms;
-    const gasBalance =
-      balances &&
-      Object.entries(balances).find(
-        ([denom]) =>
-          denom.includes("-native") ||
-          denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
-      )?.[1];
-
-    if (!gasBalance) {
-      const chainAssets = (await this.getAssets(String(chainId)))?.[chainId];
-      const asset = chainAssets?.find(
-        (x) =>
-          x.denom.includes("-native") ||
-          x.denom.toLowerCase() ===
-            "0x0000000000000000000000000000000000000000",
-      );
-      if (!asset?.decimals) {
-        throw new Error(
-          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
-        );
-      }
-
-      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
-      throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
-      );
-    }
-    if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
-      const chainAssets = (await this.getAssets(String(chainId)))?.[chainId];
-      const asset = chainAssets?.find(
-        (x) =>
-          x.denom.includes("-native") ||
-          x.denom.toLowerCase() ===
-            "0x0000000000000000000000000000000000000000",
-      );
-      if (!asset?.decimals) {
-        throw new Error(
-          `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
-        );
-      }
-
-      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
-      throw new Error(
-        `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
-      );
+      return {
+        error: `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
+        asset: null,
+        fee: null,
+      };
     }
   }
 
   async validateSvmGasBalance({ tx }: { tx: types.SvmTx }) {
     const endpoint = await this.getRpcEndpointForChain(tx.chainID);
     const connection = new Connection(endpoint);
-    if (!connection) throw new Error("Signer not found");
+    if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
     const gasAmount = await getSVMGasAmountForMessage(connection, tx);
 
     const skipBalances = this.skipBalances?.chains["solana"]?.denoms[

@@ -23,7 +23,7 @@ export type SwapPageFooterItemsProps = {
 };
 
 export const poweredBySkipGo = (
-  <Row align="center" gap={5}>
+  <Row data-logo="skip-go" align="center" gap={5}>
     Powered by <SkipLogoIcon />
   </Row>
 );

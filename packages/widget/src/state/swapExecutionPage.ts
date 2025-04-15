@@ -21,7 +21,7 @@ import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { CosmosGasAmount, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
+import { COSMOS_GAS_AMOUNT, EVM_GAS_AMOUNT, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
@@ -40,6 +40,7 @@ type SwapExecutionState = {
   transactionHistoryIndex: number;
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData;
+  transactionsSigned: number;
 };
 
 export type ChainAddress = {
@@ -69,6 +70,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     transactionHistoryIndex: 0,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
+    transactionsSigned: 0,
   },
 );
 
@@ -114,6 +116,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     transactionHistoryIndex,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
+    transactionsSigned: 0,
   });
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
@@ -177,6 +180,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionSigned: async () => {
       track("execute route: transaction signed");
+
+      set(swapExecutionStateAtom, (prev) => ({
+        ...prev,
+        transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
+      }));
+
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
@@ -195,6 +204,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
+        if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
+          track("error page: unexpected error");
+          set(errorAtom, {
+            errorType: ErrorType.Unexpected,
+            error: error as Error,
+            onClickBack: () => {
+              set(setOverallStatusAtom, "unconfirmed");
+            },
+          });
+          return;
+        }
         track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
@@ -257,7 +277,8 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      route,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      route: route!,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
       status: "unconfirmed",
@@ -303,16 +324,19 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   const swapVenues = get(skipSwapVenuesAtom)?.data;
 
   return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
+    if (chainType === ChainType.EVM) {
+      return EVM_GAS_AMOUNT;
+    }
     if (chainType !== ChainType.Cosmos) return undefined;
 
     const isSwapChain = swapVenues?.some((venue) => venue.chainID === chainId) ?? false;
     const defaultGasAmount = Math.ceil(
-      isSwapChain ? CosmosGasAmount.SWAP : CosmosGasAmount.DEFAULT,
+      isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
     );
 
     // Special case for carbon-1
     if (chainId === "carbon-1") {
-      return CosmosGasAmount.CARBON;
+      return COSMOS_GAS_AMOUNT.CARBON;
     }
 
     return defaultGasAmount;

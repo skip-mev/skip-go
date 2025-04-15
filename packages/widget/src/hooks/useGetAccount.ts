@@ -27,9 +27,9 @@ export const useGetAccount = () => {
 
   const getAccount = useCallback(
     // if checkChainType is true, it only check wallet connected no chainId is dependent
-    (chainId?: string, checkChainType?: boolean) => {
+    (chainId?: string, checkChainType?: boolean, chainType?: string) => {
       if (!chainId) return;
-      const chainType = chains?.find((c) => c.chainID === chainId)?.chainType;
+      chainType ??= chains?.find((c) => c.chainID === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
         return {
           address: connectedAddress[chainId],
@@ -54,13 +54,13 @@ export const useGetAccount = () => {
           const walletInfo = getCosmosWalletInfo(wallet.cosmos.walletName as WalletType);
 
           return {
-            address: cosmosAccount.bech32Address,
+            address: cosmosAccount?.bech32Address,
             chainType,
             wallet: {
               name: wallet.cosmos.walletName,
               prettyName: walletInfo.name,
               logo: walletInfo.imgSrc,
-              isLedger: cosmosAccount.isNanoLedger,
+              isLedger: cosmosAccount?.isNanoLedger,
             },
           };
         }

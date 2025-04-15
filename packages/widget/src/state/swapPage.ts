@@ -174,9 +174,13 @@ export type ChainFilter = {
   destination?: Record<string, string[] | undefined>;
 };
 
-export const chainFilterAtom = atom<ChainFilter>();
+export const filterAtom = atom<ChainFilter>();
 
-export const CosmosGasAmount = {
+export const filterOutAtom = atom<ChainFilter>();
+
+export const EVM_GAS_AMOUNT = 150_000;
+
+export const COSMOS_GAS_AMOUNT = {
   DEFAULT: 300_000,
   SWAP: 2_800_000,
   CARBON: 1_000_000,
