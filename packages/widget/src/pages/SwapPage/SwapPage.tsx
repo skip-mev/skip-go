@@ -23,7 +23,7 @@ import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecu
 import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
-import { useInsufficientSourceBalance } from "./useSetMaxAmount";
+import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
@@ -42,6 +42,7 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
+import { useGetBalance } from "@/hooks/useGetBalance";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -68,6 +69,8 @@ export const SwapPage = () => {
   const isGoFast = useIsGoFast(route);
   const routePreference = useAtomValue(routePreferenceAtom);
   const slippage = useAtomValue(slippageAtom);
+  const maxAmountMinusFees = useMaxAmountTokenMinusFees()
+  const getBalance = useGetBalance();
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -167,6 +170,8 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
+    const computeFontSize = (label: string) => label.length > 36 ? 18 : 24;
+
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
@@ -210,15 +215,24 @@ export const SwapPage = () => {
       const errMsg = message.startsWith("no single-tx routes found")
         ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
         : message;
-
-      const fontSize = errMsg.length > 36 ? 18 : 24;
-      return <MainButton label={errMsg || "No routes found"} disabled fontSize={fontSize} />;
+    
+      const label = errMsg || "No routes found";
+      return <MainButton label={label} disabled fontSize={computeFontSize(label)} />;
     }
+    
     if (isLoadingBalances) {
-      return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
+      const label = "Fetching balances";
+      return <MainButton label={label} loading icon={ICONS.swap} fontSize={computeFontSize(label)} />;
     }
+    
     if (insufficientBalance) {
-      return <MainButton label="Insufficient balance" disabled icon={ICONS.swap} />;
+      const sourceAssetBalance = getBalance(sourceAsset?.chainID, sourceAsset?.denom)?.formattedAmount;
+      const insufficientBalanceForGas = Number(sourceAssetBalance) > Number(maxAmountMinusFees);
+      const label = insufficientBalanceForGas ?
+        "Insufficient balance for gas — click the max button" :
+        "Insufficient balance";
+    
+      return <MainButton label={label} disabled icon={ICONS.swap} fontSize={computeFontSize(label)} />;
     }
 
     const onClick = () => {
