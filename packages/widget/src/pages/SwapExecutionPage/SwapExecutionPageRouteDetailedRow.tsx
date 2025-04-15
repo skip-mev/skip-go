@@ -259,7 +259,7 @@ export const StyledAnimatedBorder = ({
   status,
   style,
 }: {
-  backgroundColor: string;
+  backgroundColor?: string;
   children?: React.ReactNode;
   width: number;
   height: number;
@@ -325,7 +325,7 @@ const StyledLoadingContainer = styled(Row)<{
           transparent,
           transparent,
           transparent,
-          ${backgroundColor ?? theme.success.text}
+          ${backgroundColor ?? theme.primary.text.normal}
         );
         animation: rotate 4s linear infinite;
       `};

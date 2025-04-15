@@ -104,14 +104,7 @@ export const TransactionHistoryPageHistoryItem = ({
     switch (historyStatus) {
       case "unconfirmed":
       case "pending":
-        return (
-          <StyledAnimatedBorder
-            width={10}
-            height={10}
-            backgroundColor={theme.primary.text.normal}
-            status="pending"
-          />
-        );
+        return <StyledAnimatedBorder width={10} height={10} status="pending" />;
       case "completed":
         return <StyledGreenDot />;
       case "incomplete":
@@ -121,13 +114,7 @@ export const TransactionHistoryPageHistoryItem = ({
         } else return <XIcon color={theme.error.text} />;
       }
     }
-  }, [
-    theme.error.text,
-    theme.primary.text.normal,
-    theme.warning.text,
-    transferAssetRelease,
-    historyStatus,
-  ]);
+  }, [theme.error.text, theme.warning.text, transferAssetRelease, historyStatus]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -219,7 +206,7 @@ const RenderAssetAmount = ({
     <Row gap={8}>
       <img height={35} width={35} src={assetImage} />
       <Column style={sourceAsset ? { width: 50 } : undefined}>
-        <Tooltip content={amount}>
+        <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
             {formattedAmount}
           </Text>

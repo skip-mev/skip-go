@@ -7,11 +7,11 @@ import { useAtomValue } from "jotai";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { GhostButton } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { track } from "@amplitude/analytics-browser";
+import { StyledAnimatedBorder } from "../SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -71,12 +71,13 @@ export const ConnectedWalletContent = () => {
               position: "relative",
             }}
           >
-            <SpinnerIcon
+            <StyledAnimatedBorder
+              width={6}
+              height={6}
+              borderSize={4}
+              status="pending"
               style={{
-                animation: "spin 1s linear infinite",
-                position: "absolute",
-                height: 14,
-                width: 14,
+                maskImage: "radial-gradient(circle, transparent 55%, black 0%)",
               }}
             />
           </div>

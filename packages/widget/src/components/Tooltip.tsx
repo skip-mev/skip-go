@@ -16,10 +16,12 @@ export const Tooltip = ({
   children,
   content,
   direction = "right",
+  style,
 }: {
   children?: React.ReactNode;
   content?: React.ReactNode;
   direction?: "left" | "right";
+  style?: React.CSSProperties;
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTriggerContainerRef = useRef<HTMLDivElement | null>(null);
@@ -47,6 +49,7 @@ export const Tooltip = ({
 
   return (
     <StyledTooltipTriggerContainer
+      style={style}
       ref={tooltipTriggerContainerRef}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
@@ -69,7 +72,6 @@ export const Tooltip = ({
 const StyledTooltipTriggerContainer = styled.span`
   position: relative;
   display: flex;
-  width: min-content;
 `;
 
 const OFFSET_GAP = 5;
