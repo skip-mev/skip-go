@@ -3,9 +3,11 @@ import { ChainWithAsset, GroupedAsset } from "./AssetAndChainSelectorModal";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { filterAtom, filterOutAtom } from "@/state/swapPage";
 import { EXCLUDED_TOKEN_COMBINATIONS } from "./useFilteredAssets";
+import { cosmosWalletAtom } from "@/state/wallets";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export type useFilteredChainsProps = {
   selectedGroup: GroupedAsset | undefined;
@@ -19,9 +21,15 @@ export const useFilteredChains = ({
   context,
 }: useFilteredChainsProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const hideAssetsUnlessWalletTypeConnected = useAtomValue(hideAssetsUnlessWalletTypeConnectedAtom);
+  const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
+
+  const getBalance = useGetBalance();
+
+  const cosmosWallet = useAtomValue(cosmosWalletAtom);
+  const cosmosWalletConnected = cosmosWallet !== undefined;
   const filter = useAtomValue(filterAtom);
   const filterOut = useAtomValue(filterOutAtom);
-  const getBalance = useGetBalance();
 
   const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
 
@@ -46,6 +54,16 @@ export const useFilteredChains = ({
 
         const allowedChainIds = filter?.[context];
         const blockedChainIds = filterOut?.[context];
+        const blockedChainIdsUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
+
+        const hasBalance =
+          Number(getBalance(chain.asset.chainID, chain.asset.denom)?.amount ?? 0) > 0;
+
+        const isFilteredOutUnlessUserHasBalance = Boolean(
+          blockedChainIdsUnlessUserHasBalance?.[chain.chainID] &&
+            blockedChainIdsUnlessUserHasBalance?.[chain.chainID] === undefined &&
+            hasBalance === undefined,
+        );
 
         const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
         const isFilteredOutByFilter = Boolean(
@@ -54,10 +72,15 @@ export const useFilteredChains = ({
 
         const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
 
-        return isAllowedByFilter && isPenumbraAllowed && !isFilteredOutByFilter;
+        return (
+          isAllowedByFilter &&
+          isPenumbraAllowed &&
+          !isFilteredOutByFilter &&
+          !isFilteredOutUnlessUserHasBalance
+        );
       }) as ChainWithAsset[];
 
-    return chainsWithAssets
+    const filtered = chainsWithAssets
       .filter((chainWithAsset) => {
         const { chainName, prettyName } = chainWithAsset;
         const chainNameIncludesSearchQuery = chainName
@@ -94,17 +117,18 @@ export const useFilteredChains = ({
         }
 
         // 3. Sort by ibcEurekaHighlightedAssets index
-        const indexA = ibcEurekaHighlightedAssets.indexOf(chainWithAssetA.asset.denom);
-        const indexB = ibcEurekaHighlightedAssets.indexOf(chainWithAssetB.asset.denom);
+        const indexA = Object.keys(ibcEurekaHighlightedAssets).indexOf(
+          chainWithAssetA.asset.recommendedSymbol || "",
+        );
+        const indexB = Object.keys(ibcEurekaHighlightedAssets).indexOf(
+          chainWithAssetB.asset.recommendedSymbol || "",
+        );
 
         const aIsHighlighted = indexA !== -1;
         const bIsHighlighted = indexB !== -1;
 
-        if (aIsHighlighted && bIsHighlighted) {
-          return indexA - indexB;
-        }
-        if (aIsHighlighted) return -1;
-        if (bIsHighlighted) return 1;
+        if (aIsHighlighted && !bIsHighlighted) return -1;
+        if (bIsHighlighted && !aIsHighlighted) return 1;
 
         // 4. Sort by chainName including asset denom/symbol
         const aMatchesName = chainWithAssetA.chainName
@@ -126,15 +150,43 @@ export const useFilteredChains = ({
 
         return 0;
       });
+
+    return filtered
+      .filter((chainWithAsset) => {
+        if (
+          hideAssetsUnlessWalletTypeConnected &&
+          !cosmosWalletConnected &&
+          chainWithAsset?.chainName === "sei" &&
+          chainWithAsset?.chainType === "cosmos"
+        ) {
+          // If the user does not have a cosmos wallet connected and the asset is the "cosmos" version of SEI, then hide it.
+          return false;
+        }
+        return true;
+      })
+      .map((chainWithAsset) => {
+        if (
+          hideAssetsUnlessWalletTypeConnected &&
+          chainWithAsset.chainName === "sei" &&
+          !cosmosWalletConnected
+        ) {
+          // Remove confusing "Sei - EVM" when they only ever see EVM stuff
+          chainWithAsset.prettyName = "SEI";
+        }
+        return chainWithAsset;
+      });
   }, [
-    selectedGroup,
     chains,
-    filter,
     context,
+    cosmosWalletConnected,
+    filter,
     filterOut,
-    searchQuery,
+    filterOutUnlessUserHasBalance,
     getBalance,
+    hideAssetsUnlessWalletTypeConnected,
     ibcEurekaHighlightedAssets,
+    searchQuery,
+    selectedGroup,
   ]);
 
   return filteredChains;

@@ -7,15 +7,17 @@
       type="module"
     ></script>
     <div style="width: 100%; max-width: 500px; padding: 0 10px">
-      <skip-widget
-        theme='{
-      "backgroundColor": "#191A1C",
-      "textColor": "#E6EAE9",
-      "borderColor": "#363B3F",
-      "brandColor": "#FF4FFF",
-      "highlightColor": "#1F2022"
-    }'
-      ></skip-widget>
+      <skip-widget></skip-widget>
     </div>
   </body>
 </html>
+
+<script>
+  const skipWidget = document.querySelector("skip-widget");
+
+  if (skipWidget) {
+    skipWidget.onRouteUpdated = (route) => {
+      console.log("route updated", route);
+    };
+  }
+</script>

@@ -1,7 +1,7 @@
 import { css, keyframes, styled } from "styled-components";
 import { disableShadowDomAtom, ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
@@ -26,23 +26,12 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const disableShadowDom = useAtomValue(disableShadowDomAtom);
   const rootId = useAtomValue(rootIdAtom);
 
-  const delay = async (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
-  const closeModal = useCallback(() => {
-    onOpenChange?.(false);
-    delay(75).then(() => {
-      modal.remove();
-    });
-  }, [modal, onOpenChange]);
-
   useEffect(() => {
     if (wasVisible && !modal.visible) {
-      closeModal();
+      onOpenChange?.(false);
     }
     setWasVisible(modal.visible);
-  }, [closeModal, modal.visible, wasVisible]);
+  }, [modal.visible, onOpenChange, wasVisible]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -79,14 +68,23 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       onOpenChange?.(false);
       document.documentElement.style.overflow = prevOverflowStyle;
     };
-  }, [closeModal, drawer, modal, onOpenChange, prevOverflowStyle]);
+  }, [drawer, modal, onOpenChange, prevOverflowStyle]);
 
   // this fixes a flickering animation when modals are opened
   if (disableShadowDom && wasVisible === undefined) return null;
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay drawer={drawer} open={modal.visible} data-root-id={rootId}>
+      <StyledOverlay
+        drawer={drawer}
+        open={modal.visible}
+        data-root-id={rootId}
+        onAnimationEnd={() => {
+          if (!modal.visible) {
+            modal.remove();
+          }
+        }}
+      >
         <StyledContent
           ref={modalRef}
           drawer={drawer}
@@ -198,7 +196,7 @@ const StyledOverlay = styled.div<{
   display: grid;
   place-items: center;
   z-index: 10;
-  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
+  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -214,7 +212,7 @@ const StyledOverlay = styled.div<{
       align-items: flex-end;
       position: absolute;
       background: rgba(255, 255, 255, 0);
-      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out;
+      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out forwards;
       /* For Chrome */
       &::-webkit-scrollbar {
         display: none;
@@ -245,5 +243,5 @@ const StyledContent = styled.div<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    150ms cubic-bezier(0.5, 1, 0.89, 1);
+    150ms cubic-bezier(0.5, 1, 0.89, 1) forwards;
 `;
