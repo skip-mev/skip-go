@@ -1,10 +1,10 @@
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "@/state/history";
+import { transactionHistoryAtom, transactionHistoryItemAtom } from "@/state/history";
 import {
   setOverallStatusAtom,
   swapExecutionStateAtom,
   skipSubmitSwapExecutionAtom,
 } from "@/state/swapExecutionPage";
-import { getClientOperations, ClientOperation } from "@/utils/clientType";
+import { getClientOperations, ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
@@ -20,7 +20,9 @@ export const useSyncTxStatus = ({
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
     useAtomValue(swapExecutionStateAtom);
-  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const setTransactionHistoryItem = useSetAtom(
+    transactionHistoryItemAtom(historyIndex ?? transactionHistoryIndex),
+  );
   const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -71,13 +73,21 @@ export const useSyncTxStatus = ({
   ]);
 
   useEffect(() => {
-    if (computedSwapStatus) {
-      const index = historyIndex ?? transactionHistoryIndex;
-      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
-        ...txHistory[index],
-        ...statusData,
-        status: computedSwapStatus,
-      });
+    const index = historyIndex ?? transactionHistoryIndex;
+
+    if (!computedSwapStatus) return;
+
+    const newTxHistoryItem = {
+      ...txHistory[index],
+      ...statusData,
+      status: computedSwapStatus as SimpleStatus,
+    };
+
+    const txHistoryItemChanged =
+      JSON.stringify(txHistory[index]) !== JSON.stringify(newTxHistoryItem);
+
+    if (computedSwapStatus && !txHistory[index].isSettled && txHistoryItemChanged) {
+      setTransactionHistoryItem(newTxHistoryItem);
       if (!historyIndex) {
         setOverallStatus(computedSwapStatus);
       }
@@ -88,10 +98,10 @@ export const useSyncTxStatus = ({
     computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
-    setTransactionHistory,
     transactionHistoryIndex,
     historyIndex,
     txHistory,
     statusData,
+    setTransactionHistoryItem,
   ]);
 };

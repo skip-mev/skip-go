@@ -16,7 +16,7 @@ import {
   walletConnectDeepLinkByChainTypeAtom,
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
+import { transactionHistoryAtom, transactionHistoryItemAtom } from "./history";
 import { SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
@@ -140,11 +140,13 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         chainType: chain?.chainType,
         txHash: txInfo.txHash,
       });
+
       set(
         setTransactionDetailsAtom,
         { ...txInfo, explorerLink, status: undefined },
         transactionHistoryIndex,
       );
+
       callbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainID,
         txHash: txInfo.txHash,
@@ -185,6 +187,16 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         ...prev,
         transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
       }));
+
+      set(transactionHistoryItemAtom(transactionHistoryIndex), {
+        route: route,
+        transactionDetails: [],
+        transferEvents: [],
+        timestamp: Date.now(),
+        isSettled: false,
+        isSuccess: false,
+        status: "unconfirmed",
+      });
 
       set(setOverallStatusAtom, "pending");
     },
@@ -258,7 +270,7 @@ export const setTransactionDetailsAtom = atom(
     const swapExecutionState = get(swapExecutionStateAtom);
     const { transactionDetailsArray, route } = swapExecutionState;
 
-    const newTransactionDetailsArray = transactionDetailsArray;
+    const newTransactionDetailsArray = [...transactionDetailsArray];
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
       (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase(),
@@ -276,11 +288,13 @@ export const setTransactionDetailsAtom = atom(
       transactionDetailsArray: newTransactionDetailsArray,
     });
 
-    set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      route: route!,
+    set(transactionHistoryItemAtom(transactionHistoryIndex), {
+      route: route,
       transactionDetails: newTransactionDetailsArray,
+      transferEvents: [],
       timestamp: Date.now(),
+      isSettled: false,
+      isSuccess: false,
       status: "unconfirmed",
     });
   },

@@ -1,15 +1,13 @@
-import { RouteResponse, TxStatusResponse } from "@skip-go/client";
-import { atomWithStorage } from "jotai/utils";
+import { RouteResponse } from "@skip-go/client";
+import { atomFamily, atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
-import { atomWithQuery } from "jotai-tanstack-query";
-import { skipClient } from "./skipClient";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 
 export type TransactionHistoryItem = {
-  route: RouteResponse;
-  transactionDetails: TransactionDetails[];
+  route?: RouteResponse;
+  transactionDetails?: TransactionDetails[];
   timestamp: number;
   status: SimpleStatus;
 } & TxsStatus;
@@ -20,17 +18,35 @@ export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   undefined,
 );
 
-export const setTransactionHistoryAtom = atom(
-  null,
-  (get, set, index: number, historyItem: TransactionHistoryItem) => {
-    const history = get(transactionHistoryAtom);
-    const oldHistoryItem = history?.[index] ?? {};
-    const newHistory = history;
+export const transactionHistoryItemAtom = atomFamily((index: number) =>
+  atom(
+    (get) => get(transactionHistoryAtom)[index],
+    (get, set, historyItem: TransactionHistoryItem) => {
+      const currentHistory = get(transactionHistoryAtom);
+      const newHistory = [...currentHistory];
+      const oldHistoryItem = newHistory[index] ?? {};
 
-    newHistory[index] = { ...oldHistoryItem, ...historyItem };
-    set(transactionHistoryAtom, newHistory);
-  },
+      newHistory[index] = { ...oldHistoryItem, ...historyItem };
+      set(transactionHistoryAtom, newHistory);
+    },
+  ),
 );
+
+export const lastTransactionAtom = atom((get) => {
+  const history = get(transactionHistoryAtom);
+  const lastIndex = history.length - 1;
+  if (lastIndex < 0) return undefined;
+
+  return {
+    transactionHistoryItem: get(transactionHistoryItemAtom(lastIndex)),
+    index: lastIndex,
+  };
+});
+
+export const lastTransactionIsSettledAtom = atom((get) => {
+  const txHistory = get(transactionHistoryAtom);
+  return txHistory?.[txHistory.length - 1]?.isSettled;
+});
 
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {
   const history = get(transactionHistoryAtom);
@@ -42,43 +58,4 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
   const newHistory = history.filter((_, i) => i !== index);
 
   set(transactionHistoryAtom, newHistory);
-});
-
-export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const transactionHistory = get(transactionHistoryAtom);
-
-  const pendingTransactionHistoryItemsFound = transactionHistory.find(
-    (transactionHistoryItem) =>
-      transactionHistoryItem.status !== "completed" && transactionHistoryItem.status !== "failed",
-  );
-
-  return {
-    queryKey: ["skipPendingTxHistoryStatus", transactionHistory],
-    queryFn: async () => {
-      const nestedTransactionHistoryPromises = transactionHistory.map(
-        async (transactionHistoryItem) => {
-          const transactionDetailsPromises = await Promise.all(
-            transactionHistoryItem.transactionDetails.map(async (transactionDetail) => {
-              if (
-                transactionHistoryItem.status !== "completed" &&
-                transactionHistoryItem.status !== "failed"
-              ) {
-                return await skip.transactionStatus({
-                  chainID: transactionDetail.chainID,
-                  txHash: transactionDetail.txHash,
-                });
-              }
-              return new Promise((resolve) => resolve(null));
-            }) as Promise<TxStatusResponse | null>[],
-          );
-          return transactionDetailsPromises;
-        },
-      );
-      return nestedTransactionHistoryPromises;
-    },
-    enabled: !!pendingTransactionHistoryItemsFound,
-    refetchInterval: 1000 * 2,
-    keepPreviousData: true,
-  };
 });
