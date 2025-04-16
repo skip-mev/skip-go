@@ -104,7 +104,14 @@ export const TransactionHistoryPageHistoryItem = ({
     switch (historyStatus) {
       case "unconfirmed":
       case "pending":
-        return <StyledAnimatedBorder width={10} height={10} status="pending" />;
+        return (
+          <StyledAnimatedBorder
+            width={10}
+            height={10}
+            backgroundColor={theme.primary.text.normal}
+            status="pending"
+          />
+        );
       case "completed":
         return <StyledGreenDot />;
       case "incomplete":
@@ -114,7 +121,13 @@ export const TransactionHistoryPageHistoryItem = ({
         } else return <XIcon color={theme.error.text} />;
       }
     }
-  }, [theme.error.text, theme.warning.text, transferAssetRelease, historyStatus]);
+  }, [
+    historyStatus,
+    theme.primary.text.normal,
+    theme.error.text,
+    theme.warning.text,
+    transferAssetRelease,
+  ]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {

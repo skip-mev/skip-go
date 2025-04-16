@@ -259,7 +259,7 @@ export const StyledAnimatedBorder = ({
   status,
   style,
 }: {
-  backgroundColor?: string;
+  backgroundColor: string;
   children?: React.ReactNode;
   width: number;
   height: number;

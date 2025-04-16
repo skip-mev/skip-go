@@ -167,6 +167,7 @@ export const RenderWalletList = ({
             <StyledAnimatedBorder
               width={80}
               height={80}
+              backgroundColor={theme.primary.text.normal}
               status={connectMutation.isError ? "failed" : "pending"}
               borderSize={8}
             >
