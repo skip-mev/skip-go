@@ -92,12 +92,14 @@ export const TransactionHistoryPageHistoryItem = ({
     amount: sourceAssetDetails.amount,
     asset: sourceAssetDetails.asset,
     assetImage: sourceAssetDetails.assetImage ?? "",
+    chainName: sourceAssetDetails.chainName,
   };
 
   const destination = {
     amount: destinationAssetDetails.amount,
     asset: destinationAssetDetails.asset,
     assetImage: destinationAssetDetails.assetImage ?? "",
+    chainName: destinationAssetDetails.chainName,
   };
 
   const renderStatus = useMemo(() => {
@@ -191,11 +193,13 @@ const RenderAssetAmount = ({
   amount,
   asset,
   assetImage,
+  chainName,
   sourceAsset = false,
 }: {
   amount?: string;
   asset?: ClientAsset;
   assetImage: string;
+  chainName?: string;
   sourceAsset?: boolean;
 }) => {
   const isMobileScreenSize = useIsMobileScreenSize();
@@ -213,8 +217,8 @@ const RenderAssetAmount = ({
     if (sourceAsset || isMobileScreenSize) {
       return asset?.recommendedSymbol;
     }
-    return `${asset?.recommendedSymbol} on ${asset?.chainName}`;
-  }, [asset, isMobileScreenSize, sourceAsset]);
+    return `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
+  }, [asset, chainName, isMobileScreenSize, sourceAsset]);
 
   return (
     <Row gap={8}>
