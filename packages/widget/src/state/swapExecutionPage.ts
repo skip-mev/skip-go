@@ -268,7 +268,7 @@ export const setTransactionDetailsAtom = atom(
   null,
   (get, set, transactionDetails: TransactionDetails, transactionHistoryIndex: number) => {
     const swapExecutionState = get(swapExecutionStateAtom);
-    const { transactionDetailsArray } = swapExecutionState;
+    const { transactionDetailsArray, route } = swapExecutionState;
 
     const newTransactionDetailsArray = [...transactionDetailsArray];
 
@@ -288,12 +288,14 @@ export const setTransactionDetailsAtom = atom(
       transactionDetailsArray: newTransactionDetailsArray,
     });
 
-    const existingTxHistoryItem = get(transactionHistoryItemAtom(transactionHistoryIndex));
-
     set(transactionHistoryItemAtom(transactionHistoryIndex), {
-      ...existingTxHistoryItem,
+      route: route,
       transactionDetails: newTransactionDetailsArray,
+      transferEvents: [],
       timestamp: Date.now(),
+      isSettled: false,
+      isSuccess: false,
+      status: "unconfirmed",
     });
   },
 );
