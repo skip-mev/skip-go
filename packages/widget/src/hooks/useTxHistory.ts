@@ -2,7 +2,6 @@ import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/us
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -16,7 +15,6 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
-  const { overallStatus } = useAtomValue(swapExecutionStateAtom);
 
   const txs = txHistoryItem?.transactionDetails?.map((tx) => ({
     chainID: tx.chainID,
@@ -31,9 +29,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
-  const shouldFetchStatus =
-    (!txHistoryItem?.isSettled && txs?.length === txsRequired && chainIdFound) ||
-    overallStatus === "pending";
+  const shouldFetchStatus = !txHistoryItem?.isSettled && txs !== undefined && chainIdFound;
 
   let statusData: TransactionHistoryItem | TxsStatus | undefined = txHistoryItem;
 
