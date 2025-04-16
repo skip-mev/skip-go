@@ -1,13 +1,8 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
-import {
-  lastTransactionAtom,
-  transactionHistoryAtom,
-  TransactionHistoryItem,
-} from "@/state/history";
+import { transactionHistoryAtom, TransactionHistoryItem } from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
 import { SimpleStatus } from "@/utils/clientType";
-import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { memo } from "react";
@@ -15,10 +10,9 @@ import { memo } from "react";
 type useTxHistoryProps = {
   index: number;
   txHistoryItem?: TransactionHistoryItem;
-  queryDisabled?: boolean;
 };
 
-export const useTxHistory = ({ txHistoryItem, index, queryDisabled }: useTxHistoryProps) => {
+export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const txs = txHistoryItem?.transactionDetails?.map((tx) => ({
@@ -66,12 +60,8 @@ export const useTxHistory = ({ txHistoryItem, index, queryDisabled }: useTxHisto
       if ((statusData?.isSettled && !statusData?.isSuccess) || !chainIdFound) return "failed";
       return "pending";
     },
-    enabled: !queryDisabled,
   });
 
-  if (queryDisabled) {
-    return;
-  }
   return {
     status: query.data as SimpleStatus,
     explorerLinks: Array.from(explorerLinks).filter((link) => link) as string[],
@@ -85,7 +75,6 @@ export const TxStatusSync = memo(() => {
   useTxHistory({
     txHistoryItem: lastTransaction.at(-1),
     index: lastTransaction.length - 1,
-    queryDisabled: true,
   });
 
   return null;
