@@ -5,11 +5,11 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { PageHeader } from "../../components/PageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { lastTransactionIsSettledAtom } from "@/state/history";
+import { lastTransactionIsSettledAtom, transactionHistoryAtom } from "@/state/history";
 import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
-import { TxStatusSync } from "@/hooks/useTxHistory";
 import { useGetAccount } from "@/hooks/useGetAccount";
+import { useTxHistory } from "@/hooks/useTxHistory";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -67,4 +67,15 @@ export const SwapPageHeader = memo(() => {
       />
     </>
   );
+});
+
+export const TxStatusSync = memo(() => {
+  const transactionhistoryItem = useAtomValue(transactionHistoryAtom);
+
+  useTxHistory({
+    txHistoryItem: transactionhistoryItem.at(-1),
+    index: transactionhistoryItem.length - 1,
+  });
+
+  return null;
 });
