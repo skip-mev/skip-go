@@ -42,7 +42,6 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
-import { StyledAnimatedBorder } from "../SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
