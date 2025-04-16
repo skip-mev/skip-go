@@ -1,10 +1,14 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
-import { transactionHistoryAtom, TransactionHistoryItem } from "@/state/history";
+import {
+  removeTransactionHistoryItemAtom,
+  transactionHistoryAtom,
+  TransactionHistoryItem,
+} from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
 import { SimpleStatus } from "@/utils/clientType";
 import { useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { memo } from "react";
 
 type useTxHistoryProps = {
@@ -14,6 +18,8 @@ type useTxHistoryProps = {
 
 export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+
+  const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
 
   const txs = txHistoryItem?.transactionDetails?.map((tx) => ({
     chainID: tx.chainID,
@@ -28,10 +34,14 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   let statusData: TransactionHistoryItem | TxsStatus | undefined = txHistoryItem;
 
+  if (txs === undefined || txs.length === 0) {
+    removeTransactionHistoryItem(index);
+  }
+
   const { data, isFetching, isPending } = useBroadcastedTxsStatus({
     txsRequired,
     txs,
-    enabled: !txHistoryItem?.isSettled && chainIdFound,
+    enabled: !txHistoryItem?.isSettled && txs !== undefined && chainIdFound,
   });
 
   if (data !== undefined) {
