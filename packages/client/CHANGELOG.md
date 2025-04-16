@@ -1,5 +1,30 @@
 # @skip-go/client
 
+## 0.16.29
+
+### Patch Changes
+
+- dedd423: evm gas simulation at the start of the tx
+
+## 0.16.28
+
+### Patch Changes
+
+- afd9530: add initia pubkey to account parser
+
+## 0.16.27
+
+### Patch Changes
+
+- 0d2e0c3: Remove eth sepolia from GAS_STATION_CHAIN_IDS
+- 0e33fe7: fix evm gas simulation
+
+## 0.16.26
+
+### Patch Changes
+
+- d13c452: update registries
+
 ## 0.16.25
 
 ### Patch Changes

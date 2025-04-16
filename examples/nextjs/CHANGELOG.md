@@ -1,5 +1,69 @@
 # nextjs
 
+## 0.1.79
+
+### Patch Changes
+
+- Updated dependencies [ac50805]
+- Updated dependencies [dedd423]
+  - @skip-go/widget@3.7.3
+
+## 0.1.78
+
+### Patch Changes
+
+- Updated dependencies [78f9a6a]
+  - @skip-go/widget@3.7.2
+
+## 0.1.77
+
+### Patch Changes
+
+- Updated dependencies [a7ba428]
+- Updated dependencies [9515ad5]
+- Updated dependencies [39235a6]
+- Updated dependencies [f26c654]
+- Updated dependencies [afd9530]
+- Updated dependencies [8fce4a3]
+  - @skip-go/widget@3.7.1
+
+## 0.1.76
+
+### Patch Changes
+
+- Updated dependencies [a83f22f]
+- Updated dependencies [2939b01]
+- Updated dependencies [8815787]
+  - @skip-go/widget@3.7.0
+
+## 0.1.75
+
+### Patch Changes
+
+- Updated dependencies [59f5f76]
+- Updated dependencies [6b5dfa1]
+  - @skip-go/widget@3.6.8
+
+## 0.1.74
+
+### Patch Changes
+
+- Updated dependencies [777a11d]
+- Updated dependencies [e77efac]
+- Updated dependencies [04cf861]
+- Updated dependencies [0e33fe7]
+- Updated dependencies [94f5424]
+- Updated dependencies [c73fa16]
+  - @skip-go/widget@3.6.7
+
+## 0.1.73
+
+### Patch Changes
+
+- Updated dependencies [ad43417]
+- Updated dependencies [d13c452]
+  - @skip-go/widget@3.6.6
+
 ## 0.1.72
 
 ### Patch Changes

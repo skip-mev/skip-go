@@ -168,10 +168,6 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
-    if (!sourceAsset?.chainID) {
-      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
-    }
-
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
@@ -191,11 +187,18 @@ export const SwapPage = () => {
       );
     }
 
+    if (!sourceAsset?.chainID) {
+      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
+    }
+
     if (!destinationAsset?.chainID) {
       return <MainButton label="Please select a destination asset" icon={ICONS.swap} disabled />;
     }
 
-    if (!sourceAsset?.amount && !destinationAsset?.amount) {
+    const amountsUndefined = !sourceAsset?.amount && !destinationAsset?.amount;
+    const amountsAreZero = sourceAsset?.amount === "0" || destinationAsset?.amount === "0";
+
+    if (amountsUndefined || amountsAreZero) {
       return <MainButton label="Please enter a valid amount" icon={ICONS.swap} disabled />;
     }
 
@@ -204,13 +207,13 @@ export const SwapPage = () => {
     }
 
     if (isRouteError) {
-      // special case for multi-tx routes on mobile
-      const errMsg = routeError?.message.startsWith("no single-tx routes found")
+      const message = routeError?.message ?? "";
+      const errMsg = message.startsWith("no single-tx routes found")
         ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
-        : routeError?.message;
-      return (
-        <MainButton label={errMsg ?? "No routes found"} disabled fontSize={errMsg ? 18 : 24} />
-      );
+        : message;
+
+      const fontSize = errMsg.length > 36 ? 18 : 24;
+      return <MainButton label={errMsg || "No routes found"} disabled fontSize={fontSize} />;
     }
     if (isLoadingBalances) {
       return <MainButton label="Fetching balances" loading icon={ICONS.swap} />;
@@ -237,7 +240,7 @@ export const SwapPage = () => {
         });
         return;
       }
-      if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
+      if (route?.warning?.type === "BAD_PRICE_WARNING") {
         track("error page: bad price warning", { route });
         setError({
           errorType: ErrorType.BadPriceWarning,
@@ -321,7 +324,6 @@ export const SwapPage = () => {
     routePreference,
     slippage,
     showCosmosLedgerWarning,
-    priceChangePercentage,
     showGoFastWarning,
     isGoFast,
     setChainAddresses,

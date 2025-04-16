@@ -11,8 +11,6 @@ import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { Column, Row } from "@/components/Layout";
-import { useUpdateSourceAssetToDefaultForChainType } from "@/hooks/useUpdateSourceAssetToDefaultForChainType";
-import { MinimalWallet } from "@/state/wallets";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
 
@@ -25,7 +23,6 @@ export type WalletSelectorModalProps = ModalProps & {
 export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalProps) => {
   const { chainId, chainType, fromConnectedWalletModal } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const setSourceAsset = useUpdateSourceAssetToDefaultForChainType();
   const walletList = useWalletList({ chainID: chainId, chainType });
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const getAccount = useGetAccount();
@@ -65,12 +62,6 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     }
   };
 
-  const onWalletConnected = (wallet?: MinimalWallet) => {
-    if (wallet?.walletChainType && wallet?.walletChainType !== sourceAssetChain?.chainType) {
-      setSourceAsset(wallet.walletChainType);
-    }
-  };
-
   const title = useMemo(() => {
     switch (selectedEcoChain?.chainType ?? sourceAssetChain?.chainType) {
       case ChainType.Cosmos:
@@ -91,7 +82,6 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       onClickBackButton={handleOnClickBackButton}
       isConnectEco={fromConnectedWalletModal}
       chainId={chainId}
-      onWalletConnected={onWalletConnected}
       headerRightContent={
         <StyledChainLogoContainerRow align="center" justify="center">
           <img
@@ -103,7 +93,11 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       }
       bottomContent={
         showOtherEcosytems && (
-          <Column>
+          <Column
+            style={{
+              marginTop: "-5px",
+            }}
+          >
             <StyledDivider />
             <EcosystemConnectors excludeChainType={sourceAssetChainType} onClick={setSelectedEco} />
           </Column>
@@ -115,7 +109,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
 
 const StyledDivider = styled.div`
   height: 1px;
-  background-color: ${({ theme }) => theme.primary.text.ultraLowContrast};
+  background-color: ${({ theme }) => theme.secondary.background.transparent};
   margin: 10px;
 `;
 
