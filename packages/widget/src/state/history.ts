@@ -47,20 +47,8 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
   transactionHistoryItemAtom.remove(index);
 });
 
-const lastTransactionIndexAtom = atom((get) => {
-  const history = get(transactionHistoryAtom);
-  return history.length - 1;
-});
+export const lastTransactionHasCompletedAtom = atom((get) => {
+  const txHistoryItem = get(transactionHistoryAtom).at(-1);
 
-const transactionIsSettledAtom = atomFamily((index: number) =>
-  atom((get) => {
-    return get(transactionHistoryItemAtom(index))?.isSettled;
-  }),
-);
-
-export const lastTransactionIsSettledAtom = atom((get) => {
-  const lastIndex = get(lastTransactionIndexAtom);
-  if (lastIndex < 0) return undefined;
-
-  return get(transactionIsSettledAtom(lastIndex));
+  return txHistoryItem?.isSettled;
 });
