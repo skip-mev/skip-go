@@ -70,11 +70,11 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 };
 
 export const TxStatusSync = memo(() => {
-  const lastTransaction = useAtomValue(transactionHistoryAtom);
+  const transactionhistoryItem = useAtomValue(transactionHistoryAtom);
 
   useTxHistory({
-    txHistoryItem: lastTransaction.at(-1),
-    index: lastTransaction.length - 1,
+    txHistoryItem: transactionhistoryItem.at(-1),
+    index: transactionhistoryItem.length - 1,
   });
 
   return null;
