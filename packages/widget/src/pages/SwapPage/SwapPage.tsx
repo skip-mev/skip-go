@@ -334,26 +334,9 @@ export const SwapPage = () => {
   const historyPageButton = useMemo(() => {
     if (txHistory.length === 0) return;
 
-    const getIcon = () => {
-      if (!txHistory[txHistory.length - 1]?.isSettled) {
-        return (
-          <StyledAnimatedBorder
-            width={6}
-            height={6}
-            borderSize={4}
-            status="pending"
-            style={{
-              maskImage: "radial-gradient(circle, transparent 55%, black 0%)",
-            }}
-          />
-        );
-      }
-      return ICONS.history;
-    };
-
     return {
       label: "History",
-      icon: getIcon(),
+      icon: ICONS.history,
       onClick: () => {
         track("swap page: history button - clicked");
         setCurrentPage(Routes.TransactionHistoryPage);
