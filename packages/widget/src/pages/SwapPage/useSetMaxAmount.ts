@@ -1,6 +1,9 @@
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import {
+  convertHumanReadableAmountToCryptoAmount,
+  convertTokenAmountToHumanReadableAmount,
+} from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { EVM_GAS_AMOUNT, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
@@ -10,9 +13,102 @@ import {
   useCosmosFeeAssetsBalanceValidation,
 } from "@/hooks/useCosmosFeeAssetValidation";
 import { ChainType } from "@skip-go/client";
+import {
+  mainnet,
+  polygon,
+  avalanche,
+  celo,
+  arbitrum,
+  arbitrumSepolia,
+  avalancheFuji,
+  base,
+  baseSepolia,
+  blast,
+  blastSepolia,
+  bsc,
+  bscTestnet,
+  fantom,
+  fantomTestnet,
+  filecoin,
+  forma,
+  kava,
+  kavaTestnet,
+  linea,
+  lineaSepolia,
+  manta,
+  mantaSepoliaTestnet,
+  moonbeam,
+  optimism,
+  optimismSepolia,
+  polygonMumbai,
+  sei,
+  sepolia,
+} from "viem/chains";
+import { formaTestnet } from "@/constants/wagmi";
+import { createPublicClient, fallback, http } from "viem";
+import { useCallback, useEffect, useState } from "react";
 
+export const chainMap = {
+  // 🌐 Mainnets
+  "1": mainnet,
+  "10": optimism,
+  "56": bsc,
+  "97": bscTestnet,
+  "137": polygon,
+  "169": manta,
+  "250": fantom,
+  "314": filecoin,
+  "8453": base,
+  "2222": kava,
+  "42220": celo,
+  "43114": avalanche,
+  "59144": linea,
+  "1284": moonbeam,
+  "42161": arbitrum,
+  "81457": blast,
+  "4000": forma,
+  "713715": sei,
+
+  // 🧪 Testnets
+  "80001": polygonMumbai,
+  "11155111": sepolia,
+  "43113": avalancheFuji,
+  "84532": baseSepolia,
+  "11155420": optimismSepolia,
+  "421614": arbitrumSepolia,
+  "168587773": blastSepolia,
+  "4010": formaTestnet,
+  "2221": kavaTestnet,
+  "4002": fantomTestnet,
+  "59141": lineaSepolia,
+  "3441005": mantaSepoliaTestnet,
+};
+
+export const getEvmGasPriceEstimate = async (chainId?: string) => {
+  if (!chainId) return;
+  const chain = chainMap[chainId as keyof typeof chainMap];
+
+  if (!chain) return null;
+
+  const client = createPublicClient({
+    chain,
+    transport: fallback([
+      http("https://ethereum.publicnode.com"),
+      http("https://rpc.ankr.com/eth"),
+      http("https://cloudflare-eth.com"),
+    ]),
+  });
+
+  const fees = await client.estimateFeesPerGas();
+
+  return {
+    maxFeePerGas: fees.maxFeePerGas,
+    gasPriceGwei: Number(fees.maxFeePerGas) / 1e9,
+  };
+};
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
+  const [gasFeeTokenAmount, setGasFeeTokenAmount] = useState<number>(0);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -22,49 +118,41 @@ export const useGasFeeTokenAmount = () => {
 
   const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
   const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);
-
   const chainType = sourceDetails?.chain?.chainType;
 
-  switch (chainType) {
-    case ChainType.EVM: {
-      let gasLimit: number;
-      let gasPriceGwei: number;
+  const getGasFeeTokenAmount = useCallback(async (): Promise<number> => {
+    switch (chainType) {
+      case ChainType.EVM: {
+        const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
 
-      switch (sourceAsset?.chainID) {
-        case "1": // Ethereum Mainnet
-          gasLimit = 21000;
-          gasPriceGwei = 50;
-          break;
-        case "137": // Polygon
-          gasLimit = 80000;
-          gasPriceGwei = 40;
-          break;
-        case "43114": // Avalanche
-          gasLimit = 21000;
-          gasPriceGwei = 25;
-          break;
-        case "42220": // Celo
-          gasLimit = 21000;
-          gasPriceGwei = 5;
-          break;
-        default:
-          gasLimit = 21000;
-          gasPriceGwei = 20;
-          break;
+        if (!result) {
+          return Number(
+            convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
+          );
+        }
+        const gasFee = BigNumber(EVM_GAS_AMOUNT)
+          .multipliedBy(result.gasPriceGwei)
+          .multipliedBy(1e9); // Gwei to Wei
+        return Number(gasFee.toFixed(0));
       }
-
-      const gasFeeInWei = BigNumber(gasLimit).multipliedBy(gasPriceGwei).multipliedBy(1e9); // convert Gwei to Wei
-
-      const gasFeeInBaseUnits = gasFeeInWei.toFixed(0);
-      return Number(gasFeeInBaseUnits);
+      case ChainType.Cosmos:
+        return Number(cosmosFeeUsed?.feeAmount);
+      case ChainType.SVM:
+      default:
+        return 0;
     }
-    case ChainType.Cosmos:
-      if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
-      return Number(cosmosFeeUsed.feeAmount);
-    case ChainType.SVM:
-    default:
-      return 0;
-  }
+  }, [chainType, cosmosFeeUsed?.feeAmount, sourceAsset?.chainID, sourceDetails.asset?.decimals]);
+
+  useEffect(() => {
+    const updateGasFeeTokenAmount = async () => {
+      const fee = await getGasFeeTokenAmount();
+      setGasFeeTokenAmount(fee);
+    };
+
+    updateGasFeeTokenAmount();
+  }, [getGasFeeTokenAmount, sourceAsset?.chainID]);
+
+  return gasFeeTokenAmount;
 };
 
 export const useMaxAmountTokenMinusFees = () => {
