@@ -26,6 +26,8 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
     txHash: tx.txHash,
   }));
 
+  const txHashFoundInTxHistoryItem = txs?.some((tx) => tx.txHash);
+
   const chainIdFound = chains?.some((chain) =>
     txs?.map((tx) => tx.chainID).includes(chain.chainID),
   );
@@ -34,7 +36,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   let statusData: TransactionHistoryItem | TxsStatus | undefined = txHistoryItem;
 
-  if (txs === undefined || txs.length === 0) {
+  if (!txHashFoundInTxHistoryItem) {
     removeTransactionHistoryItem(index);
   }
 
