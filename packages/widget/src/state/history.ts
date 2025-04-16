@@ -21,31 +21,30 @@ export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
 export const transactionHistoryItemAtom = atomFamily((index: number) =>
   atom(
     (get) => get(transactionHistoryAtom)[index],
-    (get, set, historyItem: TransactionHistoryItem) => {
-      const currentHistory = get(transactionHistoryAtom);
-      const newHistory = [...currentHistory];
-      const oldHistoryItem = newHistory[index] ?? {};
+    (get, set, newTxHistoryItem: TransactionHistoryItem) => {
+      const current = get(transactionHistoryAtom);
+      const previousTxHistoryItem = current[index];
 
-      newHistory[index] = { ...oldHistoryItem, ...historyItem };
-      set(transactionHistoryAtom, newHistory);
+      if (JSON.stringify(previousTxHistoryItem) === JSON.stringify(newTxHistoryItem)) return;
+
+      const updated = [...current];
+      updated[index] = { ...previousTxHistoryItem, ...newTxHistoryItem };
+      set(transactionHistoryAtom, updated);
     },
   ),
 );
 
-export const lastTransactionAtom = atom((get) => {
+export const transactionIsSettledAtom = atomFamily((index: number) =>
+  atom((get) => {
+    return get(transactionHistoryItemAtom(index))?.isSettled;
+  }),
+);
+
+export const lastTransactionIsSettledAtom = atom((get) => {
   const history = get(transactionHistoryAtom);
   const lastIndex = history.length - 1;
   if (lastIndex < 0) return undefined;
-
-  return {
-    transactionHistoryItem: get(transactionHistoryItemAtom(lastIndex)),
-    index: lastIndex,
-  };
-});
-
-export const lastTransactionIsSettledAtom = atom((get) => {
-  const txHistory = get(transactionHistoryAtom);
-  return txHistory?.[txHistory.length - 1]?.isSettled;
+  return get(transactionIsSettledAtom(lastIndex));
 });
 
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {

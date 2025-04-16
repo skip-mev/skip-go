@@ -4,7 +4,7 @@ import {
   swapExecutionStateAtom,
   skipSubmitSwapExecutionAtom,
 } from "@/state/swapExecutionPage";
-import { getClientOperations, ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { getClientOperations, ClientOperation } from "@/utils/clientType";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
@@ -73,21 +73,13 @@ export const useSyncTxStatus = ({
   ]);
 
   useEffect(() => {
-    const index = historyIndex ?? transactionHistoryIndex;
-
-    if (!computedSwapStatus) return;
-
-    const newTxHistoryItem = {
-      ...txHistory[index],
-      ...statusData,
-      status: computedSwapStatus as SimpleStatus,
-    };
-
-    const txHistoryItemChanged =
-      JSON.stringify(txHistory[index]) !== JSON.stringify(newTxHistoryItem);
-
-    if (computedSwapStatus && !txHistory[index].isSettled && txHistoryItemChanged) {
-      setTransactionHistoryItem(newTxHistoryItem);
+    if (computedSwapStatus) {
+      const index = historyIndex ?? transactionHistoryIndex;
+      setTransactionHistoryItem({
+        ...txHistory[index],
+        ...statusData,
+        status: computedSwapStatus,
+      });
       if (!historyIndex) {
         setOverallStatus(computedSwapStatus);
       }
@@ -98,10 +90,10 @@ export const useSyncTxStatus = ({
     computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
+    setTransactionHistoryItem,
     transactionHistoryIndex,
     historyIndex,
     txHistory,
     statusData,
-    setTransactionHistoryItem,
   ]);
 };

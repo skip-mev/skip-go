@@ -1,6 +1,10 @@
 import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
-import { lastTransactionAtom, TransactionHistoryItem } from "@/state/history";
+import {
+  lastTransactionAtom,
+  transactionHistoryAtom,
+  TransactionHistoryItem,
+} from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
 import { SimpleStatus } from "@/utils/clientType";
 import { TransferAssetRelease } from "@skip-go/client";
@@ -76,11 +80,11 @@ export const useTxHistory = ({ txHistoryItem, index, queryDisabled }: useTxHisto
 };
 
 export const TxStatusSync = memo(() => {
-  const lastTransaction = useAtomValue(lastTransactionAtom);
+  const lastTransaction = useAtomValue(transactionHistoryAtom);
 
   useTxHistory({
-    txHistoryItem: lastTransaction?.transactionHistoryItem,
-    index: lastTransaction?.index ?? 0,
+    txHistoryItem: lastTransaction.at(-1),
+    index: lastTransaction.length - 1,
     queryDisabled: true,
   });
 
