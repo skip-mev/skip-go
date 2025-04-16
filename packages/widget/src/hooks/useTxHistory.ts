@@ -60,6 +60,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
       if ((statusData?.isSettled && !statusData?.isSuccess) || !chainIdFound) return "failed";
       return "pending";
     },
+    enabled: txs !== undefined && txsRequired !== undefined && statusData !== undefined,
   });
 
   return {
