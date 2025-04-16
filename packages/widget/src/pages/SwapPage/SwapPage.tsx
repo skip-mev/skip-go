@@ -21,17 +21,14 @@ import {
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
-import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { calculatePercentageChange } from "@/utils/number";
-import { lastTransactionIsSettledAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
@@ -42,8 +39,7 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
-import { SpinnerIcon } from "@/icons/SpinnerIcon";
-import { TxStatusSync } from "@/hooks/useTxHistory";
+import { SwapPageHeader } from "./SwapPageHeader";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -79,7 +75,6 @@ export const SwapPage = () => {
   const switchEvmChainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
-  const lastTransactionIsSettled = useAtomValue(lastTransactionIsSettledAtom);
 
   const isSwapOperation = useIsSwapOperation(route);
 
@@ -335,44 +330,6 @@ export const SwapPage = () => {
     setError,
   ]);
 
-  const historyPageIcon = useMemo(() => {
-    if (!lastTransactionIsSettled) {
-      return (
-        <div
-          style={{
-            marginLeft: "8px",
-            marginRight: "8px",
-            position: "relative",
-          }}
-        >
-          <SpinnerIcon
-            style={{
-              animation: "spin 1s linear infinite",
-              position: "absolute",
-              height: 14,
-              width: 14,
-            }}
-          />
-        </div>
-      );
-    }
-
-    return ICONS.history;
-  }, [lastTransactionIsSettled]);
-
-  const historyPageButton = useMemo(() => {
-    if (lastTransactionIsSettled === undefined) return;
-
-    return {
-      label: "History",
-      icon: historyPageIcon,
-      onClick: () => {
-        track("swap page: history button - clicked");
-        setCurrentPage(Routes.TransactionHistoryPage);
-      },
-    };
-  }, [lastTransactionIsSettled, historyPageIcon, setCurrentPage]);
-
   return (
     <Column
       gap={5}
@@ -380,11 +337,7 @@ export const SwapPage = () => {
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      <TxStatusSync />
-      <SwapPageHeader
-        leftButton={historyPageButton}
-        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
-      />
+      <SwapPageHeader />
       <Column align="center">
         <SwapPageAssetChainInput
           selectedAsset={sourceAsset}

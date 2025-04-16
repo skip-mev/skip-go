@@ -1,60 +1,70 @@
-import { Row } from "@/components/Layout";
-import { GhostButton } from "@/components/Button";
-import { iconMap, ICONS } from "@/icons";
-import { styled } from "styled-components";
-import React from "react";
+import { memo, useMemo } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { ICONS } from "@/icons";
+import { sourceAssetAtom } from "@/state/swapPage";
+import { PageHeader } from "../../components/PageHeader";
+import { currentPageAtom, Routes } from "@/state/router";
+import { ConnectedWalletContent } from "./ConnectedWalletContent";
+import { lastTransactionIsSettledAtom } from "@/state/history";
+import { track } from "@amplitude/analytics-browser";
+import { SpinnerIcon } from "@/icons/SpinnerIcon";
+import { TxStatusSync } from "@/hooks/useTxHistory";
+import { useGetAccount } from "@/hooks/useGetAccount";
 
-export type SwapPageHeaderItemButton = {
-  label: React.ReactNode;
-  icon?: ICONS | React.ReactElement;
-  onClick?: () => void;
-};
+export const SwapPageHeader = memo(() => {
+  const setCurrentPage = useSetAtom(currentPageAtom);
+  const sourceAsset = useAtomValue(sourceAssetAtom);
 
-type SwapPageHeaderProps = {
-  leftButton?: SwapPageHeaderItemButton;
-  rightButton?: SwapPageHeaderItemButton;
-  rightContent?: React.ReactNode;
-};
+  const lastTransactionIsSettled = useAtomValue(lastTransactionIsSettledAtom);
 
-export const SwapPageHeader = ({ leftButton, rightButton, rightContent }: SwapPageHeaderProps) => {
-  const renderIcon = (icon?: ICONS | React.ReactElement) => {
-    if (React.isValidElement(icon)) {
-      return () => icon;
+  const getAccount = useGetAccount();
+  const sourceAccount = getAccount(sourceAsset?.chainID);
+
+  const historyPageIcon = useMemo(() => {
+    if (!lastTransactionIsSettled) {
+      return (
+        <div
+          style={{
+            marginLeft: "8px",
+            marginRight: "8px",
+            position: "relative",
+          }}
+        >
+          <SpinnerIcon
+            style={{
+              animation: "spin 1s linear infinite",
+              position: "absolute",
+              height: 14,
+              width: 14,
+            }}
+          />
+        </div>
+      );
     }
 
-    if (icon && icon in iconMap) {
-      return iconMap[icon];
-    }
+    return ICONS.history;
+  }, [lastTransactionIsSettled]);
 
-    return () => null;
-  };
+  const historyPageButton = useMemo(() => {
+    if (lastTransactionIsSettled === undefined) return;
 
-  const LeftIcon = renderIcon(leftButton?.icon);
-  const RightIcon = renderIcon(rightButton?.icon);
+    return {
+      label: "History",
+      icon: historyPageIcon,
+      onClick: () => {
+        track("swap page: history button - clicked");
+        setCurrentPage(Routes.TransactionHistoryPage);
+      },
+    };
+  }, [lastTransactionIsSettled, historyPageIcon, setCurrentPage]);
+
   return (
-    <StyledSwapPageHeaderContainer justify="space-between">
-      <Row align="center" gap={10}>
-        {leftButton && (
-          <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
-            <LeftIcon />
-            {leftButton.label}
-          </GhostButton>
-        )}
-      </Row>
-
-      <Row align="center" gap={10}>
-        {rightContent}
-        {rightButton && (
-          <GhostButton gap={5} align="center" onClick={rightButton.onClick}>
-            {rightButton.label}
-            <RightIcon />
-          </GhostButton>
-        )}
-      </Row>
-    </StyledSwapPageHeaderContainer>
+    <>
+      <TxStatusSync />
+      <PageHeader
+        leftButton={historyPageButton}
+        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
+      />
+    </>
   );
-};
-
-const StyledSwapPageHeaderContainer = styled(Row)`
-  height: 30px;
-`;
+});

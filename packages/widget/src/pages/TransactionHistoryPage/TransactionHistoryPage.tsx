@@ -1,6 +1,6 @@
 import { Column } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
-import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { PageHeader } from "@/components/PageHeader";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
@@ -25,7 +25,7 @@ export const TransactionHistoryPage = () => {
 
   return (
     <Column gap={5}>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

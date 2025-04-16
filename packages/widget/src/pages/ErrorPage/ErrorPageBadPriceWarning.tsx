@@ -6,7 +6,7 @@ import { ICONS } from "@/icons";
 import { calculatePercentageChange } from "@/utils/number";
 import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
 
@@ -34,10 +34,7 @@ export const ErrorPageBadPriceWarning = ({
   } = route;
 
   const hasUsdValues =
-    usdAmountIn &&
-    usdAmountOut &&
-    parseFloat(usdAmountIn) > 0 &&
-    parseFloat(usdAmountOut) > 0;
+    usdAmountIn && usdAmountOut && parseFloat(usdAmountIn) > 0 && parseFloat(usdAmountOut) > 0;
 
   const swapDifferencePercentage = hasUsdValues
     ? `${calculatePercentageChange(usdAmountIn, usdAmountOut, true)}%`
@@ -70,7 +67,8 @@ export const ErrorPageBadPriceWarning = ({
             <br />
             Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
             <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (
+            {usdAmountOut})
           </>
         ),
       };
@@ -80,7 +78,8 @@ export const ErrorPageBadPriceWarning = ({
         title: `Warning: High Price Impact (${priceImpactPercentage})`,
         descriptionContent: (
           <>
-            Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
+            Executing this trade is expected to impact the price by {priceImpactPercentage}. Please
+            verify the amounts.
             <br />
           </>
         ),
@@ -111,7 +110,7 @@ export const ErrorPageBadPriceWarning = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
