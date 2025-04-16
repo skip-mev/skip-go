@@ -34,19 +34,6 @@ export const transactionHistoryItemAtom = atomFamily((index: number) =>
   ),
 );
 
-export const transactionIsSettledAtom = atomFamily((index: number) =>
-  atom((get) => {
-    return get(transactionHistoryItemAtom(index))?.isSettled;
-  }),
-);
-
-export const lastTransactionIsSettledAtom = atom((get) => {
-  const history = get(transactionHistoryAtom);
-  const lastIndex = history.length - 1;
-  if (lastIndex < 0) return undefined;
-  return get(transactionIsSettledAtom(lastIndex));
-});
-
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {
   const history = get(transactionHistoryAtom);
   if (!history) return;
@@ -57,4 +44,22 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
   const newHistory = history.filter((_, i) => i !== index);
 
   set(transactionHistoryAtom, newHistory);
+});
+
+const lastTransactionIndexAtom = atom((get) => {
+  const history = get(transactionHistoryAtom);
+  return history.length - 1;
+});
+
+const transactionIsSettledAtom = atomFamily((index: number) =>
+  atom((get) => {
+    return get(transactionHistoryItemAtom(index))?.isSettled;
+  }),
+);
+
+export const lastTransactionIsSettledAtom = atom((get) => {
+  const lastIndex = get(lastTransactionIndexAtom);
+  if (lastIndex < 0) return undefined;
+
+  return get(transactionIsSettledAtom(lastIndex));
 });
