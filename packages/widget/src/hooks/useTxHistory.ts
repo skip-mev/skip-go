@@ -29,11 +29,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
-  const shouldFetchStatus =
-    txHistoryItem?.lastTxStatus !== "failed" &&
-    txHistoryItem?.lastTxStatus !== "success" &&
-    txs !== undefined &&
-    chainIdFound;
+  const shouldFetchStatus = !txHistoryItem?.isSettled && chainIdFound;
 
   let statusData: TransactionHistoryItem | TxsStatus | undefined = txHistoryItem;
 
