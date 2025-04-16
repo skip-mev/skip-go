@@ -5,25 +5,23 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { PageHeader } from "../../components/PageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { lastTransactionHasCompletedAtom, transactionHistoryAtom } from "@/state/history";
+import { isFetchingLastTransactionStatusAtom, transactionHistoryAtom } from "@/state/history";
 import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
-import { skipSubmitSwapExecutionAtom } from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const sourceAsset = useAtomValue(sourceAssetAtom);
-  const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const lastTransactionHasCompleted = useAtomValue(lastTransactionHasCompletedAtom);
+  const isFetchingLastTransactionStatus = useAtomValue(isFetchingLastTransactionStatusAtom);
 
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
 
   const historyPageIcon = useMemo(() => {
-    if (!lastTransactionHasCompleted || isPending) {
+    if (isFetchingLastTransactionStatus) {
       return (
         <div
           style={{
@@ -45,10 +43,10 @@ export const SwapPageHeader = memo(() => {
     }
 
     return ICONS.history;
-  }, [isPending, lastTransactionHasCompleted]);
+  }, [isFetchingLastTransactionStatus]);
 
   const historyPageButton = useMemo(() => {
-    if (lastTransactionHasCompleted === undefined) return;
+    if (isFetchingLastTransactionStatus === undefined) return;
 
     return {
       label: "History",
@@ -58,7 +56,7 @@ export const SwapPageHeader = memo(() => {
         setCurrentPage(Routes.TransactionHistoryPage);
       },
     };
-  }, [lastTransactionHasCompleted, historyPageIcon, setCurrentPage]);
+  }, [isFetchingLastTransactionStatus, historyPageIcon, setCurrentPage]);
 
   return (
     <>

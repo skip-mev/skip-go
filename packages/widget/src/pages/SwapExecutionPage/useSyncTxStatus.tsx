@@ -73,8 +73,6 @@ export const useSyncTxStatus = ({
   ]);
 
   useEffect(() => {
-    setOverallStatus(computedSwapStatus);
-
     if (computedSwapStatus) {
       const index = historyIndex ?? transactionHistoryIndex;
       setTransactionHistoryItem({
@@ -82,7 +80,7 @@ export const useSyncTxStatus = ({
         ...statusData,
         status: computedSwapStatus,
       });
-      console.log(computedSwapStatus);
+      setOverallStatus(computedSwapStatus);
     }
   }, [
     clientOperations,

@@ -1,6 +1,6 @@
 import { RouteResponse } from "@skip-go/client";
 import { atomFamily, atomWithStorage } from "jotai/utils";
-import { TransactionDetails } from "./swapExecutionPage";
+import { skipSubmitSwapExecutionAtom, TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
@@ -47,8 +47,14 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
   transactionHistoryItemAtom.remove(index);
 });
 
-export const lastTransactionHasCompletedAtom = atom((get) => {
-  const txHistoryItem = get(transactionHistoryAtom).at(-1);
+export const isFetchingLastTransactionStatusAtom = atom((get) => {
+  const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
 
-  return txHistoryItem?.isSettled;
+  const { isPending: executeRouteIsPending } = get(skipSubmitSwapExecutionAtom);
+
+  const isFetchingLastTxStatus =
+    (!lastTxHistoryItem?.isSettled && lastTxHistoryItem?.transactionDetails !== undefined) ||
+    executeRouteIsPending;
+
+  return isFetchingLastTxStatus;
 });
