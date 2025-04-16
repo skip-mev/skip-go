@@ -30,12 +30,6 @@ export const useGasFeeTokenAmount = () => {
 
   switch (chainType) {
     case ChainType.EVM: {
-      const isFeeAsset =
-        sourceAsset?.denom?.includes("-native") &&
-        sourceAsset?.originChainID === sourceAsset?.chainID;
-
-      if (!isFeeAsset || !sourceDetails.asset?.decimals) return 0;
-
       let gasLimit: number;
       let gasPriceGwei: number;
 
