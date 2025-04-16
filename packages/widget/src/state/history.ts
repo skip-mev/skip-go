@@ -44,6 +44,7 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
   const newHistory = history.filter((_, i) => i !== index);
 
   set(transactionHistoryAtom, newHistory);
+  transactionHistoryItemAtom.remove(index);
 });
 
 const lastTransactionIndexAtom = atom((get) => {
