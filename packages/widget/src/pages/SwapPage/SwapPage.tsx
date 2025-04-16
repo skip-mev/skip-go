@@ -21,17 +21,14 @@ import {
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
-import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance } from "./useSetMaxAmount";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { calculatePercentageChange } from "@/utils/number";
-import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
@@ -42,9 +39,11 @@ import { setUser } from "@sentry/react";
 import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
+import { SwapPageHeader } from "./SwapPageHeader";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
+
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
@@ -76,7 +75,7 @@ export const SwapPage = () => {
   const switchEvmChainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
-  const txHistory = useAtomValue(transactionHistoryAtom);
+
   const isSwapOperation = useIsSwapOperation(route);
 
   const getClientAsset = useCallback(
@@ -338,21 +337,7 @@ export const SwapPage = () => {
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      <SwapPageHeader
-        leftButton={
-          txHistory.length === 0
-            ? undefined
-            : {
-                label: "History",
-                icon: ICONS.history,
-                onClick: () => {
-                  track("swap page: history button - clicked");
-                  setCurrentPage(Routes.TransactionHistoryPage);
-                },
-              }
-        }
-        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
-      />
+      <SwapPageHeader />
       <Column align="center">
         <SwapPageAssetChainInput
           selectedAsset={sourceAsset}

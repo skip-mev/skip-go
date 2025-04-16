@@ -5,7 +5,7 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -42,7 +42,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

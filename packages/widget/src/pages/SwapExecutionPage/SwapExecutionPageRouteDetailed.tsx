@@ -61,7 +61,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
 
-
   const getBridgeSwapVenue = useCallback(
     (operation: ClientOperation) => {
       const swapVenueId = operation.swapVenues?.[0]?.chainID;
@@ -193,11 +192,12 @@ export const SwapExecutionPageRouteDetailed = ({
           index={0}
         />
         {renderOperations}
-        {isGasStationTx && 
-        <StyledGasStationTxText>
-          Transactions from EVM to Babylon have gas provided automatically if no gas tokens are found.
-        </StyledGasStationTxText>
-        }
+        {isGasStationTx && (
+          <StyledGasStationTxText>
+            Transactions from EVM to Babylon have gas provided automatically if no gas tokens are
+            found.
+          </StyledGasStationTxText>
+        )}
       </Column>
     </StyledSwapExecutionPageRoute>
   );
@@ -244,7 +244,7 @@ const StyledOperationTypeAndTooltipContainer = styled(Row)`
 
 const StyledGasStationTxText = styled(SmallText)`
   margin-top: 10px;
-  color: ${({ theme }) => theme.success.text}; 
+  color: ${({ theme }) => theme.success.text};
   background: ${({ theme }) => theme.secondary.background.transparent};
   padding: 12px;
   border-radius: 6px;

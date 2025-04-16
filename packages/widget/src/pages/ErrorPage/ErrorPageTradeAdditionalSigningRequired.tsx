@@ -2,7 +2,7 @@ import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
@@ -36,7 +36,7 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

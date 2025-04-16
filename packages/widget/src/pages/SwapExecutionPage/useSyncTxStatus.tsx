@@ -1,4 +1,4 @@
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "@/state/history";
+import { transactionHistoryAtom, transactionHistoryItemAtom } from "@/state/history";
 import {
   setOverallStatusAtom,
   swapExecutionStateAtom,
@@ -20,7 +20,9 @@ export const useSyncTxStatus = ({
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
     useAtomValue(swapExecutionStateAtom);
-  const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const setTransactionHistoryItem = useSetAtom(
+    transactionHistoryItemAtom(historyIndex ?? transactionHistoryIndex),
+  );
   const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
@@ -31,8 +33,6 @@ export const useSyncTxStatus = ({
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
-    if (!route?.operations || !route?.txsRequired) return;
-
     if (statusData?.lastTxStatus === "pending") {
       if (isPending) {
         setOverallStatus("pending");
@@ -64,8 +64,6 @@ export const useSyncTxStatus = ({
     }
   }, [
     isPending,
-    route?.operations,
-    route?.txsRequired,
     setOverallStatus,
     statusData?.isSettled,
     statusData?.isSuccess,
@@ -77,13 +75,12 @@ export const useSyncTxStatus = ({
   useEffect(() => {
     if (computedSwapStatus) {
       const index = historyIndex ?? transactionHistoryIndex;
-      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
+      setTransactionHistoryItem({
         ...txHistory[index],
+        ...statusData,
         status: computedSwapStatus,
       });
-      if (!historyIndex) {
-        setOverallStatus(computedSwapStatus);
-      }
+      setOverallStatus(computedSwapStatus);
     }
   }, [
     clientOperations,
@@ -91,9 +88,10 @@ export const useSyncTxStatus = ({
     computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
-    setTransactionHistory,
+    setTransactionHistoryItem,
     transactionHistoryIndex,
     historyIndex,
     txHistory,
+    statusData,
   ]);
 };
