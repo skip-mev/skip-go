@@ -33,31 +33,39 @@ export const useGasFeeTokenAmount = () => {
       const isFeeAsset =
         sourceAsset?.denom?.includes("-native") &&
         sourceAsset?.originChainID === sourceAsset?.chainID;
-      if (isFeeAsset) {
-        switch (sourceAsset?.chainID) {
-          case "1": // mainnet
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.015, sourceDetails.asset?.decimals),
-            );
-          case "137": // polygon
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(1.2, sourceDetails.asset?.decimals),
-            );
-          case "43114": // avalanche
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.02, sourceDetails.asset?.decimals),
-            );
-          case "42220": // celo
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.01, sourceDetails.asset?.decimals),
-            );
-          default: // other chains
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
-            );
-        }
+
+      if (!isFeeAsset || !sourceDetails.asset?.decimals) return 0;
+
+      let gasLimit: number;
+      let gasPriceGwei: number;
+
+      switch (sourceAsset?.chainID) {
+        case "1": // Ethereum Mainnet
+          gasLimit = 21000;
+          gasPriceGwei = 50;
+          break;
+        case "137": // Polygon
+          gasLimit = 80000;
+          gasPriceGwei = 40;
+          break;
+        case "43114": // Avalanche
+          gasLimit = 21000;
+          gasPriceGwei = 25;
+          break;
+        case "42220": // Celo
+          gasLimit = 21000;
+          gasPriceGwei = 5;
+          break;
+        default:
+          gasLimit = 21000;
+          gasPriceGwei = 20;
+          break;
       }
-      return 0;
+
+      const gasFeeInWei = BigNumber(gasLimit).multipliedBy(gasPriceGwei).multipliedBy(1e9); // convert Gwei to Wei
+
+      const gasFeeInBaseUnits = gasFeeInWei.toFixed(0);
+      return Number(gasFeeInBaseUnits);
     }
     case ChainType.Cosmos:
       if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
