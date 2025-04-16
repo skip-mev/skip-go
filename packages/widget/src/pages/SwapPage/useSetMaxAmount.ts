@@ -49,7 +49,7 @@ import { createPublicClient, fallback, http } from "viem";
 import { useCallback, useEffect, useState } from "react";
 
 export const chainMap = {
-  // 🌐 Mainnets
+  // Mainnets
   "1": mainnet,
   "10": optimism,
   "56": bsc,
@@ -69,7 +69,7 @@ export const chainMap = {
   "4000": forma,
   "713715": sei,
 
-  // 🧪 Testnets
+  // Testnets
   "80001": polygonMumbai,
   "11155111": sepolia,
   "43113": avalancheFuji,
