@@ -34,6 +34,7 @@ export const useBroadcastedTxsStatus = ({
 
   const queryKey = useMemo(() => ["txs-status", txsRequired, txs] as const, [txs, txsRequired]);
   return useQuery({
+    enabled: txsRequired && txs,
     queryKey,
     queryFn: async ({ queryKey: [, txsRequired, txs] }) => {
       if (!txs) return;
