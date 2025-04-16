@@ -33,8 +33,8 @@ export const useBroadcastedTxsStatus = ({
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
 
   const queryKey = useMemo(() => ["txs-status", txsRequired, txs] as const, [txs, txsRequired]);
+
   return useQuery({
-    enabled: txsRequired && txs,
     queryKey,
     queryFn: async ({ queryKey: [, txsRequired, txs] }) => {
       if (!txs) return;
@@ -87,7 +87,11 @@ export const useBroadcastedTxsStatus = ({
       setPrevData(resData);
       return resData;
     },
-    enabled: !isSettled && (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
+    enabled:
+      txsRequired !== undefined &&
+      txs !== undefined &&
+      !isSettled &&
+      (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
     refetchInterval: 500,
     // to make the data persist when query key changed
     initialData: prevData,
