@@ -1,7 +1,4 @@
-import {
-  convertHumanReadableAmountToCryptoAmount,
-  convertTokenAmountToHumanReadableAmount,
-} from "@/utils/crypto";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
