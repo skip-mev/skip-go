@@ -1,7 +1,4 @@
-import {
-  convertHumanReadableAmountToCryptoAmount,
-  convertTokenAmountToHumanReadableAmount,
-} from "@/utils/crypto";
+import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { EVM_GAS_AMOUNT, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
@@ -101,10 +98,7 @@ export const getEvmGasPriceEstimate = async (chainId?: string) => {
 
   const fees = await client.estimateFeesPerGas();
 
-  return {
-    maxFeePerGas: fees.maxFeePerGas,
-    gasPriceGwei: Number(fees.maxFeePerGas) / 1e9,
-  };
+  return Number(fees.maxFeePerGas);
 };
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
@@ -125,14 +119,9 @@ export const useGasFeeTokenAmount = () => {
       case ChainType.EVM: {
         const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
 
-        if (!result) {
-          return Number(
-            convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
-          );
-        }
-        const gasFee = BigNumber(EVM_GAS_AMOUNT)
-          .multipliedBy(result.gasPriceGwei)
-          .multipliedBy(1e9); // Gwei to Wei
+        if (!result) return 0;
+        const gasFee = BigNumber(25_000).multipliedBy(result);
+        console.log(gasFee.toFixed(0));
         return Number(gasFee.toFixed(0));
       }
       case ChainType.Cosmos:
@@ -141,7 +130,7 @@ export const useGasFeeTokenAmount = () => {
       default:
         return 0;
     }
-  }, [chainType, cosmosFeeUsed?.feeAmount, sourceAsset?.chainID, sourceDetails.asset?.decimals]);
+  }, [chainType, cosmosFeeUsed?.feeAmount, sourceAsset?.chainID]);
 
   useEffect(() => {
     const updateGasFeeTokenAmount = async () => {
