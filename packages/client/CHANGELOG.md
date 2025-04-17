@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.16.30
+
+### Patch Changes
+
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+
 ## 0.16.29
 
 ### Patch Changes
