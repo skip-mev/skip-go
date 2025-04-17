@@ -167,10 +167,6 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
-    if (!sourceAsset?.chainID) {
-      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
-    }
-
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
         <MainButton
@@ -188,6 +184,10 @@ export const SwapPage = () => {
           }}
         />
       );
+    }
+
+    if (!sourceAsset?.chainID) {
+      return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
     if (!destinationAsset?.chainID) {
@@ -239,7 +239,7 @@ export const SwapPage = () => {
         });
         return;
       }
-      if (route?.warning?.type === "BAD_PRICE_WARNING" && Number(priceChangePercentage ?? 0) < 0) {
+      if (route?.warning?.type === "BAD_PRICE_WARNING") {
         track("error page: bad price warning", { route });
         setError({
           errorType: ErrorType.BadPriceWarning,
@@ -323,7 +323,6 @@ export const SwapPage = () => {
     routePreference,
     slippage,
     showCosmosLedgerWarning,
-    priceChangePercentage,
     showGoFastWarning,
     isGoFast,
     setChainAddresses,
