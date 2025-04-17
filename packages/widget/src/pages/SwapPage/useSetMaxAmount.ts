@@ -51,19 +51,25 @@ export const useGasFeeTokenAmount = () => {
   const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);
   const chainType = sourceDetails?.chain?.chainType;
 
-  const getGasFeeTokenAmount = useCallback(async (): Promise<number> => {
+  const getGasFeeTokenAmount = useCallback(async () => {
     switch (chainType) {
       case ChainType.EVM: {
-        const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
+        const isFeeAsset =
+          sourceAsset?.denom?.includes("-native") &&
+          sourceAsset?.originChainID === sourceAsset?.chainID;
 
-        if (!result) {
-          return Number(
-            convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
-          );
+        if (isFeeAsset) {
+          const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
+
+          if (!result) {
+            return Number(convertHumanReadableAmountToCryptoAmount(0.0008, sourceAsset?.chainID));
+          }
+
+          const gasFee = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1e9);
+
+          return Number(gasFee);
         }
-        const gasFee = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1e9);
-
-        return Number(gasFee.toFixed(0));
+        return 0;
       }
       case ChainType.Cosmos:
         return Number(cosmosFeeUsed?.feeAmount);
@@ -71,7 +77,13 @@ export const useGasFeeTokenAmount = () => {
       default:
         return 0;
     }
-  }, [chainType, cosmosFeeUsed?.feeAmount, sourceAsset?.chainID, sourceDetails.asset?.decimals]);
+  }, [
+    chainType,
+    cosmosFeeUsed?.feeAmount,
+    sourceAsset?.chainID,
+    sourceAsset?.denom,
+    sourceAsset?.originChainID,
+  ]);
 
   const { data: gasFeeTokenAmount } = useQuery({
     queryKey: ["gasFeeTokenAmount", sourceAsset?.chainID],
