@@ -15,7 +15,7 @@ import {
 import { ChainType } from "@skip-go/client";
 
 import { config } from "@/constants/wagmi";
-import { createPublicClient, fallback, http } from "viem";
+import { createPublicClient, http } from "viem";
 import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 
