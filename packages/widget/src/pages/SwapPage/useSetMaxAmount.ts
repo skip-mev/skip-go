@@ -15,7 +15,7 @@ import {
 import { ChainType } from "@skip-go/client";
 
 import { config } from "@/constants/wagmi";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, fallback, http } from "viem";
 import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -27,7 +27,11 @@ export const getEvmGasPriceEstimate = async (chainId?: string) => {
 
   const client = createPublicClient({
     chain,
-    transport: http(),
+    transport: fallback([
+      http("https://ethereum.publicnode.com"),
+      http("https://rpc.ankr.com/eth"),
+      http("https://cloudflare-eth.com"),
+    ]),
   });
 
   const fees = await client.estimateFeesPerGas();
@@ -61,7 +65,7 @@ export const useGasFeeTokenAmount = () => {
             return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
           }
 
-          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1.5).toString();
+          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).toString();
         }
         return "0";
       }
