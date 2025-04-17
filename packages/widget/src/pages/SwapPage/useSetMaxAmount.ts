@@ -36,7 +36,7 @@ export const getEvmGasPriceEstimate = async (chainId?: string) => {
 
   const fees = await client.estimateFeesPerGas();
 
-  return Number(fees.maxFeePerGas) / 1e9;
+  return fees.maxFeePerGas.toString();
 };
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
@@ -62,20 +62,18 @@ export const useGasFeeTokenAmount = () => {
           const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
 
           if (!result) {
-            return Number(convertHumanReadableAmountToCryptoAmount(0.0008, sourceAsset?.chainID));
+            return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
           }
 
-          const gasFee = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1e9);
-
-          return Number(gasFee);
+          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).toString();
         }
-        return 0;
+        return "0";
       }
       case ChainType.Cosmos:
-        return Number(cosmosFeeUsed?.feeAmount);
+        return cosmosFeeUsed?.feeAmount;
       case ChainType.SVM:
       default:
-        return 0;
+        return "0";
     }
   }, [
     chainType,
@@ -83,6 +81,7 @@ export const useGasFeeTokenAmount = () => {
     sourceAsset?.chainID,
     sourceAsset?.denom,
     sourceAsset?.originChainID,
+    sourceDetails?.asset?.decimals,
   ]);
 
   const { data: gasFeeTokenAmount } = useQuery({
