@@ -178,7 +178,7 @@ export const filterAtom = atom<ChainFilter>();
 
 export const filterOutAtom = atom<ChainFilter>();
 
-export const EVM_GAS_AMOUNT = 150_000;
+export const EVM_GAS_AMOUNT = 1_000_000;
 
 export const COSMOS_GAS_AMOUNT = {
   DEFAULT: 300_000,
