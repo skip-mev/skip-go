@@ -13,80 +13,14 @@ import {
   useCosmosFeeAssetsBalanceValidation,
 } from "@/hooks/useCosmosFeeAssetValidation";
 import { ChainType } from "@skip-go/client";
-import {
-  mainnet,
-  polygon,
-  avalanche,
-  celo,
-  arbitrum,
-  arbitrumSepolia,
-  avalancheFuji,
-  base,
-  baseSepolia,
-  blast,
-  blastSepolia,
-  bsc,
-  bscTestnet,
-  fantom,
-  fantomTestnet,
-  filecoin,
-  forma,
-  kava,
-  kavaTestnet,
-  linea,
-  lineaSepolia,
-  manta,
-  mantaSepoliaTestnet,
-  moonbeam,
-  optimism,
-  optimismSepolia,
-  polygonMumbai,
-  sei,
-  sepolia,
-} from "viem/chains";
-import { formaTestnet } from "@/constants/wagmi";
+
+import { config } from "@/constants/wagmi";
 import { createPublicClient, fallback, http } from "viem";
 import { useCallback, useEffect, useState } from "react";
 
-export const chainMap = {
-  // Mainnets
-  "1": mainnet,
-  "10": optimism,
-  "56": bsc,
-  "97": bscTestnet,
-  "137": polygon,
-  "169": manta,
-  "250": fantom,
-  "314": filecoin,
-  "8453": base,
-  "2222": kava,
-  "42220": celo,
-  "43114": avalanche,
-  "59144": linea,
-  "1284": moonbeam,
-  "42161": arbitrum,
-  "81457": blast,
-  "4000": forma,
-  "713715": sei,
-
-  // Testnets
-  "80001": polygonMumbai,
-  "11155111": sepolia,
-  "43113": avalancheFuji,
-  "84532": baseSepolia,
-  "11155420": optimismSepolia,
-  "421614": arbitrumSepolia,
-  "168587773": blastSepolia,
-  "4010": formaTestnet,
-  "2221": kavaTestnet,
-  "4002": fantomTestnet,
-  "59141": lineaSepolia,
-  "3441005": mantaSepoliaTestnet,
-};
-
 export const getEvmGasPriceEstimate = async (chainId?: string) => {
   if (!chainId) return;
-  const chain = chainMap[chainId as keyof typeof chainMap];
+  const chain = config.chains.find((chain) => chain.id === Number(chainId));
 
   if (!chain) return null;
 
