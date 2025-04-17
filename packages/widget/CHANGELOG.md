@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.8.1
+
+### Patch Changes
+
+- e309043: Update History page design and reduce API calls
+
 ## 3.8.0
 
 ### Minor Changes
