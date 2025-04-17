@@ -61,7 +61,7 @@ export const useGasFeeTokenAmount = () => {
             return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
           }
 
-          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(2).toString();
+          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1.5).toString();
         }
         return "0";
       }
