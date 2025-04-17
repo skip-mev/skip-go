@@ -16,7 +16,8 @@ import { ChainType } from "@skip-go/client";
 
 import { config } from "@/constants/wagmi";
 import { createPublicClient, fallback, http } from "viem";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export const getEvmGasPriceEstimate = async (chainId?: string) => {
   if (!chainId) return;
@@ -35,11 +36,10 @@ export const getEvmGasPriceEstimate = async (chainId?: string) => {
 
   const fees = await client.estimateFeesPerGas();
 
-  return Number(fees.maxFeePerGas);
+  return Number(fees.maxFeePerGas) / 1e9;
 };
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
-  const [gasFeeTokenAmount, setGasFeeTokenAmount] = useState<number>(0);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
@@ -61,7 +61,8 @@ export const useGasFeeTokenAmount = () => {
             convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
           );
         }
-        const gasFee = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result);
+        const gasFee = BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).multipliedBy(1e9);
+
         return Number(gasFee.toFixed(0));
       }
       case ChainType.Cosmos:
@@ -72,14 +73,12 @@ export const useGasFeeTokenAmount = () => {
     }
   }, [chainType, cosmosFeeUsed?.feeAmount, sourceAsset?.chainID, sourceDetails.asset?.decimals]);
 
-  useEffect(() => {
-    const updateGasFeeTokenAmount = async () => {
-      const fee = await getGasFeeTokenAmount();
-      setGasFeeTokenAmount(fee);
-    };
-
-    updateGasFeeTokenAmount();
-  }, [getGasFeeTokenAmount, sourceAsset?.chainID]);
+  const { data: gasFeeTokenAmount } = useQuery({
+    queryKey: ["gasFeeTokenAmount", sourceAsset?.chainID],
+    queryFn: async () => {
+      return await getGasFeeTokenAmount();
+    },
+  });
 
   return gasFeeTokenAmount;
 };
