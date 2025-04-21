@@ -411,7 +411,7 @@ export class SkipClient {
         simulate: simulate,
         enabledChainIds: isGasStationSourceEVM
           ? GAS_STATION_CHAIN_IDS
-          : undefined,
+          : [],
       });
     };
 
@@ -1809,7 +1809,7 @@ export class SkipClient {
         if (
           "cosmosTx" in tx &&
           !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.cosmosTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.cosmosTx.chainID))
         ) {
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
@@ -1840,7 +1840,7 @@ export class SkipClient {
         if (
           "evmTx" in tx &&
           !disabledChainIds?.includes(tx.evmTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.evmTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.evmTx.chainID))
         ) {
           const signer = await getEVMSigner?.(tx.evmTx.chainID);
           if (!signer) {
@@ -1868,7 +1868,7 @@ export class SkipClient {
         if (
           "svmTx" in tx &&
           !disabledChainIds?.includes(tx.svmTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.svmTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.svmTx.chainID))
         ) {
           try {
             const res = await this.validateSvmGasBalance({
