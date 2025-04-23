@@ -32,7 +32,7 @@ import {
   forma,
 } from "wagmi/chains";
 import { defineChain } from "viem";
-import { walletConnect } from "wagmi/connectors";
+import { safe, walletConnect } from "wagmi/connectors";
 import { isBrowser } from "@/utils/os";
 
 export const formaTestnet = defineChain({
@@ -132,6 +132,9 @@ export const config: Config = createConfig({
     walletConnect({
       projectId: "ff1b9e9bd6329cfb07642bd7f4d11a8c",
       showQrModal: true,
+    }),
+    safe({
+      allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
     }),
   ],
 });
