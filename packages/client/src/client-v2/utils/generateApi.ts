@@ -1,16 +1,13 @@
-import { Api } from "src/types/swaggerTypes";
 import { Camel, toCamel, toSnake } from "./convert";
-import { ClientState } from "./state";
+import { ClientState } from "../state";
+import { Api } from "../types/swaggerTypes";
 
 type RequestClientOptions = {
   baseURL: string;
   apiKey?: string;
 };
 
-export const createRequestClient = ({
-  baseURL,
-  apiKey,
-}: RequestClientOptions) => {
+export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) => {
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
     ...(apiKey ? { Authorization: apiKey } : {}),
@@ -23,9 +20,7 @@ export const createRequestClient = ({
 
     if (!response.ok) {
       const message =
-        typeof body === "object" && body?.message
-          ? body.message
-          : response.statusText;
+        typeof body === "object" && body?.message ? body.message : response.statusText;
       throw new Error(message);
     }
 
@@ -74,10 +69,7 @@ export const createRequestClient = ({
   return { get, post };
 };
 
-export type OnSuccessCallback<Result, Params> = (
-  result: Result,
-  options: Params,
-) => void;
+export type OnSuccessCallback<Result, Params> = (result: Result, options: Params) => void;
 
 export type createRequestType<Result, Params> = {
   path: string;
@@ -86,10 +78,7 @@ export type createRequestType<Result, Params> = {
   onSuccess?: OnSuccessCallback<Result, Params>;
 };
 
-export function createRequest<
-  Params extends object = object,
-  Result extends object = object,
->({
+export function createRequest<Params extends object = object, Result extends object = object>({
   path,
   method = "get",
   options,
@@ -142,11 +131,9 @@ type FunctionKeys<T> = {
 
 // Keys of methods that return { data: ... }
 type ValidApiMethodKeys = {
-  [K in FunctionKeys<ApiInstance>]: Awaited<
-    ReturnType<ApiInstance[K]>
-  > extends { data: unknown }
-    ? K
-    : never;
+  [K in FunctionKeys<ApiInstance>]: Awaited<ReturnType<ApiInstance[K]>> extends { data: unknown }
+  ? K
+  : never;
 }[FunctionKeys<ApiInstance>];
 
 /* --------------------------------------------------
@@ -154,16 +141,14 @@ type ValidApiMethodKeys = {
 -------------------------------------------------- */
 
 // Params: take first argument, convert to camelCase, make it non-null
-type MethodParams<K extends ValidApiMethodKeys> = NonNullable<
-  Camel<Parameters<ApiInstance[K]>[0]>
->;
+type MethodParams<K extends ValidApiMethodKeys> = NonNullable<Camel<Parameters<ApiInstance[K]>[0]>>;
 
 type MethodReturn<K extends ValidApiMethodKeys> = Camel<
   Awaited<ReturnType<ApiInstance[K]>> extends { data: infer D }
-    ? D extends object
-      ? D
-      : never
-    : never
+  ? D extends object
+  ? D
+  : never
+  : never
 >;
 
 /* --------------------------------------------------
@@ -204,3 +189,6 @@ export function api<K extends ValidApiMethodKeys>({
 
   return requestWithCancel;
 }
+
+export type ApiRequest<K extends ValidApiMethodKeys> = MethodParams<K>;
+export type ApiResponse<K extends ValidApiMethodKeys> = MethodReturn<K>;

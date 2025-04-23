@@ -1,4 +1,4 @@
-import { api } from "../generateApi";
+import { api } from "../utils/generateApi";
 
 export const messages = api({
   methodName: "getMsgsV2",

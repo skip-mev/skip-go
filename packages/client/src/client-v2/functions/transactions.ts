@@ -7,23 +7,23 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
-import { ChainType, CosmosMsg, EvmTx, SvmTx } from "./types";
-import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "./codegen/circle/cctp/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
-import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
-import { ClawbackVestingAccount } from "./codegen/evmos/vesting/v2/vesting";
 import { WalletClient, publicActions } from "viem";
 import { Connection, Transaction } from "@solana/web3.js";
-import { GetFallbackGasAmount } from "./client-types";
+import { CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
+import { ChainType, GetFallbackGasAmount } from "../types/client";
+import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
+import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
+import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
+import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
 export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObject {
-  const msgJson = JSON.parse(message.msg);
+  const msgJson = JSON.parse(message.msg ?? "");
 
-  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+  if (message.msgTypeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
     return {
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
       value: MsgTransfer.fromJSON({
@@ -39,9 +39,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
-  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+  if (message.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgExecuteContract.fromPartial({
         sender: msgJson.sender,
         contract: msgJson.contract,
@@ -51,9 +51,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
-  if (message.msgTypeURL === "/cosmos.bank.v1beta1.MsgSend") {
+  if (message.msgTypeUrl === "/cosmos.bank.v1beta1.MsgSend") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgSend.fromPartial({
         fromAddress: msgJson.from_address,
         toAddress: msgJson.to_address,
@@ -62,23 +62,23 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
-  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurn") {
+  if (message.msgTypeUrl === "/circle.cctp.v1.MsgDepositForBurn") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgDepositForBurn.fromAmino(msgJson),
     };
   }
 
-  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurnWithCaller") {
+  if (message.msgTypeUrl === "/circle.cctp.v1.MsgDepositForBurnWithCaller") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgDepositForBurnWithCaller.fromAmino(msgJson),
     };
   }
 
-  if (message.msgTypeURL === "/initia.move.v1.MsgExecute") {
+  if (message.msgTypeUrl === "/initia.move.v1.MsgExecute") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgExecute.fromPartial({
         sender: msgJson.sender,
         moduleAddress: msgJson.module_address,
@@ -89,9 +89,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
-  if (message.msgTypeURL === "/opinit.ophost.v1.MsgInitiateTokenDeposit") {
+  if (message.msgTypeUrl === "/opinit.ophost.v1.MsgInitiateTokenDeposit") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: MsgInitiateTokenDeposit.fromPartial({
         sender: msgJson.sender,
         to: msgJson.to,
@@ -101,9 +101,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
     };
   }
 
-  if (message.msgTypeURL === "/evmos.vesting.v2.ClawbackVestingAccount") {
+  if (message.msgTypeUrl === "/evmos.vesting.v2.ClawbackVestingAccount") {
     return {
-      typeUrl: message.msgTypeURL,
+      typeUrl: message.msgTypeUrl,
       value: ClawbackVestingAccount.fromPartial({
         baseVestingAccount: msgJson.base_vesting_account,
         funderAddress: msgJson.funder_address,
@@ -115,15 +115,15 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
   }
 
   return {
-    typeUrl: message.msgTypeURL,
+    typeUrl: message.msgTypeUrl ?? "",
     value: msgJson,
   };
 }
 
 export function getEncodeObjectFromCosmosMessageInjective(message: CosmosMsg): Msgs {
-  const msgJson = JSON.parse(message.msg);
+  const msgJson = JSON.parse(message.msg ?? "");
 
-  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+  if (message.msgTypeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
     return MsgTransferInjective.fromJSON({
       port: msgJson.source_port,
       channelId: msgJson.source_channel,
@@ -135,7 +135,7 @@ export function getEncodeObjectFromCosmosMessageInjective(message: CosmosMsg): M
     });
   }
 
-  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+  if (message.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract") {
     return MsgExecuteContractInjective.fromJSON({
       sender: msgJson.sender,
       contractAddress: msgJson.contract,
@@ -170,7 +170,7 @@ export async function getCosmosGasAmountForMessage(
     chainID.includes("dymension") ||
     process?.env.NODE_ENV === "test"
   ) {
-    if (messages?.find((i) => i.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract")) {
+    if (messages?.find((i) => i.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract")) {
       return "2400000";
     }
     return "280000";
@@ -198,12 +198,12 @@ export async function getEVMGasAmountForMessage(
       account: signer.account,
       to: to as `0x${string}`,
       data: `0x${data}`,
-      value: value === "" ? undefined : BigInt(value),
+      value: value === "" ? undefined : BigInt(value ?? ""),
     });
 
     return gasAmount * fee.maxFeePerGas;
   } catch (error) {
-    const fallbackGasAmount = await getFallbackGasAmount?.(tx.chainID, ChainType.EVM);
+    const fallbackGasAmount = await getFallbackGasAmount?.(tx.chainId ?? "", ChainType.EVM);
     if (fallbackGasAmount) {
       return BigInt(fallbackGasAmount) * fee.maxFeePerGas;
     }
@@ -212,12 +212,12 @@ export async function getEVMGasAmountForMessage(
 }
 
 export async function getSVMGasAmountForMessage(connection: Connection, tx: SvmTx) {
-  const _tx = Buffer.from(tx.tx, "base64");
+  const _tx = Buffer.from(tx.tx ?? "", "base64");
   const transaction = Transaction.from(_tx);
   const gas = await connection.getFeeForMessage(transaction.compileMessage(), "confirmed");
   if (!gas.value) {
     throw new Error(
-      `estimateGasForSVMTx error: unable to get gas for transaction on ${tx.chainID}`,
+      `estimateGasForSVMTx error: unable to get gas for transaction on ${tx.chainId}`,
     );
   }
   return gas.value;

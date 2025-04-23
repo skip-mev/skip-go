@@ -1,14 +1,28 @@
-import * as clientTypes from "../client-types";
-import { ClientState } from "./state";
-import * as types from "../types";
-import { createRequestClient } from "./generateApi";
+import { AminoTypes } from "@cosmjs/stargate/build/aminotypes";
+import { ClientState, SkipClientOptions } from "./state";
+import { Affiliate, ChainAffiliates } from "./types/swaggerTypes";
+import { createRequestClient } from "./utils/generateApi";
+import {
+  createDefaultAminoConverters,
+  defaultRegistryTypes,
+} from "@cosmjs/stargate/build/signingstargateclient";
+import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate/build/modules/wasm/aminomessages";
+import {
+  circleAminoConverters,
+  circleProtoRegistry,
+} from "src/codegen/circle/client";
+import {
+  evmosAminoConverters,
+  evmosProtoRegistry,
+} from "src/codegen/evmos/client";
+import { Registry } from "@cosmjs/proto-signing/build/registry";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { MsgExecute } from "src/codegen/initia/move/v1/tx";
+import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 
-export const setClientOptions = (
-  options: clientTypes.SkipClientOptions = {},
-) => {
-  ClientState.clientOptions = options;
+export const setClientOptions = (options: SkipClientOptions = {}) => {
   ClientState.requestClient = createRequestClient({
-    baseURL: options.apiURL || "https://api.skip.build",
+    baseURL: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
   });
 
@@ -17,23 +31,23 @@ export const setClientOptions = (
   ClientState.getEVMSigner = options.getEVMSigner;
   ClientState.getSVMSigner = options.getSVMSigner;
 
-  // ClientState.aminoTypes = new AminoTypes({
-  //   ...createDefaultAminoConverters(),
-  //   ...createWasmAminoConverters(),
-  //   ...circleAminoConverters,
-  //   ...evmosAminoConverters,
-  //   ...(options.aminoTypes ?? {}),
-  // });
+  ClientState.aminoTypes = new AminoTypes({
+    ...createDefaultAminoConverters(),
+    ...createWasmAminoConverters(),
+    ...circleAminoConverters,
+    ...evmosAminoConverters,
+    ...(options.aminoTypes ?? {}),
+  });
 
-  // ClientState.registry = new Registry([
-  //   ...defaultRegistryTypes,
-  //   ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-  //   ["/initia.move.v1.MsgExecute", MsgExecute],
-  //   ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
-  //   ...circleProtoRegistry,
-  //   ...evmosProtoRegistry,
-  //   ...(options.registryTypes ?? []),
-  // ]);
+  ClientState.registry = new Registry([
+    ...defaultRegistryTypes,
+    ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+    ["/initia.move.v1.MsgExecute", MsgExecute],
+    ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
+    ...circleProtoRegistry,
+    ...evmosProtoRegistry,
+    ...(options.registryTypes ?? []),
+  ]);
 
   if (options.chainIDsToAffiliates) {
     ClientState.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -44,11 +58,11 @@ export const setClientOptions = (
 };
 
 function validateChainIDsToAffiliates(
-  chainIDsToAffiliates: Record<string, types.ChainAffiliates>,
+  chainIDsToAffiliates: Record<string, ChainAffiliates>,
 ) {
-  const affiliatesArray: types.Affiliate[][] = Object.values(
-    chainIDsToAffiliates,
-  ).map((chain) => chain.affiliates);
+  const affiliatesArray = Object.values(chainIDsToAffiliates)
+    .map((chain) => chain.affiliates)
+    .filter((a) => a !== undefined) as Affiliate[][];
 
   const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce(
     (acc, affiliate) => {

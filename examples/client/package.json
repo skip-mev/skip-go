@@ -6,6 +6,10 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.2"
   },
+  "scripts": {
+    "build": "vite build",
+    "visualize": "VISUALIZE=true vite build"
+  },
   "devDependencies": {
     "rollup-plugin-visualizer": "^5.14.0",
     "vite-plugin-inspect": "^11.0.1"
