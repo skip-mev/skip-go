@@ -5,18 +5,16 @@ import { Connection, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { submitTransaction } from "src/client-v2/api/postSubmitTransaction";
 import { wait } from "src/client-v2/utils/timer";
+import { ClientState } from "src/client-v2/state";
 
-export const executeSvmTx = async (
-  tx: { svmTx: SvmTx },
-  options: ExecuteRouteOptions,
-): Promise<{ chainID: string; txHash: string }> => {
-  const gasArray = await waitForVariable(() => this.validateGasResults);
-  const gas = gasArray.find((gas) => gas?.error !== null && gas?.error !== undefined);
+export const executeSvmTx = async (tx: { svmTx: SvmTx }, options: ExecuteRouteOptions) => {
+  const gasArray = ClientState.validateGasResults;
+  const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
   if (typeof gas?.error === "string") {
     throw new Error(gas?.error);
   }
   const { svmTx } = tx;
-  const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
+  const getSVMSigner = options.getSVMSigner || ClientState.getSVMSigner;
   if (!getSVMSigner) {
     throw new Error(
       "executeRoute error: 'getSVMSigner' is not provided or configured in skip router",
@@ -31,7 +29,7 @@ export const executeSvmTx = async (
   });
 
   return {
-    chainID: svmTx.chainID,
+    chainId: svmTx.chainId,
     txHash: txReceipt,
   };
 };

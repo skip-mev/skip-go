@@ -1,40 +1,57 @@
 import { EvmTx } from "src/client-v2/types/swaggerTypes";
-import { WalletClient } from "viem/_types/clients/createWalletClient";
 import { ExecuteRouteOptions } from "../executeRoute";
+import { ClientState } from "src/client-v2/state";
 import { maxUint256, publicActions } from "viem";
 import { erc20ABI } from "src/constants/abis";
 
-export const executeEVMTransaction = async ({
-  message,
-  signer,
-  options,
-}: {
-  message: EvmTx;
-  signer: WalletClient;
-  options: ExecuteRouteOptions;
-}) => {
-  if (!signer.account) {
+export const executeEvmTransaction = async (
+  message: { evmTx: EvmTx },
+  options: ExecuteRouteOptions,
+) => {
+  const gasArray = ClientState.validateGasResults;
+
+  const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
+  if (typeof gas?.error === "string") {
+    throw new Error(gas?.error);
+  }
+
+  const { evmTx } = message;
+
+  const getEVMSigner = options.getEVMSigner || ClientState.getEVMSigner;
+  if (!getEVMSigner) {
+    throw new Error("Unable to get EVM signer");
+  }
+  if (!evmTx.chainId) {
+    throw new Error("chain id not found in evmTx");
+  }
+
+  const evmSigner = await getEVMSigner(evmTx.chainId);
+
+  if (!evmSigner.account) {
     throw new Error("executeEVMTransaction error: failed to retrieve account from signer");
   }
-  if (!message.chainId) {
+  if (!evmTx.chainId) {
     throw new Error("executeEVMTransaction error: chainId not found for evmTx");
   }
-  if (!message.value) {
+  if (!evmTx.value) {
     throw new Error("executeEVMTransaction error: no value found in evmTx");
   }
 
   const { onApproveAllowance, onTransactionSigned, bypassApprovalCheck, useUnlimitedApproval } =
     options;
-  const extendedSigner = signer.extend(publicActions);
+  const extendedSigner = evmSigner.extend(publicActions);
 
   // Check for approvals unless bypassApprovalCheck is enabled
-  if (!bypassApprovalCheck && message.requiredErc20Approvals) {
-    for (const requiredApproval of message.requiredErc20Approvals) {
+  if (!bypassApprovalCheck && evmTx.requiredErc20Approvals) {
+    for (const requiredApproval of evmTx.requiredErc20Approvals) {
       const allowance = await extendedSigner.readContract({
         address: requiredApproval.tokenContract as `0x${string}`,
         abi: erc20ABI,
         functionName: "allowance",
-        args: [signer.account.address as `0x${string}`, requiredApproval.spender as `0x${string}`],
+        args: [
+          evmSigner.account.address as `0x${string}`,
+          requiredApproval.spender as `0x${string}`,
+        ],
       });
 
       if (!requiredApproval.amount) {
@@ -51,7 +68,7 @@ export const executeEVMTransaction = async ({
       });
 
       const txHash = await extendedSigner.writeContract({
-        account: signer.account,
+        account: evmSigner.account,
         address: requiredApproval.tokenContract as `0x${string}`,
         abi: erc20ABI,
         functionName: "approve",
@@ -59,7 +76,7 @@ export const executeEVMTransaction = async ({
           requiredApproval.spender as `0x${string}`,
           useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount) + BigInt(1000),
         ],
-        chain: signer.chain,
+        chain: evmSigner.chain,
       });
 
       const receipt = await extendedSigner.waitForTransactionReceipt({
@@ -80,15 +97,15 @@ export const executeEVMTransaction = async ({
 
   // Execute the transaction
   const txHash = await extendedSigner.sendTransaction({
-    account: signer.account,
-    to: message.to as `0x${string}`,
-    data: `0x${message.data}`,
-    chain: signer.chain,
-    value: message.value === "" ? undefined : BigInt(message.value),
+    account: evmSigner.account,
+    to: evmTx.to as `0x${string}`,
+    data: `0x${evmTx.data}`,
+    chain: evmSigner.chain,
+    value: evmTx.value === "" ? undefined : BigInt(evmTx.value),
   });
 
   onTransactionSigned?.({
-    chainId: message.chainId,
+    chainId: evmTx.chainId,
   });
 
   const receipt = await extendedSigner.waitForTransactionReceipt({
