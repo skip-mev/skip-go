@@ -3,16 +3,20 @@
   "description": "JavaScript SDK for Skip Go API",
   "version": "0.16.29",
   "repository": "https://github.com/skip-mev/skip-go",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./client-v2/api/postRoute": {
+      "import": "./dist/client-v2/api/postRoute.mjs",
+      "require": "./dist/client-v2/api/postRoute.js",
+      "types": "./dist/client-v2/api/postRoute.d.ts"
     }
   },
-  "types": "dist/index.d.ts",
   "files": [
     "dist/*",
     "*.js",

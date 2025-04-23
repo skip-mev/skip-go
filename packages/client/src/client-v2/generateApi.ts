@@ -1,6 +1,6 @@
 import { Api } from "src/types/swaggerTypes";
-import { Camel, toCamel, toSnake } from "../convert";
-import { ClientState } from "../state";
+import { Camel, toCamel, toSnake } from "./convert";
+import { ClientState } from "./state";
 
 type RequestClientOptions = {
   baseURL: string;

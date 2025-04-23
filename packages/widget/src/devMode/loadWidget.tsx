@@ -1,11 +1,10 @@
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Widget } from "@/widget/Widget";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import { route } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -21,26 +20,6 @@ const DevMode = () => {
     }
   };
 
-  useEffect(() => {
-    const routeFn = async () => {
-      const { request } = route({
-        sourceAssetDenom: "uatom",
-        sourceAssetChainId: "cosmoshub-4",
-        destAssetDenom: "uusdc",
-        destAssetChainId: "noble-1",
-        allowUnsafe: true,
-        experimentalFeatures: ["stargate", "eureka"],
-        allowMultiTx: true,
-        smartRelay: true,
-        smartSwapOptions: { splitRoutes: true, evmSwaps: true },
-        goFast: true,
-        amountIn: "1000000",
-      });
-      const response = await request();
-      console.log(response);
-    };
-    routeFn();
-  }, []);
   return (
     <Column align="flex-end">
       <Column gap={5} style={{ width: 200 }}>

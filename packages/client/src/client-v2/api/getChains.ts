@@ -1,5 +1,5 @@
 import { ClientState } from "../state";
-import { api } from "./generateApi";
+import { api } from "../generateApi";
 
 export const chains = api({
   methodName: "getChains",

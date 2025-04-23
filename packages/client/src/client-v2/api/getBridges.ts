@@ -1,4 +1,4 @@
-import { api } from "./generateApi";
+import { api } from "../generateApi";
 
 export const bridges = api({
   methodName: "getBridges",

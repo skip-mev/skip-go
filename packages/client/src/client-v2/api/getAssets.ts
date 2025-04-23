@@ -1,6 +1,6 @@
 import { Asset } from "../../types/swaggerTypes";
 import { ClientState } from "../state";
-import { api } from "./generateApi";
+import { api } from "../generateApi";
 
 export const assets = api({
   methodName: "getAssets",

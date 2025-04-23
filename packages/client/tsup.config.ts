@@ -1,6 +1,16 @@
 import type { Options } from "tsup";
 import { defineConfig } from "tsup";
 import { dependencies, peerDependencies } from "./package.json";
+import glob from "fast-glob";
+
+const apiEntrypoints = glob.sync("src/client-v2/api/*.ts").reduce(
+  (acc, file) => {
+    const name = file.replace(/^src\//, "").replace(/\.ts$/, "");
+    acc[name] = file;
+    return acc;
+  },
+  {} as Record<string, string>,
+);
 
 const defaultOptions: Options = {
   cjsInterop: true,
@@ -21,8 +31,11 @@ export default defineConfig(async ({ watch }) => {
       clean: !watch,
       entry: {
         index: "src/index.ts",
+        ...apiEntrypoints,
       },
       external: [
+        ...Object.keys(dependencies || {}),
+        ...Object.keys(peerDependencies || {}),
         /^@cosmjs\/.*/,
         /^@injectivelabs\/.*/,
         /^@protobufjs\/.*/,
@@ -33,7 +46,6 @@ export default defineConfig(async ({ watch }) => {
         "viem",
         "long",
         "protobufjs",
-        //
       ],
     },
   ];

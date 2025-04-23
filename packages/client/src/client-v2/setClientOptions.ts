@@ -1,7 +1,7 @@
 import * as clientTypes from "../client-types";
 import { ClientState } from "./state";
 import * as types from "../types";
-import { createRequestClient } from "./api/generateApi";
+import { createRequestClient } from "./generateApi";
 
 export const setClientOptions = (
   options: clientTypes.SkipClientOptions = {},

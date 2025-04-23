@@ -1,4 +1,4 @@
-import { api } from "./generateApi";
+import { api } from "../generateApi";
 
 export const route = api({
   methodName: "getRouteV2",
