@@ -14,6 +14,7 @@ import { routePreferenceAtom } from "@/state/swapPage";
 import { RoutePreference } from "@/state/types";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { getFeeList, getTotalFees } from "@/utils/route";
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
@@ -39,6 +40,13 @@ export const SwapPageFooterItems = ({
   const routePreference = useAtomValue(routePreferenceAtom);
   const isMobileScreenSize = useIsMobileScreenSize();
   const isGoFast = useIsGoFast(route);
+
+  const feeList = useMemo(() => {
+    if (!route) return [];
+    return getFeeList(route);
+  }, [route]);
+  const totalFees = getTotalFees(feeList);
+
 
   const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
 
@@ -94,8 +102,12 @@ export const SwapPageFooterItems = ({
                 <Row gap={8} align="flex-end">
                   {estimatedTime}
                 </Row>
+  
               </>
             )}
+            <Row gap={8} align="flex-end">
+              {totalFees?.formattedUsdAmount}
+            </Row>
           </Row>
         );
       }
@@ -144,6 +156,9 @@ export const SwapPageFooterItems = ({
                 </Row>
               </>
             )}
+            <Row gap={8} align="flex-end">
+              {totalFees?.formattedUsdAmount}
+            </Row>
             {routeRequiresMultipleSignatures
               ? renderSignatureRequired
               : isGoFast
