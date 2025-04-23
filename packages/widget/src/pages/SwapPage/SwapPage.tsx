@@ -46,7 +46,6 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
-
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
@@ -324,6 +323,7 @@ export const SwapPage = () => {
   }, [
     sourceAsset?.chainID,
     sourceAsset?.amount,
+    sourceAsset?.denom,
     sourceAccount?.address,
     isInvertingSwap,
     destinationAsset?.chainID,
@@ -340,7 +340,9 @@ export const SwapPage = () => {
     showCosmosLedgerWarning,
     showGoFastWarning,
     isGoFast,
+    maxAmountMinusFees,
     setChainAddresses,
+    getBalance,
     setCurrentPage,
     setSwapExecutionState,
     setError,
@@ -358,7 +360,7 @@ export const SwapPage = () => {
       },
     };
   }, [setCurrentPage, txHistory]);
-
+  
   return (
     <Column
       gap={5}
