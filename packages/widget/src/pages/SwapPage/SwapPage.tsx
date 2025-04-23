@@ -229,7 +229,7 @@ export const SwapPage = () => {
       const sourceAssetBalance = getBalance(sourceAsset?.chainID, sourceAsset?.denom)?.formattedAmount;
       const insufficientBalanceForGas = Number(sourceAssetBalance) > Number(maxAmountMinusFees);
       const label = insufficientBalanceForGas ?
-        "Insufficient balance for gas — click the max button" :
+        "Insufficient balance for gas":
         "Insufficient balance";
     
       return <MainButton label={label} disabled icon={ICONS.swap} fontSize={computeFontSize(label)} />;
