@@ -1,0 +1,13 @@
+{
+  "name": "client",
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@skip-go/client": "workspace:^",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2"
+  },
+  "devDependencies": {
+    "rollup-plugin-visualizer": "^5.14.0",
+    "vite-plugin-inspect": "^11.0.1"
+  }
+}
