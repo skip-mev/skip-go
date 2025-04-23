@@ -1,5 +1,27 @@
 ## 0.0.15
 
+## 3.8.1
+
+### Patch Changes
+
+- e309043: Update History page design and reduce API calls
+
+## 3.8.0
+
+### Minor Changes
+
+- b2bff47: fixed bug in displaying bad price warnings
+
+### Patch Changes
+
+- 58c5faf: Show connect wallet before showing please select a source asset
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+- b184242: Update web-component to allow passing props via javascript properties
+- Updated dependencies [4105295]
+- Updated dependencies [773175c]
+  - @skip-go/client@0.16.30
+
 ## 3.7.3
 
 ### Patch Changes

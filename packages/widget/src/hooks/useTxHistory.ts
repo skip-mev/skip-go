@@ -1,35 +1,61 @@
-import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
-import { SimpleStatus } from "@/utils/clientType";
+import { useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
+import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
+import { TransactionHistoryItem } from "@/state/history";
+import { skipChainsAtom } from "@/state/skipClient";
+import { ClientTransferEvent, OverallStatus, SimpleStatus } from "@/utils/clientType";
 import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+
+type useTxHistoryProps = {
+  index: number;
+  txHistoryItem: TransactionHistoryItem;
+};
 
 export const useTxHistory = ({
-  txs,
-  txsRequired,
-}: {
-  statusData?: TxsStatus;
-  txs: {
-    chainID: string;
-    txHash: string;
-  }[];
-  txsRequired: number;
-}): {
+  txHistoryItem,
+  index,
+}: useTxHistoryProps): {
   status?: SimpleStatus;
   transferAssetRelease?: TransferAssetRelease;
   explorerLinks: string[];
 } => {
-  const {
-    data: statusData,
-    isFetching,
-    isPending,
-  } = useBroadcastedTxsStatus({
-    txsRequired: txsRequired,
+  const { data: chains } = useAtomValue(skipChainsAtom);
+
+  const txs = txHistoryItem.transactionDetails?.map((tx) => ({
+    chainID: tx.chainID,
+    txHash: tx.txHash,
+  }));
+
+  const chainIdFound = chains?.some((chain) => txs.map((tx) => tx.chainID).includes(chain.chainID));
+
+  const txsRequired = txHistoryItem?.route?.txsRequired;
+
+  let statusData: {
+    transferEvents: ClientTransferEvent[];
+    lastTxStatus?: OverallStatus;
+    isSuccess: boolean;
+    isSettled: boolean;
+    transferAssetRelease?: TransferAssetRelease;
+  } = txHistoryItem;
+
+  const { data, isFetching, isPending } = useBroadcastedTxsStatus({
+    txsRequired,
     txs,
-    enabled: txs.length === txsRequired,
+    enabled: !txHistoryItem.isSettled && chainIdFound,
+  });
+
+  if (data !== undefined) {
+    statusData = data;
+  }
+
+  useSyncTxStatus({
+    statusData,
+    historyIndex: index,
   });
 
   const explorerLinks = new Set();
-  statusData?.transferEvents.forEach((transferEvent) => {
+  statusData?.transferEvents?.forEach((transferEvent) => {
     explorerLinks.add(transferEvent.fromExplorerLink);
     explorerLinks.add(transferEvent.toExplorerLink);
   });
@@ -42,13 +68,13 @@ export const useTxHistory = ({
       if (statusData?.lastTxStatus === "success") return "completed";
       if (isFetching && isPending) return "unconfirmed";
       if (statusData?.isSuccess) return "completed";
-      if (statusData?.isSettled && !statusData?.isSuccess) return "failed";
+      if ((statusData?.isSettled && !statusData?.isSuccess) || !chainIdFound) return "failed";
       return "pending";
     },
   });
   return {
     status: query.data as SimpleStatus,
     explorerLinks: Array.from(explorerLinks).filter((link) => link) as string[],
-    transferAssetRelease: statusData?.transferAssetRelease,
+    transferAssetRelease: statusData?.transferAssetRelease ?? txHistoryItem.transferAssetRelease,
   };
 };

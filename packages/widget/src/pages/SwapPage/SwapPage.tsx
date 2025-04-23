@@ -45,6 +45,7 @@ import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
+
   useAtom(onRouteUpdatedEffect);
   useAtom(onSourceAssetUpdatedEffect);
 
@@ -331,6 +332,19 @@ export const SwapPage = () => {
     setError,
   ]);
 
+  const historyPageButton = useMemo(() => {
+    if (txHistory.length === 0) return;
+
+    return {
+      label: "History",
+      icon: ICONS.history,
+      onClick: () => {
+        track("swap page: history button - clicked");
+        setCurrentPage(Routes.TransactionHistoryPage);
+      },
+    };
+  }, [setCurrentPage, txHistory]);
+
   return (
     <Column
       gap={5}
@@ -339,18 +353,7 @@ export const SwapPage = () => {
       }}
     >
       <SwapPageHeader
-        leftButton={
-          txHistory.length === 0
-            ? undefined
-            : {
-                label: "History",
-                icon: ICONS.history,
-                onClick: () => {
-                  track("swap page: history button - clicked");
-                  setCurrentPage(Routes.TransactionHistoryPage);
-                },
-              }
-        }
+        leftButton={historyPageButton}
         rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
       />
       <Column align="center">
