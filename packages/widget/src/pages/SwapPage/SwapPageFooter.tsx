@@ -157,7 +157,7 @@ export const SwapPageFooterItems = ({
               </>
             )}
             <Row gap={8} align="flex-end">
-              {totalFees?.formattedUsdAmount}
+              {totalFees?.formattedUsdAmount} in fees
             </Row>
             {routeRequiresMultipleSignatures
               ? renderSignatureRequired
