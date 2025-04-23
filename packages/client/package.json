@@ -10,11 +10,6 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    },
-    "./client-v2/api/postRoute": {
-      "import": "./dist/client-v2/api/postRoute.mjs",
-      "require": "./dist/client-v2/api/postRoute.js",
-      "types": "./dist/client-v2/api/postRoute.d.ts"
     }
   },
   "files": [
