@@ -2,20 +2,16 @@ import { Asset } from "../../types/swaggerTypes";
 import { ClientState } from "../state";
 import { api } from "./generateApi";
 
-export const { request: getAssets, requestWithCancel: getAssetsWithCancel } =
-  api({
-    methodName: "getAssets",
-    path: "/v2/fungible/assets",
-    onSuccess: (res, options) => {
-      if (
-        options.includeEvmAssets &&
-        options.includeSvmAssets &&
-        options.includeCw20Assets
-      ) {
-        ClientState.skipAssets = res.chainToAssetsMap as Record<
-          string,
-          Asset[]
-        >;
-      }
-    },
-  });
+export const assets = api({
+  methodName: "getAssets",
+  path: "/v2/fungible/assets",
+  onSuccess: (res, options) => {
+    if (
+      options.includeEvmAssets &&
+      options.includeSvmAssets &&
+      options.includeCw20Assets
+    ) {
+      ClientState.skipAssets = res.chainToAssetsMap as Record<string, Asset[]>;
+    }
+  },
+});

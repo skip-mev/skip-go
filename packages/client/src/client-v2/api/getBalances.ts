@@ -1,9 +1,6 @@
 import { api } from "./generateApi";
 
-export const {
-  request: getBalances,
-  requestWithCancel: getBalancesWithCancel,
-} = api({
+export const balances = api({
   methodName: "getBalances",
   path: "/v2/info/balances",
 });

@@ -5,7 +5,7 @@ import { Column, Row } from "@/components/Layout";
 import "./global.css";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { resetWidget } from "@/state/swapPage";
-import { postRoute } from "@skip-go/client";
+import { route } from "@skip-go/client";
 
 const DevMode = () => {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -23,7 +23,7 @@ const DevMode = () => {
 
   useEffect(() => {
     const routeFn = async () => {
-      const route = await postRoute({
+      const { request } = route({
         sourceAssetDenom: "uatom",
         sourceAssetChainId: "cosmoshub-4",
         destAssetDenom: "uusdc",
@@ -36,7 +36,8 @@ const DevMode = () => {
         goFast: true,
         amountIn: "1000000",
       });
-      console.log(route);
+      const response = await request();
+      console.log(response);
     };
     routeFn();
   }, []);

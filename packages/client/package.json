@@ -4,6 +4,14 @@
   "version": "0.16.29",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist/*",

@@ -193,15 +193,6 @@ export function api<K extends ValidApiMethodKeys>({
     });
   }
 
-  const request = async (options?: Params) => {
-    return await createRequest<Params, Response>({
-      path,
-      method,
-      options,
-      onSuccess,
-    })?.request?.();
-  };
-
   const requestWithCancel = (options?: Params) => {
     return createRequest<Params, Response>({
       path,
@@ -211,8 +202,5 @@ export function api<K extends ValidApiMethodKeys>({
     });
   };
 
-  return {
-    request,
-    requestWithCancel,
-  };
+  return requestWithCancel;
 }
