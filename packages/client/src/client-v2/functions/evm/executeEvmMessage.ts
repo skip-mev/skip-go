@@ -1,6 +1,7 @@
 import { EvmTx } from "src/client-v2/types/swaggerTypes";
 import { ExecuteRouteOptions } from "../executeRoute";
 import { ClientState } from "src/client-v2/state";
+import { executeEVMTransaction } from "./executeEvmTransaction";
 
 export const executeEvmMessage = async (
   message: { evmTx: EvmTx },
@@ -25,7 +26,7 @@ export const executeEvmMessage = async (
 
   const evmSigner = await getEVMSigner(evmTx.chainId);
 
-  return await this.executeEVMTransaction({
+  return await executeEVMTransaction({
     message: evmTx,
     signer: evmSigner,
     options,

@@ -7,6 +7,7 @@ import { TransactionCallbacks } from "src/client-v2/types/callbacks";
 import { SigningStargateClient } from "@cosmjs/stargate/build/signingstargateclient";
 import { GasOptions } from "src/client-v2/types/client";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
+import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 
 export type ExecuteCosmosMessageProps = GasOptions & {
   signerAddress: string;
@@ -61,7 +62,7 @@ export const executeCosmosMessage = async (
       signer,
     });
   } else {
-    rawTx = await this.signCosmosMessageAmino({ ...commonRawTxBody, signer });
+    rawTx = await signCosmosMessageAmino({ ...commonRawTxBody, signer });
   }
 
   onTransactionSigned?.({
