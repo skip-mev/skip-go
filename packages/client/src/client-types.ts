@@ -95,6 +95,14 @@ export type ExecuteRouteOptions = SignerGetters &
      * Addresses should be in the same order with the `chainIDs` in the `route`
      */
     userAddresses: UserAddress[];
+    /**
+     * defaults to true
+     * if `simulate` is set to `true`, it will simulate the transaction before sending it.
+     * This is useful for checking if the transaction will succeed or not and get a proper gas amount.
+     *
+     * If `simulate` is set to `false`, it will not simulate the transaction and send it directly.
+     * We suggest if you set it to `false` you should set `getFallbackGasAmount` for chainID that you are going to have.
+     */
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
@@ -113,6 +121,12 @@ export type ExecuteRouteOptions = SignerGetters &
      * This can be useful if approval has already been handled externally or there are race conditions.
      */
     bypassApprovalCheck?: boolean;
+    /**
+     * defaults to true
+     * If `batchSimulate` is set to `true`, it will simulate all messages in a batch before the first tx run.
+     * If `batchSimulate` is set to `false`, it will simulate each message one by one.
+     */
+    batchSimulate?: boolean;
   };
 
 export type ExecuteCosmosMessageOptions = {
