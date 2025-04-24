@@ -31,8 +31,6 @@ export const useSyncTxStatus = ({
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
-    if (!route?.operations || !route?.txsRequired) return;
-
     if (statusData?.lastTxStatus === "pending") {
       if (isPending) {
         setOverallStatus("pending");
@@ -64,8 +62,6 @@ export const useSyncTxStatus = ({
     }
   }, [
     isPending,
-    route?.operations,
-    route?.txsRequired,
     setOverallStatus,
     statusData?.isSettled,
     statusData?.isSuccess,
@@ -79,6 +75,7 @@ export const useSyncTxStatus = ({
       const index = historyIndex ?? transactionHistoryIndex;
       setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
         ...txHistory[index],
+        ...statusData,
         status: computedSwapStatus,
       });
       if (!historyIndex) {
@@ -95,5 +92,6 @@ export const useSyncTxStatus = ({
     transactionHistoryIndex,
     historyIndex,
     txHistory,
+    statusData,
   ]);
 };

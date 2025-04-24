@@ -33,20 +33,24 @@ This can be added to npm scripts in `package.json`, a `.env file`, or used when 
 
 ## Usage
 
-Props are the same as [`WidgetProps`](./configuration), but passed as attributes in kebab-case. Use strings or stringified objects for complex props.
+Props are the exact same as [`WidgetProps`](./configuration) but you are required to pass them to the element via javascript/typescript.
 
 ```tsx
 <div style="width:100%; max-width:500px; padding:0 10px;">
-  <skip-widget
-    theme='{
-      "brandColor": "#FF4FFF",
-    }'
-    default-route='{
-      "srcChainId": "osmosis-1",
-      "srcAssetDenom": "ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4"
-    }'
-  ></skip-widget>
+  <skip-widget></skip-widget>
 </div>
+<script>
+  const skipWidget = document.querySelector("skip-widget");
+  if (skipWidget) {
+    skipWidget.theme = {
+      brandColor: "#FF4FFF",
+    };
+    skipWidget.defaultRoute = {
+      srcChainId: "osmosis-1",
+      srcAssetDenom: "ibc/1480b8fd20ad5fcae81ea87584d269547dd4d436843c1d20f15e00eb64743ef4",
+    }
+  }
+</script>
 ```
 
 ## Performance Considerations

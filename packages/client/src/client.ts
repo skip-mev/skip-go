@@ -362,6 +362,7 @@ export class SkipClient {
       onTransactionBroadcast,
       onTransactionCompleted,
       simulate = true,
+      batchSimulate = true,
     } = options;
     const chainIds = txs.map((tx) => {
       if ("cosmosTx" in tx) {
@@ -389,29 +390,32 @@ export class SkipClient {
       );
     });
 
-    this.validateGasBalances({
+    this.validateGasResults = undefined;
+    const validateChainIds = !batchSimulate
+      ? chainIds.map((x) => x.chainID)
+      : isGasStationSourceEVM
+        ? GAS_STATION_CHAIN_IDS
+        : [];
+
+    await this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
       getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
       getEVMSigner: options.getEVMSigner || this.getEVMSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
-      disabledChainIds: isGasStationSourceEVM
-        ? GAS_STATION_CHAIN_IDS
-        : undefined,
+      disabledChainIds: validateChainIds,
     });
 
-    const validateEnabledChainIds = () => {
-      this.validateGasBalances({
+    const validateEnabledChainIds = async (chainId: string) => {
+      await this.validateGasBalances({
         txs,
         getFallbackGasAmount: options.getFallbackGasAmount,
         getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
         getEVMSigner: options.getEVMSigner || this.getEVMSigner,
         onValidateGasBalance: options.onValidateGasBalance,
         simulate: simulate,
-        enabledChainIds: isGasStationSourceEVM
-          ? GAS_STATION_CHAIN_IDS
-          : undefined,
+        enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
       });
     };
 
@@ -423,22 +427,21 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        validateEnabledChainIds();
+        await validateEnabledChainIds(tx.cosmosTx.chainID);
         txResult = await this.executeCosmosTx({
           tx,
           options,
           index: i,
-          gasTimeOut: isGasStationSourceEVM ? 30_000 : undefined,
         });
       } else if ("evmTx" in tx) {
-        validateEnabledChainIds();
+        await validateEnabledChainIds(tx.evmTx.chainID);
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
           chainID: tx.evmTx.chainID,
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
-        validateEnabledChainIds();
+        await validateEnabledChainIds(tx.svmTx.chainID);
         txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
@@ -462,7 +465,6 @@ export class SkipClient {
     tx,
     options,
     index,
-    gasTimeOut,
   }: {
     tx: {
       cosmosTx: types.CosmosTx;
@@ -470,22 +472,19 @@ export class SkipClient {
     };
     options: clientTypes.ExecuteRouteOptions;
     index: number;
-    gasTimeOut?: number;
   }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
 
-    const gasArray = await waitForVariable(
-      () => this.validateGasResults,
-      gasTimeOut,
-    );
-    const gas = gasArray.find(
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
       throw new Error(gas?.error);
     }
 
-    const gasUsed = gasArray[index];
+    const gasUsed = gasArray?.[index];
     if (!gasUsed) {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
@@ -526,8 +525,9 @@ export class SkipClient {
     tx: { svmTx: types.SvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ): Promise<{ chainID: string; txHash: string }> {
-    const gasArray = await waitForVariable(() => this.validateGasResults);
-    const gas = gasArray.find(
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
@@ -558,8 +558,9 @@ export class SkipClient {
     message: { evmTx: types.EvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ) {
-    const gasArray = await waitForVariable(() => this.validateGasResults);
-    const gas = gasArray.find(
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
@@ -1788,7 +1789,6 @@ export class SkipClient {
     // run gas validation for specific chainId
     enabledChainIds?: string[];
   } & Pick<clientTypes.SignerGetters, "getCosmosSigner" | "getEVMSigner">) {
-    this.validateGasResults = undefined;
     // cosmos or svm tx in txs
     if (
       txs.every((tx) => "cosmosTx" in tx === undefined) ||
@@ -1809,7 +1809,8 @@ export class SkipClient {
         if (
           "cosmosTx" in tx &&
           !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.cosmosTx.chainID))
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.cosmosTx.chainID))
         ) {
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
@@ -1840,7 +1841,8 @@ export class SkipClient {
         if (
           "evmTx" in tx &&
           !disabledChainIds?.includes(tx.evmTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.evmTx.chainID))
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.evmTx.chainID))
         ) {
           const signer = await getEVMSigner?.(tx.evmTx.chainID);
           if (!signer) {
@@ -1868,7 +1870,8 @@ export class SkipClient {
         if (
           "svmTx" in tx &&
           !disabledChainIds?.includes(tx.svmTx.chainID) &&
-          (!enabledChainIds || enabledChainIds.includes(tx.svmTx.chainID))
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.svmTx.chainID))
         ) {
           try {
             const res = await this.validateSvmGasBalance({
@@ -1886,6 +1889,11 @@ export class SkipClient {
         }
       }),
     );
+
+    if (validateResult.filter(Boolean).length === 0) {
+      return;
+    }
+
     const txError = validateResult.find((res) => res && res?.error !== null);
     if (txError) {
       onValidateGasBalance?.({
@@ -2003,24 +2011,14 @@ export class SkipClient {
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
 
-    const feeAssetFoundInSkipBalances = feeAssets.every((asset) => {
-      return (
-        this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
-          undefined &&
-        this.skipBalances?.chains?.[chainID]?.denoms[asset.denom]?.amount !==
-          "0"
-      );
+    const feeBalance = await this.balances({
+      chains: {
+        [chainID]: {
+          address: signerAddress,
+          denoms: feeAssets.map((asset) => asset.denom),
+        },
+      },
     });
-    const feeBalance = feeAssetFoundInSkipBalances
-      ? this.skipBalances
-      : await this.balances({
-          chains: {
-            [chainID]: {
-              address: signerAddress,
-              denoms: feeAssets.map((asset) => asset.denom),
-            },
-          },
-        });
     const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
@@ -2128,15 +2126,14 @@ export class SkipClient {
     if (!signer.account?.address) {
       throw new Error("validateEvmGasBalance: Signer address not found");
     }
-    const skipBalances =
-      this.skipBalances ||
-      (await this.balances({
-        chains: {
-          [tx.chainID]: {
-            address: signer.account?.address,
-          },
+    const skipBalances = await this.balances({
+      chains: {
+        [tx.chainID]: {
+          address: signer.account?.address,
         },
-      }));
+      },
+    });
+
     const balances = skipBalances.chains[tx.chainID]?.denoms;
 
     const nativeGasBalance =
@@ -2212,18 +2209,14 @@ export class SkipClient {
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
     const gasAmount = await getSVMGasAmountForMessage(connection, tx);
 
-    const skipBalances = this.skipBalances?.chains["solana"]?.denoms[
-      "solana-native"
-    ]
-      ? this.skipBalances
-      : await this.balances({
-          chains: {
-            solana: {
-              address: tx.signerAddress,
-              denoms: ["solana-native"],
-            },
-          },
-        });
+    const skipBalances = await this.balances({
+      chains: {
+        solana: {
+          address: tx.signerAddress,
+          denoms: ["solana-native"],
+        },
+      },
+    });
     const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
     if (!gasBalance) {
       return {
@@ -2381,27 +2374,4 @@ function raise(message?: string, options?: ErrorOptions): never {
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function waitForVariable<T>(
-  variable: () => T | undefined,
-  timeout: number = 10_000,
-  interval: number = 100,
-): Promise<T> {
-  const startTime = Date.now();
-
-  return new Promise((resolve, reject) => {
-    const checkVariable = setInterval(() => {
-      const value = variable();
-      if (value !== undefined) {
-        clearInterval(checkVariable);
-        resolve(value);
-      }
-
-      if (Date.now() - startTime > timeout) {
-        clearInterval(checkVariable);
-        reject(new Error("Timeout waiting for variable to be defined"));
-      }
-    }, interval);
-  });
 }
