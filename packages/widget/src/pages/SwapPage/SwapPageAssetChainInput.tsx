@@ -21,9 +21,6 @@ import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndCha
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
-import { skipRouteAtom } from "@/state/route";
-import { useAtomValue } from "jotai";
-import { getFeeList, getTotalFees } from "@/utils/route";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -55,13 +52,6 @@ export const SwapPageAssetChainInput = ({
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
   const isMobileScreenSize = useIsMobileScreenSize();
-  const { data: route } = useAtomValue(skipRouteAtom);
-
-  const feeList = useMemo(() =>{
-    if (!route) return [];
-    return getFeeList(route)
-  }, [route]);
-  const totalFees = getTotalFees(feeList);
 
   const showPriceChangePercentage = _showPriceChangePercentage || badPriceWarning;
   const assetDetails = useGetAssetDetails({
