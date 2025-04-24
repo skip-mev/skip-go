@@ -113,6 +113,12 @@ export type ExecuteRouteOptions = SignerGetters &
      * This can be useful if approval has already been handled externally or there are race conditions.
      */
     bypassApprovalCheck?: boolean;
+    /**
+     * defaults to true
+     * If `batchSimulate` is set to `true`, it will simulate all messages in a batch before the first tx run.
+     * If `batchSimulate` is set to `false`, it will simulate each message one by one.
+     */
+    batchSimulate?: boolean;
   };
 
 export type ExecuteCosmosMessageOptions = {

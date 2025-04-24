@@ -362,6 +362,7 @@ export class SkipClient {
       onTransactionBroadcast,
       onTransactionCompleted,
       simulate = true,
+      batchSimulate = true,
     } = options;
     const chainIds = txs.map((tx) => {
       if ("cosmosTx" in tx) {
@@ -390,6 +391,12 @@ export class SkipClient {
     });
 
     this.validateGasResults = undefined;
+    const validateChainIds = !batchSimulate
+      ? chainIds.map((x) => x.chainID)
+      : isGasStationSourceEVM
+        ? GAS_STATION_CHAIN_IDS
+        : [];
+
     await this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
@@ -397,10 +404,10 @@ export class SkipClient {
       getEVMSigner: options.getEVMSigner || this.getEVMSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
-      disabledChainIds: isGasStationSourceEVM ? GAS_STATION_CHAIN_IDS : [],
+      disabledChainIds: validateChainIds,
     });
 
-    const validateEnabledChainIds = async () => {
+    const validateEnabledChainIds = async (chainId: string) => {
       console.log("validateEnabledChainIds");
       await this.validateGasBalances({
         txs,
@@ -409,7 +416,7 @@ export class SkipClient {
         getEVMSigner: options.getEVMSigner || this.getEVMSigner,
         onValidateGasBalance: options.onValidateGasBalance,
         simulate: simulate,
-        enabledChainIds: isGasStationSourceEVM ? GAS_STATION_CHAIN_IDS : [],
+        enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
       });
     };
 
@@ -421,21 +428,21 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        await validateEnabledChainIds();
+        await validateEnabledChainIds(tx.cosmosTx.chainID);
         txResult = await this.executeCosmosTx({
           tx,
           options,
           index: i,
         });
       } else if ("evmTx" in tx) {
-        await validateEnabledChainIds();
+        await validateEnabledChainIds(tx.evmTx.chainID);
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
           chainID: tx.evmTx.chainID,
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
-        await validateEnabledChainIds();
+        await validateEnabledChainIds(tx.svmTx.chainID);
         txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
