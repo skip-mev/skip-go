@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.8.5
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+- Updated dependencies [72ca16b]
+  - @skip-go/client@0.16.34
+
 ## 3.8.4
 
 ### Patch Changes
