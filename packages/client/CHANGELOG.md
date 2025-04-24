@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.33
+
+### Patch Changes
+
+- d82a6e3: update registries
+
 ## 0.16.32
 
 ### Patch Changes
