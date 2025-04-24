@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.8.4
+
+### Patch Changes
+
+- d82a6e3: update registries
+- Updated dependencies [d82a6e3]
+  - @skip-go/client@0.16.33
+
 ## 3.8.3
 
 ### Patch Changes
