@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.16.31
+
+### Patch Changes
+
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+
 ## 0.16.30
 
 ### Patch Changes

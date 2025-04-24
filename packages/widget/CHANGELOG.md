@@ -1,5 +1,16 @@
 ## 0.0.15
 
+## 3.8.2
+
+### Patch Changes
+
+- daeb41e: improve insufficient balance button text if gas balance issue
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+- Updated dependencies [aca9648]
+- Updated dependencies [a0582fc]
+  - @skip-go/client@0.16.31
+
 ## 3.8.1
 
 ### Patch Changes
