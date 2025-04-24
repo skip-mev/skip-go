@@ -129,6 +129,7 @@ export const SwapPageFooterItems = ({
     settingsChanged,
     showEstimatedTime,
     showRouteInfo,
+    totalFees?.formattedUsdAmount,
   ]);
 
   const renderDesktopContent = useMemo(() => {
