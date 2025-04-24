@@ -31,7 +31,7 @@
     "@cosmjs/faucet": "0.32.3",
     "@cosmjs/faucet-client": "0.32.3",
     "@cosmology/telescope": "1.8.3",
-    "@initia/initia-registry": "^1.0.1",
+    "@initia/initia-registry": "^1.0.2",
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
