@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.32
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+
 ## 0.16.31
 
 ### Patch Changes
