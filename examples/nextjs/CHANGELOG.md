@@ -1,5 +1,12 @@
 # nextjs
 
+## 0.1.85
+
+### Patch Changes
+
+- Updated dependencies [72ca16b]
+  - @skip-go/widget@3.8.5
+
 ## 0.1.84
 
 ### Patch Changes
