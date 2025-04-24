@@ -127,6 +127,7 @@ export const SwapPageFooterItems = ({
     settingsChanged,
     showEstimatedTime,
     showRouteInfo,
+    totalFees?.formattedUsdAmount,
   ]);
 
   const renderDesktopContent = useMemo(() => {
@@ -181,6 +182,7 @@ export const SwapPageFooterItems = ({
     renderRoutePreference,
     renderSignatureRequired,
     route,
+    totalFees?.formattedUsdAmount,
     routeRequiresMultipleSignatures,
     settingsChanged,
     showEstimatedTime,
