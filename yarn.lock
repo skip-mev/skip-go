@@ -4887,12 +4887,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry@npm:^0.2.8":
-  version: 0.2.8
-  resolution: "@initia/initia-registry@npm:0.2.8"
+"@initia/initia-registry@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@initia/initia-registry@npm:1.0.1"
   dependencies:
     "@initia/initia-registry-types": ^1.0.2
-  checksum: 175cdd2f9e5ab91ecb64ff1995c74ba0e3fbc3f39c5f1846f5af9d40b386769e223be38f039f32d5a2d1b4d927fbc8f81f82852e9ba933155a9ba2118d73b627
+  checksum: 78ce146d9329c012558313b042dba68e0d5381462095e70ef58dc0c848e5c15c60d7f5dc73183c13874988a2ac064365a047431e50e8505ba5cd0002dd5c51cb
   languageName: node
   linkType: hard
 
@@ -7831,7 +7831,7 @@ __metadata:
     "@cosmjs/stargate": 0.33.1
     "@cosmjs/tendermint-rpc": 0.33.1
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": ^0.2.8
+    "@initia/initia-registry": ^1.0.1
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.143
@@ -7869,7 +7869,7 @@ __metadata:
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
-    "@initia/initia-registry": ^0.2.8
+    "@initia/initia-registry": ^1.0.1
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^13.0.0
