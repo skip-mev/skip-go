@@ -34,7 +34,7 @@ export class ClientState {
   static getCosmosSigner?: SignerGetters["getCosmosSigner"];
   static getEVMSigner?: SignerGetters["getEVMSigner"];
   static getSVMSigner?: SignerGetters["getSVMSigner"];
-  static chainIDsToAffiliates?: Record<string, ChainAffiliates>;
+  static chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   static cumulativeAffiliateFeeBPS?: string = "0";
 
   static skipChains?: Chain[];

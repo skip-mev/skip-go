@@ -77,65 +77,7 @@ export type SignCosmosMessageAminoOptions = SignCosmosMessageOptionsBase & {
   signer: OfflineAminoSigner;
 };
 
-/** Execute Route Options */
-// export type ExecuteRouteOptions = SignerGetters &
-//   GasOptions &
-//   types.TransactionCallbacks &
-//   Pick<MsgsRequest, "timeoutSeconds"> & {
-//     route: types.RouteResponse;
-//     /**
-//      * Addresses should be in the same order with the `chainIDs` in the `route`
-//      */
-//     userAddresses: UserAddress[];
-//     simulate?: boolean;
-//     slippageTolerancePercent?: string;
-//     /**
-//      * Arbitrary Tx to be executed before or after route msgs
-//      */
-//     beforeMsg?: types.CosmosMsg;
-//     afterMsg?: types.CosmosMsg;
-//     /**
-//      * Set allowance amount to max if EVM transaction requires allowance approval.
-//      */
-//     useUnlimitedApproval?: boolean;
-//     /**
-//     /**
-//      * If `skipApproval` is set to `true`, the router will bypass checking whether
-//      * the signer has granted approval for the specified token contract on an EVM chain.
-//      * This can be useful if approval has already been handled externally or there are race conditions.
-//      */
-//     bypassApprovalCheck?: boolean;
-//   };
-
-// export type ExecuteCosmosMessageOptions = {
-//   signerAddress: string;
-//   signer: OfflineSigner;
-//   message: types.MultiChainMsg;
-//   fee: StdFee;
-// };
-
-// export type ExecuteCosmosMessage = GasOptions & {
-//   signerAddress: string;
-//   getCosmosSigner?: SignerGetters["getCosmosSigner"];
-//   chainID: string;
-//   messages: types.CosmosMsg[];
-//   gas: ValidateGasResult;
-//   onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
-//   onTransactionBroadcast?: TransactionCallbacks["onTransactionBroadcast"];
-// };
-
-// interface SignCosmosMessageOptionsBase {
-//   signerAddress: string;
-//   chainID: string;
-//   cosmosMsgs: types.CosmosMsg[];
-//   fee: StdFee;
-//   signerData: SignerData;
-// }
-
-// export type SignCosmosMessageDirectOptions = SignCosmosMessageOptionsBase & {
-//   signer: OfflineDirectSigner;
-// };
-
-// export type SignCosmosMessageAminoOptions = SignCosmosMessageOptionsBase & {
-//   signer: OfflineAminoSigner;
-// };
+export type TxResult = {
+  txHash: string;
+  chainId: string;
+};

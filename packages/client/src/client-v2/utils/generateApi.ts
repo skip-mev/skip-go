@@ -1,6 +1,7 @@
 import { Camel, toCamel, toSnake } from "./convert";
 import { ClientState } from "../state";
 import { Api } from "../types/swaggerTypes";
+import { wait } from "./timer";
 
 type RequestClientOptions = {
   baseURL: string;
@@ -74,19 +75,17 @@ export type OnSuccessCallback<Result, Params> = (result: Result, options: Params
 export type createRequestType<Result, Params> = {
   path: string;
   method: "get" | "post";
-  options?: Params;
   onSuccess?: OnSuccessCallback<Result, Params>;
 };
 
 export function createRequest<Params extends object = object, Result extends object = object>({
   path,
   method = "get",
-  options,
   onSuccess,
 }: createRequestType<Result, Params>) {
   const controller = new AbortController();
 
-  const request = async (): Promise<Result> => {
+  const request = async (options?: Params): Promise<Result> => {
     try {
       const response = await ClientState.requestClient[method]<Result>(
         path,
@@ -151,6 +150,9 @@ type MethodReturn<K extends ValidApiMethodKeys> = Camel<
   : never
 >;
 
+export type ApiRequest<K extends ValidApiMethodKeys> = MethodParams<K>;
+export type ApiResponse<K extends ValidApiMethodKeys> = MethodReturn<K>;
+
 /* --------------------------------------------------
  ⚙️ 3. Factory to generate API functions
 -------------------------------------------------- */
@@ -178,11 +180,10 @@ export function api<K extends ValidApiMethodKeys>({
     });
   }
 
-  const requestWithCancel = (options?: Params) => {
+  const requestWithCancel = () => {
     return createRequest<Params, Response>({
       path,
       method,
-      options,
       onSuccess,
     });
   };
@@ -190,5 +191,83 @@ export function api<K extends ValidApiMethodKeys>({
   return requestWithCancel;
 }
 
-export type ApiRequest<K extends ValidApiMethodKeys> = MethodParams<K>;
-export type ApiResponse<K extends ValidApiMethodKeys> = MethodReturn<K>;
+type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & {
+  isSuccess?: (result: ApiResponse<K>) => boolean;
+  /**
+   * Maximum number of retries
+   * @default 5
+   */
+  maxRetries?: number;
+  /**
+   * Retry interval in milliseconds
+   * @default 1000
+   */
+  retryInterval?: number;
+  /**
+   * Backoff multiplier for retries
+   *
+   * example: `retryInterval` is set to 1000, backoffMultiplier is set to 2
+   *
+   * 1st retry: 1000ms
+   *
+   * 2nd retry: 2000ms
+   *
+   * 3rd retry: 4000ms
+   *
+   * 4th retry: 8000ms
+   *
+   * 5th retry: 16000ms
+   *
+   * @default 2
+   */
+  backoffMultiplier?: number;
+  onError?: (error: unknown, attempt: number) => void;
+  onSuccess?: (result: ApiResponse<K>, attempt: number) => void;
+};
+
+export function pollingApi<K extends ValidApiMethodKeys>({
+  methodName,
+  path,
+  method = "get",
+  onSuccess,
+  onError,
+  isSuccess = () => true,
+  maxRetries = 5,
+  retryInterval = 1000,
+  backoffMultiplier = 2,
+}: PollingApiProps<K>) {
+  let cancel: (reason?: string) => void;
+
+  const request = async (requestParams?: ApiRequest<K>): Promise<ApiResponse<K>> => {
+    const apiFn = api<K>({ methodName, path, method });
+    const apiRequest = apiFn();
+    cancel = apiRequest.cancel;
+
+    let attempt = 0;
+    let lastError: unknown;
+
+    while (attempt < maxRetries) {
+      try {
+        const result = await apiRequest.request(requestParams);
+        if (isSuccess(result)) {
+          onSuccess?.(result, attempt);
+          return result;
+        }
+      } catch (err) {
+        lastError = err;
+        onError?.(err, attempt);
+      }
+
+      const delay = retryInterval * Math.pow(backoffMultiplier, attempt);
+      await wait(delay);
+      attempt++;
+    }
+
+    throw lastError ?? new Error("pollingApi: max retries exceeded");
+  };
+
+  return {
+    request: (params?: ApiRequest<K>) => request(params),
+    cancel: (reason?: string) => cancel(reason),
+  };
+}

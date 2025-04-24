@@ -50,14 +50,14 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
   ]);
 
   if (options.chainIDsToAffiliates) {
-    ClientState.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
+    ClientState.cumulativeAffiliateFeeBPS = validateChainIdsToAffiliates(
       options.chainIDsToAffiliates,
     );
-    ClientState.chainIDsToAffiliates = options.chainIDsToAffiliates;
+    ClientState.chainIdsToAffiliates = options.chainIDsToAffiliates;
   }
 };
 
-function validateChainIDsToAffiliates(
+function validateChainIdsToAffiliates(
   chainIDsToAffiliates: Record<string, ChainAffiliates>,
 ) {
   const affiliatesArray = Object.values(chainIDsToAffiliates)

@@ -13,7 +13,7 @@ export type TransactionCallbacks = {
   onTransactionCompleted?: (
     chainId: string,
     txHash: string,
-    status: TransferStatus,
+    status?: TransferStatus,
   ) => Promise<void>;
   onValidateGasBalance?: (value: {
     chainId?: string;

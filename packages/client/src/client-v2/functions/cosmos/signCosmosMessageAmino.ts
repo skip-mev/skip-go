@@ -16,10 +16,10 @@ export const signCosmosMessageAmino = async (
   const {
     signer,
     signerAddress,
-    chainID,
+    chainId,
     cosmosMsgs,
     fee,
-    signerData: { accountNumber, sequence, chainId },
+    signerData: { accountNumber, sequence, chainId: signerChainId },
   } = options;
 
   const accounts = await signer.getAccounts();
@@ -34,7 +34,7 @@ export const signCosmosMessageAmino = async (
   const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
   const msgs = messages.map((msg) => ClientState.aminoTypes.toAmino(msg));
 
-  const signDoc = makeSignDoc(msgs, fee, chainId, "", accountNumber, sequence);
+  const signDoc = makeSignDoc(msgs, fee, signerChainId, "", accountNumber, sequence);
 
   const { signature, signed } = await signer.signAmino(signerAddress, signDoc);
 
@@ -56,7 +56,7 @@ export const signCosmosMessageAmino = async (
   const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
   const signedSequence = Int53.fromString(signed.sequence).toNumber();
 
-  const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner, chainID);
+  const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner, chainId);
 
   const signedAuthInfoBytes = makeAuthInfoBytes(
     [{ pubkey: pubkeyAny, sequence: signedSequence }],

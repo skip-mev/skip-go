@@ -5,7 +5,7 @@ import { maxUint256, publicActions } from "viem";
 import { erc20ABI } from "src/constants/abis";
 
 export const executeEvmTransaction = async (
-  message: { evmTx: EvmTx },
+  message: { evmTx?: EvmTx },
   options: ExecuteRouteOptions,
 ) => {
   const gasArray = ClientState.validateGasResults;
@@ -21,7 +21,7 @@ export const executeEvmTransaction = async (
   if (!getEVMSigner) {
     throw new Error("Unable to get EVM signer");
   }
-  if (!evmTx.chainId) {
+  if (!evmTx?.chainId) {
     throw new Error("chain id not found in evmTx");
   }
 

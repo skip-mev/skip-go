@@ -1,4 +1,3 @@
-import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
 import { SvmTx } from "src/client-v2/types/swaggerTypes";
 import { ExecuteRouteOptions } from "../executeRoute";
 import { Connection, Transaction } from "@solana/web3.js";
@@ -7,62 +6,47 @@ import { submitTransaction } from "src/client-v2/api/postSubmitTransaction";
 import { wait } from "src/client-v2/utils/timer";
 import { ClientState } from "src/client-v2/state";
 
-export const executeSvmTx = async (tx: { svmTx: SvmTx }, options: ExecuteRouteOptions) => {
+export const executeSvmTransaction = async (
+  tx?: { svmTx?: SvmTx },
+  options?: ExecuteRouteOptions,
+) => {
   const gasArray = ClientState.validateGasResults;
+
   const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
   if (typeof gas?.error === "string") {
     throw new Error(gas?.error);
   }
-  const { svmTx } = tx;
-  const getSVMSigner = options.getSVMSigner || ClientState.getSVMSigner;
+
+  const svmTx = tx?.svmTx;
+  const getSVMSigner = options?.getSVMSigner || ClientState.getSVMSigner;
   if (!getSVMSigner) {
     throw new Error(
       "executeRoute error: 'getSVMSigner' is not provided or configured in skip router",
     );
   }
-  const svmSigner = await getSVMSigner();
 
-  const txReceipt = await this.executeSVMTransaction({
-    signer: svmSigner,
-    message: svmTx,
-    options,
-  });
+  const signer = await getSVMSigner();
 
-  return {
-    chainId: svmTx.chainId,
-    txHash: txReceipt,
-  };
-};
-
-export const executeSVMTransaction = async ({
-  signer,
-  message,
-  options: options,
-}: {
-  signer: Adapter;
-  message: SvmTx;
-  options: ExecuteRouteOptions;
-}) => {
-  const { onTransactionSigned } = options;
-  const _tx = Buffer.from(message.tx ?? "", "base64");
-  const transaction = Transaction.from(_tx);
-
-  if (!message.chainId) {
-    throw new Error("executeSVMTransaction error: chainId not found in svmTx");
+  if (!svmTx?.chainId) {
+    throw new Error("executeSvmTransaction error: chainId not found in svmTx");
   }
 
-  const endpoint = await getRpcEndpointForChain(message.chainId);
+  const txBuffer = Buffer.from(svmTx.tx ?? "", "base64");
+  const transaction = Transaction.from(txBuffer);
+
+  const endpoint = await getRpcEndpointForChain(svmTx.chainId);
   const connection = new Connection(endpoint);
-  let signature;
+
+  let signature: string | undefined;
+
   if ("signTransaction" in signer) {
-    const tx = await signer.signTransaction(transaction);
-    onTransactionSigned?.({
-      chainId: message.chainId,
-    });
-    const serializedTx = tx.serialize();
+    const signedTx = await signer.signTransaction(transaction);
+    options?.onTransactionSigned?.({ chainId: svmTx.chainId });
+
+    const serializedTx = signedTx.serialize();
 
     await submitTransaction({
-      chainId: message.chainId,
+      chainId: svmTx.chainId,
       tx: serializedTx.toString("base64"),
     })
       .request()
@@ -70,36 +54,43 @@ export const executeSVMTransaction = async ({
         signature = res.txHash;
       });
 
-    const sig = await connection.sendRawTransaction(serializedTx, {
+    const rpcSig = await connection.sendRawTransaction(serializedTx, {
       preflightCommitment: "confirmed",
       maxRetries: 5,
     });
 
-    signature = sig;
+    signature = rpcSig;
   }
 
   if (!signature) {
-    throw new Error("executeSVMTransaction error: signature not found");
+    throw new Error("executeSvmTransaction error: signature not found");
   }
 
   let getStatusCount = 0;
   let errorCount = 0;
+
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      const result = await connection.getSignatureStatus(signature, {
+      const status = await connection.getSignatureStatus(signature, {
         searchTransactionHistory: true,
       });
-      if (result?.value?.confirmationStatus === "confirmed") {
-        return signature;
-      } else if (getStatusCount > 12) {
+
+      if (status?.value?.confirmationStatus === "confirmed") {
+        return {
+          chainId: svmTx.chainId,
+          txHash: signature,
+        };
+      }
+
+      if (getStatusCount > 12) {
         await wait(3000);
         throw new Error(
-          `executeSVMTransaction error: waiting finalized status timed out for ${signature}`,
+          `executeSvmTransaction error: waiting finalized status timed out for ${signature}`,
         );
       }
-      getStatusCount++;
 
+      getStatusCount++;
       await wait(3000);
     } catch (error) {
       errorCount++;
