@@ -3,15 +3,15 @@ import { ClientState } from "../state";
 
 export const getMainnetAndTestnetChains = async () => {
   const [mainnetRes, testnetRes] = await Promise.all([
-    chains({
+    chains.request({
       includeEvm: true,
       includeSvm: true,
-    }).request(),
-    chains({
+    }),
+    chains.request({
       includeEvm: true,
       includeSvm: true,
       onlyTestnets: true,
-    }).request(),
+    }),
   ]);
 
   const combinedChains = [...(mainnetRes.chains ?? []), ...(testnetRes.chains ?? [])];

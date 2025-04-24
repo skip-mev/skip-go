@@ -1,12 +1,11 @@
 import { WalletClient } from "viem/_types/clients/createWalletClient";
-import { EvmTx } from "../types/swaggerTypes";
-import { GetFallbackGasAmount } from "../types/client";
-import { chains } from "../api/getChains";
-import { getEVMGasAmountForMessage } from "./transactions";
-import { balances } from "../api/getBalances";
-import { assets } from "../api/getAssets";
+import { EvmTx } from "../../types/swaggerTypes";
+import { GetFallbackGasAmount } from "../../types/client";
+import { getEVMGasAmountForMessage } from "../transactions";
+import { balances } from "../../api/getBalances";
 import { formatUnits } from "viem/_types/utils/unit/formatUnits";
 import { BigNumber } from "bignumber.js";
+import { ClientState } from "src/client-v2/state";
 
 export const validateEvmGasBalance = async ({
   signer,
@@ -17,14 +16,14 @@ export const validateEvmGasBalance = async ({
   tx?: EvmTx;
   getFallbackGasAmount?: GetFallbackGasAmount;
 }) => {
-  const chainId = tx.chainId ?? "";
-  const skipAssets = (await assets().request()).chainToAssetsMap?.[chainId]?.assets;
-  const skipChains = (await chains().request())?.chains;
+  const chainId = tx?.chainId ?? "";
+  const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
+  const skipChains = await ClientState.getSkipChains();
 
   const chain = skipChains?.find?.((chain) => chain.chainId === chainId);
 
   if (!chain) {
-    throw new Error(`failed to find chain id for '${tx.chainId}'`);
+    throw new Error(`failed to find chain for chainId: '${chainId}'`);
   }
   const gasAmount = await getEVMGasAmountForMessage(signer, tx, getFallbackGasAmount);
 
@@ -33,14 +32,14 @@ export const validateEvmGasBalance = async ({
   }
 
   const skipBalances = (
-    await balances().request({
+    await balances.request({
       chains: {
         [tx?.chainId ?? ""]: {
           address: signer.account?.address,
         },
       },
     })
-  )?.chains?.[tx.chainId ?? ""]?.denoms;
+  )?.chains?.[tx?.chainId ?? ""]?.denoms;
 
   const nativeGasBalance =
     skipBalances && Object.entries(skipBalances).find(([denom]) => denom.includes("-native"))?.[1];

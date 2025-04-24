@@ -180,15 +180,11 @@ export function api<K extends ValidApiMethodKeys>({
     });
   }
 
-  const requestWithCancel = () => {
-    return createRequest<Params, Response>({
-      path,
-      method,
-      onSuccess,
-    });
-  };
-
-  return requestWithCancel;
+  return createRequest<Params, Response>({
+    path,
+    method,
+    onSuccess,
+  });
 }
 
 type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & {
@@ -240,8 +236,8 @@ export function pollingApi<K extends ValidApiMethodKeys>({
 
   const request = async (requestParams?: ApiRequest<K>): Promise<ApiResponse<K>> => {
     const apiFn = api<K>({ methodName, path, method });
-    const apiRequest = apiFn();
-    cancel = apiRequest.cancel;
+    const apiRequest = apiFn;
+    cancel = apiFn.cancel;
 
     let attempt = 0;
     let lastError: unknown;

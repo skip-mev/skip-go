@@ -19,6 +19,9 @@ import { WalletClient } from "viem/_types/clients/createWalletClient";
 import { OfflineAminoSigner } from "@cosmjs/amino";
 import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
 import { StdFee } from "@cosmjs/stargate";
+import { getMainnetAndTestnetChains } from "./functions/getMainnetAndTestnetChains";
+import { getMainnetAndTestnetAssets } from "./functions/getMainnetAndTestnetAssets";
+import { balances } from "./api/getBalances";
 
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
@@ -40,6 +43,38 @@ export class ClientState {
   static skipChains?: Chain[];
   static skipAssets?: Record<string, Asset[]>;
   static skipBalances?: Record<string, ApiResponse<"getBalances">>;
+
+  static async getSkipChains() {
+    if (this.skipChains) {
+      return this.skipChains;
+    }
+
+    const response = await getMainnetAndTestnetChains();
+
+    this.skipChains = response;
+    return response;
+  }
+
+  static async getSkipAssets() {
+    if (this.skipAssets) {
+      this.skipAssets;
+    }
+
+    const response = await getMainnetAndTestnetAssets();
+    this.skipAssets = response;
+    return response;
+  }
+
+  static async getSkipBalances() {
+    if (this.skipBalances) {
+      return this.skipBalances;
+    }
+
+    const response = await balances.request();
+    this.skipBalances = response;
+    return response;
+  }
+
   static signingStargateClientByChainId: Record<string, SigningStargateClient> =
     {};
   static validateGasResults: ValidateGasResult[] | undefined;

@@ -1,15 +1,14 @@
 import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
-import { CosmosMsg } from "../types/swaggerTypes";
-import { ChainType, GetFallbackGasAmount } from "../types/client";
-import { ExecuteRouteOptions } from "./executeRoute";
+import { CosmosMsg } from "../../types/swaggerTypes";
+import { ChainType, GetFallbackGasAmount } from "../../types/client";
+import { ExecuteRouteOptions } from "../executeRoute";
 import { BigNumber } from "bignumber.js";
-import { chains } from "../api/getChains";
-import { getSigningStargateClient } from "./getSigningStargateClient";
-import { getCosmosGasAmountForMessage } from "./transactions";
+import { getSigningStargateClient } from "../getSigningStargateClient";
+import { getCosmosGasAmountForMessage } from "../transactions";
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
-import { assets } from "../api/getAssets";
-import { balances } from "../api/getBalances";
+import { balances } from "../../api/getBalances";
+import { ClientState } from "src/client-v2/state";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;
@@ -35,8 +34,8 @@ export const validateCosmosGasBalance = async ({
   txIndex,
   simulate,
 }: ValidateCosmosGasBalanceProps) => {
-  const skipAssets = (await assets().request()).chainToAssetsMap?.[chainId]?.assets;
-  const skipChains = (await chains().request())?.chains;
+  const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
+  const skipChains = await ClientState.getSkipChains();
 
   const chain = skipChains?.find((chain) => chain.chainId === chainId);
   if (!chain) {
@@ -107,9 +106,9 @@ export const validateCosmosGasBalance = async ({
     return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
   });
 
-  const feeBalance = await balances().request({
+  const feeBalance = await balances.request({
     chains: {
-      [chainId ?? ""]: {
+      [chainId]: {
         address: signerAddress,
         denoms: feeAssets.map((asset) => asset.denom ?? ""),
       },

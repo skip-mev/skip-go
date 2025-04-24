@@ -2,9 +2,9 @@ import { ClientState, SignerGetters, ValidateGasResult } from "../state";
 import { GetFallbackGasAmount } from "../types/client";
 import { Tx } from "../types/swaggerTypes";
 import { ExecuteRouteOptions } from "./executeRoute";
-import { validateCosmosGasBalance } from "./validateCosmosGasBalance";
-import { validateEvmGasBalance } from "./validateEvmGasBalance";
-import { validateSvmGasBalance } from "./validateSvmGasBalance";
+import { validateCosmosGasBalance } from "./cosmos/validateCosmosGasBalance";
+import { validateEvmGasBalance } from "./evm/validateEvmGasBalance";
+import { validateSvmGasBalance } from "./svm/validateSvmGasBalance";
 
 export type ValidateGasBalancesProps = {
   txs: Tx[];

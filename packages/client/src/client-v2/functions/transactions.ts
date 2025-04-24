@@ -211,13 +211,13 @@ export async function getEVMGasAmountForMessage(
   }
 }
 
-export async function getSVMGasAmountForMessage(connection: Connection, tx: SvmTx) {
-  const _tx = Buffer.from(tx.tx ?? "", "base64");
+export async function getSVMGasAmountForMessage(connection: Connection, tx?: SvmTx) {
+  const _tx = Buffer.from(tx?.tx ?? "", "base64");
   const transaction = Transaction.from(_tx);
   const gas = await connection.getFeeForMessage(transaction.compileMessage(), "confirmed");
   if (!gas.value) {
     throw new Error(
-      `estimateGasForSVMTx error: unable to get gas for transaction on ${tx.chainId}`,
+      `estimateGasForSVMTx error: unable to get gas for transaction on ${tx?.chainId}`,
     );
   }
   return gas.value;
