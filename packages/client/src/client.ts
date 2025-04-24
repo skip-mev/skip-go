@@ -476,18 +476,15 @@ export class SkipClient {
     const { userAddresses, getCosmosSigner } = options;
 
     const gasArray = this.validateGasResults;
-    if (!gasArray) {
-      raise(`executeRoute error: gas results are not available`);
-    }
 
-    const gas = gasArray.find(
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
       throw new Error(gas?.error);
     }
 
-    const gasUsed = gasArray[index];
+    const gasUsed = gasArray?.[index];
     if (!gasUsed) {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
@@ -529,11 +526,8 @@ export class SkipClient {
     options: clientTypes.ExecuteRouteOptions,
   ): Promise<{ chainID: string; txHash: string }> {
     const gasArray = this.validateGasResults;
-    if (!gasArray) {
-      raise(`executeRoute error: gas results are not available`);
-    }
 
-    const gas = gasArray.find(
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
@@ -565,10 +559,8 @@ export class SkipClient {
     options: clientTypes.ExecuteRouteOptions,
   ) {
     const gasArray = this.validateGasResults;
-    if (!gasArray) {
-      raise(`executeRoute error: gas results are not available`);
-    }
-    const gas = gasArray.find(
+
+    const gas = gasArray?.find(
       (gas) => gas?.error !== null && gas?.error !== undefined,
     );
     if (typeof gas?.error === "string") {
