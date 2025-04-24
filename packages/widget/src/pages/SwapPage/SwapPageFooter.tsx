@@ -104,7 +104,7 @@ export const SwapPageFooterItems = ({
               </>
             )}
             <Row gap={8} align="flex-end">
-              Fees: {totalFees?.formattedUsdAmount}
+              Fee: {totalFees?.formattedUsdAmount}
             </Row>
           </Row>
         );
@@ -155,7 +155,7 @@ export const SwapPageFooterItems = ({
               </>
             )}
             <Row gap={8} align="flex-end">
-              Fees: {totalFees?.formattedUsdAmount}
+              Fee: {totalFees?.formattedUsdAmount}
             </Row>
             {routeRequiresMultipleSignatures
               ? renderSignatureRequired
