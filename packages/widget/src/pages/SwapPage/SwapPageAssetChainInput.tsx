@@ -240,9 +240,15 @@ export const SwapPageAssetChainInput = ({
               <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
             {priceChangePercentage <= -20 && totalFees?.formattedUsdAmount && (
-              <SmallText>
-                {totalFees.formattedUsdAmount} in fees
-              </SmallText>
+              <Row align="center" gap={6}>
+                <SmallText>{totalFees.formattedUsdAmount}</SmallText>
+                {feeList.map(({ label }, i) => (
+                  <SmallText key={label}>
+                    {label}
+                    {feeList.length > 1 && i < feeList.length - 1 && ' +' }
+                  </SmallText>
+                ))}
+              </Row>
             )}
           </Row>
         ) : (
