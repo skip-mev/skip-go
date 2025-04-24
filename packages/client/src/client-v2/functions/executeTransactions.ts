@@ -10,7 +10,7 @@ import { waitForTransaction } from "./waitForTransaction";
 
 export const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
 
-export const executeTransactions = async (options: ExecuteRouteOptions & { txs: Tx[] }) => {
+export const executeTransactions = async (options: ExecuteRouteOptions & { txs?: Tx[] }) => {
   const {
     txs,
     onTransactionBroadcast,
@@ -18,6 +18,11 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs: 
     simulate = true,
     batchSimulate = true,
   } = options;
+
+  if (txs === undefined) {
+    throw new Error("executeTransactions error: txs is undefined in executeTransactions");
+  }
+
   const chainIds = txs.map((tx) => {
     if ("cosmosTx" in tx) {
       return {

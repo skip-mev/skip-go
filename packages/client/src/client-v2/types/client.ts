@@ -9,7 +9,7 @@ import { CosmosMsg, FeeAsset } from "./swaggerTypes";
 
 /** Common Types */
 export type UserAddress = {
-  chainID: string;
+  chainId: string;
   address: string;
 };
 
