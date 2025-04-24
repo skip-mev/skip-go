@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.8.3
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+- d4b83b0: add initia testnet
+- Updated dependencies [363cceb]
+  - @skip-go/client@0.16.32
+
 ## 3.8.2
 
 ### Patch Changes
