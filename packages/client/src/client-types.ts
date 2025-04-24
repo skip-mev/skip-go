@@ -95,6 +95,14 @@ export type ExecuteRouteOptions = SignerGetters &
      * Addresses should be in the same order with the `chainIDs` in the `route`
      */
     userAddresses: UserAddress[];
+    /**
+     * defaults to true
+     * if `simulate` is set to `true`, it will simulate the transaction before sending it.
+     * This is useful for checking if the transaction will succeed or not and get a proper gas amount.
+     *
+     * If `simulate` is set to `false`, it will not simulate the transaction and send it directly.
+     * We suggest if you set it to `false` you should set `getFallbackGasAmount` for chainID that you are going to have.
+     */
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
