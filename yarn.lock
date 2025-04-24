@@ -4878,21 +4878,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry-types@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@initia/initia-registry-types@npm:1.0.2"
+"@initia/initia-registry-types@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@initia/initia-registry-types@npm:1.0.3"
   dependencies:
     zod: ^3.22.4
-  checksum: 7ff7fa8fefa2798113257db9232524b3910de0946b66dfe7ba07900b40dbb53b09c5c84f9554f6fe17d6acda07b410312feb858472d0545c3fee135d41ce5c69
+  checksum: fe774999f60ce7704a1576ae3dc9a3a0a4ec19c0049fb51ccafe4826eae22e42a114dca9cdd60087138b1bdcf91481415b57071b29762e2882784d51f92e54fc
   languageName: node
   linkType: hard
 
-"@initia/initia-registry@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@initia/initia-registry@npm:1.0.1"
+"@initia/initia-registry@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@initia/initia-registry@npm:1.0.2"
   dependencies:
-    "@initia/initia-registry-types": ^1.0.2
-  checksum: 78ce146d9329c012558313b042dba68e0d5381462095e70ef58dc0c848e5c15c60d7f5dc73183c13874988a2ac064365a047431e50e8505ba5cd0002dd5c51cb
+    "@initia/initia-registry-types": ^1.0.3
+  checksum: b856b016198867067497a11bee6e1ce842cd3afc0a7e1ed009ec320cf06e65deb2c7a5a438d5ccef94f4d5765e8da9df7ccb89f1453f3e1bddabe8657fc51a9f
   languageName: node
   linkType: hard
 
@@ -7831,7 +7831,7 @@ __metadata:
     "@cosmjs/stargate": 0.33.1
     "@cosmjs/tendermint-rpc": 0.33.1
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": ^1.0.1
+    "@initia/initia-registry": ^1.0.2
     "@injectivelabs/core-proto-ts": 0.0.21
     "@injectivelabs/sdk-ts": 1.14.5
     "@keplr-wallet/unit": ^0.12.143
@@ -7869,7 +7869,7 @@ __metadata:
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
-    "@initia/initia-registry": ^1.0.1
+    "@initia/initia-registry": ^1.0.2
     "@keplr-wallet/types": ^0.12.125
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.44
     "@penumbra-zone/bech32m": ^13.0.0

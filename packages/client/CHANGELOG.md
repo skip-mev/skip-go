@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.16.34
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+
 ## 0.16.33
 
 ### Patch Changes

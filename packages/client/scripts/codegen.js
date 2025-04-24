@@ -217,12 +217,23 @@ async function codegen() {
 
   for (const registry of registries) {
     const chains = await collectChains(registry);
-    allChains = allChains.concat(chains);
+    allChains = mergeArrays(allChains, chains);
   }
 
   // Write all chains to a single JSON file
   const outputFilePath = path.resolve(outPath, "chains.json");
   await fs.writeFile(outputFilePath, JSON.stringify(allChains), "utf-8");
 }
+
+const mergeArrays = (arr1, arr2) => {
+  const merged = [...arr1, ...arr2];
+  const map = new Map();
+
+  merged.forEach((item) => {
+    map.set(item.chain_id, item); // second occurrence overwrites first
+  });
+
+  return Array.from(map.values());
+};
 
 void codegen();
