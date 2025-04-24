@@ -15,7 +15,7 @@ import { WalletClient } from "viem";
 
 import * as types from "./types";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { TransactionCallbacks } from "./types";
+import { MsgsRequest, TransactionCallbacks } from "./types";
 
 /** Common Types */
 export interface UserAddress {
@@ -28,10 +28,10 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export type Gas = {
-  error: null;
-  asset: types.FeeAsset;
-  fee: StdFee;
+export type ValidateGasResult = {
+  error: null | string;
+  asset: types.FeeAsset | null;
+  fee: StdFee | null;
 };
 
 /** Signer Getters */
@@ -88,12 +88,21 @@ export interface SkipClientOptions extends SignerGetters {
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
   GasOptions &
-  types.TransactionCallbacks & {
+  types.TransactionCallbacks &
+  Pick<MsgsRequest, "timeoutSeconds"> & {
     route: types.RouteResponse;
     /**
      * Addresses should be in the same order with the `chainIDs` in the `route`
      */
     userAddresses: UserAddress[];
+    /**
+     * defaults to true
+     * if `simulate` is set to `true`, it will simulate the transaction before sending it.
+     * This is useful for checking if the transaction will succeed or not and get a proper gas amount.
+     *
+     * If `simulate` is set to `false`, it will not simulate the transaction and send it directly.
+     * We suggest if you set it to `false` you should set `getFallbackGasAmount` for chainID that you are going to have.
+     */
     simulate?: boolean;
     slippageTolerancePercent?: string;
     /**
@@ -102,11 +111,22 @@ export type ExecuteRouteOptions = SignerGetters &
     beforeMsg?: types.CosmosMsg;
     afterMsg?: types.CosmosMsg;
     /**
+     * Set allowance amount to max if EVM transaction requires allowance approval.
+     */
+    useUnlimitedApproval?: boolean;
+    /**
+    /**
      * If `skipApproval` is set to `true`, the router will bypass checking whether
      * the signer has granted approval for the specified token contract on an EVM chain.
      * This can be useful if approval has already been handled externally or there are race conditions.
      */
     bypassApprovalCheck?: boolean;
+    /**
+     * defaults to true
+     * If `batchSimulate` is set to `true`, it will simulate all messages in a batch before the first tx run.
+     * If `batchSimulate` is set to `false`, it will simulate each message one by one.
+     */
+    batchSimulate?: boolean;
   };
 
 export type ExecuteCosmosMessageOptions = {
@@ -121,7 +141,7 @@ export type ExecuteCosmosMessage = GasOptions & {
   getCosmosSigner?: SignerGetters["getCosmosSigner"];
   chainID: string;
   messages: types.CosmosMsg[];
-  gas: Gas;
+  gas: ValidateGasResult;
   onTransactionSigned?: TransactionCallbacks["onTransactionSigned"];
   onTransactionBroadcast?: TransactionCallbacks["onTransactionBroadcast"];
 };

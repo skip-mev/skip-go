@@ -13,8 +13,123 @@ export type Explorer = {
   block_page?: string;
 };
 
-export const mainnetChains = _mainnetChains as unknown as ChainInfo[];
-export const testnetChains = _testnetChains as unknown as ChainInfo[];
+const lombardTestnet: ChainInfo = {
+  chainName: "Ledger",
+  chainId: "ledger-testnet-1",
+  rpc: "https://rpc-gastald.lb-mgt.com:443",
+  rest: "https://rpc-gastald.lb-mgt.com/ipc",
+  bip44: {
+    coinType: 118,
+  },
+  currencies: [
+    {
+      coinDecimals: 6,
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+    },
+  ],
+  feeCurrencies: [
+    {
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+      coinDecimals: 6,
+    },
+  ],
+  stakeCurrency: {
+    coinDenom: "lom",
+    coinMinimalDenom: "ulom",
+    coinDecimals: 6,
+  },
+  bech32Config: {
+    bech32PrefixAccAddr: "lom",
+    bech32PrefixAccPub: "lompub",
+    bech32PrefixValAddr: "lomvaloper",
+    bech32PrefixValPub: "lomvaloperpub",
+    bech32PrefixConsAddr: "lomvalcons",
+    bech32PrefixConsPub: "lomvalconspub",
+  },
+};
+
+const lombardMainnet: ChainInfo = {
+  chainName: "Ledger",
+  chainId: "ledger-mainnet-1",
+  rpc: "https://rpc-mainnet.lb-mgt.com:443",
+  rest: "http://rpc-mainnet.lb-mgt.com:1317",
+  bip44: {
+    coinType: 118,
+  },
+  currencies: [
+    {
+      coinDecimals: 6,
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+    },
+  ],
+  feeCurrencies: [
+    {
+      coinDenom: "lom",
+      coinMinimalDenom: "ulom",
+      coinDecimals: 6,
+    },
+  ],
+  stakeCurrency: {
+    coinDenom: "lom",
+    coinMinimalDenom: "ulom",
+    coinDecimals: 6,
+  },
+  bech32Config: {
+    bech32PrefixAccAddr: "lom",
+    bech32PrefixAccPub: "lompub",
+    bech32PrefixValAddr: "lomvaloper",
+    bech32PrefixValPub: "lomvaloperpub",
+    bech32PrefixConsAddr: "lomvalcons",
+    bech32PrefixConsPub: "lomvalconspub",
+  },
+};
+
+const initiaTestnet = {
+  chainName: "initia",
+  chainId: "initiation-2",
+  rpc: "https://rpc.testnet.initia.xyz",
+  rest: "https://rest.testnet.initia.xyz",
+  bip44: {
+    coinType: 118,
+  },
+  currencies: [
+    {
+      coinDecimals: 6,
+      coinDenom: "init",
+      coinMinimalDenom: "uinit",
+    },
+  ],
+  feeCurrencies: [
+    {
+      coinDenom: "init",
+      coinMinimalDenom: "uinit",
+      coinDecimals: 6,
+    },
+  ],
+  stakeCurrency: {
+    coinDenom: "init",
+    coinMinimalDenom: "uinit",
+    coinDecimals: 6,
+  },
+  bech32Config: {
+    bech32PrefixAccAddr: "init",
+    bech32PrefixAccPub: "initpub",
+    bech32PrefixValAddr: "initvaloper",
+    bech32PrefixValPub: "initvaloperpub",
+    bech32PrefixConsAddr: "initvalcons",
+    bech32PrefixConsPub: "initvalconspub",
+  },
+};
+
+export const mainnetChains = [...(_mainnetChains as unknown as ChainInfo[]), lombardMainnet];
+export const testnetChains = [
+  ...(_testnetChains as unknown as ChainInfo[]),
+  lombardTestnet,
+  initiaTestnet,
+];
 const allChains = [...mainnetChains, ...testnetChains];
 
 export const explorers = _explorers as unknown as {

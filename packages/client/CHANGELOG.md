@@ -1,5 +1,187 @@
 # @skip-go/client
 
+## 0.16.33
+
+### Patch Changes
+
+- d82a6e3: update registries
+
+## 0.16.32
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+
+## 0.16.31
+
+### Patch Changes
+
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+
+## 0.16.30
+
+### Patch Changes
+
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+
+## 0.16.29
+
+### Patch Changes
+
+- dedd423: evm gas simulation at the start of the tx
+
+## 0.16.28
+
+### Patch Changes
+
+- afd9530: add initia pubkey to account parser
+
+## 0.16.27
+
+### Patch Changes
+
+- 0d2e0c3: Remove eth sepolia from GAS_STATION_CHAIN_IDS
+- 0e33fe7: fix evm gas simulation
+
+## 0.16.26
+
+### Patch Changes
+
+- d13c452: update registries
+
+## 0.16.25
+
+### Patch Changes
+
+- 7a399d5: update registries
+
+## 0.16.24
+
+### Patch Changes
+
+- 6ec520a: Add eth sepolia to gas validation bypass
+
+## 0.16.23
+
+### Patch Changes
+
+- 12035c1: disable gas validation on gas station chains
+- 7416025: fix evm get address and add lombard testnet
+
+## 0.16.22
+
+### Patch Changes
+
+- 9515033: Update default timeout for waitForVariable to be 10seconds
+- ab7ebdf: Add to_chain_entry_contract_address to eureka transfer and trasfer types and converters
+- 9b642eb: modify evm gas balance error message
+- 17f6fb3: evm and svm gas balance validation
+- b2fb0ab: fix asset evm validation
+
+## 0.16.21
+
+### Patch Changes
+
+- 1e510c5: update registries
+
+## 0.16.20
+
+### Patch Changes
+
+- 8bd8d07: Force client lib update for packetTxs refactor
+
+## 0.16.19
+
+### Patch Changes
+
+- c709da5: Fix 2 cctp tx throwing error
+
+## 0.16.18
+
+### Patch Changes
+
+- fb7887e: add eureka to experimental feature
+- 8308e9c: Add eureka types
+- 38c1a8c: Improve executeRoute performance
+- c600209: update dependencies
+
+## 0.16.17
+
+### Patch Changes
+
+- 45c3c33: update registries
+
+## 0.16.16
+
+### Patch Changes
+
+- 8aa63c0: transaction tracking watch for state
+
+## 0.16.15
+
+### Patch Changes
+
+- a5e3017: update registries
+- 8191a9b: Add timeoutSeconds to routeConfig to customize IBC transfer timeout
+
+## 0.16.14
+
+### Patch Changes
+
+- 18a00bc: Fix stride encode/decode logic
+- 5d234ce: add useUnlimitedApproval default to false in client and widget
+- a3d6433: titan chain ethermint pubkey
+
+## 0.16.13
+
+### Patch Changes
+
+- 4b3e488: Fix stride encode/decode logic
+
+## 0.16.12
+
+### Patch Changes
+
+- 947ee9d: fix validation address issue
+
+## 0.16.11
+
+### Patch Changes
+
+- 04fe86d: penumbra wallet address fixes
+
+## 0.16.10
+
+### Patch Changes
+
+- 0b4e15d: hot fix address validation logic to include all chains
+
+## 0.16.9
+
+### Patch Changes
+
+- add5269: [API-3779] transfer asset release amount field
+- add5269: Skip gas estimation for noble-1 in multi-tx routes
+- add5269: update img preference for tokens denoms
+- add5269: add bypass approve allowance option in execute route function
+- add5269: fix initita codegen
+- add5269: Update chainId passed to executeEVMTransaction to be from message, instead of signer
+- add5269: update registries
+- add5269: fix chain fetching logic in client lib
+
+## 0.16.8
+
+### Patch Changes
+
+- 0ca751c: [API-3779] transfer asset release amount field
+- 0ca751c: Skip gas estimation for noble-1 in multi-tx routes
+- 0ca751c: update img preference for tokens denoms
+- 0ca751c: add bypass approve allowance option in execute route function
+- 0ca751c: Update chainId passed to executeEVMTransaction to be from message, instead of signer
+- 0ca751c: update registries
+
 ## 0.16.7
 
 ### Patch Changes

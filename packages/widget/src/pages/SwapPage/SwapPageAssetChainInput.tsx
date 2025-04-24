@@ -9,6 +9,7 @@ import {
   formatNumberWithCommas,
   formatNumberWithoutCommas,
   limitDecimalsDisplayed,
+  shouldReduceFontSize,
 } from "@/utils/number";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { TinyTriangleIcon } from "@/icons/TinyTriangleIcon";
@@ -19,6 +20,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { transition } from "@/utils/transitions";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -31,6 +33,7 @@ export type AssetChainInputProps = {
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
   context: SelectorContext;
+  disabled?: boolean;
 };
 
 export const SwapPageAssetChainInput = ({
@@ -44,6 +47,7 @@ export const SwapPageAssetChainInput = ({
   isWaitingToUpdateInputValue,
   badPriceWarning,
   context,
+  disabled,
 }: AssetChainInputProps) => {
   const theme = useTheme();
   const [_showPriceChangePercentage, setShowPriceChangePercentage] = useState(false);
@@ -153,6 +157,7 @@ export const SwapPageAssetChainInput = ({
   }, [priceChangePercentage, theme.error.text, theme.primary.text.normal, theme.success.text]);
 
   const displayedValue = formatNumberWithCommas(value || "");
+  const isLargeNumber = shouldReduceFontSize(value);
 
   return (
     <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
@@ -165,9 +170,11 @@ export const SwapPageAssetChainInput = ({
           placeholder="0"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          disabled={disabled}
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
+          isLargeNumber={isLargeNumber}
         />
-        <Button onClick={handleChangeAsset} gap={5}>
+        <StyledAssetButton onClick={handleChangeAsset} disabled={disabled} gap={5}>
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
@@ -196,11 +203,12 @@ export const SwapPageAssetChainInput = ({
           )}
           {!isMobileScreenSize && (
             <ChevronIcon
-              color={theme.primary.background.normal}
-              backgroundColor={theme.primary.text.normal}
+              className="chevron-icon"
+              color={theme.primary.text.normal}
+              backgroundColor={theme.secondary.background.normal}
             />
           )}
-        </Button>
+        </StyledAssetButton>
       </Row>
       <Row justify="space-between" align="center">
         {priceChangePercentage ? (
@@ -225,7 +233,13 @@ export const SwapPageAssetChainInput = ({
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
         )}
         {assetDetails?.chainName ? (
-          <StyledOnChainGhostButton onClick={handleChangeChain} align="center" secondary gap={4}>
+          <StyledOnChainGhostButton
+            disabled={disabled}
+            onClick={handleChangeChain}
+            align="center"
+            secondary
+            gap={4}
+          >
             <SmallText>on {assetDetails?.chainName}</SmallText>
           </StyledOnChainGhostButton>
         ) : (
@@ -241,6 +255,7 @@ const StyledOnChainGhostButton = styled(GhostButton)`
     padding: 0 5px;
     height: 25px;
   }
+  ${({ disabled }) => disabled && "cursor: not-allowed"};
 `;
 
 const StyledAssetChainInputWrapper = styled(Column)`
@@ -255,31 +270,50 @@ const StyledAssetChainInputWrapper = styled(Column)`
 
 const StyledInput = styled.input<{
   isWaitingToUpdateInputValue?: boolean;
+  isLargeNumber?: boolean;
 }>`
-  all: unset;
+  border: none;
+  outline: none;
 
+  /* Default font sizes */
   font-size: 38px;
   @media (max-width: 767px) {
     font-size: 30px;
   }
+
+  /* Reduced font sizes for large numbers */
+  ${(props) =>
+    props.isLargeNumber &&
+    `
+    font-size: 30px;
+    @media (max-width: 767px) {
+      font-size: 24px;
+    }
+  `}
+
   font-weight: 400;
   letter-spacing: -0.01em;
   width: 100%;
+  ${({ disabled }) => disabled && "cursor: not-allowed"};
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.primary.background.normal};
   height: 50px;
 
   ${(props) =>
-    props.isWaitingToUpdateInputValue && "animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;"}
+    props.isWaitingToUpdateInputValue &&
+    `
+      color: ${props.theme.primary.text.ultraLowContrast};
+      animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite;
+  `}
   @keyframes pulse {
     0% {
-      opacity: 0.5;
+      opacity: 0.8;
     }
     50% {
       opacity: 1;
     }
     100% {
-      opacity: 0.5;
+      opacity: 0.8;
     }
   }
 
@@ -294,10 +328,47 @@ export const StyledAssetLabel = styled(Row).attrs({
   height: 40px;
   border-radius: 10px;
   white-space: nowrap;
+  position: relative;
+
   color: ${(props) => props.theme.primary.text.normal};
   background: ${(props) => props.theme.secondary.background.normal};
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0);
+    pointer-events: none;
+    border-radius: 10px;
+    ${transition(["background-color"], "fast", "easeOut")};
+    z-index: 0;
+  }
+
+  img,
+  p {
+    z-index: 1;
+  }
 `;
 
 const StyledSelectTokenLabel = styled(StyledAssetLabel)`
   background: ${(props) => props.theme.brandColor};
+
+  &::after {
+    background-color: rgba(255, 255, 255, 0);
+  }
+`;
+
+export const StyledAssetButton = styled(Button)`
+  &:hover {
+    ${StyledAssetLabel}::after {
+      background-color: ${({ theme }) => theme.secondary.background.hover};
+    }
+
+    ${StyledSelectTokenLabel}::after {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
 `;

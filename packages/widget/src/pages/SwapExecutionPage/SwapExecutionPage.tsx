@@ -1,7 +1,7 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
@@ -21,10 +21,8 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
-import { StyledSignatureRequiredContainer } from "@/pages/SwapPage/SwapPageFooter";
-import { SignatureIcon } from "@/icons/SignatureIcon";
-import pluralize from "pluralize";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
+import { track } from "@amplitude/analytics-browser";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -36,21 +34,27 @@ export enum SwapExecutionState {
   confirmed,
   validatingGasBalance,
   approving,
+  pendingGettingAddresses,
 }
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, overallStatus, transactionDetailsArray, isValidatingGasBalance } =
-    useAtomValue(swapExecutionStateAtom);
+  const {
+    route,
+    overallStatus,
+    transactionDetailsArray,
+    isValidatingGasBalance,
+    transactionsSigned,
+  } = useAtomValue(swapExecutionStateAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const { connectRequiredChains } = useAutoSetAddress();
+  const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
   const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
-    ? route.txsRequired - (transactionDetailsArray?.length ?? 0)
+    ? route.txsRequired - transactionsSigned
     : 0;
 
   const { data: statusData } = useBroadcastedTxsStatus({
@@ -75,23 +79,23 @@ export const SwapExecutionPage = () => {
     overallStatus,
     isValidatingGasBalance,
     signaturesRemaining,
+    isLoading,
   });
 
-  useHandleTransactionFailed(statusData?.isSettled && !statusData?.isSuccess);
+  useHandleTransactionFailed(statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
-  const renderSignaturesStillRequired = useMemo(() => {
-    if (shouldDisplaySignaturesRemaining && signaturesRemaining) {
-      return (
-        <StyledSignatureRequiredContainer gap={5} align="center">
-          <SignatureIcon />
-          {signaturesRemaining} {pluralize("Signature", signaturesRemaining)} still required
-        </StyledSignatureRequiredContainer>
-      );
-    }
-  }, [signaturesRemaining, shouldDisplaySignaturesRemaining]);
-
   const firstOperationStatus = useMemo(() => {
+    if (
+      swapExecutionState === SwapExecutionState.confirmed ||
+      swapExecutionState === SwapExecutionState.pending ||
+      swapExecutionState === SwapExecutionState.signaturesRemaining
+    ) {
+      return "completed";
+    }
+  }, [swapExecutionState]);
+
+  const secondOperationStatus = useMemo(() => {
     const status = statusData?.transferEvents;
 
     if (swapExecutionState === SwapExecutionState.confirmed) {
@@ -111,6 +115,7 @@ export const SwapExecutionPage = () => {
   }, [statusData, swapExecutionState]);
 
   const onClickEditDestinationWallet = useMemo(() => {
+    track("swap execution page: edit destination address button - clicked");
     const loadingStates = [
       SwapExecutionState.pending,
       SwapExecutionState.waitingForSigning,
@@ -126,9 +131,10 @@ export const SwapExecutionPage = () => {
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
         chainId: route?.destAssetChainID,
+        chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };
-  }, [swapExecutionState, route?.destAssetChainID]);
+  }, [swapExecutionState, route]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
@@ -142,14 +148,22 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Back",
                 icon: ICONS.thinArrow,
-                onClick: () => setCurrentPage(Routes.SwapPage),
+                onClick: () => {
+                  track("swap execution page: back button - clicked");
+                  setCurrentPage(Routes.SwapPage);
+                },
               }
             : undefined
         }
         rightButton={{
           label: simpleRoute ? "Details" : "Hide details",
           icon: simpleRoute ? ICONS.hamburger : ICONS.horizontalLine,
-          onClick: () => setSimpleRoute(!simpleRoute),
+          onClick: () => {
+            track("swap execution page: toggle route details button - clicked", {
+              shown: simpleRoute ? "simple" : "detailed",
+            });
+            setSimpleRoute(!simpleRoute);
+          },
         }}
       />
       <SwapExecutionPageRoute
@@ -158,6 +172,7 @@ export const SwapExecutionPage = () => {
         statusData={statusData}
         swapExecutionState={swapExecutionState}
         firstOperationStatus={firstOperationStatus}
+        secondOperationStatus={secondOperationStatus}
       />
       <SwapExecutionButton
         swapExecutionState={swapExecutionState}
@@ -167,10 +182,7 @@ export const SwapExecutionPage = () => {
         connectRequiredChains={connectRequiredChains}
         submitExecuteRouteMutation={submitExecuteRouteMutation}
       />
-      <SwapPageFooter
-        showRouteInfo={overallStatus === undefined}
-        rightContent={renderSignaturesStillRequired}
-      />
+      <SwapPageFooter showRouteInfo={overallStatus === "unconfirmed"} />
     </Column>
   );
 };

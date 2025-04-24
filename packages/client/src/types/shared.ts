@@ -69,6 +69,9 @@ export type TransferJSON = {
   bridge_id: BridgeType;
   smart_relay: boolean;
 
+  to_chain_callback_contract_address?: string;
+  to_chain_entry_contract_address?: string;
+
   /**
    * @deprecated use `from_chain_id` and `to_chain_id` instead
    */
@@ -98,6 +101,9 @@ export type Transfer = {
   bridgeID: BridgeType;
   smartRelay: boolean;
 
+  
+  toChainCallbackContractAddress?: string;
+  toChainEntryContractAddress?: string;
   /**
    * @deprecated use `fromChainID` and `toChainID` instead
    */
@@ -383,6 +389,46 @@ export type OPInitTransfer = {
   opInitBridgeID: string;
   bridgeID: BridgeType;
   smartRelay: boolean;
+};
+
+export type EurekaTransferJSON = {
+  destination_port: string;
+  source_client: string;
+  from_chain_id: string;
+  to_chain_id: string;
+  pfm_enabled: boolean;
+  supports_memo: boolean;
+  entry_contract_address: string;
+  callback_adapter_contract_address: string;
+
+  denom_in: string;
+  denom_out: string;
+
+  bridge_id: BridgeType;
+  smart_relay: boolean;
+  smart_relay_fee_quote?: SmartRelayFeeQuoteJSON;
+  to_chain_callback_contract_address?: string;
+  to_chain_entry_contract_address?: string;
+};
+
+export type EurekaTransfer = {
+  destinationPort: string;
+  sourceClient: string;
+  fromChainID: string;
+  toChainID: string;
+  pfmEnabled: boolean;
+  supportsMemo: boolean;
+  entryContractAddress: string;
+  callbackAdapterContractAddress: string;
+  
+  denomIn: string;
+  denomOut: string;
+
+  bridgeID: BridgeType;
+  smartRelay: boolean;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
+  toChainCallbackContractAddress?: string;
+  toChainEntryContractAddress?: string;
 };
 
 export type SmartRelayFeeQuoteJSON = {

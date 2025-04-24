@@ -1,13 +1,11 @@
-import { ClientOnly, ShadowDomAndProviders } from "./ShadowDomAndProviders";
-import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { ShadowDomAndProviders } from "./ShadowDomAndProviders";
+import NiceModal from "@ebay/nice-modal-react";
 import { styled } from "styled-components";
-import { createModal } from "@/components/Modal";
-import { cloneElement, ReactElement, ReactNode, useEffect } from "react";
+import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { ChainAffiliates, SkipClientOptions } from "@skip-go/client";
+import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
-import { ChainFilter } from "@/state/swapPage";
 import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
@@ -15,13 +13,24 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
 import { Callbacks } from "@/state/callbacks";
+import { createStore, Provider, useAtomValue, useSetAtom } from "jotai";
+import { settingsDrawerAtom } from "@/state/settingsDrawer";
+import { rootIdAtom } from "@/state/skipClient";
+import packageJson from "../../package.json";
+import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
+import { ChainFilter } from "@/state/filters";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
-};
+} & Pick<MsgsRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
+  /**
+   * If specified, add a `data-root-id` attribute to all root elements of the widget, including portals.
+   * This can be used to style or document.querySelector specific parts of the widget.
+   */
+  rootId?: string;
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
   onlyTestnet?: boolean;
@@ -32,15 +41,25 @@ export type WidgetProps = {
      * @default 1
      */
     slippage?: number;
+    /**
+     * Set allowance amount to max if EVM transaction requires allowance approval
+     */
+    useUnlimitedApproval?: boolean;
   };
   routeConfig?: WidgetRouteConfig;
   filter?: ChainFilter;
+  filterOut?: ChainFilter;
+  filterOutUnlessUserHasBalance?: ChainFilter;
   walletConnect?: WalletConnect;
   /**
    * enables sentry session replays on the widget to help with troubleshooting errors
    * https://docs.sentry.io/product/explore/session-replay/web/
    */
   enableSentrySessionReplays?: boolean;
+  /**
+   * Enable Amplitude analytics for the widget to improve user experience.
+   */
+  enableAmplitudeAnalytics?: boolean;
   /**
    * Map of connected wallet addresses, allowing your app to pass pre-connected addresses to the widget.
    * This feature enables the widget to display a specific address as connected for a given chain.
@@ -58,6 +77,10 @@ export type WidgetProps = {
    * @default true
    */
   simulate?: boolean;
+  disableShadowDom?: boolean;
+  ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
+  assetSymbolsSortedToTop?: string[];
+  hideAssetsUnlessWalletTypeConnected?: boolean;
 } & Pick<
   NewSkipClientOptions,
   | "apiUrl"
@@ -74,7 +97,7 @@ type NewSwapVenueRequest = {
   chainId: string;
 };
 
-type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
+export type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
   apiUrl?: string;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 };
@@ -85,8 +108,21 @@ export type ShowSwapWidget = {
 
 export const queryClient = new QueryClient();
 
+export const jotaiStore: ReturnType<typeof createStore> = createStore();
+
 export const Widget = (props: WidgetProps) => {
+  return (
+    <Provider store={jotaiStore}>
+      <WidgetWithinProvider props={props} />
+    </Provider>
+  );
+};
+
+export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   const { theme } = useInitWidget(props);
+  const setRootId = useSetAtom(rootIdAtom);
+  setRootId(props.rootId);
+
   return (
     <ShadowDomAndProviders theme={theme}>
       <WalletProviders>
@@ -102,40 +138,24 @@ export const Widget = (props: WidgetProps) => {
   );
 };
 
-export const WidgetWithoutNiceModalProvider = (props: WidgetProps) => {
-  const { theme } = useInitWidget(props);
-  return (
-    <ShadowDomAndProviders theme={theme}>
-      <WalletProviders>
-        <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <WidgetWrapper>
-            <Router />
-          </WidgetWrapper>
-        </QueryClientProvider>
-      </WalletProviders>
-    </ShadowDomAndProviders>
-  );
-};
-
-export const ShowWidget = ({ button = <button>show widget</button>, ...props }: ShowSwapWidget) => {
-  const modal = useModal(createModal(() => <WidgetWithoutNiceModalProvider {...props} />));
-
-  const handleClick = () => {
-    modal.show();
-  };
-
-  const Element = cloneElement(button, { onClick: handleClick });
-
-  return <>{Element}</>;
-};
-
 const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+  const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
+  const rootId = useAtomValue(rootIdAtom);
+
   useEffect(() => {
     registerModals();
+    // eslint-disable-next-line no-console
+    console.info(`Loaded skip-go widget version ${packageJson.version}`);
   }, []);
+
+  const onSettingsDrawerContainerLoaded = (element: HTMLDivElement) => {
+    setSettingsDrawerContainer(element);
+  };
+
   return (
-    <WidgetContainer>
-      <ClientOnly>{children}</ClientOnly>
+    <WidgetContainer data-root-id={rootId}>
+      {children}
+      <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>
   );
 };
@@ -143,4 +163,16 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
 const WidgetContainer = styled.div`
   width: 100%;
   position: relative;
+
+  div,
+  p {
+    box-sizing: border-box;
+  }
+
+  * {
+    font-family: "ABCDiatype", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 `;

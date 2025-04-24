@@ -1,24 +1,66 @@
-import { useEffect } from "react";
-import {
-  swapExecutionStateAtom,
-} from "@/state/swapExecutionPage";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect } from "react";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
+import { track } from "@amplitude/analytics-browser";
+import { TxsStatus } from "./useBroadcastedTxs";
+import { Routes, currentPageAtom } from "@/state/router";
+import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { skipAssetsAtom } from "@/state/skipClient";
 
-export const useHandleTransactionFailed = (
-  transactionFailed?: boolean
-) => {
+export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   const setError = useSetAtom(errorAtom);
+  const setCurrentPage = useSetAtom(currentPageAtom);
+  const setSourceAssetAtom = useSetAtom(sourceAssetAtom);
+  const setDebouncedSourceAssetAmountAtom = useSetAtom(debouncedSourceAssetAmountAtom);
+  const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const { transactionDetailsArray } = useAtomValue(
-    swapExecutionStateAtom
+  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+
+  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
+
+  const getClientAsset = useCallback(
+    (denom?: string, chainId?: string) => {
+      if (!denom || !chainId) return;
+      if (!assets) return;
+      return assets.find(
+        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+      );
+    },
+    [assets],
   );
 
-  const lastTransaction =
-    transactionDetailsArray[transactionDetailsArray.length - 1];
+  const sourceClientAsset = getClientAsset(
+    statusData?.transferAssetRelease?.denom,
+    statusData?.transferAssetRelease?.chainID,
+  );
 
   useEffect(() => {
-    if (transactionFailed) {
+    if (statusData?.isSettled && !statusData?.isSuccess) {
+      if (sourceClientAsset) {
+        track("error page: transaction reverted", {
+          transferAssetRelease: statusData.transferAssetRelease,
+          lastTransaction,
+        });
+        setError({
+          errorType: ErrorType.TransactionReverted,
+          onClickContinueTransaction: () => {
+            setSourceAssetAtom(sourceClientAsset);
+            setDebouncedSourceAssetAmountAtom(
+              statusData.transferAssetRelease?.amount,
+              undefined,
+              true,
+            );
+            setCurrentPage(Routes.SwapPage);
+            setError(undefined);
+          },
+          explorerUrl: lastTransaction?.explorerLink ?? "",
+          transferAssetRelease: statusData.transferAssetRelease,
+        });
+        return;
+      }
+
+      track("error page: transaction failed", { lastTransaction });
       setError({
         errorType: ErrorType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
@@ -26,5 +68,17 @@ export const useHandleTransactionFailed = (
         txHash: lastTransaction?.txHash,
       });
     }
-  }, [lastTransaction?.explorerLink, lastTransaction?.txHash, setError, transactionFailed]);
+  }, [
+    lastTransaction,
+    lastTransaction?.explorerLink,
+    lastTransaction?.txHash,
+    setCurrentPage,
+    setDebouncedSourceAssetAmountAtom,
+    setError,
+    setSourceAssetAtom,
+    sourceClientAsset,
+    statusData?.isSettled,
+    statusData?.isSuccess,
+    statusData?.transferAssetRelease,
+  ]);
 };

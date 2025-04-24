@@ -41,7 +41,7 @@ export const useGasFeeTokenAmount = () => {
             );
           case "137": // polygon
             return Number(
-              convertHumanReadableAmountToCryptoAmount(0.06, sourceDetails.asset?.decimals),
+              convertHumanReadableAmountToCryptoAmount(1.2, sourceDetails.asset?.decimals),
             );
           case "43114": // avalanche
             return Number(

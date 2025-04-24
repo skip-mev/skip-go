@@ -1,7 +1,8 @@
 /* eslint-disable prefer-const */
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
-import { fromBase64, fromBech32 } from "@cosmjs/encoding";
+import { fromBase64 } from "@cosmjs/encoding";
+import { bech32m, bech32 } from "bech32";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
@@ -43,7 +44,7 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
 import {
-  Chain,
+  formatUnits,
   isAddress,
   maxUint256,
   publicActions,
@@ -60,27 +61,31 @@ import {
   evmosProtoRegistry,
 } from "./codegen/evmos/client";
 import { erc20ABI } from "./constants/abis";
-import {
-  DEFAULT_GAS_DENOM_OVERRIDES,
-  DEFAULT_CACHE_DURATION,
-} from "./constants/constants";
+import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
   getEncodeObjectFromCosmosMessage,
   getEncodeObjectFromCosmosMessageInjective,
   getCosmosGasAmountForMessage,
+  getEVMGasAmountForMessage,
+  getSVMGasAmountForMessage,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+} from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
-import { createCachingMiddleware, CustomCache } from "./cache";
 
 export const SKIP_API_URL = "https://api.skip.build";
 
+export const GAS_STATION_CHAIN_IDS = ["bbn-test-5", "bbn-1"];
 export class SkipClient {
   protected requestClient: RequestClient;
 
@@ -92,18 +97,24 @@ export class SkipClient {
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
+  getCosmosSigner?: clientTypes.SignerGetters["getCosmosSigner"];
+  getEVMSigner?: clientTypes.SignerGetters["getEVMSigner"];
+  getSVMSigner?: clientTypes.SignerGetters["getSVMSigner"];
+  chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
+  cumulativeAffiliateFeeBPS?: string = "0";
 
-  protected getCosmosSigner?: clientTypes.SignerGetters["getCosmosSigner"];
-  protected getEVMSigner?: clientTypes.SignerGetters["getEVMSigner"];
-  protected getSVMSigner?: clientTypes.SignerGetters["getSVMSigner"];
-  protected chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
-  protected cumulativeAffiliateFeeBPS?: string = "0";
-  protected cacheDurationMs?: number;
-
-  private cache: CustomCache;
-  private cachingMiddleware: ReturnType<typeof createCachingMiddleware>;
+  private clientOptions: clientTypes.SkipClientOptions;
+  private skipChains?: types.Chain[];
+  private skipAssets?: Record<string, types.Asset[]>;
+  private skipBalances?: types.BalanceResponse;
+  private signingStargateClientByChainId: Record<
+    string,
+    SigningStargateClient
+  > = {};
+  private validateGasResults: clientTypes.ValidateGasResult[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
+    this.clientOptions = options;
     this.requestClient = new RequestClient({
       baseURL: options.apiURL || SKIP_API_URL,
       apiKey: options.apiKey,
@@ -132,12 +143,51 @@ export class SkipClient {
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
 
-    this.cache = CustomCache.getInstance();
+    if (options.chainIDsToAffiliates) {
+      this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
+        options.chainIDsToAffiliates,
+      );
+      this.chainIDsToAffiliates = options.chainIDsToAffiliates;
+    }
+  }
 
-    this.cacheDurationMs = options.cacheDurationMs ?? DEFAULT_CACHE_DURATION;
-    this.cachingMiddleware = createCachingMiddleware(this.cache, {
-      cacheDurationMs: this.cacheDurationMs,
-    });
+  updateOptions(options: clientTypes.SkipClientOptions = {}) {
+    if (
+      this.clientOptions.apiURL !== options.apiURL ||
+      this.clientOptions.apiKey !== options.apiKey
+    ) {
+      this.requestClient = new RequestClient({
+        baseURL: options.apiURL || SKIP_API_URL,
+        apiKey: options.apiKey,
+      });
+    }
+
+    if (this.clientOptions.aminoTypes !== options.aminoTypes) {
+      this.aminoTypes = new AminoTypes({
+        ...createDefaultAminoConverters(),
+        ...createWasmAminoConverters(),
+        ...circleAminoConverters,
+        ...evmosAminoConverters,
+        ...(options.aminoTypes ?? {}),
+      });
+    }
+
+    if (this.clientOptions.registryTypes !== options.registryTypes) {
+      this.registry = new Registry([
+        ...defaultRegistryTypes,
+        ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+        ["/initia.move.v1.MsgExecute", MsgExecute],
+        ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
+        ...circleProtoRegistry,
+        ...evmosProtoRegistry,
+        ...(options.registryTypes ?? []),
+      ]);
+    }
+
+    this.endpointOptions = options.endpointOptions ?? {};
+    this.getCosmosSigner = options.getCosmosSigner;
+    this.getEVMSigner = options.getEVMSigner;
+    this.getSVMSigner = options.getSVMSigner;
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -150,36 +200,41 @@ export class SkipClient {
   async assets(
     options: types.AssetsRequest = {},
   ): Promise<Record<string, types.Asset[]>> {
-    return this.cachingMiddleware(
-      "assets",
-      async (opts: types.AssetsRequest) => {
-        const response = await this.requestClient.get<{
-          chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
-        }>("/v2/fungible/assets", types.assetsRequestToJSON({ ...opts }));
-
-        return Object.entries(response.chain_to_assets_map).reduce(
-          (acc, [chainID, { assets }]) => {
-            acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
-            return acc;
-          },
-          {} as Record<string, types.Asset[]>,
-        );
+    const response = await this.requestClient.get<{
+      chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
+    }>("/v2/fungible/assets", types.assetsRequestToJSON({ ...options }));
+    const responseCamelCase = Object.entries(
+      response.chain_to_assets_map,
+    ).reduce(
+      (acc, [chainID, { assets }]) => {
+        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
+        return acc;
       },
-      [options],
+      {} as Record<string, types.Asset[]>,
     );
+
+    if (
+      options.includeEvmAssets &&
+      options.includeSvmAssets &&
+      options.includeCW20Assets
+    ) {
+      this.skipAssets = responseCamelCase;
+    }
+    return responseCamelCase;
   }
 
   async chains(options?: types.ChainsRequest): Promise<types.Chain[]> {
-    return this.cachingMiddleware(
-      "chains",
-      async (opts: typeof options) => {
-        const response = await this.requestClient.get<{
-          chains: types.ChainJSON[];
-        }>("/v2/info/chains", types.chainsRequestToJSON({ ...opts }));
-        return response.chains.map((chain) => types.chainFromJSON(chain));
-      },
-      [options],
+    const response = await this.requestClient.get<{
+      chains: types.ChainJSON[];
+    }>("/v2/info/chains", types.chainsRequestToJSON({ ...options }));
+    const responseCamelCase = response.chains.map((chain) =>
+      types.chainFromJSON(chain),
     );
+    if (options?.includeEVM && options?.includeSVM) {
+      this.skipChains = responseCamelCase;
+    }
+
+    return responseCamelCase;
   }
 
   async assetsFromSource(
@@ -235,22 +290,24 @@ export class SkipClient {
       "/v2/info/balances",
       types.balanceRequestToJSON(request),
     );
+    const responseCamelCase = types.balanceResponseFromJSON(response);
+
+    this.skipBalances = responseCamelCase;
     return types.balanceResponseFromJSON(response);
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const { route, userAddresses, beforeMsg, afterMsg } = options;
+    const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } =
+      options;
 
     let addressList: string[] = [];
-    let i = 0;
-    for (let j = 0; j < userAddresses.length; j++) {
-      if (route.requiredChainAddresses[i] !== userAddresses[j]?.chainID) {
-        i = j;
-        continue;
+    userAddresses.forEach((userAddress, index) => {
+      const requiredChainAddress = route.requiredChainAddresses[index];
+
+      if (requiredChainAddress === userAddress?.chainID) {
+        addressList.push(userAddress.address!);
       }
-      addressList.push(userAddresses[j]!.address!);
-      i++;
-    }
+    });
 
     if (addressList.length !== route.requiredChainAddresses.length) {
       addressList = userAddresses.map((x) => x.address);
@@ -273,6 +330,7 @@ export class SkipClient {
 
     const messages = await this.messages({
       ...route,
+      timeoutSeconds,
       amountOut: route.estimatedAmountOut || "0",
       addressList: addressList,
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
@@ -304,14 +362,63 @@ export class SkipClient {
       onTransactionBroadcast,
       onTransactionCompleted,
       simulate = true,
+      batchSimulate = true,
     } = options;
-    const gas = await this.validateGasBalances({
+    const chainIds = txs.map((tx) => {
+      if ("cosmosTx" in tx) {
+        return {
+          chainType: "cosmos",
+          chainID: tx.cosmosTx.chainID,
+        };
+      }
+      if ("svmTx" in tx) {
+        return {
+          chainType: "svm",
+          chainID: tx.svmTx.chainID,
+        };
+      }
+      return {
+        chainType: "evm",
+        chainID: tx.evmTx.chainID,
+      };
+    });
+
+    const isGasStationSourceEVM = chainIds.find((item, i, array) => {
+      return (
+        GAS_STATION_CHAIN_IDS.includes(item.chainID) &&
+        array[i - 1]?.chainType === "evm"
+      );
+    });
+
+    this.validateGasResults = undefined;
+    const validateChainIds = !batchSimulate
+      ? chainIds.map((x) => x.chainID)
+      : isGasStationSourceEVM
+        ? GAS_STATION_CHAIN_IDS
+        : [];
+
+    await this.validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
-      getOfflineSigner: options.getCosmosSigner,
+      getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+      getEVMSigner: options.getEVMSigner || this.getEVMSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
+      disabledChainIds: validateChainIds,
     });
+
+    const validateEnabledChainIds = async (chainId: string) => {
+      await this.validateGasBalances({
+        txs,
+        getFallbackGasAmount: options.getFallbackGasAmount,
+        getCosmosSigner: options.getCosmosSigner || this.getCosmosSigner,
+        getEVMSigner: options.getEVMSigner || this.getEVMSigner,
+        onValidateGasBalance: options.onValidateGasBalance,
+        simulate: simulate,
+        enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
+      });
+    };
+
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
       if (!tx) {
@@ -320,14 +427,21 @@ export class SkipClient {
 
       let txResult: types.TxResult;
       if ("cosmosTx" in tx) {
-        txResult = await this.executeCosmosTx(tx, options, i, gas);
+        await validateEnabledChainIds(tx.cosmosTx.chainID);
+        txResult = await this.executeCosmosTx({
+          tx,
+          options,
+          index: i,
+        });
       } else if ("evmTx" in tx) {
+        await validateEnabledChainIds(tx.evmTx.chainID);
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
           chainID: tx.evmTx.chainID,
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
+        await validateEnabledChainIds(tx.svmTx.chainID);
         txResult = await this.executeSvmTx(tx, options);
       } else {
         raise(`executeRoute error: invalid message type`);
@@ -347,42 +461,38 @@ export class SkipClient {
     }
   }
 
-  private async executeCosmosTx(
+  private async executeCosmosTx({
+    tx,
+    options,
+    index,
+  }: {
     tx: {
       cosmosTx: types.CosmosTx;
       operationsIndices: number[];
-    },
-    options: clientTypes.ExecuteRouteOptions,
-    index: number,
-    gas: clientTypes.Gas[],
-  ): Promise<{ chainID: string; txHash: string }> {
+    };
+    options: clientTypes.ExecuteRouteOptions;
+    index: number;
+  }): Promise<{ chainID: string; txHash: string }> {
     const { userAddresses, getCosmosSigner } = options;
-    const gasUsed = gas[index];
+
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
+    }
+
+    const gasUsed = gasArray?.[index];
     if (!gasUsed) {
       raise(`executeRoute error: invalid gas at index ${index}`);
     }
-    const getOfflineSigner = options.getCosmosSigner ?? this.getCosmosSigner;
 
-    if (!getOfflineSigner) {
-      throw new Error(
-        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
-      );
-    }
-
-    const [signer, endpoint] = await Promise.all([
-      getOfflineSigner(tx.cosmosTx.chainID),
-      this.getRpcEndpointForChain(tx.cosmosTx.chainID),
-    ]);
-
-    const stargateClient = await SigningStargateClient.connectWithSigner(
-      endpoint,
-      signer,
-      {
-        aminoTypes: this.aminoTypes,
-        registry: this.registry,
-        accountParser,
-      },
-    );
+    const { stargateClient, signer } = await this.getSigningStargateClient({
+      chainId: tx.cosmosTx.chainID,
+      getOfflineSigner: options.getCosmosSigner,
+    });
 
     const currentUserAddress = userAddresses.find(
       (x) => x.chainID === tx.cosmosTx.chainID,
@@ -400,7 +510,7 @@ export class SkipClient {
       getCosmosSigner,
       signerAddress: currentUserAddress,
       gas: gasUsed,
-      stargateClient,
+      stargateClient: stargateClient,
       signer,
       ...options,
     });
@@ -415,6 +525,14 @@ export class SkipClient {
     tx: { svmTx: types.SvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ): Promise<{ chainID: string; txHash: string }> {
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
+    }
     const { svmTx } = tx;
     const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
     if (!getSVMSigner) {
@@ -440,6 +558,15 @@ export class SkipClient {
     message: { evmTx: types.EvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ) {
+    const gasArray = this.validateGasResults;
+
+    const gas = gasArray?.find(
+      (gas) => gas?.error !== null && gas?.error !== undefined,
+    );
+    if (typeof gas?.error === "string") {
+      throw new Error(gas?.error);
+    }
+
     const { evmTx } = message;
 
     const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
@@ -479,11 +606,16 @@ export class SkipClient {
 
     if (!accountFromSigner) {
       throw new Error(
-        "executeMultiChainMessage error: failed to retrieve account from signer",
+        "executeCosmosMessage error: failed to retrieve account from signer",
       );
     }
 
     const fee = gas.fee;
+    if (!fee) {
+      throw new Error(
+        "executeCosmosMessage error: failed to retrieve fee from gas",
+      );
+    }
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
@@ -539,8 +671,12 @@ export class SkipClient {
       );
     }
 
-    const { onApproveAllowance, onTransactionSigned, bypassApprovalCheck } =
-      options;
+    const {
+      onApproveAllowance,
+      onTransactionSigned,
+      bypassApprovalCheck,
+      useUnlimitedApproval,
+    } = options;
     const extendedSigner = signer.extend(publicActions);
 
     // Check for approvals unless bypassApprovalCheck is enabled
@@ -556,7 +692,7 @@ export class SkipClient {
           ],
         });
 
-        if (allowance >= BigInt(requiredApproval.amount)) {
+        if (allowance > BigInt(requiredApproval.amount)) {
           continue;
         }
 
@@ -570,7 +706,12 @@ export class SkipClient {
           address: requiredApproval.tokenContract as `0x${string}`,
           abi: erc20ABI,
           functionName: "approve",
-          args: [requiredApproval.spender as `0x${string}`, maxUint256],
+          args: [
+            requiredApproval.spender as `0x${string}`,
+            useUnlimitedApproval
+              ? maxUint256
+              : BigInt(requiredApproval.amount) + BigInt(1000),
+          ],
           chain: signer.chain,
         });
 
@@ -677,6 +818,56 @@ export class SkipClient {
         }
       }
     }
+  }
+
+  async getSigningStargateClient({
+    chainId,
+    getOfflineSigner,
+  }: {
+    chainId: string;
+    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  }) {
+    getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
+    if (!getOfflineSigner) {
+      throw new Error(
+        "'getCosmosSigner' is not provided or configured in skip router",
+      );
+    }
+    if (!this.signingStargateClientByChainId?.[chainId]) {
+      const [signer, endpoint] = await Promise.all([
+        getOfflineSigner(chainId),
+        this.getRpcEndpointForChain(chainId),
+      ]);
+      this.signingStargateClientByChainId[chainId] =
+        await SigningStargateClient.connectWithSigner(endpoint, signer, {
+          aminoTypes: this.aminoTypes,
+          registry: this.registry,
+          accountParser,
+        });
+    }
+
+    return {
+      stargateClient: this.signingStargateClientByChainId[
+        chainId
+      ] as SigningStargateClient,
+      signer: await getOfflineSigner(chainId),
+    };
+  }
+
+  private async getAssets(chainId?: string) {
+    if (
+      (chainId && this.skipAssets?.[chainId]) ||
+      (!chainId && this.skipAssets)
+    ) {
+      return this.skipAssets;
+    }
+    return await this.getMainnetAndTestnetAssets(chainId);
+  }
+
+  private async getChains() {
+    if (this.skipChains) return this.skipChains;
+
+    return await this.getMainnetAndTestnetChains();
   }
 
   async signCosmosMessageDirect(
@@ -974,6 +1165,13 @@ export class SkipClient {
       types.RouteRequestJSON
     >("/v2/fungible/route", {
       ...types.routeRequestToJSON(options),
+      experimental_features: [
+        ...new Set([
+          "stargate",
+          "eureka",
+          ...(options.experimentalFeatures || []),
+        ]),
+      ] as types.ExperimentalFeature[],
       cumulative_affiliate_fee_bps: this.cumulativeAffiliateFeeBPS,
     });
 
@@ -1223,8 +1421,16 @@ export class SkipClient {
         txHash,
       });
 
-      if (txStatusResponse.status === "STATE_COMPLETED") {
+      if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
         return txStatusResponse;
+      }
+      if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
+        throw new Error(
+          `${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`,
+        );
+      }
+      if (txStatusResponse.state === "STATE_ABANDONED") {
+        throw new Error("Tracking for the transaction has been abandoned");
       }
 
       await wait(1000);
@@ -1246,9 +1452,11 @@ export class SkipClient {
       return this.getAccountNumberAndSequenceFromDymension(address, chainID);
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
-    const client = await StargateClient.connect(endpoint, {
-      accountParser,
-    });
+    const client =
+      this.signingStargateClientByChainId[chainID] ??
+      (await StargateClient.connect(endpoint, {
+        accountParser,
+      }));
     const account = await client.getAccount(address);
     if (!account) {
       throw new Error(
@@ -1438,11 +1646,7 @@ export class SkipClient {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const [mainnetChains, testnetChains] = await Promise.all([
-      this.chains({}),
-      this.chains({ onlyTestnets: true }),
-    ]);
-    const skipChains = [...mainnetChains, ...testnetChains];
+    const skipChains = await this.getMainnetAndTestnetChains();
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
@@ -1568,61 +1772,110 @@ export class SkipClient {
 
   async validateGasBalances({
     txs,
-    getOfflineSigner,
     onValidateGasBalance,
     getFallbackGasAmount,
+    getCosmosSigner,
+    getEVMSigner,
     simulate,
+    disabledChainIds,
+    enabledChainIds,
   }: {
     txs: types.Tx[];
-    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions["onValidateGasBalance"];
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
-  }) {
+    // skip gas validation for specific chainId
+    disabledChainIds?: string[];
+    // run gas validation for specific chainId
+    enabledChainIds?: string[];
+  } & Pick<clientTypes.SignerGetters, "getCosmosSigner" | "getEVMSigner">) {
+    // cosmos or svm tx in txs
+    if (
+      txs.every((tx) => "cosmosTx" in tx === undefined) ||
+      txs.every((tx) => "svmTx" in tx === undefined)
+    ) {
+      return;
+    }
+
     onValidateGasBalance?.({
       status: "pending",
     });
+
     const validateResult = await Promise.all(
       txs.map(async (tx, i) => {
         if (!tx) {
           raise(`invalid tx at index ${i}`);
         }
-        if ("cosmosTx" in tx) {
+        if (
+          "cosmosTx" in tx &&
+          !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.cosmosTx.chainID))
+        ) {
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
-          getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
-          if (!getOfflineSigner) {
-            throw new Error(
-              "'getCosmosSigner' is not provided or configured in skip router",
-            );
-          }
-          const endpoint = await this.getRpcEndpointForChain(
-            tx.cosmosTx.chainID,
-          );
-          const signer = await getOfflineSigner(tx.cosmosTx.chainID);
-          const client = await SigningStargateClient.connectWithSigner(
-            endpoint,
-            signer,
-            {
-              aminoTypes: this.aminoTypes,
-              registry: this.registry,
-              accountParser,
-            },
-          );
 
-          if (!client) {
-            throw new Error("'stargateClient' is not provided for cosmos tx");
-          }
           try {
             const res = await this.validateCosmosGasBalance({
               chainID: tx.cosmosTx.chainID,
               signerAddress: tx.cosmosTx.signerAddress,
-              client,
               messages: tx.cosmosTx.msgs,
               getFallbackGasAmount,
+              getOfflineSigner: getCosmosSigner,
               txIndex: i,
               simulate,
+            });
+
+            return res;
+          } catch (e) {
+            const error = e as Error;
+            return {
+              error: error.message,
+              asset: null,
+              fee: null,
+            };
+          }
+        }
+
+        if (
+          "evmTx" in tx &&
+          !disabledChainIds?.includes(tx.evmTx.chainID) &&
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.evmTx.chainID))
+        ) {
+          const signer = await getEVMSigner?.(tx.evmTx.chainID);
+          if (!signer) {
+            throw new Error(
+              `failed to get signer for chain ${tx.evmTx.chainID}`,
+            );
+          }
+          try {
+            const res = await this.validateEvmGasBalance({
+              tx: tx.evmTx,
+              signer,
+              getFallbackGasAmount,
+            });
+            return res;
+          } catch (e) {
+            const error = e as Error;
+            return {
+              error: error.message,
+              asset: null,
+              fee: null,
+            };
+          }
+        }
+
+        if (
+          "svmTx" in tx &&
+          !disabledChainIds?.includes(tx.svmTx.chainID) &&
+          (enabledChainIds === undefined ||
+            enabledChainIds.includes(tx.svmTx.chainID))
+        ) {
+          try {
+            const res = await this.validateSvmGasBalance({
+              tx: tx.svmTx,
             });
             return res;
           } catch (e) {
@@ -1636,17 +1889,26 @@ export class SkipClient {
         }
       }),
     );
+
+    if (validateResult.filter(Boolean).length === 0) {
+      return;
+    }
+
     const txError = validateResult.find((res) => res && res?.error !== null);
     if (txError) {
       onValidateGasBalance?.({
         status: "error",
       });
+      this.validateGasResults =
+        validateResult as unknown as clientTypes.ValidateGasResult[];
       throw new Error(`${txError.error}`);
     }
     onValidateGasBalance?.({
       status: "completed",
     });
-    return validateResult as unknown as clientTypes.Gas[];
+
+    this.validateGasResults =
+      validateResult as unknown as clientTypes.ValidateGasResult[];
   }
 
   /**
@@ -1657,43 +1919,25 @@ export class SkipClient {
   async validateCosmosGasBalance({
     chainID,
     signerAddress,
-    client,
     messages,
     getFallbackGasAmount,
+    getOfflineSigner,
     txIndex,
     simulate,
   }: {
     chainID: string;
     signerAddress: string;
-    client: SigningStargateClient;
     messages?: types.CosmosMsg[];
+    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
     txIndex?: number;
     simulate?: clientTypes.ExecuteRouteOptions["simulate"];
   }) {
-    const [mainnetChains, testnetChains] = await Promise.all([
-      this.chains(),
-      this.chains({ onlyTestnets: true }),
-    ]);
+    const chainAssets = (await this.getAssets(chainID))?.[chainID];
 
-    const [assetsMainnet, assetsTestnet] = await Promise.all([
-      this.assets({
-        chainIDs: [chainID],
-      }),
-      this.assets({
-        chainIDs: [chainID],
-        onlyTestnets: true,
-      }),
-    ]);
-    const assets = {
-      ...assetsMainnet,
-      ...assetsTestnet,
-    };
-
-    const chainAssets = assets[chainID];
-
-    const skipChains = [...mainnetChains, ...testnetChains];
-    const chain = skipChains.find((chain) => chain.chainID === chainID);
+    const chain = (await this.getChains()).find(
+      (chain) => chain.chainID === chainID,
+    );
     if (!chain) {
       throw new Error(`failed to find chain id for '${chainID}'`);
     }
@@ -1709,8 +1953,12 @@ export class SkipClient {
         if (txIndex !== 0 && chainID === "noble-1") {
           return "0";
         }
+        const { stargateClient } = await this.getSigningStargateClient({
+          chainId: chainID,
+          getOfflineSigner,
+        });
         const estimatedGas = await getCosmosGasAmountForMessage(
-          client,
+          stargateClient,
           signerAddress,
           chainID,
           messages,
@@ -1762,6 +2010,7 @@ export class SkipClient {
       }
       return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
     });
+
     const feeBalance = await this.balances({
       chains: {
         [chainID]: {
@@ -1770,6 +2019,7 @@ export class SkipClient {
         },
       },
     });
+    const skipChains = await this.getChains();
     const validatedAssets = feeAssets.map((asset, index) => {
       const chainAsset = chainAssets?.find((x) => x.denom === asset.denom);
       const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
@@ -1802,12 +2052,12 @@ export class SkipClient {
         };
       }
 
-      const balance = feeBalance.chains[chainID]?.denoms[asset.denom];
+      let balance = feeBalance?.chains[chainID]?.denoms[asset.denom];
 
       if (!balance) {
-        return {
-          error: `(${chain?.prettyName}) Unable to find balance for ${symbol}`,
-          asset,
+        balance = {
+          amount: "0",
+          formattedAmount: "0",
         };
       }
       if (!fee.amount[0]?.amount) {
@@ -1852,12 +2102,177 @@ export class SkipClient {
     return feeUsed;
   }
 
-  async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
-    const chains = await this.chains({
-      includeEVM: true,
-      includeSVM: true,
+  async validateEvmGasBalance({
+    signer,
+    tx,
+    getFallbackGasAmount,
+  }: {
+    signer: WalletClient;
+    tx: types.EvmTx;
+    getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+  }) {
+    const chain = (await this.getChains()).find(
+      (chain) => chain.chainID === tx.chainID,
+    );
+    if (!chain) {
+      throw new Error(`failed to find chain id for '${tx.chainID}'`);
+    }
+    const gasAmount = await getEVMGasAmountForMessage(
+      signer,
+      tx,
+      getFallbackGasAmount,
+    );
+
+    if (!signer.account?.address) {
+      throw new Error("validateEvmGasBalance: Signer address not found");
+    }
+    const skipBalances = await this.balances({
+      chains: {
+        [tx.chainID]: {
+          address: signer.account?.address,
+        },
+      },
     });
 
+    const balances = skipBalances.chains[tx.chainID]?.denoms;
+
+    const nativeGasBalance =
+      balances &&
+      Object.entries(balances).find(([denom]) =>
+        denom.includes("-native"),
+      )?.[1];
+
+    const zeroAddressGasBalance =
+      balances &&
+      Object.entries(balances).find(
+        ([denom]) =>
+          denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
+      )?.[1];
+    const gasBalance = nativeGasBalance || zeroAddressGasBalance;
+
+    if (!gasBalance) {
+      const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
+        tx.chainID
+      ];
+
+      const nativeAsset = chainAssets?.find((x) => x.denom.includes("-native"));
+      const zeroAddressAsset = chainAssets?.find(
+        (x) =>
+          x.denom.toLowerCase() ===
+          "0x0000000000000000000000000000000000000000",
+      );
+      const asset = nativeAsset || zeroAddressAsset;
+      if (!asset?.decimals) {
+        return {
+          error: `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei.`,
+          asset: null,
+          fee: null,
+        };
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
+
+      return {
+        error: `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
+        asset: null,
+        fee: null,
+      };
+    }
+    if (BigNumber(gasBalance.amount).lt(Number(gasAmount))) {
+      const chainAssets = (await this.getAssets(tx.chainID))?.[tx.chainID];
+      const asset = chainAssets?.find(
+        (x) =>
+          x.denom.includes("-native") ||
+          x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+      );
+      if (!asset?.decimals) {
+        return {
+          error: `Insufficient balance for gas on ${chain.prettyName}. Need ${gasAmount} gwei but only have ${gasBalance.amount} gwei.`,
+          asset: null,
+          fee: null,
+        };
+      }
+
+      const formattedGasAmount = formatUnits(gasAmount, asset?.decimals);
+      return {
+        error: `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
+        asset: null,
+        fee: null,
+      };
+    }
+  }
+
+  async validateSvmGasBalance({ tx }: { tx: types.SvmTx }) {
+    const endpoint = await this.getRpcEndpointForChain(tx.chainID);
+    const connection = new Connection(endpoint);
+    if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
+    const gasAmount = await getSVMGasAmountForMessage(connection, tx);
+
+    const skipBalances = await this.balances({
+      chains: {
+        solana: {
+          address: tx.signerAddress,
+          denoms: ["solana-native"],
+        },
+      },
+    });
+    const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
+    if (!gasBalance) {
+      return {
+        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL.`,
+        asset: null,
+        fee: null,
+      };
+    }
+
+    if (BigNumber(gasBalance.amount).lt(gasAmount)) {
+      return {
+        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL but only have ${gasBalance.formattedAmount} SOL.`,
+        asset: null,
+        fee: null,
+      };
+    }
+  }
+
+  async getMainnetAndTestnetChains() {
+    const [mainnetChains, testnetChains] = await Promise.all([
+      this.chains({
+        includeEVM: true,
+        includeSVM: true,
+      }),
+      this.chains({
+        includeEVM: true,
+        includeSVM: true,
+        onlyTestnets: true,
+      }),
+    ]);
+    this.skipChains = [...mainnetChains, ...testnetChains];
+    return [...mainnetChains, ...testnetChains];
+  }
+
+  async getMainnetAndTestnetAssets(chainId?: string) {
+    const [assetsMainnet, assetsTestnet] = await Promise.all([
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+      }),
+      this.assets({
+        chainIDs: chainId ? [chainId] : undefined,
+        onlyTestnets: true,
+      }),
+    ]);
+    this.skipAssets = {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
+    return {
+      ...assetsMainnet,
+      ...assetsTestnet,
+    };
+  }
+
+  async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
+    const chains = await this.getChains();
     const validations = userAddresses.map((userAddress) => {
       const chain = chains.find(
         (chain) => chain.chainID === userAddress.chainID,
@@ -1866,11 +2281,28 @@ export class SkipClient {
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
-            const { prefix } = fromBech32(userAddress.address);
-            return chain.bech32Prefix === prefix;
-          } catch (_error) {
+            if (chain.chainID.includes("penumbra")) {
+              try {
+                return (
+                  chain.bech32Prefix ===
+                  bech32m.decode(userAddress.address, 143)?.prefix
+                );
+              } catch {
+                // The temporary solution to route around Noble address breakage.
+                // This can be entirely removed once `noble-1` upgrades.
+                return ["penumbracompat1", "tpenumbra"].includes(
+                  bech32.decode(userAddress.address, 1023).prefix,
+                );
+              }
+            }
+            return (
+              chain.bech32Prefix ===
+              bech32.decode(userAddress.address, 1023).prefix
+            );
+          } catch {
             return false;
           }
+
         case types.ChainType.EVM:
           try {
             return isAddress(userAddress.address);

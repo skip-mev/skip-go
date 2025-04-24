@@ -11,16 +11,19 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { isValidWalletAddress } from "./isValidWalletAddress";
 import { useWalletList } from "@/hooks/useWalletList";
 import { ModalHeader, StyledModalContainer } from "@/components/ModalHeader";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { ChainType } from "@skip-go/client";
 import { isMobile } from "@/utils/os";
+import { MinimalWallet } from "@/state/wallets";
+import { track } from "@amplitude/analytics-browser";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;
-  chainAddressIndex?: number;
+  chainAddressIndex: number;
+  signRequired?: boolean;
 };
 
 export enum WalletSource {
@@ -32,7 +35,11 @@ export enum WalletSource {
 export const SetAddressModal = createModal((modalProps: SetAddressModalProps) => {
   const isMobileScreenSize = useIsMobileScreenSize();
   const { chainId, chainAddressIndex } = modalProps;
-  // TODO: get theme from modal props (currently being passed in as undefined from createModal function)
+  const { route } = useAtomValue(swapExecutionStateAtom);
+  const requiredChainAddresses = route?.requiredChainAddresses;
+  if (modalProps.chainAddressIndex === undefined) {
+    throw new Error("chain address index cannot be undefined");
+  }
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
   const chain = chains?.find((c) => c.chainID === chainId);
@@ -57,7 +64,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     },
   } as ManualWalletEntry;
 
-  const walletList = [..._walletList, manualWalletEntry];
+  const onlyShowManualWalletEntry =
+    chain?.chainType === chainAddresses[0]?.chainType && chain?.chainType !== ChainType.Cosmos;
+
+  const hideManualWalletEntry = modalProps.signRequired;
+
+  const walletList = [..._walletList, ...(hideManualWalletEntry ? [] : [manualWalletEntry])];
 
   const handleChangeAddress = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setManualWalletAddress(e.target.value);
@@ -65,11 +77,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
 
   const addressIsValid = useMemo(() => {
     if (!chain || manualWalletAddress.length === 0) return;
-    const { chainType, bech32Prefix } = chain;
+    const { chainType, bech32Prefix, chainID } = chain;
     return isValidWalletAddress({
       address: manualWalletAddress,
       bech32Prefix,
       chainType,
+      chainId: chainID,
     });
   }, [chain, manualWalletAddress]);
 
@@ -90,13 +103,15 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   }, [chain]);
 
   const onConfirmSetManualAddress = () => {
+    track("set address modal: confirm set address", {
+      chainId,
+    });
     const chainType = chain?.chainType;
     if (!chainId || !chainType) return;
     setChainAddresses((prev) => {
-      const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
       return {
         ...prev,
-        [destinationIndex]: {
+        [chainAddressIndex]: {
           chainID: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
@@ -106,6 +121,57 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     });
     NiceModal.remove(Modals.SetAddressModal);
   };
+
+  const walletListTitle = useMemo(() => {
+    const isDestinationIndex = chainAddressIndex === Object.values(chainAddresses).length - 1;
+    const title = isDestinationIndex ? "Destination" : "Intermediary";
+    if (mobile) {
+      return title;
+    }
+    return `${title} wallet`;
+  }, [chainAddressIndex, chainAddresses, mobile]);
+
+  const onSelectWallet = async (wallet: MinimalWallet) => {
+    track("set address modal: wallet selected", {
+      chainId,
+      walletName: wallet.walletName,
+    });
+    const response = await wallet.getAddress?.({
+      praxWallet: {
+        sourceChainID: chainAddressIndex
+          ? chainAddresses[chainAddressIndex - 1]?.chainID
+          : undefined,
+      },
+    });
+    const address = response?.address;
+    const logo = response?.logo;
+    setChainAddresses((prev) => {
+      if (
+        JSON.stringify(requiredChainAddresses) !==
+        JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [chainAddressIndex]: {
+          chainID: chainId,
+          chainType: chain?.chainType,
+          address,
+          source: WalletSource.Wallet,
+          wallet: {
+            walletName: wallet.walletName,
+            walletPrettyName: wallet.walletPrettyName,
+            walletChainType: wallet.walletChainType,
+            walletInfo: {
+              logo: logo ?? wallet.walletInfo?.logo,
+            },
+          },
+        },
+      };
+    });
+  };
+
   return (
     <>
       {showManualAddressInput ? (
@@ -113,11 +179,11 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
           <ModalHeader
             title={isMobileScreenSize ? "Enter an address" : `Enter a ${chainName} address`}
             onClickBackButton={() => setShowManualAddressInput(false)}
-            rightContent={() => (
+            rightContent={
               <StyledChainLogoContainerRow align="center" justify="center">
                 <img width="25px" height="25px" src={chainLogo} />
               </StyledChainLogoContainerRow>
-            )}
+            }
           />
           {showWithdrawalWarning && (
             <SmallText color={theme?.error?.text} textAlign="center">
@@ -155,13 +221,20 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
         </StyledModalContainer>
       ) : (
         <RenderWalletList
-          title={mobile ? "Destination" : "Destination wallet"}
-          walletList={walletList}
-          onClickBackButton={() => NiceModal.remove(Modals.SetAddressModal)}
+          title={walletListTitle}
+          walletList={onlyShowManualWalletEntry ? [manualWalletEntry] : walletList}
+          onClickBackButton={() => {
+            track("set address modal: back button - clicked");
+            NiceModal.remove(Modals.SetAddressModal);
+          }}
           chainId={chainId}
-          chainType={chain?.chainType}
-          isDestinationAddress
-          chainAddressIndex={chainAddressIndex}
+          onSelectWallet={(v) => {
+            track("set address modal: wallet selected", {
+              chainId,
+              walletName: v.walletName,
+            });
+            onSelectWallet(v);
+          }}
         />
       )}
     </>
@@ -198,6 +271,8 @@ const StyledAddressValidatorDot = styled.div<{ validAddress?: boolean }>`
 `;
 
 const StyledInput = styled.input<{ validAddress?: boolean }>`
+  font-size: 20px;
+  font-family: "ABCDiatype", sans-serif;
   height: 60px;
   width: 100%;
   box-sizing: border-box;

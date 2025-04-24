@@ -1,0 +1,30 @@
+name: Widget Tests
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  e2e-test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.51.1-noble
+      options: --user 1001
+      ports:
+        - 5173:5173
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: yarn install
+      - name: build client lib
+        run: yarn run build:client
+      - name: Run e2e tests
+        env:
+          WORD_PHRASE_KEY: ${{ secrets.WORD_PHRASE_KEY }}
+        run: yarn test-widget

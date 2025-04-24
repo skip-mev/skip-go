@@ -5,6 +5,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "@/state/errorPage";
+import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageAuthFailedProps = {
   onClickBack: () => void;
@@ -15,10 +16,9 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
   const theme = useTheme();
 
   const handleOnClickBack = () => {
+    track("error page: user rejected request - back button clicked");
     setErrorAtom(undefined);
-    if (onClickBack) {
-      onClickBack();
-    }
+    onClickBack?.();
   };
 
   return (
@@ -34,14 +34,14 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
         title="Transaction failed"
         description="User rejected authentication request"
         icon={ICONS.triangleWarning}
-        backgroundColor={theme.error.background}
-        textColor={theme.error.text}
+        backgroundColor={theme.warning.background}
+        textColor={theme.warning.text}
       />
       <MainButton
         label="Back"
         icon={ICONS.leftArrow}
         onClick={handleOnClickBack}
-        backgroundColor={theme.error.text}
+        backgroundColor={theme.warning.text}
       />
     </>
   );

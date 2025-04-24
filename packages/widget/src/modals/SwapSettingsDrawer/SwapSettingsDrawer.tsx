@@ -1,9 +1,9 @@
 import { styled, useTheme } from "styled-components";
 import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
-import { SmallText } from "@/components/Typography";
+import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { SwapPageFooterItems } from "@/pages/SwapPage/SwapPageFooter";
+import { poweredBySkipGo } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
@@ -14,6 +14,9 @@ import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
 import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
+import NiceModal from "@ebay/nice-modal-react";
+import { Modals } from "../registerModals";
+import { track } from "@amplitude/analytics-browser";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -169,19 +172,27 @@ export const SwapSettingsDrawer = createModal(() => {
           href="https://docs.skip.build/go/legal-and-privacy/terms-of-service"
           target="_blank"
         >
-          <u>Terms of Service</u>
+          <UnderlineText>Terms of Service</UnderlineText>
         </SmallText>
         <SmallText
           as="a"
           href="https://docs.skip.build/go/legal-and-privacy/privacy-policy"
           target="_blank"
         >
-          <u>Privacy Policy</u>
+          <UnderlineText>Privacy Policy</UnderlineText>
         </SmallText>
       </Row>
-      <SwapDetailText justify="space-between">
-        <SwapPageFooterItems showRouteInfo />
-      </SwapDetailText>
+      <Row justify="space-between">
+        <SmallTextButton
+          onClick={() => {
+            track("settings drawer: close button - clicked");
+            NiceModal.hide(Modals.SwapSettingsDrawer);
+          }}
+        >
+          Close
+        </SmallTextButton>
+        <SmallText>{poweredBySkipGo}</SmallText>
+      </Row>
     </StyledSwapPageSettings>
   );
 });
@@ -199,4 +210,8 @@ const SwapDetailText = styled(Row).attrs({
 })`
   position: relative;
   letter-spacing: 0.26px;
+`;
+
+const UnderlineText = styled.u`
+  text-decoration-line: unset;
 `;

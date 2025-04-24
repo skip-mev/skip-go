@@ -57,7 +57,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
       {asset ? (
         <>
           <Button onClick={onClickBack}>
-            <StyledLeftArrowIcon color={theme.primary.text.normal} />
+            <StyledLeftArrowIcon color={theme.primary.text.normal} maskedVersion={false} />
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
             <GroupedAssetImage groupedAsset={groupedAsset} width={20} height={20} />
@@ -77,7 +77,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
         onChange={handleSearch}
         onKeyDown={onKeyDown}
       />
-      <Row align="center" gap={5}>
+      <Row align="center" gap={5} data-logo="skip-go">
         {!isMobileScreenSize && (
           <>
             <SmallText textWrap="nowrap"> Powered by </SmallText>
@@ -97,6 +97,15 @@ const StyledLeftArrowIcon = styled(LeftArrowIcon)`
 
 const StyledSelectedAsset = styled(StyledAssetLabel)`
   height: auto;
+
+  &:after {
+    background-color: transparent;
+  }
+  &:hover {
+    &:after {
+      background-color: transparent;
+    }
+  }
 `;
 
 const StyledSearchIcon = styled(SearchIcon)`

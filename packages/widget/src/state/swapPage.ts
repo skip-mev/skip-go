@@ -1,12 +1,19 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
-import { skipRouteAtom } from "@/state/route";
+import { ClientAsset, skipClient } from "@/state/skipClient";
+import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
+import { atomEffect } from "jotai-effect";
+import { callbacksAtom } from "./callbacks";
+import { jotaiStore } from "@/widget/Widget";
+import { currentPageAtom, Routes } from "./router";
+import { errorAtom } from "./errorPage";
+import { walletsAtom } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
+  locked?: boolean;
 };
 
 export const {
@@ -21,10 +28,59 @@ export const {
   clearTimeoutAtom: cleanupDebouncedDestinationAssetAmountAtom,
 } = atomWithDebounce<string | undefined>();
 
+export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
+  const { data } = get(skipRouteAtom);
+
+  const callbacks = get(callbacksAtom);
+
+  if (callbacks?.onRouteUpdated) {
+    callbacks?.onRouteUpdated({
+      srcChainId: sourceAsset?.chainID,
+      srcAssetDenom: sourceAsset?.denom,
+      destChainId: destinationAsset?.chainID,
+      destAssetDenom: destinationAsset?.denom,
+      amountIn: sourceAsset?.amount,
+      amountOut: destinationAsset?.amount,
+      requiredChainAddresses: data?.requiredChainAddresses,
+    });
+  }
+});
+
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const skip = get(skipClient);
+  const wallets = get(walletsAtom);
+  if (sourceAsset?.chainID && wallets.cosmos) {
+    skip.getSigningStargateClient({
+      chainId: sourceAsset?.chainID,
+    });
+  }
+});
+
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   "sourceAsset",
   undefined,
 );
+
+export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: boolean } = {}) => {
+  const { set } = jotaiStore;
+
+  if (onlyClearInputValues) {
+    set(clearAssetInputAmountsAtom);
+  } else {
+    set(sourceAssetAtom, undefined);
+    set(debouncedSourceAssetAmountAtom, "", undefined, true);
+
+    set(destinationAssetAtom, undefined);
+    set(debouncedDestinationAssetAmountAtom, "", undefined, true);
+  }
+
+  set(setRouteToDefaultRouteAtom);
+  set(currentPageAtom, Routes.SwapPage);
+  set(errorAtom, undefined);
+};
 
 export const sourceAssetAmountAtom = atom(
   (get) => get(sourceAssetAtom)?.amount ?? "",
@@ -75,13 +131,15 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const { isLoading } = get(skipRouteAtom);
   const direction = get(swapDirectionAtom);
 
+  const sourceAmountIsValidNumber = !isNaN(parseFloat(sourceAmount));
+  const destinationAmountIsValidNumber = !isNaN(parseFloat(destinationAmount));
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
   if (direction === "swap-in") {
-    return sourceAmountHasChanged || isLoading;
+    return (sourceAmountHasChanged && sourceAmountIsValidNumber) || isLoading;
   } else if (direction === "swap-out") {
-    return destinationAmountHasChanged || isLoading;
+    return (destinationAmountHasChanged && destinationAmountIsValidNumber) || isLoading;
   }
 });
 
@@ -116,9 +174,13 @@ export type ChainFilter = {
   destination?: Record<string, string[] | undefined>;
 };
 
-export const chainFilterAtom = atom<ChainFilter>();
+export const filterAtom = atom<ChainFilter>();
 
-export const CosmosGasAmount = {
+export const filterOutAtom = atom<ChainFilter>();
+
+export const EVM_GAS_AMOUNT = 150_000;
+
+export const COSMOS_GAS_AMOUNT = {
   DEFAULT: 300_000,
   SWAP: 2_800_000,
   CARBON: 1_000_000,
@@ -127,6 +189,7 @@ export const CosmosGasAmount = {
 export const defaultSwapSettings = {
   slippage: 1,
   routePreference: RoutePreference.FASTEST,
+  useUnlimitedApproval: false,
 };
 
 export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
@@ -136,16 +199,16 @@ export const swapSettingsAtom = atomWithStorageNoCrossTabSync(
 
 export const slippageAtom = atom(
   (get) => get(swapSettingsAtom).slippage,
-  (get, set, newSlippage: number) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, slippage: newSlippage });
+  (_get, set, newSlippage: number) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, slippage: newSlippage }));
   },
 );
 
 export const routePreferenceAtom = atom(
   (get) => get(swapSettingsAtom).routePreference,
-  (get, set, newRoutePreference: RoutePreference) => {
-    const currentSettings = get(swapSettingsAtom);
-    set(swapSettingsAtom, { ...currentSettings, routePreference: newRoutePreference });
+  (_get, set, newRoutePreference: RoutePreference) => {
+    set(swapSettingsAtom, (prev) => ({ ...prev, routePreference: newRoutePreference }));
   },
 );
+
+export const goFastWarningAtom = atomWithStorageNoCrossTabSync("showGoFastWarning", true);

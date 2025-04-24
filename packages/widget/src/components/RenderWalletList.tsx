@@ -1,40 +1,28 @@
-import { useCallback, useMemo } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { styled, useTheme } from "styled-components";
 import { Row, Column } from "@/components/Layout";
 import { ModalRowItem } from "./ModalRowItem";
 import { VirtualList } from "./VirtualList";
 import { SmallText, Text } from "@/components/Typography";
-import {
-  MinimalWallet,
-  cosmosWalletAtom,
-  evmWalletAtom,
-  svmWalletAtom,
-  walletsAtom,
-} from "@/state/wallets";
+import { MinimalWallet } from "@/state/wallets";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { useMutation } from "@tanstack/react-query";
 import { ModalHeader, StyledModalContainer, StyledModalInnerContainer } from "./ModalHeader";
-import { useAtomValue, useSetAtom } from "jotai";
-import { chainAddressesAtom } from "@/state/swapExecutionPage";
+import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { ChainType } from "@skip-go/client";
-import { WalletSource } from "@/modals/SetAddressModal/SetAddressModal";
-import { isMobile } from "@/utils/os";
-import { WalletType, getWallet, useDisconnect } from "graz";
-import { solanaWallets } from "@/constants/solana";
-import { useConnectors } from "wagmi";
 
 export type RenderWalletListProps = {
   title: string;
   walletList: (MinimalWallet | ManualWalletEntry)[];
   onClickBackButton: () => void;
-  isDestinationAddress?: boolean;
+  onSelectWallet?: (wallet: MinimalWallet) => void;
   chainId?: string;
-  chainType?: ChainType;
   isConnectEco?: boolean;
-  chainAddressIndex?: number;
+  bottomContent?: ReactNode;
+  headerRightContent?: ReactNode;
+  onWalletConnected?: (wallet: MinimalWallet) => void;
 };
 
 export type ManualWalletEntry = {
@@ -62,19 +50,15 @@ export const RenderWalletList = ({
   title,
   walletList,
   onClickBackButton,
-  isDestinationAddress,
+  onSelectWallet,
   chainId,
-  chainType,
   isConnectEco,
-  chainAddressIndex,
+  onWalletConnected,
+  bottomContent,
+  headerRightContent,
 }: RenderWalletListProps) => {
   const theme = useTheme();
-  const walletAtom = useAtomValue(walletsAtom);
-  const setCosmosWallet = useSetAtom(cosmosWalletAtom);
-  const setEVMWallet = useSetAtom(evmWalletAtom);
-  const setSVMWallet = useSetAtom(svmWalletAtom);
-
-  const setChainAddresses = useSetAtom(chainAddressesAtom);
+  const [selectedWallet, setSelectedWallet] = useState<MinimalWallet>();
 
   const displayWallets = useMemo(() => {
     const filteredWallets = walletList.filter(
@@ -86,85 +70,16 @@ export const RenderWalletList = ({
 
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
 
-  const connectors = useConnectors();
-  const { disconnectAsync } = useDisconnect();
-
   const connectMutation = useMutation({
     mutationKey: ["connectWallet"],
     mutationFn: async (wallet: MinimalWallet) => {
-      if (isDestinationAddress) {
-        if (!chainId || !chainType) return;
-        const address = await wallet.getAddress?.({});
-        setChainAddresses((prev) => {
-          const destinationIndex = chainAddressIndex || Object.values(prev).length - 1;
-          return {
-            ...prev,
-            [destinationIndex]: {
-              chainID: chainId,
-              chainType,
-              address,
-              source: WalletSource.Wallet,
-              wallet: {
-                walletName: wallet.walletName,
-                walletPrettyName: wallet.walletPrettyName,
-                walletChainType: wallet.walletChainType,
-                walletInfo: wallet.walletInfo,
-              },
-            },
-          };
-        });
-        return null;
+      // If a specific chainId is provided, connect to that chain
+      // This is used when connecting from a specific chain context
+      if (chainId) {
+        return await wallet.connect(chainId);
       }
-      const mobile = isMobile();
-      if (mobile) {
-        switch (chainType) {
-          case ChainType.EVM:
-            if (walletAtom.cosmos) {
-              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-              await cosmosWallet.disable?.();
-              await disconnectAsync();
-              setCosmosWallet(undefined);
-            }
-            if (walletAtom.svm) {
-              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-              await svmWallet?.disconnect?.();
-              setSVMWallet(undefined);
-            }
-            break;
-          case ChainType.SVM:
-            if (walletAtom.evm) {
-              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-              await evmWallet?.disconnect?.();
-              setEVMWallet(undefined);
-            }
-            if (walletAtom.cosmos) {
-              const cosmosWallet = getWallet(walletAtom.cosmos.walletName as WalletType);
-              await cosmosWallet.disable?.();
-              await disconnectAsync();
-              setCosmosWallet(undefined);
-            }
-            break;
-          case ChainType.Cosmos:
-            if (walletAtom.evm) {
-              const evmWallet = connectors.find((x) => x.id === walletAtom.evm?.walletName);
-              await evmWallet?.disconnect?.();
-              setEVMWallet(undefined);
-            }
-            if (walletAtom.svm) {
-              const svmWallet = solanaWallets.find((x) => x.name === walletAtom.svm?.walletName);
-              await svmWallet?.disconnect?.();
-              setSVMWallet(undefined);
-            }
-            break;
-          default:
-            break;
-        }
-      }
-
-      if (isConnectEco) {
-        clearAssetInputAmounts();
-        return await wallet.connectEco();
-      }
+      // Otherwise, connect without specifying a chain
+      // This will use the wallet's default behavior
       return await wallet.connect();
     },
     onSuccess: () => {
@@ -173,6 +88,9 @@ export const RenderWalletList = ({
       }
       NiceModal.remove(Modals.SetAddressModal);
       NiceModal.remove(Modals.WalletSelectorModal);
+      if (selectedWallet) {
+        onWalletConnected?.(selectedWallet);
+      }
     },
   });
 
@@ -199,10 +117,15 @@ export const RenderWalletList = ({
       ) : null;
 
       const onClickConnectWallet = () => {
-        if (isMinimalWallet(wallet)) {
-          connectMutation.mutate(wallet);
-        } else {
+        if (!isMinimalWallet(wallet)) {
           wallet.onSelect();
+        } else if (onSelectWallet) {
+          onSelectWallet(wallet);
+          NiceModal.remove(Modals.SetAddressModal);
+          NiceModal.remove(Modals.WalletSelectorModal);
+        } else {
+          setSelectedWallet(wallet);
+          connectMutation.mutate(wallet);
         }
       };
 
@@ -228,7 +151,7 @@ export const RenderWalletList = ({
         />
       );
     },
-    [connectMutation],
+    [connectMutation, onSelectWallet],
   );
 
   const height = useMemo(() => {
@@ -248,11 +171,13 @@ export const RenderWalletList = ({
               status={connectMutation.isError ? "failed" : "pending"}
               borderSize={8}
             >
-              <img
-                style={{ objectFit: "cover" }}
-                src={connectMutation.variables?.walletInfo.logo}
-                alt={`${connectMutation.variables?.walletPrettyName} logo`}
-              />
+              {connectMutation.variables?.walletInfo?.logo && (
+                <img
+                  style={{ objectFit: "cover" }}
+                  src={connectMutation.variables.walletInfo.logo}
+                  alt={`${connectMutation.variables?.walletPrettyName} logo`}
+                />
+              )}
             </StyledAnimatedBorder>
             <Text color={theme.primary.text.lowContrast} textAlign="center">
               {titleText} {connectMutation.variables?.walletPrettyName}
@@ -283,7 +208,7 @@ export const RenderWalletList = ({
     connectMutation.error,
     connectMutation.isError,
     connectMutation.isPending,
-    connectMutation.variables?.walletInfo.logo,
+    connectMutation.variables?.walletInfo?.logo,
     connectMutation.variables?.walletPrettyName,
     height,
     renderItem,
@@ -301,8 +226,10 @@ export const RenderWalletList = ({
             ? connectMutation.reset
             : onClickBackButton
         }
+        rightContent={headerRightContent}
       />
       {renderWalletListOrWalletConnectionStatus}
+      {bottomContent}
     </StyledModalContainer>
   );
 };

@@ -9,7 +9,7 @@ import {
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
-import { chainFilterAtom, defaultSwapSettings, swapSettingsAtom } from "@/state/swapPage";
+import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
 import {
   walletConnectAtom,
@@ -24,10 +24,19 @@ import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
 import { simulateTxAtom } from "@/state/swapExecutionPage";
+import { initAmplitude } from "./initAmplitude";
+import { disableShadowDomAtom } from "./ShadowDomAndProviders";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
+import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
+import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
     initSentry();
+  }
+  if (props.enableAmplitudeAnalytics) {
+    initAmplitude();
   }
   setTag("widget_version", version);
   useInitDefaultRoute(props.defaultRoute);
@@ -38,11 +47,19 @@ export const useInitWidget = (props: WidgetProps) => {
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
-  const setChainFilter = useSetAtom(chainFilterAtom);
+  const setFilter = useSetAtom(filterAtom);
+  const setFilterOut = useSetAtom(filterOutAtom);
+  const setFilterOutUnlessUserHasBalanceAtom = useSetAtom(filterOutUnlessUserHasBalanceAtom);
   const setOnlyTestnets = useSetAtom(onlyTestnetsAtom);
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
+  const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
+  const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
+  const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
+  const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
+    hideAssetsUnlessWalletTypeConnectedAtom,
+  );
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -89,10 +106,10 @@ export const useInitWidget = (props: WidgetProps) => {
 
   useEffect(() => {
     if (props.settings) {
-      setSwapSettings({
-        ...defaultSwapSettings,
+      setSwapSettings((prev) => ({
+        ...prev,
         ...props.settings,
-      });
+      }));
     }
     if (props.routeConfig) {
       setRouteConfig((prev) => {
@@ -103,16 +120,37 @@ export const useInitWidget = (props: WidgetProps) => {
       });
     }
     if (props.filter) {
-      setChainFilter(props.filter);
+      setFilter(props.filter);
     }
-    if (props.onlyTestnet) {
-      setOnlyTestnets(props.onlyTestnet);
+    if (props.filterOut) {
+      setFilterOut(props.filterOut);
     }
+    if (props.filterOutUnlessUserHasBalance) {
+      setFilterOutUnlessUserHasBalanceAtom(props.filterOutUnlessUserHasBalance);
+    }
+
+    setOnlyTestnets(props.onlyTestnet ?? false);
+
     if (props.walletConnect) {
       setWalletConnect(props.walletConnect);
     }
     if (props.simulate !== undefined) {
       setSimulateTx(props.simulate);
+    }
+    if (props.disableShadowDom !== undefined) {
+      setDisableShadowDom(props.disableShadowDom);
+    }
+
+    if (props.ibcEurekaHighlightedAssets) {
+      setIbcEurekaHighlightedAssets(props.ibcEurekaHighlightedAssets);
+    }
+
+    if (props.assetSymbolsSortedToTop) {
+      setAssetSymbolsSortedToTop(props.assetSymbolsSortedToTop);
+    }
+
+    if (props.hideAssetsUnlessWalletTypeConnected) {
+      setHideAssetsUnlessWalletTypeConnected(props.hideAssetsUnlessWalletTypeConnected);
     }
 
     const callbacks = {
@@ -121,6 +159,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionBroadcasted: props.onTransactionBroadcasted,
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
+      onRouteUpdated: props.onRouteUpdated,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -139,13 +178,26 @@ export const useInitWidget = (props: WidgetProps) => {
     props.settings?.slippage,
     props.walletConnect,
     props.simulate,
-    setChainFilter,
     setOnlyTestnets,
     setRouteConfig,
     setSwapSettings,
     setWalletConnect,
     setCallbacks,
     setSimulateTx,
+    props.onRouteUpdated,
+    props.disableShadowDom,
+    setDisableShadowDom,
+    props.ibcEurekaHighlightedAssets,
+    setIbcEurekaHighlightedAssets,
+    props.assetSymbolsSortedToTop,
+    setAssetSymbolsSortedToTop,
+    props.filterOut,
+    setFilter,
+    setFilterOut,
+    props.hideAssetsUnlessWalletTypeConnected,
+    setHideAssetsUnlessWalletTypeConnected,
+    props.filterOutUnlessUserHasBalance,
+    setFilterOutUnlessUserHasBalanceAtom,
   ]);
 
   return { theme: mergedTheme };

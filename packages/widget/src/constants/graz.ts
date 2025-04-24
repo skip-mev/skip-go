@@ -13,7 +13,6 @@ export const okxWalletChainIdsInitialConnect = [
 ];
 
 export const keplrMainnetChainIdsInitialConnect = [
-  "agoric-3",
   "akashnet-2",
   "axelar-dojo-1",
   "celestia",
@@ -22,7 +21,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "core-1",
   "cosmoshub-4",
   "crypto-org-chain-mainnet-1",
-  "dimension_37-1",
   "dydx-mainnet-1",
   "dymension_1100-1",
   "evmos_9001-2",
@@ -30,8 +28,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "juno-1",
   "kava_2222-10",
   "kyve-1",
-  "lava-mainnet-1",
-  "mars-1",
   "neutron-1",
   "noble-1",
   "omniflixhub-1",
@@ -50,7 +46,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "stargaze-1",
   "stride-1",
   "umee-1",
-  "wormchain",
 ];
 
 // other wallets not the keplr wallet
@@ -77,7 +72,6 @@ export const walletConnectMainnetChainIdsInitialConnect = [
 ];
 
 export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
-  "agoric-3",
   "akashnet-2",
   "axelar-dojo-1",
   "celestia",
@@ -91,7 +85,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "kava_2222-10",
   "kyve-1",
   "lava-mainnet-1",
-  "mars-1",
   "neutron-1",
   "noble-1",
   "omniflixhub-1",
@@ -123,7 +116,8 @@ export const walletInfo: Record<
 > = {
   [WalletType.OKX]: {
     name: "OKX",
-    imgSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJDSURBVHgB7Zq9jtpAEMfHlhEgQLiioXEkoAGECwoKxMcTRHmC5E3IoyRPkPAEkI7unJYmTgEFTYwA8a3NTKScLnCHN6c9r1e3P2llWQy7M/s1Gv1twCP0ej37dDq9x+Zut1t3t9vZjDEHIiSRSPg4ZpDL5fxkMvn1cDh8m0wmfugfO53OoFQq/crn8wxfY9EymQyrVCqMfHvScZx1p9ls3pFxXBy/bKlUipGPrVbLuQqAfsCliq3zl0H84zwtjQrOw4Mt1W63P5LvBm2d+Xz+YzqdgkqUy+WgWCy+Mc/nc282m4FqLBYL+3g8fjDxenq72WxANZbLJeA13zDX67UDioL5ybXwafMYu64Ltn3bdDweQ5R97fd7GyhBQMipx4POeEDHIu2LfDdBIGGz+hJ9CQ1ABjoA2egAZPM6AgiCAEQhsi/C4jHyPA/6/f5NG3Ks2+3CYDC4aTccDrn6ojG54MnEvG00GoVmWLIRNZ7wTCwDHYBsdACy0QHIhiuRETxlICWpMMhGZHmqS8qH6JLyGegAZKMDkI0uKf8X4SWlaZo+Pp1bRrwlJU8ZKLIvUjKh0WiQ3sRUbNVq9c5Ebew7KEo2m/1p4jJ4qAmDaqDQBzj5XyiAT4VCQezJigAU+IDU+z8vJFnGWeC+bKQV/5VZ71FV6L7PA3gg3tXrdQ+DgLhC+75Wq3no69P3MC0NFQpx2lL04Ql9gHK1bRDjsSBIvScBnDTk1WrlGIZBorIDEYJj+rhdgnQ67VmWRe0zlplXl81vcyEt0rSoYDUAAAAASUVORK5CYII=",
+    imgSrc:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJDSURBVHgB7Zq9jtpAEMfHlhEgQLiioXEkoAGECwoKxMcTRHmC5E3IoyRPkPAEkI7unJYmTgEFTYwA8a3NTKScLnCHN6c9r1e3P2llWQy7M/s1Gv1twCP0ej37dDq9x+Zut1t3t9vZjDEHIiSRSPg4ZpDL5fxkMvn1cDh8m0wmfugfO53OoFQq/crn8wxfY9EymQyrVCqMfHvScZx1p9ls3pFxXBy/bKlUipGPrVbLuQqAfsCliq3zl0H84zwtjQrOw4Mt1W63P5LvBm2d+Xz+YzqdgkqUy+WgWCy+Mc/nc282m4FqLBYL+3g8fjDxenq72WxANZbLJeA13zDX67UDioL5ybXwafMYu64Ltn3bdDweQ5R97fd7GyhBQMipx4POeEDHIu2LfDdBIGGz+hJ9CQ1ABjoA2egAZPM6AgiCAEQhsi/C4jHyPA/6/f5NG3Ks2+3CYDC4aTccDrn6ojG54MnEvG00GoVmWLIRNZ7wTCwDHYBsdACy0QHIhiuRETxlICWpMMhGZHmqS8qH6JLyGegAZKMDkI0uKf8X4SWlaZo+Pp1bRrwlJU8ZKLIvUjKh0WiQ3sRUbNVq9c5Ebew7KEo2m/1p4jJ4qAmDaqDQBzj5XyiAT4VCQezJigAU+IDU+z8vJFnGWeC+bKQV/5VZ71FV6L7PA3gg3tXrdQ+DgLhC+75Wq3no69P3MC0NFQpx2lL04Ql9gHK1bRDjsSBIvScBnDTk1WrlGIZBorIDEYJj+rhdgnQ67VmWRe0zlplXl81vcyEt0rSoYDUAAAAASUVORK5CYII=",
   },
   [WalletType.KEPLR]: {
     name: "Keplr",

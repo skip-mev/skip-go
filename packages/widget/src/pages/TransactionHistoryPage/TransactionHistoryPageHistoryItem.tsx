@@ -1,20 +1,23 @@
-import { SmallText } from "@/components/Typography";
-import { ClientAsset } from "@/state/skipClient";
+import { Text, SmallText } from "@/components/Typography";
+import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { XIcon } from "@/icons/XIcon";
 import { useMemo } from "react";
 import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPageRouteDetailedRow";
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
-import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
-import { removeTrailingZeros } from "@/utils/number";
-import { useTxHistoryStatus } from "@/hooks/useTxHistoryStatus";
+import { limitDecimalsDisplayed } from "@/utils/number";
+import { useTxHistory } from "@/hooks/useTxHistory";
+import { createExplorerLink } from "@/utils/explorerLink";
+import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
+import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
+import { Tooltip } from "@/components/Tooltip";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -31,13 +34,15 @@ export const TransactionHistoryPageHistoryItem = ({
 }: TransactionHistoryPageHistoryItemProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const historyStatus = useTxHistoryStatus({
-    txs: txHistoryItem.transactionDetails.map((tx) => ({
-      chainID: tx.chainID,
-      txHash: tx.txHash,
-    })),
-    txsRequired: txHistoryItem.route.txsRequired,
+  const {
+    status: historyStatus,
+    explorerLinks: txHistoryExplorerLinks,
+    transferAssetRelease,
+  } = useTxHistory({
+    txHistoryItem,
+    index,
   });
 
   const removeTransactionHistoryItem = useSetAtom(removeTransactionHistoryItemAtom);
@@ -55,6 +60,22 @@ export const TransactionHistoryPageHistoryItem = ({
     transactionDetails,
   } = txHistoryItem;
 
+  const initialTxHash = transactionDetails?.[0]?.txHash;
+  const chainId = transactionDetails?.[0]?.chainID;
+  const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+  const derivedExplorerLink = createExplorerLink({
+    txHash: initialTxHash,
+    chainID: chainId,
+    chainType,
+  });
+
+  const explorerLinks = useMemo(() => {
+    if (txHistoryExplorerLinks.length === 0 && derivedExplorerLink) {
+      return [derivedExplorerLink];
+    }
+    return txHistoryExplorerLinks;
+  }, [derivedExplorerLink, txHistoryExplorerLinks]);
+
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
     chainId: sourceAssetChainID,
@@ -71,12 +92,14 @@ export const TransactionHistoryPageHistoryItem = ({
     amount: sourceAssetDetails.amount,
     asset: sourceAssetDetails.asset,
     assetImage: sourceAssetDetails.assetImage ?? "",
+    chainName: sourceAssetDetails.chainName,
   };
 
   const destination = {
     amount: destinationAssetDetails.amount,
     asset: destinationAssetDetails.asset,
     assetImage: destinationAssetDetails.assetImage ?? "",
+    chainName: destinationAssetDetails.chainName,
   };
 
   const renderStatus = useMemo(() => {
@@ -94,10 +117,19 @@ export const TransactionHistoryPageHistoryItem = ({
       case "completed":
         return <StyledGreenDot />;
       case "incomplete":
-      case "failed":
-        return <XIcon color={theme.error.text} />;
+      case "failed": {
+        if (transferAssetRelease) {
+          return <FilledWarningIcon backgroundColor={theme.warning.text} />;
+        } else return <XIcon color={theme.error.text} />;
+      }
     }
-  }, [historyStatus, theme.error.text, theme.primary.text.normal]);
+  }, [
+    historyStatus,
+    theme.primary.text.normal,
+    theme.error.text,
+    theme.warning.text,
+    transferAssetRelease,
+  ]);
 
   const absoluteTimeString = useMemo(() => {
     if (isMobileScreenSize) {
@@ -111,6 +143,7 @@ export const TransactionHistoryPageHistoryItem = ({
     if (historyStatus === "pending") {
       return "In Progress";
     }
+    if (!timestamp) return "";
     return formatDistanceStrict(new Date(timestamp), new Date(), {
       addSuffix: true,
     })
@@ -124,27 +157,21 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [historyStatus, timestamp]);
+  }, [timestamp, historyStatus]);
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <StyledHistoryItemContainer gap={5} align="center">
-          <RenderAssetAmount {...source} />
-          <HistoryArrowIcon color={theme.primary.text.lowContrast} style={{ flexShrink: 0 }} />
+        <Row gap={12} align="center">
+          <RenderAssetAmount {...source} sourceAsset />
+          <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
           <RenderAssetAmount {...destination} />
-          <SmallText
-            normalTextColor
-            title={destinationAssetDetails.chainName}
-            textWrap="nowrap"
-            overflowEllipsis
-          >
-            on {destinationAssetDetails.chainName}
-          </SmallText>
-        </StyledHistoryItemContainer>
+        </Row>
         <Row align="center" gap={10}>
           <SmallText>{relativeTime}</SmallText>
-          {renderStatus}
+          <Row width={20} align="center" justify="center">
+            {renderStatus}
+          </Row>
         </Row>
       </StyledHistoryItemRow>
       {showDetails && (
@@ -153,8 +180,9 @@ export const TransactionHistoryPageHistoryItem = ({
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
-          transactionDetails={transactionDetails}
           onClickDelete={() => removeTransactionHistoryItem(index)}
+          explorerLinks={explorerLinks}
+          transferAssetRelease={transferAssetRelease}
         />
       )}
     </StyledHistoryContainer>
@@ -165,22 +193,47 @@ const RenderAssetAmount = ({
   amount,
   asset,
   assetImage,
+  chainName,
+  sourceAsset = false,
 }: {
   amount?: string;
   asset?: ClientAsset;
   assetImage: string;
+  chainName?: string;
+  sourceAsset?: boolean;
 }) => {
   const isMobileScreenSize = useIsMobileScreenSize();
+
+  const formattedAmount = useMemo(() => {
+    const numberAfterLimitTwoDecimalPlaces = limitDecimalsDisplayed(amount, 2);
+    if (numberAfterLimitTwoDecimalPlaces === "0.00") {
+      return "< 0.01";
+    }
+    return numberAfterLimitTwoDecimalPlaces;
+  }, [amount]);
+
+  const subtitle = useMemo(() => {
+    if (!asset) return;
+    if (sourceAsset || isMobileScreenSize) {
+      return asset?.recommendedSymbol;
+    }
+    return `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
+  }, [asset, chainName, isMobileScreenSize, sourceAsset]);
+
   return (
-    <>
-      <img height={20} width={20} src={assetImage} />
-      <SmallText normalTextColor title={amount}>
-        {removeTrailingZeros(amount)}
-      </SmallText>
-      {!isMobileScreenSize && (
-        <SmallText normalTextColor>{asset?.recommendedSymbol ?? asset?.symbol}</SmallText>
-      )}
-    </>
+    <Row gap={8}>
+      <img height={35} width={35} src={assetImage} />
+      <Column style={sourceAsset ? { width: 50 } : undefined}>
+        <Tooltip content={amount} style={{ width: "min-content" }}>
+          <Text normalTextColor style={{ width: "max-content" }}>
+            {formattedAmount}
+          </Text>
+        </Tooltip>
+        <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
+          {subtitle}
+        </SmallText>
+      </Column>
+    </Row>
   );
 };
 
@@ -189,12 +242,15 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
   &:hover {
     background: ${({ theme }) => theme.secondary.background.normal};
   }
+  min-height: 55px;
   border-radius: 6px;
+  justify-content: center;
 `;
 
 const StyledHistoryItemRow = styled(Row)`
+  gap: 5px;
   padding: 0 10px;
-  height: 40px;
+  height: 55px;
   &:hover {
     cursor: pointer;
   }
@@ -205,9 +261,4 @@ const StyledGreenDot = styled.div`
   height: 10px;
   background: ${({ theme }) => theme.success.text};
   border-radius: 50%;
-`;
-
-const StyledHistoryItemContainer = styled(Row)`
-  max-width: calc(100% - 100px);
-  overflow: hidden;
 `;

@@ -18,6 +18,8 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
+import { track } from "@amplitude/analytics-browser";
+import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
 
 export type GroupedAsset = {
   id: string;
@@ -46,21 +48,21 @@ export type AssetAndChainSelectorModalProps = ModalProps & {
 };
 
 const ITEM_HEIGHT = 65;
-const ITEM_GAP = 5;
 
 export const AssetAndChainSelectorModal = createModal(
   (modalProps: AssetAndChainSelectorModalProps) => {
     const modal = useModal();
     const { onSelect: _onSelect, selectedAsset, selectChain, context } = modalProps;
-    const { data: assets, isLoading: isAssetsLoading } = useAtomValue(skipAssetsAtom);
+    const { data: assets, isFetching, isPending } = useAtomValue(skipAssetsAtom);
+    const ibcEurekaHighlightedAssets = useAtomValue(ibcEurekaHighlightedAssetsAtom);
     const { isLoading: isChainsLoading } = useAtomValue(skipChainsAtom);
-    const isLoading = isAssetsLoading || isChainsLoading;
+    const isLoading = (isFetching && isPending) || isChainsLoading;
 
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [groupedAssetSelected, setGroupedAssetSelected] = useState<GroupedAsset | null>(null);
 
-    const listHeight = useListHeight(ITEM_HEIGHT + ITEM_GAP);
+    const listHeight = useListHeight(ITEM_HEIGHT);
 
     const resetInput = () => {
       setSearchQuery("");
@@ -95,7 +97,11 @@ export const AssetAndChainSelectorModal = createModal(
     }, [groupedAssetSelected?.assets, selectedAsset, groupedAssetsByRecommendedSymbol]);
 
     const filteredAssets = useFilteredAssets({ groupedAssetsByRecommendedSymbol, searchQuery });
-    const filteredChains = useFilteredChains({ selectedGroup, searchQuery, context });
+    const filteredChains = useFilteredChains({
+      selectedGroup,
+      searchQuery,
+      context,
+    });
 
     useEffect(() => {
       if (!isLoading && assets) {
@@ -107,12 +113,36 @@ export const AssetAndChainSelectorModal = createModal(
       setSearchQuery("");
     }, [modal.visible]);
 
+    const componentName = `${context} ${selectChain ? "chain" : "asset"} modal`;
+
     const handleSearch = (term: string) => {
+      track(`${componentName}: search input - changed`, { term });
       setSearchQuery(term);
     };
 
     const renderItem = useCallback(
       (item: GroupedAsset | ChainWithAsset, index: number) => {
+        const groupedAsset = item as GroupedAsset;
+        const chainWithAsset = item as ChainWithAsset;
+
+        const highlightedSymbol =
+          ibcEurekaHighlightedAssets && Object.keys(ibcEurekaHighlightedAssets);
+
+        const groupedAssetContainsEurekaAsset = highlightedSymbol?.includes(groupedAsset.id);
+
+        const chainWithAssetContainsEurekaAsset = chainWithAsset?.asset?.recommendedSymbol
+          ? ibcEurekaHighlightedAssets &&
+            highlightedSymbol.includes(chainWithAsset.asset.recommendedSymbol) &&
+            ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] === undefined
+            ? true
+            : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
+              ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
+                chainWithAsset.chainID,
+              )
+          : false;
+
+        const eureka = groupedAssetContainsEurekaAsset || chainWithAssetContainsEurekaAsset;
+
         return (
           <AssetAndChainSelectorModalRowItem
             item={item}
@@ -120,10 +150,11 @@ export const AssetAndChainSelectorModal = createModal(
             onSelect={onSelect}
             skeleton={<Skeleton />}
             context={context}
+            eureka={eureka}
           />
         );
       },
-      [context, onSelect],
+      [context, ibcEurekaHighlightedAssets, onSelect],
     );
 
     const listOfAssetsOrChains = useMemo(() => {
@@ -134,6 +165,7 @@ export const AssetAndChainSelectorModal = createModal(
     }, [filteredAssets, filteredChains, groupedAssetSelected, selectChain]);
 
     const onClickBack = () => {
+      track(`${componentName}: header back button - clicked`);
       if (groupedAssetSelected === null) {
         NiceModal.remove(Modals.AssetAndChainSelectorModal);
       } else {
@@ -142,8 +174,15 @@ export const AssetAndChainSelectorModal = createModal(
     };
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      track(`${componentName}: keyboard - pressed`, { key: event.key });
+      const firstAssetOrChain = listOfAssetsOrChains?.[0] ?? null;
+      const asset = (firstAssetOrChain as ChainWithAsset)?.asset;
+      const groupedAsset = firstAssetOrChain as GroupedAsset;
       if (event.key === "Backspace" && groupedAssetSelected !== null && searchQuery === "") {
         setGroupedAssetSelected(null);
+      }
+      if (event.key === "Enter" && listOfAssetsOrChains?.length === 1) {
+        onSelect(asset ?? groupedAsset);
       }
     };
 
@@ -166,7 +205,7 @@ export const AssetAndChainSelectorModal = createModal(
         ) : (
           <VirtualList
             listItems={listOfAssetsOrChains ?? []}
-            itemHeight={ITEM_HEIGHT + ITEM_GAP}
+            itemHeight={ITEM_HEIGHT}
             itemKey={(item) =>
               isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`
             }
@@ -183,6 +222,22 @@ export const AssetAndChainSelectorModal = createModal(
     );
   },
 );
+
+export const openAssetAndChainSelectorModal = ({
+  context,
+  onSelect,
+}: {
+  onSelect: (asset: ClientAsset | null) => void;
+  context: "source" | "destination";
+}) => {
+  NiceModal.show(Modals.AssetAndChainSelectorModal, {
+    context,
+    onSelect: (asset: ClientAsset | null) => {
+      onSelect(asset);
+      NiceModal.hide(Modals.AssetAndChainSelectorModal);
+    },
+  });
+};
 
 const StyledColumn = styled(Column)<{
   height: number;

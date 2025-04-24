@@ -3,12 +3,11 @@ import { Column, Row } from "./Layout";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Text } from "./Typography";
 import { Button } from "./Button";
-import { MAX_MOBILE_SCREEN_WIDTH } from "@/hooks/useIsMobileScreenSize";
 
 type ModalHeaderProps = {
   title: string;
   onClickBackButton: () => void;
-  rightContent?: () => React.ReactNode;
+  rightContent?: React.ReactNode;
 };
 
 export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHeaderProps) => {
@@ -19,7 +18,7 @@ export const ModalHeader = ({ title, onClickBackButton, rightContent }: ModalHea
         <StyledLeftArrowIcon color={theme?.primary.text.normal} />
       </Button>
       <StyledCenteredTitle textAlign="center">{title}</StyledCenteredTitle>
-      {rightContent?.()}
+      {rightContent}
     </StyledHeader>
   );
 };
@@ -31,13 +30,9 @@ export const StyledModalContainer = styled(Column)`
   width: calc(100% - 20px);
   border-radius: 20px;
   background: ${({ theme }) => theme.primary.background.normal};
-  overflow: hidden;
   height: 100%;
-
-  @media (max-width: ${MAX_MOBILE_SCREEN_WIDTH}px) {
-    max-height: 600px;
-  }
 `;
+
 export const StyledModalInnerContainer = styled(Column)`
   width: 100%;
   align-items: center;

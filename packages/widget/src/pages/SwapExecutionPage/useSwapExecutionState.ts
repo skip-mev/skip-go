@@ -11,6 +11,7 @@ type UseSwapExecutionStateParams = {
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: { status: string };
   signaturesRemaining: number;
+  isLoading: boolean;
 };
 
 export function useSwapExecutionState({
@@ -19,8 +20,10 @@ export function useSwapExecutionState({
   overallStatus,
   isValidatingGasBalance,
   signaturesRemaining,
+  isLoading,
 }: UseSwapExecutionStateParams): SwapExecutionState {
   return useMemo(() => {
+    if (isLoading) return SwapExecutionState.pendingGettingAddresses;
     if (!chainAddresses) return SwapExecutionState.destinationAddressUnset;
     const requiredChainAddresses = route?.requiredChainAddresses;
     if (!requiredChainAddresses) return SwapExecutionState.destinationAddressUnset;
@@ -64,6 +67,7 @@ export function useSwapExecutionState({
 
     return SwapExecutionState.ready;
   }, [
+    isLoading,
     chainAddresses,
     route?.requiredChainAddresses,
     overallStatus,

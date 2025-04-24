@@ -1,6 +1,6 @@
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import { useAtom } from "jotai";
-import { ErrorPageTradeWarning } from "./ErrorPageTradeWarning";
+import { ErrorPageBadPriceWarning } from "./ErrorPageBadPriceWarning";
 import { ErrorPageAuthFailed } from "./ErrorPageAuthFailed";
 import { ErrorPageTransactionFailed } from "./ErrorPageTransactionFailed";
 import { ErrorPageUnexpected } from "./ErrorPageUnexpected";
@@ -10,6 +10,8 @@ import { ErrorPageTimeout } from "./ErrorPageTimeout";
 import { ErrorPageTradeAdditionalSigningRequired } from "./ErrorPageTradeAdditionalSigningRequired";
 import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
 import { ErrorPageCosmosLedgerWarning } from "./ErrorPageCosmosLedgerWarning";
+import { ErrorPageGoFastWarning } from "./ErrorPageGoFastWarning";
+import { ErrorPageLowInfoWarning } from "./ErrorPageLowInfoWarning";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -18,12 +20,14 @@ export const ErrorPage = () => {
     switch (error?.errorType) {
       case ErrorType.AuthFailed:
         return <ErrorPageAuthFailed {...error} />;
+      case ErrorType.GoFastWarning:
+        return <ErrorPageGoFastWarning {...error} />;
       case ErrorType.Timeout:
         return <ErrorPageTimeout {...error} />;
       case ErrorType.AdditionalSigningRequired:
         return <ErrorPageTradeAdditionalSigningRequired {...error} />;
-      case ErrorType.TradeWarning:
-        return <ErrorPageTradeWarning {...error} />;
+      case ErrorType.BadPriceWarning:
+        return <ErrorPageBadPriceWarning {...error} />;
       case ErrorType.TransactionFailed:
         return <ErrorPageTransactionFailed {...error} />;
       case ErrorType.TransactionReverted:
@@ -32,6 +36,8 @@ export const ErrorPage = () => {
         return <ErrorPageUnexpected error={error.error} />;
       case ErrorType.CosmosLedgerWarning:
         return <ErrorPageCosmosLedgerWarning {...error} />;
+      case ErrorType.LowInfoWarning:
+        return <ErrorPageLowInfoWarning {...error} />;
       default:
         return;
     }

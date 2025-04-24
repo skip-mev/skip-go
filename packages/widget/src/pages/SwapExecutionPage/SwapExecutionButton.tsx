@@ -15,6 +15,9 @@ import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+import { useCountdown } from "./useCountdown";
+import { track } from "@amplitude/analytics-browser";
+import { useCallback } from "react";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -33,19 +36,40 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   connectRequiredChains,
   submitExecuteRouteMutation,
 }) => {
+  const countdown = useCountdown({
+    estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
+    swapExecutionState,
+  });
+
   const theme = useTheme();
   const setError = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route);
 
+  const getDestinationAddreessUnsetText = useCallback(() => {
+    const destinationChainIdHasSignRequired =
+      lastOperation.signRequired && lastOperation.fromChainID === route?.destAssetChainID;
+
+    if (destinationChainIdHasSignRequired && route?.txsRequired === 2) {
+      return "Set second signing address";
+    }
+    return "Set destination address";
+  }, [
+    lastOperation.fromChainID,
+    lastOperation.signRequired,
+    route?.destAssetChainID,
+    route?.txsRequired,
+  ]);
+
   switch (swapExecutionState) {
     case SwapExecutionState.recoveryAddressUnset:
       return (
         <MainButton
-          label="Set recovery address"
+          label="Set intermediary address"
           icon={ICONS.rightArrow}
           onClick={() => {
+            track("swap execution page: set recovery address button - clicked");
             connectRequiredChains(true);
           }}
         />
@@ -53,21 +77,25 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.destinationAddressUnset:
       return (
         <MainButton
-          label="Set destination address"
+          label={getDestinationAddreessUnsetText()}
           icon={ICONS.rightArrow}
           onClick={() => {
+            track("swap execution page: set destination address button - clicked");
             const destinationChainID = route?.destAssetChainID;
             if (!destinationChainID) return;
             NiceModal.show(Modals.SetAddressModal, {
               signRequired: lastOperation.signRequired,
               chainId: destinationChainID,
+              chainAddressIndex: route.requiredChainAddresses.length - 1,
             });
           }}
         />
       );
     case SwapExecutionState.ready: {
+      track("swap execution page: confirm button - clicked", { route });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
+          track("error page: additional signing required", { route });
           setError({
             errorType: ErrorType.AdditionalSigningRequired,
             onClickContinue: () => submitExecuteRouteMutation(),
@@ -92,7 +120,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           loading
           isGoFast={isGoFast}
           extra={isGoFast && <GoFastSymbol />}
-          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
         />
       );
     case SwapExecutionState.signaturesRemaining:
@@ -103,7 +131,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             signaturesRemaining,
           )} ${signaturesRemaining > 1 ? "are" : "is"} still required`}
           loading
-          loadingTimeString={convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds)}
+          loadingTimeString={convertSecondsToMinutesOrHours(countdown)}
         />
       );
     case SwapExecutionState.confirmed:
@@ -113,11 +141,15 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.checkmark}
           backgroundColor={theme.success.text}
           onClick={() => {
+            track("swap execution page: go again button - clicked");
             clearAssetInputAmounts();
             setCurrentPage(Routes.SwapPage);
           }}
         />
       );
+    case SwapExecutionState.pendingGettingAddresses:
+      return <MainButton label="Getting addresses" loading />;
+
     default:
       return null;
   }

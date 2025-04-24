@@ -1,10 +1,10 @@
-import { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { ComponentType, ReactNode, useEffect, useMemo, useState } from "react";
 import { StyleSheetManager, ThemeProvider } from "styled-components";
-import { useCSS, Scope } from "react-shadow-scope";
+import { Scope } from "react-shadow-scope";
 import { defaultTheme, PartialTheme } from "./theme";
 import isPropValid from "@emotion/is-prop-valid";
 import { useInjectFontsToDocumentHead } from "@/hooks/useInjectFontsToDocumentHead";
-import { globalStyles } from "./globalStyles";
+import { atom, useAtomValue } from "jotai";
 
 function shouldForwardProp(propName: string, target: string | ComponentType<unknown>) {
   if (typeof target === "string") {
@@ -13,6 +13,8 @@ function shouldForwardProp(propName: string, target: string | ComponentType<unkn
   return true;
 }
 
+export const disableShadowDomAtom = atom<boolean>(false);
+
 export const ShadowDomAndProviders = ({
   children,
   theme,
@@ -20,19 +22,17 @@ export const ShadowDomAndProviders = ({
   children: ReactNode;
   theme?: PartialTheme;
 }) => {
+  const disableShadowDom = useAtomValue(disableShadowDomAtom);
   useInjectFontsToDocumentHead();
-  const css = useCSS();
 
-  const [, setShadowDom] = useState<HTMLElement>();
-  const [styledComponentContainer, setStyledComponentContainer] = useState<HTMLElement>();
+  const [localShadowRoot, setLocalShadowRoot] = useState<ShadowRoot>();
 
-  const onShadowDomLoaded = useCallback((element: HTMLDivElement) => {
-    setShadowDom(element);
-  }, []);
-
-  const onStyledComponentContainerLoaded = useCallback((element: HTMLDivElement) => {
-    setStyledComponentContainer(element);
-  }, []);
+  const onShadowDomLoaded = (element: HTMLDivElement) => {
+    if (!element?.shadowRoot) return;
+    if (!localShadowRoot) {
+      setLocalShadowRoot(element?.shadowRoot);
+    }
+  };
 
   const mergedThemes = useMemo(() => {
     return {
@@ -41,18 +41,22 @@ export const ShadowDomAndProviders = ({
     };
   }, [theme]);
 
+  if (disableShadowDom) {
+    return (
+      <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+        <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
+      </StyleSheetManager>
+    );
+  }
+
   return (
     <ClientOnly>
-      <Scope
-        ref={onShadowDomLoaded}
-        stylesheet={css`
-          ${globalStyles}
-        `}
-      >
-        <div ref={onStyledComponentContainerLoaded}></div>
-        <StyleSheetManager shouldForwardProp={shouldForwardProp} target={styledComponentContainer}>
-          <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
-        </StyleSheetManager>
+      <Scope ref={onShadowDomLoaded}>
+        {localShadowRoot && (
+          <StyleSheetManager shouldForwardProp={shouldForwardProp} target={localShadowRoot}>
+            <ThemeProvider theme={mergedThemes}>{children}</ThemeProvider>
+          </StyleSheetManager>
+        )}
       </Scope>
     </ClientOnly>
   );

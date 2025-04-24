@@ -10,12 +10,12 @@ import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
-import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { copyToClipboard } from "@/utils/misc";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { removeTrailingZeros } from "@/utils/number";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { TxsStatus } from "./useBroadcastedTxs";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -31,6 +31,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
     address: string;
     image?: string;
   };
+  statusData?: TxsStatus;
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({
@@ -43,10 +44,12 @@ export const SwapExecutionPageRouteDetailedRow = ({
   isSignRequired,
   index,
   context,
+  statusData,
   ...props
 }: SwapExecutionPageRouteDetailedRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -55,8 +58,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
   });
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
 
   const shouldRenderEditDestinationWallet =
     context === "destination" && onClickEditDestinationWallet !== undefined;
@@ -64,57 +65,59 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const renderingEditDestinationWalletOrExplorerLink =
     shouldRenderEditDestinationWallet || explorerLink !== undefined;
 
-  const source = useMemo(() => {
+  const chainAddressWallet = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
-    switch (context) {
-      case "source":
-        return {
-          address: account?.address,
-          image: account?.wallet.logo,
-        };
-      case "intermediary": {
-        const selected = Object.values(chainAddresses).find(
-          (chainAddress) => chainAddress.chainID === chainId,
-        );
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
-        };
-      }
-      case "destination": {
-        const selected = chainAddressArray[chainAddressArray.length - 1];
-        return {
-          address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
-        };
-      }
-    }
-  }, [account?.address, account?.wallet.logo, chainAddresses, chainId, context]);
+    const firstChainAddressFoundForChainId = chainAddressArray.find(
+      (chainAddress) => chainAddress.chainID === chainId,
+    );
+    const lastChainAddress = chainAddressArray[chainAddressArray.length - 1];
+
+    const selectedChainAddress =
+      context === "destination" ? lastChainAddress : firstChainAddressFoundForChainId;
+
+    return {
+      address: selectedChainAddress?.address,
+      image:
+        (selectedChainAddress?.source === "wallet" &&
+          selectedChainAddress?.wallet?.walletInfo.logo) ||
+        undefined,
+    };
+  }, [chainAddresses, chainId, context]);
 
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
       : React.Fragment;
-    if (!source.address) return;
+    if (!chainAddressWallet.address) return;
+
+    const renderContent = () => {
+      const copiedToClipboardText = isMobileScreenSize ? "Copied!" : "Address copied!";
+
+      if (isShowingCopyAddressFeedback) {
+        return <SmallText>{copiedToClipboardText}</SmallText>;
+      }
+      if (isMobileScreenSize) {
+        return <CopyIcon color={theme.primary.text.lowContrast} />;
+      }
+      return (
+        <AddressText title={chainAddressWallet.address} monospace textWrap="nowrap">
+          {getTruncatedAddress(chainAddressWallet.address, isMobileScreenSize)}
+        </AddressText>
+      );
+    };
     return (
       <Container>
-        <PillButton onClick={() => copyToClipboard(source.address)}>
-          {source.image && (
+        <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
+          {chainAddressWallet.image && (
             <img
-              src={source.image}
+              src={chainAddressWallet.image}
               style={{
                 height: "100%",
               }}
             />
           )}
-          {isMobileScreenSize ? (
-            <CopyIcon color={theme.primary.text.lowContrast} />
-          ) : (
-            <AddressText title={source.address} monospace textWrap="nowrap">
-              {getTruncatedAddress(source.address, isMobileScreenSize)}
-            </AddressText>
-          )}
-        </PillButton>
+          {renderContent()}
+        </AddressPillButton>
         {shouldRenderEditDestinationWallet && (
           <Button
             as={isMobileScreenSize ? PillButton : undefined}
@@ -127,11 +130,13 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
+    copyAddress,
     isMobileScreenSize,
+    isShowingCopyAddressFeedback,
     onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
-    source.address,
-    source.image,
+    chainAddressWallet.address,
+    chainAddressWallet.image,
     theme.primary.text.lowContrast,
   ]);
 
@@ -151,14 +156,18 @@ export const SwapExecutionPageRouteDetailedRow = ({
     );
   }, [explorerLink, isMobileScreenSize]);
 
+  const numberOfTransferEvents = statusData?.transferEvents.length;
+  const latestStatus = statusData?.transferEvents?.[statusData?.transferEvents.length - 1]?.status;
+
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.assetImage && (
+      {assetDetails?.assetImage ? (
         <StyledAnimatedBorder
           width={30}
           height={30}
           backgroundColor={theme.success.text}
           status={status}
+          key={`${numberOfTransferEvents}-${latestStatus}`}
         >
           <StyledChainImage
             height={30}
@@ -167,6 +176,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
             title={assetDetails?.asset?.name}
           />
         </StyledAnimatedBorder>
+      ) : (
+        <PlaceholderIcon> ? </PlaceholderIcon>
       )}
 
       <Column
@@ -175,8 +186,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
         }}
         justify="space-between"
       >
-        <Row align="center" justify="space-between">
-          <Column>
+        <Row align="center">
+          <LeftContent>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
                 {removeTrailingZeros(assetDetails?.amount)}
@@ -195,13 +206,40 @@ export const SwapExecutionPageRouteDetailedRow = ({
               {renderExplorerLink}
             </Row>{" "}
             {isSignRequired && <SmallText color={theme.warning.text}>Signature required</SmallText>}
-          </Column>
+          </LeftContent>
           {renderAddress}
         </Row>
       </Column>
     </Row>
   );
 };
+
+const AddressPillButton = styled(PillButton)`
+  justify-content: flex-start;
+  @media (min-width: 768px) {
+    width: 160px;
+  }
+`;
+
+const LeftContent = styled(Column)`
+  width: 55%;
+  @media (max-width: 767px) {
+    width: 75%;
+  }
+`;
+
+const PlaceholderIcon = styled.div`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.secondary.background.normal};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: ${(props) => props.theme.primary.text.normal};
+  border: 1px solid ${(props) => props.theme.primary.text.normal};
+`;
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
@@ -312,13 +350,9 @@ const StyledLoadingOverlay = styled(Row)<{
 `;
 
 const StyledAssetAmount = styled(SmallText)`
-  max-width: 60px;
+  max-width: 80px;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  @media (max-width: 767px) {
-    max-width: 80px;
-  }
 
   @media (max-width: 400px) {
     max-width: 55px;

@@ -1,13 +1,13 @@
 import { css, keyframes, styled } from "styled-components";
-import { ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
+import { disableShadowDomAtom, ShadowDomAndProviders } from "@/widget/ShadowDomAndProviders";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom, ErrorType } from "@/state/errorPage";
-import { themeAtom } from "@/state/skipClient";
+import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 
 export type ModalProps = {
@@ -22,25 +22,16 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
   const [prevOverflowStyle, setPrevOverflowStyle] = useState<string>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const modal = useModal();
-  const [wasVisible, setWasVisible] = useState(modal.visible);
-
-  const delay = async (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
-  const closeModal = useCallback(() => {
-    onOpenChange?.(false);
-    delay(140).then(() => {
-      modal.remove();
-    });
-  }, [modal, onOpenChange]);
+  const [wasVisible, setWasVisible] = useState<boolean>();
+  const disableShadowDom = useAtomValue(disableShadowDomAtom);
+  const rootId = useAtomValue(rootIdAtom);
 
   useEffect(() => {
     if (wasVisible && !modal.visible) {
-      closeModal();
+      onOpenChange?.(false);
     }
     setWasVisible(modal.visible);
-  }, [closeModal, modal.visible, wasVisible]);
+  }, [modal.visible, onOpenChange, wasVisible]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -50,15 +41,23 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (modalRef.current !== event.target && modal.visible) {
         modal.hide();
       }
     };
 
     onOpenChange?.(true);
-    const prevOverflowStyle = window.getComputedStyle(document.body).overflow;
-    setPrevOverflowStyle(prevOverflowStyle);
-    document.body.style.overflow = "hidden";
+
+    const hasScrollbar = () => {
+      const htmlElement = document.documentElement;
+      return htmlElement.scrollHeight > htmlElement.clientHeight;
+    };
+
+    const prevOverflowStyle = window.getComputedStyle(document.documentElement).overflow;
+    if (!drawer || !hasScrollbar()) {
+      setPrevOverflowStyle(prevOverflowStyle);
+      document.documentElement.style.overflow = "hidden";
+    }
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("click", handleClickOutside);
@@ -67,14 +66,31 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("click", handleClickOutside);
       onOpenChange?.(false);
-      document.body.style.overflow = prevOverflowStyle;
+      document.documentElement.style.overflow = prevOverflowStyle;
     };
-  }, [closeModal, modal, onOpenChange, prevOverflowStyle]);
+  }, [drawer, modal, onOpenChange, prevOverflowStyle]);
+
+  // this fixes a flickering animation when modals are opened
+  if (disableShadowDom && wasVisible === undefined) return null;
 
   return createPortal(
     <ShadowDomAndProviders theme={theme}>
-      <StyledOverlay ref={modalRef} drawer={drawer} open={modal.visible}>
-        <StyledContent drawer={drawer} open={modal.visible} onClick={(e) => e.stopPropagation()}>
+      <StyledOverlay
+        drawer={drawer}
+        open={modal.visible}
+        data-root-id={rootId}
+        onAnimationEnd={() => {
+          if (!modal.visible) {
+            modal.remove();
+          }
+        }}
+      >
+        <StyledContent
+          ref={modalRef}
+          drawer={drawer}
+          open={modal.visible}
+          onClick={(e) => e.stopPropagation()}
+        >
           {children}
         </StyledContent>
       </StyledOverlay>
@@ -180,7 +196,7 @@ const StyledOverlay = styled.div<{
   display: grid;
   place-items: center;
   z-index: 10;
-  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out;
+  animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -196,7 +212,7 @@ const StyledOverlay = styled.div<{
       align-items: flex-end;
       position: absolute;
       background: rgba(255, 255, 255, 0);
-      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out;
+      animation: ${props.open ? fadeIn : fadeOut} 150ms ease-in-out forwards;
       /* For Chrome */
       &::-webkit-scrollbar {
         display: none;
@@ -227,5 +243,5 @@ const StyledContent = styled.div<{
         : drawer
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
-    150ms cubic-bezier(0.5, 1, 0.89, 1);
+    150ms cubic-bezier(0.5, 1, 0.89, 1) forwards;
 `;

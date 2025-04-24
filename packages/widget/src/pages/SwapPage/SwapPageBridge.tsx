@@ -1,33 +1,42 @@
 import { useTheme, styled } from "styled-components";
 import { BridgeArrowIcon } from "@/icons/BridgeArrowIcon";
 import { BridgeIcon } from "@/icons/BridgeIcon";
-import { invertSwapAtom } from "@/state/swapPage";
-import { useSetAtom } from "jotai";
+import { destinationAssetAtom, invertSwapAtom } from "@/state/swapPage";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "@/components/Button";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { defaultRouteAtom } from "@/state/route";
+import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 
 export const SwapPageBridge = () => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const switchEvmChainId = useSwitchEvmChain();
+  const destinationAsset = useAtomValue(destinationAssetAtom);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const invertSwap = useSetAtom(invertSwapAtom);
+  const defaultRoute = useAtomValue(defaultRouteAtom);
+  const lockedRoute = defaultRoute?.srcLocked || defaultRoute?.destLocked;
   const onInvertSwap = () => {
     invertSwap();
+    switchEvmChainId(destinationAsset?.chainID);
 
     let spinTimeout = undefined;
     clearTimeout(spinTimeout);
     setIsSpinning(true);
-    spinTimeout = setTimeout(() => setIsSpinning(false), 500);
+
+    spinTimeout = setTimeout(() => {
+      setIsSpinning(false);
+    }, 500);
   };
 
   return (
-    <Button
-      style={{ position: "relative", cursor: "pointer", height: 5 }}
+    <StyledSwapPageBridgeButton
       align="center"
       onClick={onInvertSwap}
-      disabled={isSpinning}
+      disabled={isSpinning || lockedRoute}
     >
       <BridgeIcon
         color={theme.primary.background.normal}
@@ -40,9 +49,15 @@ export const SwapPageBridge = () => {
         width={isMobileScreenSize ? 16 : 13}
         height={isMobileScreenSize ? 16 : 13}
       />
-    </Button>
+    </StyledSwapPageBridgeButton>
   );
 };
+
+const StyledSwapPageBridgeButton = styled(Button)`
+  position: relative;
+  cursor: pointer;
+  height: 5px;
+`;
 
 const StyledBridgeArrow = styled(BridgeArrowIcon)<{ spin?: boolean }>`
   position: absolute;

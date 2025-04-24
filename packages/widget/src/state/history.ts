@@ -5,22 +5,24 @@ import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { skipClient } from "./skipClient";
+import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
   transactionDetails: TransactionDetails[];
   timestamp: number;
   status: SimpleStatus;
-};
+} & TxsStatus;
 
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   "transactionHistory",
   [],
+  undefined,
 );
 
 export const setTransactionHistoryAtom = atom(
   null,
-  (get, set, index: number, historyItem: Partial<TransactionHistoryItem>) => {
+  (get, set, index: number, historyItem: TransactionHistoryItem) => {
     const history = get(transactionHistoryAtom);
     const oldHistoryItem = history?.[index] ?? {};
     const newHistory = history;

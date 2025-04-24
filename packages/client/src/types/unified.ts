@@ -45,7 +45,9 @@ import {
   StargateTransfer,
   LayerZeroTransferJSON,
   LayerZeroTransfer,
-} from './shared';
+  EurekaTransferJSON,
+  EurekaTransfer,
+} from "./shared";
 
 export type AssetsRequestJSON = {
   chain_ids?: string[];
@@ -240,7 +242,7 @@ export type MsgsWarningType =
   | "INSUFFICIENT_GAS_AT_DEST_EOA"
   | "INSUFFICIENT_GAS_AT_INTERMEDIATE";
 
-export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate";
+export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate" | "eureka";
 
 export type RouteWarning = {
   type: RouteWarningType;
@@ -295,7 +297,9 @@ export type OperationJSON =
   | (BaseOperationJSON & { op_init_transfer: OPInitTransferJSON })
   | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON })
   | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON })
-  | (BaseOperationJSON & { layer_zero_transfer: LayerZeroTransferJSON });
+  | (BaseOperationJSON & { layer_zero_transfer: LayerZeroTransferJSON })
+  | (BaseOperationJSON & { eureka_transfer: EurekaTransferJSON })
+  | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON });
 
 interface BaseOperation {
   txIndex: number;
@@ -314,7 +318,9 @@ export type Operation =
   | (BaseOperation & { opInitTransfer: OPInitTransfer })
   | (BaseOperation & { goFastTransfer: GoFastTransfer })
   | (BaseOperation & { stargateTransfer: StargateTransfer })
-  | (BaseOperation & { layerZeroTransfer: LayerZeroTransfer });
+  | (BaseOperation & { layerZeroTransfer: LayerZeroTransfer })
+  | (BaseOperation & { eurekaTransfer: EurekaTransfer })
+  | (BaseOperation & { stargateTransfer: StargateTransfer });
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -387,6 +393,7 @@ export type MsgsRequestJSON = {
   post_route_handler?: PostHandlerJSON;
 
   enable_gas_warnings?: boolean;
+  timeout_seconds?: string;
 };
 
 export type MsgsRequest = {
@@ -410,6 +417,8 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   enableGasWarnings?: boolean;
+
+  timeoutSeconds?: string;
 };
 export type MsgsDirectRequestBaseJSON = {
   source_asset_denom: string;
@@ -540,7 +549,8 @@ export type BridgeType =
   | "HYPERLANE"
   | "OPINIT"
   | "GO_FAST"
-  | "STARGATE";
+  | "STARGATE"
+  | "EUREKA";
 
 export enum ChainType {
   Cosmos = "cosmos",

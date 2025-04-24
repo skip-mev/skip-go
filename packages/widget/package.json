@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.2.0",
+  "version": "3.8.4",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -21,7 +21,8 @@
     "pre": "npm run build && node scripts/prepublish.cjs",
     "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
-    "update-registries": "yarn up @initia/initia-registry chain-registry"
+    "update-registries": "yarn up @initia/initia-registry chain-registry",
+    "test": "yarn playwright test"
   },
   "exports": {
     ".": {
@@ -37,8 +38,9 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.9.0",
-    "@initia/initia-registry": "^0.2.2",
+    "@initia/initia-registry": "^1.0.1",
     "@keplr-wallet/types": "^0.12.125",
+    "@playwright/test": "^1.51.1",
     "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.6",
     "@storybook/addon-links": "^8.2.6",
@@ -47,19 +49,23 @@
     "@storybook/react": "^8.2.6",
     "@storybook/react-vite": "^8.2.6",
     "@storybook/test": "^8.2.6",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
     "@types/eslint__js": "^8.42.3",
     "@types/pluralize": "^0.0.33",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^19.0.2",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "@vitejs/plugin-react": "^4.3.1",
     "buffer": "^6.0.3",
-    "chain-registry": "^1.69.113",
+    "chain-registry": "^1.69.193",
+    "download": "^8.0.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "fs-extra": "^11.3.0",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "pino-pretty": "^13.0.0",
     "postcss-loader": "^8.1.1",
@@ -88,6 +94,7 @@
     "wagmi": "^2.14.1"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.11.12",
     "@cosmjs/amino": "0.31.3",
     "@cosmjs/cosmwasm-stargate": "0.31.3",
     "@cosmjs/launchpad": "*",
@@ -98,9 +105,9 @@
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
-    "@penumbra-zone/bech32m": "^7.0.0",
-    "@penumbra-zone/client": "^18.1.0",
-    "@penumbra-zone/protobuf": "^6.0.0",
+    "@penumbra-zone/bech32m": "^13.0.0",
+    "@penumbra-zone/client": "^24.0.0",
+    "@penumbra-zone/protobuf": "^7.2.0",
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@r2wc/react-to-web-component": "^2.0.3",
     "@sentry/react": "^8.46.0",
@@ -110,7 +117,6 @@
     "@solana/wallet-adapter-coinbase": "^0.1.19",
     "@solana/wallet-adapter-ledger": "^0.9.25",
     "@solana/wallet-adapter-phantom": "^0.9.24",
-    "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-solflare": "^0.6.28",
     "@solana/wallet-adapter-trust": "^0.1.13",
     "@solana/web3.js": "^1.95.8",
@@ -118,6 +124,8 @@
     "@walletconnect/modal": "2.7.0",
     "@walletconnect/sign-client": "2.17.2",
     "@walletconnect/solana-adapter": "^0.0.6",
+    "add": "^2.0.6",
+    "bech32": "^2.0.0",
     "graz": "^0.1.30",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
@@ -128,6 +136,7 @@
     "react-error-boundary": "^4.0.13",
     "react-shadow-scope": "^1.0.5",
     "styled-components": "^6.1.13",
+    "yarn": "^1.22.22",
     "zod": "^3.23.8"
   },
   "publishConfig": {

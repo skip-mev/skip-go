@@ -18,7 +18,6 @@ export const initSentry = () => {
     dsn: "https://10ce608bdd1c68a13d3849d6b242333c@o4504768725909504.ingest.us.sentry.io/4508485201231872",
     tunnel: "https://go.skip.build/api/sentry",
     defaultIntegrations: false,
-    denyUrls: [/^https?:\/\/localhost:.*/],
     integrations: [
       breadcrumbsIntegration(),
       dedupeIntegration(),
@@ -34,6 +33,7 @@ export const initSentry = () => {
         networkDetailAllowUrls: [/^https:\/\/go\.skip\.build\//],
         networkRequestHeaders: ["X-Custom-Header"],
         networkResponseHeaders: ["X-Custom-Header"],
+        useCompression: false,
       }),
     ],
     // Session Replay

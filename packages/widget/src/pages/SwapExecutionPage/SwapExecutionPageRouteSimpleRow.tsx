@@ -12,12 +12,11 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
-import { useGetAccount } from "@/hooks/useGetAccount";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { copyToClipboard } from "@/utils/misc";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useCopyAddress } from "@/hooks/useCopyAddress";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -43,6 +42,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 }: SwapExecutionPageRouteSimpleRowProps) => {
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
+  const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -51,26 +51,26 @@ export const SwapExecutionPageRouteSimpleRow = ({
   });
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
-  const getAccount = useGetAccount();
-  const account = getAccount(chainId);
 
   const source = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     switch (context) {
-      case "source":
+      case "source": {
+        const selected = chainAddressArray[0];
         return {
-          address: account?.address,
-          image: account?.wallet.logo,
+          address: selected?.address,
+          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
+      }
       case "destination": {
         const selected = chainAddressArray[chainAddressArray.length - 1];
         return {
           address: selected?.address,
-          image: (selected?.source === "wallet" && selected.wallet.walletInfo.logo) || undefined,
+          image: (selected?.source === "wallet" && selected?.wallet?.walletInfo.logo) || undefined,
         };
       }
     }
-  }, [account?.address, account?.wallet.logo, chainAddresses, context]);
+  }, [chainAddresses, context]);
 
   const displayAmount = useMemo(() => {
     return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
@@ -123,11 +123,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
             on {assetDetails.chainName}
           </StyledChainName>
 
-          <Button align="center" gap={3} onClick={() => copyToClipboard(source.address)}>
+          <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
             {source.image && <img height={10} width={10} src={source.image} />}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
-                {getTruncatedAddress(source.address, isMobileScreenSize)}
+                {isShowingCopyAddressFeedback
+                  ? "Address copied!"
+                  : getTruncatedAddress(source.address, isMobileScreenSize)}
               </SmallText>
             )}
           </Button>
@@ -152,6 +154,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
 const StyledSymbolAndAmount = styled(Text)`
   font-size: 24px;
   max-width: 325px;
+  height: 27px;
   overflow: hidden;
   text-overflow: ellipsis;
   @media (max-width: 767px) {

@@ -8,8 +8,8 @@ import { getWallet, WalletType } from "graz";
 import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
-import { solanaWallets } from "@/constants/solana";
 import { defaultTheme, Theme } from "@/widget/theme";
+import { solanaWallets } from "@/constants/solana";
 
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
@@ -19,18 +19,23 @@ export const defaultSkipClientConfig = {
 };
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: defaultSkipClientConfig.apiUrl,
-  endpointOptions: defaultSkipClientConfig.endpointOptions,
+  apiURL: undefined,
+  endpointOptions: undefined,
 });
 
+export const rootIdAtom = atom<string | undefined>(undefined);
+
 export const themeAtom = atom<Theme>(defaultTheme);
+
+export const skipClientInstanceAtom = atom(new SkipClient());
 
 export const skipClient = atom((get) => {
   const options = get(skipClientConfigAtom);
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
+  const skipClientInstance = get(skipClientInstanceAtom);
 
-  return new SkipClient({
+  skipClientInstance.updateOptions({
     ...options,
     getCosmosSigner: async (chainID) => {
       if (getSigners?.getCosmosSigner) {
@@ -70,6 +75,8 @@ export const skipClient = atom((get) => {
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
   });
+
+  return skipClientInstance;
 });
 
 export type ClientAsset = Asset & {
@@ -114,6 +121,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
         })
         .then((v) => flattenData(v, chains.data));
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
@@ -131,6 +139,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
         onlyTestnets,
       });
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
@@ -155,6 +164,7 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
     queryFn: async () => {
       return skip.venues(onlyTestnets);
     },
+    enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 

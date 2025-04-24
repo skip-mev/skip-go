@@ -10,7 +10,13 @@ export const useGetSourceBalance = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainID);
-  const { data: skipBalances, isFetched, isLoading, refetch } = useAtomValue(skipAllBalancesAtom);
+  const {
+    data: skipBalances,
+    isFetched,
+    isPending: allBalancesIsPending,
+    isFetching: allBalancesIsFetching,
+    refetch,
+  } = useAtomValue(skipAllBalancesAtom);
 
   const cw20Balance = useCW20Balance({
     asset: sourceAsset as ClientAsset,
@@ -19,6 +25,7 @@ export const useGetSourceBalance = () => {
 
   // this is to support both tanstack query v4/v5
   const cw20BalanceIsLoading = cw20Balance.isPending && cw20Balance.isFetching;
+  const allBalancesIsLoading = allBalancesIsPending && allBalancesIsFetching;
 
   const data = useMemo(() => {
     if (!sourceAsset || !sourceAccount || !skipBalances) return;
@@ -48,7 +55,7 @@ export const useGetSourceBalance = () => {
 
   return {
     data,
-    isLoading: !isFetched || isLoading || cw20BalanceIsLoading,
+    isLoading: !isFetched || allBalancesIsLoading || cw20BalanceIsLoading,
     refetch: () => {
       refetch();
       cw20Balance.refetch();

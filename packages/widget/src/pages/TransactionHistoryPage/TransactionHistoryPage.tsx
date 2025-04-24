@@ -10,12 +10,11 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { transactionHistoryAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
-import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { track } from "@amplitude/analytics-browser";
 
 export const TransactionHistoryPage = () => {
   const theme = useTheme();
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const isMobileScreenSize = useIsMobileScreenSize();
   const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<number | undefined>(undefined);
 
   const txHistory = useAtomValue(transactionHistoryAtom);
@@ -30,14 +29,17 @@ export const TransactionHistoryPage = () => {
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
-          onClick: () => setCurrentPage(Routes.SwapPage),
+          onClick: () => {
+            track("transaction history page: header back button - clicked");
+            setCurrentPage(Routes.SwapPage);
+          },
         }}
       />
       <StyledContainer gap={5}>
         <VirtualList
           key={txHistory.length}
           listItems={historyList}
-          height={isMobileScreenSize ? 0 : 262}
+          height={262}
           empty={{
             details: "No transactions yet",
             icon: <HistoryIcon width={30} height={30} color={theme?.primary?.text.lowContrast} />,
@@ -48,12 +50,15 @@ export const TransactionHistoryPage = () => {
               index={index}
               txHistoryItem={item}
               showDetails={index === itemIndexToShowDetail}
-              onClickRow={() =>
-                setItemIndexToShowDetail((prev) => (prev === index ? undefined : index))
-              }
+              onClickRow={() => {
+                track("transaction history page: transaction row - clicked", {
+                  item,
+                });
+                setItemIndexToShowDetail((prev) => (prev === index ? undefined : index));
+              }}
             />
           )}
-          itemKey={(item) => item.transactionDetails[0].txHash}
+          itemKey={(item) => item.transactionDetails?.[0].txHash}
         />
       </StyledContainer>
       <SwapPageFooter />

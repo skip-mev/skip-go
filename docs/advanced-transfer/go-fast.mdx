@@ -47,6 +47,22 @@ Currently, Go Fast supports the following source chains:
 And the following destination chains:
 1. Any IBC-connected chain supported by Skip Go
 
+# What are the minimum and maximum transfer sizes for Go Fast?
+
+Below is a table summarizing the minimum and maximum transfer sizes for each chain currently supported by Go Fast. 
+
+| Source Chain                                | Minimum Transfer Size (in USD) | Maximum Transfer Size (in USD)|
+| ------------------------------------------- | --------------------- | --------------------- |
+| **Ethereum Mainnet**                        | 50                    | 17,500                 |
+| **Arbitrum**                                | 1                     | 17,500                 |
+| **Avalanche**                               | 1                     | 17,500                 |
+| **Base**                                    | 1                     | 17,500                 |
+| **Optimism**                                | 1                     | 17,500                 |
+| **Polygon**                                 | 1                     | 17,500                 |
+
+
+Note: If a user is starting from an asset that is not USDC on the source chain, Skip Go will swap the asset to USDC on the source chain and the post-swap amount is used to see if it is within the min/max bounds of Go Fast transfer sizes.
+
 # What is the fee model for Go Fast?
 
 Go Fast works by having solvers use their own capital to fill orders as quickly as possible, where the solvers take on the re-org risk of the source chain. The Go Fast protocol compensates solvers by paying them a fee (denoted by the difference in the input and output amount of the user's order). The fee is composed of three parts, a basis points fee on the transfer size, a source gas fee, and a destination gas fee.

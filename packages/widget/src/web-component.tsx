@@ -1,49 +1,58 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-/* eslint-disable @typescript-eslint/no-namespace */
+
 import toWebComponent from "@r2wc/react-to-web-component";
-import { Widget } from "./widget/Widget";
-
-type WebComponentProps = {
-  container: {
-    attributes: Record<string, string>[];
-  };
-};
-
-function isJsonString(str: string) {
-  try {
-    JSON.parse(str);
-  } catch (_err) {
-    return false;
-  }
-  return true;
-}
-
-const camelize = (inputString: string) => {
-  inputString = inputString.toLowerCase();
-  return inputString.replace(/-./g, (x) => x[1].toUpperCase());
-};
-
-const WidgetWithProvider = (props: WebComponentProps) => {
-  const parsedProps = Array.from(props.container.attributes).map(({ name, value }) => {
-    return { key: name, value };
-  });
-
-  const realProps = parsedProps.reduce(
-    (accumulator, initialValue) => {
-      const { key, value } = initialValue;
-
-      accumulator[camelize(key)] = isJsonString(value) ? JSON.parse(value) : value;
-      return accumulator;
-    },
-    {} as Record<string, string>,
-  );
-
-  return <Widget {...realProps} />;
-};
+import { NewSkipClientOptions, Widget, WidgetProps } from "./widget/Widget";
 
 const WEB_COMPONENT_NAME = "skip-widget";
 
-const WebComponent = toWebComponent(WidgetWithProvider);
+type WebComponentProps = WidgetProps & NewSkipClientOptions;
+
+type PropDescriptors = {
+  [K in keyof WebComponentProps]: "any";
+};
+
+const widgetPropTypes: Required<PropDescriptors> = {
+  rootId: "any",
+  theme: "any",
+  brandColor: "any",
+  onlyTestnet: "any",
+  defaultRoute: "any",
+  settings: "any",
+  routeConfig: "any",
+  filter: "any",
+  filterOut: "any",
+  filterOutUnlessUserHasBalance: "any",
+  walletConnect: "any",
+  enableSentrySessionReplays: "any",
+  enableAmplitudeAnalytics: "any",
+  connectedAddresses: "any",
+  simulate: "any",
+  disableShadowDom: "any",
+  ibcEurekaHighlightedAssets: "any",
+  assetSymbolsSortedToTop: "any",
+  hideAssetsUnlessWalletTypeConnected: "any",
+  apiUrl: "any",
+  apiKey: "any",
+  endpointOptions: "any",
+  aminoTypes: "any",
+  registryTypes: "any",
+  chainIdsToAffiliates: "any",
+  cacheDurationMs: "any",
+  getCosmosSigner: "any",
+  getEVMSigner: "any",
+  getSVMSigner: "any",
+  onWalletConnected: "any",
+  onWalletDisconnected: "any",
+  onTransactionBroadcasted: "any",
+  onTransactionComplete: "any",
+  onTransactionFailed: "any",
+  onRouteUpdated: "any",
+};
+
+const WebComponent = toWebComponent(Widget, {
+  // @ts-expect-error any is not one of the valid types but it works
+  props: widgetPropTypes,
+});
 
 function initializeSkipWidget() {
   if (!customElements.get(WEB_COMPONENT_NAME)) {
@@ -51,23 +60,15 @@ function initializeSkipWidget() {
   }
 
   // Upgrade any existing skip-widget elements
-  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => {
-    customElements.upgrade(el);
-  });
+  document.querySelectorAll(WEB_COMPONENT_NAME).forEach((el) => customElements.upgrade(el as Node));
 }
 
 initializeSkipWidget();
 
 export default WebComponent;
 
-type Stringify<T> = {
-  [K in keyof T]?: string;
-};
-
 declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [WEB_COMPONENT_NAME]: Stringify<WebComponentProps>;
-    }
+  interface HTMLElementTagNameMap {
+    [WEB_COMPONENT_NAME]: WidgetProps;
   }
 }

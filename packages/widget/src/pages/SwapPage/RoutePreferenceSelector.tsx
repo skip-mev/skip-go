@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAtom } from "jotai";
 import { routePreferenceAtom } from "@/state/swapPage";
 import { ROUTE_PREFERENCE_OPTIONS } from "@/constants/widget";
-import { Row, Spacer } from "@/components/Layout";
+import { Column, Row, Spacer } from "@/components/Layout";
 import { SmallText } from "@/components/Typography";
 import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled from "styled-components";
 import { StyledSettingsOptionLabel } from "./SlippageSelector";
+import { Tooltip } from "@/components/Tooltip";
+import { track } from "@amplitude/analytics-browser";
 
 const RoutePreferenceSelector: React.FC = () => {
-  const [showTooltip, setShowTooltip] = useState(false);
   const [routePreference, setRoutePreference] = useAtom(routePreferenceAtom);
 
   return (
@@ -17,23 +18,25 @@ const RoutePreferenceSelector: React.FC = () => {
       <PreferenceText align="center">
         Route Preference
         <Spacer width={5} />
-        <QuestionMarkIcon
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        />
-        {showTooltip && (
-          <Tooltip>
-            Choose if Skip:Go should prioritize faster routes or routes with the lowest possible
-            fees.
-          </Tooltip>
-        )}
+        <Tooltip
+          content={
+            <SmallText normalTextColor style={{ width: 250 }}>
+             Choose if faster or cheaper routes should be prioritized. Fast routes require a $50 minimum from Ethereum and may not be available if there is insufficient liquidity for an asset.
+            </SmallText>
+          }
+        >
+          <QuestionMarkIcon />
+        </Tooltip>
       </PreferenceText>
       <OptionsContainer gap={5}>
         {ROUTE_PREFERENCE_OPTIONS.map((option) => (
           <StyledSettingsOptionLabel
             key={option}
             selected={option === routePreference}
-            onClick={() => setRoutePreference(option)}
+            onClick={() => {
+              track("settings drawer: route preference - changed", { routePreference: option });
+              setRoutePreference(option);
+            }}
           >
             {option.charAt(0).toUpperCase() + option.slice(1)}
           </StyledSettingsOptionLabel>
@@ -43,14 +46,10 @@ const RoutePreferenceSelector: React.FC = () => {
   );
 };
 
-const Container = styled(Row)`
+const Container = styled(Column)`
   justify-content: space-between;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
+  align-items: flex-start;
+  gap: 15px;
 `;
 
 const PreferenceText = styled(Row).attrs({
@@ -61,24 +60,8 @@ const PreferenceText = styled(Row).attrs({
   letter-spacing: 0.26px;
 `;
 
-const Tooltip = styled(SmallText).attrs({
-  normalTextColor: true,
-})`
-  position: absolute;
-  padding: 13px;
-  border-radius: 13px;
-  border: 1px solid ${({ theme }) => theme.primary.text.ultraLowContrast};
-  background: ${({ theme }) => theme.secondary.background.normal};
-  top: -30px;
-  left: 130px;
-  width: 250px;
-  z-index: 1;
-`;
-
 const OptionsContainer = styled(Row)`
-  @media (max-width: 767px) {
-    width: 100%;
-  }
+  width: 100%;
 `;
 
 export default RoutePreferenceSelector;

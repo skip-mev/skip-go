@@ -11,6 +11,7 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { track } from "@amplitude/analytics-browser";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -42,11 +43,13 @@ export const ConnectedWalletContent = () => {
   return (
     <Row
       style={{
-        paddingRight: 13,
+        paddingRight: 8,
+        gap: 1,
       }}
     >
       <GhostButton
         onClick={() => {
+          track("swap page: connected wallet balance - clicked");
           NiceModal.show(Modals.ConnectedWalletModal);
         }}
         align="center"
@@ -86,7 +89,10 @@ export const ConnectedWalletContent = () => {
         disabled={
           !sourceBalance || sourceBalance?.amount === "0" || maxAmountTokenMinusFees === "0"
         }
-        onClick={handleMaxButton}
+        onClick={() => {
+          track("swap page: max button - clicked");
+          handleMaxButton();
+        }}
         align="center"
       >
         Max

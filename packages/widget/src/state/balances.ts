@@ -11,13 +11,16 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
   const params = get(skipAllBalancesRequestAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
 
-  const enabled = params && Object.keys(params).length > 0 && !isInvertingSwap;
+  const enabled = params && !isInvertingSwap;
 
   return {
     queryKey: ["skipBalances", params],
     queryFn: async () => {
       if (!params) {
-        throw new Error("No balance request provided");
+        return { chains: {} };
+      }
+      if (Object.keys(params.chains).length === 0) {
+        return { chains: {} };
       }
       return skip.balances(params);
     },

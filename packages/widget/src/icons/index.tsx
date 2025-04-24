@@ -10,8 +10,8 @@ import { HistoryIcon } from "./HistoryIcon";
 import { ThinArrowIcon } from "./ThinArrowIcon";
 import { HamburgerIcon } from "./HamburgerIcon";
 import { HorizontalLineIcon } from "./HorizontalLineIcon";
-import { SVGProps } from "react";
-import { LightningIcon } from "./LightningIcon";
+import { ReactElement, SVGProps } from "react";
+import { GoFastIcon } from "./GoFastIcon";
 
 export enum ICONS {
   none,
@@ -28,7 +28,7 @@ export enum ICONS {
   thinArrow,
   hamburger,
   horizontalLine,
-  lightning,
+  goFast,
 }
 
 type IconProps = SVGProps<SVGSVGElement> & {
@@ -37,7 +37,7 @@ type IconProps = SVGProps<SVGSVGElement> & {
   backgroundColor?: string;
 };
 
-type IconMap = Record<ICONS, (props: IconProps) => JSX.Element | null>;
+type IconMap = Record<ICONS, (props: IconProps) => ReactElement | null>;
 
 export const iconMap: IconMap = {
   [ICONS.none]: () => null,
@@ -54,5 +54,5 @@ export const iconMap: IconMap = {
   [ICONS.thinArrow]: ThinArrowIcon,
   [ICONS.hamburger]: HamburgerIcon,
   [ICONS.horizontalLine]: HorizontalLineIcon,
-  [ICONS.lightning]: LightningIcon,
+  [ICONS.goFast]: GoFastIcon,
 };

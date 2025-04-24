@@ -1,4 +1,4 @@
-import { setTransactionHistoryAtom } from "@/state/history";
+import { setTransactionHistoryAtom, transactionHistoryAtom } from "@/state/history";
 import {
   setOverallStatusAtom,
   swapExecutionStateAtom,
@@ -21,6 +21,7 @@ export const useSyncTxStatus = ({
   const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
     useAtomValue(swapExecutionStateAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
+  const txHistory = useAtomValue(transactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -30,8 +31,6 @@ export const useSyncTxStatus = ({
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
-    if (!route?.operations || !route?.txsRequired) return;
-
     if (statusData?.lastTxStatus === "pending") {
       if (isPending) {
         setOverallStatus("pending");
@@ -63,8 +62,6 @@ export const useSyncTxStatus = ({
     }
   }, [
     isPending,
-    route?.operations,
-    route?.txsRequired,
     setOverallStatus,
     statusData?.isSettled,
     statusData?.isSuccess,
@@ -75,7 +72,10 @@ export const useSyncTxStatus = ({
 
   useEffect(() => {
     if (computedSwapStatus) {
+      const index = historyIndex ?? transactionHistoryIndex;
       setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
+        ...txHistory[index],
+        ...statusData,
         status: computedSwapStatus,
       });
       if (!historyIndex) {
@@ -91,5 +91,7 @@ export const useSyncTxStatus = ({
     setTransactionHistory,
     transactionHistoryIndex,
     historyIndex,
+    txHistory,
+    statusData,
   ]);
 };
