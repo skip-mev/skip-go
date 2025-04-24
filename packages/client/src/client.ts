@@ -408,7 +408,6 @@ export class SkipClient {
     });
 
     const validateEnabledChainIds = async (chainId: string) => {
-      console.log("validateEnabledChainIds");
       await this.validateGasBalances({
         txs,
         getFallbackGasAmount: options.getFallbackGasAmount,
@@ -1821,7 +1820,6 @@ export class SkipClient {
           (enabledChainIds === undefined ||
             enabledChainIds.includes(tx.cosmosTx.chainID))
         ) {
-          console.log("cosmosTxSimulation", tx.cosmosTx.chainID);
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
           }
@@ -1854,7 +1852,6 @@ export class SkipClient {
           (enabledChainIds === undefined ||
             enabledChainIds.includes(tx.evmTx.chainID))
         ) {
-          console.log("evmTxSimulation", tx.evmTx.chainID);
           const signer = await getEVMSigner?.(tx.evmTx.chainID);
           if (!signer) {
             throw new Error(
@@ -1884,7 +1881,6 @@ export class SkipClient {
           (enabledChainIds === undefined ||
             enabledChainIds.includes(tx.svmTx.chainID))
         ) {
-          console.log("svmTxSimulation", tx.svmTx.chainID);
           try {
             const res = await this.validateSvmGasBalance({
               tx: tx.svmTx,
