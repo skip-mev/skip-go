@@ -101,7 +101,6 @@ export type Transfer = {
   bridgeID: BridgeType;
   smartRelay: boolean;
 
-  
   toChainCallbackContractAddress?: string;
   toChainEntryContractAddress?: string;
   /**
@@ -420,7 +419,7 @@ export type EurekaTransfer = {
   supportsMemo: boolean;
   entryContractAddress: string;
   callbackAdapterContractAddress: string;
-  
+
   denomIn: string;
   denomOut: string;
 
