@@ -1,5 +1,41 @@
 ## 0.0.15
 
+## 3.8.5
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+- Updated dependencies [72ca16b]
+  - @skip-go/client@0.16.34
+
+## 3.8.4
+
+### Patch Changes
+
+- d82a6e3: update registries
+- Updated dependencies [d82a6e3]
+  - @skip-go/client@0.16.33
+
+## 3.8.3
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+- d4b83b0: add initia testnet
+- Updated dependencies [363cceb]
+  - @skip-go/client@0.16.32
+
+## 3.8.2
+
+### Patch Changes
+
+- daeb41e: improve insufficient balance button text if gas balance issue
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+- Updated dependencies [aca9648]
+- Updated dependencies [a0582fc]
+  - @skip-go/client@0.16.31
+
 ## 3.8.1
 
 ### Patch Changes

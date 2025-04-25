@@ -1,5 +1,30 @@
 # @skip-go/client
 
+## 0.16.34
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+
+## 0.16.33
+
+### Patch Changes
+
+- d82a6e3: update registries
+
+## 0.16.32
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+
+## 0.16.31
+
+### Patch Changes
+
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+
 ## 0.16.30
 
 ### Patch Changes
