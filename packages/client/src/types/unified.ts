@@ -242,7 +242,12 @@ export type MsgsWarningType =
   | "INSUFFICIENT_GAS_AT_DEST_EOA"
   | "INSUFFICIENT_GAS_AT_INTERMEDIATE";
 
-export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate" | "eureka";
+export type ExperimentalFeature =
+  | "cctp"
+  | "hyperlane"
+  | "stargate"
+  | "eureka"
+  | "layer_zero";
 
 export type RouteWarning = {
   type: RouteWarningType;
@@ -550,7 +555,8 @@ export type BridgeType =
   | "OPINIT"
   | "GO_FAST"
   | "STARGATE"
-  | "EUREKA";
+  | "EUREKA"
+  | "LAYER_ZERO";
 
 export enum ChainType {
   Cosmos = "cosmos",
