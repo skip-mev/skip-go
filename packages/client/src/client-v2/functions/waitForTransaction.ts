@@ -14,15 +14,19 @@ export const waitForTransaction = async ({
   txHash,
   onTransactionTracked,
 }: WaitForTransactionProps) => {
-  const { explorerLink } = await trackTransaction.request({
+  const { explorerLink } = (await trackTransaction.request({
     chainId,
     txHash,
-  });
+    // TODO: remove after updating swagger
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  })) as any;
   await onTransactionTracked?.({ txHash, chainId, explorerLink });
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const txStatusResponse = await transactionStatus.request({
+    // TODO: remove after updating swagger
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const txStatusResponse: any = await transactionStatus.request({
       chainId,
       txHash,
     });

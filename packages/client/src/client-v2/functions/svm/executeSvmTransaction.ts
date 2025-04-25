@@ -12,6 +12,10 @@ export const executeSvmTransaction = async (
 ) => {
   const gasArray = ClientState.validateGasResults;
 
+  if (tx === undefined) {
+    throw new Error("executeSvmTransaction error: tx is undefined");
+  }
+
   const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
   if (typeof gas?.error === "string") {
     throw new Error(gas?.error);
@@ -45,11 +49,11 @@ export const executeSvmTransaction = async (
 
     const serializedTx = signedTx.serialize();
 
-    await submitTransaction({
-      chainId: svmTx.chainId,
-      tx: serializedTx.toString("base64"),
-    })
-      .request()
+    await submitTransaction
+      .request({
+        chainId: svmTx.chainId,
+        tx: serializedTx.toString("base64"),
+      })
       .then((res) => {
         signature = res.txHash;
       });

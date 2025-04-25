@@ -23,9 +23,14 @@ export const executeCosmosTransaction = async ({
   index,
 }: ExecuteCosmosTransactionProps) => {
   const { userAddresses } = options;
+
+  if (tx === undefined) {
+    throw new Error("executeCosmosTransaction error: tx is undefined");
+  }
+
   const chainId = tx.cosmosTx?.chainId;
   const messages = tx.cosmosTx?.msgs;
-  const currentUserAddress = userAddresses.find((x) => x.chainID === tx.cosmosTx?.chainId)?.address;
+  const currentUserAddress = userAddresses.find((x) => x.chainId === tx.cosmosTx?.chainId)?.address;
 
   const gasArray = ClientState.validateGasResults;
   const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
