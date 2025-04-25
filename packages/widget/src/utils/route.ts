@@ -1,41 +1,135 @@
 import { formatUSD } from "@/utils/intl";
-import { EstimatedFee, RouteResponse } from "@skip-go/client";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
+import {
+  RouteResponse,
+  EstimatedFee,
+  FeeType as ClientFeeType,
+} from "@skip-go/client";
+import { ClientOperation, OperationType, getClientOperations } from "./clientType";
 
-export enum FeeType {
-  SMART_RELAY = "SMART_RELAY",
+export interface FeeDetail {
+  assetAmount: number;
+  formattedAssetAmount: string;
+  formattedUsdAmount?: string;
+}
+export interface LabeledFee {
+  label: string;
+  fee: FeeDetail;
 }
 
-export const checkIsSmartRelay = (route: RouteResponse | undefined): boolean => {
-  return !!route?.estimatedFees?.some((fee) => fee.feeType === FeeType.SMART_RELAY);
-};
+/** Turn a ClientOperation into a FeeDetail */
+const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
+  if (op.type === OperationType.goFastTransfer && op.fee) {
+    const {
+      feeAsset,
+      sourceChainFeeAmount,
+      destinationChainFeeAmount,
+      bpsFeeAmount,
+      sourceChainFeeUSD,
+      destinationChainFeeUSD,
+      bpsFeeUSD,
+    } = op.fee;
 
-export const calculateSmartRelayFee = (
-  isSmartRelay: boolean,
-  estimatedFees: EstimatedFee[] | undefined,
-) => {
-  if (!isSmartRelay || !estimatedFees) return undefined;
+    const totalAmt = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
+      .reduce((s, a) => s + Number(a), 0)
+      .toString();
+    const totalUsd = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD]
+      .reduce((s, u) => s + Number(u), 0);
 
-  const relayFees = estimatedFees.filter((fee) => fee.feeType === FeeType.SMART_RELAY);
+    const human = convertTokenAmountToHumanReadableAmount(totalAmt, feeAsset.decimals);
 
-  const sameAsset = relayFees.every(
-    (fee, _, arr) => fee.originAsset.symbol === arr[0].originAsset.symbol,
+    return {
+      assetAmount: Number(human),
+      formattedAssetAmount: `${human} ${feeAsset.symbol}`,
+      formattedUsdAmount: formatUSD(totalUsd.toString()),
+    };
+  }
+
+  // all other ops have a simple fee + usdFeeAmount
+  const { feeAmount, feeAsset, usdFeeAmount } = op;
+  if (!feeAmount || !feeAsset?.decimals) return;
+
+  const human = convertTokenAmountToHumanReadableAmount(
+    feeAmount,
+    feeAsset.decimals
   );
 
-  if (!sameAsset) return undefined;
+  return {
+    assetAmount: Number(human),
+    formattedAssetAmount: `${human} ${feeAsset.symbol}`,
+    formattedUsdAmount: usdFeeAmount
+      ? formatUSD(usdFeeAmount)
+      : undefined,
+  };
+}
 
-  const computedAmount = relayFees.reduce((acc, fee) => acc + Number(fee.amount), 0);
+function computeSmartRelayFee(estimatedFees: EstimatedFee[]): FeeDetail | undefined {
+  const relay = estimatedFees.filter((f) => f.feeType === ClientFeeType.SMART_RELAY);
+  if (!relay.length) return;
 
-  const computedUsd = relayFees.reduce((acc, fee) => acc + Number(fee.usdAmount), 0);
+  const totalAmt = relay.reduce((s, f) => s + Number(f.amount), 0).toString();
+  const totalUsd = relay.reduce((s, f) => s + Number(f.usdAmount), 0);
 
-  if (!computedAmount || !computedUsd) return undefined;
-
-  const assetDecimals = relayFees[0].originAsset.decimals ?? 6;
-  const inAsset = convertTokenAmountToHumanReadableAmount(computedAmount, assetDecimals);
+  const { originAsset } = relay[0];
+  const decimals = originAsset.decimals ?? 6;
+  const human = convertTokenAmountToHumanReadableAmount(totalAmt, decimals);
 
   return {
-    assetAmount: Number(inAsset),
-    formattedAssetAmount: `${inAsset} ${relayFees[0].originAsset.symbol}`,
-    formattedUsdAmount: `${formatUSD(computedUsd)}`,
+    assetAmount: Number(human),
+    formattedAssetAmount: `${human} ${originAsset.symbol}`,
+    formattedUsdAmount: formatUSD(totalUsd.toString()),
   };
-};
+}
+
+export function getFeeList(route: RouteResponse): LabeledFee[] {
+  const fees: LabeledFee[] = [];
+
+  if (!route.operations) return fees;
+  const clientOps = getClientOperations(route.operations);
+  clientOps.forEach((op) => {
+    const fee = computeOpFee(op);
+    if (!fee) return;
+
+    let label = "Bridge Fee";
+    switch (op.type) {
+      case OperationType.axelarTransfer:
+        label = "Axelar Bridging Fee";
+        break;
+      case OperationType.hyperlaneTransfer:
+        label = "Hyperlane Bridging Fee";
+        break;
+      case OperationType.goFastTransfer:
+        label = "Go-Fast Transfer Fee";
+        break;
+    }
+
+    fees.push({ label, fee });
+  });
+
+  // 2) if smart-relay is present, append it too
+  const smartFee = computeSmartRelayFee(route.estimatedFees || []);
+  if (smartFee) {
+    fees.push({ label: "Smart Relay Fee", fee: smartFee });
+  }
+
+  return fees;
+}
+
+export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
+  if (!fees.length) return;
+
+  const totalAsset = fees.reduce((s, { fee }) => s + fee.assetAmount, 0);
+  const totalUsd = fees.reduce(
+    (s, { fee }) => s + (fee.formattedUsdAmount
+      ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, ""))
+      : 0),
+    0
+  );
+  const symbol = fees[0].fee.formattedAssetAmount.split(" ")[1];
+
+  return {
+    assetAmount: totalAsset,
+    formattedAssetAmount: `${totalAsset.toFixed(6)} ${symbol}`,
+    formattedUsdAmount: totalUsd > 0 ? formatUSD(totalUsd.toString()) : undefined,
+  };
+}
