@@ -8166,7 +8166,6 @@ __metadata:
     chain-registry: ^1.69.193
     cosmjs-types: ^0.9.0
     keccak: 3.0.4
-    lodash: ^4.17.21
     minimatch: ^9.0.3
     proxy-from-env: ^1.1.0
     swagger-typescript-api: ^13.0.28
