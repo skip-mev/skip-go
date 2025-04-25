@@ -103,9 +103,11 @@ export const SwapPageFooterItems = ({
                 </Row>
               </>
             )}
-            <Row gap={8} align="flex-end">
-              Fee: {totalFees?.formattedUsdAmount}
-            </Row>
+            {totalFees?.formattedUsdAmount &&
+              <Row gap={8} align="flex-end">
+                Fee: {totalFees?.formattedUsdAmount}
+              </Row>
+            }
           </Row>
         );
       }
@@ -155,9 +157,11 @@ export const SwapPageFooterItems = ({
                 </Row>
               </>
             )}
-            <Row gap={8} align="flex-end">
-              Fee: {totalFees?.formattedUsdAmount}
-            </Row>
+            {totalFees?.formattedUsdAmount &&
+              <Row gap={8} align="flex-end">
+                Fee: {totalFees?.formattedUsdAmount}
+              </Row>
+            }
             {routeRequiresMultipleSignatures
               ? renderSignatureRequired
               : isGoFast
