@@ -26,8 +26,10 @@ export const DEFAULT_GAS_MULTIPLIER = 1.5;
 export function getEncodeObjectFromCosmosMessage(
   message: CosmosMsg,
 ): EncodeObject {
+  console.log("getEncodeObjectFromCosmosMessage");
+  console.log("message", message);
   const msgJson = JSON.parse(message.msg);
-
+  console.log("msgJson", msgJson);
   if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
     return {
       typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
@@ -152,6 +154,44 @@ export function getEncodeObjectFromCosmosMessageInjective(
   }
 
   throw new Error("Unsupported message type");
+}
+
+export function getRlpTypes(message: CosmosMsg) {
+  const msgJson = JSON.parse(message.msg);
+  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+    return {
+      MsgValue: [
+        { name: "source_port", type: "string" },
+        { name: "source_channel", type: "string" },
+        { name: "token", type: "TypeToken" },
+        { name: "sender", type: "string" },
+        { name: "receiver", type: "string" },
+        { name: "timeout_height", type: "TypeTimeoutHeight" },
+        { name: "timeout_timestamp", type: "uint64" },
+        ...(() => {
+          if (msgJson.memo != null && msgJson.memo && msgJson.memo.length > 0) {
+            return [
+              {
+                name: "memo",
+                type: "string",
+              },
+            ];
+          }
+
+          return [];
+        })(),
+      ],
+      TypeToken: [
+        { name: "denom", type: "string" },
+        { name: "amount", type: "string" },
+      ],
+      TypeTimeoutHeight: [
+        { name: "revision_number", type: "uint64" },
+        { name: "revision_height", type: "uint64" },
+      ],
+    };
+  }
+  return {};
 }
 
 export async function getCosmosGasAmountForMessage(

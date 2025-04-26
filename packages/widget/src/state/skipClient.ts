@@ -54,6 +54,13 @@ export const skipClient = atom((get) => {
         ? wallet.getOfflineSignerOnlyAmino(chainID)
         : wallet.getOfflineSigner(chainID);
     },
+    getEIP712CosmosSigner: async () => {
+      if (!wallets.cosmos)
+        throw new Error("experimental sign EIP712 Cosmos Tx v0 error: no cosmos wallet");
+      const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+      if (!wallet) throw new Error("experimental sign EIP712 Cosmos Tx v0 error: wallet not found");
+      return wallet.experimentalSignEIP712CosmosTx_v0;
+    },
     getEVMSigner: async (chainID) => {
       if (getSigners?.getEVMSigner) {
         return getSigners.getEVMSigner(chainID);

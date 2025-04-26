@@ -49,6 +49,7 @@ export function encodePubkeyToAny(
       key: fromBase64(pubkey.value),
     });
     if (isInitia) {
+      console.log("isInitia", isInitia);
       return Any.fromPartial({
         typeUrl: "/initia.crypto.v1beta1.ethsecp256k1.PubKey",
         value: Uint8Array.from(PubKey.encode(pubkeyProto).finish()),

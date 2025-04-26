@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+import { makeSignDoc as makeSignDocAmino, StdSignDoc } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { bech32m, bech32 } from "bech32";
@@ -41,7 +41,10 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-import { MsgExecute } from "./codegen/initia/move/v1/tx";
+import {
+  initiaAminoConverters,
+  initiaProtoRegistry,
+} from "./codegen/initia/client";
 
 import {
   formatUnits,
@@ -70,6 +73,7 @@ import {
   getCosmosGasAmountForMessage,
   getEVMGasAmountForMessage,
   getSVMGasAmountForMessage,
+  getRlpTypes,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
@@ -81,7 +85,19 @@ import {
   PublicKey,
   Transaction,
 } from "@solana/web3.js";
-import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
+import {
+  opinitAminoConverters,
+  opinitProtoRegistry,
+} from "./codegen/opinit/client";
+import { ETH_KEY_SIGN_CHAINS } from "./amino/ethKeySign";
+import { Mutable } from "utility-types";
+import { getEip712TypedDataBasedOnChainId } from "./amino/eip712Utils";
+import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
+import {
+  AuthInfo,
+  Fee,
+  TxBody,
+} from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
 
@@ -100,6 +116,8 @@ export class SkipClient {
   getCosmosSigner?: clientTypes.SignerGetters["getCosmosSigner"];
   getEVMSigner?: clientTypes.SignerGetters["getEVMSigner"];
   getSVMSigner?: clientTypes.SignerGetters["getSVMSigner"];
+  getEIP712CosmosSigner?: clientTypes.SignerGetters["getEIP712CosmosSigner"];
+
   chainIDsToAffiliates?: clientTypes.SkipClientOptions["chainIDsToAffiliates"];
   cumulativeAffiliateFeeBPS?: string = "0";
 
@@ -125,16 +143,18 @@ export class SkipClient {
       ...createWasmAminoConverters(),
       ...circleAminoConverters,
       ...evmosAminoConverters,
+      ...initiaAminoConverters,
+      ...opinitAminoConverters,
       ...(options.aminoTypes ?? {}),
     });
 
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-      ["/initia.move.v1.MsgExecute", MsgExecute],
-      ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
       ...circleProtoRegistry,
       ...evmosProtoRegistry,
+      ...initiaProtoRegistry,
+      ...opinitProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
 
@@ -142,6 +162,7 @@ export class SkipClient {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
+    this.getEIP712CosmosSigner = options.getEIP712CosmosSigner;
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -168,6 +189,8 @@ export class SkipClient {
         ...createWasmAminoConverters(),
         ...circleAminoConverters,
         ...evmosAminoConverters,
+        ...initiaAminoConverters,
+        ...opinitAminoConverters,
         ...(options.aminoTypes ?? {}),
       });
     }
@@ -176,10 +199,10 @@ export class SkipClient {
       this.registry = new Registry([
         ...defaultRegistryTypes,
         ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-        ["/initia.move.v1.MsgExecute", MsgExecute],
-        ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
         ...circleProtoRegistry,
         ...evmosProtoRegistry,
+        ...initiaProtoRegistry,
+        ...opinitProtoRegistry,
         ...(options.registryTypes ?? []),
       ]);
     }
@@ -188,6 +211,7 @@ export class SkipClient {
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
     this.getSVMSigner = options.getSVMSigner;
+    this.getEIP712CosmosSigner = options.getEIP712CosmosSigner;
 
     if (options.chainIDsToAffiliates) {
       this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
@@ -648,8 +672,37 @@ export class SkipClient {
     onTransactionSigned?.({
       chainID,
     });
-
+    console.log("rawTx", rawTx);
     const txBytes = TxRaw.encode(rawTx).finish();
+    console.log("txBytes", txBytes);
+    const isEIP712Signing = ETH_KEY_SIGN_CHAINS.includes(chainID);
+
+    if (isEIP712Signing) {
+      // @ts-expect-error - test
+      const resKeplr = await window.keplr.sendTx(chainID, txBytes, "sync");
+      console.log("resKeplr", resKeplr);
+
+      const restEndpoint = await this.getRestEndpointForChain(chainID);
+      const base64 = Buffer.from(txBytes).toString("base64");
+      const endpoint = restEndpoint + "/cosmos/tx/v1beta1/txs";
+      const resul1t = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          tx_bytes: base64,
+          mode: "BROADCAST_MODE_SYNC",
+        }),
+      });
+      console.log("result", resul1t);
+      const result = await this.submitTransaction({
+        chainID,
+        tx: base64,
+      });
+      console.log("result", result);
+      return { transactionHash: result.txHash };
+    }
 
     const tx = await stargateClient.broadcastTx(txBytes);
 
@@ -1090,11 +1143,21 @@ export class SkipClient {
     const messages = cosmosMsgs.map((cosmosMsg) =>
       getEncodeObjectFromCosmosMessage(cosmosMsg),
     );
-
+    const rlpTypes = cosmosMsgs.map((cosmosMsg) => getRlpTypes(cosmosMsg));
+    console.log("rlpTypes", rlpTypes);
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
     const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
 
-    const signDoc = makeSignDocAmino(
+    // const signDoc: StdSignDoc = {
+    //   chain_id: chainID,
+    //   account_number: String(accountNumber),
+    //   sequence: String(sequence),
+    //   fee: fee,
+    //   msgs: msgs,
+    //   memo: "",
+    // };
+
+    const signDocRaw = makeSignDocAmino(
       msgs,
       fee,
       chainId,
@@ -1103,9 +1166,91 @@ export class SkipClient {
       sequence,
     );
 
+    const isEIP712Signing = ETH_KEY_SIGN_CHAINS.includes(chainID);
+
+    if (isEIP712Signing) {
+      // TODO: add is injective branching
+      (signDocRaw as Mutable<StdSignDoc>).fee = {
+        ...signDocRaw.fee,
+        ...(() => {
+          if (isEIP712Signing) {
+            return {};
+          }
+          return {
+            feePayer: signerAddress,
+          };
+        })(),
+      };
+      const signDoc = sortObjectByKey(signDocRaw);
+      console.log("res rlpTypes", Object.assign({}, ...rlpTypes));
+      const eip712Signer = await this.getEIP712CosmosSigner?.();
+      if (!eip712Signer) throw new Error("EIP 712 signer not found");
+      const signResponse = await eip712Signer(
+        chainID,
+        signerAddress,
+        getEip712TypedDataBasedOnChainId(
+          chainID,
+          Object.assign({}, ...rlpTypes),
+        ),
+        signDoc,
+      );
+
+      const { signed, signature } = signResponse;
+
+      console.log("signResponse", signResponse);
+      console.log("messages", messages);
+      console.log("bodyBytes", {
+        messages,
+        memo: signed.memo,
+        timeoutHeight: signed.timeout_height,
+        extensionOptions: undefined,
+      });
+
+      const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner, chainID);
+
+      const authInfoBytes = AuthInfo.encode({
+        signerInfos: [
+          {
+            publicKey: pubkeyAny,
+            modeInfo: {
+              single: {
+                mode: SignMode.SIGN_MODE_EIP_191,
+              },
+              multi: undefined,
+            },
+            sequence: signed.sequence,
+          },
+        ],
+        fee: Fee.fromPartial({
+          amount: signed.fee.amount as Coin[],
+          gasLimit: signed.fee.gas,
+          payer: undefined,
+        }),
+      }).finish();
+
+      const signatures = [Buffer.from(signature.signature, "base64")];
+
+      const bodyBytes = TxBody.encode(
+        TxBody.fromPartial({
+          messages,
+          memo: signed.memo,
+          timeoutHeight: signed.timeout_height,
+          extensionOptions: undefined,
+        }),
+      ).finish();
+
+      const tx = TxRaw.fromPartial({
+        authInfoBytes,
+        signatures,
+        bodyBytes,
+      });
+
+      return tx;
+    }
+
     const { signature, signed } = await signer.signAmino(
       signerAddress,
-      signDoc,
+      signDocRaw,
     );
 
     const signedTxBody = {
@@ -2374,4 +2519,20 @@ function raise(message?: string, options?: ErrorOptions): never {
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function sortObjectByKey(obj: Record<string, any>): any {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(sortObjectByKey);
+  }
+  const sortedKeys = Object.keys(obj).sort();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: Record<string, any> = {};
+  sortedKeys.forEach((key) => {
+    result[key] = sortObjectByKey(obj[key]);
+  });
+  return result;
 }

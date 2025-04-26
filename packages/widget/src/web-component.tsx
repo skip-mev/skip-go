@@ -39,6 +39,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   chainIdsToAffiliates: "any",
   cacheDurationMs: "any",
   getCosmosSigner: "any",
+  getEIP712CosmosSigner: "any",
   getEVMSigner: "any",
   getSVMSigner: "any",
   onWalletConnected: "any",
