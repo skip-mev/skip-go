@@ -43,10 +43,10 @@ type AccountResponse = {
 const getAccountNumberAndSequenceFromDymension = async (address: string, chainId: string) => {
   const endpoint = await getRpcEndpointForChain(chainId);
 
-  const response = await createRequest<object, AccountResponse>({
+  const response = await createRequest<object, object, AccountResponse>({
     path: `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
     method: "get",
-  }).request();
+  });
 
   let sequence = 0;
   let accountNumber = 0;

@@ -63,7 +63,7 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
                 transactionHistoryItem.status !== "completed" &&
                 transactionHistoryItem.status !== "failed"
               ) {
-                return await transactionStatus.request(transactionDetail);
+                return await transactionStatus(transactionDetail);
               }
               return new Promise((resolve) => resolve(null));
             }) as Promise<TxStatusResponse | null>[],

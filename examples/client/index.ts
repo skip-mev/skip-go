@@ -1,7 +1,7 @@
 import { route } from "@skip-go/client";
 
 const getRoute = async () => {
-  const response = await route.request({
+  const response = await route({
     sourceAssetDenom: "uatom",
     sourceAssetChainId: "cosmoshub-4",
     destAssetDenom: "uusdc",

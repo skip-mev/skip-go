@@ -3,10 +3,10 @@ import { ClientState } from "../state";
 
 export const getMainnetAndTestnetAssets = async (chainId?: string) => {
   const [assetsMainnet, assetsTestnet] = await Promise.all([
-    assets.request({
+    assets({
       chainIds: chainId ? [chainId] : undefined,
     }),
-    assets.request({
+    assets({
       chainIds: chainId ? [chainId] : undefined,
       onlyTestnets: true,
     }),

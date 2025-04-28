@@ -32,7 +32,7 @@ export const validateEvmGasBalance = async ({
   }
 
   const skipBalances = (
-    await balances.request({
+    await balances({
       chains: {
         [tx?.chainId ?? ""]: {
           address: signer.account?.address,

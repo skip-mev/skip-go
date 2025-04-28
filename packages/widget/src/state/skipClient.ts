@@ -59,7 +59,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      const response = await assets.request({
+      const response = await assets({
         includeEvmAssets: true,
         includeCw20Assets: true,
         includeSvmAssets: true,
@@ -79,7 +79,7 @@ export const skipChainsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      const response = await chains.request({
+      const response = await chains({
         includeEvm: true,
         includeSvm: true,
         onlyTestnets,
@@ -94,7 +94,7 @@ export const skipBridgesAtom = atomWithQuery((get) => {
   const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   return {
     queryKey: ["skipBridges", { apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => bridges.request(),
+    queryFn: async () => bridges(),
   };
 });
 
@@ -104,7 +104,7 @@ export const skipSwapVenuesAtom = atomWithQuery((get) => {
 
   return {
     queryKey: ["skipSwapVenue", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
-    queryFn: async () => venues.request(),
+    queryFn: async () => venues(),
     enabled: onlyTestnets !== undefined && apiUrl !== undefined,
   };
 });

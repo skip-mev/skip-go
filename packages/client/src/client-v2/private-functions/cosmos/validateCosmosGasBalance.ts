@@ -110,7 +110,7 @@ export const validateCosmosGasBalance = async ({
     return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
   });
 
-  const feeBalance = await balances.request({
+  const feeBalance = await balances({
     chains: {
       [chainId]: {
         address: signerAddress,

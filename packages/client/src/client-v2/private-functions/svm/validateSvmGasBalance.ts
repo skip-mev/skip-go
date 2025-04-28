@@ -11,7 +11,7 @@ export const validateSvmGasBalance = async ({ tx }: { tx?: SvmTx }) => {
   if (!connection) throw new Error(`Failed to connect to ${tx?.chainId}`);
   const gasAmount = await getSVMGasAmountForMessage(connection, tx);
 
-  const skipBalances = await balances.request({
+  const skipBalances = await balances({
     chains: {
       solana: {
         address: tx?.signerAddress,

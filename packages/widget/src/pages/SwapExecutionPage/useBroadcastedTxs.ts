@@ -38,7 +38,7 @@ export const useBroadcastedTxsStatus = ({
 
       const results = await Promise.all(
         txs.map(async (tx) => {
-          const _res = await transactionStatus.request(tx);
+          const _res = await transactionStatus(tx);
           return _res;
         }),
       );

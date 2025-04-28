@@ -75,7 +75,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     throw new Error("executeRoute error: invalid user addresses");
   }
 
-  const response = await messages.request({
+  const response = await messages({
     timeoutSeconds,
     amountIn: route?.amountIn,
     amountOut: route.estimatedAmountOut || "0",

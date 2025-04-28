@@ -62,7 +62,7 @@ export class ClientState {
       return this.skipBalances;
     }
 
-    const response = await balances.request();
+    const response = await balances();
     this.skipBalances = response;
     return response;
   }

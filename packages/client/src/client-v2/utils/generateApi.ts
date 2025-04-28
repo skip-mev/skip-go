@@ -84,9 +84,15 @@ export function createRequest<Request, Response, TransformedResponse>({
   onSuccess,
   transformResponse,
 }: createRequestType<Request, Response, TransformedResponse>) {
-  const controller = new AbortController();
+  let controller: AbortController | null = null;
 
   const request = async (options?: Request): Promise<TransformedResponse> => {
+    if (controller && !controller?.signal?.aborted) {
+      controller?.abort();
+    }
+
+    controller = new AbortController();
+
     try {
       const response = await ClientState.requestClient[method]<Response>(
         path,
@@ -100,9 +106,7 @@ export function createRequest<Request, Response, TransformedResponse>({
         ? transformResponse(camelCased)
         : (camelCased as unknown as TransformedResponse);
 
-      if (onSuccess) {
-        onSuccess(finalResponse, options);
-      }
+      onSuccess?.(finalResponse, options);
 
       return finalResponse;
     } catch (error) {
@@ -115,10 +119,7 @@ export function createRequest<Request, Response, TransformedResponse>({
     }
   };
 
-  return {
-    request,
-    cancel: (reason?: string) => controller.abort(reason),
-  };
+  return request;
 }
 
 // ✅ Get instance type of the API class
@@ -233,19 +234,13 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   retryInterval = 1000,
   backoffMultiplier = 2,
 }: PollingApiProps<K>) {
-  let cancel: (reason?: string) => void;
-
   const request = async (requestParams?: ApiRequest<K>): Promise<ApiResponse<K>> => {
-    const apiFn = api<K>({ methodName, path, method });
-    const apiRequest = apiFn;
-    cancel = apiFn.cancel;
-
     let attempt = 0;
     let lastError: unknown;
 
     while (attempt < maxRetries) {
       try {
-        const result = await apiRequest.request(requestParams);
+        const result = await api<K>({ methodName, path, method })(requestParams);
         if (isSuccess(result)) {
           onSuccess?.(result, attempt);
           return result;
@@ -263,8 +258,5 @@ export function pollingApi<K extends ValidApiMethodKeys>({
     throw lastError ?? new Error("pollingApi: max retries exceeded");
   };
 
-  return {
-    request: (params?: ApiRequest<K>) => request(params),
-    cancel: (reason?: string) => cancel(reason),
-  };
+  return (params?: ApiRequest<K>) => request(params);
 }

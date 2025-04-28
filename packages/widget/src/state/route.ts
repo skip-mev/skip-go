@@ -157,7 +157,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
       }
       try {
         const skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(routeConfig);
-        const response = await route.request({
+        const response = await route({
           ...params,
           smartRelay: true,
           ...skipRouteConfig,
