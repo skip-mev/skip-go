@@ -45,7 +45,7 @@ export const lightTheme = {
     text: {
       normal: "#000000",
       lowContrast: "#000000" + opacityToHex(45),
-      ultraLowContrast: "#000000" + opacityToHex(10),
+      ultraLowContrast: "#000000" + opacityToHex(25),
     },
     ghostButtonHover: "#ffffff" + opacityToHex(90),
   },
