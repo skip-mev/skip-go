@@ -20,10 +20,10 @@ export const useGasFeeTokenAmount = () => {
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
-    chainId: sourceAsset?.chainID,
+    chainId: sourceAsset?.chainId,
   });
 
-  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
+  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainId);
   const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);
 
   const chainType = sourceDetails?.chain?.chainType;
@@ -32,9 +32,9 @@ export const useGasFeeTokenAmount = () => {
     case ChainType.EVM: {
       const isFeeAsset =
         sourceAsset?.denom?.includes("-native") &&
-        sourceAsset?.originChainID === sourceAsset?.chainID;
+        sourceAsset?.originChainId === sourceAsset?.chainId;
       if (isFeeAsset) {
-        switch (sourceAsset?.chainID) {
+        switch (sourceAsset?.chainId) {
           case "1": // mainnet
             return Number(
               convertHumanReadableAmountToCryptoAmount(0.015, sourceDetails.asset?.decimals),
@@ -114,7 +114,7 @@ export const useInsufficientSourceBalance = () => {
   if (!sourceAsset?.amount) return false;
   if (!maxAmountTokenMinusFees) return true;
 
-  const chain = chains?.find((chain) => chain.chainID === sourceAsset?.chainID);
+  const chain = chains?.find((chain) => chain.chainId === sourceAsset?.chainId);
   if (chain?.chainType === ChainType.Cosmos) {
     return cosmosFeeAssetValidation;
   }

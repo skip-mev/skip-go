@@ -16,11 +16,11 @@ import { track } from "@amplitude/analytics-browser";
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
+  const sourceAccount = getAccount(sourceAsset?.chainId);
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
-    chainId: sourceAsset?.chainID,
+    chainId: sourceAsset?.chainId,
   });
 
   const { data: sourceBalance, isLoading } = useGetSourceBalance();

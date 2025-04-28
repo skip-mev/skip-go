@@ -36,13 +36,8 @@ generateApi({
             }
           });
 
-          if (
-            object.additionalProperties &&
-            typeof object.additionalProperties === "object"
-          ) {
-            object.additionalProperties = camelCaseProperties(
-              object.additionalProperties,
-            );
+          if (object.additionalProperties && typeof object.additionalProperties === "object") {
+            object.additionalProperties = camelCaseProperties(object.additionalProperties);
           }
 
           if (object.required && Array.isArray(object.required)) {

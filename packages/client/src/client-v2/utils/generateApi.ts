@@ -175,6 +175,7 @@ export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiRespo
   path,
   onSuccess,
   method = "get",
+  transformResponse,
 }: ApiProps<K, TransformedResponse>) {
   type Request = ApiRequest<K>;
   type Response = ApiResponse<K>;
@@ -183,6 +184,7 @@ export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiRespo
     path,
     method,
     onSuccess,
+    transformResponse,
   });
 }
 

@@ -1,14 +1,8 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipChainsAtom, skipClient, skipSwapVenuesAtom } from "@/state/skipClient";
+import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import {
-  TransactionCallbacks,
-  RouteResponse,
-  TxStatusResponse,
-  UserAddress,
-  ChainType,
-} from "@skip-go/client";
+import { TransactionCallbacks, TxStatusResponse, ChainType } from "@skip-go/client";
 import {
   DEEPLINK_CHOICE,
   MinimalWallet,
@@ -26,9 +20,10 @@ import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
+import { executeRoute, RouteResponse, UserAddress } from "@skip-go/client/v2";
 
 type ValidatingGasBalanceData = {
-  chainID?: string;
+  chainId?: string;
   txIndex?: number;
   status: "success" | "error" | "pending" | "completed";
 };
@@ -44,7 +39,7 @@ type SwapExecutionState = {
 };
 
 export type ChainAddress = {
-  chainID: string;
+  chainId: string;
   chainType?: ChainType;
   address?: string;
 } & {
@@ -57,7 +52,7 @@ export type ChainAddress = {
 
 /**
  * route.requiredChainAddresses is a list of chainIDs that are required to have an address associated with them
- * the key in this atom is the index of the chainID in the requiredChainAddresses array
+ * the key in this atom is the index of the chainId in the requiredChainAddresses array
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
@@ -90,9 +85,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const {
     requiredChainAddresses,
     sourceAssetDenom,
-    sourceAssetChainID,
+    sourceAssetChainId,
     destAssetDenom,
-    destAssetChainID,
+    destAssetChainId,
   } = route;
 
   const sourceAddress = requiredChainAddresses[0];
@@ -100,9 +95,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   const initialChainAddresses: Record<number, ChainAddress> = {};
 
-  route?.requiredChainAddresses?.forEach((chainID, index) => {
+  route?.requiredChainAddresses?.forEach((chainId, index) => {
     initialChainAddresses[index] = {
-      chainID,
+      chainId,
       address: "",
     };
   });
@@ -134,9 +129,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
       setUser({ id: txInfo?.txHash });
-      const chain = chains?.find((chain) => chain.chainID === txInfo.chainID);
+      const chain = chains?.find((chain) => chain.chainId === txInfo.chainId);
       const explorerLink = createExplorerLink({
-        chainID: txInfo.chainID,
+        chainId: txInfo.chainId,
         chainType: chain?.chainType,
         txHash: txInfo.txHash,
       });
@@ -146,23 +141,23 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         transactionHistoryIndex,
       );
       callbacks?.onTransactionBroadcasted?.({
-        chainId: txInfo.chainID,
+        chainId: txInfo.chainId,
         txHash: txInfo.txHash,
         explorerLink: explorerLink ?? "",
         sourceAddress,
         destinationAddress,
         sourceAssetDenom,
-        sourceAssetChainID,
+        sourceAssetChainId,
         destAssetDenom,
-        destAssetChainID,
+        destAssetChainId,
       });
     },
     onTransactionCompleted: async (chainId: string, txHash: string, status) => {
       track("execute route: transaction completed", { chainId, txHash, status });
       setTag("txCompleted", true);
-      const chain = chains?.find((chain) => chain.chainID === chainId);
+      const chain = chains?.find((chain) => chain.chainId === chainId);
       const explorerLink = createExplorerLink({
-        chainID: chainId,
+        chainId: chainId,
         chainType: chain?.chainType,
         txHash,
       });
@@ -173,9 +168,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         sourceAddress,
         destinationAddress,
         sourceAssetDenom,
-        sourceAssetChainID,
+        sourceAssetChainId,
         destAssetDenom,
-        destAssetChainID,
+        destAssetChainId,
       });
     },
     onTransactionSigned: async () => {
@@ -295,7 +290,7 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
 
   const userAddresses = Object.values(chainAddresses).map((chainAddress) => {
     return {
-      chainID: chainAddress.chainID,
+      chainId: chainAddress.chainId,
       address: chainAddress.address as string,
     };
   });
@@ -308,7 +303,7 @@ export const chainAddressEffectAtom = atomEffect((get, set) => {
 
 export type TransactionDetails = {
   txHash: string;
-  chainID: string;
+  chainId: string;
   explorerLink?: string;
   status?: TxStatusResponse;
 };
@@ -329,7 +324,7 @@ export const fallbackGasAmountFnAtom = atom((get) => {
     }
     if (chainType !== ChainType.Cosmos) return undefined;
 
-    const isSwapChain = swapVenues?.some((venue) => venue.chainID === chainId) ?? false;
+    const isSwapChain = swapVenues?.some((venue) => venue.chainId === chainId) ?? false;
     const defaultGasAmount = Math.ceil(
       isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
     );
@@ -346,7 +341,6 @@ export const fallbackGasAmountFnAtom = atom((get) => {
 export const simulateTxAtom = atom<boolean>();
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const skip = get(skipClient);
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
@@ -359,7 +353,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const walletConnectDeepLinkByChainType = get(walletConnectDeepLinkByChainTypeAtom);
 
-  const chainType = chains?.find((chain) => chain.chainID === sourceAsset?.chainID)?.chainType;
+  const chainType = chains?.find((chain) => chain.chainId === sourceAsset?.chainId)?.chainType;
 
   if (chainType) {
     const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
@@ -377,8 +371,9 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
+      console.log(route, userAddresses);
       try {
-        await skip.executeRoute({
+        await executeRoute({
           route,
           userAddresses,
           timeoutSeconds,

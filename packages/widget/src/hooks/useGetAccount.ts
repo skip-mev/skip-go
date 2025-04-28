@@ -29,7 +29,7 @@ export const useGetAccount = () => {
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean, chainType?: string) => {
       if (!chainId) return;
-      chainType ??= chains?.find((c) => c.chainID === chainId)?.chainType;
+      chainType ??= chains?.find((c) => c.chainId === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
         return {
           address: connectedAddress[chainId],

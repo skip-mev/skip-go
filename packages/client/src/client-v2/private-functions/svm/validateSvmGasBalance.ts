@@ -2,7 +2,7 @@ import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { getSVMGasAmountForMessage } from "../transactions";
-import { balances } from "../../api/getBalances";
+import { balances } from "../../api/postBalances";
 import { BigNumber } from "bignumber.js";
 
 export const validateSvmGasBalance = async ({ tx }: { tx?: SvmTx }) => {

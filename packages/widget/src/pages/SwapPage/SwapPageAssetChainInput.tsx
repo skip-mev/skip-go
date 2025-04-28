@@ -57,7 +57,7 @@ export const SwapPageAssetChainInput = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
-    chainId: selectedAsset?.chainID,
+    chainId: selectedAsset?.chainId,
   });
 
   const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });

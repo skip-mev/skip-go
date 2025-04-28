@@ -76,9 +76,14 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
   }
 
   const response = await messages.request({
-    ...route,
     timeoutSeconds,
+    amountIn: route?.amountIn,
     amountOut: route.estimatedAmountOut || "0",
+    sourceAssetChainId: route?.sourceAssetChainId,
+    sourceAssetDenom: route?.sourceAssetDenom,
+    destAssetChainId: route?.destAssetChainId,
+    destAssetDenom: route?.destAssetDenom,
+    operations: route?.operations,
     addressList: addressList,
     slippageTolerancePercent: options.slippageTolerancePercent || "1",
     chainIdsToAffiliates: ClientState.chainIdsToAffiliates,

@@ -7,7 +7,7 @@ import { getSigningStargateClient } from "../getSigningStargateClient";
 import { getCosmosGasAmountForMessage } from "../transactions";
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
-import { balances } from "../../api/getBalances";
+import { balances } from "../../api/postBalances";
 import { ClientState } from "src/client-v2/state";
 
 export type ValidateCosmosGasBalanceProps = {
@@ -116,6 +116,7 @@ export const validateCosmosGasBalance = async ({
   });
   const validatedAssets = feeAssets.map((asset, index) => {
     const chainAsset = skipAssets?.find((x) => x.denom === asset.denom);
+    console.log(skipAssets, chainAsset);
     const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
     const chain = skipChains?.find((x) => x.chainId === chainId);
     const decimal = Number(chainAsset?.decimals);

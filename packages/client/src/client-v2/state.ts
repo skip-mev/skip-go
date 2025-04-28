@@ -8,7 +8,7 @@ import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
 import { StdFee } from "@cosmjs/stargate";
 import { getMainnetAndTestnetChains } from "./private-functions/getMainnetAndTestnetChains";
 import { getMainnetAndTestnetAssets } from "./private-functions/getMainnetAndTestnetAssets";
-import { balances } from "./api/getBalances";
+import { balances } from "./api/postBalances";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {

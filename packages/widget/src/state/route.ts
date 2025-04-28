@@ -1,10 +1,9 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
-import { RouteResponse, RouteConfig, RouteRequest } from "@skip-go/client";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { errorAtom } from "./errorPage";
 import { currentPageAtom, Routes } from "./router";
-import { ClientAsset, skipAssetsAtom, skipClient } from "./skipClient";
+import { ClientAsset, skipAssetsAtom } from "./skipClient";
 import {
   sourceAssetAtom,
   destinationAssetAtom,
@@ -22,6 +21,8 @@ import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
+import { route } from "@skip-go/client/v2";
+import { RouteConfig } from "@skip-go/client";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
@@ -55,9 +56,9 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   get(initializeDebounceValuesEffect);
 
   if (
-    !sourceAsset?.chainID ||
+    !sourceAsset?.chainId ||
     !sourceAsset.denom ||
-    !destinationAsset?.chainID ||
+    !destinationAsset?.chainId ||
     !destinationAsset.denom
   ) {
     return undefined;
@@ -65,23 +66,23 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-          amountIn: convertHumanReadableAmountToCryptoAmount(
-            sourceAssetAmount ?? "0",
-            sourceAsset.decimals,
-          ),
-        }
+        amountIn: convertHumanReadableAmountToCryptoAmount(
+          sourceAssetAmount ?? "0",
+          sourceAsset.decimals,
+        ),
+      }
       : {
-          amountOut: convertHumanReadableAmountToCryptoAmount(
-            destinationAssetAmount ?? "0",
-            destinationAsset.decimals,
-          ),
-        };
+        amountOut: convertHumanReadableAmountToCryptoAmount(
+          destinationAssetAmount ?? "0",
+          destinationAsset.decimals,
+        ),
+      };
 
   return {
     ...amount,
-    sourceAssetChainID: sourceAsset.chainID,
+    sourceAssetChainId: sourceAsset.chainId,
     sourceAssetDenom: sourceAsset.denom,
-    destAssetChainID: destinationAsset.chainID,
+    destAssetChainId: destinationAsset.chainId,
     destAssetDenom: destinationAsset.denom,
   };
 });
@@ -103,9 +104,7 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-export const convertWidgetRouteConfigToClientRouteConfig = (
-  params: WidgetRouteConfig,
-): RouteConfig => {
+export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig) => {
   return {
     ...params,
     swapVenues: params.swapVenues?.map((venue) => ({
@@ -136,7 +135,6 @@ export const convertClientRouteConfigToWidgetRouteConfig = (
 };
 
 export const _skipRouteAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
@@ -153,13 +151,13 @@ export const _skipRouteAtom = atomWithQuery((get) => {
 
   return {
     queryKey: ["skipRoute", params, routeConfig, routePreference],
-    queryFn: async (): Promise<CaughtRouteError | RouteResponse> => {
+    queryFn: async () => {
       if (!params) {
         throw new Error("No route request provided");
       }
       try {
         const skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(routeConfig);
-        const response = await skip.route({
+        const response = await route.request({
           ...params,
           smartRelay: true,
           ...skipRouteConfig,
@@ -182,7 +180,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
 export const skipRouteAtom = atom((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
-  const routeResponse = data as RouteResponse;
+  const routeResponse = data;
   if (caughtError?.isError) {
     return {
       data: undefined,
@@ -211,7 +209,7 @@ export const setRouteToDefaultRouteAtom = atom(null, (get, set, assets?: ClientA
     if (!denom || !chainId) return;
     if (!assets) return;
     return assets.find(
-      (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+      (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainId === chainId,
     );
   };
 

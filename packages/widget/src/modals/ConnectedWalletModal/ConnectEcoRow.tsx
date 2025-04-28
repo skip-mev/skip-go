@@ -48,41 +48,41 @@ export const ConnectEcoRow = ({
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { data: chains } = useAtomValue(skipChainsAtom);
 
-  const primaryChainIdForChainType = usePrimaryChainIdForChainType();
+  const primarychainIdForChainType = usePrimaryChainIdForChainType();
 
-  const defaultChainId = primaryChainIdForChainType[chainType];
+  const defaultchainId = primarychainIdForChainType[chainType];
 
-  const accountChainId = useMemo(() => {
+  const accountchainId = useMemo(() => {
     if (chainType !== ChainType.Cosmos) {
-      return defaultChainId;
+      return defaultchainId;
     }
 
-    if (sourceAsset?.chainID && cosmosAccounts?.[sourceAsset.chainID]) {
-      return sourceAsset?.chainID;
+    if (sourceAsset?.chainId && cosmosAccounts?.[sourceAsset.chainId]) {
+      return sourceAsset?.chainId;
     }
 
-    if (cosmosAccounts?.[defaultChainId]) {
-      return defaultChainId;
+    if (cosmosAccounts?.[defaultchainId]) {
+      return defaultchainId;
     }
 
     if (cosmosAccounts && Object.keys(cosmosAccounts)[0]) {
       return Object.keys(cosmosAccounts)[0];
     }
-  }, [chainType, cosmosAccounts, defaultChainId, sourceAsset?.chainID]);
+  }, [chainType, cosmosAccounts, defaultchainId, sourceAsset?.chainId]);
 
   const chainIdForWalletSelector = useMemo(() => {
-    if (!sourceAsset?.chainID || !chains) return undefined;
+    if (!sourceAsset?.chainId || !chains) return undefined;
 
-    const sourceChainInfo = chains.find((c) => c.chainID === sourceAsset.chainID);
+    const sourceChainInfo = chains.find((c) => c.chainId === sourceAsset.chainId);
     if (sourceChainInfo?.chainType === chainType) {
-      return sourceAsset.chainID;
+      return sourceAsset.chainId;
     }
-    return defaultChainId;
-  }, [sourceAsset?.chainID, chains, chainType, defaultChainId]);
+    return defaultchainId;
+  }, [sourceAsset?.chainId, chains, chainType, defaultchainId]);
 
   const account = useMemo(() => {
-    return getAccount(accountChainId, true);
-  }, [accountChainId, getAccount]);
+    return getAccount(accountchainId, true);
+  }, [accountchainId, getAccount]);
 
   const truncatedAddress = getTruncatedAddress(account?.address, isMobileScreenSize);
   const wallets = useWalletList({ chainType });
@@ -187,7 +187,7 @@ export const ConnectEcoRow = ({
                 </StyledCopyIconButton>
               </Tooltip>
 
-              <ChainIndicator chainId={accountChainId} />
+              <ChainIndicator chainId={accountchainId} />
             </Row>
           </Row>
         ) : (
@@ -215,7 +215,7 @@ export const ConnectEcoRow = ({
 export const ChainIndicator = ({ chainId }: { chainId?: string }) => {
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find((chain) => chain.chainID === chainId);
+  const chain = chains?.find((chain) => chain.chainId === chainId);
   if (!chain) return null;
   return (
     <Text fontSize={12} color={theme.primary.text.lowContrast}>

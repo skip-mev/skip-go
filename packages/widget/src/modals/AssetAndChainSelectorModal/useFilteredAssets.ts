@@ -27,7 +27,7 @@ export const useFilteredAssets = ({
       .map((group) => {
         const allowedAssets = group.assets.filter((asset) => {
           const isExcluded = EXCLUDED_TOKEN_COMBINATIONS.some(
-            (ex) => ex.id === group.id && ex.chainIDs.includes(asset.chainID),
+            (ex) => ex.id === group.id && ex.chainIDs.includes(asset.chainId),
           );
           return !isExcluded;
         });

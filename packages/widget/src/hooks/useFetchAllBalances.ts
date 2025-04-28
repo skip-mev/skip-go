@@ -18,7 +18,7 @@ export const useFetchAllBalances = () => {
     if (!connectedAddresses) return;
     const chainIds = Object.keys(connectedAddresses);
     const _evmChainId = chainIds.find((chainId) => {
-      const chain = chains?.find((chain) => chain.chainID === chainId);
+      const chain = chains?.find((chain) => chain.chainId === chainId);
       return chain?.chainType === ChainType.EVM;
     });
     return _evmChainId && connectedAddresses?.[_evmChainId];
@@ -31,15 +31,15 @@ export const useFetchAllBalances = () => {
 
     return assets.reduce(
       (acc, asset) => {
-        const chain = chains.find((chain) => chain.chainID === asset.chainID);
+        const chain = chains.find((chain) => chain.chainId === asset.chainId);
         if (!chain) return acc;
 
         const evmAddress = evmConnectedAddress ?? getAccount(String(evmChainId))?.address;
         const addressToUse =
-          chain.chainType === ChainType.EVM ? evmAddress : getAccount(asset.chainID)?.address;
+          chain.chainType === ChainType.EVM ? evmAddress : getAccount(asset.chainId)?.address;
 
-        if (addressToUse && !acc[asset.chainID]) {
-          acc[asset.chainID] = { address: addressToUse };
+        if (addressToUse && !acc[asset.chainId]) {
+          acc[asset.chainId] = { address: addressToUse };
         }
 
         return acc;

@@ -1,5 +1,7 @@
 import { atom } from "jotai";
-import { Asset, SkipClient, Chain, SkipClientOptions, assets, chains } from "@skip-go/client";
+import { SkipClient, SkipClientOptions } from "@skip-go/client";
+import { Asset, assets, bridges, Chain, chains, venues } from "@skip-go/client/v2";
+
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { walletsAtom } from "./wallets";
@@ -89,11 +91,11 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 
   for (const chainKey in data) {
     data[chainKey].forEach((asset: Asset) => {
-      const chain = chains?.find((c) => c.chainID === asset.chainID);
+      const chain = chains?.find((c) => c.chainId === asset.chainId);
       flattenedData.push({
         ...asset,
         chain_key: chainKey,
-        chainName: chain?.prettyName ?? chain?.chainName ?? asset.chainID ?? "--",
+        chainName: chain?.prettyName ?? chain?.chainName ?? asset.chainId ?? "--",
       });
     });
   }
@@ -111,14 +113,14 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      return assets
-        .request({
-          includeEvmAssets: true,
-          includeCw20Assets: true,
-          includeSvmAssets: true,
-          onlyTestnets,
-        })
-        .then((v) => flattenData(v.chainToAssetsMap as Record<string, Asset[]>, chains.data));
+      const response = await assets.request({
+        includeEvmAssets: true,
+        includeCw20Assets: true,
+        includeSvmAssets: true,
+        onlyTestnets,
+      });
+
+      return flattenData(response as Record<string, V2.Asset[]>, chains.data);
     },
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
@@ -136,33 +138,27 @@ export const skipChainsAtom = atomWithQuery((get) => {
         includeSvm: true,
         onlyTestnets,
       });
-      return response.chains;
+      return response;
     },
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
 export const skipBridgesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   return {
     queryKey: ["skipBridges", { apiURL, apiKey, cacheDurationMs }],
-    queryFn: async () => {
-      return skip.bridges();
-    },
+    queryFn: async () => bridges.request(),
   };
 });
 
 export const skipSwapVenuesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
     queryKey: ["skipSwapVenue", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
-    queryFn: async () => {
-      return skip.venues(onlyTestnets);
-    },
+    queryFn: async () => venues.request(),
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
@@ -177,16 +173,16 @@ export const getChainsContainingAsset = (
   chains: Chain[],
 ): ChainWithAsset[] => {
   if (!assets) return [];
-  const chainIDs = assets
+  const chainIds = assets
     .filter((asset) => asset.symbol === assetSymbol)
-    .map((asset) => asset.chainID);
+    .map((asset) => asset.chainId);
   const chainsContainingAsset = chains
-    .filter((chain) => chainIDs?.includes(chain.chainID))
+    .filter((chain) => chainIds?.includes(chain.chainId))
     .map((chain) => {
       return {
         ...chain,
         asset: assets.find(
-          (asset) => asset.chainID === chain.chainID && asset.symbol === assetSymbol,
+          (asset) => asset.chainId === chain.chainId && asset.symbol === assetSymbol,
         ),
       };
     });

@@ -13,19 +13,8 @@ export const getMainnetAndTestnetAssets = async (chainId?: string) => {
     }),
   ]);
 
-  const transformAssetsMap = (
-    input?: Record<string, { assets?: Asset[] }>,
-  ): Record<string, Asset[]> =>
-    Object.entries(input ?? {}).reduce(
-      (acc, [chainId, { assets }]) => {
-        acc[chainId] = (assets ?? []).map((asset) => asset);
-        return acc;
-      },
-      {} as Record<string, Asset[]>,
-    );
-
-  const mainnet = transformAssetsMap(assetsMainnet.chainToAssetsMap);
-  const testnet = transformAssetsMap(assetsTestnet.chainToAssetsMap);
+  const mainnet = transformAssetsMap(assetsMainnet);
+  const testnet = transformAssetsMap(assetsTestnet);
 
   const merged = {
     ...mainnet,
@@ -36,3 +25,14 @@ export const getMainnetAndTestnetAssets = async (chainId?: string) => {
 
   return merged;
 };
+
+export const transformAssetsMap = (
+  input?: Record<string, { assets?: Asset[] }>,
+): Record<string, Asset[]> =>
+  Object.entries(input ?? {}).reduce(
+    (acc, [chainId, { assets }]) => {
+      acc[chainId] = (assets ?? []).map((asset) => asset);
+      return acc;
+    },
+    {} as Record<string, Asset[]>,
+  );

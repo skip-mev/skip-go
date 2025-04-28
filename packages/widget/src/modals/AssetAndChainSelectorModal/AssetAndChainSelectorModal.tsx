@@ -10,7 +10,7 @@ import {
   isGroupedAsset,
 } from "./AssetAndChainSelectorModalRowItem";
 import { AssetAndChainSelectorModalSearchInput } from "./AssetAndChainSelectorModalSearchInput";
-import { Chain } from "@skip-go/client";
+import { V2 } from "@skip-go/client";
 import { useFilteredChains } from "./useFilteredChains";
 import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
@@ -24,9 +24,9 @@ import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAsse
 export type GroupedAsset = {
   id: string;
   chains: {
-    chainID: string;
+    chainId: string;
     chainName: string;
-    originChainID: string;
+    originChainId: string;
   }[];
   assets: ClientAsset[];
   totalAmount: number;
@@ -34,7 +34,7 @@ export type GroupedAsset = {
   name?: string;
 };
 
-export type ChainWithAsset = Chain & {
+export type ChainWithAsset = V2.Chain & {
   asset: ClientAsset;
 };
 
@@ -137,7 +137,7 @@ export const AssetAndChainSelectorModal = createModal(
             ? true
             : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
               ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
-                chainWithAsset.chainID,
+                chainWithAsset?.chainId,
               )
           : false;
 
@@ -207,7 +207,7 @@ export const AssetAndChainSelectorModal = createModal(
             listItems={listOfAssetsOrChains ?? []}
             itemHeight={ITEM_HEIGHT}
             itemKey={(item) =>
-              isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`
+              isGroupedAsset(item) ? item.id : `${item.chainId}-${item.asset.denom}`
             }
             renderItem={renderItem}
             empty={{

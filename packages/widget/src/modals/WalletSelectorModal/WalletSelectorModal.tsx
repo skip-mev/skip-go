@@ -23,13 +23,13 @@ export type WalletSelectorModalProps = ModalProps & {
 export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalProps) => {
   const { chainId, chainType, fromConnectedWalletModal } = modalProps;
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const walletList = useWalletList({ chainID: chainId, chainType });
+  const walletList = useWalletList({ chainId, chainType });
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
+  const sourceAccount = getAccount(sourceAsset?.chainId);
 
   const sourceAssetChain = chains?.find((chain) => {
-    return chain.chainID === sourceAsset?.chainID;
+    return chain.chainId === sourceAsset?.chainId;
   });
 
   const [selectedEco, setSelectedEco] = useState<ChainType | undefined>(
@@ -40,15 +40,15 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
 
   const selectedEcoChain = chains?.find((chain) => {
     if (selectedEco) {
-      return chain.chainID === primaryChainIdForChainType[selectedEco];
+      return chain.chainId === primaryChainIdForChainType[selectedEco];
     }
   });
 
   const showOtherEcosytems = !sourceAccount && selectedEco === sourceAssetChain?.chainType;
 
   const sourceAssetChainType = useMemo(() => {
-    return chains?.find((chain) => chain.chainID === sourceAsset?.chainID)?.chainType;
-  }, [chains, sourceAsset?.chainID]);
+    return chains?.find((chain) => chain.chainId === sourceAsset?.chainId)?.chainType;
+  }, [chains, sourceAsset?.chainId]);
 
   const handleOnClickBackButton = () => {
     NiceModal.remove(Modals.WalletSelectorModal);
@@ -57,7 +57,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     } else if (!showOtherEcosytems) {
       setSelectedEco(sourceAssetChain?.chainType);
       NiceModal.show(Modals.WalletSelectorModal, {
-        chainId: sourceAssetChain?.chainID,
+        chainId: sourceAssetChain?.chainId,
       });
     }
   };
@@ -87,7 +87,7 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
           <img
             width="25px"
             height="25px"
-            src={selectedEcoChain?.logoURI ?? sourceAssetChain?.logoURI}
+            src={selectedEcoChain?.logoUri ?? sourceAssetChain?.logoUri}
           />
         </StyledChainLogoContainerRow>
       }

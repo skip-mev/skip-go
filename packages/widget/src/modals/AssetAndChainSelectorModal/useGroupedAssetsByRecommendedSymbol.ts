@@ -31,11 +31,11 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(allowed).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+              chainId === asset.chainId &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
@@ -44,15 +44,15 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(blocked).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+              chainId === asset.chainId &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
-      const hasBalance = Number(getBalance(asset.chainID, asset.denom)?.amount ?? 0) > 0;
+      const hasBalance = Number(getBalance(asset.chainId, asset.denom)?.amount ?? 0) > 0;
 
       const isBlockedUnlessUserHasBalance =
         !!blockedUnlessUserHasBalance &&
@@ -60,11 +60,11 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(blockedUnlessUserHasBalance).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
+              chainId === asset.chainId &&
               denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
@@ -79,7 +79,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
     const calculateBalanceSummary = (assets: ClientAsset[]) => {
       return assets.reduce(
         (accumulator, asset) => {
-          const balance = getBalance(asset.chainID, asset.denom);
+          const balance = getBalance(asset.chainId, asset.denom);
           if (balance) {
             accumulator.totalAmount += Number(
               convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals),
@@ -99,9 +99,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
       if (foundGroup) {
         foundGroup.assets.push(asset);
         foundGroup.chains.push({
-          chainID: asset.chainID,
+          chainId: asset.chainId,
           chainName: asset.chainName,
-          originChainID: asset.originChainID,
+          originChainID: asset.originChainId,
         });
       } else {
         groupedAssets.push({
@@ -109,9 +109,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
           name: asset.name,
           chains: [
             {
-              chainID: asset.chainID,
+              chainId: asset.chainId,
               chainName: asset.chainName,
-              originChainID: asset.originChainID,
+              originChainId: asset.originChainId,
             },
           ],
           assets: [asset],
