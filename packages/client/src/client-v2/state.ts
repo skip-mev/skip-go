@@ -2,7 +2,7 @@ import { GeneratedType, OfflineDirectSigner, Registry } from "@cosmjs/proto-sign
 import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
 import { Chain, Asset, ChainAffiliates, FeeAsset } from "./types/swaggerTypes";
 import { ApiResponse, createRequestClient } from "./utils/generateApi";
-import { WalletClient } from "viem/_types/clients/createWalletClient";
+import { WalletClient } from "viem";
 import { OfflineAminoSigner } from "@cosmjs/amino";
 import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
 import { StdFee } from "@cosmjs/stargate";
@@ -13,6 +13,12 @@ import { balances } from "./api/getBalances";
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
+
+  static {
+    ClientState.requestClient = createRequestClient({
+      baseURL: "https://api.skip.build",
+    });
+  }
 
   static aminoTypes: AminoTypes;
   static registry: Registry;

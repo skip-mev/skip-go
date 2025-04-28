@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Asset, SkipClient, Chain, SkipClientOptions } from "@skip-go/client";
+import { Asset, SkipClient, Chain, SkipClientOptions, assets, chains } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
 import { walletsAtom } from "./wallets";
@@ -104,7 +104,6 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
 export const skipAssetsAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
@@ -112,32 +111,32 @@ export const skipAssetsAtom = atomWithQuery((get) => {
   return {
     queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      return skip
-        .assets({
+      return assets
+        .request({
           includeEvmAssets: true,
-          includeCW20Assets: true,
+          includeCw20Assets: true,
           includeSvmAssets: true,
           onlyTestnets,
         })
-        .then((v) => flattenData(v, chains.data));
+        .then((v) => flattenData(v.chainToAssetsMap as Record<string, Asset[]>, chains.data));
     },
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };
 });
 
 export const skipChainsAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
     queryKey: ["skipChains", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
-    queryFn: async (): Promise<Chain[]> => {
-      return skip.chains({
-        includeEVM: true,
-        includeSVM: true,
+    queryFn: async () => {
+      const response = await chains.request({
+        includeEvm: true,
+        includeSvm: true,
         onlyTestnets,
       });
+      return response.chains;
     },
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };

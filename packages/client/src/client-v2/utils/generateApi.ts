@@ -1,7 +1,8 @@
 import { Camel, toCamel, toSnake } from "./convert";
-import { ClientState } from "../state";
+
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
+import { ClientState } from "../state";
 
 type RequestClientOptions = {
   baseURL: string;
@@ -70,36 +71,40 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
   return { get, post };
 };
 
-export type OnSuccessCallback<Result, Params> = (result: Result, options: Params) => void;
-
-export type createRequestType<Result, Params> = {
+export type createRequestType<Request, Response, TransformedResponse = Response> = {
   path: string;
   method: "get" | "post";
-  onSuccess?: OnSuccessCallback<Result, Params>;
+  onSuccess?: (response: TransformedResponse, options?: Request) => void;
+  transformResponse?: (response: Response) => TransformedResponse;
 };
 
-export function createRequest<Params extends object = object, Result extends object = object>({
+export function createRequest<Request, Response, TransformedResponse>({
   path,
   method = "get",
   onSuccess,
-}: createRequestType<Result, Params>) {
+  transformResponse,
+}: createRequestType<Request, Response, TransformedResponse>) {
   const controller = new AbortController();
 
-  const request = async (options?: Params): Promise<Result> => {
+  const request = async (options?: Request): Promise<TransformedResponse> => {
     try {
-      const response = await ClientState.requestClient[method]<Result>(
+      const response = await ClientState.requestClient[method]<Response>(
         path,
         options ? toSnake(options) : undefined,
         controller.signal,
       );
 
-      const camelCased = toCamel(response) as Result;
+      const camelCased = toCamel(response ?? {}) as Response;
+
+      const finalResponse = transformResponse
+        ? transformResponse(camelCased)
+        : (camelCased as unknown as TransformedResponse);
 
       if (onSuccess) {
-        onSuccess(camelCased, options as Params);
+        onSuccess(finalResponse, options);
       }
 
-      return camelCased;
+      return finalResponse;
     } catch (error) {
       if ((error as Error).name === "AbortError") {
         console.log("Request was cancelled");
@@ -140,9 +145,11 @@ type ValidApiMethodKeys = {
 -------------------------------------------------- */
 
 // Params: take first argument, convert to camelCase, make it non-null
-type MethodParams<K extends ValidApiMethodKeys> = NonNullable<Camel<Parameters<ApiInstance[K]>[0]>>;
+export type ApiRequest<K extends ValidApiMethodKeys> = NonNullable<
+  Camel<Parameters<ApiInstance[K]>[0]>
+>;
 
-type MethodReturn<K extends ValidApiMethodKeys> = Camel<
+export type ApiResponse<K extends ValidApiMethodKeys> = Camel<
   Awaited<ReturnType<ApiInstance[K]>> extends { data: infer D }
   ? D extends object
   ? D
@@ -150,37 +157,29 @@ type MethodReturn<K extends ValidApiMethodKeys> = Camel<
   : never
 >;
 
-export type ApiRequest<K extends ValidApiMethodKeys> = MethodParams<K>;
-export type ApiResponse<K extends ValidApiMethodKeys> = MethodReturn<K>;
-
 /* --------------------------------------------------
  ⚙️ 3. Factory to generate API functions
 -------------------------------------------------- */
 
-export type ApiProps<K extends ValidApiMethodKeys> = {
+export type ApiProps<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>> = {
   methodName: K;
   path: string;
-  onSuccess?: OnSuccessCallback<MethodReturn<K>, MethodParams<K>>;
+  onSuccess?: (response: TransformedResponse, options?: ApiRequest<K>) => void;
   method?: "get" | "post";
+  transformResponse?: (response: ApiResponse<K>) => TransformedResponse;
 };
 
-export function api<K extends ValidApiMethodKeys>({
+export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>>({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   methodName,
   path,
   onSuccess,
   method = "get",
-}: ApiProps<K>) {
-  type Params = MethodParams<K>;
-  type Response = MethodReturn<K>;
+}: ApiProps<K, TransformedResponse>) {
+  type Request = ApiRequest<K>;
+  type Response = ApiResponse<K>;
 
-  if (!ClientState.requestClient) {
-    ClientState.requestClient = createRequestClient({
-      baseURL: "https://api.skip.build",
-    });
-  }
-
-  return createRequest<Params, Response>({
+  return createRequest<Request, Response, TransformedResponse>({
     path,
     method,
     onSuccess,

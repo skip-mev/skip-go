@@ -1,4 +1,4 @@
-import { WalletClient } from "viem/_types/clients/createWalletClient";
+import { WalletClient } from "viem";
 import { EvmTx } from "../../types/swaggerTypes";
 import { GetFallbackGasAmount } from "../../types/client";
 import { getEVMGasAmountForMessage } from "../transactions";

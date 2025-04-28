@@ -1,15 +1,6 @@
 import { OfflineAminoSigner } from "@cosmjs/amino";
-import {
-  GeneratedType,
-  OfflineDirectSigner,
-  OfflineSigner,
-} from "@cosmjs/proto-signing";
-import {
-  AminoConverters,
-  GasPrice,
-  SignerData,
-  StdFee,
-} from "@cosmjs/stargate";
+import { GeneratedType, OfflineDirectSigner, OfflineSigner } from "@cosmjs/proto-signing";
+import { AminoConverters, GasPrice, SignerData, StdFee } from "@cosmjs/stargate";
 
 import { WalletClient } from "viem";
 
@@ -18,10 +9,10 @@ import { Adapter } from "@solana/wallet-adapter-base";
 import { MsgsRequest, TransactionCallbacks } from "./types";
 
 /** Common Types */
-export interface UserAddress {
+export type UserAddress = {
   chainID: string;
   address: string;
-}
+};
 
 export type EndpointOptions = {
   rpc?: string;
@@ -35,17 +26,15 @@ export type ValidateGasResult = {
 };
 
 /** Signer Getters */
-export interface SignerGetters {
+export type SignerGetters = {
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (
     chainID: string,
   ) => Promise<
-    | (OfflineAminoSigner & OfflineDirectSigner)
-    | OfflineAminoSigner
-    | OfflineDirectSigner
+    (OfflineAminoSigner & OfflineDirectSigner) | OfflineAminoSigner | OfflineDirectSigner
   >;
   getSVMSigner?: () => Promise<Adapter>;
-}
+};
 
 /** Gas Options */
 export type GetFallbackGasAmount = (
@@ -58,7 +47,7 @@ export type GetGasPrice = (
   chainType: types.ChainType,
 ) => Promise<GasPrice | undefined>;
 
-interface GasOptions {
+type GasOptions = {
   /**
    * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
    **/
@@ -68,10 +57,10 @@ interface GasOptions {
    */
   getFallbackGasAmount?: GetFallbackGasAmount;
   gasAmountMultiplier?: number;
-}
+};
 
 /** Skip Client Options */
-export interface SkipClientOptions extends SignerGetters {
+export type SkipClientOptions = {
   apiURL?: string;
   apiKey?: string;
   endpointOptions?: {
@@ -83,7 +72,7 @@ export interface SkipClientOptions extends SignerGetters {
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIDsToAffiliates?: Record<string, types.ChainAffiliates>;
   cacheDurationMs?: number;
-}
+} & SignerGetters;
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -146,13 +135,13 @@ export type ExecuteCosmosMessage = GasOptions & {
   onTransactionBroadcast?: TransactionCallbacks["onTransactionBroadcast"];
 };
 
-interface SignCosmosMessageOptionsBase {
+type SignCosmosMessageOptionsBase = {
   signerAddress: string;
   chainID: string;
   cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
-}
+};
 
 export type SignCosmosMessageDirectOptions = SignCosmosMessageOptionsBase & {
   signer: OfflineDirectSigner;

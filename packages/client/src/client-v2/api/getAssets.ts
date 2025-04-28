@@ -5,13 +5,12 @@ import { api } from "../utils/generateApi";
 export const assets = api({
   methodName: "getAssets",
   path: "/v2/fungible/assets",
-  onSuccess: (res, options) => {
-    if (
-      options.includeEvmAssets &&
-      options.includeSvmAssets &&
-      options.includeCw20Assets
-    ) {
-      ClientState.skipAssets = res.chainToAssetsMap as Record<string, Asset[]>;
+  transformResponse: (response) => {
+    return response.chainToAssetsMap;
+  },
+  onSuccess: (response, options) => {
+    if (options?.includeEvmAssets && options?.includeSvmAssets && options?.includeCw20Assets) {
+      ClientState.skipAssets = response as Record<string, Asset[]>;
     }
   },
 });
