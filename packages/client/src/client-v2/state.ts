@@ -14,7 +14,7 @@ export class ClientState {
 
   static {
     ClientState.requestClient = createRequestClient({
-      baseURL: "https://api.skip.build",
+      baseUrl: "https://api.skip.build",
     });
   }
 

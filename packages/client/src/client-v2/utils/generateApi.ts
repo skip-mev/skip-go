@@ -5,14 +5,14 @@ import { wait } from "./timer";
 import { ClientState } from "../state";
 
 type RequestClientOptions = {
-  baseURL: string;
+  baseUrl: string;
   apiKey?: string;
 };
 
-export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) => {
+export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) => {
   const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(apiKey ? { Authorization: apiKey } : {}),
+    "content-type": "application/json",
+    ...(apiKey ? { authorization: apiKey } : {}),
   };
 
   const handleResponse = async (response: Response) => {
@@ -34,7 +34,7 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const url = new URL(path, baseURL);
+    const url = new URL(baseUrl + path);
 
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {
@@ -58,7 +58,7 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
     data: Body = {} as Body,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const response = await fetch(new URL(path, baseURL).toString(), {
+    const response = await fetch(new URL(baseUrl + path).toString(), {
       method: "POST",
       headers: defaultHeaders,
       body: JSON.stringify(data),

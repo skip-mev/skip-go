@@ -1,14 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, Theme } from "./theme";
-import { useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
   defaultSkipClientConfig,
   onlyTestnetsAtom,
-  setClientOptionsAtom,
 } from "@/state/skipClient";
-import { SkipClientOptions } from "@skip-go/client";
+import { SkipClient, SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
@@ -16,6 +15,7 @@ import {
   walletConnectAtom,
   getConnectedSignersAtom,
   connectedAddressesAtom,
+  walletsAtom,
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
@@ -31,6 +31,12 @@ import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAsse
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
+import { getWallet, WalletType } from "graz";
+import { WalletClient } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { config } from "@/constants/wagmi";
+import { solanaWallets } from "@/constants/solana";
+import { setClientOptions } from "@skip-go/client/v2";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -45,7 +51,6 @@ export const useInitWidget = (props: WidgetProps) => {
   useMobileRouteConfig();
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
-  const setClientOptions = useSetAtom(setClientOptionsAtom);
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
@@ -99,9 +104,8 @@ export const useInitWidget = (props: WidgetProps) => {
 
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
-    setClientOptions(mergedSkipClientConfig);
     setTheme(mergedTheme);
-  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme, setClientOptions]);
+  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
 
   useEffect(() => {
     if (props.settings) {
@@ -202,9 +206,13 @@ export const useInitWidget = (props: WidgetProps) => {
   return { theme: mergedTheme };
 };
 
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
+
 const useInitGetSigners = (props: Partial<WidgetProps>) => {
-  const setGetSigners = useSetAtom(getConnectedSignersAtom);
+  const [getSigners, setGetSigners] = useAtom(getConnectedSignersAtom);
+  const wallets = useAtomValue(walletsAtom);
   const setInjectedAddresses = useSetAtom(connectedAddressesAtom);
+  const skipClientConfig = useAtomValue(skipClientConfigAtom);
 
   // Update injected addresses whenever `connectedAddresses` changes
   useEffect(() => {
@@ -220,4 +228,54 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
       ...(props.getSVMSigner && { getSVMSigner: props.getSVMSigner }),
     }));
   }, [props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, setGetSigners]);
+
+  useEffect(() => {
+    setClientOptions({
+      ...skipClientConfig,
+      getCosmosSigner: async (chainId) => {
+        if (getSigners?.getCosmosSigner) {
+          return getSigners.getCosmosSigner(chainId);
+        }
+        if (!wallets.cosmos) {
+          throw new Error("getCosmosSigner error: no cosmos wallet");
+        }
+        const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+        if (!wallet) {
+          throw new Error("getCosmosSigner error: wallet not found");
+        }
+        const key = await wallet.getKey(chainId);
+
+        return key.isNanoLedger
+          ? wallet.getOfflineSignerOnlyAmino(chainId)
+          : wallet.getOfflineSigner(chainId);
+      },
+      getEVMSigner: async (chainId) => {
+        if (getSigners?.getEVMSigner) {
+          return getSigners.getEVMSigner(chainId);
+        }
+        const evmWalletClient = (await getWalletClient(config, {
+          chainId: parseInt(chainId),
+        })) as WalletClient;
+
+        return evmWalletClient;
+      },
+      getSVMSigner: async () => {
+        if (getSigners?.getSVMSigner) {
+          return getSigners.getSVMSigner();
+        }
+        const walletName = wallets.svm?.walletName;
+        if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
+        const solanaWallet = solanaWallets.find((w) => w.name === walletName);
+        if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
+        return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
+      },
+    });
+  }, [
+    wallets,
+    props.getCosmosSigner,
+    props.getEVMSigner,
+    props.getSVMSigner,
+    skipClientConfig,
+    getSigners,
+  ]);
 };

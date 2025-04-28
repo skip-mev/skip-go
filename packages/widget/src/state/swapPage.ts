@@ -10,7 +10,7 @@ import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
-import { walletsAtom } from "./wallets";
+import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -52,7 +52,11 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
 export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
   const wallets = get(walletsAtom);
-  if (sourceAsset?.chainId && wallets.cosmos) {
+
+  const getSigners = get(getConnectedSignersAtom);
+  console.log(getSigners);
+  if (sourceAsset?.chainId && wallets.cosmos && getSigners?.getCosmosSigner) {
+    console.log("get signing stargate client");
     getSigningStargateClient({
       chainId: sourceAsset?.chainId,
     });
