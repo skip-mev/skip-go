@@ -1,4 +1,4 @@
-import { Camel, Snake, toCamel, toSnake } from "src/client-v2/convert";
+import { Camel, Snake, toCamel, toSnake } from "src/client-v2/utils/convert";
 
 describe("Case Conversion Functions", function () {
   describe("toSnake", function () {
@@ -17,10 +17,7 @@ describe("Case Conversion Functions", function () {
     });
 
     it("should convert arrays of objects with camelCase keys to snake_case", function () {
-      const input = [
-        { arrayKey: "value" },
-        { anotherArrayKey: "anotherValue" },
-      ];
+      const input = [{ arrayKey: "value" }, { anotherArrayKey: "anotherValue" }];
       const expected: Snake<typeof input> = [
         { array_key: "value" },
         { another_array_key: "anotherValue" },
@@ -69,10 +66,7 @@ describe("Case Conversion Functions", function () {
     });
 
     it("should convert arrays of objects with snake_case keys to camelCase", function () {
-      const input = [
-        { array_key: "value" },
-        { another_array_key: "anotherValue" },
-      ];
+      const input = [{ array_key: "value" }, { another_array_key: "anotherValue" }];
       const expected: Camel<typeof input> = [
         { arrayKey: "value" },
         { anotherArrayKey: "anotherValue" },
