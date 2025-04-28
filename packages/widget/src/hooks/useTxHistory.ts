@@ -23,11 +23,13 @@ export const useTxHistory = ({
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const txs = txHistoryItem.transactionDetails?.map((tx) => ({
-    chainID: tx.chainID,
+    chainID: tx.chainId,
     txHash: tx.txHash,
   }));
 
-  const chainIdFound = chains?.some((chain) => txs.map((tx) => tx.chainID).includes(chain.chainID));
+  const chainIdFound = chains?.some((chain) =>
+    txs.map((tx) => tx.chainID).includes(chain.chainId ?? ""),
+  );
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 

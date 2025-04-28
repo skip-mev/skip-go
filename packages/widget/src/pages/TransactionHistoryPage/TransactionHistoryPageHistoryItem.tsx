@@ -53,8 +53,10 @@ export const TransactionHistoryPageHistoryItem = ({
       amountOut,
       sourceAssetDenom,
       sourceAssetChainId,
+      sourceAssetChainID,
       destAssetDenom,
       destAssetChainId,
+      destAssetChainID,
     },
     timestamp,
     transactionDetails,
@@ -78,13 +80,13 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    chainId: sourceAssetChainId,
+    chainId: sourceAssetChainId ?? sourceAssetChainID,
     tokenAmount: amountIn,
   });
 
   const destinationAssetDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainId,
+    chainId: destAssetChainId ?? destAssetChainID,
     tokenAmount: amountOut,
   });
 

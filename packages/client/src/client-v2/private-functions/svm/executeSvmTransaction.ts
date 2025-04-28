@@ -1,10 +1,10 @@
 import { SvmTx } from "src/client-v2/types/swaggerTypes";
-import { ExecuteRouteOptions } from "../executeRoute";
 import { Connection, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { submitTransaction } from "src/client-v2/api/postSubmitTransaction";
 import { wait } from "src/client-v2/utils/timer";
 import { ClientState } from "src/client-v2/state";
+import { ExecuteRouteOptions } from "src/client-v2/public-functions/executeRoute";
 
 export const executeSvmTransaction = async (
   tx?: { svmTx?: SvmTx },

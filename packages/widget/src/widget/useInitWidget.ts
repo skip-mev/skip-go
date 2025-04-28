@@ -230,6 +230,7 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
   }, [props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, setGetSigners]);
 
   useEffect(() => {
+    console.log("set client options");
     setClientOptions({
       ...skipClientConfig,
       getCosmosSigner: async (chainId) => {
