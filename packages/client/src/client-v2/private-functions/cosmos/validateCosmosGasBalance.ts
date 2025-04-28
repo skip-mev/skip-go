@@ -135,7 +135,6 @@ export const validateCosmosGasBalance = async ({
 
     const fee = fees[index];
 
-    console.log(chain, feeAssets, fees, fee);
     if (!fee) {
       return {
         error: `(${chain?.prettyName}) Unable to calculate fee for ${symbol}`,
