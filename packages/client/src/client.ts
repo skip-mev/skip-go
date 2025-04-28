@@ -32,10 +32,7 @@ import {
   ChainRestAuthApi,
   ChainRestTendermintApi,
 } from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
-import {
-  BigNumberInBase,
-  DEFAULT_BLOCK_TIMEOUT_HEIGHT,
-} from "@injectivelabs/utils";
+import { BigNumberInBase, DEFAULT_BLOCK_TIMEOUT_HEIGHT } from "@injectivelabs/utils";
 import axios from "axios";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
@@ -43,23 +40,11 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
-import {
-  formatUnits,
-  isAddress,
-  maxUint256,
-  publicActions,
-  WalletClient,
-} from "viem";
+import { formatUnits, isAddress, maxUint256, publicActions, WalletClient } from "viem";
 
 import { chains, findFirstWorkingEndpoint } from "./chains";
-import {
-  circleAminoConverters,
-  circleProtoRegistry,
-} from "./codegen/circle/client";
-import {
-  evmosAminoConverters,
-  evmosProtoRegistry,
-} from "./codegen/evmos/client";
+import { circleAminoConverters, circleProtoRegistry } from "./codegen/circle/client";
+import { evmosAminoConverters, evmosProtoRegistry } from "./codegen/evmos/client";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -75,12 +60,7 @@ import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  Transaction,
-} from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
@@ -107,10 +87,7 @@ export class SkipClient {
   private skipChains?: types.Chain[];
   private skipAssets?: Record<string, types.Asset[]>;
   private skipBalances?: types.BalanceResponse;
-  private signingStargateClientByChainId: Record<
-    string,
-    SigningStargateClient
-  > = {};
+  private signingStargateClientByChainId: Record<string, SigningStargateClient> = {};
   private validateGasResults: clientTypes.ValidateGasResult[] | undefined;
 
   constructor(options: clientTypes.SkipClientOptions = {}) {
@@ -144,9 +121,7 @@ export class SkipClient {
     this.getSVMSigner = options.getSVMSigner;
 
     if (options.chainIDsToAffiliates) {
-      this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
-        options.chainIDsToAffiliates,
-      );
+      this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(options.chainIDsToAffiliates);
       this.chainIDsToAffiliates = options.chainIDsToAffiliates;
     }
   }
@@ -190,22 +165,16 @@ export class SkipClient {
     this.getSVMSigner = options.getSVMSigner;
 
     if (options.chainIDsToAffiliates) {
-      this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(
-        options.chainIDsToAffiliates,
-      );
+      this.cumulativeAffiliateFeeBPS = validateChainIDsToAffiliates(options.chainIDsToAffiliates);
       this.chainIDsToAffiliates = options.chainIDsToAffiliates;
     }
   }
 
-  async assets(
-    options: types.AssetsRequest = {},
-  ): Promise<Record<string, types.Asset[]>> {
+  async assets(options: types.AssetsRequest = {}): Promise<Record<string, types.Asset[]>> {
     const response = await this.requestClient.get<{
       chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
     }>("/v2/fungible/assets", types.assetsRequestToJSON({ ...options }));
-    const responseCamelCase = Object.entries(
-      response.chain_to_assets_map,
-    ).reduce(
+    const responseCamelCase = Object.entries(response.chain_to_assets_map).reduce(
       (acc, [chainID, { assets }]) => {
         acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
         return acc;
@@ -213,11 +182,7 @@ export class SkipClient {
       {} as Record<string, types.Asset[]>,
     );
 
-    if (
-      options.includeEvmAssets &&
-      options.includeSvmAssets &&
-      options.includeCW20Assets
-    ) {
+    if (options.includeEvmAssets && options.includeSvmAssets && options.includeCW20Assets) {
       this.skipAssets = responseCamelCase;
     }
     return responseCamelCase;
@@ -227,9 +192,7 @@ export class SkipClient {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
     }>("/v2/info/chains", types.chainsRequestToJSON({ ...options }));
-    const responseCamelCase = response.chains.map((chain) =>
-      types.chainFromJSON(chain),
-    );
+    const responseCamelCase = response.chains.map((chain) => types.chainFromJSON(chain));
     if (options?.includeEVM && options?.includeSVM) {
       this.skipChains = responseCamelCase;
     }
@@ -264,28 +227,21 @@ export class SkipClient {
   async assetsBetweenChains(
     options: types.AssetsBetweenChainsRequest,
   ): Promise<types.AssetBetweenChains[]> {
-    const response =
-      await this.requestClient.post<types.AssetsBetweenChainsResponseJSON>(
-        "/v2/fungible/assets_between_chains",
-        types.assetsBetweenChainsRequestToJSON(options),
-      );
+    const response = await this.requestClient.post<types.AssetsBetweenChainsResponseJSON>(
+      "/v2/fungible/assets_between_chains",
+      types.assetsBetweenChainsRequestToJSON(options),
+    );
 
-    return types.assetsBetweenChainsResponseFromJSON(response)
-      .assetsBetweenChains;
+    return types.assetsBetweenChainsResponseFromJSON(response).assetsBetweenChains;
   }
 
   async bridges(): Promise<types.Bridge[]> {
-    const response =
-      await this.requestClient.get<types.BridgesResponseJSON>(
-        "/v2/info/bridges",
-      );
+    const response = await this.requestClient.get<types.BridgesResponseJSON>("/v2/info/bridges");
 
     return types.bridgesResponseFromJSON(response).bridges;
   }
 
-  async balances(
-    request: types.BalanceRequest,
-  ): Promise<types.BalanceResponse> {
+  async balances(request: types.BalanceRequest): Promise<types.BalanceResponse> {
     const response = await this.requestClient.post<types.BalanceResponseJSON>(
       "/v2/info/balances",
       types.balanceRequestToJSON(request),
@@ -297,8 +253,7 @@ export class SkipClient {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } =
-      options;
+    const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
 
     let addressList: string[] = [];
     userAddresses.forEach((userAddress, index) => {
@@ -321,8 +276,7 @@ export class SkipClient {
       raise("executeRoute error: invalid address list");
     }
 
-    const isUserAddressesValid =
-      await this.validateUserAddresses(userAddresses);
+    const isUserAddressesValid = await this.validateUserAddresses(userAddresses);
 
     if (!isUserAddressesValid) {
       raise("executeRoute error: invalid user addresses");
@@ -354,9 +308,7 @@ export class SkipClient {
     await this.executeTxs({ ...options, txs: messages.txs });
   }
 
-  async executeTxs(
-    options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] },
-  ) {
+  async executeTxs(options: clientTypes.ExecuteRouteOptions & { txs: types.Tx[] }) {
     const {
       txs,
       onTransactionBroadcast,
@@ -384,10 +336,7 @@ export class SkipClient {
     });
 
     const isGasStationSourceEVM = chainIds.find((item, i, array) => {
-      return (
-        GAS_STATION_CHAIN_IDS.includes(item.chainID) &&
-        array[i - 1]?.chainType === "evm"
-      );
+      return GAS_STATION_CHAIN_IDS.includes(item.chainID) && array[i - 1]?.chainType === "evm";
     });
 
     this.validateGasResults = undefined;
@@ -444,7 +393,7 @@ export class SkipClient {
         await validateEnabledChainIds(tx.svmTx.chainID);
         txResult = await this.executeSvmTx(tx, options);
       } else {
-        raise(`executeRoute error: invalid message type`);
+        raise("executeRoute error: invalid message type");
       }
       await onTransactionBroadcast?.({ ...txResult });
 
@@ -453,11 +402,7 @@ export class SkipClient {
         onTransactionTracked: options.onTransactionTracked,
       });
 
-      await onTransactionCompleted?.(
-        txResult.chainID,
-        txResult.txHash,
-        txStatusResponse,
-      );
+      await onTransactionCompleted?.(txResult.chainID, txResult.txHash, txStatusResponse);
     }
   }
 
@@ -477,9 +422,7 @@ export class SkipClient {
 
     const gasArray = this.validateGasResults;
 
-    const gas = gasArray?.find(
-      (gas) => gas?.error !== null && gas?.error !== undefined,
-    );
+    const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
     if (typeof gas?.error === "string") {
       throw new Error(gas?.error);
     }
@@ -499,9 +442,7 @@ export class SkipClient {
     )?.address;
 
     if (!currentUserAddress) {
-      raise(
-        `executeRoute error: invalid address for chain '${tx.cosmosTx.chainID}'`,
-      );
+      raise(`executeRoute error: invalid address for chain '${tx.cosmosTx.chainID}'`);
     }
 
     const txResponse = await this.executeCosmosMessage({
@@ -527,9 +468,7 @@ export class SkipClient {
   ): Promise<{ chainID: string; txHash: string }> {
     const gasArray = this.validateGasResults;
 
-    const gas = gasArray?.find(
-      (gas) => gas?.error !== null && gas?.error !== undefined,
-    );
+    const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
     if (typeof gas?.error === "string") {
       throw new Error(gas?.error);
     }
@@ -554,15 +493,10 @@ export class SkipClient {
     };
   }
 
-  async executeEvmMsg(
-    message: { evmTx: types.EvmTx },
-    options: clientTypes.ExecuteRouteOptions,
-  ) {
+  async executeEvmMsg(message: { evmTx: types.EvmTx }, options: clientTypes.ExecuteRouteOptions) {
     const gasArray = this.validateGasResults;
 
-    const gas = gasArray?.find(
-      (gas) => gas?.error !== null && gas?.error !== undefined,
-    );
+    const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
     if (typeof gas?.error === "string") {
       throw new Error(gas?.error);
     }
@@ -589,32 +523,19 @@ export class SkipClient {
       signer: OfflineSigner;
     },
   ) {
-    const {
-      signerAddress,
-      chainID,
-      messages,
-      gas,
-      onTransactionSigned,
-      stargateClient,
-      signer,
-    } = options;
+    const { signerAddress, chainID, messages, gas, onTransactionSigned, stargateClient, signer } =
+      options;
 
     const accounts = await signer.getAccounts();
-    const accountFromSigner = accounts.find(
-      (account) => account.address === signerAddress,
-    );
+    const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
     if (!accountFromSigner) {
-      throw new Error(
-        "executeCosmosMessage error: failed to retrieve account from signer",
-      );
+      throw new Error("executeCosmosMessage error: failed to retrieve account from signer");
     }
 
     const fee = gas.fee;
     if (!fee) {
-      throw new Error(
-        "executeCosmosMessage error: failed to retrieve fee from gas",
-      );
+      throw new Error("executeCosmosMessage error: failed to retrieve fee from gas");
     }
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
@@ -666,17 +587,11 @@ export class SkipClient {
     options: clientTypes.ExecuteRouteOptions;
   }) {
     if (!signer.account) {
-      throw new Error(
-        "executeEVMTransaction error: failed to retrieve account from signer",
-      );
+      throw new Error("executeEVMTransaction error: failed to retrieve account from signer");
     }
 
-    const {
-      onApproveAllowance,
-      onTransactionSigned,
-      bypassApprovalCheck,
-      useUnlimitedApproval,
-    } = options;
+    const { onApproveAllowance, onTransactionSigned, bypassApprovalCheck, useUnlimitedApproval } =
+      options;
     const extendedSigner = signer.extend(publicActions);
 
     // Check for approvals unless bypassApprovalCheck is enabled
@@ -708,9 +623,7 @@ export class SkipClient {
           functionName: "approve",
           args: [
             requiredApproval.spender as `0x${string}`,
-            useUnlimitedApproval
-              ? maxUint256
-              : BigInt(requiredApproval.amount) + BigInt(1000),
+            useUnlimitedApproval ? maxUint256 : BigInt(requiredApproval.amount) + BigInt(1000),
           ],
           chain: signer.chain,
         });
@@ -829,36 +742,32 @@ export class SkipClient {
   }) {
     getOfflineSigner = getOfflineSigner || this.getCosmosSigner;
     if (!getOfflineSigner) {
-      throw new Error(
-        "'getCosmosSigner' is not provided or configured in skip router",
-      );
+      throw new Error("'getCosmosSigner' is not provided or configured in skip router");
     }
     if (!this.signingStargateClientByChainId?.[chainId]) {
       const [signer, endpoint] = await Promise.all([
         getOfflineSigner(chainId),
         this.getRpcEndpointForChain(chainId),
       ]);
-      this.signingStargateClientByChainId[chainId] =
-        await SigningStargateClient.connectWithSigner(endpoint, signer, {
+      this.signingStargateClientByChainId[chainId] = await SigningStargateClient.connectWithSigner(
+        endpoint,
+        signer,
+        {
           aminoTypes: this.aminoTypes,
           registry: this.registry,
           accountParser,
-        });
+        },
+      );
     }
 
     return {
-      stargateClient: this.signingStargateClientByChainId[
-        chainId
-      ] as SigningStargateClient,
+      stargateClient: this.signingStargateClientByChainId[chainId] as SigningStargateClient,
       signer: await getOfflineSigner(chainId),
     };
   }
 
   private async getAssets(chainId?: string) {
-    if (
-      (chainId && this.skipAssets?.[chainId]) ||
-      (!chainId && this.skipAssets)
-    ) {
+    if ((chainId && this.skipAssets?.[chainId]) || (!chainId && this.skipAssets)) {
       return this.skipAssets;
     }
     return await this.getMainnetAndTestnetAssets(chainId);
@@ -883,39 +792,29 @@ export class SkipClient {
     } = options;
 
     if (chainID.includes("evmos")) {
-      return this.signCosmosMessageDirectEvmos(
-        signerAddress,
-        signer,
-        cosmosMsgs,
-        fee,
-        { accountNumber, sequence, chainId },
-      );
+      return this.signCosmosMessageDirectEvmos(signerAddress, signer, cosmosMsgs, fee, {
+        accountNumber,
+        sequence,
+        chainId,
+      });
     }
 
     if (chainID.includes("injective")) {
-      return this.signCosmosMessageDirectInjective(
-        signerAddress,
-        signer,
-        cosmosMsgs,
-        fee,
-        { accountNumber, sequence, chainId },
-      );
+      return this.signCosmosMessageDirectInjective(signerAddress, signer, cosmosMsgs, fee, {
+        accountNumber,
+        sequence,
+        chainId,
+      });
     }
 
     const accounts = await signer.getAccounts();
-    const accountFromSigner = accounts.find(
-      (account) => account.address === signerAddress,
-    );
+    const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
     if (!accountFromSigner) {
-      throw new Error(
-        "signCosmosMessageDirect error: failed to retrieve account from signer",
-      );
+      throw new Error("signCosmosMessageDirect error: failed to retrieve account from signer");
     }
 
-    const messages = cosmosMsgs.map((cosmosMsg) =>
-      getEncodeObjectFromCosmosMessage(cosmosMsg),
-    );
+    const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg));
 
     const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -938,17 +837,9 @@ export class SkipClient {
       fee.payer,
     );
 
-    const signDoc = makeSignDoc(
-      txBodyBytes,
-      authInfoBytes,
-      chainId,
-      accountNumber,
-    );
+    const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
 
-    const { signature, signed } = await signer.signDirect(
-      signerAddress,
-      signDoc,
-    );
+    const { signature, signed } = await signer.signDirect(signerAddress, signDoc);
 
     return TxRaw.fromPartial({
       bodyBytes: signed.bodyBytes,
@@ -968,14 +859,10 @@ export class SkipClient {
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
     const accounts = await signer.getAccounts();
-    const accountFromSigner = accounts.find(
-      (account) => account.address === signerAddress,
-    );
+    const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
     if (!accountFromSigner) {
-      throw new Error(
-        "signCosmosMessageDirectEvmos: failed to retrieve account from signer",
-      );
+      throw new Error("signCosmosMessageDirectEvmos: failed to retrieve account from signer");
     }
 
     const messages = cosmosMsgs.map((cosmosMsg) =>
@@ -1018,14 +905,10 @@ export class SkipClient {
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
     const accounts = await signer.getAccounts();
-    const accountFromSigner = accounts.find(
-      (account) => account.address === signerAddress,
-    );
+    const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
     if (!accountFromSigner) {
-      throw new Error(
-        "signCosmosMessageDirectInjective: failed to retrieve account from signer",
-      );
+      throw new Error("signCosmosMessageDirectInjective: failed to retrieve account from signer");
     }
 
     const restEndpoint = await this.getRestEndpointForChain(chainId);
@@ -1034,9 +917,7 @@ export class SkipClient {
     const chainRestTendermintApi = new ChainRestTendermintApi(restEndpoint);
     const latestBlock = await chainRestTendermintApi.fetchLatestBlock();
     const latestHeight = latestBlock.header.height;
-    const timeoutHeight = new BigNumberInBase(latestHeight).plus(
-      DEFAULT_BLOCK_TIMEOUT_HEIGHT,
-    );
+    const timeoutHeight = new BigNumberInBase(latestHeight).plus(DEFAULT_BLOCK_TIMEOUT_HEIGHT);
     const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
     const messages = cosmosMsgs.map((cosmosMsg) =>
       getEncodeObjectFromCosmosMessageInjective(cosmosMsg),
@@ -1064,9 +945,7 @@ export class SkipClient {
     });
   }
 
-  async signCosmosMessageAmino(
-    options: clientTypes.SignCosmosMessageAminoOptions,
-  ): Promise<TxRaw> {
+  async signCosmosMessageAmino(options: clientTypes.SignCosmosMessageAminoOptions): Promise<TxRaw> {
     const {
       signer,
       signerAddress,
@@ -1077,36 +956,20 @@ export class SkipClient {
     } = options;
 
     const accounts = await signer.getAccounts();
-    const accountFromSigner = accounts.find(
-      (account) => account.address === signerAddress,
-    );
+    const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
     if (!accountFromSigner) {
-      throw new Error(
-        "signCosmosMessageAmino: failed to retrieve account from signer",
-      );
+      throw new Error("signCosmosMessageAmino: failed to retrieve account from signer");
     }
 
-    const messages = cosmosMsgs.map((cosmosMsg) =>
-      getEncodeObjectFromCosmosMessage(cosmosMsg),
-    );
+    const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg));
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
     const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
 
-    const signDoc = makeSignDocAmino(
-      msgs,
-      fee,
-      chainId,
-      "",
-      accountNumber,
-      sequence,
-    );
+    const signDoc = makeSignDocAmino(msgs, fee, chainId, "", accountNumber, sequence);
 
-    const { signature, signed } = await signer.signAmino(
-      signerAddress,
-      signDoc,
-    );
+    const { signature, signed } = await signer.signAmino(signerAddress, signDoc);
 
     const signedTxBody = {
       messages: signed.msgs.map((msg) => this.aminoTypes.fromAmino(msg)),
@@ -1146,45 +1009,37 @@ export class SkipClient {
   async messages(options: types.MsgsRequest): Promise<types.MsgsResponse> {
     const optionsWithChainIdsToAffiliates = {
       ...options,
-      chainIDsToAffiliates:
-        options.chainIDsToAffiliates || this.chainIDsToAffiliates,
+      chainIDsToAffiliates: options.chainIDsToAffiliates || this.chainIDsToAffiliates,
     };
-    const response = await this.requestClient.post<
-      types.MsgsResponseJSON,
-      types.MsgsRequestJSON
-    >("/v2/fungible/msgs", {
-      ...types.msgsRequestToJSON(optionsWithChainIdsToAffiliates),
-      slippage_tolerance_percent: options.slippageTolerancePercent || "0",
-    });
+    const response = await this.requestClient.post<types.MsgsResponseJSON, types.MsgsRequestJSON>(
+      "/v2/fungible/msgs",
+      {
+        ...types.msgsRequestToJSON(optionsWithChainIdsToAffiliates),
+        slippage_tolerance_percent: options.slippageTolerancePercent || "0",
+      },
+    );
     return types.messageResponseFromJSON(response);
   }
 
   async route(options: types.RouteRequest): Promise<types.RouteResponse> {
-    const response = await this.requestClient.post<
-      types.RouteResponseJSON,
-      types.RouteRequestJSON
-    >("/v2/fungible/route", {
-      ...types.routeRequestToJSON(options),
-      experimental_features: [
-        ...new Set([
-          "stargate",
-          "eureka",
-          ...(options.experimentalFeatures || []),
-        ]),
-      ] as types.ExperimentalFeature[],
-      cumulative_affiliate_fee_bps: this.cumulativeAffiliateFeeBPS,
-    });
+    const response = await this.requestClient.post<types.RouteResponseJSON, types.RouteRequestJSON>(
+      "/v2/fungible/route",
+      {
+        ...types.routeRequestToJSON(options),
+        experimental_features: [
+          ...new Set(["stargate", "eureka", ...(options.experimentalFeatures || [])]),
+        ] as types.ExperimentalFeature[],
+        cumulative_affiliate_fee_bps: this.cumulativeAffiliateFeeBPS,
+      },
+    );
 
     return types.routeResponseFromJSON(response);
   }
 
-  async msgsDirect(
-    options: types.MsgsDirectRequest,
-  ): Promise<types.MsgsDirectResponse> {
+  async msgsDirect(options: types.MsgsDirectRequest): Promise<types.MsgsDirectResponse> {
     const optionsWithChainIdsToAffiliates = {
       ...options,
-      chainIDsToAffiliates:
-        options.chainIDsToAffiliates || this.chainIDsToAffiliates,
+      chainIDsToAffiliates: options.chainIDsToAffiliates || this.chainIDsToAffiliates,
     };
     const response = await this.requestClient.post<
       types.MsgsDirectResponseJSON,
@@ -1201,34 +1056,27 @@ export class SkipClient {
   }
 
   async recommendAssets(
-    request:
-      | types.AssetRecommendationRequest
-      | types.AssetRecommendationRequest[],
+    request: types.AssetRecommendationRequest | types.AssetRecommendationRequest[],
   ) {
     const options = types.recommendAssetsRequestToJSON({
       requests: Array.isArray(request) ? request : [request],
     });
 
-    const response =
-      await this.requestClient.post<types.RecommendAssetsResponseJSON>(
-        "/v2/fungible/recommend_assets",
-        options,
-      );
+    const response = await this.requestClient.post<types.RecommendAssetsResponseJSON>(
+      "/v2/fungible/recommend_assets",
+      options,
+    );
 
-    return types.recommendAssetsResponseFromJSON(response)
-      .recommendationEntries;
+    return types.recommendAssetsResponseFromJSON(response).recommendationEntries;
   }
 
-  async ibcOriginAssets(
-    assets: types.DenomWithChainID[],
-  ): Promise<types.AssetOrError[]> {
-    const response =
-      await this.requestClient.post<types.OriginAssetsResponseJSON>(
-        "/v2/fungible/ibc_origin_assets",
-        types.originAssetsRequestToJSON({
-          assets,
-        }),
-      );
+  async ibcOriginAssets(assets: types.DenomWithChainID[]): Promise<types.AssetOrError[]> {
+    const response = await this.requestClient.post<types.OriginAssetsResponseJSON>(
+      "/v2/fungible/ibc_origin_assets",
+      types.originAssetsRequestToJSON({
+        assets,
+      }),
+    );
 
     return types.originAssetsResponseFromJSON(response).originAssets;
   }
@@ -1425,9 +1273,7 @@ export class SkipClient {
         return txStatusResponse;
       }
       if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
-        throw new Error(
-          `${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`,
-        );
+        throw new Error(`${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`);
       }
       if (txStatusResponse.state === "STATE_ABANDONED") {
         throw new Error("Tracking for the transaction has been abandoned");
@@ -1459,9 +1305,7 @@ export class SkipClient {
       }));
     const account = await client.getAccount(address);
     if (!account) {
-      throw new Error(
-        "getAccountNumberAndSequence: failed to retrieve account",
-      );
+      throw new Error("getAccountNumberAndSequence: failed to retrieve account");
     }
 
     client.disconnect();
@@ -1472,21 +1316,15 @@ export class SkipClient {
     };
   }
 
-  private async getAccountNumberAndSequenceFromDymension(
-    address: string,
-    chainID: string,
-  ) {
+  private async getAccountNumberAndSequenceFromDymension(address: string, chainID: string) {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
-    const response = await axios.get(
-      `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-    );
+    const response = await axios.get(`${endpoint}/cosmos/auth/v1beta1/accounts/${address}`);
     let sequence = 0;
     let accountNumber = 0;
     if (response.data.account.base_account) {
       sequence = response.data.account.base_account.sequence as number;
-      accountNumber = response.data.account.base_account
-        .account_number as number;
+      accountNumber = response.data.account.base_account.account_number as number;
     } else {
       sequence = response.data.account.sequence as number;
       accountNumber = response.data.account.account_number as number;
@@ -1497,18 +1335,12 @@ export class SkipClient {
     };
   }
 
-  private async getAccountNumberAndSequenceFromEvmos(
-    address: string,
-    chainID: string,
-  ) {
+  private async getAccountNumberAndSequenceFromEvmos(address: string, chainID: string) {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
-    const response = await axios.get(
-      `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-    );
+    const response = await axios.get(`${endpoint}/cosmos/auth/v1beta1/accounts/${address}`);
 
-    const accountNumber = response.data.account.base_account
-      .account_number as number;
+    const accountNumber = response.data.account.base_account.account_number as number;
     const sequence = response.data.account.base_account.sequence as number;
 
     return {
@@ -1517,10 +1349,7 @@ export class SkipClient {
     };
   }
 
-  private async getAccountNumberAndSequenceInjective(
-    address: string,
-    chainID: string,
-  ) {
+  private async getAccountNumberAndSequenceInjective(address: string, chainID: string) {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
     const chainRestAuthApi = new ChainRestAuthApi(endpoint);
@@ -1528,9 +1357,7 @@ export class SkipClient {
     const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
 
     return {
-      accountNumber: parseInt(
-        accountDetailsResponse.account.base_account.account_number,
-      ),
+      accountNumber: parseInt(accountDetailsResponse.account.base_account.account_number),
       sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
     };
   }
@@ -1540,10 +1367,7 @@ export class SkipClient {
       return this.endpointOptions.getRpcEndpointForChain(chainID);
     }
 
-    if (
-      this.endpointOptions.endpoints &&
-      this.endpointOptions.endpoints[chainID]
-    ) {
+    if (this.endpointOptions.endpoints && this.endpointOptions.endpoints[chainID]) {
       const endpointOptions = this.endpointOptions.endpoints[chainID];
 
       if (endpointOptions?.rpc) {
@@ -1558,9 +1382,7 @@ export class SkipClient {
     let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      throw new Error(
-        `getRpcEndpointForChain: failed to find chain id '${chainID}' in registry`,
-      );
+      throw new Error(`getRpcEndpointForChain: failed to find chain id '${chainID}' in registry`);
     }
 
     if (chain.apis?.rpc?.length === 0 || !chain.apis?.rpc) {
@@ -1585,10 +1407,7 @@ export class SkipClient {
       return this.endpointOptions.getRestEndpointForChain(chainID);
     }
 
-    if (
-      this.endpointOptions.endpoints &&
-      this.endpointOptions.endpoints[chainID]
-    ) {
+    if (this.endpointOptions.endpoints && this.endpointOptions.endpoints[chainID]) {
       const endpointOptions = this.endpointOptions.endpoints[chainID];
 
       if (endpointOptions?.rest) {
@@ -1637,15 +1456,10 @@ export class SkipClient {
 
     if (!price) return;
 
-    return new GasPrice(
-      Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
-      feeInfo.denom,
-    );
+    return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), feeInfo.denom);
   }
 
-  async getFeeInfoForChain(
-    chainID: string,
-  ): Promise<types.FeeAsset | undefined> {
+  async getFeeInfoForChain(chainID: string): Promise<types.FeeAsset | undefined> {
     const skipChains = await this.getMainnetAndTestnetChains();
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
@@ -1692,15 +1506,9 @@ export class SkipClient {
     return {
       denom: registryFeeInfo.denom,
       gasPrice: {
-        low: registryFeeInfo.low_gas_price
-          ? `${registryFeeInfo.low_gas_price}`
-          : "",
-        average: registryFeeInfo.average_gas_price
-          ? `${registryFeeInfo.average_gas_price}`
-          : "",
-        high: registryFeeInfo.high_gas_price
-          ? `${registryFeeInfo.high_gas_price}`
-          : "",
+        low: registryFeeInfo.low_gas_price ? `${registryFeeInfo.low_gas_price}` : "",
+        average: registryFeeInfo.average_gas_price ? `${registryFeeInfo.average_gas_price}` : "",
+        high: registryFeeInfo.high_gas_price ? `${registryFeeInfo.high_gas_price}` : "",
       },
     };
   }
@@ -1736,16 +1544,13 @@ export class SkipClient {
 
     // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
     const nonIBCAsset = chain.fees.fee_tokens.find(
-      (token) =>
-        !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
+      (token) => !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
     );
     if (nonIBCAsset) {
       return nonIBCAsset.denom;
     }
 
-    const nonL2Asset = chain.fees.fee_tokens.find(
-      (token) => !token.denom.startsWith("l2/"),
-    );
+    const nonL2Asset = chain.fees.fee_tokens.find((token) => !token.denom.startsWith("l2/"));
     if (nonL2Asset) {
       return nonL2Asset.denom;
     }
@@ -1809,8 +1614,7 @@ export class SkipClient {
         if (
           "cosmosTx" in tx &&
           !disabledChainIds?.includes(tx.cosmosTx.chainID) &&
-          (enabledChainIds === undefined ||
-            enabledChainIds.includes(tx.cosmosTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.cosmosTx.chainID))
         ) {
           if (!tx.cosmosTx.msgs) {
             raise(`invalid msgs ${tx.cosmosTx.msgs}`);
@@ -1841,14 +1645,11 @@ export class SkipClient {
         if (
           "evmTx" in tx &&
           !disabledChainIds?.includes(tx.evmTx.chainID) &&
-          (enabledChainIds === undefined ||
-            enabledChainIds.includes(tx.evmTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.evmTx.chainID))
         ) {
           const signer = await getEVMSigner?.(tx.evmTx.chainID);
           if (!signer) {
-            throw new Error(
-              `failed to get signer for chain ${tx.evmTx.chainID}`,
-            );
+            throw new Error(`failed to get signer for chain ${tx.evmTx.chainID}`);
           }
           try {
             const res = await this.validateEvmGasBalance({
@@ -1870,8 +1671,7 @@ export class SkipClient {
         if (
           "svmTx" in tx &&
           !disabledChainIds?.includes(tx.svmTx.chainID) &&
-          (enabledChainIds === undefined ||
-            enabledChainIds.includes(tx.svmTx.chainID))
+          (enabledChainIds === undefined || enabledChainIds.includes(tx.svmTx.chainID))
         ) {
           try {
             const res = await this.validateSvmGasBalance({
@@ -1899,16 +1699,14 @@ export class SkipClient {
       onValidateGasBalance?.({
         status: "error",
       });
-      this.validateGasResults =
-        validateResult as unknown as clientTypes.ValidateGasResult[];
+      this.validateGasResults = validateResult as unknown as clientTypes.ValidateGasResult[];
       throw new Error(`${txError.error}`);
     }
     onValidateGasBalance?.({
       status: "completed",
     });
 
-    this.validateGasResults =
-      validateResult as unknown as clientTypes.ValidateGasResult[];
+    this.validateGasResults = validateResult as unknown as clientTypes.ValidateGasResult[];
   }
 
   /**
@@ -1935,9 +1733,7 @@ export class SkipClient {
   }) {
     const chainAssets = (await this.getAssets(chainID))?.[chainID];
 
-    const chain = (await this.getChains()).find(
-      (chain) => chain.chainID === chainID,
-    );
+    const chain = (await this.getChains()).find((chain) => chain.chainID === chainID);
     if (!chain) {
       throw new Error(`failed to find chain id for '${chainID}'`);
     }
@@ -1967,15 +1763,10 @@ export class SkipClient {
       } catch (e) {
         const error = e as Error;
         if (error.message === "simulate" && !getFallbackGasAmount) {
-          throw new Error(
-            `unable to get gas amount for ${chainID}'s message(s)`,
-          );
+          throw new Error(`unable to get gas amount for ${chainID}'s message(s)`);
         }
         if (getFallbackGasAmount) {
-          const fallbackGasAmount = await getFallbackGasAmount(
-            chainID,
-            types.ChainType.Cosmos,
-          );
+          const fallbackGasAmount = await getFallbackGasAmount(chainID, types.ChainType.Cosmos);
           if (!fallbackGasAmount) {
             raise(`unable to estimate gas for message(s) ${messages}`);
           }
@@ -1996,10 +1787,7 @@ export class SkipClient {
         }
 
         if (!price) return;
-        return new GasPrice(
-          Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
-          asset.denom,
-        );
+        return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), asset.denom);
       })();
       if (!gasPrice) {
         return null;
@@ -2090,13 +1878,11 @@ export class SkipClient {
     if (!feeUsed) {
       if (validatedAssets.length > 1) {
         throw new Error(
-          validatedAssets[0]?.error ||
-            `Insufficient fee token to initiate transfer on ${chainID}.`,
+          validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chainID}.`,
         );
       }
       throw new Error(
-        validatedAssets[0]?.error ||
-          `Insufficient fee token to initiate transfer on ${chainID}.`,
+        validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chainID}.`,
       );
     }
     return feeUsed;
@@ -2111,17 +1897,11 @@ export class SkipClient {
     tx: types.EvmTx;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
   }) {
-    const chain = (await this.getChains()).find(
-      (chain) => chain.chainID === tx.chainID,
-    );
+    const chain = (await this.getChains()).find((chain) => chain.chainID === tx.chainID);
     if (!chain) {
       throw new Error(`failed to find chain id for '${tx.chainID}'`);
     }
-    const gasAmount = await getEVMGasAmountForMessage(
-      signer,
-      tx,
-      getFallbackGasAmount,
-    );
+    const gasAmount = await getEVMGasAmountForMessage(signer, tx, getFallbackGasAmount);
 
     if (!signer.account?.address) {
       throw new Error("validateEvmGasBalance: Signer address not found");
@@ -2137,29 +1917,21 @@ export class SkipClient {
     const balances = skipBalances.chains[tx.chainID]?.denoms;
 
     const nativeGasBalance =
-      balances &&
-      Object.entries(balances).find(([denom]) =>
-        denom.includes("-native"),
-      )?.[1];
+      balances && Object.entries(balances).find(([denom]) => denom.includes("-native"))?.[1];
 
     const zeroAddressGasBalance =
       balances &&
       Object.entries(balances).find(
-        ([denom]) =>
-          denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
+        ([denom]) => denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
     const gasBalance = nativeGasBalance || zeroAddressGasBalance;
 
     if (!gasBalance) {
-      const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
-        tx.chainID
-      ];
+      const chainAssets = (await this.getAssets(String(tx.chainID)))?.[tx.chainID];
 
       const nativeAsset = chainAssets?.find((x) => x.denom.includes("-native"));
       const zeroAddressAsset = chainAssets?.find(
-        (x) =>
-          x.denom.toLowerCase() ===
-          "0x0000000000000000000000000000000000000000",
+        (x) => x.denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       );
       const asset = nativeAsset || zeroAddressAsset;
       if (!asset?.decimals) {
@@ -2183,8 +1955,7 @@ export class SkipClient {
       const asset = chainAssets?.find(
         (x) =>
           x.denom.includes("-native") ||
-          x.denom.toLowerCase() ===
-            "0x0000000000000000000000000000000000000000",
+          x.denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       );
       if (!asset?.decimals) {
         return {
@@ -2274,19 +2045,14 @@ export class SkipClient {
   async validateUserAddresses(userAddresses: clientTypes.UserAddress[]) {
     const chains = await this.getChains();
     const validations = userAddresses.map((userAddress) => {
-      const chain = chains.find(
-        (chain) => chain.chainID === userAddress.chainID,
-      );
+      const chain = chains.find((chain) => chain.chainID === userAddress.chainID);
 
       switch (chain?.chainType) {
         case types.ChainType.Cosmos:
           try {
             if (chain.chainID.includes("penumbra")) {
               try {
-                return (
-                  chain.bech32Prefix ===
-                  bech32m.decode(userAddress.address, 143)?.prefix
-                );
+                return chain.bech32Prefix === bech32m.decode(userAddress.address, 143)?.prefix;
               } catch {
                 // The temporary solution to route around Noble address breakage.
                 // This can be entirely removed once `noble-1` upgrades.
@@ -2295,10 +2061,7 @@ export class SkipClient {
                 );
               }
             }
-            return (
-              chain.bech32Prefix ===
-              bech32.decode(userAddress.address, 1023).prefix
-            );
+            return chain.bech32Prefix === bech32.decode(userAddress.address, 1023).prefix;
           } catch {
             return false;
           }
@@ -2325,22 +2088,17 @@ export class SkipClient {
   }
 }
 
-function validateChainIDsToAffiliates(
-  chainIDsToAffiliates: Record<string, types.ChainAffiliates>,
-) {
-  const affiliatesArray: types.Affiliate[][] = Object.values(
-    chainIDsToAffiliates,
-  ).map((chain) => chain.affiliates);
-
-  const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce(
-    (acc, affiliate) => {
-      if (!affiliate.basisPointsFee) {
-        throw new Error("basisPointFee must exist in each affiliate");
-      }
-      return acc + parseInt(affiliate.basisPointsFee, 10);
-    },
-    0,
+function validateChainIDsToAffiliates(chainIDsToAffiliates: Record<string, types.ChainAffiliates>) {
+  const affiliatesArray: types.Affiliate[][] = Object.values(chainIDsToAffiliates).map(
+    (chain) => chain.affiliates,
   );
+
+  const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce((acc, affiliate) => {
+    if (!affiliate.basisPointsFee) {
+      throw new Error("basisPointFee must exist in each affiliate");
+    }
+    return acc + parseInt(affiliate.basisPointsFee, 10);
+  }, 0);
 
   const allBasisPointsAreEqual = affiliatesArray.every((affiliate) => {
     const totalBasisPointsFee = affiliate.reduce((acc, affiliate) => {
@@ -2366,7 +2124,7 @@ function validateChainIDsToAffiliates(
 /**
  * @deprecated SkipRouter is deprecated please use SkipClient instead
  */
-export class SkipRouter extends SkipClient {}
+export class SkipRouter extends SkipClient { }
 
 function raise(message?: string, options?: ErrorOptions): never {
   throw new Error(message, options);

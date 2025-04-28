@@ -3,9 +3,9 @@ import { EvmTx } from "../../types/swaggerTypes";
 import { GetFallbackGasAmount } from "../../types/client";
 import { getEVMGasAmountForMessage } from "../transactions";
 import { balances } from "../../api/getBalances";
-import { formatUnits } from "viem/_types/utils/unit/formatUnits";
 import { BigNumber } from "bignumber.js";
 import { ClientState } from "src/client-v2/state";
+import { formatUnits } from "viem";
 
 export const validateEvmGasBalance = async ({
   signer,

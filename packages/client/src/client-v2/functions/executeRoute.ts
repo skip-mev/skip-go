@@ -5,9 +5,9 @@ import { ChainType, GasOptions, UserAddress } from "../types/client";
 import { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
 import { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
-import { isAddress } from "viem/_types/utils/address/isAddress";
 import { executeTransactions } from "./executeTransactions";
 import { messages } from "../api/postMessages";
+import { isAddress } from "viem";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -46,15 +46,14 @@ export type ExecuteRouteOptions = SignerGetters &
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
-  const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } =
-    options;
+  const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
 
   let addressList: string[] = [];
   userAddresses.forEach((userAddress, index) => {
     const requiredChainAddress = route.requiredChainAddresses[index];
 
     if (requiredChainAddress === userAddress?.chainId) {
-      addressList.push(userAddress.address!);
+      addressList.push(userAddress.address);
     }
   });
 
@@ -70,8 +69,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     throw new Error("executeRoute error: invalid address list");
   }
 
-  const isUserAddressesValid =
-    await validateUserAddresses(userAddresses);
+  const isUserAddressesValid = await validateUserAddresses(userAddresses);
 
   if (!isUserAddressesValid) {
     throw new Error("executeRoute error: invalid user addresses");
@@ -101,24 +99,19 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
   }
 
   await executeTransactions({ ...options, txs: response.txs });
-}
+};
 
 const validateUserAddresses = async (userAddresses: UserAddress[]) => {
   const chains = await ClientState.getSkipChains();
   const validations = userAddresses.map((userAddress) => {
-    const chain = chains.find(
-      (chain) => chain.chainId === userAddress.chainId,
-    );
+    const chain = chains.find((chain) => chain.chainId === userAddress.chainId);
 
     switch (chain?.chainType) {
       case ChainType.Cosmos:
         try {
           if (chain.chainId?.includes("penumbra")) {
             try {
-              return (
-                chain.bech32Prefix ===
-                bech32m.decode(userAddress.address, 143)?.prefix
-              );
+              return chain.bech32Prefix === bech32m.decode(userAddress.address, 143)?.prefix;
             } catch {
               // The temporary solution to route around Noble address breakage.
               // This can be entirely removed once `noble-1` upgrades.
@@ -127,10 +120,7 @@ const validateUserAddresses = async (userAddresses: UserAddress[]) => {
               );
             }
           }
-          return (
-            chain.bech32Prefix ===
-            bech32.decode(userAddress.address, 1023).prefix
-          );
+          return chain.bech32Prefix === bech32.decode(userAddress.address, 1023).prefix;
         } catch {
           return false;
         }
@@ -154,4 +144,4 @@ const validateUserAddresses = async (userAddresses: UserAddress[]) => {
   });
 
   return validations.every((validation) => validation);
-}
+};

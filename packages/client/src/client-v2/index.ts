@@ -11,5 +11,10 @@ export { messagesDirect } from "./api/postMessagesDirect";
 export { recommendAssets } from "./api/postRecommendAssets";
 
 export { route } from "./api/postRoute";
+export { submitTransaction } from "./api/postSubmitTransaction";
+export { trackTransaction } from "./api/postTrackTransaction";
+export { transactionStatus } from "./api/postTransactionStatus";
 
 export { setClientOptions } from "./setClientOptions";
+
+export { executeRoute } from "./functions/executeRoute";
