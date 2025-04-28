@@ -225,9 +225,11 @@ export const SwapPageAssetChainInput = ({
               direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
               style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
             />
+
             {showPriceChangePercentage && (
               <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
+
           </Row>
         ) : (
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>

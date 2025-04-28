@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.8.6
+
+### Patch Changes
+
+- 854c59a: Fix useTxHistory returning completed if lastTxSuccess, instead should only return completed if isSettled and isSuccess are true
+- 2b2a6e7: refactor fee computation and fee display
+
 ## 3.8.5
 
 ### Patch Changes
