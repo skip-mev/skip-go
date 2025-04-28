@@ -1,28 +1,16 @@
-import {
-  GeneratedType,
-  OfflineDirectSigner,
-  Registry,
-} from "@cosmjs/proto-signing";
-import {
-  AminoConverters,
-  AminoTypes,
-  SigningStargateClient,
-} from "@cosmjs/stargate";
-import {
-  Chain,
-  Asset,
-  ChainAffiliates,
-  FeeAsset,
-} from "./types/swaggerTypes";
+import { GeneratedType, OfflineDirectSigner, Registry } from "@cosmjs/proto-signing";
+import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
+import { Chain, Asset, ChainAffiliates, FeeAsset } from "./types/swaggerTypes";
 import { ApiResponse, createRequestClient } from "./utils/generateApi";
 import { WalletClient } from "viem/_types/clients/createWalletClient";
 import { OfflineAminoSigner } from "@cosmjs/amino";
 import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
 import { StdFee } from "@cosmjs/stargate";
-import { getMainnetAndTestnetChains } from "./functions/getMainnetAndTestnetChains";
-import { getMainnetAndTestnetAssets } from "./functions/getMainnetAndTestnetAssets";
+import { getMainnetAndTestnetChains } from "./private-functions/getMainnetAndTestnetChains";
+import { getMainnetAndTestnetAssets } from "./private-functions/getMainnetAndTestnetAssets";
 import { balances } from "./api/getBalances";
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
 
@@ -75,8 +63,7 @@ export class ClientState {
     return response;
   }
 
-  static signingStargateClientByChainId: Record<string, SigningStargateClient> =
-    {};
+  static signingStargateClientByChainId: Record<string, SigningStargateClient> = {};
   static validateGasResults: ValidateGasResult[] | undefined;
 }
 
@@ -85,14 +72,12 @@ export type SignerGetters = {
   getCosmosSigner?: (
     chainId: string,
   ) => Promise<
-    | (OfflineAminoSigner & OfflineDirectSigner)
-    | OfflineAminoSigner
-    | OfflineDirectSigner
+    (OfflineAminoSigner & OfflineDirectSigner) | OfflineAminoSigner | OfflineDirectSigner
   >;
   getSVMSigner?: () => Promise<Adapter>;
 };
 
-export interface SkipClientOptions extends SignerGetters {
+export type SkipClientOptions = {
   apiUrl?: string;
   apiKey?: string;
   endpointOptions?: {
@@ -104,7 +89,7 @@ export interface SkipClientOptions extends SignerGetters {
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
   cacheDurationMs?: number;
-}
+} & SignerGetters;
 
 export type EndpointOptions = {
   rpc?: string;

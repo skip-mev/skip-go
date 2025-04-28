@@ -17,4 +17,4 @@ export { transactionStatus } from "./api/postTransactionStatus";
 
 export { setClientOptions } from "./setClientOptions";
 
-export { executeRoute } from "./functions/executeRoute";
+export { executeRoute } from "./public-functions/executeRoute";

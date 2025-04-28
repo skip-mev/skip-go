@@ -3,14 +3,19 @@ import { defineConfig } from "tsup";
 import { dependencies, peerDependencies } from "./package.json";
 import glob from "fast-glob";
 
-const apiEntrypoints = glob.sync("src/client-v2/api/*.ts").reduce(
-  (acc, file) => {
-    const name = file.replace(/^src\//, "").replace(/\.ts$/, "");
-    acc[name] = file;
-    return acc;
-  },
-  {} as Record<string, string>,
-);
+export const autoExportFilesInDirectory = (path: string) => {
+  return glob.sync(path).reduce(
+    (acc, file) => {
+      const name = file.replace(/^src\//, "").replace(/\.ts$/, "");
+      acc[name] = file;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+};
+
+const apiEntrypoints = autoExportFilesInDirectory("src/client-v2/api/*");
+const publicFunctions = autoExportFilesInDirectory("src/client-v2/public-functions/*");
 
 const defaultOptions: Options = {
   cjsInterop: true,
@@ -32,7 +37,7 @@ export default defineConfig(async ({ watch }) => {
       entry: {
         index: "src/index.ts",
         ...apiEntrypoints,
-        ["client-v2/functions/executeRoute"]: "src/client-v2/functions/executeRoute.ts",
+        ...publicFunctions,
       },
       external: [
         ...Object.keys(dependencies || {}),
