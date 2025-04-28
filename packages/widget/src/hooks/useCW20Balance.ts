@@ -23,7 +23,7 @@ export const useCW20Balance = ({ asset, address }: { address?: string; asset?: C
       if (!asset) throw new Error("Asset not found");
       return getCosmosCW20Balance(rpcURL, address, asset);
     },
-    enabled: !!address && !!asset?.tokenContract && !!asset?.isCW20 && !!asset?.chainId,
+    enabled: !!address && !!asset?.tokenContract && !!asset?.isCw20 && !!asset?.chainId,
   });
   return query;
 };

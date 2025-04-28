@@ -1,5 +1,5 @@
 import { ClientState } from "../../state";
-import { getSigningStargateClient } from "../getSigningStargateClient";
+import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { CosmosTx } from "../../types/swaggerTypes";
 import { ExecuteRouteOptions } from "../executeRoute";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";

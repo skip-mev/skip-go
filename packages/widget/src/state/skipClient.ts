@@ -1,6 +1,15 @@
 import { atom } from "jotai";
-import { SkipClient, SkipClientOptions } from "@skip-go/client";
-import { Asset, assets, bridges, Chain, chains, venues } from "@skip-go/client/v2";
+import { SkipClient } from "@skip-go/client";
+import {
+  Asset,
+  assets,
+  bridges,
+  Chain,
+  chains,
+  setClientOptions,
+  SkipClientOptions,
+  venues,
+} from "@skip-go/client/v2";
 
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
@@ -21,7 +30,7 @@ export const defaultSkipClientConfig = {
 };
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: undefined,
+  apiUrl: undefined,
   endpointOptions: undefined,
 });
 
@@ -29,19 +38,15 @@ export const rootIdAtom = atom<string | undefined>(undefined);
 
 export const themeAtom = atom<Theme>(defaultTheme);
 
-export const skipClientInstanceAtom = atom(new SkipClient());
-
-export const skipClient = atom((get) => {
-  const options = get(skipClientConfigAtom);
+export const setClientOptionsAtom = atom(null, (get, _set, options: SkipClientOptions) => {
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
-  const skipClientInstance = get(skipClientInstanceAtom);
 
-  skipClientInstance.updateOptions({
+  setClientOptions({
     ...options,
-    getCosmosSigner: async (chainID) => {
+    getCosmosSigner: async (chainId) => {
       if (getSigners?.getCosmosSigner) {
-        return getSigners.getCosmosSigner(chainID);
+        return getSigners.getCosmosSigner(chainId);
       }
       if (!wallets.cosmos) {
         throw new Error("getCosmosSigner error: no cosmos wallet");
@@ -50,18 +55,18 @@ export const skipClient = atom((get) => {
       if (!wallet) {
         throw new Error("getCosmosSigner error: wallet not found");
       }
-      const key = await wallet.getKey(chainID);
+      const key = await wallet.getKey(chainId);
 
       return key.isNanoLedger
-        ? wallet.getOfflineSignerOnlyAmino(chainID)
-        : wallet.getOfflineSigner(chainID);
+        ? wallet.getOfflineSignerOnlyAmino(chainId)
+        : wallet.getOfflineSigner(chainId);
     },
-    getEVMSigner: async (chainID) => {
+    getEVMSigner: async (chainId) => {
       if (getSigners?.getEVMSigner) {
-        return getSigners.getEVMSigner(chainID);
+        return getSigners.getEVMSigner(chainId);
       }
       const evmWalletClient = (await getWalletClient(config, {
-        chainId: parseInt(chainID),
+        chainId: parseInt(chainId),
       })) as WalletClient;
 
       return evmWalletClient;
@@ -77,8 +82,6 @@ export const skipClient = atom((get) => {
       return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
     },
   });
-
-  return skipClientInstance;
 });
 
 export type ClientAsset = Asset & {
@@ -120,7 +123,7 @@ export const skipAssetsAtom = atomWithQuery((get) => {
         onlyTestnets,
       });
 
-      return flattenData(response as Record<string, V2.Asset[]>, chains.data);
+      return flattenData(response as Record<string, Asset[]>, chains.data);
     },
     enabled: onlyTestnets !== undefined && apiURL !== undefined,
   };

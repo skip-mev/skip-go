@@ -1,5 +1,5 @@
 import { ClientState } from "../state";
-import { api } from "../utils/generateApi";
+import { api, ApiRequest, ApiResponse } from "../utils/generateApi";
 
 export const balances = api({
   methodName: "getBalances",
@@ -11,3 +11,6 @@ export const balances = api({
     }
   },
 });
+
+export type BalanceRequest = ApiRequest<"getBalances">;
+export type BalanceResponse = ApiResponse<"getBalances">;

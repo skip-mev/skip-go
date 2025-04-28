@@ -2,7 +2,7 @@ import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { CosmosMsg } from "../../types/swaggerTypes";
 import { ChainType, GetFallbackGasAmount } from "../../types/client";
 import { BigNumber } from "bignumber.js";
-import { getSigningStargateClient } from "../getSigningStargateClient";
+import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { getCosmosGasAmountForMessage } from "../transactions";
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
@@ -81,13 +81,17 @@ export const validateCosmosGasBalance = async ({
   })();
   const fees = feeAssets.map((asset) => {
     const gasPrice = (() => {
-      if (!asset?.gasPriceInfo) return undefined;
-      let price = asset.gasPriceInfo.average;
+      // @ts-expect-error the swagger type is incorrect
+      if (!asset?.gasPrice) return undefined;
+      // @ts-expect-error the swagger type is incorrect
+      let price = asset.gasPrice.average;
       if (price === "") {
-        price = asset.gasPriceInfo.high;
+        // @ts-expect-error the swagger type is incorrect
+        price = asset.gasPrice.high;
       }
       if (price === "") {
-        price = asset.gasPriceInfo.low;
+        // @ts-expect-error the swagger type is incorrect
+        price = asset.gasPrice.low;
       }
 
       if (!price) return;
@@ -117,7 +121,7 @@ export const validateCosmosGasBalance = async ({
   const validatedAssets = feeAssets.map((asset, index) => {
     const chainAsset = skipAssets?.find((x) => x.denom === asset.denom);
     const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
-    console.log(chain, feeAssets);
+
     const decimal = Number(chainAsset?.decimals);
     if (!chainAsset) {
       return {
@@ -130,6 +134,8 @@ export const validateCosmosGasBalance = async ({
       };
 
     const fee = fees[index];
+
+    console.log(chain, feeAssets, fees, fee);
     if (!fee) {
       return {
         error: `(${chain?.prettyName}) Unable to calculate fee for ${symbol}`,

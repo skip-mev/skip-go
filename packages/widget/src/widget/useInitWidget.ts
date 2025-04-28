@@ -6,6 +6,7 @@ import {
   themeAtom,
   defaultSkipClientConfig,
   onlyTestnetsAtom,
+  setClientOptionsAtom,
 } from "@/state/skipClient";
 import { SkipClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
@@ -44,6 +45,7 @@ export const useInitWidget = (props: WidgetProps) => {
   useMobileRouteConfig();
 
   const setSkipClientConfig = useSetAtom(skipClientConfigAtom);
+  const setClientOptions = useSetAtom(setClientOptionsAtom);
   const setTheme = useSetAtom(themeAtom);
   const setSwapSettings = useSetAtom(swapSettingsAtom);
   const setRouteConfig = useSetAtom(routeConfigAtom);
@@ -71,9 +73,9 @@ export const useInitWidget = (props: WidgetProps) => {
 
     // merge if not undefined
     return {
-      apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
+      apiUrl: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
       endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
+      chainIdsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
 
@@ -96,13 +98,10 @@ export const useInitWidget = (props: WidgetProps) => {
   }, [props.brandColor, props.theme]);
 
   useEffect(() => {
-    setSkipClientConfig({
-      apiURL: mergedSkipClientConfig.apiURL,
-      endpointOptions: mergedSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: mergedSkipClientConfig.chainIDsToAffiliates,
-    });
+    setSkipClientConfig(mergedSkipClientConfig);
+    setClientOptions(mergedSkipClientConfig);
     setTheme(mergedTheme);
-  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
+  }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme, setClientOptions]);
 
   useEffect(() => {
     if (props.settings) {

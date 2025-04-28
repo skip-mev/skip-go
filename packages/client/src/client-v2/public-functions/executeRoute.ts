@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
-import { ClientState, SignerGetters } from "../state";
+import { ClientState } from "../state";
 import { TransactionCallbacks } from "../types/callbacks";
-import { ChainType, GasOptions, UserAddress } from "../types/client";
+import { ChainType, GasOptions, SignerGetters, UserAddress } from "../types/client";
 import { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
 import { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";

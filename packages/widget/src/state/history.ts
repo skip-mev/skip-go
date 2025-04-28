@@ -4,8 +4,8 @@ import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { skipClient } from "./skipClient";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
+import { transactionStatus } from "@skip-go/client/v2";
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
@@ -45,7 +45,6 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
 });
 
 export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const transactionHistory = get(transactionHistoryAtom);
 
   const pendingTransactionHistoryItemsFound = transactionHistory.find(
@@ -64,10 +63,7 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
                 transactionHistoryItem.status !== "completed" &&
                 transactionHistoryItem.status !== "failed"
               ) {
-                return await skip.transactionStatus({
-                  chainID: transactionDetail.chainID,
-                  txHash: transactionDetail.txHash,
-                });
+                return await transactionStatus.request(transactionDetail);
               }
               return new Promise((resolve) => resolve(null));
             }) as Promise<TxStatusResponse | null>[],

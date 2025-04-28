@@ -15,6 +15,7 @@ import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
+  console.log(options);
   ClientState.requestClient = createRequestClient({
     baseURL: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
