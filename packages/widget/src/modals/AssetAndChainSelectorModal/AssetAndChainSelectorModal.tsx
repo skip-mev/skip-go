@@ -10,7 +10,6 @@ import {
   isGroupedAsset,
 } from "./AssetAndChainSelectorModalRowItem";
 import { AssetAndChainSelectorModalSearchInput } from "./AssetAndChainSelectorModalSearchInput";
-import { V2 } from "@skip-go/client";
 import { useFilteredChains } from "./useFilteredChains";
 import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
@@ -20,6 +19,7 @@ import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { Chain } from "@skip-go/client/v2";
 
 export type GroupedAsset = {
   id: string;
@@ -34,7 +34,7 @@ export type GroupedAsset = {
   name?: string;
 };
 
-export type ChainWithAsset = V2.Chain & {
+export type ChainWithAsset = Chain & {
   asset: ClientAsset;
 };
 
