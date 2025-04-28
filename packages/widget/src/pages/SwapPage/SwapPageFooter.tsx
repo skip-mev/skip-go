@@ -20,7 +20,7 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { getFeeList, getTotalFees } from "@/utils/route";
 
 export const PoweredBySkipGo = () => (
-  <Row data-logo="skip-go" align="center" gap={5}>
+  <Row align="center" data-logo="skip-go" gap={5}>
     Powered by <SkipLogoIcon />
   </Row>
 );
@@ -29,11 +29,11 @@ const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds
     ? convertSecondsToMinutesOrHours(seconds)
     : null;
-  return formatted ? <Row gap={8} align="flex-end">{formatted}</Row> : null;
+  return formatted ? <Row gap={6} align="flex-end">{formatted}</Row> : null;
 };
 
 const Fee = ({ amount }: { amount?: string }) =>
-  amount ? <Row gap={8} align="flex-end">Fee: {amount}</Row> : null;
+  amount ? <Row gap={6} align="flex-end">Fee: {amount}</Row> : null;
 
 const SettingsButton = ({
   highlight,
@@ -53,7 +53,7 @@ const SettingsButton = ({
 
 const SignatureRequired = ({ count }: { count: number }) => (
   <Row gap={4} align="center">
-    <StyledSignatureRequiredContainer gap={5} align="flex-end">
+    <StyledSignatureRequiredContainer gap={3} align="flex-end">
       {`${count} ${pluralize("Signature", count)} required`}
       <SignatureIcon />
     </StyledSignatureRequiredContainer>
@@ -90,7 +90,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   const estimatedSeconds = route?.estimatedRouteDurationSeconds;
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
   const totalFees = getTotalFees(fees)?.formattedUsdAmount;
-  const signaturesRequired = 2
+  const signaturesRequired = route?.txsRequired ?? 1;
 
   const leftContent = () => {
     if (content) return content;
@@ -113,30 +113,21 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
     );
   };
 
-  const rightContent = () => (
-    <>
-     <RoutePreferenceLabel preference={routePreference} />
+  const rightContent = () => 
+    isMobile && isGoFast ? (
+      <RoutePreferenceLabel preference={routePreference} />
+    ) : (
       <PoweredBySkipGo />
-    </>
-  )
-    // isMobile && isGoFast ? (
-    //   <RoutePreferenceLabel preference={routePreference} />
-    // ) : (
-    //   <PoweredBySkipGo />
-    // );
+    );
 
-  console.log(rightContent())
   return (
     <>
-      {leftContent() || <div />}
+      {leftContent() ?? <div />}
       {rightContent()}
-      <PoweredBySkipGo />
-
     </>
   );
 };
 
-// Footer Button
 export const SwapPageFooter: React.FC<
   { onClick?: () => void } & SwapPageFooterItemsProps & React.ButtonHTMLAttributes<HTMLButtonElement>
 > = ({ onClick, ...props }) => (
@@ -152,7 +143,6 @@ export const SwapPageFooter: React.FC<
   </GhostButton>
 );
 
-// Styled Components
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
 `;
