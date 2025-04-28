@@ -40,6 +40,7 @@ export class ClientState {
 
   static async getSkipChains() {
     if (this.skipChains) {
+      console.log("got skip chains");
       return this.skipChains;
     }
 
@@ -51,7 +52,7 @@ export class ClientState {
 
   static async getSkipAssets() {
     if (this.skipAssets) {
-      this.skipAssets;
+      return this.skipAssets;
     }
 
     const response = await getMainnetAndTestnetAssets();

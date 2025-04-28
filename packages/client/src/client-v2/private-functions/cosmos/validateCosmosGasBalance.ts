@@ -1,7 +1,6 @@
 import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { CosmosMsg } from "../../types/swaggerTypes";
 import { ChainType, GetFallbackGasAmount } from "../../types/client";
-import { ExecuteRouteOptions } from "../executeRoute";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../getSigningStargateClient";
 import { getCosmosGasAmountForMessage } from "../transactions";
@@ -9,6 +8,7 @@ import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
 import { balances } from "../../api/postBalances";
 import { ClientState } from "src/client-v2/state";
+import { ExecuteRouteOptions } from "src/client-v2/public-functions/executeRoute";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;
@@ -37,7 +37,7 @@ export const validateCosmosGasBalance = async ({
   const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
   const skipChains = await ClientState.getSkipChains();
 
-  const chain = skipChains?.find((chain) => chain.chainId === chainId);
+  const chain = skipChains?.find((c) => c.chainId === chainId);
   if (!chain) {
     throw new Error(`failed to find chain id for '${chainId}'`);
   }
@@ -116,9 +116,8 @@ export const validateCosmosGasBalance = async ({
   });
   const validatedAssets = feeAssets.map((asset, index) => {
     const chainAsset = skipAssets?.find((x) => x.denom === asset.denom);
-    console.log(skipAssets, chainAsset);
     const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
-    const chain = skipChains?.find((x) => x.chainId === chainId);
+    console.log(chain, feeAssets);
     const decimal = Number(chainAsset?.decimals);
     if (!chainAsset) {
       return {

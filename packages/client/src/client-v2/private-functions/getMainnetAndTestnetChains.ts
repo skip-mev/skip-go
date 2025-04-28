@@ -14,7 +14,7 @@ export const getMainnetAndTestnetChains = async () => {
     }),
   ]);
 
-  const combinedChains = [...(mainnetRes.chains ?? []), ...(testnetRes.chains ?? [])];
+  const combinedChains = [...(mainnetRes ?? []), ...(testnetRes ?? [])];
   ClientState.skipChains = combinedChains;
 
   return combinedChains;

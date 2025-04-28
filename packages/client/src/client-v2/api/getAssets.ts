@@ -1,7 +1,6 @@
 import { Asset } from "../types/swaggerTypes";
 import { ClientState } from "../state";
 import { api } from "../utils/generateApi";
-import { transformAssetsMap } from "../private-functions/getMainnetAndTestnetAssets";
 
 export const assets = api({
   methodName: "getAssets",
@@ -15,3 +14,14 @@ export const assets = api({
     }
   },
 });
+
+export const transformAssetsMap = (
+  input?: Record<string, { assets?: Asset[] }>,
+): Record<string, Asset[]> =>
+  Object.entries(input ?? {}).reduce(
+    (acc, [chainId, { assets }]) => {
+      acc[chainId] = (assets ?? []).map((asset) => asset);
+      return acc;
+    },
+    {} as Record<string, Asset[]>,
+  );
