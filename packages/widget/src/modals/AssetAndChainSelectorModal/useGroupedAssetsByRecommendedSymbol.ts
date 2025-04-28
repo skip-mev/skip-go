@@ -84,8 +84,8 @@ export const useGroupedAssetByRecommendedSymbol = ({
             accumulator.totalAmount += Number(
               convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals),
             );
-            if (Number(balance.valueUSD)) {
-              accumulator.totalUsd += Number(balance.valueUSD);
+            if (Number(balance.valueUsd)) {
+              accumulator.totalUsd += Number(balance.valueUsd);
             }
           }
           return accumulator;

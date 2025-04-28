@@ -75,8 +75,8 @@ export const AssetAndChainSelectorModalRowItem = ({
             <SmallText normalTextColor>
               {convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals)}
             </SmallText>
-            {balance.valueUSD && Number(balance.valueUSD) > 0 && (
-              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            {balance.valueUsd && Number(balance.valueUsd) > 0 && (
+              <SmallText>{formatUSD(balance.valueUsd)}</SmallText>
             )}
           </Column>
         )
