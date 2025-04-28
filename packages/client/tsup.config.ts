@@ -32,6 +32,7 @@ export default defineConfig(async ({ watch }) => {
       entry: {
         index: "src/index.ts",
         ...apiEntrypoints,
+        ["client-v2/functions/executeRoute"]: "src/client-v2/functions/executeRoute.ts",
       },
       external: [
         ...Object.keys(dependencies || {}),
