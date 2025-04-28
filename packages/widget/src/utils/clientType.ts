@@ -1,4 +1,14 @@
 import {
+  GoFastTransfer,
+  GoFastTransferInfo,
+  GoFastTransferState,
+  StargateTransfer,
+  StargateTransferInfo,
+  StargateTransferState,
+  StatusState,
+  TxStatusResponse,
+} from "@skip-go/client";
+import {
   AxelarTransfer,
   AxelarTransferInfo,
   AxelarTransferState,
@@ -6,32 +16,24 @@ import {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  EurekaTransfer,
+  EurekaTransferInfo,
   EvmSwap,
-  GoFastTransfer,
-  GoFastTransferInfo,
-  GoFastTransferState,
   HyperlaneTransfer,
   HyperlaneTransferInfo,
   HyperlaneTransferState,
-  StargateTransferInfo,
-  StargateTransfer,
-  StargateTransferState,
+  Operation,
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
-  Operation as SkipClientOperation,
-  StatusState,
   Swap,
+  SwapExactCoinIn,
+  SwapExactCoinOut,
   Transfer,
   TransferEvent,
   TransferInfo,
   TransferState,
-  TxStatusResponse,
-  SwapExactCoinIn,
-  SwapExactCoinOut,
-  EurekaTransfer,
-  EurekaTransferInfo,
-} from "@skip-go/client";
+} from "@skip-go/client/v2";
 
 export type OverallStatus = "pending" | "success" | "failed";
 
@@ -68,16 +70,16 @@ type CombinedOperation = {
 
 type OperationDetails = CombineObjectTypes<
   Transfer &
-    BankSend &
-    Swap &
-    AxelarTransfer &
-    CCTPTransfer &
-    HyperlaneTransfer &
-    EvmSwap &
-    StargateTransfer &
-    OPInitTransfer &
-    GoFastTransfer &
-    EurekaTransfer
+  BankSend &
+  Swap &
+  AxelarTransfer &
+  CCTPTransfer &
+  HyperlaneTransfer &
+  EvmSwap &
+  StargateTransfer &
+  OPInitTransfer &
+  GoFastTransfer &
+  EurekaTransfer
 > & {
   swapIn?: SwapExactCoinIn;
   swapOut?: SwapExactCoinOut;
@@ -96,19 +98,19 @@ export type ClientOperation = {
 // find keys that are present in each type
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? Key
-      : never
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? Key
+  : never
+  : never
   : never;
 
 // find keys that are not present in each type
 type KeysNotPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? never
-      : Key
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? never
+  : Key
+  : never
   : never;
 
 // combine multiple types properly and preserve details on if key is optional
@@ -118,7 +120,7 @@ type CombineObjectTypes<T> = {
   [K in KeysNotPresentInAll<T>]?: T[K];
 };
 
-function getOperationDetailsAndType(operation: SkipClientOperation) {
+function getOperationDetailsAndType(operation: Operation) {
   const combinedOperation = operation as CombinedOperation;
   let returnValue = {
     details: {} as OperationDetails,
@@ -131,7 +133,7 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
       switch (type) {
         case OperationType.swap:
         case OperationType.evmSwap:
-          (operationDetails as Transfer).toChainID = (operationDetails as EvmSwap).fromChainID;
+          (operationDetails as Transfer).toChainId = (operationDetails as EvmSwap).fromChainId;
           break;
         // special case needed for axelar transfers where the source denom is not the first operation denom
         case OperationType.axelarTransfer:
@@ -142,8 +144,8 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
         case OperationType.bankSend:
           (operationDetails as Transfer).denomIn = (operationDetails as BankSend).denom;
           (operationDetails as Transfer).denomOut = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).fromChainID = (operationDetails as BankSend).chainID;
-          (operationDetails as Transfer).toChainID = (operationDetails as BankSend).chainID;
+          (operationDetails as Transfer).fromChainId = (operationDetails as BankSend).chainId;
+          (operationDetails as Transfer).toChainId = (operationDetails as BankSend).chainId;
           break;
         default:
       }
@@ -157,7 +159,7 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
   return returnValue;
 }
 
-export function getClientOperation(operation: SkipClientOperation) {
+export function getClientOperation(operation: Operation) {
   const { details, type } = getOperationDetailsAndType(operation);
   return {
     type,
@@ -173,7 +175,7 @@ export function getClientOperation(operation: SkipClientOperation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(operations?: SkipClientOperation[]) {
+export function getClientOperations(operations?: Operation[]) {
   if (!operations) return [];
   let transferIndex = 0;
   const filteredOperations = filterNeutronSwapFee(operations);
@@ -206,14 +208,14 @@ export function getClientOperations(operations?: SkipClientOperation[]) {
   });
 }
 
-function filterNeutronSwapFee(operations: SkipClientOperation[]) {
+function filterNeutronSwapFee(operations: Operation[]) {
   return operations.filter((op, i) => {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
       clientOperation.swapOut?.swapVenue.name === "neutron-astroport" &&
-      clientOperation.swapOut?.swapVenue.chainID === "neutron-1" &&
-      clientOperation.chainID === "neutron-1" &&
+      clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
+      clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
       clientOperation.fromChainID === "neutron-1" &&
       clientOperation.swapOut?.swapAmountOut === "200000"
@@ -224,8 +226,8 @@ function filterNeutronSwapFee(operations: SkipClientOperation[]) {
         if (
           nextClientOperation.type === OperationType.swap &&
           nextClientOperation.swapIn?.swapVenue.name === "neutron-astroport" &&
-          nextClientOperation.swapIn?.swapVenue.chainID === "neutron-1" &&
-          nextClientOperation.chainID === "neutron-1"
+          nextClientOperation.swapIn?.swapVenue.chainId === "neutron-1" &&
+          nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
         }
@@ -416,13 +418,13 @@ export type ClientTransferEvent = {
   fromChainID: string;
   toChainID: string;
   state:
-    | TransferState
-    | AxelarTransferState
-    | CCTPTransferState
-    | HyperlaneTransferState
-    | OPInitTransferState
-    | GoFastTransferState
-    | StargateTransferState;
+  | TransferState
+  | AxelarTransferState
+  | CCTPTransferState
+  | HyperlaneTransferState
+  | OPInitTransferState
+  | GoFastTransferState
+  | StargateTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;

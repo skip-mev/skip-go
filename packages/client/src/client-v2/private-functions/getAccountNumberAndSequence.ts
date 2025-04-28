@@ -46,7 +46,7 @@ const getAccountNumberAndSequenceFromDymension = async (address: string, chainId
   const response = await createRequest<object, object, AccountResponse>({
     path: `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
     method: "get",
-  });
+  })();
 
   let sequence = 0;
   let accountNumber = 0;
