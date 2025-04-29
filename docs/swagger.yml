@@ -3018,7 +3018,7 @@ components:
         denom:
           description: Asset denom
           type: string
-        gas_price:  # Renamed from gas_price_info
+        gas_price: 
           description: Gas price tiers
           nullable: true
           properties:
@@ -3170,8 +3170,8 @@ components:
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
         - $ref: '#/components/schemas/EurekaTransferWrapper'
-        - $ref: '#/components/schemas/StargateTransferWrapper' # Added Stargate wrapper
-        - $ref: '#/components/schemas/GoFastTransferWrapper'   # Added GoFast wrapper
+        - $ref: '#/components/schemas/StargateTransferWrapper' 
+        - $ref: '#/components/schemas/GoFastTransferWrapper'  
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3720,7 +3720,7 @@ components:
         - $ref: '#/components/schemas/OPInitTransferInfo'
         - $ref: '#/components/schemas/EurekaTransferInfo'
         - $ref: '#/components/schemas/StargateTransferInfo'
-        - $ref: '#/components/schemas/GoFastTransferInfo' # Added GoFast
+        - $ref: '#/components/schemas/GoFastTransferInfo'
     TransferInfo:
       properties:
         to_chain_id:
