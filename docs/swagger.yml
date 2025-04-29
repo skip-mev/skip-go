@@ -3178,6 +3178,9 @@ components:
           description:
             All chain-ids that require an address to be provided for, in order
             of usage by operations in the route
+          type: array
+          items:
+            type: string
         dest_asset_chain_id:
           description: Chain-id of the destination asset
           type: string
