@@ -1662,11 +1662,14 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - tx_hash
+                - chain_id
               properties:
                 tx_hash:
                   type: string
                   description: Hex encoded hash of the transaction to track
-                  example: tx hash
+                  example: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
                 chain_id:
                   type: string
                   description: Chain ID of the transaction
