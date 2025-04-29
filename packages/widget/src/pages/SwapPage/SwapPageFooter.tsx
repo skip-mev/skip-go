@@ -26,22 +26,22 @@ export const PoweredBySkipGo = () => (
 );
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
-  const formatted = seconds
-    ? convertSecondsToMinutesOrHours(seconds)
-    : null;
-  return formatted ? <Row gap={6} align="flex-end">{formatted}</Row> : null;
+  const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;
+  return formatted ? (
+    <Row gap={6} align="flex-end">
+      {formatted}
+    </Row>
+  ) : null;
 };
 
 const Fee = ({ amount }: { amount?: string }) =>
-  amount ? <Row gap={6} align="flex-end">Fee: {amount}</Row> : null;
+  amount ? (
+    <Row gap={6} align="flex-end">
+      Fee: {amount}
+    </Row>
+  ) : null;
 
-const SettingsButton = ({
-  highlight,
-  changed,
-}: {
-  highlight?: boolean;
-  changed: boolean;
-}) => (
+const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
   <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
     <CogIconWrapper>
       <CogIcon />
@@ -61,10 +61,7 @@ const SignatureRequired = ({ count }: { count: number }) => (
 );
 
 const RoutePreferenceLabel = ({ preference }: { preference: RoutePreference }) => {
-  const label =
-    preference === RoutePreference.FASTEST
-      ? "Fastest route"
-      : "Cheapest route";
+  const label = preference === RoutePreference.FASTEST ? "Fastest route" : "Cheapest route";
   return <span>{label}</span>;
 };
 
@@ -113,7 +110,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
     );
   };
 
-  const rightContent = () => 
+  const rightContent = () =>
     isMobile && isGoFast ? (
       <RoutePreferenceLabel preference={routePreference} />
     ) : (
@@ -129,7 +126,8 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
 };
 
 export const SwapPageFooter: React.FC<
-  { onClick?: () => void } & SwapPageFooterItemsProps & React.ButtonHTMLAttributes<HTMLButtonElement>
+  { onClick?: () => void } & SwapPageFooterItemsProps &
+    React.ButtonHTMLAttributes<HTMLButtonElement>
 > = ({ onClick, ...props }) => (
   <GhostButton
     gap={5}
@@ -148,8 +146,7 @@ export const StyledSignatureRequiredContainer = styled(Row)`
 `;
 
 const StyledSettingsContainer = styled(Row)<{ highlightSettings?: boolean }>`
-  ${({ highlightSettings, theme }) =>
-    highlightSettings && `color: ${theme.primary.text.normal}`};
+  ${({ highlightSettings, theme }) => highlightSettings && `color: ${theme.primary.text.normal}`};
 `;
 
 const CogIconWrapper = styled(Row)`

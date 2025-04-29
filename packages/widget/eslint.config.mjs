@@ -16,18 +16,6 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "prettier/prettier": [
-        "error",
-        {
-          singleQuote: false,
-          trailingComma: "all",
-          tabWidth: 2,
-          semi: true,
-          printWidth: 100,
-          bracketSpacing: true,
-          endOfLine: "auto",
-        },
-      ],
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -46,10 +34,6 @@ export default tseslint.config(
       quotes: ["error", "double", { avoidEscape: true }],
       "@typescript-eslint/no-unsafe-function-type": "off",
     },
-    ignores: [
-      "scripts/prepublish.cjs",
-      "scripts/generate-chains.cjs",
-      "build/*",
-    ],
+    ignores: ["scripts/prepublish.cjs", "scripts/generate-chains.cjs", "build/*"],
   },
 );

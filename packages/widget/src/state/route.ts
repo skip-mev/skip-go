@@ -21,7 +21,8 @@ import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
-import { route, RouteResponse } from "@skip-go/client/v2";
+import { route, RouteRequest, RouteResponse } from "@skip-go/client/v2";
+
 import { RouteConfig } from "@skip-go/client";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(

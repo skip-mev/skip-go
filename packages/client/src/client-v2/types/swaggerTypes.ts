@@ -139,30 +139,28 @@ export interface AxelarTransfer {
 }
 
 export interface AxelarTransferInfo {
-  axelarTransfer?: {
-    /** Link to the transaction on the Axelar Scan explorer */
-    axelarScanLink?: string;
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /**
-     * Axelar transfer state:
-     * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
-     * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
-     * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
-     * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
-     * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
-     */
-    state?: AxelarTransferState;
-    txs?: ContractCallWithTokenTxs | SendTokenTxs;
-    /**
-     * Axelar transfer type:
-     * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
-     * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
-     */
-    type?: AxelarTransferType;
-  };
+  /** Link to the transaction on the Axelar Scan explorer */
+  axelarScanLink?: string;
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /**
+   * Axelar transfer state:
+   * * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
+   * * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
+   * * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
+   * * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
+   * * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
+   */
+  state: AxelarTransferState;
+  txs: ContractCallWithTokenTxs | SendTokenTxs;
+  /**
+   * Axelar transfer type:
+   * * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
+   * * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
+   */
+  type?: AxelarTransferType;
 }
 
 /**
@@ -240,22 +238,20 @@ export interface CCTPTransfer {
 }
 
 export interface CCTPTransferInfo {
-  cctpTransfer?: {
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /**
-     * CCTP transfer state:
-     * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
-     * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
-     * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
-     * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
-     * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
-     */
-    state?: CCTPTransferState;
-    txs?: CCTPTransferTxs;
-  };
+  /** Chain ID of the destination chain */
+  toChainId?: string;
+  /** Chain ID of the source chain */
+  fromChainId?: string;
+  /**
+   * CCTP transfer state:
+   * * `CCTP_TRANSFER_UNKNOWN` - Unknown error
+   * * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
+   * * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
+   * * `CCTP_TRANSFER_CONFIRMED` - CCTP transfer has been confirmed by the cctp attestation api
+   * * `CCTP_TRANSFER_RECEIVED` - CCTP transfer has been received at the destination chain
+   */
+  state?: CCTPTransferState;
+  txs?: CCTPTransferTxs;
 }
 
 export interface CCTPTransferTxs {
@@ -284,6 +280,38 @@ export interface CCTPTransferWrapper {
   cctpTransfer?: CCTPTransfer;
 }
 
+/** A transfer facilitated by the Stargate bridge */
+export interface StargateTransfer {
+  /** Canonical chain-id of the source chain of the bridge transaction */
+  fromChainId?: string;
+  /** Canonical chain-id of the destination chain of the bridge transaction */
+  toChainId?: string;
+  /** Denom of the input asset */
+  denomIn?: string;
+  /** Denom of the output asset */
+  denomOut?: string;
+  /**
+   * Bridge Type:
+   * * `IBC` - IBC Bridge
+   * * `AXELAR` - Axelar Bridge
+   * * `CCTP` - CCTP Bridge
+   * * `HYPERLANE` - Hyperlane Bridge
+   * * `OPINIT` - Opinit Bridge
+   * * `GO_FAST` - Go Fast Bridge
+   * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
+   */
+  bridgeId?: BridgeType;
+  poolAddress?: string;
+  destinationEndpointId?: number;
+  oftFeeAsset?: Asset;
+  oftFeeAmount?: string;
+  oftFeeAmountUsd?: string;
+  messagingFeeAsset?: Asset;
+  messagingFeeAmount?: string;
+  messageingFeeAmountUsd?: string;
+}
+
 /**
  * Stargate transfer state:
  * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
@@ -309,47 +337,70 @@ export interface StargateTransferTxs {
 }
 
 export interface StargateTransferInfo {
-  stargateTransfer?: {
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /**
-     * Stargate transfer state:
-     * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
-     * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
-     * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
-     * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
-     * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
-     * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
-     */
-    state?: StargateTransferState;
-    txs?: StargateTransferTxs;
-  };
+  /** Chain ID of the source chain */
+  fromChainId?: string;
+  /** Chain ID of the destination chain */
+  toChainId?: string;
+  /**
+   * Stargate transfer state:
+   * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+   * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+   * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+   * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+   * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+   * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+   */
+  state?: StargateTransferState;
+  txs?: StargateTransferTxs;
 }
 
 export interface StargateTransferWrapper {
-  stargateTransfer?: any;
+  /** A transfer facilitated by the Stargate bridge */
+  stargateTransfer?: StargateTransfer;
+}
+
+/** A transfer facilitated by GoFast */
+export interface GoFastTransfer {
+  /** Canonical chain-id of the source chain of the bridge transaction */
+  fromChainId?: string;
+  /** Canonical chain-id of the destination chain of the bridge transaction */
+  toChainId?: string;
+  /**
+   * Bridge Type:
+   * * `IBC` - IBC Bridge
+   * * `AXELAR` - Axelar Bridge
+   * * `CCTP` - CCTP Bridge
+   * * `HYPERLANE` - Hyperlane Bridge
+   * * `OPINIT` - Opinit Bridge
+   * * `GO_FAST` - Go Fast Bridge
+   * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
+   */
+  bridgeId?: BridgeType;
+  /** Denom of the input asset */
+  denomIn?: string;
+  /** Denom of the output asset */
+  denomOut?: string;
+  /** Go fast Fee */
+  fee?: GoFastFee;
 }
 
 /**
  * GoFast transfer state:
- * * `GO_FAST_UNKNOWN` - Unknown state
- * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
- * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
- * * `GO_FAST_ORDER_REFUNDED` - Order refunded
- * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+ * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
+ * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
  * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
- * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+ * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
+ * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
+ * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
  */
 export enum GoFastTransferState {
-  GO_FAST_UNKNOWN = "GO_FAST_UNKNOWN",
-  GO_FAST_ORDER_SUBMITTED = "GO_FAST_ORDER_SUBMITTED",
-  GO_FAST_ORDER_FILLED = "GO_FAST_ORDER_FILLED",
-  GO_FAST_ORDER_REFUNDED = "GO_FAST_ORDER_REFUNDED",
-  GO_FAST_ORDER_TIMED_OUT = "GO_FAST_ORDER_TIMED_OUT",
+  GO_FAST_TRANSFER_UNKNOWN = "GO_FAST_TRANSFER_UNKNOWN",
+  GO_FAST_TRANSFER_SENT = "GO_FAST_TRANSFER_SENT",
   GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
-  GO_FAST_COMPLETED_SUCCESS = "GO_FAST_COMPLETED_SUCCESS",
+  GO_FAST_TRANSFER_TIMEOUT = "GO_FAST_TRANSFER_TIMEOUT",
+  GO_FAST_TRANSFER_FILLED = "GO_FAST_TRANSFER_FILLED",
+  GO_FAST_TRANSFER_REFUNDED = "GO_FAST_TRANSFER_REFUNDED",
 }
 
 export interface GoFastTransferTxs {
@@ -360,26 +411,23 @@ export interface GoFastTransferTxs {
 }
 
 export interface GoFastTransferInfo {
-  goFastTransfer?: {
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /**
-     * GoFast transfer state:
-     * * `GO_FAST_UNKNOWN` - Unknown state
-     * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
-     * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
-     * * `GO_FAST_ORDER_REFUNDED` - Order refunded
-     * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
-     * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
-     * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
-     */
-    state?: GoFastTransferState;
-    txs?: GoFastTransferTxs;
-    /** Error message if the transfer failed post-fill */
-    errorMessage?: string;
-  };
+  /** Chain Id of the source chain */
+  fromChainId: string;
+  /** Chain Id of the destination chain */
+  toChainId: string;
+  /**
+   * GoFast transfer state:
+   * * `GO_FAST_TRANSFER_UNKNOWN` - Unknown state
+   * * `GO_FAST_TRANSFER_SENT` - Order submitted on source chain
+   * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+   * * `GO_FAST_TRANSFER_TIMEOUT` - Order timed out
+   * * `GO_FAST_TRANSFER_FILLED` - Order filled on destination chain
+   * * `GO_FAST_TRANSFER_REFUNDED` - Order refunded
+   */
+  state: GoFastTransferState;
+  txs: GoFastTransferTxs;
+  /** Error message if the transfer failed post-fill */
+  errorMessage?: string;
 }
 
 export interface BalanceRequestChainEntry {
@@ -654,6 +702,17 @@ export interface FeeAsset {
   };
 }
 
+/** Go fast Fee */
+export interface GoFastFee {
+  feeAsset?: Asset;
+  bpsFee?: string;
+  bpsFeeAmount?: string;
+  sourceChainFeeAmount?: string;
+  sourceChainFeeUsd?: string;
+  destinationChainFeeAmount?: string;
+  destinationChainFeeUsd?: string;
+}
+
 /** grpc status codes as defined [here](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) */
 export type GRPCStatusCode = number;
 
@@ -691,21 +750,19 @@ export interface HyperlaneTransfer {
 }
 
 export interface HyperlaneTransferInfo {
-  hyperlaneTransfer?: {
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /**
-     * Hyperlane transfer state:
-     * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
-     * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
-     * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
-     * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
-     */
-    state?: HyperlaneTransferState;
-    txs?: HyperlaneTransferTransactions;
-  };
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  /**
+   * Hyperlane transfer state:
+   * * `HYPERLANE_TRANSFER_UNKNOWN` - Unknown error
+   * * `HYPERLANE_TRANSFER_SENT` - The Hyperlane transfer transaction on the source chain has executed
+   * * `HYPERLANE_TRANSFER_FAILED` - The Hyperlane transfer failed
+   * * `HYPERLANE_TRANSFER_RECEIVED` - The Hyperlane transfer has been received at the destination chain
+   */
+  state: HyperlaneTransferState;
+  txs: HyperlaneTransferTransactions;
 }
 
 /**
@@ -733,7 +790,20 @@ export interface HyperlaneTransferWrapper {
 }
 
 export interface IBCTransferInfo {
-  ibcTransfer?: TransferInfo;
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  packetTxs: Packet;
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /**
+   * Transfer state:
+   * * `TRANSFER_UNKNOWN` - Transfer state is not known.
+   * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+   * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
+   * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+   * * `TRANSFER_FAILURE`- The transfer has failed.
+   */
+  state: TransferState;
 }
 
 export type Msg = MultiChainMsgWrapper | EvmTxWrapper | SvmTxWrapper;
@@ -1121,20 +1191,18 @@ export interface OPInitTransferWrapper {
 }
 
 export interface OPInitTransferInfo {
-  opinitTransfer?: {
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /**
-     * OPInit transfer state:
-     * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
-     * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
-     * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
-     */
-    state?: OPInitTransferState;
-    txs?: OPInitTransferTxs;
-  };
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /**
+   * OPInit transfer state:
+   * * `OPINIT_TRANSFER_UNKNOWN` - Unknown error
+   * * `OPINIT_TRANSFER_SENT` - The deposit transaction on the source chain has executed
+   * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
+   */
+  state: OPInitTransferState;
+  txs: OPInitTransferTxs;
 }
 
 export interface OPInitTransferTxs {
@@ -1149,9 +1217,9 @@ export interface OPInitTransferTxs {
  * * `OPINIT_TRANSFER_RECEIVED` - OPInit transfer has been received at the destination chain
  */
 export enum OPInitTransferState {
-  CCTP_TRANSFER_UNKNOWN = "CCTP_TRANSFER_UNKNOWN",
-  CCTP_TRANSFER_SENT = "CCTP_TRANSFER_SENT",
-  CCTP_TRANSFER_RECEIVED = "CCTP_TRANSFER_RECEIVED",
+  OPINIT_TRANSFER_UNKNOWN = "OPINIT_TRANSFER_UNKNOWN",
+  OPINIT_TRANSFER_SENT = "OPINIT_TRANSFER_SENT",
+  OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
 }
 
 /** A cross-chain transfer */
@@ -1196,31 +1264,15 @@ export interface Transfer {
   smartRelay?: boolean;
 }
 
-export type TransferEvent =
-  | IBCTransferInfo
-  | AxelarTransferInfo
-  | CCTPTransferInfo
-  | HyperlaneTransferInfo
-  | OPInitTransferInfo
-  | EurekaTransferInfo
-  | StargateTransferInfo
-  | GoFastTransferInfo;
-
-export interface TransferInfo {
-  /** Chain ID of the destination chain */
-  toChainId?: string;
-  packetTxs?: Packet;
-  /** Chain ID of the source chain */
-  fromChainId?: string;
-  /**
-   * Transfer state:
-   * * `TRANSFER_UNKNOWN` - Transfer state is not known.
-   * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
-   * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
-   * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
-   * * `TRANSFER_FAILURE`- The transfer has failed.
-   */
-  state?: TransferState;
+export interface TransferEvent {
+  ibcTransfer?: IBCTransferInfo;
+  axelarTransfer?: AxelarTransferInfo;
+  cctpTransfer?: CCTPTransferInfo;
+  hyperlaneTransfer?: HyperlaneTransferInfo;
+  opInitTransfer?: OPInitTransferInfo;
+  eurekaTransfer?: EurekaTransferInfo;
+  stargateTransfer?: StargateTransferInfo;
+  goFastTransfer?: GoFastTransferInfo;
 }
 
 /**
@@ -1321,22 +1373,20 @@ export interface EurekaTransfer {
 }
 
 export interface EurekaTransferInfo {
-  eurekaTransfer?: {
-    /** Chain ID of the source chain */
-    fromChainId?: string;
-    /** Chain ID of the destination chain */
-    toChainId?: string;
-    /**
-     * Transfer state:
-     * * `TRANSFER_UNKNOWN` - Transfer state is not known.
-     * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
-     * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
-     * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
-     * * `TRANSFER_FAILURE`- The transfer has failed.
-     */
-    state?: TransferState;
-    packetTxs?: Packet;
-  };
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  /**
+   * Transfer state:
+   * * `TRANSFER_UNKNOWN` - Transfer state is not known.
+   * * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
+   * * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
+   * * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
+   * * `TRANSFER_FAILURE`- The transfer has failed.
+   */
+  state: TransferState;
+  packetTxs: Packet;
 }
 
 export interface EurekaTransferWrapper {
@@ -2162,7 +2212,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
         state?: TransactionState;
         /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
-        transfer_sequence?: TransferEvent[];
+        transfer_sequence: TransferEvent[];
         /** Details about the next transfer in the sequence that is preventing further progress, if any. */
         next_blocking_transfer?: {
           transfer_sequence_index?: number;

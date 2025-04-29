@@ -1,14 +1,4 @@
 import {
-  GoFastTransfer,
-  GoFastTransferInfo,
-  GoFastTransferState,
-  StargateTransfer,
-  StargateTransferInfo,
-  StargateTransferState,
-  StatusState,
-  TxStatusResponse,
-} from "@skip-go/client";
-import {
   AxelarTransfer,
   AxelarTransferInfo,
   AxelarTransferState,
@@ -19,20 +9,28 @@ import {
   EurekaTransfer,
   EurekaTransferInfo,
   EvmSwap,
+  GoFastTransfer,
+  GoFastTransferInfo,
+  GoFastTransferState,
   HyperlaneTransfer,
   HyperlaneTransferInfo,
   HyperlaneTransferState,
+  IBCTransferInfo,
   Operation,
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
+  StargateTransfer,
+  StargateTransferInfo,
+  StargateTransferState,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinOut,
+  TransactionState,
   Transfer,
   TransferEvent,
-  TransferInfo,
   TransferState,
+  TxStatusResponse,
 } from "@skip-go/client/v2";
 
 export type OverallStatus = "pending" | "success" | "failed";
@@ -146,7 +144,7 @@ function getOperationDetailsAndType(operation: Operation) {
         default:
       }
       returnValue = {
-        details: operationDetails,
+        details: operationDetails as OperationDetails,
         type,
       };
     }
@@ -237,7 +235,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const combinedTransferEvent = transferEvent as CombinedTransferEvent;
 
   const axelarTransfer = combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
-  const ibcTransfer = combinedTransferEvent?.ibcTransfer as TransferInfo;
+  const ibcTransfer = combinedTransferEvent?.ibcTransfer as IBCTransferInfo;
   const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
   const hyperlaneTransfer = combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
   const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
@@ -268,12 +266,12 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     switch (transferType) {
       case TransferType.ibcTransfer:
         if (type === "send") {
-          return ibcTransfer.packetTxs?.sendTx?.explorerLink;
+          return ibcTransfer.packetTxs.sendTx?.explorerLink;
         }
-        return ibcTransfer.packetTxs?.receiveTx?.explorerLink;
+        return ibcTransfer.packetTxs.receiveTx?.explorerLink;
       case TransferType.eurekaTransfer:
         if (type === "send") {
-          return eurekaTransfer.packetTxs?.sendTx?.explorerLink;
+          return eurekaTransfer.packetTxs.sendTx?.explorerLink;
         }
         return eurekaTransfer.packetTxs.receiveTx?.explorerLink;
       case TransferType.goFastTransfer:
@@ -291,10 +289,9 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | StargateTransferInfo;
 
         if (type === "send") {
-          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs.sendTx
-            ?.explorerLink;
+          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx?.explorerLink;
         }
-        return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs.receiveTx
+        return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.receiveTx
           ?.explorerLink;
     }
   };
@@ -329,7 +326,7 @@ export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatu
   });
 }
 
-export function getSimpleOverallStatus(state: StatusState): OverallStatus {
+export function getSimpleOverallStatus(state: TransactionState): OverallStatus {
   switch (state) {
     case "STATE_SUBMITTED":
     case "STATE_PENDING":
@@ -380,7 +377,7 @@ export function getSimpleStatus(
 }
 
 type CombinedTransferEvent = {
-  [TransferType.ibcTransfer]: TransferInfo;
+  [TransferType.ibcTransfer]: IBCTransferInfo;
   [TransferType.axelarTransfer]: AxelarTransferInfo;
   [TransferType.cctpTransfer]: CCTPTransferInfo;
   [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
