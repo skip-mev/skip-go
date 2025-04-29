@@ -270,12 +270,6 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
         return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
       },
     });
-  }, [
-    wallets,
-    props.getCosmosSigner,
-    props.getEVMSigner,
-    props.getSVMSigner,
-    skipClientConfig,
-    getSigners,
-  ]);
+
+  }, [wallets, props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, skipClientConfig, getSigners]);
 };
