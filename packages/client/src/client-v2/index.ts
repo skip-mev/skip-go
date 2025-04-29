@@ -18,9 +18,9 @@ export * from "./api/postTransactionStatus";
 export * from "./types/swaggerTypes";
 export * from "./types/callbacks";
 export * from "./types/client";
-export * from "./setClientOptions";
 
 export * from "./public-functions/executeRoute";
 export * from "./public-functions/getSigningStargateClient";
+export * from "./public-functions/setClientOptions";
 
 export * from "./state";

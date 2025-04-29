@@ -12,12 +12,6 @@ import { ValidateGasResult } from "src/client-types";
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
 
-  static {
-    ClientState.requestClient = createRequestClient({
-      baseUrl: "https://api.skip.build",
-    });
-  }
-
   static aminoTypes: AminoTypes;
   static registry: Registry;
 

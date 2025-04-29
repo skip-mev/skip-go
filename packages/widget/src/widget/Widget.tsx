@@ -19,6 +19,7 @@ import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
+import { setClientOptions } from "@skip-go/client/v2";
 
 export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];

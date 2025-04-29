@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, Theme } from "./theme";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {

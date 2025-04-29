@@ -1,7 +1,4 @@
 import { AminoTypes } from "@cosmjs/stargate/build/aminotypes";
-import { ClientState, SkipClientOptions } from "./state";
-import { Affiliate, ChainAffiliates } from "./types/swaggerTypes";
-import { createRequestClient } from "./utils/generateApi";
 import {
   createDefaultAminoConverters,
   defaultRegistryTypes,
@@ -13,9 +10,11 @@ import { Registry } from "@cosmjs/proto-signing/build/registry";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
+import { ClientState, SkipClientOptions } from "../state";
+import { createRequestClient } from "../utils/generateApi";
+import { Affiliate, ChainAffiliates } from "../types/swaggerTypes";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
-  console.log(options);
   ClientState.requestClient = createRequestClient({
     baseUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
@@ -50,6 +49,8 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     );
     ClientState.chainIdsToAffiliates = options.chainIDsToAffiliates;
   }
+
+  // setClientInitialized();
 };
 
 function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, ChainAffiliates>) {
@@ -85,3 +86,20 @@ function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, Chain
 
   return firstAffiliateBasisPointsFee?.toFixed(0);
 }
+
+
+let resolvePromise: () => void;
+let isInitialized = false;
+
+export const clientInitialized = new Promise<void>((resolve) => {
+  resolvePromise = () => {
+    isInitialized = true;
+    resolve();
+  };
+});
+
+export const setClientInitialized = () => {
+  if (!isInitialized) {
+    resolvePromise();
+  }
+};
