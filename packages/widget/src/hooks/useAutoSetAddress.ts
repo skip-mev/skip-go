@@ -41,7 +41,7 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainID);
+    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainId);
     return signRequiredChains;
   }, [route?.operations]);
 

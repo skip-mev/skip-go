@@ -21,7 +21,7 @@ import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
 import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
-import { route } from "@skip-go/client/v2";
+import { route, RouteResponse } from "@skip-go/client/v2";
 import { RouteConfig } from "@skip-go/client";
 
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
@@ -180,7 +180,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
 export const skipRouteAtom = atom((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
-  const routeResponse = data;
+  const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
     return {
       data: undefined,

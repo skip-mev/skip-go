@@ -131,10 +131,6 @@ function getOperationDetailsAndType(operation: Operation) {
 
     if (operationDetails) {
       switch (type) {
-        case OperationType.swap:
-        case OperationType.evmSwap:
-          (operationDetails as Transfer).toChainId = (operationDetails as EvmSwap).fromChainId;
-          break;
         // special case needed for axelar transfers where the source denom is not the first operation denom
         case OperationType.axelarTransfer:
           (operationDetails as Transfer).denomIn =
@@ -217,7 +213,7 @@ function filterNeutronSwapFee(operations: Operation[]) {
       clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
       clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
-      clientOperation.fromChainID === "neutron-1" &&
+      clientOperation.fromChainId === "neutron-1" &&
       clientOperation.swapOut?.swapAmountOut === "200000"
     ) {
       const nextOperation = operations[i + 1];

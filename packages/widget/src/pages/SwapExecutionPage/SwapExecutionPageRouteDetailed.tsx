@@ -155,7 +155,9 @@ export const SwapExecutionPageRouteDetailed = ({
       const operationStatus = getOperationStatus(operation);
 
       return (
-        <React.Fragment key={`row-${operation.fromChain}-${operation.toChainId}-${index}`}>
+        <React.Fragment
+          key={`row-${operation.fromChain}-${operation.toChainId ?? operation.chainId}-${index}`}
+        >
           {renderTooltip(operation)}
           <SwapExecutionPageRouteDetailedRow
             {...asset}
