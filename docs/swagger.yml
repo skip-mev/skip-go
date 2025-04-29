@@ -2556,6 +2556,117 @@ components:
         cctp_transfer:
           $ref: '#/components/schemas/CCTPTransfer'
       type: object
+    StargateTransferState:
+      description: |
+        Stargate transfer state:  
+        * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+        * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+        * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+        * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+        * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+        * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+      enum:
+        - STARGATE_TRANSFER_UNKNOWN
+        - STARGATE_TRANSFER_SENT
+        - STARGATE_TRANSFER_PENDING_CONFIRMATION
+        - STARGATE_TRANSFER_CONFIRMED
+        - STARGATE_TRANSFER_RECEIVED
+        - STARGATE_TRANSFER_FAILED
+      type: string
+    StargateTransferTxs:
+      properties:
+        send_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        receive_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        error_tx: 
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction' 
+          nullable: true
+      type: object
+    StargateTransferInfo:
+      properties:
+        stargate_transfer:
+          properties:
+            from_chain_id:
+              description: Chain ID of the source chain
+              type: string
+            to_chain_id:
+              description: Chain ID of the destination chain
+              type: string
+            state:
+              $ref: '#/components/schemas/StargateTransferState'
+            txs:
+              $ref: '#/components/schemas/StargateTransferTxs'
+          type: object
+      type: object
+    StargateTransferWrapper:
+      properties:
+        stargate_transfer:
+          $ref: '#/components/schemas/StargateTransfer'
+      type: object
+    GoFastTransferState:
+      description: |
+        GoFast transfer state:
+        * `GO_FAST_UNKNOWN` - Unknown state
+        * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
+        * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
+        * `GO_FAST_ORDER_REFUNDED` - Order refunded
+        * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+        * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+        * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+      enum:
+        - GO_FAST_UNKNOWN
+        - GO_FAST_ORDER_SUBMITTED
+        - GO_FAST_ORDER_FILLED
+        - GO_FAST_ORDER_REFUNDED
+        - GO_FAST_ORDER_TIMED_OUT
+        - GO_FAST_POST_ACTION_FAILED
+        - GO_FAST_COMPLETED_SUCCESS
+      type: string
+    GoFastTransferTxs:
+      properties:
+        order_submitted_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        order_filled_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        order_refunded_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+        order_timeout_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
+      type: object
+    GoFastTransferInfo:
+      properties:
+        go_fast_transfer:
+          properties:
+            from_chain_id:
+              description: Chain ID of the source chain
+              type: string
+            to_chain_id:
+              description: Chain ID of the destination chain
+              type: string
+            state:
+              $ref: '#/components/schemas/GoFastTransferState'
+            txs:
+              $ref: '#/components/schemas/GoFastTransferTxs'
+            error_message:
+              description: Error message if the transfer failed post-fill
+              type: string
+              nullable: true
+          type: object
+      type: object
     BalanceRequestChainEntry:
       properties:
         address:
@@ -3057,6 +3168,8 @@ components:
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
         - $ref: '#/components/schemas/EurekaTransferWrapper'
+        - $ref: '#/components/schemas/StargateTransferWrapper' # Added Stargate wrapper
+        - $ref: '#/components/schemas/GoFastTransferWrapper'   # Added GoFast wrapper
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3600,6 +3713,8 @@ components:
         - $ref: '#/components/schemas/HyperlaneTransferInfo'
         - $ref: '#/components/schemas/OPInitTransferInfo'
         - $ref: '#/components/schemas/EurekaTransferInfo'
+        - $ref: '#/components/schemas/StargateTransferInfo'
+        - $ref: '#/components/schemas/GoFastTransferInfo' # Added GoFast
     TransferInfo:
       properties:
         to_chain_id:
