@@ -1,8 +1,8 @@
 import { PublicKey } from "@solana/web3.js";
 import { ClientState } from "../state";
 import { TransactionCallbacks } from "../types/callbacks";
-import { ChainType, GasOptions, SignerGetters, UserAddress } from "../types/client";
-import { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
+import { GasOptions, SignerGetters, UserAddress } from "../types/client";
+import { ChainType, CosmosMsg, RouteResponse } from "../types/swaggerTypes";
 import { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
@@ -130,13 +130,13 @@ const validateUserAddresses = async (userAddresses: UserAddress[]) => {
           return false;
         }
 
-      case ChainType.EVM:
+      case ChainType.Evm:
         try {
           return isAddress(userAddress.address);
         } catch (_error) {
           return false;
         }
-      case ChainType.SVM:
+      case ChainType.Svm:
         try {
           const publicKey = new PublicKey(userAddress.address);
           return PublicKey.isOnCurve(publicKey);

@@ -1931,6 +1931,7 @@ paths:
                   state:
                     $ref: '#/components/schemas/TransactionState'
                     description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
+                    required: true
                   transfer_sequence:
                     description: A detailed sequence of all cross-chain transfer events associated with the transaction.
                     type: array
@@ -1945,19 +1946,7 @@ paths:
                         type: integer
                     type: object
                   transfer_asset_release:
-                    description: Information about the final location and state of the assets involved in the transfers.
-                    nullable: true
-                    properties:
-                      chain_id:
-                        type: string
-                      denom:
-                        type: string
-                      amount:
-                        type: string
-                        nullable: true
-                      released:
-                        type: boolean
-                    type: object
+                    $ref: '#/components/schemas/TransferAssetRelease'
                   error:
                     description: Details about any error encountered during the transaction or its subsequent transfers.
                     allOf:
@@ -2278,12 +2267,15 @@ components:
         is_cw20:
           description: Indicates whether asset is a CW20 token
           type: boolean
+          required: true
         is_evm:
           description: Indicates whether asset is an EVM token
           type: boolean
+          required: true
         is_svm:
           description: Indicates whether asset is an SVM token
           type: boolean
+          required: true
         logo_uri:
           description: URI pointing to an image of the logo of the asset
           nullable: true
@@ -2297,11 +2289,13 @@ components:
             Chain-id of the origin of the asset. If this is an ibc denom, this
             is the chain-id of the asset that the ibc token represents
           type: string
+          required: true
         origin_denom:
           description:
             Denom of the origin of the asset. If this is an ibc denom, this
             is the original denom that the ibc token represents
           type: string
+          required: true
         recommended_symbol:
           description:
             Recommended symbol of the asset used to differentiate between bridged
@@ -2324,6 +2318,7 @@ components:
             The forward slash delimited sequence of ibc ports and channels
             that can be traversed to unwind an ibc token to its origin asset.
           type: string
+          required: true
       type: object
     AssetBetweenChains:
       properties:
@@ -2334,6 +2329,7 @@ components:
         txs_required:
           description: Number of transactions required to transfer the asset
           type: integer
+          required: true
         bridges:
           description: Bridges that are used to transfer the asset
           items:
@@ -2739,12 +2735,14 @@ components:
       properties:
         amount:
           type: string
+          required: true
         decimals:
           type: integer
           format: int32
           nullable: true
         formatted_amount:
           type: string
+          required: true
         price:
           type: string
           nullable: true
@@ -2811,18 +2809,23 @@ components:
         chain_name:
           description: Name of the chain
           type: string
+          required: true
         chain_id:
           description: Chain-id of the chain
           type: string
+          required: true
         pfm_enabled:
           description: Whether the PFM module is enabled on the chain
           type: boolean
+          required: true
         cosmos_module_support:
           description: Supported cosmos modules
           $ref: '#/components/schemas/CosmosModuleSupport'
+          required: true
         supports_memo:
           description: Whether the chain supports IBC memos
           type: boolean
+          required: true
         logo_uri:
           description: chain logo URI
           nullable: true
@@ -2830,24 +2833,36 @@ components:
         bech32_prefix:
           description: Bech32 prefix of the chain
           type: string
+          required: true
         fee_assets:
           description: Fee assets of the chain
           items:
             $ref: '#/components/schemas/FeeAsset'
           type: array
+          required: true
         chain_type:
           description: Type of chain, e.g. "cosmos" or "evm"
-          type: string
+          $ref: '#/components/schemas/ChainType'
+          required: true
         ibc_capabilities:
           description: IBC capabilities of the chain
           $ref: '#/components/schemas/IbcCapabilities'
+          required: true
         is_testnet:
           description: Whether the chain is a testnet
           type: boolean
+          required: true
         pretty_name:
           description: User friendly name of the chain
           type: string
+          required: true
       type: object
+    ChainType:
+      type: string
+      enum:
+        - cosmos
+        - evm
+        - svm
     ChainAffiliates:
       properties:
         affiliates:
@@ -3262,12 +3277,15 @@ components:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
           type: integer
+          required: true
         amount_in:
           description: Amount of input asset to this operation
           type: string
+          required: true
         amount_out:
           description: Amount of output asset from this operation
           type: string
+          required: true
     OptionalAsset:
       properties:
         asset:
@@ -3400,6 +3418,7 @@ components:
           items:
             $ref: '#/components/schemas/Operation'
           type: array
+          required: true
         source_asset_chain_id:
           description: Chain-id of the source asset
           type: string
@@ -3413,6 +3432,7 @@ components:
         txs_required:
           description: Number of transactions required to perform the transfer or swap
           type: integer
+          required: true
         usd_amount_in:
           description: Amount of the source denom, converted to USD value
           type: string
@@ -3833,6 +3853,25 @@ components:
         - TRANSFER_SUCCESS
         - TRANSFER_FAILURE
       type: string
+    TransferAssetRelease:
+      description: Indicates location and denom of transfer asset release.
+      type: object
+      properties:
+        chain_id:
+          description:
+            The chain ID of the chain that the transfer asset is released
+            on.
+          type: string
+        denom:
+          description: The denom of the asset that is released.
+          type: string
+        amount:
+          description: The amount of the asset that is released.
+          type: string
+          nullable: true
+        released:
+          description: Indicates whether assets have been released and are accessible. The assets may still be in transit.
+          type: boolean
     TransferStatus:
       properties:
         error:
@@ -3854,25 +3893,7 @@ components:
         state:
           $ref: '#/components/schemas/TransactionState'
         transfer_asset_release:
-          description: Indicates location and denom of transfer asset release.
-          nullable: true
-          properties:
-            chain_id:
-              description:
-                The chain ID of the chain that the transfer asset is released
-                on.
-              type: string
-            denom:
-              description: The denom of the asset that is released.
-              type: string
-            amount:
-              description: The amount of the asset that is released.
-              type: string
-              nullable: true
-            released:
-              description: Indicates whether assets have been released and are accessible. The assets may still be in transit.
-              type: boolean
-          type: object
+          $ref: '#/components/schemas/TransferAssetRelease'
         transfer_sequence:
           description: Lists any IBC and Axelar transfers as they are seen.
           items:

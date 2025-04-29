@@ -3,7 +3,7 @@ import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
 import { TransactionHistoryItem } from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
 import { ClientTransferEvent, OverallStatus, SimpleStatus } from "@/utils/clientType";
-import { TransferAssetRelease } from "@skip-go/client";
+import { TransferAssetRelease } from "@skip-go/client/v2";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
@@ -34,7 +34,7 @@ export const useTxHistory = ({
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
   let statusData: {
-    transferEvents: ClientTransferEvent[];
+    transferEvents: ClientTransferEvent[]
     lastTxStatus?: OverallStatus;
     isSuccess: boolean;
     isSettled: boolean;

@@ -101,7 +101,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
         foundGroup.chains.push({
           chainId: asset.chainId,
           chainName: asset.chainName,
-          originChainID: asset.originChainId,
+          originChainId: asset.originChainId,
         });
       } else {
         groupedAssets.push({

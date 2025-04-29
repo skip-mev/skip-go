@@ -1,6 +1,6 @@
 import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
-import { CosmosMsg } from "../../types/swaggerTypes";
-import { ChainType, GetFallbackGasAmount } from "../../types/client";
+import { ChainType, CosmosMsg } from "../../types/swaggerTypes";
+import { GetFallbackGasAmount } from "../../types/client";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { getCosmosGasAmountForMessage } from "../transactions";

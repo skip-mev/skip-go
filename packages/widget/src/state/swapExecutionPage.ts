@@ -278,7 +278,7 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      route: route,
+      route: route as RouteResponse,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
       status: "unconfirmed",

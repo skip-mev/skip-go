@@ -12,11 +12,11 @@ import { createPublicClient, http } from "viem";
 import { sei } from "viem/chains";
 import { useAccount, useConnect, useConnectors } from "wagmi";
 import { disconnect } from "@wagmi/core";
-import { ChainType } from "@skip-go/client";
 import { config, walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
 import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
+import { ChainType } from "@skip-go/client/v2";
 
 export const useCreateEvmWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -71,7 +71,7 @@ export const useCreateEvmWallets = () => {
             await connectAsync({ connector, chainId: Number(chainIdToConnect) });
 
             if (sourceAsset === undefined) {
-              setDefaultSourceAsset(ChainType.EVM);
+              setDefaultSourceAsset(ChainType.Evm);
             }
 
             const account = await connector.getAccounts();
@@ -81,7 +81,7 @@ export const useCreateEvmWallets = () => {
             const walletConnectMetadata = (provider as any)?.session?.peer
               ?.metadata as WalletConnectMetaData;
 
-            setWCDeepLinkByChainType(ChainType.EVM);
+            setWCDeepLinkByChainType(ChainType.Evm);
 
             if (evmWallet === undefined) {
               callbacks?.onWalletConnected?.({
@@ -93,7 +93,7 @@ export const useCreateEvmWallets = () => {
               setEvmWallet({
                 id: account[0],
                 walletName: connector.id,
-                chainType: ChainType.EVM,
+                chainType: ChainType.Evm,
                 logo: walletConnectMetadata?.icons[0] ?? connector?.icon,
               });
             }
@@ -101,7 +101,7 @@ export const useCreateEvmWallets = () => {
             track("wallet connected", {
               walletName: connector.name,
               chainId: chainIdToConnect,
-              chainType: ChainType.EVM,
+              chainType: ChainType.Evm,
             });
 
             return { address: account[0], logo: walletConnectMetadata?.icons?.[0] };
@@ -110,7 +110,7 @@ export const useCreateEvmWallets = () => {
             track("connect wallet error", {
               walletName: connector.name,
               chainId: chainIdToConnect,
-              ChainType: ChainType.EVM,
+              ChainType: ChainType.Evm,
               errorMessage: error?.message,
             });
             console.error(error);
@@ -121,7 +121,7 @@ export const useCreateEvmWallets = () => {
         const minimalWallet: MinimalWallet = {
           walletName: connector.id,
           walletPrettyName: connector.name,
-          walletChainType: ChainType.EVM,
+          walletChainType: ChainType.Evm,
           walletInfo: {
             logo: isWalletConnect ? walletConnectLogo : connector.icon,
           },
@@ -133,12 +133,12 @@ export const useCreateEvmWallets = () => {
             track("wallet disconnected", {
               walletName: connector.name,
               chainId: chainId,
-              ChainType: ChainType.EVM,
+              ChainType: ChainType.Evm,
             });
             setEvmWallet(undefined);
             callbacks?.onWalletDisconnected?.({
               walletName: connector.name,
-              chainType: ChainType.EVM,
+              chainType: ChainType.Evm,
             });
           },
           getAddress: async ({ signRequired }) => {
@@ -150,7 +150,7 @@ export const useCreateEvmWallets = () => {
             track("get address", {
               walletName: connector.name,
               chainId: chainId,
-              ChainType: ChainType.EVM,
+              ChainType: ChainType.Evm,
             });
             try {
               const account = await connector.getAccounts();

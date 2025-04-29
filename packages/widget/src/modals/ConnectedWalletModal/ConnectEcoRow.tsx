@@ -15,13 +15,13 @@ import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { XIcon } from "@/icons/XIcon";
-import { ChainType } from "@skip-go/client";
 import { Tooltip } from "@/components/Tooltip";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
 import { useAccount as useCosmosAccount } from "graz";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
+import { ChainType } from "@skip-go/client/v2";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -195,7 +195,7 @@ export const ConnectEcoRow = ({
             Connect to{" "}
             {chainType === ChainType.Cosmos
               ? "Cosmos"
-              : chainType === ChainType.EVM
+              : chainType === ChainType.Evm
                 ? "Ethereum"
                 : "Solana"}
           </TextButton>

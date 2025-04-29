@@ -42,19 +42,19 @@ export interface Asset {
   /** Description of the asset */
   description?: string;
   /** Indicates whether asset is a CW20 token */
-  isCw20?: boolean;
+  isCw20: boolean;
   /** Indicates whether asset is an EVM token */
-  isEvm?: boolean;
+  isEvm: boolean;
   /** Indicates whether asset is an SVM token */
-  isSvm?: boolean;
+  isSvm: boolean;
   /** URI pointing to an image of the logo of the asset */
   logoUri?: string;
   /** Name of the asset */
   name?: string;
   /** Chain-id of the origin of the asset. If this is an ibc denom, this is the chain-id of the asset that the ibc token represents */
-  originChainId?: string;
+  originChainId: string;
   /** Denom of the origin of the asset. If this is an ibc denom, this is the original denom that the ibc token represents */
-  originDenom?: string;
+  originDenom: string;
   /** Recommended symbol of the asset used to differentiate between bridged assets with the same symbol, e.g. USDC.axl for Axelar USDC and USDC.grv for Gravity USDC */
   recommendedSymbol?: string;
   /** Symbol of the asset, e.g. ATOM for uatom */
@@ -62,14 +62,14 @@ export interface Asset {
   /** Address of the contract for the asset, e.g. if it is a CW20 or ERC20 token */
   tokenContract?: string;
   /** The forward slash delimited sequence of ibc ports and channels that can be traversed to unwind an ibc token to its origin asset. */
-  trace?: string;
+  trace: string;
 }
 
 export interface AssetBetweenChains {
   assetOnSource?: Asset;
   assetOnDest?: Asset;
   /** Number of transactions required to transfer the asset */
-  txsRequired?: number;
+  txsRequired: number;
   /** Bridges that are used to transfer the asset */
   bridges?: BridgeType[];
 }
@@ -438,10 +438,10 @@ export interface BalanceRequestChainEntry {
 }
 
 export interface BalanceResponseDenomEntry {
-  amount?: string;
+  amount: string;
   /** @format int32 */
   decimals?: number;
-  formattedAmount?: string;
+  formattedAmount: string;
   price?: string;
   valueUsd?: string;
   error?: ApiError;
@@ -505,29 +505,35 @@ export enum BridgeType {
 
 export interface Chain {
   /** Name of the chain */
-  chainName?: string;
+  chainName: string;
   /** Chain-id of the chain */
-  chainId?: string;
+  chainId: string;
   /** Whether the PFM module is enabled on the chain */
-  pfmEnabled?: boolean;
+  pfmEnabled: boolean;
   /** Supported cosmos modules */
-  cosmosModuleSupport?: CosmosModuleSupport;
+  cosmosModuleSupport: CosmosModuleSupport;
   /** Whether the chain supports IBC memos */
-  supportsMemo?: boolean;
+  supportsMemo: boolean;
   /** chain logo URI */
   logoUri?: string;
   /** Bech32 prefix of the chain */
-  bech32Prefix?: string;
+  bech32Prefix: string;
   /** Fee assets of the chain */
-  feeAssets?: FeeAsset[];
+  feeAssets: FeeAsset[];
   /** Type of chain, e.g. "cosmos" or "evm" */
-  chainType?: string;
+  chainType: ChainType;
   /** IBC capabilities of the chain */
-  ibcCapabilities?: IbcCapabilities;
+  ibcCapabilities: IbcCapabilities;
   /** Whether the chain is a testnet */
-  isTestnet?: boolean;
+  isTestnet: boolean;
   /** User friendly name of the chain */
-  prettyName?: string;
+  prettyName: string;
+}
+
+export enum ChainType {
+  Cosmos = "cosmos",
+  Evm = "evm",
+  Svm = "svm",
 }
 
 export interface ChainAffiliates {
@@ -843,11 +849,11 @@ export type Operation = (
   | StargateTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
-  txIndex?: number;
+  txIndex: number;
   /** Amount of input asset to this operation */
-  amountIn?: string;
+  amountIn: string;
   /** Amount of output asset from this operation */
-  amountOut?: string;
+  amountOut: string;
 };
 
 export interface OptionalAsset {
@@ -942,7 +948,7 @@ export interface RouteResponse {
   /** Amount of destination asset out, if a swap is performed */
   estimatedAmountOut?: string;
   /** Array of operations required to perform the transfer or swap */
-  operations?: Operation[];
+  operations: Operation[];
   /** Chain-id of the source asset */
   sourceAssetChainId?: string;
   /** Denom of the source asset */
@@ -950,7 +956,7 @@ export interface RouteResponse {
   /** Swap venue on which the swap is performed, if a swap is performed */
   swapVenue?: SwapVenue;
   /** Number of transactions required to perform the transfer or swap */
-  txsRequired?: number;
+  txsRequired: number;
   /** Amount of the source denom, converted to USD value */
   usdAmountIn?: string;
   /** Amount of the destination denom expected to be received, converted to USD value */
@@ -1291,6 +1297,18 @@ export enum TransferState {
   TRANSFER_FAILURE = "TRANSFER_FAILURE",
 }
 
+/** Indicates location and denom of transfer asset release. */
+export interface TransferAssetRelease {
+  /** The chain ID of the chain that the transfer asset is released on. */
+  chainId?: string;
+  /** The denom of the asset that is released. */
+  denom?: string;
+  /** The amount of the asset that is released. */
+  amount?: string;
+  /** Indicates whether assets have been released and are accessible. The assets may still be in transit. */
+  released?: boolean;
+}
+
 export interface TransferStatus {
   error?: StatusError;
   /** Indicates which entry in the `transfer_sequence` field that the transfer is blocked on. Will be null if there is no blocked transfer. */
@@ -1310,16 +1328,7 @@ export interface TransferStatus {
    */
   state?: TransactionState;
   /** Indicates location and denom of transfer asset release. */
-  transferAssetRelease?: {
-    /** The chain ID of the chain that the transfer asset is released on. */
-    chainId?: string;
-    /** The denom of the asset that is released. */
-    denom?: string;
-    /** The amount of the asset that is released. */
-    amount?: string;
-    /** Indicates whether assets have been released and are accessible. The assets may still be in transit. */
-    released?: boolean;
-  };
+  transferAssetRelease?: TransferAssetRelease;
   /** Lists any IBC and Axelar transfers as they are seen. */
   transferSequence?: TransferEvent[];
 }
@@ -2210,20 +2219,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
         transfers?: TransferStatus[];
         /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
-        state?: TransactionState;
+        state: TransactionState;
         /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
         transfer_sequence: TransferEvent[];
         /** Details about the next transfer in the sequence that is preventing further progress, if any. */
         next_blocking_transfer?: {
           transfer_sequence_index?: number;
         } | null;
-        /** Information about the final location and state of the assets involved in the transfers. */
-        transfer_asset_release?: {
-          chain_id?: string;
-          denom?: string;
-          amount?: string | null;
-          released?: boolean;
-        };
+        /** Indicates location and denom of transfer asset release. */
+        transfer_asset_release?: TransferAssetRelease;
         /** Details about any error encountered during the transaction or its subsequent transfers. */
         error?: StatusError | null;
         /**

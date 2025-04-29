@@ -3,7 +3,6 @@ import { RenderWalletList } from "@/components/RenderWalletList";
 import { useWalletList } from "@/hooks/useWalletList";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
-import { ChainType } from "@skip-go/client";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
@@ -13,6 +12,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { Column, Row } from "@/components/Layout";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
+import { ChainType } from "@skip-go/client/v2";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
@@ -66,9 +66,9 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     switch (selectedEcoChain?.chainType ?? sourceAssetChain?.chainType) {
       case ChainType.Cosmos:
         return "Connect cosmos wallet";
-      case ChainType.EVM:
+      case ChainType.Evm:
         return "Connect ethereum wallet";
-      case ChainType.SVM:
+      case ChainType.Svm:
         return "Connect solana Wallet";
       default:
         return "Connect wallet";

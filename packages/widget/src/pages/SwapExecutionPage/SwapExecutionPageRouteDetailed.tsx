@@ -64,7 +64,7 @@ export const SwapExecutionPageRouteDetailed = ({
   const getBridgeSwapVenue = useCallback(
     (operation: ClientOperation) => {
       const swapVenueId = operation.swapVenues?.[0]?.chainId;
-      const bridgeId = operation.bridgeID;
+      const bridgeId = operation.bridgeId;
 
       const bridge = bridges?.find((bridge) => bridge.id === bridgeId);
       const swapVenue = swapVenues?.find((swapVenue) => swapVenue.chainId === swapVenueId);

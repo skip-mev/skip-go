@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { connectedAddressesAtom } from "@/state/wallets";
-import { ChainType } from "@skip-go/client";
+import { ChainType } from "@skip-go/client/v2";
 
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();
@@ -19,7 +19,7 @@ export const useFetchAllBalances = () => {
     const chainIds = Object.keys(connectedAddresses);
     const _evmChainId = chainIds.find((chainId) => {
       const chain = chains?.find((chain) => chain.chainId === chainId);
-      return chain?.chainType === ChainType.EVM;
+      return chain?.chainType === ChainType.Evm;
     });
     return _evmChainId && connectedAddresses?.[_evmChainId];
   }, [connectedAddresses, chains]);
@@ -36,7 +36,7 @@ export const useFetchAllBalances = () => {
 
         const evmAddress = evmConnectedAddress ?? getAccount(String(evmChainId))?.address;
         const addressToUse =
-          chain.chainType === ChainType.EVM ? evmAddress : getAccount(asset.chainId)?.address;
+          chain.chainType === ChainType.Evm ? evmAddress : getAccount(asset.chainId)?.address;
 
         if (addressToUse && !acc[asset.chainId]) {
           acc[asset.chainId] = { address: addressToUse };

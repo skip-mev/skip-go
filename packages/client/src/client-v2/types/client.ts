@@ -5,19 +5,13 @@ import { GasPrice, SignerData, StdFee } from "@cosmjs/stargate";
 import { WalletClient } from "viem";
 
 import { Adapter } from "@solana/wallet-adapter-base";
-import { CosmosMsg, FeeAsset } from "./swaggerTypes";
+import { ChainType, CosmosMsg, FeeAsset } from "./swaggerTypes";
 
 /** Common Types */
 export type UserAddress = {
   chainId: string;
   address: string;
 };
-
-export enum ChainType {
-  Cosmos = "cosmos",
-  EVM = "evm",
-  SVM = "svm",
-}
 
 export type EndpointOptions = {
   rpc?: string;

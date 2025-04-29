@@ -11,8 +11,8 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 
 import { WalletClient, publicActions } from "viem";
 import { Connection, Transaction } from "@solana/web3.js";
-import { CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
-import { ChainType, GetFallbackGasAmount } from "../types/client";
+import { ChainType, CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
+import { GetFallbackGasAmount } from "../types/client";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
 import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
@@ -203,7 +203,7 @@ export async function getEVMGasAmountForMessage(
 
     return gasAmount * fee.maxFeePerGas;
   } catch (error) {
-    const fallbackGasAmount = await getFallbackGasAmount?.(tx.chainId ?? "", ChainType.EVM);
+    const fallbackGasAmount = await getFallbackGasAmount?.(tx.chainId ?? "", ChainType.Evm);
     if (fallbackGasAmount) {
       return BigInt(fallbackGasAmount) * fee.maxFeePerGas;
     }

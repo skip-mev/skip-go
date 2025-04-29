@@ -93,10 +93,10 @@ export const useFilteredChains = ({
       })
       .sort((chainWithAssetA, chainWithAssetB) => {
         const usdValueA = Number(
-          getBalance(chainWithAssetA.chainId, chainWithAssetA.asset.denom)?.valueUSD ?? 0,
+          getBalance(chainWithAssetA.chainId, chainWithAssetA.asset.denom)?.valueUsd ?? 0,
         );
         const usdValueB = Number(
-          getBalance(chainWithAssetB.chainId, chainWithAssetB.asset.denom)?.valueUSD ?? 0,
+          getBalance(chainWithAssetB.chainId, chainWithAssetB.asset.denom)?.valueUsd ?? 0,
         );
 
         const amountA = Number(

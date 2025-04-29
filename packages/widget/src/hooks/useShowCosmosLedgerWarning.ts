@@ -3,8 +3,8 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { knownEthermintLikeChains } from "@/state/wallets";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { ChainType } from "@skip-go/client";
 import { useGetAccount } from "./useGetAccount";
+import { ChainType } from "@skip-go/client/v2";
 
 export const useShowCosmosLedgerWarning = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);

@@ -1,6 +1,6 @@
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { ChainType } from "@skip-go/client";
+import { ChainType } from "@skip-go/client/v2";
 import { useAtomValue, useSetAtom } from "jotai";
 
 export const useUpdateSourceAssetToDefaultForChainType = () => {
@@ -21,7 +21,7 @@ export const useUpdateSourceAssetToDefaultForChainType = () => {
         });
         return;
       }
-      case ChainType.EVM: {
+      case ChainType.Evm: {
         const chain = chains?.find((chain) => chain.chainId === "1");
         const asset = assets?.find((asset) => asset.denom === "ethereum-native");
 
@@ -32,7 +32,7 @@ export const useUpdateSourceAssetToDefaultForChainType = () => {
         });
         return;
       }
-      case ChainType.SVM: {
+      case ChainType.Svm: {
         const chain = chains?.find((x) => x.chainId === "solana");
         const asset = assets?.find(
           (x) =>

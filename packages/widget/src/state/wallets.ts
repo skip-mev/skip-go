@@ -1,8 +1,9 @@
 import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
-import { ChainType, SignerGetters } from "@skip-go/client";
+import { SignerGetters } from "@skip-go/client";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { ChainType } from "@skip-go/client/v2";
 
 export type WalletConnectMetaData = {
   name: string;
@@ -90,11 +91,11 @@ export const walletConnectDeepLinkByChainTypeAtom = atomWithStorageNoCrossTabSyn
       deeplink: "",
       recentWalletData: "",
     },
-    [ChainType.EVM]: {
+    [ChainType.Evm]: {
       deeplink: "",
       recentWalletData: "",
     },
-    [ChainType.SVM]: {
+    [ChainType.Svm]: {
       deeplink: "",
       recentWalletData: "",
     },
