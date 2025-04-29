@@ -22,9 +22,10 @@ const defaultOptions: Options = {
   clean: true,
   dts: true,
   format: ["esm"],
-  minify: true,
+  minify: false,
   shims: true,
   splitting: true,
+  bundle: true,
   treeshake: true,
   tsconfig: "./tsconfig.build.json",
 };
