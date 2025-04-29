@@ -209,7 +209,7 @@ function filterNeutronSwapFee(operations: Operation[]) {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
-      clientOperation.swapOut?.swapVenue.name === "neutron-astroport" &&
+      clientOperation.swapOut?.swapVenue?.name === "neutron-astroport" &&
       clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
       clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
@@ -221,8 +221,8 @@ function filterNeutronSwapFee(operations: Operation[]) {
         const nextClientOperation = getClientOperation(nextOperation);
         if (
           nextClientOperation.type === OperationType.swap &&
-          nextClientOperation.swapIn?.swapVenue.name === "neutron-astroport" &&
-          nextClientOperation.swapIn?.swapVenue.chainId === "neutron-1" &&
+          nextClientOperation.swapIn?.swapVenue?.name === "neutron-astroport" &&
+          nextClientOperation.swapIn?.swapVenue?.chainId === "neutron-1" &&
           nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
@@ -268,12 +268,12 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     switch (transferType) {
       case TransferType.ibcTransfer:
         if (type === "send") {
-          return ibcTransfer.packetTxs.sendTx?.explorerLink;
+          return ibcTransfer.packetTxs?.sendTx?.explorerLink;
         }
-        return ibcTransfer.packetTxs.receiveTx?.explorerLink;
+        return ibcTransfer.packetTxs?.receiveTx?.explorerLink;
       case TransferType.eurekaTransfer:
         if (type === "send") {
-          return eurekaTransfer.packetTxs.sendTx?.explorerLink;
+          return eurekaTransfer.packetTxs?.sendTx?.explorerLink;
         }
         return eurekaTransfer.packetTxs.receiveTx?.explorerLink;
       case TransferType.goFastTransfer:
@@ -282,7 +282,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
         }
         return goFastTransfer.txs.orderFilledTx?.explorerLink;
       case TransferType.axelarTransfer:
-        return axelarTransfer.axelarScanLink;
+        return axelarTransfer?.axelarScanLink;
       default:
         type RemainingTransferTypes =
           | CCTPTransferInfo

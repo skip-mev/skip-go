@@ -132,7 +132,7 @@ export const SwapSettingsDrawer = createModal(() => {
                 <img
                   width="25"
                   height="25"
-                  src={chain?.logoURI}
+                  src={chain?.logoUri}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
                 />

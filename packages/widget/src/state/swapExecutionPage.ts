@@ -2,7 +2,7 @@ import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { TransactionCallbacks, TxStatusResponse, ChainType } from "@skip-go/client";
+import { TxStatusResponse, ChainType } from "@skip-go/client";
 import {
   DEEPLINK_CHOICE,
   MinimalWallet,
@@ -20,7 +20,7 @@ import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
-import { executeRoute, RouteResponse, UserAddress } from "@skip-go/client/v2";
+import { executeRoute, RouteResponse, TransactionCallbacks, UserAddress } from "@skip-go/client/v2";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
