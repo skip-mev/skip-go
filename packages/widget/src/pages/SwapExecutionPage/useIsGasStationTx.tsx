@@ -20,7 +20,7 @@ export const useIsGasStationTx = () => {
     const isAxelarTransfer = route.operations.some((op) => OperationType.axelarTransfer in op);
 
     return (
-      sourceChain?.chainType === ChainType.EVM &&
+      sourceChain?.chainType === ChainType.Evm &&
       !isAxelarTransfer &&
       GAS_STATION_CHAIN_IDS.includes(destChain?.chainId)
     );
