@@ -31,10 +31,10 @@ export const useCreateEvmWallets = () => {
   const connectors = useConnectors();
 
   const createEvmWallets = useCallback(
-    (chainID?: string) => {
-      const isSei = chainID === "pacific-1";
+    (chainId?: string) => {
+      const isSei = chainId === "pacific-1";
       if (isSei) {
-        chainID = sei.id.toString();
+        chainId = sei.id.toString();
       }
       const wallets: MinimalWallet[] = [];
       for (const connector of connectors) {
@@ -82,7 +82,7 @@ export const useCreateEvmWallets = () => {
             if (evmWallet === undefined) {
               callbacks?.onWalletConnected?.({
                 walletName: connector.name,
-                chainId: chainID,
+                chainId: chainId,
                 address: account[0],
               });
 
@@ -128,7 +128,7 @@ export const useCreateEvmWallets = () => {
             await disconnect(config);
             track("wallet disconnected", {
               walletName: connector.name,
-              chainId: chainID,
+              chainId: chainId,
               ChainType: ChainType.EVM,
             });
             setEvmWallet(undefined);
@@ -140,12 +140,12 @@ export const useCreateEvmWallets = () => {
           getAddress: async ({ signRequired }) => {
             if (signRequired && !isEvmConnected) {
               return connectWallet({
-                chainIdToConnect: chainID,
+                chainIdToConnect: chainId,
               });
             }
             track("get address", {
               walletName: connector.name,
-              chainId: chainID,
+              chainId: chainId,
               ChainType: ChainType.EVM,
             });
             try {
@@ -156,7 +156,7 @@ export const useCreateEvmWallets = () => {
               return { address: account[0] };
             } catch (_error) {
               return connectWallet({
-                chainIdToConnect: chainID,
+                chainIdToConnect: chainId,
               });
             }
           },
@@ -172,11 +172,11 @@ export const useCreateEvmWallets = () => {
           minimalWallet.getAddress = async () => {
             track("get address", {
               walletName: connector.name,
-              chainId: chainID,
+              chainId: chainId,
               ChainType: ChainType.Cosmos,
             });
             const { address } = await connectWallet({
-              chainIdToConnect: chainID,
+              chainIdToConnect: chainId,
             });
             const publicClient = createPublicClient({
               chain: sei,
@@ -194,7 +194,7 @@ export const useCreateEvmWallets = () => {
               const error = e as Error;
               track("get address error", {
                 walletName: connector.name,
-                chainId: chainID,
+                chainId: chainId,
                 ChainType: ChainType.Cosmos,
                 errorMessage: error?.message,
               });
@@ -212,7 +212,6 @@ export const useCreateEvmWallets = () => {
       connectors,
       currentEvmConnector?.id,
       isEvmConnected,
-      chainId,
       sourceAsset,
       setWCDeepLinkByChainType,
       evmWallet,

@@ -107,7 +107,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
   const transferAssetReleaseAsset = useGetAssetDetails({
     assetDenom: transferAssetRelease?.denom,
-    chainId: transferAssetRelease?.chainID,
+    chainId: transferAssetRelease?.chainId,
   });
 
   return (

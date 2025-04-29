@@ -33,7 +33,7 @@ export const useCreateSolanaWallets = () => {
       const connectWallet = async () => {
         try {
           await wallet.connect();
-          const chain = chains?.find((x) => x.chainID === "solana");
+          const chain = chains?.find((x) => x.chainId === "solana");
 
           if (sourceAsset === undefined) {
             setDefaultSourceAsset(ChainType.SVM);
@@ -50,7 +50,7 @@ export const useCreateSolanaWallets = () => {
           if (svmWallet === undefined) {
             callbacks?.onWalletConnected?.({
               walletName: wallet.name,
-              chainId: chain?.chainID,
+              chainId: chain?.chainId,
               address,
             });
             setSvmWallet({
@@ -63,7 +63,7 @@ export const useCreateSolanaWallets = () => {
           track("wallet connected", {
             walletName: wallet.name,
             chainType: ChainType.SVM,
-            chainId: chain?.chainID,
+            chainId: chain?.chainId,
             address,
           });
 

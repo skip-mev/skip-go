@@ -39,7 +39,7 @@ export const ErrorPageTransactionReverted = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: transferAssetRelease?.denom,
     tokenAmount: transferAssetRelease?.amount,
-    chainId: transferAssetRelease?.chainID,
+    chainId: transferAssetRelease?.chainId,
   });
 
   return (

@@ -1,15 +1,15 @@
 import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { Chain } from "@skip-go/client/v2";
 import {
   convertTokenAmountToHumanReadableAmount,
   convertHumanReadableAmountToCryptoAmount,
 } from "@/utils/crypto";
-import { V2 } from "@skip-go/client";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 
 export type AssetDetailsProps = {
   asset?: ClientAsset;
-  chain?: V2.Chain;
+  chain?: Chain;
   symbol?: string;
   assetImage?: string;
   chainName?: string;

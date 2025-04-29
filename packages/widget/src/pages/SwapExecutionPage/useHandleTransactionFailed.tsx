@@ -24,7 +24,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       if (!denom || !chainId) return;
       if (!assets) return;
       return assets.find(
-        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainId === chainId,
       );
     },
     [assets],
@@ -32,7 +32,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const sourceClientAsset = getClientAsset(
     statusData?.transferAssetRelease?.denom,
-    statusData?.transferAssetRelease?.chainID,
+    statusData?.transferAssetRelease?.chainId,
   );
 
   useEffect(() => {

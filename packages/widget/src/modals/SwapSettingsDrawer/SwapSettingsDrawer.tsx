@@ -24,7 +24,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
+    return route?.chainIds.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
   }, [route, chains]);
 
   const clientOperations = getClientOperations(route?.operations);

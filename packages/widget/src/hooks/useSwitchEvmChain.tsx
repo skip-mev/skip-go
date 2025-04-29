@@ -9,7 +9,7 @@ export const useSwitchEvmChain = () => {
 
   const switchEvmChainId = useCallback(
     (chainId?: string) => {
-      const isEvmChainId = chains?.find((c) => c.chainID === chainId)?.chainType === "evm";
+      const isEvmChainId = chains?.find((c) => c.chainId === chainId)?.chainType === "evm";
 
       if (isEvmChainId) {
         connector?.switchChain?.({
