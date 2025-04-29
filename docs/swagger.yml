@@ -1923,6 +1923,44 @@ paths:
                     items:
                       $ref: '#/components/schemas/TransferStatus'
                     description: Transfer status for all transfers initiated by the transaction in the order they were initiated.
+                  state:
+                    $ref: '#/components/schemas/TransactionState'
+                    description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
+                  transfer_sequence:
+                    description: A detailed sequence of all cross-chain transfer events associated with the transaction.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TransferEvent'
+                  next_blocking_transfer:
+                    description: Details about the next transfer in the sequence that is preventing further progress, if any.
+                    nullable: true
+                    properties:
+                      transfer_sequence_index:
+                        type: integer
+                    type: object
+                  transfer_asset_release:
+                    description: Information about the final location and state of the assets involved in the transfers.
+                    nullable: true
+                    properties:
+                      chain_id:
+                        type: string
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                        nullable: true
+                      released:
+                        type: boolean
+                    type: object
+                  error:
+                    description: Details about any error encountered during the transaction or its subsequent transfers.
+                    allOf:
+                      - $ref: '#/components/schemas/StatusError'
+                    nullable: true
+                  status:
+                    type: string
+                    description: A high-level status indicator for the transaction's completion state.
+                    example: STATE_COMPLETED
         '404':
           description: The specified tx was not found.
           content:
@@ -3619,8 +3657,13 @@ components:
             denom:
               description: The denom of the asset that is released.
               type: string
+            amount:
+              description: The amount of the asset that is released.
+              type: string
+              nullable: true
             released:
               description: Indicates whether assets have been released and are accessible. The assets may still be in transit.
+              type: boolean
           type: object
         transfer_sequence:
           description: Lists any IBC and Axelar transfers as they are seen.
