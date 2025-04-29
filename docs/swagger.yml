@@ -2905,7 +2905,7 @@ components:
         denom:
           description: Asset denom
           type: string
-        gas_price_info:
+        gas_price:  # Renamed from gas_price_info
           description: Gas price tiers
           nullable: true
           properties:
