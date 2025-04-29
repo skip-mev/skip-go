@@ -22,9 +22,10 @@ const defaultOptions: Options = {
   clean: true,
   dts: true,
   format: ["esm"],
-  minify: true,
+  minify: false,
   shims: true,
   splitting: true,
+  bundle: true,
   treeshake: true,
   tsconfig: "./tsconfig.build.json",
 };
@@ -36,6 +37,7 @@ export default defineConfig(async ({ watch }) => {
       clean: !watch,
       entry: {
         index: "src/index.ts",
+        "client-v2/index": "src/client-v2/index.ts",
         ...apiEntrypoints,
         ...publicFunctions,
       },

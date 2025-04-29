@@ -1,17 +1,18 @@
 import { Camel, toCamel, toSnake } from "./convert";
-import { ClientState } from "../state";
+
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
+import { ClientState } from "../state";
 
 type RequestClientOptions = {
-  baseURL: string;
+  baseUrl: string;
   apiKey?: string;
 };
 
-export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) => {
+export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) => {
   const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(apiKey ? { Authorization: apiKey } : {}),
+    "content-type": "application/json",
+    ...(apiKey ? { authorization: apiKey } : {}),
   };
 
   const handleResponse = async (response: Response) => {
@@ -33,7 +34,7 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const url = new URL(path, baseURL);
+    const url = new URL(baseUrl + path);
 
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {
@@ -57,7 +58,7 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
     data: Body = {} as Body,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const response = await fetch(new URL(path, baseURL).toString(), {
+    const response = await fetch(new URL(baseUrl + path).toString(), {
       method: "POST",
       headers: defaultHeaders,
       body: JSON.stringify(data),
@@ -70,36 +71,44 @@ export const createRequestClient = ({ baseURL, apiKey }: RequestClientOptions) =
   return { get, post };
 };
 
-export type OnSuccessCallback<Result, Params> = (result: Result, options: Params) => void;
-
-export type createRequestType<Result, Params> = {
+export type createRequestType<Request, Response, TransformedResponse = Response> = {
   path: string;
   method: "get" | "post";
-  onSuccess?: OnSuccessCallback<Result, Params>;
+  onSuccess?: (response: TransformedResponse, options?: Request) => void;
+  transformResponse?: (response: Response) => TransformedResponse;
 };
 
-export function createRequest<Params extends object = object, Result extends object = object>({
+export function createRequest<Request, Response, TransformedResponse>({
   path,
   method = "get",
   onSuccess,
-}: createRequestType<Result, Params>) {
-  const controller = new AbortController();
+  transformResponse,
+}: createRequestType<Request, Response, TransformedResponse>) {
+  let controller: AbortController | null = null;
 
-  const request = async (options?: Params): Promise<Result> => {
+  const request = async (options?: Request): Promise<TransformedResponse> => {
+    if (controller && !controller?.signal?.aborted) {
+      controller?.abort();
+    }
+
+    controller = new AbortController();
+
     try {
-      const response = await ClientState.requestClient[method]<Result>(
+      const response = await ClientState.requestClient[method]<Response>(
         path,
         options ? toSnake(options) : undefined,
         controller.signal,
       );
 
-      const camelCased = toCamel(response) as Result;
+      const camelCased = toCamel(response ?? {}) as Response;
 
-      if (onSuccess) {
-        onSuccess(camelCased, options as Params);
-      }
+      const finalResponse = transformResponse
+        ? transformResponse(camelCased)
+        : (camelCased as unknown as TransformedResponse);
 
-      return camelCased;
+      onSuccess?.(finalResponse, options);
+
+      return finalResponse;
     } catch (error) {
       if ((error as Error).name === "AbortError") {
         console.log("Request was cancelled");
@@ -110,10 +119,7 @@ export function createRequest<Params extends object = object, Result extends obj
     }
   };
 
-  return {
-    request,
-    cancel: (reason?: string) => controller.abort(reason),
-  };
+  return request;
 }
 
 // ✅ Get instance type of the API class
@@ -140,9 +146,11 @@ type ValidApiMethodKeys = {
 -------------------------------------------------- */
 
 // Params: take first argument, convert to camelCase, make it non-null
-type MethodParams<K extends ValidApiMethodKeys> = NonNullable<Camel<Parameters<ApiInstance[K]>[0]>>;
+export type ApiRequest<K extends ValidApiMethodKeys> = NonNullable<
+  Camel<Parameters<ApiInstance[K]>[0]>
+>;
 
-type MethodReturn<K extends ValidApiMethodKeys> = Camel<
+export type ApiResponse<K extends ValidApiMethodKeys> = Camel<
   Awaited<ReturnType<ApiInstance[K]>> extends { data: infer D }
   ? D extends object
   ? D
@@ -150,40 +158,34 @@ type MethodReturn<K extends ValidApiMethodKeys> = Camel<
   : never
 >;
 
-export type ApiRequest<K extends ValidApiMethodKeys> = MethodParams<K>;
-export type ApiResponse<K extends ValidApiMethodKeys> = MethodReturn<K>;
-
 /* --------------------------------------------------
  ⚙️ 3. Factory to generate API functions
 -------------------------------------------------- */
 
-export type ApiProps<K extends ValidApiMethodKeys> = {
+export type ApiProps<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>> = {
   methodName: K;
   path: string;
-  onSuccess?: OnSuccessCallback<MethodReturn<K>, MethodParams<K>>;
+  onSuccess?: (response: TransformedResponse, options?: ApiRequest<K>) => void;
   method?: "get" | "post";
+  transformResponse?: (response: ApiResponse<K>) => TransformedResponse;
 };
 
-export function api<K extends ValidApiMethodKeys>({
+export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>>({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   methodName,
   path,
   onSuccess,
   method = "get",
-}: ApiProps<K>) {
-  type Params = MethodParams<K>;
-  type Response = MethodReturn<K>;
+  transformResponse,
+}: ApiProps<K, TransformedResponse>) {
+  type Request = ApiRequest<K>;
+  type Response = ApiResponse<K>;
 
-  if (!ClientState.requestClient) {
-    ClientState.requestClient = createRequestClient({
-      baseURL: "https://api.skip.build",
-    });
-  }
-
-  return createRequest<Params, Response>({
+  return createRequest<Request, Response, TransformedResponse>({
     path,
     method,
     onSuccess,
+    transformResponse,
   });
 }
 
@@ -232,19 +234,13 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   retryInterval = 1000,
   backoffMultiplier = 2,
 }: PollingApiProps<K>) {
-  let cancel: (reason?: string) => void;
-
   const request = async (requestParams?: ApiRequest<K>): Promise<ApiResponse<K>> => {
-    const apiFn = api<K>({ methodName, path, method });
-    const apiRequest = apiFn;
-    cancel = apiFn.cancel;
-
     let attempt = 0;
     let lastError: unknown;
 
     while (attempt < maxRetries) {
       try {
-        const result = await apiRequest.request(requestParams);
+        const result = await api<K>({ methodName, path, method })(requestParams);
         if (isSuccess(result)) {
           onSuccess?.(result, attempt);
           return result;
@@ -262,8 +258,5 @@ export function pollingApi<K extends ValidApiMethodKeys>({
     throw lastError ?? new Error("pollingApi: max retries exceeded");
   };
 
-  return {
-    request: (params?: ApiRequest<K>) => request(params),
-    cancel: (reason?: string) => cancel(reason),
-  };
+  return (params?: ApiRequest<K>) => request(params);
 }

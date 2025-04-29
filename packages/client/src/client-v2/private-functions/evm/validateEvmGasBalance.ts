@@ -1,8 +1,8 @@
-import { WalletClient } from "viem/_types/clients/createWalletClient";
+import { WalletClient } from "viem";
 import { EvmTx } from "../../types/swaggerTypes";
 import { GetFallbackGasAmount } from "../../types/client";
 import { getEVMGasAmountForMessage } from "../transactions";
-import { balances } from "../../api/getBalances";
+import { balances } from "../../api/postBalances";
 import { BigNumber } from "bignumber.js";
 import { ClientState } from "src/client-v2/state";
 import { formatUnits } from "viem";
@@ -32,7 +32,7 @@ export const validateEvmGasBalance = async ({
   }
 
   const skipBalances = (
-    await balances.request({
+    await balances({
       chains: {
         [tx?.chainId ?? ""]: {
           address: signer.account?.address,

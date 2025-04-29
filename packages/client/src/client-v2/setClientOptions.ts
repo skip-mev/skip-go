@@ -7,14 +7,8 @@ import {
   defaultRegistryTypes,
 } from "@cosmjs/stargate/build/signingstargateclient";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate/build/modules/wasm/aminomessages";
-import {
-  circleAminoConverters,
-  circleProtoRegistry,
-} from "src/codegen/circle/client";
-import {
-  evmosAminoConverters,
-  evmosProtoRegistry,
-} from "src/codegen/evmos/client";
+import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
+import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
 import { Registry } from "@cosmjs/proto-signing/build/registry";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
@@ -22,7 +16,7 @@ import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
   ClientState.requestClient = createRequestClient({
-    baseURL: options.apiUrl || "https://api.skip.build",
+    baseUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
   });
 
@@ -57,22 +51,17 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
   }
 };
 
-function validateChainIdsToAffiliates(
-  chainIDsToAffiliates: Record<string, ChainAffiliates>,
-) {
+function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, ChainAffiliates>) {
   const affiliatesArray = Object.values(chainIDsToAffiliates)
     .map((chain) => chain.affiliates)
     .filter((a) => a !== undefined) as Affiliate[][];
 
-  const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce(
-    (acc, affiliate) => {
-      if (!affiliate.basisPointsFee) {
-        throw new Error("basisPointFee must exist in each affiliate");
-      }
-      return acc + parseInt(affiliate.basisPointsFee, 10);
-    },
-    0,
-  );
+  const firstAffiliateBasisPointsFee = affiliatesArray[0]?.reduce((acc, affiliate) => {
+    if (!affiliate.basisPointsFee) {
+      throw new Error("basisPointFee must exist in each affiliate");
+    }
+    return acc + parseInt(affiliate.basisPointsFee, 10);
+  }, 0);
 
   const allBasisPointsAreEqual = affiliatesArray.every((affiliate) => {
     const totalBasisPointsFee = affiliate.reduce((acc, affiliate) => {

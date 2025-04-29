@@ -2,7 +2,7 @@ import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { ClientState } from "../state";
 import { SigningStargateClient } from "@cosmjs/stargate/build/signingstargateclient";
 import { accountParser } from "src/registry";
-import { getRpcEndpointForChain } from "./getRpcEndpointForChain";
+import { getRpcEndpointForChain } from "../private-functions/getRpcEndpointForChain";
 
 export type getSigningStargateClientProps = {
   chainId: string;

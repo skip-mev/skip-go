@@ -32,15 +32,15 @@ export interface ApiError {
 
 export interface Asset {
   /** Chain-id of the asset */
-  chainId?: string;
+  chainId: string;
   /** Coingecko id of the asset */
-  coingeckoId?: string | null;
+  coingeckoId?: string;
   /** Number of decimals used for amounts of the asset */
-  decimals?: number | null;
+  decimals?: number;
   /** Denom of the asset */
-  denom?: string;
+  denom: string;
   /** Description of the asset */
-  description?: string | null;
+  description?: string;
   /** Indicates whether asset is a CW20 token */
   isCw20?: boolean;
   /** Indicates whether asset is an EVM token */
@@ -48,19 +48,19 @@ export interface Asset {
   /** Indicates whether asset is an SVM token */
   isSvm?: boolean;
   /** URI pointing to an image of the logo of the asset */
-  logoUri?: string | null;
+  logoUri?: string;
   /** Name of the asset */
-  name?: string | null;
+  name?: string;
   /** Chain-id of the origin of the asset. If this is an ibc denom, this is the chain-id of the asset that the ibc token represents */
   originChainId?: string;
   /** Denom of the origin of the asset. If this is an ibc denom, this is the original denom that the ibc token represents */
   originDenom?: string;
   /** Recommended symbol of the asset used to differentiate between bridged assets with the same symbol, e.g. USDC.axl for Axelar USDC and USDC.grv for Gravity USDC */
-  recommendedSymbol?: string | null;
+  recommendedSymbol?: string;
   /** Symbol of the asset, e.g. ATOM for uatom */
-  symbol?: string | null;
+  symbol?: string;
   /** Address of the contract for the asset, e.g. if it is a CW20 or ERC20 token */
-  tokenContract?: string | null;
+  tokenContract?: string;
   /** The forward slash delimited sequence of ibc ports and channels that can be traversed to unwind an ibc token to its origin asset. */
   trace?: string;
 }
@@ -203,7 +203,7 @@ export interface SmartRelayFeeQuote {
   /** The fee asset denomination */
   feeDenom?: string;
   /** The address the fee should be sent to */
-  feePaymentAddress?: string | null;
+  feePaymentAddress?: string;
   /** Address of the relayer */
   relayerAddress?: string;
   /** Expiration time of the fee quote */
@@ -236,7 +236,7 @@ export interface CCTPTransfer {
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
   smartRelay?: boolean;
-  smartRelayFeeQuote?: SmartRelayFeeQuote | null;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
 }
 
 export interface CCTPTransferInfo {
@@ -259,8 +259,8 @@ export interface CCTPTransferInfo {
 }
 
 export interface CCTPTransferTxs {
-  sendTx?: ChainTransaction | null;
-  receiveTx?: ChainTransaction | null;
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
 }
 
 /**
@@ -284,6 +284,104 @@ export interface CCTPTransferWrapper {
   cctpTransfer?: CCTPTransfer;
 }
 
+/**
+ * Stargate transfer state:
+ * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+ * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+ * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+ * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+ * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+ * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+ */
+export enum StargateTransferState {
+  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
+  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
+  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
+  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
+  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
+  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
+}
+
+export interface StargateTransferTxs {
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
+  errorTx?: ChainTransaction;
+}
+
+export interface StargateTransferInfo {
+  stargateTransfer?: {
+    /** Chain ID of the source chain */
+    fromChainId?: string;
+    /** Chain ID of the destination chain */
+    toChainId?: string;
+    /**
+     * Stargate transfer state:
+     * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+     * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+     * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+     * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+     * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+     * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+     */
+    state?: StargateTransferState;
+    txs?: StargateTransferTxs;
+  };
+}
+
+export interface StargateTransferWrapper {
+  stargateTransfer?: any;
+}
+
+/**
+ * GoFast transfer state:
+ * * `GO_FAST_UNKNOWN` - Unknown state
+ * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
+ * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
+ * * `GO_FAST_ORDER_REFUNDED` - Order refunded
+ * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+ * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+ * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+ */
+export enum GoFastTransferState {
+  GO_FAST_UNKNOWN = "GO_FAST_UNKNOWN",
+  GO_FAST_ORDER_SUBMITTED = "GO_FAST_ORDER_SUBMITTED",
+  GO_FAST_ORDER_FILLED = "GO_FAST_ORDER_FILLED",
+  GO_FAST_ORDER_REFUNDED = "GO_FAST_ORDER_REFUNDED",
+  GO_FAST_ORDER_TIMED_OUT = "GO_FAST_ORDER_TIMED_OUT",
+  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
+  GO_FAST_COMPLETED_SUCCESS = "GO_FAST_COMPLETED_SUCCESS",
+}
+
+export interface GoFastTransferTxs {
+  orderSubmittedTx?: ChainTransaction;
+  orderFilledTx?: ChainTransaction;
+  orderRefundedTx?: ChainTransaction;
+  orderTimeoutTx?: ChainTransaction;
+}
+
+export interface GoFastTransferInfo {
+  goFastTransfer?: {
+    /** Chain ID of the source chain */
+    fromChainId?: string;
+    /** Chain ID of the destination chain */
+    toChainId?: string;
+    /**
+     * GoFast transfer state:
+     * * `GO_FAST_UNKNOWN` - Unknown state
+     * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
+     * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
+     * * `GO_FAST_ORDER_REFUNDED` - Order refunded
+     * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+     * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+     * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+     */
+    state?: GoFastTransferState;
+    txs?: GoFastTransferTxs;
+    /** Error message if the transfer failed post-fill */
+    errorMessage?: string;
+  };
+}
+
 export interface BalanceRequestChainEntry {
   /** Address of the wallet that the balance is requested for */
   address?: string;
@@ -294,11 +392,11 @@ export interface BalanceRequestChainEntry {
 export interface BalanceResponseDenomEntry {
   amount?: string;
   /** @format int32 */
-  decimals?: number | null;
+  decimals?: number;
   formattedAmount?: string;
-  price?: string | null;
-  valueUsd?: string | null;
-  error?: ApiError | null;
+  price?: string;
+  valueUsd?: string;
+  error?: ApiError;
 }
 
 export interface BalanceResponseChainEntry {
@@ -369,7 +467,7 @@ export interface Chain {
   /** Whether the chain supports IBC memos */
   supportsMemo?: boolean;
   /** chain logo URI */
-  logoUri?: string | null;
+  logoUri?: string;
   /** Bech32 prefix of the chain */
   bech32Prefix?: string;
   /** Fee assets of the chain */
@@ -408,12 +506,12 @@ export enum ContractCallWithTokenErrorType {
 }
 
 export interface ContractCallWithTokenTxs {
-  approveTx?: ChainTransaction | null;
-  confirmTx?: ChainTransaction | null;
-  error?: ContractCallWithTokenError | null;
-  executeTx?: ChainTransaction | null;
-  gasPaidTx?: ChainTransaction | null;
-  sendTx?: ChainTransaction | null;
+  approveTx?: ChainTransaction;
+  confirmTx?: ChainTransaction;
+  error?: ContractCallWithTokenError;
+  executeTx?: ChainTransaction;
+  gasPaidTx?: ChainTransaction;
+  sendTx?: ChainTransaction;
 }
 
 export interface CosmWasmContractMsg {
@@ -546,14 +644,14 @@ export interface FeeAsset {
   /** Asset denom */
   denom?: string;
   /** Gas price tiers */
-  gasPriceInfo?: {
+  gasPrice?: {
     /** Average gas price */
     average?: string;
     /** High gas price */
     high?: string;
     /** Low gas price */
     low?: string;
-  } | null;
+  };
 }
 
 /** grpc status codes as defined [here](https://grpc.github.io/grpc/core/md_doc_statuscodes.html) */
@@ -625,8 +723,8 @@ export enum HyperlaneTransferState {
 }
 
 export interface HyperlaneTransferTransactions {
-  sendTx?: ChainTransaction | null;
-  receiveTx?: ChainTransaction | null;
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
 }
 
 export interface HyperlaneTransferWrapper {
@@ -672,6 +770,7 @@ export type Operation = (
   | EvmSwapWrapper
   | OPInitTransferWrapper
   | EurekaTransferWrapper
+  | StargateTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
   txIndex?: number;
@@ -688,11 +787,11 @@ export interface OptionalAsset {
 }
 
 export interface Packet {
-  acknowledgeTx?: ChainTransaction | null;
-  error?: PacketError | null;
-  receiveTx?: ChainTransaction | null;
-  sendTx?: ChainTransaction | null;
-  timeoutTx?: ChainTransaction | null;
+  acknowledgeTx?: ChainTransaction;
+  error?: PacketError;
+  receiveTx?: ChainTransaction;
+  sendTx?: ChainTransaction;
+  timeoutTx?: ChainTransaction;
 }
 
 export interface PacketError {
@@ -763,7 +862,7 @@ export interface RouteResponse {
   /** Chain-ids of all chains of the transfer or swap, in order of usage by operations in the route */
   chainIds?: string[];
   /** All chain-ids that require an address to be provided for, in order of usage by operations in the route */
-  requiredChainAddresses?: any;
+  requiredChainAddresses: string[];
   /** Chain-id of the destination asset */
   destAssetChainId?: string;
   /** Denom of the destination asset */
@@ -787,7 +886,7 @@ export interface RouteResponse {
   /** Amount of the destination denom expected to be received, converted to USD value */
   usdAmountOut?: string;
   /** Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5% */
-  swapPriceImpactPercent?: string | null;
+  swapPriceImpactPercent?: string;
   /** Indicates if the route is unsafe due to poor execution price or if safety cannot be determined due to lack of pricing information */
   warning?: {
     /**
@@ -798,7 +897,7 @@ export interface RouteResponse {
     type?: RoutePriceWarningType;
     /** Warning message */
     message?: string;
-  } | null;
+  };
   /** Indicates fees incurred in the execution of the transfer */
   estimatedFees?: Fee[];
   /** The estimated time in seconds for the route to execute */
@@ -824,14 +923,14 @@ export enum SendTokenErrorType {
 }
 
 export interface SendTokenTxs {
-  confirmTx?: ChainTransaction | null;
-  error?: SendTokenError | null;
-  executeTx?: ChainTransaction | null;
-  sendTx?: ChainTransaction | null;
+  confirmTx?: ChainTransaction;
+  error?: SendTokenError;
+  executeTx?: ChainTransaction;
+  sendTx?: ChainTransaction;
 }
 
 export interface StatusError {
-  details?: TransactionExecutionErrorDetails | null;
+  details?: TransactionExecutionErrorDetails;
   /** Error message */
   message?: string;
   /**
@@ -876,13 +975,13 @@ export type Swap = (SwapInWrapper | SwapOutWrapper | SmartSwapInWrapper) & {
 /** Specification of a swap with an exact amount in */
 export interface SwapExactCoinIn {
   /** Amount to swap in */
-  swapAmountIn?: string | null;
+  swapAmountIn?: string;
   /** Operations required to execute the swap */
   swapOperations?: SwapOperation[];
   /** Swap venue that this swap should execute on */
   swapVenue?: SwapVenue;
   /** Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5% */
-  priceImpactPercent?: string | null;
+  priceImpactPercent?: string;
 }
 
 /** Specification of a swap with an exact amount out */
@@ -894,7 +993,7 @@ export interface SwapExactCoinOut {
   /** Swap venue that this swap should execute on */
   swapVenue?: SwapVenue;
   /** Price impact of the estimated swap, if present.  Measured in percentage e.g. "0.5" is .5% */
-  priceImpactPercent?: string | null;
+  priceImpactPercent?: string;
 }
 
 export interface SwapInWrapper {
@@ -911,7 +1010,7 @@ export interface SwapOperation {
   /** Identifier of the pool to use for the swap */
   pool?: string;
   /** Optional dditional metadata a swap adapter may require */
-  interface?: string | null;
+  interface?: string;
 }
 
 export interface SwapOutWrapper {
@@ -954,6 +1053,8 @@ export interface SwapVenue {
   chainId?: string;
   /** Name of the swap venue */
   name?: string;
+  /** URI for the venue's logo */
+  logoUri?: string;
 }
 
 export interface SwapWrapper {
@@ -1037,8 +1138,8 @@ export interface OPInitTransferInfo {
 }
 
 export interface OPInitTransferTxs {
-  sendTx?: ChainTransaction | null;
-  receiveTx?: ChainTransaction | null;
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
 }
 
 /**
@@ -1074,11 +1175,11 @@ export interface Transfer {
   /** Denom of the output asset of the transfer */
   denomOut?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable. */
-  feeAmount?: string | null;
+  feeAmount?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable, converted to USD value */
-  usdFeeAmount?: string | null;
+  usdFeeAmount?: string;
   /** Asset to be paid as the transfer fee if applicable. */
-  feeAsset?: Asset | null;
+  feeAsset?: Asset;
   /**
    * Bridge Type:
    * * `IBC` - IBC Bridge
@@ -1101,7 +1202,9 @@ export type TransferEvent =
   | CCTPTransferInfo
   | HyperlaneTransferInfo
   | OPInitTransferInfo
-  | EurekaTransferInfo;
+  | EurekaTransferInfo
+  | StargateTransferInfo
+  | GoFastTransferInfo;
 
 export interface TransferInfo {
   /** Chain ID of the destination chain */
@@ -1137,12 +1240,12 @@ export enum TransferState {
 }
 
 export interface TransferStatus {
-  error?: StatusError | null;
+  error?: StatusError;
   /** Indicates which entry in the `transfer_sequence` field that the transfer is blocked on. Will be null if there is no blocked transfer. */
   nextBlockingTransfer?: {
     /** The index of the entry in the `transfer_sequence` field that the transfer is blocked on. */
     transferSequenceIndex?: number;
-  } | null;
+  };
   /**
    * Transaction state:
    * * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
@@ -1160,9 +1263,11 @@ export interface TransferStatus {
     chainId?: string;
     /** The denom of the asset that is released. */
     denom?: string;
+    /** The amount of the asset that is released. */
+    amount?: string;
     /** Indicates whether assets have been released and are accessible. The assets may still be in transit. */
-    released?: any;
-  } | null;
+    released?: boolean;
+  };
   /** Lists any IBC and Axelar transfers as they are seen. */
   transferSequence?: TransferEvent[];
 }
@@ -1193,7 +1298,7 @@ export interface EurekaTransfer {
   /** Address of the Eureka entry contract on the source chain */
   entryContractAddress?: string;
   /** Optional address of the Eureka callback adapter contract on the source chain */
-  callbackAdapterContractAddress?: string | null;
+  callbackAdapterContractAddress?: string;
   /**
    * Bridge Type:
    * * `IBC` - IBC Bridge
@@ -1208,11 +1313,11 @@ export interface EurekaTransfer {
   bridgeId?: BridgeType;
   /** Indicates whether this transfer is relayed via Smart Relay */
   smartRelay?: boolean;
-  smartRelayFeeQuote?: SmartRelayFeeQuote | null;
+  smartRelayFeeQuote?: SmartRelayFeeQuote;
   /** Optional address of the Eureka callback contract on the destination chain */
-  toChainCallbackContractAddress?: string | null;
+  toChainCallbackContractAddress?: string;
   /** Optional address of the Eureka entry contract on the destination chain */
-  toChainEntryContractAddress?: string | null;
+  toChainEntryContractAddress?: string;
 }
 
 export interface EurekaTransferInfo {
@@ -1245,9 +1350,9 @@ export interface RecommendationRequest {
   /** Chain-id of the source asset */
   sourceAssetChainId?: string;
   /** Chain-id of the recommended destination asset */
-  destChainId?: string | null;
+  destChainId?: string;
   /** Reason for recommendation (optional) */
-  reason?: Reason | null;
+  reason?: Reason;
 }
 
 export interface CosmosModuleSupport {
@@ -1298,13 +1403,13 @@ export interface Fee {
   amount?: string;
   /** The value of the fee in USD */
   usdAmount?: string;
-  originAsset?: Asset;
+  originAsset: Asset;
   /** Chain ID of the chain where fees are collected */
   chainId?: string;
   /** The index of the transaction in the list of transactions required to execute the transfer where fees are paid */
   txIndex?: number;
   /** The index of the operation in the returned operations list which incurs the fee */
-  operationIndex?: number | null;
+  operationIndex?: number;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -1976,6 +2081,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Hash of the transaction */
         tx_hash?: string;
+        /** Link to the transaction on the relevant block explorer */
+        explorer_link?: string;
       },
       Error
     >({
@@ -1998,14 +2105,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     data: {
       /**
        * Hex encoded hash of the transaction to track
-       * @example "tx hash"
+       * @example "F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F"
        */
-      tx_hash?: string;
+      tx_hash: string;
       /**
        * Chain ID of the transaction
        * @example "osmosis-1"
        */
-      chain_id?: string;
+      chain_id: string;
     },
     params: RequestParams = {},
   ) =>
@@ -2013,6 +2120,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Hash of the transaction */
         tx_hash?: string;
+        /** Link to the transaction on the relevant block explorer */
+        explorer_link?: string;
       },
       Error
     >({
@@ -2050,6 +2159,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
         transfers?: TransferStatus[];
+        /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
+        state?: TransactionState;
+        /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
+        transfer_sequence?: TransferEvent[];
+        /** Details about the next transfer in the sequence that is preventing further progress, if any. */
+        next_blocking_transfer?: {
+          transfer_sequence_index?: number;
+        } | null;
+        /** Information about the final location and state of the assets involved in the transfers. */
+        transfer_asset_release?: {
+          chain_id?: string;
+          denom?: string;
+          amount?: string | null;
+          released?: boolean;
+        };
+        /** Details about any error encountered during the transaction or its subsequent transfers. */
+        error?: StatusError | null;
+        /**
+         * A high-level status indicator for the transaction's completion state.
+         * @example "STATE_COMPLETED"
+         */
+        status?: string;
       },
       Error
     >({

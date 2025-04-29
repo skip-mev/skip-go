@@ -2,7 +2,7 @@ import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { getSVMGasAmountForMessage } from "../transactions";
-import { balances } from "../../api/getBalances";
+import { balances } from "../../api/postBalances";
 import { BigNumber } from "bignumber.js";
 
 export const validateSvmGasBalance = async ({ tx }: { tx?: SvmTx }) => {
@@ -11,7 +11,7 @@ export const validateSvmGasBalance = async ({ tx }: { tx?: SvmTx }) => {
   if (!connection) throw new Error(`Failed to connect to ${tx?.chainId}`);
   const gasAmount = await getSVMGasAmountForMessage(connection, tx);
 
-  const skipBalances = await balances.request({
+  const skipBalances = await balances({
     chains: {
       solana: {
         address: tx?.signerAddress,

@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 
 generateApi({
   fileName: "swaggerTypes.ts",
-  output: path.resolve(__dirname, "./client-v2/types"),
+  output: path.resolve(__dirname, "./src/client-v2/types"),
   input: path.resolve(__dirname, "../../docs/swagger.yml"),
   modular: false,
   moduleNameIndex: -1,
@@ -18,6 +18,7 @@ generateApi({
       function mapEntries(object, mapCallbackFn) {
         return Object.fromEntries(Object.entries(object).map(mapCallbackFn));
       }
+
       function camelCaseProperties(object) {
         if (Array.isArray(object)) {
           return object.map(camelCaseProperties);
@@ -36,29 +37,20 @@ generateApi({
             }
           });
 
-          if (
-            object.additionalProperties &&
-            typeof object.additionalProperties === "object"
-          ) {
-            object.additionalProperties = camelCaseProperties(
-              object.additionalProperties,
-            );
+          if (object.additionalProperties && typeof object.additionalProperties === "object") {
+            object.additionalProperties = camelCaseProperties(object.additionalProperties);
           }
 
           if (object.required && Array.isArray(object.required)) {
             object.required = object.required.map(_.camelCase);
           }
 
+          if (object.nullable === true) {
+            delete object.nullable;
+          }
+
           return mapEntries(object, ([key, value]) => {
             return [
-              /**
-               * Transforming key into camel case format needs to be done like follow
-               * because camelCase method from lodash removes special characters while
-               * performing transformation into camel case format.
-               * e.g., $ref key, that is introduced in OpenAPI 3.0,
-               * will be converted into ref if camelCase method itself is used
-               * @see https://swagger.io/docs/specification/using-ref/
-               */
               key.replace(/\w+/g, _.camelCase),
               camelCaseProperties(value),
             ];
@@ -67,8 +59,16 @@ generateApi({
           return object;
         }
       }
+
       component.rawTypeData = camelCaseProperties(component.rawTypeData);
       return component;
+    },
+
+    onCreateProperty: (property) => {
+      if (property.property.nullable === true) {
+        delete property.property.nullable;
+      }
+      return property;
     },
   },
 });

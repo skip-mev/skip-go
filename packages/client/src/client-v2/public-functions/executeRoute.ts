@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
-import { ClientState, SignerGetters } from "../state";
+import { ClientState } from "../state";
 import { TransactionCallbacks } from "../types/callbacks";
-import { ChainType, GasOptions, UserAddress } from "../types/client";
+import { ChainType, GasOptions, SignerGetters, UserAddress } from "../types/client";
 import { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
 import { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
@@ -75,10 +75,15 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     throw new Error("executeRoute error: invalid user addresses");
   }
 
-  const response = await messages.request({
-    ...route,
+  const response = await messages({
     timeoutSeconds,
+    amountIn: route?.amountIn,
     amountOut: route.estimatedAmountOut || "0",
+    sourceAssetChainId: route?.sourceAssetChainId,
+    sourceAssetDenom: route?.sourceAssetDenom,
+    destAssetChainId: route?.destAssetChainId,
+    destAssetDenom: route?.destAssetDenom,
+    operations: route?.operations,
     addressList: addressList,
     slippageTolerancePercent: options.slippageTolerancePercent || "1",
     chainIdsToAffiliates: ClientState.chainIdsToAffiliates,

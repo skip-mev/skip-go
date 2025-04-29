@@ -1,8 +1,8 @@
 import { EvmTx } from "src/client-v2/types/swaggerTypes";
-import { ExecuteRouteOptions } from "../executeRoute";
 import { ClientState } from "src/client-v2/state";
 import { maxUint256, publicActions } from "viem";
 import { erc20ABI } from "src/constants/abis";
+import { ExecuteRouteOptions } from "src/client-v2/public-functions/executeRoute";
 
 export const executeEvmTransaction = async (
   message: { evmTx?: EvmTx },

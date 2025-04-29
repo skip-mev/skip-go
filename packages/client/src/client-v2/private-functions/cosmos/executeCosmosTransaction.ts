@@ -1,12 +1,12 @@
 import { ClientState } from "../../state";
-import { getSigningStargateClient } from "../getSigningStargateClient";
+import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { CosmosTx } from "../../types/swaggerTypes";
-import { ExecuteRouteOptions } from "../executeRoute";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
+import { ExecuteRouteOptions } from "src/client-v2/public-functions/executeRoute";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -69,7 +69,8 @@ export const executeCosmosTransaction = async ({
     throw new Error("executeCosmosTransaction error: failed to retrieve account from signer");
   }
 
-  const fee = gas?.fee;
+  const fee = gasUsed?.fee;
+
   if (!fee) {
     throw new Error("executeCosmosTransaction error: failed to retrieve fee from gas");
   }

@@ -1,14 +1,14 @@
 import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { CosmosMsg } from "../../types/swaggerTypes";
 import { ChainType, GetFallbackGasAmount } from "../../types/client";
-import { ExecuteRouteOptions } from "../executeRoute";
 import { BigNumber } from "bignumber.js";
-import { getSigningStargateClient } from "../getSigningStargateClient";
+import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { getCosmosGasAmountForMessage } from "../transactions";
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
-import { balances } from "../../api/getBalances";
+import { balances } from "../../api/postBalances";
 import { ClientState } from "src/client-v2/state";
+import { ExecuteRouteOptions } from "src/client-v2/public-functions/executeRoute";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;
@@ -37,7 +37,7 @@ export const validateCosmosGasBalance = async ({
   const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
   const skipChains = await ClientState.getSkipChains();
 
-  const chain = skipChains?.find((chain) => chain.chainId === chainId);
+  const chain = skipChains?.find((c) => c.chainId === chainId);
   if (!chain) {
     throw new Error(`failed to find chain id for '${chainId}'`);
   }
@@ -81,13 +81,17 @@ export const validateCosmosGasBalance = async ({
   })();
   const fees = feeAssets.map((asset) => {
     const gasPrice = (() => {
-      if (!asset?.gasPriceInfo) return undefined;
-      let price = asset.gasPriceInfo.average;
+      // @ts-expect-error the swagger type is incorrect
+      if (!asset?.gasPrice) return undefined;
+      // @ts-expect-error the swagger type is incorrect
+      let price = asset.gasPrice.average;
       if (price === "") {
-        price = asset.gasPriceInfo.high;
+        // @ts-expect-error the swagger type is incorrect
+        price = asset.gasPrice.high;
       }
       if (price === "") {
-        price = asset.gasPriceInfo.low;
+        // @ts-expect-error the swagger type is incorrect
+        price = asset.gasPrice.low;
       }
 
       if (!price) return;
@@ -106,7 +110,7 @@ export const validateCosmosGasBalance = async ({
     return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
   });
 
-  const feeBalance = await balances.request({
+  const feeBalance = await balances({
     chains: {
       [chainId]: {
         address: signerAddress,
@@ -117,7 +121,7 @@ export const validateCosmosGasBalance = async ({
   const validatedAssets = feeAssets.map((asset, index) => {
     const chainAsset = skipAssets?.find((x) => x.denom === asset.denom);
     const symbol = chainAsset?.recommendedSymbol?.toUpperCase();
-    const chain = skipChains?.find((x) => x.chainId === chainId);
+
     const decimal = Number(chainAsset?.decimals);
     if (!chainAsset) {
       return {
@@ -130,6 +134,7 @@ export const validateCosmosGasBalance = async ({
       };
 
     const fee = fees[index];
+
     if (!fee) {
       return {
         error: `(${chain?.prettyName}) Unable to calculate fee for ${symbol}`,

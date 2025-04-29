@@ -21,10 +21,12 @@ export const getFeeInfoForChain = async (chainId: string) => {
     ? skipChain.feeAssets?.find((skipFee) => skipFee.denom === defaultGasToken)
     : skipChain.feeAssets?.[0];
 
-  if (!skipFeeInfo && skipChain.feeAssets?.[0]?.gasPriceInfo !== null) {
+  // @ts-expect-error the swagger file type is incorrect
+  if (!skipFeeInfo && skipChain.feeAssets?.[0]?.gasPrice !== null) {
     return skipChain.feeAssets?.[0];
   }
-  if (skipFeeInfo && skipFeeInfo.gasPriceInfo !== null) {
+  // @ts-expect-error the swagger type is incorrect
+  if (skipFeeInfo && skipFeeInfo.gasPrice !== null) {
     return skipFeeInfo;
   }
 

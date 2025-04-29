@@ -1,18 +1,22 @@
-import { GeneratedType, OfflineDirectSigner, Registry } from "@cosmjs/proto-signing";
+import { GeneratedType, Registry } from "@cosmjs/proto-signing";
 import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { Chain, Asset, ChainAffiliates, FeeAsset } from "./types/swaggerTypes";
+import { Chain, Asset, ChainAffiliates } from "./types/swaggerTypes";
 import { ApiResponse, createRequestClient } from "./utils/generateApi";
-import { WalletClient } from "viem/_types/clients/createWalletClient";
-import { OfflineAminoSigner } from "@cosmjs/amino";
-import { Adapter } from "@solana/wallet-adapter-base/lib/types/types";
-import { StdFee } from "@cosmjs/stargate";
 import { getMainnetAndTestnetChains } from "./private-functions/getMainnetAndTestnetChains";
 import { getMainnetAndTestnetAssets } from "./private-functions/getMainnetAndTestnetAssets";
-import { balances } from "./api/getBalances";
+import { balances } from "./api/postBalances";
+import { EndpointOptions, SignerGetters } from "./types/client";
+import { ValidateGasResult } from "src/client-types";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {
   static requestClient: ReturnType<typeof createRequestClient>;
+
+  static {
+    ClientState.requestClient = createRequestClient({
+      baseUrl: "https://api.skip.build",
+    });
+  }
 
   static aminoTypes: AminoTypes;
   static registry: Registry;
@@ -45,7 +49,7 @@ export class ClientState {
 
   static async getSkipAssets() {
     if (this.skipAssets) {
-      this.skipAssets;
+      return this.skipAssets;
     }
 
     const response = await getMainnetAndTestnetAssets();
@@ -58,7 +62,7 @@ export class ClientState {
       return this.skipBalances;
     }
 
-    const response = await balances.request();
+    const response = await balances();
     this.skipBalances = response;
     return response;
   }
@@ -66,16 +70,6 @@ export class ClientState {
   static signingStargateClientByChainId: Record<string, SigningStargateClient> = {};
   static validateGasResults: ValidateGasResult[] | undefined;
 }
-
-export type SignerGetters = {
-  getEVMSigner?: (chainId: string) => Promise<WalletClient>;
-  getCosmosSigner?: (
-    chainId: string,
-  ) => Promise<
-    (OfflineAminoSigner & OfflineDirectSigner) | OfflineAminoSigner | OfflineDirectSigner
-  >;
-  getSVMSigner?: () => Promise<Adapter>;
-};
 
 export type SkipClientOptions = {
   apiUrl?: string;
@@ -90,14 +84,3 @@ export type SkipClientOptions = {
   chainIDsToAffiliates?: Record<string, ChainAffiliates>;
   cacheDurationMs?: number;
 } & SignerGetters;
-
-export type EndpointOptions = {
-  rpc?: string;
-  rest?: string;
-};
-
-export type ValidateGasResult = {
-  error: null | string;
-  asset: FeeAsset | null;
-  fee: StdFee | null;
-};
