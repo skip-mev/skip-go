@@ -63,6 +63,21 @@ export class ClientState {
 
   static signingStargateClientByChainId: Record<string, SigningStargateClient> = {};
   static validateGasResults: ValidateGasResult[] | undefined;
+
+  private static isInitialized = false;
+  private static resolveInitialization: () => void;
+  static clientInitialized: Promise<void> = new Promise<void>((resolve) => {
+    this.resolveInitialization = () => {
+      if (!this.isInitialized) {
+        this.isInitialized = true;
+        resolve();
+      }
+    };
+  });
+
+  static setClientInitialized() {
+    this.resolveInitialization();
+  }
 }
 
 export type SkipClientOptions = {

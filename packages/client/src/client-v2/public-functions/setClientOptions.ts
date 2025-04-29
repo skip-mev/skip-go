@@ -50,7 +50,7 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ClientState.chainIdsToAffiliates = options.chainIDsToAffiliates;
   }
 
-  // setClientInitialized();
+  ClientState.setClientInitialized();
 };
 
 function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, ChainAffiliates>) {
@@ -86,20 +86,3 @@ function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, Chain
 
   return firstAffiliateBasisPointsFee?.toFixed(0);
 }
-
-
-let resolvePromise: () => void;
-let isInitialized = false;
-
-export const clientInitialized = new Promise<void>((resolve) => {
-  resolvePromise = () => {
-    isInitialized = true;
-    resolve();
-  };
-});
-
-export const setClientInitialized = () => {
-  if (!isInitialized) {
-    resolvePromise();
-  }
-};

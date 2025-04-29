@@ -88,7 +88,7 @@ export function createRequest<Request, Response, TransformedResponse>({
   let controller: AbortController | null = null;
 
   const request = async (options?: Request): Promise<TransformedResponse> => {
-    await clientInitialized;
+    await ClientState.clientInitialized;
 
     if (controller && !controller?.signal?.aborted) {
       controller?.abort();
