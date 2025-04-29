@@ -14,6 +14,11 @@ export const useSettingsDrawer = () => {
   const { isError: isRouteError, data: route } = useAtomValue(skipRouteAtom);
   const isWaitingForNewRoute = useAtomValue(isWaitingForNewRouteAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
+  console.log({
+    isRouteError,
+    route,
+    isWaitingForNewRoute,
+  })
 
   const SettingsFooter = ({ content, ...props }: SwapPageFooterItemsProps) => {
     const openSettingsDrawer = () => {
