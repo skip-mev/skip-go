@@ -32,13 +32,13 @@ export interface ApiError {
 
 export interface Asset {
   /** Chain-id of the asset */
-  chainId?: string;
+  chainId: string;
   /** Coingecko id of the asset */
   coingeckoId?: string;
   /** Number of decimals used for amounts of the asset */
   decimals?: number;
   /** Denom of the asset */
-  denom?: string;
+  denom: string;
   /** Description of the asset */
   description?: string;
   /** Indicates whether asset is a CW20 token */
@@ -282,6 +282,104 @@ export enum CCTPTransferState {
 export interface CCTPTransferWrapper {
   /** A transfer facilitated by the CCTP bridge */
   cctpTransfer?: CCTPTransfer;
+}
+
+/**
+ * Stargate transfer state:
+ * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+ * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+ * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+ * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+ * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+ * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+ */
+export enum StargateTransferState {
+  STARGATE_TRANSFER_UNKNOWN = "STARGATE_TRANSFER_UNKNOWN",
+  STARGATE_TRANSFER_SENT = "STARGATE_TRANSFER_SENT",
+  STARGATE_TRANSFER_PENDING_CONFIRMATION = "STARGATE_TRANSFER_PENDING_CONFIRMATION",
+  STARGATE_TRANSFER_CONFIRMED = "STARGATE_TRANSFER_CONFIRMED",
+  STARGATE_TRANSFER_RECEIVED = "STARGATE_TRANSFER_RECEIVED",
+  STARGATE_TRANSFER_FAILED = "STARGATE_TRANSFER_FAILED",
+}
+
+export interface StargateTransferTxs {
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
+  errorTx?: ChainTransaction;
+}
+
+export interface StargateTransferInfo {
+  stargateTransfer?: {
+    /** Chain ID of the source chain */
+    fromChainId?: string;
+    /** Chain ID of the destination chain */
+    toChainId?: string;
+    /**
+     * Stargate transfer state:
+     * * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
+     * * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
+     * * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
+     * * `STARGATE_TRANSFER_CONFIRMED` - Stargate transfer has been confirmed
+     * * `STARGATE_TRANSFER_RECEIVED` - Stargate transfer has been received at the destination chain
+     * * `STARGATE_TRANSFER_FAILED` - Stargate transfer failed
+     */
+    state?: StargateTransferState;
+    txs?: StargateTransferTxs;
+  };
+}
+
+export interface StargateTransferWrapper {
+  stargateTransfer?: any;
+}
+
+/**
+ * GoFast transfer state:
+ * * `GO_FAST_UNKNOWN` - Unknown state
+ * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
+ * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
+ * * `GO_FAST_ORDER_REFUNDED` - Order refunded
+ * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+ * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+ * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+ */
+export enum GoFastTransferState {
+  GO_FAST_UNKNOWN = "GO_FAST_UNKNOWN",
+  GO_FAST_ORDER_SUBMITTED = "GO_FAST_ORDER_SUBMITTED",
+  GO_FAST_ORDER_FILLED = "GO_FAST_ORDER_FILLED",
+  GO_FAST_ORDER_REFUNDED = "GO_FAST_ORDER_REFUNDED",
+  GO_FAST_ORDER_TIMED_OUT = "GO_FAST_ORDER_TIMED_OUT",
+  GO_FAST_POST_ACTION_FAILED = "GO_FAST_POST_ACTION_FAILED",
+  GO_FAST_COMPLETED_SUCCESS = "GO_FAST_COMPLETED_SUCCESS",
+}
+
+export interface GoFastTransferTxs {
+  orderSubmittedTx?: ChainTransaction;
+  orderFilledTx?: ChainTransaction;
+  orderRefundedTx?: ChainTransaction;
+  orderTimeoutTx?: ChainTransaction;
+}
+
+export interface GoFastTransferInfo {
+  goFastTransfer?: {
+    /** Chain ID of the source chain */
+    fromChainId?: string;
+    /** Chain ID of the destination chain */
+    toChainId?: string;
+    /**
+     * GoFast transfer state:
+     * * `GO_FAST_UNKNOWN` - Unknown state
+     * * `GO_FAST_ORDER_SUBMITTED` - Order submitted on source chain
+     * * `GO_FAST_ORDER_FILLED` - Order filled on destination chain
+     * * `GO_FAST_ORDER_REFUNDED` - Order refunded
+     * * `GO_FAST_ORDER_TIMED_OUT` - Order timed out
+     * * `GO_FAST_POST_ACTION_FAILED` - Order filled, but subsequent action (e.g., swap) failed
+     * * `GO_FAST_COMPLETED_SUCCESS` - Order completed successfully
+     */
+    state?: GoFastTransferState;
+    txs?: GoFastTransferTxs;
+    /** Error message if the transfer failed post-fill */
+    errorMessage?: string;
+  };
 }
 
 export interface BalanceRequestChainEntry {
@@ -546,7 +644,7 @@ export interface FeeAsset {
   /** Asset denom */
   denom?: string;
   /** Gas price tiers */
-  gasPriceInfo?: {
+  gasPrice?: {
     /** Average gas price */
     average?: string;
     /** High gas price */
@@ -672,6 +770,7 @@ export type Operation = (
   | EvmSwapWrapper
   | OPInitTransferWrapper
   | EurekaTransferWrapper
+  | StargateTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
   txIndex?: number;
@@ -763,7 +862,7 @@ export interface RouteResponse {
   /** Chain-ids of all chains of the transfer or swap, in order of usage by operations in the route */
   chainIds?: string[];
   /** All chain-ids that require an address to be provided for, in order of usage by operations in the route */
-  requiredChainAddresses?: any;
+  requiredChainAddresses: string[];
   /** Chain-id of the destination asset */
   destAssetChainId?: string;
   /** Denom of the destination asset */
@@ -954,6 +1053,8 @@ export interface SwapVenue {
   chainId?: string;
   /** Name of the swap venue */
   name?: string;
+  /** URI for the venue's logo */
+  logoUri?: string;
 }
 
 export interface SwapWrapper {
@@ -1101,7 +1202,9 @@ export type TransferEvent =
   | CCTPTransferInfo
   | HyperlaneTransferInfo
   | OPInitTransferInfo
-  | EurekaTransferInfo;
+  | EurekaTransferInfo
+  | StargateTransferInfo
+  | GoFastTransferInfo;
 
 export interface TransferInfo {
   /** Chain ID of the destination chain */
@@ -1160,8 +1263,10 @@ export interface TransferStatus {
     chainId?: string;
     /** The denom of the asset that is released. */
     denom?: string;
+    /** The amount of the asset that is released. */
+    amount?: string;
     /** Indicates whether assets have been released and are accessible. The assets may still be in transit. */
-    released?: any;
+    released?: boolean;
   };
   /** Lists any IBC and Axelar transfers as they are seen. */
   transferSequence?: TransferEvent[];
@@ -1298,7 +1403,7 @@ export interface Fee {
   amount?: string;
   /** The value of the fee in USD */
   usdAmount?: string;
-  originAsset?: Asset;
+  originAsset: Asset;
   /** Chain ID of the chain where fees are collected */
   chainId?: string;
   /** The index of the transaction in the list of transactions required to execute the transfer where fees are paid */
@@ -1494,18 +1599,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -1976,6 +2081,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Hash of the transaction */
         tx_hash?: string;
+        /** Link to the transaction on the relevant block explorer */
+        explorer_link?: string;
       },
       Error
     >({
@@ -1998,14 +2105,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     data: {
       /**
        * Hex encoded hash of the transaction to track
-       * @example "tx hash"
+       * @example "F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F"
        */
-      tx_hash?: string;
+      tx_hash: string;
       /**
        * Chain ID of the transaction
        * @example "osmosis-1"
        */
-      chain_id?: string;
+      chain_id: string;
     },
     params: RequestParams = {},
   ) =>
@@ -2013,6 +2120,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Hash of the transaction */
         tx_hash?: string;
+        /** Link to the transaction on the relevant block explorer */
+        explorer_link?: string;
       },
       Error
     >({
@@ -2050,6 +2159,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       {
         /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
         transfers?: TransferStatus[];
+        /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
+        state?: TransactionState;
+        /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
+        transfer_sequence?: TransferEvent[];
+        /** Details about the next transfer in the sequence that is preventing further progress, if any. */
+        next_blocking_transfer?: {
+          transfer_sequence_index?: number;
+        } | null;
+        /** Information about the final location and state of the assets involved in the transfers. */
+        transfer_asset_release?: {
+          chain_id?: string;
+          denom?: string;
+          amount?: string | null;
+          released?: boolean;
+        };
+        /** Details about any error encountered during the transaction or its subsequent transfers. */
+        error?: StatusError | null;
+        /**
+         * A high-level status indicator for the transaction's completion state.
+         * @example "STATE_COMPLETED"
+         */
+        status?: string;
       },
       Error
     >({

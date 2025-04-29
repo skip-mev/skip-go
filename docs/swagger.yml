@@ -2257,6 +2257,7 @@ components:
         chain_id:
           description: Chain-id of the asset
           type: string
+          required: true
         coingecko_id:
           description: Coingecko id of the asset
           nullable: true
@@ -2268,6 +2269,7 @@ components:
         denom:
           description: Denom of the asset
           type: string
+          required: true
         description:
           description: Description of the asset
           nullable: true
@@ -3299,6 +3301,7 @@ components:
           type: array
           items:
             type: string
+          required: true
         dest_asset_chain_id:
           description: Chain-id of the destination asset
           type: string
@@ -3936,6 +3939,7 @@ components:
           type: string
         origin_asset:
           $ref: '#/components/schemas/Asset'
+          required: true
         chain_id:
           description: Chain ID of the chain where fees are collected
           type: string
