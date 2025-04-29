@@ -243,8 +243,10 @@ paths:
                 venues:
                   - name: neutron-astroport
                     chain_id: neutron-1
-                  - name: osmosis
+                    logo_uri: https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/neutron-astroport/logo.png
+                  - name: osmosis-poolmanager
                     chain_id: osmosis-1
+                    logo_uri: https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png
               schema:
                 type: object
                 properties:
@@ -3556,6 +3558,10 @@ components:
         name:
           description: Name of the swap venue
           type: string
+        logo_uri:
+          description: URI for the venue's logo
+          type: string
+          nullable: true
       type: object
     SwapWrapper:
       properties:
