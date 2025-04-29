@@ -41,7 +41,7 @@ export const useKeepWalletStateSynced = () => {
       setEvmWallet({
         id: evmAccount.address,
         walletName: evmAccount.connector.id,
-        chainType: ChainType.EVM,
+        chainType: ChainType.Evm,
         logo: walletConnectMetadata?.icons[0] ?? evmAccount.connector?.icon,
       });
     }
@@ -56,7 +56,7 @@ export const useKeepWalletStateSynced = () => {
       setSvmWallet({
         id: solanaWallet.publicKey?.toBase58(),
         walletName: solanaWallet.name,
-        chainType: ChainType.SVM,
+        chainType: ChainType.Svm,
         logo: walletConnectMetadata?.icons[0] ?? solanaWallet.icon,
       });
     }

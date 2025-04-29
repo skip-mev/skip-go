@@ -29,7 +29,7 @@ export const useGasFeeTokenAmount = () => {
   const chainType = sourceDetails?.chain?.chainType;
 
   switch (chainType) {
-    case ChainType.EVM: {
+    case ChainType.Evm: {
       const isFeeAsset =
         sourceAsset?.denom?.includes("-native") &&
         sourceAsset?.originChainId === sourceAsset?.chainId;
@@ -62,7 +62,7 @@ export const useGasFeeTokenAmount = () => {
     case ChainType.Cosmos:
       if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
       return Number(cosmosFeeUsed.feeAmount);
-    case ChainType.SVM:
+    case ChainType.Svm:
     default:
       return 0;
   }

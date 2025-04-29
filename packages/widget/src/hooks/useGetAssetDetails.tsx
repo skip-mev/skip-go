@@ -1,5 +1,5 @@
 import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
-import { Chain } from "@skip-go/client/v2";
+import { Chain } from "@skip-go/client";
 import {
   convertTokenAmountToHumanReadableAmount,
   convertHumanReadableAmountToCryptoAmount,

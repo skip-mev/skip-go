@@ -4,9 +4,8 @@ import { styled } from "styled-components";
 import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
+import { ChainAffiliates, MessagesRequest, RouteRequest, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
-import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -20,10 +19,10 @@ import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
 
-export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
+export type WidgetRouteConfig = Omit<RouteRequest, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
   swapVenue?: NewSwapVenueRequest;
-} & Pick<MsgsRequest, "timeoutSeconds">;
+} & Pick<MessagesRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   /**

@@ -18,7 +18,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { isMobile } from "@/utils/os";
 import { MinimalWallet } from "@/state/wallets";
 import { track } from "@amplitude/analytics-browser";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export type SetAddressModalProps = ModalProps & {
   chainId: string;

@@ -1688,9 +1688,11 @@ paths:
                   tx_hash:
                     type: string
                     description: Hash of the transaction
+                    required: true
                   explorer_link:
                     type: string
                     description: Link to the transaction on the relevant block explorer
+                    required: true
         '400':
           description: The request was invalid, i.e. the transaction hash was malformed or the specified transaction did not execute successfully.
           content:
@@ -3088,6 +3090,7 @@ components:
         denom:
           description: Asset denom
           type: string
+          required: true
         gas_price: 
           description: Gas price tiers
           nullable: true
@@ -3109,9 +3112,12 @@ components:
       properties:
         fee_asset:
           $ref: '#/components/schemas/Asset'
+          required: true
         bpsFee:
           type: string
         bpsFeeAmount:
+          type: string
+        bpsFeeUsd:
           type: string
         sourceChainFeeAmount:
           type: string
@@ -3348,6 +3354,7 @@ components:
         explorer_link:
           description: Link to the transaction on block explorer
           type: string
+          required: true
         tx_hash:
           description: Hash of the transaction the packet event occurred in
           type: string

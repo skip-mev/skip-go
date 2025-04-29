@@ -20,12 +20,12 @@ export const createExplorerLink = ({
       const url = explorer?.tx_page?.replace("${txHash}", txHash);
       return url;
     }
-    case ChainType.EVM: {
+    case ChainType.Evm: {
       const chain = config.chains.find((chain) => chain.id === Number(chainId));
       const url = chain?.blockExplorers?.default.url;
       return url ? `${url}/tx/${txHash}` : undefined;
     }
-    case ChainType.SVM: {
+    case ChainType.Svm: {
       return `https://solscan.io/tx/${txHash}`;
     }
     default:

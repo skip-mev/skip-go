@@ -1,6 +1,6 @@
 import { skipChainsAtom, skipAssetsAtom } from "@/state/skipClient";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 import { useAtomValue, useSetAtom } from "jotai";
 
 export const useUpdateSourceAssetToDefaultForChainType = () => {

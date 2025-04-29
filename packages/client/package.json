@@ -9,10 +9,6 @@
     ".": {
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts"
-    },
-    "./v2": {
-      "import": "./dist/client-v2/index.mjs",
-      "types": "./dist/client-v2/index.d.mts"
     }
   },
   "files": [

@@ -17,7 +17,7 @@ import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
 import { track } from "@amplitude/analytics-browser";
 import { useCallback } from "react";
-import { RouteResponse } from "@skip-go/client/v2";
+import { RouteResponse } from "@skip-go/client";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;

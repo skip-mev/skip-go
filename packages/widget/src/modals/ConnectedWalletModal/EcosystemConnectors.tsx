@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ConnectEcoRow } from "@/modals/ConnectedWalletModal/ConnectEcoRow";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 type EcosystemConnectorsProps = {
   excludeChainType?: ChainType;

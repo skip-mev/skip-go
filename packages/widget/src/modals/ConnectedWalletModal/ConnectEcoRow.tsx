@@ -21,7 +21,7 @@ import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { track } from "@amplitude/analytics-browser";
 import { useAccount as useCosmosAccount } from "graz";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;

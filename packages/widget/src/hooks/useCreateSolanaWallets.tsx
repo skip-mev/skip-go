@@ -13,7 +13,7 @@ import { walletConnectLogo } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
 import { track } from "@amplitude/analytics-browser";
 import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useCreateSolanaWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -103,12 +103,12 @@ export const useCreateSolanaWallets = () => {
           await wallet.disconnect();
           track("wallet disconnected", {
             walletName: wallet.name,
-            chainType: ChainType.SVM,
+            chainType: ChainType.Svm,
           });
           setSvmWallet(undefined);
           callbacks?.onWalletDisconnected?.({
             walletName: wallet.name,
-            chainType: ChainType.SVM,
+            chainType: ChainType.Svm,
           });
         },
         isWalletConnected: wallet.connected,

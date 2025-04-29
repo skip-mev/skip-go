@@ -12,7 +12,7 @@ import { useGetAccount } from "@/hooks/useGetAccount";
 import { Column, Row } from "@/components/Layout";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;

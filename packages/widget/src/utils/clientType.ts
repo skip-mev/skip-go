@@ -31,7 +31,7 @@ import {
   TransferEvent,
   TransferState,
   TxStatusResponse,
-} from "@skip-go/client/v2";
+} from "@skip-go/client";
 
 export type OverallStatus = "pending" | "success" | "failed";
 

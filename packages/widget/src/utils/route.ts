@@ -1,8 +1,7 @@
 import { formatUSD } from "@/utils/intl";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
-import { FeeType as ClientFeeType } from "@skip-go/client";
+import { FeeType, Fee, RouteResponse } from "@skip-go/client";
 import { ClientOperation, OperationType, getClientOperations } from "./clientType";
-import { Fee, RouteResponse } from "@skip-go/client/v2";
 
 export type FeeDetail = {
   assetAmount: number;
@@ -22,15 +21,15 @@ const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
       sourceChainFeeAmount,
       destinationChainFeeAmount,
       bpsFeeAmount,
-      sourceChainFeeUSD,
-      destinationChainFeeUSD,
-      bpsFeeUSD,
+      sourceChainFeeUsd,
+      destinationChainFeeUsd,
+      bpsFeeUsd,
     } = op.fee;
 
     const totalAmt = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
       .reduce((s, a) => s + Number(a), 0)
       .toString();
-    const totalUsd = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD].reduce(
+    const totalUsd = [sourceChainFeeUsd, destinationChainFeeUsd, bpsFeeUsd].reduce(
       (s, u) => s + Number(u),
       0,
     );
@@ -58,7 +57,7 @@ const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
 };
 
 function computeSmartRelayFee(estimatedFees: Fee[]): FeeDetail | undefined {
-  const relay = estimatedFees.filter((f) => f.feeType === ClientFeeType.SMART_RELAY);
+  const relay = estimatedFees.filter((f) => f.feeType === FeeType.SMART_RELAY);
   if (!relay.length) return;
 
   const totalAmt = relay.reduce((s, f) => s + Number(f.amount), 0).toString();

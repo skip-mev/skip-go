@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { connectedAddressesAtom } from "@/state/wallets";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useFetchAllBalances = () => {
   const getAccount = useGetAccount();

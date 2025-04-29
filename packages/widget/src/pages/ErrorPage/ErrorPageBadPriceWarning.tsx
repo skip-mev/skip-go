@@ -8,7 +8,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
-import { RouteResponse } from "@skip-go/client/v2";
+import { RouteResponse } from "@skip-go/client";
 
 export type ErrorPageBadPriceWarningProps = {
   onClickContinue: () => void;

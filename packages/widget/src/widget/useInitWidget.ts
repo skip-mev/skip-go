@@ -7,7 +7,7 @@ import {
   defaultSkipClientConfig,
   onlyTestnetsAtom,
 } from "@/state/skipClient";
-import { SkipClient, SkipClientOptions } from "@skip-go/client";
+import { SkipClientOptions, setClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
@@ -36,7 +36,6 @@ import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { config } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
-import { setClientOptions } from "@skip-go/client/v2";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -147,7 +146,7 @@ export const useInitWidget = (props: WidgetProps) => {
         if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
         const solanaWallet = solanaWallets.find((w) => w.name === walletName);
         if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
-        return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
+        return solanaWallet;
       },
     });
   }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
@@ -250,8 +249,6 @@ export const useInitWidget = (props: WidgetProps) => {
 
   return { theme: mergedTheme };
 };
-
-type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
 const useInitGetSigners = (props: Partial<WidgetProps>) => {
   const setInjectedAddresses = useSetAtom(connectedAddressesAtom);

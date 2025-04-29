@@ -5,7 +5,7 @@ import {
   OverallStatus,
 } from "@/utils/clientType";
 import { captureException } from "@sentry/react";
-import { transactionStatus, TransferAssetRelease } from "@skip-go/client/v2";
+import { transactionStatus, TransferAssetRelease } from "@skip-go/client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 

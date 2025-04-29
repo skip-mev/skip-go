@@ -7,7 +7,7 @@ import {
   chains,
   SkipClientOptions,
   venues,
-} from "@skip-go/client/v2";
+} from "@skip-go/client";
 
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";

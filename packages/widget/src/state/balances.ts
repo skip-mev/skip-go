@@ -1,7 +1,7 @@
 import { atomWithQuery } from "jotai-tanstack-query";
 import { isInvertingSwapAtom } from "./swapPage";
 import { atom } from "jotai";
-import { BalanceRequest, BalanceResponse, balances } from "@skip-go/client/v2";
+import { BalanceRequest, BalanceResponse, balances } from "@skip-go/client";
 
 export const skipAllBalancesRequestAtom = atom<BalanceRequest | undefined>(undefined);
 

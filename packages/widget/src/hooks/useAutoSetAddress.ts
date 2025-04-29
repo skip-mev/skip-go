@@ -50,8 +50,8 @@ export const useAutoSetAddress = () => {
       setIsLoading(true);
       const createWallets = {
         [ChainType.Cosmos]: createCosmosWallets,
-        [ChainType.EVM]: createEvmWallets,
-        [ChainType.SVM]: createSolanaWallets,
+        [ChainType.Evm]: createEvmWallets,
+        [ChainType.Svm]: createSolanaWallets,
       };
 
       if (!requiredChainAddresses) return;

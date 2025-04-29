@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);

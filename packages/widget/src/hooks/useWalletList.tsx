@@ -4,7 +4,7 @@ import { useCreateEvmWallets } from "./useCreateEvmWallets";
 import { useCreateSolanaWallets } from "./useCreateSolanaWallets";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useWalletList = ({
   chainId,

@@ -6,7 +6,7 @@ import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { track } from "@amplitude/analytics-browser";
-import { RouteResponse } from "@skip-go/client/v2";
+import { RouteResponse } from "@skip-go/client";
 
 export type ErrorPageLowInfoWarningProps = {
   onClickContinue: () => void;

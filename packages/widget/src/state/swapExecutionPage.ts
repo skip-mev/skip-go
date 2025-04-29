@@ -26,7 +26,7 @@ import {
   RouteResponse,
   TransactionCallbacks,
   UserAddress,
-} from "@skip-go/client/v2";
+} from "@skip-go/client";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -324,7 +324,7 @@ export const fallbackGasAmountFnAtom = atom((get) => {
   const swapVenues = get(skipSwapVenuesAtom)?.data;
 
   return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
-    if (chainType === ChainType.EVM) {
+    if (chainType === ChainType.Evm) {
       return EVM_GAS_AMOUNT;
     }
     if (chainType !== ChainType.Cosmos) return undefined;

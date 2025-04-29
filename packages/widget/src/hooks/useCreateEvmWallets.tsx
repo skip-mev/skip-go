@@ -16,7 +16,7 @@ import { config, walletConnectLogo } from "@/constants/wagmi";
 import { callbacksAtom } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
 import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useCreateEvmWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);

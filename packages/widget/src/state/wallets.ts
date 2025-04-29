@@ -1,9 +1,8 @@
 import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
-import { SignerGetters } from "@skip-go/client";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType, SignerGetters } from "@skip-go/client";
 
 export type WalletConnectMetaData = {
   name: string;

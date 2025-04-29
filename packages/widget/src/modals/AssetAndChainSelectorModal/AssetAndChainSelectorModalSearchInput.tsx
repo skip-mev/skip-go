@@ -12,7 +12,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { isMobile } from "@/utils/os";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
-import { Asset } from "@skip-go/client/v2";
+import { Asset } from "@skip-go/client";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;

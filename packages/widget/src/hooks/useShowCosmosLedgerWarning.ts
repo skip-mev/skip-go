@@ -4,7 +4,7 @@ import { knownEthermintLikeChains } from "@/state/wallets";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 import { useGetAccount } from "./useGetAccount";
-import { ChainType } from "@skip-go/client/v2";
+import { ChainType } from "@skip-go/client";
 
 export const useShowCosmosLedgerWarning = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);

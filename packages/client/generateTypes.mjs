@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 
 generateApi({
   fileName: "swaggerTypes.ts",
-  output: path.resolve(__dirname, "./src/client-v2/types"),
+  output: path.resolve(__dirname, "./src/types"),
   input: path.resolve(__dirname, "../../docs/swagger.yml"),
   modular: false,
   moduleNameIndex: -1,

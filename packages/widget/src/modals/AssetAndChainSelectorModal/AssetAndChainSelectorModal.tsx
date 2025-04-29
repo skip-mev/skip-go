@@ -19,7 +19,7 @@ import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
-import { Chain } from "@skip-go/client/v2";
+import { Chain } from "@skip-go/client";
 
 export type GroupedAsset = {
   id: string;

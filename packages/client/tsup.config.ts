@@ -14,8 +14,8 @@ export const autoExportFilesInDirectory = (path: string) => {
   );
 };
 
-const apiEntrypoints = autoExportFilesInDirectory("src/client-v2/api/*");
-const publicFunctions = autoExportFilesInDirectory("src/client-v2/public-functions/*");
+const apiEntrypoints = autoExportFilesInDirectory("src/api/*");
+const publicFunctions = autoExportFilesInDirectory("src/public-functions/*");
 
 const defaultOptions: Options = {
   cjsInterop: true,
@@ -37,7 +37,6 @@ export default defineConfig(async ({ watch }) => {
       clean: !watch,
       entry: {
         index: "src/index.ts",
-        "client-v2/index": "src/client-v2/index.ts",
         ...apiEntrypoints,
         ...publicFunctions,
       },

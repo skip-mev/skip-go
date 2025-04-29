@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { ClientAsset } from "@/state/skipClient";
-import { getSigningStargateClient } from "@skip-go/client/v2";
+import { getSigningStargateClient } from "@skip-go/client";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
