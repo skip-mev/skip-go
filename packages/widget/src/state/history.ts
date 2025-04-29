@@ -1,11 +1,11 @@
-import { RouteResponse, TxStatusResponse } from "@skip-go/client";
+import { TxStatusResponse } from "@skip-go/client";
 import { atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
-import { transactionStatus } from "@skip-go/client/v2";
+import { RouteResponse, transactionStatus } from "@skip-go/client/v2";
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
