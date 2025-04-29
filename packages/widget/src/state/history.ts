@@ -8,11 +8,11 @@ import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { RouteResponse, transactionStatus } from "@skip-go/client/v2";
 
 export type TransactionHistoryItem = {
-  route: RouteResponse;
+  route?: RouteResponse;
   transactionDetails: TransactionDetails[];
   timestamp: number;
   status: SimpleStatus;
-} & TxsStatus;
+} & Partial<TxsStatus>;
 
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   "transactionHistory",

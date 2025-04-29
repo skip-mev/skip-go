@@ -272,8 +272,7 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      route: route!,
+      route: route,
       transactionDetails: newTransactionDetailsArray,
       timestamp: Date.now(),
       status: "unconfirmed",
@@ -379,7 +378,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
-          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainID !== "984122",
+          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
           getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
         });
