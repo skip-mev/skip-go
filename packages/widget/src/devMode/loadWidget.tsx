@@ -66,8 +66,6 @@ const DevMode = () => {
           "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
         },
       },
-      onWalletDisconnected: (props) => console.log('onWalletDisconnected', {props}),
-      onWalletConnected: (props) => console.log('onWalletConnected', {props}),
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);
 
