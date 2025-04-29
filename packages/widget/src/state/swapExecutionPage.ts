@@ -2,7 +2,7 @@ import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { TxStatusResponse, ChainType } from "@skip-go/client";
+import { TxStatusResponse } from "@skip-go/client";
 import {
   DEEPLINK_CHOICE,
   MinimalWallet,
@@ -20,7 +20,13 @@ import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
-import { executeRoute, RouteResponse, TransactionCallbacks, UserAddress } from "@skip-go/client/v2";
+import {
+  ChainType,
+  executeRoute,
+  RouteResponse,
+  TransactionCallbacks,
+  UserAddress,
+} from "@skip-go/client/v2";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -355,7 +361,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const chainType = chains?.find((chain) => chain.chainId === sourceAsset?.chainId)?.chainType;
 
   if (chainType) {
-    const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType];
+    const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType as ChainType];
     if (chainType === ChainType.Cosmos) {
       window.localStorage.removeItem(DEEPLINK_CHOICE);
       window.localStorage.removeItem(RECENT_WALLET_DATA);
@@ -370,7 +376,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
     mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
-      console.log(route, userAddresses);
       try {
         await executeRoute({
           route,

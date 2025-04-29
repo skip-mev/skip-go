@@ -24,7 +24,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIds.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
+    return route?.chainIds?.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
   }, [route, chains]);
 
   const clientOperations = getClientOperations(route?.operations);
@@ -51,16 +51,16 @@ export const SwapSettingsDrawer = createModal(() => {
         sourceChainFeeAmount,
         destinationChainFeeAmount,
         bpsFeeAmount,
-        sourceChainFeeUSD,
-        destinationChainFeeUSD,
-        bpsFeeUSD,
+        sourceChainFeeUsd,
+        destinationChainFeeUsd,
+        bpsFeeUsd,
       } = goFastFee;
 
       const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount].reduce(
         (sum, amount) => sum + Number(amount),
         0,
       );
-      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD].reduce(
+      const totalUsdAmount = [sourceChainFeeUsd, destinationChainFeeUsd, bpsFeeUsd].reduce(
         (sum, amount) => sum + Number(amount),
         0,
       );

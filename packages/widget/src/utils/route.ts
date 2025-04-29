@@ -1,6 +1,6 @@
 import { formatUSD } from "@/utils/intl";
-import { EstimatedFee, RouteResponse } from "@skip-go/client";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
+import { Fee, RouteResponse } from "@skip-go/client/v2";
 
 export enum FeeType {
   SMART_RELAY = "SMART_RELAY",
@@ -10,16 +10,13 @@ export const checkIsSmartRelay = (route: RouteResponse | undefined): boolean => 
   return !!route?.estimatedFees?.some((fee) => fee.feeType === FeeType.SMART_RELAY);
 };
 
-export const calculateSmartRelayFee = (
-  isSmartRelay: boolean,
-  estimatedFees: EstimatedFee[] | undefined,
-) => {
+export const calculateSmartRelayFee = (isSmartRelay: boolean, estimatedFees: Fee[] | undefined) => {
   if (!isSmartRelay || !estimatedFees) return undefined;
 
   const relayFees = estimatedFees.filter((fee) => fee.feeType === FeeType.SMART_RELAY);
 
   const sameAsset = relayFees.every(
-    (fee, _, arr) => fee.originAsset.symbol === arr[0].originAsset.symbol,
+    (fee, _, arr) => fee.originAsset?.symbol === arr[0].originAsset?.symbol,
   );
 
   if (!sameAsset) return undefined;
@@ -30,12 +27,12 @@ export const calculateSmartRelayFee = (
 
   if (!computedAmount || !computedUsd) return undefined;
 
-  const assetDecimals = relayFees[0].originAsset.decimals ?? 6;
+  const assetDecimals = relayFees[0].originAsset?.decimals ?? 6;
   const inAsset = convertTokenAmountToHumanReadableAmount(computedAmount, assetDecimals);
 
   return {
     assetAmount: Number(inAsset),
-    formattedAssetAmount: `${inAsset} ${relayFees[0].originAsset.symbol}`,
+    formattedAssetAmount: `${inAsset} ${relayFees[0].originAsset?.symbol}`,
     formattedUsdAmount: `${formatUSD(computedUsd)}`,
   };
 };
