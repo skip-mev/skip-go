@@ -3,7 +3,6 @@ import { Camel, toCamel, toSnake } from "./convert";
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
 import { ClientState } from "../state";
-import { clientInitialized } from "../public-functions/setClientOptions";
 
 type RequestClientOptions = {
   baseUrl: string;
