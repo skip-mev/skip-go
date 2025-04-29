@@ -42,17 +42,17 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
   }
   const theme = useTheme();
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chain = chains?.find((c) => c.chainID === chainId);
+  const chain = chains?.find((c) => c.chainId === chainId);
   const chainName = chain?.prettyName;
-  const chainLogo = chain?.logoURI;
+  const chainLogo = chain?.logoUri;
   const [showManualAddressInput, setShowManualAddressInput] = useState(false);
   const [manualWalletAddress, setManualWalletAddress] = useState("");
-  const _walletList = useWalletList({ chainID: chainId, destinationWalletList: true });
+  const _walletList = useWalletList({ chainId, destinationWalletList: true });
   const [chainAddresses, setChainAddresses] = useAtom(chainAddressesAtom);
 
   // If not same chain transaction, show warning
   const showWithdrawalWarning =
-    new Set(Object.values(chainAddresses).map(({ chainID }) => chainID)).size > 1;
+    new Set(Object.values(chainAddresses).map(({ chainId }) => chainId)).size > 1;
 
   const mobile = isMobile();
 
@@ -77,12 +77,12 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
 
   const addressIsValid = useMemo(() => {
     if (!chain || manualWalletAddress.length === 0) return;
-    const { chainType, bech32Prefix, chainID } = chain;
+    const { chainType, bech32Prefix, chainId } = chain;
     return isValidWalletAddress({
       address: manualWalletAddress,
       bech32Prefix,
       chainType,
-      chainId: chainID,
+      chainId: chainId,
     });
   }, [chain, manualWalletAddress]);
 
@@ -112,7 +112,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
       return {
         ...prev,
         [chainAddressIndex]: {
-          chainID: chainId,
+          chainId: chainId,
           chainType: chainType as ChainType,
           address: manualWalletAddress,
           source: WalletSource.Input,
@@ -139,7 +139,7 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     const response = await wallet.getAddress?.({
       praxWallet: {
         sourceChainID: chainAddressIndex
-          ? chainAddresses[chainAddressIndex - 1]?.chainID
+          ? chainAddresses[chainAddressIndex - 1]?.chainId
           : undefined,
       },
     });
@@ -148,14 +148,14 @@ export const SetAddressModal = createModal((modalProps: SetAddressModalProps) =>
     setChainAddresses((prev) => {
       if (
         JSON.stringify(requiredChainAddresses) !==
-        JSON.stringify(Object.values(prev).map((chain) => chain.chainID))
+        JSON.stringify(Object.values(prev).map((chain) => chain.chainId))
       ) {
         return prev;
       }
       return {
         ...prev,
         [chainAddressIndex]: {
-          chainID: chainId,
+          chainId: chainId,
           chainType: chain?.chainType,
           address,
           source: WalletSource.Wallet,

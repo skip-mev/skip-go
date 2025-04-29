@@ -24,7 +24,7 @@ export const useBroadcastedTxsStatus = ({
   enabled,
 }: {
   txsRequired?: number;
-  txs: { chainID: string; txHash: string }[] | undefined;
+  txs: { chainId: string; txHash: string }[] | undefined;
   enabled?: boolean;
 }): UseQueryResult<TxsStatus> => {
   const [isSettled, setIsSettled] = useState(false);

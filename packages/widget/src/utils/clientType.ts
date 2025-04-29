@@ -415,8 +415,8 @@ export type SimpleStatus =
   | "incomplete";
 
 export type ClientTransferEvent = {
-  fromChainID: string;
-  toChainID: string;
+  fromChainId: string;
+  toChainId: string;
   state:
   | TransferState
   | AxelarTransferState
