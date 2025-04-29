@@ -1604,12 +1604,16 @@ paths:
             application/json:
               example:
                 tx_hash: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
+                explorer_link: https://www.mintscan.io/osmosis/tx/F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
               schema:
                 type: object
                 properties:
                   tx_hash:
                     type: string
                     description: Hash of the transaction
+                  explorer_link:
+                    type: string
+                    description: Link to the transaction on the relevant block explorer
         '400':
           description: The request was invalid, i.e. the submitted transaction was malformed or fails on execution.
           content:
@@ -1667,17 +1671,21 @@ paths:
                   example: osmosis-1
       responses:
         '200':
-          description: The hash of the transaction.
+          description: The hash of the transaction and a link to its explorer page.
           content:
             application/json:
               example:
                 tx_hash: F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
+                explorer_link: https://www.mintscan.io/osmosis/tx/F30790E79987F18F3A4DA8C7A9BA9FD837043EF59D8236CA85180E1078BC607F
               schema:
                 type: object
                 properties:
                   tx_hash:
                     type: string
                     description: Hash of the transaction
+                  explorer_link:
+                    type: string
+                    description: Link to the transaction on the relevant block explorer
         '400':
           description: The request was invalid, i.e. the transaction hash was malformed or the specified transaction did not execute successfully.
           content:
