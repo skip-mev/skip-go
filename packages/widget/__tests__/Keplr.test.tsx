@@ -11,7 +11,7 @@ test.describe.serial("Widget tests", async () => {
     await page.waitForTimeout(100);
     await page.screenshot({
       animations: "disabled",
-      path: "__tests__/Widget/default-widget.png",
+      path: "__tests__/Widget/new/default-widget.png",
     });
 
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
@@ -19,7 +19,7 @@ test.describe.serial("Widget tests", async () => {
     await page.waitForTimeout(100);
     await page.screenshot({
       animations: "disabled",
-      path: "__tests__/Widget/usdc-noble-selected.png",
+      path: "__tests__/Widget/new/usdc-noble-selected.png",
     });
 
     await selectAsset({ page, asset: "INJ", chain: "Injective" });
@@ -27,7 +27,7 @@ test.describe.serial("Widget tests", async () => {
     await page.waitForTimeout(100);
     await page.screenshot({
       animations: "disabled",
-      path: "__tests__/Widget/both-assets-selected.png",
+      path: "__tests__/Widget/new/both-assets-selected.png",
     });
 
     await expect(page.getByRole("button", { name: "USDC logo USDC" })).toBeVisible();
@@ -42,7 +42,7 @@ test.describe.serial("Widget tests", async () => {
 
     await page.waitForTimeout(100);
     await page.screenshot({
-      path: "__tests__/Widget/connect-keplr.png",
+      path: "__tests__/Widget/new/connect-keplr.png",
     });
 
     const input = page.getByRole("textbox");
