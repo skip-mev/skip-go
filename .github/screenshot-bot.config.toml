@@ -3,11 +3,11 @@ workflowWithTests = [
 ]
 
 screenshotsDiffsPaths = [
-  '.*expected/.*',
+  'expected/.*',
 ]
 
 newScreenshotMark = [
-  '.*new/.*'
+  'new/.*'
 ]
 
 branchesIgnore = []
