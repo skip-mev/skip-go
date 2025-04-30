@@ -70,6 +70,7 @@ import {
   getCosmosGasAmountForMessage,
   getEVMGasAmountForMessage,
   getSVMGasAmountForMessage,
+  simulateSvmTx,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
@@ -2208,6 +2209,7 @@ export class SkipClient {
     const connection = new Connection(endpoint);
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
     const gasAmount = await getSVMGasAmountForMessage(connection, tx);
+    const simResult = await simulateSvmTx(connection, tx);
 
     const skipBalances = await this.balances({
       chains: {
@@ -2218,6 +2220,15 @@ export class SkipClient {
       },
     });
     const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
+
+    if (!simResult.success) {
+      return {
+        error: `Failed to simulate transaction on Solana. You may have insufficient balance for gas.`,
+        asset: null,
+        fee: null,
+      };
+    }
+
     if (!gasBalance) {
       return {
         error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL.`,

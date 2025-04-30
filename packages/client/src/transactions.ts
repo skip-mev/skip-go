@@ -18,7 +18,11 @@ import { MsgExecute } from "./codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "./codegen/evmos/vesting/v2/vesting";
 import { WalletClient, publicActions } from "viem";
-import { Connection, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  Transaction,
+  SimulatedTransactionResponse,
+} from "@solana/web3.js";
 import { GetFallbackGasAmount } from "./client-types";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
@@ -243,4 +247,44 @@ export async function getSVMGasAmountForMessage(
     );
   }
   return gas.value;
+}
+
+export interface SimulationResult {
+  success: boolean;
+  logs?: string[];
+  error?: SimulatedTransactionResponse["err"];
+}
+
+export async function simulateSvmTx(
+  connection: Connection,
+  svmTx: SvmTx,
+): Promise<SimulationResult> {
+  // 1. Decode the base64 Transaction
+  const txBuffer = Buffer.from(svmTx.tx, "base64");
+  let transaction: Transaction;
+  try {
+    transaction = Transaction.from(txBuffer);
+  } catch (decodeError) {
+    return {
+      success: false,
+      error: { decodeError: (decodeError as Error).message },
+    };
+  }
+
+  const simulation = await connection.simulateTransaction(transaction);
+
+  if (simulation.value.err) {
+    // Simulation failed
+    return {
+      success: false,
+      logs: simulation.value.logs ?? [],
+      error: simulation.value.err,
+    };
+  }
+
+  // Simulation succeeded
+  return {
+    success: true,
+    logs: simulation.value.logs ?? [],
+  };
 }
