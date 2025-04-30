@@ -168,7 +168,7 @@ export const invertSwapAtom = atom(null, (get, set) => {
     set(swapDirectionAtom, newSwapDirection);
 
     set(isInvertingSwapAtom, false);
-    callbacks?.onSwappedSourceAndDestinationAssets?.({
+    callbacks?.onSourceAndDestinationSwapped?.({
       srcChainId: sourceAsset?.chainID,
       srcAssetDenom: sourceAsset?.denom,
       destChainId: destinationAsset?.chainID,
