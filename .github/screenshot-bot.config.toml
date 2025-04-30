@@ -9,3 +9,5 @@ screenshotsDiffsPaths = [
 newScreenshotMark = '.*packages/widget/__tests__/Widget/new/.*'
 
 branchesIgnore = []
+
+screenshotImageAttrs = ['height="300px"']
