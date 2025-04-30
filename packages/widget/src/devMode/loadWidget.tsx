@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "../web-component";
