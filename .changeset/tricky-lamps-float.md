@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Add onSwappedSourceAndDestinationAssets callback
+Add onSourceAndDestinationSwapped callback
