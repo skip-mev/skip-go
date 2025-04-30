@@ -156,6 +156,7 @@ export const invertSwapAtom = atom(null, (get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
   const swapDirection = get(swapDirectionAtom);
+  const callbacks = get(callbacksAtom);
   set(isInvertingSwapAtom, true);
 
   set(sourceAssetAtom, { ...destinationAsset });
@@ -165,7 +166,16 @@ export const invertSwapAtom = atom(null, (get, set) => {
   set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
     const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
     set(swapDirectionAtom, newSwapDirection);
+
     set(isInvertingSwapAtom, false);
+    callbacks?.onSwappedSourceAndDestinationAssets?.({
+      srcChainId: sourceAsset?.chainID,
+      srcAssetDenom: sourceAsset?.denom,
+      destChainId: destinationAsset?.chainID,
+      destAssetDenom: destinationAsset?.denom,
+      amountIn: sourceAsset?.amount,
+      amountOut: destinationAsset?.amount,
+    });
   });
 });
 

@@ -51,6 +51,15 @@ export type onRouteUpdatedProps = {
   requiredChainAddresses?: string[];
 };
 
+export type onSwappedSourceAndDestinationAssetsProps = {
+  srcChainId?: string;
+  srcAssetDenom?: string;
+  destChainId?: string;
+  destAssetDenom?: string;
+  amountIn?: string;
+  amountOut?: string;
+};
+
 export type Callbacks = {
   onWalletConnected?: (props: onWalletConnectedProps) => void;
   onWalletDisconnected?: (props: onWalletDisconnectedProps) => void;
@@ -58,6 +67,7 @@ export type Callbacks = {
   onTransactionComplete?: (props: onTransactionCompleteProps) => void;
   onTransactionFailed?: (props: onTransactionFailedProps) => void;
   onRouteUpdated?: (props: onRouteUpdatedProps) => void;
+  onSwappedSourceAndDestinationAssets?: (props: onSwappedSourceAndDestinationAssetsProps) => void;
 };
 
 export const callbacksAtom = atom<Callbacks>();

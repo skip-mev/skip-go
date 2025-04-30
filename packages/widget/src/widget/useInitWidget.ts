@@ -160,6 +160,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
       onRouteUpdated: props.onRouteUpdated,
+      onSwappedSourceAndDestinationAssets: props.onSwappedSourceAndDestinationAssets,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -198,6 +199,8 @@ export const useInitWidget = (props: WidgetProps) => {
     setHideAssetsUnlessWalletTypeConnected,
     props.filterOutUnlessUserHasBalance,
     setFilterOutUnlessUserHasBalanceAtom,
+    props.onSwapSourceAndDestinationAssets,
+    props.onSwappedSourceAndDestinationAssets,
   ]);
 
   return { theme: mergedTheme };

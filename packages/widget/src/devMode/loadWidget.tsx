@@ -66,6 +66,9 @@ const DevMode = () => {
           "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
         },
       },
+      onSwappedSourceAndDestinationAssets(props) {
+        console.log(props);
+      },
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);
 
