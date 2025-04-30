@@ -66,7 +66,7 @@ export const useCreateCosmosWallets = () => {
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
-                throw new Error(`connect: Chain info not found for chainID: ${chainId}`);
+                throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
@@ -235,7 +235,7 @@ const getInitialChainIds = (wallet: WalletType) => {
 const filterValidChainIds = (chainIds: string[], chains?: Chain[]) => {
   const cosmosChainIds = chains
     ?.filter((chain) => chain.chainType === ChainType.Cosmos)
-    .map((chain) => chain.chainID);
+    .map((chain) => chain.chainId);
 
   const mainnetChainIds = mainnetChains.map((chain) => chain.chainId);
 

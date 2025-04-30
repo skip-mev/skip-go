@@ -53,9 +53,11 @@ export const TransactionHistoryPageHistoryItem = ({
       amountOut,
       sourceAssetDenom,
       sourceAssetChainId,
+      // @ts-expect-error backwards compatability 
       sourceAssetChainID,
       destAssetDenom,
       destAssetChainId,
+      // @ts-expect-error backwards compatability 
       destAssetChainID,
     },
     timestamp,

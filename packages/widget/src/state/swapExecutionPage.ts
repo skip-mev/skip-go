@@ -158,7 +158,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         destAssetChainId,
       });
     },
-    onTransactionCompleted: async (chainId: string, txHash: string, status) => {
+    onTransactionCompleted: async ({ chainId, txHash, status }) => {
       track("execute route: transaction completed", { chainId, txHash, status });
       setTag("txCompleted", true);
       const chain = chains?.find((chain) => chain.chainId === chainId);

@@ -933,27 +933,27 @@ export enum RoutePriceWarningType {
 
 export interface RouteResponse {
   /** Amount of source asset to be transferred or swapped */
-  amountIn?: string;
+  amountIn: string;
   /** Amount of destination asset out */
-  amountOut?: string;
+  amountOut: string;
   /** Chain-ids of all chains of the transfer or swap, in order of usage by operations in the route */
-  chainIds?: string[];
+  chainIds: string[];
   /** All chain-ids that require an address to be provided for, in order of usage by operations in the route */
   requiredChainAddresses: string[];
   /** Chain-id of the destination asset */
-  destAssetChainId?: string;
+  destAssetChainId: string;
   /** Denom of the destination asset */
-  destAssetDenom?: string;
+  destAssetDenom: string;
   /** Whether this route performs a swap */
   doesSwap?: boolean;
   /** Amount of destination asset out, if a swap is performed */
-  estimatedAmountOut?: string;
+  estimatedAmountOut: string;
   /** Array of operations required to perform the transfer or swap */
   operations: Operation[];
   /** Chain-id of the source asset */
-  sourceAssetChainId?: string;
+  sourceAssetChainId: string;
   /** Denom of the source asset */
-  sourceAssetDenom?: string;
+  sourceAssetDenom: string;
   /** Swap venue on which the swap is performed, if a swap is performed */
   swapVenue?: SwapVenue;
   /** Number of transactions required to perform the transfer or swap */

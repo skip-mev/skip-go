@@ -3390,9 +3390,11 @@ components:
         amount_in:
           description: Amount of source asset to be transferred or swapped
           type: string
+          required: true
         amount_out:
           description: Amount of destination asset out
           type: string
+          required: true
         chain_ids:
           description:
             Chain-ids of all chains of the transfer or swap, in order of usage
@@ -3400,6 +3402,7 @@ components:
           items:
             type: string
           type: array
+          required: true
         required_chain_addresses:
           description:
             All chain-ids that require an address to be provided for, in order
@@ -3411,15 +3414,18 @@ components:
         dest_asset_chain_id:
           description: Chain-id of the destination asset
           type: string
+          required: true
         dest_asset_denom:
           description: Denom of the destination asset
           type: string
+          required: true
         does_swap:
           description: Whether this route performs a swap
           type: boolean
         estimated_amount_out:
           description: Amount of destination asset out, if a swap is performed
           type: string
+          required: true
         operations:
           description: Array of operations required to perform the transfer or swap
           items:
@@ -3429,9 +3435,11 @@ components:
         source_asset_chain_id:
           description: Chain-id of the source asset
           type: string
+          required: true
         source_asset_denom:
           description: Denom of the source asset
           type: string
+          required: true
         swap_venue:
           allOf:
             - $ref: '#/components/schemas/SwapVenue'

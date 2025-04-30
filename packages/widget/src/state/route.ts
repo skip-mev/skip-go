@@ -23,8 +23,6 @@ import { RoutePreference } from "./types";
 import { DefaultRouteConfig } from "@/widget/useInitDefaultRoute";
 import { route, RouteRequest, RouteResponse } from "@skip-go/client";
 
-import { RouteConfig } from "@skip-go/client";
-
 export const initializeDebounceValuesEffect: ReturnType<typeof atomEffect> = atomEffect(
   (get, set) => {
     const sourceAsset = get(sourceAssetAtom);
@@ -105,36 +103,6 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-export const convertWidgetRouteConfigToClientRouteConfig = (params: WidgetRouteConfig) => {
-  return {
-    ...params,
-    swapVenues: params.swapVenues?.map((venue) => ({
-      ...venue,
-      chainID: venue.chainId,
-    })),
-    swapVenue: params.swapVenue && {
-      ...params.swapVenue,
-      chainID: params.swapVenue.chainId,
-    },
-  };
-};
-
-export const convertClientRouteConfigToWidgetRouteConfig = (
-  params: RouteConfig,
-): WidgetRouteConfig => {
-  return {
-    ...params,
-    swapVenues: params.swapVenues?.map((venue) => ({
-      ...venue,
-      chainId: venue.chainID,
-    })),
-    swapVenue: params.swapVenue && {
-      ...params.swapVenue,
-      chainId: params.swapVenue.chainID,
-    },
-  };
-};
-
 export const _skipRouteAtom = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
@@ -157,11 +125,10 @@ export const _skipRouteAtom = atomWithQuery((get) => {
         throw new Error("No route request provided");
       }
       try {
-        const skipRouteConfig = convertWidgetRouteConfigToClientRouteConfig(routeConfig);
         const response = await route({
           ...params,
           smartRelay: true,
-          ...skipRouteConfig,
+          ...routeConfig,
           goFast: routePreference === RoutePreference.FASTEST,
         });
         return response;
