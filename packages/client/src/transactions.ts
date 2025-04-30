@@ -259,7 +259,6 @@ export async function simulateSvmTx(
   connection: Connection,
   svmTx: SvmTx,
 ): Promise<SimulationResult> {
-  // 1. Decode the base64 Transaction
   const txBuffer = Buffer.from(svmTx.tx, "base64");
   let transaction: Transaction;
   try {
@@ -274,7 +273,6 @@ export async function simulateSvmTx(
   const simulation = await connection.simulateTransaction(transaction);
 
   if (simulation.value.err) {
-    // Simulation failed
     return {
       success: false,
       logs: simulation.value.logs ?? [],
@@ -282,7 +280,6 @@ export async function simulateSvmTx(
     };
   }
 
-  // Simulation succeeded
   return {
     success: true,
     logs: simulation.value.logs ?? [],
