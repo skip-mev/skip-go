@@ -35,5 +35,5 @@ jobs:
         with:
           name: widget-screenshots
           path: |
-            __tests__/Widget/expected
-            __tests__/Widget/new
+            packages/widget/__tests__/Widget/expected
+            packages/widget/__tests__/Widget/new
