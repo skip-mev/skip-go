@@ -2,12 +2,10 @@ workflowWithTests = [
   '.*Widget Tests.*',
 ]
 
-# Pretend expected screenshots are diffs, so they get included in the comment
 screenshotsDiffsPaths = [
-  '.*__tests__/Widget/expected/.*',
+  '.*packages/widget/__tests__/Widget/expected/.*',
 ]
 
-# Show the newly generated screenshots
-newScreenshotMark = '.*__tests__/Widget/new/.*'
+newScreenshotMark = '.*packages/widget/__tests__/Widget/new/.*'
 
 branchesIgnore = []
