@@ -169,12 +169,12 @@ export const invertSwapAtom = atom(null, (get, set) => {
 
     set(isInvertingSwapAtom, false);
     callbacks?.onSourceAndDestinationSwapped?.({
-      srcChainId: sourceAsset?.chainID,
-      srcAssetDenom: sourceAsset?.denom,
-      destChainId: destinationAsset?.chainID,
-      destAssetDenom: destinationAsset?.denom,
-      amountIn: sourceAsset?.amount,
-      amountOut: destinationAsset?.amount,
+      srcChainId: destinationAsset?.chainID,
+      srcAssetDenom: destinationAsset?.denom,
+      destChainId: sourceAsset?.chainID,
+      destAssetDenom: sourceAsset?.denom,
+      amountIn: destinationAsset?.amount,
+      amountOut: sourceAsset?.amount,
     });
   });
 });
