@@ -199,8 +199,6 @@ export const useInitWidget = (props: WidgetProps) => {
     setHideAssetsUnlessWalletTypeConnected,
     props.filterOutUnlessUserHasBalance,
     setFilterOutUnlessUserHasBalanceAtom,
-    props.onSwapSourceAndDestinationAssets,
-    props.onSwappedSourceAndDestinationAssets,
     props.onSourceAndDestinationSwapped,
   ]);
 
