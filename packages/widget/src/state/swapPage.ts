@@ -55,7 +55,7 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
 
-  const wallet = getWallet(wallets.cosmos?.walletName as WalletType);
+  const wallet = wallets?.cosmos?.walletName && getWallet(wallets.cosmos.walletName as WalletType);
 
   const signer = getSigners?.getCosmosSigner ?? wallet;
 
