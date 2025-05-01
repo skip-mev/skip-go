@@ -124,27 +124,40 @@ function getOperationDetailsAndType(operation: Operation) {
     details: {} as OperationDetails,
     type: undefined as OperationType | undefined,
   };
-  Object.values(OperationType).find((type) => {
-    const operationDetails = combinedOperation?.[type];
 
-    if (operationDetails) {
+  Object.values(OperationType).find((type) => {
+    const originalDetails = combinedOperation?.[type];
+    if (originalDetails) {
+      const operationDetails = { ...originalDetails } as OperationDetails;
+
       switch (type) {
-        // special case needed for axelar transfers where the source denom is not the first operation denom
+        case OperationType.swap:
+        case OperationType.evmSwap:
+          operationDetails.toChainId = (originalDetails as EvmSwap).fromChainId;
+          break;
+
         case OperationType.axelarTransfer:
-          (operationDetails as Transfer).denomIn =
-            (operationDetails as AxelarTransfer).ibcTransferToAxelar?.denomIn ??
-            (operationDetails as Transfer).denomIn;
+          operationDetails.denomIn =
+            (originalDetails as AxelarTransfer).ibcTransferToAxelar?.denomIn ??
+            (originalDetails as Transfer).denomIn;
           break;
-        case OperationType.bankSend:
-          (operationDetails as Transfer).denomIn = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).denomOut = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).fromChainId = (operationDetails as BankSend).chainId;
-          (operationDetails as Transfer).toChainId = (operationDetails as BankSend).chainId;
+
+        case OperationType.bankSend: {
+          const bankSend = originalDetails as BankSend;
+
+          operationDetails.denomIn = bankSend.denom;
+          operationDetails.denomOut = bankSend.denom;
+          operationDetails.fromChainId = bankSend.chainId;
+          operationDetails.toChainId = bankSend.chainId;
+
           break;
+        }
+
         default:
       }
+
       returnValue = {
-        details: operationDetails as OperationDetails,
+        details: operationDetails,
         type,
       };
     }
