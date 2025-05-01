@@ -2209,7 +2209,6 @@ export class SkipClient {
     const connection = new Connection(endpoint);
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
     const simResult = await simulateSvmTx(connection, tx);
-    console.log("simResult", simResult);
 
     if (simResult.error) {
       return {
