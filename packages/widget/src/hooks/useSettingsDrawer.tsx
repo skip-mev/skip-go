@@ -38,6 +38,7 @@ export const useSettingsDrawer = () => {
         disabled={isRouteError || isWaitingForNewRoute || route === undefined}
         showRouteInfo
         showEstimatedTime
+        showFee
         onClick={openSettingsDrawer}
         {...props}
       />
