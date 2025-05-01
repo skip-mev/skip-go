@@ -15,20 +15,6 @@ export const assets = api({
   },
 });
 
-export const assetsAllowDuplicates = api({
-  methodName: "getAssets",
-  path: "/v2/fungible/assets",
-  transformResponse: (response) => {
-    return transformAssetsMap(response.chainToAssetsMap);
-  },
-  onSuccess: (response, options) => {
-    if (options?.includeEvmAssets && options?.includeSvmAssets && options?.includeCw20Assets) {
-      ClientState.skipAssets = response as Record<string, Asset[]>;
-    }
-  },
-  allowDuplicateRequests: true
-});
-
 export const transformAssetsMap = (
   input?: Record<string, { assets?: Asset[] }>,
 ): Record<string, Asset[]> =>

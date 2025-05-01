@@ -76,7 +76,6 @@ export type createRequestType<Request, Response, TransformedResponse = Response>
   method: "get" | "post";
   onSuccess?: (response: TransformedResponse, options?: Request) => void;
   transformResponse?: (response: Response) => TransformedResponse;
-  allowDuplicateRequests?: boolean;
 };
 
 export function createRequest<Request, Response, TransformedResponse>({
@@ -84,14 +83,13 @@ export function createRequest<Request, Response, TransformedResponse>({
   method = "get",
   onSuccess,
   transformResponse,
-  allowDuplicateRequests
 }: createRequestType<Request, Response, TransformedResponse>) {
   let controller: AbortController | null = null;
 
-  const request = async (options?: Request): Promise<TransformedResponse | undefined> => {
+  const request = async (options?: Request & { allowDuplicateRequests?: boolean }): Promise<TransformedResponse | undefined> => {
     await ClientState.clientInitialized;
 
-    if (!allowDuplicateRequests && controller && !controller?.signal?.aborted) {
+    if (!options?.allowDuplicateRequests && controller && !controller?.signal?.aborted) {
       controller?.abort();
     }
 
@@ -172,7 +170,6 @@ export type ApiProps<K extends ValidApiMethodKeys, TransformedResponse = ApiResp
   onSuccess?: (response: TransformedResponse, options?: ApiRequest<K>) => void;
   method?: "get" | "post";
   transformResponse?: (response: ApiResponse<K>) => TransformedResponse;
-  allowDuplicateRequests?: boolean;
 };
 
 export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>>({
@@ -182,7 +179,6 @@ export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiRespo
   onSuccess,
   method = "get",
   transformResponse,
-  allowDuplicateRequests,
 }: ApiProps<K, TransformedResponse>) {
   type Request = ApiRequest<K>;
   type Response = ApiResponse<K>;
@@ -192,7 +188,6 @@ export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiRespo
     method,
     onSuccess,
     transformResponse,
-    allowDuplicateRequests,
   });
 }
 

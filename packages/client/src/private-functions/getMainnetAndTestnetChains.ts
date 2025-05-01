@@ -1,16 +1,18 @@
-import { chainsAllowDuplicates } from "../api/getChains";
+import { chains } from "../api/getChains";
 import { ClientState } from "../state";
 
 export const getMainnetAndTestnetChains = async () => {
   const [mainnetRes, testnetRes] = await Promise.all([
-    chainsAllowDuplicates({
+    chains({
       includeEvm: true,
       includeSvm: true,
+      allowDuplicateRequests: true,
     }),
-    chainsAllowDuplicates({
+    chains({
       includeEvm: true,
       includeSvm: true,
       onlyTestnets: true,
+      allowDuplicateRequests: true,
     }),
   ]);
 
