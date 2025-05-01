@@ -273,10 +273,20 @@ export async function simulateSvmTx(
   const simulation = await connection.simulateTransaction(transaction);
 
   if (simulation.value.err) {
+    const insufficientGasBalance = simulation.value.logs?.some((log) =>
+      log.includes("insufficient lamports"),
+    );
+
+    console.error(simulation.value.err);
+
+    const errMsg = insufficientGasBalance
+      ? "Transaction failed due to insufficient gas balance"
+      : "Simulation failed";
+
     return {
       success: false,
       logs: simulation.value.logs ?? [],
-      error: simulation.value.err,
+      error: errMsg,
     };
   }
 

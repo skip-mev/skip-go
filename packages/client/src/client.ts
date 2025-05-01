@@ -2220,10 +2220,11 @@ export class SkipClient {
       },
     });
     const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
+    console.log("simResult", simResult);
 
-    if (!simResult.success) {
+    if (simResult.error) {
       return {
-        error: `Failed to simulate transaction on Solana. You may have insufficient balance for gas.`,
+        error: simResult.error,
         asset: null,
         fee: null,
       };
