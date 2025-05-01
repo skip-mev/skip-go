@@ -22,6 +22,7 @@ import {
   Connection,
   Transaction,
   SimulatedTransactionResponse,
+  LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
 import { GetFallbackGasAmount } from "./client-types";
 
@@ -277,11 +278,12 @@ export async function simulateSvmTx(
       log.includes("insufficient lamports"),
     );
 
-    console.error(simulation.value.err);
+    const shortfall = getSolShortfall(simulation.value.logs ?? []);
 
-    const errMsg = insufficientGasBalance
-      ? "Transaction failed due to insufficient gas balance"
-      : "Simulation failed";
+    const errMsg =
+      insufficientGasBalance && shortfall
+        ? `Insufficient balance for gas on Solana. You need ${shortfall.toFixed(6)} SOL to proceed.`
+        : "Simulation failed";
 
     return {
       success: false,
@@ -294,4 +296,17 @@ export async function simulateSvmTx(
     success: true,
     logs: simulation.value.logs ?? [],
   };
+}
+
+export function getSolShortfall(logs: string[]): number | null {
+  const line = logs.find((l) => l.includes("insufficient lamports"));
+  if (!line) return null;
+
+  const m = line.match(/insufficient lamports (\d+), need (\d+)/);
+  if (!m) return null;
+
+  const have = parseInt(m[1] ?? "0", 10);
+  const need = parseInt(m[2] ?? "0", 10);
+  const shortfallLamports = need - have;
+  return shortfallLamports / LAMPORTS_PER_SOL;
 }

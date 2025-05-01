@@ -2208,39 +2208,12 @@ export class SkipClient {
     const endpoint = await this.getRpcEndpointForChain(tx.chainID);
     const connection = new Connection(endpoint);
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
-    const gasAmount = await getSVMGasAmountForMessage(connection, tx);
     const simResult = await simulateSvmTx(connection, tx);
-
-    const skipBalances = await this.balances({
-      chains: {
-        solana: {
-          address: tx.signerAddress,
-          denoms: ["solana-native"],
-        },
-      },
-    });
-    const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
     console.log("simResult", simResult);
 
     if (simResult.error) {
       return {
         error: simResult.error,
-        asset: null,
-        fee: null,
-      };
-    }
-
-    if (!gasBalance) {
-      return {
-        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL.`,
-        asset: null,
-        fee: null,
-      };
-    }
-
-    if (BigNumber(gasBalance.amount).lt(gasAmount)) {
-      return {
-        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL but only have ${gasBalance.formattedAmount} SOL.`,
         asset: null,
         fee: null,
       };
