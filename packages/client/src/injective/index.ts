@@ -12,9 +12,9 @@ import {
 } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/tx/utils/tx";
 import { DEFAULT_STD_FEE } from "@injectivelabs/utils";
 
-import createKeccakHash from 'keccak';
+import createKeccakHash from "keccak";
 
-export interface CreateTransactionArgs {
+export type CreateTransactionArgs = {
   fee?: StdFee; // the fee to include in the transaction
   memo?: string; // the memo to include in the transaction
   chainId: string; // the chain id of the chain that the transaction is going to be broadcasted to
@@ -83,7 +83,7 @@ export function createTransaction({
 
   const signDocBytes = CosmosTxV1Beta1Tx.SignDoc.encode(signDoc).finish();
   const toSignBytes = Buffer.from(signDocBytes);
-  const toSignHash = createKeccakHash('keccak256').update(toSignBytes).digest();
+  const toSignHash = createKeccakHash("keccak256").update(toSignBytes).digest();
   const txRaw = CosmosTxV1Beta1Tx.TxRaw.create();
   txRaw.authInfoBytes = authInfoBytes;
   txRaw.bodyBytes = bodyBytes;
