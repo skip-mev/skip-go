@@ -34,6 +34,8 @@ export const signCosmosMessageAmino = async (
   const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
   const msgs = messages.map((msg) => ClientState.aminoTypes.toAmino(msg));
 
+  console.log("sign cosmos message amino", msgs, fee, signerChainId, "", accountNumber, sequence);
+
   const signDoc = makeSignDoc(msgs, fee, signerChainId, "", accountNumber, sequence);
 
   const { signature, signed } = await signer.signAmino(signerAddress, signDoc);

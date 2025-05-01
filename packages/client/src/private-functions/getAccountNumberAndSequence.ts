@@ -2,7 +2,9 @@ import { StargateClient } from "@cosmjs/stargate/build/stargateclient";
 import { getRpcEndpointForChain } from "./getRpcEndpointForChain";
 import { ClientState } from "../state";
 import { accountParser } from "src/registry";
-import { createRequest } from "../utils/generateApi";
+import { createRequestClient } from "../utils/generateApi";
+import { getRestEndpointForChain } from "./getRestEndpointForChain";
+import { toCamel } from "src/utils/convert";
 
 export const getAccountNumberAndSequence = async (address: string, chainId: string) => {
   if (chainId.includes("dymension")) {
@@ -41,22 +43,24 @@ type AccountResponse = {
 };
 
 const getAccountNumberAndSequenceFromDymension = async (address: string, chainId: string) => {
-  const endpoint = await getRpcEndpointForChain(chainId);
+  const endpoint = await getRestEndpointForChain(chainId);
 
-  const response = await createRequest<object, object, AccountResponse>({
-    path: `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-    method: "get",
-  })();
+  const jsonResponse: AccountResponse = await createRequestClient({
+    baseUrl: `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
+  }).get();
+
+  const response = toCamel(jsonResponse);
 
   let sequence = 0;
   let accountNumber = 0;
   if (response.account.baseAccount) {
-    sequence = response.account.baseAccount.sequence as number;
-    accountNumber = response.account.baseAccount.accountNumber as number;
+    sequence = response.account.baseAccount.sequence;
+    accountNumber = response.account.baseAccount.accountNumber;
   } else {
-    sequence = response.account.sequence as number;
-    accountNumber = response.account.accountNumber as number;
+    sequence = response.account.sequence;
+    accountNumber = response.account.accountNumber;
   }
+
   return {
     accountNumber,
     sequence,

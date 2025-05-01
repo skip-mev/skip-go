@@ -13,6 +13,9 @@ export function makePubkeyAnyFromAccount(
   account: AccountData,
   chainId: string,
 ) {
+  console.log("make pubkey any from account");
+  console.log(account, chainId);
+
   const isEthermint = getIsEthermint(chainId);
 
   const pubkey = isEthermint
@@ -21,6 +24,7 @@ export function makePubkeyAnyFromAccount(
 
   const pubkeyAny = encodePubkeyToAny(pubkey, chainId, isEthermint);
 
+  console.log(pubkeyAny);
   return pubkeyAny;
 }
 

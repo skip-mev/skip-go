@@ -30,11 +30,11 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
   };
 
   const get = async <ResponseType = unknown, RequestParams = unknown>(
-    path: string,
+    path?: string,
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const url = new URL(baseUrl + path);
+    const url = new URL(baseUrl + (path ?? ""));
 
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {

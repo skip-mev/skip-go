@@ -7,11 +7,11 @@ import { SignerData } from "@cosmjs/stargate/build/signingstargateclient";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { CosmosMsg } from "src/types/swaggerTypes";
 import { getRestEndpointForChain } from "../getRestEndpointForChain";
-import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts";
 import { getEncodeObjectFromCosmosMessageInjective } from "../transactions";
 import { createTransaction } from "src/injective";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
 import { BigNumberInBase, DEFAULT_BLOCK_TIMEOUT_HEIGHT } from "@injectivelabs/utils";
+import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts";
 
 // I need to investigate what exactly is even different about this and hopefully remove it all together.
 export const signCosmosMessageDirectInjective = async (

@@ -99,8 +99,12 @@ export const executeCosmosTransaction = async ({
       ...commonRawTxBody,
       signer,
     });
+    console.log("offline direct signer");
+    console.log("RAW TX: ", rawTx);
   } else {
     rawTx = await signCosmosMessageAmino({ ...commonRawTxBody, signer });
+    console.log("sign cosmos message amino");
+    console.log("RAW TX: ", rawTx);
   }
 
   options?.onTransactionSigned?.({
