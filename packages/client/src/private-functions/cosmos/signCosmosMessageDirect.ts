@@ -68,11 +68,7 @@ export const signCosmosMessageDirect = async (
     fee.payer,
   );
 
-  console.log("sign cosmos message direct", txBodyBytes, authInfoBytes, chainId, accountNumber);
-
   const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
-
-  console.log(pubkeyAny);
 
   const { signature, signed } = await signer.signDirect(signerAddress, signDoc);
 
