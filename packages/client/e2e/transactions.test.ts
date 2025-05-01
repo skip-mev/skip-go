@@ -6,12 +6,12 @@ import {
   isDeliverTxFailure,
   isDeliverTxSuccess,
 } from "@cosmjs/stargate";
-
-import { Secp256k1Wallet } from "@cosmjs/amino";
+import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts";
 
 import {
   COSMOSHUB_ENDPOINT,
   COSMOSHUB_FAUCET,
+  EVMOS_REST_ENDPOINT,
   EVMOS_RPC_ENDPOINT,
   INJECTIVE_REST_ENDPOINT,
   INJECTIVE_RPC_ENDPOINT,
@@ -134,7 +134,7 @@ describe("transaction execution", () => {
       },
     });
 
-    const signer = await Secp256k1Wallet.fromKey(
+    const signer = await InjectiveDirectEthSecp256k1Wallet.fromKey(
       Uint8Array.from(
         Buffer.from(
           "408890c2b5eba1664bbd33ced41ec0d1322c48b2f65934142e0d8855b552204c",
