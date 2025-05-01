@@ -13,7 +13,7 @@ import { submitTransaction } from "src/api/postSubmitTransaction";
 import { trackTransaction } from "src/api/postTrackTransaction";
 import { transactionStatus } from "src/api/postTransactionStatus";
 import { SKIP_API_URL } from "src/constants/constants";
-import { getFeeInfoForChain } from "src/private-functions/getFeeInfoForChain";
+import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { getRecommendedGasPrice } from "src/public-functions/getRecommendedGasPrice";
 import { setClientOptions } from "src/public-functions/setClientOptions";
 import { toCamel } from "src/utils/convert";
@@ -1550,7 +1550,7 @@ describe("client", () => {
       const result = await ibcOriginAssets(params);
 
       expect(result).toEqual(
-        toCamel(expectedResult),
+        toCamel(expectedResult)?.originAssets,
       );
     });
   });

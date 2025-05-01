@@ -1,17 +1,22 @@
 import { chains } from "src/chains";
-import { getDefaultGasTokenForChain } from "./getDefaultGasTokenForChain";
-import { getMainnetAndTestnetChains } from "./getMainnetAndTestnetChains";
+import { getDefaultGasTokenForChain } from "../private-functions/getDefaultGasTokenForChain";
+import { getMainnetAndTestnetChains } from "../private-functions/getMainnetAndTestnetChains";
+import { ClientState } from "src/state";
 
 export const getFeeInfoForChain = async (chainId: string) => {
-  const skipChains = await getMainnetAndTestnetChains();
+  const skipChains = await ClientState.getSkipChains();
 
   const skipChain = skipChains.find((chain) => chain.chainId === chainId);
+
+  console.log(skipChain);
 
   if (!skipChain) {
     return undefined;
   }
 
   const defaultGasToken = await getDefaultGasTokenForChain(chainId);
+
+  console.log(defaultGasToken);
 
   if (!defaultGasToken && !skipChain.feeAssets) {
     return undefined;

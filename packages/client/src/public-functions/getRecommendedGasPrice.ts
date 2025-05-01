@@ -1,6 +1,6 @@
 import { Decimal } from "@cosmjs/math/build/decimal";
 import { GasPrice } from "@cosmjs/stargate/build/fee";
-import { getFeeInfoForChain } from "src/private-functions/getFeeInfoForChain";
+import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { BigNumber } from "bignumber.js";
 
 export const getRecommendedGasPrice = async (chainId: string) => {

@@ -1,4 +1,6 @@
-import { route } from "@skip-go/client";
+import { route, setApiOptions, getFeeInfoForChain } from "@skip-go/client";
+
+setApiOptions();
 
 const getRoute = async () => {
   const response = await route({
@@ -17,4 +19,9 @@ const getRoute = async () => {
   console.log(response);
 }
 
-getRoute();
+const getFeeInfo = async () => {
+  const response = await getFeeInfoForChain("dymension_1100-1");
+  console.log(response);
+}
+
+getFeeInfo();
