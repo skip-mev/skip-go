@@ -151,7 +151,8 @@ export const skipRouteAtom = atom((get) => {
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
-    const requestAborted = caughtError?.message === "signal is aborted without reason";
+    const REQUEST_ABORTED_MESSAGE = "signal is aborted without reason";
+    const requestAborted = caughtError?.message === REQUEST_ABORTED_MESSAGE;
     return {
       data: undefined,
       isError: true,
