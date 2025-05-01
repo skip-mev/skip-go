@@ -12,7 +12,7 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 import { WalletClient, publicActions } from "viem";
-import { Connection, Transaction } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, SimulatedTransactionResponse, Transaction } from "@solana/web3.js";
 import { ChainType, CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
@@ -223,4 +223,72 @@ export async function getSVMGasAmountForMessage(connection: Connection, tx?: Svm
     );
   }
   return gas.value;
+}
+
+export type SimulationResult = {
+  success: boolean;
+  logs?: string[];
+  error?: SimulatedTransactionResponse["err"];
+}
+
+export async function simulateSvmTx(
+  connection: Connection,
+  svmTx: SvmTx,
+): Promise<SimulationResult> {
+  if (!svmTx.tx) {
+    throw new Error("Transaction data is undefined");
+  }
+  const txBuffer = Buffer.from(svmTx.tx, "base64");
+  let transaction: Transaction;
+  try {
+    transaction = Transaction.from(txBuffer);
+  } catch (decodeError) {
+    return {
+      success: false,
+      error: { decodeError: (decodeError as Error).message },
+    };
+  }
+
+  const simulation = await connection.simulateTransaction(transaction);
+
+  if (simulation.value.err) {
+    const shortfall = getSolShortfall(simulation.value.logs ?? []);
+
+    const insufficientLamports = simulation.value.logs?.some((log) =>
+      log.includes("insufficient lamports"),
+    ) && shortfall !== null;
+
+    const insufficientFundsForRent = Object.keys(simulation.value.err).includes("InsufficientFundsForRent");
+
+    const errMsg =
+      insufficientLamports
+        ? `Insufficient balance for gas on Solana. You need ${shortfall.toFixed(6)} SOL to proceed.` :
+        insufficientFundsForRent
+          ? "Insufficient funds for rent on Solana. You need to fund your account."
+          : "Simulation failed";
+
+    return {
+      success: false,
+      logs: simulation.value.logs ?? [],
+      error: errMsg,
+    };
+  }
+
+  return {
+    success: true,
+    logs: simulation.value.logs ?? [],
+  };
+}
+
+export function getSolShortfall(logs: string[]): number | null {
+  const line = logs.find((l) => l.includes("insufficient lamports"));
+  if (!line) return null;
+
+  const m = line.match(/insufficient lamports (\d+), need (\d+)/);
+  if (!m) return null;
+
+  const have = parseInt(m[1] ?? "0", 10);
+  const need = parseInt(m[2] ?? "0", 10);
+  const shortfallLamports = need - have;
+  return shortfallLamports / LAMPORTS_PER_SOL;
 }
