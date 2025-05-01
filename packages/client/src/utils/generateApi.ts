@@ -86,7 +86,7 @@ export function createRequest<Request, Response, TransformedResponse>({
 }: createRequestType<Request, Response, TransformedResponse>) {
   let controller: AbortController | null = null;
 
-  const request = async (options?: Request): Promise<TransformedResponse> => {
+  const request = async (options?: Request): Promise<TransformedResponse | undefined> => {
     await ClientState.clientInitialized;
 
     if (controller && !controller?.signal?.aborted) {
@@ -243,7 +243,7 @@ export function pollingApi<K extends ValidApiMethodKeys>({
     while (attempt < maxRetries) {
       try {
         const result = await api<K>({ methodName, path, method })(requestParams);
-        if (isSuccess(result)) {
+        if (result && isSuccess(result)) {
           onSuccess?.(result, attempt);
           return result;
         }

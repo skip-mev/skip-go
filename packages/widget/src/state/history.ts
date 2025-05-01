@@ -6,6 +6,7 @@ import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { RouteResponse, transactionStatus } from "@skip-go/client";
+import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
@@ -15,7 +16,7 @@ export type TransactionHistoryItem = {
 } & Partial<TxsStatus>;
 
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
-  "transactionHistory",
+  LOCAL_STORAGE_KEYS.transactionHistory,
   [],
   undefined,
 );

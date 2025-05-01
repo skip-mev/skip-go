@@ -89,21 +89,21 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     chainIdsToAffiliates: ClientState.chainIdsToAffiliates,
   });
 
-  if (beforeMsg && (response.txs?.length ?? 0) > 0) {
-    const firstTx = response.txs?.[0];
+  if (beforeMsg && (response?.txs?.length ?? 0) > 0) {
+    const firstTx = response?.txs?.[0];
     if (firstTx && "cosmosTx" in firstTx) {
       firstTx.cosmosTx?.msgs?.unshift(beforeMsg);
     }
   }
 
-  if (afterMsg && (response.txs?.length ?? 0) > 0) {
-    const lastTx = response.txs?.[response.txs.length - 1];
+  if (afterMsg && (response?.txs?.length ?? 0) > 0) {
+    const lastTx = response?.txs?.[response.txs.length - 1];
     if (lastTx && "cosmosTx" in lastTx) {
       lastTx.cosmosTx?.msgs?.push(afterMsg);
     }
   }
 
-  await executeTransactions({ ...options, txs: response.txs });
+  await executeTransactions({ ...options, txs: response?.txs });
 };
 
 const validateUserAddresses = async (userAddresses: UserAddress[]) => {

@@ -65,18 +65,18 @@ export type CamelKey<S extends string> = S extends `${infer T}_${infer U}`
 export type Snake<T> = T extends (infer U)[]
   ? Snake<U>[]
   : T extends object
-    ? {
-        [K in keyof T as K extends string ? SnakeKey<K> : never]: Snake<T[K]>;
-      }
-    : T;
+  ? {
+    [K in keyof T as K extends string ? SnakeKey<K> : never]: Snake<T[K]>;
+  }
+  : T;
 
 export type Camel<T> = T extends (infer U)[]
   ? Camel<U>[]
   : T extends object
-    ? {
-        [K in keyof T as K extends string ? CamelKey<K> : never]: Camel<T[K]>;
-      }
-    : T;
+  ? {
+    [K in keyof T as K extends string ? CamelKey<K> : never]: Camel<T[K]>;
+  }
+  : T;
 
 export function toSnake<T extends object>(obj: T): Snake<T> {
   return convertKeys(obj, (key) =>
@@ -86,7 +86,15 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
   return convertKeys(obj, (key) =>
-    key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()),
+    key
+      // convert snake_case to camelCase
+      .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+      // lowercase first letter if PascalCase
+      .replace(/^([A-Z])/, (match) => match.toLowerCase())
+      // convert ALLCAPS acronyms like ID -> Id
+      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[0-9]|$)/g, (match) =>
+        match.charAt(0) + match.slice(1).toLowerCase()
+      )
   );
 }
 

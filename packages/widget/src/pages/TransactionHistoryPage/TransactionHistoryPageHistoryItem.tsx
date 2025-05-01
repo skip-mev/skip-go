@@ -53,12 +53,8 @@ export const TransactionHistoryPageHistoryItem = ({
       amountOut,
       sourceAssetDenom,
       sourceAssetChainId,
-      // @ts-expect-error backwards compatability 
-      sourceAssetChainID,
       destAssetDenom,
       destAssetChainId,
-      // @ts-expect-error backwards compatability 
-      destAssetChainID,
     },
     timestamp,
     transactionDetails,
@@ -82,13 +78,13 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    chainId: sourceAssetChainId ?? sourceAssetChainID,
+    chainId: sourceAssetChainId,
     tokenAmount: amountIn,
   });
 
   const destinationAssetDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainId ?? destAssetChainID,
+    chainId: destAssetChainId,
     tokenAmount: amountOut,
   });
 

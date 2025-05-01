@@ -18,6 +18,7 @@ import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
+import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
 
 export type WidgetRouteConfig = Omit<RouteRequest, "swapVenues" | "swapVenue"> & {
   swapVenues?: NewSwapVenueRequest[];
@@ -108,6 +109,8 @@ export type ShowSwapWidget = {
 export const queryClient = new QueryClient();
 
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
+
+migrateOldLocalStorageValues();
 
 export const Widget = (props: WidgetProps) => {
   return (

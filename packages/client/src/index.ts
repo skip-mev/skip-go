@@ -22,6 +22,7 @@ export * from "./public-functions/executeRoute";
 export * from "./public-functions/getSigningStargateClient";
 export * from "./public-functions/setClientOptions";
 export * from "./public-functions/getRecommendedGasPrice";
+export * from "./public-functions/utils";
 
 export * from "./state";
 

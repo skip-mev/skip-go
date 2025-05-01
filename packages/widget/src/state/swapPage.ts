@@ -12,6 +12,7 @@ import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
+import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -83,8 +84,9 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
   }
 });
 
+
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
-  "sourceAsset",
+  LOCAL_STORAGE_KEYS.sourceAsset,
   undefined,
 );
 
@@ -120,7 +122,7 @@ export const sourceAssetAmountAtom = atom(
 );
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
-  "destinationAsset",
+  LOCAL_STORAGE_KEYS.destinationAsset,
   undefined,
 );
 
