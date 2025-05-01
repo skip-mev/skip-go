@@ -6,7 +6,7 @@ import { getRpcEndpointForChain } from "../private-functions/getRpcEndpointForCh
 
 export type getSigningStargateClientProps = {
   chainId: string;
-  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getOfflineSigner?: (chainId: string) => Promise<OfflineSigner>;
 };
 
 export const getSigningStargateClient = async ({

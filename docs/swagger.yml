@@ -3797,7 +3797,7 @@ components:
           description: Channel to use to initiate the transfer
           type: string
         dest_denom:
-          description: Denom of the destionation asset of the transfer
+          description: Denom of the destination asset of the transfer
           type: string
         pfm_enabled:
           description: Whether pfm is enabled on the chain where the transfer is initiated

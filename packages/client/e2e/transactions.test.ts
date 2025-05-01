@@ -8,7 +8,6 @@ import {
 } from "@cosmjs/stargate";
 import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts";
 
-import { SKIP_API_URL, SkipClient } from "../src";
 import {
   COSMOSHUB_ENDPOINT,
   COSMOSHUB_FAUCET,
@@ -19,11 +18,16 @@ import {
   OSMOSIS_ENDPOINT,
   OSMOSIS_FAUCET,
 } from "./utils";
+import { SKIP_API_URL } from "src/constants/constants";
+import { setClientOptions } from "dist";
+import { executeRoute } from "src/public-functions/executeRoute";
+import { BridgeType } from "src";
+import { executeCosmosTransaction } from "src/private-functions/cosmos/executeCosmosTransaction";
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -45,7 +49,7 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const faucet = new FaucetClient(COSMOSHUB_FAUCET);
     await faucet.credit(signerAddress, "uatom");
@@ -59,7 +63,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       getCosmosSigner,
       getGasPrice,
@@ -71,8 +75,8 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes an IBC transfer (amino)", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -92,7 +96,7 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const faucet = new FaucetClient(COSMOSHUB_FAUCET);
     await faucet.credit(signerAddress, "uatom");
@@ -106,7 +110,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       getCosmosSigner,
       getGasPrice,
@@ -118,8 +122,8 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes an IBC transfer (injective)", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return INJECTIVE_RPC_ENDPOINT;
@@ -145,7 +149,7 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25inj");
     };
@@ -159,7 +163,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       // @ts-expect-error : skipping type check for testing purposes
       getCosmosSigner,
@@ -172,14 +176,14 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes an IBC transfer (evmos)", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return EVMOS_RPC_ENDPOINT;
         },
         getRestEndpointForChain: async () => {
-          return EVMOS_REST_ENDPOINT;
+          return EVMOS_RPC_ENDPOINT;
         },
       },
     });
@@ -203,7 +207,7 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -214,7 +218,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       messages: [message],
       // @ts-expect-error : skipping type check for testing purposes
@@ -242,13 +246,13 @@ describe("transaction execution", () => {
     };
 
     const accounts = await signer.getAccounts();
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -263,7 +267,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       getCosmosSigner,
       getGasPrice,
@@ -279,8 +283,8 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes a cosmwasm execute message (amino)", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -304,7 +308,7 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
@@ -316,7 +320,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeCosmosMessage({
+    const tx = await executeCosmosTransaction({
       signerAddress,
       getCosmosSigner,
       getGasPrice,
@@ -332,8 +336,8 @@ describe("transaction execution", () => {
   });
 
   it("executeRoute with undefined getGasPrice", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
+    setClientOptions({
+      apiUrl: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -358,13 +362,13 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
 
-    const signerAddress = accounts[0].address;
+    const signerAddress = accounts[0]?.address ?? "";
 
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
     try {
-      await client.executeRoute({
+      await executeRoute({
         route: {
           sourceAssetDenom: "uosmo",
           sourceAssetChainID: "osmosis-1",
@@ -376,19 +380,15 @@ describe("transaction execution", () => {
           operations: [
             {
               transfer: {
-                port: "transfer",
-                channel: "channel-0",
-                fromChainID: "osmosis-1",
-                toChainID: "cosmoshub-4",
-                pfmEnabled: true,
-                supportsMemo: true,
+                fromChainId: "osmosis-1",
+                toChainId: "cosmoshub-4",
                 denomIn: "uosmo",
                 denomOut:
                   "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-                bridgeID: "IBC",
+                bridgeId: BridgeType.IBC,
                 destDenom:
                   "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-                chainID: "osmosis-1",
+                chainId: "osmosis-1",
                 smartRelay: true,
               },
             },
@@ -404,11 +404,11 @@ describe("transaction execution", () => {
         userAddresses: [
           {
             address: signerAddress,
-            chainID: "osmosis-1",
+            chainId: "osmosis-1",
           },
           {
             address: "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
-            chainID: "cosmoshub-4",
+            chainId: "cosmoshub-4",
           },
         ],
         validateGasBalance: true,

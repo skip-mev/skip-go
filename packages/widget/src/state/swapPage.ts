@@ -195,9 +195,9 @@ export const invertSwapAtom = atom(null, (get, set) => {
 
     set(isInvertingSwapAtom, false);
     callbacks?.onSourceAndDestinationSwapped?.({
-      srcChainId: clonedDestinationAsset?.chainID,
+      srcChainId: clonedDestinationAsset?.chainId,
       srcAssetDenom: clonedDestinationAsset?.denom,
-      destChainId: clonedSourceAsset?.chainID,
+      destChainId: clonedSourceAsset?.chainId,
       destAssetDenom: clonedSourceAsset?.denom,
       amountIn: clonedDestinationAsset?.amount,
       amountOut: clonedSourceAsset?.amount,

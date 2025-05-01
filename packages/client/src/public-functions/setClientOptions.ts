@@ -43,18 +43,18 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ...(options.registryTypes ?? []),
   ]);
 
-  if (options.chainIDsToAffiliates) {
+  if (options.chainIdsToAffiliates) {
     ClientState.cumulativeAffiliateFeeBPS = validateChainIdsToAffiliates(
-      options.chainIDsToAffiliates,
+      options.chainIdsToAffiliates,
     );
-    ClientState.chainIdsToAffiliates = options.chainIDsToAffiliates;
+    ClientState.chainIdsToAffiliates = options.chainIdsToAffiliates;
   }
 
   ClientState.setClientInitialized();
 };
 
-function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, ChainAffiliates>) {
-  const affiliatesArray = Object.values(chainIDsToAffiliates)
+function validateChainIdsToAffiliates(chainIdsToAffiliates: Record<string, ChainAffiliates>) {
+  const affiliatesArray = Object.values(chainIdsToAffiliates)
     .map((chain) => chain.affiliates)
     .filter((a) => a !== undefined) as Affiliate[][];
 
@@ -80,7 +80,7 @@ function validateChainIdsToAffiliates(chainIDsToAffiliates: Record<string, Chain
 
   if (!allBasisPointsAreEqual) {
     throw new Error(
-      "basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates",
+      "basisPointFee does not add up to the same number for each chain in chainIdsToAffiliates",
     );
   }
 

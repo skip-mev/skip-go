@@ -89,6 +89,7 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
 type CaughtRouteError = {
   isError: boolean;
   error: unknown;
+  message?: string;
 };
 
 export const routeConfigAtom = atom<WidgetRouteConfig>({
@@ -150,11 +151,12 @@ export const skipRouteAtom = atom((get) => {
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
   if (caughtError?.isError) {
+    const requestAborted = caughtError?.message === "signal is aborted without reason";
     return {
       data: undefined,
       isError: true,
       error: caughtError.error as Error,
-      isLoading: false,
+      isLoading: requestAborted ? true : false,
     };
   }
   return {

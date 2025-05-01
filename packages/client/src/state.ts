@@ -16,8 +16,8 @@ export class ClientState {
 
   static endpointOptions: {
     endpoints?: Record<string, EndpointOptions>;
-    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+    getRpcEndpointForChain?: (chainId: string) => Promise<string>;
+    getRestEndpointForChain?: (chainId: string) => Promise<string>;
   };
   static getCosmosSigner?: SignerGetters["getCosmosSigner"];
   static getEVMSigner?: SignerGetters["getEVMSigner"];
@@ -89,6 +89,6 @@ export type SkipClientOptions = {
   };
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
-  chainIDsToAffiliates?: Record<string, ChainAffiliates>;
+  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   cacheDurationMs?: number;
 } & SignerGetters;

@@ -12,11 +12,11 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { WalletClient, publicActions } from "viem";
 import { Connection, Transaction } from "@solana/web3.js";
 import { ChainType, CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
-import { GetFallbackGasAmount } from "../client-v2/types/client";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
 import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
+import { GetFallbackGasAmount } from "src/types/client-types";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
@@ -150,7 +150,7 @@ export function getEncodeObjectFromCosmosMessageInjective(message: CosmosMsg): M
 export async function getCosmosGasAmountForMessage(
   client: SigningStargateClient,
   signerAddress: string,
-  chainID: string,
+  chainId: string,
   messages?: CosmosMsg[],
   encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
@@ -165,9 +165,9 @@ export async function getCosmosGasAmountForMessage(
     throw new Error("Either message or encodedMsg must be provided");
   }
   if (
-    chainID.includes("evmos") ||
-    chainID.includes("injective") ||
-    chainID.includes("dymension") ||
+    chainId.includes("evmos") ||
+    chainId.includes("injective") ||
+    chainId.includes("dymension") ||
     process?.env.NODE_ENV === "test"
   ) {
     if (messages?.find((i) => i.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract")) {

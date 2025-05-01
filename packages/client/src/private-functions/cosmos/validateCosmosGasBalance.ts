@@ -14,7 +14,7 @@ export type ValidateCosmosGasBalanceProps = {
   chainId: string;
   signerAddress: string;
   messages?: CosmosMsg[];
-  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getOfflineSigner?: (chainId: string) => Promise<OfflineSigner>;
   getFallbackGasAmount?: GetFallbackGasAmount;
   txIndex?: number;
   simulate?: ExecuteRouteOptions["simulate"];
