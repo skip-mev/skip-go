@@ -73,6 +73,7 @@ export type SwapPageFooterItemsProps = {
   showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
   highlightSettings?: boolean;
+  showFee?: boolean;
 };
 
 export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
@@ -80,6 +81,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   showRouteInfo = false,
   showEstimatedTime = false,
   highlightSettings = false,
+  showFee = false
 }) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const routePreference = useAtomValue(routePreferenceAtom);
@@ -104,7 +106,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
             <EstimatedDuration seconds={estimatedSeconds} />
           </>
         )}
-        <Fee amount={totalFees} />
+        {showFee && <Fee amount={totalFees} />}
         {!isMobile && signaturesRequired > 1 && <SignatureRequired count={signaturesRequired} />}
         {!isMobile && signaturesRequired <= 1 && isGoFast && (
           <RoutePreferenceLabel preference={routePreference} />
