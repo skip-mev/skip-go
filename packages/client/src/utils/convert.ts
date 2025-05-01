@@ -87,12 +87,12 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 export function toCamel<T extends object>(obj: T): Camel<T> {
   return convertKeys(obj, (key) =>
     key
-      // convert snake_case to camelCase
+      // snake_case to camelCase
       .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
       // lowercase first letter if PascalCase
       .replace(/^([A-Z])/, (match) => match.toLowerCase())
-      // convert ALLCAPS acronyms like ID -> Id
-      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[0-9]|$)/g, (match) =>
+      // normalize acronyms (ID → Id, IDs → Ids, APIKey → ApiKey)
+      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
         match.charAt(0) + match.slice(1).toLowerCase()
       )
   );

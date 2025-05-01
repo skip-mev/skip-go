@@ -28,6 +28,7 @@ import {
   TxStatusResponse,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";
+import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -64,7 +65,7 @@ export type ChainAddress = {
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
 export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
-  "swapExecutionState",
+  LOCAL_STORAGE_KEYS.swapExecutionState,
   {
     route: undefined,
     userAddresses: [],
