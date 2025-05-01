@@ -7,7 +7,7 @@ screenshotsDiffsPaths = [
   '.*new.*',
 ]
 
-newScreenshotMark = '*.png'
+newScreenshotMark = '.*new/.*\.png'
 
 branchesIgnore = []
 
