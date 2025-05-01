@@ -116,8 +116,8 @@ export function createRequest<Request, Response, TransformedResponse>({
         console.log("Request was cancelled");
       } else {
         console.error("Error:", error);
+        throw error;
       }
-      throw error;
     }
   };
 

@@ -134,16 +134,10 @@ export const _skipRouteAtom = atomWithQuery((get) => {
         });
         return response;
       } catch (error) {
-        const REQUEST_ABORTED_MESSAGE = "signal is aborted without reason";
-        const requestAborted = (error as Error)?.message?.includes(REQUEST_ABORTED_MESSAGE);
-
-        if (!requestAborted) {
-          return {
-            isError: true,
-            error,
-          };
-        }
-
+        return {
+          isError: true,
+          error,
+        };
       }
     },
     retry: 1,
@@ -156,7 +150,6 @@ export const skipRouteAtom = atom((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;
-
   if (caughtError?.isError) {
     return {
       data: undefined,
