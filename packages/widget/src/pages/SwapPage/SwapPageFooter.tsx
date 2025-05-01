@@ -20,7 +20,7 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { getFeeList, getTotalFees } from "@/utils/route";
 
 export const PoweredBySkipGo = () => (
-  <Row align="center" data-logo="skip-go"  gap={3}>
+  <Row align="center" data-logo="skip-go" gap={3}>
     Powered by <SkipLogoIcon />
   </Row>
 );
@@ -92,7 +92,6 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   const estimatedSeconds = route?.estimatedRouteDurationSeconds;
   const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
   const totalFees = getTotalFees(fees)?.formattedUsdAmount;
-
   const signaturesRequired = route?.txsRequired ?? 1;
 
   const leftContent = () => {
