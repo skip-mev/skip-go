@@ -7,7 +7,5 @@ export const setApiOptions = (options: SkipApiOptions = {}) => {
     apiKey: options.apiKey,
   });
 
-  ClientState.endpointOptions = options.endpointOptions ?? {};
-
   ClientState.setClientInitialized();
 };

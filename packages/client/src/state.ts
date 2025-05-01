@@ -82,14 +82,14 @@ export class ClientState {
 export type SkipApiOptions = {
   apiUrl?: string;
   apiKey?: string;
+}
+
+export type SkipClientOptions = SkipApiOptions & {
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainId: string) => Promise<string>;
     getRestEndpointForChain?: (chainId: string) => Promise<string>;
   };
-}
-
-export type SkipClientOptions = SkipApiOptions & {
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
