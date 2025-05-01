@@ -207,6 +207,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
       onRouteUpdated: props.onRouteUpdated,
+      onSourceAndDestinationSwapped: props.onSourceAndDestinationSwapped,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -245,6 +246,7 @@ export const useInitWidget = (props: WidgetProps) => {
     setHideAssetsUnlessWalletTypeConnected,
     props.filterOutUnlessUserHasBalance,
     setFilterOutUnlessUserHasBalanceAtom,
+    props.onSourceAndDestinationSwapped,
   ]);
 
   return { theme: mergedTheme };

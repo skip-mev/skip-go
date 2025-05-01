@@ -2,7 +2,6 @@ import { atomWithMutation } from "jotai-tanstack-query";
 import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
-import { TxStatusResponse } from "@skip-go/client";
 import {
   DEEPLINK_CHOICE,
   MinimalWallet,
@@ -26,7 +25,9 @@ import {
   RouteResponse,
   TransactionCallbacks,
   UserAddress,
+  TxStatusResponse,
 } from "@skip-go/client";
+import { currentPageAtom, Routes } from "./router";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -77,6 +78,13 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
 
 export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
   set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
+});
+
+export const clearIsValidatingGasBalanceAtom = atom(null, (_get, set) => {
+  set(swapExecutionStateAtom, (state) => ({
+    ...state,
+    isValidatingGasBalance: undefined,
+  }));
 });
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
@@ -190,6 +198,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       set(setOverallStatusAtom, "pending");
     },
     onError: (error: unknown, transactionDetailsArray) => {
+      const currentPage = get(currentPageAtom);
       track("execute route: error", { error });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
@@ -198,12 +207,15 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         track("error page: user rejected request");
-        set(errorAtom, {
-          errorType: ErrorType.AuthFailed,
-          onClickBack: () => {
-            set(setOverallStatusAtom, "unconfirmed");
-          },
-        });
+        if (currentPage === Routes.SwapExecutionPage) {
+          set(errorAtom, {
+            errorType: ErrorType.AuthFailed,
+            onClickBack: () => {
+              set(setOverallStatusAtom, "unconfirmed");
+              set(clearIsValidatingGasBalanceAtom);
+            },
+          });
+        }
       } else if (lastTransaction?.explorerLink) {
         if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
           track("error page: unexpected error");
