@@ -211,13 +211,13 @@ describe("client", () => {
         rest.get(
           "https://api.skip.build/v2/fungible/assets",
           (req, res, ctx) => {
-            const chainId = req.url.searchParams.get("chain_id");
+            const chainIds = req.url.searchParams.get("chain_ids");
             const nativeOnly = req.url.searchParams.get("native_only");
             const includeNoMetadataAssets = req.url.searchParams.get(
               "include_no_metadata_assets",
             );
 
-            if (chainId && nativeOnly && includeNoMetadataAssets) {
+            if (chainIds && nativeOnly && includeNoMetadataAssets) {
               return res(
                 ctx.status(200),
                 ctx.json({
@@ -253,6 +253,7 @@ describe("client", () => {
       );
 
       const response = await assets({
+        chainIds: ["osmosis-1"],
         nativeOnly: true,
         includeNoMetadataAssets: true,
       });
