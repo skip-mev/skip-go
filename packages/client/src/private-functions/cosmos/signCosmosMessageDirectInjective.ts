@@ -7,7 +7,7 @@ import { SignerData } from "@cosmjs/stargate/build/signingstargateclient";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { CosmosMsg } from "src/types/swaggerTypes";
 import { getRestEndpointForChain } from "../getRestEndpointForChain";
-import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest/ChainRestTendermintApi";
+import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts";
 import { getEncodeObjectFromCosmosMessageInjective } from "../transactions";
 import { createTransaction } from "src/injective";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
