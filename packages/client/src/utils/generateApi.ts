@@ -92,7 +92,7 @@ export function createRequest<Request, Response, TransformedResponse>({
   };
 
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
-    const { apiKey, apiUrl, abortDuplicateRequests, ...rest } = options ?? {};
+    const { apiKey, apiUrl, abortDuplicateRequests, ...requestParams } = options ?? {};
     let fetchClient = Fetch.client;
     if (apiUrl || apiKey) {
       fetchClient = createRequestClient({
@@ -112,7 +112,7 @@ export function createRequest<Request, Response, TransformedResponse>({
     try {
       const response = await fetchClient[method](
         path,
-        options ? toSnake(options) : undefined,
+        requestParams ? toSnake(requestParams) : undefined,
         controller.signal,
       );
 
@@ -122,7 +122,7 @@ export function createRequest<Request, Response, TransformedResponse>({
         ? transformResponse(camelCased)
         : (camelCased as unknown as TransformedResponse);
 
-      onSuccess?.(finalResponse, rest as Request);
+      onSuccess?.(finalResponse, requestParams as Request);
 
       return finalResponse;
     } catch (error) {

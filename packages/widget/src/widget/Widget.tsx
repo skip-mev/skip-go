@@ -81,25 +81,12 @@ export type WidgetProps = {
   ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
-} & Pick<
-  NewSkipClientOptions,
-  | "apiUrl"
-  | "chainIdsToAffiliates"
-  | "endpointOptions"
-  | "getCosmosSigner"
-  | "getEVMSigner"
-  | "getSVMSigner"
-> &
+} & SkipClientOptions &
   Callbacks;
 
 type NewSwapVenueRequest = {
   name: string;
   chainId: string;
-};
-
-export type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
-  apiUrl?: string;
-  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 };
 
 export type ShowSwapWidget = {
