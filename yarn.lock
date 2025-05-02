@@ -4994,9 +4994,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@injectivelabs/sdk-ts@npm:1.15.4":
-  version: 1.15.4
-  resolution: "@injectivelabs/sdk-ts@npm:1.15.4"
+"@injectivelabs/sdk-ts@npm:1.15.3":
+  version: 1.15.3
+  resolution: "@injectivelabs/sdk-ts@npm:1.15.3"
   dependencies:
     "@apollo/client": ^3.13.1
     "@cosmjs/amino": ^0.33.0
@@ -5032,7 +5032,7 @@ __metadata:
     secp256k1: ^4.0.3
     shx: ^0.3.4
     snakecase-keys: ^5.4.1
-  checksum: 90642da2b406848d8e6c5c851c0a50ea92768f7be4a5df71d93f5b02b7a4abeac823df43c1c9ccf5ba81982ff4d0740edf1346fd88e764bc0fb08f0d6f61bfff
+  checksum: c9d8706e981ff1fe9f2cb9af662430ad0ef121b286326308715d0a9101e136ae0394d4f63afbf035a20bfd83a41da9b11b8c0d1d67dec5c53582c73fa5056bc3
   languageName: node
   linkType: hard
 
@@ -7996,7 +7996,7 @@ __metadata:
     "@cosmjs/tendermint-rpc": 0.33.1
     "@cosmology/telescope": 1.8.3
     "@initia/initia-registry": ^1.0.4
-    "@injectivelabs/sdk-ts": 1.15.4
+    "@injectivelabs/sdk-ts": 1.15.3
     "@keplr-wallet/unit": ^0.12.143
     "@protobufs/gogoproto": 0.0.10
     "@protobufs/google": 0.0.10
