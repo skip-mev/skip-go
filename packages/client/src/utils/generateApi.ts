@@ -2,7 +2,6 @@ import { Camel, toCamel, toSnake } from "./convert";
 
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
-import { setApiOptions } from "dist";
 import { Fetch, SkipApiOptions } from "./fetchClient";
 
 type RequestClientOptions = {
