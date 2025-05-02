@@ -1,8 +1,8 @@
 import { AccountParser, accountFromAny } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
-import { accountEthParser } from "@injectivelabs/sdk-ts";
 import { decodePubkey } from "@cosmjs/proto-signing";
+import { accountEthParser } from "@injectivelabs/sdk-ts";
 import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
