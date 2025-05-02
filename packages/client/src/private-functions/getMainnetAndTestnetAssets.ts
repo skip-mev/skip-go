@@ -5,12 +5,10 @@ export const getMainnetAndTestnetAssets = async (chainId?: string) => {
   const [assetsMainnet, assetsTestnet] = await Promise.all([
     assets({
       chainIds: chainId ? [chainId] : undefined,
-      allowDuplicateRequests: true
     }),
     assets({
       chainIds: chainId ? [chainId] : undefined,
       onlyTestnets: true,
-      allowDuplicateRequests: true,
     }),
   ]);
 

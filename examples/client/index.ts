@@ -1,8 +1,10 @@
-import { route, setApiOptions, getFeeInfoForChain } from "@skip-go/client";
-
-setApiOptions();
+import { route, setApiOptions } from "@skip-go/client";
 
 const getRoute = async () => {
+  setApiOptions({
+    apiUrl: "",
+    apiKey: "",
+  });
   const response = await route({
     sourceAssetDenom: "uatom",
     sourceAssetChainId: "cosmoshub-4",
@@ -19,9 +21,11 @@ const getRoute = async () => {
   console.log(response);
 }
 
-const getFeeInfo = async () => {
-  const response = await getFeeInfoForChain("dymension_1100-1");
-  console.log(response);
-}
+// const getFeeInfo = async () => {
+//   const response = await getFeeInfoForChain("dymension_1100-1");
+//   console.log(response);
+// }
 
-getFeeInfo();
+getRoute();
+
+// getFeeInfo();

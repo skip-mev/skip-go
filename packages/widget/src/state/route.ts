@@ -131,6 +131,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
           smartRelay: true,
           ...routeConfig,
           goFast: routePreference === RoutePreference.FASTEST,
+          abortDuplicateRequests: true,
         });
         return response;
       } catch (error) {

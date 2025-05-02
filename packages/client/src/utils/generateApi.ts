@@ -2,7 +2,8 @@ import { Camel, toCamel, toSnake } from "./convert";
 
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
-import { ClientState } from "../state";
+import { setApiOptions } from "dist";
+import { Fetch, SkipApiOptions } from "./fetchClient";
 
 type RequestClientOptions = {
   baseUrl: string;
@@ -86,17 +87,30 @@ export function createRequest<Request, Response, TransformedResponse>({
 }: createRequestType<Request, Response, TransformedResponse>) {
   let controller: AbortController | null = null;
 
-  const request = async (options?: Request & { allowDuplicateRequests?: boolean }): Promise<TransformedResponse | undefined> => {
-    await ClientState.clientInitialized;
+  type RequestType = Request & SkipApiOptions & {
+    abortDuplicateRequests?: boolean;
+  };
 
-    if (!options?.allowDuplicateRequests && controller && !controller?.signal?.aborted) {
+  const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
+    const { apiKey, apiUrl, abortDuplicateRequests, ...rest } = options ?? {};
+    let fetchClient = Fetch.client;
+    if (apiUrl || apiKey) {
+      fetchClient = createRequestClient({
+        baseUrl: apiUrl || "https://api.skip.build",
+        apiKey: apiKey,
+      });
+    } else {
+      await Fetch.clientInitialized;
+    }
+
+    if (abortDuplicateRequests && controller && !controller?.signal?.aborted) {
       controller?.abort();
     }
 
     controller = new AbortController();
 
     try {
-      const response = await ClientState.requestClient[method]<Response>(
+      const response = await fetchClient[method](
         path,
         options ? toSnake(options) : undefined,
         controller.signal,
@@ -108,7 +122,7 @@ export function createRequest<Request, Response, TransformedResponse>({
         ? transformResponse(camelCased)
         : (camelCased as unknown as TransformedResponse);
 
-      onSuccess?.(finalResponse, options);
+      onSuccess?.(finalResponse, rest as Request);
 
       return finalResponse;
     } catch (error) {

@@ -13,9 +13,10 @@ import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClientState, SkipClientOptions } from "../state";
 import { createRequestClient } from "../utils/generateApi";
 import { Affiliate, ChainAffiliates } from "../types/swaggerTypes";
+import { Fetch } from "src/utils/fetchClient";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
-  ClientState.requestClient = createRequestClient({
+  Fetch.client = createRequestClient({
     baseUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
   });
@@ -50,7 +51,7 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     ClientState.chainIdsToAffiliates = options.chainIdsToAffiliates;
   }
 
-  ClientState.setClientInitialized();
+  Fetch.setClientInitialized();
 };
 
 function validateChainIdsToAffiliates(chainIdsToAffiliates: Record<string, ChainAffiliates>) {

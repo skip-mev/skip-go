@@ -6,13 +6,11 @@ export const getMainnetAndTestnetChains = async () => {
     chains({
       includeEvm: true,
       includeSvm: true,
-      allowDuplicateRequests: true,
     }),
     chains({
       includeEvm: true,
       includeSvm: true,
       onlyTestnets: true,
-      allowDuplicateRequests: true,
     }),
   ]);
 
