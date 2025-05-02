@@ -30,11 +30,13 @@ Each `Fee` object in the array will have the following attributes:
 
 
  <Warning>
-**Included Fees & Current Limitations**
+ **Included Fees & Current Limitations**
 
- The `estimated_fees` array consolidates certain fees for easier display. Currently, it includes fees for `AXELAR`, `HYPERLANE`, and `GO_FAST` bridges.
+ The `estimated_fees` array consolidates certain fees for easier display. Currently, it includes:
+ * `FeeType: SMART_RELAY` for CCTP bridge transfers.
+ * `FeeType: BRIDGE` fees for the following specific bridges: `AXELAR`, `HYPERLANE`, and `GO_FAST`.
 
- Please note that fees for other bridges (`CCTP`, `IBC`, etc.) and other types like `Swap` or `Gas` fees are not yet included here and must be identified within the `operations` array. We plan to expand the coverage of `estimated_fees` in the future to include more fee types.
+ Please note that fees for other bridges (`IBC`, `Stargate`, `LayerZero`, etc.) and other fee types like `Swap` or `Gas` are not yet included here and the steps where these fees occur are detailed in the `operations` array. We plan to expand the coverage of `estimated_fees` in the future.
  </Warning>
 
   
