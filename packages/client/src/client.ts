@@ -31,7 +31,7 @@ import { accountParser } from "./registry";
 import {
   ChainRestAuthApi,
   ChainRestTendermintApi,
-} from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
+} from "@injectivelabs/sdk-ts";
 import {
   BigNumberInBase,
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
@@ -70,6 +70,7 @@ import {
   getCosmosGasAmountForMessage,
   getEVMGasAmountForMessage,
   getSVMGasAmountForMessage,
+  simulateSvmTx,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
@@ -2207,28 +2208,11 @@ export class SkipClient {
     const endpoint = await this.getRpcEndpointForChain(tx.chainID);
     const connection = new Connection(endpoint);
     if (!connection) throw new Error(`Failed to connect to ${tx.chainID}`);
-    const gasAmount = await getSVMGasAmountForMessage(connection, tx);
+    const simResult = await simulateSvmTx(connection, tx);
 
-    const skipBalances = await this.balances({
-      chains: {
-        solana: {
-          address: tx.signerAddress,
-          denoms: ["solana-native"],
-        },
-      },
-    });
-    const gasBalance = skipBalances.chains["solana"]?.denoms["solana-native"];
-    if (!gasBalance) {
+    if (simResult.error) {
       return {
-        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL.`,
-        asset: null,
-        fee: null,
-      };
-    }
-
-    if (BigNumber(gasBalance.amount).lt(gasAmount)) {
-      return {
-        error: `Insufficient balance for gas on Solana. Need ${gasAmount / LAMPORTS_PER_SOL} SOL but only have ${gasBalance.formattedAmount} SOL.`,
+        error: simResult.error,
         asset: null,
         fee: null,
       };
