@@ -23,14 +23,18 @@ export { submitTransaction } from "./api/postSubmitTransaction";
 export { trackTransaction } from "./api/postTrackTransaction";
 export { transactionStatus } from "./api/postTransactionStatus";
 
-export * from "./public-functions/executeRoute";
-export * from "./public-functions/getSigningStargateClient";
-export * from "./public-functions/setClientOptions";
-export * from "./public-functions/getRecommendedGasPrice";
-export * from "./public-functions/getFeeInfoForChain";
-export * from "./public-functions/utils";
-export * from "./public-functions/setApiOptions";
+export { executeRoute } from "./public-functions/executeRoute";
+export type { ExecuteRouteOptions } from "./public-functions/executeRoute";
 
-export * from "./state";
+export { getSigningStargateClient } from "./public-functions/getSigningStargateClient";
+export type { getSigningStargateClientProps } from "./public-functions/getSigningStargateClient";
+
+export { setClientOptions } from "./public-functions/setClientOptions";
+export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPrice";
+export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
+export { toSnake, toCamel } from "./public-functions/utils";
+export { setApiOptions } from "./public-functions/setApiOptions";
+
+export type { SkipClientOptions } from "./state";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";
