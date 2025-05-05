@@ -112,7 +112,8 @@ export const executeCosmosTransaction = async ({
   const txResponse = await stargateClient.broadcastTx(txBytes);
 
   return {
-    chainId: tx?.cosmosTx?.chainId ?? "",
+    chainId: tx?.cosmosTx?.chainId,
     txHash: txResponse.transactionHash,
+    stargateBroadcastTxResponse: txResponse,
   };
 };

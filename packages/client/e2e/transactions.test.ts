@@ -6,7 +6,6 @@ import {
   isDeliverTxFailure,
   isDeliverTxSuccess,
 } from "@cosmjs/stargate";
-import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts";
 
 import {
   COSMOSHUB_ENDPOINT,
@@ -19,10 +18,12 @@ import {
   OSMOSIS_FAUCET,
 } from "./utils";
 import { SKIP_API_URL } from "src/constants/constants";
-import { setClientOptions } from "dist";
 import { executeRoute, ExecuteRouteOptions } from "src/public-functions/executeRoute";
-import { BridgeType, toCamel } from "src";
+import { setClientOptions } from "src/public-functions/setClientOptions";
 import { executeCosmosTransaction } from "src/private-functions/cosmos/executeCosmosTransaction";
+import { ClientState } from "src/state";
+import { BridgeType, IBCTransferInfo, Operation, RouteResponse, Transfer } from "src/types/swaggerTypes";
+import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts/dist/esm/cosmjs";
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
@@ -34,6 +35,20 @@ describe("transaction execution", () => {
         },
       },
     });
+
+    ClientState.validateGasResults = [{
+      error: null,
+      asset: {
+        denom: "",
+      },
+      fee: {
+        amount: [{
+          denom: "0",
+          amount: "0",
+        }],
+        gas: "0",
+      },
+    }];
 
     const signer = await DirectSecp256k1HdWallet.fromMnemonic(
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley"
@@ -56,16 +71,29 @@ describe("transaction execution", () => {
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
-    const message = {
-      chainID: "gaia-1",
+    const cosmosTx = {
+      chainId: "gaia-1",
       path: ["gaia-1", "osmosis-1"],
-      msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"uatom","amount":"1000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
-      msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
+      msgs: [{
+        msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"uatom","amount":"1000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
+        msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({ ...txs, index: 0, options: {} as ExecuteRouteOptions });
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "gaia-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
+    });
 
-    expect(isDeliverTxSuccess(tx)).toBe(true);
+    expect(isDeliverTxSuccess(txResult.stargateBroadcastTxResponse)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (amino)", async () => {
@@ -97,22 +125,29 @@ describe("transaction execution", () => {
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
-    const message = {
+    const cosmosTx = {
       chainId: "gaia-1",
       path: ["gaia-1", "osmosis-1"],
-      msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"uatom","amount":"1000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
-      msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      msgs: [{
+        msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"uatom","amount":"1000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
+        msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({
-      signerAddress,
-      getCosmosSigner,
-      getGasPrice,
-      messages: [message],
-      chainId: "gaia-1",
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "gaia-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
     });
 
-    expect(isDeliverTxSuccess(tx)).toBe(true);
+    expect(isDeliverTxSuccess(txResult.stargateBroadcastTxResponse)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (injective)", async () => {
@@ -150,23 +185,29 @@ describe("transaction execution", () => {
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
-    const message = {
+    const cosmosTx = {
       chainId: "injective-1",
       path: ["injective-1", "osmosis-1"],
-      msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"inj","amount":"1000000000000000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
-      msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      msgs: [{
+        msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"inj","amount":"1000000000000000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
+        msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({
-      signerAddress,
-      // @ts-expect-error : skipping type check for testing purposes
-      getCosmosSigner,
-      getGasPrice,
-      messages: [message],
-      chainId: "injective-1",
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "injective-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
     });
 
-    expect(isDeliverTxSuccess(tx)).toBe(true);
+    expect(isDeliverTxSuccess(txResult.stargateBroadcastTxResponse)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (evmos)", async () => {
@@ -205,23 +246,29 @@ describe("transaction execution", () => {
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
-    const message = {
+    const cosmosTx = {
       chainId: "evmos_9000-1",
       path: ["evmos_9000-1", "osmosis-1"],
-      msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"aevmos","amount":"1000000000000000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
-      msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      msgs: [{
+        msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"aevmos","amount":"1000000000000000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
+        msgTypeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({
-      signerAddress,
-      messages: [message],
-      // @ts-expect-error : skipping type check for testing purposes
-      getCosmosSigner,
-      getGasPrice,
-      chainId: "evmos_9000-1",
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "evmos_9000-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
     });
 
-    expect(isDeliverTxSuccess(tx)).toBe(true);
+    expect(isDeliverTxSuccess(txResult.stargateBroadcastTxResponse)).toBe(true);
   });
 
   it("signs and executes a cosmwasm execute message", async () => {
@@ -254,24 +301,30 @@ describe("transaction execution", () => {
       },
     });
 
-    const message = {
+    const cosmosTx = {
       chainId: "osmosis-1",
       path: ["osmosis-1", "cosmoshub-4"],
-      msg: `{"sender":"${signerAddress}","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"495"},"timeout_timestamp":1693265108785341058,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"10000"}]}`,
-      msgTypeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      msgs: [{
+        msg: `{"sender":"${signerAddress}","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"495"},"timeout_timestamp":1693265108785341058,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"10000"}]}`,
+        msgTypeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({
-      signerAddress,
-      getCosmosSigner,
-      getGasPrice,
-      messages: [message],
-      chainId: "osmosis-1",
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "osmosis-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
     });
 
-    // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
-    expect(isDeliverTxFailure(tx)).toBe(true);
-    expect(tx.rawLog).toEqual(
+    expect(isDeliverTxFailure(txResult.stargateBroadcastTxResponse)).toBe(true);
+    expect(txResult.stargateBroadcastTxResponse.rawLog).toEqual(
       "failed to execute message; message index: 0: contract: not found"
     );
   });
@@ -307,24 +360,30 @@ describe("transaction execution", () => {
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
-    const message = {
+    const cosmosTx = {
       chainId: "osmosis-1",
       path: ["osmosis-1", "cosmoshub-4"],
-      msg: `{"sender":"${signerAddress}","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"495"},"timeout_timestamp":1693265108785341058,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"10000"}]}`,
-      msgTypeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      msgs: [{
+        msg: `{"sender":"${signerAddress}","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"495"},"timeout_timestamp":1693265108785341058,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"10000"}]}`,
+        msgTypeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      }]
     };
 
-    const tx = await executeCosmosTransaction({
-      signerAddress,
-      getCosmosSigner,
-      getGasPrice,
-      messages: [message],
-      chainId: "osmosis-1",
+    const txResult = await executeCosmosTransaction({
+      tx: {
+        cosmosTx
+      },
+      options: {
+        route: {} as RouteResponse,
+        userAddresses: [{ chainId: "osmosis-1", address: signerAddress }],
+        getCosmosSigner,
+        getGasPrice,
+      } as ExecuteRouteOptions,
+      index: 0, // or the index into your batched gas results
     });
 
-    // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
-    expect(isDeliverTxFailure(tx)).toBe(true);
-    expect(tx.rawLog).toEqual(
+    expect(isDeliverTxFailure(txResult.stargateBroadcastTxResponse)).toBe(true);
+    expect(txResult.stargateBroadcastTxResponse.rawLog).toEqual(
       "failed to execute message; message index: 0: contract: not found"
     );
   });
@@ -365,10 +424,10 @@ describe("transaction execution", () => {
       await executeRoute({
         route: {
           sourceAssetDenom: "uosmo",
-          sourceAssetChainID: "osmosis-1",
+          sourceAssetChainId: "osmosis-1",
           destAssetDenom:
             "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-          destAssetChainID: "cosmoshub-4",
+          destAssetChainId: "cosmoshub-4",
           amountIn: "1000000",
           amountOut: "1000000",
           operations: [
@@ -384,9 +443,10 @@ describe("transaction execution", () => {
                   "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
                 chainId: "osmosis-1",
                 smartRelay: true,
-              },
-            },
+              } as Transfer,
+            } as Operation,
           ],
+          requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
           chainIds: ["osmosis-1", "cosmoshub-4"],
           doesSwap: false,
           estimatedAmountOut: "1000000",
@@ -405,7 +465,6 @@ describe("transaction execution", () => {
             chainId: "cosmoshub-4",
           },
         ],
-        validateGasBalance: true,
         slippageTolerancePercent: "3",
         onTransactionBroadcast: async (tx) => {
           expect(tx).toBeTruthy();
