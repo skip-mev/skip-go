@@ -55,6 +55,10 @@ import {
   StargateTransferTransactions,
   EurekaTransferInfo,
   EurekaTransferInfoJSON,
+  LayerZeroTransferTransactions,
+  LayerZeroTransferTransactionsJSON,
+  LayerZeroTransferInfo,
+  LayerZeroTransferInfoJSON,
 } from "./lifecycle";
 import {
   Chain,
@@ -139,6 +143,8 @@ import {
   StargateTransfer,
   EurekaTransferJSON,
   EurekaTransfer,
+  LayerZeroTransferJSON,
+  LayerZeroTransfer,
 } from "./shared";
 import {
   AssetBetweenChains,
@@ -621,7 +627,8 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
     destDenom: transferJSON.dest_denom,
     chainID: transferJSON.chain_id,
     smartRelay: transferJSON.smart_relay,
-    toChainCallbackContractAddress: transferJSON.to_chain_callback_contract_address,
+    toChainCallbackContractAddress:
+      transferJSON.to_chain_callback_contract_address,
     toChainEntryContractAddress: transferJSON.to_chain_entry_contract_address,
   };
 }
@@ -646,7 +653,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 
     dest_denom: transfer.destDenom,
     chain_id: transfer.chainID,
-    smart_relay: transfer.smartRelay, 
+    smart_relay: transfer.smartRelay,
     to_chain_callback_contract_address: transfer.toChainCallbackContractAddress,
     to_chain_entry_contract_address: transfer.toChainEntryContractAddress,
   };
@@ -936,6 +943,40 @@ export function stargateTransferToJSON(
   };
 }
 
+export function layerZeroTransferFromJSON(
+  layerZeroTransferJSON: LayerZeroTransferJSON,
+): LayerZeroTransfer {
+  return {
+    fromChainID: layerZeroTransferJSON.from_chain_id,
+    toChainID: layerZeroTransferJSON.to_chain_id,
+    denomIn: layerZeroTransferJSON.denom_in,
+    denomOut: layerZeroTransferJSON.denom_out,
+    sourceOFTContractAddress: layerZeroTransferJSON.source_oft_contract_address,
+    destinationEndpointID: layerZeroTransferJSON.destination_endpoint_id,
+    messagingFeeAsset: assetFromJSON(layerZeroTransferJSON.messaging_fee_asset),
+    messagingFeeAmount: layerZeroTransferJSON.messaging_fee_amount,
+    messagingFeeAmountUSD: layerZeroTransferJSON.messaging_fee_amount_usd,
+    bridgeID: layerZeroTransferJSON.bridge_id,
+  };
+}
+
+export function layerZeroTransferToJSON(
+  layerZeroTransfer: LayerZeroTransfer,
+): LayerZeroTransferJSON {
+  return {
+    from_chain_id: layerZeroTransfer.fromChainID,
+    to_chain_id: layerZeroTransfer.toChainID,
+    denom_in: layerZeroTransfer.denomIn,
+    denom_out: layerZeroTransfer.denomOut,
+    source_oft_contract_address: layerZeroTransfer.sourceOFTContractAddress,
+    destination_endpoint_id: layerZeroTransfer.destinationEndpointID,
+    messaging_fee_asset: assetToJSON(layerZeroTransfer.messagingFeeAsset),
+    messaging_fee_amount: layerZeroTransfer.messagingFeeAmount,
+    messaging_fee_amount_usd: layerZeroTransfer.messagingFeeAmountUSD,
+    bridge_id: layerZeroTransfer.bridgeID,
+  };
+}
+
 export function eurekaTransferFromJSON(
   eurekaTransferJSON: EurekaTransferJSON,
 ): EurekaTransfer {
@@ -956,8 +997,10 @@ export function eurekaTransferFromJSON(
     smartRelayFeeQuote: eurekaTransferJSON?.smart_relay_fee_quote
       ? smartRelayFeeQuoteFromJSON(eurekaTransferJSON.smart_relay_fee_quote)
       : undefined,
-    toChainCallbackContractAddress: eurekaTransferJSON.to_chain_callback_contract_address,
-    toChainEntryContractAddress: eurekaTransferJSON.to_chain_entry_contract_address,
+    toChainCallbackContractAddress:
+      eurekaTransferJSON.to_chain_callback_contract_address,
+    toChainEntryContractAddress:
+      eurekaTransferJSON.to_chain_entry_contract_address,
   };
 }
 
@@ -981,7 +1024,8 @@ export function eurekaTransferToJSON(
     smart_relay_fee_quote: eurekaTransfer?.smartRelayFeeQuote
       ? smartRelayFeeQuoteToJSON(eurekaTransfer.smartRelayFeeQuote)
       : undefined,
-    to_chain_callback_contract_address: eurekaTransfer.toChainCallbackContractAddress,
+    to_chain_callback_contract_address:
+      eurekaTransfer.toChainCallbackContractAddress,
     to_chain_entry_contract_address: eurekaTransfer.toChainEntryContractAddress,
   };
 }
@@ -1049,6 +1093,15 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       ...commonProps,
       stargateTransfer: stargateTransferFromJSON(
         operationJSON.stargate_transfer,
+      ),
+    };
+  }
+
+  if ("layer_zero_transfer" in operationJSON) {
+    return {
+      ...commonProps,
+      layerZeroTransfer: layerZeroTransferFromJSON(
+        operationJSON.layer_zero_transfer,
       ),
     };
   }
@@ -1137,6 +1190,13 @@ export function operationToJSON(operation: Operation): OperationJSON {
     return {
       ...commonProps,
       stargate_transfer: stargateTransferToJSON(operation.stargateTransfer),
+    };
+  }
+
+  if ("layerZeroTransfer" in operation) {
+    return {
+      ...commonProps,
+      layer_zero_transfer: layerZeroTransferToJSON(operation.layerZeroTransfer),
     };
   }
 
@@ -2175,6 +2235,14 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("layer_zero_transfer" in value) {
+    return {
+      layerZeroTransfer: layerZeroTransferInfoFromJSON(
+        value.layer_zero_transfer,
+      ),
+    };
+  }
+
   if ("eureka_transfer" in value) {
     return {
       eurekaTransfer: eurekaTransferInfoFromJSON(value.eureka_transfer),
@@ -2219,6 +2287,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("stargateTransfer" in value) {
     return {
       stargate_transfer: stargateTransferInfoToJSON(value.stargateTransfer),
+    };
+  }
+
+  if ("layerZeroTransfer" in value) {
+    return {
+      layer_zero_transfer: layerZeroTransferInfoToJSON(value.layerZeroTransfer),
     };
   }
 
@@ -2616,6 +2690,52 @@ export function stargateTransferTransactionsToJSON(
       ? chainTransactionToJSON(value.receiveTx)
       : null,
     error_tx: value.errorTx ? chainTransactionToJSON(value.errorTx) : null,
+  };
+}
+
+export function layerZeroTransferTransactionsFromJSON(
+  value: LayerZeroTransferTransactionsJSON,
+): LayerZeroTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+    errorTx: value.error_tx ? chainTransactionFromJSON(value.error_tx) : null,
+  };
+}
+
+export function layerZeroTransferTransactionsToJSON(
+  value: LayerZeroTransferTransactions,
+): LayerZeroTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+    error_tx: value.errorTx ? chainTransactionToJSON(value.errorTx) : null,
+  };
+}
+
+export function layerZeroTransferInfoFromJSON(
+  value: LayerZeroTransferInfoJSON,
+): LayerZeroTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && layerZeroTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function layerZeroTransferInfoToJSON(
+  value: LayerZeroTransferInfo,
+): LayerZeroTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && layerZeroTransferTransactionsToJSON(value.txs),
   };
 }
 

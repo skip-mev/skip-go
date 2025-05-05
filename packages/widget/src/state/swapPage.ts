@@ -155,17 +155,29 @@ export const isInvertingSwapAtom = atom(false);
 export const invertSwapAtom = atom(null, (get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const clonedSourceAsset = { ...sourceAsset };
+  const clonedDestinationAsset = { ...destinationAsset };
   const swapDirection = get(swapDirectionAtom);
+  const callbacks = get(callbacksAtom);
   set(isInvertingSwapAtom, true);
 
-  set(sourceAssetAtom, { ...destinationAsset });
+  set(sourceAssetAtom, clonedDestinationAsset);
   set(sourceAssetAmountAtom, destinationAsset?.amount ?? "");
 
-  set(destinationAssetAtom, { ...sourceAsset });
+  set(destinationAssetAtom, clonedSourceAsset);
   set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
     const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
     set(swapDirectionAtom, newSwapDirection);
+
     set(isInvertingSwapAtom, false);
+    callbacks?.onSourceAndDestinationSwapped?.({
+      srcChainId: clonedDestinationAsset?.chainID,
+      srcAssetDenom: clonedDestinationAsset?.denom,
+      destChainId: clonedSourceAsset?.chainID,
+      destAssetDenom: clonedSourceAsset?.denom,
+      amountIn: clonedDestinationAsset?.amount,
+      amountOut: clonedSourceAsset?.amount,
+    });
   });
 });
 

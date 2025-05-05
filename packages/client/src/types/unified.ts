@@ -43,6 +43,8 @@ import {
   ChainAffiliates,
   StargateTransferJSON,
   StargateTransfer,
+  LayerZeroTransferJSON,
+  LayerZeroTransfer,
   EurekaTransferJSON,
   EurekaTransfer,
 } from "./shared";
@@ -240,7 +242,12 @@ export type MsgsWarningType =
   | "INSUFFICIENT_GAS_AT_DEST_EOA"
   | "INSUFFICIENT_GAS_AT_INTERMEDIATE";
 
-export type ExperimentalFeature = "cctp" | "hyperlane" | "stargate" | "eureka";
+export type ExperimentalFeature =
+  | "cctp"
+  | "hyperlane"
+  | "stargate"
+  | "eureka"
+  | "layer_zero";
 
 export type RouteWarning = {
   type: RouteWarningType;
@@ -294,6 +301,8 @@ export type OperationJSON =
   | (BaseOperationJSON & { evm_swap: EvmSwapJSON })
   | (BaseOperationJSON & { op_init_transfer: OPInitTransferJSON })
   | (BaseOperationJSON & { go_fast_transfer: GoFastTransferJSON })
+  | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON })
+  | (BaseOperationJSON & { layer_zero_transfer: LayerZeroTransferJSON })
   | (BaseOperationJSON & { eureka_transfer: EurekaTransferJSON })
   | (BaseOperationJSON & { stargate_transfer: StargateTransferJSON });
 
@@ -313,6 +322,8 @@ export type Operation =
   | (BaseOperation & { evmSwap: EvmSwap })
   | (BaseOperation & { opInitTransfer: OPInitTransfer })
   | (BaseOperation & { goFastTransfer: GoFastTransfer })
+  | (BaseOperation & { stargateTransfer: StargateTransfer })
+  | (BaseOperation & { layerZeroTransfer: LayerZeroTransfer })
   | (BaseOperation & { eurekaTransfer: EurekaTransfer })
   | (BaseOperation & { stargateTransfer: StargateTransfer });
 
@@ -544,7 +555,8 @@ export type BridgeType =
   | "OPINIT"
   | "GO_FAST"
   | "STARGATE"
-  | "EUREKA";
+  | "EUREKA"
+  | "LAYER_ZERO";
 
 export enum ChainType {
   Cosmos = "cosmos",

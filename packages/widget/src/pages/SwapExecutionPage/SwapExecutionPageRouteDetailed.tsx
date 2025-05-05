@@ -29,6 +29,7 @@ const operationTypeToIcon: operationTypeToIcon = {
   [OperationType.goFastTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.stargateTransfer]: <SwapExecutionBridgeIcon width={34} />,
   [OperationType.eurekaTransfer]: <SwapExecutionBridgeIcon width={34} />,
+  [OperationType.layerZeroTransfer]: <SwapExecutionBridgeIcon width={34} />,
   // send icon
   [OperationType.bankSend]: <SwapExecutionSendIcon width={34} />,
 };
@@ -45,6 +46,7 @@ const operationTypeToSimpleOperationType = {
   goFastTransfer: "Bridged",
   stargateTransfer: "Bridged",
   eurekaTransfer: "Bridged",
+  layerZeroTransfer: "Bridged",
 };
 
 export const SwapExecutionPageRouteDetailed = ({
@@ -60,7 +62,6 @@ export const SwapExecutionPageRouteDetailed = ({
   const isGasStationTx = useIsGasStationTx();
   const firstOperation = operations[0];
   const status = statusData?.transferEvents;
-
 
   const getBridgeSwapVenue = useCallback(
     (operation: ClientOperation) => {
@@ -193,11 +194,12 @@ export const SwapExecutionPageRouteDetailed = ({
           index={0}
         />
         {renderOperations}
-        {isGasStationTx && 
-        <StyledGasStationTxText>
-          Transactions from EVM to Babylon have gas provided automatically if no gas tokens are found.
-        </StyledGasStationTxText>
-        }
+        {isGasStationTx && (
+          <StyledGasStationTxText>
+            Transactions from EVM to Babylon have gas provided automatically if no gas tokens are
+            found.
+          </StyledGasStationTxText>
+        )}
       </Column>
     </StyledSwapExecutionPageRoute>
   );
@@ -244,7 +246,7 @@ const StyledOperationTypeAndTooltipContainer = styled(Row)`
 
 const StyledGasStationTxText = styled(SmallText)`
   margin-top: 10px;
-  color: ${({ theme }) => theme.success.text}; 
+  color: ${({ theme }) => theme.success.text};
   background: ${({ theme }) => theme.secondary.background.transparent};
   padding: 12px;
   border-radius: 6px;
