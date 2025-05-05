@@ -33,6 +33,7 @@ const DevMode = () => {
       settings: {
         useUnlimitedApproval: true,
       },
+      enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
       routeConfig: {
