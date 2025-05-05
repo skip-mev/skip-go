@@ -1,11 +1,13 @@
 type IconProps = {
   color?: string;
   className?: string;
+  spin?: boolean;
 };
 
 export const BridgeArrowIcon = ({
   color = "currentColor",
   className,
+  spin,
   ...props
 }: IconProps & React.SVGProps<SVGSVGElement>) => (
   <svg
