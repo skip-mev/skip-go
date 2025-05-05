@@ -18,11 +18,12 @@ import { getRecommendedGasPrice } from "src/public-functions/getRecommendedGasPr
 import { setClientOptions } from "src/public-functions/setClientOptions";
 import { toCamel } from "src/utils/convert";
 import { BridgeType } from "src/types";
+import { setApiOptions } from "src/public-functions/setApiOptions";
 
 export const server = setupServer();
 
 describe("client", () => {
-  beforeEach(() => setClientOptions());
+  beforeEach(() => setApiOptions());
 
   beforeAll(() => server.listen());
 
