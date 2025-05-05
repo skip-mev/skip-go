@@ -59,8 +59,8 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
   await validateGasBalances({
     txs,
     getFallbackGasAmount: options.getFallbackGasAmount,
-    getCosmosSigner: options.getCosmosSigner || ClientState.getCosmosSigner,
-    getEvmSigner: options.getEvmSigner || ClientState.getEvmSigner,
+    getCosmosSigner: options.getCosmosSigner,
+    getEvmSigner: options.getEvmSigner,
     onValidateGasBalance: options.onValidateGasBalance,
     simulate: simulate,
     disabledChainIds: validateChainIds,
@@ -70,8 +70,8 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     await validateGasBalances({
       txs,
       getFallbackGasAmount: options.getFallbackGasAmount,
-      getCosmosSigner: options.getCosmosSigner || ClientState.getCosmosSigner,
-      getEvmSigner: options.getEvmSigner || ClientState.getEvmSigner,
+      getCosmosSigner: options.getCosmosSigner,
+      getEvmSigner: options.getEvmSigner,
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
       enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,

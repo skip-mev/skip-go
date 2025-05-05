@@ -31,11 +31,6 @@ import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAsse
 import { assetSymbolsSortedToTopAtom } from "@/state/assetSymbolsSortedToTop";
 import { hideAssetsUnlessWalletTypeConnectedAtom } from "@/state/hideAssetsUnlessWalletTypeConnected";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
-import { getWallet, WalletType } from "graz";
-import { WalletClient } from "viem";
-import { getWalletClient } from "@wagmi/core";
-import { config } from "@/constants/wagmi";
-import { solanaWallets } from "@/constants/solana";
 
 export const useInitWidget = (props: WidgetProps) => {
   if (props.enableSentrySessionReplays) {
@@ -111,43 +106,6 @@ export const useInitWidget = (props: WidgetProps) => {
   useEffect(() => {
     setClientOptions({
       ...mergedSkipClientConfig,
-      getCosmosSigner: async (chainId) => {
-        if (getSigners?.getCosmosSigner) {
-          return getSigners.getCosmosSigner(chainId);
-        }
-        if (!wallets.cosmos) {
-          throw new Error("getCosmosSigner error: no cosmos wallet");
-        }
-        const wallet = getWallet(wallets.cosmos.walletName as WalletType);
-        if (!wallet) {
-          throw new Error("getCosmosSigner error: wallet not found");
-        }
-        const key = await wallet.getKey(chainId);
-
-        return key.isNanoLedger
-          ? wallet.getOfflineSignerOnlyAmino(chainId)
-          : wallet.getOfflineSigner(chainId);
-      },
-      getEvmSigner: async (chainId) => {
-        if (getSigners?.getEvmSigner) {
-          return getSigners.getEvmSigner(chainId);
-        }
-        const evmWalletClient = (await getWalletClient(config, {
-          chainId: parseInt(chainId),
-        })) as WalletClient;
-
-        return evmWalletClient;
-      },
-      getSvmSigner: async () => {
-        if (getSigners?.getSvmSigner) {
-          return getSigners.getSvmSigner();
-        }
-        const walletName = wallets.svm?.walletName;
-        if (!walletName) throw new Error("getSvmSigner error: no svm wallet");
-        const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-        if (!solanaWallet) throw new Error("getSvmSigner error: wallet not found");
-        return solanaWallet;
-      },
     });
   }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
 

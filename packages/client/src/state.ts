@@ -73,4 +73,4 @@ export type SkipClientOptions = SkipApiOptions & {
   registryTypes?: Iterable<[string, GeneratedType]>;
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   cacheDurationMs?: number;
-} & SignerGetters;
+};

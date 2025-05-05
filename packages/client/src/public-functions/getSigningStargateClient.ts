@@ -13,7 +13,6 @@ export const getSigningStargateClient = async ({
   chainId,
   getOfflineSigner,
 }: getSigningStargateClientProps) => {
-  getOfflineSigner = getOfflineSigner || ClientState.getCosmosSigner;
   if (!getOfflineSigner) {
     throw new Error("'getCosmosSigner' is not provided or configured in skip router");
   }

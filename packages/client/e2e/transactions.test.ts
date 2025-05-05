@@ -396,14 +396,6 @@ describe("transaction execution", () => {
           return OSMOSIS_ENDPOINT;
         },
       },
-      getCosmosSigner: async () => {
-        return DirectSecp256k1HdWallet.fromMnemonic(
-          "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
-          {
-            prefix: "osmo",
-          }
-        );
-      },
     });
 
     const signer = await Secp256k1HdWallet.fromMnemonic(
@@ -468,6 +460,14 @@ describe("transaction execution", () => {
         slippageTolerancePercent: "3",
         onTransactionBroadcast: async (tx) => {
           expect(tx).toBeTruthy();
+        },
+        getCosmosSigner: async () => {
+          return DirectSecp256k1HdWallet.fromMnemonic(
+            "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
+            {
+              prefix: "osmo",
+            }
+          );
         },
       });
     } catch (error) {

@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { MessagesRequest, RouteRequest, SkipClientOptions } from "@skip-go/client";
+import { MessagesRequest, RouteRequest, SignerGetters, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
@@ -82,7 +82,7 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
 } & SkipClientOptions &
-  Callbacks;
+  Callbacks & SignerGetters;
 
 type NewSwapVenueRequest = {
   name: string;

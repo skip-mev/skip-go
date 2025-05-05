@@ -114,6 +114,5 @@ export const executeCosmosTransaction = async ({
   return {
     chainId: tx?.cosmosTx?.chainId ?? "",
     txHash: txResponse.transactionHash,
-    stargateBroadcastTxResponse: txResponse,
   };
 };

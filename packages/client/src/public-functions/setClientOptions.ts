@@ -22,9 +22,6 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
   });
 
   ClientState.endpointOptions = options.endpointOptions ?? {};
-  ClientState.getCosmosSigner = options.getCosmosSigner;
-  ClientState.getEvmSigner = options.getEvmSigner;
-  ClientState.getSvmSigner = options.getSvmSigner;
 
   ClientState.aminoTypes = new AminoTypes({
     ...createDefaultAminoConverters(),
