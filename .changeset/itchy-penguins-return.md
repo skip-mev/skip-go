@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Fix warning in dev
+Fix prop warning in dev
