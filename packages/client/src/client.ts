@@ -2005,11 +2005,18 @@ export class SkipClient {
       if (!gasPrice) {
         return null;
       }
+      let gasLimitToUse = Math.ceil(parseFloat(estimatedGasAmount));
+
+
       if (chainID === "noble-1") {
-        const fee = calculateFee(200_000, gasPrice);
-        return fee;
+        gasLimitToUse = 200_000;
+      } else if (chainID === "pirin-1" && asset.denom !== "unls") {
+        // For Nolus (pirin-1), apply a multiplier for non-native fee tokens
+        const nolusMultiplier = 1.4;
+        gasLimitToUse = Math.ceil(gasLimitToUse * nolusMultiplier);
       }
-      return calculateFee(Math.ceil(parseFloat(estimatedGasAmount)), gasPrice);
+
+      return calculateFee(gasLimitToUse, gasPrice);
     });
 
     const feeBalance = await this.balances({
