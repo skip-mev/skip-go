@@ -80,6 +80,18 @@ describe("Case Conversion Functions", function () {
       expect(toCamel(input)).toEqual(expected);
     });
 
+    it("should convert chainID to chainId", function () {
+      const input = { chainID: "value" };
+      const expected = { chainId: "value" };
+      expect(toCamel(input)).toEqual(expected);
+    });
+
+    it("should not mutate eth addresses", function () {
+      const input = { "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359": "value" };
+      const expected = { "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359": "value" };
+      expect(toCamel(input)).toEqual(expected);
+    });
+
     it("should handle empty objects", function () {
       const input = {};
       const expected: Camel<typeof input> = {};

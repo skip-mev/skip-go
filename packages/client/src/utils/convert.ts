@@ -85,17 +85,17 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 }
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
-  return convertKeys(obj, (key) =>
-    key
-      // snake_case to camelCase
+  return convertKeys(obj, (key) => {
+    // Only transform snake_case keys
+    if (!key.includes("_")) return key;
+
+    return key
       .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
-      // lowercase first letter if PascalCase
       .replace(/^([A-Z])/, (match) => match.toLowerCase())
-      // normalize all-uppercase words or prefixes (e.g., ID, APIKey → Id, ApiKey)
       .replace(/\b([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
         match.charAt(0) + match.slice(1).toLowerCase()
-      )
-  );
+      );
+  });
 }
 
 export function convertKeys<T extends object>(
