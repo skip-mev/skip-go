@@ -86,14 +86,17 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
   return convertKeys(obj, (key) => {
-    // Only transform snake_case keys
-    if (!key.includes("_")) return key;
+    // Skip keys that start with something that's not a letter
+    if (/^[^a-zA-Z]/.test(key)) return key;
 
     return key
-      .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+      // snake_case to camelCase
+      .replace(/_([a-zA-Z0-9])/g, (_, letter) => letter.toUpperCase())
+      // lowercase first character
       .replace(/^([A-Z])/, (match) => match.toLowerCase())
-      .replace(/\b([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
-        match.charAt(0) + match.slice(1).toLowerCase()
+      // normalize full-uppercase acronyms like ID, API, CW → Id, Api, Cw
+      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
+        /^[A-Z]+$/.test(match) ? match.charAt(0) + match.slice(1).toLowerCase() : match
       );
   });
 }
