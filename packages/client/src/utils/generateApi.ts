@@ -71,27 +71,34 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
   return { get, post };
 };
 
-export type createRequestType<Request, Response, TransformedResponse = Response> = {
+export type createRequestType<Request, Response, TransformedRequest = Request, TransformedResponse = Response> = {
   path: string;
   method: "get" | "post";
-  onSuccess?: (response: TransformedResponse, options?: Request) => void;
+  onSuccess?: (response: TransformedResponse, options?: TransformedRequest) => void;
+  transformRequest?: (request: Request) => TransformedRequest;
   transformResponse?: (response: Response) => TransformedResponse;
 };
 
-export function createRequest<Request, Response, TransformedResponse>({
+export function createRequest<Request, Response, TransformedRequest, TransformedResponse>({
   path,
   method = "get",
   onSuccess,
+  transformRequest,
   transformResponse,
-}: createRequestType<Request, Response, TransformedResponse>) {
+}: createRequestType<Request, Response, TransformedRequest, TransformedResponse>) {
   let controller: AbortController | null = null;
 
-  type RequestType = Request & SkipApiOptions & {
+  type RequestType = TransformedRequest & SkipApiOptions & {
     abortDuplicateRequests?: boolean;
   };
 
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
-    const { apiKey, apiUrl, abortDuplicateRequests, ...requestParams } = options ?? {};
+    const { apiKey, apiUrl, abortDuplicateRequests, ...rawRequestParams } = options ?? {};
+
+    const requestParams = transformRequest
+      ? transformRequest(rawRequestParams as Request)
+      : rawRequestParams;
+
     let fetchClient = Fetch.client;
     if (apiUrl || apiKey) {
       fetchClient = createRequestClient({
@@ -121,7 +128,7 @@ export function createRequest<Request, Response, TransformedResponse>({
         ? transformResponse(camelCased)
         : (camelCased as unknown as TransformedResponse);
 
-      onSuccess?.(finalResponse, requestParams as Request);
+      onSuccess?.(finalResponse, rawRequestParams as TransformedRequest);
 
       return finalResponse;
     } catch (error) {
@@ -177,29 +184,30 @@ export type ApiResponse<K extends ValidApiMethodKeys> = Camel<
  ⚙️ 3. Factory to generate API functions
 -------------------------------------------------- */
 
-export type ApiProps<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>> = {
+export type ApiProps<K extends ValidApiMethodKeys, TransformedRequest = ApiRequest<K>, TransformedResponse = ApiResponse<K>> = {
   methodName: K;
   path: string;
-  onSuccess?: (response: TransformedResponse, options?: ApiRequest<K>) => void;
+  onSuccess?: (response: TransformedResponse, options?: TransformedRequest) => void;
   method?: "get" | "post";
+  transformRequest?: (request: ApiRequest<K>) => TransformedRequest;
   transformResponse?: (response: ApiResponse<K>) => TransformedResponse;
 };
 
-export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiResponse<K>>({
+export function api<K extends ValidApiMethodKeys, TransformedRequest = ApiRequest<K>, TransformedResponse = ApiResponse<K>>({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   methodName,
   path,
   onSuccess,
   method = "get",
+  transformRequest,
   transformResponse,
-}: ApiProps<K, TransformedResponse>) {
-  type Request = ApiRequest<K>;
-  type Response = ApiResponse<K>;
+}: ApiProps<K, TransformedRequest, TransformedResponse>) {
 
-  return createRequest<Request, Response, TransformedResponse>({
+  return createRequest<ApiRequest<K>, ApiResponse<K>, TransformedRequest, TransformedResponse>({
     path,
     method,
     onSuccess,
+    transformRequest,
     transformResponse,
   });
 }

@@ -4,6 +4,9 @@ export const ibcOriginAssets = api({
   methodName: "getOriginAssets",
   method: "post",
   path: "/v2/fungible/ibc_origin_assets",
+  transformRequest(request) {
+    return request.assets;
+  },
   transformResponse: (response) => {
     return response.originAssets;
   }

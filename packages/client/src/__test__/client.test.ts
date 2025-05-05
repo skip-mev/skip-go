@@ -17,6 +17,7 @@ import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { getRecommendedGasPrice } from "src/public-functions/getRecommendedGasPrice";
 import { setClientOptions } from "src/public-functions/setClientOptions";
 import { toCamel } from "src/utils/convert";
+import { BridgeType } from "src/types";
 
 export const server = setupServer();
 
@@ -496,14 +497,13 @@ describe("client", () => {
         ),
       );
 
-      const response = await recommendAssets({
-        requests: [{
+      const response = await recommendAssets([
+        {
           sourceAssetChainId: "osmosis-1",
           sourceAssetDenom: "uosmo",
           destChainId: "cosmoshub-4",
-        }
-        ]
-      });
+        },
+      ]);
 
       const expected = [
         {
@@ -608,7 +608,7 @@ describe("client", () => {
           {
             transfer: {
               smartRelay: false,
-              bridgeId: "IBC",
+              bridgeId: BridgeType.IBC,
               denomIn: "uosmo",
               denomOut: "uatom",
               fromChainId: "osmosis-1",
@@ -620,12 +620,6 @@ describe("client", () => {
           },
         ],
         slippageTolerancePercent: "0.01",
-        affiliates: [
-          {
-            address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-            basisPointsFee: "100",
-          },
-        ],
         postRouteHandler: {
           wasmMsg: {
             contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
@@ -635,7 +629,7 @@ describe("client", () => {
         enableGasWarnings: true,
       });
 
-      expect(response.msgs).toEqual([
+      expect(response?.msgs).toEqual([
         {
           multiChainMsg: {
             chainId: "osmosis-1",
@@ -1538,15 +1532,13 @@ describe("client", () => {
         ),
       );
 
-      const params = {
-        assets: [
-          {
-            denom:
-              "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-            chainId: "cosmoshub-4",
-          },
-        ]
-      };
+      const params = [
+        {
+          denom:
+            "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+          chainId: "cosmoshub-4",
+        },
+      ];
 
       const result = await ibcOriginAssets(params);
 

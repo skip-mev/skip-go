@@ -20,10 +20,7 @@ import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
 import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
 
-export type WidgetRouteConfig = Omit<RouteRequest, "swapVenues" | "swapVenue"> & {
-  swapVenues?: NewSwapVenueRequest[];
-  swapVenue?: NewSwapVenueRequest;
-} & Pick<MessagesRequest, "timeoutSeconds">;
+export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   /**
@@ -83,11 +80,6 @@ export type WidgetProps = {
   hideAssetsUnlessWalletTypeConnected?: boolean;
 } & SkipClientOptions &
   Callbacks & SignerGetters;
-
-type NewSwapVenueRequest = {
-  name: string;
-  chainId: string;
-};
 
 export type ShowSwapWidget = {
   button?: ReactElement;
