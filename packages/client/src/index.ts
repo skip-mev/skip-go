@@ -1,22 +1,27 @@
 export * from "./types";
 
-export * from "./api/getAssets";
-export * from "./api/getAssetsBetweenChains";
-export * from "./api/getBridges";
-export * from "./api/getChains";
-export * from "./api/getVenues";
+export { assets } from "./api/getAssets";
+export { assetsBetweenChains } from "./api/getAssetsBetweenChains";
+export { bridges } from "./api/getBridges";
+export { chains } from "./api/getChains";
+export { venues } from "./api/getVenues";
 
-export * from "./api/postIbcOriginAssets";
-export * from "./api/postMessages";
-export * from "./api/postMessagesDirect";
-export * from "./api/postRecommendAssets";
-export * from "./api/postAssetsFromSource";
-export * from "./api/postBalances";
+export { ibcOriginAssets } from "./api/postIbcOriginAssets";
+export { messages } from "./api/postMessages";
+export type { MessagesRequest, MessagesResponse } from "./api/postMessages";
 
-export * from "./api/postRoute";
-export * from "./api/postSubmitTransaction";
-export * from "./api/postTrackTransaction";
-export * from "./api/postTransactionStatus";
+export { messagesDirect } from "./api/postMessagesDirect";
+export { recommendAssets } from "./api/postRecommendAssets";
+export { assetsFromSource } from "./api/postAssetsFromSource";
+export { balances } from "./api/postBalances";
+export type { BalanceRequest, BalanceResponse } from "./api/postBalances";
+
+export { route } from "./api/postRoute";
+export type { RouteRequest } from "./api/postRoute";
+
+export { submitTransaction } from "./api/postSubmitTransaction";
+export { trackTransaction } from "./api/postTrackTransaction";
+export { transactionStatus } from "./api/postTransactionStatus";
 
 export * from "./public-functions/executeRoute";
 export * from "./public-functions/getSigningStargateClient";
