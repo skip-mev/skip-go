@@ -1,5 +1,18 @@
 # @skip-go/client
 
+## 0.17.0
+
+### Minor Changes
+
+- 3f58bf3: refactor injective labs dependencey to reduce bundle size
+- d2804a0: apply multipler for non-native fee tokens on prin-1
+
+### Patch Changes
+
+- 162f202: update registries
+- f5bc62c: simluate svm txs to ensure sufficient gas and program execution
+- 1b601ec: support layer zero
+
 ## 0.16.34
 
 ### Patch Changes
