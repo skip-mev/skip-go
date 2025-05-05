@@ -265,7 +265,7 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
     setGetSigners((prev) => ({
       ...prev,
       ...(props.getCosmosSigner && { getCosmosSigner: props.getCosmosSigner }),
-      ...(props.getEvmSigner && { getEVMSigner: props.getEvmSigner }),
+      ...(props.getEvmSigner && { getEvmSigner: props.getEvmSigner }),
       ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
   }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);

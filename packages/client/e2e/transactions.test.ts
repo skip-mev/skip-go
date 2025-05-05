@@ -56,32 +56,12 @@ describe("transaction execution", () => {
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
-    const txs = toCamel({
-      "txs": [
-        {
-          "cosmos_tx": {
-            "chain_id": "noble-1",
-            "path": [
-              "noble-1",
-              "osmosis-1",
-              "cosmoshub-4"
-            ],
-            "msgs": [
-              {
-                "msg": "{\"source_port\":\"transfer\",\"source_channel\":\"channel-1\",\"token\":{\"denom\":\"uusdc\",\"amount\":\"10000\"},\"sender\":\"noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x\",\"receiver\":\"osmo10a3k4hvk37cc4hnxctw4p95fhscd2z6h2rmx0aukc6rm8u9qqx9smfsh7u\",\"timeout_height\":{},\"timeout_timestamp\":1746207294039536305,\"memo\":\"{\\\"wasm\\\":{\\\"contract\\\":\\\"osmo10a3k4hvk37cc4hnxctw4p95fhscd2z6h2rmx0aukc6rm8u9qqx9smfsh7u\\\",\\\"msg\\\":{\\\"swap_and_action\\\":{\\\"user_swap\\\":{\\\"swap_exact_asset_in\\\":{\\\"swap_venue_name\\\":\\\"osmosis-poolmanager\\\",\\\"operations\\\":[{\\\"pool\\\":\\\"1282\\\",\\\"denom_in\\\":\\\"ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4\\\",\\\"denom_out\\\":\\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\\"}]}},\\\"min_asset\\\":{\\\"native\\\":{\\\"denom\\\":\\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\\",\\\"amount\\\":\\\"2230\\\"}},\\\"timeout_timestamp\\\":1746207294039561790,\\\"post_swap_action\\\":{\\\"ibc_transfer\\\":{\\\"ibc_info\\\":{\\\"source_channel\\\":\\\"channel-0\\\",\\\"receiver\\\":\\\"cosmos1qj83mw6k79k7wp2675t8xueytwcf7t6dtekkag\\\",\\\"memo\\\":\\\"\\\",\\\"recover_address\\\":\\\"osmo1qj83mw6k79k7wp2675t8xueytwcf7t6drz9xt6\\\"}}},\\\"affiliates\\\":[]}}}}\"}",
-                "msg_type_url": "/ibc.applications.transfer.v1.MsgTransfer"
-              }
-            ],
-            "signer_address": "noble1qj83mw6k79k7wp2675t8xueytwcf7t6dr6r79x"
-          },
-          "operations_indices": [
-            0,
-            1,
-            2
-          ]
-        }
-      ]
-    });
+    const message = {
+      chainID: "gaia-1",
+      path: ["gaia-1", "osmosis-1"],
+      msg: `{"source_port":"transfer","source_channel":"channel-0","token":{"denom":"uatom","amount":"1000000"},"sender":"${signerAddress}","receiver":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","timeout_height":{},"timeout_timestamp":"${timeout}","memo":"{\\"wasm\\":{\\"contract\\":\\"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj\\",\\"msg\\":{\\"swap_and_action\\":{\\"user_swap\\":{\\"swap_exact_coin_in\\":{\\"swap_venue_name\\":\\"osmosis-poolmanager\\",\\"operations\\":[{\\"pool\\":\\"1\\",\\"denom_in\\":\\"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2\\",\\"denom_out\\":\\"uosmo\\"}]}},\\"min_coin\\":{\\"denom\\":\\"uosmo\\",\\"amount\\":\\"18961936\\"},\\"timeout_timestamp\\":1693222298030492937,\\"post_swap_action\\":{\\"bank_send\\":{\\"to_address\\":\\"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e\\"}},\\"affiliates\\":[]}}}}"}`,
+      msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
+    };
 
     const tx = await executeCosmosTransaction({ ...txs, index: 0, options: {} as ExecuteRouteOptions });
 

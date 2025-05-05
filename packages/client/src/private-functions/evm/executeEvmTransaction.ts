@@ -17,15 +17,15 @@ export const executeEvmTransaction = async (
 
   const { evmTx } = message;
 
-  const getEVMSigner = options.getEVMSigner || ClientState.getEVMSigner;
-  if (!getEVMSigner) {
+  const getEvmSigner = options.getEvmSigner || ClientState.getEvmSigner;
+  if (!getEvmSigner) {
     throw new Error("Unable to get EVM signer");
   }
   if (!evmTx?.chainId) {
     throw new Error("chain id not found in evmTx");
   }
 
-  const evmSigner = await getEVMSigner(evmTx.chainId);
+  const evmSigner = await getEvmSigner(evmTx.chainId);
 
   if (!evmSigner.account) {
     throw new Error("executeEVMTransaction error: failed to retrieve account from signer");

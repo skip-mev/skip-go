@@ -15,14 +15,14 @@ export type ValidateGasBalancesProps = {
   disabledChainIds?: string[];
   // run gas validation for specific chainId
   enabledChainIds?: string[];
-} & Pick<SignerGetters, "getCosmosSigner" | "getEVMSigner">;
+} & Pick<SignerGetters, "getCosmosSigner" | "getEvmSigner">;
 
 export const validateGasBalances = async ({
   txs,
   onValidateGasBalance,
   getFallbackGasAmount,
   getCosmosSigner,
-  getEVMSigner,
+  getEvmSigner,
   simulate,
   disabledChainIds,
   enabledChainIds,
@@ -80,7 +80,7 @@ export const validateGasBalances = async ({
         !disabledChainIds?.includes(tx?.evmTx?.chainId ?? "") &&
         (enabledChainIds === undefined || enabledChainIds.includes(tx?.evmTx?.chainId ?? ""))
       ) {
-        const signer = await getEVMSigner?.(tx?.evmTx?.chainId ?? "");
+        const signer = await getEvmSigner?.(tx?.evmTx?.chainId ?? "");
         if (!signer) {
           throw new Error(`failed to get signer for chain ${tx?.evmTx?.chainId}`);
         }
