@@ -22,14 +22,14 @@ export const executeSvmTransaction = async (
   }
 
   const svmTx = tx?.svmTx;
-  const getSVMSigner = options?.getSVMSigner || ClientState.getSVMSigner;
-  if (!getSVMSigner) {
+  const getSvmSigner = options?.getSvmSigner || ClientState.getSvmSigner;
+  if (!getSvmSigner) {
     throw new Error(
       "executeRoute error: 'getSVMSigner' is not provided or configured in skip router",
     );
   }
 
-  const signer = await getSVMSigner();
+  const signer = await getSvmSigner();
 
   if (!svmTx?.chainId) {
     throw new Error("executeSvmTransaction error: chainId not found in svmTx");

@@ -1237,7 +1237,7 @@ export interface Transfer {
   toChainId?: string;
   /** Channel to use to initiate the transfer */
   channel?: string;
-  /** Denom of the destionation asset of the transfer */
+  /** Denom of the destination asset of the transfer */
   destDenom?: string;
   /** Whether pfm is enabled on the chain where the transfer is initiated */
   pfmEnabled?: boolean;
@@ -1965,21 +1965,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   getMsgsV2 = (
     data: {
       /** Denom of the source asset */
-      source_asset_denom?: string;
+      source_asset_denom: string;
       /** Chain-id of the source asset */
-      source_asset_chain_id?: string;
+      source_asset_chain_id: string;
       /** Denom of the destination asset */
-      dest_asset_denom?: string;
+      dest_asset_denom: string;
       /** Chain-id of the destination asset */
-      dest_asset_chain_id?: string;
+      dest_asset_chain_id: string;
       /** Amount of source asset to be transferred or swapped */
-      amount_in?: string;
+      amount_in: string;
       /** Amount of destination asset out */
-      amount_out?: string;
+      amount_out: string;
       /** Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request */
-      address_list?: string[];
+      address_list: string[];
       /** Array of operations required to perform the transfer or swap */
-      operations?: Operation[];
+      operations: Operation[];
+      estimated_amount_out?: string;
       /** Percent tolerance for slippage on swap, if a swap is performed */
       slippage_tolerance_percent?: string;
       /** Number of seconds for the IBC transfer timeout, defaults to 5 minutes */

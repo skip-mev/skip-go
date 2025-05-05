@@ -26,13 +26,13 @@ export type ValidateGasResult = {
 
 /** Signer Getters */
 export type SignerGetters = {
-  getEVMSigner?: (chainId: string) => Promise<WalletClient>;
+  getEvmSigner?: (chainId: string) => Promise<WalletClient>;
   getCosmosSigner?: (
     chainId: string,
   ) => Promise<
     (OfflineAminoSigner & OfflineDirectSigner) | OfflineAminoSigner | OfflineDirectSigner
   >;
-  getSVMSigner?: () => Promise<Adapter>;
+  getSvmSigner?: () => Promise<Adapter>;
 };
 
 /** Gas Options */

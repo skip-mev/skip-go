@@ -128,9 +128,9 @@ export const useInitWidget = (props: WidgetProps) => {
           ? wallet.getOfflineSignerOnlyAmino(chainId)
           : wallet.getOfflineSigner(chainId);
       },
-      getEVMSigner: async (chainId) => {
-        if (getSigners?.getEVMSigner) {
-          return getSigners.getEVMSigner(chainId);
+      getEvmSigner: async (chainId) => {
+        if (getSigners?.getEvmSigner) {
+          return getSigners.getEvmSigner(chainId);
         }
         const evmWalletClient = (await getWalletClient(config, {
           chainId: parseInt(chainId),
@@ -138,14 +138,14 @@ export const useInitWidget = (props: WidgetProps) => {
 
         return evmWalletClient;
       },
-      getSVMSigner: async () => {
-        if (getSigners?.getSVMSigner) {
-          return getSigners.getSVMSigner();
+      getSvmSigner: async () => {
+        if (getSigners?.getSvmSigner) {
+          return getSigners.getSvmSigner();
         }
         const walletName = wallets.svm?.walletName;
-        if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
+        if (!walletName) throw new Error("getSvmSigner error: no svm wallet");
         const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-        if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
+        if (!solanaWallet) throw new Error("getSvmSigner error: wallet not found");
         return solanaWallet;
       },
     });
@@ -265,9 +265,9 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
     setGetSigners((prev) => ({
       ...prev,
       ...(props.getCosmosSigner && { getCosmosSigner: props.getCosmosSigner }),
-      ...(props.getEVMSigner && { getEVMSigner: props.getEVMSigner }),
-      ...(props.getSVMSigner && { getSVMSigner: props.getSVMSigner }),
+      ...(props.getEvmSigner && { getEVMSigner: props.getEvmSigner }),
+      ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
-  }, [props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, setGetSigners]);
+  }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);
 
 };

@@ -19,8 +19,8 @@ export class ClientState {
     getRestEndpointForChain?: (chainId: string) => Promise<string>;
   };
   static getCosmosSigner?: SignerGetters["getCosmosSigner"];
-  static getEVMSigner?: SignerGetters["getEVMSigner"];
-  static getSVMSigner?: SignerGetters["getSVMSigner"];
+  static getEvmSigner?: SignerGetters["getEvmSigner"];
+  static getSvmSigner?: SignerGetters["getSvmSigner"];
   static chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   static cumulativeAffiliateFeeBPS?: string = "0";
 

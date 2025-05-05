@@ -865,7 +865,6 @@ paths:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. Input consists of the output of route with additional information required for message construction (e.g. destination addresses for each chain)
       requestBody:
-        required: true
         content:
           application/json:
             examples:
@@ -1015,31 +1014,41 @@ paths:
                 source_asset_denom:
                   type: string
                   description: Denom of the source asset
+                  required: true
                 source_asset_chain_id:
                   type: string
                   description: Chain-id of the source asset
+                  required: true
                 dest_asset_denom:
                   type: string
                   description: Denom of the destination asset
+                  required: true
                 dest_asset_chain_id:
                   type: string
                   description: Chain-id of the destination asset
+                  required: true
                 amount_in:
                   type: string
                   description: Amount of source asset to be transferred or swapped
+                  required: true
                 amount_out:
                   type: string
                   description: Amount of destination asset out
+                  required: true
                 address_list:
                   type: array
                   description: Array of receipient and/or sender address for each chain in the path, corresponding to the chain_ids array returned from a route request
                   items:
                     type: string
+                  required: true
                 operations:
                   type: array
                   description: Array of operations required to perform the transfer or swap
                   items:
                     $ref: '#/components/schemas/Operation'
+                  required: true
+                estimated_amount_out:
+                  type: string
                 slippage_tolerance_percent:
                   type: string
                   description: Percent tolerance for slippage on swap, if a swap is performed
