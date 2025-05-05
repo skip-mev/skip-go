@@ -91,8 +91,8 @@ export function toCamel<T extends object>(obj: T): Camel<T> {
       .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
       // lowercase first letter if PascalCase
       .replace(/^([A-Z])/, (match) => match.toLowerCase())
-      // normalize acronyms (ID → Id, IDs → Ids, APIKey → ApiKey)
-      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
+      // normalize all-uppercase words or prefixes (e.g., ID, APIKey → Id, ApiKey)
+      .replace(/\b([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
         match.charAt(0) + match.slice(1).toLowerCase()
       )
   );
