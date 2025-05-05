@@ -1,0 +1,14 @@
+workflowWithTests = [
+  '.*Widget Tests.*',
+]
+
+screenshotsDiffsPaths = [
+  '.*expected.*',
+  '.*new.*',
+]
+
+newScreenshotMark = '.*\.png'
+
+branchesIgnore = []
+
+screenshotImageAttrs = ['height="300px"']
