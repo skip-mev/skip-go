@@ -92,7 +92,7 @@ type CaughtRouteError = {
 };
 
 export const routeConfigAtom = atom<WidgetRouteConfig>({
-  experimentalFeatures: ["stargate", "eureka"],
+  experimentalFeatures: ["stargate", "eureka", "layer_zero"],
   allowMultiTx: true,
   allowUnsafe: true,
   smartSwapOptions: {
