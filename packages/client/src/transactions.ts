@@ -209,27 +209,40 @@ export async function getEVMGasAmountForMessage(
   getFallbackGasAmount?: GetFallbackGasAmount,
 ) {
   const { to, data, value } = tx;
-  if (!signer.account) throw new Error("estimateGasForEvmTx: No account found");
+
+  if (!signer.account) {
+    throw new Error("estimateGasForEvmTx: No account found");
+  }
+
   const extendedSigner = signer.extend(publicActions);
 
-  const fee = await extendedSigner.estimateFeesPerGas();
+  let maxFeePerGas: bigint;
+  try {
+    const fees = await extendedSigner.estimateFeesPerGas();
+    maxFeePerGas = fees.maxFeePerGas;
+  } catch {
+    // Fallback if eth_maxPriorityFeePerGas or eth_feeHistory is not supported
+    maxFeePerGas = await extendedSigner.getGasPrice();
+  }
+
   try {
     const gasAmount = await extendedSigner.estimateGas({
       account: signer.account,
       to: to as `0x${string}`,
       data: `0x${data}`,
-      value: value === "" ? undefined : BigInt(value),
+      value: value ? BigInt(value) : undefined,
     });
 
-    return gasAmount * fee.maxFeePerGas;
+    return gasAmount * maxFeePerGas;
   } catch (error) {
     const fallbackGasAmount = await getFallbackGasAmount?.(
       tx.chainID,
       ChainType.EVM,
     );
     if (fallbackGasAmount) {
-      return BigInt(fallbackGasAmount) * fee.maxFeePerGas;
+      return BigInt(fallbackGasAmount) * maxFeePerGas;
     }
+
     throw error;
   }
 }
