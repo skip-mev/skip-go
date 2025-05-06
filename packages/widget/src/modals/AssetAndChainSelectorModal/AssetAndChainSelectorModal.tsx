@@ -33,6 +33,7 @@ export type GroupedAsset = {
   totalUsd: number;
   formattedTotalAmount: string;
   name?: string;
+  decimals?: number;
 };
 
 export type ChainWithAsset = Chain & {

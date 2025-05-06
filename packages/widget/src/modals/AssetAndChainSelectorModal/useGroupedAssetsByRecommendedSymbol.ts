@@ -86,7 +86,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           }
           return accumulator;
         },
-        { totalAmount: 0, totalUsd: 0, formattedTotalAmount: 0 },
+        { totalAmount: 0, totalUsd: 0 },
       );
     };
 
@@ -114,6 +114,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
           totalAmount: 0,
           totalUsd: 0,
           formattedTotalAmount: "0",
+          decimals: asset.decimals,
         });
       }
     });
