@@ -1532,7 +1532,6 @@ describe("client", () => {
 
   describe("getRecommendedGasPrice", () => {
     it("returns the recommended gas price for a chain", async () => {
-      setApiOptions();
       const result = await getRecommendedGasPrice("osmosis-1");
 
       expect(result?.denom).toEqual("uosmo");

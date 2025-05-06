@@ -1,31 +1,24 @@
 import { createRequestClient } from "./generateApi";
 
-let client: ReturnType<typeof createRequestClient> | undefined;
-let isInitialized = false;
-let resolveInit: () => void;
-const clientInitialized = new Promise<void>((resolve) => {
-  resolveInit = () => {
-    if (!isInitialized) {
-      isInitialized = true;
-      resolve();
-    }
-  };
-});
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+export class Fetch {
+  static client: ReturnType<typeof createRequestClient>;
 
-export const Fetch = {
-  setClientInitialized() {
-    resolveInit?.();
-  },
-  getClient() {
-    if (!client) throw new Error("Fetch client not set");
-    return client;
-  },
-  setClient(newClient: ReturnType<typeof createRequestClient>) {
-    client = newClient;
-  },
-  isInitialized: () => isInitialized,
-  clientInitialized,
-};
+  static isInitialized = false;
+  static resolveInitialization: () => void;
+  static clientInitialized: Promise<void> = new Promise<void>((resolve) => {
+    Fetch.resolveInitialization = () => {
+      if (!Fetch.isInitialized) {
+        Fetch.isInitialized = true;
+        resolve();
+      }
+    };
+  });
+
+  static setClientInitialized() {
+    Fetch.resolveInitialization();
+  }
+}
 
 export type SkipApiOptions = {
   apiUrl?: string;

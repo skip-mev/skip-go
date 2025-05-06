@@ -93,7 +93,7 @@ export function createRequest<Request, Response, TransformedResponse>({
 
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
     const { apiKey, apiUrl, abortDuplicateRequests, ...requestParams } = options ?? {};
-    let fetchClient = Fetch.getClient();
+    let fetchClient = Fetch.client;
     if (apiUrl || apiKey) {
       fetchClient = createRequestClient({
         baseUrl: apiUrl || "https://api.skip.build",
