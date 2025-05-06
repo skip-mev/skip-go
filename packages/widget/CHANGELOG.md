@@ -1,5 +1,25 @@
 ## 0.0.15
 
+## 3.8.7
+
+### Patch Changes
+
+- 7e7f1b1: fix swap page footer layout
+- 162f202: update registries
+- cf49d23: improve asset display in history page
+- 4f4db90: Fix clearing validating when returning from user rejected request, Fix no longer showing user rejected request unless currently on swap execution page
+- 41655dd: update low contrast text color
+- 23899c2: add initia to ledger warning
+- 1b601ec: support layer zero
+- a1744b8: Add onSourceAndDestinationSwapped callback
+- c946693: improve gaping in footer
+- Updated dependencies [162f202]
+- Updated dependencies [3f58bf3]
+- Updated dependencies [f5bc62c]
+- Updated dependencies [d2804a0]
+- Updated dependencies [1b601ec]
+  - @skip-go/client@0.17.0
+
 ## 3.8.6
 
 ### Patch Changes
