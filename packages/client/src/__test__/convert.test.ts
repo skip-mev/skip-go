@@ -108,6 +108,20 @@ describe("Case Conversion Functions", function () {
       expect(toCamel(input)).toEqual(input);
     });
 
+    it("should not mutate ibc denoms", function () {
+      const input = {
+        "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0": "value",
+      };
+      expect(toCamel(input)).toEqual(input);
+    });
+
+    it("should not mutate cosmos chainIds", function () {
+      const input = {
+        "kava_2222-10": "value",
+      };
+      expect(toCamel(input)).toEqual(input);
+    });
+
     it("should not mutate keys that are kebab-case", function () {
       const input = { "sei-native": "value" };
       expect(toCamel(input)).toEqual(input);

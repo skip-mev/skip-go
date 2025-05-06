@@ -84,8 +84,10 @@ export function toSnake<T extends object>(obj: T): Snake<T> {
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
   return convertKeys(obj, (key) => {
-    // Skip keys that start with something that's not a letter
-    if (/^[^a-zA-Z]/.test(key)) return key;
+    // Skip keys that include characters that arent alphanumerical or _
+    if (/[^a-zA-Z0-9_]/.test(key)) {
+      return key;
+    }
 
     return (
       key
