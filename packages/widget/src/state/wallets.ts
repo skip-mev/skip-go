@@ -78,6 +78,7 @@ export const knownEthermintLikeChains = [
   "dimension_37-1",
   "haqq_11235-1",
   "shido_9008-1",
+  "interwoven-1",
 ];
 
 export const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";

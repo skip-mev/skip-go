@@ -214,10 +214,11 @@ const RenderAssetAmount = ({
 
   const subtitle = useMemo(() => {
     if (!asset) return;
-    if (sourceAsset || isMobileScreenSize) {
+    const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`
+    if (sourceAsset || isMobileScreenSize || verboseString.length > 24) {
       return asset?.recommendedSymbol;
     }
-    return `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
+    return verboseString;
   }, [asset, chainName, isMobileScreenSize, sourceAsset]);
 
   return (

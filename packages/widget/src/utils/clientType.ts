@@ -26,10 +26,13 @@ import {
   Swap,
   SwapExactCoinIn,
   SwapExactCoinOut,
-  TransactionState,
+  LayerZeroTransfer,
+  LayerZeroTransferState,
+  LayerZeroTransferInfo,
+  TransferState,
   Transfer,
   TransferEvent,
-  TransferState,
+  TransactionState,
   TxStatusResponse,
 } from "@skip-go/client";
 
@@ -47,6 +50,7 @@ export enum OperationType {
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
   eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 type CombinedOperation = {
@@ -64,6 +68,7 @@ type CombinedOperation = {
   goFastTransfer?: GoFastTransfer;
   stargateTransfer?: StargateTransfer;
   eurekaTransfer?: EurekaTransfer;
+  layerZeroTransfer?: LayerZeroTransfer;
 };
 
 type OperationDetails = CombineObjectTypes<
@@ -77,7 +82,8 @@ type OperationDetails = CombineObjectTypes<
   StargateTransfer &
   OPInitTransfer &
   GoFastTransfer &
-  EurekaTransfer
+  EurekaTransfer &
+  LayerZeroTransfer
 > & {
   swapIn?: SwapExactCoinIn;
   swapOut?: SwapExactCoinOut;
@@ -255,6 +261,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
   const stargateTransfer = combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
   const eurekaTransfer = combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
+  const layerZeroTransfer = combinedTransferEvent?.layerZeroTransfer as LayerZeroTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -273,6 +280,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.stargateTransfer;
   } else if (eurekaTransfer) {
     transferType = TransferType.eurekaTransfer;
+  } else if (layerZeroTransfer) {
+    transferType = TransferType.layerZeroTransfer;
   }
 
   const getExplorerLink = (type: "send" | "receive") => {
@@ -299,7 +308,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | CCTPTransferInfo
           | HyperlaneTransferInfo
           | OPInitTransferInfo
-          | StargateTransferInfo;
+          | StargateTransferInfo
+          | LayerZeroTransferInfo;
 
         if (type === "send") {
           return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx?.explorerLink;
@@ -319,6 +329,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...goFastTransfer,
     ...stargateTransfer,
     ...eurekaTransfer,
+    ...layerZeroTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -361,7 +372,8 @@ export function getSimpleStatus(
     | HyperlaneTransferState
     | OPInitTransferState
     | GoFastTransferState
-    | StargateTransferState,
+    | StargateTransferState
+    | LayerZeroTransferState,
 ): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
@@ -375,6 +387,7 @@ export function getSimpleStatus(
     case "OPINIT_TRANSFER_SENT":
     case "GO_FAST_TRANSFER_SENT":
     case "STARGATE_TRANSFER_SENT":
+    case "LAYER_ZERO_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
@@ -383,6 +396,7 @@ export function getSimpleStatus(
     case "OPINIT_TRANSFER_RECEIVED":
     case "STARGATE_TRANSFER_RECEIVED":
     case "GO_FAST_TRANSFER_FILLED":
+    case "LAYER_ZERO_TRANSFER_RECEIVED":
       return "completed";
     default:
       return "failed";
@@ -398,6 +412,7 @@ type CombinedTransferEvent = {
   [TransferType.goFastTransfer]: GoFastTransferInfo;
   [TransferType.stargateTransfer]: StargateTransferInfo;
   [TransferType.eurekaTransfer]: EurekaTransferInfo;
+  [TransferType.layerZeroTransfer]: LayerZeroTransferInfo;
 };
 
 export enum TransferType {
@@ -409,6 +424,7 @@ export enum TransferType {
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
   eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 export type SimpleStatus =
@@ -430,7 +446,8 @@ export type ClientTransferEvent = {
   | HyperlaneTransferState
   | OPInitTransferState
   | GoFastTransferState
-  | StargateTransferState;
+  | StargateTransferState
+  | LayerZeroTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;
