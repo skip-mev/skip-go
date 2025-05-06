@@ -846,8 +846,9 @@ export type Operation = (
   | HyperlaneTransferWrapper
   | EvmSwapWrapper
   | OPInitTransferWrapper
-  | EurekaTransferWrapper
   | StargateTransferWrapper
+  | EurekaTransferWrapper
+  | LayerZeroTransferWrapper
 ) & {
   /** Index of the tx returned from Msgs that executes this operation */
   txIndex: number;
@@ -861,6 +862,12 @@ export interface OptionalAsset {
   asset?: Asset;
   /** Whether the asset was found */
   assetFound?: boolean;
+}
+
+export interface LayerZeroTransferTransactions {
+  sendTx?: ChainTransaction;
+  receiveTx?: ChainTransaction;
+  errorTx?: ChainTransaction;
 }
 
 export interface Packet {
@@ -1229,6 +1236,20 @@ export enum OPInitTransferState {
   OPINIT_TRANSFER_RECEIVED = "OPINIT_TRANSFER_RECEIVED",
 }
 
+/**
+ * LayerZero transfer state:
+ * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
+ * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+ * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
+ * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
+ */
+export enum LayerZeroTransferState {
+  LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
+  LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
+  LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
+  LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
+}
+
 /** A cross-chain transfer */
 export interface Transfer {
   /** Chain-id on which the transfer is initiated */
@@ -1277,9 +1298,10 @@ export interface TransferEvent {
   cctpTransfer?: CCTPTransferInfo;
   hyperlaneTransfer?: HyperlaneTransferInfo;
   opInitTransfer?: OPInitTransferInfo;
-  eurekaTransfer?: EurekaTransferInfo;
   stargateTransfer?: StargateTransferInfo;
   goFastTransfer?: GoFastTransferInfo;
+  eurekaTransfer?: EurekaTransferInfo;
+  layerZeroTransfer?: LayerZeroTransferInfo;
 }
 
 /**
@@ -1402,6 +1424,56 @@ export interface EurekaTransferInfo {
 export interface EurekaTransferWrapper {
   /** An IBC Eureka transfer */
   eurekaTransfer?: EurekaTransfer;
+}
+
+/** A Layer Zero Transfer */
+export interface LayerZeroTransfer {
+  /** Chain-id on which the transfer is initiated */
+  fromChainId: string;
+  /** Chain-id on which the transfer is received */
+  toChainId: string;
+  /** Denom of the input asset of the transfer */
+  denomIn: string;
+  /** Denom of the output asset of the transfer */
+  denomOut: string;
+  sourceOftCntractAddress: string;
+  destinationEndpointId: number;
+  messagingFeeAsset: Asset;
+  messagingFeeAmount: string;
+  messagingFeeAmountUsd: string;
+  /**
+   * Bridge Type:
+   * * `IBC` - IBC Bridge
+   * * `AXELAR` - Axelar Bridge
+   * * `CCTP` - CCTP Bridge
+   * * `HYPERLANE` - Hyperlane Bridge
+   * * `OPINIT` - Opinit Bridge
+   * * `GO_FAST` - Go Fast Bridge
+   * * `STARGATE` - Stargate Bridge
+   * * `EUREKA` - IBC Eureka Bridge
+   */
+  bridgeId: BridgeType;
+}
+
+export interface LayerZeroTransferInfo {
+  /** Chain ID of the source chain */
+  fromChainId: string;
+  /** Chain ID of the destination chain */
+  toChainId: string;
+  /**
+   * LayerZero transfer state:
+   * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
+   * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+   * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
+   * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
+   */
+  state: LayerZeroTransferState;
+  txs: LayerZeroTransferTransactions;
+}
+
+export interface LayerZeroTransferWrapper {
+  /** A Layer Zero Transfer */
+  eurekaTransfer?: LayerZeroTransfer;
 }
 
 export interface RecommendationRequest {

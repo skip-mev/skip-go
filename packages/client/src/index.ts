@@ -22,6 +22,7 @@ export type { RouteRequest } from "./api/postRoute";
 export { submitTransaction } from "./api/postSubmitTransaction";
 export { trackTransaction } from "./api/postTrackTransaction";
 export { transactionStatus } from "./api/postTransactionStatus";
+export type { TxStatusResponse } from "./api/postTransactionStatus";
 
 export { executeRoute } from "./public-functions/executeRoute";
 export type { ExecuteRouteOptions } from "./public-functions/executeRoute";
