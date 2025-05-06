@@ -11,6 +11,7 @@ export default defineConfig({
     ...(enableVisualizer ? [visualizer({ open: true })] : [])
   ],
   build: {
+    minify: false,
     target: 'esnext',
     lib: {
       entry: path.resolve(__dirname, 'index.ts'),

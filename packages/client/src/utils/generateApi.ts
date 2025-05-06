@@ -250,7 +250,15 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   retryInterval = 1000,
   backoffMultiplier = 2,
 }: PollingApiProps<K>) {
-  const request = async (requestParams?: ApiRequest<K>): Promise<ApiResponse<K>> => {
+  type Request = ApiRequest<K>;
+  type Response = ApiResponse<K>;
+
+  type RequestType = Request &
+    SkipApiOptions & {
+      abortDuplicateRequests?: boolean;
+    };
+
+  const request = async (requestParams?: RequestType): Promise<Response> => {
     let attempt = 0;
     let lastError: unknown;
 
@@ -274,5 +282,5 @@ export function pollingApi<K extends ValidApiMethodKeys>({
     throw lastError ?? new Error("pollingApi: max retries exceeded");
   };
 
-  return (params?: ApiRequest<K>): Promise<ApiResponse<K>> => request(params);
+  return (params?: RequestType): Promise<Response> => request(params);
 }

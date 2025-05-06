@@ -1,10 +1,8 @@
-import { api, ApiRequest } from "../utils/generateApi";
+import { api } from "../utils/generateApi";
 
-export const ibcOriginAssets = (request: ApiRequest<"getOriginAssets">["assets"]) => {
-  return api({
-    methodName: "getOriginAssets",
-    method: "post",
-    path: "/v2/fungible/ibc_origin_assets",
-    transformResponse: (response) => response.originAssets,
-  })({ assets: request });
-};
+export const ibcOriginAssets = api({
+  methodName: "getOriginAssets",
+  method: "post",
+  path: "/v2/fungible/ibc_origin_assets",
+  transformResponse: (response) => response.originAssets,
+});

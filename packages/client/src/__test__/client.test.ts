@@ -27,7 +27,6 @@ export const server = setupServer();
 
 describe("client", () => {
   beforeAll(async () => {
-    await setApiOptions();
     server.listen();
   });
 
@@ -71,7 +70,9 @@ describe("client", () => {
         }),
       );
 
-      const response = await chains();
+      const response = await chains({
+        apiUrl: "https://api.skip.build",
+      });
 
       expect(response).toEqual([
         {
@@ -161,7 +162,9 @@ describe("client", () => {
         }),
       );
 
-      const response = await assets();
+      const response = await assets({
+        apiUrl: "https://api.skip.build",
+      });
 
       expect(response).toEqual({
         "cosmoshub-4": [
@@ -252,6 +255,7 @@ describe("client", () => {
         chainIds: ["osmosis-1"],
         nativeOnly: true,
         includeNoMetadataAssets: true,
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -287,7 +291,11 @@ describe("client", () => {
         }),
       );
 
-      await expect(assets()).rejects.toThrow("Invalid chain_id");
+      await expect(
+        assets({
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("Invalid chain_id");
     });
 
     it("handles 500 Internal Server Error", async () => {
@@ -304,7 +312,11 @@ describe("client", () => {
         }),
       );
 
-      await expect(assets()).rejects.toThrow("internal server error");
+      await expect(
+        assets({
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("internal server error");
     });
   });
 
@@ -358,6 +370,7 @@ describe("client", () => {
         sourceAssetChainId: "osmosis-1",
         sourceAssetDenom: "uosmo",
         includeCw20Assets: true,
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -411,6 +424,7 @@ describe("client", () => {
           sourceAssetChainId: "osmosis-1",
           sourceAssetDenom: "uosmo",
           includeCw20Assets: true,
+          apiUrl: "https://api.skip.build",
         }),
       ).rejects.toThrow("Invalid source_asset_chain_id");
     });
@@ -434,6 +448,7 @@ describe("client", () => {
           sourceAssetChainId: "osmosis-1",
           sourceAssetDenom: "uosmo",
           includeCw20Assets: true,
+          apiUrl: "https://api.skip.build",
         }),
       ).rejects.toThrow("internal server error");
     });
@@ -476,13 +491,16 @@ describe("client", () => {
         }),
       );
 
-      const response = await recommendAssets([
-        {
-          sourceAssetChainId: "osmosis-1",
-          sourceAssetDenom: "uosmo",
-          destChainId: "cosmoshub-4",
-        },
-      ]);
+      const response = await recommendAssets({
+        requests: [
+          {
+            sourceAssetChainId: "osmosis-1",
+            sourceAssetDenom: "uosmo",
+            destChainId: "cosmoshub-4",
+          },
+        ],
+        apiUrl: "https://api.skip.build",
+      });
 
       const expected = [
         {
@@ -536,6 +554,7 @@ describe("client", () => {
       );
 
       const response = await messages({
+        apiUrl: "https://api.skip.build",
         sourceAssetDenom: "uosmo",
         sourceAssetChainId: "osmosis-1",
         destAssetDenom: "uatom",
@@ -705,6 +724,7 @@ describe("client", () => {
       );
 
       const response = await route({
+        apiUrl: "https://api.skip.build",
         sourceAssetChainId: "osmosis-1",
         sourceAssetDenom: "uosmo",
         destAssetChainId: "cosmoshub-4",
@@ -815,7 +835,9 @@ describe("client", () => {
         }),
       );
 
-      const response = await venues();
+      const response = await venues({
+        apiUrl: "https://api.skip.build",
+      });
 
       expect(response).toEqual([
         {
@@ -845,6 +867,7 @@ describe("client", () => {
       );
 
       const response = await submitTransaction({
+        apiUrl: "https://api.skip.build",
         chainId: "cosmoshub-4",
         tx: "txbytes123",
       });
@@ -873,6 +896,7 @@ describe("client", () => {
       const response = await trackTransaction({
         chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -987,6 +1011,7 @@ describe("client", () => {
       const response = await transactionStatus({
         chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -1200,6 +1225,7 @@ describe("client", () => {
       const response = await transactionStatus({
         chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -1422,6 +1448,7 @@ describe("client", () => {
         await transactionStatus({
           chainId: "cosmoshub-4",
           txHash: "tx_hash123",
+          apiUrl: "https://api.skip.build",
         });
       } catch (error) {
         expect(error).toEqual(new Error("internal server error"));
@@ -1484,12 +1511,15 @@ describe("client", () => {
         }),
       );
 
-      const params = [
-        {
-          denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-          chainId: "cosmoshub-4",
-        },
-      ];
+      const params = {
+        assets: [
+          {
+            denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+            chainId: "cosmoshub-4",
+          },
+        ],
+        apiUrl: "https://api.skip.build",
+      };
 
       const result = await ibcOriginAssets(params);
 
@@ -1499,12 +1529,14 @@ describe("client", () => {
 
   describe("getRecommendedGasPrice", () => {
     it("returns the recommended gas price for a chain", async () => {
+      await setApiOptions();
       const result = await getRecommendedGasPrice("osmosis-1");
 
       expect(result?.denom).toEqual("uosmo");
     }, 30000);
 
     it("returns the recommended gas price for Noble (no staking token)", async () => {
+      await setApiOptions();
       const result = await getRecommendedGasPrice("noble-1");
 
       expect(result?.denom).toEqual("uusdc");
@@ -1513,6 +1545,7 @@ describe("client", () => {
 
   describe("getFeeInfoForChain", async () => {
     it("returns the fee info for dymension", async () => {
+      await setApiOptions();
       const feeInfo = await getFeeInfoForChain("dymension_1100-1");
       expect(feeInfo?.denom).toEqual("adym");
     });
@@ -1550,7 +1583,9 @@ describe("client", () => {
         }),
       );
 
-      const result = await bridges();
+      const result = await bridges({
+        apiUrl: "https://api.skip.build",
+      });
 
       expect(result).toEqual([
         {
@@ -1760,7 +1795,7 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
@@ -1793,7 +1828,7 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
@@ -1850,7 +1885,7 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
