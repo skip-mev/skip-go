@@ -1,13 +1,5 @@
 import { atom } from "jotai";
-import {
-  Asset,
-  assets,
-  bridges,
-  Chain,
-  chains,
-  SkipClientOptions,
-  venues,
-} from "@skip-go/client";
+import { Asset, assets, bridges, Chain, chains, SkipClientOptions, venues } from "@skip-go/client";
 
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";

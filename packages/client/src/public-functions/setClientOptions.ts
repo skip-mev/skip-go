@@ -16,10 +16,13 @@ import { Affiliate, ChainAffiliates } from "../types/swaggerTypes";
 import { Fetch } from "src/utils/fetchClient";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
-  Fetch.client = createRequestClient({
+  const client = createRequestClient({
     baseUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
   });
+
+  Fetch.setClient(client);
+  Fetch.setClientInitialized();
 
   ClientState.endpointOptions = options.endpointOptions ?? {};
 
@@ -47,8 +50,6 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
     );
     ClientState.chainIdsToAffiliates = options.chainIdsToAffiliates;
   }
-
-  Fetch.setClientInitialized();
 };
 
 function validateChainIdsToAffiliates(chainIdsToAffiliates: Record<string, ChainAffiliates>) {
