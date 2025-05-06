@@ -23,6 +23,10 @@ const getRoute = async () => {
 }
 
 const getRecGasPrice = async () => {
+  setApiOptions({
+    apiUrl: "",
+    apiKey: "",
+  });
   const response = await getRecommendedGasPrice("osmosis-1");
   console.log(response);
 }

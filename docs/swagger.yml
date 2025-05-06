@@ -3009,6 +3009,7 @@ components:
       properties:
         cosmos_tx:
           $ref: '#/components/schemas/CosmosTx'
+      required: true
     EvmSwap:
       description: A swap on an EVM chain
       properties:
@@ -3073,6 +3074,7 @@ components:
         evm_tx:
           $ref: '#/components/schemas/EvmTx'
       type: object
+      required: true
     SvmTx:
       description: A transaction on an SVM chain
       properties:
@@ -3091,6 +3093,7 @@ components:
         svm_tx:
           $ref: '#/components/schemas/SvmTx'
       type: object
+      required: true
     FeeAsset:
       description:
         Asset used to pay gas fees and the recommended price tiers. Assets

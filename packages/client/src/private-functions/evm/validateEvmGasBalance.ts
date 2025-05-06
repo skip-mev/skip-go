@@ -13,7 +13,7 @@ export const validateEvmGasBalance = async ({
   getFallbackGasAmount,
 }: {
   signer: WalletClient;
-  tx?: EvmTx;
+  tx: EvmTx;
   getFallbackGasAmount?: GetFallbackGasAmount;
 }) => {
   const chainId = tx?.chainId ?? "";

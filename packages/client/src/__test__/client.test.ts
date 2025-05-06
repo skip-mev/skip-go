@@ -26,6 +26,9 @@ import { toCamel } from "src/utils/convert";
 export const server = setupServer();
 
 describe("client", () => {
+  beforeEach(async () => {
+    await setApiOptions();
+  });
   beforeAll(async () => {
     server.listen();
   });
@@ -1529,23 +1532,20 @@ describe("client", () => {
 
   describe("getRecommendedGasPrice", () => {
     it("returns the recommended gas price for a chain", async () => {
-      await setApiOptions();
       const result = await getRecommendedGasPrice("osmosis-1");
 
       expect(result?.denom).toEqual("uosmo");
     }, 30000);
 
     it("returns the recommended gas price for Noble (no staking token)", async () => {
-      await setApiOptions();
       const result = await getRecommendedGasPrice("noble-1");
 
       expect(result?.denom).toEqual("uusdc");
     }, 30000);
   });
 
-  describe("getFeeInfoForChain", async () => {
+  describe("getFeeInfoForChain", () => {
     it("returns the fee info for dymension", async () => {
-      await setApiOptions();
       const feeInfo = await getFeeInfoForChain("dymension_1100-1");
       expect(feeInfo?.denom).toEqual("adym");
     });

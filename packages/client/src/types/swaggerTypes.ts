@@ -629,7 +629,7 @@ export interface CosmosTx {
 
 export interface CosmosTxWrapper {
   /** A transaction on a Cosmos chain */
-  cosmosTx?: CosmosTx;
+  cosmosTx: CosmosTx;
 }
 
 /** A swap on an EVM chain */
@@ -675,7 +675,7 @@ export interface EvmTx {
 
 export interface EvmTxWrapper {
   /** A transaction on an EVM chain */
-  evmTx?: EvmTx;
+  evmTx: EvmTx;
 }
 
 /** A transaction on an SVM chain */
@@ -690,7 +690,7 @@ export interface SvmTx {
 
 export interface SvmTxWrapper {
   /** A transaction on an SVM chain */
-  svmTx?: SvmTx;
+  svmTx: SvmTx;
 }
 
 /** Asset used to pay gas fees and the recommended price tiers. Assets and gas price recommendations are sourced from the [keplr chain registry](https://github.com/chainapsis/keplr-chain-registry) */
