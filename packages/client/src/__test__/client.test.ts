@@ -16,12 +16,12 @@ import {
   route,
   setClientOptions,
   submitTransaction,
-  toCamel,
   trackTransaction,
   transactionStatus,
   venues,
 } from "../index";
 import { SKIP_API_URL } from "src/constants/constants";
+import { toCamel } from "src/utils/convert";
 
 export const server = setupServer();
 

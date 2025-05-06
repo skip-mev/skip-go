@@ -33,7 +33,6 @@ export type { getSigningStargateClientProps } from "./public-functions/getSignin
 export { setClientOptions } from "./public-functions/setClientOptions";
 export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPrice";
 export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
-export { toSnake, toCamel } from "./public-functions/utils";
 export { setApiOptions } from "./public-functions/setApiOptions";
 
 export type { SkipClientOptions } from "./state";

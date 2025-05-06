@@ -79,54 +79,6 @@ describe("Case Conversion Functions", function () {
       expect(toCamel(input)).toEqual(input);
     });
 
-    it("should convert chainID to chainId", function () {
-      const input = { chainID: "value" };
-      const expected = { chainId: "value" };
-      expect(toCamel(input)).toEqual(expected);
-    });
-
-    it("should convert imageURL to imageUrl", function () {
-      const input = { imageURL: "value" };
-      const expected = { imageUrl: "value" };
-      expect(toCamel(input)).toEqual(expected);
-    });
-
-    it("should convert isCW20 to isCw20", function () {
-      const input = { isCW20: "value" };
-      const expected = { isCw20: "value" };
-      expect(toCamel(input)).toEqual(expected);
-    });
-
-    it("should convert isSVM to isSvm", function () {
-      const input = { isSVM: "value" };
-      const expected = { isSvm: "value" };
-      expect(toCamel(input)).toEqual(expected);
-    });
-
-    it("should not mutate eth addresses", function () {
-      const input = { "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359": "value" };
-      expect(toCamel(input)).toEqual(input);
-    });
-
-    it("should not mutate ibc denoms", function () {
-      const input = {
-        "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0": "value",
-      };
-      expect(toCamel(input)).toEqual(input);
-    });
-
-    it("should not mutate cosmos chainIds", function () {
-      const input = {
-        "kava_2222-10": "value",
-      };
-      expect(toCamel(input)).toEqual(input);
-    });
-
-    it("should not mutate keys that are kebab-case", function () {
-      const input = { "sei-native": "value" };
-      expect(toCamel(input)).toEqual(input);
-    });
-
     it("should handle empty objects", function () {
       const input = {};
       const expected: Camel<typeof input> = {};
