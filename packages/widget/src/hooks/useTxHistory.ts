@@ -1,8 +1,8 @@
-import { useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
+import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
 import { TransactionHistoryItem } from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
-import { ClientTransferEvent, OverallStatus, SimpleStatus } from "@/utils/clientType";
+import { SimpleStatus } from "@/utils/clientType";
 import { TransferAssetRelease } from "@skip-go/client";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
@@ -23,21 +23,22 @@ export const useTxHistory = ({
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const txs = txHistoryItem.transactionDetails?.map((tx) => ({
-    chainID: tx.chainID,
+    chainId: tx.chainId,
     txHash: tx.txHash,
   }));
 
-  const chainIdFound = chains?.some((chain) => txs.map((tx) => tx.chainID).includes(chain.chainID));
+  const chainIdFound = chains?.some((chain) =>
+    txs.map((tx) => tx.chainId).includes(chain.chainId ?? ""),
+  );
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
-  let statusData: {
-    transferEvents: ClientTransferEvent[];
-    lastTxStatus?: OverallStatus;
-    isSuccess: boolean;
-    isSettled: boolean;
-    transferAssetRelease?: TransferAssetRelease;
-  } = txHistoryItem;
+  let statusData: TxsStatus = {
+    isSuccess: false,
+    isSettled: false,
+    transferEvents: [],
+    ...txHistoryItem,
+  };
 
   const { data, isFetching, isPending } = useBroadcastedTxsStatus({
     txsRequired,

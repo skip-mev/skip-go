@@ -39,38 +39,38 @@ export const useFilteredChains = ({
     // Filter out excluded assets before mapping to chains
     const allowedAssets = selectedGroup.assets.filter((asset) => {
       const isExcluded = EXCLUDED_TOKEN_COMBINATIONS.some(
-        (ex) => ex.id === selectedGroup.id && ex.chainIDs.includes(asset.chainID),
+        (ex) => ex.id === selectedGroup.id && ex.chainIDs.includes(asset.chainId ?? ""),
       );
       return !isExcluded;
     });
 
     const chainsWithAssets = allowedAssets
       .map((asset) => {
-        const chain = chains.find((c) => c.chainID === asset.chainID);
+        const chain = chains.find((c) => c.chainId === asset.chainId);
         return chain ? ({ ...chain, asset } as ChainWithAsset) : null;
       })
       .filter((chain) => {
         if (!chain) return false;
 
-        const allowedChainIds = filter?.[context];
-        const blockedChainIds = filterOut?.[context];
-        const blockedChainIdsUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
+        const allowedchainIds = filter?.[context];
+        const blockedchainIds = filterOut?.[context];
+        const blockedchainIdsUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
 
         const hasBalance =
-          Number(getBalance(chain.asset.chainID, chain.asset.denom)?.amount ?? 0) > 0;
+          Number(getBalance(chain.asset.chainId ?? "", chain.asset.denom ?? "")?.amount ?? 0) > 0;
 
         const isFilteredOutUnlessUserHasBalance = Boolean(
-          blockedChainIdsUnlessUserHasBalance?.[chain.chainID] &&
-            blockedChainIdsUnlessUserHasBalance?.[chain.chainID] === undefined &&
-            hasBalance === undefined,
+          blockedchainIdsUnlessUserHasBalance?.[chain?.chainId ?? ""] &&
+          blockedchainIdsUnlessUserHasBalance?.[chain?.chainId ?? ""] === undefined &&
+          hasBalance === undefined,
         );
 
-        const isAllowedByFilter = !allowedChainIds || chain.chainID in allowedChainIds;
+        const isAllowedByFilter = !allowedchainIds || chain?.chainId in allowedchainIds;
         const isFilteredOutByFilter = Boolean(
-          blockedChainIds?.[chain.chainID] && blockedChainIds?.[chain.chainID] === undefined,
+          blockedchainIds?.[chain.chainId] && blockedchainIds?.[chain.chainId] === undefined,
         );
 
-        const isPenumbraAllowed = context !== "source" || !chain.chainID.startsWith("penumbra");
+        const isPenumbraAllowed = context !== "source" || !chain.chainId.startsWith("penumbra");
 
         return (
           isAllowedByFilter &&
@@ -93,17 +93,17 @@ export const useFilteredChains = ({
       })
       .sort((chainWithAssetA, chainWithAssetB) => {
         const usdValueA = Number(
-          getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.valueUSD ?? 0,
+          getBalance(chainWithAssetA.chainId, chainWithAssetA.asset.denom)?.valueUsd ?? 0,
         );
         const usdValueB = Number(
-          getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.valueUSD ?? 0,
+          getBalance(chainWithAssetB.chainId, chainWithAssetB.asset.denom)?.valueUsd ?? 0,
         );
 
         const amountA = Number(
-          getBalance(chainWithAssetA.chainID, chainWithAssetA.asset.denom)?.amount ?? 0,
+          getBalance(chainWithAssetA.chainId, chainWithAssetA.asset.denom)?.amount ?? 0,
         );
         const amountB = Number(
-          getBalance(chainWithAssetB.chainID, chainWithAssetB.asset.denom)?.amount ?? 0,
+          getBalance(chainWithAssetB.chainId, chainWithAssetB.asset.denom)?.amount ?? 0,
         );
 
         // 1. Sort by USD value descending
@@ -142,8 +142,8 @@ export const useFilteredChains = ({
         if (bMatchesName && !aMatchesName) return 1;
 
         // 5. Sort by origin chain
-        const aIsOrigin = chainWithAssetA.asset.originChainID === chainWithAssetA.chainID;
-        const bIsOrigin = chainWithAssetB.asset.originChainID === chainWithAssetB.chainID;
+        const aIsOrigin = chainWithAssetA.asset.originChainId === chainWithAssetA.chainId;
+        const bIsOrigin = chainWithAssetB.asset.originChainId === chainWithAssetB.chainId;
 
         if (aIsOrigin && !bIsOrigin) return -1;
         if (bIsOrigin && !aIsOrigin) return 1;

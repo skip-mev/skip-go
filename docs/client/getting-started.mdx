@@ -88,12 +88,12 @@ const getEVMSigner = async () => {
 }
 ```
 
-```ts SVM Signer
+```ts Svm Signer
 // For Solana transactions, we'll use the Phantom wallet adapter
 // npm install @solana/wallet-adapter-phantom
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 
-const getSVMSigner = async () => {
+const getSvmSigner = async () => {
   const phantom = new PhantomWalletAdapter();
   await phantom.connect();
   return phantom;
@@ -107,8 +107,8 @@ Now, pass the signers and your optional configuration options into your `SkipCli
 ```ts
 const skipClient = new SkipClient({
   getCosmosSigner,
-  getEVMSigner,
-  getSVMSigner,
+  getEvmSigner,
+  getSvmSigner,
   // ...configOptions,
 });
 ```

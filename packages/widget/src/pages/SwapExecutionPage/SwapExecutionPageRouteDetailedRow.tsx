@@ -20,7 +20,7 @@ import { TxsStatus } from "./useBroadcastedTxs";
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
-  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
@@ -68,7 +68,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const chainAddressWallet = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     const firstChainAddressFoundForChainId = chainAddressArray.find(
-      (chainAddress) => chainAddress.chainID === chainId,
+      (chainAddress) => chainAddress.chainId === chainId,
     );
     const lastChainAddress = chainAddressArray[chainAddressArray.length - 1];
 

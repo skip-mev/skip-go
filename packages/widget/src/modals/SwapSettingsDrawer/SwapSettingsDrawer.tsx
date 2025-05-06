@@ -21,7 +21,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
+    return route?.chainIds?.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
   }, [route, chains]);
 
   const fees = useMemo(() => {
@@ -40,7 +40,7 @@ export const SwapSettingsDrawer = createModal(() => {
                 <img
                   width="25"
                   height="25"
-                  src={chain?.logoURI}
+                  src={chain?.logoUri}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
                 />

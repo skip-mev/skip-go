@@ -2,8 +2,8 @@
 import { useMemo } from "react";
 import { ChainAddress } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
-import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { RouteResponse } from "@skip-go/client";
 
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;

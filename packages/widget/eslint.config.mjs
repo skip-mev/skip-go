@@ -46,10 +46,6 @@ export default tseslint.config(
       quotes: ["error", "double", { avoidEscape: true }],
       "@typescript-eslint/no-unsafe-function-type": "off",
     },
-    ignores: [
-      "scripts/prepublish.cjs",
-      "scripts/generate-chains.cjs",
-      "build/*",
-    ],
+    ignores: ["scripts/prepublish.cjs", "scripts/generate-chains.cjs", "build/*"],
   },
 );

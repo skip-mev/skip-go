@@ -12,15 +12,18 @@ export const useIsGasStationTx = () => {
   const isGasStationTx = useMemo(() => {
     if (!chains || !route) return false;
 
-    const sourceChain = chains.find((chain) => chain.chainID === route.sourceAssetChainID);
-    const destChain = chains.find((chain) => chain.chainID === route.destAssetChainID);
+    const sourceChain = chains.find((chain) => chain.chainId === route.sourceAssetChainId);
+    const destChain = chains.find((chain) => chain.chainId === route.destAssetChainId);
 
     if (!sourceChain || !destChain) return false;
 
     const isAxelarTransfer = route.operations.some((op) => OperationType.axelarTransfer in op);
 
-    return sourceChain?.chainType === ChainType.EVM &&
-    !isAxelarTransfer && GAS_STATION_CHAIN_IDS.includes(destChain?.chainID);
+    return (
+      sourceChain?.chainType === ChainType.Evm &&
+      !isAxelarTransfer &&
+      GAS_STATION_CHAIN_IDS.includes(destChain?.chainId)
+    );
   }, [chains, route]);
 
   return isGasStationTx;

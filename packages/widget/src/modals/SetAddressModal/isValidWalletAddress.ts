@@ -1,7 +1,7 @@
 import { isAddress } from "viem";
 import { PublicKey } from "@solana/web3.js";
-import { ChainType } from "@skip-go/client";
 import { bech32m, bech32 } from "@/utils/bech32";
+import { ChainType } from "@skip-go/client";
 
 type isValidWalletAddressProps = {
   address: string;
@@ -33,13 +33,13 @@ export const isValidWalletAddress = ({
       } catch (_error) {
         return false;
       }
-    case ChainType.EVM:
+    case ChainType.Evm:
       try {
         return isAddress(address);
       } catch (_error) {
         return false;
       }
-    case ChainType.SVM:
+    case ChainType.Svm:
       try {
         const publicKey = new PublicKey(address);
         return PublicKey.isOnCurve(publicKey);

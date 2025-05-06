@@ -7,11 +7,11 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { ChainType } from "@skip-go/client";
 
 export const useWalletList = ({
-  chainID,
+  chainId,
   destinationWalletList,
   chainType: _chainType,
 }: {
-  chainID?: string;
+  chainId?: string;
   destinationWalletList?: boolean;
   chainType?: ChainType;
 }) => {
@@ -20,27 +20,27 @@ export const useWalletList = ({
   const { createSolanaWallets } = useCreateSolanaWallets();
 
   const { data: chains } = useAtomValue(skipChainsAtom);
-  const chainType = chainID ? chains?.find((c) => c.chainID === chainID)?.chainType : _chainType;
+  const chainType = chainId ? chains?.find((c) => c.chainId === chainId)?.chainType : _chainType;
 
-  const walletType = destinationWalletList && chainID === "pacific-1" ? "sei" : chainType;
+  const walletType = destinationWalletList && chainId === "pacific-1" ? "sei" : chainType;
 
   const walletList = useMemo(() => {
     switch (walletType) {
       case "sei": {
-        const cosmos = createCosmosWallets(chainID);
-        const evm = createEvmWallets(chainID);
+        const cosmos = createCosmosWallets(chainId);
+        const evm = createEvmWallets(chainId);
         return [...cosmos, ...evm];
       }
       case "cosmos":
-        return createCosmosWallets(chainID);
+        return createCosmosWallets(chainId);
       case "evm":
-        return createEvmWallets(chainID);
+        return createEvmWallets(chainId);
       case "svm":
         return createSolanaWallets();
       default:
         return [];
     }
-  }, [chainID, createCosmosWallets, createEvmWallets, createSolanaWallets, walletType]);
+  }, [chainId, createCosmosWallets, createEvmWallets, createSolanaWallets, walletType]);
 
   return walletList;
 };

@@ -10,12 +10,12 @@ export const usePrimaryChainIdForChainType = () => {
 
 const chainIdForChainType = {
   [ChainType.Cosmos]: "cosmoshub-4",
-  [ChainType.EVM]: "1",
-  [ChainType.SVM]: "solana",
+  [ChainType.Evm]: "1",
+  [ChainType.Svm]: "solana",
 };
 
 const chainIdForChainTypeTestnet = {
   [ChainType.Cosmos]: "provider",
-  [ChainType.EVM]: "11155111",
-  [ChainType.SVM]: "solana-devnet",
+  [ChainType.Evm]: "11155111",
+  [ChainType.Svm]: "solana-devnet",
 };

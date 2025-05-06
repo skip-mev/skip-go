@@ -4,10 +4,10 @@ import {
 } from "@injectivelabs/sdk-ts";
 import { DEFAULT_STD_FEE } from "@injectivelabs/utils";
 
-export interface CreateTransactionArgs extends CreateTransactionArgsInjective {
+export type CreateTransactionArgs = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   message: any | any[]; // the message that should be packed into the transaction
-}
+} & CreateTransactionArgsInjective
 
 export function createTransaction({
   chainId,

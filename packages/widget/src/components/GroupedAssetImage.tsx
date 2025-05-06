@@ -17,20 +17,20 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
     return <StyledAssetImage height={height} width={width} src="" alt="No asset" />;
   }
 
-  const allLogoURIs = [
-    groupedAsset.assets.find((asset) => asset.logoURI?.includes("chain-registry"))?.logoURI,
-    ...groupedAsset.assets.map((asset) => asset.logoURI),
+  const allLogoUris = [
+    groupedAsset.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
+    ...groupedAsset.assets.map((asset) => asset.logoUri),
   ].filter((uri): uri is string => !!uri);
 
-  const dedupedLogoURIs = Array.from(new Set(allLogoURIs));
+  const dedupedLogoUris = Array.from(new Set(allLogoUris));
 
-  if (dedupedLogoURIs.length === 0) {
+  if (dedupedLogoUris.length === 0) {
     return <StyledAssetImage height={height} width={width} src="" alt="No valid URIs" />;
   }
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (
-      currentImageIndex >= dedupedLogoURIs.length - 1 ||
+      currentImageIndex >= dedupedLogoUris.length - 1 ||
       currentImageIndex >= MAX_NUMBER_OF_IMAGES_TO_CHECK
     ) {
       e.currentTarget.onerror = null; // Prevent infinite loops in weird scenarios.
@@ -43,7 +43,7 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
     <StyledAssetImage
       height={height}
       width={width}
-      src={dedupedLogoURIs[currentImageIndex]}
+      src={dedupedLogoUris[currentImageIndex]}
       loading="lazy"
       onError={handleError}
       alt={`${groupedAsset.assets[0].recommendedSymbol || ""} logo`}

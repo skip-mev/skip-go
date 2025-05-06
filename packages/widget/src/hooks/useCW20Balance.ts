@@ -10,20 +10,20 @@ const COSMWASM_CLIENTS: Record<string, CosmWasmClient> = {};
 export const useCW20Balance = ({ asset, address }: { address?: string; asset?: ClientAsset }) => {
   const skipClientConfig = useAtomValue(skipClientConfigAtom);
   const query = useQuery({
-    queryKey: ["cw20Balance", { denom: asset?.denom, address, chainID: asset?.chainID }],
+    queryKey: ["cw20Balance", { denom: asset?.denom, address, chainId: asset?.chainId }],
     queryFn: async () => {
-      if (!asset?.chainID) throw new Error("Chain ID not found");
+      if (!asset?.chainId) throw new Error("Chain ID not found");
       const rpcURL =
-        (await skipClientConfig.endpointOptions?.getRpcEndpointForChain?.(asset?.chainID)) ||
+        (await skipClientConfig.endpointOptions?.getRpcEndpointForChain?.(asset?.chainId)) ||
         getChainInfo({
-          chainId: asset?.chainID,
+          chainId: asset?.chainId,
         })?.rpc;
       if (!rpcURL) throw new Error("RPC URL not found");
       if (!address) throw new Error("Address not found");
       if (!asset) throw new Error("Asset not found");
       return getCosmosCW20Balance(rpcURL, address, asset);
     },
-    enabled: !!address && !!asset?.tokenContract && !!asset?.isCW20 && !!asset?.chainID,
+    enabled: !!address && !!asset?.tokenContract && !!asset?.isCw20 && !!asset?.chainId,
   });
   return query;
 };
@@ -31,11 +31,11 @@ export const useCW20Balance = ({ asset, address }: { address?: string; asset?: C
 export async function getCosmosCW20Balance(rpcURL: string, address: string, asset: ClientAsset) {
   if (!asset.tokenContract) throw new Error("Token contract not found");
   const getCosmWasmClient = async () => {
-    if (COSMWASM_CLIENTS[asset.chainID]) {
-      return COSMWASM_CLIENTS[asset.chainID];
+    if (COSMWASM_CLIENTS[asset.chainId]) {
+      return COSMWASM_CLIENTS[asset.chainId];
     }
     const client = await CosmWasmClient.connect(rpcURL);
-    return (COSMWASM_CLIENTS[asset.chainID] = client), client;
+    return (COSMWASM_CLIENTS[asset.chainId] = client), client;
   };
   const cosmwasm = await getCosmWasmClient();
 

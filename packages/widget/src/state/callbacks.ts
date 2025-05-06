@@ -20,9 +20,9 @@ export type onTransactionBroadcastedProps = {
   sourceAddress: string;
   destinationAddress: string;
   sourceAssetDenom: string;
-  sourceAssetChainID: string;
+  sourceAssetChainId: string;
   destAssetDenom: string;
-  destAssetChainID: string;
+  destAssetChainId: string;
 };
 
 export type onTransactionCompleteProps = {
@@ -32,9 +32,9 @@ export type onTransactionCompleteProps = {
   sourceAddress: string;
   destinationAddress: string;
   sourceAssetDenom: string;
-  sourceAssetChainID: string;
+  sourceAssetChainId: string;
   destAssetDenom: string;
-  destAssetChainID: string;
+  destAssetChainId: string;
 };
 
 export type onTransactionFailedProps = {

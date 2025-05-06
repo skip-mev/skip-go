@@ -9,10 +9,7 @@ import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
 import { AccountData } from "./signer";
 import { getIsEthermint, getIsInitia } from "src/chains";
 
-export function makePubkeyAnyFromAccount(
-  account: AccountData,
-  chainId: string,
-) {
+export function makePubkeyAnyFromAccount(account: AccountData, chainId: string) {
   const isEthermint = getIsEthermint(chainId);
 
   const pubkey = isEthermint
@@ -24,11 +21,7 @@ export function makePubkeyAnyFromAccount(
   return pubkeyAny;
 }
 
-export function encodePubkeyToAny(
-  pubkey: Pubkey,
-  chainId: string,
-  isEthermint: boolean,
-): Any {
+export function encodePubkeyToAny(pubkey: Pubkey, chainId: string, isEthermint: boolean): Any {
   if (isEthermint) {
     const pubkeyProto = PubKey.fromPartial({
       key: fromBase64(pubkey.value),

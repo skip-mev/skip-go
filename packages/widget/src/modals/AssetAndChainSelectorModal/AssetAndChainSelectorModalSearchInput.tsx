@@ -7,12 +7,12 @@ import { SearchIcon } from "@/icons/SearchIcon";
 import { LeftArrowIcon } from "@/icons/ArrowIcon";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Typography";
-import { Asset } from "@skip-go/client";
 import { StyledAssetLabel } from "@/pages/SwapPage/SwapPageAssetChainInput";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { isMobile } from "@/utils/os";
 import { GroupedAsset } from "./AssetAndChainSelectorModal";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { Asset } from "@skip-go/client";
 
 type AssetAndChainSelectorModalSearchInputProps = {
   onSearch: (term: string) => void;

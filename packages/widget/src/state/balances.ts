@@ -1,13 +1,11 @@
-import { BalanceRequest, BalanceResponse } from "@skip-go/client";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { skipClient } from "./skipClient";
 import { isInvertingSwapAtom } from "./swapPage";
 import { atom } from "jotai";
+import { BalanceRequest, BalanceResponse, balances } from "@skip-go/client";
 
 export const skipAllBalancesRequestAtom = atom<BalanceRequest | undefined>(undefined);
 
 export const skipAllBalancesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const params = get(skipAllBalancesRequestAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
 
@@ -19,10 +17,10 @@ export const skipAllBalancesAtom = atomWithQuery((get) => {
       if (!params) {
         return { chains: {} };
       }
-      if (Object.keys(params.chains).length === 0) {
+      if (Object.keys(params?.chains ?? {}).length === 0) {
         return { chains: {} };
       }
-      return skip.balances(params);
+      return balances({ ...params, abortDuplicateRequests: true });
     },
     enabled,
     refetchInterval: 1000 * 60,

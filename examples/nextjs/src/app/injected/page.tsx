@@ -101,7 +101,7 @@ export default function Home() {
     "43114": avalanche,
   };
 
-  const getEVMSigner = async () => {
+  const getEvmSigner = async () => {
     const ethereum = window.ethereum;
     if (!ethereum) {
       throw new Error("MetaMask not installed");
@@ -135,7 +135,7 @@ export default function Home() {
   /**
    * Get an SVM-compatible signer using Phantom.
    */
-  const getSVMSigner = async () => {
+  const getSvmSigner = async () => {
     const phantom = new PhantomWalletAdapter();
     await phantom.connect();
     return phantom;
@@ -173,8 +173,8 @@ export default function Home() {
         // Provide the connected addresses and signer retrieval functions to the Widget
         connectedAddresses={connectedAddresses}
         getCosmosSigner={getCosmosSigner}
-        getEVMSigner={getEVMSigner}
-        getSVMSigner={getSVMSigner}
+        getEvmSigner={getEvmSigner}
+        getSvmSigner={getSvmSigner}
       />
     </div>
   );

@@ -69,16 +69,16 @@ export const SwapPage = () => {
   const isGoFast = useIsGoFast(route);
   const routePreference = useAtomValue(routePreferenceAtom);
   const slippage = useAtomValue(slippageAtom);
-  const maxAmountMinusFees = useMaxAmountTokenMinusFees()
+  const maxAmountMinusFees = useMaxAmountTokenMinusFees();
   const getBalance = useGetBalance();
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
   useCleanupDebouncedAtoms();
   useUpdateAmountWhenRouteChanges();
-  const switchEvmChainId = useSwitchEvmChain();
+  const switchEvmchainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
+  const sourceAccount = getAccount(sourceAsset?.chainId);
   const txHistory = useAtomValue(transactionHistoryAtom);
   const isSwapOperation = useIsSwapOperation(route);
 
@@ -87,7 +87,7 @@ export const SwapPage = () => {
       if (!denom || !chainId) return;
       if (!assets) return;
       return assets.find(
-        (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainID === chainId,
+        (a) => a.denom?.toLowerCase() === denom.toLowerCase() && a.chainId === chainId,
       );
     },
     [assets],
@@ -103,13 +103,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        switchEvmChainId(asset?.chainID);
+        switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmChainId]);
+  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -121,13 +121,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        switchEvmChainId(asset?.chainID);
+        switchEvmchainId(asset?.chainId);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
-      selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainID),
+      selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
     });
-  }, [getClientAsset, setSourceAsset, sourceAsset?.chainID, sourceAsset?.denom, switchEvmChainId]);
+  }, [getClientAsset, setSourceAsset, sourceAsset?.chainId, sourceAsset?.denom, switchEvmchainId]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
@@ -156,10 +156,10 @@ export const SwapPage = () => {
         }));
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
-      selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainID),
+      selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
     });
-  }, [destinationAsset?.chainID, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
+  }, [destinationAsset?.chainId, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
@@ -170,7 +170,7 @@ export const SwapPage = () => {
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
-    const computeFontSize = (label: string) => label.length > 36 ? 18 : 24;
+    const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);
 
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
@@ -179,9 +179,9 @@ export const SwapPage = () => {
           icon={ICONS.plus}
           onClick={() => {
             track("swap page: connect wallet button - clicked");
-            if (sourceAsset?.chainID) {
+            if (sourceAsset?.chainId) {
               NiceModal.show(Modals.WalletSelectorModal, {
-                chainId: sourceAsset?.chainID,
+                chainId: sourceAsset?.chainId,
               });
             } else {
               NiceModal.show(Modals.ConnectedWalletModal);
@@ -191,11 +191,11 @@ export const SwapPage = () => {
       );
     }
 
-    if (!sourceAsset?.chainID) {
+    if (!sourceAsset?.chainId) {
       return <MainButton label="Please select a source asset" icon={ICONS.swap} disabled />;
     }
 
-    if (!destinationAsset?.chainID) {
+    if (!destinationAsset?.chainId) {
       return <MainButton label="Please select a destination asset" icon={ICONS.swap} disabled />;
     }
 
@@ -215,24 +215,31 @@ export const SwapPage = () => {
       const errMsg = message.startsWith("no single-tx routes found")
         ? "Multiple signature routes are currently only supported on the Skip:Go desktop app"
         : message;
-    
+
       const label = errMsg || "No routes found";
       return <MainButton label={label} disabled fontSize={computeFontSize(label)} />;
     }
-    
+
     if (isLoadingBalances) {
       const label = "Fetching balances";
-      return <MainButton label={label} loading icon={ICONS.swap} fontSize={computeFontSize(label)} />;
+      return (
+        <MainButton label={label} loading icon={ICONS.swap} fontSize={computeFontSize(label)} />
+      );
     }
-    
+
     if (insufficientBalance) {
-      const sourceAssetBalance = getBalance(sourceAsset?.chainID, sourceAsset?.denom)?.formattedAmount;
+      const sourceAssetBalance = getBalance(
+        sourceAsset?.chainId,
+        sourceAsset?.denom,
+      )?.formattedAmount;
       const insufficientBalanceForGas = Number(sourceAssetBalance) > Number(maxAmountMinusFees);
-      const label = insufficientBalanceForGas ?
-        "Insufficient balance for gas":
-        "Insufficient balance";
-    
-      return <MainButton label={label} disabled icon={ICONS.swap} fontSize={computeFontSize(label)} />;
+      const label = insufficientBalanceForGas
+        ? "Insufficient balance for gas"
+        : "Insufficient balance";
+
+      return (
+        <MainButton label={label} disabled icon={ICONS.swap} fontSize={computeFontSize(label)} />
+      );
     }
 
     const onClick = () => {
@@ -321,12 +328,12 @@ export const SwapPage = () => {
       />
     );
   }, [
-    sourceAsset?.chainID,
+    sourceAsset?.chainId,
     sourceAsset?.amount,
     sourceAsset?.denom,
     sourceAccount?.address,
     isInvertingSwap,
-    destinationAsset?.chainID,
+    destinationAsset?.chainId,
     destinationAsset?.amount,
     isWaitingForNewRoute,
     isRouteError,
@@ -360,7 +367,7 @@ export const SwapPage = () => {
       },
     };
   }, [setCurrentPage, txHistory]);
-  
+
   return (
     <Column
       gap={5}

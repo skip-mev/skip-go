@@ -4,9 +4,8 @@ import { styled } from "styled-components";
 import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { ChainAffiliates, MsgsRequest, SkipClientOptions } from "@skip-go/client";
+import { MessagesRequest, RouteRequest, SignerGetters, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
-import { RouteConfig } from "@skip-go/client";
 import { registerModals } from "@/modals/registerModals";
 import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -19,11 +18,9 @@ import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
+import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
 
-export type WidgetRouteConfig = Omit<RouteConfig, "swapVenues" | "swapVenue"> & {
-  swapVenues?: NewSwapVenueRequest[];
-  swapVenue?: NewSwapVenueRequest;
-} & Pick<MsgsRequest, "timeoutSeconds">;
+export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
 export type WidgetProps = {
   /**
@@ -81,26 +78,9 @@ export type WidgetProps = {
   ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
-} & Pick<
-  NewSkipClientOptions,
-  | "apiUrl"
-  | "chainIdsToAffiliates"
-  | "endpointOptions"
-  | "getCosmosSigner"
-  | "getEVMSigner"
-  | "getSVMSigner"
-> &
-  Callbacks;
-
-type NewSwapVenueRequest = {
-  name: string;
-  chainId: string;
-};
-
-export type NewSkipClientOptions = Omit<SkipClientOptions, "apiURL" | "chainIDsToAffiliates"> & {
-  apiUrl?: string;
-  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
-};
+} & SkipClientOptions &
+  Callbacks &
+  SignerGetters;
 
 export type ShowSwapWidget = {
   button?: ReactElement;
@@ -109,6 +89,8 @@ export type ShowSwapWidget = {
 export const queryClient = new QueryClient();
 
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
+
+migrateOldLocalStorageValues();
 
 export const Widget = (props: WidgetProps) => {
   return (

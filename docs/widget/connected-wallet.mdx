@@ -37,7 +37,7 @@ The `connectedAddresses` prop is a map from chain IDs to addresses. This map tel
 In addition to passing in `connectedAddresses`, you must also provide the widget with signer functions so it can sign and send transactions on behalf of the user. These functions vary by chain type and are provided as separate props:
 
 - `getCosmosSigner() => Promise<OfflineSigner>`
-- `getEVMSigner() => Promise<WalletClient>`
-- `getSVMSigner() => Promise<PhantomWalletAdapter>`
+- `getEvmSigner() => Promise<WalletClient>`
+- `getSvmSigner() => Promise<PhantomWalletAdapter>`
 
 Each of these functions should return a signer (or signer-like interface) that the widget can use to create and broadcast transactions.
