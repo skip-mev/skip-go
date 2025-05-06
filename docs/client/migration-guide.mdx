@@ -8,11 +8,11 @@ title: 'Migration Guide'
   actively maintained [TypeScript package](https://www.npmjs.com/package/@skip-go/client).
 </Warning>
 
-### Upcoming Breaking Changes
+## Upcoming Breaking Changes
 
 This section details the migration from previous versions to the latest `@skip-go/client`.
 
-#### No More SkipClient Class
+### No More SkipClient Class
 
 The `SkipClient` class has been removed. Instead, import and use individual functions directly:
 
@@ -39,7 +39,7 @@ import {
 } from '@skip-go/client';
 ```
 
-#### Initialization Changes
+### Initialization Changes
 
 **If not using `executeRoute`:**
 
@@ -62,7 +62,7 @@ import {
 + chains(); // Assuming apiUrl/apiKey were set via setApiOptions or passed in
 ```
 
-#### Build Format Change
+### Build Format Change
 
 The library build format has changed from CommonJS (CJS) to `ES Modules (ESM)`.
 
@@ -72,11 +72,11 @@ This change enables better tree-shaking, leading to significantly smaller bundle
   If you're **not** using `executeRoute`, your final bundle size should decrease dramatically (e.g., from ~5MB to potentially ~7KB for a single API function usage), assuming tree-shaking is enabled in your bundler.
 </Info>
 
-#### Axios Removed
+### Axios Removed
 
 `axios` is no longer a dependency. All API calls now utilize the standard `window.fetch` API internally.
 
-#### CamelCase Update
+### CamelCase Update
 
 All property names in API responses and configuration objects now strictly adhere to `camelCase`.
 
