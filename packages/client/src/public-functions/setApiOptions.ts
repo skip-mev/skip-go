@@ -8,4 +8,6 @@ export const setApiOptions = (options: SkipApiOptions = {}) => {
   });
 
   Fetch.setClientInitialized();
+
+  return Fetch.clientInitialized;
 };

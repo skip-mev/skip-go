@@ -22,12 +22,17 @@ import {
   venues,
 } from "../index";
 import { SKIP_API_URL } from "src/constants/constants";
+import { createRequestClient } from "src/utils/generateApi";
+import { Fetch } from "src/utils/fetchClient";
 
 export const server = setupServer();
 
 describe("client", () => {
-  beforeAll(() => {
-    setApiOptions();
+  beforeAll(async () => {
+    Fetch.client = createRequestClient({
+      baseUrl: "https://api.skip.build",
+    });
+    Fetch.setClientInitialized();
     server.listen();
   });
 
