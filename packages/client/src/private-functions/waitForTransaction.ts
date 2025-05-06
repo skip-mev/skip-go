@@ -14,10 +14,10 @@ export const waitForTransaction = async ({
   txHash,
   onTransactionTracked,
 }: WaitForTransactionProps) => {
-  const { explorerLink } = (await trackTransaction({
+  const { explorerLink } = await trackTransaction({
     chainId,
     txHash,
-  }));
+  });
   await onTransactionTracked?.({ txHash, chainId, explorerLink });
 
   // eslint-disable-next-line no-constant-condition

@@ -86,9 +86,10 @@ export function createRequest<Request, Response, TransformedResponse>({
 }: createRequestType<Request, Response, TransformedResponse>) {
   let controller: AbortController | null = null;
 
-  type RequestType = Request & SkipApiOptions & {
-    abortDuplicateRequests?: boolean;
-  };
+  type RequestType = Request &
+    SkipApiOptions & {
+      abortDuplicateRequests?: boolean;
+    };
 
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
     const { apiKey, apiUrl, abortDuplicateRequests, ...requestParams } = options ?? {};
@@ -152,8 +153,8 @@ type FunctionKeys<T> = {
 // Keys of methods that return { data: ... }
 type ValidApiMethodKeys = {
   [K in FunctionKeys<ApiInstance>]: Awaited<ReturnType<ApiInstance[K]>> extends { data: unknown }
-  ? K
-  : never;
+    ? K
+    : never;
 }[FunctionKeys<ApiInstance>];
 
 /* --------------------------------------------------
@@ -167,10 +168,10 @@ export type ApiRequest<K extends ValidApiMethodKeys> = NonNullable<
 
 export type ApiResponse<K extends ValidApiMethodKeys> = Camel<
   Awaited<ReturnType<ApiInstance[K]>> extends { data: infer D }
-  ? D extends object
-  ? D
-  : never
-  : never
+    ? D extends object
+      ? D
+      : never
+    : never
 >;
 
 /* --------------------------------------------------

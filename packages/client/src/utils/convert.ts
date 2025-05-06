@@ -65,23 +65,21 @@ export type CamelKey<S extends string> = S extends `${infer T}_${infer U}`
 export type Snake<T> = T extends (infer U)[]
   ? Snake<U>[]
   : T extends object
-  ? {
-    [K in keyof T as K extends string ? SnakeKey<K> : never]: Snake<T[K]>;
-  }
-  : T;
+    ? {
+        [K in keyof T as K extends string ? SnakeKey<K> : never]: Snake<T[K]>;
+      }
+    : T;
 
 export type Camel<T> = T extends (infer U)[]
   ? Camel<U>[]
   : T extends object
-  ? {
-    [K in keyof T as K extends string ? CamelKey<K> : never]: Camel<T[K]>;
-  }
-  : T;
+    ? {
+        [K in keyof T as K extends string ? CamelKey<K> : never]: Camel<T[K]>;
+      }
+    : T;
 
 export function toSnake<T extends object>(obj: T): Snake<T> {
-  return convertKeys(obj, (key) =>
-    key.replace(/([A-Z])/g, "_$1").toLowerCase(),
-  );
+  return convertKeys(obj, (key) => key.replace(/([A-Z])/g, "_$1").toLowerCase());
 }
 
 export function toCamel<T extends object>(obj: T): Camel<T> {
@@ -89,22 +87,21 @@ export function toCamel<T extends object>(obj: T): Camel<T> {
     // Skip keys that start with something that's not a letter
     if (/^[^a-zA-Z]/.test(key)) return key;
 
-    return key
-      // snake_case to camelCase
-      .replace(/_([a-zA-Z0-9])/g, (_, letter) => letter.toUpperCase())
-      // lowercase first character
-      .replace(/^([A-Z])/, (match) => match.toLowerCase())
-      // normalize full-uppercase acronyms like ID, API, CW → Id, Api, Cw
-      .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
-        /^[A-Z]+$/.test(match) ? match.charAt(0) + match.slice(1).toLowerCase() : match
-      );
+    return (
+      key
+        // snake_case to camelCase
+        .replace(/_([a-zA-Z0-9])/g, (_, letter) => letter.toUpperCase())
+        // lowercase first character
+        .replace(/^([A-Z])/, (match) => match.toLowerCase())
+        // normalize full-uppercase acronyms like ID, API, CW → Id, Api, Cw
+        .replace(/([A-Z]{2,})(?=[A-Z][a-z]|[a-z]|[0-9]|$)/g, (match) =>
+          /^[A-Z]+$/.test(match) ? match.charAt(0) + match.slice(1).toLowerCase() : match,
+        )
+    );
   });
 }
 
-export function convertKeys<T extends object>(
-  obj: T,
-  convertKey: (key: string) => string,
-): any {
+export function convertKeys<T extends object>(obj: T, convertKey: (key: string) => string): any {
   if (Array.isArray(obj)) {
     return obj.map((item) => convertKeys(item, convertKey)) as any;
   } else if (obj !== null && typeof obj === "object") {

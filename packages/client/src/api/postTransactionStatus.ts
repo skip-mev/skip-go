@@ -6,4 +6,4 @@ export const transactionStatus = pollingApi({
   method: "get",
 });
 
-export type TxStatusResponse = ApiResponse<"getTransactionStatusV2">
+export type TxStatusResponse = ApiResponse<"getTransactionStatusV2">;

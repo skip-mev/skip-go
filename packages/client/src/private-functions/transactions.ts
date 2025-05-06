@@ -12,7 +12,12 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 import { WalletClient, publicActions } from "viem";
-import { Connection, LAMPORTS_PER_SOL, SimulatedTransactionResponse, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  SimulatedTransactionResponse,
+  Transaction,
+} from "@solana/web3.js";
 import { ChainType, CosmosMsg, EvmTx, SvmTx } from "../types/swaggerTypes";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
@@ -229,7 +234,7 @@ export type SimulationResult = {
   success: boolean;
   logs?: string[];
   error?: SimulatedTransactionResponse["err"];
-}
+};
 
 export async function simulateSvmTx(
   connection: Connection,
@@ -254,18 +259,19 @@ export async function simulateSvmTx(
   if (simulation.value.err) {
     const shortfall = getSolShortfall(simulation.value.logs ?? []);
 
-    const insufficientLamports = simulation.value.logs?.some((log) =>
-      log.includes("insufficient lamports"),
-    ) && shortfall !== null;
+    const insufficientLamports =
+      simulation.value.logs?.some((log) => log.includes("insufficient lamports")) &&
+      shortfall !== null;
 
-    const insufficientFundsForRent = Object.keys(simulation.value.err).includes("InsufficientFundsForRent");
+    const insufficientFundsForRent = Object.keys(simulation.value.err).includes(
+      "InsufficientFundsForRent",
+    );
 
-    const errMsg =
-      insufficientLamports
-        ? `Insufficient balance for gas on Solana. You need ${shortfall.toFixed(6)} SOL to proceed.` :
-        insufficientFundsForRent
-          ? "Insufficient funds for rent on Solana. You need to fund your account."
-          : "Simulation failed";
+    const errMsg = insufficientLamports
+      ? `Insufficient balance for gas on Solana. You need ${shortfall.toFixed(6)} SOL to proceed.`
+      : insufficientFundsForRent
+        ? "Insufficient funds for rent on Solana. You need to fund your account."
+        : "Simulation failed";
 
     return {
       success: false,

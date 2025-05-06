@@ -79,7 +79,8 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
 } & SkipClientOptions &
-  Callbacks & SignerGetters;
+  Callbacks &
+  SignerGetters;
 
 export type ShowSwapWidget = {
   button?: ReactElement;

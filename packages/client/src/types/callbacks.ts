@@ -11,9 +11,9 @@ export type TransactionCallbacks = {
     explorerLink: string;
   }) => Promise<void>;
   onTransactionCompleted?: (txInfo: {
-    chainId: string,
-    txHash: string,
-    status?: TransferStatus,
+    chainId: string;
+    txHash: string;
+    status?: TransferStatus;
   }) => Promise<void>;
   onValidateGasBalance?: (value: {
     chainId?: string;

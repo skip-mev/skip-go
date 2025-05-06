@@ -3,7 +3,6 @@ import { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { simulateSvmTx } from "../transactions";
 
-
 export const validateSvmGasBalance = async ({ tx }: { tx?: SvmTx }) => {
   const endpoint = await getRpcEndpointForChain(tx?.chainId ?? "");
   const connection = new Connection(endpoint);

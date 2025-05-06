@@ -20,8 +20,5 @@ export const getRecommendedGasPrice = async (chainId: string) => {
 
   if (!price) return;
 
-  return new GasPrice(
-    Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
-    feeInfo.denom,
-  );
+  return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), feeInfo.denom);
 };

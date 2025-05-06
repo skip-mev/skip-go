@@ -11,7 +11,7 @@ const eslintConfig = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "prettier"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -27,6 +27,18 @@ const eslintConfig = {
     "scripts/generate-chains.cjs",
   ],
   rules: {
+    "prettier/prettier": [
+      "error",
+      {
+        singleQuote: false,
+        trailingComma: "all",
+        tabWidth: 2,
+        semi: true,
+        printWidth: 100,
+        bracketSpacing: true,
+        endOfLine: "auto",
+      },
+    ],
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "@typescript-eslint/no-unused-vars": [
       "error",

@@ -23,4 +23,4 @@ export class Fetch {
 export type SkipApiOptions = {
   apiUrl?: string;
   apiKey?: string;
-}
+};
