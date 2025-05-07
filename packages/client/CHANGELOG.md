@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 0.17.1
+
+### Patch Changes
+
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+
 ## 0.17.0
 
 ### Minor Changes
