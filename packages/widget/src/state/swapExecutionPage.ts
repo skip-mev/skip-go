@@ -406,7 +406,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
-          getFallbackGasAmount,
+          // getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
             if (getSigners?.getCosmosSigner) {

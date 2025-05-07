@@ -7,7 +7,7 @@ import { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { SignerData } from "@cosmjs/stargate/build/signingstargateclient";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { CosmosMsg } from "src/types/swaggerTypes";
-import { getEncodeObjectFromCosmosMessageInjective } from "../transactions";
+import { getEncodeObjectFromCosmosMessageInjective } from "./getEncodeObjectFromCosmosMessage";
 import { createTransaction } from "src/injective";
 
 // I need to investigate what exactly is even different about this and hopefully remove it all together.

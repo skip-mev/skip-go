@@ -1,20 +1,23 @@
 import { WalletClient } from "viem";
 import { EvmTx } from "../../types/swaggerTypes";
-import { getEVMGasAmountForMessage } from "../transactions";
 import { balances } from "../../api/postBalances";
 import { BigNumber } from "bignumber.js";
 import { ClientState } from "src/state";
 import { formatUnits } from "viem";
 import { GetFallbackGasAmount } from "src/types/client-types";
+import { validateEvmTokenApproval } from "./validateEvmTokenApproval";
+import { getEVMGasAmountForMessage } from "./getEvmGasAmountForMessage";
 
 export const validateEvmGasBalance = async ({
   signer,
   tx,
   getFallbackGasAmount,
+  useUnlimitedApproval,
 }: {
   signer: WalletClient;
   tx: EvmTx;
   getFallbackGasAmount?: GetFallbackGasAmount;
+  useUnlimitedApproval?: boolean;
 }) => {
   const chainId = tx?.chainId ?? "";
   const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
@@ -25,7 +28,6 @@ export const validateEvmGasBalance = async ({
   if (!chain) {
     throw new Error(`failed to find chain for chainId: '${chainId}'`);
   }
-  const gasAmount = await getEVMGasAmountForMessage(signer, tx, getFallbackGasAmount);
 
   if (!signer.account?.address) {
     throw new Error("validateEvmGasBalance: Signer address not found");
@@ -50,6 +52,30 @@ export const validateEvmGasBalance = async ({
       ([denom]) => denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
     )?.[1];
   const gasBalance = nativeGasBalance || zeroAddressGasBalance;
+
+  const { requiredErc20Approvals } = tx;
+
+  if (requiredErc20Approvals) {
+    try {
+      await validateEvmTokenApproval({
+        requiredErc20Approvals,
+        signer,
+        chain,
+        gasBalance,
+        tx,
+        useUnlimitedApproval,
+      });
+    } catch (error) {
+      const err = error as Error;
+      return {
+        error: err.message,
+        asset: null,
+        fee: null,
+      };
+    }
+  }
+
+  const gasAmount = await getEVMGasAmountForMessage(signer, tx, getFallbackGasAmount);
 
   if (!gasBalance) {
     const nativeAsset = skipAssets?.find((x) => x.denom?.includes("-native"));

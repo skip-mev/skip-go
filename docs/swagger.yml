@@ -2943,12 +2943,15 @@ components:
         amount:
           description: Amount of the approval
           type: string
+          required: true
         spender:
           description: Address of the spender
           type: string
+          required: true
         token_contract:
           description: Address of the ERC20 token contract
           type: string
+          required: true
       type: object
     ErrorDetail:
       type: object
@@ -2993,6 +2996,7 @@ components:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
+          required: true
         path:
           description: Path of chain-ids that the message is intended to interact with
           items:
@@ -3051,6 +3055,7 @@ components:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
+          required: true
         data:
           description: Data of the transaction
           type: string
@@ -3081,6 +3086,7 @@ components:
         chain_id:
           description: Chain-id of the chain that the transaction is intended for
           type: string
+          required: true
         signer_address:
           description: The address of the wallet that will sign this transaction
           type: string

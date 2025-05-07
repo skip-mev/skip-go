@@ -7,7 +7,7 @@ import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
 import { Int53 } from "@cosmjs/math/build/integers";
 import { ClientState } from "src/state";
-import { getEncodeObjectFromCosmosMessage } from "../transactions";
+import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { SignCosmosMessageDirectOptions } from "src/types/client-types";
 
 export const signCosmosMessageDirect = async (

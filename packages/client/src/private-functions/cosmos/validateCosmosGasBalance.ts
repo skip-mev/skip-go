@@ -2,13 +2,13 @@ import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { ChainType, CosmosMsg } from "../../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
-import { getCosmosGasAmountForMessage } from "../transactions";
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
 import { balances } from "../../api/postBalances";
 import { ClientState } from "src/state";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { GetFallbackGasAmount } from "src/types/client-types";
+import { getCosmosGasAmountForMessage } from "./getCosmosGasAmountForMessage";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;

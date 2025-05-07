@@ -1,5 +1,5 @@
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { getEncodeObjectFromCosmosMessage } from "../transactions";
+import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { ClientState } from "src/state";
 import { makeSignDoc } from "@cosmjs/amino";

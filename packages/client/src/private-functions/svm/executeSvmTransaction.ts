@@ -53,7 +53,7 @@ export const executeSvmTransaction = async (
       chainId: svmTx.chainId,
       tx: serializedTx.toString("base64"),
     }).then((res) => {
-      signature = res.txHash;
+      signature = res?.txHash;
     });
 
     const rpcSig = await connection.sendRawTransaction(serializedTx, {

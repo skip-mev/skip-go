@@ -582,11 +582,11 @@ export interface CosmWasmContractMsgWrapper {
 /** An ERC20 token contract approval */
 export interface Erc20Approval {
   /** Amount of the approval */
-  amount?: string;
+  amount: string;
   /** Address of the spender */
-  spender?: string;
+  spender: string;
   /** Address of the ERC20 token contract */
-  tokenContract?: string;
+  tokenContract: string;
 }
 
 export interface ErrorDetail {
@@ -618,7 +618,7 @@ export interface CosmosMsg {
 /** A transaction on a Cosmos chain */
 export interface CosmosTx {
   /** Chain-id of the chain that the transaction is intended for */
-  chainId?: string;
+  chainId: string;
   /** Path of chain-ids that the message is intended to interact with */
   path?: string[];
   /** The address of the wallet that will sign this transaction */
@@ -660,7 +660,7 @@ export interface EvmSwapWrapper {
 /** A transaction on an EVM chain */
 export interface EvmTx {
   /** Chain-id of the chain that the transaction is intended for */
-  chainId?: string;
+  chainId: string;
   /** Data of the transaction */
   data?: string;
   /** ERC20 approvals required for the transaction */
@@ -681,7 +681,7 @@ export interface EvmTxWrapper {
 /** A transaction on an SVM chain */
 export interface SvmTx {
   /** Chain-id of the chain that the transaction is intended for */
-  chainId?: string;
+  chainId: string;
   /** The address of the wallet that will sign this transaction */
   signerAddress?: string;
   /** Base64 encoded unsigned or partially signed transaction */
