@@ -31,7 +31,9 @@ export type GroupedAsset = {
   assets: ClientAsset[];
   totalAmount: number;
   totalUsd: number;
+  formattedTotalAmount: string;
   name?: string;
+  decimals?: number;
 };
 
 export type ChainWithAsset = Chain & {
