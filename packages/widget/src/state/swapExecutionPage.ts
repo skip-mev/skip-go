@@ -198,7 +198,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onError: (error: unknown, transactionDetailsArray) => {
       const currentPage = get(currentPageAtom);
-      track("execute route: error", { error });
+      track("execute route: error", { error, route });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
@@ -215,18 +215,16 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
           });
         }
-      } else if (lastTransaction?.explorerLink) {
-        if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
-          track("error page: unexpected error");
+      } else if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
+          track("error page: insufficient balance for gas");
           set(errorAtom, {
-            errorType: ErrorType.Unexpected,
+            errorType: ErrorType.InsufficientBalanceForGas,
             error: error as Error,
             onClickBack: () => {
               set(setOverallStatusAtom, "unconfirmed");
             },
-          });
-          return;
-        }
+        });
+      } else if (lastTransaction?.explorerLink) {
         track("error page: transaction failed");
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
