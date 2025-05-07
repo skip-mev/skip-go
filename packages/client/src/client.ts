@@ -69,19 +69,13 @@ import {
   getEncodeObjectFromCosmosMessageInjective,
   getCosmosGasAmountForMessage,
   getEVMGasAmountForMessage,
-  getSVMGasAmountForMessage,
   simulateSvmTx,
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  Transaction,
-} from "@solana/web3.js";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.build";
@@ -406,6 +400,7 @@ export class SkipClient {
       onValidateGasBalance: options.onValidateGasBalance,
       simulate: simulate,
       disabledChainIds: validateChainIds,
+      useUnlimitedApproval: options.useUnlimitedApproval,
     });
 
     const validateEnabledChainIds = async (chainId: string) => {
@@ -417,6 +412,7 @@ export class SkipClient {
         onValidateGasBalance: options.onValidateGasBalance,
         simulate: simulate,
         enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
+        useUnlimitedApproval: options.useUnlimitedApproval,
       });
     };
 
@@ -1780,6 +1776,7 @@ export class SkipClient {
     simulate,
     disabledChainIds,
     enabledChainIds,
+    useUnlimitedApproval,
   }: {
     txs: types.Tx[];
     onValidateGasBalance?: clientTypes.ExecuteRouteOptions["onValidateGasBalance"];
@@ -1789,6 +1786,7 @@ export class SkipClient {
     disabledChainIds?: string[];
     // run gas validation for specific chainId
     enabledChainIds?: string[];
+    useUnlimitedApproval?: boolean;
   } & Pick<clientTypes.SignerGetters, "getCosmosSigner" | "getEVMSigner">) {
     // cosmos or svm tx in txs
     if (
@@ -1856,6 +1854,7 @@ export class SkipClient {
               tx: tx.evmTx,
               signer,
               getFallbackGasAmount,
+              useUnlimitedApproval,
             });
             return res;
           } catch (e) {
@@ -2007,7 +2006,6 @@ export class SkipClient {
       }
       let gasLimitToUse = Math.ceil(parseFloat(estimatedGasAmount));
 
-
       if (chainID === "noble-1") {
         gasLimitToUse = 200_000;
       } else if (chainID === "pirin-1" && asset.denom !== "unls") {
@@ -2114,10 +2112,12 @@ export class SkipClient {
     signer,
     tx,
     getFallbackGasAmount,
+    useUnlimitedApproval,
   }: {
     signer: WalletClient;
     tx: types.EvmTx;
     getFallbackGasAmount?: clientTypes.GetFallbackGasAmount;
+    useUnlimitedApproval?: boolean;
   }) {
     const chain = (await this.getChains()).find(
       (chain) => chain.chainID === tx.chainID,
@@ -2125,15 +2125,10 @@ export class SkipClient {
     if (!chain) {
       throw new Error(`failed to find chain id for '${tx.chainID}'`);
     }
-    const gasAmount = await getEVMGasAmountForMessage(
-      signer,
-      tx,
-      getFallbackGasAmount,
-    );
-
     if (!signer.account?.address) {
       throw new Error("validateEvmGasBalance: Signer address not found");
     }
+
     const skipBalances = await this.balances({
       chains: {
         [tx.chainID]: {
@@ -2157,6 +2152,34 @@ export class SkipClient {
           denom.toLowerCase() === "0x0000000000000000000000000000000000000000",
       )?.[1];
     const gasBalance = nativeGasBalance || zeroAddressGasBalance;
+
+    const { requiredERC20Approvals } = tx;
+
+    if (requiredERC20Approvals) {
+      try {
+        await this.validateEvmTokenApproval({
+          requiredERC20Approvals,
+          signer,
+          chain,
+          gasBalance,
+          tx,
+          useUnlimitedApproval,
+        });
+      } catch (error) {
+        const err = error as Error;
+        return {
+          error: err.message,
+          asset: null,
+          fee: null,
+        };
+      }
+    }
+
+    const gasAmount = await getEVMGasAmountForMessage(
+      signer,
+      tx,
+      getFallbackGasAmount,
+    );
 
     if (!gasBalance) {
       const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
@@ -2208,6 +2231,125 @@ export class SkipClient {
         asset: null,
         fee: null,
       };
+    }
+  }
+
+  async validateEvmTokenApproval({
+    requiredERC20Approvals,
+    signer,
+    chain,
+    gasBalance,
+    tx,
+    useUnlimitedApproval,
+  }: {
+    requiredERC20Approvals: types.ERC20Approval[];
+    signer: WalletClient;
+    gasBalance?: types.BalanceResponseDenomEntry | undefined;
+    chain: types.Chain;
+    tx: types.EvmTx;
+    useUnlimitedApproval?: boolean;
+  }) {
+    if (!signer.account?.address) {
+      throw new Error("validateEvmGasBalance: Signer address not found");
+    }
+    for (const requiredApproval of requiredERC20Approvals) {
+      const extendedSigner = signer.extend(publicActions);
+      const allowance = await extendedSigner.readContract({
+        address: requiredApproval.tokenContract as `0x${string}`,
+        abi: erc20ABI,
+        functionName: "allowance",
+        args: [
+          signer.account?.address as `0x${string}`,
+          requiredApproval.spender as `0x${string}`,
+        ],
+      });
+
+      if (allowance > BigInt(requiredApproval.amount)) {
+        continue;
+      }
+
+      const fee = await extendedSigner.estimateFeesPerGas();
+      const allowanceGasFee = BigInt(fee.maxFeePerGas) * BigInt(100_000);
+
+      if (!gasBalance) {
+        const chainAssets = (await this.getAssets(String(tx.chainID)))?.[
+          tx.chainID
+        ];
+
+        const nativeAsset = chainAssets?.find((x) =>
+          x.denom.includes("-native"),
+        );
+        const zeroAddressAsset = chainAssets?.find(
+          (x) =>
+            x.denom.toLowerCase() ===
+            "0x0000000000000000000000000000000000000000",
+        );
+        const asset = nativeAsset || zeroAddressAsset;
+        if (!asset?.decimals) {
+          throw new Error(
+            `Insufficient balance for gas on ${chain.prettyName}. Need ${allowanceGasFee} gwei.`,
+          );
+        }
+
+        const formattedGasAmount = formatUnits(
+          allowanceGasFee,
+          asset?.decimals,
+        );
+
+        throw new Error(
+          `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol}.`,
+        );
+      }
+      if (BigNumber(gasBalance.amount).lt(Number(allowanceGasFee))) {
+        const chainAssets = (await this.getAssets(tx.chainID))?.[tx.chainID];
+        const asset = chainAssets?.find(
+          (x) =>
+            x.denom.includes("-native") ||
+            x.denom.toLowerCase() ===
+              "0x0000000000000000000000000000000000000000",
+        );
+        if (!asset?.decimals) {
+          return {
+            error: `Insufficient balance for gas on ${chain.prettyName}. Need ${allowanceGasFee} gwei but only have ${gasBalance.amount} gwei.`,
+            asset: null,
+            fee: null,
+          };
+        }
+
+        const formattedGasAmount = formatUnits(
+          allowanceGasFee,
+          asset?.decimals,
+        );
+        return {
+          error: `Insufficient balance for gas on ${chain.prettyName}. Need ${formattedGasAmount} ${asset.symbol} but only have ${gasBalance.formattedAmount} ${asset.symbol}.`,
+          asset: null,
+          fee: null,
+        };
+      }
+
+      const txHash = await extendedSigner.writeContract({
+        account: signer.account,
+        address: requiredApproval.tokenContract as `0x${string}`,
+        abi: erc20ABI,
+        functionName: "approve",
+        args: [
+          requiredApproval.spender as `0x${string}`,
+          useUnlimitedApproval
+            ? maxUint256
+            : BigInt(requiredApproval.amount) + BigInt(1000),
+        ],
+        chain: signer.chain,
+      });
+
+      const receipt = await extendedSigner.waitForTransactionReceipt({
+        hash: txHash,
+      });
+
+      if (receipt.status === "reverted") {
+        throw new Error(
+          `executeEVMTransaction error: evm tx reverted for hash ${receipt.transactionHash}`,
+        );
+      }
     }
   }
 
