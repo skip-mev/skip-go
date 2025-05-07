@@ -6,6 +6,7 @@ import { WalletClient } from "viem";
 
 import { Adapter } from "@solana/wallet-adapter-base";
 import { ChainType, CosmosMsg, FeeAsset } from "./swaggerTypes";
+import { ICosmosGenericOfflineSigner } from "@interchainjs/cosmos/types/wallet";
 
 /** Common Types */
 export type UserAddress = {
@@ -27,11 +28,7 @@ export type ValidateGasResult = {
 /** Signer Getters */
 export type SignerGetters = {
   getEvmSigner?: (chainId: string) => Promise<WalletClient>;
-  getCosmosSigner?: (
-    chainId: string,
-  ) => Promise<
-    (OfflineAminoSigner & OfflineDirectSigner) | OfflineAminoSigner | OfflineDirectSigner
-  >;
+  getCosmosSigner?: (chainId: string) => Promise<ICosmosGenericOfflineSigner>;
   getSvmSigner?: () => Promise<Adapter>;
 };
 

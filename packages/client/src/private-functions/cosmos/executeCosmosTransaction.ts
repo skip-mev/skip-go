@@ -7,6 +7,17 @@ import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { AminoSigner } from "@interchainjs/cosmos/signers/amino";
+import { SigningClient } from "@interchainjs/cosmos/signing-client";
+import {
+  ICosmosGenericOfflineSigner,
+  OfflineAminoSigner,
+  OfflineDirectSigner,
+} from "@interchainjs/cosmos/types/wallet";
+import { toEncoders } from "@interchainjs/cosmos/utils";
+import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
+import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
+import { AminoConverter } from "@cosmjs/stargate";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -51,10 +62,10 @@ export const executeCosmosTransaction = async ({
     throw new Error("no messages found for tx");
   }
 
-  const { stargateClient, signer } = await getSigningStargateClient({
-    chainId: chainId,
-    getOfflineSigner: options?.getCosmosSigner,
-  });
+  // const { stargateClient, signer } = await getSigningStargateClient({
+  //   chainId: chainId,
+  //   getOfflineSigner: options?.getCosmosSigner,
+  // });
 
   if (!currentUserAddress) {
     throw new Error(
@@ -62,12 +73,13 @@ export const executeCosmosTransaction = async ({
     );
   }
 
-  const accounts = await signer.getAccounts();
-  const accountFromSigner = accounts.find((account) => account.address === currentUserAddress);
+  // const accounts = await signer.getAccounts();
 
-  if (!accountFromSigner) {
-    throw new Error("executeCosmosTransaction error: failed to retrieve account from signer");
-  }
+  // const accountFromSigner = accounts.find((account) => account.address === currentUserAddress);
+
+  // if (!accountFromSigner) {
+  //   throw new Error("executeCosmosTransaction error: failed to retrieve account from signer");
+  // }
 
   const fee = gasUsed?.fee;
 
@@ -94,22 +106,79 @@ export const executeCosmosTransaction = async ({
     },
   };
 
-  if (isOfflineDirectSigner(signer)) {
-    rawTx = await signCosmosMessageDirect({
-      ...commonRawTxBody,
-      signer,
-    });
-  } else {
-    rawTx = await signCosmosMessageAmino({ ...commonRawTxBody, signer });
-  }
+  const cosmosSigner = (await options?.getCosmosSigner?.(chainId)) as ICosmosGenericOfflineSigner;
+
+  const endpoint = await getRpcEndpointForChain(chainId);
+
+  console.log(cosmosSigner);
+
+  const signer = await SigningClient.connectWithSigner(endpoint, cosmosSigner);
+
+  const registry = Object.assign({}, ClientState.registry) as any;
+  const encoders = Array.from(registry.types).map((registry) => registry?.[1]);
+  signer.addEncoders(encoders);
+
+  const aminoTypes = Object.assign({}, ClientState.aminoTypes) as any;
+  console.log(aminoTypes);
+  const converters = Object.entries(aminoTypes.register).map(([typeUrl, converter]) => ({
+    typeUrl,
+    ...(converter as AminoConverter),
+  }));
+
+  console.log(converters);
+  signer.addConverters(converters);
+
+  // if (message.msgTypeUrl === "/circle.cctp.v1.MsgDepositForBurnWithCaller") {
+  //   return {
+  //     typeUrl: message.msgTypeUrl,
+  //     value: MsgDepositForBurnWithCaller.fromAmino(msgJson),
+  //   };
+  // }
+
+  console.log("got signer", signer);
+
+  const encodeObjectMessages = messages.map((cosmosMsg) =>
+    getEncodeObjectFromCosmosMessage(cosmosMsg),
+  );
+
+  console.log(currentUserAddress, encodeObjectMessages);
+
+  const txResponse = await signer.signAndBroadcast(
+    currentUserAddress,
+    encodeObjectMessages,
+    "auto",
+  );
+
+  // if (isOfflineDirectSigner(signer)) {
+  //   rawTx = await signCosmosMessageDirect({
+  //     ...commonRawTxBody,
+  //     signer,
+  //   });
+  // } else {
+  //   const cosmosSigner = await options?.getCosmosSigner?.(tx.cosmosTx?.chainId ?? "");
+  //   if (cosmosSigner) {
+  //     const signDirect = cosmosSigner as OfflineDirectSigner;
+  //     const signAmino = cosmosSigner as OfflineAminoSigner;
+  //     if (signDirect?.signDirect !== undefined) {
+  //       signDirect.sign = signDirect.signDirect;
+  //     }
+  //     if (signer?.signAmino) {
+  //       signer.sign = signer.signAmino;
+  //     }
+
+  //     console.log(client);
+  //   }
+
+  //   rawTx = await signCosmosMessageAmino({ ...commonRawTxBody, signer });
+  // }
 
   options?.onTransactionSigned?.({
     chainId,
   });
 
-  const txBytes = TxRaw.encode(rawTx).finish();
+  // const txBytes = TxRaw.encode(rawTx).finish();
 
-  const txResponse = await stargateClient.broadcastTx(txBytes);
+  // const txResponse = await stargateClient.broadcastTx(txBytes);
 
   return {
     chainId: tx?.cosmosTx?.chainId ?? "",

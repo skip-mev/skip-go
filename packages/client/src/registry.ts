@@ -10,8 +10,8 @@ import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
 export const accountParser: AccountParser = (acc) => {
   switch (acc.typeUrl) {
     case "/stride.vesting.StridePeriodicVestingAccount": {
-      const baseAccount = StridePeriodicVestingAccount.decode(acc.value)
-        .baseVestingAccount?.baseAccount;
+      const baseAccount = StridePeriodicVestingAccount.decode(acc.value).baseVestingAccount
+        ?.baseAccount;
       assertDefinedAndNotNull(baseAccount);
 
       return {
@@ -22,17 +22,12 @@ export const accountParser: AccountParser = (acc) => {
       };
     }
     case "/injective.types.v1beta1.EthAccount":
-      return accountEthParser(
-        acc,
-        "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
-      );
+      return accountEthParser(acc, "/injective.crypto.v1beta1.ethsecp256k1.PubKey");
     case "/ethermint.types.v1.EthAccount":
       return accountEthParser(acc, "/ethermint.crypto.v1.ethsecp256k1.PubKey");
     default: {
       if (acc.typeUrl === "/cosmos.auth.v1beta1.BaseAccount") {
-        const { address, pubKey, accountNumber, sequence } = BaseAccount.decode(
-          acc.value,
-        );
+        const { address, pubKey, accountNumber, sequence } = BaseAccount.decode(acc.value);
         if (pubKey?.typeUrl === "/initia.crypto.v1beta1.ethsecp256k1.PubKey") {
           const { key } = PubKey.decode(pubKey.value);
           const pk = encodeSecp256k1Pubkey(key);
