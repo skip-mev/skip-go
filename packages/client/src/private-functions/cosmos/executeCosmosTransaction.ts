@@ -7,17 +7,12 @@ import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
-import { AminoSigner } from "@interchainjs/cosmos/signers/amino";
 import { SigningClient } from "@interchainjs/cosmos/signing-client";
-import {
-  ICosmosGenericOfflineSigner,
-  OfflineAminoSigner,
-  OfflineDirectSigner,
-} from "@interchainjs/cosmos/types/wallet";
-import { toEncoders } from "@interchainjs/cosmos/utils";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { AminoConverter } from "@cosmjs/stargate";
+import { toCamel } from "src/utils/convert";
+import { ICosmosGenericOfflineSigner } from "@interchainjs/cosmos/types/wallet";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -137,9 +132,10 @@ export const executeCosmosTransaction = async ({
 
   console.log("got signer", signer);
 
-  const encodeObjectMessages = messages.map((cosmosMsg) =>
-    getEncodeObjectFromCosmosMessage(cosmosMsg),
-  );
+  const encodeObjectMessages = messages.map((cosmosMsg) => ({
+    typeUrl: cosmosMsg.msgTypeUrl ?? "",
+    value: toCamel(JSON.parse(cosmosMsg.msg ?? "")),
+  }));
 
   console.log(currentUserAddress, encodeObjectMessages);
 
