@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.8.8
+
+### Patch Changes
+
+- 00b842a: improve asset display amount code
+- 31c67f4: Fix prop warning in dev
+- 441a597: enable amplitude session replays
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+- Updated dependencies [4ca2bb4]
+- Updated dependencies [c928a3c]
+  - @skip-go/client@0.17.1
+
 ## 3.8.7
 
 ### Patch Changes
