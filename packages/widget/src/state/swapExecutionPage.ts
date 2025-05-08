@@ -225,7 +225,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
         });
       } else if (lastTransaction?.explorerLink) {
-        track("error page: transaction failed");
+        track("error page: transaction failed", { lastTransaction });
         set(errorAtom, {
           errorType: ErrorType.TransactionFailed,
           onClickBack: () => {
