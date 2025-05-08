@@ -31,28 +31,3 @@ export const hasAmountChanged = (newAmount: string, oldAmount: string, decimals:
   return !newAmountBN.eq(oldAmountBN);
 };
 
-export const formatAmount = (input: number | string): string => {
-  let num: number;
-  if (typeof input === 'string') {
-    num = parseFloat(input);
-    if (isNaN(num)) {
-      return input;
-    }
-  } else {
-    num = input;
-  }
-
-  const abs = Math.abs(num);
-  const MAX_DECIMALS = 6;
-  const THRESHOLD = 10 ** -MAX_DECIMALS; // 0.000001
-
-  if (abs > 0 && abs < THRESHOLD) {
-    return `< ${THRESHOLD.toFixed(MAX_DECIMALS)}`;
-  }
-
-  const s = num
-    .toFixed(MAX_DECIMALS)
-    .replace(/\.?0+$/, '');
-
-  return s;
-}
