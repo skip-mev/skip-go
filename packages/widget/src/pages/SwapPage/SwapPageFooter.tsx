@@ -19,11 +19,6 @@ import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { getFeeList, getTotalFees } from "@/utils/route";
 
-export const PoweredBySkipGo = () => (
-  <Row align="center" data-logo="skip-go" gap={3}>
-    Powered by <SkipLogoIcon />
-  </Row>
-);
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds
@@ -116,11 +111,9 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   };
 
   const rightContent = () => 
-    (isMobile && isGoFast) || signaturesRequired > 1 ? (
+    isMobile && isGoFast ? (
       <RoutePreferenceLabel preference={routePreference} />
-    ) : (
-      <PoweredBySkipGo />
-    );
+    ) : null;
 
   return (
     <>
