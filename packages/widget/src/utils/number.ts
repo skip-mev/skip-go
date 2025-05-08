@@ -120,8 +120,3 @@ export function limitDecimalsDisplayed(
 
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
-
-export const removeTrailingZeros = (input: string | undefined) => {
-  if (input === "0") return input;
-  return input?.replace(/0+$/, "").replace(/\.$/, "");
-};
