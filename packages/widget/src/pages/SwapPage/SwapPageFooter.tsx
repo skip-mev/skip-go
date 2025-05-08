@@ -116,7 +116,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   };
 
   const rightContent = () => 
-    isMobile && isGoFast ? (
+    (isMobile && isGoFast) || signaturesRequired > 1 ? (
       <RoutePreferenceLabel preference={routePreference} />
     ) : (
       <PoweredBySkipGo />
