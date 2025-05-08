@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
-import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
 import { SignatureIcon } from "@/icons/SignatureIcon";
 import { CogIcon } from "@/icons/CogIcon";
 import { useAtomValue } from "jotai";
