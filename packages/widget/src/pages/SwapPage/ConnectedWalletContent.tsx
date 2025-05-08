@@ -8,7 +8,7 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { GhostButton } from "@/components/Button";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
-import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
+import { formatDisplayAmount } from "@/utils/number";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { track } from "@amplitude/analytics-browser";
@@ -32,9 +32,7 @@ export const ConnectedWalletContent = () => {
     if (sourceBalance?.error?.message) return "--";
     if (sourceBalance === undefined) return;
 
-    const formattedBalanceAmount = limitDecimalsDisplayed(
-      removeTrailingZeros(sourceBalance?.formattedAmount),
-    );
+    const formattedBalanceAmount = formatDisplayAmount(sourceBalance?.formattedAmount)
 
     return formattedBalanceAmount + symbol;
   }, [sourceBalance, sourceDetails?.symbol]);

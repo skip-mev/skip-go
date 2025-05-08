@@ -1,6 +1,6 @@
-import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 import { BigNumber } from "bignumber.js";
 import pluralize from "pluralize";
+import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export function formatNumberWithCommas(str: string | number) {
   const parts = str.toString().split(".");
@@ -8,40 +8,8 @@ export function formatNumberWithCommas(str: string | number) {
   return parts.join(".");
 }
 
-
 export function formatNumberWithoutCommas(str: string | number) {
   return str.toString().replace(/,/g, "");
-}
-
-export const removeTrailingZeros = (input: string | undefined) => {
-  if (input === "0") return input;
-  return input?.replace(/0+$/, "").replace(/\.$/, "");
-};
-
-export function limitDecimalsDisplayed(
-  input: string | number | undefined,
-  decimalPlaces = DEFAULT_DECIMAL_PLACES,
-) {
-  if (input === undefined) return "";
-
-  if (typeof input === "string") {
-    const [integer, decimal] = input.split(".");
-
-    if (decimal === undefined || decimal.length <= decimalPlaces) {
-      return input;
-    }
-
-    return integer + "." + decimal.slice(0, decimalPlaces);
-  }
-
-  if (isNaN(input)) return "";
-
-  const decimalScalingFactor = Math.pow(10, decimalPlaces);
-
-  const flooredAndLimitedDecimalPlacesNumber =
-    Math.floor(input * decimalScalingFactor) / decimalScalingFactor;
-
-  return flooredAndLimitedDecimalPlacesNumber.toString();
 }
 
 export function calculatePercentageChange(
@@ -86,4 +54,69 @@ export function shouldReduceFontSize(value: string | number | undefined): boolea
   
   // Return true if character count is 14 or more
   return valueWithoutCommas.length >= 14;
+}
+
+type FormatAmountOptions = {
+  showLessThanSign?: boolean;
+  decimals?: number;
+};
+
+export const formatDisplayAmount = (
+  input: number | string | undefined,
+  options: FormatAmountOptions = {}
+): string => {
+  const { showLessThanSign = true, decimals = 6 } = options;
+
+  if (input === undefined) {
+    return '';
+  }
+
+  let num: number;
+
+  if (typeof input === 'string') {
+    num = Number(input);
+    if (isNaN(num)) {
+      return input;
+    }
+  } else {
+    num = input;
+  }
+
+  const abs = Math.abs(num);
+  const THRESHOLD = 10 ** -decimals;
+  if (abs > 0 && abs < THRESHOLD) {
+    const thresholdStr = THRESHOLD.toFixed(decimals);
+    return showLessThanSign ? `< ${thresholdStr}` : thresholdStr;
+  }
+
+  return num
+    .toFixed(decimals)
+    .replace(/\.?0+$/, '');
+};
+
+
+export function limitDecimalsDisplayed(
+  input: string | number | undefined,
+  decimalPlaces = DEFAULT_DECIMAL_PLACES,
+) {
+  if (input === undefined) return "";
+
+  if (typeof input === "string") {
+    const [integer, decimal] = input.split(".");
+
+    if (decimal === undefined || decimal.length <= decimalPlaces) {
+      return input;
+    }
+
+    return integer + "." + decimal.slice(0, decimalPlaces);
+  }
+
+  if (isNaN(input)) return "";
+
+  const decimalScalingFactor = Math.pow(10, decimalPlaces);
+
+  const flooredAndLimitedDecimalPlacesNumber =
+    Math.floor(input * decimalScalingFactor) / decimalScalingFactor;
+
+  return flooredAndLimitedDecimalPlacesNumber.toString();
 }

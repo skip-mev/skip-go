@@ -14,7 +14,7 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
+import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 
@@ -73,7 +73,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
   }, [chainAddresses, context]);
 
   const displayAmount = useMemo(() => {
-    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
+    return formatDisplayAmount(assetDetails.amount);
   }, [assetDetails.amount]);
 
   const renderExplorerLink = useMemo(() => {
