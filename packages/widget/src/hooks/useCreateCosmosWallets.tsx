@@ -166,11 +166,6 @@ export const useCreateCosmosWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
-            track("get address", {
-              walletName: wallet,
-              ChainType: ChainType.Cosmos,
-              chainId,
-            });
             try {
               const getAddressWithoutConnectingWallet = cosmosWallet && !signRequired && chainId;
 
@@ -301,11 +296,6 @@ const handlePenumbraNetwork = (
       throw new Error("Prax wallet is not supported");
     },
     getAddress: async ({ praxWallet }) => {
-      track("get address", {
-        walletName: "prax",
-        ChainType: ChainType.Cosmos,
-        chainId: "penumbra",
-      });
       const penumbraSubaccountIndex = praxWallet?.index;
       const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
       const prax_origin = `chrome-extension://${prax_id}`;
