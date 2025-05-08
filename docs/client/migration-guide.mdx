@@ -7,7 +7,7 @@ title: 'Migration Guide'
   are deprecated. Please migrate to Skip Go Client ([`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client)), our actively maintained clietn package.
 </Warning>
 
-<Update label="Upcoming">
+<Update label="1.0.0 (Upcoming)">
 ## Breaking changes
 
 This section details the migration from previous versions to the latest [`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client).
@@ -86,6 +86,38 @@ All property names in API responses and configuration objects now strictly adher
 | `apiURL`        | `apiUrl`        |
 | `logoURI`       | `logoUri`       |
 | `asset.isCW20`  | `asset.isCw20`  |
+
+### Named parameter enforcement for API functions
+
+Two methods now require named parameters instead of passing arrays or objects directly:
+
+#### recommendAssets
+
+Old:
+```ts
+await client.recommendAssets(request);
+// OR
+await client.recommendAssets([request1, request2]);
+```
+New:
+```ts
+await recommendAssets({ requests: [request1, request2] });
+```
+Wrap the array in a `{ requests: [...] }` object.
+
+#### ibcOriginAssets
+
+Old:
+```ts
+await client.ibcOriginAssets(assets);
+```
+New:
+```ts
+await ibcOriginAssets({ assets: [asset1, asset2] });
+```
+Wrap the assets array in a `{ assets: [...] }` object.
+
+```
 </Update>
 
 <Update label="4.0.0">
