@@ -4,7 +4,6 @@ import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/stat
 import { convertTokenAmountToHumanReadableAmount, hasAmountChanged } from "@/utils/crypto";
 import { formatDisplayAmount } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
-import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export const useUpdateAmountWhenRouteChanges = () => {
   const [route] = useAtom(skipRouteAtom);
@@ -29,12 +28,10 @@ export const useUpdateAmountWhenRouteChanges = () => {
     const swapInAmountChanged = hasAmountChanged(
       swapInAmount,
       destinationAsset?.amount ?? "",
-      DEFAULT_DECIMAL_PLACES,
     );
     const swapOutAmountChanged = hasAmountChanged(
       swapOutAmount,
       sourceAsset?.amount ?? "",
-      DEFAULT_DECIMAL_PLACES,
     );
 
     if (direction === "swap-in" && swapInAmountChanged) {
