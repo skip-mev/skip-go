@@ -1,4 +1,4 @@
-import { GeneratedType, Registry } from "@cosmjs/proto-signing";
+import { GeneratedType } from "@cosmjs/proto-signing";
 import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
 import { Chain, Asset, ChainAffiliates } from "./types/swaggerTypes";
 import { ApiResponse } from "./utils/generateApi";
@@ -7,6 +7,7 @@ import { getMainnetAndTestnetAssets } from "./private-functions/getMainnetAndTes
 import { balances } from "./api/postBalances";
 import { EndpointOptions, SignerGetters, ValidateGasResult } from "src/types/client-types";
 import { SkipApiOptions } from "./utils/fetchClient";
+import { Registry } from "@interchainjs/cosmos/types/signing-client";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {

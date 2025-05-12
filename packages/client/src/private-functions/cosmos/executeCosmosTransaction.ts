@@ -132,10 +132,14 @@ export const executeCosmosTransaction = async ({
 
   console.log("got signer", signer);
 
-  const encodeObjectMessages = messages.map((cosmosMsg) => ({
-    typeUrl: cosmosMsg.msgTypeUrl ?? "",
-    value: toCamel(JSON.parse(cosmosMsg.msg ?? "")),
-  }));
+  // const encodeObjectMessages = messages.map((cosmosMsg) => ({
+  //   typeUrl: cosmosMsg.msgTypeUrl ?? "",
+  //   value: toCamel(JSON.parse(cosmosMsg.msg ?? "")),
+  // }));
+
+  const encodeObjectMessages = messages.map((cosmosMsg) =>
+    getEncodeObjectFromCosmosMessage(cosmosMsg),
+  );
 
   console.log(currentUserAddress, encodeObjectMessages);
 
