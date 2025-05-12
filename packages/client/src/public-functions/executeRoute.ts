@@ -8,6 +8,7 @@ import { executeTransactions } from "../private-functions/executeTransactions";
 import { messages } from "../api/postMessages";
 import { isAddress } from "viem";
 import { SignerGetters, GasOptions, UserAddress } from "src/types/client-types";
+import { ApiState } from "src/state/apiState";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -86,7 +87,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     operations: route?.operations,
     addressList: addressList,
     slippageTolerancePercent: options.slippageTolerancePercent || "1",
-    chainIdsToAffiliates: ClientState.chainIdsToAffiliates,
+    chainIdsToAffiliates: ApiState.chainIdsToAffiliates,
   });
 
   if (beforeMsg && (response?.txs?.length ?? 0) > 0) {
