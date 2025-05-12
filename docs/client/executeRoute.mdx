@@ -21,11 +21,11 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 <Warning> All user addresses must match the chain ids expected in the route, and must be valid for the corresponding chain type (Cosmos, Evm, or Svm). An error will be thrown if the addresses are mismatched or malformed. </Warning>
 
-```getCosmosSigner``` Function that takes a chainId and returns a Promise<OfflineSigner>
+```getCosmosSigner``` Function that takes a chainId and returns a Promise\<OfflineSigner>
 
-```getEvmSigner``` Function that takes a chainId and returns a Promise<WalletClient>
+```getEvmSigner``` Function that takes a chainId and returns a Promise\<WalletClient>
 
-```getSvmSigner``` Function that returns a Promise<OfflineSigner>
+```getSvmSigner``` Function that returns a Promise\<OfflineSigner>
 
 ## Optional fields
 ```slippageTolerancePercent``` Set the maximum slippage tolerance for the route (defaults to "1").
