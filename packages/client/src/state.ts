@@ -3,7 +3,10 @@ import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/star
 import { Chain, Asset, ChainAffiliates } from "./types/swaggerTypes";
 import { ApiResponse } from "./utils/generateApi";
 import { getMainnetAndTestnetChains } from "./private-functions/getMainnetAndTestnetChains";
-import { getMainnetAndTestnetAssets } from "./private-functions/getMainnetAndTestnetAssets";
+import {
+  getMainnetAndTestnetAssets,
+  GetMainnetAndTestnetAssetsProps,
+} from "./private-functions/getMainnetAndTestnetAssets";
 import { balances } from "./api/postBalances";
 import { EndpointOptions, SignerGetters, ValidateGasResult } from "src/types/client-types";
 import { SkipApiOptions } from "./utils/fetchClient";
@@ -39,12 +42,12 @@ export class ClientState {
     return response;
   }
 
-  static async getSkipAssets() {
+  static async getSkipAssets(props: GetMainnetAndTestnetAssetsProps) {
     if (this.skipAssets) {
       return this.skipAssets;
     }
 
-    const response = await getMainnetAndTestnetAssets();
+    const response = await getMainnetAndTestnetAssets(props);
     this.skipAssets = response;
     return response;
   }

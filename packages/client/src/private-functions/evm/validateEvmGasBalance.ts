@@ -20,7 +20,7 @@ export const validateEvmGasBalance = async ({
   useUnlimitedApproval?: boolean;
 }) => {
   const chainId = tx?.chainId ?? "";
-  const skipAssets = (await ClientState.getSkipAssets())?.[chainId];
+  const skipAssets = (await ClientState.getSkipAssets({ chainId }))?.[chainId];
   const skipChains = await ClientState.getSkipChains();
 
   const chain = skipChains?.find?.((chain) => chain.chainId === chainId);

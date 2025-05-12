@@ -39,7 +39,7 @@ export const validateEvmTokenApproval = async ({
     const allowanceGasFee = BigInt(fee.maxFeePerGas) * BigInt(100_000);
 
     if (!gasBalance) {
-      const chainAssets = (await ClientState.getSkipAssets())[tx.chainId];
+      const chainAssets = (await ClientState.getSkipAssets({ chainId: tx.chainId }))[tx.chainId];
 
       const nativeAsset = chainAssets?.find((x) => x.denom.includes("-native"));
       const zeroAddressAsset = chainAssets?.find(
@@ -59,7 +59,7 @@ export const validateEvmTokenApproval = async ({
       );
     }
     if (BigNumber(gasBalance.amount).lt(Number(allowanceGasFee))) {
-      const chainAssets = (await ClientState.getSkipAssets())[tx.chainId];
+      const chainAssets = (await ClientState.getSkipAssets({ chainId: tx.chainId }))[tx.chainId];
       const asset = chainAssets?.find(
         (x) =>
           x.denom.includes("-native") ||
