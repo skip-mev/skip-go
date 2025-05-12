@@ -36,6 +36,8 @@ import { getWallet, WalletType } from "graz";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
+import { SIGN_MODE, AccountData, StdSignDoc, SignDoc } from "@interchainjs/types";
+import { OfflineDirectSigner } from "@interchainjs/cosmos/types/wallet";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -421,9 +423,29 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             }
             const key = await wallet.getKey(chainId);
 
-            return key.isNanoLedger
-              ? wallet.getOfflineSignerOnlyAmino(chainId)
-              : wallet.getOfflineSigner(chainId);
+            const aminoSigner = wallet.getOfflineSignerOnlyAmino(chainId);
+
+            const offlineDirectSigner = wallet.getOfflineSigner(chainId);
+
+            const offlineSigner = key.isNanoLedger ? aminoSigner : offlineDirectSigner;
+
+            return {
+              getAccounts: () => offlineSigner.getAccounts(),
+              // getAccounts: () => new Promise((resolve) => resolve(response as AccountData[])),
+              signMode: key.isNanoLedger ? SIGN_MODE.AMINO : SIGN_MODE.DIRECT,
+              sign: ({
+                signerAddress,
+                signDoc,
+              }: {
+                signerAddress: string;
+                signDoc: StdSignDoc;
+              }) => {
+                if (key.isNanoLedger) {
+                  return aminoSigner.signAmino?.(signerAddress, signDoc);
+                }
+                return offlineDirectSigner.signDirect?.(signerAddress, signDoc);
+              },
+            };
           },
           getEvmSigner: async (chainId) => {
             if (getSigners?.getEvmSigner) {
