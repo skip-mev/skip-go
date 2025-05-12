@@ -1,0 +1,49 @@
+title: 'executeRoute – Executing a Cross-Chain Route'
+description: 'This page documents the executeRoute function, used to execute a token transfer or swap across chains using a precomputed route.'
+Executing a cross-chain route
+The executeRoute function is the core entry point for executing a precomputed route, including optional support for simulating transactions, injecting custom Cosmos messages, and tracking transaction status.
+
+You must provide a list of user addresses (one per participating chain), along with the route object returned from a prior route computation (e.g. from getRoute or getMsgsV2).
+
+<Info> This function handles validation of addresses and gas balances, prepares the route messages, and executes transactions in order across Cosmos, EVM, and SVM chains. </Info>
+executeRoute
+ts
+Copy
+Edit
+async executeRoute(options: ExecuteRouteOptions): Promise<void>
+Required fields
+route: A RouteResponse containing swap or transfer operations.
+
+userAddresses: One user address per participating chain in the same order as route.requiredChainAddresses.
+
+Optional fields
+slippageTolerancePercent: Set the maximum slippage tolerance for the route (defaults to "1").
+
+simulate: Whether to simulate transactions before executing (defaults to true).
+
+batchSimulate: If true, simulate all transactions in a batch before execution; if false, simulate each transaction individually.
+
+beforeMsg / afterMsg: Optional Cosmos messages to inject at the beginning or end of the route execution.
+
+useUnlimitedApproval: If true, sets EVM token allowances to MAX_UINT256 if required.
+
+bypassApprovalCheck: If true, skips approval checks on EVM chains.
+
+timeoutSeconds: Time in seconds to wait for message preparation before timing out.
+
+getGasPrice: Override the gas price per chain.
+
+getFallbackGasAmount: Fallback gas to use if simulation fails.
+
+gasAmountMultiplier: Overrides the default simulation multiplier (default is 1.5).
+
+Lifecycle callbacks
+You can optionally provide the following callbacks:
+
+onTransactionBroadcast: Called after each transaction is broadcasted.
+
+onTransactionCompleted: Called after each transaction is confirmed.
+
+onTransactionTracked: Called during confirmation polling, useful for progress tracking UIs.
+
+<CodeGroup> ```ts TypeScript (Client) await executeRoute({ route, userAddresses: [ { chainId: "osmosis-1", address: osmoAddress }, { chainId: "ethereum", address: evmAddress } ], simulate: true, slippageTolerancePercent: "0.5", beforeMsg: cosmosMsg1, afterMsg: cosmosMsg2, onTransactionBroadcast: ({ chainId, txHash }) => { console.log(`Broadcasted on ${chainId}: ${txHash}`); }, onTransactionCompleted: ({ chainId, txHash, status }) => { console.log(`Completed on ${chainId}: ${txHash} (Status: ${status})`); } }); ``` </CodeGroup> <Warning> All user addresses must match the chain IDs expected in the route, and must be valid for the corresponding chain type (Cosmos, EVM, or SVM). An error will be thrown if the addresses are mismatched or malformed. </Warning>
