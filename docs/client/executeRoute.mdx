@@ -8,10 +8,11 @@ You must provide a list of user addresses (one per participating chain), along w
 
 <Info> This function handles validation of addresses and gas balances, prepares the route messages, and executes transactions in order across Cosmos, EVM, and SVM chains. </Info>
 executeRoute
-ts
-Copy
-Edit
+
+```ts
 async executeRoute(options: ExecuteRouteOptions): Promise<void>
+```
+
 Required fields
 route: A RouteResponse containing swap or transfer operations.
 
