@@ -25,13 +25,13 @@ slippageTolerancePercent: Set the maximum slippage tolerance for the route (defa
 
 simulate: Whether to simulate transactions before executing (defaults to true).
 
-batchSimulate: If true, simulate all transactions in a batch before execution; if false, simulate each transaction individually.
+batchSimulate: If true, simulate all transactions in a batch before execution; if false, simulate each transaction individually. (defaults to true).
 
 beforeMsg / afterMsg: Optional Cosmos messages to inject at the beginning or end of the route execution.
 
-useUnlimitedApproval: If true, sets EVM token allowances to MAX_UINT256 if required.
+useUnlimitedApproval: If true, sets EVM token allowances to MAX_UINT256. (defaults to false).
 
-bypassApprovalCheck: If true, skips approval checks on EVM chains.
+bypassApprovalCheck: If true, skips token approval checks on EVM. (defaults to false).
 
 timeoutSeconds: Time in seconds to wait for message preparation before timing out.
 
