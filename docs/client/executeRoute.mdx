@@ -1,10 +1,12 @@
 ---
 title: 'executeRoute – Executing a Cross-Chain Route'
-description: 'This page documents the executeRoute function, used to execute a token transfer or swap across chains using a precomputed route.'
-Executing a cross-chain route
-The executeRoute function is the core entry point for executing a precomputed route, including optional support for simulating transactions, injecting custom Cosmos messages, and tracking transaction status.
-You must provide a list of user addresses (one per participating chain), along with the route object returned from a prior route computation (e.g. from getRoute or getMsgsV2).
+description: 'This page documents the executeRoute function, used to execute a token transfer/swap using a route from /v2/fungible/route API'
 ---
+
+## Executing a cross-chain route
+
+The executeRoute function is the core entry point for executing a route, including optional support for simulating transactions, injecting custom Cosmos messages, and tracking transaction status.
+You must provide a list of user addresses (one per chain in route.requiredChainAddresses), along with the route object returned from route (/v2/fungible/route).
 
 <Info> This function handles validation of addresses and gas balances, prepares the route messages, and executes transactions in order across Cosmos, EVM, and SVM chains. </Info>
 executeRoute
@@ -13,12 +15,12 @@ executeRoute
 async executeRoute(options: ExecuteRouteOptions): Promise<void>
 ```
 
-Required fields
+## Required fields
 route: A RouteResponse containing swap or transfer operations.
 
-userAddresses: One user address per participating chain in the same order as route.requiredChainAddresses.
+userAddresses: One user address per chain in the same order as route.requiredChainAddresses.
 
-Optional fields
+## Optional fields
 slippageTolerancePercent: Set the maximum slippage tolerance for the route (defaults to "1").
 
 simulate: Whether to simulate transactions before executing (defaults to true).
@@ -39,7 +41,7 @@ getFallbackGasAmount: Fallback gas to use if simulation fails.
 
 gasAmountMultiplier: Overrides the default simulation multiplier (default is 1.5).
 
-Lifecycle callbacks
+## Lifecycle callbacks
 You can optionally provide the following callbacks:
 
 onTransactionBroadcast: Called after each transaction is broadcasted.
