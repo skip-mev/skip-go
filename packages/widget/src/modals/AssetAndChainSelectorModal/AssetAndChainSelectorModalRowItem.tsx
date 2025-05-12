@@ -52,7 +52,7 @@ export const AssetAndChainSelectorModalRowItem = ({
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
-              <SmallText normalTextColor>{parseFloat(item.totalAmount.toFixed(8))}</SmallText>
+              <SmallText normalTextColor>{item.formattedTotalAmount}</SmallText>
               {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
             </Column>
           )

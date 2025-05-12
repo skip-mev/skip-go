@@ -81,12 +81,8 @@ export const useGroupedAssetByRecommendedSymbol = ({
         (accumulator, asset) => {
           const balance = getBalance(asset.chainId, asset.denom);
           if (balance) {
-            accumulator.totalAmount += Number(
-              convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals),
-            );
-            if (Number(balance.valueUsd)) {
-              accumulator.totalUsd += Number(balance.valueUsd);
-            }
+            accumulator.totalAmount += Number(balance.amount);
+            accumulator.totalUsd += Number(balance.valueUsd ?? 0);
           }
           return accumulator;
         },
@@ -117,6 +113,8 @@ export const useGroupedAssetByRecommendedSymbol = ({
           assets: [asset],
           totalAmount: 0,
           totalUsd: 0,
+          formattedTotalAmount: "0",
+          decimals: asset.decimals,
         });
       }
     });
@@ -125,6 +123,10 @@ export const useGroupedAssetByRecommendedSymbol = ({
       const balanceSummary = calculateBalanceSummary(group.assets);
       group.totalAmount = balanceSummary.totalAmount;
       group.totalUsd = balanceSummary.totalUsd;
+      group.formattedTotalAmount = convertTokenAmountToHumanReadableAmount(
+        balanceSummary.totalAmount,
+        group.decimals,
+      );
     });
 
     return groupedAssets;
