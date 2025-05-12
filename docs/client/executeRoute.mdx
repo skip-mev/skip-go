@@ -50,4 +50,24 @@ onTransactionCompleted: Called after each transaction is confirmed.
 
 onTransactionTracked: Called during confirmation polling, useful for progress tracking UIs.
 
-<CodeGroup> ```ts TypeScript (Client) await executeRoute({ route, userAddresses: [ { chainId: "osmosis-1", address: osmoAddress }, { chainId: "ethereum", address: evmAddress } ], simulate: true, slippageTolerancePercent: "0.5", beforeMsg: cosmosMsg1, afterMsg: cosmosMsg2, onTransactionBroadcast: ({ chainId, txHash }) => { console.log(`Broadcasted on ${chainId}: ${txHash}`); }, onTransactionCompleted: ({ chainId, txHash, status }) => { console.log(`Completed on ${chainId}: ${txHash} (Status: ${status})`); } }); ``` </CodeGroup> <Warning> All user addresses must match the chain IDs expected in the route, and must be valid for the corresponding chain type (Cosmos, EVM, or SVM). An error will be thrown if the addresses are mismatched or malformed. </Warning>
+```ts
+await executeRoute({
+  route,
+  userAddresses: [
+    { chainId: "osmosis-1", address: osmoAddress },
+    { chainId: "ethereum", address: evmAddress },
+  ],
+  simulate: true,
+  slippageTolerancePercent: "0.5",
+  beforeMsg: cosmosMsg1,
+  afterMsg: cosmosMsg2,
+  onTransactionBroadcast: ({ chainId, txHash }) => {
+    console.log(`Broadcasted on ${chainId}: ${txHash}`);
+  },
+  onTransactionCompleted: ({ chainId, txHash, status }) => {
+    console.log(`Completed on ${chainId}: ${txHash} (Status: ${status})`);
+  },
+});
+```
+
+<Warning> All user addresses must match the chain IDs expected in the route, and must be valid for the corresponding chain type (Cosmos, Evm, or Svm). An error will be thrown if the addresses are mismatched or malformed. </Warning>
