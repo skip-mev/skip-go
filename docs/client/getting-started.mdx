@@ -28,24 +28,50 @@ you may need to install these peer dependencies as well:
 ```
 </Info>
 
-</Step> <Step title="Initialize Client">
+</Step> <Step title="Initialize Library">
 
-To start integrating with the Skip Go API, initialize a `SkipClient` instance. This `skipClient` provides helper methods for common actions such as querying assets and chains, constructing routes, and executing transactions.
+To start integrating with the Skip Go API, you no longer initialize a `SkipClient` instance. Instead, you configure the library once and then import and use individual functions directly.
 
-```ts
-import { SkipClient } from "@skip-go/client";
+### Initialization Options
 
-const skipClient = new SkipClient({
-  // Signers will be set up in the following section
+- **If using `executeRoute`:** Call `setClientOptions()` once at application startup with your configuration (excluding signers).
+- **If *not* using `executeRoute`:** Call `setApiOptions({ apiUrl, apiKey })` once at startup, or pass `apiUrl` and `apiKey` to each function call.
+
+```ts Import and Initialize
+import {
+  setClientOptions, // Use if calling executeRoute
+  setApiOptions,    // Use if *not* calling executeRoute
+  chains,
+  assets,
+  route,
+  executeRoute,
+  // ... other functions you need
+} from "@skip-go/client";
+
+// Example: Initialize for executeRoute usage
+setClientOptions({
+  // No signers here anymore!
+  endpointOptions: { /* ... */ },
+  // ... other options like aminoTypes, registryTypes
 });
+
+// Example: Initialize for direct API calls (no executeRoute)
+setApiOptions({
+  apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
+  apiKey: "YOUR_API_KEY",   // Optional: required for certain features
+});
+
+// Now you can call functions directly, e.g.:
+// const supportedChains = await chains();
 ```
 
-The SkipClient constructor accepts an optional configuration object of type `SkipClientOptions`. Here's a brief overview:
+### Configuration Parameters
 
-- `apiURL?: string`: Override the default API URL
-- `endpointOptions?: EndpointOptions`: Provide RPC and REST endpoints for specific chains
-- `aminoTypes?: AminoConverters`: Additional amino types to be for message encoding
-- `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types 
+- `apiUrl?: string`: Override the default API URL (used by `setApiOptions` or passed directly).
+- `apiKey?: string`: Your Skip API key (used by `setApiOptions` or passed directly).
+- `endpointOptions?: EndpointOptions`: Provide RPC and REST endpoints for specific chains (used by `setClientOptions`).
+- `aminoTypes?: AminoConverters`: Additional amino types for message encoding (used by `setClientOptions`).
+- `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types (used by `setClientOptions`).
 
 </Step> <Step title="Setup Signers">
 
@@ -73,11 +99,11 @@ const getCosmosSigner = async (chainID: string) => {
 import { createWalletClient, custom, Account } from "viem";
 import { mainnet } from 'viem/chains';
 
-const getEVMSigner = async () => {
+const getEvmSigner = async () => {
   const ethereum = window.ethereum;
   if (!ethereum) throw new Error("MetaMask not installed");
   const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as Account[];
-  const account = accounts?.[0] 
+  const account = accounts?.[0]
   if (!account) throw new Error('No accounts found');
   const client = createWalletClient({
     account,
@@ -93,7 +119,7 @@ const getEVMSigner = async () => {
 // npm install @solana/wallet-adapter-phantom
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 
-const getSVMSigner = async () => {
+const getSvmSigner = async () => {
   const phantom = new PhantomWalletAdapter();
   await phantom.connect();
   return phantom;
@@ -101,84 +127,98 @@ const getSVMSigner = async () => {
 ```
 </CodeGroup>
 
-### Finalizing the Client Initialization
-Now, pass the signers and your optional configuration options into your `SkipClient` instance:
+### Using Signers
 
-```ts
-const skipClient = new SkipClient({
-  getCosmosSigner,
-  getEVMSigner,
-  getSVMSigner,
-  // ...configOptions,
-});
-```
+These signer functions (`getCosmosSigner`, `getEvmSigner`, `getSvmSigner`) are **not** passed during initialization with `setClientOptions`.
+
+Instead, you pass them directly to the `executeRoute` function when you are ready to execute a transaction, as shown in Step 7.
+
 </Step> <Step title="Query Basic Info">
 
-With your client initialized, you can query balances, supported chains and assets.
+With the library initialized, you can query balances, supported chains and assets using the imported functions.
+
+### Query Examples
 
 <CodeGroup>
 
-```ts List of Supported Chains
+```ts Supported Chains
+import { chains } from "@skip-go/client";
+
 // returns a Chain[] of all supported Cosmos mainnet chains
-const cosmosChains = await skipClient.chains();
+const cosmosChains = await chains();
 
 // include EVM and SVM chains
-const allChains = await skipClient.chains({
+const allChains = await chains({
   includeEVM: true,
   includeSVM: true,
 });
 
 // only show testnet chains
-const testnetChains = await skipClient.chains({
+const testnetChains = await chains({
   onlyTestnets: true
 });
 ```
 
-```ts Map of Supported Assets
-// returns `Record<string, Asset[]>
-const assets = await skipClient.assets({
-  includeEvmAssets: true,
-  includeSvmAssets: true,
-});
+```ts Supported Assets
+import { assets } from "@skip-go/client";
+
+// returns `Record<string, Asset[]>`, includes EVM & SVM by default
+const allAssets = await assets();
 
 // get assets filtered by chain ID
-const assets = await client.assets({
-  chainID: 'cosmoshub-4'
-  includeCW20Assets: true,
-})
+const cosmosHubAssets = await assets({
+  chainID: 'cosmoshub-4',
+  includeCW20Assets: true, // include CW20 assets for this chain
+});
+
+// only get assets for specific chains
+const specificAssets = await assets({
+  chainIDs: ['osmosis-1', '1'], // Ethereum and Osmosis
+});
 ```
 
-```ts Map of Token Balances
-// returns a map of assets by chain ID 
-// includes all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains
-const balances = await skipClient.balances({
-  "chains": {
-    "137": {
-      address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
-      denoms: [
-        "polygon-native",
-        "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"
-      ]
-    },
-    "osmosis-1": {
-      address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
-      denoms: [
-        "uosmo"
-      ]
-    }
+```ts Token Balances
+import { balances } from "@skip-go/client";
+
+// Define the request structure
+interface BalancesRequest {
+  chainID: string;
+  address: string;
+  denoms?: string[]; // Optional: specify denoms, otherwise fetches all
+}
+
+const balanceRequests: BalancesRequest[] = [
+  {
+    chainID: "137", // Polygon
+    address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
+    denoms: [
+      "polygon-native", // Matic
+      "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359" // USDC
+    ]
+  },
+  {
+    chainID: "osmosis-1",
+    address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
+    denoms: ["uosmo"]
   }
-});
+];
+
+// returns a map of assets by chain ID
+const userBalances = await balances({ requests: balanceRequests });
 ```
 </CodeGroup>
 
-
 </Step> <Step title="Get a Route">
 
-Once you've selected your source and destination chains and tokens, you can generate a route and get a quote. See it in context [here](https://github.com/skip-mev/skip-go-example/blob/d68ec668ebaa230325ad31658b547bd27c42ac49/pages/index.tsx#L46).
+Once you've selected your source and destination chains and tokens, you can generate a route and get a quote using the `route` function. See it in context [here](https://github.com/skip-mev/skip-go-example/blob/d68ec668ebaa230325ad31658b547bd27c42ac49/pages/index.tsx#L46).
+
+### Route Examples
 
 <CodeGroup>
-```ts Swap ATOM for OSMO
-const route = await skipClient.route({
+```ts Swap ATOM for OSMO Example
+import { route } from "@skip-go/client";
+
+const routeResult = await route({
   amountIn: "1000000", // Desired amount in smallest denomination (e.g., uatom)
   sourceAssetDenom: "uatom",
   sourceAssetChainID: "cosmoshub-4",
@@ -187,8 +227,10 @@ const route = await skipClient.route({
   cumulativeAffiliateFeeBPS: '0',
 });
 ```
-```ts Swap ETH for TIA
-const route = await skipClient.route({
+```ts Swap ETH for TIA Example
+import { route } from "@skip-go/client";
+
+const routeResult = await route({
   amountOut: "1000000", // Desired amount out
   sourceAssetDenom: "ethereum-native",
   sourceAssetChainID: "1", // Ethereum mainnet chain ID
@@ -201,8 +243,10 @@ const route = await skipClient.route({
   },
 });
 ```
-```ts Transfer USDC from Solana to Noble
-const route = await skipClient.route({
+```ts Transfer USDC from Solana to Noble Example
+import { route } from "@skip-go/client";
+
+const routeResult = await route({
   sourceAssetDenom: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   sourceAssetChainID: "solana",
   destAssetDenom: "uusdc",
@@ -241,61 +285,96 @@ We recommend storing the user's addresses and creating a function like [`getAddr
 
 </Step> <Step title="Execute the Route">
 
-Once you have a route, you can execute it in a single function call by passing in the route, the user addresses for at least the chains the route includes, and optional callback functions. This also registers the transaction for tracking.
+Once you have a route object (`routeResult` from the previous step), you can execute it using the `executeRoute` function. You need to pass the route object, the user addresses, and the necessary signer functions.
 
-```ts
-await skipClient.executeRoute({
-  route,
+### Execute Route Example
+
+```ts Execute Route
+import {
+  executeRoute,
+  // Import your signer functions defined in Step 3
+  getCosmosSigner,
+  getEvmSigner,
+  getSvmSigner,
+} from "@skip-go/client";
+
+// Assuming 'routeResult' holds the object from the route() call
+// Assuming 'userAddresses' holds the array from the 'Get Required Addresses' step
+
+await executeRoute({
+  route: routeResult,
   userAddresses,
-  // Executes after all of the operations triggered by a user's signature complete.
-  // For multi-tx routes that require multiple user signatures, this will be called once for each tx in sequence
+  getCosmosSigner, // Pass the signer functions directly
+  getEvmSigner,
+  getSvmSigner,
+  // Optional Callbacks
   onTransactionCompleted: async (chainID, txHash, status) => {
     console.log(
-      `Route completed with tx hash: ${txHash} & status: ${status.state}`
+      `Route completed on chain ${chainID} with tx hash: ${txHash} & status: ${status.state}`
     );
   },
-  // called after the transaction that the user signs gets broadcast on chain
   onTransactionBroadcast: async ({ txHash, chainID }) => {
-    console.log(`Transaction broadcasted with tx hash: ${txHash}`);
+    console.log(`Transaction broadcasted on ${chainID} with tx hash: ${txHash}`);
   },
-  // called after the transaction that the user signs is successfully registered for tracking
   onTransactionTracked: async ({ txHash, chainID }) => {
-    console.log(`Transaction tracked with tx hash: ${txHash}`);
+    console.log(`Transaction tracked for ${chainID} with tx hash: ${txHash}`);
   },
-  // called after the user signs a transaction
-  onTransactionSigned: async ({ chainID }) => {
-    console.log(`Transaction signed with chain ID: ${chainID}`);
+  onTransactionSigned: async ({ txHash, chainID }) => {
+    console.log(`Transaction signed for ${chainID} with tx hash: ${txHash}`);
   },
-  // validate gas balance on each chain
-  onValidateGasBalance: async ({ chainID, txIndex, status }) => {
-    console.log(`Validating gas balance for chain ${chainID}...`);
+  onValidateGasBalance: async ({ chainID, isGasSufficient }) => {
+    if (!isGasSufficient) {
+      console.warn(`Insufficient gas balance on chain ${chainID}.`);
+      // Optionally prompt user to acquire more gas
+    }
   },
 });
 ```
 
-For routes that consist of multiple transactions, this will monitor each transaction until it completes, then generate the transaction for the next step and prompt the user to sign it.
+For routes that consist of multiple transactions, `executeRoute` will monitor each transaction until it completes, then generate the transaction for the next step and prompt the user to sign it using the appropriate signer.
 
 <Info>
-Alternatively, the route object allows you to generate, sign, and submit messages individually. You can also implement your own solutions for any or all of these steps. For more details on these lower-level functions, refer to `skipClient.messages`, `skipClient.signMultiChainMessageDirect`, and `skipClient.submitTransaction`.
+Alternatively, you can handle message generation, signing, and submission manually using the individual functions:
+- `messages`: Generate transaction messages.
+- `signDirect`: Sign messages directly.
+- `broadcastTx`: Broadcast transactions to the network.
+- `submitTransaction`: Submit and track transactions.
+Refer to the API documentation for details on these lower-level functions.
 </Info>
 
+</Step> <Step title="Transaction Tracking">
 
-</Step><Step title="Transaction Tracking">
+Once the user has signed a transaction to execute a cross-chain action, you can track its progress.
 
-Once the user has signed a transaction to execute a cross-chain action, you can track it with:
+### Tracking Transactions
 
-- `skipClient.trackTransaction`: Requests tracking for a transaction that's already been submitted to the network through an RPC, using the transaction hash
-- `skipClient.submitTransaction`: Publishes the signed transaction to the network & begins tracking the cross-chain actions this transaction produces
+If you used `executeRoute`, tracking is handled automatically. For manual transaction submission or to track an existing transaction:
 
-After you've used one of these two functions to kick-off realtime tracking for a cross-chain action, you can request the current status of the transaction using `skipClient.transactionStatus`.
+- **Track Existing Transaction:** `trackTransaction` - Call this function with a `txHash` and `chainID` to begin Skip's backend tracking for a transaction already submitted to the network.
+- **Submit and Track:** `submitTransaction` - This function (used internally by `executeRoute`) submits a signed transaction to the network *and* registers it for tracking.
 
-We also provide a `waitForTransaction` helper function that hangs until the entire cross-chain action flow has completed, which you can use instead of configuring your own polling via `transactionStatus`.
+After a transaction is registered for tracking (either via `executeRoute`, `submitTransaction`, or `trackTransaction`), you can poll for its status:
+
+- **Check Status:** `transactionStatus` - Takes a `txHash` and `chainID` and returns the current cross-chain status.
+
+We also provide a `waitForTransaction` helper function (imported from `@skip-go/client`) that resolves a promise when the entire cross-chain action flow has completed. This can be an alternative to manually polling with `transactionStatus`.
+
+```ts Manual Transaction Tracking
+import {
+  submitTransaction,
+  trackTransaction,
+  transactionStatus,
+  waitForTransaction // Helper function
+} from "@skip-go/client";
+// ... existing code within code block ...
+```
 
 </Step></Steps>
 
 <Info>
- **Have questions or feedback? Help us get better!**
+**Have questions or feedback? Help us get better!**
 
 Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
-
 </Info>
+
+</Steps>
