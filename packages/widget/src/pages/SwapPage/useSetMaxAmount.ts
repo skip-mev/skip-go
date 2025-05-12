@@ -60,24 +60,24 @@ export const useGasFeeTokenAmount = () => {
 
         if (isFeeAsset) {
           const result = await getEvmGasPriceEstimate(sourceAsset?.chainID ?? "");
-
           if (!result) {
             return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
           }
 
           return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).toString();
         }
-        return "0";
+        return 0;
       }
       case ChainType.Cosmos:
+        if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
         return cosmosFeeUsed?.feeAmount;
       case ChainType.SVM:
       default:
-        return "0";
+        return 0;
     }
   }, [
     chainType,
-    cosmosFeeUsed?.feeAmount,
+    cosmosFeeUsed,
     sourceAsset?.chainID,
     sourceAsset?.denom,
     sourceAsset?.originChainID,
@@ -90,7 +90,6 @@ export const useGasFeeTokenAmount = () => {
       return await getGasFeeTokenAmount();
     },
   });
-
   return gasFeeTokenAmount;
 };
 
