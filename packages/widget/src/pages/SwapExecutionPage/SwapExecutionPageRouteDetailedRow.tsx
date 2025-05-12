@@ -9,7 +9,7 @@ import { ChainTransaction } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
-import { chainAddressesAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
@@ -50,15 +50,6 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
   const { copyAddress, isShowingCopyAddressFeedback } = useCopyAddress();
-
-  const { transactionsSigned } = useAtomValue(swapExecutionStateAtom);
-
-  const showSignRequired = useMemo(() => {
-    if (index + 1 - transactionsSigned > 0) {
-      return isSignRequired;
-    }
-    return false;
-  }, [index, isSignRequired, transactionsSigned]);
 
   const assetDetails = useGetAssetDetails({
     assetDenom: denom,
@@ -214,9 +205,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               </StyledChainName>
               {renderExplorerLink}
             </Row>{" "}
-            {showSignRequired && (
-              <SmallText color={theme.warning.text}>Signature required</SmallText>
-            )}
+            {isSignRequired && <SmallText color={theme.warning.text}>Signature required</SmallText>}
           </LeftContent>
           {renderAddress}
         </Row>

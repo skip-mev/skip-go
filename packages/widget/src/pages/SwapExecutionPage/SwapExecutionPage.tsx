@@ -41,6 +41,7 @@ export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const {
     route,
+    clientOperations,
     overallStatus,
     transactionDetailsArray,
     isValidatingGasBalance,
@@ -65,11 +66,6 @@ export const SwapExecutionPage = () => {
   useSyncTxStatus({
     statusData,
   });
-
-  const clientOperations = useMemo(() => {
-    if (!route?.operations) return [] as ClientOperation[];
-    return getClientOperations(route.operations);
-  }, [route?.operations]);
 
   const lastOperation = clientOperations[clientOperations.length - 1];
 

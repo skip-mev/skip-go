@@ -142,8 +142,6 @@ export const SwapExecutionPageRouteDetailed = ({
 
   const renderOperations = useMemo(() => {
     return operations.map((operation, index) => {
-      const nextOperation = operations[index + 1];
-
       const asset = {
         tokenAmount: operation.amountOut,
         denom: operation.denomOut,
@@ -164,7 +162,7 @@ export const SwapExecutionPageRouteDetailed = ({
             index={index}
             onClickEditDestinationWallet={onClickEditDestinationWallet}
             context={index === operations.length - 1 ? "destination" : "intermediary"}
-            isSignRequired={nextOperation?.signRequired}
+            isSignRequired={operation?.signRequired}
             status={operationStatus}
             explorerLink={explorerLink}
             statusData={statusData}
