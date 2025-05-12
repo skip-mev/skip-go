@@ -1,6 +1,6 @@
 import { StargateClient } from "@cosmjs/stargate/build/stargateclient";
 import { getRpcEndpointForChain } from "./getRpcEndpointForChain";
-import { ClientState } from "../state";
+import { ClientState } from "../state/clientState";
 import { accountParser } from "src/registry";
 import { createRequestClient } from "../utils/generateApi";
 import { getRestEndpointForChain } from "./getRestEndpointForChain";

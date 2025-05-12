@@ -1,6 +1,6 @@
-import { SkipApiOptions } from "src/utils/fetchClient";
+import { SkipApiOptions } from "src/state/apiState";
 import { assets } from "../api/getAssets";
-import { ClientState } from "../state";
+import { ClientState } from "../state/clientState";
 
 export type GetMainnetAndTestnetAssetsProps = {
   chainId?: string;

@@ -35,6 +35,6 @@ export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPric
 export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
 export { setApiOptions } from "./public-functions/setApiOptions";
 
-export type { SkipClientOptions } from "./state";
+export type { SkipClientOptions } from "./state/clientState";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

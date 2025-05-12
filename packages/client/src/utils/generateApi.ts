@@ -2,7 +2,7 @@ import { Camel, toCamel, toSnake } from "./convert";
 
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
-import { Fetch, SkipApiOptions } from "./fetchClient";
+import { ApiState, SkipApiOptions } from "../state/apiState";
 
 type RequestClientOptions = {
   baseUrl: string;
@@ -93,14 +93,14 @@ export function createRequest<Request, Response, TransformedResponse>({
 
   const request = async (options?: RequestType): Promise<TransformedResponse | undefined> => {
     const { apiKey, apiUrl, abortDuplicateRequests, ...requestParams } = options ?? {};
-    let fetchClient = Fetch.client;
+    let fetchClient = ApiState.client;
     if (apiUrl || apiKey) {
       fetchClient = createRequestClient({
         baseUrl: apiUrl || "https://api.skip.build",
         apiKey: apiKey,
       });
     } else {
-      await Fetch.clientInitialized;
+      await ApiState.clientInitialized;
     }
 
     if (abortDuplicateRequests && controller && !controller?.signal?.aborted) {

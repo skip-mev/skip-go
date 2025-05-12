@@ -1,4 +1,4 @@
-import { ClientState } from "../../state";
+import { ClientState } from "../../state/clientState";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { CosmosTx } from "../../types/swaggerTypes";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";

@@ -1,4 +1,4 @@
-import { ClientState } from "../state";
+import { ClientState } from "../state/clientState";
 import { api, ApiRequest, ApiResponse } from "../utils/generateApi";
 
 export const balances = api({

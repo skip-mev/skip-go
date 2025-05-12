@@ -2,7 +2,7 @@ import { WalletClient } from "viem";
 import { EvmTx } from "../../types/swaggerTypes";
 import { balances } from "../../api/postBalances";
 import { BigNumber } from "bignumber.js";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { formatUnits } from "viem";
 import { GetFallbackGasAmount } from "src/types/client-types";
 import { validateEvmTokenApproval } from "./validateEvmTokenApproval";

@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { ClientState } from "../state";
+import { ClientState } from "../state/clientState";
 import { TransactionCallbacks } from "../types/callbacks";
 import { ChainType, CosmosMsg, RouteResponse } from "../types/swaggerTypes";
 import { ApiRequest } from "../utils/generateApi";

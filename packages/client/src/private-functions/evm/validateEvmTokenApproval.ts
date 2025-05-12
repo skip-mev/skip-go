@@ -1,5 +1,5 @@
 import { erc20ABI } from "src/constants/abis";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { BalanceResponseDenomEntry, Chain, Erc20Approval, EvmTx } from "src/types/swaggerTypes";
 import { formatUnits, maxUint256, publicActions, WalletClient } from "viem";
 import { BigNumber } from "bignumber.js";

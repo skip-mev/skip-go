@@ -3,7 +3,7 @@ import { Connection, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { submitTransaction } from "src/api/postSubmitTransaction";
 import { wait } from "src/utils/timer";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 
 export const executeSvmTransaction = async (

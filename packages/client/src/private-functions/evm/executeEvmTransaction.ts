@@ -1,5 +1,5 @@
 import { EvmTx } from "src/types/swaggerTypes";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { maxUint256, publicActions } from "viem";
 import { erc20ABI } from "src/constants/abis";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";

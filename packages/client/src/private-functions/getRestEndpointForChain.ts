@@ -1,5 +1,5 @@
 import { chains, findFirstWorkingEndpoint } from "src/chains";
-import { ClientState } from "../state";
+import { ClientState } from "../state/clientState";
 
 export const getRestEndpointForChain = async (chainId: string) => {
   if (ClientState.endpointOptions.getRestEndpointForChain) {

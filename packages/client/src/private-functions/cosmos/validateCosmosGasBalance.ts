@@ -5,7 +5,7 @@ import { getSigningStargateClient } from "../../public-functions/getSigningStarg
 import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
 import { Decimal } from "@cosmjs/math/build/decimal";
 import { balances } from "../../api/postBalances";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { GetFallbackGasAmount } from "src/types/client-types";
 import { getCosmosGasAmountForMessage } from "./getCosmosGasAmountForMessage";

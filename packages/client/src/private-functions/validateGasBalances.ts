@@ -1,5 +1,5 @@
 import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
-import { ClientState } from "src/state";
+import { ClientState } from "src/state/clientState";
 import { GetFallbackGasAmount, SignerGetters, ValidateGasResult } from "src/types/client-types";
 import { Tx } from "../types/swaggerTypes";
 import { validateCosmosGasBalance } from "./cosmos/validateCosmosGasBalance";

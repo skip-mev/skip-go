@@ -1,15 +1,15 @@
 import { GeneratedType, Registry } from "@cosmjs/proto-signing";
 import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { Chain, Asset, ChainAffiliates } from "./types/swaggerTypes";
-import { ApiResponse } from "./utils/generateApi";
-import { getMainnetAndTestnetChains } from "./private-functions/getMainnetAndTestnetChains";
+import { Chain, Asset, ChainAffiliates } from "../types/swaggerTypes";
+import { ApiResponse } from "../utils/generateApi";
+import { getMainnetAndTestnetChains } from "../private-functions/getMainnetAndTestnetChains";
 import {
   getMainnetAndTestnetAssets,
   GetMainnetAndTestnetAssetsProps,
-} from "./private-functions/getMainnetAndTestnetAssets";
-import { balances } from "./api/postBalances";
+} from "../private-functions/getMainnetAndTestnetAssets";
+import { balances } from "../api/postBalances";
 import { EndpointOptions, SignerGetters, ValidateGasResult } from "src/types/client-types";
-import { SkipApiOptions } from "./utils/fetchClient";
+import { SkipApiOptions } from "./apiState";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {
@@ -24,8 +24,6 @@ export class ClientState {
   static getCosmosSigner?: SignerGetters["getCosmosSigner"];
   static getEvmSigner?: SignerGetters["getEvmSigner"];
   static getSvmSigner?: SignerGetters["getSvmSigner"];
-  static chainIdsToAffiliates?: Record<string, ChainAffiliates>;
-  static cumulativeAffiliateFeeBPS?: string = "0";
 
   static skipChains?: Chain[];
   static skipAssets?: Record<string, Asset[]>;
@@ -74,6 +72,5 @@ export type SkipClientOptions = SkipApiOptions & {
   };
   aminoTypes?: AminoConverters;
   registryTypes?: Iterable<[string, GeneratedType]>;
-  chainIdsToAffiliates?: Record<string, ChainAffiliates>;
   cacheDurationMs?: number;
 };
