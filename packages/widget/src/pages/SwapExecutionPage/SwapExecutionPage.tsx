@@ -7,7 +7,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
-import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import {
   chainAddressesAtom,
   skipSubmitSwapExecutionAtom,
