@@ -1,6 +1,6 @@
 import { GeneratedType, Registry } from "@cosmjs/proto-signing";
 import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { Chain, Asset, ChainAffiliates } from "../types/swaggerTypes";
+import { Chain, Asset } from "../types/swaggerTypes";
 import { ApiResponse } from "../utils/generateApi";
 import { getMainnetAndTestnetChains } from "../private-functions/getMainnetAndTestnetChains";
 import {
@@ -8,7 +8,7 @@ import {
   GetMainnetAndTestnetAssetsProps,
 } from "../private-functions/getMainnetAndTestnetAssets";
 import { balances } from "../api/postBalances";
-import { EndpointOptions, SignerGetters, ValidateGasResult } from "src/types/client-types";
+import { EndpointOptions, ValidateGasResult } from "src/types/client-types";
 import { SkipApiOptions } from "./apiState";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -21,9 +21,6 @@ export class ClientState {
     getRpcEndpointForChain?: (chainId: string) => Promise<string>;
     getRestEndpointForChain?: (chainId: string) => Promise<string>;
   };
-  static getCosmosSigner?: SignerGetters["getCosmosSigner"];
-  static getEvmSigner?: SignerGetters["getEvmSigner"];
-  static getSvmSigner?: SignerGetters["getSvmSigner"];
 
   static skipChains?: Chain[];
   static skipAssets?: Record<string, Asset[]>;
