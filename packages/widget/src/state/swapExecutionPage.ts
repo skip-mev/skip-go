@@ -224,14 +224,16 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
           });
         }
-      } else if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
-          track("error page: insufficient balance for gas");
-          set(errorAtom, {
-            errorType: ErrorType.InsufficientBalanceForGas,
-            error: error as Error,
-            onClickBack: () => {
-              set(setOverallStatusAtom, "unconfirmed");
-            },
+      } else if (
+        (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
+      ) {
+        track("error page: insufficient balance for gas");
+        set(errorAtom, {
+          errorType: ErrorType.InsufficientBalanceForGas,
+          error: error as Error,
+          onClickBack: () => {
+            set(setOverallStatusAtom, "unconfirmed");
+          },
         });
       } else if (lastTransaction?.explorerLink) {
         track("error page: transaction failed", { lastTransaction });
@@ -404,7 +406,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
-          // getFallbackGasAmount,
+          getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
             if (getSigners?.getCosmosSigner) {
