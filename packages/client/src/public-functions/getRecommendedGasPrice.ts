@@ -2,9 +2,14 @@ import { Decimal } from "@cosmjs/math/build/decimal";
 import { GasPrice } from "@cosmjs/stargate/build/fee";
 import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { BigNumber } from "bignumber.js";
+import { SkipApiOptions } from "src/utils/fetchClient";
 
-export const getRecommendedGasPrice = async (chainId: string) => {
-  const feeInfo = await getFeeInfoForChain(chainId);
+export type getRecommendedGasPriceProps = {
+  chainId: string;
+} & SkipApiOptions;
+
+export const getRecommendedGasPrice = async (props: getRecommendedGasPriceProps) => {
+  const feeInfo = await getFeeInfoForChain(props);
 
   if (!feeInfo || !feeInfo.gasPrice) {
     return undefined;

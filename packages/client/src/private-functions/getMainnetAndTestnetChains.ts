@@ -1,16 +1,19 @@
+import { SkipApiOptions } from "src/utils/fetchClient";
 import { chains } from "../api/getChains";
 import { ClientState } from "../state";
 
-export const getMainnetAndTestnetChains = async () => {
+export const getMainnetAndTestnetChains = async (apiOptions?: SkipApiOptions) => {
   const [mainnetRes, testnetRes] = await Promise.all([
     chains({
       includeEvm: true,
       includeSvm: true,
+      ...apiOptions,
     }),
     chains({
       includeEvm: true,
       includeSvm: true,
       onlyTestnets: true,
+      ...apiOptions,
     }),
   ]);
 

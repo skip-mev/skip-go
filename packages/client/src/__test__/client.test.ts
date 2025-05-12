@@ -16,6 +16,8 @@ import {
   trackTransaction,
   transactionStatus,
   venues,
+  getRecommendedGasPrice,
+  getFeeInfoForChain,
 } from "../index";
 import { SKIP_API_URL } from "src/constants/constants";
 import { toCamel } from "src/utils/convert";
@@ -1522,29 +1524,35 @@ describe("client", () => {
     });
   });
 
-  // describe("getRecommendedGasPrice", () => {
-  //   it("returns the recommended gas price for a chain", async () => {
-  //     await setApiOptions();
-  //     const result = await getRecommendedGasPrice("osmosis-1");
+  describe("getRecommendedGasPrice", () => {
+    it("returns the recommended gas price for a chain", async () => {
+      const result = await getRecommendedGasPrice({
+        chainId: "osmosis-1",
+        apiUrl: "https://api.skip.build",
+      });
 
-  //     expect(result?.denom).toEqual("uosmo");
-  //   }, 30000);
+      expect(result?.denom).toEqual("uosmo");
+    }, 30000);
 
-  //   it("returns the recommended gas price for Noble (no staking token)", async () => {
-  //     await setApiOptions();
-  //     const result = await getRecommendedGasPrice("noble-1");
+    it("returns the recommended gas price for Noble (no staking token)", async () => {
+      const result = await getRecommendedGasPrice({
+        chainId: "noble-1",
+        apiUrl: "https://api.skip.build",
+      });
 
-  //     expect(result?.denom).toEqual("uusdc");
-  //   }, 30000);
-  // });
+      expect(result?.denom).toEqual("uusdc");
+    }, 30000);
+  });
 
-  // describe("getFeeInfoForChain", () => {
-  //   it("returns the fee info for dymension", async () => {
-  //     await setApiOptions();
-  //     const feeInfo = await getFeeInfoForChain("dymension_1100-1");
-  //     expect(feeInfo?.denom).toEqual("adym");
-  //   });
-  // });
+  describe("getFeeInfoForChain", () => {
+    it("returns the fee info for dymension", async () => {
+      const feeInfo = await getFeeInfoForChain({
+        chainId: "dymension_1100-1",
+        apiUrl: "https://api.skip.build",
+      });
+      expect(feeInfo?.denom).toEqual("adym");
+    });
+  });
 
   describe("bridges", () => {
     it("returns a list of bridges", async () => {

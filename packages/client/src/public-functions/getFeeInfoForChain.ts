@@ -1,9 +1,14 @@
 import { chains } from "src/chains";
 import { getDefaultGasTokenForChain } from "../private-functions/getDefaultGasTokenForChain";
 import { ClientState } from "src/state";
+import { SkipApiOptions } from "src/utils/fetchClient";
 
-export const getFeeInfoForChain = async (chainId: string) => {
-  const skipChains = await ClientState.getSkipChains();
+export type GetFeeInfoForChainProps = {
+  chainId: string;
+} & SkipApiOptions;
+
+export const getFeeInfoForChain = async ({ chainId, apiUrl, apiKey }: GetFeeInfoForChainProps) => {
+  const skipChains = await ClientState.getSkipChains({ apiUrl, apiKey });
 
   const skipChain = skipChains.find((chain) => chain.chainId === chainId);
 

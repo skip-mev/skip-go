@@ -169,8 +169,6 @@ export default function Home() {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
-            hideAssetsUnlessWalletTypeConnected
-
             filterOut={{
               destination: {
                 "pacific-1": [

@@ -28,12 +28,12 @@ export class ClientState {
   static skipAssets?: Record<string, Asset[]>;
   static skipBalances?: Record<string, ApiResponse<"getBalances">>;
 
-  static async getSkipChains() {
+  static async getSkipChains(apiOptions?: SkipApiOptions) {
     if (this.skipChains) {
       return this.skipChains;
     }
 
-    const response = await getMainnetAndTestnetChains();
+    const response = await getMainnetAndTestnetChains(apiOptions);
 
     this.skipChains = response;
     return response;
