@@ -15,9 +15,15 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 ```
 
 ## Required fields
-route: A RouteResponse containing swap or transfer operations.
+```route``` A RouteResponse containing swap or transfer operations.
 
-userAddresses: One user address per chain in the same order as route.requiredChainAddresses.
+```userAddresses``` One user address per chain in the same order as route.requiredChainAddresses.
+
+```getCosmosSigner``` Function that takes a chainId and returns a Promise<OfflineSigner>
+
+```getEvmSigner``` Function that takes a chainId and returns a Promise<WalletClient>
+
+```getSvmSigner``` Function that returns a Promise<OfflineSigner>
 
 ## Optional fields
 ```slippageTolerancePercent``` Set the maximum slippage tolerance for the route (defaults to "1").
@@ -60,6 +66,9 @@ await executeRoute({
   slippageTolerancePercent: "0.5",
   beforeMsg: cosmosMsg1,
   afterMsg: cosmosMsg2,
+  getCosmosSigner: (chainId) => {},
+  getEvmSigner: (chainId) => {},
+  getSvmSigner: () => {},
   onTransactionBroadcast: ({ chainId, txHash }) => {
     console.log(`Broadcasted on ${chainId}: ${txHash}`);
   },
