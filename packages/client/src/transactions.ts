@@ -1,8 +1,10 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
-import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
-import { Msgs } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs";
-import MsgExecuteContractInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract";
+import {
+  MsgTransfer as MsgTransferInjective,
+  MsgExecuteContractCompat as MsgExecuteContractInjective,
+  Msgs,
+} from "@injectivelabs/sdk-ts";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
@@ -18,7 +20,12 @@ import { MsgExecute } from "./codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "./codegen/evmos/vesting/v2/vesting";
 import { WalletClient, publicActions } from "viem";
-import { Connection, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  Transaction,
+  SimulatedTransactionResponse,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
 import { GetFallbackGasAmount } from "./client-types";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
@@ -243,4 +250,65 @@ export async function getSVMGasAmountForMessage(
     );
   }
   return gas.value;
+}
+
+export interface SimulationResult {
+  success: boolean;
+  logs?: string[];
+  error?: SimulatedTransactionResponse["err"];
+}
+
+export async function simulateSvmTx(
+  connection: Connection,
+  svmTx: SvmTx,
+): Promise<SimulationResult> {
+  const txBuffer = Buffer.from(svmTx.tx, "base64");
+  let transaction: Transaction;
+  try {
+    transaction = Transaction.from(txBuffer);
+  } catch (decodeError) {
+    return {
+      success: false,
+      error: { decodeError: (decodeError as Error).message },
+    };
+  }
+
+  const simulation = await connection.simulateTransaction(transaction);
+
+  if (simulation.value.err) {
+    const insufficientGasBalance = simulation.value.logs?.some((log) =>
+      log.includes("insufficient lamports"),
+    );
+
+    const shortfall = getSolShortfall(simulation.value.logs ?? []);
+
+    const errMsg =
+      insufficientGasBalance && shortfall
+        ? `Insufficient balance for gas on Solana. You need ${shortfall.toFixed(6)} SOL to proceed.`
+        : "Simulation failed";
+
+    return {
+      success: false,
+      logs: simulation.value.logs ?? [],
+      error: errMsg,
+    };
+  }
+
+  return {
+    success: true,
+    logs: simulation.value.logs ?? [],
+  };
+}
+
+export function getSolShortfall(logs: string[]): number | null {
+  const line = logs.find((l) => l.includes("insufficient lamports"));
+  if (!line) return null;
+
+  const m = line.match(/insufficient lamports (\d+), need (\d+)/);
+  if (!m) return null;
+
+  const have = parseInt(m[1] ?? "0", 10);
+  const need = parseInt(m[2] ?? "0", 10);
+  const shortfallLamports = need - have;
+  return shortfallLamports / LAMPORTS_PER_SOL;
 }

@@ -1,5 +1,57 @@
 # @skip-go/client
 
+## 0.17.1
+
+### Patch Changes
+
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+
+## 0.17.0
+
+### Minor Changes
+
+- 3f58bf3: refactor injective labs dependencey to reduce bundle size
+- d2804a0: apply multipler for non-native fee tokens on prin-1
+
+### Patch Changes
+
+- 162f202: update registries
+- f5bc62c: simluate svm txs to ensure sufficient gas and program execution
+- 1b601ec: support layer zero
+
+## 0.16.34
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+
+## 0.16.33
+
+### Patch Changes
+
+- d82a6e3: update registries
+
+## 0.16.32
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+
+## 0.16.31
+
+### Patch Changes
+
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+
+## 0.16.30
+
+### Patch Changes
+
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+
 ## 0.16.29
 
 ### Patch Changes

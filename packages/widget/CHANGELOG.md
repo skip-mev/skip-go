@@ -1,5 +1,103 @@
 ## 0.0.15
 
+## 3.8.8
+
+### Patch Changes
+
+- 00b842a: improve asset display amount code
+- 31c67f4: Fix prop warning in dev
+- 441a597: enable amplitude session replays
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+- Updated dependencies [4ca2bb4]
+- Updated dependencies [c928a3c]
+  - @skip-go/client@0.17.1
+
+## 3.8.7
+
+### Patch Changes
+
+- 7e7f1b1: fix swap page footer layout
+- 162f202: update registries
+- cf49d23: improve asset display in history page
+- 4f4db90: Fix clearing validating when returning from user rejected request, Fix no longer showing user rejected request unless currently on swap execution page
+- 41655dd: update low contrast text color
+- 23899c2: add initia to ledger warning
+- 1b601ec: support layer zero
+- a1744b8: Add onSourceAndDestinationSwapped callback
+- c946693: improve gaping in footer
+- Updated dependencies [162f202]
+- Updated dependencies [3f58bf3]
+- Updated dependencies [f5bc62c]
+- Updated dependencies [d2804a0]
+- Updated dependencies [1b601ec]
+  - @skip-go/client@0.17.0
+
+## 3.8.6
+
+### Patch Changes
+
+- 854c59a: Fix useTxHistory returning completed if lastTxSuccess, instead should only return completed if isSettled and isSuccess are true
+- 2b2a6e7: refactor fee computation and fee display
+
+## 3.8.5
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+- Updated dependencies [72ca16b]
+  - @skip-go/client@0.16.34
+
+## 3.8.4
+
+### Patch Changes
+
+- d82a6e3: update registries
+- Updated dependencies [d82a6e3]
+  - @skip-go/client@0.16.33
+
+## 3.8.3
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+- d4b83b0: add initia testnet
+- Updated dependencies [363cceb]
+  - @skip-go/client@0.16.32
+
+## 3.8.2
+
+### Patch Changes
+
+- daeb41e: improve insufficient balance button text if gas balance issue
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+- Updated dependencies [aca9648]
+- Updated dependencies [a0582fc]
+  - @skip-go/client@0.16.31
+
+## 3.8.1
+
+### Patch Changes
+
+- e309043: Update History page design and reduce API calls
+
+## 3.8.0
+
+### Minor Changes
+
+- b2bff47: fixed bug in displaying bad price warnings
+
+### Patch Changes
+
+- 58c5faf: Show connect wallet before showing please select a source asset
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+- b184242: Update web-component to allow passing props via javascript properties
+- Updated dependencies [4105295]
+- Updated dependencies [773175c]
+  - @skip-go/client@0.16.30
+
 ## 3.7.3
 
 ### Patch Changes

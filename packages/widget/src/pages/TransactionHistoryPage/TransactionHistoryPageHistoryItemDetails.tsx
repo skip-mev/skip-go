@@ -163,6 +163,8 @@ const StyledHistoryItemDetailRow = styled(Row)`
   @media (max-width: 767px) {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+    padding: 5px 10px;
   }
 `;
 

@@ -143,11 +143,6 @@ export const useCreateEvmWallets = () => {
                 chainIdToConnect: chainID,
               });
             }
-            track("get address", {
-              walletName: connector.name,
-              chainId: chainID,
-              ChainType: ChainType.EVM,
-            });
             try {
               const account = await connector.getAccounts();
               if (account.length === 0) {
@@ -170,11 +165,6 @@ export const useCreateEvmWallets = () => {
             connector.name.toLowerCase().includes("cosmostation");
           minimalWallet.walletPrettyName = `${connector.name} ${isMultiChainWallet ? "(EVM)" : ""}`;
           minimalWallet.getAddress = async () => {
-            track("get address", {
-              walletName: connector.name,
-              chainId: chainID,
-              ChainType: ChainType.Cosmos,
-            });
             const { address } = await connectWallet({
               chainIdToConnect: chainID,
             });
