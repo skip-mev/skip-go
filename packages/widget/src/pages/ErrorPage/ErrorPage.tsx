@@ -12,6 +12,7 @@ import { ErrorPageTransactionReverted } from "./ErrorPageTransactionReverted";
 import { ErrorPageCosmosLedgerWarning } from "./ErrorPageCosmosLedgerWarning";
 import { ErrorPageGoFastWarning } from "./ErrorPageGoFastWarning";
 import { ErrorPageLowInfoWarning } from "./ErrorPageLowInfoWarning";
+import { ErrorPageInsufficientGasBalance } from "./ErrorPageInsufficientGasBalance";
 
 export const ErrorPage = () => {
   const [error] = useAtom(errorAtom);
@@ -34,6 +35,8 @@ export const ErrorPage = () => {
         return <ErrorPageTransactionReverted {...error} />;
       case ErrorType.Unexpected:
         return <ErrorPageUnexpected error={error.error} />;
+      case ErrorType.InsufficientBalanceForGas:
+        return <ErrorPageInsufficientGasBalance error={error.error} />;
       case ErrorType.CosmosLedgerWarning:
         return <ErrorPageCosmosLedgerWarning {...error} />;
       case ErrorType.LowInfoWarning:
