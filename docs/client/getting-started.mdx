@@ -34,8 +34,12 @@ To start integrating with the Skip Go API, you no longer initialize a `SkipClien
 
 ### Initialization Options
 
-- **If using `executeRoute`:** Call `setClientOptions()` once at application startup with your configuration (excluding signers).
-- **If *not* using `executeRoute`:** Call `setApiOptions({ apiUrl, apiKey })` once at startup, or pass `apiUrl` and `apiKey` to each function call.
+The library can be initialized using `setClientOptions` or `setApiOptions`. Both functions accept `apiUrl` and `apiKey`.
+
+- **`setClientOptions(options)`:** Use this for a comprehensive setup, especially if you plan to use `executeRoute` or other functions requiring on-chain interaction. It configures API access (`apiUrl`, `apiKey`, `cacheDurationMs`) and chain-specific details like RPC/REST endpoints (`endpointOptions`), Amino types (`aminoTypes`), and Protobuf registry types (`registryTypes`).
+- **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`) and/or set up affiliate fee structures (`chainIdsToAffiliates`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
+
+You typically call one of these functions once at application startup.
 
 ```ts Import and Initialize
 import {
@@ -48,16 +52,19 @@ import {
   // ... other functions you need
 } from "@skip-go/client";
 
-// Example: Initialize for executeRoute usage
+// Example: Initialize for executeRoute usage 
 setClientOptions({
+  apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
+  apiKey: "YOUR_API_KEY",   // Optional: required for certain features
   endpointOptions: { /* ... */ },
-  // ... other options like aminoTypes, registryTypes
+  // ... other options like aminoTypes, registryTypes, cacheDurationMs
 });
 
-// Example: Initialize for direct API calls (no executeRoute)
+// Example: Initialize for direct API calls (simpler, if not using executeRoute)
 setApiOptions({
   apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
   apiKey: "YOUR_API_KEY",   // Optional: required for certain features
+  // chainIdsToAffiliates: { /* ... */ } // Optional: for affiliate fees
 });
 
 // Now you can call functions directly, e.g.:
@@ -66,11 +73,15 @@ setApiOptions({
 
 ### Configuration Parameters
 
-- `apiUrl?: string`: Override the default API URL (used by `setApiOptions` or passed directly).
-- `apiKey?: string`: Your Skip API key (used by `setApiOptions` or passed directly).
+Below are the common configuration parameters. Refer to the specific `options` type for `setClientOptions` or `setApiOptions` for full details.
+
+- `apiUrl?: string`: Override the default API URL. Can be passed to `setClientOptions` or `setApiOptions`, or directly to individual API functions if neither initialization function is called.
+- `apiKey?: string`: Your Skip API key. Can be passed to `setClientOptions` or `setApiOptions`, or directly to individual API functions if neither initialization function is called. Required for certain features.
 - `endpointOptions?: EndpointOptions`: Provide RPC and REST endpoints for specific chains (used by `setClientOptions`).
 - `aminoTypes?: AminoConverters`: Additional amino types for message encoding (used by `setClientOptions`).
 - `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types (used by `setClientOptions`).
+- `cacheDurationMs?: number`: Duration in milliseconds to cache responses for functions like `chains` and `assets` (used by `setClientOptions`).
+- `chainIdsToAffiliates?: Record<string, ChainAffiliates>`: Configure affiliate fee details (used by `setApiOptions`).
 
 </Step> <Step title="Setup Signers">
 
@@ -98,7 +109,7 @@ const getCosmosSigner = async (chainId: string) => {
 import { createWalletClient, custom, Account } from "viem";
 import { mainnet } from 'viem/chains';
 
-const getEvmSigner = async () => {
+const getEvmSigner = async (chainId: string) => {
   const ethereum = window.ethereum;
   if (!ethereum) throw new Error("MetaMask not installed");
   const accounts = await ethereum.request({ method: 'eth_requestAccounts' }) as Account[];
@@ -113,7 +124,7 @@ const getEvmSigner = async () => {
 }
 ```
 
-```ts SVM Signer
+```ts Svm Signer
 // For Solana transactions, we'll use the Phantom wallet adapter
 // npm install @solana/wallet-adapter-phantom
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
@@ -125,12 +136,6 @@ const getSvmSigner = async () => {
 };
 ```
 </CodeGroup>
-
-### Using Signers
-
-These signer functions (`getCosmosSigner`, `getEvmSigner`, `getSvmSigner`) are **not** passed during initialization with `setClientOptions`.
-
-Instead, you pass them directly to the `executeRoute` function when you are ready to execute a transaction, as shown in Step 7.
 
 </Step> <Step title="Query Basic Info">
 
@@ -148,8 +153,8 @@ const cosmosChains = await chains();
 
 // include EVM and SVM chains
 const allChains = await chains({
-  includeEVM: true,
-  includeSVM: true,
+  includeEvm: true,
+  includeSvm: true,
 });
 
 // only show testnet chains
@@ -161,13 +166,13 @@ const testnetChains = await chains({
 ```ts Supported Assets
 import { assets } from "@skip-go/client";
 
-// returns `Record<string, Asset[]>`, includes EVM & SVM by default
-const allAssets = await assets();
+// returns `Record<string, Asset[]>`
+const allAssets = await assets(); 
 
 // get assets filtered by chain ID
 const cosmosHubAssets = await assets({
-  chainId: 'cosmoshub-4',
-  includeCw20Assets: true, // include Cw20 assets for this chain
+  chainId: 'cosmoshub-4', 
+  includeCw20Assets: true, 
 });
 
 // only get assets for specific chains
@@ -179,7 +184,7 @@ const specificAssets = await assets({
 ```ts Token Balances
 import { balances } from "@skip-go/client";
 
-// Define the request structure
+// Define the request structure (already defined earlier in doc, ensure consistency or repeat here for clarity)
 interface BalancesRequest {
   chainId: string;
   address: string;
@@ -202,7 +207,7 @@ const balanceRequests: BalancesRequest[] = [
   }
 ];
 
-// returns a map of assets by chain ID
+// returns a map of assets by chain ID (or the structure defined by BalanceResponse)
 const userBalances = await balances({ requests: balanceRequests });
 ```
 </CodeGroup>
@@ -256,6 +261,7 @@ const routeResult = await route({
       ```
 </CodeGroup>
 
+
 <Info>
   Read more about [affiliate fees](../general/affiliate-fees), [Smart Relay](../general/smart-relay) and [EVM Swaps](../advanced-swapping/smart-swap-options#feature-evm-swaps).
 </Info>
@@ -273,6 +279,7 @@ See [Cross-chain Failure Cases](../advanced-transfer/handling-cross-chain-failur
 We recommend storing the user's addresses and creating a function like [`getAddress`](https://github.com/skip-mev/skip-go-example/blob/c55d9208bb46fbf1a4934000e7ec4196d8ccdca4/pages/index.tsx#L99) that retrieves the address based on the chain ID. 
 
 ```ts
+// Assuming 'routeResult' holds the object from the route() call in Step 5
 // get user addresses for each requiredChainAddress to execute the route
   const userAddresses = await Promise.all(
   routeResult.requiredChainAddresses.map(async (chainId) => ({
@@ -284,49 +291,37 @@ We recommend storing the user's addresses and creating a function like [`getAddr
 
 </Step> <Step title="Execute the Route">
 
-Once you have a route object (`routeResult` from the previous step), you can execute it using the `executeRoute` function. You need to pass the route object, the user addresses, and the necessary signer functions.
+Once you have a route, you can execute it in a single function call by passing in the route, the user addresses for at least the chains the route includes, and optional callback functions. This also registers the transaction for tracking.
 
-### Execute Route Example
-
-```ts Execute Route
-import {
-  executeRoute,
-  // Import your signer functions defined in Step 3
-  getCosmosSigner,
-  getEvmSigner,
-  getSvmSigner,
-} from "@skip-go/client";
-
-// Assuming 'routeResult' holds the object from the route() call
-// Assuming 'userAddresses' holds the array from the 'Get Required Addresses' step
-
+```ts
 await executeRoute({
   route: routeResult,
   userAddresses,
-  getCosmosSigner, // Pass the signer functions directly
+  getCosmosSigner,
   getEvmSigner,
   getSvmSigner,
-  // Optional Callbacks
-  onTransactionCompleted: async (chainId, txHash, status) => {
+  onTransactionCompleted: async (txInfo) => {
     console.log(
-      `Route completed on chain ${chainId} with tx hash: ${txHash} & status: ${status.state}`
+      `Route completed on chain ${txInfo.chainId} with tx hash: ${txInfo.txHash} & status: ${txInfo.status?.state}`
     );
   },
   onTransactionBroadcast: async ({ txHash, chainId }) => {
     console.log(`Transaction broadcasted on ${chainId} with tx hash: ${txHash}`);
   },
-  onTransactionTracked: async ({ txHash, chainId }) => {
-    console.log(`Transaction tracked for ${chainId} with tx hash: ${txHash}`);
+  onTransactionTracked: async ({ txHash, chainId, explorerLink }) => {
+    console.log(`Transaction tracked for ${chainId} with tx hash: ${txHash}, explorer: ${explorerLink}`);
   },
-  onTransactionSigned: async ({ txHash, chainId }) => {
-    console.log(`Transaction signed for ${chainId} with tx hash: ${txHash}`);
+  onTransactionSigned: async ({ chainId }) => {
+    console.log(`Transaction signed for ${chainId}`);
   },
-  onValidateGasBalance: async ({ chainId, isGasSufficient }) => {
-    if (!isGasSufficient) {
-      console.warn(`Insufficient gas balance on chain ${chainId}.`);
-      // Optionally prompt user to acquire more gas
+  onValidateGasBalance: async (validation) => {
+    if (validation.status === "error") {
+      console.warn(`Insufficient gas balance or gas validation error on chain ${validation.chainId} (Tx Index: ${validation.txIndex}).`);
     }
   },
+  onApproveAllowance: async (approvalInfo) => {
+    console.log(`ERC20 allowance ${approvalInfo.status} for token ${approvalInfo.allowance?.tokenContract} on chain ${approvalInfo.allowance?.chainId}`);
+  }
 });
 ```
 
@@ -335,35 +330,26 @@ For routes that consist of multiple transactions, `executeRoute` will monitor ea
 <Info>
 Alternatively, you can handle message generation, signing, and submission manually using the individual functions:
 - `messages`: Generate transaction messages.
-- `signDirect`: Sign messages directly.
+- `messagesDirect`: Sign messages directly
 - `broadcastTx`: Broadcast transactions to the network.
 - `submitTransaction`: Submit and track transactions.
 Refer to the API documentation for details on these lower-level functions.
 </Info>
 
-</Step> <Step title="Transaction Tracking">
 
-Once the user has signed a transaction to execute a cross-chain action, you can track its progress.
-
-### Tracking Transactions
-
-If you used `executeRoute`, tracking is handled automatically. For manual transaction submission or to track an existing transaction:
-
-- **Track Existing Transaction:** `trackTransaction` - Call this function with a `txHash` and `chainId` to begin Skip's backend tracking for a transaction already submitted to the network.
-- **Submit and Track:** `submitTransaction` - This function (used internally by `executeRoute`) submits a signed transaction to the network *and* registers it for tracking.
+</Step><Step title="Transaction Tracking">
 
 After a transaction is registered for tracking (either via `executeRoute`, `submitTransaction`, or `trackTransaction`), you can poll for its status:
 
 - **Check Status:** `transactionStatus` - Takes a `txHash` and `chainId` and returns the current cross-chain status.
 
-We also provide a `waitForTransaction` helper function (imported from `@skip-go/client`) that resolves a promise when the entire cross-chain action flow has completed. This can be an alternative to manually polling with `transactionStatus`.
+Remember, if you use `executeRoute` (Step 7), it automatically handles the transaction lifecycle, including waiting for completion. The manual polling method described below using `transactionStatus` is primarily for scenarios where you are not using `executeRoute` for full execution (e.g., if you use `submitTransaction` directly) or if you need more granular control over the tracking process.
 
 ```ts Manual Transaction Tracking
 import {
   submitTransaction,
   trackTransaction,
   transactionStatus,
-  waitForTransaction
 } from "@skip-go/client";
 
 async function handleManualTx(signedTx: any, chainId: string) {
@@ -377,35 +363,38 @@ async function handleManualTx(signedTx: any, chainId: string) {
   // Or, if already submitted elsewhere:
   // await trackTransaction({ txHash: existingTxHash, chainId });
 
-
+  // Poll for status using transactionStatus
   const checkStatus = async () => {
-    const status = await transactionStatus({ txHash, chainId });
-    console.log("Current status:", status.state);
-    // Check if the transaction is in a terminal state
-    if (status.state !== "COMPLETED" && status.state !== "ABANDONED" /* ... add other terminal states */) { 
-      setTimeout(checkStatus, 5000); 
-    } else {
-      console.log("Final status:", status);
+    try {
+      const statusResult = await transactionStatus({ txHash, chainId });
+      console.log("Current status:", statusResult.state, statusResult);
+
+      // Check if the transaction is in a terminal state
+      // Possible states include: STATE_COMPLETED_SUCCESS, STATE_COMPLETED_ERROR, STATE_ABANDONED, STATE_PENDING_CONFIRMATION, STATE_PENDING_EXECUTION, etc.
+      // Refer to the TxStatusResponse type or API documentation for a complete list of states.
+      if (statusResult.state === "STATE_COMPLETED_SUCCESS") {
+        console.log("Final status (Completed Successfully):", statusResult);
+      } else if (statusResult.state === "STATE_COMPLETED_ERROR" || statusResult.state === "STATE_ABANDONED") {
+        console.error("Final status (Failed or Abandoned):", statusResult.error || "Abandoned");
+      } else {
+        console.log(`Transaction for ${txHash} on ${chainId} is still processing with state: ${statusResult.state}. Polling again in 5s.`);
+        setTimeout(checkStatus, 5000);
+      }
+    } catch (error) {
+      console.error(`Error polling for status of ${txHash} on ${chainId}:`, error);
+      // Decide if you want to retry polling on error or stop.
     }
   };
-  //checkStatus(); // Uncomment to start polling
 
-  // Or, use the helper to wait for completion
-  try {
-    const finalStatus = await waitForTransaction({ txHash, chainId });
-    console.log("Transaction completed:", finalStatus);
-  } catch (error) {
-    console.error("Error waiting for transaction or transaction failed:", error);
-  }
+  checkStatus(); // Start polling
+
 }
 ```
-
-</Step> 
+</Step></Steps>
 
 <Info>
-**Have questions or feedback? Help us get better!**
+ **Have questions or feedback? Help us get better!**
 
 Join [our Discord](https://skip.build/discord) and select the "Skip Go Developer" role to share your questions and feedback.
-</Info>
 
-</Steps>
+</Info>
