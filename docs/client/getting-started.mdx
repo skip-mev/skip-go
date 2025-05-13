@@ -297,9 +297,9 @@ await executeRoute({
   getCosmosSigner,
   getEvmSigner,
   getSvmSigner,
-  onTransactionCompleted: async (txInfo) => {
+  onTransactionCompleted: async ({ txHash, chainId, status}) => {
     console.log(
-      `Route completed on chain ${txInfo.chainId} with tx hash: ${txInfo.txHash} & status: ${txInfo.status?.state}`
+      `Route completed on chain ${chainId} with tx hash: ${txHash} & status: ${status?.state}`
     );
   },
   onTransactionBroadcast: async ({ txHash, chainId }) => {
