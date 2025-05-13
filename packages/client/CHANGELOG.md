@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 0.17.2
+
+### Patch Changes
+
+- b5d0b31: update registries
+
 ## 0.17.1
 
 ### Patch Changes
