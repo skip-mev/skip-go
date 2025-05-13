@@ -3016,7 +3016,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cosmjs/launchpad@npm:*":
+"@cosmjs/launchpad@npm:*, @cosmjs/launchpad@npm:0.27.1":
   version: 0.27.1
   resolution: "@cosmjs/launchpad@npm:0.27.1"
   dependencies:
@@ -7917,7 +7917,7 @@ __metadata:
     eslint-plugin-prettier: ^5.2.1
     eslint-plugin-react-hooks: ^4.6.2
     fs-extra: ^11.3.0
-    graz: ^0.1.30
+    graz: ^0.2.6
     jotai: ^2.10.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
@@ -17835,16 +17835,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graz@npm:^0.1.30":
-  version: 0.1.31
-  resolution: "graz@npm:0.1.31"
+"graz@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "graz@npm:0.2.6"
   dependencies:
+    "@cosmjs/amino": 0.31.3
+    "@cosmjs/cosmwasm-stargate": 0.31.3
+    "@cosmjs/launchpad": 0.27.1
+    "@cosmjs/proto-signing": 0.31.3
+    "@cosmjs/stargate": 0.31.3
+    "@cosmjs/tendermint-rpc": 0.31.3
     "@cosmsnap/snapper": 0.1.29
     "@dao-dao/cosmiframe": 0.1.0
     "@keplr-wallet/cosmos": 0.12.156
     "@keplr-wallet/types": 0.12.156
     "@metamask/providers": 12.0.0
-    "@tanstack/react-query": 4.35.0
     "@terra-money/station-connector": 1.1.0
     "@vectis/extension-client": ^0.7.2
     "@walletconnect/modal": 2.7.0
@@ -17855,17 +17860,12 @@ __metadata:
     long: 4
     zustand: 4.5.2
   peerDependencies:
-    "@cosmjs/amino": <=0.31.3
-    "@cosmjs/cosmwasm-stargate": <=0.31.3
-    "@cosmjs/launchpad": "*"
-    "@cosmjs/proto-signing": <=0.31.3
-    "@cosmjs/stargate": <=0.31.3
-    "@cosmjs/tendermint-rpc": <=0.31.3
     "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.41
+    "@tanstack/react-query": ">=5.62.0"
     react: ">=17"
   bin:
     graz: dist/cli.js
-  checksum: ca0b7ee2fb05eedfacbf6c167c291ea8b906c8400b6af32701efb9d03d3b89b9ff5793be7e1e6792520729dd59f8ce18de9a9bab1829fe0b3214f8600585a662
+  checksum: 41ea8fbc6db26f47cbcfa14067c5391d9db2e0d541656df0dfec71da483a21dc823c1d8936115e0b4c68d976e125073081be43abbe81f79a20b42d3a73be6844
   languageName: node
   linkType: hard
 
