@@ -81,13 +81,13 @@ To execute transactions, you need to set up signers for the ecosystems you plan 
 
 ```ts Cosmos Signer
 // For Cosmos transactions, we'll use Keplr wallet from the window object
-const getCosmosSigner = async (chainID: string) => {
-  const key = await window.keplr?.getKey(chainID);
+const getCosmosSigner = async (chainId: string) => {
+  const key = await window.keplr?.getKey(chainId);
   if (!key) throw new Error("Keplr not installed or chain not added");
 
   return key.isNanoLedger
-        ? window.keplr?.getOfflineSignerOnlyAmino(chainID)
-        : window.keplr?.getOfflineSigner(chainID);
+        ? window.keplr?.getOfflineSignerOnlyAmino(chainId)
+        : window.keplr?.getOfflineSigner(chainId);
 };
 
 ```
@@ -166,13 +166,13 @@ const allAssets = await assets();
 
 // get assets filtered by chain ID
 const cosmosHubAssets = await assets({
-  chainID: 'cosmoshub-4',
-  includeCW20Assets: true, // include CW20 assets for this chain
+  chainId: 'cosmoshub-4',
+  includeCw20Assets: true, // include Cw20 assets for this chain
 });
 
 // only get assets for specific chains
 const specificAssets = await assets({
-  chainIDs: ['osmosis-1', '1'], // Ethereum and Osmosis
+  chainIds: ['osmosis-1', '1'], // Ethereum and Osmosis
 });
 ```
 
@@ -181,14 +181,14 @@ import { balances } from "@skip-go/client";
 
 // Define the request structure
 interface BalancesRequest {
-  chainID: string;
+  chainId: string;
   address: string;
   denoms?: string[]; // Optional: specify denoms, otherwise fetches all
 }
 
 const balanceRequests: BalancesRequest[] = [
   {
-    chainID: "137", // Polygon
+    chainId: "137", // Polygon
     address: "0x24a9267cE9e0a8F4467B584FDDa12baf1Df772B5",
     denoms: [
       "polygon-native", // Matic
@@ -196,7 +196,7 @@ const balanceRequests: BalancesRequest[] = [
     ]
   },
   {
-    chainID: "osmosis-1",
+    chainId: "osmosis-1",
     address: "osmo12xufazw43lanl8dkvf3l7y9zzm8n3zswftw2yc",
     denoms: ["uosmo"]
   }
@@ -275,9 +275,9 @@ We recommend storing the user's addresses and creating a function like [`getAddr
 ```ts
 // get user addresses for each requiredChainAddress to execute the route
   const userAddresses = await Promise.all(
-  route.requiredChainAddresses.map(async (chainID) => ({
-    chainID,
-    address: await getAddress(chainID),
+  routeResult.requiredChainAddresses.map(async (chainId) => ({
+    chainId,
+    address: await getAddress(chainId),
   }))
 );
 ```
@@ -307,23 +307,23 @@ await executeRoute({
   getEvmSigner,
   getSvmSigner,
   // Optional Callbacks
-  onTransactionCompleted: async (chainID, txHash, status) => {
+  onTransactionCompleted: async (chainId, txHash, status) => {
     console.log(
-      `Route completed on chain ${chainID} with tx hash: ${txHash} & status: ${status.state}`
+      `Route completed on chain ${chainId} with tx hash: ${txHash} & status: ${status.state}`
     );
   },
-  onTransactionBroadcast: async ({ txHash, chainID }) => {
-    console.log(`Transaction broadcasted on ${chainID} with tx hash: ${txHash}`);
+  onTransactionBroadcast: async ({ txHash, chainId }) => {
+    console.log(`Transaction broadcasted on ${chainId} with tx hash: ${txHash}`);
   },
-  onTransactionTracked: async ({ txHash, chainID }) => {
-    console.log(`Transaction tracked for ${chainID} with tx hash: ${txHash}`);
+  onTransactionTracked: async ({ txHash, chainId }) => {
+    console.log(`Transaction tracked for ${chainId} with tx hash: ${txHash}`);
   },
-  onTransactionSigned: async ({ txHash, chainID }) => {
-    console.log(`Transaction signed for ${chainID} with tx hash: ${txHash}`);
+  onTransactionSigned: async ({ txHash, chainId }) => {
+    console.log(`Transaction signed for ${chainId} with tx hash: ${txHash}`);
   },
-  onValidateGasBalance: async ({ chainID, isGasSufficient }) => {
+  onValidateGasBalance: async ({ chainId, isGasSufficient }) => {
     if (!isGasSufficient) {
-      console.warn(`Insufficient gas balance on chain ${chainID}.`);
+      console.warn(`Insufficient gas balance on chain ${chainId}.`);
       // Optionally prompt user to acquire more gas
     }
   },
@@ -349,12 +349,12 @@ Once the user has signed a transaction to execute a cross-chain action, you can 
 
 If you used `executeRoute`, tracking is handled automatically. For manual transaction submission or to track an existing transaction:
 
-- **Track Existing Transaction:** `trackTransaction` - Call this function with a `txHash` and `chainID` to begin Skip's backend tracking for a transaction already submitted to the network.
+- **Track Existing Transaction:** `trackTransaction` - Call this function with a `txHash` and `chainId` to begin Skip's backend tracking for a transaction already submitted to the network.
 - **Submit and Track:** `submitTransaction` - This function (used internally by `executeRoute`) submits a signed transaction to the network *and* registers it for tracking.
 
 After a transaction is registered for tracking (either via `executeRoute`, `submitTransaction`, or `trackTransaction`), you can poll for its status:
 
-- **Check Status:** `transactionStatus` - Takes a `txHash` and `chainID` and returns the current cross-chain status.
+- **Check Status:** `transactionStatus` - Takes a `txHash` and `chainId` and returns the current cross-chain status.
 
 We also provide a `waitForTransaction` helper function (imported from `@skip-go/client`) that resolves a promise when the entire cross-chain action flow has completed. This can be an alternative to manually polling with `transactionStatus`.
 
@@ -366,20 +366,20 @@ import {
   waitForTransaction
 } from "@skip-go/client";
 
-async function handleManualTx(signedTx: any, chainID: string) {
+async function handleManualTx(signedTx: any, chainId: string) {
 
   const { txHash } = await submitTransaction({
     signedTx: signedTx.tx_bytes, // Or however your signed tx is structured
-    chainID: chainID,
+    chainId: chainId,
   });
-  console.log(`Submitted and tracking tx: ${txHash} on ${chainID}`);
+  console.log(`Submitted and tracking tx: ${txHash} on ${chainId}`);
 
   // Or, if already submitted elsewhere:
-  // await trackTransaction({ txHash: existingTxHash, chainID });
+  // await trackTransaction({ txHash: existingTxHash, chainId });
 
 
   const checkStatus = async () => {
-    const status = await transactionStatus({ txHash, chainID });
+    const status = await transactionStatus({ txHash, chainId });
     console.log("Current status:", status.state);
     // Check if the transaction is in a terminal state
     if (status.state !== "COMPLETED" && status.state !== "ABANDONED" /* ... add other terminal states */) { 
@@ -392,7 +392,7 @@ async function handleManualTx(signedTx: any, chainID: string) {
 
   // Or, use the helper to wait for completion
   try {
-    const finalStatus = await waitForTransaction({ txHash, chainID });
+    const finalStatus = await waitForTransaction({ txHash, chainId });
     console.log("Transaction completed:", finalStatus);
   } catch (error) {
     console.error("Error waiting for transaction or transaction failed:", error);
