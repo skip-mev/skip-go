@@ -43,7 +43,7 @@ export default defineConfig({
       include: [/jotai-effect/, /node_modules/],
       transformMixedEsModules: true,
     },
-    minify: true,
+    minify: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, "src/index.tsx"),

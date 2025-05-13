@@ -62,11 +62,11 @@ export const AssetAndChainSelectorModalRowItem = ({
       />
     );
   }
-  const balance = getBalance(item.asset.chainID, item.asset.denom);
+  const balance = getBalance(item.asset.chainId, item.asset.denom);
 
   return (
     <ModalRowItem
-      key={item.chainID}
+      key={item.chainId}
       eureka={eureka}
       onClick={() => onSelect(item.asset)}
       leftContent={<ChainWithAssetRow item={item} eureka={eureka} />}
@@ -75,8 +75,8 @@ export const AssetAndChainSelectorModalRowItem = ({
         Number(balance.amount) > 0 && (
           <Column align="flex-end">
             <SmallText normalTextColor>{formatDisplayAmount(balance.formattedAmount)}</SmallText>
-            {balance.valueUSD && Number(balance.valueUSD) > 0 && (
-              <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
+            {balance.valueUsd && Number(balance.valueUsd) > 0 && (
+              <SmallText>{formatUSD(balance.valueUsd)}</SmallText>
             )}
           </Column>
         )
@@ -117,10 +117,10 @@ const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: bo
   return (
     <RowLayout
       image={
-        <StyledChainImage height={35} width={35} src={item?.logoURI} alt={`${item.chainID} logo`} />
+        <StyledChainImage height={35} width={35} src={item?.logoUri} alt={`${item.chainId} logo`} />
       }
       mainText={item.prettyName}
-      subText={<SmallText>{item.chainID}</SmallText>}
+      subText={<SmallText>{item.chainId}</SmallText>}
       eureka={eureka}
     />
   );

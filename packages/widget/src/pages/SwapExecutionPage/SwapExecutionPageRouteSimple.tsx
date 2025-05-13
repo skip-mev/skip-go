@@ -49,14 +49,14 @@ export const SwapExecutionPageRouteSimple = ({
   const source = {
     denom: firstOperation.denomIn,
     tokenAmount: firstOperation.amountIn,
-    chainId: firstOperation.fromChainID ?? firstOperation.chainID,
+    chainId: firstOperation.fromChainId ?? firstOperation.chainId,
     usdValue: route?.usdAmountIn,
   };
 
   const destination = {
     denom: lastOperation.denomOut,
     tokenAmount: lastOperation.amountOut,
-    chainId: lastOperation.toChainID ?? lastOperation.chainID,
+    chainId: lastOperation.toChainId ?? lastOperation.chainId,
     usdValue: route?.usdAmountOut,
   };
 

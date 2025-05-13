@@ -4,11 +4,11 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { calculatePercentageChange } from "@/utils/number";
-import { RouteResponse } from "@skip-go/client";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
+import { RouteResponse } from "@skip-go/client";
 
 export type ErrorPageBadPriceWarningProps = {
   onClickContinue: () => void;
@@ -28,9 +28,9 @@ export const ErrorPageBadPriceWarning = ({
     usdAmountIn,
     usdAmountOut,
     sourceAssetDenom,
-    sourceAssetChainID,
+    sourceAssetChainId,
     destAssetDenom,
-    destAssetChainID,
+    destAssetChainId,
   } = route;
 
   const hasUsdValues =
@@ -51,12 +51,12 @@ export const ErrorPageBadPriceWarning = ({
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    chainId: sourceAssetChainID,
+    chainId: sourceAssetChainId,
     tokenAmount: amountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainID,
+    chainId: destAssetChainId,
     tokenAmount: amountOut,
   });
 

@@ -3,8 +3,14 @@
   "description": "JavaScript SDK for Skip Go API",
   "version": "0.17.2",
   "repository": "https://github.com/skip-mev/skip-go",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
   "files": [
     "dist/*",
     "*.js",
@@ -25,7 +31,8 @@
     "test": "vitest -c vitest.unit.config.mjs",
     "watch": "tsup --watch",
     "watch:link": "tsup --watch --onSuccess \"yalc push\"",
-    "update-registries": "yarn up @initia/initia-registry chain-registry"
+    "update-registries": "yarn up @initia/initia-registry chain-registry",
+    "update-types": "node generateTypes.mjs"
   },
   "devDependencies": {
     "@cosmjs/faucet": "0.32.3",
@@ -38,6 +45,7 @@
     "chain-registry": "^1.69.211",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
+    "swagger-typescript-api": "^13.0.28",
     "vitest": "^1.2.2"
   },
   "peerDependencies": {
@@ -55,7 +63,6 @@
     "@injectivelabs/sdk-ts": "1.15.3",
     "@keplr-wallet/unit": "^0.12.143",
     "@solana/wallet-adapter-base": "^0.9.23",
-    "axios": "1.x",
     "bech32": "^2.0.0",
     "cosmjs-types": "^0.9.0",
     "keccak": "3.0.4"

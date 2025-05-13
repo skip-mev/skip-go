@@ -1,21 +1,17 @@
 import { formatUSD } from "@/utils/intl";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
-import {
-  RouteResponse,
-  EstimatedFee,
-  FeeType as ClientFeeType,
-} from "@skip-go/client";
+import { FeeType, Fee, RouteResponse } from "@skip-go/client";
 import { ClientOperation, OperationType, getClientOperations } from "./clientType";
 
-export interface FeeDetail {
+export type FeeDetail = {
   assetAmount: number;
   formattedAssetAmount: string;
   formattedUsdAmount?: string;
-}
-export interface LabeledFee {
+};
+export type LabeledFee = {
   label: string;
   fee: FeeDetail;
-}
+};
 
 /** Turn a ClientOperation into a FeeDetail */
 const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
@@ -25,16 +21,18 @@ const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
       sourceChainFeeAmount,
       destinationChainFeeAmount,
       bpsFeeAmount,
-      sourceChainFeeUSD,
-      destinationChainFeeUSD,
-      bpsFeeUSD,
+      sourceChainFeeUsd,
+      destinationChainFeeUsd,
+      bpsFeeUsd,
     } = op.fee;
 
     const totalAmt = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
       .reduce((s, a) => s + Number(a), 0)
       .toString();
-    const totalUsd = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD]
-      .reduce((s, u) => s + Number(u), 0);
+    const totalUsd = [sourceChainFeeUsd, destinationChainFeeUsd, bpsFeeUsd].reduce(
+      (s, u) => s + Number(u),
+      0,
+    );
 
     const human = convertTokenAmountToHumanReadableAmount(totalAmt, feeAsset.decimals);
 
@@ -49,22 +47,17 @@ const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
   const { feeAmount, feeAsset, usdFeeAmount } = op;
   if (!feeAmount || !feeAsset?.decimals) return;
 
-  const human = convertTokenAmountToHumanReadableAmount(
-    feeAmount,
-    feeAsset.decimals
-  );
+  const human = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
 
   return {
     assetAmount: Number(human),
     formattedAssetAmount: `${human} ${feeAsset.symbol}`,
-    formattedUsdAmount: usdFeeAmount
-      ? formatUSD(usdFeeAmount)
-      : undefined,
+    formattedUsdAmount: usdFeeAmount ? formatUSD(usdFeeAmount) : undefined,
   };
-}
+};
 
-function computeSmartRelayFee(estimatedFees: EstimatedFee[]): FeeDetail | undefined {
-  const relay = estimatedFees.filter((f) => f.feeType === ClientFeeType.SMART_RELAY);
+function computeSmartRelayFee(estimatedFees: Fee[]): FeeDetail | undefined {
+  const relay = estimatedFees.filter((f) => f.feeType === FeeType.SMART_RELAY);
   if (!relay.length) return;
 
   const totalAmt = relay.reduce((s, f) => s + Number(f.amount), 0).toString();
@@ -120,10 +113,9 @@ export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
 
   const totalAsset = fees.reduce((s, { fee }) => s + fee.assetAmount, 0);
   const totalUsd = fees.reduce(
-    (s, { fee }) => s + (fee.formattedUsdAmount
-      ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, ""))
-      : 0),
-    0
+    (s, { fee }) =>
+      s + (fee.formattedUsdAmount ? Number(fee.formattedUsdAmount.replace(/[^0-9.-]/g, "")) : 0),
+    0,
   );
   const symbol = fees[0].fee.formattedAssetAmount.split(" ")[1];
 

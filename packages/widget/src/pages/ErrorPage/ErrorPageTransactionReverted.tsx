@@ -10,7 +10,6 @@ import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
-import { captureException } from "@sentry/react";
 import { useEffect } from "react";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
@@ -28,9 +27,6 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
-  useEffect(() => {
-    captureException("TransactionReverted");
-  }, []);
 
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -39,7 +35,7 @@ export const ErrorPageTransactionReverted = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: transferAssetRelease?.denom,
     tokenAmount: transferAssetRelease?.amount,
-    chainId: transferAssetRelease?.chainID,
+    chainId: transferAssetRelease?.chainId,
   });
 
   return (

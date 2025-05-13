@@ -22,7 +22,7 @@ export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   usdValue?: string;
-  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
