@@ -34,7 +34,7 @@ To start integrating with the Skip Go API, you no longer initialize a `SkipClien
 
 The library can be initialized using `setClientOptions` or `setApiOptions`. Both functions accept `apiUrl` and `apiKey`.
 
-- **`setClientOptions(options)`:** Use this if you plan to use `executeRoute` or interact directly with blockchains. It configures your API credentials and lets you provide chain-specific settings like endpoints, Amino types, and registry types.
+- **`setClientOptions(options)`:** Use this if you plan to use `executeRoute`. It configures your API credentials and lets you provide chain-specific settings like endpoints, Amino types, and registry types.
 - **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`) or set up affiliate fees (`chainIdsToAffiliates`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
 
 
@@ -164,7 +164,7 @@ const testnetChains = await chains({
 import { assets } from "@skip-go/client";
 
 // returns `Record<string, Asset[]>`
-const allAssets = await assets(); 
+const allAssets = await assets({ includeEvmAssets: true, includeSvmAssets: true, }); 
 
 // get assets filtered by chain ID
 const cosmosHubAssets = await assets({
@@ -327,7 +327,7 @@ For routes that consist of multiple transactions, `executeRoute` will monitor ea
 <Info>
 Alternatively, you can handle message generation, signing, and submission manually using the individual functions:
 - `messages`: Generate transaction messages.
-- `messagesDirect`: Sign messages directly
+- `messagesDirect`: A convenience function that combines the functionality of `/route` and `/msgs` into a single call. It returns the minimal number of messages required to execute a multi-chain swap or transfer.
 - `broadcastTx`: Broadcast transactions to the network.
 - `submitTransaction`: Submit and track transactions.
 Refer to the API documentation for details on these lower-level functions.
