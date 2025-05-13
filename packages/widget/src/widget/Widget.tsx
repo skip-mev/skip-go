@@ -7,7 +7,6 @@ import { Router } from "./Router";
 import { MessagesRequest, RouteRequest, SignerGetters, SkipClientOptions } from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import { registerModals } from "@/modals/registerModals";
-import { WalletProviders } from "@/providers/WalletProviders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useInitWidget } from "./useInitWidget";
 import { WalletConnect } from "@/state/wallets";
@@ -19,6 +18,8 @@ import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
 import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
+import { EVMProvider } from "@/providers/EVMProvider";
+import { CosmosProvider } from "@/providers/CosmosProvider";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
@@ -107,15 +108,17 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
 
   return (
     <ShadowDomAndProviders theme={theme}>
-      <WalletProviders>
+      <EVMProvider>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
-          <NiceModal.Provider>
-            <WidgetWrapper>
-              <Router />
-            </WidgetWrapper>
-          </NiceModal.Provider>
+          <CosmosProvider>
+            <NiceModal.Provider>
+              <WidgetWrapper>
+                <Router />
+              </WidgetWrapper>
+            </NiceModal.Provider>
+          </CosmosProvider>
         </QueryClientProvider>
-      </WalletProviders>
+      </EVMProvider>
     </ShadowDomAndProviders>
   );
 };
