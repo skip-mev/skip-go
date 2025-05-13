@@ -37,14 +37,14 @@ To start integrating with the Skip Go API, you no longer initialize a `SkipClien
 The library can be initialized using `setClientOptions` or `setApiOptions`. Both functions accept `apiUrl` and `apiKey`.
 
 - **`setClientOptions(options)`:** Use this for a comprehensive setup, especially if you plan to use `executeRoute` or other functions requiring on-chain interaction. It configures API access (`apiUrl`, `apiKey`, `cacheDurationMs`) and chain-specific details like RPC/REST endpoints (`endpointOptions`), Amino types (`aminoTypes`), and Protobuf registry types (`registryTypes`).
-- **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`) and/or set up affiliate fee structures (`chainIdsToAffiliates`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
+- **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
 
 You typically call one of these functions once at application startup.
 
 ```ts Import and Initialize
 import {
-  setClientOptions, // Use if calling executeRoute
-  setApiOptions,    // Use if *not* calling executeRoute
+  setClientOptions,
+  setApiOptions,
   chains,
   assets,
   route,
@@ -64,7 +64,6 @@ setClientOptions({
 setApiOptions({
   apiUrl: "YOUR_API_URL", // Optional: defaults to Skip API
   apiKey: "YOUR_API_KEY",   // Optional: required for certain features
-  // chainIdsToAffiliates: { /* ... */ } // Optional: for affiliate fees
 });
 
 // Now you can call functions directly, e.g.:
@@ -81,7 +80,6 @@ Below are the common configuration parameters. Refer to the specific `options` t
 - `aminoTypes?: AminoConverters`: Additional amino types for message encoding (used by `setClientOptions`).
 - `registryTypes?: Iterable<[string, GeneratedType]>`: Additional registry types (used by `setClientOptions`).
 - `cacheDurationMs?: number`: Duration in milliseconds to cache responses for functions like `chains` and `assets` (used by `setClientOptions`).
-- `chainIdsToAffiliates?: Record<string, ChainAffiliates>`: Configure affiliate fee details (used by `setApiOptions`).
 
 </Step> <Step title="Setup Signers">
 
@@ -342,54 +340,18 @@ Refer to the API documentation for details on these lower-level functions.
 After a transaction is registered for tracking (either via `executeRoute`, `submitTransaction`, or `trackTransaction`), you can poll for its status:
 
 - **Check Status:** `transactionStatus` - Takes a `txHash` and `chainId` and returns the current cross-chain status.
+  ```ts
+  // Example of checking transaction status:
+  // Assuming you have txHash and chainId from a previous step:
+  // const statusResult = await transactionStatus({ txHash: "your_tx_hash", chainId: "your_chain_id" });
+  // console.log("Transaction State:", statusResult.state); 
+  // console.log("Full Status Response:", statusResult);
+  // Possible states include: STATE_COMPLETED_SUCCESS, STATE_COMPLETED_ERROR, STATE_ABANDONED, STATE_PENDING_CONFIRMATION, STATE_PENDING_EXECUTION, etc.
+  // Refer to the TxStatusResponse type or API documentation for a complete list of states.
+  ```
 
-Remember, if you use `executeRoute` (Step 7), it automatically handles the transaction lifecycle, including waiting for completion. The manual polling method described below using `transactionStatus` is primarily for scenarios where you are not using `executeRoute` for full execution (e.g., if you use `submitTransaction` directly) or if you need more granular control over the tracking process.
+Remember, if you use `executeRoute` (Step 7), it automatically handles the transaction lifecycle, including waiting for completion. The manual tracking functions (`submitTransaction`, `trackTransaction`, `transactionStatus`) are primarily for scenarios where you are not using `executeRoute` for full execution (e.g., if you use `submitTransaction` directly) or if you need more granular control over the tracking and status polling process.
 
-```ts Manual Transaction Tracking
-import {
-  submitTransaction,
-  trackTransaction,
-  transactionStatus,
-} from "@skip-go/client";
-
-async function handleManualTx(signedTx: any, chainId: string) {
-
-  const { txHash } = await submitTransaction({
-    signedTx: signedTx.tx_bytes, // Or however your signed tx is structured
-    chainId: chainId,
-  });
-  console.log(`Submitted and tracking tx: ${txHash} on ${chainId}`);
-
-  // Or, if already submitted elsewhere:
-  // await trackTransaction({ txHash: existingTxHash, chainId });
-
-  // Poll for status using transactionStatus
-  const checkStatus = async () => {
-    try {
-      const statusResult = await transactionStatus({ txHash, chainId });
-      console.log("Current status:", statusResult.state, statusResult);
-
-      // Check if the transaction is in a terminal state
-      // Possible states include: STATE_COMPLETED_SUCCESS, STATE_COMPLETED_ERROR, STATE_ABANDONED, STATE_PENDING_CONFIRMATION, STATE_PENDING_EXECUTION, etc.
-      // Refer to the TxStatusResponse type or API documentation for a complete list of states.
-      if (statusResult.state === "STATE_COMPLETED_SUCCESS") {
-        console.log("Final status (Completed Successfully):", statusResult);
-      } else if (statusResult.state === "STATE_COMPLETED_ERROR" || statusResult.state === "STATE_ABANDONED") {
-        console.error("Final status (Failed or Abandoned):", statusResult.error || "Abandoned");
-      } else {
-        console.log(`Transaction for ${txHash} on ${chainId} is still processing with state: ${statusResult.state}. Polling again in 5s.`);
-        setTimeout(checkStatus, 5000);
-      }
-    } catch (error) {
-      console.error(`Error polling for status of ${txHash} on ${chainId}:`, error);
-      // Decide if you want to retry polling on error or stop.
-    }
-  };
-
-  checkStatus(); // Start polling
-
-}
-```
 </Step></Steps>
 
 <Info>
