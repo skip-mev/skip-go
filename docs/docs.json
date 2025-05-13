@@ -45,6 +45,7 @@
             "pages": [
               "client/getting-started",
               "client/balance-gas-and-fee-tooling",
+              "client/executing-a-route",
               "client/advanced-features",
               "client/migration-guide"
             ]
