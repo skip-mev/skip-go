@@ -1,5 +1,5 @@
 import { api, ApiRequest } from "../utils/generateApi";
-import { ApiState } from "src/state/apiState";
+import { ApiState, SkipApiOptions } from "src/state/apiState";
 
 export const route = async (request: RouteRequest) => {
   const requestWithAffiliateFeeBps = {
@@ -14,4 +14,7 @@ export const route = async (request: RouteRequest) => {
   })(requestWithAffiliateFeeBps);
 };
 
-export type RouteRequest = ApiRequest<"getRouteV2">;
+export type RouteRequest = ApiRequest<"getRouteV2"> &
+  SkipApiOptions & {
+    abortDuplicateRequests?: boolean;
+  };
