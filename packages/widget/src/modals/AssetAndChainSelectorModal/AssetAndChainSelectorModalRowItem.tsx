@@ -6,7 +6,7 @@ import { CircleSkeletonElement, SkeletonElement } from "@/components/Skeleton";
 import { styled } from "styled-components";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
+import { formatDisplayAmount } from "@/utils/number";
 import { formatUSD } from "@/utils/intl";
 import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSelectorModal";
 import { useFilteredChains } from "./useFilteredChains";
@@ -52,7 +52,7 @@ export const AssetAndChainSelectorModalRowItem = ({
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
-              <SmallText normalTextColor>{item.formattedTotalAmount}</SmallText>
+              <SmallText normalTextColor>{formatDisplayAmount(item.formattedTotalAmount)}</SmallText>
               {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
             </Column>
           )
@@ -73,7 +73,7 @@ export const AssetAndChainSelectorModalRowItem = ({
         Number(balance.amount) > 0 && (
           <Column align="flex-end">
             <SmallText normalTextColor>
-              {convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals)}
+              {formatDisplayAmount(balance.amount)}
             </SmallText>
             {balance.valueUSD && Number(balance.valueUSD) > 0 && (
               <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
