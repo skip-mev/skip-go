@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.0.0
+
+### Major Changes
+
+- 4007e19: Refactored client library to export seperate functions instead of single class to improve treeshaking and reduce bundle size impact
+  Refactored prop/variable naming to follow camelCase and PascalCase (for enums) strictly to autogenerate interfaces based on open api spec (swagger.yml) and use util functions to easily convert between camelCase and snake_case for API consumption
+  Added auto-cancelling previous requests if multiple requests for the same API are made before previous one completes
+
+### Patch Changes
+
+- be8dda4: update registries
+
 ## 0.17.2
 
 ### Patch Changes
