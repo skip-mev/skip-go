@@ -17,7 +17,7 @@ import {
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
-import { SimpleStatus } from "@/utils/clientType";
+import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
@@ -37,6 +37,7 @@ type ValidatingGasBalanceData = {
 type SwapExecutionState = {
   userAddresses: UserAddress[];
   route?: RouteResponse;
+  clientOperations: ClientOperation[];
   transactionDetailsArray: TransactionDetails[];
   transactionHistoryIndex: number;
   overallStatus: SimpleStatus;
@@ -66,6 +67,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
   "swapExecutionState",
   {
     route: undefined,
+    clientOperations: [],
     userAddresses: [],
     transactionDetailsArray: [],
     transactionHistoryIndex: 0,
@@ -121,6 +123,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     userAddresses: [],
     transactionDetailsArray: [],
     route,
+    clientOperations: getClientOperations(route.operations),
     transactionHistoryIndex,
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
@@ -186,13 +189,28 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         destAssetChainID,
       });
     },
-    onTransactionSigned: async () => {
+    onTransactionSigned: async (txInfo) => {
       track("execute route: transaction signed");
 
-      set(swapExecutionStateAtom, (prev) => ({
-        ...prev,
-        transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
-      }));
+      set(swapExecutionStateAtom, (prev) => {
+        const clientOperations = prev.clientOperations;
+        const signRequiredIndex = clientOperations.findIndex((operation) => {
+          return (
+            operation.signRequired &&
+            (operation.chainID === txInfo.chainID || operation.fromChainID === txInfo.chainID)
+          );
+        });
+
+        if (signRequiredIndex >= 0) {
+          clientOperations[signRequiredIndex].signRequired = false;
+        }
+
+        return {
+          ...prev,
+          clientOperations: clientOperations,
+          transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
+        };
+      });
 
       set(setOverallStatusAtom, "pending");
     },
@@ -215,14 +233,16 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
           });
         }
-      } else if ((error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")) {
-          track("error page: insufficient balance for gas");
-          set(errorAtom, {
-            errorType: ErrorType.InsufficientBalanceForGas,
-            error: error as Error,
-            onClickBack: () => {
-              set(setOverallStatusAtom, "unconfirmed");
-            },
+      } else if (
+        (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
+      ) {
+        track("error page: insufficient balance for gas");
+        set(errorAtom, {
+          errorType: ErrorType.InsufficientBalanceForGas,
+          error: error as Error,
+          onClickBack: () => {
+            set(setOverallStatusAtom, "unconfirmed");
+          },
         });
       } else if (lastTransaction?.explorerLink) {
         track("error page: transaction failed", { lastTransaction });
