@@ -18,8 +18,7 @@ export function formatShortDate(date: string | Date) {
 
 export function formatUSD(amount: string | number) {
   const amountNumber = typeof amount === "string" ? parseFloat(amount) : amount;
-  const minDisplayable =
-    1 / Math.pow(10, usdFormatter.resolvedOptions().maximumFractionDigits ?? 2);
+  const minDisplayable = 1 / Math.pow(10, 2);
 
   if (amountNumber > 0 && amountNumber < minDisplayable) {
     return `< ${usdFormatter.format(minDisplayable)}`;
