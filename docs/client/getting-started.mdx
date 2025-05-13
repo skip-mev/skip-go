@@ -35,7 +35,8 @@ To start integrating with the Skip Go API, you no longer initialize a `SkipClien
 The library can be initialized using `setClientOptions` or `setApiOptions`. Both functions accept `apiUrl` and `apiKey`.
 
 - **`setClientOptions(options)`:** Use this if you plan to use `executeRoute` or interact directly with blockchains. It configures your API credentials and lets you provide chain-specific settings like endpoints, Amino types, and registry types.
-- **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
+- **`setApiOptions(options)`:** Use this if you primarily need to configure API interaction (`apiUrl`, `apiKey`) and/or set up affiliate fee structures (`chainIdsToAffiliates`). This option does not configure `endpointOptions`, `aminoTypes`, or `registryTypes`.
+
 
 You typically call one of these functions once at application startup.
 
