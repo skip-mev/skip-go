@@ -364,9 +364,41 @@ import {
   submitTransaction,
   trackTransaction,
   transactionStatus,
-  waitForTransaction // Helper function
+  waitForTransaction
 } from "@skip-go/client";
-// ... existing code within code block ...
+
+async function handleManualTx(signedTx: any, chainID: string) {
+
+  const { txHash } = await submitTransaction({
+    signedTx: signedTx.tx_bytes, // Or however your signed tx is structured
+    chainID: chainID,
+  });
+  console.log(`Submitted and tracking tx: ${txHash} on ${chainID}`);
+
+  // Or, if already submitted elsewhere:
+  // await trackTransaction({ txHash: existingTxHash, chainID });
+
+
+  const checkStatus = async () => {
+    const status = await transactionStatus({ txHash, chainID });
+    console.log("Current status:", status.state);
+    // Check if the transaction is in a terminal state
+    if (status.state !== "COMPLETED" && status.state !== "ABANDONED" /* ... add other terminal states */) { 
+      setTimeout(checkStatus, 5000); 
+    } else {
+      console.log("Final status:", status);
+    }
+  };
+  //checkStatus(); // Uncomment to start polling
+
+  // Or, use the helper to wait for completion
+  try {
+    const finalStatus = await waitForTransaction({ txHash, chainID });
+    console.log("Transaction completed:", finalStatus);
+  } catch (error) {
+    console.error("Error waiting for transaction or transaction failed:", error);
+  }
+}
 ```
 
 </Step></Steps>
