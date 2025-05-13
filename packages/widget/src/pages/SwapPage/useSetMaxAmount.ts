@@ -85,7 +85,15 @@ export const useGasFeeTokenAmount = () => {
   ]);
 
   const { data: gasFeeTokenAmount } = useQuery({
-    queryKey: ["gasFeeTokenAmount", sourceAsset?.chainID, sourceAsset?.denom],
+    queryKey: [
+      "gasFeeTokenAmount",
+      {
+        chainType,
+        cosmosFeeUsed,
+        sourceAsset,
+        sourceDetails,
+      },
+    ],
     queryFn: async () => {
       return await getGasFeeTokenAmount();
     },
