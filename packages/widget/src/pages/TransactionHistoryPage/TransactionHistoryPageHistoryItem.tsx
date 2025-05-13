@@ -162,12 +162,12 @@ export const TransactionHistoryPageHistoryItem = ({
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
-        <Row gap={12} align="center">
+        <Row gap={8} align="center">
           <RenderAssetAmount {...source} sourceAsset />
           <ThinArrowIcon color={theme.primary.text.lowContrast} direction="right" />
           <RenderAssetAmount {...destination} />
         </Row>
-        <Row align="center" gap={10}>
+        <Row align="center" gap={6}>
           <SmallText>{relativeTime}</SmallText>
           <Row width={20} align="center" justify="center">
             {renderStatus}

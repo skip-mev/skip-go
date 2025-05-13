@@ -11,9 +11,9 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
-import { removeTrailingZeros } from "@/utils/number";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { TxsStatus } from "./useBroadcastedTxs";
 
@@ -190,7 +190,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <LeftContent>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
-                {removeTrailingZeros(assetDetails?.amount)}
+                {formatDisplayAmount(assetDetails?.amount)}
               </StyledAssetAmount>
               <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
               <StyledChainName
