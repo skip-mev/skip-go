@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.8.9
+
+### Patch Changes
+
+- fa63d79: bump graz
+- 5b3b9bc: fix max button cosmos amount
+- 2d5c7ce: Update useGasFeeTokenAmount for EVM
+- b5d0b31: update registries
+- c64a70a: improve number formatting and decrowd settings bar by removing powered by skip go text
+- 2c1967a: Hide signature required for operation once signed
+- 22200c8: Fix showing formattedAmount instead of balance.amount in Asset/Chain selector modal
+- Updated dependencies [b5d0b31]
+  - @skip-go/client@0.17.2
+
 ## 3.8.8
 
 ### Patch Changes
