@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.9.0
+
+### Minor Changes
+
+- 4007e19: Update widget to use client v1.0.0
+
+### Patch Changes
+
+- 30d7b1f: only record sentry replay on valid user id
+- be8dda4: update registries
+- Updated dependencies [4007e19]
+- Updated dependencies [be8dda4]
+  - @skip-go/client@1.0.0
+
 ## 3.8.9
 
 ### Patch Changes
