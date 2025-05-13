@@ -4,7 +4,13 @@ import { styled } from "styled-components";
 import React, { ReactElement, ReactNode, useEffect } from "react";
 import { PartialTheme } from "./theme";
 import { Router } from "./Router";
-import { MessagesRequest, RouteRequest, SignerGetters, SkipClientOptions } from "@skip-go/client";
+import {
+  MessagesRequest,
+  RouteRequest,
+  SetApiOptionsProps,
+  SignerGetters,
+  SkipClientOptions,
+} from "@skip-go/client";
 import { DefaultRouteConfig } from "./useInitDefaultRoute";
 import { registerModals } from "@/modals/registerModals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -81,7 +87,8 @@ export type WidgetProps = {
   hideAssetsUnlessWalletTypeConnected?: boolean;
 } & SkipClientOptions &
   Callbacks &
-  SignerGetters;
+  SignerGetters &
+  SetApiOptionsProps;
 
 export type ShowSwapWidget = {
   button?: ReactElement;

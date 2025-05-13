@@ -34,6 +34,7 @@ export { setClientOptions } from "./public-functions/setClientOptions";
 export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPrice";
 export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
 export { setApiOptions } from "./public-functions/setApiOptions";
+export type { SetApiOptionsProps } from "./public-functions/setApiOptions";
 
 export type { SkipClientOptions } from "./state/clientState";
 

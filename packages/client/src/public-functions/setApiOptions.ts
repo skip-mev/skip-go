@@ -2,7 +2,7 @@ import { ApiState, SkipApiOptions } from "src/state/apiState";
 import { createRequestClient } from "../utils/generateApi";
 import { Affiliate, ChainAffiliates } from "src/types/swaggerTypes";
 
-type SetApiOptionsProps = {
+export type SetApiOptionsProps = {
   chainIdsToAffiliates?: Record<string, ChainAffiliates>;
 } & SkipApiOptions;
 

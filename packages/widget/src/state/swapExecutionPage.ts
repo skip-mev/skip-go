@@ -206,7 +206,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         const signRequiredIndex = clientOperations.findIndex((operation) => {
           return (
             operation.signRequired &&
-            (operation.chainID === txInfo.chainID || operation.fromChainID === txInfo.chainID)
+            (operation.chainId === txInfo.chainId || operation.fromChainId === txInfo.chainId)
           );
         });
 
