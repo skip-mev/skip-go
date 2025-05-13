@@ -32,8 +32,8 @@ const getRecGasPrice = async () => {
 //   console.log(response);
 // }
 
-// getRoute();
+getRoute();
 
 // getFeeInfo();
 
-getRecGasPrice();
+// getRecGasPrice();
