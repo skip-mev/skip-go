@@ -4,7 +4,6 @@ import {
   getTransferEventsFromTxStatusResponse,
   OverallStatus,
 } from "@/utils/clientType";
-import { captureException } from "@sentry/react";
 import { transactionStatus, TransferAssetRelease } from "@skip-go/client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -61,10 +60,6 @@ export const useBroadcastedTxsStatus = ({
 
       const lastTxStatus =
         results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
-
-      if (lastTxStatus === "failed" && isRouteSettled) {
-        captureException("TransactionFailed");
-      }
 
       const transferAssetRelease = results
         .reverse()
