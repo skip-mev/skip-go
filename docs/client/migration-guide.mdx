@@ -89,7 +89,7 @@ All property names in API responses and configuration objects now strictly adher
 
 ### Named parameter enforcement for API functions
 
-Two methods now require named parameters instead of passing arrays or objects directly:
+Some methods now require named parameters or an options object instead of positional arguments:
 
 #### recommendAssets
 
@@ -116,6 +116,40 @@ New:
 await ibcOriginAssets({ assets: [asset1, asset2] });
 ```
 Wrap the assets array in a `{ assets: [...] }` object.
+
+#### `getFeeInfoForChain`
+
+Parameters for `getFeeInfoForChain` should now be passed as an object.
+
+Old:
+```ts
+await client.getFeeInfoForChain(chainID);
+```
+New:
+```ts
+import { getFeeInfoForChain } from '@skip-go/client'; // Assuming setApiOptions was called
+
+await getFeeInfoForChain({ chainId: chainID });
+// Or, if not using setApiOptions globally for apiUrl/apiKey:
+// await getFeeInfoForChain({ chainId: chainID, apiUrl: YOUR_API_URL, apiKey: YOUR_API_KEY });
+```
+
+#### `getRecommendedGasPrice`
+
+Parameters for `getRecommendedGasPrice` should now be passed as an object.
+
+Old:
+```ts
+await client.getRecommendedGasPrice(chainID);
+```
+New:
+```ts
+import { getRecommendedGasPrice } from '@skip-go/client'; // Assuming setApiOptions was called
+
+await getRecommendedGasPrice({ chainId: chainID });
+// Or, if not using setApiOptions globally for apiUrl/apiKey:
+// await getRecommendedGasPrice({ chainId: chainID, apiUrl: YOUR_API_URL, apiKey: YOUR_API_KEY });
+```
 
 </Update>
 
