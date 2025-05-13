@@ -4,9 +4,9 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
-import { RouteResponse } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { track } from "@amplitude/analytics-browser";
+import { RouteResponse } from "@skip-go/client";
 
 export type ErrorPageLowInfoWarningProps = {
   onClickContinue: () => void;
@@ -24,19 +24,19 @@ export const ErrorPageLowInfoWarning = ({
     amountIn,
     amountOut,
     sourceAssetDenom,
-    sourceAssetChainID,
+    sourceAssetChainId,
     destAssetDenom,
-    destAssetChainID,
+    destAssetChainId,
   } = route;
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    chainId: sourceAssetChainID,
+    chainId: sourceAssetChainId,
     tokenAmount: amountIn,
   });
   const destinationDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainID,
+    chainId: destAssetChainId,
     tokenAmount: amountOut,
   });
 

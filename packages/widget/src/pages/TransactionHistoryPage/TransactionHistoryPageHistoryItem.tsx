@@ -52,20 +52,20 @@ export const TransactionHistoryPageHistoryItem = ({
       amountIn,
       amountOut,
       sourceAssetDenom,
-      sourceAssetChainID,
+      sourceAssetChainId,
       destAssetDenom,
-      destAssetChainID,
+      destAssetChainId,
     },
     timestamp,
     transactionDetails,
   } = txHistoryItem;
 
   const initialTxHash = transactionDetails?.[0]?.txHash;
-  const chainId = transactionDetails?.[0]?.chainID;
-  const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+  const chainId = transactionDetails?.[0]?.chainId;
+  const chainType = chains?.find((chain) => chain.chainId === chainId)?.chainType;
   const derivedExplorerLink = createExplorerLink({
     txHash: initialTxHash,
-    chainID: chainId,
+    chainId: chainId,
     chainType,
   });
 
@@ -78,13 +78,13 @@ export const TransactionHistoryPageHistoryItem = ({
 
   const sourceAssetDetails = useGetAssetDetails({
     assetDenom: sourceAssetDenom,
-    chainId: sourceAssetChainID,
+    chainId: sourceAssetChainId,
     tokenAmount: amountIn,
   });
 
   const destinationAssetDetails = useGetAssetDetails({
     assetDenom: destAssetDenom,
-    chainId: destAssetChainID,
+    chainId: destAssetChainId,
     tokenAmount: amountOut,
   });
 

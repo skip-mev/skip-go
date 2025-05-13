@@ -11,13 +11,13 @@ import { currentPageAtom, Routes } from "@/state/router";
 import { errorAtom, ErrorType } from "@/state/errorPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
 import { track } from "@amplitude/analytics-browser";
 import { useCallback } from "react";
+import { RouteResponse } from "@skip-go/client";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -49,16 +49,16 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
 
   const getDestinationAddreessUnsetText = useCallback(() => {
     const destinationChainIdHasSignRequired =
-      lastOperation.signRequired && lastOperation.fromChainID === route?.destAssetChainID;
+      lastOperation.signRequired && lastOperation.fromChainId === route?.destAssetChainId;
 
     if (destinationChainIdHasSignRequired && route?.txsRequired === 2) {
       return "Set second signing address";
     }
     return "Set destination address";
   }, [
-    lastOperation.fromChainID,
+    lastOperation.fromChainId,
     lastOperation.signRequired,
-    route?.destAssetChainID,
+    route?.destAssetChainId,
     route?.txsRequired,
   ]);
 
@@ -81,11 +81,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set destination address button - clicked");
-            const destinationChainID = route?.destAssetChainID;
-            if (!destinationChainID) return;
+            const destinationChainId = route?.destAssetChainId;
+            if (!destinationChainId) return;
             NiceModal.show(Modals.SetAddressModal, {
               signRequired: lastOperation.signRequired,
-              chainId: destinationChainID,
+              chainId: destinationChainId,
               chainAddressIndex: route.requiredChainAddresses.length - 1,
             });
           }}

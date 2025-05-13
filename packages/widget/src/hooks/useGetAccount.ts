@@ -5,9 +5,9 @@ import { useAccount as useCosmosAccount, WalletType } from "graz";
 import { useAtomValue } from "jotai";
 import { useCallback } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
-import { ChainType } from "@skip-go/client";
 import { walletConnectLogo } from "@/constants/wagmi";
 import { solanaWallets } from "@/constants/solana";
+import { ChainType } from "@skip-go/client";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
@@ -29,7 +29,7 @@ export const useGetAccount = () => {
     // if checkChainType is true, it only check wallet connected no chainId is dependent
     (chainId?: string, checkChainType?: boolean, chainType?: string) => {
       if (!chainId) return;
-      chainType ??= chains?.find((c) => c.chainID === chainId)?.chainType;
+      chainType ??= chains?.find((c) => c.chainId === chainId)?.chainType;
       if (connectedAddress && connectedAddress[chainId]) {
         return {
           address: connectedAddress[chainId],
@@ -64,7 +64,7 @@ export const useGetAccount = () => {
             },
           };
         }
-        case ChainType.EVM: {
+        case ChainType.Evm: {
           if (evmAccount.chainId !== Number(chainId) && !checkChainType) return;
           if (!evmAccount.address) return;
           if (!evmAccount.connector) return;
@@ -90,7 +90,7 @@ export const useGetAccount = () => {
             },
           };
         }
-        case ChainType.SVM: {
+        case ChainType.Svm: {
           if (!solanaWallet?.publicKey) return;
 
           const getLogo = () => {
