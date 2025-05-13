@@ -72,6 +72,7 @@ export const validateSvmGasBalance = async ({
   return {
     success: true,
     logs: simulation.value.logs ?? [],
+    error: null,
     asset: null,
     fee: null,
   };
