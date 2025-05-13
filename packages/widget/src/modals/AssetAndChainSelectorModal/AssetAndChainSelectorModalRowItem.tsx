@@ -52,7 +52,9 @@ export const AssetAndChainSelectorModalRowItem = ({
         rightContent={
           Number(item.totalAmount) > 0 && (
             <Column align="flex-end">
-              <SmallText normalTextColor>{formatDisplayAmount(item.formattedTotalAmount)}</SmallText>
+              <SmallText normalTextColor>
+                {formatDisplayAmount(item.formattedTotalAmount)}
+              </SmallText>
               {Number(item.totalUsd) > 0 && <SmallText>{formatUSD(item.totalUsd)}</SmallText>}
             </Column>
           )
@@ -72,9 +74,7 @@ export const AssetAndChainSelectorModalRowItem = ({
         balance &&
         Number(balance.amount) > 0 && (
           <Column align="flex-end">
-            <SmallText normalTextColor>
-              {formatDisplayAmount(balance.amount)}
-            </SmallText>
+            <SmallText normalTextColor>{formatDisplayAmount(balance.formattedAmount)}</SmallText>
             {balance.valueUSD && Number(balance.valueUSD) > 0 && (
               <SmallText>{formatUSD(balance.valueUSD)}</SmallText>
             )}

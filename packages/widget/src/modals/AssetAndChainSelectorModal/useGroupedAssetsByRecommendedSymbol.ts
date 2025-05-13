@@ -123,7 +123,10 @@ export const useGroupedAssetByRecommendedSymbol = ({
       const balanceSummary = calculateBalanceSummary(group.assets);
       group.totalAmount = balanceSummary.totalAmount;
       group.totalUsd = balanceSummary.totalUsd;
-      group.formattedTotalAmount = convertTokenAmountToHumanReadableAmount(balanceSummary.totalAmount, group.decimals);
+      group.formattedTotalAmount = convertTokenAmountToHumanReadableAmount(
+        balanceSummary.totalAmount,
+        group.decimals,
+      );
     });
 
     return groupedAssets;
