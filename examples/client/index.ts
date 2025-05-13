@@ -1,10 +1,7 @@
 import { route, setApiOptions, getRecommendedGasPrice } from "@skip-go/client";
 
 const getRoute = async () => {
-  setApiOptions({
-    apiUrl: "",
-    apiKey: "",
-  });
+  setApiOptions();
 
   const response = await route({
     sourceAssetDenom: "uatom",
@@ -23,11 +20,10 @@ const getRoute = async () => {
 }
 
 const getRecGasPrice = async () => {
-  setApiOptions({
-    apiUrl: "",
-    apiKey: "",
+  setApiOptions();
+  const response = await getRecommendedGasPrice({
+    chainId: "osmosis-1"
   });
-  const response = await getRecommendedGasPrice("osmosis-1");
   console.log(response);
 }
 
