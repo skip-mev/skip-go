@@ -4,13 +4,7 @@
   "version": "1.0.0",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
-    }
-  },
+  "types": "dist/index.d.mts",
   "files": [
     "dist/*",
     "*.js",
