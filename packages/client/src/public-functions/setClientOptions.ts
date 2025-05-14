@@ -4,7 +4,7 @@ import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate/build/modul
 import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
 import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
 import { Registry } from "@cosmjs/proto-signing/build/registry";
-import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx.js";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClientState } from "../state/clientState";

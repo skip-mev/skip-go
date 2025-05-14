@@ -10,7 +10,7 @@ import type { CosmosMsg } from "src/types/swaggerTypes";
 import { getRestEndpointForChain } from "../getRestEndpointForChain";
 import { getEncodeObjectFromCosmosMessageInjective } from "./getEncodeObjectFromCosmosMessage";
 import { createTransaction } from "src/injective";
-import { fromBase64 } from "@cosmjs/encoding/build/base64";
+import { fromBase64 } from "@cosmjs/encoding/build/base64.js";
 import { BigNumberInBase, DEFAULT_BLOCK_TIMEOUT_HEIGHT } from "@injectivelabs/utils";
 import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts";
 

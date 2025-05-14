@@ -1,6 +1,6 @@
-import { BinaryReader, BinaryWriter } from "cosmjs-types/binary";
-import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
-import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin";
+import { BinaryReader, BinaryWriter } from "cosmjs-types/binary.js";
+import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth.js";
+import { Coin } from "cosmjs-types/cosmos/base/v1beta1/coin.js";
 
 export type BaseVestingAccount = {
   baseAccount: BaseAccount;

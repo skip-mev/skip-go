@@ -5,7 +5,7 @@ import { signCosmosMessageDirectInjective } from "./signCosmosMessageDirectInjec
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing/build/registry";
 import { makeAuthInfoBytes, makeSignDoc } from "@cosmjs/proto-signing/build/signing";
 import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
-import { fromBase64 } from "@cosmjs/encoding/build/base64";
+import { fromBase64 } from "@cosmjs/encoding/build/base64.js";
 import { Int53 } from "@cosmjs/math/build/integers";
 import { ClientState } from "src/state/clientState";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
