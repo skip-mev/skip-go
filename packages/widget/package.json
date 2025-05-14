@@ -17,9 +17,7 @@
     "build:web-component": "NODE_OPTIONS=--max-old-space-size=32384 webpack --config webpack.config.js",
     "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
     "prepack": "yarn run pre",
-    "postpack": "yarn run post",
     "pre": "npm run build && node scripts/prepublish.js",
-    "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",
     "test": "yarn playwright test"
