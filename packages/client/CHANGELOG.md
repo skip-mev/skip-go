@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.1
+
+### Patch Changes
+
+- aba3e58: release cjs version temporarily
+
 ## 1.0.0
 
 ### Major Changes
