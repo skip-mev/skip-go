@@ -10,7 +10,6 @@ import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { errorAtom } from "@/state/errorPage";
 import { useSetAtom } from "jotai";
-import { useEffect } from "react";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
 
@@ -27,7 +26,6 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
-
   const setErrorAtom = useSetAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();

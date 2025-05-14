@@ -1,16 +1,10 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.17.2",
+  "version": "1.0.0",
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
-    }
-  },
+  "types": "dist/index.d.mts",
   "files": [
     "dist/*",
     "*.js",
@@ -42,7 +36,7 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^1.69.211",
+    "chain-registry": "^1.69.212",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "swagger-typescript-api": "^13.0.28",
