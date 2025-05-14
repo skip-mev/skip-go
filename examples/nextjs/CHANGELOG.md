@@ -1,5 +1,11 @@
 # nextjs
 
+## 0.1.91
+
+### Patch Changes
+
+- @skip-go/widget@3.9.1
+
 ## 0.1.90
 
 ### Patch Changes
