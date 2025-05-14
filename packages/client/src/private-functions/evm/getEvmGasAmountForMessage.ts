@@ -1,6 +1,8 @@
-import { GetFallbackGasAmount } from "src/types/client-types";
-import { ChainType, EvmTx } from "src/types/swaggerTypes";
-import { publicActions, WalletClient } from "viem";
+import type { GetFallbackGasAmount } from "src/types/client-types";
+import { ChainType } from "src/types/swaggerTypes";
+import type { EvmTx } from "src/types/swaggerTypes";
+import { publicActions } from "viem";
+import type { WalletClient } from "viem";
 
 export async function getEVMGasAmountForMessage(
   signer: WalletClient,

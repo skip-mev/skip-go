@@ -22,5 +22,5 @@
     "strictNullChecks": true
   },
   "exclude": ["node_modules", "src/codegen/**/*.ts"],
-  "include": ["**/*.ts", "**/*.js"]
+  "include": ["**/*.ts", "**/*.js", "scripts/prepublish.cjs", "scripts/codegen.cjs"]
 }

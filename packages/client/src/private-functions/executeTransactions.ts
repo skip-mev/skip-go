@@ -1,7 +1,7 @@
-import { TxResult } from "src/types/client-types";
-import { ExecuteRouteOptions } from "../public-functions/executeRoute";
+import type { TxResult } from "src/types/client-types";
+import type { ExecuteRouteOptions } from "../public-functions/executeRoute";
 import { ClientState } from "../state/clientState";
-import { TransferStatus, Tx } from "../types/swaggerTypes";
+import type { TransferStatus, Tx } from "../types/swaggerTypes";
 import { executeCosmosTransaction } from "./cosmos/executeCosmosTransaction";
 import { executeEvmTransaction } from "./evm/executeEvmTransaction";
 import { executeSvmTransaction } from "./svm/executeSvmTransaction";
