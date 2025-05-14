@@ -16,8 +16,8 @@
   },
   "files": [
     "dist/*",
-    "*.mjs",
-    "*.d.mts"
+    "*.js",
+    "*.d.ts"
   ],
   "sideEffects": false,
   "scripts": {
