@@ -2,6 +2,7 @@ import type { Options } from "tsup";
 import { defineConfig } from "tsup";
 import { dependencies, peerDependencies } from "./package.json";
 import glob from "fast-glob";
+import { esbuildPluginFilePathExtensions } from "esbuild-plugin-file-path-extensions";
 
 export const autoExportFilesInDirectory = (path: string) => {
   return glob.sync(path).reduce(
@@ -40,6 +41,7 @@ export default defineConfig(async ({ watch }) => {
         ...apiEntrypoints,
         ...publicFunctions,
       },
+      esbuildPlugins: [esbuildPluginFilePathExtensions()],
       external: [
         ...Object.keys(dependencies || {}),
         ...Object.keys(peerDependencies || {}),
