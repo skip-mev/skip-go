@@ -5,6 +5,12 @@
   "repository": "https://github.com/skip-mev/skip-go",
   "main": "dist/index.mjs",
   "types": "dist/index.d.mts",
+  "exports": {
+    ".": {
+      "import": "./build/index.mjs",
+      "types": "./build/index.d.mts"
+    }
+  },
   "files": [
     "dist/*",
     "*.mjs",
