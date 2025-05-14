@@ -1,7 +1,7 @@
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
-import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
+import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { ClientState } from "src/state/clientState";
 import { makeSignDoc } from "@cosmjs/amino";
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
