@@ -1,16 +1,5 @@
 /** @type {import("eslint").Linter.Config} */
 const eslintConfig = {
-  root: true,
-  env: {
-    browser: true,
-    node: true,
-    es2021: true,
-  },
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-  },
   plugins: ["@typescript-eslint", "prettier", "import", "esm"],
   extends: [
     "eslint:recommended",
@@ -19,7 +8,28 @@ const eslintConfig = {
     "plugin:@typescript-eslint/stylistic",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:import/errors",
+    "plugin:import/warnings",
   ],
+  root: true,
+  env: {
+    browser: true,
+    node: true,
+    es2021: true,
+  },
+  settings: {
+    "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "module",
+  },
   ignorePatterns: [
     "dist/",
     "build/",
@@ -34,6 +44,8 @@ const eslintConfig = {
       disallowTypeAnnotations: false,
     }],
 
+    'import/no-unresolved': 'error',
+
     "@typescript-eslint/no-import-type-side-effects": "error",
 
     // Enforce file extensions in imports (especially useful for ESM)
@@ -43,6 +55,7 @@ const eslintConfig = {
       "js": "always",
       "jsx": "always",
     }],
+
     "esm/no-commonjs": "warn",
     "import/no-unresolved": ["error", {
       ignoreExtension: false,

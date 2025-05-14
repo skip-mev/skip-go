@@ -1,4 +1,5 @@
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import { signCosmosMessageDirectEvmos } from "./signCosmosMessageDirectEvmos";
 import { signCosmosMessageDirectInjective } from "./signCosmosMessageDirectInjective";
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing/build/registry";
@@ -12,7 +13,7 @@ import type { SignCosmosMessageDirectOptions } from "src/types/client-types";
 
 export const signCosmosMessageDirect = async (
   options: SignCosmosMessageDirectOptions,
-): Promise<TxRaw> => {
+): Promise<TxRawType> => {
   const {
     signer,
     signerAddress,
