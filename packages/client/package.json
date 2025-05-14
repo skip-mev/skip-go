@@ -37,6 +37,8 @@
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
     "chain-registry": "^1.69.212",
+    "eslint-plugin-esm": "^0.8.1",
+    "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "swagger-typescript-api": "^13.0.28",

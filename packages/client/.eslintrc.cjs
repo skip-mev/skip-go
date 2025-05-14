@@ -11,12 +11,14 @@ const eslintConfig = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint", "prettier", "import", "esm"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/strict",
     "plugin:@typescript-eslint/stylistic",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   ignorePatterns: [
     "dist/",
@@ -27,6 +29,25 @@ const eslintConfig = {
     "scripts/generate-chains.cjs",
   ],
   rules: {
+    "@typescript-eslint/consistent-type-imports": ["error", {
+      prefer: "type-imports",
+      disallowTypeAnnotations: false,
+    }],
+
+    "@typescript-eslint/no-import-type-side-effects": "error",
+
+    // Enforce file extensions in imports (especially useful for ESM)
+    "import/extensions": ["error", "ignorePackages", {
+      "ts": "never",
+      "tsx": "never",
+      "js": "always",
+      "jsx": "always",
+    }],
+    "esm/no-commonjs": "warn",
+    "import/no-unresolved": ["error", {
+      ignoreExtension: false,
+      caseSensitive: true,
+    }],
     "prettier/prettier": [
       "error",
       {

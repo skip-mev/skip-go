@@ -27,11 +27,6 @@ const defaultOptions: Options = {
   splitting: true,
   bundle: true,
   treeshake: true,
-  outExtension() {
-    return {
-      js: ".js",
-    };
-  },
   tsconfig: "./tsconfig.build.json",
 };
 
