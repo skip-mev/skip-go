@@ -2,7 +2,7 @@ import { ClientState } from "../../state/clientState";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { CosmosTx } from "../../types/swaggerTypes";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";
-import { TxRaw } from "cosmjs-types/cosmos";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";

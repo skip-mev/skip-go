@@ -7,8 +7,8 @@
   "types": "dist/index.d.mts",
   "files": [
     "dist/*",
-    "*.js",
-    "*.d.ts"
+    "*.mjs",
+    "*.d.mts"
   ],
   "sideEffects": false,
   "scripts": {

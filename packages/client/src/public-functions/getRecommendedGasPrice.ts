@@ -2,7 +2,7 @@ import { Decimal } from "@cosmjs/math/build/decimal";
 import { GasPrice } from "@cosmjs/stargate";
 import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { BigNumber } from "bignumber.js";
-import { SkipApiOptions } from "src/state/apiState";
+import type { SkipApiOptions } from "src/state/apiState";
 
 export type getRecommendedGasPriceProps = {
   chainId: string;

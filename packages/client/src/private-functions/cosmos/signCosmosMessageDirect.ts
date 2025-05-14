@@ -1,4 +1,4 @@
-import { TxRaw } from "cosmjs-types/cosmos";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { signCosmosMessageDirectEvmos } from "./signCosmosMessageDirectEvmos";
 import { signCosmosMessageDirectInjective } from "./signCosmosMessageDirectInjective";
 import { TxBodyEncodeObject } from "@cosmjs/proto-signing/build/registry";

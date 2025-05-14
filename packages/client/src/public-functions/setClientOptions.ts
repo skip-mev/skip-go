@@ -7,7 +7,8 @@ import { Registry } from "@cosmjs/proto-signing/build/registry";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
-import { ClientState, SkipClientOptions } from "../state/clientState";
+import { ClientState } from "../state/clientState";
+import type { SkipClientOptions } from "../state/clientState";
 import { createRequestClient } from "../utils/generateApi";
 import { ApiState } from "src/state/apiState";
 

@@ -1,4 +1,5 @@
-import { ApiResponse, pollingApi } from "../utils/generateApi";
+import { pollingApi } from "../utils/generateApi";
+import type { ApiResponse } from "../utils/generateApi";
 
 export const transactionStatus = pollingApi({
   methodName: "getTransactionStatusV2",

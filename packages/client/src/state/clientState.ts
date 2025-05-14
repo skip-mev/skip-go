@@ -1,15 +1,13 @@
-import { GeneratedType, Registry } from "@cosmjs/proto-signing";
-import { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { Chain, Asset } from "../types/swaggerTypes";
-import { ApiResponse } from "../utils/generateApi";
+import type { GeneratedType, Registry } from "@cosmjs/proto-signing";
+import type { AminoConverters, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
+import type { Chain, Asset } from "../types/swaggerTypes";
+import type { ApiResponse } from "../utils/generateApi";
 import { getMainnetAndTestnetChains } from "../private-functions/getMainnetAndTestnetChains";
-import {
-  getMainnetAndTestnetAssets,
-  GetMainnetAndTestnetAssetsProps,
-} from "../private-functions/getMainnetAndTestnetAssets";
+import { getMainnetAndTestnetAssets } from "../private-functions/getMainnetAndTestnetAssets";
+import type { GetMainnetAndTestnetAssetsProps } from "../private-functions/getMainnetAndTestnetAssets";
 import { balances } from "../api/postBalances";
-import { EndpointOptions, ValidateGasResult } from "src/types/client-types";
-import { SkipApiOptions } from "./apiState";
+import type { EndpointOptions, ValidateGasResult } from "src/types/client-types";
+import type { SkipApiOptions } from "./apiState";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ClientState {
