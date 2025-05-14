@@ -1,9 +1,9 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/amino/addresses.ts
 
 import {
-  Pubkey,
   pubkeyToRawAddress as cosmPubkeyToRawAddress,
 } from "@cosmjs/amino";
+import type { Pubkey } from "@cosmjs/amino";
 import { keccak256 } from "@cosmjs/crypto";
 import { fromBase64, toBech32 } from "@cosmjs/encoding";
 

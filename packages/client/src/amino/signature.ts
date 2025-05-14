@@ -1,9 +1,9 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/amino/signature.ts
 
 import {
-  StdSignature,
   decodeSignature as cosmDecodeSignature,
 } from "@cosmjs/amino";
+import type { StdSignature } from "@cosmjs/amino";
 import { fromBase64, toBase64 } from "@cosmjs/encoding";
 
 import { encodeEthSecp256k1Pubkey } from "./encoding";
