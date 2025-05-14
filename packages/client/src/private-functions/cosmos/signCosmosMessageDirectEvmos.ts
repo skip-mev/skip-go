@@ -1,9 +1,9 @@
 // TODO: This is previously existing code, just moved to a new function.
 // Using signCosmosMessageDirectEvmos on evmos DOES currently fail.
 
-import type { StdFee } from "@cosmjs/amino/build/signdoc";
-import { fromBase64 } from "@cosmjs/encoding/build/base64.js";
-import type { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer.js";
+import type { StdFee } from "@cosmjs/amino";
+import { fromBase64 } from "@cosmjs/encoding";
+import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
 import type { SignerData } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";

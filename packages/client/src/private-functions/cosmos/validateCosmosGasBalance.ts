@@ -1,10 +1,10 @@
-import type { OfflineSigner } from "@cosmjs/proto-signing/build/signer.js";
+import type { OfflineSigner } from "@cosmjs/proto-signing";
 import { ChainType } from "../../types/swaggerTypes";
 import type { CosmosMsg } from "../../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
-import { Decimal } from "@cosmjs/math/build/decimal";
+import { Decimal } from "@cosmjs/math";
 import { balances } from "../../api/postBalances";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";

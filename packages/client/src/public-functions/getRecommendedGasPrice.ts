@@ -1,4 +1,4 @@
-import { Decimal } from "@cosmjs/math/build/decimal";
+import { Decimal } from "@cosmjs/math";
 import { GasPrice } from "@cosmjs/stargate";
 import { getFeeInfoForChain } from "src/public-functions/getFeeInfoForChain";
 import { BigNumber } from "bignumber.js";
