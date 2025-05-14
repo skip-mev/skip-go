@@ -1,4 +1,4 @@
-import { StargateClient } from "@cosmjs/stargate";
+import { StargateClient } from "@cosmjs/stargate/build/stargateclient";
 import { getRpcEndpointForChain } from "./getRpcEndpointForChain";
 import { ClientState } from "../state/clientState";
 import { accountParser } from "src/registry";

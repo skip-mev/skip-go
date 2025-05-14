@@ -1,5 +1,8 @@
-import { AminoTypes } from "@cosmjs/stargate";
-import { createDefaultAminoConverters, defaultRegistryTypes } from "@cosmjs/stargate";
+import { AminoTypes } from "@cosmjs/stargate/build/aminotypes";
+import {
+  createDefaultAminoConverters,
+  defaultRegistryTypes,
+} from "@cosmjs/stargate/build/signingstargateclient";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate/build/modules/wasm/aminomessages";
 import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
 import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
