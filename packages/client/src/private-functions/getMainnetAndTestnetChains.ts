@@ -1,4 +1,4 @@
-import { SkipApiOptions } from "src/state/apiState";
+import type { SkipApiOptions } from "src/state/apiState";
 import { chains } from "../api/getChains";
 import { ClientState } from "../state/clientState";
 

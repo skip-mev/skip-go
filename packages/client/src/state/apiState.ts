@@ -1,4 +1,4 @@
-import { ChainAffiliates } from "src/types/swaggerTypes";
+import type { ChainAffiliates } from "src/types/swaggerTypes";
 import { createRequestClient } from "../utils/generateApi";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class

@@ -1,6 +1,6 @@
 import { trackTransaction } from "../api/postTrackTransaction";
 import { transactionStatus } from "../api/postTransactionStatus";
-import { TransactionCallbacks } from "../types/callbacks";
+import type { TransactionCallbacks } from "../types/callbacks";
 import { wait } from "../utils/timer";
 
 export type WaitForTransactionProps = {

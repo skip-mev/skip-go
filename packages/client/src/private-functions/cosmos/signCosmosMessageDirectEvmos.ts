@@ -1,12 +1,14 @@
 // TODO: This is previously existing code, just moved to a new function.
 // Using signCosmosMessageDirectEvmos on evmos DOES currently fail.
 
-import { StdFee } from "@cosmjs/amino/build/signdoc";
+import type { StdFee } from "@cosmjs/amino/build/signdoc";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
-import { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
-import { SignerData } from "@cosmjs/stargate/build/signingstargateclient";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { CosmosMsg } from "src/types/swaggerTypes";
+import type { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
+import type { SignerData } from "@cosmjs/stargate";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+
+import type { CosmosMsg } from "src/types/swaggerTypes";
 import { getEncodeObjectFromCosmosMessageInjective } from "./getEncodeObjectFromCosmosMessage";
 import { createTransaction } from "src/injective";
 
@@ -17,7 +19,7 @@ export const signCosmosMessageDirectEvmos = async (
   cosmosMsgs: CosmosMsg[],
   fee: StdFee,
   { accountNumber, sequence, chainId }: SignerData,
-): Promise<TxRaw> => {
+): Promise<TxRawType> => {
   const accounts = await signer.getAccounts();
   const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
