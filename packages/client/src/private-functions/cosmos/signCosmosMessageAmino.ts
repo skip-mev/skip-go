@@ -1,4 +1,5 @@
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { ClientState } from "src/state/clientState";
@@ -12,7 +13,7 @@ import type { SignCosmosMessageAminoOptions } from "src/types/client-types";
 
 export const signCosmosMessageAmino = async (
   options: SignCosmosMessageAminoOptions,
-): Promise<TxRaw> => {
+): Promise<TxRawType> => {
   const {
     signer,
     signerAddress,

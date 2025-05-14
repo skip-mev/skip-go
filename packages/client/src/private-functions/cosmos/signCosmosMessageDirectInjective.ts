@@ -4,7 +4,8 @@
 import type { StdFee } from "@cosmjs/amino/build/signdoc";
 import type { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import type { SignerData } from "@cosmjs/stargate";
-import type { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import type { CosmosMsg } from "src/types/swaggerTypes";
 import { getRestEndpointForChain } from "../getRestEndpointForChain";
 import { getEncodeObjectFromCosmosMessageInjective } from "./getEncodeObjectFromCosmosMessage";
@@ -20,7 +21,7 @@ export const signCosmosMessageDirectInjective = async (
   cosmosMsgs: CosmosMsg[],
   fee: StdFee,
   { accountNumber, sequence, chainId }: SignerData,
-): Promise<TxRaw> => {
+): Promise<TxRawType> => {
   const accounts = await signer.getAccounts();
   const accountFromSigner = accounts.find((account) => account.address === signerAddress);
 
