@@ -2,7 +2,7 @@ import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
 import { ChainType, CosmosMsg } from "../../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
-import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
 import { Decimal } from "@cosmjs/math/build/decimal";
 import { balances } from "../../api/postBalances";
 import { ClientState } from "src/state/clientState";
