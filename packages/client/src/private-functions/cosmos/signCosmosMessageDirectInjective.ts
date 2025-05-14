@@ -4,7 +4,7 @@
 import { StdFee } from "@cosmjs/amino/build/signdoc";
 import { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { SignerData } from "@cosmjs/stargate";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos";
 import { CosmosMsg } from "src/types/swaggerTypes";
 import { getRestEndpointForChain } from "../getRestEndpointForChain";
 import { getEncodeObjectFromCosmosMessageInjective } from "./getEncodeObjectFromCosmosMessage";

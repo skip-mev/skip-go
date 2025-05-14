@@ -1,4 +1,4 @@
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { ClientState } from "src/state/clientState";
