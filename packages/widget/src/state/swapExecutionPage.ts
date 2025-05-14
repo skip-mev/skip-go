@@ -267,7 +267,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else {
-        track("error page: unexpected error");
+        track("error page: unexpected error", { error });
         set(errorAtom, {
           errorType: ErrorType.Unexpected,
           error: error as Error,
