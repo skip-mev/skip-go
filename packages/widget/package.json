@@ -18,7 +18,7 @@
     "publish:web-component": "npm run build:web-component && cd web-component && npm publish && cd ..",
     "prepack": "yarn run pre",
     "postpack": "yarn run post",
-    "pre": "npm run build && node scripts/prepublish.cjs",
+    "pre": "npm run build && node scripts/prepublish.js",
     "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",

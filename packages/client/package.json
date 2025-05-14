@@ -30,7 +30,7 @@
     "e2e:stop": "make stop",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.mjs --test-timeout=30000",
     "postpublish": "git reset --hard",
-    "prepublishOnly": "node scripts/prepublish.cjs",
+    "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
     "watch": "tsup --watch",
     "watch:link": "tsup --watch --onSuccess \"yalc push\"",
