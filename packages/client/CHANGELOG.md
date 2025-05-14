@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.3
+
+### Patch Changes
+
+- d0e0de4: revert cjs
+
 ## 1.0.2
 
 ### Patch Changes
