@@ -1,12 +1,13 @@
 import { ClientState } from "../../state/clientState";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
-import { CosmosTx } from "../../types/swaggerTypes";
+import type { CosmosTx } from "../../types/swaggerTypes";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
-import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -80,7 +81,7 @@ export const executeCosmosTransaction = async ({
     chainId,
   );
 
-  let rawTx: TxRaw;
+  let rawTx: TxRawType;
 
   const commonRawTxBody = {
     signerAddress: currentUserAddress,

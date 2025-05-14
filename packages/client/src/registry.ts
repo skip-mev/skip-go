@@ -1,4 +1,5 @@
-import { AccountParser, accountFromAny } from "@cosmjs/stargate";
+import { accountFromAny } from "@cosmjs/stargate";
+import type { AccountParser } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
 import { decodePubkey } from "@cosmjs/proto-signing";

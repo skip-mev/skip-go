@@ -1,4 +1,4 @@
-import { Asset } from "../types/swaggerTypes";
+import type { Asset } from "../types/swaggerTypes";
 import { ClientState } from "../state/clientState";
 import { api } from "../utils/generateApi";
 

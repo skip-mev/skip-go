@@ -1,7 +1,7 @@
-import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { ClientState } from "src/state/clientState";
-import { GetFallbackGasAmount, SignerGetters, ValidateGasResult } from "src/types/client-types";
-import { Tx } from "../types/swaggerTypes";
+import type { GetFallbackGasAmount, SignerGetters, ValidateGasResult } from "src/types/client-types";
+import type { Tx } from "../types/swaggerTypes";
 import { validateCosmosGasBalance } from "./cosmos/validateCosmosGasBalance";
 import { validateEvmGasBalance } from "./evm/validateEvmGasBalance";
 import { validateSvmGasBalance } from "./svm/validateSvmGasBalance";

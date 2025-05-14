@@ -1,15 +1,15 @@
 import { toUtf8 } from "@cosmjs/encoding";
-import { EncodeObject } from "@cosmjs/proto-signing";
+import type { EncodeObject } from "@cosmjs/proto-signing";
 import {
   MsgTransfer as MsgTransferInjective,
   MsgExecuteContractCompat as MsgExecuteContractInjective,
-  Msgs,
 } from "@injectivelabs/sdk-ts";
+import type { Msgs } from "@injectivelabs/sdk-ts";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
-import { CosmosMsg } from "../../types/swaggerTypes";
+import type { CosmosMsg } from "../../types/swaggerTypes";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
 import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
