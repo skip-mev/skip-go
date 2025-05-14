@@ -1,4 +1,4 @@
-import type { OfflineSigner } from "@cosmjs/proto-signing/build/signer.js";
+import type { OfflineSigner } from "@cosmjs/proto-signing";
 import { ClientState } from "../state/clientState";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { accountParser } from "src/registry";

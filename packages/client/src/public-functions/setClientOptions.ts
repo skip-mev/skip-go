@@ -1,9 +1,9 @@
 import { AminoTypes } from "@cosmjs/stargate";
 import { createDefaultAminoConverters, defaultRegistryTypes } from "@cosmjs/stargate";
-import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate/build/modules/wasm/aminomessages";
+import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { circleAminoConverters, circleProtoRegistry } from "src/codegen/circle/client";
 import { evmosAminoConverters, evmosProtoRegistry } from "src/codegen/evmos/client";
-import { Registry } from "@cosmjs/proto-signing/build/registry";
+import { Registry } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
