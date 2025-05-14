@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.2
+
+### Patch Changes
+
+- b22c07b: Update type imports to be explicit for esm
+
 ## 1.0.1
 
 ### Patch Changes
