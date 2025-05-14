@@ -23,7 +23,7 @@
   "scripts": {
     "build": "yarn run codegen && tsup",
     "clean": "rm -rf dist",
-    "codegen": "node scripts/codegen.js",
+    "codegen": "node scripts/codegen.cjs",
     "e2e:clean": "make stop clean",
     "e2e:setup": "make setup && make setup-kind",
     "e2e:start": "make start",
