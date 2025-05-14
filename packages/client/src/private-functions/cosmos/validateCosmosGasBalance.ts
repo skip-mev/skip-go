@@ -1,4 +1,4 @@
-import type { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
+import type { OfflineSigner } from "@cosmjs/proto-signing/build/signer.js";
 import { ChainType } from "../../types/swaggerTypes";
 import type { CosmosMsg } from "../../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";

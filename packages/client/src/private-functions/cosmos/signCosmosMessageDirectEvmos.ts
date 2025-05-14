@@ -3,7 +3,7 @@
 
 import type { StdFee } from "@cosmjs/amino/build/signdoc";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
-import type { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
+import type { OfflineDirectSigner } from "@cosmjs/proto-signing/build/signer.js";
 import type { SignerData } from "@cosmjs/stargate";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
