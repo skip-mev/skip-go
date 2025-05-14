@@ -5,10 +5,10 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { ClientState } from "src/state/clientState";
 import { makeSignDoc } from "@cosmjs/amino";
 import type { TxBodyEncodeObject } from "@cosmjs/proto-signing";
-import { Int53 } from "@cosmjs/math/build/integers";
+import { Int53 } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
-import { makeAuthInfoBytes } from "@cosmjs/proto-signing/build/signing";
-import { fromBase64 } from "@cosmjs/encoding/build/base64.js";
+import { makeAuthInfoBytes } from "@cosmjs/proto-signing";
+import { fromBase64 } from "@cosmjs/encoding";
 import type { SignCosmosMessageAminoOptions } from "src/types/client-types";
 
 export const signCosmosMessageAmino = async (
