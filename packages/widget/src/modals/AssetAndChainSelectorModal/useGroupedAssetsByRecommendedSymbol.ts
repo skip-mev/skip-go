@@ -6,6 +6,7 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
+import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
@@ -79,14 +80,15 @@ export const useGroupedAssetByRecommendedSymbol = ({
     const calculateBalanceSummary = (assets: ClientAsset[]) => {
       return assets.reduce(
         (accumulator, asset) => {
-          const balance = getBalance(asset.chainId, asset.denom);
+          const balance = getBalance(asset.chainId, asset.denom,);
           if (balance) {
             accumulator.totalAmount += Number(balance.amount);
+            accumulator.formattedTotalAmount += Number(convertTokenAmountToHumanReadableAmount(balance.amount, balance?.decimals));
             accumulator.totalUsd += Number(balance.valueUsd ?? 0);
           }
           return accumulator;
         },
-        { totalAmount: 0, totalUsd: 0 },
+        { totalAmount: 0, totalUsd: 0, formattedTotalAmount: 0 },
       );
     };
 
@@ -114,7 +116,6 @@ export const useGroupedAssetByRecommendedSymbol = ({
           totalAmount: 0,
           totalUsd: 0,
           formattedTotalAmount: "0",
-          decimals: asset.decimals,
         });
       }
     });
@@ -123,10 +124,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
       const balanceSummary = calculateBalanceSummary(group.assets);
       group.totalAmount = balanceSummary.totalAmount;
       group.totalUsd = balanceSummary.totalUsd;
-      group.formattedTotalAmount = convertTokenAmountToHumanReadableAmount(
-        balanceSummary.totalAmount,
-        group.decimals,
-      );
+      group.formattedTotalAmount = balanceSummary.formattedTotalAmount.toString();
     });
 
     return groupedAssets;
