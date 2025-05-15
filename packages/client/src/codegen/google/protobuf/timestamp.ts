@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Long, isSet, fromJsonTimestamp, fromTimestamp } from "../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../json-safe";
 /**
  * A Timestamp represents a point in time independent of any time zone or local

@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Class, ClassAmino, ClassSDKType, NFT, NFTAmino, NFTSDKType } from "./nft";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { isSet } from "../../../helpers";
 /** GenesisState defines the nft module's genesis state. */
