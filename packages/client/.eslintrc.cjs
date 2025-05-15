@@ -48,13 +48,12 @@ const eslintConfig = {
 
     "@typescript-eslint/no-import-type-side-effects": "error",
 
-    // Enforce file extensions in imports (especially useful for ESM)
-    "import/extensions": ["error", "ignorePackages", {
-      "ts": "never",
-      "tsx": "never",
-      "js": "always",
-      "jsx": "always",
-    }],
+  "import/extensions": ["error", "always", {
+    "ts": "never",
+    "tsx": "never",
+    "js": "always",
+    "jsx": "always",
+  }],
 
     "esm/no-commonjs": "warn",
     "import/no-unresolved": ["error", {
