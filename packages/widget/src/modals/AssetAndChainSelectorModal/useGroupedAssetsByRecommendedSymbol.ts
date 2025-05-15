@@ -79,7 +79,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
     const calculateBalanceSummary = (assets: ClientAsset[]) => {
       return assets.reduce(
         (accumulator, asset) => {
-          const balance = getBalance(asset.chainId, asset.denom,);
+          const balance = getBalance(asset.chainId, asset.denom);
           if (balance) {
             accumulator.totalAmount += Number(balance.amount);
             accumulator.formattedTotalAmount += Number(convertTokenAmountToHumanReadableAmount(balance.amount, balance?.decimals));
