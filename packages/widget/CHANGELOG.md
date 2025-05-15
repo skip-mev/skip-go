@@ -1,5 +1,12 @@
 ## 0.0.15
 
+## 3.9.5
+
+### Patch Changes
+
+- Updated dependencies [fd69bee]
+  - @skip-go/client@1.0.5
+
 ## 3.9.4
 
 ### Patch Changes
