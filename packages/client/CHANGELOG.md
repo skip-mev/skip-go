@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.4
+
+### Patch Changes
+
+- 9b1f4fe: Fix esm build, updated all imports to follow esm convention
+
 ## 1.0.3
 
 ### Patch Changes
