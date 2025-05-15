@@ -21,7 +21,7 @@ const defaultOptions: Options = {
   cjsInterop: true,
   clean: true,
   dts: true,
-  format: ["cjs"],
+  format: ["esm"],
   minify: false,
   shims: true,
   splitting: true,
