@@ -13,9 +13,9 @@ import {
   isInvertingSwapAtom,
   debouncedSourceAssetAmountValueInitializedAtom,
   debouncedDestinationAssetAmountValueInitializedAtom,
-  routePreferenceAtom,
   sourceAssetAmountAtom,
   destinationAssetAmountAtom,
+  swapSettingsAtom,
 } from "./swapPage";
 import { atomEffect } from "jotai-effect";
 import { WidgetRouteConfig } from "@/widget/Widget";
@@ -110,7 +110,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   const isInvertingSwap = get(isInvertingSwapAtom);
   const error = get(errorAtom);
   const routeConfig = get(routeConfigAtom);
-  const routePreference = get(routePreferenceAtom);
+  const swapSettings = get(swapSettingsAtom)
 
   const queryEnabled =
     params !== undefined &&
@@ -120,7 +120,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
     error === undefined;
 
   return {
-    queryKey: ["skipRoute", params, routeConfig, routePreference],
+    queryKey: ["skipRoute", params, routeConfig, swapSettings],
     queryFn: async () => {
       if (!params) {
         throw new Error("No route request provided");
@@ -130,7 +130,7 @@ export const _skipRouteAtom = atomWithQuery((get) => {
           ...params,
           smartRelay: true,
           ...routeConfig,
-          goFast: routePreference === RoutePreference.FASTEST,
+          goFast: swapSettings.routePreference === RoutePreference.FASTEST,
           abortDuplicateRequests: true,
         });
         return response;
