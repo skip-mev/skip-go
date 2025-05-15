@@ -2,7 +2,7 @@
 import { DecCoin, DecCoinAmino, DecCoinSDKType } from "../../../cosmos/base/v1beta1/coin";
 import { Params, ParamsAmino, ParamsSDKType } from "./genesis";
 import { Long, isSet, padDecimal } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { Decimal } from "@cosmjs/math";
 /** QueryPeriodRequest is the request type for the Query/Period RPC method. */

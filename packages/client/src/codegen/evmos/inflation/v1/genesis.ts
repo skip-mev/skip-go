@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { ExponentialCalculation, ExponentialCalculationAmino, ExponentialCalculationSDKType, InflationDistribution, InflationDistributionAmino, InflationDistributionSDKType } from "./inflation";
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** GenesisState defines the inflation module's genesis state. */
 export interface GenesisState {

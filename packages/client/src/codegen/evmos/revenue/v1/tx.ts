@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Params, ParamsAmino, ParamsSDKType } from "./genesis";
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** MsgRegisterRevenue defines a message that registers a Revenue */
 export interface MsgRegisterRevenue {

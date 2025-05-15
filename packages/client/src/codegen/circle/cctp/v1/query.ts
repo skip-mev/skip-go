@@ -10,7 +10,7 @@ import { SignatureThreshold, SignatureThresholdAmino, SignatureThresholdSDKType 
 import { TokenPair, TokenPairAmino, TokenPairSDKType } from "./token_pair";
 import { RemoteTokenMessenger, RemoteTokenMessengerAmino, RemoteTokenMessengerSDKType } from "./remote_token_messenger";
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** QueryRolesRequest is the request type for the Query/Roles RPC method. */
 export interface QueryRolesRequest {}

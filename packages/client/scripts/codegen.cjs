@@ -246,10 +246,14 @@ async function fixProtobufjsImports(directory) {
       await fixProtobufjsImports(fullPath);
     } else if (entry.isFile() && entry.name.endsWith(".ts")) {
       let content = await fs.readFile(fullPath, "utf-8");
-      const updated = content.replace(
-        /from\s+['"]protobufjs\/minimal['"]/g,
-        'from "protobufjs/minimal.js"'
+      let updated = content;
+
+      // Replace import * as x from 'protobufjs/minimal'; with import x from 'protobufjs/minimal.js'
+      updated = updated.replace(
+        /import\s+\*\s+as\s+(\w+)\s+from\s+['"]protobufjs\/minimal(?:\.js)?['"];/g,
+        'import $1 from "protobufjs/minimal.js";'
       );
+
       if (updated !== content) {
         await fs.writeFile(fullPath, updated, "utf-8");
       }

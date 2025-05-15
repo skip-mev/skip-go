@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Header, HeaderAmino, HeaderSDKType, Data, DataAmino, DataSDKType, Commit, CommitAmino, CommitSDKType } from "./types";
 import { EvidenceList, EvidenceListAmino, EvidenceListSDKType } from "./evidence";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../helpers";
 import { JsonSafe } from "../../json-safe";
 export interface Block {

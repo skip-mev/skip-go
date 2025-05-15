@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { ConsensusParams, ConsensusParamsAmino, ConsensusParamsSDKType } from "../../../tendermint/types/params";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { isSet } from "../../../helpers";
 /** QueryParamsRequest defines the request type for querying x/consensus parameters. */

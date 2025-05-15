@@ -5,7 +5,7 @@ import { TxResponse, TxResponseAmino, TxResponseSDKType, GasInfo, GasInfoAmino, 
 import { BlockID, BlockIDAmino, BlockIDSDKType } from "../../../tendermint/types/types";
 import { Block, BlockAmino, BlockSDKType } from "../../../tendermint/types/block";
 import { Long, isSet, bytesFromBase64, base64FromBytes } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** OrderBy defines the sorting order */
 export enum OrderBy {

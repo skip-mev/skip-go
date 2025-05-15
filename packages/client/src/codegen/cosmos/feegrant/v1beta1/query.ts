@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { PageRequest, PageRequestAmino, PageRequestSDKType, PageResponse, PageResponseAmino, PageResponseSDKType } from "../../base/query/v1beta1/pagination";
 import { Grant, GrantAmino, GrantSDKType } from "./feegrant";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /** QueryAllowanceRequest is the request type for the Query/Allowance RPC method. */

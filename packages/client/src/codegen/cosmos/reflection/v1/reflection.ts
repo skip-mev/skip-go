@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { FileDescriptorProto, FileDescriptorProtoAmino, FileDescriptorProtoSDKType } from "../../../google/protobuf/descriptor";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** FileDescriptorsRequest is the Query/FileDescriptors request type. */
 export interface FileDescriptorsRequest {}

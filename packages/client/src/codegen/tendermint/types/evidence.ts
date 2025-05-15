@@ -3,7 +3,7 @@ import { Vote, VoteAmino, VoteSDKType, LightBlock, LightBlockAmino, LightBlockSD
 import { Timestamp } from "../../google/protobuf/timestamp";
 import { Validator, ValidatorAmino, ValidatorSDKType } from "./validator";
 import { Long, isSet, toTimestamp, fromTimestamp, fromJsonTimestamp } from "../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../json-safe";
 export interface Evidence {
   duplicateVoteEvidence?: DuplicateVoteEvidence;

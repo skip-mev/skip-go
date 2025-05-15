@@ -2,7 +2,7 @@
 import { Any, AnyAmino, AnySDKType } from "../../../../google/protobuf/any";
 import { Event, EventAmino, EventSDKType } from "../../../../tendermint/abci/types";
 import { Long, isSet, bytesFromBase64, base64FromBytes } from "../../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../../json-safe";
 /**
  * TxResponse defines a structure containing relevant tx data and metadata. The
