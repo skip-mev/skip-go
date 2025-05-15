@@ -6,7 +6,6 @@ import { skipAssetsAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
-import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
   context: "source" | "destination";
