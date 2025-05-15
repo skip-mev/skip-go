@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.6
+
+### Patch Changes
+
+- a009e22: Fix packageJson for esm format
+
 ## 1.0.5
 
 ### Patch Changes
