@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { BlockParams, BlockParamsAmino, BlockParamsSDKType, EvidenceParams, EvidenceParamsAmino, EvidenceParamsSDKType, ValidatorParams, ValidatorParamsAmino, ValidatorParamsSDKType } from "../../../tendermint/types/params";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /** MsgUpdateParams is the Msg/UpdateParams request type. */

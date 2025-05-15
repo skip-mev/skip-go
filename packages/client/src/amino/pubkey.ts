@@ -1,10 +1,9 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/amino/pubkey.ts
 
 import {
-  Pubkey,
-  SinglePubkey,
   pubkeyType as cosmPubkeyType,
 } from "@cosmjs/amino";
+import type { Pubkey, SinglePubkey } from "@cosmjs/amino";
 
 export interface EthSecp256k1Pubkey extends SinglePubkey {
   readonly type: "ethermint/PubKeyEthSecp256k1";

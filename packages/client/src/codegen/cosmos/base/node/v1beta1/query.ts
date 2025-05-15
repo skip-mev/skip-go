@@ -1,5 +1,5 @@
 //@ts-nocheck
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../../json-safe";
 import { isSet } from "../../../../helpers";
 /** ConfigRequest defines the request structure for the Config gRPC query. */

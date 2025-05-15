@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Duration, DurationAmino, DurationSDKType } from "../../google/protobuf/duration";
 import { Long, isSet } from "../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../json-safe";
 /**
  * ConsensusParams contains consensus critical parameters that determine the

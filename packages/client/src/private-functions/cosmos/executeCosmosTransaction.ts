@@ -4,7 +4,7 @@ import type { CosmosTx } from "../../types/swaggerTypes";
 import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import { isOfflineDirectSigner } from "@cosmjs/proto-signing/build/signer";
+import { isOfflineDirectSigner } from "@cosmjs/proto-signing";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";

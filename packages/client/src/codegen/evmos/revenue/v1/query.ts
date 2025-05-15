@@ -2,7 +2,7 @@
 import { PageRequest, PageRequestAmino, PageRequestSDKType, PageResponse, PageResponseAmino, PageResponseSDKType } from "../../../cosmos/base/query/v1beta1/pagination";
 import { Revenue, RevenueAmino, RevenueSDKType } from "./revenue";
 import { Params, ParamsAmino, ParamsSDKType } from "./genesis";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /** QueryRevenuesRequest is the request type for the Query/Revenues RPC method. */

@@ -212,6 +212,7 @@ async function codegen() {
     .then(() => fs.writeFile(path.resolve(outPath, ".gitkeep"), "", "utf-8"));
 
   await genTelescope();
+  await fixProtobufjsImports(outPath);
 
   let allChains = [];
 
@@ -235,5 +236,29 @@ const mergeArrays = (arr1, arr2) => {
 
   return Array.from(map.values());
 };
+
+async function fixProtobufjsImports(directory) {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      await fixProtobufjsImports(fullPath);
+    } else if (entry.isFile() && entry.name.endsWith(".ts")) {
+      let content = await fs.readFile(fullPath, "utf-8");
+      let updated = content;
+
+      // Replace import * as x from 'protobufjs/minimal'; with import x from 'protobufjs/minimal.js'
+      updated = updated.replace(
+        /import\s+\*\s+as\s+(\w+)\s+from\s+['"]protobufjs\/minimal(?:\.js)?['"];/g,
+        'import $1 from "protobufjs/minimal.js";'
+      );
+
+      if (updated !== content) {
+        await fs.writeFile(fullPath, updated, "utf-8");
+      }
+    }
+  }
+}
 
 void codegen();

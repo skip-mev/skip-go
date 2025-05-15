@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** TxResult is the value stored in eth tx indexer */
 export interface TxResult {
