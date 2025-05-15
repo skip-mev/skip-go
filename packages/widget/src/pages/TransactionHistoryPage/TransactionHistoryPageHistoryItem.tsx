@@ -35,6 +35,8 @@ export const TransactionHistoryPageHistoryItem = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
+  
+  if (!txHistoryItem.route) return null  
 
   const {
     status: historyStatus,
