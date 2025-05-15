@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.0.5
+
+### Patch Changes
+
+- fd69bee: Update client build format as esm
+
 ## 1.0.4
 
 ### Patch Changes
