@@ -1,18 +1,19 @@
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
+import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { ClientState } from "src/state/clientState";
 import { makeSignDoc } from "@cosmjs/amino";
-import { TxBodyEncodeObject } from "@cosmjs/proto-signing/build/registry";
+import type { TxBodyEncodeObject } from "@cosmjs/proto-signing/build/registry";
 import { Int53 } from "@cosmjs/math/build/integers";
 import { makePubkeyAnyFromAccount } from "src/proto-signing/pubkey";
 import { makeAuthInfoBytes } from "@cosmjs/proto-signing/build/signing";
 import { fromBase64 } from "@cosmjs/encoding/build/base64";
-import { SignCosmosMessageAminoOptions } from "src/types/client-types";
+import type { SignCosmosMessageAminoOptions } from "src/types/client-types";
 
 export const signCosmosMessageAmino = async (
   options: SignCosmosMessageAminoOptions,
-): Promise<TxRaw> => {
+): Promise<TxRawType> => {
   const {
     signer,
     signerAddress,

@@ -1,7 +1,8 @@
 import { erc20ABI } from "src/constants/abis";
 import { ClientState } from "src/state/clientState";
-import { BalanceResponseDenomEntry, Chain, Erc20Approval, EvmTx } from "src/types/swaggerTypes";
-import { formatUnits, maxUint256, publicActions, WalletClient } from "viem";
+import type { BalanceResponseDenomEntry, Chain, Erc20Approval, EvmTx } from "src/types/swaggerTypes";
+import { formatUnits, maxUint256, publicActions } from "viem";
+import type { WalletClient } from "viem";
 import { BigNumber } from "bignumber.js";
 
 export const validateEvmTokenApproval = async ({

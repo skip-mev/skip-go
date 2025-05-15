@@ -1,8 +1,10 @@
-import { Camel, toCamel, toSnake } from "./convert";
+import { toCamel, toSnake } from "./convert";
+import type { Camel } from "./convert";
 
 import { Api } from "../types/swaggerTypes";
 import { wait } from "./timer";
-import { ApiState, SkipApiOptions } from "../state/apiState";
+import { ApiState } from "../state/apiState";
+import type { SkipApiOptions } from "../state/apiState";
 
 type RequestClientOptions = {
   baseUrl: string;

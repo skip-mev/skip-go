@@ -1,4 +1,4 @@
-import { Erc20Approval, TransferStatus } from "./swaggerTypes";
+import type { Erc20Approval, TransferStatus } from "./swaggerTypes";
 
 type CallbackStatus = "success" | "error" | "pending" | "completed";
 

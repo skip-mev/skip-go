@@ -1,10 +1,10 @@
 import {
   Connection,
   LAMPORTS_PER_SOL,
-  SimulatedTransactionResponse,
   Transaction,
 } from "@solana/web3.js";
-import { SvmTx } from "../../types/swaggerTypes";
+import type { SimulatedTransactionResponse } from "@solana/web3.js";
+import type { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 export type SimulationResult = {
   success: boolean;

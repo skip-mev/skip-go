@@ -1,6 +1,6 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/proto-signing/signer.ts
 
-import { Algo as CosmAlgo } from "@cosmjs/proto-signing";
+import type { Algo as CosmAlgo } from "@cosmjs/proto-signing";
 
 export type Algo = "eth_secp256k1" | "ethsecp256k1" | CosmAlgo;
 
