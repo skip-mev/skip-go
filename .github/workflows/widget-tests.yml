@@ -24,8 +24,6 @@ jobs:
         run: yarn install
       - name: build client lib
         run: yarn run build:client
-      - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
       - name: Run e2e tests
         env:
           WORD_PHRASE_KEY: ${{ secrets.WORD_PHRASE_KEY }}
