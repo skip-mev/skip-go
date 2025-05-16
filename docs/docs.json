@@ -85,7 +85,8 @@
               "eureka/eureka-overview",
               "eureka/eureka-tech-overview",
               "eureka/integration-guide",
-              "eureka/security-properties"
+              "eureka/security-properties",
+              "eureka/contract-addresses"
             ]
           },
           {
