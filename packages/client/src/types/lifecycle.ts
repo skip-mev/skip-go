@@ -213,12 +213,14 @@ export type ChainTransactionJSON = {
   chain_id: string;
   tx_hash: string;
   explorer_link: string;
+  on_chain_at: string;
 };
 
 export type ChainTransaction = {
   chainID: string;
   txHash: string;
   explorerLink: string;
+  onChainAt: Date;
 };
 
 export type TrackTxRequestJSON = {

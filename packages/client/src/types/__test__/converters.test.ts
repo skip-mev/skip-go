@@ -2641,12 +2641,14 @@ test("chainTransactionFromJSON", () => {
     tx_hash: "txid123",
     chain_id: "osmosis-1",
     explorer_link: "https://osmosis.zone/tx/txid123",
+    on_chain_at: "2025-05-15T19:38:30Z"
   };
 
   expect(chainTransactionFromJSON(chainTransactionJSON)).toEqual({
     txHash: "txid123",
     chainID: "osmosis-1",
     explorerLink: "https://osmosis.zone/tx/txid123",
+    onChainAt: new Date("2025-05-15T19:38:30Z"),
   });
 });
 
@@ -2655,12 +2657,14 @@ test("chainTransactionToJSON", () => {
     txHash: "txid123",
     chainID: "osmosis-1",
     explorerLink: "https://osmosis.zone/tx/txid123",
+    onChainAt: new Date("2025-05-15T19:38:30Z"),
   };
 
   expect(chainTransactionToJSON(chainTransaction)).toEqual({
     tx_hash: "txid123",
     chain_id: "osmosis-1",
     explorer_link: "https://osmosis.zone/tx/txid123",
+    on_chain_at: "2025-05-15T19:38:30Z"
   });
 });
 
@@ -2672,6 +2676,7 @@ test("packetFromJSON", () => {
         "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
       explorer_link:
         "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     receive_tx: {
       chain_id: "osmosis-1",
@@ -2679,6 +2684,7 @@ test("packetFromJSON", () => {
         "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
       explorer_link:
         "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     acknowledge_tx: {
       chain_id: "axelar-dojo-1",
@@ -2686,6 +2692,7 @@ test("packetFromJSON", () => {
         "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
       explorer_link:
         "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     timeout_tx: null,
     error: null,
@@ -2698,6 +2705,7 @@ test("packetFromJSON", () => {
         "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
       explorerLink:
         "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     receiveTx: {
       chainID: "osmosis-1",
@@ -2705,6 +2713,7 @@ test("packetFromJSON", () => {
         "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
       explorerLink:
         "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     acknowledgeTx: {
       chainID: "axelar-dojo-1",
@@ -2712,6 +2721,7 @@ test("packetFromJSON", () => {
         "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
       explorerLink:
         "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     timeoutTx: null,
     error: null,
@@ -2726,6 +2736,7 @@ test("packetToJSON", () => {
         "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
       explorerLink:
         "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     receiveTx: {
       chainID: "osmosis-1",
@@ -2733,6 +2744,7 @@ test("packetToJSON", () => {
         "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
       explorerLink:
         "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     acknowledgeTx: {
       chainID: "axelar-dojo-1",
@@ -2740,6 +2752,7 @@ test("packetToJSON", () => {
         "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
       explorerLink:
         "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     timeoutTx: null,
     error: null,
@@ -2752,6 +2765,7 @@ test("packetToJSON", () => {
         "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
       explorer_link:
         "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     receive_tx: {
       chain_id: "osmosis-1",
@@ -2759,6 +2773,7 @@ test("packetToJSON", () => {
         "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
       explorer_link:
         "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     acknowledge_tx: {
       chain_id: "axelar-dojo-1",
@@ -2766,6 +2781,7 @@ test("packetToJSON", () => {
         "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
       explorer_link:
         "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     timeout_tx: null,
     error: null,
@@ -2786,6 +2802,7 @@ test("transferInfoFromJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorer_link:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       receive_tx: {
         chain_id: "osmosis-1",
@@ -2793,6 +2810,7 @@ test("transferInfoFromJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorer_link:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       acknowledge_tx: {
         chain_id: "axelar-dojo-1",
@@ -2800,6 +2818,7 @@ test("transferInfoFromJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorer_link:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       timeout_tx: null,
       error: null,
@@ -2819,6 +2838,7 @@ test("transferInfoFromJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       receiveTx: {
         chainID: "osmosis-1",
@@ -2826,6 +2846,7 @@ test("transferInfoFromJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorerLink:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       acknowledgeTx: {
         chainID: "axelar-dojo-1",
@@ -2833,6 +2854,7 @@ test("transferInfoFromJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       timeoutTx: null,
       error: null,
@@ -2844,6 +2866,7 @@ test("transferInfoFromJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       receiveTx: {
         chainID: "osmosis-1",
@@ -2851,6 +2874,7 @@ test("transferInfoFromJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorerLink:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       acknowledgeTx: {
         chainID: "axelar-dojo-1",
@@ -2858,6 +2882,7 @@ test("transferInfoFromJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       timeoutTx: null,
       error: null,
@@ -2879,6 +2904,7 @@ test("transferInfoToJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       receiveTx: {
         chainID: "osmosis-1",
@@ -2886,6 +2912,7 @@ test("transferInfoToJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorerLink:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       acknowledgeTx: {
         chainID: "axelar-dojo-1",
@@ -2893,6 +2920,7 @@ test("transferInfoToJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       timeoutTx: null,
       error: null,
@@ -2904,6 +2932,7 @@ test("transferInfoToJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       receiveTx: {
         chainID: "osmosis-1",
@@ -2911,6 +2940,7 @@ test("transferInfoToJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorerLink:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       acknowledgeTx: {
         chainID: "axelar-dojo-1",
@@ -2918,6 +2948,7 @@ test("transferInfoToJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorerLink:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        onChainAt: new Date("2025-05-15T19:38:30Z"),
       },
       timeoutTx: null,
       error: null,
@@ -2937,6 +2968,7 @@ test("transferInfoToJSON", () => {
           "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
         explorer_link:
           "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       receive_tx: {
         chain_id: "osmosis-1",
@@ -2944,6 +2976,7 @@ test("transferInfoToJSON", () => {
           "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
         explorer_link:
           "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       acknowledge_tx: {
         chain_id: "axelar-dojo-1",
@@ -2951,6 +2984,7 @@ test("transferInfoToJSON", () => {
           "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
         explorer_link:
           "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+        on_chain_at: "2025-05-15T19:38:30Z"
       },
       timeout_tx: null,
       error: null,
@@ -3028,6 +3062,7 @@ test("txStatusResponseFromJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorer_link:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             receive_tx: {
               chain_id: "osmosis-1",
@@ -3035,6 +3070,7 @@ test("txStatusResponseFromJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorer_link:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             acknowledge_tx: {
               chain_id: "axelar-dojo-1",
@@ -3042,6 +3078,7 @@ test("txStatusResponseFromJSON", () => {
                 "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
               explorer_link:
                 "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             timeout_tx: null,
             error: null,
@@ -3062,6 +3099,7 @@ test("txStatusResponseFromJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorer_link:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             receive_tx: {
               chain_id: "cosmoshub-4",
@@ -3069,6 +3107,7 @@ test("txStatusResponseFromJSON", () => {
                 "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
               explorer_link:
                 "https://cosmos.bigdipper.live/transactions/913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             acknowledge_tx: {
               chain_id: "osmosis-1",
@@ -3076,6 +3115,7 @@ test("txStatusResponseFromJSON", () => {
                 "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
               explorer_link:
                 "https://osmosis.zone/tx/1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             timeout_tx: null,
             error: null,
@@ -3144,6 +3184,7 @@ test("txStatusResponseFromJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "osmosis-1",
@@ -3151,6 +3192,7 @@ test("txStatusResponseFromJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorerLink:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             acknowledgeTx: {
               chainID: "axelar-dojo-1",
@@ -3158,6 +3200,7 @@ test("txStatusResponseFromJSON", () => {
                 "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             timeoutTx: null,
             error: null,
@@ -3169,6 +3212,7 @@ test("txStatusResponseFromJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "osmosis-1",
@@ -3319,6 +3363,7 @@ test("txStatusResponseToJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "osmosis-1",
@@ -3326,6 +3371,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorerLink:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             acknowledgeTx: {
               chainID: "axelar-dojo-1",
@@ -3333,6 +3379,7 @@ test("txStatusResponseToJSON", () => {
                 "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             timeoutTx: null,
             error: null,
@@ -3344,6 +3391,7 @@ test("txStatusResponseToJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "osmosis-1",
@@ -3351,6 +3399,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorerLink:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             acknowledgeTx: {
               chainID: "axelar-dojo-1",
@@ -3358,6 +3407,7 @@ test("txStatusResponseToJSON", () => {
                 "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
               explorerLink:
                 "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             timeoutTx: null,
             error: null,
@@ -3378,6 +3428,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorerLink:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "cosmoshub-4",
@@ -3385,6 +3436,7 @@ test("txStatusResponseToJSON", () => {
                 "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
               explorerLink:
                 "https://cosmos.bigdipper.live/transactions/913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             acknowledgeTx: {
               chainID: "osmosis-1",
@@ -3392,6 +3444,7 @@ test("txStatusResponseToJSON", () => {
                 "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
               explorerLink:
                 "https://osmosis.zone/tx/1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             timeoutTx: null,
             error: null,
@@ -3403,6 +3456,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorerLink:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             receiveTx: {
               chainID: "cosmoshub-4",
@@ -3410,6 +3464,7 @@ test("txStatusResponseToJSON", () => {
                 "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
               explorerLink:
                 "https://cosmos.bigdipper.live/transactions/913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             acknowledgeTx: {
               chainID: "osmosis-1",
@@ -3417,6 +3472,7 @@ test("txStatusResponseToJSON", () => {
                 "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
               explorerLink:
                 "https://osmosis.zone/tx/1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              onChainAt: new Date("2025-05-15T19:38:30Z"),
             },
             timeoutTx: null,
             error: null,
@@ -3492,6 +3548,7 @@ test("txStatusResponseToJSON", () => {
                 "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
               explorer_link:
                 "https://axelar-testnet.mintscan.io/txs/AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             receive_tx: {
               chain_id: "osmosis-1",
@@ -3499,6 +3556,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorer_link:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             acknowledge_tx: {
               chain_id: "axelar-dojo-1",
@@ -3506,6 +3564,7 @@ test("txStatusResponseToJSON", () => {
                 "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
               explorer_link:
                 "https://axelar-testnet.mintscan.io/txs/C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             timeout_tx: null,
             error: null,
@@ -3526,6 +3585,7 @@ test("txStatusResponseToJSON", () => {
                 "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
               explorer_link:
                 "https://osmosis.zone/tx/082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             receive_tx: {
               chain_id: "cosmoshub-4",
@@ -3533,6 +3593,7 @@ test("txStatusResponseToJSON", () => {
                 "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
               explorer_link:
                 "https://cosmos.bigdipper.live/transactions/913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             acknowledge_tx: {
               chain_id: "osmosis-1",
@@ -3540,6 +3601,7 @@ test("txStatusResponseToJSON", () => {
                 "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
               explorer_link:
                 "https://osmosis.zone/tx/1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              on_chain_at: "2025-05-15T19:38:30Z"
             },
             timeout_tx: null,
             error: null,
@@ -3628,6 +3690,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorer_link:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     confirm_tx: {
       chain_id: "osmosis-1",
@@ -3635,6 +3698,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorer_link:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     execute_tx: {
       chain_id: "43114",
@@ -3642,6 +3706,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorer_link:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     error: {
       message: "transaction failed",
@@ -3656,6 +3721,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorerLink:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     confirmTx: {
       chainID: "osmosis-1",
@@ -3663,6 +3729,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorerLink:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     executeTx: {
       chainID: "43114",
@@ -3670,6 +3737,7 @@ test("sendTokenTransactionsFromJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorerLink:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     error: {
       message: "transaction failed",
@@ -3688,6 +3756,7 @@ test("sendTokenTransactionsToJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorerLink:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     confirmTx: {
       chainID: "osmosis-1",
@@ -3695,6 +3764,7 @@ test("sendTokenTransactionsToJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorerLink:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     executeTx: {
       chainID: "43114",
@@ -3702,6 +3772,7 @@ test("sendTokenTransactionsToJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorerLink:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     error: {
       message: "transaction failed",
@@ -3716,6 +3787,7 @@ test("sendTokenTransactionsToJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorer_link:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     confirm_tx: {
       chain_id: "osmosis-1",
@@ -3723,6 +3795,7 @@ test("sendTokenTransactionsToJSON", () => {
         "B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
       explorer_link:
         "https://osmosis.zone/tx/B6A0176A1D9F72D9445D9865B365E40735F060972931C6A99E89DCC8B736CE07",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     execute_tx: {
       chain_id: "43114",
@@ -3730,6 +3803,7 @@ test("sendTokenTransactionsToJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorer_link:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     error: {
       message: "transaction failed",
@@ -3746,21 +3820,25 @@ test("contractCallWithTokenTransactionsFromJSON", () => {
       chain_id: "osmosis-1",
       tx_hash: "tx-a",
       explorer_link: "https://osmosis.zone/tx/tx-a",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     gas_paid_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-b",
       explorer_link: "https://osmosis.zone/tx/tx-b",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     confirm_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-c",
       explorer_link: "https://osmosis.zone/tx/tx-c",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     approve_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-d",
       explorer_link: "https://osmosis.zone/tx/tx-d",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     execute_tx: {
       chain_id: "43114",
@@ -3768,6 +3846,7 @@ test("contractCallWithTokenTransactionsFromJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorer_link:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     error: {
       message: "transaction failed",
@@ -3780,21 +3859,25 @@ test("contractCallWithTokenTransactionsFromJSON", () => {
       chainID: "osmosis-1",
       txHash: "tx-a",
       explorerLink: "https://osmosis.zone/tx/tx-a",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     gasPaidTx: {
       chainID: "osmosis-1",
       txHash: "tx-b",
       explorerLink: "https://osmosis.zone/tx/tx-b",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     confirmTx: {
       chainID: "osmosis-1",
       txHash: "tx-c",
       explorerLink: "https://osmosis.zone/tx/tx-c",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     approveTx: {
       chainID: "osmosis-1",
       txHash: "tx-d",
       explorerLink: "https://osmosis.zone/tx/tx-d",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     executeTx: {
       chainID: "43114",
@@ -3802,6 +3885,7 @@ test("contractCallWithTokenTransactionsFromJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorerLink:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     error: {
       message: "transaction failed",
@@ -3818,21 +3902,25 @@ test("contractCallWithTokenTransactionsToJSON", () => {
       chainID: "osmosis-1",
       txHash: "tx-a",
       explorerLink: "https://osmosis.zone/tx/tx-a",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     gasPaidTx: {
       chainID: "osmosis-1",
       txHash: "tx-b",
       explorerLink: "https://osmosis.zone/tx/tx-b",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     confirmTx: {
       chainID: "osmosis-1",
       txHash: "tx-c",
       explorerLink: "https://osmosis.zone/tx/tx-c",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     approveTx: {
       chainID: "osmosis-1",
       txHash: "tx-d",
       explorerLink: "https://osmosis.zone/tx/tx-d",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     executeTx: {
       chainID: "43114",
@@ -3840,6 +3928,7 @@ test("contractCallWithTokenTransactionsToJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorerLink:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      onChainAt: new Date("2025-05-15T19:38:30Z"),
     },
     error: {
       message: "transaction failed",
@@ -3852,21 +3941,25 @@ test("contractCallWithTokenTransactionsToJSON", () => {
       chain_id: "osmosis-1",
       tx_hash: "tx-a",
       explorer_link: "https://osmosis.zone/tx/tx-a",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     gas_paid_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-b",
       explorer_link: "https://osmosis.zone/tx/tx-b",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     confirm_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-c",
       explorer_link: "https://osmosis.zone/tx/tx-c",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     approve_tx: {
       chain_id: "osmosis-1",
       tx_hash: "tx-d",
       explorer_link: "https://osmosis.zone/tx/tx-d",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     execute_tx: {
       chain_id: "43114",
@@ -3874,6 +3967,7 @@ test("contractCallWithTokenTransactionsToJSON", () => {
         "0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
       explorer_link:
         "https://www.mintscan.io/terra/tx/0xc78b62283ae813ad58e5c1d4023007459070f67c00fa949aa1af8288337ad421",
+      on_chain_at: "2025-05-15T19:38:30Z"
     },
     error: {
       message: "transaction failed",

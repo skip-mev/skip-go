@@ -1460,6 +1460,7 @@ export function chainTransactionFromJSON(
     txHash: chainTransactionJSON.tx_hash,
     chainID: chainTransactionJSON.chain_id,
     explorerLink: chainTransactionJSON.explorer_link,
+    onChainAt: new Date(chainTransactionJSON.on_chain_at),
   };
 }
 
@@ -1470,6 +1471,7 @@ export function chainTransactionToJSON(
     tx_hash: chainTransaction.txHash,
     chain_id: chainTransaction.chainID,
     explorer_link: chainTransaction.explorerLink,
+    on_chain_at: chainTransaction.onChainAt.toISOString()
   };
 }
 
