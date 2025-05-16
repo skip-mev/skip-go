@@ -102,6 +102,7 @@ export const useCreateEvmWallets = () => {
               walletName: connector.name,
               chainId: chainIdToConnect,
               chainType: ChainType.Evm,
+              address: account[0],
             });
 
             return { address: account[0], logo: walletConnectMetadata?.icons?.[0] };

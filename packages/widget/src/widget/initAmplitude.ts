@@ -13,7 +13,6 @@ export const initAmplitude = () => {
   init("14616a575f32087cf0403ab8f3ea3ce0", {
     autocapture: true,
     appVersion: version,
-    // serverUrl: "https://go.skip.build/api/amplitude"
   });
 
   isAmplitudeInitialized = true;

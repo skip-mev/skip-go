@@ -1,13 +1,14 @@
 import { PublicKey } from "@solana/web3.js";
 import { ClientState } from "../state/clientState";
-import { TransactionCallbacks } from "../types/callbacks";
-import { ChainType, CosmosMsg, RouteResponse } from "../types/swaggerTypes";
-import { ApiRequest } from "../utils/generateApi";
+import type { TransactionCallbacks } from "../types/callbacks";
+import { ChainType } from "../types/swaggerTypes";
+import type { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
+import type { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
 import { messages } from "../api/postMessages";
 import { isAddress } from "viem";
-import { SignerGetters, GasOptions, UserAddress } from "src/types/client-types";
+import type { SignerGetters, GasOptions, UserAddress } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 
 /** Execute Route Options */

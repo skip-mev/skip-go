@@ -1,13 +1,14 @@
-import { OfflineSigner } from "@cosmjs/proto-signing/build/signer";
-import { ChainType, CosmosMsg } from "../../types/swaggerTypes";
+import type { OfflineSigner } from "@cosmjs/proto-signing";
+import { ChainType } from "../../types/swaggerTypes";
+import type { CosmosMsg } from "../../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";
 import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
-import { calculateFee, GasPrice } from "@cosmjs/stargate/build/fee";
-import { Decimal } from "@cosmjs/math/build/decimal";
+import { calculateFee, GasPrice } from "@cosmjs/stargate";
+import { Decimal } from "@cosmjs/math";
 import { balances } from "../../api/postBalances";
 import { ClientState } from "src/state/clientState";
-import { ExecuteRouteOptions } from "src/public-functions/executeRoute";
-import { GetFallbackGasAmount } from "src/types/client-types";
+import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import type { GetFallbackGasAmount } from "src/types/client-types";
 import { getCosmosGasAmountForMessage } from "./getCosmosGasAmountForMessage";
 
 export type ValidateCosmosGasBalanceProps = {

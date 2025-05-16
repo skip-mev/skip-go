@@ -1,15 +1,18 @@
 {
   "name": "@skip-go/client",
   "description": "JavaScript SDK for Skip Go API",
-  "version": "0.17.2",
+  "version": "1.0.6",
   "repository": "https://github.com/skip-mev/skip-go",
-  "main": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
-    }
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/*",
@@ -20,14 +23,14 @@
   "scripts": {
     "build": "yarn run codegen && tsup",
     "clean": "rm -rf dist",
-    "codegen": "node scripts/codegen.js",
+    "codegen": "node scripts/codegen.cjs",
     "e2e:clean": "make stop clean",
     "e2e:setup": "make setup && make setup-kind",
     "e2e:start": "make start",
     "e2e:stop": "make stop",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.mjs --test-timeout=30000",
     "postpublish": "git reset --hard",
-    "prepublishOnly": "node scripts/prepublish.js",
+    "prepublishOnly": "node scripts/prepublish.cjs",
     "test": "vitest -c vitest.unit.config.mjs",
     "watch": "tsup --watch",
     "watch:link": "tsup --watch --onSuccess \"yalc push\"",
@@ -42,7 +45,9 @@
     "@protobufs/gogoproto": "0.0.10",
     "@protobufs/google": "0.0.10",
     "@types/keccak": "3.0.4",
-    "chain-registry": "^1.69.211",
+    "chain-registry": "^1.69.212",
+    "eslint-plugin-esm": "^0.8.1",
+    "eslint-plugin-import": "^2.31.0",
     "minimatch": "^9.0.3",
     "proxy-from-env": "^1.1.0",
     "swagger-typescript-api": "^13.0.28",

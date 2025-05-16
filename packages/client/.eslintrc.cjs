@@ -1,23 +1,35 @@
 /** @type {import("eslint").Linter.Config} */
 const eslintConfig = {
+  plugins: ["@typescript-eslint", "prettier", "import", "esm"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/strict",
+    "plugin:@typescript-eslint/stylistic",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+  ],
   root: true,
   env: {
     browser: true,
     node: true,
     es2021: true,
   },
+  settings: {
+    "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "prettier"],
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/strict",
-    "plugin:@typescript-eslint/stylistic",
-  ],
   ignorePatterns: [
     "dist/",
     "build/",
@@ -27,6 +39,27 @@ const eslintConfig = {
     "scripts/generate-chains.cjs",
   ],
   rules: {
+    "@typescript-eslint/consistent-type-imports": ["error", {
+      prefer: "type-imports",
+      disallowTypeAnnotations: false,
+    }],
+
+    'import/no-unresolved': 'error',
+
+    "@typescript-eslint/no-import-type-side-effects": "error",
+
+  "import/extensions": ["error", "always", {
+    "ts": "never",
+    "tsx": "never",
+    "js": "always",
+    "jsx": "always",
+  }],
+
+    "esm/no-commonjs": "warn",
+    "import/no-unresolved": ["error", {
+      ignoreExtension: false,
+      caseSensitive: true,
+    }],
     "prettier/prettier": [
       "error",
       {

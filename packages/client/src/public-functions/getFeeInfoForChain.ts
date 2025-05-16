@@ -1,7 +1,7 @@
 import { chains } from "src/chains";
 import { getDefaultGasTokenForChain } from "../private-functions/getDefaultGasTokenForChain";
 import { ClientState } from "src/state/clientState";
-import { SkipApiOptions } from "src/state/apiState";
+import type { SkipApiOptions } from "src/state/apiState";
 
 export type GetFeeInfoForChainProps = {
   chainId: string;

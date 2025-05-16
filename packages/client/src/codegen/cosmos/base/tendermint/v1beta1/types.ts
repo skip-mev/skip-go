@@ -4,7 +4,7 @@ import { EvidenceList, EvidenceListAmino, EvidenceListSDKType } from "../../../.
 import { Consensus, ConsensusAmino, ConsensusSDKType } from "../../../../tendermint/version/types";
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 import { Long, isSet, toTimestamp, fromTimestamp, fromJsonTimestamp, bytesFromBase64, base64FromBytes } from "../../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../../json-safe";
 /**
  * Block is tendermint type Block, with the Header proposer address

@@ -1,11 +1,11 @@
-import { OfflineAminoSigner } from "@cosmjs/amino";
-import { OfflineDirectSigner } from "@cosmjs/proto-signing";
-import { GasPrice, SignerData, StdFee } from "@cosmjs/stargate";
+import type { OfflineAminoSigner } from "@cosmjs/amino";
+import type { OfflineDirectSigner } from "@cosmjs/proto-signing";
+import type { GasPrice, SignerData, StdFee } from "@cosmjs/stargate";
 
-import { WalletClient } from "viem";
+import type { WalletClient } from "viem";
 
-import { Adapter } from "@solana/wallet-adapter-base";
-import { ChainType, CosmosMsg, FeeAsset } from "./swaggerTypes";
+import type { Adapter } from "@solana/wallet-adapter-base";
+import type { ChainType, CosmosMsg, FeeAsset } from "./swaggerTypes";
 
 /** Common Types */
 export type UserAddress = {

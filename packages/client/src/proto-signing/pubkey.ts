@@ -1,12 +1,13 @@
 // https://github.com/archmage-live/archmage-x/blob/develop/lib/network/cosm/proto-signing/pubkey.ts
 
-import { Pubkey, encodeSecp256k1Pubkey } from "@cosmjs/amino";
+import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
+import type { Pubkey } from "@cosmjs/amino";
 import { fromBase64 } from "@cosmjs/encoding";
 import { encodePubkey as cosmEncodePubkey } from "@cosmjs/proto-signing";
-import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
-import { Any } from "cosmjs-types/google/protobuf/any";
+import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
+import { Any } from "cosmjs-types/google/protobuf/any.js";
 import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
-import { AccountData } from "./signer";
+import type { AccountData } from "./signer";
 import { getIsEthermint, getIsInitia } from "src/chains";
 
 export function makePubkeyAnyFromAccount(account: AccountData, chainId: string) {

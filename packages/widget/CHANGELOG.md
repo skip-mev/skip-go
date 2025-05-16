@@ -1,5 +1,61 @@
 ## 0.0.15
 
+## 3.9.6
+
+### Patch Changes
+
+- Updated dependencies [a009e22]
+  - @skip-go/client@1.0.6
+
+## 3.9.5
+
+### Patch Changes
+
+- Updated dependencies [fd69bee]
+  - @skip-go/client@1.0.5
+
+## 3.9.4
+
+### Patch Changes
+
+- Updated dependencies [9b1f4fe]
+  - @skip-go/client@1.0.4
+
+## 3.9.3
+
+### Patch Changes
+
+- Updated dependencies [d0e0de4]
+  - @skip-go/client@1.0.3
+
+## 3.9.2
+
+### Patch Changes
+
+- Updated dependencies [b22c07b]
+  - @skip-go/client@1.0.2
+
+## 3.9.1
+
+### Patch Changes
+
+- Updated dependencies [aba3e58]
+  - @skip-go/client@1.0.1
+
+## 3.9.0
+
+### Minor Changes
+
+- 4007e19: Update widget to use client v1.0.0
+
+### Patch Changes
+
+- 30d7b1f: only record sentry replay on valid user id
+- be8dda4: update registries
+- Updated dependencies [4007e19]
+- Updated dependencies [be8dda4]
+  - @skip-go/client@1.0.0
+
 ## 3.8.9
 
 ### Patch Changes

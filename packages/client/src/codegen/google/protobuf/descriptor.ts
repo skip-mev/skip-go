@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Long, isSet, bytesFromBase64, base64FromBytes } from "../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../json-safe";
 export enum FieldDescriptorProto_Type {
   /**

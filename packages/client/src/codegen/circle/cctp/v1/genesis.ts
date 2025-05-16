@@ -8,7 +8,7 @@ import { Nonce, NonceAmino, NonceSDKType } from "./nonce";
 import { SignatureThreshold, SignatureThresholdAmino, SignatureThresholdSDKType } from "./signature_threshold";
 import { TokenPair, TokenPairAmino, TokenPairSDKType } from "./token_pair";
 import { RemoteTokenMessenger, RemoteTokenMessengerAmino, RemoteTokenMessengerSDKType } from "./remote_token_messenger";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /** GenesisState defines the cctp module's genesis state. */

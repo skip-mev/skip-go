@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 import { Long, toTimestamp, fromTimestamp, isSet, fromJsonTimestamp, bytesFromBase64, base64FromBytes } from "../../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../../json-safe";
 /**
  * CommitInfo defines commit information used by the multi-store when committing

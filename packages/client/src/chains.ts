@@ -1,4 +1,4 @@
-import { Chain } from "@chain-registry/types";
+import type { Chain } from "@chain-registry/types";
 import chainRegistryChains from "./codegen/chains.json";
 
 const SOLANA_CHAIN = {

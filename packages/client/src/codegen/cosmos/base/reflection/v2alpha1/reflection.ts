@@ -1,5 +1,5 @@
 //@ts-nocheck
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../../helpers";
 import { JsonSafe } from "../../../../json-safe";
 /** AppDescriptor describes a cosmos-sdk based application */

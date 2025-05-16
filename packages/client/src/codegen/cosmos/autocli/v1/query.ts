@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { ModuleOptions, ModuleOptionsAmino, ModuleOptionsSDKType } from "./options";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 import { isSet, isObject } from "../../../helpers";
 /** AppOptionsRequest is the RemoteInfoService/AppOptions request type. */

@@ -4,7 +4,7 @@ import { Any, AnyAmino, AnySDKType } from "../../../google/protobuf/any";
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Duration, DurationAmino, DurationSDKType } from "../../../google/protobuf/duration";
 import { Long, isSet, padDecimal, toTimestamp, fromTimestamp, fromJsonTimestamp, bytesFromBase64, base64FromBytes } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { Decimal } from "@cosmjs/math";
 import { JsonSafe } from "../../../json-safe";
 /** VoteOption enumerates the valid vote options for a given governance proposal. */

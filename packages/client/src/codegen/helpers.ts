@@ -5,7 +5,7 @@
 * and run the transpile command or npm scripts command that is used to regenerate this bundle.
 */
 
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import Long from 'long';
 import { Dec } from "@keplr-wallet/unit";
 
