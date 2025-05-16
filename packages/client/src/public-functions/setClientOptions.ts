@@ -7,6 +7,7 @@ import { Registry } from "@cosmjs/proto-signing";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx.js";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
+import { MsgExecuteContract as SecretMsgExecuteContract } from "src/codegen/secret/compute/v1beta1/msg";
 import { ClientState } from "../state/clientState";
 import type { SkipClientOptions } from "../state/clientState";
 import { createRequestClient } from "../utils/generateApi";
@@ -32,6 +33,7 @@ export const setClientOptions = (options: SkipClientOptions = {}) => {
   ClientState.registry = new Registry([
     ...defaultRegistryTypes,
     ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+    ["/secret.compute.v1beta1.MsgExecuteContract", SecretMsgExecuteContract],
     ["/initia.move.v1.MsgExecute", MsgExecute],
     ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
     ...circleProtoRegistry,

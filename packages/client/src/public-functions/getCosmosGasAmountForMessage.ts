@@ -16,7 +16,7 @@ export async function getCosmosGasAmountForMessage(
   if (!messages && !encodedMsgs) {
     throw new Error("Either message or encodedMsg must be provided");
   }
-  const _encodedMsgs = messages?.map((message) => getEncodeObjectFromCosmosMessage(message));
+  const _encodedMsgs = messages?.map((message) => getEncodeObjectFromCosmosMessage(message, chainId));
   encodedMsgs = encodedMsgs || _encodedMsgs;
 
   if (!encodedMsgs) {

@@ -30,7 +30,7 @@ export const signCosmosMessageAmino = async (
     throw new Error("signCosmosMessageAmino: failed to retrieve account from signer");
   }
 
-  const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg));
+  const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg, chainId));
 
   const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
   const msgs = messages.map((msg) => ClientState.aminoTypes.toAmino(msg));
