@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.9.7
+
+### Patch Changes
+
+- d5aa812: refetch route on swap settings changed
+- 041a12a: minor improvements to amplitude analytics
+- 9849401: Temporarily remove fadeout animation from selecting asset
+
 ## 3.9.6
 
 ### Patch Changes
