@@ -106,7 +106,7 @@ export const SwapPage = () => {
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
@@ -122,7 +122,7 @@ export const SwapPage = () => {
           ...asset,
         }));
         switchEvmchainId(asset?.chainId);
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
@@ -139,7 +139,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAsset]);
@@ -154,7 +154,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.hide(Modals.AssetAndChainSelectorModal);
+        NiceModal.remove(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
