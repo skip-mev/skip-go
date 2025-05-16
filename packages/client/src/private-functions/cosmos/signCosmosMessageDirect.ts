@@ -46,7 +46,7 @@ export const signCosmosMessageDirect = async (
     throw new Error("signCosmosMessageDirect error: failed to retrieve account from signer");
   }
 
-  const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg));
+  const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg, chainId));
 
   const txBodyEncodeObject: TxBodyEncodeObject = {
     typeUrl: "/cosmos.tx.v1beta1.TxBody",
