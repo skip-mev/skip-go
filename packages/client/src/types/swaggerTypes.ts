@@ -1201,7 +1201,7 @@ export interface OPInitTransfer {
 
 export interface OPInitTransferWrapper {
   /** A transfer facilitated by the CCTP bridge */
-  transfer?: OPInitTransfer;
+  opInitTransfer?: OPInitTransfer;
 }
 
 export interface OPInitTransferInfo {
@@ -1473,7 +1473,7 @@ export interface LayerZeroTransferInfo {
 
 export interface LayerZeroTransferWrapper {
   /** A Layer Zero Transfer */
-  eurekaTransfer?: LayerZeroTransfer;
+  layerZeroTransfer?: LayerZeroTransfer;
 }
 
 export interface RecommendationRequest {

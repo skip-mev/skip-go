@@ -3776,7 +3776,7 @@ components:
       type: object
     OPInitTransferWrapper:
       properties:
-        transfer:
+        op_init_transfer:
           $ref: '#/components/schemas/OPInitTransfer'
       type: object
     OPInitTransferInfo:
@@ -4100,7 +4100,7 @@ components:
       type: object
     LayerZeroTransferWrapper:
       properties:
-        eureka_transfer:
+        layer_zero_transfer:
           $ref: '#/components/schemas/LayerZeroTransfer'
       type: object
       

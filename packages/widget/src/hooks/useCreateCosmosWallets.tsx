@@ -111,6 +111,7 @@ export const useCreateCosmosWallets = () => {
               walletName: wallet,
               chainId: chainIdToConnect,
               chainType: ChainType.Cosmos,
+              address
             });
 
             return { address };
