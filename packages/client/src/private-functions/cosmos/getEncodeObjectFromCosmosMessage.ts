@@ -1,4 +1,4 @@
-import { toUtf8 } from "@cosmjs/encoding";
+import { fromBech32, toUtf8 } from "@cosmjs/encoding";
 import type { EncodeObject } from "@cosmjs/proto-signing";
 import {
   MsgTransfer as MsgTransferInjective,
@@ -12,10 +12,17 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx.js";
 import type { CosmosMsg } from "../../types/swaggerTypes";
 import { MsgInitiateTokenDeposit } from "src/codegen/opinit/ophost/v1/tx";
 import { ClawbackVestingAccount } from "src/codegen/evmos/vesting/v2/vesting";
-import { MsgDepositForBurn, MsgDepositForBurnWithCaller } from "src/codegen/circle/cctp/v1/tx";
+import {
+  MsgDepositForBurn,
+  MsgDepositForBurnWithCaller,
+} from "src/codegen/circle/cctp/v1/tx";
 import { MsgExecute } from "src/codegen/initia/move/v1/tx";
+import { MsgExecuteContract as SecretMsgExecuteContract } from "src/codegen/secret/compute/v1beta1/msg";
 
-export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObject {
+export function getEncodeObjectFromCosmosMessage(
+  message: CosmosMsg,
+  chainId?: string
+): EncodeObject {
   const msgJson = JSON.parse(message.msg ?? "");
 
   if (message.msgTypeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
@@ -35,6 +42,17 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
   }
 
   if (message.msgTypeUrl === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    if (chainId?.includes("secret")) {
+      return {
+        typeUrl: "/secret.compute.v1beta1.MsgExecuteContract",
+        value: SecretMsgExecuteContract.fromPartial({
+          sender: fromBech32(msgJson.sender).data,
+          contract: fromBech32(msgJson.contract).data,
+          msg: toUtf8(JSON.stringify(msgJson.msg)),
+          sentFunds: msgJson.funds,
+        }),
+      };
+    }
     return {
       typeUrl: message.msgTypeUrl,
       value: MsgExecuteContract.fromPartial({
@@ -115,7 +133,9 @@ export function getEncodeObjectFromCosmosMessage(message: CosmosMsg): EncodeObje
   };
 }
 
-export function getEncodeObjectFromCosmosMessageInjective(message: CosmosMsg): Msgs {
+export function getEncodeObjectFromCosmosMessageInjective(
+  message: CosmosMsg
+): Msgs {
   const msgJson = JSON.parse(message.msg ?? "");
 
   if (message.msgTypeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
