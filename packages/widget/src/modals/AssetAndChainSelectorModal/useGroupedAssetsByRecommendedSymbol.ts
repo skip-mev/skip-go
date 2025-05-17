@@ -8,7 +8,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
-  context: "source" | "destination";
+  context?: "source" | "destination";
 };
 
 export const useGroupedAssetByRecommendedSymbol = ({
@@ -21,9 +21,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
   const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
 
   const assets = useMemo(() => {
-    const allowed = filter?.[context];
-    const blocked = filterOut?.[context];
-    const blockedUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
+    const allowed = context && filter?.[context];
+    const blocked = context && filterOut?.[context];
+    const blockedUnlessUserHasBalance = context && filterOutUnlessUserHasBalance?.[context];
 
     return _assets?.filter((asset) => {
       const isAllowed =
@@ -82,7 +82,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
           const balance = getBalance(asset.chainId, asset.denom);
           if (balance) {
             accumulator.totalAmount += Number(balance.amount);
-            accumulator.formattedTotalAmount += Number(convertTokenAmountToHumanReadableAmount(balance.amount, balance?.decimals));
+            accumulator.formattedTotalAmount += Number(
+              convertTokenAmountToHumanReadableAmount(balance.amount, balance?.decimals),
+            );
             accumulator.totalUsd += Number(balance.valueUsd ?? 0);
           }
           return accumulator;
