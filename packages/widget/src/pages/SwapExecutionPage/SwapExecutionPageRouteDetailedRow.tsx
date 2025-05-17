@@ -16,6 +16,8 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { TxsStatus } from "./useBroadcastedTxs";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -56,6 +58,10 @@ export const SwapExecutionPageRouteDetailedRow = ({
     chainId,
     tokenAmount,
   });
+  const groupedAssets = useGroupedAssetByRecommendedSymbol({
+    context: undefined,
+  });
+  const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -161,7 +167,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.assetImage ? (
+      {groupedAsset ? (
         <StyledAnimatedBorder
           width={30}
           height={30}
@@ -169,11 +175,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
           status={status}
           key={`${numberOfTransferEvents}-${latestStatus}`}
         >
-          <StyledChainImage
+          <GroupedAssetImage
             height={30}
             width={30}
-            src={assetDetails.assetImage}
-            title={assetDetails?.asset?.name}
+            style={{ borderRadius: 30, boxSizing: "content-box" }}
+            groupedAsset={groupedAsset}
           />
         </StyledAnimatedBorder>
       ) : (
@@ -243,11 +249,6 @@ const PlaceholderIcon = styled.div`
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledChainImage = styled.img`
-  border-radius: 50%;
-  box-sizing: content-box;
 `;
 
 export const StyledAnimatedBorder = ({

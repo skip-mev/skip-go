@@ -229,7 +229,6 @@ export const SwapPageAssetChainInput = ({
             {showPriceChangePercentage && (
               <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
-
           </Row>
         ) : (
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
