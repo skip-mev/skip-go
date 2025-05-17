@@ -36,9 +36,6 @@ export const initSentry = () => {
         useCompression: false,
       }),
     ],
-    // Session Replay
-    replaysSessionSampleRate: 1,
-    replaysOnErrorSampleRate: 0,
   });
   isSentryInitialized = true;
 };
