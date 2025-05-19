@@ -254,6 +254,11 @@ async function fixProtobufjsImports(directory) {
         'import $1 from "protobufjs/minimal.js";'
       );
 
+      updated = updated.replace(
+        `import { HttpEndpoint } from "@cosmjs/tendermint-rpc";`,
+        'import type { HttpEndpoint } from "@cosmjs/stargate";'
+      );
+
       if (updated !== content) {
         await fs.writeFile(fullPath, updated, "utf-8");
       }

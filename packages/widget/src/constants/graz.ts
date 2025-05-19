@@ -180,11 +180,6 @@ export const walletInfo: Record<
       "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-cosmostation.png",
     mobile: true,
   },
-  [WalletType.CAPSULE]: {
-    name: "Capsule",
-    imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-capsule.jpg",
-  },
   [WalletType.COSMIFRAME]: {
     name: "DAO DAO",
     imgSrc:
