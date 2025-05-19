@@ -316,8 +316,10 @@ export const SwapPage = () => {
       setChainAddresses({});
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
-      const replay = getReplay();
-      replay?.start();
+      if (sourceAccount?.address) {
+        const replay = getReplay()
+        replay?.start()
+      }
       setSwapExecutionState();
     };
 
