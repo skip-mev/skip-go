@@ -1,5 +1,21 @@
 ## 0.0.15
 
+## 3.10.0
+
+### Minor Changes
+
+- df62bf0: bump cosmjs package
+
+### Patch Changes
+
+- be7c302: only session record on valid user id
+- c609cd4: fix decimals display for grouped assets
+- c8315f2: asset logo consistency
+- Updated dependencies [376583c]
+- Updated dependencies [df62bf0]
+- Updated dependencies [4458538]
+  - @skip-go/client@1.1.0
+
 ## 3.9.7
 
 ### Patch Changes
