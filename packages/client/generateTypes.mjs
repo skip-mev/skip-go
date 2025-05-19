@@ -72,3 +72,13 @@ generateApi({
     },
   },
 });
+
+generateApi({
+  fileName: "swaggerTypesJson.ts",
+  output: path.resolve(__dirname, "./src/types"),
+  input: path.resolve(__dirname, "../../docs/swagger.yml"),
+  modular: false,
+  moduleNameIndex: -1,
+  typeSuffix: 'Json',
+  generateClient: false,
+});
