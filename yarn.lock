@@ -3260,17 +3260,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cosmsnap/snapper@npm:0.1.29":
-  version: 0.1.29
-  resolution: "@cosmsnap/snapper@npm:0.1.29"
-  dependencies:
-    "@keplr-wallet/proto-types": 0.12.12
-    "@keplr-wallet/types": 0.12.12
-    ses: ^0.18.4
-  checksum: 911d211d5e92522b4dd839c290f168088fd828c8a47cab6857485f3d9e2a32d13c47f76e963cb0717d145b2d998fbff0633534e4cb652cb6eaa80bea1566b42f
-  languageName: node
-  linkType: hard
-
 "@cosmsnap/snapper@npm:0.2.7":
   version: 0.2.7
   resolution: "@cosmsnap/snapper@npm:0.2.7"
@@ -3322,15 +3311,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dao-dao/cosmiframe@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@dao-dao/cosmiframe@npm:0.1.0"
+"@dao-dao/cosmiframe@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@dao-dao/cosmiframe@npm:1.0.0"
   dependencies:
     uuid: ^9.0.1
   peerDependencies:
     "@cosmjs/amino": "*"
     "@cosmjs/proto-signing": "*"
-  checksum: 77e46f193d70c6b028783be7a702c62aa5a233dab7c92535bd6eaea1c573f49ea6baf0c2ddc489ddf6a26ae86ef4fab1fde2bcbf8be72388a5597bc024782552
+  checksum: 6b789d8de4ba1c0be00d89e66533638128f6d15fe0d1dde1209a77ab89eeab8dcd5adf98d23141b89e055a7883670d17349d7c134d03679e1dbed1e0f7df3aef
   languageName: node
   linkType: hard
 
@@ -8242,7 +8231,7 @@ __metadata:
     eslint-plugin-prettier: ^5.2.1
     eslint-plugin-react-hooks: ^4.6.2
     fs-extra: ^11.3.0
-    graz: 0.3.1
+    graz: 0.3.2
     jotai: ^2.10.1
     jotai-effect: ^1.0.2
     jotai-tanstack-query: ^0.8.6
@@ -9298,13 +9287,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.35.0":
-  version: 4.35.0
-  resolution: "@tanstack/query-core@npm:4.35.0"
-  checksum: 7a6f24164bce5d7367e2bb58f94380d9608bf4df2726e4e8b0e4f42e84d40cc7883baab2127c0c7e8eaa5c4d444a80c1e5f6e7930d21768a863c82baf22a75d4
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:5.59.17":
   version: 5.59.17
   resolution: "@tanstack/query-core@npm:5.59.17"
@@ -9319,25 +9301,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:4.35.0":
-  version: 4.35.0
-  resolution: "@tanstack/react-query@npm:4.35.0"
-  dependencies:
-    "@tanstack/query-core": 4.35.0
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: d3a140a010f0266eca9dae83c4995f2b541ceb8cafafd7247c5c17ec4e09416d2f2a88450f23ebab45c132125e4e4222e77a69354c0dd5d459170c7a24f1b172
-  languageName: node
-  linkType: hard
-
 "@tanstack/react-query@npm:^5.51.21":
   version: 5.59.19
   resolution: "@tanstack/react-query@npm:5.59.19"
@@ -9346,19 +9309,6 @@ __metadata:
   peerDependencies:
     react: ^18 || ^19
   checksum: dd4b33a801f8e97fec81ec2c0828c5d805674b7fc82b6899409cb18df60fbc42794baa985a21bbbc1b3ca8efc55ee7c5813e1d291e3becfa46bc35619d8f0ad0
-  languageName: node
-  linkType: hard
-
-"@terra-money/station-connector@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@terra-money/station-connector@npm:1.1.0"
-  dependencies:
-    bech32: ^2.0.0
-  peerDependencies:
-    "@cosmjs/amino": ^0.31.0
-    "@terra-money/feather.js": ^3.0.0-beta.1
-    axios: ^0.27.2
-  checksum: 5dbf0107f9329ab737aa8f22dee3fddb38e2622ab3c654aa4dff7a5d887b1773fb408781592db1692126d65d0a98d9b2559fc3b80fecda29c1cbe2cb02b9adf3
   languageName: node
   linkType: hard
 
@@ -19092,50 +19042,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graz@npm:0.1.30":
-  version: 0.1.30
-  resolution: "graz@npm:0.1.30"
-  dependencies:
-    "@cosmsnap/snapper": 0.1.29
-    "@dao-dao/cosmiframe": 0.1.0
-    "@keplr-wallet/cosmos": 0.12.156
-    "@keplr-wallet/types": 0.12.156
-    "@metamask/providers": 12.0.0
-    "@tanstack/react-query": 4.35.0
-    "@terra-money/station-connector": 1.1.0
-    "@vectis/extension-client": ^0.7.2
-    "@walletconnect/modal": 2.7.0
-    "@walletconnect/sign-client": 2.17.2
-    "@walletconnect/types": 2.17.2
-    "@walletconnect/utils": 2.17.2
-    cosmos-directory-client: 0.0.6
-    long: 4
-    zustand: 4.5.2
-  peerDependencies:
-    "@cosmjs/amino": <=0.31.3
-    "@cosmjs/cosmwasm-stargate": <=0.31.3
-    "@cosmjs/launchpad": "*"
-    "@cosmjs/proto-signing": <=0.31.3
-    "@cosmjs/stargate": <=0.31.3
-    "@cosmjs/tendermint-rpc": <=0.31.3
-    "@leapwallet/cosmos-social-login-capsule-provider": ^0.0.41
-    react: ">=17"
-  bin:
-    graz: dist/cli.js
-  checksum: dce86cd5ed0d1b2eec667448d93fe582f2accb0433854ec7f353d3c4c1a082d01f96cbf40b7917659cde5e0b2547a8c01b631c2c0e0021c56a59ab571bc6421f
-  languageName: node
-  linkType: hard
-
-"graz@npm:0.3.1":
-  version: 0.3.1
-  resolution: "graz@npm:0.3.1"
+"graz@npm:0.3.2":
+  version: 0.3.2
+  resolution: "graz@npm:0.3.2"
   dependencies:
     "@cosmsnap/snapper": 0.2.7
-    "@dao-dao/cosmiframe": 0.1.0
+    "@dao-dao/cosmiframe": 1.0.0
     "@keplr-wallet/cosmos": 0.12.156
     "@keplr-wallet/types": 0.12.156
     "@metamask/providers": 12.0.0
-    "@terra-money/station-connector": 1.1.0
     "@vectis/extension-client": ^0.7.2
     "@walletconnect/modal": 2.7.0
     "@walletconnect/sign-client": 2.20.2
@@ -19154,7 +19069,7 @@ __metadata:
     react: ">=17"
   bin:
     graz: dist/cli.js
-  checksum: fb3caafa828f12d49c21e0c5a5d374d3597d626736836572077fa7337773d1826c794490fea7c2d8d8e4db062280ef9c5af9af12ef0c684d12d2b1d364d2083a
+  checksum: e94da798f712a001817c871582abcd7779b23f32d6e57dcf25c3f49ca47a49a68d34adb8e25f3ac3534362d8a9a15c24e21ebb72d31c41a055805e58107a11e6
   languageName: node
   linkType: hard
 
@@ -28047,7 +27962,7 @@ __metadata:
     eslint-plugin-prettier: ^5.1.3
     eslint-plugin-simple-import-sort: ^10.0.0
     globby: ^14.0.1
-    graz: 0.1.30
+    graz: 0.3.2
     jest: ^29.7.0
     jest-environment-jsdom: ^29.7.0
     keccak256: 1.x
@@ -30596,15 +30511,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.0":
-  version: 1.2.2
-  resolution: "use-sync-external-store@npm:1.2.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: fe07c071c4da3645f112c38c0e57beb479a8838616ff4e92598256ecce527f2888c08febc7f9b2f0ce2f0e18540ba3cde41eb2035e4fafcb4f52955037098a81
-  languageName: node
-  linkType: hard
-
 "utf-8-validate@npm:^5.0.2":
   version: 5.0.10
   resolution: "utf-8-validate@npm:5.0.10"
@@ -32227,26 +32133,6 @@ __metadata:
   version: 3.24.4
   resolution: "zod@npm:3.24.4"
   checksum: 62829789765a9187bd72bed3972a7c1a39fdfe6c59bc752eedabec5f99af701658471b8577d22e0fee2081e6e35d4efc93c02c90e13350755a36feadbf72bbbc
-  languageName: node
-  linkType: hard
-
-"zustand@npm:4.5.2":
-  version: 4.5.2
-  resolution: "zustand@npm:4.5.2"
-  dependencies:
-    use-sync-external-store: 1.2.0
-  peerDependencies:
-    "@types/react": ">=16.8"
-    immer: ">=9.0.6"
-    react: ">=16.8"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    immer:
-      optional: true
-    react:
-      optional: true
-  checksum: 160052a7faaefbaad1071e890a06e5d7a04f6ff6985def30a7b4471f4ddbdd1d30bb05b3688a2777cd0b717d1f0d98dad24883a5caa3deeb3afb4d83b6dabc55
   languageName: node
   linkType: hard
 
