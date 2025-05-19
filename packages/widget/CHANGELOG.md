@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.10.1
+
+### Patch Changes
+
+- 6c1ff69: bump graz 0.3.2
+
 ## 3.10.0
 
 ### Minor Changes
