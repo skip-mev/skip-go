@@ -1,5 +1,16 @@
 # @skip-go/client
 
+## 1.1.0
+
+### Minor Changes
+
+- df62bf0: bump cosmjs package
+
+### Patch Changes
+
+- 376583c: Add on_chain_ts to ChainTransaction type
+- 4458538: export json types
+
 ## 1.0.6
 
 ### Patch Changes
