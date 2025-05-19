@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { GeneratedType, Registry, OfflineSigner } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { HttpEndpoint } from "@cosmjs/tendermint-rpc";
+import type { HttpEndpoint } from "@cosmjs/stargate";
 import * as initiaMoveV1TxRegistry from "./move/v1/tx.registry";
 import * as initiaMoveV1TxAmino from "./move/v1/tx.amino";
 export const initiaAminoConverters = {
