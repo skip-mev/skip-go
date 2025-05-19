@@ -214,7 +214,7 @@ const RenderAssetAmount = ({
 
   const subtitle = useMemo(() => {
     if (!asset) return;
-    const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`
+    const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
     if (sourceAsset || isMobileScreenSize || verboseString.length > 24) {
       return asset?.recommendedSymbol;
     }
@@ -223,7 +223,7 @@ const RenderAssetAmount = ({
 
   return (
     <Row gap={8}>
-      <img height={35} width={35} src={assetImage} />
+      <img height={35} width={35} src={assetImage} alt={subtitle} />
       <Column style={sourceAsset ? { width: 50 } : undefined}>
         <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
