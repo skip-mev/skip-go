@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.9.6",
+  "version": "3.9.7",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -96,13 +96,12 @@
   "dependencies": {
     "@amplitude/analytics-browser": "^2.11.12",
     "@amplitude/plugin-session-replay-browser": "^1.16.5",
-    "@cosmjs/amino": "0.31.3",
-    "@cosmjs/cosmwasm-stargate": "0.31.3",
-    "@cosmjs/launchpad": "*",
-    "@cosmjs/math": "^0.31.3",
-    "@cosmjs/proto-signing": "0.31.3",
-    "@cosmjs/stargate": "0.31.3",
-    "@cosmjs/tendermint-rpc": "0.31.3",
+    "@cosmjs/amino": "0.33.1",
+    "@cosmjs/cosmwasm-stargate": "0.33.1",
+    "@cosmjs/encoding": "0.33.1",
+    "@cosmjs/math": "0.33.1",
+    "@cosmjs/proto-signing": "0.33.1",
+    "@cosmjs/stargate": "0.33.1",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
     "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
@@ -127,7 +126,7 @@
     "@walletconnect/solana-adapter": "^0.0.6",
     "add": "^2.0.6",
     "bech32": "^2.0.0",
-    "graz": "^0.2.6",
+    "graz": "0.3.1",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",

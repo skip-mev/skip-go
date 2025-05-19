@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { GeneratedType, Registry, OfflineSigner } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { HttpEndpoint } from "@cosmjs/tendermint-rpc";
+import type { HttpEndpoint } from "@cosmjs/stargate";
 import * as evmosErc20V1TxRegistry from "./erc20/v1/tx.registry";
 import * as evmosInflationV1TxRegistry from "./inflation/v1/tx.registry";
 import * as evmosRevenueV1TxRegistry from "./revenue/v1/tx.registry";

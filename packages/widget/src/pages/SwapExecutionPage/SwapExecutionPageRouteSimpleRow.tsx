@@ -17,6 +17,8 @@ import { formatUSD } from "@/utils/intl";
 import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -49,6 +51,10 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId,
     tokenAmount,
   });
+  const groupedAssets = useGroupedAssetByRecommendedSymbol({
+    context: undefined,
+  });
+  const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -100,13 +106,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
         backgroundColor={theme.success.text}
         status={status}
       >
-        {assetDetails.assetImage ? (
-          <img
+        {groupedAsset ? (
+          <GroupedAssetImage
             height={50}
             width={50}
             style={{ borderRadius: 50 }}
-            src={assetDetails.assetImage}
-            title={assetDetails?.asset?.name}
+            groupedAsset={groupedAsset}
           />
         ) : (
           <PlaceholderIcon>?</PlaceholderIcon>

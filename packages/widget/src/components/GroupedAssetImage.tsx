@@ -8,9 +8,15 @@ export type GroupedAssetImageType = {
   groupedAsset?: GroupedAsset;
   height?: number;
   width?: number;
+  style?: React.CSSProperties;
 };
 
-export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetImageType) => {
+export const GroupedAssetImage = ({
+  groupedAsset,
+  height,
+  width,
+  style,
+}: GroupedAssetImageType) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!groupedAsset?.assets || groupedAsset.assets.length === 0) {
@@ -47,6 +53,7 @@ export const GroupedAssetImage = ({ groupedAsset, height, width }: GroupedAssetI
       loading="lazy"
       onError={handleError}
       alt={`${groupedAsset.assets[0].recommendedSymbol || ""} logo`}
+      style={style}
     />
   );
 };

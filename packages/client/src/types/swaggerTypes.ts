@@ -910,6 +910,8 @@ export interface ChainTransaction {
   explorerLink: string;
   /** Hash of the transaction the packet event occurred in */
   txHash?: string;
+  /** RFC3339 formatted UTC timestamp of when the transaction landed on chain */
+  onChainAt?: string;
 }
 
 export type PostHandler = CosmWasmContractMsgWrapper | AutopilotMsgWrapper;
@@ -1201,7 +1203,7 @@ export interface OPInitTransfer {
 
 export interface OPInitTransferWrapper {
   /** A transfer facilitated by the CCTP bridge */
-  transfer?: OPInitTransfer;
+  opInitTransfer?: OPInitTransfer;
 }
 
 export interface OPInitTransferInfo {
@@ -1473,7 +1475,7 @@ export interface LayerZeroTransferInfo {
 
 export interface LayerZeroTransferWrapper {
   /** A Layer Zero Transfer */
-  eurekaTransfer?: LayerZeroTransfer;
+  layerZeroTransfer?: LayerZeroTransfer;
 }
 
 export interface RecommendationRequest {
