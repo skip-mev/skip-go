@@ -1776,14 +1776,17 @@ paths:
                                   chain_id: cosmoshub-4
                                   tx_hash: EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: osmosis-1
                                   tx_hash: F513DDCB7BDFEE74AF07F67881D6778A3710C88EEAEBDA95E726E52C7B5E6BD3
                                   explorer_link: https://www.mintscan.io/osmosis/transactions/F513DDCB7BDFEE74AF07F67881D6778A3710C88EEAEBDA95E726E52C7B5E6BD3
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                                 acknowledge_tx:
                                   chain_id: cosmoshub-4
                                   tx_hash: 67E19B010FED8688C1B476EE4E1E627111158527C531742FB3D54A7399E40789
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/67E19B010FED8688C1B476EE4E1E627111158527C531742FB3D54A7399E40789
+                                  on_chain_at: "2023-11-13T03:00:19Z"
                                 timeout_tx: null
                                 error: null
                           - axelar_transfer:
@@ -1825,14 +1828,17 @@ paths:
                                   chain_id: osmosis-1
                                   tx_hash: 19444D7C23B4C1FB96649EFECA5CCBDF88A6937D6EFDAFD41B96B3CE7BAC12B0
                                   explorer_link: https://www.mintscan.io/osmosis/transactions/19444D7C23B4C1FB96649EFECA5CCBDF88A6937D6EFDAFD41B96B3CE7BAC12B0
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: cosmoshub-4
                                   tx_hash: 3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                                 acknowledge_tx:
                                   chain_id: osmosis-1
                                   tx_hash: E6E402D88C8CFF1101F6FA583054E12D05ACD906DB5BA7249E1B6E22ECD3BC78
                                   explorer_link: https://www.mintscan.io/osmosis/transactions/E6E402D88C8CFF1101F6FA583054E12D05ACD906DB5BA7249E1B6E22ECD3BC78
+                                  on_chain_at: "2023-11-13T03:00:19Z"
                                 timeout_tx: null
                                 error: null
                           - ibc_transfer:
@@ -1844,14 +1850,17 @@ paths:
                                   chain_id: cosmoshub-4
                                   tx_hash: 3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: juno-1
                                   tx_hash: 66BB827E38BD7B9071A855444BCA871447DF90830AA57891F92983B5CC8946B3
                                   explorer_link: https://www.mintscan.io/juno/transactions/66BB827E38BD7B9071A855444BCA871447DF90830AA57891F92983B5CC8946B3
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                                 acknowledge_tx:
                                   chain_id: cosmoshub-4
                                   tx_hash: 83E95C18C78CD298C3B6C5DDB6F766DEFB2083BF3A91D6C7CD739FE0ADAF29AF
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/83E95C18C78CD298C3B6C5DDB6F766DEFB2083BF3A91D6C7CD739FE0ADAF29AF
+                                  on_chain_at: "2023-11-13T03:00:19Z"
                                 timeout_tx: null
                                 error: null
                               next_blocking_transfer: null
@@ -1871,14 +1880,17 @@ paths:
                                   chain_id: osmosis-1
                                   tx_hash: 19444D7C23B4C1FB96649EFECA5CCBDF88A6937D6EFDAFD41B96B3CE7BAC12B0
                                   explorer_link: https://www.mintscan.io/osmosis/transactions/19444D7C23B4C1FB96649EFECA5CCBDF88A6937D6EFDAFD41B96B3CE7BAC12B0
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: cosmoshub-4
                                   tx_hash: 3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                                 acknowledge_tx:
                                   chain_id: osmosis-1
                                   tx_hash: F8C661B9F25CC908C85C61BADBE66D4B51650CA839360C385BFF2D9A475B97E9
                                   explorer_link: https://www.mintscan.io/osmosis/transactions/F8C661B9F25CC908C85C61BADBE66D4B51650CA839360C385BFF2D9A475B97E9
+                                  on_chain_at: "2023-11-13T03:00:19Z"
                                 timeout_tx: null
                                 error: null
                           - ibc_transfer:
@@ -1890,14 +1902,17 @@ paths:
                                   chain_id: cosmoshub-4
                                   tx_hash: 3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/3CEEA7B7042AC5C3CBC287BB5D0B7E427AB0640922D2D991E9DBB9D34385C247
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: canto_7700-1
                                   tx_hash: 4CAB58C09868091B93F1D1C7A45E423C48C312DC2C0F8482F01EA9469EB1E1B5
                                   explorer_link: https://www.mintscan.io/juno/transactions/4CAB58C09868091B93F1D1C7A45E423C48C312DC2C0F8482F01EA9469EB1E1B5
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                                 acknowledge_tx:
                                   chain_id: cosmoshub-4
                                   tx_hash: BC195283E22406CAD84393B9442F9D29018AE51E4BEF59055599A23B10702898
                                   explorer_link: https://www.mintscan.io/cosmos/transactions/BC195283E22406CAD84393B9442F9D29018AE51E4BEF59055599A23B10702898
+                                  on_chain_at: "2023-11-13T03:00:19Z"
                                 timeout_tx: null
                                 error: null
                               next_blocking_transfer: null
@@ -1921,10 +1936,12 @@ paths:
                                   chain_id: noble-1
                                   tx_hash: 8D87951B3D6EC4B3915CC4C035C48664B97D5964224940A2178A642B5FE83E8B
                                   explorer_link: https://www.mintscan.io/noble/txs/8D87951B3D6EC4B3915CC4C035C48664B97D5964224940A2178A642B5FE83E8B
+                                  on_chain_at: "2023-11-13T02:59:53Z"
                                 receive_tx:
                                   chain_id: '1'
                                   tx_hash: '0xf9b23f873107fe631ba2880a322510ab9a43e15e46dfcacfcdfd75fb66765a7d'
                                   explorer_link: https://etherscan.io/tx/0xf9b23f873107fe631ba2880a322510ab9a43e15e46dfcacfcdfd75fb66765a7d
+                                  on_chain_at: "2023-11-13T03:00:07Z"
                         next_blocking_transfer: null
                         transfer_asset_release:
                           chain_id: '1'
@@ -3391,6 +3408,9 @@ components:
           required: true
         tx_hash:
           description: Hash of the transaction the packet event occurred in
+          type: string
+        on_chain_at:
+          description: RFC3339 formatted UTC timestamp of when the transaction landed on chain
           type: string
       type: object
     PostHandler:

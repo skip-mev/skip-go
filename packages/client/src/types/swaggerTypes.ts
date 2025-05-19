@@ -910,6 +910,8 @@ export interface ChainTransaction {
   explorerLink: string;
   /** Hash of the transaction the packet event occurred in */
   txHash?: string;
+  /** RFC3339 formatted UTC timestamp of when the transaction landed on chain */
+  onChainAt?: string;
 }
 
 export type PostHandler = CosmWasmContractMsgWrapper | AutopilotMsgWrapper;

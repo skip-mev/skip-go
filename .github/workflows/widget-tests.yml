@@ -22,6 +22,9 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: yarn install
+      - name: Playwright install
+        working-directory: ./packages/widget
+        run: yarn playwright install
       - name: build client lib
         run: yarn run build:client
       - name: Run e2e tests

@@ -35,6 +35,7 @@ export const TransactionHistoryPageHistoryItem = ({
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
+  
 
   const {
     status: historyStatus,
@@ -159,6 +160,8 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("year", "yr");
   }, [timestamp, historyStatus]);
 
+  if (!txHistoryItem.route) return null  
+
   return (
     <StyledHistoryContainer showDetails={showDetails}>
       <StyledHistoryItemRow align="center" justify="space-between" onClick={onClickRow}>
@@ -214,7 +217,7 @@ const RenderAssetAmount = ({
 
   const subtitle = useMemo(() => {
     if (!asset) return;
-    const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`
+    const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
     if (sourceAsset || isMobileScreenSize || verboseString.length > 24) {
       return asset?.recommendedSymbol;
     }
@@ -223,7 +226,7 @@ const RenderAssetAmount = ({
 
   return (
     <Row gap={8}>
-      <img height={35} width={35} src={assetImage} />
+      <img height={35} width={35} src={assetImage} alt={subtitle} />
       <Column style={sourceAsset ? { width: 50 } : undefined}>
         <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
