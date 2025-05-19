@@ -104,7 +104,6 @@
     "@cosmjs/stargate": "0.33.1",
     "@ebay/nice-modal-react": "^1.2.13",
     "@eslint/compat": "^1.1.1",
-    "@leapwallet/cosmos-social-login-capsule-provider": "^0.0.44",
     "@penumbra-zone/bech32m": "^13.0.0",
     "@penumbra-zone/client": "^24.0.0",
     "@penumbra-zone/protobuf": "^7.2.0",
