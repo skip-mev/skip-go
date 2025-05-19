@@ -1,7 +1,7 @@
 {
   "name": "@skip-go/widget",
   "description": "Swap widget",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "repository": {
     "url": "https://github.com/skip-mev/skip-go",
     "directory": "packages/widget"
@@ -126,7 +126,7 @@
     "@walletconnect/solana-adapter": "^0.0.6",
     "add": "^2.0.6",
     "bech32": "^2.0.0",
-    "graz": "0.3.1",
+    "graz": "0.3.2",
     "jotai": "^2.10.1",
     "jotai-effect": "^1.0.2",
     "jotai-tanstack-query": "^0.8.6",
