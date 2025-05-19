@@ -36,7 +36,6 @@ export const TransactionHistoryPageHistoryItem = ({
   const isMobileScreenSize = useIsMobileScreenSize();
   const { data: chains } = useAtomValue(skipChainsAtom);
   
-  if (!txHistoryItem.route) return null  
 
   const {
     status: historyStatus,
@@ -160,6 +159,8 @@ export const TransactionHistoryPageHistoryItem = ({
       .replace("years", "yrs")
       .replace("year", "yr");
   }, [timestamp, historyStatus]);
+
+  if (!txHistoryItem.route) return null  
 
   return (
     <StyledHistoryContainer showDetails={showDetails}>
