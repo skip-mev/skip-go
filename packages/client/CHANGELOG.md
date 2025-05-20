@@ -1,5 +1,14 @@
 # @skip-go/client
 
+## 1.1.1
+
+### Patch Changes
+
+- 5e42be2: add response and request types
+- 9bdd303: simplify types naming
+- cf920fe: update registries
+- 11c3c79: add missing request and response json types
+
 ## 1.1.0
 
 ### Minor Changes
