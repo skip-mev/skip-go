@@ -242,6 +242,15 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
           });
         }
+      } else if ((error as Error)?.message?.toLowerCase().includes("relay fee quote has expired")) {
+        track("error page: relay fee quote has expired");
+        set(errorAtom, {
+          errorType: ErrorType.ExpiredRelayFeeQuote,
+          error: error as Error,
+          onClickBack: () => {
+            set(setOverallStatusAtom, "unconfirmed");
+          },
+        });
       } else if (
         (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
       ) {

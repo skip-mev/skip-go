@@ -26,7 +26,8 @@ export type ErrorPageVariants =
   | ({ errorType: ErrorType.Unexpected } & ErrorPageUnexpectedProps)
   | ({ errorType: ErrorType.GoFastWarning } & ErrorPageGoFastWarningProps)
   | ({ errorType: ErrorType.LowInfoWarning } & ErrorPageLowInfoWarningProps)
-  | ({ errorType: ErrorType.InsufficientBalanceForGas } & InsufficientBalanceForGasProps);
+  | ({ errorType: ErrorType.InsufficientBalanceForGas } & InsufficientBalanceForGasProps)
+  | ({ errorType: ErrorType.ExpiredRelayFeeQuote} & ExpiredRelayFeeQuoteProps)
 
 export enum ErrorType {
   AuthFailed,
@@ -40,4 +41,5 @@ export enum ErrorType {
   GoFastWarning,
   LowInfoWarning,
   InsufficientBalanceForGas,
+  ExpiredRelayFeeQuote ,
 }
