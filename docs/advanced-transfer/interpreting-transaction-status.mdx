@@ -1,0 +1,88 @@
+---
+title: "Interpreting Transaction & Transfer Status"
+description: "Learn how to interpret the status of transactions and individual transfer steps from the Skip Go API to provide accurate feedback to users."
+---
+
+<Info>
+The fields discussed in this guide, such as `transfer.state` and `transfer.next_blocking_transfer`, are typically found in the response from the transaction status endpoint of the Skip Go API. Refer to the [API Reference](/api-reference) for detailed schema information.
+</Info>
+
+Understanding the status of a cross-chain transaction and its individual steps is crucial for building a clear and reliable user experience. This guide explains how to interpret the relevant fields from the Skip Go API to determine if a transaction (and each of its constituent transfers) is pending, successful, has encountered an error, or has been abandoned.
+
+This approach is useful for driving UI elements such as progress indicators, status messages, and error displays in your application.
+
+## Core Concepts for Status Interpretation
+
+The logic relies on a few key pieces of information typically available in the API response for a transaction (referred to as `transfer` in the examples below):
+
+1.  **The Overall Transaction Status:** This provides a high-level view of the entire multi-step operation.
+    *   Look at a field like `transfer.state`.
+    *   Possible values include:
+        *   `'STATE_COMPLETED_SUCCESS'`: The entire transaction finished successfully.
+        *   `'STATE_COMPLETED_ERROR'`: The transaction finished, but an error occurred.
+        *   `'STATE_ABANDONED'`: The transaction was abandoned (e.g., due to timeout or user action).
+    *   If the state is not one of these terminal states, it's generally assumed to be pending or in progress.
+
+2.  **The Next Blocking Step (or Failure Point):** This indicates which specific transfer in the sequence is currently active, or which one caused a failure or abandonment.
+    *   Utilize a field like `transfer.next_blocking_transfer?.transfer_sequence_index`.
+    *   This will be an index pointing to an operation within the `transfer.transfer_sequence` array.
+
+3.  **Categorizing Each Operation in the Sequence:** For each operation within the `transfer.transfer_sequence` array, you can determine its individual status:
+
+    *   **Loading/Pending:**
+        *   The operation's index matches `next_blocking_transfer_sequence_index`.
+        *   AND the overall transaction is still in progress (i.e., not `STATE_COMPLETED_ERROR` or `STATE_ABANDONED`).
+
+    *   **Error/Failed/Abandoned:**
+        *   The operation's index matches `next_blocking_transfer_sequence_index`.
+        *   AND the overall transaction state is `STATE_COMPLETED_ERROR` or `STATE_ABANDONED`.
+        *   Additionally, if the overall transaction state is `STATE_COMPLETED_ERROR` and this is the *last* operation in the sequence, it is also considered to be in an error state.
+
+    *   **Success:**
+        *   If the overall transaction state is `STATE_COMPLETED_SUCCESS`, then all operations in the sequence are considered successful.
+        *   If the overall transaction is still in progress, or has failed/been abandoned, any operation *before* the `next_blocking_transfer_sequence_index` is assumed to have completed successfully.
+
+## Example Implementation Logic (JavaScript)
+
+The following JavaScript snippet demonstrates how these concepts can be translated into code to determine the status of each step.
+
+```javascript
+// Assume 'transfer' is the main transaction object from our API
+// and 'totalSteps' is the length of transfer.transfer_sequence
+
+// 1. Determine overall transaction status from the main transaction object
+const isTransactionSuccessful = transfer.state === 'STATE_COMPLETED_SUCCESS';
+const isTransactionFailed = transfer.state === 'STATE_COMPLETED_ERROR';
+const isTransactionAbandoned = transfer.state === 'STATE_ABANDONED';
+
+// 2. Get the index of the step that is currently blocking progress or has failed
+const nextBlockingIndex = transfer.next_blocking_transfer?.transfer_sequence_index;
+
+// Then, when we process each 'step' in the 'transfer.transfer_sequence' at a given 'index':
+// (This logic would typically be inside a loop, e.g., transfer.transfer_sequence.forEach((step, index) => { ... }))
+
+// 3. Categorize the current step:
+
+// Is this step currently "pending" (loading)?
+const isStepPending = index === nextBlockingIndex && 
+                      !isTransactionFailed && 
+                      !isTransactionAbandoned;
+
+// Is this step in an "error" state (or part of an abandoned flow)?
+// 'totalSteps' would be transfer.transfer_sequence.length
+const isStepAbandonedOrFailed = (isTransactionAbandoned || isTransactionFailed) && 
+                                (index === nextBlockingIndex || (index === totalSteps - 1 && isTransactionFailed));
+
+// If 'isTransactionSuccessful' is true, this step is part of an overall successful transaction.
+// If a step isn't 'isStepPending' and isn't 'isStepAbandonedOrFailed', 
+// and its 'index < nextBlockingIndex' (for an ongoing or failed tx), it's also implicitly a success.
+
+// These boolean flags (isStepPending, isStepAbandonedOrFailed, isTransactionSuccessful)
+// are then used to drive the UI styling for that specific step (e.g., node color, edge animation, icons).
+// For example:
+// if (isStepAbandonedOrFailed) { /* show error UI */ }
+// else if (isStepPending) { /* show loading UI */ }
+// else { /* show success UI (either part of overall success, or completed before a pending/error state) */ }
+```
+
+By implementing logic based on these fields and states, you can provide users with accurate and timely feedback on the progress of their cross-chain transactions. 
