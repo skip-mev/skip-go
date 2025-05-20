@@ -430,6 +430,11 @@ export interface GoFastTransferInfoJson {
   error_message?: string | null;
 }
 
+export interface GoFastTransferWrapperJson {
+  /** A transfer facilitated by GoFast */
+  go_fast_transfer?: GoFastTransferJson;
+}
+
 export interface BalanceRequestChainEntryJson {
   /** Address of the wallet that the balance is requested for */
   address?: string;
@@ -847,6 +852,7 @@ export type OperationJson = (
   | EvmSwapWrapperJson
   | OPInitTransferWrapperJson
   | StargateTransferWrapperJson
+  | GoFastTransferWrapperJson
   | EurekaTransferWrapperJson
   | LayerZeroTransferWrapperJson
 ) & {
@@ -940,7 +946,7 @@ export enum RoutePriceWarningTypeJson {
   BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
 }
 
-export interface RouteResponseJson {
+export interface RouteJson {
   /** Amount of source asset to be transferred or swapped */
   amount_in: string;
   /** Amount of destination asset out */
@@ -987,7 +993,7 @@ export interface RouteResponseJson {
   /** Indicates fees incurred in the execution of the transfer */
   estimated_fees?: FeeJson[];
   /** The estimated time in seconds for the route to execute */
-  estimated_route_duration_seconds?: number;
+  estimated_route_duration_seconds: number;
 }
 
 export interface SendTokenErrorJson {
@@ -1544,4 +1550,171 @@ export interface FeeJson {
   tx_index?: number;
   /** The index of the operation in the returned operations list which incurs the fee */
   operation_index?: number | null;
+}
+
+export interface ChainsRequestJson {
+  /** Chain IDs to limit the response to, defaults to all chains if not provided */
+  chain_ids?: string[];
+  /**
+   * Whether to include EVM chains in the response
+   * @example false
+   */
+  include_evm?: boolean;
+  /** Whether to include SVM chains in the response */
+  include_svm?: boolean;
+  /**
+   * Whether to display only testnets in the response
+   * @example false
+   */
+  only_testnets?: boolean;
+}
+
+export interface ChainsResponseJson {
+  /** Array of supported chain-ids */
+  chains?: ChainJson[];
+}
+
+export interface BalancesResponseJson {
+  chains?: Record<string, BalanceResponseChainEntryJson>;
+}
+
+export interface BridgesResponseJson {
+  /** Array of supported bridges */
+  bridges?: BridgeJson[];
+}
+
+export interface VenuesRequestJson {
+  /**
+   * Whether to display only venues from testnets in the response
+   * @example false
+   */
+  only_testnets?: boolean;
+}
+
+export interface VenuesResponseJson {
+  /** Array of supported swap venues */
+  venues?: SwapVenueJson[];
+}
+
+export interface AssetsRequestJson {
+  /** Chain IDs to limit the response to, defaults to all chains if not provided */
+  chain_ids?: string[];
+  /** Whether to restrict assets to those native to their chain */
+  native_only?: boolean;
+  /** Whether to include assets without metadata (symbol, name, logo_uri, etc.) */
+  include_no_metadata_assets?: boolean;
+  /** Whether to include CW20 tokens */
+  include_cw20_assets?: boolean;
+  /** Whether to include EVM tokens */
+  include_evm_assets?: boolean;
+  /** Whether to include SVM tokens */
+  include_svm_assets?: boolean;
+  /**
+   * Whether to display only assets from testnets in the response
+   * @example false
+   */
+  only_testnets?: boolean;
+}
+
+export interface AssetsResponseJson {
+  /** Map of chain-ids to array of assets supported on the chain */
+  chain_to_assets_map?: Record<
+    string,
+    {
+      assets?: AssetJson[];
+    }
+  >;
+}
+
+export interface AssetsFromSourceResponseJson {
+  /** Array of assets that are reachable from the specified source asset */
+  dest_assets?: Record<
+    string,
+    {
+      assets?: AssetJson[];
+    }
+  >;
+}
+
+export type RouteResponseJson = RouteJson;
+
+export interface MsgsResponseJson {
+  msgs?: MsgJson[];
+  txs?: TxJson[];
+  /** Indicates fees incurred in the execution of the transfer */
+  estimated_fees?: FeeJson[];
+}
+
+export interface MsgsDirectResponseJson {
+  msgs?: MsgJson[];
+  txs?: TxJson[];
+  route?: RouteJson;
+}
+
+export interface AssetRecommendationsResponseJson {
+  /** Array of recommendations for each entry in the `request` field. */
+  recommendation_entries?: {
+    recommendations?: AssetRecommendationJson[];
+    error?: ApiErrorJson;
+  }[];
+}
+
+export interface SubmitResponseJson {
+  /** Hash of the transaction */
+  tx_hash?: string;
+  /** Link to the transaction on the relevant block explorer */
+  explorer_link?: string;
+}
+
+export interface TrackResponseJson {
+  /** Hash of the transaction */
+  tx_hash: string;
+  /** Link to the transaction on the relevant block explorer */
+  explorer_link: string;
+}
+
+export interface StatusRequestJson {
+  /**
+   * Hex encoded hash of the transaction to query for
+   * @example "EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB"
+   */
+  tx_hash: string;
+  /**
+   * Chain ID of the transaction
+   * @example "cosmoshub-4"
+   */
+  chain_id: string;
+}
+
+export interface StatusResponseJson {
+  /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
+  transfers?: TransferStatusJson[];
+  /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
+  state: TransactionStateJson;
+  /**
+   * **DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version.
+   * @deprecated
+   */
+  transfer_sequence: TransferEventJson[];
+  /** Details about the next transfer in the sequence that is preventing further progress, if any. */
+  next_blocking_transfer?: {
+    transfer_sequence_index?: number;
+  } | null;
+  /** Indicates location and denom of transfer asset release. */
+  transfer_asset_release?: TransferAssetReleaseJson;
+  /** Details about any error encountered during the transaction or its subsequent transfers. */
+  error?: StatusErrorJson | null;
+  /**
+   * A high-level status indicator for the transaction's completion state.
+   * @example "STATE_COMPLETED"
+   */
+  status?: string;
+}
+
+export interface IbcOriginAssetsResponseJson {
+  origin_assets?: OptionalAssetJson[];
+}
+
+export interface FungibleAssetsBetweenChainsCreateResponseJson {
+  assets_between_chains?: AssetBetweenChainsJson[];
 }

@@ -15,7 +15,7 @@ import { ApiState } from "src/state/apiState";
 export type ExecuteRouteOptions = SignerGetters &
   GasOptions &
   TransactionCallbacks &
-  Pick<ApiRequest<"getMsgsV2">, "timeoutSeconds"> & {
+  Pick<ApiRequest<"msgs">, "timeoutSeconds"> & {
     route: RouteResponse;
     /**
      * Addresses should be in the same order with the `chainIDs` in the `route`

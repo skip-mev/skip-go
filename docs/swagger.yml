@@ -20,7 +20,7 @@ tags:
 paths:
   /v2/info/chains:
     get:
-      operationId: getChains
+      operationId: chains
       tags:
         - 'Info'
       description:
@@ -125,7 +125,7 @@ paths:
                     description: Array of supported chain-ids
   /v2/info/balances:
     post:
-      operationId: getBalances
+      operationId: balances
       tags:
         - 'Info'
       description: Get the balances of a given set of assets on a given chain and wallet address. Compatible with all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains.
@@ -192,7 +192,7 @@ paths:
 
   /v2/info/bridges:
     get:
-      operationId: getBridges
+      operationId: bridges
       tags:
         - 'Info'
       description: Get all supported bridges
@@ -222,7 +222,7 @@ paths:
                     description: Array of supported bridges
   /v2/fungible/venues:
     get:
-      operationId: getVenues
+      operationId: venues
       tags:
         - 'Fungible'
       description: Get supported swap venues.
@@ -258,7 +258,7 @@ paths:
 
   /v2/fungible/assets:
     get:
-      operationId: getAssets
+      operationId: assets
       tags:
         - 'Fungible'
       description: Get supported assets. Optionally limit to assets on a given chain and/or native assets.
@@ -408,7 +408,7 @@ paths:
 
   /v2/fungible/assets_from_source:
     post:
-      operationId: getAssetsFromSource
+      operationId: assetsFromSource
       tags:
         - 'Fungible'
       description: Get assets that can be reached from a source via transfers under different conditions (e.g. single vs multiple txs)
@@ -511,7 +511,7 @@ paths:
 
   /v2/fungible/route:
     post:
-      operationId: getRouteV2
+      operationId: route
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns the sequence of transfers and/or swaps to reach the given destination asset from the given source asset, along with estimated amount out. Commonly called before /msgs to generate route info and quote.
@@ -828,7 +828,7 @@ paths:
                 estimated_fees: []
                 estimated_route_duration_seconds: 300
               schema:
-                $ref: '#/components/schemas/RouteResponse'
+                $ref: '#/components/schemas/Route'
         '400':
           description: The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
           content:
@@ -860,7 +860,7 @@ paths:
 
   /v2/fungible/msgs:
     post:
-      operationId: getMsgsV2
+      operationId: msgs
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. Input consists of the output of route with additional information required for message construction (e.g. destination addresses for each chain)
@@ -1129,7 +1129,7 @@ paths:
 
   /v2/fungible/msgs_direct:
     post:
-      operationId: getMsgsDirectV2
+      operationId: msgsDirect
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. This is a convenience endpoint that combines /route and /msgs into a single call.
@@ -1457,7 +1457,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Tx'
                   route:
-                    $ref: '#/components/schemas/RouteResponse'
+                    $ref: '#/components/schemas/Route'
         '400':
           description: The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
           content:
@@ -1489,7 +1489,7 @@ paths:
 
   /v2/fungible/recommend_assets:
     post:
-      operationId: getAssetRecommendations
+      operationId: assetRecommendations
       tags:
         - 'Fungible'
       description:
@@ -1586,7 +1586,7 @@ paths:
 
   /v2/tx/submit:
     post:
-      operationId: submitTransactionV2
+      operationId: submit
       tags:
         - 'Transaction'
       description:
@@ -1658,7 +1658,7 @@ paths:
 
   /v2/tx/track:
     post:
-      operationId: trackTransactionV2
+      operationId: track
       tags:
         - 'Transaction'
       description:
@@ -1735,7 +1735,7 @@ paths:
 
   /v2/tx/status:
     get:
-      operationId: getTransactionStatusV2
+      operationId: status
       tags:
         - 'Transaction'
       description:
@@ -1961,7 +1961,8 @@ paths:
                     description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
                     required: true
                   transfer_sequence:
-                    description: A detailed sequence of all cross-chain transfer events associated with the transaction.
+                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+                    deprecated: true
                     type: array
                     items:
                       $ref: '#/components/schemas/TransferEvent'
@@ -2006,7 +2007,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /v2/fungible/ibc_origin_assets:
     post:
-      operationId: getOriginAssets
+      operationId: ibcOriginAssets
       tags:
         - 'Fungible'
       description: Get origin assets from a given list of denoms and chain IDs.
@@ -2467,10 +2468,10 @@ components:
       type: object
     AxelarTransferState:
       description: |
-        Axelar transfer state: 
+        Axelar transfer state:
         * `AXELAR_TRANSFER_UNKNOWN` - Unknown error
         * `AXELAR_TRANSFER_PENDING_CONFIRMATION` - Axelar transfer is pending confirmation
-        * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination 
+        * `AXELAR_TRANSFER_PENDING_RECEIPT` - Axelar transfer is pending receipt at destination
         * `AXELAR_TRANSFER_SUCCESS` - Axelar transfer succeeded and assets have been received
         * `AXELAR_TRANSFER_FAILURE` - Axelar transfer failed
       enum:
@@ -2484,7 +2485,7 @@ components:
       description: |
         Axelar transfer type:
         * `AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN` - GMP contract call with token transfer type
-        * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type 
+        * `AXELAR_TRANSFER_SEND_TOKEN` - Send token transfer type
       enum:
         - AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN
         - AXELAR_TRANSFER_SEND_TOKEN
@@ -2568,7 +2569,7 @@ components:
       type: object
     CCTPTransferState:
       description: |
-        CCTP transfer state:  
+        CCTP transfer state:
         * `CCTP_TRANSFER_UNKNOWN` - Unknown error
         * `CCTP_TRANSFER_SENT` - The burn transaction on the source chain has executed
         * `CCTP_TRANSFER_PENDING_CONFIRMATION` - CCTP transfer is pending confirmation by the cctp attestation api
@@ -2622,7 +2623,7 @@ components:
       type: object
     StargateTransferState:
       description: |
-        Stargate transfer state:  
+        Stargate transfer state:
         * `STARGATE_TRANSFER_UNKNOWN` - Unknown error
         * `STARGATE_TRANSFER_SENT` - The Stargate transfer transaction on the source chain has executed
         * `STARGATE_TRANSFER_PENDING_CONFIRMATION` - Stargate transfer is pending confirmation
@@ -2647,9 +2648,9 @@ components:
           allOf:
             - $ref: '#/components/schemas/ChainTransaction'
           nullable: true
-        error_tx: 
+        error_tx:
           allOf:
-            - $ref: '#/components/schemas/ChainTransaction' 
+            - $ref: '#/components/schemas/ChainTransaction'
           nullable: true
       type: object
     StargateTransferInfo:
@@ -2748,6 +2749,11 @@ components:
           type: string
           nullable: true
       type: object
+    GoFastTransferWrapper:
+      properties:
+        go_fast_transfer:
+          $ref: '#/components/schemas/GoFastTransfer'
+      type: object
     BalanceRequestChainEntry:
       properties:
         address:
@@ -2813,8 +2819,8 @@ components:
           type: string
       type: object
     BridgeType:
-      description: | 
-        Bridge Type: 
+      description: |
+        Bridge Type:
         * `IBC` - IBC Bridge
         * `AXELAR` - Axelar Bridge
         * `CCTP` - CCTP Bridge
@@ -2975,7 +2981,7 @@ components:
       properties:
         reason:
           description: |
-            Error detail: 
+            Error detail:
             * `LOW_INFO_ERROR` - Not enough asset pricing information to determine the price safety of the route.
             * `BAD_PRICE_ERROR` - The execution price of the route deviates significantly from the current market price.
           enum:
@@ -3126,7 +3132,7 @@ components:
           description: Asset denom
           type: string
           required: true
-        gas_price: 
+        gas_price:
           description: Gas price tiers
           nullable: true
           properties:
@@ -3311,10 +3317,10 @@ components:
         - $ref: '#/components/schemas/HyperlaneTransferWrapper'
         - $ref: '#/components/schemas/EvmSwapWrapper'
         - $ref: '#/components/schemas/OPInitTransferWrapper'
-        - $ref: '#/components/schemas/StargateTransferWrapper' 
-        - $ref: '#/components/schemas/GoFastTransferWrapper'  
+        - $ref: '#/components/schemas/StargateTransferWrapper'
+        - $ref: '#/components/schemas/GoFastTransferWrapper'
         - $ref: '#/components/schemas/EurekaTransferWrapper'
-        - $ref: '#/components/schemas/LayerZeroTransferWrapper'  
+        - $ref: '#/components/schemas/LayerZeroTransferWrapper'
       properties:
         tx_index:
           description: Index of the tx returned from Msgs that executes this operation
@@ -3388,9 +3394,9 @@ components:
       type: object
     PacketErrorType:
       description: |
-        Packet error type: 
+        Packet error type:
         * `PACKET_ERROR_UNKNOWN` - Unknown error
-        * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error 
+        * `PACKET_ERROR_ACKNOWLEDGEMENT` - Packet acknowledgement error
         * `PACKET_ERROR_TIMEOUT` - Packet timed out
       enum:
         - PACKET_ERROR_UNKNOWN
@@ -3432,14 +3438,14 @@ components:
       type: string
     RoutePriceWarningType:
       description: |
-        Recommendation reason: 
+        Recommendation reason:
         * `LOW_INFO_WARNING` - Not enough asset pricing information to determine the price safety of the route.
         * `BAD_PRICE_WARNING` - The execution price of the route deviates significantly from the current market price.
       enum:
         - LOW_INFO_WARNING
         - BAD_PRICE_WARNING
       type: string
-    RouteResponse:
+    Route:
       properties:
         amount_in:
           description: Amount of source asset to be transferred or swapped
@@ -3532,6 +3538,7 @@ components:
         estimated_route_duration_seconds:
           description: The estimated time in seconds for the route to execute
           type: integer
+          required: true
       type: object
     SendTokenError:
       properties:
@@ -3543,7 +3550,7 @@ components:
       type: object
     SendTokenErrorType:
       description: |
-        SendToken error types: 
+        SendToken error types:
         * `SEND_TOKEN_EXECUTION_ERROR` - Error occurred during the execute transaction
       enum:
         - SEND_TOKEN_EXECUTION_ERROR
@@ -3581,10 +3588,10 @@ components:
       type: object
     StatusErrorType:
       description: |
-        Packet error types: 
-        * `STATUS_ERROR_UNKNOWN` - Unknown error 
+        Packet error types:
+        * `STATUS_ERROR_UNKNOWN` - Unknown error
         * `STATUS_ERROR_TRANSACTION_EXECUTION` - Error was encountered during transaction execution
-        * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data 
+        * `STATUS_ERROR_INDEXING` - Error was encountered while indexing the transaction and packet data
         * `STATUS_ERROR_TRANSFER` - The transfer failed to complete successfully
       enum:
         - STATUS_ERROR_UNKNOWN
@@ -3755,13 +3762,13 @@ components:
       type: object
     TransactionState:
       description: |
-        Transaction state: 
+        Transaction state:
         * `STATE_SUBMITTED` - The initial transaction has been submitted to Skip Go API but not observed on chain yet
         * `STATE_PENDING` - The initial transaction has been observed on chain, and there are still pending actions
         * `STATE_COMPLETED_SUCCESS` - The route has completed successfully and the user has their tokens on the destination. (indicated by `transfer_asset_release`)
         * `STATE_COMPLETED_ERROR` - The route errored somewhere and the user has their tokens unlocked in one of their wallets. Their tokens are either on the source chain, an intermediate chain, or the destination chain but as the wrong asset.
-        (Again, `transfer_asset_release` indicates where the tokens are) 
-        * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes. 
+        (Again, `transfer_asset_release` indicates where the tokens are)
+        * `STATE_ABANDONED` - Tracking for the transaction has been abandoned. This happens if the cross-chain  sequence of actions stalls for more than 10 minutes or if the initial transaction does not get observed in a block for 5 minutes.
         * `STATE_PENDING_ERROR` - The overall transaction will fail, pending error propagation
       enum:
         - STATE_SUBMITTED
@@ -3927,7 +3934,7 @@ components:
         Transfer state:
         * `TRANSFER_UNKNOWN` - Transfer state is not known.
         * `TRANSFER_PENDING` - The send packet for the transfer has been committed and the transfer is pending.
-        * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer. 
+        * `TRANSFER_RECEIVED` - The transfer packet has been received by the destination chain. It can still fail and revert if it is part of a multi-hop PFM transfer.
         * `TRANSFER_SUCCESS` - The transfer has been successfully completed and will not revert.
         * `TRANSFER_FAILURE`- The transfer has failed.
       enum:
@@ -4123,7 +4130,7 @@ components:
         layer_zero_transfer:
           $ref: '#/components/schemas/LayerZeroTransfer'
       type: object
-      
+
     RecommendationRequest:
       properties:
         source_asset_denom:
@@ -4166,7 +4173,7 @@ components:
           type: boolean
     FeeType:
       description: |
-       Fee type: 
+       Fee type:
        * SMART_RELAY - Fees for Smart relaying services.'
       enum:
         - SMART_RELAY

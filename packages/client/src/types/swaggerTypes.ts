@@ -430,6 +430,11 @@ export interface GoFastTransferInfo {
   errorMessage?: string;
 }
 
+export interface GoFastTransferWrapper {
+  /** A transfer facilitated by GoFast */
+  goFastTransfer?: GoFastTransfer;
+}
+
 export interface BalanceRequestChainEntry {
   /** Address of the wallet that the balance is requested for */
   address?: string;
@@ -847,6 +852,7 @@ export type Operation = (
   | EvmSwapWrapper
   | OPInitTransferWrapper
   | StargateTransferWrapper
+  | GoFastTransferWrapper
   | EurekaTransferWrapper
   | LayerZeroTransferWrapper
 ) & {
@@ -940,7 +946,7 @@ export enum RoutePriceWarningType {
   BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
 }
 
-export interface RouteResponse {
+export interface Route {
   /** Amount of source asset to be transferred or swapped */
   amountIn: string;
   /** Amount of destination asset out */
@@ -987,7 +993,7 @@ export interface RouteResponse {
   /** Indicates fees incurred in the execution of the transfer */
   estimatedFees?: Fee[];
   /** The estimated time in seconds for the route to execute */
-  estimatedRouteDurationSeconds?: number;
+  estimatedRouteDurationSeconds: number;
 }
 
 export interface SendTokenError {
@@ -1546,6 +1552,173 @@ export interface Fee {
   operationIndex?: number;
 }
 
+export interface ChainsRequest {
+  /** Chain IDs to limit the response to, defaults to all chains if not provided */
+  chainIds?: string[];
+  /**
+   * Whether to include EVM chains in the response
+   * @example false
+   */
+  includeEvm?: boolean;
+  /** Whether to include SVM chains in the response */
+  includeSvm?: boolean;
+  /**
+   * Whether to display only testnets in the response
+   * @example false
+   */
+  onlyTestnets?: boolean;
+}
+
+export interface ChainsResponse {
+  /** Array of supported chain-ids */
+  chains?: Chain[];
+}
+
+export interface BalancesResponse {
+  chains?: Record<string, BalanceResponseChainEntry>;
+}
+
+export interface BridgesResponse {
+  /** Array of supported bridges */
+  bridges?: Bridge[];
+}
+
+export interface VenuesRequest {
+  /**
+   * Whether to display only venues from testnets in the response
+   * @example false
+   */
+  onlyTestnets?: boolean;
+}
+
+export interface VenuesResponse {
+  /** Array of supported swap venues */
+  venues?: SwapVenue[];
+}
+
+export interface AssetsRequest {
+  /** Chain IDs to limit the response to, defaults to all chains if not provided */
+  chainIds?: string[];
+  /** Whether to restrict assets to those native to their chain */
+  nativeOnly?: boolean;
+  /** Whether to include assets without metadata (symbol, name, logo_uri, etc.) */
+  includeNoMetadataAssets?: boolean;
+  /** Whether to include CW20 tokens */
+  includeCw20Assets?: boolean;
+  /** Whether to include EVM tokens */
+  includeEvmAssets?: boolean;
+  /** Whether to include SVM tokens */
+  includeSvmAssets?: boolean;
+  /**
+   * Whether to display only assets from testnets in the response
+   * @example false
+   */
+  onlyTestnets?: boolean;
+}
+
+export interface AssetsResponse {
+  /** Map of chain-ids to array of assets supported on the chain */
+  chainToAssetsMap?: Record<
+    string,
+    {
+      assets?: Asset[];
+    }
+  >;
+}
+
+export interface AssetsFromSourceResponse {
+  /** Array of assets that are reachable from the specified source asset */
+  destAssets?: Record<
+    string,
+    {
+      assets?: Asset[];
+    }
+  >;
+}
+
+export type RouteResponse = Route;
+
+export interface MsgsResponse {
+  msgs?: Msg[];
+  txs?: Tx[];
+  /** Indicates fees incurred in the execution of the transfer */
+  estimatedFees?: Fee[];
+}
+
+export interface MsgsDirectResponse {
+  msgs?: Msg[];
+  txs?: Tx[];
+  route?: Route;
+}
+
+export interface AssetRecommendationsResponse {
+  /** Array of recommendations for each entry in the `request` field. */
+  recommendationEntries?: {
+    recommendations?: AssetRecommendation[];
+    error?: ApiError;
+  }[];
+}
+
+export interface SubmitResponse {
+  /** Hash of the transaction */
+  txHash?: string;
+  /** Link to the transaction on the relevant block explorer */
+  explorerLink?: string;
+}
+
+export interface TrackResponse {
+  /** Hash of the transaction */
+  txHash: string;
+  /** Link to the transaction on the relevant block explorer */
+  explorerLink: string;
+}
+
+export interface StatusRequest {
+  /**
+   * Hex encoded hash of the transaction to query for
+   * @example "EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB"
+   */
+  txHash: string;
+  /**
+   * Chain ID of the transaction
+   * @example "cosmoshub-4"
+   */
+  chainId: string;
+}
+
+export interface StatusResponse {
+  /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
+  transfers?: TransferStatus[];
+  /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
+  state: TransactionState;
+  /**
+   * **DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version.
+   * @deprecated
+   */
+  transferSequence: TransferEvent[];
+  /** Details about the next transfer in the sequence that is preventing further progress, if any. */
+  nextBlockingTransfer?: {
+    transfer_sequence_index?: number;
+  };
+  /** Indicates location and denom of transfer asset release. */
+  transferAssetRelease?: TransferAssetRelease;
+  /** Details about any error encountered during the transaction or its subsequent transfers. */
+  error?: StatusError | null;
+  /**
+   * A high-level status indicator for the transaction's completion state.
+   * @example "STATE_COMPLETED"
+   */
+  status?: string;
+}
+
+export interface IbcOriginAssetsResponse {
+  originAssets?: OptionalAsset[];
+}
+
+export interface FungibleAssetsBetweenChainsCreateResponse {
+  assetsBetweenChains?: AssetBetweenChains[];
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -1768,35 +1941,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get all supported chains along with additional data useful for building applications + frontends that interface with them (e.g. logo URI, IBC capabilities, fee assets, bech32 prefix, etc...)
    *
    * @tags Info
-   * @name GetChains
+   * @name Chains
    * @request GET:/v2/info/chains
+   * @response `200` `ChainsResponse` Returns a list of supported chains with additional data
    */
-  getChains = (
-    query?: {
-      /** Chain IDs to limit the response to, defaults to all chains if not provided */
-      chain_ids?: string[];
-      /**
-       * Whether to include EVM chains in the response
-       * @example false
-       */
-      include_evm?: boolean;
-      /** Whether to include SVM chains in the response */
-      include_svm?: boolean;
-      /**
-       * Whether to display only testnets in the response
-       * @example false
-       */
-      only_testnets?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<
-      {
-        /** Array of supported chain-ids */
-        chains?: Chain[];
-      },
-      any
-    >({
+  chains = (query: ChainsRequest, params: RequestParams = {}) =>
+    this.request<ChainsResponse, any>({
       path: `/v2/info/chains`,
       method: "GET",
       query: query,
@@ -1808,21 +1958,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get the balances of a given set of assets on a given chain and wallet address. Compatible with all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains.
    *
    * @tags Info
-   * @name GetBalances
+   * @name Balances
    * @request POST:/v2/info/balances
+   * @response `200` `BalancesResponse` The balances of the assets
    */
-  getBalances = (
+  balances = (
     data: {
       chains?: Record<string, BalanceRequestChainEntry>;
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        chains?: Record<string, BalanceResponseChainEntry>;
-      },
-      any
-    >({
+    this.request<BalancesResponse, any>({
       path: `/v2/info/balances`,
       method: "POST",
       body: data,
@@ -1835,17 +1981,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get all supported bridges
    *
    * @tags Info
-   * @name GetBridges
+   * @name Bridges
    * @request GET:/v2/info/bridges
+   * @response `200` `BridgesResponse` A list of supported bridges
    */
-  getBridges = (params: RequestParams = {}) =>
-    this.request<
-      {
-        /** Array of supported bridges */
-        bridges?: Bridge[];
-      },
-      any
-    >({
+  bridges = (params: RequestParams = {}) =>
+    this.request<BridgesResponse, any>({
       path: `/v2/info/bridges`,
       method: "GET",
       format: "json",
@@ -1856,26 +1997,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get supported swap venues.
    *
    * @tags Fungible
-   * @name GetVenues
+   * @name Venues
    * @request GET:/v2/fungible/venues
+   * @response `200` `VenuesResponse` A list of supported swap venues
    */
-  getVenues = (
-    query?: {
-      /**
-       * Whether to display only venues from testnets in the response
-       * @example false
-       */
-      only_testnets?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<
-      {
-        /** Array of supported swap venues */
-        venues?: SwapVenue[];
-      },
-      any
-    >({
+  venues = (query: VenuesRequest, params: RequestParams = {}) =>
+    this.request<VenuesResponse, any>({
       path: `/v2/fungible/venues`,
       method: "GET",
       query: query,
@@ -1887,43 +2014,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get supported assets. Optionally limit to assets on a given chain and/or native assets.
    *
    * @tags Fungible
-   * @name GetAssets
+   * @name Assets
    * @request GET:/v2/fungible/assets
+   * @response `200` `AssetsResponse` A map of chain_id to assets
+   * @response `400` `Error` The request was invalid, e.g. field is invalid
+   * @response `500` `Error` Internal server error
    */
-  getAssets = (
-    query?: {
-      /** Chain IDs to limit the response to, defaults to all chains if not provided */
-      chain_ids?: string[];
-      /** Whether to restrict assets to those native to their chain */
-      native_only?: boolean;
-      /** Whether to include assets without metadata (symbol, name, logo_uri, etc.) */
-      include_no_metadata_assets?: boolean;
-      /** Whether to include CW20 tokens */
-      include_cw20_assets?: boolean;
-      /** Whether to include EVM tokens */
-      include_evm_assets?: boolean;
-      /** Whether to include SVM tokens */
-      include_svm_assets?: boolean;
-      /**
-       * Whether to display only assets from testnets in the response
-       * @example false
-       */
-      only_testnets?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<
-      {
-        /** Map of chain-ids to array of assets supported on the chain */
-        chain_to_assets_map?: Record<
-          string,
-          {
-            assets?: Asset[];
-          }
-        >;
-      },
-      Error
-    >({
+  assets = (query: AssetsRequest, params: RequestParams = {}) =>
+    this.request<AssetsResponse, Error>({
       path: `/v2/fungible/assets`,
       method: "GET",
       query: query,
@@ -1935,10 +2033,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get assets that can be reached from a source via transfers under different conditions (e.g. single vs multiple txs)
    *
    * @tags Fungible
-   * @name GetAssetsFromSource
+   * @name AssetsFromSource
    * @request POST:/v2/fungible/assets_from_source
+   * @response `200` `AssetsFromSourceResponse` Assets reachable from the specified source without swapping
+   * @response `400` `Error` The request was invalid, e.g. field is invalid
+   * @response `500` `Error` Internal server error
    */
-  getAssetsFromSource = (
+  assetsFromSource = (
     data: {
       /** Denom of the source asset */
       source_asset_denom: string;
@@ -1957,18 +2058,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        /** Array of assets that are reachable from the specified source asset */
-        dest_assets?: Record<
-          string,
-          {
-            assets?: Asset[];
-          }
-        >;
-      },
-      Error
-    >({
+    this.request<AssetsFromSourceResponse, Error>({
       path: `/v2/fungible/assets_from_source`,
       method: "POST",
       body: data,
@@ -1981,10 +2071,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns the sequence of transfers and/or swaps to reach the given destination asset from the given source asset, along with estimated amount out. Commonly called before /msgs to generate route info and quote.
    *
    * @tags Fungible
-   * @name GetRouteV2
+   * @name Route
    * @request POST:/v2/fungible/route
+   * @response `200` `RouteResponse` Swap and transfer route summary & quote
+   * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
+   * @response `500` `Error` Internal server error
    */
-  getRouteV2 = (
+  route = (
     data: {
       /** Amount of source asset to be transferred or swapped. Only one of amount_in and amount_out should be provided. */
       amount_in?: string;
@@ -2033,10 +2126,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. Input consists of the output of route with additional information required for message construction (e.g. destination addresses for each chain)
    *
    * @tags Fungible
-   * @name GetMsgsV2
+   * @name Msgs
    * @request POST:/v2/fungible/msgs
+   * @response `200` `MsgsResponse` The messages required to execute the swap, as JSON.
+   * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed.
+   * @response `500` `Error` Internal server error
    */
-  getMsgsV2 = (
+  msgs = (
     data: {
       /** Denom of the source asset */
       source_asset_denom: string;
@@ -2070,15 +2166,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        msgs?: Msg[];
-        txs?: Tx[];
-        /** Indicates fees incurred in the execution of the transfer */
-        estimated_fees?: Fee[];
-      },
-      Error
-    >({
+    this.request<MsgsResponse, Error>({
       path: `/v2/fungible/msgs`,
       method: "POST",
       body: data,
@@ -2091,10 +2179,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. This is a convenience endpoint that combines /route and /msgs into a single call.
    *
    * @tags Fungible
-   * @name GetMsgsDirectV2
+   * @name MsgsDirect
    * @request POST:/v2/fungible/msgs_direct
+   * @response `200` `MsgsDirectResponse` The messages required to execute the swap, as JSON.
+   * @response `400` `Error` The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
+   * @response `500` `Error` Internal server error
    */
-  getMsgsDirectV2 = (
+  msgsDirect = (
     data: {
       /** Denom of the source asset */
       source_asset_denom?: string;
@@ -2142,14 +2233,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        msgs?: Msg[];
-        txs?: Tx[];
-        route?: RouteResponse;
-      },
-      Error
-    >({
+    this.request<MsgsDirectResponse, Error>({
       path: `/v2/fungible/msgs_direct`,
       method: "POST",
       body: data,
@@ -2162,26 +2246,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Request asset recommendations for the given source assets on a given destination chain. The response includes recommended destination assets and recommendation reasons.
    *
    * @tags Fungible
-   * @name GetAssetRecommendations
+   * @name AssetRecommendations
    * @request POST:/v2/fungible/recommend_assets
+   * @response `200` `AssetRecommendationsResponse` Recommended destination assets and reasons
+   * @response `400` `Error` The request was invalid, i.e. required fields are missing
+   * @response `404` `Error` A recommendation or the specified token was not found
+   * @response `500` `Error` Internal server error
    */
-  getAssetRecommendations = (
+  assetRecommendations = (
     data: {
       /** Array where each entry corresponds to a distinct asset recommendation request. */
       requests?: RecommendationRequest[];
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        /** Array of recommendations for each entry in the `request` field. */
-        recommendation_entries?: {
-          recommendations?: AssetRecommendation[];
-          error?: ApiError;
-        }[];
-      },
-      Error
-    >({
+    this.request<AssetRecommendationsResponse, Error>({
       path: `/v2/fungible/recommend_assets`,
       method: "POST",
       body: data,
@@ -2194,10 +2273,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Submit a signed base64 encoded transaction to be broadcast to the specified network. On successful submission, the status of the transaction and any subsequent IBC or Axelar transfers can be queried through the /status endpoint.
    *
    * @tags Transaction
-   * @name SubmitTransactionV2
+   * @name Submit
    * @request POST:/v2/tx/submit
+   * @response `200` `SubmitResponse` The hash of the transaction.
+   * @response `400` `Error` The request was invalid, i.e. the submitted transaction was malformed or fails on execution.
+   * @response `404` `Error` The specified chain is not supported.
+   * @response `500` `Error` Internal server error
    */
-  submitTransactionV2 = (
+  submit = (
     data: {
       /**
        * Signed base64 encoded transaction
@@ -2212,15 +2295,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        /** Hash of the transaction */
-        tx_hash?: string;
-        /** Link to the transaction on the relevant block explorer */
-        explorer_link?: string;
-      },
-      Error
-    >({
+    this.request<SubmitResponse, Error>({
       path: `/v2/tx/submit`,
       method: "POST",
       body: data,
@@ -2233,10 +2308,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Requests tracking of a transaction that has already landed on-chain but was not broadcast through the Skip Go API. The status of a tracked transaction and subsequent IBC or Axelar transfers if routing assets cross chain can be queried through the /status endpoint.
    *
    * @tags Transaction
-   * @name TrackTransactionV2
+   * @name Track
    * @request POST:/v2/tx/track
+   * @response `200` `TrackResponse` The hash of the transaction and a link to its explorer page.
+   * @response `400` `Error` The request was invalid, i.e. the transaction hash was malformed or the specified transaction did not execute successfully.
+   * @response `404` `Error` The specified chain is not supported or the specified transaction was not found.
+   * @response `500` `Error` Internal server error
    */
-  trackTransactionV2 = (
+  track = (
     data: {
       /**
        * Hex encoded hash of the transaction to track
@@ -2251,15 +2330,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        /** Hash of the transaction */
-        tx_hash: string;
-        /** Link to the transaction on the relevant block explorer */
-        explorer_link: string;
-      },
-      Error
-    >({
+    this.request<TrackResponse, Error>({
       path: `/v2/tx/track`,
       method: "POST",
       body: data,
@@ -2272,48 +2343,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get the status of the specified transaction and any subsequent IBC or Axelar transfers if routing assets cross chain. The transaction must have previously been submitted to either the /submit or /track endpoints.
    *
    * @tags Transaction
-   * @name GetTransactionStatusV2
+   * @name Status
    * @request GET:/v2/tx/status
+   * @response `200` `StatusResponse` The status of the transaction and any subsequent ibc or Axelar transfers.
+   * @response `404` `Error` The specified tx was not found.
+   * @response `500` `Error` Internal server error
    */
-  getTransactionStatusV2 = (
-    query: {
-      /**
-       * Hex encoded hash of the transaction to query for
-       * @example "EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB"
-       */
-      tx_hash: string;
-      /**
-       * Chain ID of the transaction
-       * @example "cosmoshub-4"
-       */
-      chain_id: string;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<
-      {
-        /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
-        transfers?: TransferStatus[];
-        /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
-        state: TransactionState;
-        /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
-        transfer_sequence: TransferEvent[];
-        /** Details about the next transfer in the sequence that is preventing further progress, if any. */
-        next_blocking_transfer?: {
-          transfer_sequence_index?: number;
-        } | null;
-        /** Indicates location and denom of transfer asset release. */
-        transfer_asset_release?: TransferAssetRelease;
-        /** Details about any error encountered during the transaction or its subsequent transfers. */
-        error?: StatusError | null;
-        /**
-         * A high-level status indicator for the transaction's completion state.
-         * @example "STATE_COMPLETED"
-         */
-        status?: string;
-      },
-      Error
-    >({
+  status = (query: StatusRequest, params: RequestParams = {}) =>
+    this.request<StatusResponse, Error>({
       path: `/v2/tx/status`,
       method: "GET",
       query: query,
@@ -2325,10 +2362,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @description Get origin assets from a given list of denoms and chain IDs.
    *
    * @tags Fungible
-   * @name GetOriginAssets
+   * @name IbcOriginAssets
    * @request POST:/v2/fungible/ibc_origin_assets
+   * @response `200` `IbcOriginAssetsResponse` The origin assets of the specified denoms and chain IDs.
+   * @response `400` `Error` The request was invalid, i.e. required fields are missing
+   * @response `500` `Error` Internal server error
    */
-  getOriginAssets = (
+  ibcOriginAssets = (
     data: {
       /** Array of assets to get origin assets for */
       assets?: {
@@ -2340,12 +2380,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        origin_assets?: OptionalAsset[];
-      },
-      Error
-    >({
+    this.request<IbcOriginAssetsResponse, Error>({
       path: `/v2/fungible/ibc_origin_assets`,
       method: "POST",
       body: data,
@@ -2360,6 +2395,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Fungible
    * @name FungibleAssetsBetweenChainsCreate
    * @request POST:/v2/fungible/assets_between_chains
+   * @response `200` `FungibleAssetsBetweenChainsCreateResponse` OK
+   * @response `404` `Error` One of the chain IDs was not found
+   * @response `500` `Error` Internal server error
    */
   fungibleAssetsBetweenChainsCreate = (
     data: {
@@ -2390,12 +2428,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      {
-        assets_between_chains?: AssetBetweenChains[];
-      },
-      Error
-    >({
+    this.request<FungibleAssetsBetweenChainsCreateResponse, Error>({
       path: `/v2/fungible/assets_between_chains`,
       method: "POST",
       body: data,
