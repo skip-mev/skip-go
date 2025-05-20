@@ -37,8 +37,13 @@ generateApi({
             }
           });
 
-          if (object.additionalProperties && typeof object.additionalProperties === "object") {
-            object.additionalProperties = camelCaseProperties(object.additionalProperties);
+          if (
+            object.additionalProperties &&
+            typeof object.additionalProperties === "object"
+          ) {
+            object.additionalProperties = camelCaseProperties(
+              object.additionalProperties
+            );
           }
 
           if (object.required && Array.isArray(object.required)) {
@@ -79,6 +84,14 @@ generateApi({
   input: path.resolve(__dirname, "../../docs/swagger.yml"),
   modular: false,
   moduleNameIndex: -1,
-  typeSuffix: 'Json',
+  typeSuffix: "Json",
   generateClient: false,
+  generateResponses: true,
+  generateUnionEnums: true,
+  extractResponseBody: true,
+  extractRequestParams: true,
+  extractingOptions: {
+    responseBodySuffix: ["Response"],
+    requestParamsSuffix: ["Request"],
+  },
 });

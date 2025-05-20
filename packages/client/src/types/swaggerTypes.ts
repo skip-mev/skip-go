@@ -430,6 +430,11 @@ export interface GoFastTransferInfo {
   errorMessage?: string;
 }
 
+export interface GoFastTransferWrapper {
+  /** A transfer facilitated by GoFast */
+  goFastTransfer?: GoFastTransfer;
+}
+
 export interface BalanceRequestChainEntry {
   /** Address of the wallet that the balance is requested for */
   address?: string;
@@ -847,6 +852,7 @@ export type Operation = (
   | EvmSwapWrapper
   | OPInitTransferWrapper
   | StargateTransferWrapper
+  | GoFastTransferWrapper
   | EurekaTransferWrapper
   | LayerZeroTransferWrapper
 ) & {
@@ -987,7 +993,7 @@ export interface RouteResponse {
   /** Indicates fees incurred in the execution of the transfer */
   estimatedFees?: Fee[];
   /** The estimated time in seconds for the route to execute */
-  estimatedRouteDurationSeconds?: number;
+  estimatedRouteDurationSeconds: number;
 }
 
 export interface SendTokenError {
