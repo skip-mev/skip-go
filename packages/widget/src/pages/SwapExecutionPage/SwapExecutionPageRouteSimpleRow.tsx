@@ -78,10 +78,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
     }
   }, [chainAddresses, context]);
 
-  const displayAmount = useMemo(() => {
-    return formatDisplayAmount(assetDetails.amount);
-  }, [assetDetails.amount]);
-
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
     if (isMobileScreenSize) {
@@ -119,7 +115,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       </StyledAnimatedBorder>
       <Column gap={5}>
         <StyledSymbolAndAmount>
-          {displayAmount} {assetDetails?.symbol}
+          {formatDisplayAmount(assetDetails.amount)} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
         {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 
