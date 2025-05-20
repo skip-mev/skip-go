@@ -2302,7 +2302,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         transfers?: TransferStatus[];
         /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
         state: TransactionState;
-        /** A detailed sequence of all cross-chain transfer events associated with the transaction. */
+        /**
+         * **DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version.
+         * @deprecated
+         */
         transfer_sequence: TransferEvent[];
         /** Details about the next transfer in the sequence that is preventing further progress, if any. */
         next_blocking_transfer?: {
