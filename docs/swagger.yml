@@ -3982,7 +3982,6 @@ components:
           $ref: '#/components/schemas/TransferAssetRelease'
         transfer_sequence:
           description: Lists any IBC and Axelar transfers as they are seen.
-          deprecated: true
           items:
             $ref: '#/components/schemas/TransferEvent'
           type: array
