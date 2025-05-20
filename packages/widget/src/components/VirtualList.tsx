@@ -11,7 +11,11 @@ export type VirtualListProps<T> = {
   height?: number;
   itemHeight: number;
   bufferSize?: number;
-  renderItem: (item: T, index: number) => React.ReactNode;
+  renderItem: (
+    item: T,
+    index: number,
+    refSetter?: (el: HTMLDivElement | null) => void,
+  ) => React.ReactNode;
   itemKey: (item: T) => string;
   className?: string;
   empty?: {
@@ -19,6 +23,7 @@ export type VirtualListProps<T> = {
     details?: string;
     icon?: React.ReactNode;
   };
+  expandedItemKey?: string | null;
 };
 
 export const MAX_MODAL_HEIGHT = 600;
@@ -50,12 +55,14 @@ export const VirtualList = <T,>({
   itemKey,
   className,
   empty,
+  expandedItemKey,
 }: VirtualListProps<T>) => {
   const theme = useTheme();
   const [currentlyFocusedElement, setCurrentlyFocusedElement] = useState<HTMLElement>();
   const listHeight = useListHeight(itemHeight);
 
   const listRef = useRef<ListRef>(null);
+  const itemRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName(
@@ -98,6 +105,15 @@ export const VirtualList = <T,>({
     }, 0);
   }, [listItems.length]);
 
+  useEffect(() => {
+    if (!listRef.current || expandedItemKey == null) return;
+
+    const index = listItems.findIndex((item) => itemKey(item) === expandedItemKey);
+    if (index !== -1) {
+      listRef.current.scrollTo({ index, align: "top" });
+    }
+  }, [expandedItemKey, listItems, itemKey]);
+
   if (listItems.length === 0) {
     return (
       <StyledNoResultsContainer gap={10} height={height ?? listHeight}>
@@ -129,7 +145,11 @@ export const VirtualList = <T,>({
         },
       }}
     >
-      {(item, index) => renderItem(item, index)}
+      {(item, index) =>
+        renderItem(item, index, (el) => {
+          itemRefs.current[itemKey(item)] = el;
+        })
+      }
     </List>
   );
 };
