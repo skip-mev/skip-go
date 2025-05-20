@@ -106,13 +106,13 @@ export const VirtualList = <T,>({
   }, [listItems.length]);
 
   useEffect(() => {
-    if (!listRef.current || !expandedItemKey) return;
+    if (!listRef.current || expandedItemKey == null) return;
 
-    const el = itemRefs.current[expandedItemKey];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "end" });
+    const index = listItems.findIndex((item) => itemKey(item) === expandedItemKey);
+    if (index !== -1) {
+      listRef.current.scrollTo({ index });
     }
-  }, [expandedItemKey]);
+  }, [expandedItemKey, listItems, itemKey]);
 
   if (listItems.length === 0) {
     return (
