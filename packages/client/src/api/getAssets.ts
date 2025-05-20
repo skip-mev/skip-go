@@ -3,7 +3,7 @@ import { ClientState } from "../state/clientState";
 import { api } from "../utils/generateApi";
 
 export const assets = api({
-  methodName: "getAssets",
+  methodName: "assets",
   path: "/v2/fungible/assets",
   transformResponse: (response) => {
     return transformAssetsMap(response.chainToAssetsMap);

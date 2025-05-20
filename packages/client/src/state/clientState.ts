@@ -22,7 +22,7 @@ export class ClientState {
 
   static skipChains?: Chain[];
   static skipAssets?: Record<string, Asset[]>;
-  static skipBalances?: Record<string, ApiResponse<"getBalances">>;
+  static skipBalances?: Record<string, ApiResponse<"balances">>;
 
   static async getSkipChains(apiOptions?: SkipApiOptions) {
     if (this.skipChains) {
