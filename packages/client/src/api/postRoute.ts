@@ -10,13 +10,13 @@ export const route = async (request: RouteRequest) => {
   };
 
   return api({
-    methodName: "getRouteV2",
+    methodName: "route",
     method: "post",
     path: "/v2/fungible/route",
   })(requestWithAffiliateFeeBps);
 };
 
-export type RouteRequest = ApiRequest<"getRouteV2"> &
+export type RouteRequest = ApiRequest<"route"> &
   SkipApiOptions & {
     abortDuplicateRequests?: boolean;
   };

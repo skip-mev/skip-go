@@ -3,7 +3,7 @@ import { api } from "../utils/generateApi";
 import type { ApiRequest, ApiResponse } from "../utils/generateApi";
 
 export const balances = api({
-  methodName: "getBalances",
+  methodName: "balances",
   method: "post",
   path: "/v2/info/balances",
   onSuccess: (response, options) => {
@@ -13,5 +13,5 @@ export const balances = api({
   },
 });
 
-export type BalanceRequest = ApiRequest<"getBalances">;
-export type BalanceResponse = ApiResponse<"getBalances">;
+export type BalanceRequest = ApiRequest<"balances">;
+export type BalanceResponse = ApiResponse<"balances">;

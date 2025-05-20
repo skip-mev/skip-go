@@ -946,7 +946,7 @@ export enum RoutePriceWarningTypeJson {
   BAD_PRICE_WARNING = "BAD_PRICE_WARNING",
 }
 
-export interface RouteResponseJson {
+export interface RouteJson {
   /** Amount of source asset to be transferred or swapped */
   amount_in: string;
   /** Amount of destination asset out */
@@ -1552,7 +1552,7 @@ export interface FeeJson {
   operation_index?: number | null;
 }
 
-export interface GetChainsRequestJson {
+export interface ChainsRequestJson {
   /** Chain IDs to limit the response to, defaults to all chains if not provided */
   chain_ids?: string[];
   /**
@@ -1569,21 +1569,21 @@ export interface GetChainsRequestJson {
   only_testnets?: boolean;
 }
 
-export interface GetChainsResponseJson {
+export interface ChainsResponseJson {
   /** Array of supported chain-ids */
   chains?: ChainJson[];
 }
 
-export interface GetBalancesResponseJson {
+export interface BalancesResponseJson {
   chains?: Record<string, BalanceResponseChainEntryJson>;
 }
 
-export interface GetBridgesResponseJson {
+export interface BridgesResponseJson {
   /** Array of supported bridges */
   bridges?: BridgeJson[];
 }
 
-export interface GetVenuesRequestJson {
+export interface VenuesRequestJson {
   /**
    * Whether to display only venues from testnets in the response
    * @example false
@@ -1591,12 +1591,12 @@ export interface GetVenuesRequestJson {
   only_testnets?: boolean;
 }
 
-export interface GetVenuesResponseJson {
+export interface VenuesResponseJson {
   /** Array of supported swap venues */
   venues?: SwapVenueJson[];
 }
 
-export interface GetAssetsRequestJson {
+export interface AssetsRequestJson {
   /** Chain IDs to limit the response to, defaults to all chains if not provided */
   chain_ids?: string[];
   /** Whether to restrict assets to those native to their chain */
@@ -1616,7 +1616,7 @@ export interface GetAssetsRequestJson {
   only_testnets?: boolean;
 }
 
-export interface GetAssetsResponseJson {
+export interface AssetsResponseJson {
   /** Map of chain-ids to array of assets supported on the chain */
   chain_to_assets_map?: Record<
     string,
@@ -1626,7 +1626,7 @@ export interface GetAssetsResponseJson {
   >;
 }
 
-export interface GetAssetsFromSourceResponseJson {
+export interface AssetsFromSourceResponseJson {
   /** Array of assets that are reachable from the specified source asset */
   dest_assets?: Record<
     string,
@@ -1636,22 +1636,22 @@ export interface GetAssetsFromSourceResponseJson {
   >;
 }
 
-export type GetRouteV2ResponseJson = RouteResponseJson;
+export type RouteResponseJson = RouteJson;
 
-export interface GetMsgsV2ResponseJson {
+export interface MsgsResponseJson {
   msgs?: MsgJson[];
   txs?: TxJson[];
   /** Indicates fees incurred in the execution of the transfer */
   estimated_fees?: FeeJson[];
 }
 
-export interface GetMsgsDirectV2ResponseJson {
+export interface MsgsDirectResponseJson {
   msgs?: MsgJson[];
   txs?: TxJson[];
-  route?: RouteResponseJson;
+  route?: RouteJson;
 }
 
-export interface GetAssetRecommendationsResponseJson {
+export interface AssetRecommendationsResponseJson {
   /** Array of recommendations for each entry in the `request` field. */
   recommendation_entries?: {
     recommendations?: AssetRecommendationJson[];
@@ -1659,21 +1659,21 @@ export interface GetAssetRecommendationsResponseJson {
   }[];
 }
 
-export interface SubmitTransactionV2ResponseJson {
+export interface SubmitResponseJson {
   /** Hash of the transaction */
   tx_hash?: string;
   /** Link to the transaction on the relevant block explorer */
   explorer_link?: string;
 }
 
-export interface TrackTransactionV2ResponseJson {
+export interface TrackResponseJson {
   /** Hash of the transaction */
   tx_hash: string;
   /** Link to the transaction on the relevant block explorer */
   explorer_link: string;
 }
 
-export interface GetTransactionStatusV2RequestJson {
+export interface StatusRequestJson {
   /**
    * Hex encoded hash of the transaction to query for
    * @example "EEC65138E6A7BDD047ED0D4BBA249A754F0BBBC7AA976568C4F35A32CD7FB8EB"
@@ -1686,7 +1686,7 @@ export interface GetTransactionStatusV2RequestJson {
   chain_id: string;
 }
 
-export interface GetTransactionStatusV2ResponseJson {
+export interface StatusResponseJson {
   /** Transfer status for all transfers initiated by the transaction in the order they were initiated. */
   transfers?: TransferStatusJson[];
   /** The overall state reflecting the end-to-end status of all transfers initiated by the original transaction. */
@@ -1711,7 +1711,7 @@ export interface GetTransactionStatusV2ResponseJson {
   status?: string;
 }
 
-export interface GetOriginAssetsResponseJson {
+export interface IbcOriginAssetsResponseJson {
   origin_assets?: OptionalAssetJson[];
 }
 

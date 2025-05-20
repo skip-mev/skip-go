@@ -2,7 +2,7 @@ import { ClientState } from "../state/clientState";
 import { api } from "../utils/generateApi";
 
 export const chains = api({
-  methodName: "getChains",
+  methodName: "chains",
   path: "/v2/info/chains",
   transformResponse: (response) => response.chains,
   onSuccess: (response, options) => {

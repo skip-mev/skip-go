@@ -54,6 +54,7 @@
             "group": "Advanced Transfer",
             "pages": [
               "advanced-transfer/handling-cross-chain-failure-cases",
+              "advanced-transfer/interpreting-transaction-status",
               "advanced-transfer/ibc-routing-algorithm",
               "advanced-transfer/evm-transactions",
               "advanced-transfer/svm-transaction-details",
@@ -133,6 +134,12 @@
                   "api-reference/prod/transaction/get-v2txstatus"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Reference Guides",
+            "pages": [
+              "api-reference/error-codes"
             ]
           }
         ]

@@ -20,7 +20,7 @@ tags:
 paths:
   /v2/info/chains:
     get:
-      operationId: getChains
+      operationId: chains
       tags:
         - 'Info'
       description:
@@ -125,7 +125,7 @@ paths:
                     description: Array of supported chain-ids
   /v2/info/balances:
     post:
-      operationId: getBalances
+      operationId: balances
       tags:
         - 'Info'
       description: Get the balances of a given set of assets on a given chain and wallet address. Compatible with all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains.
@@ -192,7 +192,7 @@ paths:
 
   /v2/info/bridges:
     get:
-      operationId: getBridges
+      operationId: bridges
       tags:
         - 'Info'
       description: Get all supported bridges
@@ -222,7 +222,7 @@ paths:
                     description: Array of supported bridges
   /v2/fungible/venues:
     get:
-      operationId: getVenues
+      operationId: venues
       tags:
         - 'Fungible'
       description: Get supported swap venues.
@@ -258,7 +258,7 @@ paths:
 
   /v2/fungible/assets:
     get:
-      operationId: getAssets
+      operationId: assets
       tags:
         - 'Fungible'
       description: Get supported assets. Optionally limit to assets on a given chain and/or native assets.
@@ -408,7 +408,7 @@ paths:
 
   /v2/fungible/assets_from_source:
     post:
-      operationId: getAssetsFromSource
+      operationId: assetsFromSource
       tags:
         - 'Fungible'
       description: Get assets that can be reached from a source via transfers under different conditions (e.g. single vs multiple txs)
@@ -511,7 +511,7 @@ paths:
 
   /v2/fungible/route:
     post:
-      operationId: getRouteV2
+      operationId: route
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns the sequence of transfers and/or swaps to reach the given destination asset from the given source asset, along with estimated amount out. Commonly called before /msgs to generate route info and quote.
@@ -828,7 +828,7 @@ paths:
                 estimated_fees: []
                 estimated_route_duration_seconds: 300
               schema:
-                $ref: '#/components/schemas/RouteResponse'
+                $ref: '#/components/schemas/Route'
         '400':
           description: The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
           content:
@@ -860,7 +860,7 @@ paths:
 
   /v2/fungible/msgs:
     post:
-      operationId: getMsgsV2
+      operationId: msgs
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. Input consists of the output of route with additional information required for message construction (e.g. destination addresses for each chain)
@@ -1129,7 +1129,7 @@ paths:
 
   /v2/fungible/msgs_direct:
     post:
-      operationId: getMsgsDirectV2
+      operationId: msgsDirect
       tags:
         - 'Fungible'
       description: This supports cross-chain actions among EVM chains, Cosmos chains, and between them. Returns minimal number of messages required to execute a multi-chain swap or transfer. This is a convenience endpoint that combines /route and /msgs into a single call.
@@ -1457,7 +1457,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Tx'
                   route:
-                    $ref: '#/components/schemas/RouteResponse'
+                    $ref: '#/components/schemas/Route'
         '400':
           description: The request was invalid, e.g. an invalid amount was passed or the swap size is unsafe
           content:
@@ -1489,7 +1489,7 @@ paths:
 
   /v2/fungible/recommend_assets:
     post:
-      operationId: getAssetRecommendations
+      operationId: assetRecommendations
       tags:
         - 'Fungible'
       description:
@@ -1586,7 +1586,7 @@ paths:
 
   /v2/tx/submit:
     post:
-      operationId: submitTransactionV2
+      operationId: submit
       tags:
         - 'Transaction'
       description:
@@ -1658,7 +1658,7 @@ paths:
 
   /v2/tx/track:
     post:
-      operationId: trackTransactionV2
+      operationId: track
       tags:
         - 'Transaction'
       description:
@@ -1735,7 +1735,7 @@ paths:
 
   /v2/tx/status:
     get:
-      operationId: getTransactionStatusV2
+      operationId: status
       tags:
         - 'Transaction'
       description:
@@ -2007,7 +2007,7 @@ paths:
                 $ref: '#/components/schemas/Error'
   /v2/fungible/ibc_origin_assets:
     post:
-      operationId: getOriginAssets
+      operationId: ibcOriginAssets
       tags:
         - 'Fungible'
       description: Get origin assets from a given list of denoms and chain IDs.
@@ -3445,7 +3445,7 @@ components:
         - LOW_INFO_WARNING
         - BAD_PRICE_WARNING
       type: string
-    RouteResponse:
+    Route:
       properties:
         amount_in:
           description: Amount of source asset to be transferred or swapped

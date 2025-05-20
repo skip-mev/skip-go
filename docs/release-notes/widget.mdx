@@ -1,7 +1,24 @@
 ---
 title: "Widget"
-description: "Selected updates and improvements to the `@skip-go/widget` [npm package](https://www.npmjs.com/package/@skip-go/client)."
+description: "Selected updates and improvements to the `@skip-go/widget` [npm package](https://www.npmjs.com/package/@skip-go/widget)."
 ---
+
+## Recent Key Updates (Spring 2025)
+
+The Skip Go Widget has seen several improvements focusing on core functionality, user experience, and developer integration.
+
+*   **Updated Core Client Dependency:** The widget now utilizes `@skip-go/client` v1.x. This update brings underlying improvements in efficiency and API consistency from the client library.
+*   **User Interface and Experience:**
+    *   Swap settings changes now trigger an automatic refetch of route information.
+    *   Display of asset amounts and number formatting has been refined for better clarity.
+    *   The "Signature Required" prompt is now hidden after a transaction is signed.
+    *   Improved the display of estimated transaction fees, providing a more transparent breakdown of potential costs for all routes.
+*   **Developer Integration:**
+    *   Introduced an `onSourceAndDestinationSwapped` callback, allowing integrators to add custom logic when users switch the source and destination assets.
+
+For a detailed list of all changes, including dependency updates and minor fixes, please refer to the [full CHANGELOG.md on GitHub](https://github.com/skip-mev/skip-go/blob/main/packages/widget/CHANGELOG.md).
+
+
 ## v2.5.2
 - Change default fee asset selection on chain change. 
 
