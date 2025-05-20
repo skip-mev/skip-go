@@ -1961,7 +1961,8 @@ paths:
                     description: The overall state reflecting the end-to-end status of all transfers initiated by the original transaction.
                     required: true
                   transfer_sequence:
-                    description: A detailed sequence of all cross-chain transfer events associated with the transaction.
+                    description: "**DEPRECATED.** This field provides a flat list of all transfer events. For a more structured and detailed status of each transfer leg, including its individual events, please use the 'transfers' array instead. This field may be removed in a future version."
+                    deprecated: true
                     type: array
                     items:
                       $ref: '#/components/schemas/TransferEvent'
@@ -3532,6 +3533,7 @@ components:
         estimated_route_duration_seconds:
           description: The estimated time in seconds for the route to execute
           type: integer
+          required: true
       type: object
     SendTokenError:
       properties:
