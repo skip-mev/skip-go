@@ -1,0 +1,142 @@
+---
+title: "API Error Codes & Status Messages"
+description: "Reference for error codes and status messages returned by the Skip Go API, including transaction, bridge, and packet-specific statuses."
+---
+
+This document provides a reference for the various error codes and status messages you may encounter when using Skip Go's APIs. Understanding these codes is essential for handling API responses correctly and providing accurate feedback to users.
+
+## Transaction Status Codes
+
+These codes represent the overall status of a transaction being processed or tracked by the Skip Go API.
+
+| Status                  | Description                                                                 | Notes                                                                                                |
+|-------------------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `STATE_UNKNOWN`           | The status of the transaction is unknown.                                   | Should be treated as an **error state**.                                                               |
+| `STATE_SUBMITTED`         | The transaction has been submitted to the blockchain network.               |                                                                                                      |
+| `STATE_PENDING`           | The transaction is in progress and waiting to be processed.                 |                                                                                                      |
+| `STATE_RECEIVED`          | The transaction has been received by the blockchain network.                |                                                                                                      |
+| `STATE_COMPLETED`         | (Internal transitional state)                                               | This state is resolved to `STATE_COMPLETED_SUCCESS` or `STATE_COMPLETED_ERROR` before API response.  |
+| `STATE_ABANDONED`         | The transaction was abandoned, often due to timeout (e.g., IBC relayer).    | Tracking timed out. Not necessarily a permanent transaction failure; may be retriable.             |
+| `STATE_COMPLETED_SUCCESS` | The transaction has completed successfully.                                 | This is the **only** status that definitively indicates successful end-to-end transaction completion. |
+| `STATE_COMPLETED_ERROR`   | The transaction has completed but encountered errors.                         |                                                                                                      |
+| `STATE_PENDING_ERROR`     | The transaction encountered errors while being processed.                   |                                                                                                      |
+
+## General Error Types
+
+These error types provide a broad categorization of issues.
+
+| Error Type                         | Description                                                              |
+|------------------------------------|--------------------------------------------------------------------------|
+| `STATUS_ERROR_UNKNOWN`               | Unknown error type.                                                      |
+| `STATUS_ERROR_TRANSACTION_EXECUTION` | Error occurred during the execution of the transaction on the blockchain. |
+| `STATUS_ERROR_INDEXING`              | Error occurred during Skip's internal processing or indexing.            |
+| `STATUS_ERROR_TRANSFER`              | Error related to a specific transfer operation within the transaction.   |
+
+## Bridge Protocol Status Codes
+
+Different bridge protocols have their own specific status codes that reflect the state of a transfer leg using that bridge.
+
+### IBC Transfer Status
+
+| Status             | Description                                          |
+|--------------------|------------------------------------------------------|
+| `TRANSFER_UNKNOWN`   | The status of the IBC transfer is unknown.           |
+| `TRANSFER_PENDING`   | The IBC transfer is in progress.                     |
+| `TRANSFER_RECEIVED`  | The IBC transfer has been received by the destination chain. |
+| `TRANSFER_SUCCESS`   | The IBC transfer has completed successfully.         |
+| `TRANSFER_FAILURE`   | The IBC transfer has failed.                         |
+
+### Axelar Transfer Status
+
+| Status                               | Description                                          |
+|--------------------------------------|------------------------------------------------------|
+| `AXELAR_TRANSFER_UNKNOWN`            | The status of the Axelar transfer is unknown.        |
+| `AXELAR_TRANSFER_PENDING_CONFIRMATION` | The Axelar transfer is waiting for confirmation.     |
+| `AXELAR_TRANSFER_PENDING_RECEIPT`      | The Axelar transfer is waiting for receipt.          |
+| `AXELAR_TRANSFER_SUCCESS`            | The Axelar transfer has completed successfully.      |
+| `AXELAR_TRANSFER_FAILURE`            | The Axelar transfer has failed.                      |
+
+### CCTP Transfer Status
+
+| Status                               | Description                                                |
+|--------------------------------------|------------------------------------------------------------|
+| `CCTP_TRANSFER_UNKNOWN`              | The status of the CCTP transfer is unknown.                |
+| `CCTP_TRANSFER_SENT`                 | The CCTP transfer has been sent.                           |
+| `CCTP_TRANSFER_PENDING_CONFIRMATION` | The CCTP transfer is waiting for confirmation.             |
+| `CCTP_TRANSFER_CONFIRMED`            | The CCTP transfer has been confirmed.                      |
+| `CCTP_TRANSFER_RECEIVED`             | The CCTP transfer has been received at the destination.    |
+
+### GoFast Transfer Status
+
+| Status                         | Description                                                      |
+|--------------------------------|------------------------------------------------------------------|
+| `GO_FAST_TRANSFER_UNKNOWN`     | The status of the GoFast transfer is unknown.                    |
+| `GO_FAST_TRANSFER_SENT`        | The GoFast transfer has been sent.                               |
+| `GO_FAST_POST_ACTION_FAILED`   | The post-transfer action on the GoFast transfer has failed.      |
+| `GO_FAST_TRANSFER_TIMEOUT`     | The GoFast transfer has timed out.                               |
+| `GO_FAST_TRANSFER_FILLED`      | The GoFast transfer has been filled.                             |
+| `GO_FAST_TRANSFER_REFUNDED`    | The GoFast transfer has been refunded.                           |
+
+### LayerZero Transfer Status
+
+| Status                       | Description                                       |
+|------------------------------|---------------------------------------------------|
+| `LAYER_ZERO_TRANSFER_UNKNOWN`  | The status of the LayerZero transfer is unknown.  |
+| `LAYER_ZERO_TRANSFER_SENT`     | The LayerZero transfer has been sent.             |
+| `LAYER_ZERO_TRANSFER_RECEIVED` | The LayerZero transfer has been received.         |
+| `LAYER_ZERO_TRANSFER_FAILED`   | The LayerZero transfer has failed.                |
+
+### Hyperlane Transfer Status
+
+| Status                       | Description                                         |
+|------------------------------|-----------------------------------------------------|
+| `HYPERLANE_TRANSFER_UNKNOWN` | The status of the Hyperlane transfer is unknown.    |
+| `HYPERLANE_TRANSFER_SENT`    | The Hyperlane transfer has been sent.               |
+| `HYPERLANE_TRANSFER_FAILED`  | The Hyperlane transfer has failed.                  |
+| `HYPERLANE_TRANSFER_RECEIVED`| The Hyperlane transfer has been received.           |
+
+### OPInit Transfer Status
+
+| Status                   | Description                                       |
+|--------------------------|---------------------------------------------------|
+| `OPINIT_TRANSFER_UNKNOWN`  | The status of the OPInit transfer is unknown.     |
+| `OPINIT_TRANSFER_SENT`     | The OPInit transfer has been sent.                |
+| `OPINIT_TRANSFER_RECEIVED` | The OPInit transfer has been received.            |
+
+### Stargate Transfer Status
+
+| Status                       | Description                                       |
+|------------------------------|---------------------------------------------------|
+| `STARGATE_TRANSFER_UNKNOWN`  | The status of the Stargate transfer is unknown.   |
+| `STARGATE_TRANSFER_SENT`     | The Stargate transfer has been sent.              |
+| `STARGATE_TRANSFER_RECEIVED` | The Stargate transfer has been received.          |
+| `STARGATE_TRANSFER_FAILED`   | The Stargate transfer has failed.                 |
+
+### Eureka Transfer Status 
+The Eureka transfer status codes are identical to the IBC transfer status codes.
+
+| Status             | Description                                          |
+|--------------------|------------------------------------------------------|
+| `TRANSFER_UNKNOWN`   | The status of the Eureka transfer is unknown.           |
+| `TRANSFER_PENDING`   | The Eureka transfer is in progress.                     |
+| `TRANSFER_RECEIVED`  | The Eureka transfer has been received by the destination chain. |
+| `TRANSFER_SUCCESS`   | The Eureka transfer has completed successfully.         |
+| `TRANSFER_FAILURE`   | The Eureka transfer has failed.                         |
+
+## Additional Error Types
+
+### Packet Error Types
+When dealing with IBC packets, you may see these error types:
+
+| Error Type                   | Description                             |
+|------------------------------|-----------------------------------------|
+| `PACKET_ERROR_UNKNOWN`       | Unknown packet error.                   |
+| `PACKET_ERROR_ACKNOWLEDGEMENT` | Error in packet acknowledgement.        |
+| `PACKET_ERROR_TIMEOUT`       | Packet timed out.                       |
+
+### Bridge-Specific Error Types
+
+| Error Type                                 | Description                                                |
+|--------------------------------------------|------------------------------------------------------------|
+| `SEND_TOKEN_EXECUTION_ERROR`               | Error during Axelar send token execution.                  |
+| `CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR` | Error during Axelar contract call with token execution.    |

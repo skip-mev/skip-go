@@ -1,11 +1,25 @@
 ---
 title: "Client Library"
-description: "Selected updates and improvements to the `@skip-go/client` library."
+description: "Selected updates and improvements to the `@skip-go/client` [npm package](https://www.npmjs.com/package/@skip-go/client)."
 ---
+
+## v1.1.0
+
+### Enhancements
+- **Transaction Timestamps:** The `ChainTransaction` type now includes an `on_chain_ts` field, providing a timestamp for when the transaction was confirmed on-chain. This can be useful for tracking and display purposes.
+- **Exported JSON Types:** Relevant JSON types used by the client are now exported, improving the developer experience for those working directly with these underlying types.
+
+## v1.0.0
+
+This major release brings significant improvements to the `@skip-go/client` library, focusing on bundle size, developer experience, and performance. If you are upgrading from a version prior to v1.0.0, please see the [Migration Guide](../client/migration-guide) for detailed instructions. **For the best experience, including all subsequent enhancements and patches since the initial v1.0.0 release, we recommend upgrading directly to v1.1.0 or the latest available stable version.**
+
+### Key Changes:
+
+-   **Improved Tree-Shaking:** The client library has been refactored to export separate functions instead of a single class. This allows for better tree-shaking, reducing the impact on your application's bundle size.
+-   **Consistent Naming Conventions:** All properties and variables now strictly follow camelCase (and PascalCase for enums). This change facilitates the auto-generation of interfaces based on the OpenAPI spec (swagger.yml) and simplifies the conversion between camelCase and snake_case for API consumption.
 
 ## v0.10.3
 - The `executeRoute` method now accepts `beforeMsg` and `afterMsg`  parameter to allow for the execution of custom Cosmos messages before/after the route is executed. This is useful for executing custom messages that are not part of the route definition.
-
 
 ```typescript
 // An example of how to use the `beforeMsg` parameter with a MsgSend
@@ -28,5 +42,5 @@ await skip.executeRoute({
 ## v0.9.3
 - Update client to include solana support via public RPC and show warning when public infrastructure is not overriden.
 
-## v0.9.0 
+## v0.9.0
 - Add `/balance` methods query API endpoint. See the [documentation](../client/balance-gas-and-fee-tooling) and the [API reference](/api-reference/prod/info/post-v2infobalances) for more details.

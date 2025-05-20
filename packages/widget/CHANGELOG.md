@@ -1,5 +1,18 @@
 ## 0.0.15
 
+## 3.10.2
+
+### Patch Changes
+
+- cf920fe: update registries
+- 1e9f832: remove unused packages
+- 78281ec: Use virtualization on history page
+- Updated dependencies [5e42be2]
+- Updated dependencies [9bdd303]
+- Updated dependencies [cf920fe]
+- Updated dependencies [11c3c79]
+  - @skip-go/client@1.1.1
+
 ## 3.10.1
 
 ### Patch Changes
