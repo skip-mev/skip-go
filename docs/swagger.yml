@@ -3533,6 +3533,7 @@ components:
         estimated_route_duration_seconds:
           description: The estimated time in seconds for the route to execute
           type: integer
+          required: true
       type: object
     SendTokenError:
       properties:
