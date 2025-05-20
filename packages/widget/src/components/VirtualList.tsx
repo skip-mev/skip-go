@@ -64,9 +64,6 @@ export const VirtualList = <T,>({
   const listRef = useRef<ListRef>(null);
   const itemRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  console.log(expandedItemKey);
-  console.log(itemRefs);
-
   useEffect(() => {
     const listElement = listRef.current?.nativeElement?.getElementsByClassName(
       "rc-virtual-list-holder-inner",
