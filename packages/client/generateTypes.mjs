@@ -76,6 +76,13 @@ generateApi({
       return property;
     },
   },
+  generateResponses: true,
+  extractResponseBody: true,
+  extractRequestParams: true,
+  extractingOptions: {
+    responseBodySuffix: ["Response"],
+    requestParamsSuffix: ["Request"],
+  },
 });
 
 generateApi({
@@ -87,7 +94,6 @@ generateApi({
   typeSuffix: "Json",
   generateClient: false,
   generateResponses: true,
-  generateUnionEnums: true,
   extractResponseBody: true,
   extractRequestParams: true,
   extractingOptions: {
