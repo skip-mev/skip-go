@@ -78,6 +78,7 @@ The logic relies on a few key pieces of information typically available in the `
         *   The operation's index matches the `next_blocking_transfer.transfer_sequence_index` (if `next_blocking_transfer` exists).
         *   AND the overall transaction state (the top-level `state` field) is `STATE_COMPLETED_ERROR` or `STATE_ABANDONED`.
         *   Additionally, if the overall transaction state is `STATE_COMPLETED_ERROR` and this is the *last* operation in the sequence, it is also considered to be in an error state.
+        *   **Note:** If the overall transaction `state` is `STATE_COMPLETED_ERROR`, it's also crucial to inspect the specific `error` object within each individual transfer step in the `transfer_sequence` (e.g., `step.ibc_transfer.packet_txs.error`, `step.cctp_transfer.error`, etc.). This will help pinpoint the exact leg(s) that encountered issues, as the `next_blocking_transfer` might be `null` if the transaction reached a terminal error state rather than getting stuck midway.
 
     *   **Success:**
         *   If the overall transaction state (top-level `state` field) is `STATE_COMPLETED_SUCCESS`, then all operations in the sequence are considered successful.
