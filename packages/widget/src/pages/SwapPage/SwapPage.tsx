@@ -106,7 +106,7 @@ export const SwapPage = () => {
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
@@ -122,7 +122,7 @@ export const SwapPage = () => {
           ...asset,
         }));
         switchEvmchainId(asset?.chainId);
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
@@ -139,7 +139,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAsset]);
@@ -154,7 +154,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
@@ -317,8 +317,8 @@ export const SwapPage = () => {
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
       if (sourceAccount?.address) {
-        const replay = getReplay()
-        replay?.start()
+        const replay = getReplay();
+        replay?.start();
       }
       setSwapExecutionState();
     };

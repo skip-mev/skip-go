@@ -81,7 +81,9 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
         data-root-id={rootId}
         onAnimationEnd={() => {
           if (!modal.visible) {
-            modal.remove();
+            setTimeout(() => {
+              modal.remove();
+            }, 0);
           }
         }}
       >
@@ -197,6 +199,9 @@ const StyledOverlay = styled.div<{
   place-items: center;
   z-index: 10;
   animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
+
+  will-change: opacity;
+
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -244,4 +249,5 @@ const StyledContent = styled.div<{
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
     150ms cubic-bezier(0.5, 1, 0.89, 1) forwards;
+  will-change: opacity, transform;
 `;
