@@ -1,7 +1,7 @@
 import { api } from "../utils/generateApi";
 
 export const submitTransaction = api({
-  methodName: "submitTransactionV2",
+  methodName: "submit",
   method: "post",
   path: "/v2/tx/submit",
 });
