@@ -110,7 +110,7 @@ export const VirtualList = <T,>({
 
     const index = listItems.findIndex((item) => itemKey(item) === expandedItemKey);
     if (index !== -1) {
-      listRef.current.scrollTo({ index });
+      listRef.current.scrollTo({ index, align: "top" });
     }
   }, [expandedItemKey, listItems, itemKey]);
 
