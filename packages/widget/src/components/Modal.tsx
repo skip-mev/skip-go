@@ -81,9 +81,11 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
         data-root-id={rootId}
         onAnimationEnd={() => {
           if (!modal.visible) {
-            setTimeout(() => {
-              modal.remove();
-            }, 0);
+            // this is a hack to avoid an after image on windows
+            if (modalRef.current) {
+              modalRef.current.style.display = "none";
+            }
+            modal.remove();
           }
         }}
       >
@@ -225,6 +227,8 @@ const StyledOverlay = styled.div<{
       /* For Internet Explorer and Edge */
       -ms-overflow-style: none;
     `};
+
+  pointer-events: ${({ open }) => (open ? "auto" : "none")};
 `;
 
 const StyledContent = styled.div<{
