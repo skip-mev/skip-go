@@ -358,19 +358,6 @@ export const SwapPage = () => {
     setError,
   ]);
 
-  const historyPageButton = useMemo(() => {
-    if (txHistory.length === 0) return;
-
-    return {
-      label: "History",
-      icon: ICONS.history,
-      onClick: () => {
-        track("swap page: history button - clicked");
-        setCurrentPage(Routes.TransactionHistoryPage);
-      },
-    };
-  }, [setCurrentPage, txHistory]);
-
   return (
     <Column
       gap={5}

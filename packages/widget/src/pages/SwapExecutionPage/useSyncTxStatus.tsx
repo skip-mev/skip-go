@@ -4,7 +4,7 @@ import {
   swapExecutionStateAtom,
   skipSubmitSwapExecutionAtom,
 } from "@/state/swapExecutionPage";
-import { getClientOperations, ClientOperation } from "@/utils/clientType";
+import { getClientOperations, ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useMemo, useEffect } from "react";
 import { TxsStatus } from "./useBroadcastedTxs";
@@ -18,8 +18,12 @@ export const useSyncTxStatus = ({
 }) => {
   const transferEvents = statusData?.transferEvents;
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
-  const { route, transactionDetailsArray, overallStatus, transactionHistoryIndex } =
-    useAtomValue(swapExecutionStateAtom);
+  const {
+    route,
+    transactionDetailsArray,
+    overallStatus,
+    transactionHistoryIndex: currentTransactionHistoryIndex,
+  } = useAtomValue(swapExecutionStateAtom);
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const txHistory = useAtomValue(transactionHistoryAtom);
@@ -73,12 +77,17 @@ export const useSyncTxStatus = ({
 
   useEffect(() => {
     if (computedSwapStatus) {
-      const index = historyIndex ?? transactionHistoryIndex;
-      setTransactionHistory(historyIndex ?? transactionHistoryIndex, {
+      const index = historyIndex ?? currentTransactionHistoryIndex;
+
+      const newTxHistoryItem = {
         ...txHistory[index],
-        status: computedSwapStatus,
-      });
-      if (!historyIndex) {
+        ...statusData,
+        status: computedSwapStatus as SimpleStatus,
+      };
+      const oldTxHistoryItem = txHistory[index];
+
+      if (JSON.stringify(newTxHistoryItem) !== JSON.stringify(oldTxHistoryItem)) {
+        setTransactionHistory(index, newTxHistoryItem);
         setOverallStatus(computedSwapStatus);
       }
     }
@@ -88,10 +97,10 @@ export const useSyncTxStatus = ({
     computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
-    transactionHistoryIndex,
-    historyIndex,
     txHistory,
     statusData,
     setTransactionHistory,
+    historyIndex,
+    currentTransactionHistoryIndex,
   ]);
 };

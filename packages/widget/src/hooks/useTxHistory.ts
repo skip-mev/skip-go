@@ -32,7 +32,11 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
     ...txHistoryItem,
   };
 
-  const shouldFetchStatus = !txHistoryItem?.isSettled && txs !== undefined && chainIdFound;
+  const shouldFetchStatus =
+    !txHistoryItem?.isSettled &&
+    txs !== undefined &&
+    txHistoryItem?.signatures === txHistoryItem?.route?.txsRequired &&
+    chainIdFound;
 
   const { data, isFetching, isPending } = useBroadcastedTxsStatus({
     txsRequired,

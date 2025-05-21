@@ -59,7 +59,7 @@ export const TransactionHistoryPage = () => {
               }}
             />
           )}
-          itemKey={(item) => item?.transactionDetails?.[0]?.txHash}
+          itemKey={(item) => item?.transactionDetails?.[0]?.txHash ?? item.timestamp}
           expandedItemKey={
             itemIndexToShowDetail
               ? historyList[itemIndexToShowDetail]?.transactionDetails?.[0]?.txHash
