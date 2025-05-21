@@ -1,7 +1,7 @@
 import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "@/state/errorPage";
 import { goFastWarningAtom } from "@/state/swapPage";
@@ -45,7 +45,7 @@ export const ErrorPageGoFastWarning = ({
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

@@ -57,7 +57,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         sourceAssetChainId,
         destAssetDenom,
         destAssetChainId,
-      },
+      } = {},
       timestamp,
       transactionDetails,
     } = txHistoryItem;
@@ -66,7 +66,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
     const chainId = transactionDetails?.[0]?.chainId;
     const chainType = chains?.find((chain) => chain.chainId === chainId)?.chainType;
     const derivedExplorerLink = createExplorerLink({
-      txHash: initialTxHash,
+      txHash: initialTxHash ?? "",
       chainId: chainId,
       chainType,
     });

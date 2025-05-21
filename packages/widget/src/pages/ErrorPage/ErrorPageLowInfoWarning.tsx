@@ -3,10 +3,10 @@ import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { track } from "@amplitude/analytics-browser";
 import { RouteResponse } from "@skip-go/client";
+import { PageHeader } from "@/components/PageHeader";
 
 export type ErrorPageLowInfoWarningProps = {
   onClickContinue: () => void;
@@ -42,7 +42,7 @@ export const ErrorPageLowInfoWarning = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

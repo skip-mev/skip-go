@@ -2,7 +2,7 @@ import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "@/state/errorPage";
 import { track } from "@amplitude/analytics-browser";
@@ -23,7 +23,7 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

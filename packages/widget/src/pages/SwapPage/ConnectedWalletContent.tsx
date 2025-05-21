@@ -32,7 +32,7 @@ export const ConnectedWalletContent = () => {
     if (sourceBalance?.error?.message) return "--";
     if (sourceBalance === undefined) return;
 
-    const formattedBalanceAmount = formatDisplayAmount(sourceBalance?.formattedAmount)
+    const formattedBalanceAmount = formatDisplayAmount(sourceBalance?.formattedAmount);
 
     return formattedBalanceAmount + symbol;
   }, [sourceBalance, sourceDetails?.symbol]);
