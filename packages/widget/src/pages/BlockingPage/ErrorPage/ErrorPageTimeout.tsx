@@ -1,15 +1,15 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
-import { errorAtom } from "@/state/errorPage";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
+import { blockingPageAtom } from "@/state/blockingPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
+import { useBroadcastedTxsStatus } from "../../SwapExecutionPage/useBroadcastedTxs";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
@@ -23,7 +23,7 @@ export type ErrorPageTimeoutProps = {
 
 export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPageTimeoutProps) => {
   const theme = useTheme();
-  const [error, setError] = useAtom(errorAtom);
+  const [blockingPage, setBlockingPage] = useAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
@@ -34,11 +34,11 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
   });
 
   useEffect(() => {
-    if (error && data?.isSettled) {
+    if (blockingPage && data?.isSettled) {
       track("error page: transaction timeover - transaction settled");
-      setError(undefined);
+      setBlockingPage(undefined);
     }
-  }, [data?.isSettled, error, setError]);
+  }, [data?.isSettled, blockingPage, setBlockingPage]);
 
   return (
     <>
@@ -48,13 +48,13 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
           icon: ICONS.thinArrow,
           onClick: () => {
             track("error page: transaction timeover - header back button clicked");
-            setError(undefined);
+            setBlockingPage(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="Sorry, your transaction is taking longer than usual."
         description={
           <>

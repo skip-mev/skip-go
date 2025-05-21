@@ -1,11 +1,11 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { errorAtom } from "@/state/errorPage";
+import { blockingPageAtom } from "@/state/blockingPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
@@ -17,7 +17,7 @@ export type ErrorPageUnexpectedProps = {
 
 export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedProps) => {
   const theme = useTheme();
-  const setErrorAtom = useSetAtom(errorAtom);
+  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
   }, [error?.message]);
 
   const onClickRetry = () => {
-    setErrorAtom(undefined);
+    setBlockingPageAtom(undefined);
     setCurrentPage(Routes.SwapPage);
   };
 
@@ -37,13 +37,13 @@ export const ErrorPageUnexpected = ({ error, onClickBack }: ErrorPageUnexpectedP
           icon: ICONS.thinArrow,
           onClick: () => {
             track("error page: unexpected error - header back button clicked");
-            setErrorAtom(undefined);
+            setBlockingPageAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="An unexpected error has occurred"
         description={error?.message}
         icon={ICONS.triangleWarning}

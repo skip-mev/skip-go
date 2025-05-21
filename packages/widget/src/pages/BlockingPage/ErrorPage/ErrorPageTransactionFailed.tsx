@@ -1,12 +1,12 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
-import { errorAtom } from "@/state/errorPage";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
+import { blockingPageAtom } from "@/state/blockingPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
@@ -25,9 +25,8 @@ export const ErrorPageTransactionFailed = ({
   onClickContactSupport,
   onClickBack,
 }: ErrorPageTransactionFailedProps) => {
-
   const theme = useTheme();
-  const setErrorAtom = useSetAtom(errorAtom);
+  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
@@ -38,7 +37,7 @@ export const ErrorPageTransactionFailed = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             track("error page: transaction failed - header back button clicked");
-            setErrorAtom(undefined);
+            setBlockingPageAtom(undefined);
             if (onClickBack) {
               onClickBack();
             }
@@ -46,7 +45,7 @@ export const ErrorPageTransactionFailed = ({
           },
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="Transaction failed"
         description={
           <>

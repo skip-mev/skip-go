@@ -1,7 +1,7 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { errorAtom } from "./errorPage";
+import { blockingPageAtom } from "./blockingPage";
 import { currentPageAtom, Routes } from "./router";
 import { ClientAsset, skipAssetsAtom } from "./skipClient";
 import {
@@ -65,17 +65,17 @@ const skipRouteRequestAtom = atom<RouteRequest | undefined>((get) => {
   const amount =
     direction === "swap-in"
       ? {
-        amountIn: convertHumanReadableAmountToCryptoAmount(
-          sourceAssetAmount ?? "0",
-          sourceAsset.decimals,
-        ),
-      }
+          amountIn: convertHumanReadableAmountToCryptoAmount(
+            sourceAssetAmount ?? "0",
+            sourceAsset.decimals,
+          ),
+        }
       : {
-        amountOut: convertHumanReadableAmountToCryptoAmount(
-          destinationAssetAmount ?? "0",
-          destinationAsset.decimals,
-        ),
-      };
+          amountOut: convertHumanReadableAmountToCryptoAmount(
+            destinationAssetAmount ?? "0",
+            destinationAsset.decimals,
+          ),
+        };
 
   return {
     ...amount,
@@ -104,20 +104,22 @@ export const routeConfigAtom = atom<WidgetRouteConfig>({
   timeoutSeconds: undefined,
 });
 
-export const _skipRouteAtom = atomWithQuery((get) => {
+export const _skipRouteAtom: ReturnType<
+  typeof atomWithQuery<Awaited<ReturnType<typeof route> | CaughtRouteError>>
+> = atomWithQuery((get) => {
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
-  const error = get(errorAtom);
+  const blockingPage = get(blockingPageAtom);
   const routeConfig = get(routeConfigAtom);
-  const swapSettings = get(swapSettingsAtom)
+  const swapSettings = get(swapSettingsAtom);
 
   const queryEnabled =
     params !== undefined &&
     (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
     !isInvertingSwap &&
     currentPage === Routes.SwapPage &&
-    error === undefined;
+    blockingPage === undefined;
 
   return {
     queryKey: ["skipRoute", params, routeConfig, swapSettings],
@@ -147,7 +149,12 @@ export const _skipRouteAtom = atomWithQuery((get) => {
   };
 });
 
-export const skipRouteAtom = atom((get) => {
+export const skipRouteAtom = atom<{
+  data?: RouteResponse | undefined;
+  isError: boolean;
+  error?: Error | null;
+  isLoading: boolean;
+}>((get) => {
   const { data, isError, error, isFetching, isPending } = get(_skipRouteAtom);
   const caughtError = data as CaughtRouteError;
   const routeResponse = data as RouteResponse;

@@ -3,7 +3,7 @@ import { Column } from "@/components/Layout";
 import { iconMap, ICONS } from "@/icons";
 import { SmallText, Text } from "@/components/Typography";
 
-export type ErrorPageContentProps = {
+export type BlockingPageContentProps = {
   icon?: ICONS;
   title: string | React.ReactNode;
   description: string | React.ReactNode;
@@ -11,13 +11,13 @@ export type ErrorPageContentProps = {
   textColor?: string;
 };
 
-export const ErrorPageContent = ({
+export const BlockingPageContent = ({
   title,
   description,
   textColor,
   backgroundColor,
   icon = ICONS.none,
-}: ErrorPageContentProps) => {
+}: BlockingPageContentProps) => {
   const theme = useTheme();
   textColor ??= theme.primary.text.normal;
   backgroundColor ??= theme.primary.background.normal;

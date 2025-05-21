@@ -8,7 +8,7 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import { currentPageAtom, Routes } from "@/state/router";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { ClientOperation } from "@/utils/clientType";
@@ -42,7 +42,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
   });
 
   const theme = useTheme();
-  const setError = useSetAtom(errorAtom);
+  const setBlockingPage = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route);
@@ -95,9 +95,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       track("swap execution page: confirm button - clicked", { route });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
-          track("error page: additional signing required", { route });
-          setError({
-            errorType: ErrorType.AdditionalSigningRequired,
+          track("warning page: additional signing required", { route });
+          setBlockingPage({
+            blockingType: BlockingType.AdditionalSigningRequired,
             onClickContinue: () => submitExecuteRouteMutation(),
             signaturesRequired: route.txsRequired,
           });

@@ -1,10 +1,10 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { useSetAtom } from "jotai";
-import { errorAtom } from "@/state/errorPage";
+import { blockingPageAtom } from "@/state/blockingPage";
 import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageAuthFailedProps = {
@@ -12,12 +12,12 @@ export type ErrorPageAuthFailedProps = {
 };
 
 export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) => {
-  const setErrorAtom = useSetAtom(errorAtom);
+  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const theme = useTheme();
 
   const handleOnClickBack = () => {
     track("error page: user rejected request - back button clicked");
-    setErrorAtom(undefined);
+    setBlockingPageAtom(undefined);
     onClickBack?.();
   };
 
@@ -30,7 +30,7 @@ export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) =
           onClick: handleOnClickBack,
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="Transaction failed"
         description="User rejected authentication request"
         icon={ICONS.triangleWarning}

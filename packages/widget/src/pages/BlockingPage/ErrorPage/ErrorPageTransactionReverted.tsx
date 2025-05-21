@@ -1,4 +1,4 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -6,9 +6,9 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
-import { errorAtom } from "@/state/errorPage";
+import { blockingPageAtom } from "@/state/blockingPage";
 import { useSetAtom } from "jotai";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
@@ -26,7 +26,7 @@ export const ErrorPageTransactionReverted = ({
   onClickContinueTransaction,
   onClickBack,
 }: ErrorPageTransactionRevertedProps) => {
-  const setErrorAtom = useSetAtom(errorAtom);
+  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
 
@@ -44,13 +44,13 @@ export const ErrorPageTransactionReverted = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             track("error page: transaction reverted - header back button clicked");
-            setErrorAtom(undefined);
+            setBlockingPageAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="Action Required"
         description={
           <>

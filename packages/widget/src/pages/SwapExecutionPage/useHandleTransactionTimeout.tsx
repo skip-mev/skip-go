@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue, useSetAtom } from "jotai";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
 import { track } from "@amplitude/analytics-browser";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
+  const setError = useSetAtom(blockingPageAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [transactionTimeoutTimer, setTransactionTimeoutTimer] = useState<
     NodeJS.Timeout | undefined
@@ -25,7 +25,7 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
         () => {
           track("error page: transaction overtime", { route });
           setError({
-            errorType: ErrorType.Timeout,
+            blockingType: BlockingType.Timeout,
             onClickBack: () => {
               setOverallStatus("unconfirmed");
             },

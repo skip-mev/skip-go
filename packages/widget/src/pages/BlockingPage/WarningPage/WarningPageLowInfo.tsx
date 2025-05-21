@@ -1,24 +1,24 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { track } from "@amplitude/analytics-browser";
 import { RouteResponse } from "@skip-go/client";
 
-export type ErrorPageLowInfoWarningProps = {
+export type WarningPageLowInfoProps = {
   onClickContinue: () => void;
   onClickBack: () => void;
   route: RouteResponse;
 };
 
-export const ErrorPageLowInfoWarning = ({
+export const WarningPageLowInfo = ({
   onClickContinue,
   onClickBack,
   route,
-}: ErrorPageLowInfoWarningProps) => {
+}: WarningPageLowInfoProps) => {
   const theme = useTheme();
   const {
     amountIn,
@@ -47,12 +47,12 @@ export const ErrorPageLowInfoWarning = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: low info warning - header back button clicked");
+            track("warning page: low info warning - header back button clicked");
             onClickBack();
           },
         }}
       />
-      <ErrorPageContent
+      <BlockingPageContent
         title="Warning: Incomplete Price Data"
         description={
           <>
@@ -65,7 +65,7 @@ export const ErrorPageLowInfoWarning = ({
             </SmallText>
             <SmallTextButton
               onClick={() => {
-                track("error page: low info warning - continue anyway clicked");
+                track("warning page: low info warning - continue anyway clicked");
                 onClickContinue();
               }}
               color={theme.primary.text.lowContrast}
@@ -82,7 +82,7 @@ export const ErrorPageLowInfoWarning = ({
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("error page: low info warning - main back button clicked");
+          track("warning page: low info warning - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.warning.text}

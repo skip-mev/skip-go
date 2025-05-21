@@ -24,7 +24,7 @@ import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
@@ -61,7 +61,7 @@ export const SwapPage = () => {
   const isInvertingSwap = useAtomValue(isInvertingSwapAtom);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
+  const setError = useSetAtom(blockingPageAtom);
   const { isFetching, isPending } = useAtomValue(skipAllBalancesAtom);
   const isLoadingBalances = isFetching && isPending;
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
@@ -252,9 +252,9 @@ export const SwapPage = () => {
       });
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
-        track("error page: cosmos ledger warning", { route });
+        track("warning page: cosmos ledger warning", { route });
         setError({
-          errorType: ErrorType.CosmosLedgerWarning,
+          blockingType: BlockingType.CosmosLedgerWarning,
           onClickBack: () => {
             setError(undefined);
           },
@@ -262,9 +262,9 @@ export const SwapPage = () => {
         return;
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING") {
-        track("error page: bad price warning", { route });
+        track("warning page: bad price warning", { route });
         setError({
-          errorType: ErrorType.BadPriceWarning,
+          blockingType: BlockingType.BadPriceWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
@@ -280,9 +280,9 @@ export const SwapPage = () => {
       }
 
       if (route?.warning?.type === "LOW_INFO_WARNING") {
-        track("error page: low info warning", { route });
+        track("warning page: low info warning", { route });
         setError({
-          errorType: ErrorType.LowInfoWarning,
+          blockingType: BlockingType.LowInfoWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
@@ -298,9 +298,9 @@ export const SwapPage = () => {
       }
 
       if (showGoFastWarning && isGoFast) {
-        track("error page: go fast warning", { route });
+        track("warning page: go fast warning", { route });
         setError({
-          errorType: ErrorType.GoFastWarning,
+          blockingType: BlockingType.GoFastWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
