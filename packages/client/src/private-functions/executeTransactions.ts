@@ -8,6 +8,7 @@ import { executeSvmTransaction } from "./svm/executeSvmTransaction";
 import { validateGasBalances } from "./validateGasBalances";
 import { waitForTransaction } from "./waitForTransaction";
 import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
+import { venues } from "src/api/getVenues";
 
 export const executeTransactions = async (options: ExecuteRouteOptions & { txs?: Tx[] }) => {
   const {
@@ -138,10 +139,17 @@ const getDefaultFallbackGasAmount = async (chainId: string, chainType: ChainType
   }
   if (chainType !== ChainType.Cosmos) return undefined;
 
+  const venuesResult = await venues();
+  const isSwapChain = venuesResult?.some((venue: { chainId?: string }) => venue.chainId === chainId) ?? false;
+  
+  const defaultGasAmount = Math.ceil(
+    isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
+  );
+
   // Special case for carbon-1
   if (chainId === "carbon-1") {
     return COSMOS_GAS_AMOUNT.CARBON;
   }
 
-  return COSMOS_GAS_AMOUNT.SWAP;
+  return defaultGasAmount;
 };
