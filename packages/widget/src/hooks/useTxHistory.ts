@@ -25,6 +25,8 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   const txsRequired = txHistoryItem?.route?.txsRequired;
 
+  const allTxsSigned = txHistoryItem?.signatures === txHistoryItem?.route?.txsRequired;
+
   let statusData: TxsStatus = {
     isSuccess: false,
     isSettled: false,
@@ -32,11 +34,13 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
     ...txHistoryItem,
   };
 
+  if (!allTxsSigned) {
+    statusData.isSettled = true;
+    statusData.isSuccess = false;
+  }
+
   const shouldFetchStatus =
-    !txHistoryItem?.isSettled &&
-    txs !== undefined &&
-    txHistoryItem?.signatures === txHistoryItem?.route?.txsRequired &&
-    chainIdFound;
+    !txHistoryItem?.isSettled && txs !== undefined && allTxsSigned && chainIdFound;
 
   const { data, isFetching, isPending } = useBroadcastedTxsStatus({
     txsRequired,
