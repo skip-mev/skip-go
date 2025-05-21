@@ -1,4 +1,4 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
@@ -52,7 +52,7 @@ export const WarningPageLowInfo = ({
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title="Warning: Incomplete Price Data"
         description={
           <>

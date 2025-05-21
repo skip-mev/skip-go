@@ -1,4 +1,4 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -6,7 +6,7 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
-import { blockingPageAtom } from "@/state/blockingPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
@@ -26,7 +26,7 @@ export const UnexpectedErrorPageTransactionFailed = ({
   onClickBack,
 }: UnexpectedErrorPageTransactionFailedProps) => {
   const theme = useTheme();
-  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
+  const setErrorWarningAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   return (
@@ -37,7 +37,7 @@ export const UnexpectedErrorPageTransactionFailed = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             track("unexpected error page: transaction failed - header back button clicked");
-            setBlockingPageAtom(undefined);
+            setErrorWarningAtom(undefined);
             if (onClickBack) {
               onClickBack();
             }
@@ -45,7 +45,7 @@ export const UnexpectedErrorPageTransactionFailed = ({
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title="Transaction failed"
         description={
           <>

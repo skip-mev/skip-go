@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
@@ -9,7 +9,7 @@ import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPag
 import { skipAssetsAtom } from "@/state/skipClient";
 
 export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
-  const setBlockingPage = useSetAtom(blockingPageAtom);
+  const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAssetAtom = useSetAtom(sourceAssetAtom);
   const setDebouncedSourceAssetAmountAtom = useSetAtom(debouncedSourceAssetAmountAtom);
@@ -42,8 +42,8 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
           transferAssetRelease: statusData.transferAssetRelease,
           lastTransaction,
         });
-        setBlockingPage({
-          blockingType: BlockingType.TransactionReverted,
+        setErrorWarning({
+          errorWarningType: ErrorWarningType.TransactionReverted,
           onClickContinueTransaction: () => {
             setSourceAssetAtom(sourceClientAsset);
             setDebouncedSourceAssetAmountAtom(
@@ -52,7 +52,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
               true,
             );
             setCurrentPage(Routes.SwapPage);
-            setBlockingPage(undefined);
+            setErrorWarning(undefined);
           },
           explorerUrl: lastTransaction?.explorerLink ?? "",
           transferAssetRelease: statusData.transferAssetRelease,
@@ -61,8 +61,8 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       }
 
       track("unexpected error page: transaction failed", { lastTransaction });
-      setBlockingPage({
-        blockingType: BlockingType.TransactionFailed,
+      setErrorWarning({
+        errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
         explorerLink: lastTransaction?.explorerLink ?? "",
         txHash: lastTransaction?.txHash,
@@ -74,7 +74,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     lastTransaction?.txHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
-    setBlockingPage,
+    setErrorWarning,
     setSourceAssetAtom,
     sourceClientAsset,
     statusData?.isSettled,

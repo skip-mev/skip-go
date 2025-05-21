@@ -1,8 +1,8 @@
-import { BlockingPage } from "@/pages/BlockingPage/BlockingPage";
+import { ErrorWarningPage } from "@/pages/ErrorWarningPage/ErrorWarningPage";
 import { SwapExecutionPage } from "@/pages/SwapExecutionPage/SwapExecutionPage";
 import { SwapPage } from "@/pages/SwapPage/SwapPage";
 import { TransactionHistoryPage } from "@/pages/TransactionHistoryPage/TransactionHistoryPage";
-import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { Routes, currentPageAtom } from "@/state/router";
 import { useAtom } from "jotai";
 import { ErrorBoundary } from "react-error-boundary";
@@ -12,10 +12,10 @@ import { track } from "@amplitude/analytics-browser";
 export const Router = () => {
   useKeepWalletStateSynced();
   const [currentPage] = useAtom(currentPageAtom);
-  const [blockingPage, setBlockingPage] = useAtom(blockingPageAtom);
+  const [errorWarning, setErrorWarning] = useAtom(errorWarningAtom);
 
-  if (blockingPage) {
-    return <BlockingPage />;
+  if (errorWarning) {
+    return <ErrorWarningPage />;
   }
 
   switch (currentPage) {
@@ -25,7 +25,7 @@ export const Router = () => {
           fallback={null}
           onError={(error) => {
             track("unexpected error page: unexpected error from swap page", { error });
-            setBlockingPage({ blockingType: BlockingType.Unexpected, error });
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
           }}
         >
           <SwapPage />
@@ -37,7 +37,7 @@ export const Router = () => {
           fallback={null}
           onError={(error) => {
             track("unexpected error page: unexpected error from execution page", { error });
-            setBlockingPage({ blockingType: BlockingType.Unexpected, error });
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
           }}
         >
           <SwapExecutionPage />
@@ -51,7 +51,7 @@ export const Router = () => {
             track("unexpected error page: unexpected error from transaction history page", {
               error,
             });
-            setBlockingPage({ blockingType: BlockingType.Unexpected, error });
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
           }}
         >
           <TransactionHistoryPage />

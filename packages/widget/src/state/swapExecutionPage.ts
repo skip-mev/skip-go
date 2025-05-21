@@ -13,7 +13,7 @@ import {
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
-import { blockingPageAtom, BlockingType } from "./blockingPage";
+import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
@@ -234,8 +234,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       if (isUserRejectedRequestError(error)) {
         track("expected error page: user rejected request");
         if (currentPage === Routes.SwapExecutionPage) {
-          set(blockingPageAtom, {
-            blockingType: BlockingType.AuthFailed,
+          set(errorWarningAtom, {
+            errorWarningType: ErrorWarningType.AuthFailed,
             onClickBack: () => {
               set(setOverallStatusAtom, "unconfirmed");
               set(clearIsValidatingGasBalanceAtom);
@@ -246,8 +246,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
       ) {
         track("expected error page: insufficient gas balance");
-        set(blockingPageAtom, {
-          blockingType: BlockingType.InsufficientBalanceForGas,
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.InsufficientBalanceForGas,
           error: error as Error,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
@@ -255,8 +255,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         });
       } else if (lastTransaction?.explorerLink) {
         track("unexpected error page: transaction failed", { lastTransaction });
-        set(blockingPageAtom, {
-          blockingType: BlockingType.TransactionFailed,
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.TransactionFailed,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
           },
@@ -268,8 +268,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         });
       } else {
         track("unexpected error page: unexpected error", { error, route });
-        set(blockingPageAtom, {
-          blockingType: BlockingType.Unexpected,
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.Unexpected,
           error: error as Error,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");

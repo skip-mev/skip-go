@@ -1,7 +1,7 @@
 import { convertHumanReadableAmountToCryptoAmount } from "@/utils/crypto";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { blockingPageAtom } from "./blockingPage";
+import { errorWarningAtom } from "./errorWarning";
 import { currentPageAtom, Routes } from "./router";
 import { ClientAsset, skipAssetsAtom } from "./skipClient";
 import {
@@ -110,7 +110,7 @@ export const _skipRouteAtom: ReturnType<
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
-  const blockingPage = get(blockingPageAtom);
+  const blockingPage = get(errorWarningAtom);
   const routeConfig = get(routeConfigAtom);
   const swapSettings = get(swapSettingsAtom);
 

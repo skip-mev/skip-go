@@ -1,9 +1,9 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
-import { blockingPageAtom } from "@/state/blockingPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import { track } from "@amplitude/analytics-browser";
@@ -20,15 +20,15 @@ export const WarningPageTradeAdditionalSigningRequired = ({
   onClickBack,
 }: WarningPageTradeAdditionalSigningRequiredProps) => {
   const theme = useTheme();
-  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
+  const setErrorWarningAtom = useSetAtom(errorWarningAtom);
 
   const handleOnClickBack = () => {
-    setBlockingPageAtom(undefined);
+    setErrorWarningAtom(undefined);
     onClickBack?.();
   };
 
   const handleOnClickContinue = () => {
-    setBlockingPageAtom(undefined);
+    setErrorWarningAtom(undefined);
     onClickContinue();
   };
 
@@ -44,7 +44,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title="This transaction requires additional signing steps"
         description={
           <SmallText textWrap="balance" textAlign="center" color={theme.warning.text}>

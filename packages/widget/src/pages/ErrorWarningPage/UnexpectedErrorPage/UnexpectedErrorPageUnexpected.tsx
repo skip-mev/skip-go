@@ -1,7 +1,7 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { blockingPageAtom } from "@/state/blockingPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
@@ -20,7 +20,7 @@ export const UnexpectedErrorPageUnexpected = ({
   onClickBack,
 }: UnexpectedErrorPageUnexpectedProps) => {
   const theme = useTheme();
-  const setBlockingPageAtom = useSetAtom(blockingPageAtom);
+  const setErrorWarningAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const UnexpectedErrorPageUnexpected = ({
   }, [error?.message]);
 
   const onClickRetry = () => {
-    setBlockingPageAtom(undefined);
+    setErrorWarningAtom(undefined);
     setCurrentPage(Routes.SwapPage);
   };
 
@@ -40,13 +40,13 @@ export const UnexpectedErrorPageUnexpected = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             track("unexpected error page: unexpected error - header back button clicked");
-            setBlockingPageAtom(undefined);
+            setErrorWarningAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title="An unexpected error has occurred"
         description={error?.message}
         icon={ICONS.triangleWarning}

@@ -6,7 +6,7 @@ import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
-import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 
@@ -107,14 +107,16 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
   const Component = component;
 
   const WrappedComponent = (props: T) => {
-    const setBlockingPage = useSetAtom(blockingPageAtom);
+    const setErrorWarning = useSetAtom(errorWarningAtom);
     const theme = useAtomValue(themeAtom);
 
     return (
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) => setBlockingPage({ blockingType: BlockingType.Unexpected, error })}
+          onError={(error) =>
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error })
+          }
         >
           <Component {...props} />
         </ErrorBoundary>

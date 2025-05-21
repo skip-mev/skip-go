@@ -1,4 +1,4 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
@@ -25,7 +25,7 @@ export const WarningPageCosmosLedger = ({ onClickBack }: WarningCosmosLedgerProp
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title={"Warning: Ledger not supported"}
         description={
           <>

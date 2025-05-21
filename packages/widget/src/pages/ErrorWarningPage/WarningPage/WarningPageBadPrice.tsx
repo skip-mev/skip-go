@@ -1,4 +1,4 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
@@ -120,7 +120,7 @@ export const WarningPageBadPrice = ({
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title={title}
         description={
           <>

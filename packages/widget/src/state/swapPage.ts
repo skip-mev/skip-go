@@ -9,7 +9,7 @@ import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
-import { blockingPageAtom } from "./blockingPage";
+import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -104,7 +104,7 @@ export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: b
 
   set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
-  set(blockingPageAtom, undefined);
+  set(errorWarningAtom, undefined);
 };
 
 export const sourceAssetAmountAtom = atom(

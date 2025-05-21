@@ -1,4 +1,4 @@
-import { BlockingPageContent } from "@/pages/BlockingPage/BlockingPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -6,7 +6,7 @@ import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
 import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
-import { blockingPageAtom } from "@/state/blockingPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useBroadcastedTxsStatus } from "../../SwapExecutionPage/useBroadcastedTxs";
@@ -27,7 +27,7 @@ export const UnexpectedErrorPageTimeout = ({
   onClickBack,
 }: UnexpectedErrorPageTimeoutProps) => {
   const theme = useTheme();
-  const [blockingPage, setBlockingPage] = useAtom(blockingPageAtom);
+  const [errorWarning, setErrorWarning] = useAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
@@ -38,11 +38,11 @@ export const UnexpectedErrorPageTimeout = ({
   });
 
   useEffect(() => {
-    if (blockingPage && data?.isSettled) {
+    if (errorWarning && data?.isSettled) {
       track("unexpected error page: transaction timeover - transaction settled");
-      setBlockingPage(undefined);
+      setErrorWarning(undefined);
     }
-  }, [data?.isSettled, blockingPage, setBlockingPage]);
+  }, [data?.isSettled, errorWarning, setErrorWarning]);
 
   return (
     <>
@@ -52,13 +52,13 @@ export const UnexpectedErrorPageTimeout = ({
           icon: ICONS.thinArrow,
           onClick: () => {
             track("unexpected error page: transaction timeover - header back button clicked");
-            setBlockingPage(undefined);
+            setErrorWarning(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <BlockingPageContent
+      <ErrorWarningPageContent
         title="Sorry, your transaction is taking longer than usual."
         description={
           <>
