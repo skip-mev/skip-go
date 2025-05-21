@@ -7,16 +7,16 @@ import { useSetAtom } from "jotai";
 import { blockingPageAtom } from "@/state/blockingPage";
 import { track } from "@amplitude/analytics-browser";
 
-export type ErrorPageAuthFailedProps = {
+export type ExpectedErrorPageAuthFailedProps = {
   onClickBack: () => void;
 };
 
-export const ErrorPageAuthFailed = ({ onClickBack }: ErrorPageAuthFailedProps) => {
+export const ExpectedErrorPageAuthFailed = ({ onClickBack }: ExpectedErrorPageAuthFailedProps) => {
   const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const theme = useTheme();
 
   const handleOnClickBack = () => {
-    track("error page: user rejected request - back button clicked");
+    track("expected error page: user rejected request - back button clicked");
     setBlockingPageAtom(undefined);
     onClickBack?.();
   };

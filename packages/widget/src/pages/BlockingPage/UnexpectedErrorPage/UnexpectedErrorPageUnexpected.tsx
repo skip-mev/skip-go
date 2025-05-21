@@ -10,15 +10,15 @@ import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
 
-export type InsufficientBalanceForGasProps = {
+export type UnexpectedErrorPageUnexpectedProps = {
   error?: Error;
   onClickBack?: () => void;
 };
 
-export const ErrorPageInsufficientGasBalance = ({
+export const UnexpectedErrorPageUnexpected = ({
   error,
   onClickBack,
-}: InsufficientBalanceForGasProps) => {
+}: UnexpectedErrorPageUnexpectedProps) => {
   const theme = useTheme();
   const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -39,7 +39,7 @@ export const ErrorPageInsufficientGasBalance = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: insufficient gas balance - header back button clicked");
+            track("unexpected error page: unexpected error - header back button clicked");
             setBlockingPageAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -47,7 +47,7 @@ export const ErrorPageInsufficientGasBalance = ({
         }}
       />
       <BlockingPageContent
-        title="Insufficient gas balance"
+        title="An unexpected error has occurred"
         description={error?.message}
         icon={ICONS.triangleWarning}
         backgroundColor={theme.error.background}
@@ -57,7 +57,7 @@ export const ErrorPageInsufficientGasBalance = ({
         label="Retry"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: insufficient gas balance - retry button clicked");
+          track("unexpected error page: unexpected error - retry button clicked");
           onClickRetry();
         }}
         backgroundColor={theme.error.text}

@@ -23,7 +23,7 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
       const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
       const timeoutTimer = setTimeout(
         () => {
-          track("error page: transaction overtime", { route });
+          track("unexpected error page: transaction timeover", { route });
           setError({
             blockingType: BlockingType.Timeout,
             onClickBack: () => {

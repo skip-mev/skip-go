@@ -12,19 +12,19 @@ import { useSetAtom } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { track } from "@amplitude/analytics-browser";
 
-export type ErrorPageTransactionFailedProps = {
+export type UnexpectedErrorPageTransactionFailedProps = {
   txHash: string;
   explorerLink: string;
   onClickContactSupport: () => void;
   onClickBack?: () => void;
 };
 
-export const ErrorPageTransactionFailed = ({
+export const UnexpectedErrorPageTransactionFailed = ({
   txHash,
   explorerLink,
   onClickContactSupport,
   onClickBack,
-}: ErrorPageTransactionFailedProps) => {
+}: UnexpectedErrorPageTransactionFailedProps) => {
   const theme = useTheme();
   const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -36,7 +36,7 @@ export const ErrorPageTransactionFailed = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: transaction failed - header back button clicked");
+            track("unexpected error page: transaction failed - header back button clicked");
             setBlockingPageAtom(undefined);
             if (onClickBack) {
               onClickBack();
@@ -56,7 +56,7 @@ export const ErrorPageTransactionFailed = ({
               as={SmallTextButton}
               gap={5}
               onClick={() => {
-                track("error page: transaction failed - explorer link clicked");
+                track("unexpected error page: transaction failed - explorer link clicked");
                 window.open(explorerLink, "_blank");
               }}
               color={theme.primary.text.lowContrast}
@@ -74,7 +74,7 @@ export const ErrorPageTransactionFailed = ({
         label="Contact support"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: transaction failed - contact support button clicked");
+          track("unexpected error page: transaction failed - contact support button clicked");
           onClickContactSupport();
         }}
         backgroundColor={theme.error.text}

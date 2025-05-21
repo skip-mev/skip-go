@@ -232,7 +232,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
-        track("error page: user rejected request");
+        track("expected error page: user rejected request");
         if (currentPage === Routes.SwapExecutionPage) {
           set(blockingPageAtom, {
             blockingType: BlockingType.AuthFailed,
@@ -245,7 +245,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       } else if (
         (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
       ) {
-        track("error page: insufficient balance for gas");
+        track("expected error page: insufficient gas balance");
         set(blockingPageAtom, {
           blockingType: BlockingType.InsufficientBalanceForGas,
           error: error as Error,
@@ -254,7 +254,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (lastTransaction?.explorerLink) {
-        track("error page: transaction failed", { lastTransaction });
+        track("unexpected error page: transaction failed", { lastTransaction });
         set(blockingPageAtom, {
           blockingType: BlockingType.TransactionFailed,
           onClickBack: () => {
@@ -267,7 +267,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else {
-        track("error page: unexpected error", { error, route });
+        track("unexpected error page: unexpected error", { error, route });
         set(blockingPageAtom, {
           blockingType: BlockingType.Unexpected,
           error: error as Error,

@@ -38,7 +38,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   useEffect(() => {
     if (statusData?.isSettled && !statusData?.isSuccess) {
       if (sourceClientAsset) {
-        track("error page: transaction reverted", {
+        track("unexpected error page: transaction reverted", {
           transferAssetRelease: statusData.transferAssetRelease,
           lastTransaction,
         });
@@ -60,7 +60,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
         return;
       }
 
-      track("error page: transaction failed", { lastTransaction });
+      track("unexpected error page: transaction failed", { lastTransaction });
       setBlockingPage({
         blockingType: BlockingType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),

@@ -15,13 +15,17 @@ import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { track } from "@amplitude/analytics-browser";
 
-export type ErrorPageTimeoutProps = {
+export type UnexpectedErrorPageTimeoutProps = {
   txHash: string;
   explorerLink?: string;
   onClickBack: () => void;
 };
 
-export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPageTimeoutProps) => {
+export const UnexpectedErrorPageTimeout = ({
+  txHash,
+  explorerLink,
+  onClickBack,
+}: UnexpectedErrorPageTimeoutProps) => {
   const theme = useTheme();
   const [blockingPage, setBlockingPage] = useAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -35,7 +39,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
 
   useEffect(() => {
     if (blockingPage && data?.isSettled) {
-      track("error page: transaction timeover - transaction settled");
+      track("unexpected error page: transaction timeover - transaction settled");
       setBlockingPage(undefined);
     }
   }, [data?.isSettled, blockingPage, setBlockingPage]);
@@ -47,7 +51,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: transaction timeover - header back button clicked");
+            track("unexpected error page: transaction timeover - header back button clicked");
             setBlockingPage(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -70,7 +74,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
               align="center"
               as={SmallTextButton}
               onClick={() => {
-                track("error page: transaction timeover - view on explorer clicked");
+                track("unexpected error page: transaction timeover - view on explorer clicked");
                 window.open(explorerLink, "_blank");
               }}
               color={theme.primary.text.lowContrast}

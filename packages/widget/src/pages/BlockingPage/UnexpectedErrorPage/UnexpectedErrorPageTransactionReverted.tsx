@@ -13,19 +13,19 @@ import { useSetAtom } from "jotai";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
 
-export type ErrorPageTransactionRevertedProps = {
+export type UnexpectedErrorPageTransactionRevertedProps = {
   explorerUrl: string;
   transferAssetRelease?: TransferAssetRelease;
   onClickContinueTransaction: () => void;
   onClickBack?: () => void;
 };
 
-export const ErrorPageTransactionReverted = ({
+export const UnexpectedErrorPageTransactionReverted = ({
   explorerUrl,
   transferAssetRelease,
   onClickContinueTransaction,
   onClickBack,
-}: ErrorPageTransactionRevertedProps) => {
+}: UnexpectedErrorPageTransactionRevertedProps) => {
   const setBlockingPageAtom = useSetAtom(blockingPageAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
@@ -43,7 +43,7 @@ export const ErrorPageTransactionReverted = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: transaction reverted - header back button clicked");
+            track("unexpected error page: transaction reverted - header back button clicked");
             setBlockingPageAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
@@ -69,7 +69,7 @@ export const ErrorPageTransactionReverted = ({
                 align="center"
                 as={SmallTextButton}
                 onClick={() => {
-                  track("error page: transaction reverted - view on explorer clicked");
+                  track("unexpected error page: transaction reverted - view on explorer clicked");
                   window.open(explorerUrl, "_blank");
                 }}
                 color={theme.primary.text.lowContrast}
@@ -89,7 +89,7 @@ export const ErrorPageTransactionReverted = ({
         backgroundColor={theme.warning.text}
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: transaction reverted - main continue button clicked");
+          track("unexpected error page: transaction reverted - main continue button clicked");
           onClickContinueTransaction();
         }}
       />

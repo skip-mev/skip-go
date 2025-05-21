@@ -24,7 +24,7 @@ export const Router = () => {
         <ErrorBoundary
           fallback={null}
           onError={(error) => {
-            track("error page: unexpected error from swap page", { error });
+            track("unexpected error page: unexpected error from swap page", { error });
             setBlockingPage({ blockingType: BlockingType.Unexpected, error });
           }}
         >
@@ -36,7 +36,7 @@ export const Router = () => {
         <ErrorBoundary
           fallback={null}
           onError={(error) => {
-            track("error page: unexpected error from execution page", { error });
+            track("unexpected error page: unexpected error from execution page", { error });
             setBlockingPage({ blockingType: BlockingType.Unexpected, error });
           }}
         >
@@ -48,7 +48,9 @@ export const Router = () => {
         <ErrorBoundary
           fallback={null}
           onError={(error) => {
-            track("error page: unexpected error from transaction history page", { error });
+            track("unexpected error page: unexpected error from transaction history page", {
+              error,
+            });
             setBlockingPage({ blockingType: BlockingType.Unexpected, error });
           }}
         >
