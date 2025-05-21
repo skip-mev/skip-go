@@ -165,6 +165,14 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         { ...txInfo, explorerLink, status: undefined },
         transactionHistoryIndex,
       );
+
+      set(setTransactionHistoryAtom, transactionHistoryIndex, {
+        route: route as RouteResponse,
+        transactionDetails: [txInfo],
+        timestamp: Date.now(),
+        status: "unconfirmed",
+      });
+
       callbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainId,
         txHash: txInfo.txHash,
