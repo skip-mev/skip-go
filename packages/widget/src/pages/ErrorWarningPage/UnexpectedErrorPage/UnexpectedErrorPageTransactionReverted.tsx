@@ -1,4 +1,4 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
@@ -6,27 +6,27 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
-import { errorAtom } from "@/state/errorPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { useSetAtom } from "jotai";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
 
-export type ErrorPageTransactionRevertedProps = {
+export type UnexpectedErrorPageTransactionRevertedProps = {
   explorerUrl: string;
   transferAssetRelease?: TransferAssetRelease;
   onClickContinueTransaction: () => void;
   onClickBack?: () => void;
 };
 
-export const ErrorPageTransactionReverted = ({
+export const UnexpectedErrorPageTransactionReverted = ({
   explorerUrl,
   transferAssetRelease,
   onClickContinueTransaction,
   onClickBack,
-}: ErrorPageTransactionRevertedProps) => {
-  const setErrorAtom = useSetAtom(errorAtom);
+}: UnexpectedErrorPageTransactionRevertedProps) => {
+  const setErrorWarningAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const theme = useTheme();
 
@@ -43,14 +43,14 @@ export const ErrorPageTransactionReverted = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: transaction reverted - header back button clicked");
-            setErrorAtom(undefined);
+            track("unexpected error page: transaction reverted - header back button clicked");
+            setErrorWarningAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
+      <ErrorWarningPageContent
         title="Action Required"
         description={
           <>
@@ -69,7 +69,7 @@ export const ErrorPageTransactionReverted = ({
                 align="center"
                 as={SmallTextButton}
                 onClick={() => {
-                  track("error page: transaction reverted - view on explorer clicked");
+                  track("unexpected error page: transaction reverted - view on explorer clicked");
                   window.open(explorerUrl, "_blank");
                 }}
                 color={theme.primary.text.lowContrast}
@@ -89,7 +89,7 @@ export const ErrorPageTransactionReverted = ({
         backgroundColor={theme.warning.text}
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: transaction reverted - main continue button clicked");
+          track("unexpected error page: transaction reverted - main continue button clicked");
           onClickContinueTransaction();
         }}
       />
