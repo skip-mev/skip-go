@@ -1,7 +1,7 @@
 import type { TxResult } from "src/types/client-types";
 import type { ExecuteRouteOptions } from "../public-functions/executeRoute";
 import { ClientState } from "../state/clientState";
-import type { TransferStatus, Tx } from "../types/swaggerTypes";
+import { ChainType, type TransferStatus, type Tx } from "../types/swaggerTypes";
 import { executeCosmosTransaction } from "./cosmos/executeCosmosTransaction";
 import { executeEvmTransaction } from "./evm/executeEvmTransaction";
 import { executeSvmTransaction } from "./svm/executeSvmTransaction";
@@ -16,6 +16,10 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     onTransactionCompleted,
     simulate = true,
     batchSimulate = true,
+    getFallbackGasAmount = getDefaultFallbackGasAmount,
+    getCosmosSigner,
+    getEvmSigner,
+    onValidateGasBalance,
   } = options;
 
   if (txs === undefined) {
@@ -58,10 +62,10 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
 
   await validateGasBalances({
     txs,
-    getFallbackGasAmount: options.getFallbackGasAmount,
-    getCosmosSigner: options.getCosmosSigner,
-    getEvmSigner: options.getEvmSigner,
-    onValidateGasBalance: options.onValidateGasBalance,
+    getFallbackGasAmount,
+    getCosmosSigner,
+    getEvmSigner,
+    onValidateGasBalance,
     simulate: simulate,
     disabledChainIds: validateChainIds,
   });
@@ -69,10 +73,10 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
   const validateEnabledChainIds = async (chainId: string) => {
     await validateGasBalances({
       txs,
-      getFallbackGasAmount: options.getFallbackGasAmount,
-      getCosmosSigner: options.getCosmosSigner,
-      getEvmSigner: options.getEvmSigner,
-      onValidateGasBalance: options.onValidateGasBalance,
+      getFallbackGasAmount,
+      getCosmosSigner,
+      getEvmSigner,
+      onValidateGasBalance,
       simulate: simulate,
       enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
     });
@@ -118,4 +122,26 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
       status: txStatusResponse as TransferStatus,
     });
   }
+};
+
+const EVM_GAS_AMOUNT = 150_000;
+
+const COSMOS_GAS_AMOUNT = {
+  DEFAULT: 300_000,
+  SWAP: 2_800_000,
+  CARBON: 1_000_000,
+};
+
+const getDefaultFallbackGasAmount = async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
+  if (chainType === ChainType.Evm) {
+    return EVM_GAS_AMOUNT;
+  }
+  if (chainType !== ChainType.Cosmos) return undefined;
+
+  // Special case for carbon-1
+  if (chainId === "carbon-1") {
+    return COSMOS_GAS_AMOUNT.CARBON;
+  }
+
+  return COSMOS_GAS_AMOUNT.SWAP;
 };
