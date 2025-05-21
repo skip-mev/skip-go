@@ -1,7 +1,7 @@
 import { blockingPageAtom, BlockingType } from "@/state/blockingPage";
 import { useAtom } from "jotai";
 import { WarningPageBadPrice } from "./WarningPage/WarningPageBadPrice";
-import { ExpectedErrorPageAuthFailed } from "./ExpectedErrorPages/ExpectedErrorPageAuthFailed";
+import { ExpectedErrorPageAuthFailed } from "./ExpectedErrorPage/ExpectedErrorPageAuthFailed";
 import { UnexpectedErrorPageTransactionFailed } from "./UnexpectedErrorPage/UnexpectedErrorPageTransactionFailed";
 import { UnexpectedErrorPageUnexpected } from "./UnexpectedErrorPage/UnexpectedErrorPageUnexpected";
 import { useMemo } from "react";
@@ -12,7 +12,7 @@ import { UnexpectedErrorPageTransactionReverted } from "./UnexpectedErrorPage/Un
 import { WarningPageCosmosLedger } from "./WarningPage/WarningPageCosmosLedger";
 import { WarningPageGoFast } from "./WarningPage/WarningPageGoFast";
 import { WarningPageLowInfo } from "./WarningPage/WarningPageLowInfo";
-import { ExpectedErrorPageInsufficientGasBalance } from "./ExpectedErrorPages/ExpectedErrorPageInsufficientGasBalance";
+import { ExpectedErrorPageInsufficientGasBalance } from "./ExpectedErrorPage/ExpectedErrorPageInsufficientGasBalance";
 
 export const BlockingPage = () => {
   const [blockingPage] = useAtom(blockingPageAtom);

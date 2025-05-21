@@ -1,4 +1,4 @@
-import { ExpectedErrorPageAuthFailedProps } from "@/pages/BlockingPage/ExpectedErrorPages/ExpectedErrorPageAuthFailed";
+import { ExpectedErrorPageAuthFailedProps } from "@/pages/BlockingPage/ExpectedErrorPage/ExpectedErrorPageAuthFailed";
 import { WarningCosmosLedgerProps } from "@/pages/BlockingPage/WarningPage/WarningPageCosmosLedger";
 import { WarningPageGoFastProps } from "@/pages/BlockingPage/WarningPage/WarningPageGoFast";
 import { WarningPageTradeAdditionalSigningRequiredProps } from "@/pages/BlockingPage/WarningPage/WarningPageTradeAdditionalSigningRequired";
@@ -8,7 +8,7 @@ import { UnexpectedErrorPageTransactionRevertedProps } from "@/pages/BlockingPag
 import { UnexpectedErrorPageUnexpectedProps } from "@/pages/BlockingPage/UnexpectedErrorPage/UnexpectedErrorPageUnexpected";
 import { atomWithReset } from "jotai/utils";
 import { WarningPageLowInfoProps } from "@/pages/BlockingPage/WarningPage/WarningPageLowInfo";
-import { ExpectedErrorPageInsufficientBalanceForGasProps } from "@/pages/BlockingPage/ExpectedErrorPages/ExpectedErrorPageInsufficientGasBalance";
+import { ExpectedErrorPageInsufficientBalanceForGasProps } from "@/pages/BlockingPage/ExpectedErrorPage/ExpectedErrorPageInsufficientGasBalance";
 import { UnexpectedErrorPageTimeoutProps } from "@/pages/BlockingPage/UnexpectedErrorPage/UnexpectedErrorPageTimeout";
 
 export const blockingPageAtom = atomWithReset<BlockingPageVariants | undefined>(undefined);
