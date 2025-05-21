@@ -1,17 +1,9 @@
 import { atom } from "jotai";
-import { Asset, SkipClient, Chain, SkipClientOptions } from "@skip-go/client";
+import { Asset, assets, bridges, Chain, chains, SkipClientOptions, venues } from "@skip-go/client";
+
 import { atomWithQuery } from "jotai-tanstack-query";
 import { endpointOptions, prodApiUrl } from "@/constants/skipClientDefault";
-import { walletsAtom } from "./wallets";
-import { getConnectedSignersAtom } from "@/state/wallets";
-import { getWallet, WalletType } from "graz";
-import { getWalletClient } from "@wagmi/core";
-import { config } from "@/constants/wagmi";
-import { WalletClient } from "viem";
 import { defaultTheme, Theme } from "@/widget/theme";
-import { solanaWallets } from "@/constants/solana";
-
-type ArgumentTypes<F extends Function> = F extends (...args: infer A) => unknown ? A : never;
 
 export const defaultSkipClientConfig = {
   apiUrl: prodApiUrl,
@@ -19,65 +11,13 @@ export const defaultSkipClientConfig = {
 };
 
 export const skipClientConfigAtom = atom<SkipClientOptions>({
-  apiURL: undefined,
+  apiUrl: undefined,
   endpointOptions: undefined,
 });
 
 export const rootIdAtom = atom<string | undefined>(undefined);
 
 export const themeAtom = atom<Theme>(defaultTheme);
-
-export const skipClientInstanceAtom = atom(new SkipClient());
-
-export const skipClient = atom((get) => {
-  const options = get(skipClientConfigAtom);
-  const wallets = get(walletsAtom);
-  const getSigners = get(getConnectedSignersAtom);
-  const skipClientInstance = get(skipClientInstanceAtom);
-
-  skipClientInstance.updateOptions({
-    ...options,
-    getCosmosSigner: async (chainID) => {
-      if (getSigners?.getCosmosSigner) {
-        return getSigners.getCosmosSigner(chainID);
-      }
-      if (!wallets.cosmos) {
-        throw new Error("getCosmosSigner error: no cosmos wallet");
-      }
-      const wallet = getWallet(wallets.cosmos.walletName as WalletType);
-      if (!wallet) {
-        throw new Error("getCosmosSigner error: wallet not found");
-      }
-      const key = await wallet.getKey(chainID);
-
-      return key.isNanoLedger
-        ? wallet.getOfflineSignerOnlyAmino(chainID)
-        : wallet.getOfflineSigner(chainID);
-    },
-    getEVMSigner: async (chainID) => {
-      if (getSigners?.getEVMSigner) {
-        return getSigners.getEVMSigner(chainID);
-      }
-      const evmWalletClient = (await getWalletClient(config, {
-        chainId: parseInt(chainID),
-      })) as WalletClient;
-
-      return evmWalletClient;
-    },
-    getSVMSigner: async () => {
-      if (getSigners?.getSVMSigner) {
-        return getSigners.getSVMSigner();
-      }
-      const walletName = wallets.svm?.walletName;
-      if (!walletName) throw new Error("getSVMSigner error: no svm wallet");
-      const solanaWallet = solanaWallets.find((w) => w.name === walletName);
-      if (!solanaWallet) throw new Error("getSVMSigner error: wallet not found");
-      return solanaWallet as ArgumentTypes<typeof SkipClient>["getSVMSigner"];
-    },
-  });
-
-  return skipClientInstance;
-});
 
 export type ClientAsset = Asset & {
   chain_key: string;
@@ -89,11 +29,11 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 
   for (const chainKey in data) {
     data[chainKey].forEach((asset: Asset) => {
-      const chain = chains?.find((c) => c.chainID === asset.chainID);
+      const chain = chains?.find((c) => c.chainId === asset.chainId);
       flattenedData.push({
         ...asset,
         chain_key: chainKey,
-        chainName: chain?.prettyName ?? chain?.chainName ?? asset.chainID ?? "--",
+        chainName: chain?.prettyName ?? chain?.chainName ?? asset.chainId ?? "--",
       });
     });
   }
@@ -104,67 +44,62 @@ const flattenData = (data: Record<string, Asset[]>, chains?: Chain[]) => {
 export const onlyTestnetsAtom = atom<boolean | undefined>(undefined);
 
 export const skipAssetsAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const chains = get(skipChainsAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
+    queryKey: ["skipAssets", onlyTestnets, { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
     queryFn: async () => {
-      return skip
-        .assets({
-          includeEvmAssets: true,
-          includeCW20Assets: true,
-          includeSvmAssets: true,
-          onlyTestnets,
-        })
-        .then((v) => flattenData(v, chains.data));
+      const response = await assets({
+        includeEvmAssets: true,
+        includeCw20Assets: true,
+        includeSvmAssets: true,
+        onlyTestnets,
+        abortDuplicateRequests: true,
+      });
+
+      return flattenData(response as Record<string, Asset[]>, chains.data);
     },
-    enabled: onlyTestnets !== undefined && apiURL !== undefined,
+    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
   };
 });
 
 export const skipChainsAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipChains", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
-    queryFn: async (): Promise<Chain[]> => {
-      return skip.chains({
-        includeEVM: true,
-        includeSVM: true,
+    queryKey: ["skipChains", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
+    queryFn: async () => {
+      const response = await chains({
+        includeEvm: true,
+        includeSvm: true,
         onlyTestnets,
+        abortDuplicateRequests: true,
       });
+      return response;
     },
-    enabled: onlyTestnets !== undefined && apiURL !== undefined,
+    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
   };
 });
 
 export const skipBridgesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   return {
-    queryKey: ["skipBridges", { apiURL, apiKey, cacheDurationMs }],
-    queryFn: async () => {
-      return skip.bridges();
-    },
+    queryKey: ["skipBridges", { apiUrl, apiKey, cacheDurationMs }],
+    queryFn: async () => bridges(),
   };
 });
 
 export const skipSwapVenuesAtom = atomWithQuery((get) => {
-  const skip = get(skipClient);
-  const { apiURL, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
+  const { apiUrl, apiKey, cacheDurationMs } = get(skipClientConfigAtom);
   const onlyTestnets = get(onlyTestnetsAtom);
 
   return {
-    queryKey: ["skipSwapVenue", { onlyTestnets, apiURL, apiKey, cacheDurationMs }],
-    queryFn: async () => {
-      return skip.venues(onlyTestnets);
-    },
-    enabled: onlyTestnets !== undefined && apiURL !== undefined,
+    queryKey: ["skipSwapVenue", { onlyTestnets, apiUrl, apiKey, cacheDurationMs }],
+    queryFn: async () => venues(),
+    enabled: onlyTestnets !== undefined && apiUrl !== undefined,
   };
 });
 
@@ -178,16 +113,16 @@ export const getChainsContainingAsset = (
   chains: Chain[],
 ): ChainWithAsset[] => {
   if (!assets) return [];
-  const chainIDs = assets
+  const chainIds = assets
     .filter((asset) => asset.symbol === assetSymbol)
-    .map((asset) => asset.chainID);
+    .map((asset) => asset.chainId);
   const chainsContainingAsset = chains
-    .filter((chain) => chainIDs?.includes(chain.chainID))
+    .filter((chain) => chainIds?.includes(chain.chainId))
     .map((chain) => {
       return {
         ...chain,
         asset: assets.find(
-          (asset) => asset.chainID === chain.chainID && asset.symbol === assetSymbol,
+          (asset) => asset.chainId === chain.chainId && asset.symbol === assetSymbol,
         ),
       };
     });

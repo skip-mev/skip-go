@@ -1,5 +1,181 @@
 # nextjs
 
+## 0.1.100
+
+### Patch Changes
+
+- Updated dependencies [cf920fe]
+- Updated dependencies [1e9f832]
+- Updated dependencies [78281ec]
+  - @skip-go/widget@3.10.2
+
+## 0.1.99
+
+### Patch Changes
+
+- Updated dependencies [6c1ff69]
+  - @skip-go/widget@3.10.1
+
+## 0.1.98
+
+### Patch Changes
+
+- Updated dependencies [be7c302]
+- Updated dependencies [df62bf0]
+- Updated dependencies [c609cd4]
+- Updated dependencies [c8315f2]
+  - @skip-go/widget@3.10.0
+
+## 0.1.97
+
+### Patch Changes
+
+- Updated dependencies [d5aa812]
+- Updated dependencies [041a12a]
+- Updated dependencies [9849401]
+  - @skip-go/widget@3.9.7
+
+## 0.1.96
+
+### Patch Changes
+
+- @skip-go/widget@3.9.6
+
+## 0.1.95
+
+### Patch Changes
+
+- @skip-go/widget@3.9.5
+
+## 0.1.94
+
+### Patch Changes
+
+- @skip-go/widget@3.9.4
+
+## 0.1.93
+
+### Patch Changes
+
+- @skip-go/widget@3.9.3
+
+## 0.1.92
+
+### Patch Changes
+
+- @skip-go/widget@3.9.2
+
+## 0.1.91
+
+### Patch Changes
+
+- @skip-go/widget@3.9.1
+
+## 0.1.90
+
+### Patch Changes
+
+- Updated dependencies [30d7b1f]
+- Updated dependencies [be8dda4]
+- Updated dependencies [4007e19]
+  - @skip-go/widget@3.9.0
+
+## 0.1.89
+
+### Patch Changes
+
+- Updated dependencies [fa63d79]
+- Updated dependencies [5b3b9bc]
+- Updated dependencies [2d5c7ce]
+- Updated dependencies [b5d0b31]
+- Updated dependencies [c64a70a]
+- Updated dependencies [2c1967a]
+- Updated dependencies [22200c8]
+  - @skip-go/widget@3.8.9
+
+## 0.1.88
+
+### Patch Changes
+
+- Updated dependencies [00b842a]
+- Updated dependencies [31c67f4]
+- Updated dependencies [441a597]
+- Updated dependencies [4ca2bb4]
+- Updated dependencies [c928a3c]
+  - @skip-go/widget@3.8.8
+
+## 0.1.87
+
+### Patch Changes
+
+- Updated dependencies [7e7f1b1]
+- Updated dependencies [162f202]
+- Updated dependencies [cf49d23]
+- Updated dependencies [4f4db90]
+- Updated dependencies [41655dd]
+- Updated dependencies [23899c2]
+- Updated dependencies [1b601ec]
+- Updated dependencies [a1744b8]
+- Updated dependencies [c946693]
+  - @skip-go/widget@3.8.7
+
+## 0.1.86
+
+### Patch Changes
+
+- Updated dependencies [854c59a]
+- Updated dependencies [2b2a6e7]
+  - @skip-go/widget@3.8.6
+
+## 0.1.85
+
+### Patch Changes
+
+- Updated dependencies [72ca16b]
+  - @skip-go/widget@3.8.5
+
+## 0.1.84
+
+### Patch Changes
+
+- Updated dependencies [d82a6e3]
+  - @skip-go/widget@3.8.4
+
+## 0.1.83
+
+### Patch Changes
+
+- Updated dependencies [363cceb]
+- Updated dependencies [d4b83b0]
+  - @skip-go/widget@3.8.3
+
+## 0.1.82
+
+### Patch Changes
+
+- Updated dependencies [daeb41e]
+- Updated dependencies [aca9648]
+- Updated dependencies [a0582fc]
+  - @skip-go/widget@3.8.2
+
+## 0.1.81
+
+### Patch Changes
+
+- Updated dependencies [e309043]
+  - @skip-go/widget@3.8.1
+
+## 0.1.80
+
+### Patch Changes
+
+- Updated dependencies [58c5faf]
+- Updated dependencies [b2bff47]
+- Updated dependencies [4105295]
+- Updated dependencies [773175c]
+- Updated dependencies [b184242]
+  - @skip-go/widget@3.8.0
+
 ## 0.1.79
 
 ### Patch Changes

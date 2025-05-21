@@ -8,7 +8,7 @@ import { useGetBalance } from "@/hooks/useGetBalance";
 import { filterAtom, filterOutAtom, filterOutUnlessUserHasBalanceAtom } from "@/state/filters";
 
 export type useGroupedAssetByRecommendedSymbolProps = {
-  context: "source" | "destination";
+  context?: "source" | "destination";
 };
 
 export const useGroupedAssetByRecommendedSymbol = ({
@@ -21,9 +21,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
   const filterOutUnlessUserHasBalance = useAtomValue(filterOutUnlessUserHasBalanceAtom);
 
   const assets = useMemo(() => {
-    const allowed = filter?.[context];
-    const blocked = filterOut?.[context];
-    const blockedUnlessUserHasBalance = filterOutUnlessUserHasBalance?.[context];
+    const allowed = context && filter?.[context];
+    const blocked = context && filterOut?.[context];
+    const blockedUnlessUserHasBalance = context && filterOutUnlessUserHasBalance?.[context];
 
     return _assets?.filter((asset) => {
       const isAllowed =
@@ -31,11 +31,11 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(allowed).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+              chainId === asset.chainId &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
@@ -44,15 +44,15 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(blocked).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
-              denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
+              chainId === asset.chainId &&
+              denoms.map((x) => x.toLowerCase()).includes(asset.denom?.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
-      const hasBalance = Number(getBalance(asset.chainID, asset.denom)?.amount ?? 0) > 0;
+      const hasBalance = Number(getBalance(asset.chainId, asset.denom)?.amount ?? 0) > 0;
 
       const isBlockedUnlessUserHasBalance =
         !!blockedUnlessUserHasBalance &&
@@ -60,11 +60,11 @@ export const useGroupedAssetByRecommendedSymbol = ({
         Object.entries(blockedUnlessUserHasBalance).some(([chainId, denoms]) => {
           if (denoms) {
             return (
-              chainId === asset.chainID &&
+              chainId === asset.chainId &&
               denoms.map((x) => x.toLowerCase()).includes(asset.denom.toLowerCase())
             );
           } else {
-            return chainId === asset.chainID;
+            return chainId === asset.chainId;
           }
         });
 
@@ -79,18 +79,17 @@ export const useGroupedAssetByRecommendedSymbol = ({
     const calculateBalanceSummary = (assets: ClientAsset[]) => {
       return assets.reduce(
         (accumulator, asset) => {
-          const balance = getBalance(asset.chainID, asset.denom);
+          const balance = getBalance(asset.chainId, asset.denom);
           if (balance) {
-            accumulator.totalAmount += Number(
-              convertTokenAmountToHumanReadableAmount(balance.amount, balance.decimals),
+            accumulator.totalAmount += Number(balance.amount);
+            accumulator.formattedTotalAmount += Number(
+              convertTokenAmountToHumanReadableAmount(balance.amount, balance?.decimals),
             );
-            if (Number(balance.valueUSD)) {
-              accumulator.totalUsd += Number(balance.valueUSD);
-            }
+            accumulator.totalUsd += Number(balance.valueUsd ?? 0);
           }
           return accumulator;
         },
-        { totalAmount: 0, totalUsd: 0 },
+        { totalAmount: 0, totalUsd: 0, formattedTotalAmount: 0 },
       );
     };
 
@@ -99,9 +98,9 @@ export const useGroupedAssetByRecommendedSymbol = ({
       if (foundGroup) {
         foundGroup.assets.push(asset);
         foundGroup.chains.push({
-          chainID: asset.chainID,
+          chainId: asset.chainId,
           chainName: asset.chainName,
-          originChainID: asset.originChainID,
+          originChainId: asset.originChainId,
         });
       } else {
         groupedAssets.push({
@@ -109,14 +108,15 @@ export const useGroupedAssetByRecommendedSymbol = ({
           name: asset.name,
           chains: [
             {
-              chainID: asset.chainID,
+              chainId: asset.chainId,
               chainName: asset.chainName,
-              originChainID: asset.originChainID,
+              originChainId: asset.originChainId,
             },
           ],
           assets: [asset],
           totalAmount: 0,
           totalUsd: 0,
+          formattedTotalAmount: "0",
         });
       }
     });
@@ -125,6 +125,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
       const balanceSummary = calculateBalanceSummary(group.assets);
       group.totalAmount = balanceSummary.totalAmount;
       group.totalUsd = balanceSummary.totalUsd;
+      group.formattedTotalAmount = balanceSummary.formattedTotalAmount.toString();
     });
 
     return groupedAssets;

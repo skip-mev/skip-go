@@ -5,7 +5,7 @@ import { sourceAssetAtom } from "@/state/swapPage";
 import { PageHeader } from "../../components/PageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { isFetchingLastTransactionStatusAtom, transactionHistoryAtom } from "@/state/history";
+import { transactionHistoryAtom } from "@/state/history";
 import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
@@ -15,13 +15,12 @@ export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const sourceAsset = useAtomValue(sourceAssetAtom);
 
-  const isFetchingLastTransactionStatus = useAtomValue(isFetchingLastTransactionStatusAtom);
-
   const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
+  const sourceAccount = getAccount(sourceAsset?.chainId);
+  const transactionHistory = useAtomValue(transactionHistoryAtom);
 
   const historyPageIcon = useMemo(() => {
-    if (isFetchingLastTransactionStatus) {
+    if (transactionHistory.at(-1)?.status === "pending") {
       return (
         <div
           style={{
@@ -43,11 +42,9 @@ export const SwapPageHeader = memo(() => {
     }
 
     return ICONS.history;
-  }, [isFetchingLastTransactionStatus]);
+  }, [transactionHistory]);
 
   const historyPageButton = useMemo(() => {
-    if (isFetchingLastTransactionStatus === undefined) return;
-
     return {
       label: "History",
       icon: historyPageIcon,
@@ -56,7 +53,7 @@ export const SwapPageHeader = memo(() => {
         setCurrentPage(Routes.TransactionHistoryPage);
       },
     };
-  }, [isFetchingLastTransactionStatus, historyPageIcon, setCurrentPage]);
+  }, [historyPageIcon, setCurrentPage]);
 
   return (
     <>

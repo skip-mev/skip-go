@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 
 import toWebComponent from "@r2wc/react-to-web-component";
-import { NewSkipClientOptions, Widget, WidgetProps } from "./widget/Widget";
+import { Widget, WidgetProps } from "./widget/Widget";
+import { SkipClientOptions } from "@skip-go/client";
 
 const WEB_COMPONENT_NAME = "skip-widget";
 
-type WebComponentProps = WidgetProps & NewSkipClientOptions;
+type WebComponentProps = WidgetProps & SkipClientOptions;
 
 type PropDescriptors = {
   [K in keyof WebComponentProps]: "any";
@@ -39,14 +40,15 @@ const widgetPropTypes: Required<PropDescriptors> = {
   chainIdsToAffiliates: "any",
   cacheDurationMs: "any",
   getCosmosSigner: "any",
-  getEVMSigner: "any",
-  getSVMSigner: "any",
+  getEvmSigner: "any",
+  getSvmSigner: "any",
   onWalletConnected: "any",
   onWalletDisconnected: "any",
   onTransactionBroadcasted: "any",
   onTransactionComplete: "any",
   onTransactionFailed: "any",
   onRouteUpdated: "any",
+  onSourceAndDestinationSwapped: "any",
 };
 
 const WebComponent = toWebComponent(Widget, {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { ChainType } from "@skip-go/client";
 import { ConnectEcoRow } from "@/modals/ConnectedWalletModal/ConnectEcoRow";
+import { ChainType } from "@skip-go/client";
 
 type EcosystemConnectorsProps = {
   excludeChainType?: ChainType;
@@ -8,7 +8,7 @@ type EcosystemConnectorsProps = {
   onClick?: (chainType: ChainType) => void;
 };
 
-const ALL_ECOSYSTEMS: ChainType[] = [ChainType.Cosmos, ChainType.EVM, ChainType.SVM];
+const ALL_ECOSYSTEMS: ChainType[] = [ChainType.Cosmos, ChainType.Evm, ChainType.Svm];
 
 export const EcosystemConnectors = ({
   excludeChainType,

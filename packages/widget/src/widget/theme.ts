@@ -11,7 +11,7 @@ export const defaultTheme = {
     text: {
       normal: "#ffffff",
       lowContrast: "#ffffff" + opacityToHex(50),
-      ultraLowContrast: "#ffffff" + opacityToHex(20),
+      ultraLowContrast: "#ffffff" + opacityToHex(30),
     },
     ghostButtonHover: "#000000" + opacityToHex(40),
   },
@@ -45,7 +45,7 @@ export const lightTheme = {
     text: {
       normal: "#000000",
       lowContrast: "#000000" + opacityToHex(45),
-      ultraLowContrast: "#000000" + opacityToHex(10),
+      ultraLowContrast: "#000000" + opacityToHex(25),
     },
     ghostButtonHover: "#ffffff" + opacityToHex(90),
   },

@@ -1,0 +1,142 @@
+---
+title: "Interpreting Transaction & Transfer Status"
+description: "Learn how to interpret the status of transactions and individual transfer steps from the Skip Go API's /v2/tx/status endpoint to provide accurate feedback to users."
+---
+
+<Info>
+The fields and logic discussed in this guide pertain to the JSON response object from the `/v2/tx/status` endpoint of the Skip Go API. Refer to the [API Reference](/api-reference/prod/transaction/get-v2txstatus) for detailed schema information.
+</Info>
+
+Understanding the status of a cross-chain transaction and its individual steps is crucial for building a clear and reliable user experience. This guide explains how to interpret the relevant fields from the `/v2/tx/status` API response to determine if a transaction (and each of its constituent transfers) is pending, successful, has encountered an error, or has been abandoned.
+
+This approach is useful for driving UI elements such as progress indicators, status messages, and error displays in your application.
+
+### Example `/v2/tx/status` Response
+
+Below is an example of a JSON response from the `/v2/tx/status` endpoint, illustrating some of the key fields discussed in this guide:
+
+```json
+{
+  "state": "STATE_COMPLETED_SUCCESS",
+  "transfer_sequence": [
+    {
+      "cctp_transfer": {
+        "from_chain_id": "42161",
+        "to_chain_id": "8453",
+        "state": "CCTP_TRANSFER_RECEIVED",
+        "txs": {
+          "send_tx": {
+            "chain_id": "42161",
+            "tx_hash": "0xYOUR_SEND_TRANSACTION_HASH_HERE_...",
+            "explorer_link": "https://arbiscan.io/tx/0xYOUR_SEND_TRANSACTION_HASH_HERE_..."
+          },
+          "receive_tx": {
+            "chain_id": "8453",
+            "tx_hash": "0xYOUR_RECEIVE_TRANSACTION_HASH_HERE_...",
+            "explorer_link": "https://basescan.org/tx/0xYOUR_RECEIVE_TRANSACTION_HASH_HERE_..."
+          }
+        },
+        "src_chain_id": "42161",
+        "dst_chain_id": "8453"
+      }
+    }
+  ],
+  "next_blocking_transfer": null,
+  "transfer_asset_release": {
+    "chain_id": "8453",
+    "denom": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "amount": "YOUR_EXAMPLE_AMOUNT",
+    "released": true
+  },
+  "error": null
+}
+```
+
+## Core Concepts for Status Interpretation
+
+The logic relies on a few key pieces of information typically available in the `/v2/tx/status` API response object:
+
+1.  **The Overall Transaction Status:** This provides a high-level view of the entire multi-step operation.
+    *   Look at the top-level `state` field in the response.
+    *   Possible values include:
+        *   `'STATE_COMPLETED_SUCCESS'`: The entire transaction finished successfully.
+        *   `'STATE_COMPLETED_ERROR'`: The transaction finished, but an error occurred.
+        *   `'STATE_ABANDONED'`: The transaction was abandoned (e.g., due to timeout or user action).
+    *   If the state is not one of these terminal states, it's generally assumed to be pending or in progress.
+
+2.  **The Next Blocking Step (or Failure Point):** This indicates which specific transfer in the sequence is currently active, or which one caused a failure or abandonment.
+    *   Utilize the `next_blocking_transfer.transfer_sequence_index` field (if `next_blocking_transfer` exists in the response).
+    *   This will be an index pointing to an operation within the top-level `transfer_sequence` array.
+
+3.  **Categorizing Each Operation in the Sequence:** For each operation within the `transfer_sequence` array of the response, you can determine its individual status:
+
+    *   **Loading/Pending:**
+        *   The operation's index matches the `next_blocking_transfer.transfer_sequence_index` (if `next_blocking_transfer` exists).
+        *   AND the overall transaction is still in progress (i.e., the top-level `state` is not `STATE_COMPLETED_ERROR` or `STATE_ABANDONED`).
+
+    *   **Error/Failed/Abandoned:**
+        *   The operation's index matches the `next_blocking_transfer.transfer_sequence_index` (if `next_blocking_transfer` exists - it is typically `null` if the overall `state` is terminal (e.g., `STATE_COMPLETED_SUCCESS`, `STATE_COMPLETED_ERROR`, or `STATE_ABANDONED`) as the transaction is no longer actively blocked or has finished successfully).
+        *   AND the overall transaction state (the top-level `state` field) is `STATE_COMPLETED_ERROR` or `STATE_ABANDONED`.
+        *   Additionally, if the overall transaction state is `STATE_COMPLETED_ERROR` and this is the *last* operation in the sequence, it is also considered to be in an error state.
+        *   **Note:** If the overall transaction `state` is `STATE_COMPLETED_ERROR`, it's also crucial to inspect the specific `error` object within each individual transfer step in the `transfer_sequence` (e.g., `step.ibc_transfer.packet_txs.error`, `step.cctp_transfer.error`, etc.). This will help pinpoint the exact leg(s) that encountered issues, as the `next_blocking_transfer` might be `null` if the transaction reached a terminal error state rather than getting stuck midway.
+
+    *   **Success:**
+        *   If the overall transaction state (top-level `state` field) is `STATE_COMPLETED_SUCCESS`, then all operations in the sequence are considered successful.
+        *   If the overall transaction is still in progress, or has failed/been abandoned, any operation *before* the `next_blocking_transfer.transfer_sequence_index` (if `next_blocking_transfer` exists - see note above about it typically being `null` in terminal states) is assumed to have completed successfully.
+
+## Example Implementation Logic (JavaScript)
+
+The following JavaScript snippet demonstrates how these concepts can be translated into code to determine the status of each step.
+
+```javascript
+// Assume 'transfer' is the main transaction object from our API
+// and 'totalSteps' is the length of transfer.transfer_sequence
+
+// 1. Determine overall transaction status from the main transaction object
+const isTransactionSuccessful = transfer.state === 'STATE_COMPLETED_SUCCESS';
+const isTransactionFailed = transfer.state === 'STATE_COMPLETED_ERROR';
+const isTransactionAbandoned = transfer.state === 'STATE_ABANDONED';
+
+// 2. Get the index of the step that is currently blocking progress or has failed
+const nextBlockingIndex = transfer.next_blocking_transfer?.transfer_sequence_index;
+
+// Then, when we process each 'step' in the 'transfer.transfer_sequence' at a given 'index':
+// (This logic would typically be inside a loop, e.g., transfer.transfer_sequence.forEach((step, index) => { ... }))
+
+// 3. Categorize the current step:
+
+// Is this step currently "pending" (loading)?
+const isStepPending = index === nextBlockingIndex && 
+                      !isTransactionFailed && 
+                      !isTransactionAbandoned;
+
+// Is this step in an "error" state (or part of an abandoned flow)?
+// 'totalSteps' would be transfer.transfer_sequence.length
+const isStepAbandonedOrFailed = (isTransactionAbandoned || isTransactionFailed) && 
+                                (index === nextBlockingIndex || (index === totalSteps - 1 && isTransactionFailed));
+
+// If 'isTransactionSuccessful' is true, this step is part of an overall successful transaction.
+// If a step isn't 'isStepPending' and isn't 'isStepAbandonedOrFailed', 
+// and its 'index < nextBlockingIndex' (for an ongoing or failed tx), it's also implicitly a success.
+
+// These boolean flags (isStepPending, isStepAbandonedOrFailed, isTransactionSuccessful)
+// are then used to drive the UI styling for that specific step (e.g., node color, edge animation, icons).
+// For example:
+// if (isStepAbandonedOrFailed) { /* show error UI */ }
+// else if (isStepPending) { /* show loading UI */ }
+// else { /* show success UI (either part of overall success, or completed before a pending/error state) */ }
+```
+
+By implementing logic based on these fields and states, you can provide users with accurate and timely feedback on the progress of their cross-chain transactions.
+
+## Understanding Asset Release (`transfer_asset_release`)
+
+The `transfer_asset_release` object in the `/v2/tx/status` response provides crucial information about where the user's assets have ultimately landed or are expected to be claimable, especially in scenarios involving swaps or complex routes.
+
+Key fields include:
+- `chain_id`: The chain ID where the assets are located.
+- `denom`: The denomination (asset identifier) of the released assets.
+- `amount`: The quantity of the released assets.
+- `released`: A boolean indicating if the assets have been definitively released to the user (e.g., available in their wallet or claimable). If `false`, it might indicate that assets are still in a contract or awaiting a final step for release.
+
+In the event of a cross-chain swap failure, the `transfer_asset_release` field is particularly important for determining the location and state of the user's funds. For a comprehensive understanding of how assets are handled in different failure scenarios (e.g., pre-swap vs. post-swap failures), please refer to our detailed guide on [Handling Cross-Chain Failure Cases](./handling-cross-chain-failure-cases.mdx). 

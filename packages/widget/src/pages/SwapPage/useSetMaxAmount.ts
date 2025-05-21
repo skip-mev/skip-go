@@ -3,7 +3,7 @@ import {
   convertTokenAmountToHumanReadableAmount,
 } from "@/utils/crypto";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
-import { sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { EVM_GAS_AMOUNT, sourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { useAtom, useSetAtom } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { useGetSourceBalance } from "@/hooks/useGetSourceBalance";
@@ -14,58 +14,91 @@ import {
 } from "@/hooks/useCosmosFeeAssetValidation";
 import { ChainType } from "@skip-go/client";
 
+import { config } from "@/constants/wagmi";
+import { createPublicClient, fallback, http } from "viem";
+import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+export const getEvmGasPriceEstimate = async (chainId?: string) => {
+  if (!chainId) return;
+  const chain = config.chains.find((chain) => chain.id === Number(chainId));
+
+  if (!chain) return null;
+
+  const client = createPublicClient({
+    chain,
+    transport: fallback([
+      http("https://ethereum.publicnode.com"),
+      http("https://rpc.ankr.com/eth"),
+      http("https://cloudflare-eth.com"),
+    ]),
+  });
+
+  const fees = await client.estimateFeesPerGas();
+
+  return fees.maxFeePerGas.toString();
+};
 export const useGasFeeTokenAmount = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
 
   const sourceDetails = useGetAssetDetails({
     assetDenom: sourceAsset?.denom,
     amount: sourceAsset?.amount,
-    chainId: sourceAsset?.chainID,
+    chainId: sourceAsset?.chainId,
   });
 
-  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
+  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainId);
   const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);
-
   const chainType = sourceDetails?.chain?.chainType;
 
-  switch (chainType) {
-    case ChainType.EVM: {
-      const isFeeAsset =
-        sourceAsset?.denom?.includes("-native") &&
-        sourceAsset?.originChainID === sourceAsset?.chainID;
-      if (isFeeAsset) {
-        switch (sourceAsset?.chainID) {
-          case "1": // mainnet
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.015, sourceDetails.asset?.decimals),
-            );
-          case "137": // polygon
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(1.2, sourceDetails.asset?.decimals),
-            );
-          case "43114": // avalanche
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.02, sourceDetails.asset?.decimals),
-            );
-          case "42220": // celo
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.01, sourceDetails.asset?.decimals),
-            );
-          default: // other chains
-            return Number(
-              convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails.asset?.decimals),
-            );
+  const getGasFeeTokenAmount = useCallback(async () => {
+    switch (chainType) {
+      case ChainType.Evm: {
+        const isFeeAsset =
+          sourceAsset?.denom?.includes("-native") &&
+          sourceAsset?.originChainId === sourceAsset?.chainId;
+
+        if (isFeeAsset) {
+          const result = await getEvmGasPriceEstimate(sourceAsset?.chainId ?? "");
+          if (!result) {
+            return convertHumanReadableAmountToCryptoAmount(0.0008, sourceDetails?.asset?.decimals);
+          }
+
+          return BigNumber(EVM_GAS_AMOUNT).multipliedBy(result).toString();
         }
+        return 0;
       }
-      return 0;
+      case ChainType.Cosmos:
+        if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
+        return cosmosFeeUsed?.feeAmount;
+      case ChainType.Svm:
+      default:
+        return 0;
     }
-    case ChainType.Cosmos:
-      if (!cosmosFeeUsed || cosmosFeeUsed?.denom !== sourceAsset?.denom) return 0;
-      return Number(cosmosFeeUsed.feeAmount);
-    case ChainType.SVM:
-    default:
-      return 0;
-  }
+  }, [
+    chainType,
+    cosmosFeeUsed,
+    sourceAsset?.chainId,
+    sourceAsset?.denom,
+    sourceAsset?.originChainId,
+    sourceDetails?.asset?.decimals,
+  ]);
+
+  const { data: gasFeeTokenAmount } = useQuery({
+    queryKey: [
+      "gasFeeTokenAmount",
+      {
+        chainType,
+        cosmosFeeUsed,
+        sourceAsset,
+        sourceDetails,
+      },
+    ],
+    queryFn: async () => {
+      return await getGasFeeTokenAmount();
+    },
+  });
+  return gasFeeTokenAmount;
 };
 
 export const useMaxAmountTokenMinusFees = () => {
@@ -114,7 +147,7 @@ export const useInsufficientSourceBalance = () => {
   if (!sourceAsset?.amount) return false;
   if (!maxAmountTokenMinusFees) return true;
 
-  const chain = chains?.find((chain) => chain.chainID === sourceAsset?.chainID);
+  const chain = chains?.find((chain) => chain.chainId === sourceAsset?.chainId);
   if (chain?.chainType === ChainType.Cosmos) {
     return cosmosFeeAssetValidation;
   }

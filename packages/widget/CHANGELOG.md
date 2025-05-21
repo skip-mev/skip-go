@@ -1,5 +1,216 @@
 ## 0.0.15
 
+## 3.10.2
+
+### Patch Changes
+
+- cf920fe: update registries
+- 1e9f832: remove unused packages
+- 78281ec: Use virtualization on history page
+- Updated dependencies [5e42be2]
+- Updated dependencies [9bdd303]
+- Updated dependencies [cf920fe]
+- Updated dependencies [11c3c79]
+  - @skip-go/client@1.1.1
+
+## 3.10.1
+
+### Patch Changes
+
+- 6c1ff69: bump graz 0.3.2
+
+## 3.10.0
+
+### Minor Changes
+
+- df62bf0: bump cosmjs package
+
+### Patch Changes
+
+- be7c302: only session record on valid user id
+- c609cd4: fix decimals display for grouped assets
+- c8315f2: asset logo consistency
+- Updated dependencies [376583c]
+- Updated dependencies [df62bf0]
+- Updated dependencies [4458538]
+  - @skip-go/client@1.1.0
+
+## 3.9.7
+
+### Patch Changes
+
+- d5aa812: refetch route on swap settings changed
+- 041a12a: minor improvements to amplitude analytics
+- 9849401: Temporarily remove fadeout animation from selecting asset
+
+## 3.9.6
+
+### Patch Changes
+
+- Updated dependencies [a009e22]
+  - @skip-go/client@1.0.6
+
+## 3.9.5
+
+### Patch Changes
+
+- Updated dependencies [fd69bee]
+  - @skip-go/client@1.0.5
+
+## 3.9.4
+
+### Patch Changes
+
+- Updated dependencies [9b1f4fe]
+  - @skip-go/client@1.0.4
+
+## 3.9.3
+
+### Patch Changes
+
+- Updated dependencies [d0e0de4]
+  - @skip-go/client@1.0.3
+
+## 3.9.2
+
+### Patch Changes
+
+- Updated dependencies [b22c07b]
+  - @skip-go/client@1.0.2
+
+## 3.9.1
+
+### Patch Changes
+
+- Updated dependencies [aba3e58]
+  - @skip-go/client@1.0.1
+
+## 3.9.0
+
+### Minor Changes
+
+- 4007e19: Update widget to use client v1.0.0
+
+### Patch Changes
+
+- 30d7b1f: only record sentry replay on valid user id
+- be8dda4: update registries
+- Updated dependencies [4007e19]
+- Updated dependencies [be8dda4]
+  - @skip-go/client@1.0.0
+
+## 3.8.9
+
+### Patch Changes
+
+- fa63d79: bump graz
+- 5b3b9bc: fix max button cosmos amount
+- 2d5c7ce: Update useGasFeeTokenAmount for EVM
+- b5d0b31: update registries
+- c64a70a: improve number formatting and decrowd settings bar by removing powered by skip go text
+- 2c1967a: Hide signature required for operation once signed
+- 22200c8: Fix showing formattedAmount instead of balance.amount in Asset/Chain selector modal
+- Updated dependencies [b5d0b31]
+  - @skip-go/client@0.17.2
+
+## 3.8.8
+
+### Patch Changes
+
+- 00b842a: improve asset display amount code
+- 31c67f4: Fix prop warning in dev
+- 441a597: enable amplitude session replays
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+- Updated dependencies [4ca2bb4]
+- Updated dependencies [c928a3c]
+  - @skip-go/client@0.17.1
+
+## 3.8.7
+
+### Patch Changes
+
+- 7e7f1b1: fix swap page footer layout
+- 162f202: update registries
+- cf49d23: improve asset display in history page
+- 4f4db90: Fix clearing validating when returning from user rejected request, Fix no longer showing user rejected request unless currently on swap execution page
+- 41655dd: update low contrast text color
+- 23899c2: add initia to ledger warning
+- 1b601ec: support layer zero
+- a1744b8: Add onSourceAndDestinationSwapped callback
+- c946693: improve gaping in footer
+- Updated dependencies [162f202]
+- Updated dependencies [3f58bf3]
+- Updated dependencies [f5bc62c]
+- Updated dependencies [d2804a0]
+- Updated dependencies [1b601ec]
+  - @skip-go/client@0.17.0
+
+## 3.8.6
+
+### Patch Changes
+
+- 854c59a: Fix useTxHistory returning completed if lastTxSuccess, instead should only return completed if isSettled and isSuccess are true
+- 2b2a6e7: refactor fee computation and fee display
+
+## 3.8.5
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+- Updated dependencies [72ca16b]
+  - @skip-go/client@0.16.34
+
+## 3.8.4
+
+### Patch Changes
+
+- d82a6e3: update registries
+- Updated dependencies [d82a6e3]
+  - @skip-go/client@0.16.33
+
+## 3.8.3
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+- d4b83b0: add initia testnet
+- Updated dependencies [363cceb]
+  - @skip-go/client@0.16.32
+
+## 3.8.2
+
+### Patch Changes
+
+- daeb41e: improve insufficient balance button text if gas balance issue
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+- Updated dependencies [aca9648]
+- Updated dependencies [a0582fc]
+  - @skip-go/client@0.16.31
+
+## 3.8.1
+
+### Patch Changes
+
+- e309043: Update History page design and reduce API calls
+
+## 3.8.0
+
+### Minor Changes
+
+- b2bff47: fixed bug in displaying bad price warnings
+
+### Patch Changes
+
+- 58c5faf: Show connect wallet before showing please select a source asset
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+- b184242: Update web-component to allow passing props via javascript properties
+- Updated dependencies [4105295]
+- Updated dependencies [773175c]
+  - @skip-go/client@0.16.30
+
 ## 3.7.3
 
 ### Patch Changes

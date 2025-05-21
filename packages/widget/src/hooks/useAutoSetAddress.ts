@@ -41,7 +41,7 @@ export const useAutoSetAddress = () => {
   const signRequiredChains = useMemo(() => {
     if (!route?.operations) return;
     const operations = getClientOperations(route.operations);
-    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainID);
+    const signRequiredChains = operations.filter((o) => o.signRequired).map((o) => o.fromChainId);
     return signRequiredChains;
   }, [route?.operations]);
 
@@ -50,21 +50,21 @@ export const useAutoSetAddress = () => {
       setIsLoading(true);
       const createWallets = {
         [ChainType.Cosmos]: createCosmosWallets,
-        [ChainType.EVM]: createEvmWallets,
-        [ChainType.SVM]: createSolanaWallets,
+        [ChainType.Evm]: createEvmWallets,
+        [ChainType.Svm]: createSolanaWallets,
       };
 
       if (!requiredChainAddresses) return;
-      requiredChainAddresses.forEach(async (chainID, index) => {
-        const chain = chains?.find((c) => c.chainID === chainID);
+      requiredChainAddresses.forEach(async (chainId, index) => {
+        const chain = chains?.find((c) => c.chainId === chainId);
         if (!chain) {
           return;
         }
         const showSetAddressModal = () => {
-          const isSignRequired = signRequiredChains?.includes(chainID);
+          const isSignRequired = signRequiredChains?.includes(chainId);
           NiceModal.show(Modals.SetAddressModal, {
             signRequired: isSignRequired,
-            chainId: chainID,
+            chainId: chainId,
             chainAddressIndex: index,
           });
         };
@@ -73,16 +73,16 @@ export const useAutoSetAddress = () => {
 
         try {
           const chainType = chain.chainType;
-          const wallets = createWallets[chainType](chainID);
+          const wallets = createWallets[chainType](chainId);
           const walletName = sourceWallet[chainType]?.walletName;
           const wallet = wallets.find((w) => w.walletName === walletName);
-          const isSignRequired = signRequiredChains?.includes(chainID);
+          const isSignRequired = signRequiredChains?.includes(chainId);
 
           const response = await wallet?.getAddress?.({ signRequired: isSignRequired });
 
-          const isInjectedWallet = connectedAddress?.[chainID];
+          const isInjectedWallet = connectedAddress?.[chainId];
 
-          const address = connectedAddress?.[chainID] ?? response?.address;
+          const address = connectedAddress?.[chainId] ?? response?.address;
 
           if (!address) {
             throw new Error(
@@ -92,7 +92,7 @@ export const useAutoSetAddress = () => {
 
           if (
             JSON.stringify(requiredChainAddresses) !==
-            JSON.stringify(Object.values(chainAddresses).map((chain) => chain.chainID))
+            JSON.stringify(Object.values(chainAddresses).map((chain) => chain.chainId))
           ) {
             setIsLoading(false);
             return;
@@ -109,19 +109,19 @@ export const useAutoSetAddress = () => {
             return {
               ...prev,
               [index]: {
-                chainID,
+                chainId,
                 address,
                 chainType: chainType,
                 source: isInjectedWallet ? WalletSource.Injected : WalletSource.Wallet,
                 wallet: wallet
                   ? {
-                      walletName: wallet?.walletName,
-                      walletPrettyName: wallet?.walletPrettyName,
-                      walletChainType: chainType,
-                      walletInfo: {
-                        logo: getLogo(),
-                      },
-                    }
+                    walletName: wallet?.walletName,
+                    walletPrettyName: wallet?.walletPrettyName,
+                    walletChainType: chainType,
+                    walletInfo: {
+                      logo: getLogo(),
+                    },
+                  }
                   : undefined,
               },
             };

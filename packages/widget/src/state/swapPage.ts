@@ -1,5 +1,6 @@
 import { atom } from "jotai";
-import { ClientAsset, skipClient } from "@/state/skipClient";
+import { ClientAsset } from "@/state/skipClient";
+import { getSigningStargateClient } from "@skip-go/client";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
@@ -9,7 +10,9 @@ import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorAtom } from "./errorPage";
-import { walletsAtom } from "./wallets";
+import { getConnectedSignersAtom, walletsAtom } from "./wallets";
+import { getWallet, WalletType } from "graz";
+import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -37,9 +40,9 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
 
   if (callbacks?.onRouteUpdated) {
     callbacks?.onRouteUpdated({
-      srcChainId: sourceAsset?.chainID,
+      srcChainId: sourceAsset?.chainId,
       srcAssetDenom: sourceAsset?.denom,
-      destChainId: destinationAsset?.chainID,
+      destChainId: destinationAsset?.chainId,
       destAssetDenom: destinationAsset?.denom,
       amountIn: sourceAsset?.amount,
       amountOut: destinationAsset?.amount,
@@ -50,17 +53,40 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
 
 export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
   const sourceAsset = get(sourceAssetAtom);
-  const skip = get(skipClient);
   const wallets = get(walletsAtom);
-  if (sourceAsset?.chainID && wallets.cosmos) {
-    skip.getSigningStargateClient({
-      chainId: sourceAsset?.chainID,
+  const getSigners = get(getConnectedSignersAtom);
+
+  const wallet = wallets?.cosmos?.walletName && getWallet(wallets.cosmos.walletName as WalletType);
+
+  const signer = getSigners?.getCosmosSigner ?? wallet;
+
+  if (sourceAsset?.chainId && wallets.cosmos && signer) {
+    getSigningStargateClient({
+      chainId: sourceAsset?.chainId,
+      getOfflineSigner: async (chainId) => {
+        if (getSigners?.getCosmosSigner) {
+          return getSigners.getCosmosSigner(chainId);
+        }
+        if (!wallets.cosmos) {
+          throw new Error("getCosmosSigner error: no cosmos wallet");
+        }
+        const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+        if (!wallet) {
+          throw new Error("getCosmosSigner error: wallet not found");
+        }
+        const key = await wallet.getKey(chainId);
+
+        return key.isNanoLedger
+          ? wallet.getOfflineSignerOnlyAmino(chainId)
+          : wallet.getOfflineSigner(chainId);
+      }
     });
   }
 });
 
+
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
-  "sourceAsset",
+  LOCAL_STORAGE_KEYS.sourceAsset,
   undefined,
 );
 
@@ -96,7 +122,7 @@ export const sourceAssetAmountAtom = atom(
 );
 
 export const destinationAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
-  "destinationAsset",
+  LOCAL_STORAGE_KEYS.destinationAsset,
   undefined,
 );
 
@@ -129,6 +155,8 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const debouncedDestinationAmount = get(debouncedDestinationAssetAmountAtom);
 
   const { isLoading } = get(skipRouteAtom);
+  if (isLoading) return true;
+
   const direction = get(swapDirectionAtom);
 
   const sourceAmountIsValidNumber = !isNaN(parseFloat(sourceAmount));
@@ -136,10 +164,11 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
+
   if (direction === "swap-in") {
-    return (sourceAmountHasChanged && sourceAmountIsValidNumber) || isLoading;
+    return (sourceAmountHasChanged && sourceAmountIsValidNumber);
   } else if (direction === "swap-out") {
-    return (destinationAmountHasChanged && destinationAmountIsValidNumber) || isLoading;
+    return (destinationAmountHasChanged && destinationAmountIsValidNumber);
   }
 });
 
@@ -155,17 +184,29 @@ export const isInvertingSwapAtom = atom(false);
 export const invertSwapAtom = atom(null, (get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const destinationAsset = get(destinationAssetAtom);
+  const clonedSourceAsset = { ...sourceAsset };
+  const clonedDestinationAsset = { ...destinationAsset };
   const swapDirection = get(swapDirectionAtom);
+  const callbacks = get(callbacksAtom);
   set(isInvertingSwapAtom, true);
 
-  set(sourceAssetAtom, { ...destinationAsset });
+  set(sourceAssetAtom, clonedDestinationAsset);
   set(sourceAssetAmountAtom, destinationAsset?.amount ?? "");
 
-  set(destinationAssetAtom, { ...sourceAsset });
+  set(destinationAssetAtom, clonedSourceAsset);
   set(destinationAssetAmountAtom, sourceAsset?.amount ?? "", () => {
     const newSwapDirection = swapDirection === "swap-in" ? "swap-out" : "swap-in";
     set(swapDirectionAtom, newSwapDirection);
+
     set(isInvertingSwapAtom, false);
+    callbacks?.onSourceAndDestinationSwapped?.({
+      srcChainId: clonedDestinationAsset?.chainId,
+      srcAssetDenom: clonedDestinationAsset?.denom,
+      destChainId: clonedSourceAsset?.chainId,
+      destAssetDenom: clonedSourceAsset?.denom,
+      amountIn: clonedDestinationAsset?.amount,
+      amountOut: clonedSourceAsset?.amount,
+    });
   });
 });
 

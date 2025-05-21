@@ -1,6 +1,6 @@
-import { RouteResponse } from "@skip-go/client";
 import { getClientOperations } from "@/utils/clientType";
 import { OperationType } from "@/utils/clientType";
+import { RouteResponse } from "@skip-go/client";
 import { useMemo } from "react";
 
 export const useIsGoFast = (route: RouteResponse | undefined) => {

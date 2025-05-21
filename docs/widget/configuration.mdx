@@ -1,6 +1,6 @@
 ---
-  title: "Configuration"
-  description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
+title: "Configuration"
+description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
 ---
 
 
@@ -314,10 +314,10 @@ Each signer function below must be implemented to fully leverage the injected wa
 - **`getCosmosSigner(): Promise<OfflineSigner>`**
   Returns a Cosmos-compatible signer.
 
-- **`getEVMSigner(): Promise<WalletClient>`**
+- **`getEvmSigner(): Promise<WalletClient>`**
   Returns an EVM-compatible signer (e.g., from `viem`).
 
-- **`getSVMSigner(): Promise<PhantomWalletAdapter>`**
+- **`getSvmSigner(): Promise<PhantomWalletAdapter>`**
   Returns a Solana-compatible signer, such as a `PhantomWalletAdapter`.
 
 **Complete Example for injected wallet functionality:**
@@ -325,7 +325,7 @@ Each signer function below must be implemented to fully leverage the injected wa
 <Widget
   connectedAddresses={connectedAddresses}
   getCosmosSigner={getCosmosSigner}
-  getEVMSigner={getEVMSigner}
-  getSVMSigner={getSVMSigner}
+  getEvmSigner={getEvmSigner}
+  getSvmSigner={getSvmSigner}
 />
 ```

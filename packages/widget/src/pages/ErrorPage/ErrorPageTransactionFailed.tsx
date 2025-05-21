@@ -10,8 +10,6 @@ import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { captureException } from "@sentry/browser";
-import { useEffect } from "react";
 import { track } from "@amplitude/analytics-browser";
 
 export type ErrorPageTransactionFailedProps = {
@@ -27,9 +25,6 @@ export const ErrorPageTransactionFailed = ({
   onClickContactSupport,
   onClickBack,
 }: ErrorPageTransactionFailedProps) => {
-  useEffect(() => {
-    captureException("TransactionFailed");
-  }, []);
 
   const theme = useTheme();
   const setErrorAtom = useSetAtom(errorAtom);

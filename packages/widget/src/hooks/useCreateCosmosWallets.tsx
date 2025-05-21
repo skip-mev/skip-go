@@ -66,7 +66,7 @@ export const useCreateCosmosWallets = () => {
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
-                throw new Error(`connect: Chain info not found for chainID: ${chainId}`);
+                throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
               }
@@ -103,7 +103,7 @@ export const useCreateCosmosWallets = () => {
               setCosmosWallet({
                 id: currentCosmosId,
                 walletName: wallet,
-                chainType: ChainType.SVM,
+                chainType: ChainType.Svm,
               });
             }
 
@@ -111,6 +111,7 @@ export const useCreateCosmosWallets = () => {
               walletName: wallet,
               chainId: chainIdToConnect,
               chainType: ChainType.Cosmos,
+              address
             });
 
             return { address };
@@ -166,11 +167,6 @@ export const useCreateCosmosWallets = () => {
             });
           },
           getAddress: async ({ signRequired }) => {
-            track("get address", {
-              walletName: wallet,
-              ChainType: ChainType.Cosmos,
-              chainId,
-            });
             try {
               const getAddressWithoutConnectingWallet = cosmosWallet && !signRequired && chainId;
 
@@ -235,7 +231,7 @@ const getInitialChainIds = (wallet: WalletType) => {
 const filterValidChainIds = (chainIds: string[], chains?: Chain[]) => {
   const cosmosChainIds = chains
     ?.filter((chain) => chain.chainType === ChainType.Cosmos)
-    .map((chain) => chain.chainID);
+    .map((chain) => chain.chainId);
 
   const mainnetChainIds = mainnetChains.map((chain) => chain.chainId);
 
@@ -301,11 +297,6 @@ const handlePenumbraNetwork = (
       throw new Error("Prax wallet is not supported");
     },
     getAddress: async ({ praxWallet }) => {
-      track("get address", {
-        walletName: "prax",
-        ChainType: ChainType.Cosmos,
-        chainId: "penumbra",
-      });
       const penumbraSubaccountIndex = praxWallet?.index;
       const prax_id = "lkpmkhpnhknhmibgnmmhdhgdilepfghe";
       const prax_origin = `chrome-extension://${prax_id}`;

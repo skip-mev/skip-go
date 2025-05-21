@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "../web-component";
@@ -32,6 +33,7 @@ const DevMode = () => {
       settings: {
         useUnlimitedApproval: true,
       },
+      enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
       routeConfig: {
@@ -65,6 +67,9 @@ const DevMode = () => {
         source: {
           "1": ["0xbf45a5029d081333407cc52a84be5ed40e181c46"],
         },
+      },
+      onSourceAndDestinationSwapped(props) {
+        console.log(props);
       },
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);

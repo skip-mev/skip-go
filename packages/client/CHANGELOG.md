@@ -1,5 +1,131 @@
 # @skip-go/client
 
+## 1.1.1
+
+### Patch Changes
+
+- 5e42be2: add response and request types
+- 9bdd303: simplify types naming
+- cf920fe: update registries
+- 11c3c79: add missing request and response json types
+
+## 1.1.0
+
+### Minor Changes
+
+- df62bf0: bump cosmjs package
+
+### Patch Changes
+
+- 376583c: Add on_chain_ts to ChainTransaction type
+- 4458538: export json types
+
+## 1.0.6
+
+### Patch Changes
+
+- a009e22: Fix packageJson for esm format
+
+## 1.0.5
+
+### Patch Changes
+
+- fd69bee: Update client build format as esm
+
+## 1.0.4
+
+### Patch Changes
+
+- 9b1f4fe: Fix esm build, updated all imports to follow esm convention
+
+## 1.0.3
+
+### Patch Changes
+
+- d0e0de4: revert cjs
+
+## 1.0.2
+
+### Patch Changes
+
+- b22c07b: Update type imports to be explicit for esm
+
+## 1.0.1
+
+### Patch Changes
+
+- aba3e58: release cjs version temporarily
+
+## 1.0.0
+
+### Major Changes
+
+- 4007e19: Refactored client library to export seperate functions instead of single class to improve treeshaking and reduce bundle size impact
+  Refactored prop/variable naming to follow camelCase and PascalCase (for enums) strictly to autogenerate interfaces based on open api spec (swagger.yml) and use util functions to easily convert between camelCase and snake_case for API consumption
+  Added auto-cancelling previous requests if multiple requests for the same API are made before previous one completes
+
+### Patch Changes
+
+- be8dda4: update registries
+
+## 0.17.2
+
+### Patch Changes
+
+- b5d0b31: update registries
+
+## 0.17.1
+
+### Patch Changes
+
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+
+## 0.17.0
+
+### Minor Changes
+
+- 3f58bf3: refactor injective labs dependencey to reduce bundle size
+- d2804a0: apply multipler for non-native fee tokens on prin-1
+
+### Patch Changes
+
+- 162f202: update registries
+- f5bc62c: simluate svm txs to ensure sufficient gas and program execution
+- 1b601ec: support layer zero
+
+## 0.16.34
+
+### Patch Changes
+
+- 72ca16b: fix initia pubkey issue
+
+## 0.16.33
+
+### Patch Changes
+
+- d82a6e3: update registries
+
+## 0.16.32
+
+### Patch Changes
+
+- 363cceb: fix gas result error
+
+## 0.16.31
+
+### Patch Changes
+
+- aca9648: fix rendundant simulation
+- a0582fc: update registries
+
+## 0.16.30
+
+### Patch Changes
+
+- 4105295: update registries
+- 773175c: always fetch balance for gas validation
+
 ## 0.16.29
 
 ### Patch Changes

@@ -1,22 +1,31 @@
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 
-import { SKIP_API_URL, SkipClient } from "../client";
 import {
-  Chain,
-  ChainJSON,
-  DenomWithChainID,
-  originAssetsResponseFromJSON,
-  OriginAssetsResponseJSON,
-  RecommendationEntry,
-  RouteResponse,
-  RouteResponseJSON,
-} from "../types";
+  chains,
+  assets,
+  assetsFromSource,
+  bridges,
+  BridgeType,
+  ibcOriginAssets,
+  messages,
+  recommendAssets,
+  route,
+  setClientOptions,
+  submitTransaction,
+  trackTransaction,
+  transactionStatus,
+  venues,
+  getRecommendedGasPrice,
+  getFeeInfoForChain,
+} from "../index";
+import { SKIP_API_URL } from "src/constants/constants";
+import { toCamel } from "src/utils/convert";
 
 export const server = setupServer();
 
 describe("client", () => {
-  beforeAll(() => server.listen());
+  beforeAll(async () => server.listen());
 
   afterEach(() => server.resetHandlers());
 
@@ -35,40 +44,11 @@ describe("client", () => {
                   chain_id: "osmosis-1",
                   pretty_name: "Osmosis",
                   pfm_enabled: true,
-                  cosmos_sdk_version: "v0.47.3",
                   chain_type: "cosmos",
-                  modules: {
-                    "github.com/cosmos/ibc-go": {
-                      path: "github.com/cosmos/ibc-go/v4",
-                      version: "v4.3.1",
-                      sum: "h1:xbg0CaCdxK3lvgGvSaI91ROOLd7s30UqEcexH6Ba4Ys=",
-                    },
-                    "github.com/osmosis-labs/osmosis/x/ibc-hooks": {
-                      path: "github.com/osmosis-labs/osmosis/x/ibc-hooks",
-                      version: "v0.0.7",
-                      sum: "h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=",
-                    },
-                    "github.com/strangelove-ventures/packet-forward-middleware":
-                      {
-                        path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
-                        version: "v4.0.5",
-                        sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
-                      },
-                  },
-                  cosmos_module_support: {
-                    authz: true,
-                    feegrant: false,
-                  },
                   supports_memo: true,
                   logo_uri:
                     "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
                   bech32_prefix: "osmo",
-                  ibc_capabilities: {
-                    cosmos_pfm: true,
-                    cosmos_ibc_hooks: true,
-                    cosmos_memo: true,
-                    cosmos_autopilot: false,
-                  },
                   fee_assets: [
                     {
                       denom: "uosmo",
@@ -81,58 +61,28 @@ describe("client", () => {
                   ],
                   is_testnet: false,
                 },
-              ] as ChainJSON[],
+              ],
             }),
           );
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-        cacheDurationMs: 0,
+      const response = await chains({
+        apiUrl: "https://api.skip.build",
       });
-      const response = await client.chains();
 
       expect(response).toEqual([
         {
           chainName: "osmosis",
-          chainID: "osmosis-1",
+          chainId: "osmosis-1",
           prettyName: "Osmosis",
           pfmEnabled: true,
-          cosmosSDKVersion: "v0.47.3",
           chainType: "cosmos",
           isTestnet: false,
-          modules: {
-            "github.com/cosmos/ibc-go": {
-              path: "github.com/cosmos/ibc-go/v4",
-              version: "v4.3.1",
-              sum: "h1:xbg0CaCdxK3lvgGvSaI91ROOLd7s30UqEcexH6Ba4Ys=",
-            },
-            "github.com/osmosis-labs/osmosis/x/ibc-hooks": {
-              path: "github.com/osmosis-labs/osmosis/x/ibc-hooks",
-              version: "v0.0.7",
-              sum: "h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=",
-            },
-            "github.com/strangelove-ventures/packet-forward-middleware": {
-              path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
-              version: "v4.0.5",
-              sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
-            },
-          },
-          cosmosModuleSupport: {
-            authz: true,
-            feegrant: false,
-          },
           supportsMemo: true,
-          logoURI:
+          logoUri:
             "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
           bech32Prefix: "osmo",
-          ibcCapabilities: {
-            cosmosPfm: true,
-            cosmosIbcHooks: true,
-            cosmosMemo: true,
-            cosmosAutopilot: false,
-          },
           feeAssets: [
             {
               denom: "uosmo",
@@ -144,7 +94,7 @@ describe("client", () => {
             },
           ],
         },
-      ] as Chain[]);
+      ]);
     });
   });
 
@@ -159,8 +109,7 @@ describe("client", () => {
                 "cosmoshub-4": {
                   assets: [
                     {
-                      denom:
-                        "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
+                      denom: "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
                       chain_id: "cosmoshub-4",
                       origin_denom: "ustrd",
                       origin_chain_id: "stride-1",
@@ -210,39 +159,35 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-        cacheDurationMs: 0,
+      const response = await assets({
+        apiUrl: "https://api.skip.build",
       });
 
-      const assets = await client.assets();
-
-      expect(assets).toEqual({
+      expect(response).toEqual({
         "cosmoshub-4": [
           {
-            denom:
-              "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
-            chainID: "cosmoshub-4",
+            denom: "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
+            chainId: "cosmoshub-4",
             originDenom: "ustrd",
-            originChainID: "stride-1",
-            isCW20: false,
+            originChainId: "stride-1",
+            isCw20: false,
             trace: "transfer/channel-391",
             symbol: "STRD",
             name: "STRD",
-            logoURI:
+            logoUri:
               "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/stride/asset/strd.png",
             decimals: 6,
           },
           {
             denom: "uatom",
-            chainID: "cosmoshub-4",
+            chainId: "cosmoshub-4",
             originDenom: "uatom",
-            originChainID: "cosmoshub-4",
-            isCW20: false,
+            originChainId: "cosmoshub-4",
+            isCw20: false,
             trace: "",
             symbol: "ATOM",
             name: "ATOM",
-            logoURI:
+            logoUri:
               "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/cosmos/asset/atom.png",
             decimals: 6,
           },
@@ -250,14 +195,14 @@ describe("client", () => {
         "osmosis-1": [
           {
             denom: "uosmo",
-            chainID: "osmosis-1",
+            chainId: "osmosis-1",
             originDenom: "uosmo",
-            originChainID: "osmosis-1",
-            isCW20: false,
+            originChainId: "osmosis-1",
+            isCw20: false,
             trace: "",
             symbol: "OSMO",
             name: "OSMO",
-            logoURI:
+            logoUri:
               "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
             decimals: 6,
           },
@@ -267,72 +212,61 @@ describe("client", () => {
 
     it("handles 200 OK - with parameters", async () => {
       server.use(
-        rest.get(
-          "https://api.skip.build/v2/fungible/assets",
-          (req, res, ctx) => {
-            const chainID = req.url.searchParams.get("chain_id");
-            const nativeOnly = req.url.searchParams.get("native_only");
-            const includeNoMetadataAssets = req.url.searchParams.get(
-              "include_no_metadata_assets",
-            );
+        rest.get("https://api.skip.build/v2/fungible/assets", (req, res, ctx) => {
+          const chainIds = req.url.searchParams.get("chain_ids");
+          const nativeOnly = req.url.searchParams.get("native_only");
+          const includeNoMetadataAssets = req.url.searchParams.get("include_no_metadata_assets");
 
-            if (chainID && nativeOnly && includeNoMetadataAssets) {
-              return res(
-                ctx.status(200),
-                ctx.json({
-                  chain_to_assets_map: {
-                    "osmosis-1": {
-                      assets: [
-                        {
-                          denom: "uosmo",
-                          chain_id: "osmosis-1",
-                          origin_denom: "uosmo",
-                          origin_chain_id: "osmosis-1",
-                          is_cw20: false,
-                          trace: "",
-                          symbol: "OSMO",
-                          name: "OSMO",
-                          logo_uri:
-                            "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
-                          decimals: 6,
-                        },
-                      ],
-                    },
-                  },
-                }),
-              );
-            }
-
+          if (chainIds && nativeOnly && includeNoMetadataAssets) {
             return res(
-              ctx.status(500),
-              ctx.json({ message: "should not have reached this" }),
+              ctx.status(200),
+              ctx.json({
+                chain_to_assets_map: {
+                  "osmosis-1": {
+                    assets: [
+                      {
+                        denom: "uosmo",
+                        chain_id: "osmosis-1",
+                        origin_denom: "uosmo",
+                        origin_chain_id: "osmosis-1",
+                        is_cw20: false,
+                        trace: "",
+                        symbol: "OSMO",
+                        name: "OSMO",
+                        logo_uri:
+                          "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                        decimals: 6,
+                      },
+                    ],
+                  },
+                },
+              }),
             );
-          },
-        ),
+          }
+
+          return res(ctx.status(500), ctx.json({ message: "should not have reached this" }));
+        }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const assets = await client.assets({
-        chainID: "osmosis-1",
+      const response = await assets({
+        chainIds: ["osmosis-1"],
         nativeOnly: true,
         includeNoMetadataAssets: true,
+        apiUrl: "https://api.skip.build",
       });
 
-      expect(assets).toEqual({
+      expect(response).toEqual({
         "osmosis-1": [
           {
             denom: "uosmo",
-            chainID: "osmosis-1",
+            chainId: "osmosis-1",
             originDenom: "uosmo",
-            originChainID: "osmosis-1",
+            originChainId: "osmosis-1",
             trace: "",
-            isCW20: false,
+            isCw20: false,
             symbol: "OSMO",
             name: "OSMO",
-            logoURI:
+            logoUri:
               "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
             decimals: 6,
           },
@@ -354,12 +288,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-        cacheDurationMs: 0,
-      });
-
-      await expect(client.assets()).rejects.toThrow("Invalid chain_id");
+      await expect(
+        assets({
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("Invalid chain_id");
     });
 
     it("handles 500 Internal Server Error", async () => {
@@ -376,28 +309,160 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-        cacheDurationMs: 0,
-      });
-
-      await expect(client.assets()).rejects.toThrow("internal server error");
+      await expect(
+        assets({
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("internal server error");
     });
   });
 
   describe("/v2/fungible/assets_from_source", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.post(
-          "https://api.skip.build/v2/fungible/assets_from_source",
-          (_, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                dest_assets: {
-                  "osmosis-1": {
-                    assets: [
-                      {
+        rest.post("https://api.skip.build/v2/fungible/assets_from_source", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              dest_assets: {
+                "osmosis-1": {
+                  assets: [
+                    {
+                      denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                      chain_id: "cosmoshub-4",
+                      origin_denom: "uosmo",
+                      origin_chain_id: "osmosis-1",
+                      trace: "transfer/channel-141",
+                      symbol: "OSMO",
+                      name: "OSMO",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                      decimals: 6,
+                    },
+                  ],
+                },
+                "neutron-1": {
+                  assets: [
+                    {
+                      denom: "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
+                      chain_id: "neutron-1",
+                      origin_denom: "uosmo",
+                      origin_chain_id: "osmosis-1",
+                      trace: "transfer/channel-10",
+                      symbol: "OSMO",
+                      name: "OSMO",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                      decimals: 6,
+                    },
+                  ],
+                },
+              },
+            }),
+          );
+        }),
+      );
+
+      const response = await assetsFromSource({
+        sourceAssetChainId: "osmosis-1",
+        sourceAssetDenom: "uosmo",
+        includeCw20Assets: true,
+        apiUrl: "https://api.skip.build",
+      });
+
+      expect(response).toEqual({
+        "osmosis-1": [
+          {
+            denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+            chainId: "cosmoshub-4",
+            originDenom: "uosmo",
+            originChainId: "osmosis-1",
+            trace: "transfer/channel-141",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoUri:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+        "neutron-1": [
+          {
+            denom: "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
+            chainId: "neutron-1",
+            originDenom: "uosmo",
+            originChainId: "osmosis-1",
+            trace: "transfer/channel-10",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoUri:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+      });
+    });
+
+    it("handles 400 Bad Request", async () => {
+      server.use(
+        rest.post("https://api.skip.build/v2/fungible/assets_from_source", (_, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              code: 3,
+              message: "Invalid source_asset_chain_id",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      await expect(
+        assetsFromSource({
+          sourceAssetChainId: "osmosis-1",
+          sourceAssetDenom: "uosmo",
+          includeCw20Assets: true,
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("Invalid source_asset_chain_id");
+    });
+
+    it("handles 500 Internal Server Error", async () => {
+      server.use(
+        rest.post("https://api.skip.build/v2/fungible/assets_from_source", (_, res, ctx) => {
+          return res(
+            ctx.status(500),
+            ctx.json({
+              code: 2,
+              message: "internal server error",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      await expect(
+        assetsFromSource({
+          sourceAssetChainId: "osmosis-1",
+          sourceAssetDenom: "uosmo",
+          includeCw20Assets: true,
+          apiUrl: "https://api.skip.build",
+        }),
+      ).rejects.toThrow("internal server error");
+    });
+  });
+
+  describe("/v2/fungible/recommend_assets", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post("https://api.skip.build/v2/fungible/recommend_assets", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              recommendation_entries: [
+                {
+                  recommendations: [
+                    {
+                      asset: {
                         denom:
                           "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
                         chain_id: "cosmoshub-4",
@@ -409,214 +474,49 @@ describe("client", () => {
                         logo_uri:
                           "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
                         decimals: 6,
+                        is_cw20: true,
+                        is_evm: true,
+                        is_svm: false,
                       },
-                    ],
-                  },
-                  "neutron-1": {
-                    assets: [
-                      {
-                        denom:
-                          "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
-                        chain_id: "neutron-1",
-                        origin_denom: "uosmo",
-                        origin_chain_id: "osmosis-1",
-                        trace: "transfer/channel-10",
-                        symbol: "OSMO",
-                        name: "OSMO",
-                        logo_uri:
-                          "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
-                        decimals: 6,
-                      },
-                    ],
-                  },
+                      reason: "MOST_LIQUID",
+                    },
+                  ],
                 },
-              }),
-            );
-          },
-        ),
+              ],
+            }),
+          );
+        }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const assetsFromSource = await client.assetsFromSource({
-        sourceAssetChainID: "osmosis-1",
-        sourceAssetDenom: "uosmo",
-        includeCW20Assets: true,
-      });
-
-      expect(assetsFromSource).toEqual({
-        "osmosis-1": [
+      const response = await recommendAssets({
+        requests: [
           {
-            denom:
-              "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-            chainID: "cosmoshub-4",
-            originDenom: "uosmo",
-            originChainID: "osmosis-1",
-            trace: "transfer/channel-141",
-            symbol: "OSMO",
-            name: "OSMO",
-            logoURI:
-              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
-            decimals: 6,
+            sourceAssetChainId: "osmosis-1",
+            sourceAssetDenom: "uosmo",
+            destChainId: "cosmoshub-4",
           },
         ],
-        "neutron-1": [
-          {
-            denom:
-              "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
-            chainID: "neutron-1",
-            originDenom: "uosmo",
-            originChainID: "osmosis-1",
-            trace: "transfer/channel-10",
-            symbol: "OSMO",
-            name: "OSMO",
-            logoURI:
-              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
-            decimals: 6,
-          },
-        ],
-      });
-    });
-
-    it("handles 400 Bad Request", async () => {
-      server.use(
-        rest.post(
-          "https://api.skip.build/v2/fungible/assets_from_source",
-          (_, res, ctx) => {
-            return res(
-              ctx.status(400),
-              ctx.json({
-                code: 3,
-                message: "Invalid source_asset_chain_id",
-                details: [],
-              }),
-            );
-          },
-        ),
-      );
-
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
+        apiUrl: "https://api.skip.build",
       });
 
-      await expect(
-        client.assetsFromSource({
-          sourceAssetChainID: "osmosis-1",
-          sourceAssetDenom: "uosmo",
-          includeCW20Assets: true,
-        }),
-      ).rejects.toThrow("Invalid source_asset_chain_id");
-    });
-
-    it("handles 500 Internal Server Error", async () => {
-      server.use(
-        rest.post(
-          "https://api.skip.build/v2/fungible/assets_from_source",
-          (_, res, ctx) => {
-            return res(
-              ctx.status(500),
-              ctx.json({
-                code: 2,
-                message: "internal server error",
-                details: [],
-              }),
-            );
-          },
-        ),
-      );
-
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      await expect(
-        client.assetsFromSource({
-          sourceAssetChainID: "osmosis-1",
-          sourceAssetDenom: "uosmo",
-          includeCW20Assets: true,
-        }),
-      ).rejects.toThrow("internal server error");
-    });
-  });
-
-  describe("/v2/fungible/recommend_assets", () => {
-    it("handles 200 OK", async () => {
-      server.use(
-        rest.post(
-          "https://api.skip.build/v2/fungible/recommend_assets",
-          (_, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                recommendations: [],
-                recommendation_entries: [
-                  {
-                    recommendations: [
-                      {
-                        asset: {
-                          denom:
-                            "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-                          chain_id: "cosmoshub-4",
-                          origin_denom: "uosmo",
-                          origin_chain_id: "osmosis-1",
-                          trace: "transfer/channel-141",
-                          symbol: "OSMO",
-                          name: "OSMO",
-                          logo_uri:
-                            "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
-                          decimals: 6,
-                          is_cw20: true,
-                          is_evm: true,
-                          is_svm: false,
-                        },
-                        reason: "MOST_LIQUID",
-                      },
-                    ],
-                  },
-                ],
-              }),
-            );
-          },
-        ),
-      );
-
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.recommendAssets([
-        {
-          sourceAssetChainID: "osmosis-1",
-          sourceAssetDenom: "uosmo",
-          destChainID: "cosmoshub-4",
-        },
-      ]);
-
-      const expected: RecommendationEntry[] = [
+      const expected = [
         {
           recommendations: [
             {
               asset: {
-                denom:
-                  "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-                chainID: "cosmoshub-4",
+                denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                chainId: "cosmoshub-4",
                 originDenom: "uosmo",
-                originChainID: "osmosis-1",
+                originChainId: "osmosis-1",
                 trace: "transfer/channel-141",
                 symbol: "OSMO",
                 name: "OSMO",
-                logoURI:
+                logoUri:
                   "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
                 decimals: 6,
-                isCW20: true,
-                isEVM: true,
-                isSVM: false,
-                tokenContract: undefined,
-                description: undefined,
-                coingeckoID: undefined,
-                recommendedSymbol: undefined,
+                isCw20: true,
+                isEvm: true,
+                isSvm: false,
               },
               reason: "MOST_LIQUID",
             },
@@ -650,15 +550,12 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.messages({
+      const response = await messages({
+        apiUrl: "https://api.skip.build",
         sourceAssetDenom: "uosmo",
-        sourceAssetChainID: "osmosis-1",
+        sourceAssetChainId: "osmosis-1",
         destAssetDenom: "uatom",
-        destAssetChainID: "cosmoshub-4",
+        destAssetChainId: "cosmoshub-4",
         amountIn: "1000000",
         amountOut: "54906",
         addressList: [
@@ -671,7 +568,7 @@ describe("client", () => {
               swapIn: {
                 swapVenue: {
                   name: "neutron-astroport",
-                  chainID: "neutron-1",
+                  chainId: "neutron-1",
                   logoUri:
                     "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
@@ -683,17 +580,16 @@ describe("client", () => {
                   },
                 ],
                 swapAmountIn: "1000000",
-                estimatedAmountOut: "",
               },
               estimatedAffiliateFee: "1000000",
-              chainID: "neutron-1",
-              fromChainID: "neutron-1",
+              chainId: "neutron-1",
+              fromChainId: "neutron-1",
               denomIn: "uosmo",
               denomOut: "uatom",
               swapVenues: [
                 {
                   name: "neutron-astroport",
-                  chainID: "neutron-1",
+                  chainId: "neutron-1",
                   logoUri:
                     "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
@@ -705,32 +601,19 @@ describe("client", () => {
           },
           {
             transfer: {
-              port: "transfer",
-              channel: "channel-0",
-              chainID: "osmosis-1",
-              pfmEnabled: true,
-              destDenom: "uatom",
-              supportsMemo: true,
               smartRelay: false,
-              bridgeID: "IBC",
+              bridgeId: BridgeType.IBC,
               denomIn: "uosmo",
               denomOut: "uatom",
-              fromChainID: "osmosis-1",
-              toChainID: "cosmoshub-4",
+              fromChainId: "osmosis-1",
+              toChainId: "cosmoshub-4",
             },
             txIndex: 0,
             amountIn: "100000",
             amountOut: "100000",
           },
         ],
-        estimatedAmountOut: "54906",
         slippageTolerancePercent: "0.01",
-        affiliates: [
-          {
-            address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
-            basisPointsFee: "100",
-          },
-        ],
         postRouteHandler: {
           wasmMsg: {
             contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
@@ -740,20 +623,20 @@ describe("client", () => {
         enableGasWarnings: true,
       });
 
-      expect(response.msgs).toEqual([
+      expect(response?.msgs).toEqual([
         {
           multiChainMsg: {
-            chainID: "osmosis-1",
+            chainId: "osmosis-1",
             path: ["osmosis-1", "cosmoshub-4"],
             msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
-            msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
+            msgTypeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
           },
         },
       ]);
     });
   });
 
-  const routeResponseJSON: RouteResponseJSON = {
+  const routeResponseJSON = {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     dest_asset_denom: "uatom",
@@ -779,7 +662,6 @@ describe("client", () => {
               },
             ],
             swap_amount_in: "1000000",
-            estimated_amount_out: "",
           },
           estimated_affiliate_fee: "1000000",
           chain_id: "neutron-1",
@@ -801,10 +683,6 @@ describe("client", () => {
       },
       {
         transfer: {
-          port: "transfer",
-          channel: "channel-0",
-          chain_id: "osmosis-1",
-          pfm_enabled: true,
           dest_denom: "uatom",
           supports_memo: true,
           smart_relay: false,
@@ -821,7 +699,6 @@ describe("client", () => {
     ],
     chain_ids: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
-    estimated_amount_out: "54906",
     swap_venues: [
       {
         name: "osmosis-poolmanager",
@@ -843,24 +720,21 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.route({
-        sourceAssetChainID: "osmosis-1",
+      const response = await route({
+        apiUrl: "https://api.skip.build",
+        sourceAssetChainId: "osmosis-1",
         sourceAssetDenom: "uosmo",
-        destAssetChainID: "cosmoshub-4",
+        destAssetChainId: "cosmoshub-4",
         destAssetDenom: "uatom",
         amountIn: "1000000",
         smartRelay: false,
       });
 
-      const routeResponse: RouteResponse = {
+      const routeResponse = {
         sourceAssetDenom: "uosmo",
-        sourceAssetChainID: "osmosis-1",
+        sourceAssetChainId: "osmosis-1",
         destAssetDenom: "uatom",
-        destAssetChainID: "cosmoshub-4",
+        destAssetChainId: "cosmoshub-4",
         amountIn: "1000000",
         amountOut: "54906",
         requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
@@ -870,7 +744,7 @@ describe("client", () => {
               swapIn: {
                 swapVenue: {
                   name: "neutron-astroport",
-                  chainID: "neutron-1",
+                  chainId: "neutron-1",
                   logoUri:
                     "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
@@ -882,17 +756,16 @@ describe("client", () => {
                   },
                 ],
                 swapAmountIn: "1000000",
-                estimatedAmountOut: "",
               },
               estimatedAffiliateFee: "1000000",
-              chainID: "neutron-1",
-              fromChainID: "neutron-1",
+              chainId: "neutron-1",
+              fromChainId: "neutron-1",
               denomIn: "uosmo",
               denomOut: "uatom",
               swapVenues: [
                 {
                   name: "neutron-astroport",
-                  chainID: "neutron-1",
+                  chainId: "neutron-1",
                   logoUri:
                     "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
@@ -904,31 +777,26 @@ describe("client", () => {
           },
           {
             transfer: {
-              port: "transfer",
-              channel: "channel-0",
-              chainID: "osmosis-1",
-              pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
               smartRelay: false,
-              bridgeID: "IBC",
+              bridgeId: "IBC",
               denomIn: "uosmo",
               denomOut: "uatom",
-              fromChainID: "osmosis-1",
-              toChainID: "cosmoshub-4",
+              fromChainId: "osmosis-1",
+              toChainId: "cosmoshub-4",
             },
             txIndex: 0,
             amountIn: "100000",
             amountOut: "100000",
           },
         ],
-        chainIDs: ["osmosis-1", "cosmoshub-4"],
+        chainIds: ["osmosis-1", "cosmoshub-4"],
         doesSwap: true,
-        estimatedAmountOut: "54906",
         swapVenues: [
           {
             name: "osmosis-poolmanager",
-            chainID: "osmosis-1",
+            chainId: "osmosis-1",
             logoUri:
               "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
           },
@@ -964,20 +832,18 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
+      const response = await venues({
+        apiUrl: "https://api.skip.build",
       });
-
-      const response = await client.venues();
 
       expect(response).toEqual([
         {
           name: "neutron-astroport",
-          chainID: "neutron-1",
+          chainId: "neutron-1",
         },
         {
           name: "osmosis-poolmanager",
-          chainID: "osmosis-1",
+          chainId: "osmosis-1",
         },
       ]);
     });
@@ -997,16 +863,14 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.submitTransaction({
-        chainID: "cosmoshub-4",
+      const response = await submitTransaction({
+        apiUrl: "https://api.skip.build",
+        chainId: "cosmoshub-4",
         tx: "txbytes123",
       });
 
       expect(response).toEqual({
+        success: true,
         txHash: "tx_hash123",
       });
     });
@@ -1026,16 +890,14 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.trackTransaction({
-        chainID: "cosmoshub-4",
+      const response = await trackTransaction({
+        chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
+        success: true,
         txHash: "tx_hash123",
       });
     });
@@ -1090,8 +952,7 @@ describe("client", () => {
                   next_blocking_transfer: null,
                   transfer_asset_release: {
                     chain_id: "neutron-1",
-                    denom:
-                      "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                    denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                     released: true,
                   },
                   error: null,
@@ -1107,22 +968,19 @@ describe("client", () => {
                     packet_txs: {
                       send_tx: {
                         chain_id: "noble-1",
-                        tx_hash:
-                          "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                        tx_hash: "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                         explorer_link:
                           "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                       },
                       receive_tx: {
                         chain_id: "neutron-1",
-                        tx_hash:
-                          "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                        tx_hash: "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                         explorer_link:
                           "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                       },
                       acknowledge_tx: {
                         chain_id: "noble-1",
-                        tx_hash:
-                          "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                        tx_hash: "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                         explorer_link:
                           "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                       },
@@ -1137,8 +995,7 @@ describe("client", () => {
               next_blocking_transfer: null,
               transfer_asset_release: {
                 chain_id: "neutron-1",
-                denom:
-                  "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                 released: true,
               },
               error: null,
@@ -1148,13 +1005,10 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.transactionStatus({
-        chainID: "cosmoshub-4",
+      const response = await transactionStatus({
+        chainId: "cosmoshub-4",
         txHash: "tx_hash123",
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -1163,68 +1017,39 @@ describe("client", () => {
         transferSequence: [
           {
             ibcTransfer: {
-              fromChainID: "noble-1",
-              toChainID: "neutron-1",
+              fromChainId: "noble-1",
+              toChainId: "neutron-1",
               state: "TRANSFER_SUCCESS",
-              packetTXs: {
-                sendTx: {
-                  txHash:
-                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                  chainID: "noble-1",
-                  explorerLink:
-                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                },
-                receiveTx: {
-                  txHash:
-                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                  chainID: "neutron-1",
-                  explorerLink:
-                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                },
-                acknowledgeTx: {
-                  txHash:
-                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                  chainID: "noble-1",
-                  explorerLink:
-                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                },
-                timeoutTx: null,
-                error: null,
-              },
               packetTxs: {
                 sendTx: {
-                  txHash:
-                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                  chainID: "noble-1",
+                  txHash: "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainId: "noble-1",
                   explorerLink:
                     "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  txHash:
-                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                  chainID: "neutron-1",
+                  txHash: "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainId: "neutron-1",
                   explorerLink:
                     "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  txHash:
-                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                  chainID: "noble-1",
+                  txHash: "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainId: "noble-1",
                   explorerLink:
                     "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
-              srcChainID: "noble-1",
-              dstChainID: "neutron-1",
+              srcChainId: "noble-1",
+              dstChainId: "neutron-1",
             },
           },
         ],
         transferAssetRelease: {
-          chainID: "neutron-1",
-          denom:
-            "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+          chainId: "neutron-1",
+          denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
           released: true,
         },
         error: null,
@@ -1234,68 +1059,39 @@ describe("client", () => {
             transferSequence: [
               {
                 ibcTransfer: {
-                  fromChainID: "noble-1",
-                  toChainID: "neutron-1",
+                  fromChainId: "noble-1",
+                  toChainId: "neutron-1",
                   state: "TRANSFER_SUCCESS",
-                  packetTXs: {
-                    sendTx: {
-                      txHash:
-                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                      chainID: "noble-1",
-                      explorerLink:
-                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                    },
-                    receiveTx: {
-                      txHash:
-                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                      chainID: "neutron-1",
-                      explorerLink:
-                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                    },
-                    acknowledgeTx: {
-                      txHash:
-                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                      chainID: "noble-1",
-                      explorerLink:
-                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                    },
-                    timeoutTx: null,
-                    error: null,
-                  },
                   packetTxs: {
                     sendTx: {
-                      txHash:
-                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                      chainID: "noble-1",
+                      txHash: "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainId: "noble-1",
                       explorerLink:
                         "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                     },
                     receiveTx: {
-                      txHash:
-                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                      chainID: "neutron-1",
+                      txHash: "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainId: "neutron-1",
                       explorerLink:
                         "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                     },
                     acknowledgeTx: {
-                      txHash:
-                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                      chainID: "noble-1",
+                      txHash: "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainId: "noble-1",
                       explorerLink:
                         "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                     },
                     timeoutTx: null,
                     error: null,
                   },
-                  srcChainID: "noble-1",
-                  dstChainID: "neutron-1",
+                  srcChainId: "noble-1",
+                  dstChainId: "neutron-1",
                 },
               },
             ],
             transferAssetRelease: {
-              chainID: "neutron-1",
-              denom:
-                "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+              chainId: "neutron-1",
+              denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
               released: true,
             },
             error: null,
@@ -1358,8 +1154,7 @@ describe("client", () => {
                     next_blocking_transfer: null,
                     transfer_asset_release: {
                       chain_id: "neutron-1",
-                      denom:
-                        "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                      denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                       released: true,
                     },
                     error: null,
@@ -1405,8 +1200,7 @@ describe("client", () => {
                 next_blocking_transfer: null,
                 transfer_asset_release: {
                   chain_id: "neutron-1",
-                  denom:
-                    "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+                  denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
                   released: true,
                 },
                 error: null,
@@ -1425,20 +1219,10 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
-      const response = await client.transactionStatus({
-        chainID: "cosmoshub-4",
+      const response = await transactionStatus({
+        chainId: "cosmoshub-4",
         txHash: "tx_hash123",
-        options: {
-          retry: {
-            retryInterval: 500,
-            maxRetries: maxRetries + 1,
-            backoffMultiplier: 1,
-          },
-        },
+        apiUrl: "https://api.skip.build",
       });
 
       expect(response).toEqual({
@@ -1447,68 +1231,39 @@ describe("client", () => {
         transferSequence: [
           {
             ibcTransfer: {
-              fromChainID: "noble-1",
-              toChainID: "neutron-1",
+              fromChainId: "noble-1",
+              toChainId: "neutron-1",
               state: "TRANSFER_SUCCESS",
-              packetTXs: {
-                sendTx: {
-                  txHash:
-                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                  chainID: "noble-1",
-                  explorerLink:
-                    "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                },
-                receiveTx: {
-                  txHash:
-                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                  chainID: "neutron-1",
-                  explorerLink:
-                    "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                },
-                acknowledgeTx: {
-                  txHash:
-                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                  chainID: "noble-1",
-                  explorerLink:
-                    "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                },
-                timeoutTx: null,
-                error: null,
-              },
               packetTxs: {
                 sendTx: {
-                  txHash:
-                    "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                  chainID: "noble-1",
+                  txHash: "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                  chainId: "noble-1",
                   explorerLink:
                     "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                 },
                 receiveTx: {
-                  txHash:
-                    "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                  chainID: "neutron-1",
+                  txHash: "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                  chainId: "neutron-1",
                   explorerLink:
                     "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                 },
                 acknowledgeTx: {
-                  txHash:
-                    "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                  chainID: "noble-1",
+                  txHash: "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                  chainId: "noble-1",
                   explorerLink:
                     "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                 },
                 timeoutTx: null,
                 error: null,
               },
-              srcChainID: "noble-1",
-              dstChainID: "neutron-1",
+              srcChainId: "noble-1",
+              dstChainId: "neutron-1",
             },
           },
         ],
         transferAssetRelease: {
-          chainID: "neutron-1",
-          denom:
-            "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+          chainId: "neutron-1",
+          denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
           released: true,
         },
         error: null,
@@ -1518,68 +1273,39 @@ describe("client", () => {
             transferSequence: [
               {
                 ibcTransfer: {
-                  fromChainID: "noble-1",
-                  toChainID: "neutron-1",
+                  fromChainId: "noble-1",
+                  toChainId: "neutron-1",
                   state: "TRANSFER_SUCCESS",
-                  packetTXs: {
-                    sendTx: {
-                      txHash:
-                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                      chainID: "noble-1",
-                      explorerLink:
-                        "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                    },
-                    receiveTx: {
-                      txHash:
-                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                      chainID: "neutron-1",
-                      explorerLink:
-                        "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                    },
-                    acknowledgeTx: {
-                      txHash:
-                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                      chainID: "noble-1",
-                      explorerLink:
-                        "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                    },
-                    timeoutTx: null,
-                    error: null,
-                  },
                   packetTxs: {
                     sendTx: {
-                      txHash:
-                        "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
-                      chainID: "noble-1",
+                      txHash: "D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
+                      chainId: "noble-1",
                       explorerLink:
                         "https://www.mintscan.io/noble/txs/D3E245917290FF55EED7B1908E77EE2FDCA2E35323E35F2BC63280E9D7D320B8",
                     },
                     receiveTx: {
-                      txHash:
-                        "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
-                      chainID: "neutron-1",
+                      txHash: "ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
+                      chainId: "neutron-1",
                       explorerLink:
                         "https://www.mintscan.io/neutron/transactions/ED80AE09392ECA61026255C873714C31A94A5CB975B8CCE05056300D26FC656C",
                     },
                     acknowledgeTx: {
-                      txHash:
-                        "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
-                      chainID: "noble-1",
+                      txHash: "9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
+                      chainId: "noble-1",
                       explorerLink:
                         "https://www.mintscan.io/noble/txs/9808346F9CD566F867B5313E2E8B800BFDA3D34C42D95665296049CAB745E2D1",
                     },
                     timeoutTx: null,
                     error: null,
                   },
-                  srcChainID: "noble-1",
-                  dstChainID: "neutron-1",
+                  srcChainId: "noble-1",
+                  dstChainId: "neutron-1",
                 },
               },
             ],
             transferAssetRelease: {
-              chainID: "neutron-1",
-              denom:
-                "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
+              chainId: "neutron-1",
+              denom: "ibc/B559A80D62249C8AA07A380E2A2BEA6E5CA9A6F079C912C3A9E9B494105E4F81",
               released: true,
             },
             error: null,
@@ -1715,21 +1441,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
-
       try {
-        await client.transactionStatus({
-          chainID: "cosmoshub-4",
+        await transactionStatus({
+          chainId: "cosmoshub-4",
           txHash: "tx_hash123",
-          options: {
-            retry: {
-              retryInterval: 500,
-              maxRetries: maxRetries - 1,
-              backoffMultiplier: 1,
-            },
-          },
+          apiUrl: "https://api.skip.build",
         });
       } catch (error) {
         expect(error).toEqual(new Error("internal server error"));
@@ -1739,7 +1455,7 @@ describe("client", () => {
 
   describe("ibcOriginAssets", () => {
     it("returns a list of origin assets", async () => {
-      const expectedResult: OriginAssetsResponseJSON = {
+      const expectedResult = {
         origin_assets: [
           {
             asset: {
@@ -1787,55 +1503,55 @@ describe("client", () => {
       };
 
       server.use(
-        rest.post(
-          "https://api.skip.build/v2/fungible/ibc_origin_assets",
-          (_, res, ctx) => {
-            return res(ctx.status(200), ctx.json(expectedResult));
+        rest.post("https://api.skip.build/v2/fungible/ibc_origin_assets", (_, res, ctx) => {
+          return res(ctx.status(200), ctx.json(expectedResult));
+        }),
+      );
+
+      const params = {
+        assets: [
+          {
+            denom: "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+            chainId: "cosmoshub-4",
           },
-        ),
-      );
+        ],
+        apiUrl: "https://api.skip.build",
+      };
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-      });
+      const result = await ibcOriginAssets(params);
 
-      const params: DenomWithChainID[] = [
-        {
-          denom:
-            "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
-          chainID: "cosmoshub-4",
-        },
-      ];
-
-      const result = await client.ibcOriginAssets(params);
-
-      expect(result).toEqual(
-        originAssetsResponseFromJSON(expectedResult).originAssets,
-      );
+      expect(result).toEqual(toCamel(expectedResult)?.originAssets);
     });
   });
 
   describe("getRecommendedGasPrice", () => {
     it("returns the recommended gas price for a chain", async () => {
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
+      const result = await getRecommendedGasPrice({
+        chainId: "osmosis-1",
+        apiUrl: "https://api.skip.build",
       });
-
-      const result = await client.getRecommendedGasPrice("osmosis-1");
 
       expect(result?.denom).toEqual("uosmo");
     }, 30000);
 
     it("returns the recommended gas price for Noble (no staking token)", async () => {
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
-        cacheDurationMs: 0,
+      const result = await getRecommendedGasPrice({
+        chainId: "noble-1",
+        apiUrl: "https://api.skip.build",
       });
-
-      const result = await client.getRecommendedGasPrice("noble-1");
 
       expect(result?.denom).toEqual("uusdc");
     }, 30000);
+  });
+
+  describe("getFeeInfoForChain", () => {
+    it("returns the fee info for dymension", async () => {
+      const feeInfo = await getFeeInfoForChain({
+        chainId: "dymension_1100-1",
+        apiUrl: "https://api.skip.build",
+      });
+      expect(feeInfo?.denom).toEqual("adym");
+    });
   });
 
   describe("bridges", () => {
@@ -1870,40 +1586,38 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipClient({
-        apiURL: SKIP_API_URL,
+      const result = await bridges({
+        apiUrl: "https://api.skip.build",
       });
-
-      const result = await client.bridges();
 
       expect(result).toEqual([
         {
           id: "IBC",
           name: "IBC",
-          logoURI:
+          logoUri:
             "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/ibc/logo.svg",
         },
         {
           id: "AXELAR",
           name: "Axelar",
-          logoURI:
+          logoUri:
             "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/axelar/logo.svg",
         },
         {
           id: "CCTP",
           name: "CCTP",
-          logoURI:
+          logoUri:
             "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/cctp/logo.svg",
         },
       ]);
     });
   });
 
-  describe("validateChainIDsToAffiliates", () => {
+  describe("validateChainIdsToAffiliates", () => {
     it("returns an error when basisPointsFee is not included in one of the affiliates", async () => {
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -1922,16 +1636,14 @@ describe("client", () => {
           },
         });
       } catch (error) {
-        expect(error).toEqual(
-          new Error("basisPointFee must exist in each affiliate"),
-        );
+        expect(error).toEqual(new Error("basisPointFee must exist in each affiliate"));
       }
     });
 
     it("returns an error when address is not included in one of the affiliates", async () => {
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -1950,16 +1662,14 @@ describe("client", () => {
           },
         });
       } catch (error) {
-        expect(error).toEqual(
-          new Error("basisPointFee must exist in each affiliate"),
-        );
+        expect(error).toEqual(new Error("basisPointFee must exist in each affiliate"));
       }
     });
 
     it("returns an error when affiliate bps differs (only comparing 2 bps)", async () => {
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -1981,7 +1691,7 @@ describe("client", () => {
       } catch (error) {
         expect(error).toEqual(
           new Error(
-            "basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates",
+            "basisPointFee does not add up to the same number for each chain in chainIdsToAffiliates",
           ),
         );
       }
@@ -1989,8 +1699,8 @@ describe("client", () => {
 
     it("returns an error when first affiliate bps are the same but total differs", async () => {
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -2016,7 +1726,7 @@ describe("client", () => {
       } catch (error) {
         expect(error).toEqual(
           new Error(
-            "basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates",
+            "basisPointFee does not add up to the same number for each chain in chainIdsToAffiliates",
           ),
         );
       }
@@ -2024,8 +1734,8 @@ describe("client", () => {
 
     it("returns an error when first and last affiliates bps are the same but total bps differs", async () => {
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -2059,7 +1769,7 @@ describe("client", () => {
       } catch (error) {
         expect(error).toEqual(
           new Error(
-            "basisPointFee does not add up to the same number for each chain in chainIDsToAffiliates",
+            "basisPointFee does not add up to the same number for each chain in chainIdsToAffiliates",
           ),
         );
       }
@@ -2068,8 +1778,8 @@ describe("client", () => {
     it("does not return an error when affiliate bps are exactly the same", async () => {
       let errorOccurred = false;
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -2088,7 +1798,7 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
@@ -2097,8 +1807,8 @@ describe("client", () => {
     it("does not return an error if 2 bps on first chain adds up to 2nd chains first bps", async () => {
       let errorOccurred = false;
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -2121,7 +1831,7 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
@@ -2130,8 +1840,8 @@ describe("client", () => {
     it("does not return an error if 3 chains are passed and each have different number of affiliates but still add up to the same total", async () => {
       let errorOccurred = false;
       try {
-        new SkipClient({
-          chainIDsToAffiliates: {
+        setClientOptions({
+          chainIdsToAffiliates: {
             chain1: {
               affiliates: [
                 {
@@ -2178,20 +1888,10 @@ describe("client", () => {
             },
           },
         });
-      } catch (error) {
+      } catch (_error) {
         errorOccurred = true;
       }
       expect(errorOccurred).toBe(false);
     });
   });
-
-  test("dymension", async () => {
-    const client = new SkipClient({
-      apiURL: SKIP_API_URL,
-      cacheDurationMs: 0,
-    });
-
-    const feeInfo = await client.getFeeInfoForChain("dymension_1100-1");
-    expect(feeInfo?.denom).toEqual("adym");
-  }, 30000);
 });

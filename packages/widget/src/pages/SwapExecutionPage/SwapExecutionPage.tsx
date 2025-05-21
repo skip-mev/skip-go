@@ -7,7 +7,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
-import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import {
   chainAddressesAtom,
   skipSubmitSwapExecutionAtom,
@@ -41,6 +40,7 @@ export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const {
     route,
+    clientOperations,
     overallStatus,
     transactionDetailsArray,
     isValidatingGasBalance,
@@ -65,11 +65,6 @@ export const SwapExecutionPage = () => {
   useSyncTxStatus({
     statusData,
   });
-
-  const clientOperations = useMemo(() => {
-    if (!route?.operations) return [] as ClientOperation[];
-    return getClientOperations(route.operations);
-  }, [route?.operations]);
 
   const lastOperation = clientOperations[clientOperations.length - 1];
 
@@ -130,7 +125,7 @@ export const SwapExecutionPage = () => {
 
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
-        chainId: route?.destAssetChainID,
+        chainId: route?.destAssetChainId,
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };

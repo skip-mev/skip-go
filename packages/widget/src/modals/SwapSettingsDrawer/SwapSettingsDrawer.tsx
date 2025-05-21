@@ -3,15 +3,11 @@ import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { poweredBySkipGo } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
-import { formatUSD } from "@/utils/intl";
-import { ClientOperation, getClientOperations, OperationType } from "@/utils/clientType";
-import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
-import { calculateSmartRelayFee, checkIsSmartRelay } from "@/utils/route";
+import { getFeeList } from "@/utils/route";
 import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";
@@ -24,102 +20,13 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
+    return route?.chainIds?.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
   }, [route, chains]);
 
-  const clientOperations = getClientOperations(route?.operations);
-
-  const transferOperations = useMemo(() => {
-    if (!clientOperations) return [];
-    return clientOperations.filter((item) =>
-      [
-        OperationType.axelarTransfer,
-        OperationType.hyperlaneTransfer,
-        OperationType.goFastTransfer,
-      ].includes(item.type),
-    );
-  }, [clientOperations]);
-
-  const computeFee = (operation: ClientOperation) => {
-    if (!operation) return;
-    if (operation.type === OperationType.goFastTransfer) {
-      const goFastFee = operation.fee;
-      if (!goFastFee) return;
-
-      const {
-        feeAsset,
-        sourceChainFeeAmount,
-        destinationChainFeeAmount,
-        bpsFeeAmount,
-        sourceChainFeeUSD,
-        destinationChainFeeUSD,
-        bpsFeeUSD,
-      } = goFastFee;
-
-      const totalFeeAmount = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount].reduce(
-        (sum, amount) => sum + Number(amount),
-        0,
-      );
-      const totalUsdAmount = [sourceChainFeeUSD, destinationChainFeeUSD, bpsFeeUSD].reduce(
-        (sum, amount) => sum + Number(amount),
-        0,
-      );
-
-      const computed = convertTokenAmountToHumanReadableAmount(
-        totalFeeAmount.toString(),
-        feeAsset.decimals,
-      );
-      return {
-        assetAmount: Number(computed),
-        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: formatUSD(totalUsdAmount.toString()),
-      };
-    } else {
-      const { feeAmount, feeAsset, usdFeeAmount } = operation;
-      if (!feeAmount || !feeAsset || !feeAsset.decimals) return;
-
-      const computed = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
-
-      return {
-        assetAmount: Number(computed),
-        formattedAssetAmount: `${computed} ${feeAsset.symbol}`,
-        formattedUsdAmount: usdFeeAmount ? formatUSD(usdFeeAmount) : undefined,
-      };
-    }
-  };
-
   const fees = useMemo(() => {
-    const feeList = [];
-
-    transferOperations.forEach((operation) => {
-      const fee = computeFee(operation);
-      if (fee) {
-        let label = "";
-        switch (operation.type) {
-          case OperationType.axelarTransfer:
-            label = "Axelar Bridging Fee";
-            break;
-          case OperationType.hyperlaneTransfer:
-            label = "Hyperlane Bridging Fee";
-            break;
-          case OperationType.goFastTransfer:
-            label = "Go Fast Transfer Fee";
-            break;
-          default:
-            break;
-        }
-        feeList.push({ label, fee });
-      }
-    });
-
-    const isSmartRelay = checkIsSmartRelay(route);
-    const smartRelayFee = calculateSmartRelayFee(isSmartRelay, route?.estimatedFees);
-
-    if (smartRelayFee) {
-      feeList.push({ label: "Relayer Fee", fee: smartRelayFee });
-    }
-    return feeList;
-  }, [transferOperations, route]);
+    if (!route) return [];
+    return getFeeList(route);
+  }, [route]);
 
   return (
     <StyledSwapPageSettings gap={15}>
@@ -132,7 +39,7 @@ export const SwapSettingsDrawer = createModal(() => {
                 <img
                   width="25"
                   height="25"
-                  src={chain?.logoURI}
+                  src={chain?.logoUri}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
                 />
@@ -191,7 +98,6 @@ export const SwapSettingsDrawer = createModal(() => {
         >
           Close
         </SmallTextButton>
-        <SmallText>{poweredBySkipGo}</SmallText>
       </Row>
     </StyledSwapPageSettings>
   );

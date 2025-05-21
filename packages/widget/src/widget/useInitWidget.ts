@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { defaultTheme, lightTheme, Theme } from "./theme";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
   themeAtom,
   defaultSkipClientConfig,
   onlyTestnetsAtom,
 } from "@/state/skipClient";
-import { SkipClientOptions } from "@skip-go/client";
+import { SkipClientOptions, setClientOptions } from "@skip-go/client";
 import { useInitDefaultRoute } from "./useInitDefaultRoute";
 import { swapSettingsAtom } from "@/state/swapPage";
 import { routeConfigAtom } from "@/state/route";
@@ -15,6 +15,7 @@ import {
   walletConnectAtom,
   getConnectedSignersAtom,
   connectedAddressesAtom,
+  walletsAtom,
 } from "@/state/wallets";
 import { WidgetProps } from "./Widget";
 import { callbacksAtom } from "@/state/callbacks";
@@ -60,6 +61,8 @@ export const useInitWidget = (props: WidgetProps) => {
   const setHideAssetsUnlessWalletTypeConnected = useSetAtom(
     hideAssetsUnlessWalletTypeConnectedAtom,
   );
+  const getSigners = useAtomValue(getConnectedSignersAtom);
+  const wallets = useAtomValue(walletsAtom);
 
   const mergedSkipClientConfig: SkipClientOptions = useMemo(() => {
     const { apiUrl, chainIdsToAffiliates, endpointOptions } = props;
@@ -71,9 +74,9 @@ export const useInitWidget = (props: WidgetProps) => {
 
     // merge if not undefined
     return {
-      apiURL: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
+      apiUrl: fromWidgetProps.apiUrl ?? defaultSkipClientConfig.apiUrl,
       endpointOptions: fromWidgetProps.endpointOptions ?? defaultSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
+      chainIdsToAffiliates: fromWidgetProps.chainIdsToAffiliates ?? {},
     };
   }, [props]);
 
@@ -96,13 +99,15 @@ export const useInitWidget = (props: WidgetProps) => {
   }, [props.brandColor, props.theme]);
 
   useEffect(() => {
-    setSkipClientConfig({
-      apiURL: mergedSkipClientConfig.apiURL,
-      endpointOptions: mergedSkipClientConfig.endpointOptions,
-      chainIDsToAffiliates: mergedSkipClientConfig.chainIDsToAffiliates,
-    });
+    setSkipClientConfig(mergedSkipClientConfig);
     setTheme(mergedTheme);
   }, [setSkipClientConfig, mergedSkipClientConfig, setTheme, mergedTheme]);
+
+  useEffect(() => {
+    setClientOptions({
+      ...mergedSkipClientConfig,
+    });
+  }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
 
   useEffect(() => {
     if (props.settings) {
@@ -160,6 +165,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionComplete: props.onTransactionComplete,
       onTransactionFailed: props.onTransactionFailed,
       onRouteUpdated: props.onRouteUpdated,
+      onSourceAndDestinationSwapped: props.onSourceAndDestinationSwapped,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -198,15 +204,15 @@ export const useInitWidget = (props: WidgetProps) => {
     setHideAssetsUnlessWalletTypeConnected,
     props.filterOutUnlessUserHasBalance,
     setFilterOutUnlessUserHasBalanceAtom,
+    props.onSourceAndDestinationSwapped,
   ]);
 
   return { theme: mergedTheme };
 };
 
 const useInitGetSigners = (props: Partial<WidgetProps>) => {
-  const setGetSigners = useSetAtom(getConnectedSignersAtom);
   const setInjectedAddresses = useSetAtom(connectedAddressesAtom);
-
+  const setGetSigners = useSetAtom(getConnectedSignersAtom);
   // Update injected addresses whenever `connectedAddresses` changes
   useEffect(() => {
     setInjectedAddresses(props.connectedAddresses);
@@ -217,8 +223,9 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
     setGetSigners((prev) => ({
       ...prev,
       ...(props.getCosmosSigner && { getCosmosSigner: props.getCosmosSigner }),
-      ...(props.getEVMSigner && { getEVMSigner: props.getEVMSigner }),
-      ...(props.getSVMSigner && { getSVMSigner: props.getSVMSigner }),
+      ...(props.getEvmSigner && { getEvmSigner: props.getEvmSigner }),
+      ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
-  }, [props.getCosmosSigner, props.getEVMSigner, props.getSVMSigner, setGetSigners]);
+  }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);
+
 };

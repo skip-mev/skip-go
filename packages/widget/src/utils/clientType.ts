@@ -6,6 +6,8 @@ import {
   CCTPTransfer,
   CCTPTransferInfo,
   CCTPTransferState,
+  EurekaTransfer,
+  EurekaTransferInfo,
   EvmSwap,
   GoFastTransfer,
   GoFastTransferInfo,
@@ -13,24 +15,25 @@ import {
   HyperlaneTransfer,
   HyperlaneTransferInfo,
   HyperlaneTransferState,
-  StargateTransferInfo,
-  StargateTransfer,
-  StargateTransferState,
+  IBCTransferInfo,
+  Operation,
   OPInitTransfer,
   OPInitTransferInfo,
   OPInitTransferState,
-  Operation as SkipClientOperation,
-  StatusState,
+  StargateTransfer,
+  StargateTransferInfo,
+  StargateTransferState,
   Swap,
-  Transfer,
-  TransferEvent,
-  TransferInfo,
-  TransferState,
-  TxStatusResponse,
   SwapExactCoinIn,
   SwapExactCoinOut,
-  EurekaTransfer,
-  EurekaTransferInfo,
+  LayerZeroTransfer,
+  LayerZeroTransferState,
+  LayerZeroTransferInfo,
+  TransferState,
+  Transfer,
+  TransferEvent,
+  TransactionState,
+  TxStatusResponse,
 } from "@skip-go/client";
 
 export type OverallStatus = "pending" | "success" | "failed";
@@ -47,6 +50,7 @@ export enum OperationType {
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
   eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 type CombinedOperation = {
@@ -64,20 +68,22 @@ type CombinedOperation = {
   goFastTransfer?: GoFastTransfer;
   stargateTransfer?: StargateTransfer;
   eurekaTransfer?: EurekaTransfer;
+  layerZeroTransfer?: LayerZeroTransfer;
 };
 
 type OperationDetails = CombineObjectTypes<
   Transfer &
-    BankSend &
-    Swap &
-    AxelarTransfer &
-    CCTPTransfer &
-    HyperlaneTransfer &
-    EvmSwap &
-    StargateTransfer &
-    OPInitTransfer &
-    GoFastTransfer &
-    EurekaTransfer
+  BankSend &
+  Swap &
+  AxelarTransfer &
+  CCTPTransfer &
+  HyperlaneTransfer &
+  EvmSwap &
+  StargateTransfer &
+  OPInitTransfer &
+  GoFastTransfer &
+  EurekaTransfer &
+  LayerZeroTransfer
 > & {
   swapIn?: SwapExactCoinIn;
   swapOut?: SwapExactCoinOut;
@@ -96,19 +102,19 @@ export type ClientOperation = {
 // find keys that are present in each type
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? Key
-      : never
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? Key
+  : never
+  : never
   : never;
 
 // find keys that are not present in each type
 type KeysNotPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends Record<Key, unknown>
-      ? never
-      : Key
-    : never
+  ? T[Key] extends Record<Key, unknown>
+  ? never
+  : Key
+  : never
   : never;
 
 // combine multiple types properly and preserve details on if key is optional
@@ -118,35 +124,44 @@ type CombineObjectTypes<T> = {
   [K in KeysNotPresentInAll<T>]?: T[K];
 };
 
-function getOperationDetailsAndType(operation: SkipClientOperation) {
+function getOperationDetailsAndType(operation: Operation) {
   const combinedOperation = operation as CombinedOperation;
   let returnValue = {
     details: {} as OperationDetails,
     type: undefined as OperationType | undefined,
   };
-  Object.values(OperationType).find((type) => {
-    const operationDetails = combinedOperation?.[type];
 
-    if (operationDetails) {
+  Object.values(OperationType).find((type) => {
+    const originalDetails = combinedOperation?.[type];
+    if (originalDetails) {
+      const operationDetails = { ...originalDetails } as OperationDetails;
+
       switch (type) {
         case OperationType.swap:
         case OperationType.evmSwap:
-          (operationDetails as Transfer).toChainID = (operationDetails as EvmSwap).fromChainID;
+          operationDetails.toChainId = (originalDetails as EvmSwap).fromChainId;
           break;
-        // special case needed for axelar transfers where the source denom is not the first operation denom
+
         case OperationType.axelarTransfer:
-          (operationDetails as Transfer).denomIn =
-            (operationDetails as AxelarTransfer).ibcTransferToAxelar?.denomIn ??
-            (operationDetails as Transfer).denomIn;
+          operationDetails.denomIn =
+            (originalDetails as AxelarTransfer).ibcTransferToAxelar?.denomIn ??
+            (originalDetails as Transfer).denomIn;
           break;
-        case OperationType.bankSend:
-          (operationDetails as Transfer).denomIn = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).denomOut = (operationDetails as BankSend).denom;
-          (operationDetails as Transfer).fromChainID = (operationDetails as BankSend).chainID;
-          (operationDetails as Transfer).toChainID = (operationDetails as BankSend).chainID;
+
+        case OperationType.bankSend: {
+          const bankSend = originalDetails as BankSend;
+
+          operationDetails.denomIn = bankSend.denom;
+          operationDetails.denomOut = bankSend.denom;
+          operationDetails.fromChainId = bankSend.chainId;
+          operationDetails.toChainId = bankSend.chainId;
+
           break;
+        }
+
         default:
       }
+
       returnValue = {
         details: operationDetails,
         type,
@@ -157,7 +172,7 @@ function getOperationDetailsAndType(operation: SkipClientOperation) {
   return returnValue;
 }
 
-export function getClientOperation(operation: SkipClientOperation) {
+export function getClientOperation(operation: Operation) {
   const { details, type } = getOperationDetailsAndType(operation);
   return {
     type,
@@ -173,7 +188,7 @@ export function getClientOperation(operation: SkipClientOperation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(operations?: SkipClientOperation[]) {
+export function getClientOperations(operations?: Operation[]) {
   if (!operations) return [];
   let transferIndex = 0;
   const filteredOperations = filterNeutronSwapFee(operations);
@@ -206,16 +221,16 @@ export function getClientOperations(operations?: SkipClientOperation[]) {
   });
 }
 
-function filterNeutronSwapFee(operations: SkipClientOperation[]) {
+function filterNeutronSwapFee(operations: Operation[]) {
   return operations.filter((op, i) => {
     const clientOperation = getClientOperation(op);
     if (
       clientOperation.type === OperationType.swap &&
-      clientOperation.swapOut?.swapVenue.name === "neutron-astroport" &&
-      clientOperation.swapOut?.swapVenue.chainID === "neutron-1" &&
-      clientOperation.chainID === "neutron-1" &&
+      clientOperation.swapOut?.swapVenue?.name === "neutron-astroport" &&
+      clientOperation.swapOut?.swapVenue.chainId === "neutron-1" &&
+      clientOperation.chainId === "neutron-1" &&
       clientOperation.denomOut === "untrn" &&
-      clientOperation.fromChainID === "neutron-1" &&
+      clientOperation.fromChainId === "neutron-1" &&
       clientOperation.swapOut?.swapAmountOut === "200000"
     ) {
       const nextOperation = operations[i + 1];
@@ -223,9 +238,9 @@ function filterNeutronSwapFee(operations: SkipClientOperation[]) {
         const nextClientOperation = getClientOperation(nextOperation);
         if (
           nextClientOperation.type === OperationType.swap &&
-          nextClientOperation.swapIn?.swapVenue.name === "neutron-astroport" &&
-          nextClientOperation.swapIn?.swapVenue.chainID === "neutron-1" &&
-          nextClientOperation.chainID === "neutron-1"
+          nextClientOperation.swapIn?.swapVenue?.name === "neutron-astroport" &&
+          nextClientOperation.swapIn?.swapVenue?.chainId === "neutron-1" &&
+          nextClientOperation.chainId === "neutron-1"
         ) {
           return false;
         }
@@ -239,13 +254,14 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
   const combinedTransferEvent = transferEvent as CombinedTransferEvent;
 
   const axelarTransfer = combinedTransferEvent?.axelarTransfer as AxelarTransferInfo;
-  const ibcTransfer = combinedTransferEvent?.ibcTransfer as TransferInfo;
+  const ibcTransfer = combinedTransferEvent?.ibcTransfer as IBCTransferInfo;
   const cctpTransfer = combinedTransferEvent?.cctpTransfer as CCTPTransferInfo;
   const hyperlaneTransfer = combinedTransferEvent?.hyperlaneTransfer as HyperlaneTransferInfo;
   const opInitTransfer = combinedTransferEvent?.opInitTransfer as OPInitTransferInfo;
   const goFastTransfer = combinedTransferEvent?.goFastTransfer as GoFastTransferInfo;
   const stargateTransfer = combinedTransferEvent?.stargateTransfer as StargateTransferInfo;
   const eurekaTransfer = combinedTransferEvent?.eurekaTransfer as EurekaTransferInfo;
+  const layerZeroTransfer = combinedTransferEvent?.layerZeroTransfer as LayerZeroTransferInfo;
 
   let transferType = "" as TransferType;
   if (axelarTransfer) {
@@ -264,6 +280,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     transferType = TransferType.stargateTransfer;
   } else if (eurekaTransfer) {
     transferType = TransferType.eurekaTransfer;
+  } else if (layerZeroTransfer) {
+    transferType = TransferType.layerZeroTransfer;
   }
 
   const getExplorerLink = (type: "send" | "receive") => {
@@ -284,19 +302,19 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
         }
         return goFastTransfer.txs.orderFilledTx?.explorerLink;
       case TransferType.axelarTransfer:
-        return axelarTransfer.axelarScanLink;
+        return axelarTransfer?.axelarScanLink;
       default:
         type RemainingTransferTypes =
           | CCTPTransferInfo
           | HyperlaneTransferInfo
           | OPInitTransferInfo
-          | StargateTransferInfo;
+          | StargateTransferInfo
+          | LayerZeroTransferInfo;
 
         if (type === "send") {
-          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs.sendTx
-            ?.explorerLink;
+          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx?.explorerLink;
         }
-        return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs.receiveTx
+        return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.receiveTx
           ?.explorerLink;
     }
   };
@@ -311,6 +329,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
     ...goFastTransfer,
     ...stargateTransfer,
     ...eurekaTransfer,
+    ...layerZeroTransfer,
     fromExplorerLink: getExplorerLink("send"),
     toExplorerLink: getExplorerLink("receive"),
   } as ClientTransferEvent;
@@ -331,7 +350,7 @@ export function getTransferEventsFromTxStatusResponse(txStatusResponse?: TxStatu
   });
 }
 
-export function getSimpleOverallStatus(state: StatusState): OverallStatus {
+export function getSimpleOverallStatus(state: TransactionState): OverallStatus {
   switch (state) {
     case "STATE_SUBMITTED":
     case "STATE_PENDING":
@@ -353,7 +372,8 @@ export function getSimpleStatus(
     | HyperlaneTransferState
     | OPInitTransferState
     | GoFastTransferState
-    | StargateTransferState,
+    | StargateTransferState
+    | LayerZeroTransferState,
 ): SimpleStatus {
   switch (state) {
     case "TRANSFER_PENDING":
@@ -367,6 +387,7 @@ export function getSimpleStatus(
     case "OPINIT_TRANSFER_SENT":
     case "GO_FAST_TRANSFER_SENT":
     case "STARGATE_TRANSFER_SENT":
+    case "LAYER_ZERO_TRANSFER_SENT":
       return "pending";
     case "TRANSFER_SUCCESS":
     case "AXELAR_TRANSFER_SUCCESS":
@@ -375,6 +396,7 @@ export function getSimpleStatus(
     case "OPINIT_TRANSFER_RECEIVED":
     case "STARGATE_TRANSFER_RECEIVED":
     case "GO_FAST_TRANSFER_FILLED":
+    case "LAYER_ZERO_TRANSFER_RECEIVED":
       return "completed";
     default:
       return "failed";
@@ -382,7 +404,7 @@ export function getSimpleStatus(
 }
 
 type CombinedTransferEvent = {
-  [TransferType.ibcTransfer]: TransferInfo;
+  [TransferType.ibcTransfer]: IBCTransferInfo;
   [TransferType.axelarTransfer]: AxelarTransferInfo;
   [TransferType.cctpTransfer]: CCTPTransferInfo;
   [TransferType.hyperlaneTransfer]: HyperlaneTransferInfo;
@@ -390,6 +412,7 @@ type CombinedTransferEvent = {
   [TransferType.goFastTransfer]: GoFastTransferInfo;
   [TransferType.stargateTransfer]: StargateTransferInfo;
   [TransferType.eurekaTransfer]: EurekaTransferInfo;
+  [TransferType.layerZeroTransfer]: LayerZeroTransferInfo;
 };
 
 export enum TransferType {
@@ -401,6 +424,7 @@ export enum TransferType {
   goFastTransfer = "goFastTransfer",
   stargateTransfer = "stargateTransfer",
   eurekaTransfer = "eurekaTransfer",
+  layerZeroTransfer = "layerZeroTransfer",
 }
 
 export type SimpleStatus =
@@ -413,16 +437,17 @@ export type SimpleStatus =
   | "incomplete";
 
 export type ClientTransferEvent = {
-  fromChainID: string;
-  toChainID: string;
+  fromChainId: string;
+  toChainId: string;
   state:
-    | TransferState
-    | AxelarTransferState
-    | CCTPTransferState
-    | HyperlaneTransferState
-    | OPInitTransferState
-    | GoFastTransferState
-    | StargateTransferState;
+  | TransferState
+  | AxelarTransferState
+  | CCTPTransferState
+  | HyperlaneTransferState
+  | OPInitTransferState
+  | GoFastTransferState
+  | StargateTransferState
+  | LayerZeroTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;

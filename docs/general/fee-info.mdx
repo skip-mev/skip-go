@@ -30,12 +30,14 @@ Each `Fee` object in the array will have the following attributes:
 
 
  <Warning>
- **Development in Progress - Only a subset of fees supported today**
- 
- For now, only the Smart Relay fee will appear in the `estimated_fees` array. 
- 
- We will add other kinds of fees (e.g. swap fees, bridge fees, public relayer fees) over time. For now, these can be found in the `operations` field attached to the `operation` where they're incurred.
-</Warning>
+ **Included Fees & Current Limitations**
+
+ The `estimated_fees` array consolidates certain fees for easier display. Currently, it includes:
+ * `FeeType: SMART_RELAY` for CCTP bridge transfers.
+ * `FeeType: BRIDGE` fees for the following specific bridges: `AXELAR`, `HYPERLANE`, and `GO_FAST`.
+
+ Please note that fees for other bridges (`IBC`, `Stargate`, `LayerZero`, etc.) and other fee types like `Swap` or `Gas` are not yet included here and the steps where these fees occur are detailed in the `operations` array. We plan to expand the coverage of `estimated_fees` in the future.
+ </Warning>
 
   
 <Info>

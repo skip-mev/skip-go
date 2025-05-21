@@ -1,14 +1,11 @@
-import { skipClient as skipClientAtom } from "@/state/skipClient";
 import {
   ClientTransferEvent,
   getSimpleOverallStatus,
   getTransferEventsFromTxStatusResponse,
   OverallStatus,
 } from "@/utils/clientType";
-import { captureException } from "@sentry/react";
-import { TransferAssetRelease } from "@skip-go/client";
+import { transactionStatus, TransferAssetRelease } from "@skip-go/client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import { useState, useMemo } from "react";
 
 export type TxsStatus = {
@@ -25,10 +22,9 @@ export const useBroadcastedTxsStatus = ({
   enabled,
 }: {
   txsRequired?: number;
-  txs: { chainID: string; txHash: string }[] | undefined;
+  txs: { chainId: string; txHash: string }[] | undefined;
   enabled?: boolean;
 }): UseQueryResult<TxsStatus> => {
-  const skipClient = useAtomValue(skipClientAtom);
   const [isSettled, setIsSettled] = useState(false);
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
 
@@ -41,10 +37,7 @@ export const useBroadcastedTxsStatus = ({
 
       const results = await Promise.all(
         txs.map(async (tx) => {
-          const _res = await skipClient.transactionStatus({
-            chainID: tx.chainID,
-            txHash: tx.txHash,
-          });
+          const _res = await transactionStatus(tx);
           return _res;
         }),
       );
@@ -68,10 +61,6 @@ export const useBroadcastedTxsStatus = ({
 
       const lastTxStatus =
         results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
-
-      if (lastTxStatus === "failed" && isRouteSettled) {
-        captureException("TransactionFailed");
-      }
 
       const transferAssetRelease = results
         .reverse()

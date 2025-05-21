@@ -21,7 +21,7 @@ export const SwapPageBridge = () => {
   const lockedRoute = defaultRoute?.srcLocked || defaultRoute?.destLocked;
   const onInvertSwap = () => {
     invertSwap();
-    switchEvmChainId(destinationAsset?.chainID);
+    switchEvmChainId(destinationAsset?.chainId);
 
     let spinTimeout = undefined;
     clearTimeout(spinTimeout);

@@ -1,8 +1,8 @@
 import { atom } from "jotai";
 import { SignClientTypes } from "@walletconnect/types";
 import { WalletConnectModalConfig } from "@walletconnect/modal";
-import { ChainType, SignerGetters } from "@skip-go/client";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
+import { ChainType, SignerGetters } from "@skip-go/client";
 
 export type WalletConnectMetaData = {
   name: string;
@@ -78,6 +78,7 @@ export const knownEthermintLikeChains = [
   "dimension_37-1",
   "haqq_11235-1",
   "shido_9008-1",
+  "interwoven-1",
 ];
 
 export const DEEPLINK_CHOICE = "WALLETCONNECT_DEEPLINK_CHOICE";
@@ -90,11 +91,11 @@ export const walletConnectDeepLinkByChainTypeAtom = atomWithStorageNoCrossTabSyn
       deeplink: "",
       recentWalletData: "",
     },
-    [ChainType.EVM]: {
+    [ChainType.Evm]: {
       deeplink: "",
       recentWalletData: "",
     },
-    [ChainType.SVM]: {
+    [ChainType.Svm]: {
       deeplink: "",
       recentWalletData: "",
     },

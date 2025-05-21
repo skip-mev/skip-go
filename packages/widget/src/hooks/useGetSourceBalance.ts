@@ -9,7 +9,7 @@ import { ClientAsset } from "@/state/skipClient";
 export const useGetSourceBalance = () => {
   const [sourceAsset] = useAtom(sourceAssetAtom);
   const getAccount = useGetAccount();
-  const sourceAccount = getAccount(sourceAsset?.chainID);
+  const sourceAccount = getAccount(sourceAsset?.chainId);
   const {
     data: skipBalances,
     isFetched,
@@ -29,13 +29,13 @@ export const useGetSourceBalance = () => {
 
   const data = useMemo(() => {
     if (!sourceAsset || !sourceAccount || !skipBalances) return;
-    const { chainID, denom } = sourceAsset;
-    if (!denom || !chainID) return;
+    const { chainId, denom } = sourceAsset;
+    if (!denom || !chainId) return;
 
-    const denomsExists = !!skipBalances?.chains?.[chainID]?.denoms;
-    const sourceBalance = skipBalances?.chains?.[chainID]?.denoms?.[denom];
+    const denomsExists = !!skipBalances?.chains?.[chainId]?.denoms;
+    const sourceBalance = skipBalances?.chains?.[chainId]?.denoms?.[denom];
 
-    if (sourceAsset.isCW20) {
+    if (sourceAsset.isCw20) {
       return {
         ...cw20Balance.data,
         error: cw20Balance.error || undefined,
@@ -50,7 +50,7 @@ export const useGetSourceBalance = () => {
         decimals: undefined,
       };
     }
-    return skipBalances?.chains?.[chainID]?.denoms?.[denom];
+    return skipBalances?.chains?.[chainId]?.denoms?.[denom];
   }, [sourceAsset, sourceAccount, skipBalances, cw20Balance.data, cw20Balance.error]);
 
   return {

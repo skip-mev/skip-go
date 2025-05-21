@@ -150,7 +150,7 @@ async function codegen() {
   let mainnetChains = [];
   for (const registry of registries) {
     const chains = await collectMainnetChains(registry);
-    mainnetChains = mainnetChains.concat(chains);
+    mainnetChains = mergeArrays(mainnetChains, chains);
   }
   const outputFilePath = path.resolve(outPath, 'mainnet.json');
   await fs.writeFile(outputFilePath, JSON.stringify(mainnetChains), 'utf-8');
@@ -160,7 +160,7 @@ async function codegen() {
   let testnetChains = [];
   for (const registry of registries) {
     const chains = await collectTestnetChains(registry);
-    testnetChains = testnetChains.concat(chains);
+    testnetChains = mergeArrays(testnetChains, chains);
   }
   const testnetOutputFilePath = path.resolve(outPath, 'testnet.json');
   await fs.writeFile(testnetOutputFilePath, JSON.stringify(testnetChains), 'utf-8');
@@ -170,11 +170,22 @@ async function codegen() {
   let explorers = [];
   for (const registry of registries) {
     const chains = await collectExplorers(registry);
-    explorers = explorers.concat(chains);
+    explorers = mergeArrays(explorers, chains);
   }
   const explorersOutputFilePath = path.resolve(outPath, 'explorers.json');
   await fs.writeFile(explorersOutputFilePath, JSON.stringify(explorers), 'utf-8');
   console.log(`Generated explorers file at ${explorersOutputFilePath}`);
 }
+
+const mergeArrays = (arr1, arr2) => {
+  const merged = [...arr1, ...arr2];
+  const map = new Map();
+
+  merged.forEach((item) => {
+    map.set(item.chainId, item); // second occurrence overwrites first
+  });
+
+  return Array.from(map.values());
+};
 
 void codegen();

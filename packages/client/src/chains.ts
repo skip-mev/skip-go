@@ -1,4 +1,4 @@
-import { Chain } from "@chain-registry/types";
+import type { Chain } from "@chain-registry/types";
 import chainRegistryChains from "./codegen/chains.json";
 
 const SOLANA_CHAIN = {
@@ -143,6 +143,15 @@ export const getIsEthermint = (chainId: string) => {
     Boolean(keyAlgos?.includes("ethsecp256k1")) ||
     Boolean(extraCodecs?.includes("ethermint"))
   );
+};
+
+export const getIsInitia = (chainId: string) => {
+  const chain = chains().find((c) => c.chain_id === chainId);
+  if (!chain) return false;
+  const keyAlgos = chain.key_algos;
+
+  // @ts-expect-error - initia chain have special key algo in the initia-registry
+  return Boolean(keyAlgos?.includes("initia_ethsecp256k1"));
 };
 
 export async function findFirstWorkingEndpoint(

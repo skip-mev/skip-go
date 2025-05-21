@@ -17,7 +17,7 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
 
   const feeAssetsState = useMemo(() => {
     if (!chainId) return undefined;
-    const feeAssets = chains?.find((chain) => chain.chainID === chainId)?.feeAssets;
+    const feeAssets = chains?.find((chain) => chain.chainId === chainId)?.feeAssets;
     return feeAssets
       ?.map((a) => {
         const balance = getBalance(chainId, a.denom)?.amount;
@@ -28,7 +28,7 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
           return new GasPrice(Decimal.fromUserInput(BigNumber(price).toFixed(), 18), a.denom);
         })();
         if (!gasPrice) return undefined;
-        const isSwapChain = swapVenues?.map((venue) => venue.chainID).includes(chainId);
+        const isSwapChain = swapVenues?.map((venue) => venue.chainId).includes(chainId);
         const gasAmount = Math.ceil(
           isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
         );
@@ -45,11 +45,11 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
         };
       })
       .filter((asset) => asset) as {
-      feeAmount: string;
-      denom: string;
-      balanceWithFees: string;
-      isSufficient: boolean;
-    }[];
+        feeAmount: string;
+        denom: string;
+        balanceWithFees: string;
+        isSufficient: boolean;
+      }[];
   }, [chainId, chains, getBalance, swapVenues]);
 
   return feeAssetsState;
@@ -58,7 +58,7 @@ export const useCosmosFeeAssetsBalanceValidation = (chainId?: string) => {
 export const useCosmosFeeAssetSourceAmountValidation = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const { data: assets } = useAtomValue(skipAssetsAtom);
-  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainID);
+  const cosmosFees = useCosmosFeeAssetsBalanceValidation(sourceAsset?.chainId);
   const maxAmountTokenMinusFees = useMaxAmountTokenMinusFees();
 
   const cosmosFeeUsed = cosmosFees?.find((fee) => fee?.isSufficient);

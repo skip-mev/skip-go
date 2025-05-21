@@ -24,9 +24,7 @@ export const ErrorPageTradeAdditionalSigningRequired = ({
 
   const handleOnClickBack = () => {
     setErrorAtom(undefined);
-    if (onClickBack) {
-      onClickBack();
-    }
+    onClickBack?.();
   };
 
   const handleOnClickContinue = () => {

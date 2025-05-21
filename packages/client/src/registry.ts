@@ -1,10 +1,11 @@
-import { AccountParser, accountFromAny } from "@cosmjs/stargate";
+import { accountFromAny } from "@cosmjs/stargate";
+import type { AccountParser } from "@cosmjs/stargate";
 import { assertDefinedAndNotNull } from "@cosmjs/utils";
 import { StridePeriodicVestingAccount } from "./stride";
-import { EthAccount } from "@injectivelabs/core-proto-ts/cjs/injective/types/v1beta1/account";
 import { decodePubkey } from "@cosmjs/proto-signing";
-import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth";
-import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
+import { accountEthParser } from "@injectivelabs/sdk-ts";
+import { BaseAccount } from "cosmjs-types/cosmos/auth/v1beta1/auth.js";
+import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
 import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
 
 export const accountParser: AccountParser = (acc) => {
@@ -21,44 +22,13 @@ export const accountParser: AccountParser = (acc) => {
         sequence: Number(baseAccount.sequence),
       };
     }
-    case "/injective.types.v1beta1.EthAccount": {
-      const injAccount = EthAccount.decode(acc.value as Uint8Array);
-      const baseInjAccount = injAccount.baseAccount;
-      assertDefinedAndNotNull(baseInjAccount);
-
-      const pubKey = baseInjAccount.pubKey;
-
-      return {
-        address: baseInjAccount.address,
-        pubkey: pubKey
-          ? {
-              type: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
-              value: Buffer.from(pubKey.value).toString("base64"),
-            }
-          : null,
-        accountNumber: Number(baseInjAccount.accountNumber),
-        sequence: Number(baseInjAccount.sequence),
-      };
-    }
-    case "/ethermint.types.v1.EthAccount": {
-      const account = EthAccount.decode(acc.value as Uint8Array);
-      const baseEthAccount = account.baseAccount;
-      assertDefinedAndNotNull(baseEthAccount);
-
-      const pubKeyEth = baseEthAccount.pubKey;
-
-      return {
-        address: baseEthAccount.address,
-        pubkey: pubKeyEth
-          ? {
-              type: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-              value: Buffer.from(pubKeyEth.value).toString("base64"),
-            }
-          : null,
-        accountNumber: Number(baseEthAccount.accountNumber),
-        sequence: Number(baseEthAccount.sequence),
-      };
-    }
+    case "/injective.types.v1beta1.EthAccount":
+      return accountEthParser(
+        acc,
+        "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+      );
+    case "/ethermint.types.v1.EthAccount":
+      return accountEthParser(acc, "/ethermint.crypto.v1.ethsecp256k1.PubKey");
     default: {
       if (acc.typeUrl === "/cosmos.auth.v1beta1.BaseAccount") {
         const { address, pubKey, accountNumber, sequence } = BaseAccount.decode(

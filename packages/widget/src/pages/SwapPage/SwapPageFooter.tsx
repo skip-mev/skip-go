@@ -1,226 +1,140 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
-import { SkipLogoIcon } from "@/icons/SkipLogoIcon";
-import { useAtomValue } from "jotai";
-import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { skipRouteAtom } from "@/state/route";
 import { SignatureIcon } from "@/icons/SignatureIcon";
-import pluralize from "pluralize";
-import { styled } from "styled-components";
 import { CogIcon } from "@/icons/CogIcon";
-import { useSettingsChanged } from "@/hooks/useSettingsChanged";
+import { useAtomValue } from "jotai";
+import pluralize from "pluralize";
+import styled from "styled-components";
+
+import { skipRouteAtom } from "@/state/route";
 import { routePreferenceAtom } from "@/state/swapPage";
 import { RoutePreference } from "@/state/types";
+
+import { useSettingsChanged } from "@/hooks/useSettingsChanged";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
+
+import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { getFeeList, getTotalFees } from "@/utils/route";
+
+
+const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
+  const formatted = seconds
+    ? convertSecondsToMinutesOrHours(seconds)
+    : null;
+  return formatted ? <Row gap={4} align="flex-end">{formatted}</Row> : null;
+};
+
+const Fee = ({ amount }: { amount?: string }) =>
+  amount ? <Row gap={4} align="flex-end">Fee: {amount}</Row> : null;
+
+const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
+  <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
+    <CogIconWrapper>
+      <CogIcon />
+      {changed && <SettingsChangedIndicator />}
+    </CogIconWrapper>
+    Settings
+  </StyledSettingsContainer>
+);
+
+const SignatureRequired = ({ count }: { count: number }) => (
+  <Row gap={4} align="center">
+    <StyledSignatureRequiredContainer gap={3} align="flex-end">
+      {`${count} ${pluralize("Signature", count)} required`}
+      <SignatureIcon />
+    </StyledSignatureRequiredContainer>
+  </Row>
+);
+
+const RoutePreferenceLabel = ({ preference }: { preference: RoutePreference }) => {
+  const label = preference === RoutePreference.FASTEST ? "Fastest route" : "Cheapest route";
+  return <span>{label}</span>;
+};
 
 export type SwapPageFooterItemsProps = {
   content?: React.ReactNode;
   showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
   highlightSettings?: boolean;
+  showFee?: boolean;
 };
 
-export const poweredBySkipGo = (
-  <Row data-logo="skip-go" align="center" gap={5}>
-    Powered by <SkipLogoIcon />
-  </Row>
-);
-
-export const SwapPageFooterItems = ({
-  content = null,
-  showRouteInfo,
-  showEstimatedTime,
-  highlightSettings,
-}: SwapPageFooterItemsProps) => {
+export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
+  content,
+  showRouteInfo = false,
+  showEstimatedTime = false,
+  highlightSettings = false,
+  showFee = false
+}) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
-  const settingsChanged = useSettingsChanged();
   const routePreference = useAtomValue(routePreferenceAtom);
-  const isMobileScreenSize = useIsMobileScreenSize();
+  const settingsChanged = useSettingsChanged();
+  const isMobile = useIsMobileScreenSize();
   const isGoFast = useIsGoFast(route);
 
-  const estimatedTime = convertSecondsToMinutesOrHours(route?.estimatedRouteDurationSeconds);
+  const estimatedSeconds = route?.estimatedRouteDurationSeconds;
+  const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
+  const totalFees = getTotalFees(fees)?.formattedUsdAmount;
+  const signaturesRequired = route?.txsRequired ?? 1;
 
-  const routeRequiresMultipleSignatures = route?.txsRequired && route.txsRequired > 1;
+  const leftContent = () => {
+    if (content) return content;
+    if (isLoading || !showRouteInfo || !route) return null;
 
-  const renderSignatureRequired = useMemo(() => {
-    if (!route?.txsRequired) return null;
     return (
-      <Row gap={4} align="center">
-        <StyledSignatureRequiredContainer gap={5} align="flex-end">
-          {route.txsRequired} {pluralize("Signature", route.txsRequired)} required
-          <SignatureIcon />
-        </StyledSignatureRequiredContainer>
+      <Row align="flex-end" gap={10} height={isMobile ? undefined : 13}>
+        {showEstimatedTime && (
+          <>
+            <SettingsButton highlight={highlightSettings} changed={settingsChanged} />
+            <EstimatedDuration seconds={estimatedSeconds} />
+          </>
+        )}
+        {showFee && <Fee amount={totalFees} />}
+        {!isMobile && signaturesRequired > 1 && <SignatureRequired count={signaturesRequired} />}
+        {!isMobile && signaturesRequired <= 1 && isGoFast && (
+          <RoutePreferenceLabel preference={routePreference} />
+        )}
       </Row>
     );
-  }, [route?.txsRequired]);
+  };
 
-  const renderRoutePreference = useMemo(() => {
-    switch (routePreference) {
-      case RoutePreference.FASTEST:
-        return "Fastest route";
-      case RoutePreference.CHEAPEST:
-        return "Cheapest route";
-    }
-  }, [routePreference]);
+  const rightContent = () =>
+    isMobile && isGoFast ? (
+      <RoutePreferenceLabel preference={routePreference} />
+    ) : null;
 
-  const renderMobileContent = useMemo(() => {
-    const renderRightContent = () => {
-      if (isGoFast) {
-        return renderRoutePreference;
-      }
-      return poweredBySkipGo;
-    };
-    const renderLeftContent = () => {
-      if (content) return content;
-      if (isLoading) return;
-      if (showRouteInfo && route) {
-        return (
-          <Row align="flex-end" gap={8}>
-            {showEstimatedTime && estimatedTime && (
-              <>
-                <StyledSettingsContainer
-                  align="flex-end"
-                  gap={3}
-                  highlightSettings={highlightSettings}
-                >
-                  <CogIconWrapper>
-                    <CogIcon />
-                    {settingsChanged && <SettingsChangedIndicator />}
-                  </CogIconWrapper>
-                  Settings
-                </StyledSettingsContainer>
-                <Row gap={8} align="flex-end">
-                  {estimatedTime}
-                </Row>
-              </>
-            )}
-          </Row>
-        );
-      }
-    };
-    return (
-      <>
-        {renderLeftContent() ?? <div />}
-        {renderRightContent()}
-      </>
-    );
-  }, [
-    content,
-    estimatedTime,
-    highlightSettings,
-    isGoFast,
-    isLoading,
-    renderRoutePreference,
-    route,
-    settingsChanged,
-    showEstimatedTime,
-    showRouteInfo,
-  ]);
-
-  const renderDesktopContent = useMemo(() => {
-    const renderLeftContent = () => {
-      if (content) return content;
-      if (isLoading) return;
-      if (showRouteInfo && route) {
-        return (
-          <Row align="flex-end" gap={10} height={13}>
-            {showEstimatedTime && estimatedTime && (
-              <>
-                <StyledSettingsContainer
-                  align="flex-end"
-                  gap={3}
-                  highlightSettings={highlightSettings}
-                >
-                  <CogIconWrapper>
-                    <CogIcon />
-                    {settingsChanged && <SettingsChangedIndicator />}
-                  </CogIconWrapper>
-                  Settings
-                </StyledSettingsContainer>
-                <Row gap={8} align="flex-end">
-                  {estimatedTime}
-                </Row>
-              </>
-            )}
-            {routeRequiresMultipleSignatures
-              ? renderSignatureRequired
-              : isGoFast
-                ? renderRoutePreference
-                : null}
-          </Row>
-        );
-      }
-    };
-    return (
-      <>
-        {renderLeftContent() ?? <div />}
-        {poweredBySkipGo}
-      </>
-    );
-  }, [
-    content,
-    estimatedTime,
-    highlightSettings,
-    isGoFast,
-    isLoading,
-    renderRoutePreference,
-    renderSignatureRequired,
-    route,
-    routeRequiresMultipleSignatures,
-    settingsChanged,
-    showEstimatedTime,
-    showRouteInfo,
-  ]);
-
-  if (isMobileScreenSize) {
-    return renderMobileContent;
-  }
-
-  return renderDesktopContent;
-};
-
-export const SwapPageFooter = ({
-  onClick,
-  content,
-  showRouteInfo,
-  showEstimatedTime,
-  highlightSettings,
-  ...props
-}: {
-  onClick?: () => void;
-} & SwapPageFooterItemsProps &
-  React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
-    <GhostButton
-      gap={5}
-      justify="space-between"
-      align="center"
-      onClick={onClick}
-      height={35}
-      {...props}
-    >
-      <SwapPageFooterItems
-        content={content}
-        showRouteInfo={showRouteInfo}
-        showEstimatedTime={showEstimatedTime}
-        highlightSettings={highlightSettings}
-      />
-    </GhostButton>
+    <>
+      {leftContent() ?? <div />}
+      {rightContent()}
+    </>
   );
 };
+
+export const SwapPageFooter: React.FC<
+  { onClick?: () => void } & SwapPageFooterItemsProps &
+    React.ButtonHTMLAttributes<HTMLButtonElement>
+> = ({ onClick, ...props }) => (
+  <GhostButton
+    gap={5}
+    justify="space-between"
+    align="center"
+    onClick={onClick}
+    height={35}
+    {...props}
+  >
+    <SwapPageFooterItems {...props} />
+  </GhostButton>
+);
 
 export const StyledSignatureRequiredContainer = styled(Row)`
   ${({ theme }) => `color: ${theme.warning.text}`};
 `;
 
 const StyledSettingsContainer = styled(Row)<{ highlightSettings?: boolean }>`
-  ${({ highlightSettings, theme }) => {
-    if (highlightSettings) {
-      return `color: ${theme.primary.text.normal}`;
-    }
-  }}
+  ${({ highlightSettings, theme }) => highlightSettings && `color: ${theme.primary.text.normal}`};
 `;
 
 const CogIconWrapper = styled(Row)`
