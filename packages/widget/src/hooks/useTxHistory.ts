@@ -2,6 +2,7 @@ import { TxsStatus, useBroadcastedTxsStatus } from "@/pages/SwapExecutionPage/us
 import { useSyncTxStatus } from "@/pages/SwapExecutionPage/useSyncTxStatus";
 import { TransactionHistoryItem } from "@/state/history";
 import { skipChainsAtom } from "@/state/skipClient";
+import { skipSubmitSwapExecutionAtom } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
@@ -13,6 +14,7 @@ type useTxHistoryProps = {
 
 export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
+  const { isPending: executeRouteIsPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const txs = txHistoryItem?.transactionDetails?.map((tx) => ({
     chainId: tx.chainId,
@@ -34,7 +36,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
     ...txHistoryItem,
   };
 
-  if (!allTxsSigned) {
+  if (!allTxsSigned && !executeRouteIsPending) {
     statusData.isSettled = true;
     statusData.isSuccess = false;
   }
