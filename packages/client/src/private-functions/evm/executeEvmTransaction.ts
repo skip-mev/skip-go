@@ -33,7 +33,7 @@ export const executeEvmTransaction = async (
   if (!evmTx.chainId) {
     throw new Error("executeEVMTransaction error: chainId not found for evmTx");
   }
-  if (!evmTx.value) {
+  if (!evmTx.value && evmTx.value !== "") {
     throw new Error("executeEVMTransaction error: no value found in evmTx");
   }
 
