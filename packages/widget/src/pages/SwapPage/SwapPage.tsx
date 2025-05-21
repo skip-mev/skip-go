@@ -43,6 +43,7 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
+import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -317,6 +318,7 @@ export const SwapPage = () => {
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
       if (sourceAccount?.address) {
+        startAmplitudeSessionReplay();
         const replay = getReplay();
         replay?.start();
       }
