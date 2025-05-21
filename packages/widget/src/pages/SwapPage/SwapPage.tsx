@@ -252,7 +252,7 @@ export const SwapPage = () => {
       });
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
-        track("warning page: cosmos ledger warning", { route });
+        track("warning page: cosmos ledger", { route });
         setError({
           blockingType: BlockingType.CosmosLedgerWarning,
           onClickBack: () => {
@@ -262,7 +262,7 @@ export const SwapPage = () => {
         return;
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING") {
-        track("warning page: bad price warning", { route });
+        track("warning page: bad price", { route });
         setError({
           blockingType: BlockingType.BadPriceWarning,
           onClickContinue: () => {
@@ -280,7 +280,7 @@ export const SwapPage = () => {
       }
 
       if (route?.warning?.type === "LOW_INFO_WARNING") {
-        track("warning page: low info warning", { route });
+        track("warning page: low info", { route });
         setError({
           blockingType: BlockingType.LowInfoWarning,
           onClickContinue: () => {
@@ -298,7 +298,7 @@ export const SwapPage = () => {
       }
 
       if (showGoFastWarning && isGoFast) {
-        track("warning page: go fast warning", { route });
+        track("warning page: go fast", { route });
         setError({
           blockingType: BlockingType.GoFastWarning,
           onClickContinue: () => {

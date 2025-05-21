@@ -47,7 +47,7 @@ export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageG
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("warning page: go fast warning - header back button clicked");
+            track("warning page: go fast - header back button clicked");
             handleOnClickBack();
           },
         }}
@@ -71,7 +71,7 @@ export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageG
         label="Continue"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("warning page: go fast warning - main continue button clicked");
+          track("warning page: go fast - main continue button clicked");
           onClickContinue();
         }}
       />

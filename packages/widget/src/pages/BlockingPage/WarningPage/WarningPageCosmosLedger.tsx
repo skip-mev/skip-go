@@ -20,7 +20,7 @@ export const WarningPageCosmosLedger = ({ onClickBack }: WarningCosmosLedgerProp
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("warning page: cosmos ledger warning - header back button clicked");
+            track("warning page: cosmos ledger - header back button clicked");
             onClickBack();
           },
         }}
@@ -43,7 +43,7 @@ export const WarningPageCosmosLedger = ({ onClickBack }: WarningCosmosLedgerProp
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("warning page: cosmos ledger warning - main back button clicked");
+          track("warning page: cosmos ledger - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.error.text}

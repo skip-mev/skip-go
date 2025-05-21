@@ -115,7 +115,7 @@ export const WarningPageBadPrice = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("warning page: bad price warning - header back button clicked");
+            track("warning page: bad price - header back button clicked");
             onClickBack();
           },
         }}
@@ -129,7 +129,7 @@ export const WarningPageBadPrice = ({
             </SmallText>
             <SmallTextButton
               onClick={() => {
-                track("warning page: bad price warning - continue anyway button clicked");
+                track("warning page: bad price - continue anyway button clicked");
                 onClickContinue();
               }}
               color={theme.primary.text.lowContrast}
@@ -146,7 +146,7 @@ export const WarningPageBadPrice = ({
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("warning page: bad price warning - main back button clicked");
+          track("warning page: bad price - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.error.text}

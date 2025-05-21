@@ -47,7 +47,7 @@ export const WarningPageLowInfo = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("warning page: low info warning - header back button clicked");
+            track("warning page: low info - header back button clicked");
             onClickBack();
           },
         }}
@@ -65,7 +65,7 @@ export const WarningPageLowInfo = ({
             </SmallText>
             <SmallTextButton
               onClick={() => {
-                track("warning page: low info warning - continue anyway clicked");
+                track("warning page: low info - continue anyway clicked");
                 onClickContinue();
               }}
               color={theme.primary.text.lowContrast}
@@ -82,7 +82,7 @@ export const WarningPageLowInfo = ({
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("warning page: low info warning - main back button clicked");
+          track("warning page: low info - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.warning.text}
