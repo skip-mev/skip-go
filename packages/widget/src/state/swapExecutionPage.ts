@@ -1,5 +1,5 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import {
@@ -16,7 +16,7 @@ import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clie
 import { errorAtom, ErrorType } from "./errorPage";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { COSMOS_GAS_AMOUNT, EVM_GAS_AMOUNT, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
+import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
@@ -358,35 +358,11 @@ type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
 
 export const submitSwapExecutionCallbacksAtom = atom<SubmitSwapExecutionCallbacks | undefined>();
 
-export const fallbackGasAmountFnAtom = atom((get) => {
-  const swapVenues = get(skipSwapVenuesAtom)?.data;
-
-  return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
-    if (chainType === ChainType.Evm) {
-      return EVM_GAS_AMOUNT;
-    }
-    if (chainType !== ChainType.Cosmos) return undefined;
-
-    const isSwapChain = swapVenues?.some((venue) => venue.chainId === chainId) ?? false;
-    const defaultGasAmount = Math.ceil(
-      isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
-    );
-
-    // Special case for carbon-1
-    if (chainId === "carbon-1") {
-      return COSMOS_GAS_AMOUNT.CARBON;
-    }
-
-    return defaultGasAmount;
-  };
-});
-
 export const simulateTxAtom = atom<boolean>();
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
-  const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
   const simulateTx = get(simulateTxAtom);
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
@@ -424,7 +400,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
-          getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
             if (getSigners?.getCosmosSigner) {
