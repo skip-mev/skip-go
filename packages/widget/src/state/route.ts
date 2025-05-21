@@ -110,7 +110,7 @@ export const _skipRouteAtom: ReturnType<
   const params = get(skipRouteRequestAtom);
   const currentPage = get(currentPageAtom);
   const isInvertingSwap = get(isInvertingSwapAtom);
-  const blockingPage = get(errorWarningAtom);
+  const errorWarning = get(errorWarningAtom);
   const routeConfig = get(routeConfigAtom);
   const swapSettings = get(swapSettingsAtom);
 
@@ -119,7 +119,7 @@ export const _skipRouteAtom: ReturnType<
     (Number(params.amountIn) > 0 || Number(params.amountOut) > 0) &&
     !isInvertingSwap &&
     currentPage === Routes.SwapPage &&
-    blockingPage === undefined;
+    errorWarning === undefined;
 
   return {
     queryKey: ["skipRoute", params, routeConfig, swapSettings],
