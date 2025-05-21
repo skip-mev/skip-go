@@ -21,4 +21,4 @@ export const startAmplitudeSessionReplay = () => {
     add(plugin);
   }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                          
