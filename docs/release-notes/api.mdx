@@ -10,7 +10,7 @@ description: "Selected updates and improvements to the Skip Go REST API."
 - **Broader Asset Support:** This integration adds support for a wide variety of new assets, with notable examples including USDT, USDe, and ZRO.
 
 ### Status Endpoint Enhancement (Late May)
-- **Transaction Timestamp Information:** Added `on_chain_at` field to the status endpoint response for all transaction types, providing RFC3339 formatted UTC timestamps of when transactions landed on chain.
+- **Transaction Timestamp Information:** Added `on_chain_at` field to individual transaction detail objects (such as `send_tx`, `receive_tx`, `acknowledge_tx`, `execute_tx`) found within the specific transfer type objects (e.g., `ibc_transfer`, `cctp_transfer`, `axelar_transfer`) in the status endpoint response. This field provides RFC3339 formatted UTC timestamps of when each specific transaction landed on its respective chain.
 
 ## April 2025
 - **Eureka Protocol Enhancements:**
