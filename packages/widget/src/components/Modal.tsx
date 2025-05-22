@@ -6,7 +6,7 @@ import { PartialTheme } from "@/widget/theme";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { useAtomValue, useSetAtom } from "jotai";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 
@@ -81,6 +81,10 @@ export const Modal = ({ children, drawer, container, onOpenChange, theme }: Moda
         data-root-id={rootId}
         onAnimationEnd={() => {
           if (!modal.visible) {
+            // this is a hack to avoid an after image on windows
+            if (modalRef.current) {
+              modalRef.current.style.display = "none";
+            }
             modal.remove();
           }
         }}
@@ -103,14 +107,16 @@ export const createModal = <T extends ModalProps>(component: ComponentType<T>) =
   const Component = component;
 
   const WrappedComponent = (props: T) => {
-    const setError = useSetAtom(errorAtom);
+    const setErrorWarning = useSetAtom(errorWarningAtom);
     const theme = useAtomValue(themeAtom);
 
     return (
       <Modal {...props} theme={theme}>
         <ErrorBoundary
           fallback={null}
-          onError={(error) => setError({ errorType: ErrorType.Unexpected, error })}
+          onError={(error) =>
+            setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error })
+          }
         >
           <Component {...props} />
         </ErrorBoundary>
@@ -197,6 +203,7 @@ const StyledOverlay = styled.div<{
   place-items: center;
   z-index: 10;
   animation: ${({ open }) => (open ? fadeIn : fadeOut)} 150ms ease-in-out forwards;
+
   /* For Chrome */
   &::-webkit-scrollbar {
     display: none;
@@ -222,6 +229,8 @@ const StyledOverlay = styled.div<{
       /* For Internet Explorer and Edge */
       -ms-overflow-style: none;
     `};
+
+  pointer-events: ${({ open }) => (open ? "auto" : "none")};
 `;
 
 const StyledContent = styled.div<{

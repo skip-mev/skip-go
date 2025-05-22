@@ -1,5 +1,5 @@
 import { atomWithMutation } from "jotai-tanstack-query";
-import { skipChainsAtom, skipSwapVenuesAtom } from "@/state/skipClient";
+import { skipChainsAtom } from "@/state/skipClient";
 import { routeConfigAtom, skipRouteAtom } from "@/state/route";
 import { atom } from "jotai";
 import {
@@ -13,10 +13,10 @@ import {
 import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
-import { errorAtom, ErrorType } from "./errorPage";
+import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
-import { COSMOS_GAS_AMOUNT, EVM_GAS_AMOUNT, sourceAssetAtom, swapSettingsAtom } from "./swapPage";
+import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { callbacksAtom } from "./callbacks";
 import { setUser, setTag } from "@sentry/react";
@@ -232,31 +232,40 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
-        track("error page: user rejected request");
+        track("expected error page: user rejected request");
         if (currentPage === Routes.SwapExecutionPage) {
-          set(errorAtom, {
-            errorType: ErrorType.AuthFailed,
+          set(errorWarningAtom, {
+            errorWarningType: ErrorWarningType.AuthFailed,
             onClickBack: () => {
               set(setOverallStatusAtom, "unconfirmed");
               set(clearIsValidatingGasBalanceAtom);
             },
           });
         }
+      } else if ((error as Error)?.message?.toLowerCase().includes("relay fee quote has expired")) {
+        track("error page: relay fee quote has expired");
+        set(errorWarningAtom, {
+          errorType: ErrorWarningType.ExpiredRelayFeeQuote,
+          error: error as Error,
+          onClickBack: () => {
+            set(setOverallStatusAtom, "unconfirmed");
+          },
+        });
       } else if (
         (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
       ) {
-        track("error page: insufficient balance for gas");
-        set(errorAtom, {
-          errorType: ErrorType.InsufficientBalanceForGas,
+        track("expected error page: insufficient gas balance");
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.InsufficientBalanceForGas,
           error: error as Error,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
           },
         });
       } else if (lastTransaction?.explorerLink) {
-        track("error page: transaction failed", { lastTransaction });
-        set(errorAtom, {
-          errorType: ErrorType.TransactionFailed,
+        track("unexpected error page: transaction failed", { lastTransaction });
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.TransactionFailed,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
           },
@@ -267,9 +276,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else {
-        track("error page: unexpected error", { error, route });
-        set(errorAtom, {
-          errorType: ErrorType.Unexpected,
+        track("unexpected error page: unexpected error", { error, route });
+        set(errorWarningAtom, {
+          errorWarningType: ErrorWarningType.Unexpected,
           error: error as Error,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
@@ -358,35 +367,11 @@ type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
 
 export const submitSwapExecutionCallbacksAtom = atom<SubmitSwapExecutionCallbacks | undefined>();
 
-export const fallbackGasAmountFnAtom = atom((get) => {
-  const swapVenues = get(skipSwapVenuesAtom)?.data;
-
-  return async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
-    if (chainType === ChainType.Evm) {
-      return EVM_GAS_AMOUNT;
-    }
-    if (chainType !== ChainType.Cosmos) return undefined;
-
-    const isSwapChain = swapVenues?.some((venue) => venue.chainId === chainId) ?? false;
-    const defaultGasAmount = Math.ceil(
-      isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
-    );
-
-    // Special case for carbon-1
-    if (chainId === "carbon-1") {
-      return COSMOS_GAS_AMOUNT.CARBON;
-    }
-
-    return defaultGasAmount;
-  };
-});
-
 export const simulateTxAtom = atom<boolean>();
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
-  const getFallbackGasAmount = get(fallbackGasAmountFnAtom);
   const simulateTx = get(simulateTxAtom);
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
@@ -424,7 +409,6 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
-          getFallbackGasAmount,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
             if (getSigners?.getCosmosSigner) {

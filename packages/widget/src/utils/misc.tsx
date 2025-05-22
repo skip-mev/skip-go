@@ -39,7 +39,7 @@ export function atomWithStorageNoCrossTabSync<T>(storageKey: string, initialValu
     },
     removeItem: (key) => {
       if (typeof window === "undefined") return;
-      localStorage.delete(key);
+      localStorage.removeItem(key);
     },
   };
 

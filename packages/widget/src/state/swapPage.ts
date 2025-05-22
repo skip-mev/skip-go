@@ -9,7 +9,7 @@ import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
 import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
-import { errorAtom } from "./errorPage";
+import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -79,11 +79,10 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
         return key.isNanoLedger
           ? wallet.getOfflineSignerOnlyAmino(chainId)
           : wallet.getOfflineSigner(chainId);
-      }
+      },
     });
   }
 });
-
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   LOCAL_STORAGE_KEYS.sourceAsset,
@@ -105,7 +104,7 @@ export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: b
 
   set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
-  set(errorAtom, undefined);
+  set(errorWarningAtom, undefined);
 };
 
 export const sourceAssetAmountAtom = atom(
@@ -164,11 +163,10 @@ export const isWaitingForNewRouteAtom = atom((get) => {
   const sourceAmountHasChanged = sourceAmount !== debouncedSourceAmount;
   const destinationAmountHasChanged = destinationAmount !== debouncedDestinationAmount;
 
-
   if (direction === "swap-in") {
-    return (sourceAmountHasChanged && sourceAmountIsValidNumber);
+    return sourceAmountHasChanged && sourceAmountIsValidNumber;
   } else if (direction === "swap-out") {
-    return (destinationAmountHasChanged && destinationAmountIsValidNumber);
+    return destinationAmountHasChanged && destinationAmountIsValidNumber;
   }
 });
 

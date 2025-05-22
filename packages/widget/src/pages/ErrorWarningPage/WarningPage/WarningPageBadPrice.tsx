@@ -1,26 +1,26 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { calculatePercentageChange } from "@/utils/number";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
+import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
 import { RouteResponse } from "@skip-go/client";
 
-export type ErrorPageBadPriceWarningProps = {
+export type WarningPageBadPriceProps = {
   onClickContinue: () => void;
   onClickBack: () => void;
   route: RouteResponse;
 };
 
-export const ErrorPageBadPriceWarning = ({
+export const WarningPageBadPrice = ({
   onClickContinue,
   onClickBack,
   route,
-}: ErrorPageBadPriceWarningProps) => {
+}: WarningPageBadPriceProps) => {
   const theme = useTheme();
   const {
     amountIn,
@@ -34,10 +34,7 @@ export const ErrorPageBadPriceWarning = ({
   } = route;
 
   const hasUsdValues =
-    usdAmountIn &&
-    usdAmountOut &&
-    parseFloat(usdAmountIn) > 0 &&
-    parseFloat(usdAmountOut) > 0;
+    usdAmountIn && usdAmountOut && parseFloat(usdAmountIn) > 0 && parseFloat(usdAmountOut) > 0;
 
   const swapDifferencePercentage = hasUsdValues
     ? `${calculatePercentageChange(usdAmountIn, usdAmountOut, true)}%`
@@ -70,7 +67,8 @@ export const ErrorPageBadPriceWarning = ({
             <br />
             Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
             <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} ({usdAmountOut})
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (
+            {usdAmountOut})
           </>
         ),
       };
@@ -80,7 +78,8 @@ export const ErrorPageBadPriceWarning = ({
         title: `Warning: High Price Impact (${priceImpactPercentage})`,
         descriptionContent: (
           <>
-            Executing this trade is expected to impact the price by {priceImpactPercentage}. Please verify the amounts.
+            Executing this trade is expected to impact the price by {priceImpactPercentage}. Please
+            verify the amounts.
             <br />
           </>
         ),
@@ -116,12 +115,12 @@ export const ErrorPageBadPriceWarning = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: bad price warning - header back button clicked");
+            track("warning page: bad price - header back button clicked");
             onClickBack();
           },
         }}
       />
-      <ErrorPageContent
+      <ErrorWarningPageContent
         title={title}
         description={
           <>
@@ -130,7 +129,7 @@ export const ErrorPageBadPriceWarning = ({
             </SmallText>
             <SmallTextButton
               onClick={() => {
-                track("error page: bad price warning - continue anyway button clicked");
+                track("warning page: bad price - continue anyway button clicked");
                 onClickContinue();
               }}
               color={theme.primary.text.lowContrast}
@@ -147,7 +146,7 @@ export const ErrorPageBadPriceWarning = ({
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("error page: bad price warning - main back button clicked");
+          track("warning page: bad price - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.error.text}

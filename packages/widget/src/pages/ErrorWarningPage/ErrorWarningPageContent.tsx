@@ -3,7 +3,7 @@ import { Column } from "@/components/Layout";
 import { iconMap, ICONS } from "@/icons";
 import { SmallText, Text } from "@/components/Typography";
 
-export type ErrorPageContentProps = {
+export type ErrorWarningPageContentProps = {
   icon?: ICONS;
   title: string | React.ReactNode;
   description: string | React.ReactNode;
@@ -11,13 +11,13 @@ export type ErrorPageContentProps = {
   textColor?: string;
 };
 
-export const ErrorPageContent = ({
+export const ErrorWarningPageContent = ({
   title,
   description,
   textColor,
   backgroundColor,
   icon = ICONS.none,
-}: ErrorPageContentProps) => {
+}: ErrorWarningPageContentProps) => {
   const theme = useTheme();
   textColor ??= theme.primary.text.normal;
   backgroundColor ??= theme.primary.background.normal;
@@ -25,7 +25,7 @@ export const ErrorPageContent = ({
   const Icon = iconMap[icon];
 
   return (
-    <StyledErrorStateContainer
+    <StyledErrorWarningStateContainer
       align="center"
       justify="center"
       backgroundColor={backgroundColor}
@@ -41,7 +41,7 @@ export const ErrorPageContent = ({
         title
       )}
       {typeof description === "string" ? (
-        <StyledErrorTextInnerContainer>
+        <StyledErrorWarningTextInnerContainer>
           <SmallText
             color={textColor}
             textAlign="center"
@@ -51,22 +51,22 @@ export const ErrorPageContent = ({
           >
             {description}
           </SmallText>
-        </StyledErrorTextInnerContainer>
+        </StyledErrorWarningTextInnerContainer>
       ) : (
         description
       )}
-    </StyledErrorStateContainer>
+    </StyledErrorWarningStateContainer>
   );
 };
 
-const StyledErrorStateContainer = styled(Column)<{ backgroundColor?: string }>`
+const StyledErrorWarningStateContainer = styled(Column)<{ backgroundColor?: string }>`
   width: 100%;
   height: 225px;
   border-radius: 25px;
   ${({ backgroundColor }) => backgroundColor && `background: ${backgroundColor}`};
 `;
 
-const StyledErrorTextInnerContainer = styled(Column)`
+const StyledErrorWarningTextInnerContainer = styled(Column)`
   padding: 8px;
   max-height: 100px;
   overflow-y: auto;

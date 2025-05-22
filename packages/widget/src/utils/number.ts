@@ -59,20 +59,25 @@ export function shouldReduceFontSize(value: string | number | undefined): boolea
 type FormatAmountOptions = {
   showLessThanSign?: boolean;
   decimals?: number;
+  /** If true, large numbers will be abbreviated to K/M notation */
+  abbreviate?: boolean;
 };
 
 export const formatDisplayAmount = (
   input: number | string | undefined,
   options: FormatAmountOptions = {}
 ): string => {
-  const { showLessThanSign = true, decimals = 6 } = options;
+  const {
+    showLessThanSign = true,
+    decimals = DEFAULT_DECIMAL_PLACES,
+    abbreviate = true,
+  } = options;
 
   if (input === undefined) {
     return '';
   }
 
   let num: number;
-
   if (typeof input === 'string') {
     num = Number(input);
     if (isNaN(num)) {
@@ -84,9 +89,26 @@ export const formatDisplayAmount = (
 
   const abs = Math.abs(num);
   const THRESHOLD = 10 ** -decimals;
+
   if (abs > 0 && abs < THRESHOLD) {
     const thresholdStr = THRESHOLD.toFixed(decimals);
     return showLessThanSign ? `< ${thresholdStr}` : thresholdStr;
+  }
+
+  if (abbreviate) {
+    const scales = [
+      { value: 1e6, symbol: 'M' },
+      { value: 1e3, symbol: 'K' },
+    ];
+
+    for (const { value, symbol } of scales) {
+      if (abs >= value) {
+        const formatted = (num / value)
+          .toFixed(2)
+          .replace(/\.?0+$/, '');
+        return `${formatted}${symbol}`;
+      }
+    }
   }
 
   return num

@@ -24,7 +24,7 @@ import { SwapPageBridge } from "./SwapPageBridge";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
@@ -43,6 +43,7 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
+import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
@@ -60,7 +61,7 @@ export const SwapPage = () => {
   const isInvertingSwap = useAtomValue(isInvertingSwapAtom);
   const insufficientBalance = useInsufficientSourceBalance();
   const setSwapExecutionState = useSetAtom(setSwapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
+  const setError = useSetAtom(errorWarningAtom);
   const { isFetching, isPending } = useAtomValue(skipAllBalancesAtom);
   const isLoadingBalances = isFetching && isPending;
   const { data: route, isError: isRouteError, error: routeError } = useAtomValue(skipRouteAtom);
@@ -106,7 +107,7 @@ export const SwapPage = () => {
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
@@ -122,7 +123,7 @@ export const SwapPage = () => {
           ...asset,
         }));
         switchEvmchainId(asset?.chainId);
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
@@ -139,7 +140,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
   }, [setDestinationAsset]);
@@ -154,7 +155,7 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        NiceModal.remove(Modals.AssetAndChainSelectorModal);
+        NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
@@ -251,9 +252,9 @@ export const SwapPage = () => {
       });
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
-        track("error page: cosmos ledger warning", { route });
+        track("warning page: cosmos ledger", { route });
         setError({
-          errorType: ErrorType.CosmosLedgerWarning,
+          errorWarningType: ErrorWarningType.CosmosLedgerWarning,
           onClickBack: () => {
             setError(undefined);
           },
@@ -261,9 +262,9 @@ export const SwapPage = () => {
         return;
       }
       if (route?.warning?.type === "BAD_PRICE_WARNING") {
-        track("error page: bad price warning", { route });
+        track("warning page: bad price", { route });
         setError({
-          errorType: ErrorType.BadPriceWarning,
+          errorWarningType: ErrorWarningType.BadPriceWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
@@ -279,9 +280,9 @@ export const SwapPage = () => {
       }
 
       if (route?.warning?.type === "LOW_INFO_WARNING") {
-        track("error page: low info warning", { route });
+        track("warning page: low info", { route });
         setError({
-          errorType: ErrorType.LowInfoWarning,
+          errorWarningType: ErrorWarningType.LowInfoWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
@@ -297,9 +298,9 @@ export const SwapPage = () => {
       }
 
       if (showGoFastWarning && isGoFast) {
-        track("error page: go fast warning", { route });
+        track("warning page: go fast", { route });
         setError({
-          errorType: ErrorType.GoFastWarning,
+          errorWarningType: ErrorWarningType.GoFastWarning,
           onClickContinue: () => {
             setError(undefined);
             setChainAddresses({});
@@ -317,8 +318,9 @@ export const SwapPage = () => {
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
       if (sourceAccount?.address) {
-        const replay = getReplay()
-        replay?.start()
+        startAmplitudeSessionReplay();
+        const replay = getReplay();
+        replay?.start();
       }
       setSwapExecutionState();
     };
