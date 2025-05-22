@@ -25,12 +25,18 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
   const theme = useTheme();
   const [error, setError] = useAtom(errorAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { route, transactionDetailsArray, transactionsSigned } =
+    useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
+
+  const allTxsSigned =
+    route?.txsRequired !== undefined &&
+    transactionsSigned === route.txsRequired;
 
   const { data } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
     txs: transactionDetailsArray,
+    allTxsSigned,
   });
 
   useEffect(() => {

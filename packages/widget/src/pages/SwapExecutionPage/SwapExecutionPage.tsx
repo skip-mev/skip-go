@@ -57,9 +57,14 @@ export const SwapExecutionPage = () => {
     ? route.txsRequired - transactionsSigned
     : 0;
 
+  const allTxsSigned =
+    route?.txsRequired !== undefined &&
+    transactionsSigned === route.txsRequired;
+
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
     txs: transactionDetailsArray,
+    allTxsSigned,
   });
 
   useSyncTxStatus({
