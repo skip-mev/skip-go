@@ -30,32 +30,36 @@ yarn add @skip-go/client
 
 </Step> <Step title="Initialize Client">
 
-To start integrating with the Skip Go API, initialize a `SkipClient` instance. This `skipClient` provides helper methods for common actions such as querying assets and chains, constructing routes, and executing transactions.
-
+To start integrating with the Skip Go API, configure the library once using `setClientOptions` or `setApiOptions`. After configuration, you import and call functions like `route` and `executeRoute` directly.
 
 
 ```ts
-import { SkipClient } from "@skip-go/client";
-const skipClient = new SkipClient({
-  getCosmosSigner = async (chainID: string) => {
-    const key = await window.keplr?.getKey(chainID);
-    if (!key) throw new Error("Keplr not installed or chain not added");
+import {
+  setClientOptions,
+  setApiOptions,
+  route,
+  executeRoute,
+  // ...other helpers you might use
+} from "@skip-go/client";
 
-
-    return key.isNanoLedger
-      ? window.keplr?.getOfflineSignerOnlyAmino(chainID)
-      : window.keplr?.getOfflineSigner(chainID);
-};
+// Example initialization for executeRoute usage
+setClientOptions({
+  apiUrl: "YOUR_API_URL", // optional: defaults to Skip API
+  apiKey: "YOUR_API_KEY", // optional: required for some features
+  // endpointOptions, aminoTypes, registryTypes, etc.
 });
+
+// If only calling API functions directly, you can instead use:
+setApiOptions({ apiUrl: "YOUR_API_URL", apiKey: "YOUR_API_KEY" });
 ```
 </Step>
 
 <Step title="Get a Route">
 
-Now, we can use the `SkipClient.route` function to request a quote and route to swap USDC on Noble to TIA on Celestia.
+Now, we can use the `route` function to request a quote and route to swap USDC on Noble to TIA on Celestia.
 
 ```ts
-const route = await skipClient.route({
+const routeResult = await route({
   sourceAssetDenom: 'uusdc',
   sourceAssetChainID: 'noble-1',
   destAssetDenom: 'utia',
@@ -80,7 +84,7 @@ For more details, see the [/route](/api-reference/prod/fungible/post-v2fungibler
 
 </Step> <Step title="Get Required Addresses">
 
-After generating a route, you need to provide user addresses for the required chains. The `route.requiredChainAddresses` array lists the chain IDs for which addresses are needed.
+After generating a route, you need to provide user addresses for the required chains. The `routeResult.requiredChainAddresses` array lists the chain IDs for which addresses are needed.
 
  <Warning>
  **Only use addresses your user can sign for.**
@@ -92,8 +96,8 @@ We recommend storing the user's addresses and creating a function like `getAddre
 
 ```ts
 // get user addresses for each requiredChainAddress to execute the route
-  const userAddresses = await Promise.all(
-  route.requiredChainAddresses.map(async (chainID) => ({
+const userAddresses = await Promise.all(
+  routeResult.requiredChainAddresses.map(async (chainID) => ({
     chainID,
     address: await getAddress(chainID),
   }))
@@ -114,8 +118,8 @@ If you attempt to derive an address on one chain from an address on another chai
 Once you have a route, you can execute it in a single function call by passing in the route, the user addresses for at least the chains the route includes, and optional callback functions. This also registers the transaction for tracking.
 
 ```ts
-await skipClient.executeRoute({
-  route,
+await executeRoute({
+  route: routeResult,
   userAddresses,
   // Executes after all of the operations triggered by a user's signature complete.
   onTransactionCompleted: async (chainID, txHash, status) => {
