@@ -1,5 +1,14 @@
 # @skip-go/client
 
+## 1.1.2
+
+### Patch Changes
+
+- df9e97c: Add defaultFallbackGasAmount to client library
+- df9e97c: fix sei evm txs
+- df9e97c: Remove old non-existant fallback for getEvmSigner and getSvmSigner
+- df9e97c: Fix error message for getRestEndpointForChain when no REST endpoint found
+
 ## 1.1.1
 
 ### Patch Changes
