@@ -24,16 +24,44 @@ description: "Selected updates and improvements to the Skip Go REST API."
   ]
   ```
   ([See API Docs](../swagger.yml) for full response structures from the `/v2/fungible/route` endpoint.)
-- **LayerZero and Stargate Integration:** Expanded cross-chain capabilities with the integration of LayerZero and Stargate protocols. To enable these in the Skip Go Widget, include `"layer_zero"` and `"stargate"` in the `experimentalFeatures` array within the `routeConfig` prop. For example:
-  ```jsx
-  <Widget
-    // ... other props
-    routeConfig={{
-      experimentalFeatures: ["layer_zero", "stargate", /* other features */]
-    }}
-  />
-  ```
-- **Broader Asset Support:** This integration adds support for a wide variety of new assets, with notable examples including USDT, USDe, and ZRO.
+- **LayerZero and Stargate Integration:** Expanded cross-chain capabilities with the integration of LayerZero and Stargate protocols. This integration adds support for a wide variety of new assets, including USDT, USDe, and ZRO.
+  
+  **Usage:**
+  - **REST API:** Include `"layer_zero"` and/or `"stargate"` in the `experimental_features` array in your POST request to `/v2/fungible/route`.
+    ```json
+    {
+      "source_asset_denom": "uatom",
+      "source_asset_chain_id": "cosmoshub-4",
+      "dest_asset_denom": "uusdc",
+      "dest_asset_chain_id": "noble-1",
+      "amount_in": "1000000",
+      "experimental_features": ["layer_zero", "stargate"]
+    }
+    ```
+  
+  - **Client Library:** Add these features to the `experimentalFeatures` parameter.
+    ```typescript
+    import { route } from '@skip-go/client';
+    
+    const response = await route({
+      sourceAssetDenom: "uatom",
+      sourceAssetChainId: "cosmoshub-4",
+      destAssetDenom: "uusdc",
+      destAssetChainId: "noble-1",
+      amountIn: "1000000",
+      experimentalFeatures: ["layer_zero", "stargate"]
+    });
+    ```
+  
+  - **Widget:** Configure the Widget with these experimental features.
+    ```jsx
+    <Widget
+      // ... other props
+      routeConfig={{
+        experimentalFeatures: ["layer_zero", "stargate"]
+      }}
+    />
+    ```
 
 ### Status Endpoint Enhancement (Late May)
 - **Transaction Timestamp Information:** Added `on_chain_at` field to individual transaction detail objects (such as `send_tx`, `receive_tx`, `acknowledge_tx`, `execute_tx`) found within the specific transfer type objects (e.g., `ibc_transfer`, `cctp_transfer`, `axelar_transfer`) in the status endpoint response. This field provides RFC3339 formatted UTC timestamps of when each specific transaction landed on its respective chain.
