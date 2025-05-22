@@ -13,6 +13,7 @@ import { WarningPageCosmosLedger } from "./WarningPage/WarningPageCosmosLedger";
 import { WarningPageGoFast } from "./WarningPage/WarningPageGoFast";
 import { WarningPageLowInfo } from "./WarningPage/WarningPageLowInfo";
 import { ExpectedErrorPageInsufficientGasBalance } from "./ExpectedErrorPage/ExpectedErrorPageInsufficientGasBalance";
+import { ExpectedErrorPageRelayFeeQuoteExpired } from "./ExpectedErrorPage/ExpectedErrorPageRelayFeeQuoteExpired";
 
 export const ErrorWarningPage = () => {
   const [errorWarningPage] = useAtom(errorWarningAtom);
@@ -39,6 +40,8 @@ export const ErrorWarningPage = () => {
         return <ExpectedErrorPageInsufficientGasBalance error={errorWarningPage.error} />;
       case ErrorWarningType.CosmosLedgerWarning:
         return <WarningPageCosmosLedger {...errorWarningPage} />;
+      case ErrorWarningType.ExpiredRelayFeeQuote:
+        return <ExpectedErrorPageRelayFeeQuoteExpired {...errorWarningPage} />;
       case ErrorWarningType.LowInfoWarning:
         return <WarningPageLowInfo {...errorWarningPage} />;
       default:
