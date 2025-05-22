@@ -53,10 +53,11 @@ description: "Selected updates and improvements to the Skip Go REST API."
     });
     ```
   
-  - **Widget:** Configure the Widget with these experimental features.
+  - **Widget Integration:** Add LayerZero and Stargate to the `experimentalFeatures` array in the `routeConfig` prop of the Skip Widget component.
     ```jsx
+    import { Widget } from '@skip-go/widget';
+    
     <Widget
-      // ... other props
       routeConfig={{
         experimentalFeatures: ["layer_zero", "stargate"]
       }}
