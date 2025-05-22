@@ -7,4 +7,4 @@ export const ROUTE_PREFERENCE_OPTIONS: RoutePreference[] = [
   RoutePreference.FASTEST,
   RoutePreference.CHEAPEST,
 ];
-export const DEFAULT_DECIMAL_PLACES = 8;
+export const DEFAULT_DECIMAL_PLACES = 6;

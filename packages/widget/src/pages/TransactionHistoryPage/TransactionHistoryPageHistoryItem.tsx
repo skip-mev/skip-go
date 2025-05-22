@@ -12,7 +12,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
-import { limitDecimalsDisplayed } from "@/utils/number";
+import { formatDisplayAmount } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { createExplorerLink } from "@/utils/explorerLink";
 import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
@@ -211,14 +211,6 @@ const RenderAssetAmount = ({
 }) => {
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const formattedAmount = useMemo(() => {
-    const numberAfterLimitTwoDecimalPlaces = limitDecimalsDisplayed(amount, 2);
-    if (numberAfterLimitTwoDecimalPlaces === "0.00") {
-      return "< 0.01";
-    }
-    return numberAfterLimitTwoDecimalPlaces;
-  }, [amount]);
-
   const subtitle = useMemo(() => {
     if (!asset) return;
     const verboseString = `${asset?.recommendedSymbol} on ${chainName ?? asset?.chainName}`;
@@ -229,12 +221,14 @@ const RenderAssetAmount = ({
   }, [asset, chainName, isMobileScreenSize, sourceAsset]);
 
   return (
-    <Row gap={8}>
-      <img height={35} width={35} src={assetImage} alt={subtitle} />
+    <Row gap={8} align="center">
+      <img height={30} width={30} src={assetImage} alt={subtitle} />
       <Column style={sourceAsset ? { width: 50 } : undefined}>
         <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
-            {formattedAmount}
+            {formatDisplayAmount(amount, {
+              decimals: 2
+            })}
           </Text>
         </Tooltip>
         <SmallText title={asset?.chainName} textWrap="nowrap" overflowEllipsis>
