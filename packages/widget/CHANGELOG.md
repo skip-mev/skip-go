@@ -1,5 +1,22 @@
 ## 0.0.15
 
+## 3.10.4
+
+### Patch Changes
+
+- 3c31e45: reduce number of session replays to connected wallet sessions
+- b143f07: fix history page asset styling and display amount updates
+- c908c9b: separate error and warning
+- 3b3617b: Fix using incorrect method on localStorage to remove an item
+- fc405f4: track two tx routes in amplitude
+- 5baed26: bump solana walletconnect deps
+- 00a487a: Add fix for modal animation jank on windows
+- Updated dependencies [aa855a7]
+- Updated dependencies [f265db1]
+- Updated dependencies [1f41315]
+- Updated dependencies [e2c1fe5]
+  - @skip-go/client@1.1.3
+
 ## 3.10.3
 
 ### Patch Changes
