@@ -21,6 +21,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
 }: WarningPageTradeAdditionalSigningRequiredProps) => {
   const theme = useTheme();
   const setErrorWarningAtom = useSetAtom(errorWarningAtom);
+  track("warning page: two signatures required")
 
   const handleOnClickBack = () => {
     setErrorWarningAtom(undefined);
@@ -39,7 +40,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: additional signing required - header back button clicked");
+            track("warning page: additional signing required - header back button clicked");
             handleOnClickBack();
           },
         }}
@@ -60,7 +61,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
         label="Continue"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: additional signing required - main continue button clicked");
+          track("warning page: additional signing required - main continue button clicked");
           handleOnClickContinue();
         }}
         backgroundColor={theme.warning.text}
