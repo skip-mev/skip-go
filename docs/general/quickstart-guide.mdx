@@ -121,6 +121,9 @@ Once you have a route, you can execute it in a single function call by passing i
 await executeRoute({
   route: routeResult,
   userAddresses,
+  getCosmosSigner: (chainId) => {},
+  getEvmSigner: (chainId) => {},
+  getSvmSigner: () => {},
   // Executes after all of the operations triggered by a user's signature complete.
   onTransactionCompleted: async (chainID, txHash, status) => {
     console.log(
