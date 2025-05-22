@@ -48,6 +48,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
     txsRequired,
     txs,
     enabled: shouldFetchStatus,
+    allTxsSigned,
   });
 
   if (data !== undefined) {

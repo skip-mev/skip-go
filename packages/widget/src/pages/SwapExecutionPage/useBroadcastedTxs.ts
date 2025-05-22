@@ -20,19 +20,29 @@ export const useBroadcastedTxsStatus = ({
   txs,
   txsRequired,
   enabled,
+  allTxsSigned,
 }: {
   txsRequired?: number;
   txs: { chainId: string; txHash: string }[] | undefined;
   enabled?: boolean;
+  /**
+   * Indicates whether all transactions in the route have been signed by
+   * the user. When false and all broadcasted transactions have settled,
+   * the hook will treat the route as settled and stop polling.
+   */
+  allTxsSigned?: boolean;
 }): UseQueryResult<TxsStatus> => {
   const [isSettled, setIsSettled] = useState(false);
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
 
-  const queryKey = useMemo(() => ["txs-status", txsRequired, txs] as const, [txs, txsRequired]);
+  const queryKey = useMemo(
+    () => ["txs-status", txsRequired, txs, allTxsSigned] as const,
+    [txs, txsRequired, allTxsSigned],
+  );
 
   return useQuery({
     queryKey,
-    queryFn: async ({ queryKey: [, txsRequired, txs] }) => {
+    queryFn: async ({ queryKey: [, txsRequired, txs, allTxsSigned] }) => {
       if (!txs) return;
 
       const results = await Promise.all(
@@ -51,7 +61,14 @@ export const useBroadcastedTxsStatus = ({
       });
 
       const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
-      if (isRouteSettled) {
+      const missingTx =
+        !allTxsSigned &&
+        txsRequired !== undefined &&
+        txs?.length !== undefined &&
+        txs.length < txsRequired;
+      const isSettledForHook = isRouteSettled || (missingTx && _isAllTxSettled);
+
+      if (isSettledForHook) {
         setIsSettled(true);
       }
 
@@ -67,9 +84,10 @@ export const useBroadcastedTxsStatus = ({
         .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
 
       const resData: TxsStatus = {
-        isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
+        isSuccess:
+          isRouteSettled && !someTxFailed && lastTxStatus === "success",
         lastTxStatus,
-        isSettled: isRouteSettled,
+        isSettled: isSettledForHook,
         transferEvents,
         transferAssetRelease: transferAssetRelease || undefined,
       };
