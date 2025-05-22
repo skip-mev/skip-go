@@ -50,6 +50,18 @@ describe("Case Conversion Functions", function () {
       };
       expect(toSnake(input)).toEqual(expected);
     });
+
+    it("should return a new object and not modify the original", function () {
+      const input = {
+        camelCaseKey: "value",
+        nested: { anotherKey: "anotherValue" },
+      };
+      const original = JSON.parse(JSON.stringify(input));
+      const result = toSnake(input);
+
+      expect(result).not.toBe(input);
+      expect(input).toEqual(original);
+    });
   });
 
   describe("toCamel", function () {
@@ -97,6 +109,18 @@ describe("Case Conversion Functions", function () {
         },
       };
       expect(toCamel(input)).toEqual(expected);
+    });
+
+    it("should return a new object and not modify the original", function () {
+      const input = {
+        snake_case_key: "value",
+        nested: { another_key: "anotherValue" },
+      };
+      const original = JSON.parse(JSON.stringify(input));
+      const result = toCamel(input);
+
+      expect(result).not.toBe(input);
+      expect(input).toEqual(original);
     });
   });
 });
