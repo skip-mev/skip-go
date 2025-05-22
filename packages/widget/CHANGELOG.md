@@ -1,5 +1,22 @@
 ## 0.0.15
 
+## 3.10.3
+
+### Patch Changes
+
+- df9e97c: reduce number of session replays to connected wallet sessions
+- df9e97c: fix history page asset styling and display amount updates
+- df9e97c: separate error and warning
+- df9e97c: Fix using incorrect method on localStorage to remove an item
+- df9e97c: track two tx routes in amplitude
+- df9e97c: bump solana walletconnect deps
+- df9e97c: Add fix for modal animation jank on windows
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+  - @skip-go/client@1.1.2
+
 ## 3.10.2
 
 ### Patch Changes
