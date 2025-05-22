@@ -22,10 +22,10 @@ export const executeSvmTransaction = async (
   }
 
   const svmTx = tx?.svmTx;
-  const getSvmSigner = options?.getSvmSigner || ClientState.getSvmSigner;
+  const getSvmSigner = options?.getSvmSigner;
   if (!getSvmSigner) {
     throw new Error(
-      "executeRoute error: 'getSVMSigner' is not provided or configured in skip router",
+      "executeSvmTransaction error: getSvmSigner is not provided",
     );
   }
 

@@ -17,9 +17,9 @@ export const executeEvmTransaction = async (
 
   const { evmTx } = message;
 
-  const getEvmSigner = options.getEvmSigner || ClientState.getEvmSigner;
+  const getEvmSigner = options.getEvmSigner;
   if (!getEvmSigner) {
-    throw new Error("Unable to get EVM signer");
+    throw new Error("executeEVMTransaction error: getEvmSigner is not provided");
   }
   if (!evmTx?.chainId) {
     throw new Error("chain id not found in evmTx");
