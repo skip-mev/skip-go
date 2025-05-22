@@ -5,8 +5,34 @@ description: "Selected updates and improvements to the Skip Go REST API."
 
 ## May 2025
 - **Improved Cross-Chain Composability:** Execute EVM swaps immediately following a Eureka cross-chain transfer, enabling more sophisticated multi-step routes.
-- **Enhanced Fee Transparency:** Fees associated with Eureka operations are now clearly displayed within the estimated transaction fees for better cost predictability.
-- **LayerZero and Stargate Integration:** Expanded cross-chain capabilities with the integration of LayerZero and Stargate protocols.
+- **Enhanced Fee Transparency:** Fees associated with Eureka operations are now clearly displayed within the `estimated_fees` array in API responses from the `/v2/fungible/route` endpoint, providing better cost predictability. For example:
+  ```json
+  "estimated_fees": [
+    {
+      "fee_type": "SMART_RELAY",
+      "bridge_id": "EUREKA",
+      "amount": "76099736314413",
+      "usd_amount": "0.20",
+      "origin_asset": {
+        "denom": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "chain_id": "1",
+        "symbol": "WETH",
+        "name": "Wrapped Ether"
+        // ... other asset details (like decimals, logo_uri etc.)
+      }
+    }
+  ]
+  ```
+  ([See API Docs](../swagger.yml) for full response structures from the `/v2/fungible/route` endpoint.)
+- **LayerZero and Stargate Integration:** Expanded cross-chain capabilities with the integration of LayerZero and Stargate protocols. To enable these in the Skip Go Widget, include `"layer_zero"` and `"stargate"` in the `experimentalFeatures` array within the `routeConfig` prop. For example:
+  ```jsx
+  <Widget
+    // ... other props
+    routeConfig={{
+      experimentalFeatures: ["layer_zero", "stargate", /* other features */]
+    }}
+  />
+  ```
 - **Broader Asset Support:** This integration adds support for a wide variety of new assets, with notable examples including USDT, USDe, and ZRO.
 
 ### Status Endpoint Enhancement (Late May)
