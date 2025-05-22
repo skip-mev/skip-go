@@ -1,6 +1,6 @@
 import { createCountdownTimer } from "@/utils/countdownTimer";
 import { useState, useEffect } from "react";
-import { SwapExecutionState } from "./SwapExecutionPage";
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 
 export const useCountdown = ({
   estimatedRouteDurationSeconds,

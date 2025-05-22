@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SwapExecutionState } from "./SwapExecutionPage";
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
