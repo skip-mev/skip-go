@@ -1,12 +1,19 @@
 # Repository Instructions
 
-All Codex PRs must include a changeset entry.
+## All Codex PRs must include a changeset entry.
 
-1. Run `npx changeset` from the repository root.
-2. Commit the generated file in `.changeset/` with the rest of your changes.
+1. From the repository root run `npx changeset`.
+2. Commit the generated file inside `.changeset/` with the rest of your changes.
 
-## Rules for create testinh in the packages/widget directory
+## Testing rules for `packages/widget`
 
-1. The test file should be name same as the file being tested, with a `.test.ts` suffix.
-2. Testing functions should be imported from `@playwright/test`
-3. Write multiple test cases
+1. Name each test file after the file being tested and append the `.test.ts` suffix.
+2. Import testing utilities from `@playwright/test`.
+3. Include multiple test cases in every file.
+
+## Best Practices
+
+1. Keep PRs focused on a single change.
+2. Write descriptive commit messages in the imperative mood, e.g. "Add widget tests".
+3. Favor small helper functions over repeated logic.
+4. Document complex code with comments.
