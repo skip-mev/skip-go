@@ -1,23 +1,28 @@
+
 name: Release Web Component
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
 
 jobs:
   publish:
+    # Optional: Run only if Changesets released (can check for specific commit message prefix)
+    if: contains(github.event.head_commit.message, 'Version Packages')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js 18.x
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
 
       - name: Install dependencies
-        run: yarn
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
 
       - name: Publish widget web component
         run: yarn workspace @skip-go/widget run publish:web-component

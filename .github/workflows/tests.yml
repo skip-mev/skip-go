@@ -13,16 +13,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Use Node 18.x
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
 
       - name: Fetch submodule
         run: git submodule update --init --recursive
 
       - name: Install dependencies
-        run: yarn
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
 
       - name: Generate cosmjs types
         run: yarn run codegen

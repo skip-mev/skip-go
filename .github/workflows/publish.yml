@@ -22,13 +22,14 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Setup Node.js 18.x
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
 
-      - name: Install Dependencies
-        run: yarn
+      - name: Install dependencies
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
