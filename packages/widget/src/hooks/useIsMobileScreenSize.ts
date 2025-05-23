@@ -8,7 +8,7 @@ export const useIsMobileScreenSize = () => {
   );
 
   useEffect(() => {
-    if (window === undefined) return;
+    if (typeof window === "undefined") return;
     const handleResize = () => {
       const isMobileScreenSize = window?.innerWidth <= MAX_MOBILE_SCREEN_WIDTH;
       setIsMobileScreenSize(isMobileScreenSize);
