@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 1.1.3
+
+### Patch Changes
+
+- fc09b51: fix swagger types
+- d71e6b0: validate all txs
+
 ## 1.1.2
 
 ### Patch Changes
