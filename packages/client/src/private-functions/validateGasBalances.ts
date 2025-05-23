@@ -29,10 +29,10 @@ export const validateGasBalances = async ({
   enabledChainIds,
   useUnlimitedApproval,
 }: ValidateGasBalancesProps) => {
-  // cosmos or svm tx in txs
+  // return early if there are no cosmos or svm transactions to validate
   if (
-    txs.every((tx) => "cosmosTx" in tx === undefined) ||
-    txs.every((tx) => "svmTx" in tx === undefined)
+    txs.every((tx) => !("cosmosTx" in tx)) &&
+    txs.every((tx) => !("svmTx" in tx))
   ) {
     return;
   }
