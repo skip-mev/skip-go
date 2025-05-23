@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { getClientOperations, OperationType } from "./clientType";
-import type { RouteResponse } from "@skip-go/client";
+import { BridgeType, type RouteResponse } from "@skip-go/client";
 
 const route: RouteResponse = {
   sourceAssetDenom: "uosmo",
@@ -8,74 +8,96 @@ const route: RouteResponse = {
   destAssetDenom: "uatom",
   destAssetChainId: "cosmoshub-4",
   amountIn: "1000000",
-  amountOut: "54906",
-  requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
+  amountOut: "48500",
   operations: [
     {
       swap: {
         swapIn: {
           swapVenue: {
-            name: "neutron-astroport",
-            chainId: "neutron-1",
+            name: "osmosis-poolmanager",
+            chainId: "osmosis-1",
             logoUri:
-              "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+              "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png",
           },
           swapOperations: [
             {
-              pool: "pool-0",
+              pool: "1096",
               denomIn: "uosmo",
-              denomOut: "uatom",
+              denomOut: "ibc/987C17B11ABC2B20019178ACE62929FE9840202CE79498E29FE8E5CB02B7C0A4",
+            },
+            {
+              pool: "611",
+              denomIn: "ibc/987C17B11ABC2B20019178ACE62929FE9840202CE79498E29FE8E5CB02B7C0A4",
+              denomOut: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
             },
           ],
           swapAmountIn: "1000000",
+          priceImpactPercent: "1.1958",
         },
-        estimatedAffiliateFee: "1000000",
-        chainId: "neutron-1",
-        fromChainId: "neutron-1",
+        estimatedAffiliateFee:
+          "0ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+        fromChainId: "osmosis-1",
+        chainId: "osmosis-1",
         denomIn: "uosmo",
-        denomOut: "uatom",
+        denomOut: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
         swapVenues: [
           {
-            name: "neutron-astroport",
-            chainId: "neutron-1",
+            name: "osmosis-poolmanager",
+            chainId: "osmosis-1",
             logoUri:
-              "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+              "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png",
           },
         ],
       },
       txIndex: 0,
-      amountIn: "100000",
-      amountOut: "100000",
+      amountIn: "1000000",
+      amountOut: "48500",
     },
     {
       transfer: {
-        destDenom: "uatom",
-        supportsMemo: true,
-        smartRelay: false,
-        bridgeId: "IBC",
-        denomIn: "uosmo",
-        denomOut: "uatom",
+        port: "transfer",
+        channel: "channel-0",
         fromChainId: "osmosis-1",
         toChainId: "cosmoshub-4",
+        pfmEnabled: true,
+        supportsMemo: true,
+        denomIn: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+        denomOut: "uatom",
+        bridgeId: BridgeType.IBC,
+        smartRelay: false,
+        destDenom: "uatom",
       },
       txIndex: 0,
-      amountIn: "100000",
-      amountOut: "100000",
+      amountIn: "48500",
+      amountOut: "48500",
     },
   ],
   chainIds: ["osmosis-1", "cosmoshub-4"],
   doesSwap: true,
+  estimatedAmountOut: "48500",
+  swapVenue: [
+    {
+      name: "osmosis-poolmanager",
+      chainId: "osmosis-1",
+      logoUri:
+        "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png",
+    },
+  ],
+  txsRequired: 1,
+  usdAmountIn: "0.24",
+  usdAmountOut: "0.24",
+  swapPriceImpactPercent: "1.1958",
+  estimatedFees: [],
+  requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
+  estimatedRouteDurationSeconds: 30,
   swapVenues: [
     {
       name: "osmosis-poolmanager",
       chainId: "osmosis-1",
       logoUri:
-        "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+        "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png",
     },
   ],
-  estimatedFees: [],
-  txsRequired: 1,
-  estimatedRouteDurationSeconds: 0,
 };
 
 const operations = getClientOperations(route.operations);
@@ -99,4 +121,3 @@ test.describe("getClientOperations", () => {
     expect(operations[1].transferIndex).toBe(0);
   });
 });
-
