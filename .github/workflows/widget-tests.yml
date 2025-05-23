@@ -20,10 +20,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - name: Install dependencies
-        run: yarn install
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
       - name: Playwright install
-        working-directory: ./packages/widget
         run: yarn playwright install
       - name: build client lib
         run: yarn run build:client
