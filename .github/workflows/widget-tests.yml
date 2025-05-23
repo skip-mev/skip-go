@@ -15,15 +15,28 @@ jobs:
       options: --user 1001
       ports:
         - 5173:5173
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
       - name: Install dependencies
-        run: yarn install
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
       - name: Playwright install
         working-directory: ./packages/widget
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: yarn playwright install
       - name: build client lib
         run: yarn run build:client
