@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.10.5
+
+### Patch Changes
+
+- 07fc190: bump registries and fix route response type
+- Updated dependencies [07fc190]
+  - @skip-go/client@1.1.4
+
 ## 3.10.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.1.4
+
+### Patch Changes
+
+- 07fc190: bump registries and fix route response type
+
 ## 1.1.3
 
 ### Patch Changes
