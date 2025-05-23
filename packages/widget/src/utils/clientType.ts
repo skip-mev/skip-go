@@ -188,7 +188,7 @@ export function getClientOperation(operation: Operation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(operations?: Operation[]): Operation[] {
+export function getClientOperations(operations?: Operation[]): ClientOperation[] {
   if (!operations) return [];
   let transferIndex = 0;
   const filteredOperations = filterNeutronSwapFee(operations);
