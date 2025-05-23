@@ -11,13 +11,13 @@ import {
   messages,
   recommendAssets,
   route,
-  setClientOptions,
   submitTransaction,
   trackTransaction,
   transactionStatus,
   venues,
   getRecommendedGasPrice,
   getFeeInfoForChain,
+  setApiOptions,
 } from "../index";
 import { SKIP_API_URL } from "src/constants/constants";
 import { toCamel } from "src/utils/convert";
@@ -1616,7 +1616,7 @@ describe("client", () => {
   describe("validateChainIdsToAffiliates", () => {
     it("returns an error when basisPointsFee is not included in one of the affiliates", async () => {
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1642,7 +1642,7 @@ describe("client", () => {
 
     it("returns an error when address is not included in one of the affiliates", async () => {
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1668,7 +1668,7 @@ describe("client", () => {
 
     it("returns an error when affiliate bps differs (only comparing 2 bps)", async () => {
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1699,7 +1699,7 @@ describe("client", () => {
 
     it("returns an error when first affiliate bps are the same but total differs", async () => {
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1734,7 +1734,7 @@ describe("client", () => {
 
     it("returns an error when first and last affiliates bps are the same but total bps differs", async () => {
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1778,7 +1778,7 @@ describe("client", () => {
     it("does not return an error when affiliate bps are exactly the same", async () => {
       let errorOccurred = false;
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1807,7 +1807,7 @@ describe("client", () => {
     it("does not return an error if 2 bps on first chain adds up to 2nd chains first bps", async () => {
       let errorOccurred = false;
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
@@ -1840,7 +1840,7 @@ describe("client", () => {
     it("does not return an error if 3 chains are passed and each have different number of affiliates but still add up to the same total", async () => {
       let errorOccurred = false;
       try {
-        setClientOptions({
+        setApiOptions({
           chainIdsToAffiliates: {
             chain1: {
               affiliates: [
