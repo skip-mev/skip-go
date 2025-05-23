@@ -309,7 +309,7 @@ export interface StargateTransfer {
   oftFeeAmountUsd?: string;
   messagingFeeAsset?: Asset;
   messagingFeeAmount?: string;
-  messageingFeeAmountUsd?: string;
+  messagingFeeAmountUsd?: string;
 }
 
 /**
