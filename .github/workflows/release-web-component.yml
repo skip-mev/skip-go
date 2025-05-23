@@ -23,9 +23,11 @@ jobs:
 
       - name: Install dependencies
         run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
-
+      - name: Build
+        run: yarn build
       - name: Publish widget web component
-        run: yarn workspace @skip-go/widget run publish:web-component
+        working-directory: packages/widget
+        run: yarn publish:web-component
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
