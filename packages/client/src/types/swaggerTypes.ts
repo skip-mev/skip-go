@@ -1280,6 +1280,9 @@ export interface Transfer {
   denomOut?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable. */
   feeAmount?: string;
+  /** Address of the entry contract on the destination chain */
+  toChainEntryContractAddress?: string;
+  toChainCallbackContractAddress?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable, converted to USD value */
   usdFeeAmount?: string;
   /** Asset to be paid as the transfer fee if applicable. */

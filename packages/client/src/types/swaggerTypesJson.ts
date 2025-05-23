@@ -1280,6 +1280,9 @@ export interface TransferJson {
   denom_out?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable. */
   fee_amount?: string | null;
+  /** Address of the entry contract on the destination chain */
+  to_chain_entry_contract_address?: string | null;
+  to_chain_callback_contract_address?: string | null;
   /** Amount of the fee asset to be paid as the transfer fee if applicable, converted to USD value */
   usd_fee_amount?: string | null;
   /** Asset to be paid as the transfer fee if applicable. */
