@@ -1,5 +1,19 @@
 ## 0.0.15
 
+## 3.10.4
+
+### Patch Changes
+
+- 49fd0da: Add tests for getClientOperations in clientType utility.
+- 2075ee9: Add tests for utils number functions
+- e6cdb46: Cache Playwright browser binaries and skip reinstall when already cached.
+- 3f8fce1: Fix mobile date formatting by zero-padding hours, minutes, month, and day.
+- cba7980: Fix window existence check in useIsMobileScreenSize hook to avoid runtime errors when `window` is undefined.
+- e6cdb46: Improve widget tests workflow to cache dependencies and Playwright browsers for faster execution.
+- Updated dependencies [fc09b51]
+- Updated dependencies [d71e6b0]
+  - @skip-go/client@1.1.3
+
 ## 3.10.3
 
 ### Patch Changes
