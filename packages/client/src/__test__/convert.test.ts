@@ -1,4 +1,5 @@
-import { Camel, Snake, toCamel, toSnake } from "src/utils/convert";
+import type { Camel, Snake } from "src/utils/convert";
+import { toCamel, toSnake } from "src/utils/convert";
 
 describe("Case Conversion Functions", function () {
   describe("toSnake", function () {
