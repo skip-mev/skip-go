@@ -970,7 +970,7 @@ export interface Route {
   /** Denom of the source asset */
   sourceAssetDenom: string;
   /** Swap venue on which the swap is performed, if a swap is performed */
-  swapVenue?: SwapVenue;
+  swapVenues?: SwapVenue[];
   /** Number of transactions required to perform the transfer or swap */
   txsRequired: number;
   /** Amount of the source denom, converted to USD value */

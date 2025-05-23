@@ -2407,10 +2407,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.134":
-  version: 0.50.134
-  resolution: "@chain-registry/types@npm:0.50.134"
-  checksum: 885905203bd9cff9e880373568885ca4273da7f864b0bdb5d4a433c999ae55c6e9ccd7331feefc6f4106a49e9c8fe0c94689c3531e85b341b04dae0b12828509
+"@chain-registry/types@npm:^0.50.137":
+  version: 0.50.137
+  resolution: "@chain-registry/types@npm:0.50.137"
+  checksum: 55fc68bb97b21b2e1a313ed977177d82255719099af4ffd0f589740a89117de9892dc7fc195c4684ac8bf4a6562e49cd98c342d164d73ac1ac8accfb48d7961e
   languageName: node
   linkType: hard
 
@@ -4680,7 +4680,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry-types@npm:^1.0.4":
+"@initia/initia-registry-types@npm:^1.0.5":
   version: 1.0.5
   resolution: "@initia/initia-registry-types@npm:1.0.5"
   dependencies:
@@ -4689,12 +4689,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@initia/initia-registry@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@initia/initia-registry@npm:1.0.5"
+"@initia/initia-registry@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@initia/initia-registry@npm:1.0.6"
   dependencies:
-    "@initia/initia-registry-types": ^1.0.4
-  checksum: 0ddd8c973f4f7bb7005f950121860ece08b4dc04c7fa887836ae2b09eef71a0a4726b7871847c73be052bf12a8465df5942e66cbcef7a70d1c8bdff0693bd95b
+    "@initia/initia-registry-types": ^1.0.5
+  checksum: 789daa999befe8cf00d4b5becf35917ef8a0caa1266c761701ab4ace3582867d7a090802caf329b74864aa3dfdc0b0a06316aa18b02cc5f5dcde87f9a23334b6
   languageName: node
   linkType: hard
 
@@ -8020,7 +8020,7 @@ __metadata:
     "@cosmjs/proto-signing": 0.33.1
     "@cosmjs/stargate": 0.33.1
     "@cosmology/telescope": 1.8.3
-    "@initia/initia-registry": ^1.0.5
+    "@initia/initia-registry": ^1.0.6
     "@injectivelabs/sdk-ts": 1.15.3
     "@keplr-wallet/unit": ^0.12.143
     "@protobufs/gogoproto": 0.0.10
@@ -8028,7 +8028,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
-    chain-registry: ^1.69.218
+    chain-registry: ^1.69.222
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -8059,7 +8059,7 @@ __metadata:
     "@ebay/nice-modal-react": ^1.2.13
     "@eslint/compat": ^1.1.1
     "@eslint/js": ^9.9.0
-    "@initia/initia-registry": ^1.0.5
+    "@initia/initia-registry": ^1.0.6
     "@keplr-wallet/types": ^0.12.125
     "@penumbra-zone/bech32m": ^13.0.0
     "@penumbra-zone/client": ^24.0.0
@@ -8101,7 +8101,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.218
+    chain-registry: ^1.69.222
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -13684,12 +13684,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.218":
-  version: 1.69.218
-  resolution: "chain-registry@npm:1.69.218"
+"chain-registry@npm:^1.69.222":
+  version: 1.69.222
+  resolution: "chain-registry@npm:1.69.222"
   dependencies:
-    "@chain-registry/types": ^0.50.134
-  checksum: e2ec53c52242b00040d67ffbdf526c57f91e3c2cb0bc3a02a014cb862a726f6b65752c59bc71b3ac34afe8ceb17f2b5622ef696da1ff08825805bd04ea86949d
+    "@chain-registry/types": ^0.50.137
+  checksum: 091eca1d4e092b343fae94f70f6cb5abbff3ebc5ab9f46075d0d19281d819d0edda629e7a62c03eca23f6d19afde6c6beb2595827200ce6da7058c2af40775d6
   languageName: node
   linkType: hard
 
