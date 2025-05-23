@@ -2618,7 +2618,7 @@ components:
           $ref: '#/components/schemas/Asset'
         messaging_fee_amount:
           type: string
-        messageing_fee_amount_usd:
+        messaging_fee_amount_usd:
           type: string
       type: object
     StargateTransferState:
@@ -3151,7 +3151,7 @@ components:
       description: Go fast Fee
       type: object
       properties:
-        fee_asset:
+        feeAsset:
           $ref: '#/components/schemas/Asset'
           required: true
         bpsFee:
@@ -3911,23 +3911,23 @@ components:
     TransferEvent:
       type: object
       properties:
-        ibcTransfer:
+        ibc_transfer:
           $ref: '#/components/schemas/IBCTransferInfo'
-        axelarTransfer:
+        axelar_transfer:
           $ref: '#/components/schemas/AxelarTransferInfo'
-        cctpTransfer:
+        cctp_transfer:
           $ref: '#/components/schemas/CCTPTransferInfo'
-        hyperlaneTransfer:
+        hyperlane_transfer:
           $ref: '#/components/schemas/HyperlaneTransferInfo'
-        opInitTransfer:
+        op_init_transfer:
           $ref: '#/components/schemas/OPInitTransferInfo'
-        stargateTransfer:
+        stargate_transfer:
           $ref: '#/components/schemas/StargateTransferInfo'
-        goFastTransfer:
+        go_fast_transfer:
           $ref: '#/components/schemas/GoFastTransferInfo'
-        eurekaTransfer:
+        eureka_transfer:
           $ref: '#/components/schemas/EurekaTransferInfo'
-        layerZeroTransfer:
+        layer_zero_transfer:
           $ref: '#/components/schemas/LayerZeroTransferInfo'
     TransferState:
       description: |

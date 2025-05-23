@@ -309,7 +309,7 @@ export interface StargateTransferJson {
   oft_fee_amount_usd?: string;
   messaging_fee_asset?: AssetJson;
   messaging_fee_amount?: string;
-  messageing_fee_amount_usd?: string;
+  messaging_fee_amount_usd?: string;
 }
 
 /**
@@ -715,7 +715,7 @@ export interface FeeAssetJson {
 
 /** Go fast Fee */
 export interface GoFastFeeJson {
-  fee_asset: AssetJson;
+  feeAsset: AssetJson;
   bpsFee?: string;
   bpsFeeAmount?: string;
   bpsFeeUsd?: string;
@@ -1301,15 +1301,15 @@ export interface TransferJson {
 }
 
 export interface TransferEventJson {
-  ibcTransfer?: IBCTransferInfoJson;
-  axelarTransfer?: AxelarTransferInfoJson;
-  cctpTransfer?: CCTPTransferInfoJson;
-  hyperlaneTransfer?: HyperlaneTransferInfoJson;
-  opInitTransfer?: OPInitTransferInfoJson;
-  stargateTransfer?: StargateTransferInfoJson;
-  goFastTransfer?: GoFastTransferInfoJson;
-  eurekaTransfer?: EurekaTransferInfoJson;
-  layerZeroTransfer?: LayerZeroTransferInfoJson;
+  ibc_transfer?: IBCTransferInfoJson;
+  axelar_transfer?: AxelarTransferInfoJson;
+  cctp_transfer?: CCTPTransferInfoJson;
+  hyperlane_transfer?: HyperlaneTransferInfoJson;
+  op_init_transfer?: OPInitTransferInfoJson;
+  stargate_transfer?: StargateTransferInfoJson;
+  go_fast_transfer?: GoFastTransferInfoJson;
+  eureka_transfer?: EurekaTransferInfoJson;
+  layer_zero_transfer?: LayerZeroTransferInfoJson;
 }
 
 /**
