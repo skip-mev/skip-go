@@ -58,6 +58,7 @@ test.describe.serial("Widget tests", async () => {
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
     await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
+    await page.waitForTimeout(100);
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
 
     await expect(page.getByRole("button", { name: "ATOM logo ATOM" })).toBeVisible();
