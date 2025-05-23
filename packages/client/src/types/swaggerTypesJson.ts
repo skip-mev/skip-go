@@ -970,7 +970,7 @@ export interface RouteJson {
   /** Denom of the source asset */
   source_asset_denom: string;
   /** Swap venue on which the swap is performed, if a swap is performed */
-  swap_venue?: SwapVenueJson;
+  swap_venues?: SwapVenueJson[];
   /** Number of transactions required to perform the transfer or swap */
   txs_required: number;
   /** Amount of the source denom, converted to USD value */

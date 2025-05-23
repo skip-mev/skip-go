@@ -10,6 +10,7 @@ import { atomWithReset } from "jotai/utils";
 import { WarningPageLowInfoProps } from "@/pages/ErrorWarningPage/WarningPage/WarningPageLowInfo";
 import { ExpectedErrorPageInsufficientBalanceForGasProps } from "@/pages/ErrorWarningPage/ExpectedErrorPage/ExpectedErrorPageInsufficientGasBalance";
 import { UnexpectedErrorPageTimeoutProps } from "@/pages/ErrorWarningPage/UnexpectedErrorPage/UnexpectedErrorPageTimeout";
+import { RelayFeeQuoteExpiredProps } from "@/pages/ErrorWarningPage/ExpectedErrorPage/ExpectedErrorPageRelayFeeQuoteExpired";
 
 export const errorWarningAtom = atomWithReset<ErrorWarningPageVariants | undefined>(undefined);
 
@@ -35,7 +36,7 @@ export type ErrorWarningPageVariants =
     } & ExpectedErrorPageInsufficientBalanceForGasProps)
   | ({
       errorWarningType: ErrorWarningType.ExpiredRelayFeeQuote;
-    } & ExpiredRelayFeeQuoteProps);
+    } & RelayFeeQuoteExpiredProps);
 
 export enum ErrorWarningType {
   AuthFailed,
@@ -49,5 +50,5 @@ export enum ErrorWarningType {
   GoFastWarning,
   LowInfoWarning,
   InsufficientBalanceForGas,
-  ExpiredRelayFeeQuote
+  ExpiredRelayFeeQuote,
 }
