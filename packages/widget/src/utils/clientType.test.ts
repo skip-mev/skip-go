@@ -75,14 +75,6 @@ const route: RouteResponse = {
   chainIds: ["osmosis-1", "cosmoshub-4"],
   doesSwap: true,
   estimatedAmountOut: "48500",
-  swapVenue: [
-    {
-      name: "osmosis-poolmanager",
-      chainId: "osmosis-1",
-      logoUri:
-        "https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png",
-    },
-  ],
   txsRequired: 1,
   usdAmountIn: "0.24",
   usdAmountOut: "0.24",
