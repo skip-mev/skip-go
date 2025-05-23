@@ -8,7 +8,7 @@ import { SmallText } from "@/components/Typography";
 import { ClientOperation, OperationType } from "@/utils/clientType";
 import { skipBridgesAtom, skipSwapVenuesAtom } from "@/state/skipClient";
 import { useAtomValue } from "jotai";
-import { SwapExecutionState } from "./SwapExecutionPage";
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";

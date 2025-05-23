@@ -7,7 +7,7 @@ import { ICONS } from "@/icons";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { TxsStatus } from "./useBroadcastedTxs";
-import { SwapExecutionState } from "./SwapExecutionPage";
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 import { useMemo } from "react";
 
 export type SwapExecutionPageRouteProps = {

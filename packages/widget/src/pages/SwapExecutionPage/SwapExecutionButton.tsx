@@ -1,7 +1,7 @@
 // SwapExecutionButton.tsx
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { SwapExecutionState } from "./SwapExecutionPage";
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 import { useTheme } from "styled-components";
 import pluralize from "pluralize";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";

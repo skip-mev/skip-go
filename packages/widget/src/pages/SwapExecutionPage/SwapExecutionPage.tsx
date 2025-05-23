@@ -22,19 +22,7 @@ import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
-
-export enum SwapExecutionState {
-  recoveryAddressUnset,
-  destinationAddressUnset,
-  ready,
-  pending,
-  waitingForSigning,
-  signaturesRemaining,
-  confirmed,
-  validatingGasBalance,
-  approving,
-  pendingGettingAddresses,
-}
+import { SwapExecutionState } from "@/utils/swapExecutionState";
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
