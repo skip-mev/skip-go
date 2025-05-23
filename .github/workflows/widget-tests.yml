@@ -35,6 +35,7 @@ jobs:
       - name: Install dependencies
         run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
       - name: Playwright install
+        working-directory: ./packages/widget
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: yarn playwright install
       - name: build client lib
