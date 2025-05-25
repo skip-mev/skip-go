@@ -1,0 +1,35 @@
+name: Update Registries
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - name: Install dependencies
+        run: YARN_ENABLE_SCRIPTS=false yarn install --immutable
+      - name: Update registries
+        run: yarn update-registries
+      - name: Generate changeset
+        run: npx changeset -y
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update registries'
+          title: 'chore: update registries'
+          body: Automated update of chain registries.
+          branch: update-registries
+          base: staging
+          delete-branch: true
