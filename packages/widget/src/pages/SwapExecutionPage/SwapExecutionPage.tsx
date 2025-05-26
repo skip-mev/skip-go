@@ -63,8 +63,9 @@ export const SwapExecutionPage = () => {
     txs: transactionDetailsArray,
   });
 
-  const initialTxHash = transactionDetailsArray?.[0]?.txHash;
-  const initialTxChainId = transactionDetailsArray?.[0]?.chainId;
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   useSyncTxStatus({
     statusData,
@@ -155,11 +156,11 @@ export const SwapExecutionPage = () => {
             : undefined
         }
         centerButton={
-          initialTxHash && initialTxChainId
+          lastTxHash && lastTxChainId
             ? {
                 label: "Track progress",
                 onClick: () => {
-                  window.open(createSkipExplorerLink(initialTxHash, initialTxChainId), "_blank");
+                  window.open(createSkipExplorerLink(lastTxHash, lastTxChainId), "_blank");
                 },
               }
             : undefined

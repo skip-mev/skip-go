@@ -18,8 +18,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
-
+  const lastTransaction = transactionDetailsArray.at(-1);
   const lastTxHash = lastTransaction?.txHash;
   const lastTxChainId = lastTransaction?.chainId;
 
