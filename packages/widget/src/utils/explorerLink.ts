@@ -32,3 +32,7 @@ export const createExplorerLink = ({
       return undefined;
   }
 };
+
+export const createSkipExplorerLink = (txHash: string, chainId: string) => {
+  return `https://explorer.skip.build/?tx_hash=${txHash}&chain_id=${chainId}`;
+};

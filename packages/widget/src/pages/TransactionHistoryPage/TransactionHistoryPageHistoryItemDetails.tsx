@@ -8,17 +8,18 @@ import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { copyToClipboard } from "@/utils/misc";
 import { TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
   sourceChainName: string;
   destinationChainName: string;
+  initialTxChainId: string;
+  initialTxHash: string;
   absoluteTimeString: string;
   onClickDelete?: () => void;
-  explorerLinks?: string[];
   transferAssetRelease?: TransferAssetRelease;
 };
 
@@ -39,8 +40,9 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   destinationChainName,
   absoluteTimeString,
   onClickDelete,
-  explorerLinks,
   transferAssetRelease,
+  initialTxChainId,
+  initialTxHash,
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
@@ -56,49 +58,10 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     return;
   }, [status, theme.error.text, theme.success.text, theme.warning.text, transferAssetRelease]);
 
-  const handleClickingLinkIfNoExplorerLink = (txHash?: string, explorerLink?: string) => {
-    if (!explorerLink) {
-      copyToClipboard(txHash);
-    }
-  };
+  const skipExplorerLink = useMemo(() => {
+    return createSkipExplorerLink(initialTxHash, initialTxChainId);
+  }, [initialTxHash, initialTxChainId]);
 
-  const getTxHashFromLink = (link?: string) => {
-    const splitLinkBySlash = link?.split("/");
-    if (!splitLinkBySlash) return;
-    return splitLinkBySlash[splitLinkBySlash.length - 1];
-  };
-
-  const renderTransactionIds = useMemo(() => {
-    return explorerLinks?.map((link, index) => {
-      const txHash = getTxHashFromLink(link);
-      const getTransactionIdLabel = () => {
-        if (index === 0) {
-          return "Initial transaction ";
-        }
-        if (index === explorerLinks.length - 1) {
-          return "Final transaction ";
-        }
-        return "Transaction ";
-      };
-      return (
-        <StyledHistoryItemDetailRow key={`${index}-${txHash}`} align="center">
-          <StyledDetailsLabel>{getTransactionIdLabel()}</StyledDetailsLabel>
-          <Link
-            onClick={() => handleClickingLinkIfNoExplorerLink(txHash, link)}
-            href={link}
-            title={txHash}
-            target="_blank"
-            gap={5}
-          >
-            <SmallText normalTextColor>{getTruncatedAddress(txHash)}</SmallText>
-            <SmallText>
-              <ChainIcon />
-            </SmallText>
-          </Link>
-        </StyledHistoryItemDetailRow>
-      );
-    });
-  }, [explorerLinks]);
   const showTransferAssetRelease = Boolean(
     transferAssetRelease &&
       transferAssetRelease.released &&
@@ -142,7 +105,15 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </Row>
       </StyledHistoryItemDetailRow>
 
-      {renderTransactionIds}
+      <StyledHistoryItemDetailRow align="center">
+        <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
+        <Link href={skipExplorerLink} target="_blank" gap={5}>
+          <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
+          <SmallText>
+            <ChainIcon />
+          </SmallText>
+        </Link>
+      </StyledHistoryItemDetailRow>
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">
