@@ -56,9 +56,6 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       transactionDetails,
     } = txHistoryItem;
 
-    const initialTxHash = transactionDetails?.[0]?.txHash;
-    const initialTxChainId = transactionDetails?.[0]?.chainId;
-
     const sourceAssetDetails = useGetAssetDetails({
       assetDenom: sourceAssetDenom,
       chainId: sourceAssetChainId,
@@ -162,8 +159,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         {showDetails && (
           <TransactionHistoryPageHistoryItemDetails
             status={historyStatus}
-            initialTxHash={initialTxHash}
-            initialTxChainId={initialTxChainId}
+            transactionDetails={transactionDetails}
             sourceChainName={sourceAssetDetails.chainName ?? "--"}
             destinationChainName={destinationAssetDetails.chainName ?? "--"}
             absoluteTimeString={absoluteTimeString}

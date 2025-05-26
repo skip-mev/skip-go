@@ -18,10 +18,10 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
-  const initialTransaction = transactionDetailsArray?.[0];
+  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
 
-  const initialTxHash = initialTransaction?.txHash;
-  const initialTxChainId = initialTransaction?.chainId;
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -44,7 +44,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       if (sourceClientAsset) {
         track("unexpected error page: transaction reverted", {
           transferAssetRelease: statusData.transferAssetRelease,
-          initialTransaction,
+          lastTransaction,
         });
         setErrorWarning({
           errorWarningType: ErrorWarningType.TransactionReverted,
@@ -58,24 +58,24 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
             setCurrentPage(Routes.SwapPage);
             setErrorWarning(undefined);
           },
-          explorerUrl: createSkipExplorerLink(initialTxHash, initialTxChainId),
+          explorerUrl: createSkipExplorerLink(lastTxHash, lastTxChainId),
           transferAssetRelease: statusData.transferAssetRelease,
         });
         return;
       }
 
-      track("unexpected error page: transaction failed", { initialTransaction });
+      track("unexpected error page: transaction failed", { lastTransaction });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: createSkipExplorerLink(initialTxHash, initialTxChainId),
-        txHash: initialTxHash,
+        explorerLink: createSkipExplorerLink(lastTxHash, lastTxChainId),
+        txHash: lastTxHash,
       });
     }
   }, [
-    initialTransaction,
-    initialTxChainId,
-    initialTxHash,
+    lastTransaction,
+    lastTxChainId,
+    lastTxHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
     setErrorWarning,

@@ -33,6 +33,6 @@ export const createExplorerLink = ({
   }
 };
 
-export const createSkipExplorerLink = (txHash: string, chainId: string) => {
-  return `https://explorer.skip.build/?tx_hash=${txHash}&chain_id=${chainId}`;
+export const createSkipExplorerLink = (txHash: string, chainId: string, isTestnet?: boolean) => {
+  return `https://explorer.skip.build/?tx_hash=${txHash}&chain_id=${chainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };
