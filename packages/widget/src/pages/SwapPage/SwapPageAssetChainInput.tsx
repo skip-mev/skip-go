@@ -21,6 +21,7 @@ import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndCha
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
+import { isWindows } from "@/utils/os";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -178,7 +179,7 @@ export const SwapPageAssetChainInput = ({
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
-              <Text>{assetDetails.symbol}</Text>
+              <StyledAssetSymbol isWindows={isWindows()}>{assetDetails.symbol}</StyledAssetSymbol>
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"
@@ -372,4 +373,8 @@ export const StyledAssetButton = styled(Button)`
       background-color: rgba(255, 255, 255, 0.15);
     }
   }
+`;
+
+export const StyledAssetSymbol = styled(Text)<{ isWindows?: boolean }>`
+  ${({ isWindows }) => isWindows && "margin-bottom: -4px;"}
 `;
