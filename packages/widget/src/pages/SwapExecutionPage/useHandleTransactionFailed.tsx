@@ -7,6 +7,7 @@ import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
 import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
@@ -17,7 +18,10 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
+  const initialTransaction = transactionDetailsArray?.[0];
+
+  const initialTxHash = initialTransaction?.txHash;
+  const initialTxChainId = initialTransaction?.chainId;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -40,7 +44,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       if (sourceClientAsset) {
         track("unexpected error page: transaction reverted", {
           transferAssetRelease: statusData.transferAssetRelease,
-          lastTransaction,
+          initialTransaction,
         });
         setErrorWarning({
           errorWarningType: ErrorWarningType.TransactionReverted,
@@ -54,24 +58,24 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
             setCurrentPage(Routes.SwapPage);
             setErrorWarning(undefined);
           },
-          explorerUrl: lastTransaction?.explorerLink ?? "",
+          explorerUrl: createSkipExplorerLink(initialTxHash, initialTxChainId),
           transferAssetRelease: statusData.transferAssetRelease,
         });
         return;
       }
 
-      track("unexpected error page: transaction failed", { lastTransaction });
+      track("unexpected error page: transaction failed", { initialTransaction });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: lastTransaction?.explorerLink ?? "",
-        txHash: lastTransaction?.txHash,
+        explorerLink: createSkipExplorerLink(initialTxHash, initialTxChainId),
+        txHash: initialTxHash,
       });
     }
   }, [
-    lastTransaction,
-    lastTransaction?.explorerLink,
-    lastTransaction?.txHash,
+    initialTransaction,
+    initialTxChainId,
+    initialTxHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
     setErrorWarning,
