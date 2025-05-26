@@ -27,7 +27,7 @@ export const SwapPageHeader = ({
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
 
   return (
-    <StyledSwapPageHeaderContainer align="center">
+    <StyledSwapPageHeaderContainer align="center" justify="space-between">
       <Row align="center" gap={10}>
         {leftButton && (
           <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
@@ -61,7 +61,6 @@ export const SwapPageHeader = ({
 
 const StyledSwapPageHeaderContainer = styled(Row)`
   height: 30px;
-  justify-content: space-between;
   position: relative;
 `;
 
