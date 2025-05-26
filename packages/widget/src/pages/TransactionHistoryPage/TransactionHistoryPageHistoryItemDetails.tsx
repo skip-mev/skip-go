@@ -12,8 +12,6 @@ import { TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { TransactionDetails } from "@/state/swapExecutionPage";
-import { onlyTestnetsAtom } from "@/state/skipClient";
-import { useAtomValue } from "jotai";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
@@ -47,7 +45,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 }: TransactionHistoryPageHistoryItemDetailsProps) => {
   const theme = useTheme();
 
-  const isTestnet = useAtomValue(onlyTestnetsAtom);
+  const initialTxHash = transactionDetails?.[0]?.txHash;
 
   const statusColor = useMemo(() => {
     if (status === "failed" || status === "incomplete") {
@@ -72,32 +70,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
     chainId: transferAssetRelease?.chainId,
   });
 
-  const renderSkipExplorerLinks = useMemo(() => {
-    return transactionDetails.map((txDetails, index) => {
-      const getLabel = () => {
-        if (index === 0) return "Route explorer";
-        if (index === 1) return "Second tx explorer";
-        return "tx explorer";
-      };
-
-      const skipExplorerLink = createSkipExplorerLink(
-        txDetails?.txHash,
-        txDetails?.chainId,
-        isTestnet,
-      );
-      return (
-        <StyledHistoryItemDetailRow align="center">
-          <StyledDetailsLabel>{getLabel()}</StyledDetailsLabel>
-          <Link href={skipExplorerLink} target="_blank" gap={5}>
-            <SmallText normalTextColor>{getTruncatedAddress(txDetails?.txHash)}</SmallText>
-            <SmallText>
-              <ChainIcon />
-            </SmallText>
-          </Link>
-        </StyledHistoryItemDetailRow>
-      );
-    });
-  }, [transactionDetails]);
+  const skipExplorerLink = createSkipExplorerLink(transactionDetails);
 
   return (
     <Column padding={10} gap={10} style={{ paddingTop: showTransferAssetRelease ? 0 : 10 }}>
@@ -131,7 +104,15 @@ export const TransactionHistoryPageHistoryItemDetails = ({
         </Row>
       </StyledHistoryItemDetailRow>
 
-      {renderSkipExplorerLinks}
+      <StyledHistoryItemDetailRow align="center">
+        <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
+        <Link href={skipExplorerLink} target="_blank" gap={5}>
+          <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
+          <SmallText>
+            <ChainIcon />
+          </SmallText>
+        </Link>
+      </StyledHistoryItemDetailRow>
 
       <Row align="center" style={{ marginTop: 10, padding: "0px 10px" }}>
         <Button onClick={onClickDelete} gap={5} align="center">

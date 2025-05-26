@@ -1,6 +1,9 @@
 import { explorers } from "@/constants/chains";
 import { config } from "@/constants/wagmi";
+import { TransactionDetails } from "@/state/swapExecutionPage";
 import { ChainType } from "@skip-go/client";
+import { jotaiStore } from "@/widget/Widget";
+import { onlyTestnetsAtom } from "@/state/skipClient";
 
 export const createExplorerLink = ({
   chainId,
@@ -33,6 +36,15 @@ export const createExplorerLink = ({
   }
 };
 
-export const createSkipExplorerLink = (txHash: string, chainId: string, isTestnet?: boolean) => {
-  return `https://explorer.skip.build/?tx_hash=${txHash}&chain_id=${chainId}${isTestnet ? "&is_testnet=true" : ""}`;
+export const createSkipExplorerLink = (transactionDetails: TransactionDetails[]) => {
+  const { get } = jotaiStore;
+
+  const txHashCommaSeperatedList = transactionDetails
+    ?.map((txDetails) => txDetails.txHash)
+    ?.join(",");
+
+  const isTestnet = get(onlyTestnetsAtom);
+  const initialTxChainId = transactionDetails?.[0]?.chainId;
+
+  return `https://explorer.skip.build/?tx_hash=${txHashCommaSeperatedList}&chain_id=${initialTxChainId}${isTestnet ? "&is_testnet=true" : ""}`;
 };

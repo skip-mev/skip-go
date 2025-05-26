@@ -57,7 +57,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
             setCurrentPage(Routes.SwapPage);
             setErrorWarning(undefined);
           },
-          explorerUrl: createSkipExplorerLink(lastTxHash, lastTxChainId),
+          explorerUrl: createSkipExplorerLink(transactionDetailsArray),
           transferAssetRelease: statusData.transferAssetRelease,
         });
         return;
@@ -67,8 +67,8 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: createSkipExplorerLink(lastTxHash, lastTxChainId),
-        txHash: lastTxHash,
+        explorerLink: createSkipExplorerLink(transactionDetailsArray),
+        txHash: lastTxHash ?? "",
       });
     }
   }, [
@@ -83,5 +83,6 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
+    transactionDetailsArray,
   ]);
 };

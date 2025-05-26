@@ -160,7 +160,7 @@ export const SwapExecutionPage = () => {
             ? {
                 label: "Track progress",
                 onClick: () => {
-                  window.open(createSkipExplorerLink(lastTxHash, lastTxChainId), "_blank");
+                  window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
                 },
               }
             : undefined
