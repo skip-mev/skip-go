@@ -12,11 +12,17 @@ export type PageHeaderItemButton = {
 
 type PageHeaderProps = {
   leftButton?: PageHeaderItemButton;
+  centerButton?: PageHeaderItemButton;
   rightButton?: PageHeaderItemButton;
   rightContent?: React.ReactNode;
 };
 
-export const PageHeader = ({ leftButton, rightButton, rightContent }: PageHeaderProps) => {
+export const PageHeader = ({
+  leftButton,
+  centerButton,
+  rightButton,
+  rightContent,
+}: PageHeaderProps) => {
   const renderIcon = (icon?: ICONS | React.ReactElement) => {
     if (React.isValidElement(icon)) {
       return () => icon;
@@ -30,9 +36,11 @@ export const PageHeader = ({ leftButton, rightButton, rightContent }: PageHeader
   };
 
   const LeftIcon = renderIcon(leftButton?.icon);
+  const CenterIcon = renderIcon(centerButton?.icon);
   const RightIcon = renderIcon(rightButton?.icon);
+
   return (
-    <StyledPageHeaderContainer justify="space-between">
+    <StyledPageHeaderContainer align="center" justify="space-between">
       <Row align="center" gap={10}>
         {leftButton && (
           <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
@@ -41,6 +49,15 @@ export const PageHeader = ({ leftButton, rightButton, rightContent }: PageHeader
           </GhostButton>
         )}
       </Row>
+
+      <CenterContainer>
+        {centerButton && (
+          <GhostButton gap={5} align="center" onClick={centerButton.onClick}>
+            <CenterIcon />
+            {centerButton.label}
+          </GhostButton>
+        )}
+      </CenterContainer>
 
       <Row align="center" gap={10}>
         {rightContent}
@@ -57,4 +74,11 @@ export const PageHeader = ({ leftButton, rightButton, rightContent }: PageHeader
 
 const StyledPageHeaderContainer = styled(Row)`
   height: 30px;
+  position: relative;
+`;
+
+const CenterContainer = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 `;
