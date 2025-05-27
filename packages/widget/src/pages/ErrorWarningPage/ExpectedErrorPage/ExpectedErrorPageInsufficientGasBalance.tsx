@@ -5,10 +5,10 @@ import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
+import { PageHeader } from "@/components/PageHeader";
 
 export type ExpectedErrorPageInsufficientBalanceForGasProps = {
   error?: Error;
@@ -34,7 +34,7 @@ export const ExpectedErrorPageInsufficientGasBalance = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

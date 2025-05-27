@@ -41,6 +41,7 @@ import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
+import { SwapPageHeader } from "./SwapPageHeader";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();

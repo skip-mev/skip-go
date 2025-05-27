@@ -19,41 +19,41 @@ export const SwapPageHeader = memo(() => {
   const sourceAccount = getAccount(sourceAsset?.chainId);
   const isFetchingLastTransactionStatus = useAtomValue(isFetchingLastTransactionStatusAtom);
 
-  const historyPageIcon = useMemo(() => {
-    if (isFetchingLastTransactionStatus) {
-      return (
-        <div
-          style={{
-            marginLeft: "8px",
-            marginRight: "8px",
-            position: "relative",
-          }}
-        >
-          <SpinnerIcon
-            style={{
-              animation: "spin 1s linear infinite",
-              position: "absolute",
-              height: 14,
-              width: 14,
-            }}
-          />
-        </div>
-      );
-    }
-
-    return ICONS.history;
-  }, [isFetchingLastTransactionStatus]);
-
   const historyPageButton = useMemo(() => {
+    const getHistoryPageIcon = () => {
+      if (isFetchingLastTransactionStatus) {
+        return (
+          <div
+            style={{
+              marginLeft: "8px",
+              marginRight: "8px",
+              position: "relative",
+            }}
+          >
+            <SpinnerIcon
+              style={{
+                animation: "spin 1s linear infinite",
+                position: "absolute",
+                height: 14,
+                width: 14,
+              }}
+            />
+          </div>
+        );
+      }
+
+      return ICONS.history;
+    };
+
     return {
       label: "History",
-      icon: historyPageIcon,
+      icon: getHistoryPageIcon(),
       onClick: () => {
         track("swap page: history button - clicked");
         setCurrentPage(Routes.TransactionHistoryPage);
       },
     };
-  }, [historyPageIcon, setCurrentPage]);
+  }, [isFetchingLastTransactionStatus, setCurrentPage]);
 
   return (
     <>
