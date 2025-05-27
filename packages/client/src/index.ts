@@ -35,6 +35,7 @@ export { getRecommendedGasPrice } from "./public-functions/getRecommendedGasPric
 export { getFeeInfoForChain } from "./public-functions/getFeeInfoForChain";
 export { setApiOptions } from "./public-functions/setApiOptions";
 export type { SetApiOptionsProps } from "./public-functions/setApiOptions";
+export { waitForTransaction } from "./public-functions/waitForTransaction";
 
 export type { SkipClientOptions } from "./state/clientState";
 
