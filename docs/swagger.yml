@@ -3894,6 +3894,14 @@ components:
           description: Amount of the fee asset to be paid as the transfer fee if applicable.
           type: string
           nullable: true
+        to_chain_entry_contract_address:
+          description: Address of the entry contract on the destination chain
+          type: string
+          nullable: true
+        to_chain_callback_contract_address:
+          description: 
+          type: string
+          nullable: true
         usd_fee_amount:
           description:
             Amount of the fee asset to be paid as the transfer fee if applicable,
