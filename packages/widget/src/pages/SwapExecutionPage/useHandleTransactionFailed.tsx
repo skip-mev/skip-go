@@ -7,6 +7,7 @@ import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
 import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
@@ -17,7 +18,9 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -54,7 +57,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
             setCurrentPage(Routes.SwapPage);
             setErrorWarning(undefined);
           },
-          explorerUrl: lastTransaction?.explorerLink ?? "",
+          explorerUrl: createSkipExplorerLink(transactionDetailsArray),
           transferAssetRelease: statusData.transferAssetRelease,
         });
         return;
@@ -64,14 +67,14 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: lastTransaction?.explorerLink ?? "",
-        txHash: lastTransaction?.txHash,
+        explorerLink: createSkipExplorerLink(transactionDetailsArray),
+        txHash: lastTxHash ?? "",
       });
     }
   }, [
     lastTransaction,
-    lastTransaction?.explorerLink,
-    lastTransaction?.txHash,
+    lastTxChainId,
+    lastTxHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
     setErrorWarning,
@@ -80,5 +83,6 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
+    transactionDetailsArray,
   ]);
 };

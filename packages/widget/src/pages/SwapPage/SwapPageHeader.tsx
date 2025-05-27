@@ -11,15 +11,23 @@ export type SwapPageHeaderItemButton = {
 
 type SwapPageHeaderProps = {
   leftButton?: SwapPageHeaderItemButton;
+  centerButton?: SwapPageHeaderItemButton;
   rightButton?: SwapPageHeaderItemButton;
   rightContent?: React.ReactNode;
 };
 
-export const SwapPageHeader = ({ leftButton, rightButton, rightContent }: SwapPageHeaderProps) => {
+export const SwapPageHeader = ({
+  leftButton,
+  centerButton,
+  rightButton,
+  rightContent,
+}: SwapPageHeaderProps) => {
   const LeftIcon = iconMap[leftButton?.icon || ICONS.none];
+  const CenterIcon = iconMap[centerButton?.icon || ICONS.none];
   const RightIcon = iconMap[rightButton?.icon || ICONS.none];
+
   return (
-    <StyledSwapPageHeaderContainer justify="space-between">
+    <StyledSwapPageHeaderContainer align="center" justify="space-between">
       <Row align="center" gap={10}>
         {leftButton && (
           <GhostButton gap={5} align="center" onClick={leftButton.onClick}>
@@ -28,6 +36,15 @@ export const SwapPageHeader = ({ leftButton, rightButton, rightContent }: SwapPa
           </GhostButton>
         )}
       </Row>
+
+      <CenterContainer>
+        {centerButton && (
+          <GhostButton gap={5} align="center" onClick={centerButton.onClick}>
+            <CenterIcon />
+            {centerButton.label}
+          </GhostButton>
+        )}
+      </CenterContainer>
 
       <Row align="center" gap={10}>
         {rightContent}
@@ -44,4 +61,11 @@ export const SwapPageHeader = ({ leftButton, rightButton, rightContent }: SwapPa
 
 const StyledSwapPageHeaderContainer = styled(Row)`
   height: 30px;
+  position: relative;
+`;
+
+const CenterContainer = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 `;

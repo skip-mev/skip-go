@@ -22,6 +22,7 @@ import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -61,6 +62,10 @@ export const SwapExecutionPage = () => {
     txsRequired: route?.txsRequired,
     txs: transactionDetailsArray,
   });
+
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   useSyncTxStatus({
     statusData,
@@ -135,6 +140,9 @@ export const SwapExecutionPage = () => {
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
 
+  const shouldRenderTrackProgressButton =
+    lastTxHash && lastTxChainId && route?.txsRequired === transactionDetailsArray.length;
+
   return (
     <Column gap={5}>
       <SwapPageHeader
@@ -146,6 +154,16 @@ export const SwapExecutionPage = () => {
                 onClick: () => {
                   track("swap execution page: back button - clicked");
                   setCurrentPage(Routes.SwapPage);
+                },
+              }
+            : undefined
+        }
+        centerButton={
+          shouldRenderTrackProgressButton
+            ? {
+                label: "Track progress",
+                onClick: () => {
+                  window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
                 },
               }
             : undefined
