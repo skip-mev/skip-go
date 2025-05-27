@@ -178,7 +178,7 @@ export const SwapPageAssetChainInput = ({
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
-              <Text>{assetDetails.symbol}</Text>
+              <Text useWindowsTextHack>{assetDetails.symbol}</Text>
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"

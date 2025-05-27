@@ -23,3 +23,11 @@ export function isMobile() {
     !!window.navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/u)
   );
 }
+
+export function isWindows() {
+  return (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window.navigator as any).userAgentData?.platform.startsWith("Win") ??
+    navigator.platform.startsWith("Win")
+  );
+}

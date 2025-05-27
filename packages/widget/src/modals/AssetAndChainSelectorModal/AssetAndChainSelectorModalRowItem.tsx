@@ -144,7 +144,7 @@ const RowLayout = ({ image, mainText, subText, eureka }: RowLayoutProps) => {
         flexDirection={isMobileScreenSize ? "column" : "row"}
         gap={isMobileScreenSize ? undefined : 8}
       >
-        <Text>{mainText}</Text>
+        <Text useWindowsTextHack>{mainText}</Text>
         <Row align="center" gap={6}>
           {subText}
           {eureka && <SmallText normalTextColor> IBC Eureka </SmallText>}
