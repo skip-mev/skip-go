@@ -17,9 +17,11 @@ export const SwapPageHeader = memo(() => {
 
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainId);
+  const transactionhistory = useAtomValue(transactionHistoryAtom);
   const isFetchingLastTransactionStatus = useAtomValue(isFetchingLastTransactionStatusAtom);
 
   const historyPageButton = useMemo(() => {
+    if (transactionhistory.length === 0) return;
     const getHistoryPageIcon = () => {
       if (isFetchingLastTransactionStatus) {
         return (
@@ -53,7 +55,7 @@ export const SwapPageHeader = memo(() => {
         setCurrentPage(Routes.TransactionHistoryPage);
       },
     };
-  }, [isFetchingLastTransactionStatus, setCurrentPage]);
+  }, [isFetchingLastTransactionStatus, setCurrentPage, transactionhistory.length]);
 
   return (
     <>
