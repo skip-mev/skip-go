@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.1.5
+
+### Patch Changes
+
+- b74f50d: Export waitForTransaction in @skip-go/client
+
 ## 1.1.4
 
 ### Patch Changes
