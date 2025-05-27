@@ -6,7 +6,7 @@ import { executeCosmosTransaction } from "./cosmos/executeCosmosTransaction";
 import { executeEvmTransaction } from "./evm/executeEvmTransaction";
 import { executeSvmTransaction } from "./svm/executeSvmTransaction";
 import { validateGasBalances } from "./validateGasBalances";
-import { waitForTransaction } from "./waitForTransaction";
+import { waitForTransaction } from "../public-functions/waitForTransaction";
 import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 
