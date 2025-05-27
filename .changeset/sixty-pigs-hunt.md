@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-Update History page design and reduce API calls
+Add Spinner icon on SwapPage to show if there's an ongoing tx
