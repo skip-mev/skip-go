@@ -1,29 +1,33 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { Row } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { PageHeader } from "../../components/PageHeader";
-import { errorAtom } from "@/state/errorPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useBroadcastedTxsStatus } from "../SwapExecutionPage/useBroadcastedTxs";
+import { useBroadcastedTxsStatus } from "../../SwapExecutionPage/useBroadcastedTxs";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { track } from "@amplitude/analytics-browser";
+import { errorWarningAtom } from "@/state/errorWarning";
+import { PageHeader } from "@/components/PageHeader";
 
-export type ErrorPageTimeoutProps = {
+export type UnexpectedErrorPageTimeoutProps = {
   txHash: string;
   explorerLink?: string;
   onClickBack: () => void;
 };
 
-export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPageTimeoutProps) => {
+export const UnexpectedErrorPageTimeout = ({
+  txHash,
+  explorerLink,
+  onClickBack,
+}: UnexpectedErrorPageTimeoutProps) => {
   const theme = useTheme();
-  const [error, setError] = useAtom(errorAtom);
+  const [errorWarning, setErrorWarning] = useAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const isGoFast = useIsGoFast(route);
@@ -34,11 +38,11 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
   });
 
   useEffect(() => {
-    if (error && data?.isSettled) {
-      track("error page: transaction timeover - transaction settled");
-      setError(undefined);
+    if (errorWarning && data?.isSettled) {
+      track("unexpected error page: transaction timeover - transaction settled");
+      setErrorWarning(undefined);
     }
-  }, [data?.isSettled, error, setError]);
+  }, [data?.isSettled, errorWarning, setErrorWarning]);
 
   return (
     <>
@@ -47,14 +51,14 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: transaction timeover - header back button clicked");
-            setError(undefined);
+            track("unexpected error page: transaction timeover - header back button clicked");
+            setErrorWarning(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
+      <ErrorWarningPageContent
         title="Sorry, your transaction is taking longer than usual."
         description={
           <>
@@ -70,7 +74,7 @@ export const ErrorPageTimeout = ({ txHash, explorerLink, onClickBack }: ErrorPag
               align="center"
               as={SmallTextButton}
               onClick={() => {
-                track("error page: transaction timeover - view on explorer clicked");
+                track("unexpected error page: transaction timeover - view on explorer clicked");
                 window.open(explorerLink, "_blank");
               }}
               color={theme.primary.text.lowContrast}

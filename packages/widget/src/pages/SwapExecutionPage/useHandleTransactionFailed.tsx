@@ -1,15 +1,16 @@
 import { useCallback, useEffect } from "react";
 import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
 import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
-  const setError = useSetAtom(errorAtom);
+  const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAssetAtom = useSetAtom(sourceAssetAtom);
   const setDebouncedSourceAssetAmountAtom = useSetAtom(debouncedSourceAssetAmountAtom);
@@ -17,7 +18,9 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -38,12 +41,12 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   useEffect(() => {
     if (statusData?.isSettled && !statusData?.isSuccess) {
       if (sourceClientAsset) {
-        track("error page: transaction reverted", {
+        track("unexpected error page: transaction reverted", {
           transferAssetRelease: statusData.transferAssetRelease,
           lastTransaction,
         });
-        setError({
-          errorType: ErrorType.TransactionReverted,
+        setErrorWarning({
+          errorWarningType: ErrorWarningType.TransactionReverted,
           onClickContinueTransaction: () => {
             setSourceAssetAtom(sourceClientAsset);
             setDebouncedSourceAssetAmountAtom(
@@ -52,33 +55,34 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
               true,
             );
             setCurrentPage(Routes.SwapPage);
-            setError(undefined);
+            setErrorWarning(undefined);
           },
-          explorerUrl: lastTransaction?.explorerLink ?? "",
+          explorerUrl: createSkipExplorerLink(transactionDetailsArray),
           transferAssetRelease: statusData.transferAssetRelease,
         });
         return;
       }
 
-      track("error page: transaction failed", { lastTransaction });
-      setError({
-        errorType: ErrorType.TransactionFailed,
+      track("unexpected error page: transaction failed", { lastTransaction });
+      setErrorWarning({
+        errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: lastTransaction?.explorerLink ?? "",
-        txHash: lastTransaction?.txHash,
+        explorerLink: createSkipExplorerLink(transactionDetailsArray),
+        txHash: lastTxHash ?? "",
       });
     }
   }, [
     lastTransaction,
-    lastTransaction?.explorerLink,
-    lastTransaction?.txHash,
+    lastTxChainId,
+    lastTxHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
-    setError,
+    setErrorWarning,
     setSourceAssetAtom,
     sourceClientAsset,
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
+    transactionDetailsArray,
   ]);
 };

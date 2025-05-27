@@ -1,16 +1,16 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { useTheme } from "styled-components";
-import { PageHeader } from "../../components/PageHeader";
 import { track } from "@amplitude/analytics-browser";
+import { PageHeader } from "@/components/PageHeader";
 
-export type ErrorCosmosLedgerWarningProps = {
+export type WarningCosmosLedgerProps = {
   onClickBack: () => void;
 };
 
-export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerWarningProps) => {
+export const WarningPageCosmosLedger = ({ onClickBack }: WarningCosmosLedgerProps) => {
   const theme = useTheme();
 
   return (
@@ -20,12 +20,12 @@ export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerW
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: cosmos ledger warning - header back button clicked");
+            track("warning page: cosmos ledger - header back button clicked");
             onClickBack();
           },
         }}
       />
-      <ErrorPageContent
+      <ErrorWarningPageContent
         title={"Warning: Ledger not supported"}
         description={
           <>
@@ -43,7 +43,7 @@ export const ErrorPageCosmosLedgerWarning = ({ onClickBack }: ErrorCosmosLedgerW
         label="Back"
         icon={ICONS.leftArrow}
         onClick={() => {
-          track("error page: cosmos ledger warning - main back button clicked");
+          track("warning page: cosmos ledger - main back button clicked");
           onClickBack();
         }}
         backgroundColor={theme.error.text}

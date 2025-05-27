@@ -1,9 +1,8 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
+import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { PageHeader } from "../../components/PageHeader";
 import { useSetAtom } from "jotai";
-import { errorAtom } from "@/state/errorPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { goFastWarningAtom } from "@/state/swapPage";
 import { SmallText } from "@/components/Typography";
 import styled, { useTheme } from "styled-components";
@@ -13,17 +12,15 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
+import { PageHeader } from "@/components/PageHeader";
 
-export type ErrorPageGoFastWarningProps = {
+export type WarningPageGoFastProps = {
   onClickBack: () => void;
   onClickContinue: () => void;
 };
 
-export const ErrorPageGoFastWarning = ({
-  onClickBack,
-  onClickContinue,
-}: ErrorPageGoFastWarningProps) => {
-  const setErrorAtom = useSetAtom(errorAtom);
+export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageGoFastProps) => {
+  const setErrorWarningAtom = useSetAtom(errorWarningAtom);
   const setShowGoFastErrorAtom = useSetAtom(goFastWarningAtom);
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   const theme = useTheme();
@@ -34,7 +31,7 @@ export const ErrorPageGoFastWarning = ({
   }, [setShowGoFastErrorAtom]);
 
   const handleOnClickBack = () => {
-    setErrorAtom(undefined);
+    setErrorWarningAtom(undefined);
     onClickBack?.();
   };
 
@@ -50,12 +47,12 @@ export const ErrorPageGoFastWarning = ({
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: go fast warning - header back button clicked");
+            track("warning page: go fast - header back button clicked");
             handleOnClickBack();
           },
         }}
       />
-      <ErrorPageContent
+      <ErrorWarningPageContent
         title="You're on the fastest route"
         description={
           <SmallText textAlign="center" textWrap="balance" lineHeight="17px">
@@ -74,7 +71,7 @@ export const ErrorPageGoFastWarning = ({
         label="Continue"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: go fast warning - main continue button clicked");
+          track("warning page: go fast - main continue button clicked");
           onClickContinue();
         }}
       />

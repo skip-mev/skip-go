@@ -2,7 +2,6 @@ import { memo, useMemo } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { ICONS } from "@/icons";
 import { sourceAssetAtom } from "@/state/swapPage";
-import { PageHeader } from "../../components/PageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { isFetchingLastTransactionStatusAtom, transactionHistoryAtom } from "@/state/history";
@@ -10,6 +9,7 @@ import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
+import { PageHeader } from "@/components/PageHeader";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);

@@ -818,9 +818,10 @@ paths:
                   - cosmoshub-4
                 does_swap: true
                 estimated_amount_out: '721110'
-                swap_venue:
-                  name: osmosis-poolmanager
-                  chain_id: osmosis-1
+                swap_venues:
+                  - name: osmosis-poolmanager
+                    chain_id: osmosis-1
+                    logo_uri: https://raw.githubusercontent.com/skip-mev/skip-go-registry/main/swap-venues/osmosis/logo.png
                 txs_required: 1
                 usd_amount_in: '2000.01'
                 usd_amount_out: '2005.23'
@@ -2618,7 +2619,7 @@ components:
           $ref: '#/components/schemas/Asset'
         messaging_fee_amount:
           type: string
-        messageing_fee_amount_usd:
+        messaging_fee_amount_usd:
           type: string
       type: object
     StargateTransferState:
@@ -3151,7 +3152,7 @@ components:
       description: Go fast Fee
       type: object
       properties:
-        fee_asset:
+        feeAsset:
           $ref: '#/components/schemas/Asset'
           required: true
         bpsFee:
@@ -3500,9 +3501,10 @@ components:
           description: Denom of the source asset
           type: string
           required: true
-        swap_venue:
-          allOf:
-            - $ref: '#/components/schemas/SwapVenue'
+        swap_venues:
+          type: array
+          items:
+            $ref: '#/components/schemas/SwapVenue'
           description: Swap venue on which the swap is performed, if a swap is performed
         txs_required:
           description: Number of transactions required to perform the transfer or swap
@@ -3911,23 +3913,23 @@ components:
     TransferEvent:
       type: object
       properties:
-        ibcTransfer:
+        ibc_transfer:
           $ref: '#/components/schemas/IBCTransferInfo'
-        axelarTransfer:
+        axelar_transfer:
           $ref: '#/components/schemas/AxelarTransferInfo'
-        cctpTransfer:
+        cctp_transfer:
           $ref: '#/components/schemas/CCTPTransferInfo'
-        hyperlaneTransfer:
+        hyperlane_transfer:
           $ref: '#/components/schemas/HyperlaneTransferInfo'
-        opInitTransfer:
+        op_init_transfer:
           $ref: '#/components/schemas/OPInitTransferInfo'
-        stargateTransfer:
+        stargate_transfer:
           $ref: '#/components/schemas/StargateTransferInfo'
-        goFastTransfer:
+        go_fast_transfer:
           $ref: '#/components/schemas/GoFastTransferInfo'
-        eurekaTransfer:
+        eureka_transfer:
           $ref: '#/components/schemas/EurekaTransferInfo'
-        layerZeroTransfer:
+        layer_zero_transfer:
           $ref: '#/components/schemas/LayerZeroTransferInfo'
     TransferState:
       description: |

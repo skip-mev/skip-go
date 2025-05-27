@@ -1,23 +1,26 @@
-import { ErrorPageContent } from "@/pages/ErrorPage/ErrorPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { errorAtom } from "@/state/errorPage";
+import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../SwapPage/SwapPageHeader";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
+import { ErrorWarningPageContent } from "../ErrorWarningPageContent";
+import { PageHeader } from "@/components/PageHeader";
 
-export type InsufficientBalanceForGasProps = {
+export type RelayFeeQuoteExpiredProps = {
   error?: Error;
   onClickBack?: () => void;
 };
 
-export const ErrorPageInsufficientGasBalance = ({ error, onClickBack }: InsufficientBalanceForGasProps) => {
+export const ExpectedErrorPageRelayFeeQuoteExpired = ({
+  error,
+  onClickBack,
+}: RelayFeeQuoteExpiredProps) => {
   const theme = useTheme();
-  const setErrorAtom = useSetAtom(errorAtom);
+  const setErrorAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
 
   useEffect(() => {
@@ -31,21 +34,21 @@ export const ErrorPageInsufficientGasBalance = ({ error, onClickBack }: Insuffic
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,
           onClick: () => {
-            track("error page: insufficient gas balance - header back button clicked");
+            track("error page: relay fee quote expired - header back button clicked");
             setErrorAtom(undefined);
             onClickBack?.();
             setCurrentPage(Routes.SwapPage);
           },
         }}
       />
-      <ErrorPageContent
-        title="Insufficient gas balance"
-        description={error?.message}
+      <ErrorWarningPageContent
+        title="Relay fee quote expired"
+        description="Please retry your route."
         icon={ICONS.triangleWarning}
         backgroundColor={theme.error.background}
         textColor={theme.error.text}
@@ -54,7 +57,7 @@ export const ErrorPageInsufficientGasBalance = ({ error, onClickBack }: Insuffic
         label="Retry"
         icon={ICONS.rightArrow}
         onClick={() => {
-          track("error page: insufficient gas balance - retry button clicked");
+          track("error page: relay fee quote expired - retry button clicked");
           onClickRetry();
         }}
         backgroundColor={theme.error.text}

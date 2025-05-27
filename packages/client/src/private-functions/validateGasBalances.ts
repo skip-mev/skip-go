@@ -29,14 +29,6 @@ export const validateGasBalances = async ({
   enabledChainIds,
   useUnlimitedApproval,
 }: ValidateGasBalancesProps) => {
-  // cosmos or svm tx in txs
-  if (
-    txs.every((tx) => "cosmosTx" in tx === undefined) ||
-    txs.every((tx) => "svmTx" in tx === undefined)
-  ) {
-    return;
-  }
-
   onValidateGasBalance?.({
     status: "pending",
   });

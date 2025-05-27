@@ -124,7 +124,12 @@ const DevMode = () => {
             padding: "0 10px",
           }}
         >
-          {renderWebComponent ? <skip-widget /> : <Widget {...widgetProps} />}
+          {renderWebComponent ? (
+            // @ts-expect-error - web-component
+            <skip-widget />
+          ) : (
+            <Widget {...widgetProps} />
+          )}
         </div>
       </Row>
     </Column>

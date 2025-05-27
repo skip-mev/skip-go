@@ -61,7 +61,7 @@ export const AssetAndChainSelectorModalSearchInput = ({
           </Button>
           <StyledSelectedAsset gap={5} align="center" justify="center">
             <GroupedAssetImage groupedAsset={groupedAsset} width={20} height={20} />
-            <Text>{asset?.recommendedSymbol}</Text>
+            <Text useWindowsTextHack>{asset?.recommendedSymbol}</Text>
           </StyledSelectedAsset>
         </>
       ) : (

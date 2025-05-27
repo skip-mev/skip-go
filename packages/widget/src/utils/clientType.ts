@@ -73,17 +73,17 @@ type CombinedOperation = {
 
 type OperationDetails = CombineObjectTypes<
   Transfer &
-  BankSend &
-  Swap &
-  AxelarTransfer &
-  CCTPTransfer &
-  HyperlaneTransfer &
-  EvmSwap &
-  StargateTransfer &
-  OPInitTransfer &
-  GoFastTransfer &
-  EurekaTransfer &
-  LayerZeroTransfer
+    BankSend &
+    Swap &
+    AxelarTransfer &
+    CCTPTransfer &
+    HyperlaneTransfer &
+    EvmSwap &
+    StargateTransfer &
+    OPInitTransfer &
+    GoFastTransfer &
+    EurekaTransfer &
+    LayerZeroTransfer
 > & {
   swapIn?: SwapExactCoinIn;
   swapOut?: SwapExactCoinOut;
@@ -102,19 +102,19 @@ export type ClientOperation = {
 // find keys that are present in each type
 type KeysPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-  ? T[Key] extends Record<Key, unknown>
-  ? Key
-  : never
-  : never
+    ? T[Key] extends Record<Key, unknown>
+      ? Key
+      : never
+    : never
   : never;
 
 // find keys that are not present in each type
 type KeysNotPresentInAll<T> = keyof T extends infer Key
   ? Key extends keyof T
-  ? T[Key] extends Record<Key, unknown>
-  ? never
-  : Key
-  : never
+    ? T[Key] extends Record<Key, unknown>
+      ? never
+      : Key
+    : never
   : never;
 
 // combine multiple types properly and preserve details on if key is optional
@@ -188,7 +188,7 @@ export function getClientOperation(operation: Operation) {
   } as ClientOperation;
 }
 
-export function getClientOperations(operations?: Operation[]) {
+export function getClientOperations(operations?: Operation[]): ClientOperation[] {
   if (!operations) return [];
   let transferIndex = 0;
   const filteredOperations = filterNeutronSwapFee(operations);
@@ -312,7 +312,8 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
           | LayerZeroTransferInfo;
 
         if (type === "send") {
-          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx?.explorerLink;
+          return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.sendTx
+            ?.explorerLink;
         }
         return (combinedTransferEvent[transferType] as RemainingTransferTypes)?.txs?.receiveTx
           ?.explorerLink;
@@ -440,14 +441,14 @@ export type ClientTransferEvent = {
   fromChainId: string;
   toChainId: string;
   state:
-  | TransferState
-  | AxelarTransferState
-  | CCTPTransferState
-  | HyperlaneTransferState
-  | OPInitTransferState
-  | GoFastTransferState
-  | StargateTransferState
-  | LayerZeroTransferState;
+    | TransferState
+    | AxelarTransferState
+    | CCTPTransferState
+    | HyperlaneTransferState
+    | OPInitTransferState
+    | GoFastTransferState
+    | StargateTransferState
+    | LayerZeroTransferState;
   status?: SimpleStatus;
   fromExplorerLink?: string;
   toExplorerLink?: string;

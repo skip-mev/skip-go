@@ -40,6 +40,7 @@ export const useUpdateAmountWhenRouteChanges = () => {
         amount: formatDisplayAmount(swapInAmount, {
           decimals: destinationAsset.decimals,
           showLessThanSign: false,
+          abbreviate: false
         })
       }));
     } else if (direction === "swap-out" && swapOutAmountChanged) {
@@ -48,6 +49,7 @@ export const useUpdateAmountWhenRouteChanges = () => {
         amount: formatDisplayAmount(swapOutAmount, {
           decimals: sourceAsset.decimals,
           showLessThanSign: false,
+          abbreviate: false
         })
       }));
     }

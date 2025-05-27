@@ -1,5 +1,44 @@
 ## 0.0.15
 
+## 3.10.5
+
+### Patch Changes
+
+- 07fc190: bump registries and fix route response type
+- Updated dependencies [07fc190]
+  - @skip-go/client@1.1.4
+
+## 3.10.4
+
+### Patch Changes
+
+- 49fd0da: Add tests for getClientOperations in clientType utility.
+- 2075ee9: Add tests for utils number functions
+- e6cdb46: Cache Playwright browser binaries and skip reinstall when already cached.
+- 3f8fce1: Fix mobile date formatting by zero-padding hours, minutes, month, and day.
+- cba7980: Fix window existence check in useIsMobileScreenSize hook to avoid runtime errors when `window` is undefined.
+- e6cdb46: Improve widget tests workflow to cache dependencies and Playwright browsers for faster execution.
+- Updated dependencies [fc09b51]
+- Updated dependencies [d71e6b0]
+  - @skip-go/client@1.1.3
+
+## 3.10.3
+
+### Patch Changes
+
+- df9e97c: reduce number of session replays to connected wallet sessions
+- df9e97c: fix history page asset styling and display amount updates
+- df9e97c: separate error and warning
+- df9e97c: Fix using incorrect method on localStorage to remove an item
+- df9e97c: track two tx routes in amplitude
+- df9e97c: bump solana walletconnect deps
+- df9e97c: Add fix for modal animation jank on windows
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+  - @skip-go/client@1.1.2
+
 ## 3.10.2
 
 ### Patch Changes
