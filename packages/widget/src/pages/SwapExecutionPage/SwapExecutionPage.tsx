@@ -140,6 +140,9 @@ export const SwapExecutionPage = () => {
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
 
+  const shouldRenderTrackProgressButton =
+    lastTxHash && lastTxChainId && route?.txsRequired === transactionDetailsArray.length;
+
   return (
     <Column gap={5}>
       <SwapPageHeader
@@ -156,7 +159,7 @@ export const SwapExecutionPage = () => {
             : undefined
         }
         centerButton={
-          lastTxHash && lastTxChainId
+          shouldRenderTrackProgressButton
             ? {
                 label: "Track progress",
                 onClick: () => {
