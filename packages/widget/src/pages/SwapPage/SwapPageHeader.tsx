@@ -57,7 +57,7 @@ export const SwapPageHeader = memo(() => {
 
   return (
     <>
-      <TxStatusSync />
+      {isFetchingLastTransactionStatus && <TrackLatestTxHistoryItemStatus />}
       <PageHeader
         leftButton={historyPageButton}
         rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
@@ -66,12 +66,13 @@ export const SwapPageHeader = memo(() => {
   );
 });
 
-export const TxStatusSync = memo(() => {
-  const transactionhistoryItem = useAtomValue(transactionHistoryAtom);
+export const TrackLatestTxHistoryItemStatus = memo(() => {
+  const transactionhistory = useAtomValue(transactionHistoryAtom);
+  const lastTxHistoryItem = transactionhistory.at(-1);
 
   useTxHistory({
-    txHistoryItem: transactionhistoryItem.at(-1),
-    index: transactionhistoryItem.length - 1,
+    txHistoryItem: lastTxHistoryItem,
+    index: transactionhistory.length - 1,
   });
 
   return null;

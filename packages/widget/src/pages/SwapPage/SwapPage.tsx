@@ -40,7 +40,6 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { transactionHistoryAtom } from "@/state/history";
 import { SwapPageHeader } from "./SwapPageHeader";
 
 export const SwapPage = () => {
@@ -78,7 +77,6 @@ export const SwapPage = () => {
   const switchEvmchainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainId);
-  const txHistory = useAtomValue(transactionHistoryAtom);
   const isSwapOperation = useIsSwapOperation(route);
 
   const getClientAsset = useCallback(
