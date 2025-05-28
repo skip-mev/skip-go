@@ -85,10 +85,10 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
 
 export const isFetchingLastTransactionStatusAtom = atom((get) => {
   const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
-  const { overallStatus, route } = get(swapExecutionStateAtom);
+  const { overallStatus } = get(swapExecutionStateAtom);
 
   return (
-    (overallStatus === "pending" && route?.txsRequired === 1) ||
+    overallStatus === "pending" ||
     (lastTxHistoryItem?.isSettled !== true && lastTxHistoryItem?.route?.txsRequired === 1)
   );
 });
