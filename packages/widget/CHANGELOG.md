@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.10.7
+
+### Patch Changes
+
+- e549963: Fix error #525 in web-component
+
 ## 3.10.6
 
 ### Patch Changes

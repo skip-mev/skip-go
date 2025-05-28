@@ -40,6 +40,11 @@ export default {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
     alias: {
       "@": resolve(__dirname, "src"), // Set up alias for @
+      // ensure all versions of react resolve to the same version
+      // to avoid https://react.dev/errors/525
+      react: resolve(__dirname, "node_modules/react"),
+      "react-dom": resolve(__dirname, "node_modules/react-dom"),
+      "react/jsx-runtime": resolve(__dirname, "node_modules/react/jsx-runtime"),
     },
     extensionAlias: {
       ".js": [".js", ".ts"],
