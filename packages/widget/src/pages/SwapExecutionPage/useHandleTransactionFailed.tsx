@@ -9,6 +9,8 @@ import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPag
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 
+const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
+
 export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -20,7 +22,6 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
 
   const lastTransaction = transactionDetailsArray.at(-1);
   const lastTxHash = lastTransaction?.txHash;
-  const lastTxChainId = lastTransaction?.chainId;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
@@ -33,53 +34,56 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     [assets],
   );
 
-  const sourceClientAsset = getClientAsset(
-    statusData?.transferAssetRelease?.denom,
-    statusData?.transferAssetRelease?.chainId,
-  );
-
   useEffect(() => {
     if (statusData?.isSettled && !statusData?.isSuccess) {
-      if (sourceClientAsset) {
-        track("unexpected error page: transaction reverted", {
-          transferAssetRelease: statusData.transferAssetRelease,
-          lastTransaction,
-        });
-        setErrorWarning({
-          errorWarningType: ErrorWarningType.TransactionReverted,
-          onClickContinueTransaction: () => {
-            setSourceAssetAtom(sourceClientAsset);
-            setDebouncedSourceAssetAmountAtom(
-              statusData.transferAssetRelease?.amount,
-              undefined,
-              true,
-            );
-            setCurrentPage(Routes.SwapPage);
-            setErrorWarning(undefined);
-          },
-          explorerUrl: createSkipExplorerLink(transactionDetailsArray),
-          transferAssetRelease: statusData.transferAssetRelease,
-        });
-        return;
-      }
+      const timeout = setTimeout(() => {
+        const sourceClientAsset = getClientAsset(
+          statusData?.transferAssetRelease?.denom,
+          statusData?.transferAssetRelease?.chainId,
+        );
 
-      track("unexpected error page: transaction failed", { lastTransaction });
-      setErrorWarning({
-        errorWarningType: ErrorWarningType.TransactionFailed,
-        onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-        explorerLink: createSkipExplorerLink(transactionDetailsArray),
-        txHash: lastTxHash ?? "",
-      });
+        if (sourceClientAsset) {
+          track("unexpected error page: transaction reverted", {
+            transferAssetRelease: statusData.transferAssetRelease,
+            lastTransaction,
+          });
+          setErrorWarning({
+            errorWarningType: ErrorWarningType.TransactionReverted,
+            onClickContinueTransaction: () => {
+              setSourceAssetAtom(sourceClientAsset);
+              setDebouncedSourceAssetAmountAtom(
+                statusData.transferAssetRelease?.amount,
+                undefined,
+                true,
+              );
+              setCurrentPage(Routes.SwapPage);
+              setErrorWarning(undefined);
+            },
+            explorerUrl: createSkipExplorerLink(transactionDetailsArray),
+            transferAssetRelease: statusData.transferAssetRelease,
+          });
+          return;
+        }
+
+        track("unexpected error page: transaction failed", { lastTransaction });
+        setErrorWarning({
+          errorWarningType: ErrorWarningType.TransactionFailed,
+          onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
+          explorerLink: createSkipExplorerLink(transactionDetailsArray),
+          txHash: lastTxHash ?? "",
+        });
+      }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
+
+      return () => clearTimeout(timeout);
     }
   }, [
+    getClientAsset,
     lastTransaction,
-    lastTxChainId,
     lastTxHash,
     setCurrentPage,
     setDebouncedSourceAssetAmountAtom,
     setErrorWarning,
     setSourceAssetAtom,
-    sourceClientAsset,
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
