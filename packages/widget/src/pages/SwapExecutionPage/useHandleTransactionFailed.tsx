@@ -9,7 +9,7 @@ import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPag
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 
-const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 5_000;
+const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
 export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
