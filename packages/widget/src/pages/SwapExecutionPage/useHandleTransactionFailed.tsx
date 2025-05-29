@@ -8,9 +8,8 @@ import { Routes, currentPageAtom } from "@/state/router";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
-import { useSetMaxAmount } from "../SwapPage/useSetMaxAmount";
 
-const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
+const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 5_000;
 
 export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
@@ -18,7 +17,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
-  const handleMaxButton = useSetMaxAmount();
 
   const { transactionDetailsArray, route } = useAtomValue(swapExecutionStateAtom);
 
@@ -81,7 +79,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
     error,
     explorerLink,
     getClientAsset,
-    handleMaxButton,
     lastTransaction,
     lastTxHash,
     route,
