@@ -55,9 +55,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
             ...sourceClientAsset,
             amount: statusData?.transferAssetRelease?.amount,
           });
-          if (!statusData?.transferAssetRelease?.amount) {
-            handleMaxButton();
-          }
           setCurrentPage(Routes.SwapPage);
           setErrorWarning(undefined);
         },
