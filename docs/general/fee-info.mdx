@@ -12,6 +12,13 @@ This doc describes functionality in Skip Go for accessing standardized informati
 * Smart Relayer fees
 * Gas fees
 
+### How Bridging Fees Are Applied
+The method for applying bridging fees depends on the source chain of the transfer:
+
+*   **EVM-Source Transfers**: When a bridge transfer originates from an EVM-based chain (e.g., Ethereum), and the fee is paid in the native token of that chain (like ETH), the fee is typically an *additional charge* on top of the amount being transferred. This approach is common among underlying bridge providers, and we maintain this behavior for consistency across all EVM-source transfers, whether for ERC20 tokens or native assets.
+
+*   **Cosmos-Source Transfers**: For transfers originating from Cosmos-based chains, bridging fees are *deducted directly* from the transferred asset amount. Consequently, the amount received on the destination chain will reflect this deduction.
+
 ## Understanding incurred fees from all sources: `estimated_fees`
 
 `estimated_fees` in the response of `/route` and `/msgs_direct` provides a `Fee` array where each entry gives information about a particular fee. 
@@ -27,7 +34,6 @@ Each `Fee` object in the array will have the following attributes:
 * `denom` : Denom of the token in which the fee is denominated
 * `tx_index`: The zero-indexed identifier of the transaction where the user will incur this fee (For multi-transaction routes, fees may be incurred after the first transaction)
 * `operation_index`: The zero-indexed entry in the operations array where the user will incur this fee
-
 
  <Warning>
  **Included Fees & Current Limitations**
