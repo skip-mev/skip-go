@@ -1,0 +1,111 @@
+---
+title: "Custom ERC20 Integration"
+id: custom-erc20-integration
+description: "A guide for asset issuers to deploy and register custom ERC20 contracts for their tokens on Ethereum"
+---
+
+# Custom ERC20 Integration
+
+## Overview
+
+In the initial release of [`solidity-ibc-eureka`](https://github.com/cosmos/solidity-ibc-eureka), receiving a non-native token (e.g., ATOM from Cosmos Hub) results in the deployment of a default [`IBCERC20`](https://github.com/cosmos/solidity-ibc-eureka/blob/main/contracts/utils/IBCERC20.sol) contract to represent that token on Ethereum.
+
+However, many teams bridging through Cosmos Hub want ownership and control over the ERC20 contracts representing their tokens on Ethereum. Because `IBCERC20` is managed by the `ICS20Transfer` contract and not externally customizable, direct ownership is not possible.
+
+To support external teams taking control of their bridged tokens, we now allow them to deploy their own ERC20 contracts—provided they implement a simple interface that permits the `ICS20Transfer` contract to mint and burn tokens.
+
+## Benefits
+
+The benefits of this approach include:
+
+<CardGroup cols={2}>
+  <Card title="Custom Metadata" icon="tag">
+    Customize metadata and token naming on deployment. Tokens will not initially be named `ibc/transfer/channel-0...` and can be represented with the name they are recognized by.
+  </Card>
+  <Card title="Contract Verification" icon="shield-check">
+    Easier contract verification on Etherscan. Each project can easily verify the ERC20 contract deployed for their project to increase trust by associating the token with the official project domain.
+  </Card>
+  <Card title="CEX Listing" icon="building-bank">
+    This is likely to result in easier CEX listing and generally increased trust in the bridged asset.
+  </Card>
+  <Card title="Full Control" icon="settings">
+    Complete ownership and control over the ERC20 contract representing your token on Ethereum.
+  </Card>
+</CardGroup>
+
+## Requirements
+
+To replace the default `IBCERC20`, your custom ERC20 contract must implement the [`IMintableAndBurnable`](https://github.com/cosmos/solidity-ibc-eureka/blob/main/contracts/interfaces/IMintableAndBurnable.sol) interface:
+
+```solidity
+interface IMintableAndBurnable {
+    /// @notice Mint new tokens to the Escrow contract
+    /// @dev This function can only be called by an authorized contract (e.g., ICS20)
+    /// @dev This function needs to allow minting tokens to the Escrow contract
+    /// @param mintAddress Address to mint tokens to
+    /// @param amount Amount of tokens to mint
+    function mint(address mintAddress, uint256 amount) external;
+
+    /// @notice Burn tokens from the Escrow contract
+    /// @dev This function can only be called by an authorized contract (e.g., ICS20)
+    /// @dev This function needs to allow burning of tokens from the Escrow contract
+    /// @param mintAddress Address to burn tokens from
+    /// @param amount Amount of tokens to burn
+    function burn(address mintAddress, uint256 amount) external;
+}
+```
+
+### Access Control Requirements
+
+These functions must be callable by the proxy of the `ICS20Transfer` contract:
+
+- **Mainnet**: `0xa348CfE719B63151F228e3C30EB424BA5a983012`
+
+Token teams may implement access controls or rate limits as needed, as long as the `ICS20Transfer` proxy can still perform mint and burn operations.
+
+<Note>
+  The interface remains open to iteration based on community feedback.
+</Note>
+
+## Registering a Custom ERC20
+
+The `ICS20Transfer` contract includes a permissioned method for registering a custom ERC20 via the [`setCustomERC20`](https://github.com/cosmos/solidity-ibc-eureka/blob/bce3a4a0de85697607815e2f7c9d9e2a8a508cd3/contracts/ICS20Transfer.sol#L264C14-L264C28) function.
+
+### Prerequisites
+
+To call this function, an address must hold the `ERC20_CUSTOMIZER_ROLE`, which is managed exclusively by the protocol's security council.
+
+### Critical Timing Requirement
+
+<Warning>
+  `setCustomERC20` must be called **before** the first IBC transfer of that token. Once the initial transfer is made, the ERC20 mapping becomes immutable.
+</Warning>
+
+## Getting Started
+
+If you're an asset issuer looking to deploy a custom ERC20 contract for your token on Ethereum:
+
+<Steps>
+  <Step title="Implement the Interface">
+    Deploy your custom ERC20 contract that implements the `IMintableAndBurnable` interface with proper access controls for the `ICS20Transfer` proxy.
+  </Step>
+  <Step title="Contact the Team">
+    Reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) to coordinate the registration of your custom ERC20 contract.
+  </Step>
+  <Step title="Register Before First Transfer">
+    Ensure your custom ERC20 is registered via `setCustomERC20` before any IBC transfers of your token occur.
+  </Step>
+  <Step title="Verify and Launch">
+    Verify your contract on Etherscan and begin bridging your token with full control over its ERC20 representation.
+  </Step>
+</Steps>
+
+## Support
+
+Need help with your custom ERC20 integration? Our team is ready to assist:
+
+- Contact us directly: [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) on Telegram
+- Email: susannah@interchainlabs.io
+- Join our [Discord](https://discord.gg/cosmos) and find the support channel
+
+For technical specifications, visit the [solidity-ibc-eureka repository](https://github.com/cosmos/solidity-ibc-eureka). 
