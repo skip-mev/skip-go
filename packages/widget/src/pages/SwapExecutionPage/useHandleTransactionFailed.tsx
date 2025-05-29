@@ -1,32 +1,33 @@
 import { useCallback, useEffect } from "react";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
-import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
+import { sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { useSetMaxAmount } from "../SwapPage/useSetMaxAmount";
 
 const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
-export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
+export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const setSourceAssetAtom = useSetAtom(sourceAssetAtom);
-  const setDebouncedSourceAssetAmountAtom = useSetAtom(debouncedSourceAssetAmountAtom);
+  const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
+  const handleMaxButton = useSetMaxAmount();
 
-  const { transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { transactionDetailsArray, route } = useAtomValue(swapExecutionStateAtom);
 
   const lastTransaction = transactionDetailsArray.at(-1);
   const lastTxHash = lastTransaction?.txHash;
 
   const getClientAsset = useCallback(
     (denom?: string, chainId?: string) => {
-      if (!denom || !chainId) return;
-      if (!assets) return;
+      if (!denom || !chainId || !assets) return;
       return assets.find(
         (a) => a.denom.toLowerCase() === denom.toLowerCase() && a.chainId === chainId,
       );
@@ -34,60 +35,83 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     [assets],
   );
 
-  useEffect(() => {
-    if (statusData?.isSettled && !statusData?.isSuccess) {
-      const timeout = setTimeout(() => {
-        const sourceClientAsset = getClientAsset(
-          statusData?.transferAssetRelease?.denom,
-          statusData?.transferAssetRelease?.chainId,
-        );
+  const explorerLink = createSkipExplorerLink(transactionDetailsArray);
 
-        if (sourceClientAsset) {
-          track("unexpected error page: transaction reverted", {
-            transferAssetRelease: statusData.transferAssetRelease,
-            lastTransaction,
-          });
-          setErrorWarning({
-            errorWarningType: ErrorWarningType.TransactionReverted,
-            onClickContinueTransaction: () => {
-              setSourceAssetAtom(sourceClientAsset);
-              setDebouncedSourceAssetAmountAtom(
-                statusData.transferAssetRelease?.amount,
-                undefined,
-                true,
-              );
-              setCurrentPage(Routes.SwapPage);
-              setErrorWarning(undefined);
-            },
-            explorerUrl: createSkipExplorerLink(transactionDetailsArray),
-            transferAssetRelease: statusData.transferAssetRelease,
-          });
-          return;
-        } else {
-          track("unexpected error page: transaction failed", { lastTransaction });
-          setErrorWarning({
-            errorWarningType: ErrorWarningType.TransactionFailed,
-            onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-            explorerLink: createSkipExplorerLink(transactionDetailsArray),
-            txHash: lastTxHash ?? "",
-          });
-        }
-      }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
+  const handleTransactionFailed = useCallback(() => {
+    const sourceClientAsset = getClientAsset(
+      statusData?.transferAssetRelease?.denom,
+      statusData?.transferAssetRelease?.chainId,
+    );
 
-      return () => clearTimeout(timeout);
+    if (sourceClientAsset) {
+      track("unexpected error page: transaction reverted", {
+        transferAssetRelease: statusData?.transferAssetRelease,
+        lastTransaction,
+      });
+      setErrorWarning({
+        errorWarningType: ErrorWarningType.TransactionReverted,
+        onClickContinueTransaction: () => {
+          setSourceAsset({
+            ...sourceClientAsset,
+            amount: statusData?.transferAssetRelease?.amount,
+          });
+          if (!statusData?.transferAssetRelease?.amount) {
+            handleMaxButton();
+          }
+          setCurrentPage(Routes.SwapPage);
+          setErrorWarning(undefined);
+        },
+        explorerUrl: explorerLink,
+        transferAssetRelease: statusData?.transferAssetRelease,
+      });
+    } else if (explorerLink) {
+      track("unexpected error page: transaction failed", { lastTransaction });
+      setErrorWarning({
+        errorWarningType: ErrorWarningType.TransactionFailed,
+        onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
+        explorerLink,
+        txHash: lastTxHash ?? "",
+      });
+    } else {
+      track("unexpected error page: unexpected error", { error, route });
+      setErrorWarning({
+        errorWarningType: ErrorWarningType.Unexpected,
+        error,
+        onClickBack: () => setOverallStatus("unconfirmed"),
+      });
     }
   }, [
+    error,
+    explorerLink,
     getClientAsset,
+    handleMaxButton,
     lastTransaction,
     lastTxHash,
+    route,
     setCurrentPage,
-    setDebouncedSourceAssetAmountAtom,
     setErrorWarning,
-    setSourceAssetAtom,
-    statusData,
+    setOverallStatus,
+    setSourceAsset,
+    statusData?.transferAssetRelease,
+  ]);
+
+  useEffect(() => {
+    if (!(statusData?.isSettled && !statusData?.isSuccess)) return;
+
+    const timeout = setTimeout(() => {
+      handleTransactionFailed();
+    }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
+
+    if (statusData.transferAssetRelease) {
+      clearTimeout(timeout);
+      handleTransactionFailed();
+    }
+
+    return () => clearTimeout(timeout);
+  }, [
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
-    transactionDetailsArray,
+    handleTransactionFailed,
   ]);
 };

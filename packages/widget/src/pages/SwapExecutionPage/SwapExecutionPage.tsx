@@ -51,7 +51,7 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
-  const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
@@ -82,7 +82,7 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
-  useHandleTransactionFailed(statusData);
+  useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
