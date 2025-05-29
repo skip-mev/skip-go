@@ -5,7 +5,7 @@ import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
-import { sourceAssetAtom } from "@/state/swapPage";
+import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 
@@ -15,6 +15,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setDebouncedSourceAssetAmount = useSetAtom(debouncedSourceAssetAmountAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
@@ -51,8 +52,8 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
         onClickContinueTransaction: () => {
           setSourceAsset({
             ...sourceClientAsset,
-            amount: statusData?.transferAssetRelease?.amount,
           });
+          setDebouncedSourceAssetAmount(statusData?.transferAssetRelease?.amount, undefined, true);
           setCurrentPage(Routes.SwapPage);
           setErrorWarning(undefined);
         },
@@ -83,6 +84,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
     lastTxHash,
     route,
     setCurrentPage,
+    setDebouncedSourceAssetAmount,
     setErrorWarning,
     setOverallStatus,
     setSourceAsset,
@@ -90,7 +92,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
   ]);
 
   useEffect(() => {
-    if (!(statusData?.isSettled && !statusData?.isSuccess)) return;
+    if (statusData?.isSuccess || !statusData?.isSettled) return;
 
     const timeout = setTimeout(() => {
       handleTransactionFailed();
