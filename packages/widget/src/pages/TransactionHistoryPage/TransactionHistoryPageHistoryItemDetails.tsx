@@ -12,6 +12,7 @@ import { TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { TransactionDetails } from "@/state/swapExecutionPage";
+import { track } from "@amplitude/analytics-browser";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
   status?: SimpleStatus;
@@ -106,7 +107,11 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
       <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
-        <Link href={skipExplorerLink} target="_blank" gap={5}>
+        <Link href={skipExplorerLink} target="_blank" gap={5} onClick={() => {
+          track("transaction history page: view route explorer - clicked", {
+            txHash: initialTxHash,
+          });
+        }}>
           <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
           <SmallText>
             <ChainIcon />

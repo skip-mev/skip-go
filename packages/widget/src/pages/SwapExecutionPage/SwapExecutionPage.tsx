@@ -164,6 +164,9 @@ export const SwapExecutionPage = () => {
                 label: "Track progress",
                 onClick: () => {
                   window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
+                  track("swap execution page: track progress button - clicked", {
+                    txHash: lastTxHash,
+                  });
                 },
               }
             : undefined
