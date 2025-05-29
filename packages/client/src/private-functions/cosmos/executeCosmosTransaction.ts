@@ -8,6 +8,7 @@ import { isOfflineDirectSigner } from "@cosmjs/proto-signing";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { submit } from "src/api/postSubmit";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -109,11 +110,15 @@ export const executeCosmosTransaction = async ({
   });
 
   const txBytes = TxRaw.encode(rawTx).finish();
+  const rawTxBase64 = Buffer.from(txBytes).toString("base64");
 
-  const txResponse = await stargateClient.broadcastTx(txBytes);
+  const txResponse = await submit({
+    chainId,
+    tx: rawTxBase64,
+  })
 
   return {
     chainId: tx?.cosmosTx?.chainId ?? "",
-    txHash: txResponse.transactionHash,
+    txHash: txResponse?.txHash ?? "",
   };
 };
