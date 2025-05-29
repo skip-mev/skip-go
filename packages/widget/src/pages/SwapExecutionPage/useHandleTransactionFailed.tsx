@@ -63,15 +63,15 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
             transferAssetRelease: statusData.transferAssetRelease,
           });
           return;
+        } else {
+          track("unexpected error page: transaction failed", { lastTransaction });
+          setErrorWarning({
+            errorWarningType: ErrorWarningType.TransactionFailed,
+            onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
+            explorerLink: createSkipExplorerLink(transactionDetailsArray),
+            txHash: lastTxHash ?? "",
+          });
         }
-
-        track("unexpected error page: transaction failed", { lastTransaction });
-        setErrorWarning({
-          errorWarningType: ErrorWarningType.TransactionFailed,
-          onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
-          explorerLink: createSkipExplorerLink(transactionDetailsArray),
-          txHash: lastTxHash ?? "",
-        });
       }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
 
       return () => clearTimeout(timeout);
@@ -84,6 +84,7 @@ export const useHandleTransactionFailed = (statusData?: TxsStatus) => {
     setDebouncedSourceAssetAmountAtom,
     setErrorWarning,
     setSourceAssetAtom,
+    statusData,
     statusData?.isSettled,
     statusData?.isSuccess,
     statusData?.transferAssetRelease,
