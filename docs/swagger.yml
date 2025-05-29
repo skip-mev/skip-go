@@ -3781,7 +3781,7 @@ components:
         - STATE_PENDING_ERROR
       type: string
     OPInitTransfer:
-      description: A transfer facilitated by the CCTP bridge
+      description: A transfer facilitated by the OP Init bridge
       properties:
         from_chain_id:
           description: Canonical chain-id of the source chain of the bridge transaction
