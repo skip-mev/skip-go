@@ -16,6 +16,9 @@ export const filterMessagesRequest = (request: MessagesRequest) => {
     postRouteHandler: request.postRouteHandler,
     chainIdsToAffiliates: request.chainIdsToAffiliates,
     enableGasWarnings: request.enableGasWarnings,
+    apiUrl: request.apiUrl,
+    apiKey: request.apiKey,
+    abortDuplicateRequests: request.abortDuplicateRequests,
   };
 
   return messagesRequest;
