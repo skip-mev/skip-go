@@ -17,7 +17,6 @@ import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
@@ -32,7 +31,6 @@ export type AssetChainInputProps = {
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
-  context: SelectorContext;
   disabled?: boolean;
 };
 
@@ -46,7 +44,6 @@ export const SwapPageAssetChainInput = ({
   priceChangePercentage,
   isWaitingToUpdateInputValue,
   badPriceWarning,
-  context,
   disabled,
 }: AssetChainInputProps) => {
   const theme = useTheme();
@@ -60,7 +57,7 @@ export const SwapPageAssetChainInput = ({
     chainId: selectedAsset?.chainId,
   });
 
-  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
+  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
     (group) => group.id === assetDetails.asset?.recommendedSymbol,
   );

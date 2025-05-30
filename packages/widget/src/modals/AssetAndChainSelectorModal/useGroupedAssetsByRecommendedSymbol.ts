@@ -13,7 +13,7 @@ export type useGroupedAssetByRecommendedSymbolProps = {
 
 export const useGroupedAssetByRecommendedSymbol = ({
   context,
-}: useGroupedAssetByRecommendedSymbolProps) => {
+}: useGroupedAssetByRecommendedSymbolProps = {}) => {
   const { data: _assets } = useAtomValue(skipAssetsAtom);
   const getBalance = useGetBalance();
   const filter = useAtomValue(filterAtom);
@@ -70,7 +70,7 @@ export const useGroupedAssetByRecommendedSymbol = ({
 
       return isAllowed && !isBlocked && !isBlockedUnlessUserHasBalance;
     });
-  }, [filter, context, filterOut, filterOutUnlessUserHasBalance, _assets, getBalance]);
+  }, [context, filter, filterOut, filterOutUnlessUserHasBalance, _assets, getBalance]);
 
   const groupedAssetsByRecommendedSymbol = useMemo(() => {
     if (!assets) return;

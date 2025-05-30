@@ -397,7 +397,6 @@ export const SwapPage = () => {
             track("swap page: source asset amount input - changed", { amount: v });
             setSourceAssetAmount(v);
           }}
-          context="source"
           disabled={sourceAsset?.locked}
         />
         <SwapPageBridge />
@@ -414,7 +413,6 @@ export const SwapPage = () => {
             track("swap page: destination asset amount input - changed", { amount: v });
             setDestinationAssetAmount(v);
           }}
-          context="destination"
           disabled={destinationAsset?.locked}
         />
       </Column>

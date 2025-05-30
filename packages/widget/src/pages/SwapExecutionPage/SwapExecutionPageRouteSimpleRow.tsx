@@ -51,9 +51,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId,
     tokenAmount,
   });
-  const groupedAssets = useGroupedAssetByRecommendedSymbol({
-    context: undefined,
-  });
+  const groupedAssets = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
