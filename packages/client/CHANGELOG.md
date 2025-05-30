@@ -1,5 +1,15 @@
 # @skip-go/client
 
+## 1.1.6
+
+### Patch Changes
+
+- de1ea69: Only pass specific fields to msgs api request
+- d554763: Fix typo in client changelog.
+- 7f71bb0: use submit endpoint to submit cosmos transactions
+- 7610467: update swagger types
+- 5156647: Export getCosmosGasAmountForMessage and getEVMGasAmountForMessage
+
 ## 1.1.5
 
 ### Patch Changes
