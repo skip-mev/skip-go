@@ -28,6 +28,10 @@ test.describe("convertSecondsToMinutesOrHours", () => {
     expect(convertSecondsToMinutesOrHours(30)).toBe("30 secs");
   });
 
+  test("handles zero seconds", () => {
+    expect(convertSecondsToMinutesOrHours(0)).toBe("0 secs");
+  });
+
   test("formats seconds under an hour", () => {
     expect(convertSecondsToMinutesOrHours(90)).toBe("2 mins");
   });

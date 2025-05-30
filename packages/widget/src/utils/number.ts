@@ -30,7 +30,7 @@ export function calculatePercentageChange(
 }
 
 export const convertSecondsToMinutesOrHours = (seconds?: number) => {
-  if (!seconds) {
+  if (seconds === undefined) {
     return;
   }
   if (seconds < 60) {
