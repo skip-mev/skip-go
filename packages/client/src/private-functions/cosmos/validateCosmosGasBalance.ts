@@ -9,7 +9,7 @@ import { balances } from "../../api/postBalances";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import type { GetFallbackGasAmount } from "src/types/client-types";
-import { getCosmosGasAmountForMessage } from "./getCosmosGasAmountForMessage";
+import { getCosmosGasAmountForMessage } from "../../public-functions/getCosmosGasAmountForMessage";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;
