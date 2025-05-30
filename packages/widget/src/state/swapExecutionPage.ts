@@ -153,6 +153,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
+      set(setValidatingGasBalanceAtom, { status: "completed" });
       setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainId === txInfo.chainId);
       const explorerLink = createExplorerLink({
@@ -223,14 +224,13 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       set(setOverallStatusAtom, "pending");
     },
-    onError: (error: unknown, transactionDetailsArray) => {
+    onError: (error: unknown) => {
       const currentPage = get(currentPageAtom);
       track("execute route: error", { error, route });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
 
-      const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         track("expected error page: user rejected request");
         if (currentPage === Routes.SwapExecutionPage) {
@@ -257,28 +257,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         track("expected error page: insufficient gas balance");
         set(errorWarningAtom, {
           errorWarningType: ErrorWarningType.InsufficientBalanceForGas,
-          error: error as Error,
-          onClickBack: () => {
-            set(setOverallStatusAtom, "unconfirmed");
-          },
-        });
-      } else if (lastTransaction?.explorerLink) {
-        track("unexpected error page: transaction failed", { lastTransaction });
-        set(errorWarningAtom, {
-          errorWarningType: ErrorWarningType.TransactionFailed,
-          onClickBack: () => {
-            set(setOverallStatusAtom, "unconfirmed");
-          },
-          explorerLink: lastTransaction?.explorerLink ?? "",
-          txHash: lastTransaction?.txHash ?? "",
-          onClickContactSupport: () => {
-            window.open("https://skip.build/discord", "_blank");
-          },
-        });
-      } else {
-        track("unexpected error page: unexpected error", { error, route });
-        set(errorWarningAtom, {
-          errorWarningType: ErrorWarningType.Unexpected,
           error: error as Error,
           onClickBack: () => {
             set(setOverallStatusAtom, "unconfirmed");
