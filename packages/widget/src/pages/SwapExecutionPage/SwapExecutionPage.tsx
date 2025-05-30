@@ -23,6 +23,7 @@ import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -82,6 +83,12 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
+  usePreventPageUnload(
+    swapExecutionState === SwapExecutionState.signaturesRemaining ||
+      swapExecutionState === SwapExecutionState.waitingForSigning ||
+      swapExecutionState === SwapExecutionState.approving ||
+      swapExecutionState === SwapExecutionState.validatingGasBalance,
+  );
   useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
