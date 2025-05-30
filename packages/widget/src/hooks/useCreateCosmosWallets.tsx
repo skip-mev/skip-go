@@ -103,7 +103,7 @@ export const useCreateCosmosWallets = () => {
               setCosmosWallet({
                 id: currentCosmosId,
                 walletName: wallet,
-                chainType: ChainType.Svm,
+                chainType: ChainType.Cosmos,
               });
             }
 
