@@ -7,5 +7,5 @@ export const submit = api({
   path: "/v2/tx/submit",
 });
 
-export type MessagesRequest = ApiRequest<"submit">;
-export type MessagesResponse = ApiResponse<"submit">;
+export type SubmitRequest = ApiRequest<"submit">;
+export type SubmitResponse = ApiResponse<"submit">;

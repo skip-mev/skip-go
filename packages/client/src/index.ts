@@ -39,4 +39,7 @@ export { waitForTransaction } from "./public-functions/waitForTransaction";
 
 export type { SkipClientOptions } from "./state/clientState";
 
+export { submit } from "./api/postSubmit";
+export type { SubmitRequest, SubmitResponse } from "./api/postSubmit";
+
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";
