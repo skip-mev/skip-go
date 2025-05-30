@@ -55,7 +55,7 @@ export const useAutoSetAddress = () => {
       };
 
       if (!requiredChainAddresses) return;
-      requiredChainAddresses.forEach(async (chainId, index) => {
+      for (const [index, chainId] of requiredChainAddresses.entries()) {
         const chain = chains?.find((c) => c.chainId === chainId);
         if (!chain) {
           return;
@@ -95,7 +95,7 @@ export const useAutoSetAddress = () => {
             JSON.stringify(Object.values(chainAddresses).map((chain) => chain.chainId))
           ) {
             setIsLoading(false);
-            return;
+            continue;
           }
 
           setChainAddresses((prev) => {
@@ -130,10 +130,9 @@ export const useAutoSetAddress = () => {
           console.error(_error);
           if (!openModal) return;
           showSetAddressModal();
-        } finally {
-          setIsLoading(false);
         }
-      });
+      }
+      setIsLoading(false);
     },
     [
       createCosmosWallets,
