@@ -2,11 +2,11 @@ import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPa
 import { MainButton } from "@/components/MainButton";
 import { SmallText } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
-import { errorWarningAtom } from "@/state/errorWarning";
 import { useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import { track } from "@amplitude/analytics-browser";
+import { errorWarningAtom } from "@/state/errorWarning";
+import { PageHeader } from "@/components/PageHeader";
 
 export type WarningPageTradeAdditionalSigningRequiredProps = {
   onClickContinue: () => void;
@@ -21,7 +21,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
 }: WarningPageTradeAdditionalSigningRequiredProps) => {
   const theme = useTheme();
   const setErrorWarningAtom = useSetAtom(errorWarningAtom);
-  track("warning page: two signatures required")
+  track("warning page: two signatures required");
 
   const handleOnClickBack = () => {
     setErrorWarningAtom(undefined);
@@ -35,7 +35,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

@@ -1,6 +1,6 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
-import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -22,6 +22,8 @@ import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -50,7 +52,7 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
-  const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
@@ -61,6 +63,10 @@ export const SwapExecutionPage = () => {
     txsRequired: route?.txsRequired,
     txs: transactionDetailsArray,
   });
+
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
 
   useSyncTxStatus({
     statusData,
@@ -77,7 +83,13 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
-  useHandleTransactionFailed(statusData);
+  usePreventPageUnload(
+    swapExecutionState === SwapExecutionState.signaturesRemaining ||
+      swapExecutionState === SwapExecutionState.waitingForSigning ||
+      swapExecutionState === SwapExecutionState.approving ||
+      swapExecutionState === SwapExecutionState.validatingGasBalance,
+  );
+  useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
@@ -135,9 +147,12 @@ export const SwapExecutionPage = () => {
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
 
+  const shouldRenderTrackProgressButton =
+    lastTxHash && lastTxChainId && route?.txsRequired === transactionDetailsArray.length;
+
   return (
     <Column gap={5}>
-      <SwapPageHeader
+      <PageHeader
         leftButton={
           simpleRoute
             ? {
@@ -146,6 +161,19 @@ export const SwapExecutionPage = () => {
                 onClick: () => {
                   track("swap execution page: back button - clicked");
                   setCurrentPage(Routes.SwapPage);
+                },
+              }
+            : undefined
+        }
+        centerButton={
+          shouldRenderTrackProgressButton
+            ? {
+                label: "Track progress",
+                onClick: () => {
+                  window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
+                  track("swap execution page: track progress button - clicked", {
+                    txHash: lastTxHash,
+                  });
                 },
               }
             : undefined

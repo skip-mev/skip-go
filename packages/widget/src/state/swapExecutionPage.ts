@@ -142,7 +142,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {
-        set(setTransactionDetailsAtom, txInfo, transactionHistoryIndex);
+        set(setTransactionDetailsAtom, {
+          transactionDetails: txInfo,
+          transactionHistoryIndex,
+        });
       }
     },
     onApproveAllowance: async ({ status, allowance }) => {
@@ -153,6 +156,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
+      set(setValidatingGasBalanceAtom, { status: "completed" });
       setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainId === txInfo.chainId);
       const explorerLink = createExplorerLink({
@@ -160,11 +164,12 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         chainType: chain?.chainType,
         txHash: txInfo.txHash,
       });
-      set(
-        setTransactionDetailsAtom,
-        { ...txInfo, explorerLink, status: undefined },
+
+      set(setTransactionDetailsAtom, {
+        transactionDetails: { ...txInfo, explorerLink, status: undefined },
         transactionHistoryIndex,
-      );
+      });
+
       callbacks?.onTransactionBroadcasted?.({
         chainId: txInfo.chainId,
         txHash: txInfo.txHash,
@@ -201,7 +206,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onTransactionSigned: async (txInfo) => {
       track("execute route: transaction signed");
 
+      let transactionsSigned = 0;
+
       set(swapExecutionStateAtom, (prev) => {
+        transactionsSigned = (prev.transactionsSigned ?? 0) + 1;
         const clientOperations = prev.clientOperations;
         const signRequiredIndex = clientOperations.findIndex((operation) => {
           return (
@@ -217,20 +225,26 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         return {
           ...prev,
           clientOperations: clientOperations,
-          transactionsSigned: (prev.transactionsSigned ?? 0) + 1,
+          transactionsSigned: transactionsSigned,
         };
+      });
+
+      const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
+
+      set(setTransactionHistoryAtom, transactionHistoryIndex, {
+        ...transactionHistoryItem,
+        signatures: transactionsSigned,
       });
 
       set(setOverallStatusAtom, "pending");
     },
-    onError: (error: unknown, transactionDetailsArray) => {
+    onError: (error: unknown) => {
       const currentPage = get(currentPageAtom);
       track("execute route: error", { error, route });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,
       });
 
-      const lastTransaction = transactionDetailsArray?.[transactionDetailsArray?.length - 1];
       if (isUserRejectedRequestError(error)) {
         track("expected error page: user rejected request");
         if (currentPage === Routes.SwapExecutionPage) {
@@ -262,28 +276,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             set(setOverallStatusAtom, "unconfirmed");
           },
         });
-      } else if (lastTransaction?.explorerLink) {
-        track("unexpected error page: transaction failed", { lastTransaction });
-        set(errorWarningAtom, {
-          errorWarningType: ErrorWarningType.TransactionFailed,
-          onClickBack: () => {
-            set(setOverallStatusAtom, "unconfirmed");
-          },
-          explorerLink: lastTransaction?.explorerLink ?? "",
-          txHash: lastTransaction?.txHash ?? "",
-          onClickContactSupport: () => {
-            window.open("https://skip.build/discord", "_blank");
-          },
-        });
-      } else {
-        track("unexpected error page: unexpected error", { error, route });
-        set(errorWarningAtom, {
-          errorWarningType: ErrorWarningType.Unexpected,
-          error: error as Error,
-          onClickBack: () => {
-            set(setOverallStatusAtom, "unconfirmed");
-          },
-        });
       }
     },
     onValidateGasBalance: async (props) => {
@@ -300,13 +292,23 @@ export const setValidatingGasBalanceAtom = atom(
   },
 );
 
+type SetTransactionDetailsProps = {
+  transactionDetails: TransactionDetails;
+  transactionHistoryIndex: number;
+  status?: SimpleStatus;
+};
+
 export const setTransactionDetailsAtom = atom(
   null,
-  (get, set, transactionDetails: TransactionDetails, transactionHistoryIndex: number) => {
+  (
+    get,
+    set,
+    { transactionDetails, transactionHistoryIndex, status }: SetTransactionDetailsProps,
+  ) => {
     const swapExecutionState = get(swapExecutionStateAtom);
     const { transactionDetailsArray, route } = swapExecutionState;
 
-    const newTransactionDetailsArray = transactionDetailsArray;
+    const newTransactionDetailsArray = [...transactionDetailsArray];
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
       (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase(),
@@ -324,11 +326,17 @@ export const setTransactionDetailsAtom = atom(
       transactionDetailsArray: newTransactionDetailsArray,
     });
 
+    const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
+
     set(setTransactionHistoryAtom, transactionHistoryIndex, {
+      ...transactionHistoryItem,
       route: route as RouteResponse,
       transactionDetails: newTransactionDetailsArray,
+      transferEvents: [],
       timestamp: Date.now(),
-      status: "unconfirmed",
+      isSettled: false,
+      isSuccess: false,
+      ...(status && { status }),
     });
   },
 );

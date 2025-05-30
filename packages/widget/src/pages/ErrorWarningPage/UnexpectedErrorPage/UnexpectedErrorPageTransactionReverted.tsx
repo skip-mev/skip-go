@@ -6,12 +6,12 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { errorWarningAtom } from "@/state/errorWarning";
 import { useSetAtom } from "jotai";
 import { track } from "@amplitude/analytics-browser";
 import { TransferAssetRelease } from "@skip-go/client";
+import { PageHeader } from "@/components/PageHeader";
 
 export type UnexpectedErrorPageTransactionRevertedProps = {
   explorerUrl: string;
@@ -38,7 +38,7 @@ export const UnexpectedErrorPageTransactionReverted = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

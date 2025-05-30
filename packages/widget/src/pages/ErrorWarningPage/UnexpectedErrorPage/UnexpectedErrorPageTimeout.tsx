@@ -5,8 +5,6 @@ import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
-import { errorWarningAtom } from "@/state/errorWarning";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useBroadcastedTxsStatus } from "../../SwapExecutionPage/useBroadcastedTxs";
@@ -14,6 +12,8 @@ import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useEffect } from "react";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { track } from "@amplitude/analytics-browser";
+import { errorWarningAtom } from "@/state/errorWarning";
+import { PageHeader } from "@/components/PageHeader";
 
 export type UnexpectedErrorPageTimeoutProps = {
   txHash: string;
@@ -46,7 +46,7 @@ export const UnexpectedErrorPageTimeout = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

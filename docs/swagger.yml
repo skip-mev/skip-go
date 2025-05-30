@@ -3781,7 +3781,7 @@ components:
         - STATE_PENDING_ERROR
       type: string
     OPInitTransfer:
-      description: A transfer facilitated by the CCTP bridge
+      description: A transfer facilitated by the OP Init bridge
       properties:
         from_chain_id:
           description: Canonical chain-id of the source chain of the bridge transaction
@@ -3892,6 +3892,14 @@ components:
           type: string
         fee_amount:
           description: Amount of the fee asset to be paid as the transfer fee if applicable.
+          type: string
+          nullable: true
+        to_chain_entry_contract_address:
+          description: Address of the entry contract on the destination chain
+          type: string
+          nullable: true
+        to_chain_callback_contract_address:
+          description: 
           type: string
           nullable: true
         usd_fee_amount:

@@ -37,6 +37,12 @@ export { setApiOptions } from "./public-functions/setApiOptions";
 export type { SetApiOptionsProps } from "./public-functions/setApiOptions";
 export { waitForTransaction } from "./public-functions/waitForTransaction";
 
+export { getCosmosGasAmountForMessage } from "./public-functions/getCosmosGasAmountForMessage";
+export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountForMessage";
+
 export type { SkipClientOptions } from "./state/clientState";
+
+export { submit } from "./api/postSubmit";
+export type { SubmitRequest, SubmitResponse } from "./api/postSubmit";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

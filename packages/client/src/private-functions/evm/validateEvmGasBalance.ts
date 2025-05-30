@@ -6,7 +6,7 @@ import { ClientState } from "src/state/clientState";
 import { formatUnits } from "viem";
 import type { GetFallbackGasAmount } from "src/types/client-types";
 import { validateEvmTokenApproval } from "./validateEvmTokenApproval";
-import { getEVMGasAmountForMessage } from "./getEvmGasAmountForMessage";
+import { getEVMGasAmountForMessage } from "../../public-functions/getEvmGasAmountForMessage";
 
 export const validateEvmGasBalance = async ({
   signer,
