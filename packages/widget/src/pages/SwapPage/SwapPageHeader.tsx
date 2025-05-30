@@ -1,15 +1,16 @@
 import { memo, useMemo } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 import { ICONS } from "@/icons";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { isFetchingLastTransactionStatusAtom, transactionHistoryAtom } from "@/state/history";
+import { transactionHistoryAtom } from "@/state/history";
 import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { PageHeader } from "@/components/PageHeader";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -17,11 +18,11 @@ export const SwapPageHeader = memo(() => {
 
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainId);
-  const transactionHistory = useAtomValue(transactionHistoryAtom);
+  const noHistoryItems = useAtomValue(noHistoryItemsAtom);
   const isFetchingLastTransactionStatus = useAtomValue(isFetchingLastTransactionStatusAtom);
 
   const historyPageButton = useMemo(() => {
-    if (transactionHistory?.length === 0) return;
+    if (noHistoryItems) return;
     const getHistoryPageIcon = () => {
       if (isFetchingLastTransactionStatus) {
         return (
@@ -55,7 +56,7 @@ export const SwapPageHeader = memo(() => {
         setCurrentPage(Routes.TransactionHistoryPage);
       },
     };
-  }, [isFetchingLastTransactionStatus, setCurrentPage, transactionHistory?.length]);
+  }, [isFetchingLastTransactionStatus, noHistoryItems, setCurrentPage]);
 
   return (
     <>
@@ -78,4 +79,16 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
   });
 
   return null;
+});
+
+const noHistoryItemsAtom = atom((get) => {
+  const txHistoryItems = get(transactionHistoryAtom);
+
+  return txHistoryItems?.length === 0;
+});
+
+const isFetchingLastTransactionStatusAtom = atom((get) => {
+  const { overallStatus, route, transactionsSigned } = get(swapExecutionStateAtom);
+
+  return overallStatus === "pending" && transactionsSigned === route?.txsRequired;
 });

@@ -1,6 +1,6 @@
 import { TxStatusResponse } from "@skip-go/client";
 import { atomWithStorage } from "jotai/utils";
-import { swapExecutionStateAtom, TransactionDetails } from "./swapExecutionPage";
+import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
@@ -81,14 +81,4 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
     refetchInterval: 1000 * 2,
     keepPreviousData: true,
   };
-});
-
-export const isFetchingLastTransactionStatusAtom = atom((get) => {
-  const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
-  const { overallStatus } = get(swapExecutionStateAtom);
-
-  return (
-    overallStatus === "pending" ||
-    (lastTxHistoryItem?.isSettled !== true && lastTxHistoryItem?.route?.txsRequired === 1)
-  );
 });
