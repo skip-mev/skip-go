@@ -9,6 +9,8 @@ import { validateGasBalances } from "./validateGasBalances";
 import { waitForTransaction } from "../public-functions/waitForTransaction";
 import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
+import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
+import { signSvmTransaction } from "./svm/signSvmTransaction";
 
 export const executeTransactions = async (options: ExecuteRouteOptions & { txs?: Tx[] }) => {
   const {
@@ -83,6 +85,48 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
       enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
     });
   };
+
+  let signedTxs: { chainId: string, tx: string }[] = [];
+
+  for (
+    let i = 0; i < txs.length; i++
+  ) {
+    const tx = txs[i];
+    if (!tx) {
+      throw new Error(`executeRoute error: invalid message at index ${i}`);
+    }
+
+    if ("cosmosTx" in tx) {
+      const signedTx =  await signCosmosTransaction({
+        tx,
+        options,
+        index: i,
+      })
+      signedTxs.push({
+        chainId: tx.cosmosTx?.chainId ?? "",
+        tx: signedTx,
+      });
+    }
+    if ("svmTx" in tx) {
+      const signedTx = await signSvmTransaction(
+        tx,
+        options,
+      );
+      if (!signedTx) {
+        throw new Error("executeRoute svm ta error: signedTx is undefined");
+      }
+      signedTxs.push({
+        chainId: tx.svmTx?.chainId ?? "",
+        tx: signedTx,
+      });
+    }
+    if( "evmTx" in tx) {
+      const evmTx = tx.evmTx;
+      // TODO
+
+    }
+  }
+
 
   for (let i = 0; i < txs.length; i++) {
     const tx = txs[i];
