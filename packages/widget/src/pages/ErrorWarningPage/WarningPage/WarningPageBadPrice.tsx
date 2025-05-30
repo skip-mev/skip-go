@@ -5,10 +5,10 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { ICONS } from "@/icons";
 import { calculatePercentageChange } from "@/utils/number";
 import { useTheme } from "styled-components";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
 import { RouteResponse } from "@skip-go/client";
+import { PageHeader } from "@/components/PageHeader";
 
 export type WarningPageBadPriceProps = {
   onClickContinue: () => void;
@@ -110,7 +110,7 @@ export const WarningPageBadPrice = ({
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

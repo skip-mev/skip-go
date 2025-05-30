@@ -51,7 +51,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         sourceAssetChainId,
         destAssetDenom,
         destAssetChainId,
-      },
+      } = {},
       timestamp,
       transactionDetails,
     } = txHistoryItem;

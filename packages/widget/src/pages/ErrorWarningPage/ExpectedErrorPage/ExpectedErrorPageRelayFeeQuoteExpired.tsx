@@ -7,15 +7,18 @@ import { useTheme } from "styled-components";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
-import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
 import { ErrorWarningPageContent } from "../ErrorWarningPageContent";
+import { PageHeader } from "@/components/PageHeader";
 
 export type RelayFeeQuoteExpiredProps = {
   error?: Error;
   onClickBack?: () => void;
 };
 
-export const ExpectedErrorPageRelayFeeQuoteExpired = ({ error, onClickBack }: RelayFeeQuoteExpiredProps) => {
+export const ExpectedErrorPageRelayFeeQuoteExpired = ({
+  error,
+  onClickBack,
+}: RelayFeeQuoteExpiredProps) => {
   const theme = useTheme();
   const setErrorAtom = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -31,7 +34,7 @@ export const ExpectedErrorPageRelayFeeQuoteExpired = ({ error, onClickBack }: Re
 
   return (
     <>
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

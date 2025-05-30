@@ -1,6 +1,6 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
-import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -152,7 +152,7 @@ export const SwapExecutionPage = () => {
 
   return (
     <Column gap={5}>
-      <SwapPageHeader
+      <PageHeader
         leftButton={
           simpleRoute
             ? {
