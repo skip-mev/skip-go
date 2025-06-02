@@ -14,8 +14,8 @@ import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { connect, getChainInfo, getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import {
-  addExtraChainIdsToConnectPerWalletAtom,
-  extraCosmosChainIdsToConnectAtom,
+  addExtraChainIdsToConnectForWalletTypeAtom,
+  extraCosmosChainIdsToConnectPerWalletAtom,
   getInitialChainIds,
 } from "@/hooks/useCreateCosmosWallets";
 
@@ -65,10 +65,10 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
 
   const wallet = walletName && getWallet(walletName);
   const isCosmosAsset = !sourceAsset?.isEvm && !sourceAsset?.isSvm;
-  const additionalChainIdsToConnect = get(extraCosmosChainIdsToConnectAtom);
+  const extraCosmosChainIdsToConnectPerWallet = get(extraCosmosChainIdsToConnectPerWalletAtom);
   const chainIdsToConnect = [
     ...getInitialChainIds(walletName),
-    ...(additionalChainIdsToConnect[walletName] ?? []),
+    ...(extraCosmosChainIdsToConnectPerWallet[walletName] ?? []),
   ];
 
   if (
@@ -85,7 +85,7 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
       const chainInfo = sourceAsset?.chainId && getChainInfo({ chainId: sourceAsset.chainId });
       if (chainInfo) {
         wallet.experimentalSuggestChain(chainInfo);
-        set(addExtraChainIdsToConnectPerWalletAtom, {
+        set(addExtraChainIdsToConnectForWalletTypeAtom, {
           walletName,
           chainId: sourceAsset.chainId as string,
         });
