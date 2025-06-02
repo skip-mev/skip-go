@@ -11,8 +11,13 @@ import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
-import { getWallet, WalletType } from "graz";
+import { connect, getChainInfo, getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
+import {
+  addAdditionalCosmosChainIdsToConnectForWalletAtom,
+  additionalCosmosChainIdsToConnectAtom,
+  getInitialChainIds,
+} from "@/hooks/useCreateCosmosWallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -51,12 +56,43 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
   }
 });
 
-export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get, set) => {
   const sourceAsset = get(sourceAssetAtom);
   const wallets = get(walletsAtom);
   const getSigners = get(getConnectedSignersAtom);
 
-  const wallet = wallets?.cosmos?.walletName && getWallet(wallets.cosmos.walletName as WalletType);
+  const walletName = wallets?.cosmos?.walletName as WalletType;
+
+  const wallet = walletName && getWallet(walletName);
+  const isCosmosAsset = !sourceAsset?.isEvm && !sourceAsset?.isSvm;
+  const additionalChainIdsToConnect = get(additionalCosmosChainIdsToConnectAtom);
+  const chainIdsToConnect = [
+    ...getInitialChainIds(walletName),
+    ...(additionalChainIdsToConnect[walletName] ?? []),
+  ];
+
+  if (
+    wallet &&
+    sourceAsset?.chainId &&
+    isCosmosAsset &&
+    !chainIdsToConnect.includes(sourceAsset.chainId)
+  ) {
+    const chainInfo = sourceAsset?.chainId && getChainInfo({ chainId: sourceAsset.chainId });
+
+    connect({
+      chainId: sourceAsset.chainId,
+      walletType: walletName,
+      autoReconnect: false,
+    }).then(() => {
+      if (chainInfo) {
+        wallet.experimentalSuggestChain(chainInfo);
+        set(addAdditionalCosmosChainIdsToConnectForWalletAtom, {
+          walletName,
+          chainId: sourceAsset.chainId as string,
+        });
+      }
+    });
+  }
 
   const signer = getSigners?.getCosmosSigner ?? wallet;
 

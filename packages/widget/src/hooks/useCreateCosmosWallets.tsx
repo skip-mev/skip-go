@@ -8,7 +8,7 @@ import {
   isWalletConnect,
   checkWallet,
 } from "graz";
-import { useAtom, useAtomValue } from "jotai";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createPenumbraClient } from "@penumbra-zone/client";
 import { ViewService } from "@penumbra-zone/protobuf";
 import { bech32mAddress } from "@penumbra-zone/bech32m/penumbra";
@@ -28,6 +28,8 @@ import { isMobile } from "@/utils/os";
 import { callbacksAtom, onWalletDisconnectedProps } from "@/state/callbacks";
 import { track } from "@amplitude/analytics-browser";
 import { useUpdateSourceAssetToDefaultForChainType } from "./useUpdateSourceAssetToDefaultForChainType";
+import { atomWithStorage } from "jotai/utils";
+import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
 
 export const useCreateCosmosWallets = () => {
   const { data: chains } = useAtomValue(skipChainsAtom);
@@ -35,6 +37,13 @@ export const useCreateCosmosWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
+  const additionalChainIdsToConnect = useAtomValue(additionalCosmosChainIdsToConnectAtom);
+  const addAdditionalCosmosChainIdsToConnectForWallet = useSetAtom(
+    addAdditionalCosmosChainIdsToConnectForWalletAtom,
+  );
+  const clearCosmosChainIdsToConnectForWallet = useSetAtom(
+    clearCosmosChainIdsToConnectForWalletAtom,
+  );
 
   const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
@@ -57,11 +66,15 @@ export const useCreateCosmosWallets = () => {
         const isWC = isWalletConnect(wallet);
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
-        const initialChainIds = filterValidChainIds(getInitialChainIds(wallet), chains);
+        const initialChainIds = filterValidChainIds(
+          [...getInitialChainIds(wallet), ...(additionalChainIdsToConnect[wallet] ?? [])],
+          chains,
+        );
 
         const connectWallet = async ({ chainIdToConnect }: { chainIdToConnect?: string }) => {
           const connectToInitialChainId =
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
+
           try {
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
@@ -69,11 +82,17 @@ export const useCreateCosmosWallets = () => {
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
+                addAdditionalCosmosChainIdsToConnectForWallet({
+                  walletName: wallet,
+                  chainId: chainIdToConnect,
+                });
               }
             }
 
             const response = await connect({
-              chainId: connectToInitialChainId ? initialChainIds : chainIdToConnect,
+              chainId: connectToInitialChainId
+                ? initialChainIds
+                : [...initialChainIds, chainIdToConnect],
               walletType: wallet,
               autoReconnect: false,
             });
@@ -111,7 +130,7 @@ export const useCreateCosmosWallets = () => {
               walletName: wallet,
               chainId: chainIdToConnect,
               chainType: ChainType.Cosmos,
-              address
+              address,
             });
 
             return { address };
@@ -123,11 +142,7 @@ export const useCreateCosmosWallets = () => {
               ChainType: ChainType.Cosmos,
               errorMessage: error?.message,
             });
-            if (error?.message?.toLowerCase().includes("no chain info")) {
-              throw new Error(
-                `There is no chain info for ${chainId}. Please add the ${chainId} chain to your wallet`,
-              );
-            }
+
             if (error?.message?.toLowerCase().includes("no ethereum public key")) {
               const response = await connect({
                 chainId: keplrMainnetWithoutEthermintChainIdsInitialConnect,
@@ -139,6 +154,29 @@ export const useCreateCosmosWallets = () => {
                   ? response?.accounts[chainIdToConnect].bech32Address
                   : undefined,
               };
+            }
+
+            if (additionalChainIdsToConnect[wallet].length > 0) {
+              clearCosmosChainIdsToConnectForWallet(wallet);
+
+              const retryChainIds = filterValidChainIds([...getInitialChainIds(wallet)], chains);
+
+              const response = await connect({
+                chainId: connectToInitialChainId
+                  ? retryChainIds
+                  : [...retryChainIds, chainIdToConnect],
+                walletType: wallet,
+                autoReconnect: false,
+              });
+              const address =
+                chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
+              return { address };
+            }
+
+            if (error?.message?.toLowerCase().includes("no chain info")) {
+              throw new Error(
+                `There is no chain info for ${chainIdToConnect}. Please add the ${chainIdToConnect} chain to your wallet`,
+              );
             }
             throw e;
           }
@@ -197,12 +235,15 @@ export const useCreateCosmosWallets = () => {
     },
     [
       callbacks,
+      additionalChainIdsToConnect,
       chains,
       currentWallet,
       sourceAsset,
       cosmosWallet,
+      addAdditionalCosmosChainIdsToConnectForWallet,
       setDefaultSourceAsset,
       setCosmosWallet,
+      clearCosmosChainIdsToConnectForWallet,
       disconnectAsync,
     ],
   );
@@ -210,7 +251,45 @@ export const useCreateCosmosWallets = () => {
   return { createCosmosWallets };
 };
 
-const getInitialChainIds = (wallet: WalletType) => {
+export const additionalCosmosChainIdsToConnectAtom = atomWithStorage<Record<string, string[]>>(
+  LOCAL_STORAGE_KEYS.additionalChainIdsToConnect,
+  {},
+);
+
+export const addAdditionalCosmosChainIdsToConnectForWalletAtom = atom(
+  null,
+  (_get, set, { walletName, chainId }: { walletName: string; chainId: string }) => {
+    set(additionalCosmosChainIdsToConnectAtom, (prev) => {
+      if (!prev[walletName]) {
+        prev[walletName] = [];
+      }
+      if (
+        chainId &&
+        !prev[walletName].includes(chainId) &&
+        !getInitialChainIds(walletName as WalletType).includes(chainId)
+      ) {
+        prev[walletName].push(chainId);
+      }
+
+      return prev;
+    });
+  },
+);
+
+export const clearCosmosChainIdsToConnectForWalletAtom = atom(
+  null,
+  (_get, set, wallet: WalletType) => {
+    set(additionalCosmosChainIdsToConnectAtom, (prev) => {
+      const newState = { ...prev };
+      if (newState[wallet]) {
+        newState[wallet] = [];
+      }
+      return newState;
+    });
+  },
+);
+
+export const getInitialChainIds = (wallet: WalletType) => {
   const isWC = isWalletConnect(wallet);
   const mobile = isMobile();
 
