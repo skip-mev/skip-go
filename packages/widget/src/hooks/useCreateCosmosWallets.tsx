@@ -37,12 +37,14 @@ export const useCreateCosmosWallets = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
   const callbacks = useAtomValue(callbacksAtom);
   const { walletType: currentWallet } = useActiveWalletType();
-  const additionalChainIdsToConnect = useAtomValue(additionalCosmosChainIdsToConnectAtom);
-  const addAdditionalCosmosChainIdsToConnectForWallet = useSetAtom(
-    addAdditionalCosmosChainIdsToConnectForWalletAtom,
+  const extraCosmosChainIdsToConnectPerWallet = useAtomValue(
+    extraCosmosChainIdsToConnectPerWalletAtom,
   );
-  const clearCosmosChainIdsToConnectForWallet = useSetAtom(
-    clearCosmosChainIdsToConnectForWalletAtom,
+  const addExtraChainIdsToConnectForWalletType = useSetAtom(
+    addExtraChainIdsToConnectForWalletTypeAtom,
+  );
+  const clearCosmosChainIdsToConnectForWalletType = useSetAtom(
+    clearCosmosChainIdsToConnectForWalletTypeAtom,
   );
 
   const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
@@ -67,7 +69,7 @@ export const useCreateCosmosWallets = () => {
         const mobile = isMobile();
         const walletInfo = getCosmosWalletInfo(wallet);
         const initialChainIds = filterValidChainIds(
-          [...getInitialChainIds(wallet), ...(additionalChainIdsToConnect[wallet] ?? [])],
+          [...getInitialChainIds(wallet), ...(extraCosmosChainIdsToConnectPerWallet[wallet] ?? [])],
           chains,
         );
 
@@ -82,7 +84,7 @@ export const useCreateCosmosWallets = () => {
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
-                addAdditionalCosmosChainIdsToConnectForWallet({
+                addExtraChainIdsToConnectForWalletType({
                   walletName: wallet,
                   chainId: chainIdToConnect,
                 });
@@ -156,8 +158,8 @@ export const useCreateCosmosWallets = () => {
               };
             }
 
-            if (additionalChainIdsToConnect[wallet].length > 0) {
-              clearCosmosChainIdsToConnectForWallet(wallet);
+            if (extraCosmosChainIdsToConnectPerWallet[wallet].length > 0) {
+              clearCosmosChainIdsToConnectForWalletType(wallet);
 
               const retryChainIds = filterValidChainIds([...getInitialChainIds(wallet)], chains);
 
@@ -235,15 +237,15 @@ export const useCreateCosmosWallets = () => {
     },
     [
       callbacks,
-      additionalChainIdsToConnect,
+      extraCosmosChainIdsToConnectPerWallet,
       chains,
       currentWallet,
       sourceAsset,
       cosmosWallet,
-      addAdditionalCosmosChainIdsToConnectForWallet,
+      addExtraChainIdsToConnectForWalletType,
       setDefaultSourceAsset,
       setCosmosWallet,
-      clearCosmosChainIdsToConnectForWallet,
+      clearCosmosChainIdsToConnectForWalletType,
       disconnectAsync,
     ],
   );
@@ -251,15 +253,15 @@ export const useCreateCosmosWallets = () => {
   return { createCosmosWallets };
 };
 
-export const additionalCosmosChainIdsToConnectAtom = atomWithStorage<Record<string, string[]>>(
-  LOCAL_STORAGE_KEYS.additionalChainIdsToConnect,
+export const extraCosmosChainIdsToConnectPerWalletAtom = atomWithStorage<Record<string, string[]>>(
+  LOCAL_STORAGE_KEYS.extraCosmosChainIdsToConnectPerWallet,
   {},
 );
 
-export const addAdditionalCosmosChainIdsToConnectForWalletAtom = atom(
+export const addExtraChainIdsToConnectForWalletTypeAtom = atom(
   null,
   (_get, set, { walletName, chainId }: { walletName: string; chainId: string }) => {
-    set(additionalCosmosChainIdsToConnectAtom, (prev) => {
+    set(extraCosmosChainIdsToConnectPerWalletAtom, (prev) => {
       if (!prev[walletName]) {
         prev[walletName] = [];
       }
@@ -276,10 +278,10 @@ export const addAdditionalCosmosChainIdsToConnectForWalletAtom = atom(
   },
 );
 
-export const clearCosmosChainIdsToConnectForWalletAtom = atom(
+export const clearCosmosChainIdsToConnectForWalletTypeAtom = atom(
   null,
   (_get, set, wallet: WalletType) => {
-    set(additionalCosmosChainIdsToConnectAtom, (prev) => {
+    set(extraCosmosChainIdsToConnectPerWalletAtom, (prev) => {
       const newState = { ...prev };
       if (newState[wallet]) {
         newState[wallet] = [];
