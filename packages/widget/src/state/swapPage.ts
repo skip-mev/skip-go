@@ -77,13 +77,12 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
     isCosmosAsset &&
     !chainIdsToConnect.includes(sourceAsset.chainId)
   ) {
-    const chainInfo = sourceAsset?.chainId && getChainInfo({ chainId: sourceAsset.chainId });
-
     connect({
       chainId: sourceAsset.chainId,
       walletType: walletName,
       autoReconnect: false,
     }).then(() => {
+      const chainInfo = sourceAsset?.chainId && getChainInfo({ chainId: sourceAsset.chainId });
       if (chainInfo) {
         wallet.experimentalSuggestChain(chainInfo);
         set(addAdditionalCosmosChainIdsToConnectForWalletAtom, {
