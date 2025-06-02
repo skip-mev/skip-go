@@ -15,7 +15,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
     <GrazProvider
       grazOptions={{
         chains: isTestnet ? testnetChains : mainnetChains,
-        autoReconnect: true,
+        autoReconnect: false,
         walletDefaultOptions: {
           sign: {
             preferNoSetFee: true,
