@@ -8,11 +8,11 @@ description: "A guide for asset issuers to deploy and register custom ERC20 cont
 
 ## Overview
 
-In the initial release of [`solidity-ibc-eureka`](https://github.com/cosmos/solidity-ibc-eureka), receiving a non-native token (e.g., ATOM from Cosmos Hub) results in the deployment of a default [`IBCERC20`](https://github.com/cosmos/solidity-ibc-eureka/blob/main/contracts/utils/IBCERC20.sol) contract to represent that token on Ethereum.
+In the initial release of [`solidity-ibc-eureka`](https://github.com/cosmos/solidity-ibc-eureka), receiving a non-native token (e.g., ATOM from Cosmos Hub) deploys a default [`IBCERC20`](https://github.com/cosmos/solidity-ibc-eureka/blob/main/contracts/utils/IBCERC20.sol) contract to represent that token on Ethereum.
 
-However, many teams bridging through Cosmos Hub want ownership and control over the ERC20 contracts representing their tokens on Ethereum. Because `IBCERC20` is managed by the `ICS20Transfer` contract and not externally customizable, direct ownership is not possible.
+Many teams bridging through Cosmos Hub, however, want ownership and control over their ERC20 contracts on Ethereum. Since `IBCERC20` is managed by the `ICS20Transfer` contract and isn't customizable, direct ownership isn't possible.
 
-To support external teams taking control of their bridged tokens, we now allow them to deploy their own ERC20 contracts—provided they implement a simple interface that permits the `ICS20Transfer` contract to mint and burn tokens.
+To address this, we allow teams to deploy custom ERC20 contracts—provided they implement a simple interface that lets the `ICS20Transfer` contract mint and burn tokens.
 
 ## Benefits
 
@@ -25,7 +25,7 @@ The benefits of this approach include:
   <Card title="Contract Verification" icon="shield-check">
     Easier contract verification on Etherscan. Each project can easily verify the ERC20 contract deployed for their project to increase trust by associating the token with the official project domain.
   </Card>
-  <Card title="CEX Listing" icon="building-bank">
+  <Card title="Improved CEX Listing" icon="building-bank">
     This is likely to result in easier CEX listing and generally increased trust in the bridged asset.
   </Card>
   <Card title="Full Control" icon="settings">
@@ -73,7 +73,7 @@ The `ICS20Transfer` contract includes a permissioned method for registering a cu
 
 ### Prerequisites
 
-To call this function, an address must hold the `ERC20_CUSTOMIZER_ROLE`, which is managed exclusively by the protocol's security council.
+Only addresses with the `ERC20_CUSTOMIZER_ROLE` can call this function, which is managed exclusively by the protocol's security council. To request that the security council register your custom ERC20 contract, [join our Discord](https://skip.build/discord) and open a support ticket.
 
 ### Critical Timing Requirement
 
@@ -89,23 +89,22 @@ If you're an asset issuer looking to deploy a custom ERC20 contract for your tok
   <Step title="Implement the Interface">
     Deploy your custom ERC20 contract that implements the `IMintableAndBurnable` interface with proper access controls for the `ICS20Transfer` proxy.
   </Step>
-  <Step title="Contact the Team">
-    Reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) to coordinate the registration of your custom ERC20 contract.
+  <Step title="Request Registration">
+    [Join our Discord](https://skip.build/discord) and open a support ticket to request that the security council register your custom ERC20 contract via `setCustomERC20`.
   </Step>
-  <Step title="Register Before First Transfer">
-    Ensure your custom ERC20 is registered via `setCustomERC20` before any IBC transfers of your token occur.
+  <Step title="Confirm Registration Timing">
+    Coordinate with the security council to ensure your custom ERC20 is registered before any IBC transfers of your token occur.
   </Step>
   <Step title="Verify and Launch">
     Verify your contract on Etherscan and begin bridging your token with full control over its ERC20 representation.
   </Step>
 </Steps>
 
-## Support
+## Support and Resources
 
 Need help with your custom ERC20 integration? Our team is ready to assist:
 
-- Contact us directly: [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) on Telegram
+- [Join our Discord](https://skip.build/discord) and open a support ticket
 - Email: susannah@interchainlabs.io
-- Join our [Discord](https://discord.gg/cosmos) and find the support channel
 
 For technical specifications, visit the [solidity-ibc-eureka repository](https://github.com/cosmos/solidity-ibc-eureka). 
