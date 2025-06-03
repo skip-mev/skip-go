@@ -84,10 +84,6 @@ export const useCreateCosmosWallets = () => {
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
-                addExtraChainIdsToConnectForWalletType({
-                  walletName: wallet,
-                  chainId: chainIdToConnect,
-                });
               }
             }
 
@@ -128,6 +124,11 @@ export const useCreateCosmosWallets = () => {
               });
             }
 
+            addExtraChainIdsToConnectForWalletType({
+              walletName: wallet,
+              chainId: chainIdToConnect ?? "",
+            });
+
             track("wallet connected", {
               walletName: wallet,
               chainId: chainIdToConnect,
@@ -158,7 +159,7 @@ export const useCreateCosmosWallets = () => {
               };
             }
 
-            if (extraCosmosChainIdsToConnectPerWallet[wallet].length > 0) {
+            if (extraCosmosChainIdsToConnectPerWallet?.[wallet]?.length > 0) {
               clearCosmosChainIdsToConnectForWalletType(wallet);
 
               const retryChainIds = filterValidChainIds([...getInitialChainIds(wallet)], chains);

@@ -48,8 +48,6 @@ export const useConnectToMissingCosmosChain = () => {
             chainId: sourceAsset.chainId,
           });
         }
-      } catch (error) {
-        console.error("Wallet connection failed:", error);
       } finally {
         setIsAskingToApproveConnection(false);
       }
