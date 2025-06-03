@@ -18,6 +18,8 @@ import {
   slippageAtom,
   isInvertingSwapAtom,
   preloadSigningStargateClientEffect,
+  onSourceAssetUpdatedEffect,
+  onDestinationAssetUpdatedEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -47,8 +49,10 @@ import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
   useAtom(preloadSigningStargateClientEffect);
+  useAtom(onSourceAssetUpdatedEffect);
+  useAtom(onDestinationAssetUpdatedEffect);
+  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
