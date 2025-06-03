@@ -78,22 +78,26 @@ export const useCreateCosmosWallets = () => {
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
 
           try {
+            let response = await connect({
+              chainId: initialChainIds,
+              walletType: wallet,
+              autoReconnect: false,
+            });
+
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
+
+                response = await connect({
+                  chainId: chainIdToConnect,
+                  walletType: wallet,
+                  autoReconnect: false,
+                });
               }
             }
-
-            const response = await connect({
-              chainId: connectToInitialChainId
-                ? initialChainIds
-                : [...initialChainIds, chainIdToConnect],
-              walletType: wallet,
-              autoReconnect: false,
-            });
 
             if (!response?.accounts) {
               throw new Error("failed to get accounts from wallet");
@@ -104,9 +108,10 @@ export const useCreateCosmosWallets = () => {
             }
 
             const chainIdToAddressMap: Record<string, string> = Object.fromEntries(
-              Object.entries(response.accounts).map(([key, value]) => [key, value.bech32Address]),
+              Object.entries(response.accounts).map(([key, value]) => [key, value?.bech32Address]),
             );
-            const address = chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
+            const address =
+              chainIdToConnect && response?.accounts?.[chainIdToConnect]?.bech32Address;
 
             if (cosmosWallet === undefined) {
               callbacks?.onWalletConnected?.({
@@ -115,7 +120,7 @@ export const useCreateCosmosWallets = () => {
                 address: address,
               });
               const currentCosmosId =
-                response?.accounts[Object.keys(response?.accounts)[0]]?.bech32Address;
+                response?.accounts[Object.keys(response?.accounts)?.[0]]?.bech32Address;
 
               setCosmosWallet({
                 id: currentCosmosId,
@@ -172,7 +177,7 @@ export const useCreateCosmosWallets = () => {
                 autoReconnect: false,
               });
               const address =
-                chainIdToConnect && response?.accounts[chainIdToConnect].bech32Address;
+                chainIdToConnect && response?.accounts[chainIdToConnect]?.bech32Address;
               return { address };
             }
 
