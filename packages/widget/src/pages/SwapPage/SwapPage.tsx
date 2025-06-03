@@ -105,9 +105,8 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
-        if (asset) {
-          callbacks?.onSourceAssetUpdated?.(asset);
-        }
+
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
 
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
@@ -134,9 +133,7 @@ export const SwapPage = () => {
           ...asset,
         }));
 
-        if (asset) {
-          callbacks?.onSourceAssetUpdated?.(asset);
-        }
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
 
         switchEvmchainId(asset?.chainId);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
@@ -164,9 +161,7 @@ export const SwapPage = () => {
           ...asset,
         }));
 
-        if (asset) {
-          callbacks?.onDestinationAssetUpdated?.(asset);
-        }
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
 
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
@@ -184,9 +179,7 @@ export const SwapPage = () => {
           ...asset,
         }));
 
-        if (asset) {
-          callbacks?.onDestinationAssetUpdated?.(asset);
-        }
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
 
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
