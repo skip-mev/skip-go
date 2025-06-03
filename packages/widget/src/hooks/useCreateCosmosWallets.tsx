@@ -78,26 +78,22 @@ export const useCreateCosmosWallets = () => {
             !chainIdToConnect || (chainIdToConnect && initialChainIds.includes(chainIdToConnect));
 
           try {
-            let response = await connect({
-              chainId: initialChainIds,
-              walletType: wallet,
-              autoReconnect: false,
-            });
-
             if (chainIdToConnect) {
               const chainInfo = getChainInfo(chainIdToConnect);
               if (!chainInfo)
                 throw new Error(`connect: Chain info not found for chainId: ${chainId}`);
               if (!mobile && !isWC) {
                 await getWallet(wallet).experimentalSuggestChain(chainInfo);
-
-                response = await connect({
-                  chainId: chainIdToConnect,
-                  walletType: wallet,
-                  autoReconnect: false,
-                });
               }
             }
+
+            const response = await connect({
+              chainId: connectToInitialChainId
+                ? initialChainIds
+                : [...initialChainIds, chainIdToConnect],
+              walletType: wallet,
+              autoReconnect: false,
+            });
 
             if (!response?.accounts) {
               throw new Error("failed to get accounts from wallet");
