@@ -21,6 +21,7 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     getCosmosSigner,
     getEvmSigner,
     onValidateGasBalance,
+    trackTxPollingProps,
   } = options;
 
   if (txs === undefined) {
@@ -114,6 +115,7 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,
+      ...trackTxPollingProps,
       onTransactionTracked: options.onTransactionTracked,
     });
 
@@ -141,7 +143,7 @@ const getDefaultFallbackGasAmount = async (chainId: string, chainType: ChainType
 
   const venuesResult = await venues();
   const isSwapChain = venuesResult?.some((venue: { chainId?: string }) => venue.chainId === chainId) ?? false;
-  
+
   const defaultGasAmount = Math.ceil(
     isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
   );
