@@ -36,7 +36,7 @@ export class ClientState {
   }
 
   static async getSkipAssets(props: GetMainnetAndTestnetAssetsProps) {
-    if (this.skipAssets) {
+    if (props.chainId && this.skipAssets?.[props.chainId] || !props.chainId && this.skipAssets) {
       return this.skipAssets;
     }
 
