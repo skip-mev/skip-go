@@ -166,6 +166,8 @@ export const useInitWidget = (props: WidgetProps) => {
       onTransactionFailed: props.onTransactionFailed,
       onRouteUpdated: props.onRouteUpdated,
       onSourceAndDestinationSwapped: props.onSourceAndDestinationSwapped,
+      onSourceAssetUpdated: props.onSourceAssetUpdated,
+      onDestinationAssetUpdated: props.onDestinationAssetUpdated,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -205,6 +207,8 @@ export const useInitWidget = (props: WidgetProps) => {
     props.filterOutUnlessUserHasBalance,
     setFilterOutUnlessUserHasBalanceAtom,
     props.onSourceAndDestinationSwapped,
+    props.onSourceAssetUpdated,
+    props.onDestinationAssetUpdated,
   ]);
 
   return { theme: mergedTheme };
@@ -227,5 +231,4 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
       ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
   }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);
-
 };
