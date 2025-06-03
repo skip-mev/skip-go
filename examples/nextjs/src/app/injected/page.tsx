@@ -62,7 +62,7 @@ export default function Home() {
    * Connect to Cosmos-based chains using Keplr.
    */
   const connectCosmos = async () => {
-    const chainIds = ["cosmoshub-4", "osmosis-1", "elys-1"];
+    const chainIds = ["cosmoshub-4", "osmosis-1", "elys-1", "noble-1"];
 
     // Request access to the specified Cosmos chains from Keplr
     await window.keplr?.enable(chainIds);
