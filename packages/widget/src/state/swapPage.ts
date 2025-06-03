@@ -147,13 +147,13 @@ export const setAsset = ({ type, ...assetDetails }: SetAssetProps) => {
     case "source":
       set(sourceAssetAtom, { ...assetFound, amount: assetAmount });
       if (assetAmount) {
-        set(debouncedSourceAssetAmountAtom, assetAmount, undefined, true);
+        set(sourceAssetAmountAtom, assetAmount);
       }
       break;
     case "destination":
       set(destinationAssetAtom, { ...assetFound, amount: assetAmount });
       if (assetAmount) {
-        set(debouncedDestinationAssetAmountAtom, assetAmount, undefined, true);
+        set(destinationAssetAmountAtom, assetAmount);
       }
   }
 };

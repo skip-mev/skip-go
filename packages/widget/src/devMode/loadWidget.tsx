@@ -105,7 +105,9 @@ const DevMode = () => {
           set source asset to USDC on noble
         </button>
         <button
-          onClick={() => setAsset({ type: "destination", chainId: "cosmoshub-4", denom: "uatom" })}
+          onClick={() =>
+            setAsset({ type: "destination", chainId: "cosmoshub-4", denom: "uatom", amount: 1 })
+          }
         >
           set destination asset to ATOM on cosmoshub
         </button>
