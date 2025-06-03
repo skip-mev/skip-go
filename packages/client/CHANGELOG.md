@@ -1,11 +1,5 @@
 # @skip-go/client
 
-## 1.1.7
-
-### Patch Changes
-
-- 92cef82: Only return cached skipAssets if asset found for chainId or chainId is not specified
-
 ## 1.1.6
 
 ### Patch Changes
