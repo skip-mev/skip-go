@@ -63,7 +63,6 @@ export type onSourceAndDestinationSwappedProps = {
 export type onAssetUpdatedProps = {
   chainId?: string;
   denom?: string;
-  amount?: string;
 };
 
 export type Callbacks = {
