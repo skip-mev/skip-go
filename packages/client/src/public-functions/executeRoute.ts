@@ -10,6 +10,7 @@ import { messages } from "../api/postMessages";
 import { isAddress } from "viem";
 import type { SignerGetters, GasOptions, UserAddress } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
+import type { TrackTxPollingProps } from "src/api/postTrackTransaction";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -45,7 +46,17 @@ export type ExecuteRouteOptions = SignerGetters &
      * If `batchSimulate` is set to `false`, it will simulate each message one by one.
      */
     batchSimulate?: boolean;
-  };
+    
+    /**
+     * Optional configuration for transaction polling behavior.
+     * - `maxRetries`: Maximum number of polling attempts (default: 5)
+     * - `retryInterval`: Retry interval in milliseconds (default: 1000)
+     * - `backoffMultiplier`: Exponential backoff multiplier for increasing delay between retries (default: 2.5)
+     * Example backoff with retryInterval = 1000 and backoffMultiplier = 2:
+     * 1st retry: 1000ms → 2nd: 2000ms → 3rd: 4000ms → 4th: 8000ms ...
+     */
+    trackTxPollingOptions?: TrackTxPollingProps;
+  }
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
   const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
