@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 import { ClientState } from "../state/clientState";
 import type { TransactionCallbacks } from "../types/callbacks";
 import { ChainType } from "../types/swaggerTypes";
-import type { CosmosMsg, RouteResponse } from "../types/swaggerTypes";
+import type { CosmosMsg, RouteResponse, PostHandler } from "../types/swaggerTypes";
 import type { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
@@ -46,7 +46,7 @@ export type ExecuteRouteOptions = SignerGetters &
      * If `batchSimulate` is set to `false`, it will simulate each message one by one.
      */
     batchSimulate?: boolean;
-    
+
     /**
      * Optional configuration for transaction polling behavior.
      * - `maxRetries`: Maximum number of polling attempts (default: 5)
@@ -56,6 +56,11 @@ export type ExecuteRouteOptions = SignerGetters &
      * 1st retry: 1000ms → 2nd: 2000ms → 3rd: 4000ms → 4th: 8000ms ...
      */
     trackTxPollingOptions?: TrackTxPollingProps;
+
+    /**
+     * Specify actions to perform after the route is completed
+     */
+    postRouteHandler?: PostHandler;
   }
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
@@ -100,6 +105,7 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
     addressList: addressList,
     slippageTolerancePercent: options.slippageTolerancePercent || "1",
     chainIdsToAffiliates: ApiState.chainIdsToAffiliates,
+    postRouteHandler: options.postRouteHandler,
   });
 
   if (beforeMsg && (response?.txs?.length ?? 0) > 0) {
