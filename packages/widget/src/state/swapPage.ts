@@ -96,7 +96,7 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
   },
 );
 export const onDestinationAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
-  const destinationAsset = get(sourceAssetAtom);
+  const destinationAsset = get(destinationAssetAtom);
   const callbacks = get(callbacksAtom);
 
   if (destinationAsset?.chainId) {
