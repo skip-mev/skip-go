@@ -63,11 +63,15 @@ These functions must be callable by the proxy of the `ICS20Transfer` contract:
 
 - **Mainnet**: `0xa348CfE719B63151F228e3C30EB424BA5a983012`
 
-Token teams may implement access controls or rate limits as needed, as long as the `ICS20Transfer` proxy can still perform mint and burn operations.
+It is crucial that access to these `mint` and `burn` functions is strictly limited to only the `ICS20Transfer` proxy. Allowing any other address or contract to call these functions could lead to unauthorized token manipulation and compromise the integrity of your token. Token teams may implement additional access controls or rate limits as needed, provided the `ICS20Transfer` proxy retains its ability to perform mint and burn operations.
 
 <Note>
   The interface remains open to iteration based on community feedback.
 </Note>
+
+### Upgradability
+
+You are not required to deploy an upgradable contract for your custom ERC20. We commit to maintaining the stability of the `IMintableAndBurnable` interface. However, please note that if we extend the interface with new functionality in the future, a non-upgradable contract would not be able to utilize these new features.
 
 ## Registering a Custom ERC20
 
@@ -76,6 +80,8 @@ The `ICS20Transfer` contract includes a permissioned method for registering a cu
 ### Prerequisites
 
 Only addresses assigned the `ERC20_CUSTOMIZER_ROLE` can call this function. This role is established by the protocol's security council and administered by the Eureka Ops multi-sig. To request registration of your custom ERC20 contract, [join our Discord](https://skip.build/discord) and open a support ticket.
+
+Additionally, the token's denomination on the Cosmos Hub must be established. The token must either be live on the Hub, or its original denomination and complete IBC path must be known if it originates elsewhere. We require the token to be active on the Cosmos Hub before registration can proceed.
 
 ### Critical Timing Requirement
 
