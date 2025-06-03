@@ -16,7 +16,9 @@ export const useConnectToMissingCosmosChain = () => {
 
   const [isAskingToApproveConnection, setIsAskingToApproveConnection] = useState(false);
 
-  const setExtraChainId = useSetAtom(addExtraChainIdsToConnectForWalletTypeAtom);
+  const addExtraChainIdsToConnectForWalletType = useSetAtom(
+    addExtraChainIdsToConnectForWalletTypeAtom,
+  );
 
   useEffect(() => {
     const connectToMissingCosmosChain = async () => {
@@ -43,7 +45,7 @@ export const useConnectToMissingCosmosChain = () => {
             autoReconnect: false,
           });
 
-          setExtraChainId({
+          addExtraChainIdsToConnectForWalletType({
             walletName,
             chainId: sourceAsset.chainId,
           });
@@ -54,7 +56,7 @@ export const useConnectToMissingCosmosChain = () => {
     };
 
     connectToMissingCosmosChain();
-  }, [sourceAsset, wallets, extraChainIdsToConnect, setExtraChainId]);
+  }, [sourceAsset, wallets, extraChainIdsToConnect, addExtraChainIdsToConnectForWalletType]);
 
   return { isAskingToApproveConnection };
 };

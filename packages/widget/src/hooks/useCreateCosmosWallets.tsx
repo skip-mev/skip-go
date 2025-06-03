@@ -263,18 +263,19 @@ export const addExtraChainIdsToConnectForWalletTypeAtom = atom(
   null,
   (_get, set, { walletName, chainId }: { walletName: string; chainId: string }) => {
     set(extraCosmosChainIdsToConnectPerWalletAtom, (prev) => {
-      if (!prev[walletName]) {
-        prev[walletName] = [];
-      }
-      if (
-        chainId &&
-        !prev[walletName].includes(chainId) &&
-        !getInitialChainIds(walletName as WalletType).includes(chainId)
-      ) {
-        prev[walletName].push(chainId);
+      const extraCosmosChainIds = prev[walletName] ?? [];
+
+      const isInitialChainId = getInitialChainIds(walletName as WalletType).includes(chainId);
+      const isAlreadyAdded = extraCosmosChainIds.includes(chainId);
+
+      if (!chainId || isInitialChainId || isAlreadyAdded) {
+        return prev;
       }
 
-      return prev;
+      return {
+        ...prev,
+        [walletName]: [...extraCosmosChainIds, chainId],
+      };
     });
   },
 );
@@ -283,11 +284,13 @@ export const clearCosmosChainIdsToConnectForWalletTypeAtom = atom(
   null,
   (_get, set, wallet: WalletType) => {
     set(extraCosmosChainIdsToConnectPerWalletAtom, (prev) => {
-      const newState = { ...prev };
-      if (newState[wallet]) {
-        newState[wallet] = [];
-      }
-      return newState;
+      const current = prev[wallet] ?? [];
+      if (current.length === 0) return prev;
+
+      return {
+        ...prev,
+        [wallet]: [],
+      };
     });
   },
 );
