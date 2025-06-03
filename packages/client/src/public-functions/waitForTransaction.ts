@@ -11,12 +11,12 @@ export const waitForTransaction = async ({
   chainId,
   txHash,
   onTransactionTracked,
-  ...trackTxPollingProps
+  ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
   const { explorerLink } = await trackTransaction({
     chainId,
     txHash,
-    ...trackTxPollingProps,
+    ...trackTxPollingOptions,
   });
   await onTransactionTracked?.({ txHash, chainId, explorerLink });
 

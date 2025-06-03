@@ -55,7 +55,7 @@ export type ExecuteRouteOptions = SignerGetters &
      * Example backoff with retryInterval = 1000 and backoffMultiplier = 2:
      * 1st retry: 1000ms → 2nd: 2000ms → 3rd: 4000ms → 4th: 8000ms ...
      */
-    trackTxPollingProps?: TrackTxPollingProps;
+    trackTxPollingOptions?: TrackTxPollingProps;
   }
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {

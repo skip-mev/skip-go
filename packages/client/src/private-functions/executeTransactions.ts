@@ -21,7 +21,7 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     getCosmosSigner,
     getEvmSigner,
     onValidateGasBalance,
-    trackTxPollingProps,
+    trackTxPollingOptions,
   } = options;
 
   if (txs === undefined) {
@@ -115,7 +115,7 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,
-      ...trackTxPollingProps,
+      ...trackTxPollingOptions,
       onTransactionTracked: options.onTransactionTracked,
     });
 

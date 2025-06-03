@@ -2,4 +2,4 @@
 "@skip-go/client": patch
 ---
 
-Add trackTxPollingProps to ExecuteRouteOptions
+Add trackTxPollingOptions to ExecuteRouteOptions and waitForTransaction
