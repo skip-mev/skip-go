@@ -113,7 +113,7 @@ export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEff
   const callbacks = get(callbacksAtom);
 
   if (sourceAsset?.chainId) {
-    callbacks?.onDestinationAssetUpdated?.({
+    callbacks?.onSourceAssetUpdated?.({
       chainId: sourceAsset?.chainId,
       denom: sourceAsset?.denom,
       amount: sourceAsset?.amount,
