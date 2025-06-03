@@ -24,6 +24,7 @@ export const Router = () => {
         <ErrorBoundary
           fallback={null}
           onError={(error) => {
+            console.log("error", error);
             track("unexpected error page: unexpected error from swap page", { error });
             setErrorWarning({ errorWarningType: ErrorWarningType.Unexpected, error });
           }}
