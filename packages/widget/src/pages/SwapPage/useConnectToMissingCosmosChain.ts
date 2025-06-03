@@ -33,26 +33,23 @@ export const useConnectToMissingCosmosChain = () => {
       setIsAskingToApproveConnection(true);
 
       try {
-        const response = await connect({
-          chainId: sourceAsset.chainId,
-          walletType: walletName,
-          autoReconnect: false,
-        });
-
-        console.log(response);
-
-        setExtraChainId({
-          walletName,
-          chainId: sourceAsset.chainId,
-        });
-
         const chainInfo = getChainInfo({ chainId: sourceAsset.chainId });
         if (chainInfo) {
-          wallet.experimentalSuggestChain(chainInfo);
+          await wallet.experimentalSuggestChain(chainInfo);
+
+          await connect({
+            chainId: sourceAsset.chainId,
+            walletType: walletName,
+            autoReconnect: false,
+          });
+
+          setExtraChainId({
+            walletName,
+            chainId: sourceAsset.chainId,
+          });
         }
       } catch (error) {
         console.error("Wallet connection failed:", error);
-        throw error;
       } finally {
         setIsAskingToApproveConnection(false);
       }
