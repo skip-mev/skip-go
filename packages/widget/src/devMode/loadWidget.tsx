@@ -71,6 +71,12 @@ const DevMode = () => {
       onSourceAndDestinationSwapped(props) {
         console.log(props);
       },
+      onSourceAssetUpdated(props) {
+        console.log(props);
+      },
+      onDestinationAssetUpdated(props) {
+        console.log(props);
+      },
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);
 

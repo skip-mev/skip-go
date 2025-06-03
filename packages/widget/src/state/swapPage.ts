@@ -95,6 +95,31 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
     })();
   },
 );
+export const onDestinationAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const destinationAsset = get(sourceAssetAtom);
+  const callbacks = get(callbacksAtom);
+
+  if (destinationAsset?.chainId) {
+    callbacks?.onDestinationAssetUpdated?.({
+      chainId: destinationAsset?.chainId,
+      denom: destinationAsset?.denom,
+      amount: destinationAsset?.amount,
+    });
+  }
+});
+
+export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
+  const sourceAsset = get(sourceAssetAtom);
+  const callbacks = get(callbacksAtom);
+
+  if (sourceAsset?.chainId) {
+    callbacks?.onDestinationAssetUpdated?.({
+      chainId: sourceAsset?.chainId,
+      denom: sourceAsset?.denom,
+      amount: sourceAsset?.amount,
+    });
+  }
+});
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   LOCAL_STORAGE_KEYS.sourceAsset,
