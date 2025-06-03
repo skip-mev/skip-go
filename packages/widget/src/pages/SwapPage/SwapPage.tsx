@@ -16,8 +16,8 @@ import {
   onRouteUpdatedEffect,
   routePreferenceAtom,
   slippageAtom,
-  onSourceAssetUpdatedEffect,
   isInvertingSwapAtom,
+  preloadSigningStargateClientEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
@@ -42,11 +42,13 @@ import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
 import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 import { SwapPageHeader } from "./SwapPageHeader";
+import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  useAtom(onSourceAssetUpdatedEffect);
+  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
+  useAtom(preloadSigningStargateClientEffect);
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
@@ -169,6 +171,10 @@ export const SwapPage = () => {
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);
+
+    if (isAskingToApproveConnection) {
+      return <MainButton label="Approving connection..." loading />;
+    }
 
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
@@ -331,11 +337,12 @@ export const SwapPage = () => {
       />
     );
   }, [
+    isAskingToApproveConnection,
+    sourceAccount?.address,
+    isInvertingSwap,
     sourceAsset?.chainId,
     sourceAsset?.amount,
     sourceAsset?.denom,
-    sourceAccount?.address,
-    isInvertingSwap,
     destinationAsset?.chainId,
     destinationAsset?.amount,
     isWaitingForNewRoute,
@@ -345,14 +352,14 @@ export const SwapPage = () => {
     isSwapOperation,
     route,
     routeError?.message,
+    getBalance,
+    maxAmountMinusFees,
     routePreference,
     slippage,
     showCosmosLedgerWarning,
     showGoFastWarning,
     isGoFast,
-    maxAmountMinusFees,
     setChainAddresses,
-    getBalance,
     setCurrentPage,
     setSwapExecutionState,
     setError,

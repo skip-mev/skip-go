@@ -13,6 +13,10 @@ import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
+import {
+  extraCosmosChainIdsToConnectPerWalletAtom,
+  getInitialChainIds,
+} from "@/hooks/useCreateCosmosWallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -51,38 +55,46 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
   }
 });
 
-export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const wallets = get(walletsAtom);
-  const getSigners = get(getConnectedSignersAtom);
+export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> = atomEffect(
+  (get) => {
+    (async () => {
+      const sourceAsset = get(sourceAssetAtom);
+      const wallets = get(walletsAtom);
+      const getSigners = get(getConnectedSignersAtom);
+      const extraChainIdsToConnect = get(extraCosmosChainIdsToConnectPerWalletAtom);
 
-  const wallet = wallets?.cosmos?.walletName && getWallet(wallets.cosmos.walletName as WalletType);
+      const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
+      const signer = getSigners?.getCosmosSigner ?? (walletName && getWallet(walletName));
 
-  const signer = getSigners?.getCosmosSigner ?? wallet;
+      if (!sourceAsset?.chainId || !wallets.cosmos || !signer || !walletName) return;
 
-  if (sourceAsset?.chainId && wallets.cosmos && signer) {
-    getSigningStargateClient({
-      chainId: sourceAsset?.chainId,
-      getOfflineSigner: async (chainId) => {
-        if (getSigners?.getCosmosSigner) {
-          return getSigners.getCosmosSigner(chainId);
-        }
-        if (!wallets.cosmos) {
-          throw new Error("getCosmosSigner error: no cosmos wallet");
-        }
-        const wallet = getWallet(wallets.cosmos.walletName as WalletType);
-        if (!wallet) {
-          throw new Error("getCosmosSigner error: wallet not found");
-        }
-        const key = await wallet.getKey(chainId);
+      const additionalChainIds = extraChainIdsToConnect[walletName] ?? [];
+      const chainIdsToConnect = [...getInitialChainIds(walletName), ...additionalChainIds];
 
-        return key.isNanoLedger
-          ? wallet.getOfflineSignerOnlyAmino(chainId)
-          : wallet.getOfflineSigner(chainId);
-      },
-    });
-  }
-});
+      if (!chainIdsToConnect.includes(sourceAsset.chainId)) return;
+
+      await getSigningStargateClient({
+        chainId: sourceAsset.chainId,
+        getOfflineSigner: async (chainId) => {
+          if (getSigners?.getCosmosSigner) {
+            return getSigners.getCosmosSigner(chainId);
+          }
+
+          if (!wallets.cosmos) throw new Error("getCosmosSigner error: no cosmos wallet");
+
+          const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+          if (!wallet) throw new Error("getCosmosSigner error: wallet not found");
+          if (!wallet?.getKey) throw new Error("getCosmosSigner error: getKey not found");
+
+          const key = await wallet.getKey(chainId);
+          return key.isNanoLedger
+            ? wallet.getOfflineSignerOnlyAmino(chainId)
+            : wallet.getOfflineSigner(chainId);
+        },
+      });
+    })();
+  },
+);
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   LOCAL_STORAGE_KEYS.sourceAsset,
