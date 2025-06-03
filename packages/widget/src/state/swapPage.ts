@@ -11,10 +11,9 @@ import { jotaiStore } from "@/widget/Widget";
 import { currentPageAtom, Routes } from "./router";
 import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
-import { connect, getChainInfo, getWallet, WalletType } from "graz";
+import { getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import {
-  addExtraChainIdsToConnectForWalletTypeAtom,
   extraCosmosChainIdsToConnectPerWalletAtom,
   getInitialChainIds,
 } from "@/hooks/useCreateCosmosWallets";
@@ -62,11 +61,17 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
       const sourceAsset = get(sourceAssetAtom);
       const wallets = get(walletsAtom);
       const getSigners = get(getConnectedSignersAtom);
+      const extraChainIdsToConnect = get(extraCosmosChainIdsToConnectPerWalletAtom);
 
       const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
       const signer = getSigners?.getCosmosSigner ?? (walletName && getWallet(walletName));
 
-      if (!sourceAsset?.chainId || !wallets.cosmos || !signer) return;
+      if (!sourceAsset?.chainId || !wallets.cosmos || !signer || !walletName) return;
+
+      const additionalChainIds = extraChainIdsToConnect[walletName] ?? [];
+      const chainIdsToConnect = [...getInitialChainIds(walletName), ...additionalChainIds];
+
+      if (!chainIdsToConnect.includes(sourceAsset.chainId)) return;
 
       await getSigningStargateClient({
         chainId: sourceAsset.chainId,
@@ -77,13 +82,14 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
 
           if (!wallets.cosmos) throw new Error("getCosmosSigner error: no cosmos wallet");
 
-          const fallbackWallet = getWallet(wallets.cosmos.walletName as WalletType);
-          if (!fallbackWallet) throw new Error("getCosmosSigner error: wallet not found");
+          const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+          if (!wallet) throw new Error("getCosmosSigner error: wallet not found");
+          if (!wallet?.getKey) throw new Error("getCosmosSigner error: getKey not found");
 
-          const key = await fallbackWallet.getKey(chainId);
+          const key = await wallet.getKey(chainId);
           return key.isNanoLedger
-            ? fallbackWallet.getOfflineSignerOnlyAmino(chainId)
-            : fallbackWallet.getOfflineSigner(chainId);
+            ? wallet.getOfflineSignerOnlyAmino(chainId)
+            : wallet.getOfflineSigner(chainId);
         },
       });
     })();
