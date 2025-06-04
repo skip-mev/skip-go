@@ -231,6 +231,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
 
+      console.log(get(transactionHistoryAtom).length, transactionHistoryIndex);
+
       set(setTransactionHistoryAtom, transactionHistoryIndex, {
         ...transactionHistoryItem,
         signatures: transactionsSigned,
