@@ -83,7 +83,7 @@ export const useSyncTxStatus = ({
       const oldTxHistoryItem = txHistory[index];
 
       if (JSON.stringify(newTxHistoryItem) !== JSON.stringify(oldTxHistoryItem)) {
-        setTransactionHistory(newTxHistoryItem);
+        setTransactionHistory(index, newTxHistoryItem);
         setOverallStatus(computedSwapStatus);
       }
     }

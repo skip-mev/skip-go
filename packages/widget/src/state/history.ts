@@ -24,15 +24,16 @@ export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
 
 export const setTransactionHistoryAtom = atom(
   null,
-  (get, set, historyItem: TransactionHistoryItem) => {
+  (get, set, index: number, historyItem: TransactionHistoryItem) => {
     const history = get(transactionHistoryAtom);
     const newHistory = [...history];
 
     const targetTxHash = historyItem.transactionDetails?.[0]?.txHash;
 
-    const existingIndex = newHistory.findIndex((item) =>
-      item.transactionDetails?.some((detail) => detail?.txHash === targetTxHash),
-    );
+    const existingIndex =
+      newHistory.findIndex((item) =>
+        item.transactionDetails?.some((detail) => detail?.txHash === targetTxHash),
+      ) ?? index;
 
     if (existingIndex !== -1) {
       const oldItem = newHistory[existingIndex];
