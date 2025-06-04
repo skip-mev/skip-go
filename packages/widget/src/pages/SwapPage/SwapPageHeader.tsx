@@ -10,7 +10,7 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { PageHeader } from "@/components/PageHeader";
-import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -71,18 +71,12 @@ export const SwapPageHeader = memo(() => {
 
 export const TrackLatestTxHistoryItemStatus = memo(() => {
   const transactionhistory = useAtomValue(transactionHistoryAtom);
-  const setOverallStatus = useSetAtom(setOverallStatusAtom);
-  const { transactionsSigned, route } = useAtomValue(swapExecutionStateAtom);
   const lastTxHistoryItem = transactionhistory.at(-1);
 
-  const { transferAssetRelease } = useTxHistory({
+  useTxHistory({
     txHistoryItem: lastTxHistoryItem,
     index: transactionhistory.length - 1,
   });
-
-  if (transferAssetRelease && transactionsSigned !== route?.txsRequired) {
-    setOverallStatus("failed");
-  }
 
   return null;
 });
