@@ -12,7 +12,7 @@ export const route = async (request: RouteRequest) => {
   return api({
     methodName: "route",
     method: "post",
-    path: "/v2/fungible/route",
+    path: "v2/fungible/route",
   })(requestWithAffiliateFeeBps);
 };
 

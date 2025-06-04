@@ -36,6 +36,10 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
+    if (path?.startsWith('/')) {
+      console.warn('paths that start with / are treated as absolute paths, please remove the leading / if this path is intended to be a relative path');
+    }
+    
     const url = new URL(path ?? "", baseUrl);
 
     if (params && typeof params === "object") {
@@ -60,6 +64,10 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     data: Body = {} as Body,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
+    if (path?.startsWith('/')) {
+      console.warn('paths that start with / are treated as absolute paths, please remove the leading / if this path is intended to be a relative path');
+    }
+
     const response = await fetch(new URL(path, baseUrl).toString(), {
       method: "POST",
       headers: defaultHeaders,

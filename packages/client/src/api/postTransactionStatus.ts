@@ -3,7 +3,7 @@ import type { ApiResponse } from "../utils/generateApi";
 
 export const transactionStatus = pollingApi({
   methodName: "status",
-  path: "/v2/tx/status",
+  path: "v2/tx/status",
   method: "get",
 });
 
