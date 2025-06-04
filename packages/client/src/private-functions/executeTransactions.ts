@@ -26,11 +26,8 @@ export const executeTransactions = async (
     getCosmosSigner,
     getEvmSigner,
     onValidateGasBalance,
-<<<<<<< HEAD
     trackTxPollingOptions,
-=======
     batchSignTxs = true,
->>>>>>> 76dbdc41 (feat: sign multi tx route upfront)
   } = options;
 
   if (txs === undefined) {
