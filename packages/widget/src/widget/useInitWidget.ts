@@ -106,7 +106,6 @@ export const useInitWidget = (props: WidgetProps) => {
   useEffect(() => {
     setClientOptions({
       ...mergedSkipClientConfig,
-      apiHeaders: { "content-type": "text/plain" },
     });
   }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
 
