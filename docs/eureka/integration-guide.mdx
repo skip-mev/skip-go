@@ -23,16 +23,23 @@ description: "A guide on how to integrate IBC Eureka for chain developers, asset
 
 If you are interested in a direct Eureka connection to Ethereum or L2s/Solana coming later this year, please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) directly as additional integration work is required.
 
-## Asset Issuers
+## Asset Issuers: Bringing Your Token to Ethereum
 
-**To bring your asset to Ethereum or other EVM domains via Eureka, you must deploy a custom ERC20 contract on Ethereum. To integrate with Eureka and keep full control over your token's representation and metadata, you'll need to deploy a custom ERC20 token.**
+To bridge assets to Ethereum through Eureka while maintaining full control over your token's representation, you must deploy a custom ERC20 contract. This approach ensures you retain ownership of the token's metadata and on-chain behavior.
 
-This approach allows you to:
-- Customize token metadata and naming
-- Verify contracts on Etherscan under your project's domain
-- Maintain ownership and control over your token's ERC20 representation
+**Requirements:**
+1. **Custom ERC20 Implementation**  
+   Deploy an ERC20 contract that implements our required interface standards
+2. **CoinGecko Listing**  
+   Maintain a CoinGecko listing to ensure accurate pricing and metadata in our interfaces
 
-For detailed instructions on deploying and registering your custom ERC20 contract, please refer to our [Custom ERC20 Integration Guide](/eureka/custom-erc20-integration). If you require support during this process, you can [join our Discord](https://skip.build/discord) and open a support ticket.
+**Why deploy a custom ERC20?**
+- **Full Metadata Control** - Set your token's name, symbol, and other details during deployment
+- **Verified Ownership** - Register the contract under your project's domain on Etherscan
+- **Permanent Governance** - Maintain irrevocable control over the token's core logic
+
+**Ready to get started?**  
+Follow our step-by-step [Custom ERC20 Integration Guide](/eureka/custom-erc20-integration) to deploy your contract.
 
 ## Application Developers
 
