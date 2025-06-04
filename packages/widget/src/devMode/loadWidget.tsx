@@ -105,17 +105,17 @@ const DevMode = () => {
         </button>
         <button
           onClick={() =>
-            setAsset({ type: "source", chainId: "noble-1", denom: "uusdc", amount: 1 })
+            setAsset({ type: "source", chainId: "osmosis-1", denom: "uosmo", amount: 1 })
           }
         >
-          set source asset to USDC on noble
+          set source asset to OSMO on Osmosis
         </button>
         <button
           onClick={() =>
-            setAsset({ type: "destination", chainId: "cosmoshub-4", denom: "uatom", amount: 1 })
+            setAsset({ type: "destination", chainId: "interwoven-1", denom: "uinit", amount: 1 })
           }
         >
-          set destination asset to ATOM on cosmoshub
+          set destination asset to INIT on Initia
         </button>
         <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
         <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>
