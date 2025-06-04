@@ -76,7 +76,7 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
       await getSigningStargateClient({
         chainId: sourceAsset.chainId,
         getOfflineSigner: async (chainId) => {
-          if (getSigners?.getCosmosSigner) {
+          if (getSigners?.getCosmosSigner?.(chainId)) {
             return getSigners.getCosmosSigner(chainId);
           }
 
