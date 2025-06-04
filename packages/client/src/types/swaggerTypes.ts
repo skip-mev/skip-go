@@ -1179,7 +1179,7 @@ export enum TransactionState {
   STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
 }
 
-/** A transfer facilitated by the CCTP bridge */
+/** A transfer facilitated by the OP Init bridge */
 export interface OPInitTransfer {
   /** Canonical chain-id of the source chain of the bridge transaction */
   fromChainId?: string;
@@ -1208,7 +1208,7 @@ export interface OPInitTransfer {
 }
 
 export interface OPInitTransferWrapper {
-  /** A transfer facilitated by the CCTP bridge */
+  /** A transfer facilitated by the OP Init bridge */
   opInitTransfer?: OPInitTransfer;
 }
 
@@ -1644,6 +1644,8 @@ export type RouteResponse = Route;
 export interface MsgsResponse {
   msgs?: Msg[];
   txs?: Tx[];
+  /** Minimum possible output after all operations, including fees and slippage */
+  minAmountOut?: string;
   /** Indicates fees incurred in the execution of the transfer */
   estimatedFees?: Fee[];
 }
@@ -1651,6 +1653,8 @@ export interface MsgsResponse {
 export interface MsgsDirectResponse {
   msgs?: Msg[];
   txs?: Tx[];
+  /** Minimum possible output after all operations, including fees and slippage */
+  minAmountOut?: string;
   route?: Route;
 }
 
