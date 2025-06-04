@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.1.9
+
+### Patch Changes
+
+- 4e97e19: Add apiHeaders to SkipApiOptions
+
 ## 1.1.8
 
 ### Patch Changes
