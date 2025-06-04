@@ -419,7 +419,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
-            if (getSigners?.getCosmosSigner) {
+            if (getSigners?.getCosmosSigner?.(chainId)) {
               return getSigners.getCosmosSigner(chainId);
             }
             if (!wallets.cosmos) {
@@ -436,7 +436,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               : wallet.getOfflineSigner(chainId);
           },
           getEvmSigner: async (chainId) => {
-            if (getSigners?.getEvmSigner) {
+            if (getSigners?.getEvmSigner?.(chainId)) {
               return getSigners.getEvmSigner(chainId);
             }
             const evmWalletClient = (await getWalletClient(config, {
