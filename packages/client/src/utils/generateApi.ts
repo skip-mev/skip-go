@@ -12,6 +12,10 @@ type RequestClientOptions = {
 };
 
 export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) => {
+  if (!baseUrl?.endsWith('/')) {
+    baseUrl += "/";
+  }
+
   const defaultHeaders: HeadersInit = {
     "content-type": "application/json",
     ...(apiKey ? { authorization: apiKey } : {}),
@@ -36,7 +40,10 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const url = new URL(baseUrl + (path ?? ""));
+    if (path?.startsWith('/')) {
+      console.warn('paths that start with / are treated as absolute paths, please remove the leading / if this path is intended to be a relative path');
+    }
+    const url = new URL(path ?? "", baseUrl);
 
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {
@@ -60,7 +67,11 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     data: Body = {} as Body,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const response = await fetch(new URL(baseUrl + path).toString(), {
+    if (path?.startsWith('/')) {
+      console.warn('paths that start with / are treated as absolute paths, please remove the leading / if this path is intended to be a relative path');
+    }
+
+    const response = await fetch(new URL(path, baseUrl).toString(), {
       method: "POST",
       headers: defaultHeaders,
       body: JSON.stringify(data),
