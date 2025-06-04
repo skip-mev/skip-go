@@ -27,4 +27,5 @@ export class ApiState {
 export type SkipApiOptions = {
   apiUrl?: string;
   apiKey?: string;
+  apiHeaders?: HeadersInit;
 };

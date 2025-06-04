@@ -227,5 +227,4 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
       ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
   }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);
-
 };

@@ -9,8 +9,9 @@ export type SetApiOptionsProps = {
 
 export const setApiOptions = (options: SetApiOptionsProps = {}) => {
   ApiState.client = createRequestClient({
-    baseUrl: options.apiUrl || "https://api.skip.build",
+    apiUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
+    apiHeaders: options.apiHeaders,
   });
 
   ApiState.setClientInitialized();
