@@ -12,6 +12,10 @@ type RequestClientOptions = {
 };
 
 export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) => {
+  if (!baseUrl?.endsWith('/')) {
+    baseUrl += "/";
+  }
+
   const defaultHeaders: HeadersInit = {
     "content-type": "application/json",
     ...(apiKey ? { authorization: apiKey } : {}),
@@ -39,7 +43,6 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     if (path?.startsWith('/')) {
       console.warn('paths that start with / are treated as absolute paths, please remove the leading / if this path is intended to be a relative path');
     }
-    
     const url = new URL(path ?? "", baseUrl);
 
     if (params && typeof params === "object") {
