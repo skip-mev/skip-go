@@ -128,7 +128,7 @@ export const executeTransactions = async (
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
         const signedTx = await signSvmTransaction({ tx, options });
         if (!signedTx) {
-          throw new Error("executeRoute svm ta error: signedTx is undefined");
+          throw new Error(`executeRoute error: signedTx is undefined`);
         }
         signedTxs.push({
           index: i,
