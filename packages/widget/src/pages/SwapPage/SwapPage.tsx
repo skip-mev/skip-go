@@ -40,15 +40,15 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
 import { SwapPageHeader } from "./SwapPageHeader";
 import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
+import { callbacksAtom } from "@/state/callbacks";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
   useAtom(preloadSigningStargateClientEffect);
+  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
@@ -72,6 +72,7 @@ export const SwapPage = () => {
   const slippage = useAtomValue(slippageAtom);
   const maxAmountMinusFees = useMaxAmountTokenMinusFees();
   const getBalance = useGetBalance();
+  const callbacks = useAtomValue(callbacksAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -103,13 +104,22 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
+  }, [
+    callbacks,
+    setDestinationAssetAmount,
+    setSourceAsset,
+    setSourceAssetAmount,
+    switchEvmchainId,
+  ]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -121,13 +131,23 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         switchEvmchainId(asset?.chainId);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
     });
-  }, [getClientAsset, setSourceAsset, sourceAsset?.chainId, sourceAsset?.denom, switchEvmchainId]);
+  }, [
+    callbacks,
+    getClientAsset,
+    setSourceAsset,
+    sourceAsset?.chainId,
+    sourceAsset?.denom,
+    switchEvmchainId,
+  ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
@@ -139,10 +159,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAsset]);
+  }, [callbacks, setDestinationAsset]);
 
   const handleChangeDestinationChain = useCallback(() => {
     track("swap page: destination chain button - clicked");
@@ -154,12 +177,21 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
     });
-  }, [destinationAsset?.chainId, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
+  }, [
+    callbacks,
+    destinationAsset?.chainId,
+    destinationAsset?.denom,
+    getClientAsset,
+    setDestinationAsset,
+  ]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
@@ -321,7 +353,6 @@ export const SwapPage = () => {
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
       if (sourceAccount?.address) {
-        startAmplitudeSessionReplay();
         const replay = getReplay();
         replay?.start();
       }

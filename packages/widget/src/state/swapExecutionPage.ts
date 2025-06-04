@@ -376,11 +376,13 @@ type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
 export const submitSwapExecutionCallbacksAtom = atom<SubmitSwapExecutionCallbacks | undefined>();
 
 export const simulateTxAtom = atom<boolean>();
+export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
+  const batchSignTxs = get(batchSignTxsAtom);
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
   const wallets = get(walletsAtom);
@@ -417,9 +419,10 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
           simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
+          batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
-            if (getSigners?.getCosmosSigner) {
+            if (getSigners?.getCosmosSigner?.(chainId)) {
               return getSigners.getCosmosSigner(chainId);
             }
             if (!wallets.cosmos) {
@@ -436,7 +439,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
               : wallet.getOfflineSigner(chainId);
           },
           getEvmSigner: async (chainId) => {
-            if (getSigners?.getEvmSigner) {
+            if (getSigners?.getEvmSigner?.(chainId)) {
               return getSigners.getEvmSigner(chainId);
             }
             const evmWalletClient = (await getWalletClient(config, {

@@ -49,6 +49,9 @@ const widgetPropTypes: Required<PropDescriptors> = {
   onTransactionFailed: "any",
   onRouteUpdated: "any",
   onSourceAndDestinationSwapped: "any",
+  batchSignTxs: "any",
+  onDestinationAssetUpdated: "any",
+  onSourceAssetUpdated: "any",
 };
 
 const WebComponent = toWebComponent(Widget, {

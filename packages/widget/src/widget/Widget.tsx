@@ -85,6 +85,7 @@ export type WidgetProps = {
   ibcEurekaHighlightedAssets?: IbcEurekaHighlightedAssets;
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
+  batchSignTxs?: boolean;
 } & SkipClientOptions &
   Callbacks &
   SignerGetters &

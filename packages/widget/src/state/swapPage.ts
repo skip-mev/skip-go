@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom } from "@/state/skipClient";
 import { getSigningStargateClient } from "@skip-go/client";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
@@ -76,7 +76,7 @@ export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> =
       await getSigningStargateClient({
         chainId: sourceAsset.chainId,
         getOfflineSigner: async (chainId) => {
-          if (getSigners?.getCosmosSigner) {
+          if (getSigners?.getCosmosSigner?.(chainId)) {
             return getSigners.getCosmosSigner(chainId);
           }
 
@@ -117,6 +117,45 @@ export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: b
   set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
   set(errorWarningAtom, undefined);
+};
+
+type SetAssetProps = {
+  type: "source" | "destination";
+  chainId: string;
+  denom: string;
+  amount?: number;
+};
+
+/**
+ * Sets the selected asset (source or destination) in the global state
+ * @param {"source" | "destination"} options.type - Indicates whether to update the source or destination asset.
+ * @param {string} options.chainId - The chain Id of the asset.
+ * @param {string} options.denom - The denom (token identifier) of the asset.
+ * @param {number} options.amount - Optional amount to associate with the asset.
+ */
+export const setAsset = ({ type, ...assetDetails }: SetAssetProps) => {
+  const { set, get } = jotaiStore;
+
+  const { data: skipAssets } = get(skipAssetsAtom);
+  const assetFound = skipAssets?.find(
+    (asset) => asset?.chainId === assetDetails.chainId && asset?.denom === assetDetails?.denom,
+  );
+
+  const assetAmount = assetDetails?.amount?.toString();
+
+  switch (type) {
+    case "source":
+      set(sourceAssetAtom, { ...assetFound, amount: assetAmount });
+      if (assetAmount) {
+        set(sourceAssetAmountAtom, assetAmount);
+      }
+      break;
+    case "destination":
+      set(destinationAssetAtom, { ...assetFound, amount: assetAmount });
+      if (assetAmount) {
+        set(destinationAssetAmountAtom, assetAmount);
+      }
+  }
 };
 
 export const sourceAssetAmountAtom = atom(

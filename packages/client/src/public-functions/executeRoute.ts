@@ -8,7 +8,11 @@ import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
 import { messages } from "../api/postMessages";
 import { isAddress } from "viem";
-import type { SignerGetters, GasOptions, UserAddress } from "src/types/client-types";
+import type {
+  SignerGetters,
+  GasOptions,
+  UserAddress,
+} from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 import type { TrackTxPollingProps } from "src/api/postTrackTransaction";
 
@@ -46,7 +50,6 @@ export type ExecuteRouteOptions = SignerGetters &
      * If `batchSimulate` is set to `false`, it will simulate each message one by one.
      */
     batchSimulate?: boolean;
-
     /**
      * Optional configuration for transaction polling behavior.
      * - `maxRetries`: Maximum number of polling attempts (default: 5)
@@ -56,12 +59,16 @@ export type ExecuteRouteOptions = SignerGetters &
      * 1st retry: 1000ms → 2nd: 2000ms → 3rd: 4000ms → 4th: 8000ms ...
      */
     trackTxPollingOptions?: TrackTxPollingProps;
-
+    /**
+     * If `batchSignTxs` is set to `true`, it will sign all transactions in a batch up front.
+     * If `batchSignTxs` is set to `false`, it will sign each transaction one by one.
+     */
+    batchSignTxs?: boolean;
     /**
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: PostHandler;
-  }
+  };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
   const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
@@ -135,16 +142,22 @@ const validateUserAddresses = async (userAddresses: UserAddress[]) => {
         try {
           if (chain.chainId?.includes("penumbra")) {
             try {
-              return chain.bech32Prefix === bech32m.decode(userAddress.address, 143)?.prefix;
+              return (
+                chain.bech32Prefix ===
+                bech32m.decode(userAddress.address, 143)?.prefix
+              );
             } catch {
               // The temporary solution to route around Noble address breakage.
               // This can be entirely removed once `noble-1` upgrades.
               return ["penumbracompat1", "tpenumbra"].includes(
-                bech32.decode(userAddress.address, 1023).prefix,
+                bech32.decode(userAddress.address, 1023).prefix
               );
             }
           }
-          return chain.bech32Prefix === bech32.decode(userAddress.address, 1023).prefix;
+          return (
+            chain.bech32Prefix ===
+            bech32.decode(userAddress.address, 1023).prefix
+          );
         } catch {
           return false;
         }
