@@ -106,6 +106,7 @@ export const useInitWidget = (props: WidgetProps) => {
   useEffect(() => {
     setClientOptions({
       ...mergedSkipClientConfig,
+      apiHeaders: { "content-type": "text/plain" },
     });
   }, [getSigners, mergedSkipClientConfig, wallets.cosmos, wallets.svm?.walletName]);
 
@@ -227,5 +228,4 @@ const useInitGetSigners = (props: Partial<WidgetProps>) => {
       ...(props.getSvmSigner && { getSvmSigner: props.getSvmSigner }),
     }));
   }, [props.getCosmosSigner, props.getEvmSigner, props.getSvmSigner, setGetSigners]);
-
 };
