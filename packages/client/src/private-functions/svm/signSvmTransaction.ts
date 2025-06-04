@@ -6,7 +6,7 @@ import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 
 export const signSvmTransaction = async (
   tx?: { svmTx?: SvmTx },
-  options?: ExecuteRouteOptions,
+  options?: ExecuteRouteOptions
 ) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -14,7 +14,9 @@ export const signSvmTransaction = async (
     throw new Error("executeSvmTransaction error: tx is undefined");
   }
 
-  const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
+  const gas = gasArray?.find(
+    (gas) => gas?.error !== null && gas?.error !== undefined
+  );
   if (typeof gas?.error === "string") {
     throw new Error(gas?.error);
   }
@@ -23,7 +25,7 @@ export const signSvmTransaction = async (
   const getSvmSigner = options?.getSvmSigner;
   if (!getSvmSigner) {
     throw new Error(
-      "executeSvmTransaction error: getSvmSigner is not provided",
+      "executeSvmTransaction error: getSvmSigner is not provided"
     );
   }
 
@@ -36,17 +38,11 @@ export const signSvmTransaction = async (
   const txBuffer = Buffer.from(svmTx.tx ?? "", "base64");
   const transaction = Transaction.from(txBuffer);
 
-  const endpoint = await getRpcEndpointForChain(svmTx.chainId);
-  const connection = new Connection(endpoint);
+  if (!("signTransaction" in signer)) return;
 
-  let signature: string | undefined;
+  const signedTx = await signer.signTransaction(transaction);
+  options?.onTransactionSigned?.({ chainId: svmTx.chainId });
 
-  if ("signTransaction" in signer) {
-    const signedTx = await signer.signTransaction(transaction);
-    options?.onTransactionSigned?.({ chainId: svmTx.chainId });
-
-    const serializedTx = signedTx.serialize();
-    return serializedTx.toString("base64")
-  }
-
+  const serializedTx = signedTx.serialize();
+  return serializedTx.toString("base64");
 };

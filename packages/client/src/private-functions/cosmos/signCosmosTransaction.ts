@@ -52,7 +52,7 @@ export const signCosmosTransaction = async ({
     throw new Error("no messages found for tx");
   }
 
-  const { stargateClient, signer } = await getSigningStargateClient({
+  const { signer } = await getSigningStargateClient({
     chainId: chainId,
     getOfflineSigner: options?.getCosmosSigner,
   });
