@@ -18,7 +18,7 @@ export const migrateOldLocalStorageValues = () => {
           (txHistoryItem: TransactionHistoryItem) => {
             const chainId = txHistoryItem?.transactionDetails?.[0]?.chainId;
             const txHash = txHistoryItem?.transactionDetails?.[0]?.txHash;
-            if (chainId && txHash) {
+            if (chainId !== undefined && txHash !== undefined) {
               return true;
             }
           },
