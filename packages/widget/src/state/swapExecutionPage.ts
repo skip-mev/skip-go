@@ -231,7 +231,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
 
-      set(setTransactionHistoryAtom, transactionHistoryIndex, {
+      set(setTransactionHistoryAtom, {
         ...transactionHistoryItem,
         signatures: transactionsSigned,
       });
@@ -328,7 +328,7 @@ export const setTransactionDetailsAtom = atom(
 
     const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
 
-    set(setTransactionHistoryAtom, transactionHistoryIndex, {
+    set(setTransactionHistoryAtom, {
       ...transactionHistoryItem,
       route: route as RouteResponse,
       transactionDetails: newTransactionDetailsArray,
