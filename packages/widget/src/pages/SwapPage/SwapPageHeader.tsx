@@ -72,14 +72,15 @@ export const SwapPageHeader = memo(() => {
 export const TrackLatestTxHistoryItemStatus = memo(() => {
   const transactionhistory = useAtomValue(transactionHistoryAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
+  const { transactionsSigned, route } = useAtomValue(swapExecutionStateAtom);
   const lastTxHistoryItem = transactionhistory.at(-1);
 
-  const { transferAssetRelease, status } = useTxHistory({
+  const { transferAssetRelease } = useTxHistory({
     txHistoryItem: lastTxHistoryItem,
     index: transactionhistory.length - 1,
   });
 
-  if (transferAssetRelease && status !== "completed") {
+  if (transferAssetRelease && transactionsSigned !== route?.txsRequired) {
     setOverallStatus("failed");
   }
 
