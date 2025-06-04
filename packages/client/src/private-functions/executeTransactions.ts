@@ -9,8 +9,13 @@ import { validateGasBalances } from "./validateGasBalances";
 import { waitForTransaction } from "../public-functions/waitForTransaction";
 import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
+import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
+import { signSvmTransaction } from "./svm/signSvmTransaction";
+import { submit } from "src/api/postSubmit";
 
-export const executeTransactions = async (options: ExecuteRouteOptions & { txs?: Tx[] }) => {
+export const executeTransactions = async (
+  options: ExecuteRouteOptions & { txs?: Tx[] }
+) => {
   const {
     txs,
     onTransactionBroadcast,
@@ -22,10 +27,13 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     getEvmSigner,
     onValidateGasBalance,
     trackTxPollingOptions,
+    batchSignTxs = true,
   } = options;
 
   if (txs === undefined) {
-    throw new Error("executeTransactions error: txs is undefined in executeTransactions");
+    throw new Error(
+      "executeTransactions error: txs is undefined in executeTransactions"
+    );
   }
 
   const chainIds = txs.map((tx) => {
@@ -52,7 +60,10 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
   });
 
   const isGasStationSourceEVM = chainIds.find((item, i, array) => {
-    return GAS_STATION_CHAIN_IDS.includes(item?.chainId ?? "") && array[i - 1]?.chainType === "evm";
+    return (
+      GAS_STATION_CHAIN_IDS.includes(item?.chainId ?? "") &&
+      array[i - 1]?.chainType === "evm"
+    );
   });
 
   ClientState.validateGasResults = undefined;
@@ -84,6 +95,51 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     });
   };
 
+  // variable to store signed transactions
+  let signedTxs: {
+    index: number;
+    chainId: string;
+    tx: string;
+    chainType: ChainType;
+  }[] = [];
+  // if batchSignTxs is true, we will sign all transactions in a batch up front
+  if (batchSignTxs) {
+    for (let i = 0; i < txs.length; i++) {
+      const tx = txs[i];
+      if (!tx) {
+        throw new Error(`executeRoute error: invalid message at index ${i}`);
+      }
+
+      if ("cosmosTx" in tx) {
+        await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
+        const signedTx = await signCosmosTransaction({
+          tx,
+          options,
+          index: i,
+        });
+        signedTxs.push({
+          index: i,
+          chainId: tx.cosmosTx?.chainId ?? "",
+          tx: signedTx,
+          chainType: ChainType.Cosmos,
+        });
+      }
+      if ("svmTx" in tx) {
+        await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
+        const signedTx = await signSvmTransaction({ tx, options });
+        if (!signedTx) {
+          throw new Error(`executeRoute error: signedTx is undefined`);
+        }
+        signedTxs.push({
+          index: i,
+          chainId: tx.svmTx?.chainId ?? "",
+          tx: signedTx.toString("base64"),
+          chainType: ChainType.Svm,
+        });
+      }
+    }
+  }
+
   for (let i = 0; i < txs.length; i++) {
     const tx = txs[i];
     if (!tx) {
@@ -91,26 +147,42 @@ export const executeTransactions = async (options: ExecuteRouteOptions & { txs?:
     }
 
     let txResult: TxResult;
-    if ("cosmosTx" in tx) {
-      await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
-      txResult = await executeCosmosTransaction({
-        tx,
-        options,
-        index: i,
+
+    // If batchSignTxs is true, we will use the signed transactions from the array
+    const txSigned = signedTxs.find((item) => item.index === i);
+    if (txSigned) {
+      const txResponse = await submit({
+        chainId: txSigned.chainId,
+        tx: txSigned.tx,
       });
-    } else if ("evmTx" in tx) {
-      await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-      const txResponse = await executeEvmTransaction(tx, options);
       txResult = {
-        chainId: tx?.evmTx?.chainId ?? "",
-        txHash: txResponse.transactionHash,
+        chainId: txSigned.chainId,
+        txHash: txResponse?.txHash ?? "",
       };
-    } else if ("svmTx" in tx) {
-      await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-      txResult = await executeSvmTransaction(tx, options);
+      // If the tx not signed we will execute the transaction normally
     } else {
-      throw new Error("executeRoute error: invalid message type");
+      if ("cosmosTx" in tx) {
+        await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
+        txResult = await executeCosmosTransaction({
+          tx,
+          options,
+          index: i,
+        });
+      } else if ("evmTx" in tx) {
+        await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
+        const txResponse = await executeEvmTransaction(tx, options);
+        txResult = {
+          chainId: tx?.evmTx?.chainId ?? "",
+          txHash: txResponse.transactionHash,
+        };
+      } else if ("svmTx" in tx) {
+        await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
+        txResult = await executeSvmTransaction(tx, options);
+      } else {
+        throw new Error("executeRoute error: invalid message type");
+      }
     }
+
     await onTransactionBroadcast?.({ ...txResult });
 
     const txStatusResponse = await waitForTransaction({
@@ -135,17 +207,23 @@ const COSMOS_GAS_AMOUNT = {
   CARBON: 1_000_000,
 };
 
-const getDefaultFallbackGasAmount = async (chainId: string, chainType: ChainType): Promise<number | undefined> => {
+const getDefaultFallbackGasAmount = async (
+  chainId: string,
+  chainType: ChainType
+): Promise<number | undefined> => {
   if (chainType === ChainType.Evm) {
     return EVM_GAS_AMOUNT;
   }
   if (chainType !== ChainType.Cosmos) return undefined;
 
   const venuesResult = await venues();
-  const isSwapChain = venuesResult?.some((venue: { chainId?: string }) => venue.chainId === chainId) ?? false;
+  const isSwapChain =
+    venuesResult?.some(
+      (venue: { chainId?: string }) => venue.chainId === chainId
+    ) ?? false;
 
   const defaultGasAmount = Math.ceil(
-    isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT,
+    isSwapChain ? COSMOS_GAS_AMOUNT.SWAP : COSMOS_GAS_AMOUNT.DEFAULT
   );
 
   // Special case for carbon-1

@@ -24,7 +24,7 @@ import { initSentry } from "./initSentry";
 import { version } from "../../package.json";
 import { setTag } from "@sentry/react";
 import { useMobileRouteConfig } from "@/hooks/useMobileRouteConfig";
-import { simulateTxAtom } from "@/state/swapExecutionPage";
+import { batchSignTxsAtom, simulateTxAtom } from "@/state/swapExecutionPage";
 import { initAmplitude } from "./initAmplitude";
 import { disableShadowDomAtom } from "./ShadowDomAndProviders";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
@@ -55,6 +55,7 @@ export const useInitWidget = (props: WidgetProps) => {
   const setWalletConnect = useSetAtom(walletConnectAtom);
   const setCallbacks = useSetAtom(callbacksAtom);
   const setSimulateTx = useSetAtom(simulateTxAtom);
+  const setBatchSignTxs = useSetAtom(batchSignTxsAtom);
   const setDisableShadowDom = useSetAtom(disableShadowDomAtom);
   const setIbcEurekaHighlightedAssets = useSetAtom(ibcEurekaHighlightedAssetsAtom);
   const setAssetSymbolsSortedToTop = useSetAtom(assetSymbolsSortedToTopAtom);
@@ -142,6 +143,9 @@ export const useInitWidget = (props: WidgetProps) => {
     if (props.simulate !== undefined) {
       setSimulateTx(props.simulate);
     }
+    if (props.batchSignTxs !== undefined) {
+      setBatchSignTxs(props.batchSignTxs);
+    }
     if (props.disableShadowDom !== undefined) {
       setDisableShadowDom(props.disableShadowDom);
     }
@@ -209,6 +213,8 @@ export const useInitWidget = (props: WidgetProps) => {
     props.onSourceAndDestinationSwapped,
     props.onSourceAssetUpdated,
     props.onDestinationAssetUpdated,
+    props.batchSignTxs,
+    setBatchSignTxs,
   ]);
 
   return { theme: mergedTheme };

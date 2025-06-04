@@ -83,12 +83,16 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
+  const isSafeToleave = route?.txsRequired === transactionDetailsArray.length;
+
   usePreventPageUnload(
     swapExecutionState === SwapExecutionState.signaturesRemaining ||
       swapExecutionState === SwapExecutionState.waitingForSigning ||
       swapExecutionState === SwapExecutionState.approving ||
-      swapExecutionState === SwapExecutionState.validatingGasBalance,
+      swapExecutionState === SwapExecutionState.validatingGasBalance ||
+      !isSafeToleave,
   );
+
   useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
