@@ -36,7 +36,7 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     params?: RequestParams,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const url = new URL(baseUrl + (path ?? ""));
+    const url = new URL(path ?? "", baseUrl);
 
     if (params && typeof params === "object") {
       Object.entries(params as Record<string, any>).forEach(([key, value]) => {
@@ -60,7 +60,7 @@ export const createRequestClient = ({ baseUrl, apiKey }: RequestClientOptions) =
     data: Body = {} as Body,
     signal?: AbortSignal,
   ): Promise<ResponseType> => {
-    const response = await fetch(new URL(baseUrl + path).toString(), {
+    const response = await fetch(new URL(path, baseUrl).toString(), {
       method: "POST",
       headers: defaultHeaders,
       body: JSON.stringify(data),
