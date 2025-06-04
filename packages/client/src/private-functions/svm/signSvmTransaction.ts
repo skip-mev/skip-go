@@ -4,10 +4,13 @@ import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 
-export const signSvmTransaction = async (
-  tx?: { svmTx?: SvmTx },
-  options?: ExecuteRouteOptions
-) => {
+export const signSvmTransaction = async ({
+  tx,
+  options,
+}: {
+  tx?: { svmTx?: SvmTx };
+  options?: ExecuteRouteOptions;
+}) => {
   const gasArray = ClientState.validateGasResults;
 
   if (tx === undefined) {
@@ -44,5 +47,5 @@ export const signSvmTransaction = async (
   options?.onTransactionSigned?.({ chainId: svmTx.chainId });
 
   const serializedTx = signedTx.serialize();
-  return serializedTx.toString("base64");
+  return serializedTx
 };

@@ -95,7 +95,14 @@ export const executeTransactions = async (
     });
   };
 
-  let signedTxs: { index: number; chainId: string; tx: string; chainType: ChainType }[] = [];
+  // variable to store signed transactions
+  let signedTxs: {
+    index: number;
+    chainId: string;
+    tx: string;
+    chainType: ChainType;
+  }[] = [];
+  // if batchSignTxs is true, we will sign all transactions in a batch up front
   if (batchSignTxs) {
     for (let i = 0; i < txs.length; i++) {
       const tx = txs[i];
@@ -114,20 +121,20 @@ export const executeTransactions = async (
           index: i,
           chainId: tx.cosmosTx?.chainId ?? "",
           tx: signedTx,
-          chainType: ChainType.Cosmos
+          chainType: ChainType.Cosmos,
         });
       }
       if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        const signedTx = await signSvmTransaction(tx, options);
+        const signedTx = await signSvmTransaction({ tx, options });
         if (!signedTx) {
           throw new Error("executeRoute svm ta error: signedTx is undefined");
         }
         signedTxs.push({
           index: i,
           chainId: tx.svmTx?.chainId ?? "",
-          tx: signedTx,
-          chainType: ChainType.Svm
+          tx: signedTx.toString("base64"),
+          chainType: ChainType.Svm,
         });
       }
     }
@@ -141,6 +148,7 @@ export const executeTransactions = async (
 
     let txResult: TxResult;
 
+    // If batchSignTxs is true, we will use the signed transactions from the array
     const txSigned = signedTxs.find((item) => item.index === i);
     if (txSigned) {
       const txResponse = await submit({
@@ -151,6 +159,7 @@ export const executeTransactions = async (
         chainId: txSigned.chainId,
         txHash: txResponse?.txHash ?? "",
       };
+      // If the tx not signed we will execute the transaction normally
     } else {
       if ("cosmosTx" in tx) {
         await validateEnabledChainIds(tx.cosmosTx?.chainId ?? "");
