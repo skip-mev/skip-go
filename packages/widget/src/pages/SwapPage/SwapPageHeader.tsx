@@ -10,7 +10,11 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { PageHeader } from "@/components/PageHeader";
-import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  setOverallStatusAtom,
+  skipSubmitSwapExecutionAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -73,6 +77,8 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
   const transactionhistory = useAtomValue(transactionHistoryAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const { transactionsSigned, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
+
   const lastTxHistoryItem = transactionhistory.at(-1);
 
   const { transferAssetRelease } = useTxHistory({
@@ -80,7 +86,7 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
     index: transactionhistory.length - 1,
   });
 
-  if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length) {
+  if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length && !isPending) {
     setOverallStatus("failed");
   }
 
