@@ -63,11 +63,11 @@ These functions must be callable by the proxy of the `ICS20Transfer` contract:
 
 - **Mainnet**: `0xa348CfE719B63151F228e3C30EB424BA5a983012`
 
-It is crucial that access to these `mint` and `burn` functions is strictly limited to only the `ICS20Transfer` proxy. Allowing any other address or contract to call these functions could lead to unauthorized token manipulation and compromise the integrity of your token. Token teams may implement additional access controls or rate limits as needed, provided the `ICS20Transfer` proxy retains its ability to perform mint and burn operations.
-
-<Note>
-  The interface remains open to iteration based on community feedback.
-</Note>
+> **Security Note:**  
+> Access to the `mint` and `burn` functions must be strictly limited to the `ICS20Transfer` proxy. Allowing any other address or contract to call these functions could lead to unauthorized token manipulation and compromise the integrity of your token. While token teams may implement additional access controls or rate limits as needed, the `ICS20Transfer` proxy must always retain its ability to perform mint and burn operations.
+>
+> **Upgradability & Extensibility:**  
+> We may update our interface over time, but we're committed to ensuring backwards compatibility. While making your contract upgradable is not required, doing so allows you to adopt new features or improvements we introduce in the future.
 
 ### Upgradability
 
