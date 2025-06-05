@@ -1,3 +1,4 @@
+import { isWindows } from "@/utils/os";
 import { css, styled } from "styled-components";
 
 type TextProps = {
@@ -82,11 +83,12 @@ export const SmallTextButton = styled(SmallText).attrs({ as: "button" })`
   letter-spacing: 0.01em;
 `;
 
-export const Text = styled(SmallText)`
+export const Text = styled(SmallText)<{ useWindowsTextHack?: boolean }>`
   color: ${({ color, theme }) => color ?? theme.primary.text.normal};
   font-size: 20px;
   font-weight: 400;
   letter-spacing: 0;
+  ${({ useWindowsTextHack }) => (useWindowsTextHack && isWindows() ? "margin-bottom: -4px" : "")};
   ${textProps}
 `;
 

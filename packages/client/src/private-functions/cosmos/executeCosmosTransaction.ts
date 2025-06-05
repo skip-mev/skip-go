@@ -8,6 +8,8 @@ import { isOfflineDirectSigner } from "@cosmjs/proto-signing";
 import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
 import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { submit } from "src/api/postSubmit";
+import { signCosmosTransaction } from "./signCosmosTransaction";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -23,97 +25,23 @@ export const executeCosmosTransaction = async ({
   options,
   index,
 }: ExecuteCosmosTransactionProps) => {
-  const { userAddresses } = options;
-
   if (tx === undefined) {
     throw new Error("executeCosmosTransaction error: tx is undefined");
   }
-
+  const rawTxBase64 = await signCosmosTransaction({
+    tx,
+    options,
+    index,
+  });
   const chainId = tx.cosmosTx?.chainId;
-  const messages = tx.cosmosTx?.msgs;
-  const currentUserAddress = userAddresses.find((x) => x.chainId === tx.cosmosTx?.chainId)?.address;
 
-  const gasArray = ClientState.validateGasResults;
-  const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
-  if (typeof gas?.error === "string") {
-    throw new Error(gas?.error);
-  }
-
-  const gasUsed = gasArray?.[index];
-  if (!gasUsed) {
-    throw new Error(`executeRoute error: invalid gas at index ${index}`);
-  }
-
-  if (chainId === undefined) {
-    throw new Error("no chainId found for tx");
-  }
-
-  if (messages === undefined) {
-    throw new Error("no messages found for tx");
-  }
-
-  const { stargateClient, signer } = await getSigningStargateClient({
-    chainId: chainId,
-    getOfflineSigner: options?.getCosmosSigner,
+  const txResponse = await submit({
+    chainId,
+    tx: rawTxBase64,
   });
-
-  if (!currentUserAddress) {
-    throw new Error(
-      `executeCosmosTransaction error: invalid address for chain '${tx.cosmosTx?.chainId}'`,
-    );
-  }
-
-  const accounts = await signer.getAccounts();
-  const accountFromSigner = accounts.find((account) => account.address === currentUserAddress);
-
-  if (!accountFromSigner) {
-    throw new Error("executeCosmosTransaction error: failed to retrieve account from signer");
-  }
-
-  const fee = gasUsed?.fee;
-
-  if (!fee) {
-    throw new Error("executeCosmosTransaction error: failed to retrieve fee from gas");
-  }
-
-  const { accountNumber, sequence } = await getAccountNumberAndSequence(
-    currentUserAddress,
-    chainId,
-  );
-
-  let rawTx: TxRawType;
-
-  const commonRawTxBody = {
-    signerAddress: currentUserAddress,
-    chainId,
-    cosmosMsgs: messages,
-    fee,
-    signerData: {
-      accountNumber,
-      sequence,
-      chainId,
-    },
-  };
-
-  if (isOfflineDirectSigner(signer)) {
-    rawTx = await signCosmosMessageDirect({
-      ...commonRawTxBody,
-      signer,
-    });
-  } else {
-    rawTx = await signCosmosMessageAmino({ ...commonRawTxBody, signer });
-  }
-
-  options?.onTransactionSigned?.({
-    chainId,
-  });
-
-  const txBytes = TxRaw.encode(rawTx).finish();
-
-  const txResponse = await stargateClient.broadcastTx(txBytes);
 
   return {
     chainId: tx?.cosmosTx?.chainId ?? "",
-    txHash: txResponse.transactionHash,
+    txHash: txResponse?.txHash ?? "",
   };
 };

@@ -1,7 +1,7 @@
 import type { EncodeObject } from "@cosmjs/proto-signing";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import type { CosmosMsg } from "src/types/swaggerTypes";
-import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
+import { getEncodeObjectFromCosmosMessage } from "../private-functions/cosmos/getEncodeObjectFromCosmosMessage";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 

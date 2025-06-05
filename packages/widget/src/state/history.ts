@@ -13,6 +13,7 @@ export type TransactionHistoryItem = {
   transactionDetails: TransactionDetails[];
   timestamp: number;
   status: SimpleStatus;
+  signatures: number;
 } & Partial<TxsStatus>;
 
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
@@ -25,14 +26,16 @@ export const setTransactionHistoryAtom = atom(
   null,
   (get, set, index: number, historyItem: TransactionHistoryItem) => {
     const history = get(transactionHistoryAtom);
-    const oldHistoryItem = history?.[index] ?? {};
-    const newHistory = history;
+
+    const newHistory = [...history];
+
+    const oldHistoryItem = newHistory[index] ?? {};
 
     newHistory[index] = { ...oldHistoryItem, ...historyItem };
+
     set(transactionHistoryAtom, newHistory);
   },
 );
-
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {
   const history = get(transactionHistoryAtom);
   if (!history) return;
@@ -59,7 +62,7 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
       const nestedTransactionHistoryPromises = transactionHistory.map(
         async (transactionHistoryItem) => {
           const transactionDetailsPromises = await Promise.all(
-            transactionHistoryItem.transactionDetails.map(async (transactionDetail) => {
+            transactionHistoryItem.transactionDetails?.map(async (transactionDetail) => {
               if (
                 transactionHistoryItem.status !== "completed" &&
                 transactionHistoryItem.status !== "failed"

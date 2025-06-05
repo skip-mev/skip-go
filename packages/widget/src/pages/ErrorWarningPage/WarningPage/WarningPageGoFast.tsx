@@ -1,7 +1,6 @@
 import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPageContent";
 import { MainButton } from "@/components/MainButton";
 import { ICONS } from "@/icons";
-import { SwapPageHeader } from "../../SwapPage/SwapPageHeader";
 import { useSetAtom } from "jotai";
 import { errorWarningAtom } from "@/state/errorWarning";
 import { goFastWarningAtom } from "@/state/swapPage";
@@ -13,6 +12,7 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { useEffect } from "react";
 import { setTag } from "@sentry/react";
 import { track } from "@amplitude/analytics-browser";
+import { PageHeader } from "@/components/PageHeader";
 
 export type WarningPageGoFastProps = {
   onClickBack: () => void;
@@ -42,7 +42,7 @@ export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageG
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      <SwapPageHeader
+      <PageHeader
         leftButton={{
           label: "Back",
           icon: ICONS.thinArrow,

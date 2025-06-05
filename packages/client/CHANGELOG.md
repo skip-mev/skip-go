@@ -1,5 +1,21 @@
 # @skip-go/client
 
+## 1.1.7
+
+### Patch Changes
+
+- 92cef82: Only return cached skipAssets if asset found for chainId or chainId is not specified
+
+## 1.1.6
+
+### Patch Changes
+
+- de1ea69: Only pass specific fields to msgs api request
+- d554763: Fix typo in client changelog.
+- 7f71bb0: use submit endpoint to submit cosmos transactions
+- 7610467: update swagger types
+- 5156647: Export getCosmosGasAmountForMessage and getEVMGasAmountForMessage
+
 ## 1.1.5
 
 ### Patch Changes
@@ -88,7 +104,7 @@
 
 ### Major Changes
 
-- 4007e19: Refactored client library to export seperate functions instead of single class to improve treeshaking and reduce bundle size impact
+- 4007e19: Refactored client library to export separate functions instead of single class to improve treeshaking and reduce bundle size impact
   Refactored prop/variable naming to follow camelCase and PascalCase (for enums) strictly to autogenerate interfaces based on open api spec (swagger.yml) and use util functions to easily convert between camelCase and snake_case for API consumption
   Added auto-cancelling previous requests if multiple requests for the same API are made before previous one completes
 

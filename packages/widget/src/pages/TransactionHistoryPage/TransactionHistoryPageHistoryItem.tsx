@@ -1,5 +1,5 @@
 import { Text, SmallText } from "@/components/Typography";
-import { ClientAsset, skipChainsAtom } from "@/state/skipClient";
+import { ClientAsset } from "@/state/skipClient";
 import { Column, Row } from "@/components/Layout";
 import { styled, useTheme } from "styled-components";
 import { XIcon } from "@/icons/XIcon";
@@ -8,13 +8,12 @@ import { StyledAnimatedBorder } from "@/pages/SwapExecutionPage/SwapExecutionPag
 import { TransactionHistoryPageHistoryItemDetails } from "./TransactionHistoryPageHistoryItemDetails";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { removeTransactionHistoryItemAtom, TransactionHistoryItem } from "@/state/history";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { formatDistanceStrict } from "date-fns";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { getMobileDateFormat } from "@/utils/date";
 import { formatDisplayAmount } from "@/utils/number";
 import { useTxHistory } from "@/hooks/useTxHistory";
-import { createExplorerLink } from "@/utils/explorerLink";
 import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
 import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
@@ -36,13 +35,8 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
   ) => {
     const theme = useTheme();
     const isMobileScreenSize = useIsMobileScreenSize();
-    const { data: chains } = useAtomValue(skipChainsAtom);
 
-    const {
-      status: historyStatus,
-      explorerLinks: txHistoryExplorerLinks,
-      transferAssetRelease,
-    } = useTxHistory({
+    const { status: historyStatus, transferAssetRelease } = useTxHistory({
       txHistoryItem,
       index,
     });
@@ -57,26 +51,10 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         sourceAssetChainId,
         destAssetDenom,
         destAssetChainId,
-      },
+      } = {},
       timestamp,
       transactionDetails,
     } = txHistoryItem;
-
-    const initialTxHash = transactionDetails?.[0]?.txHash;
-    const chainId = transactionDetails?.[0]?.chainId;
-    const chainType = chains?.find((chain) => chain.chainId === chainId)?.chainType;
-    const derivedExplorerLink = createExplorerLink({
-      txHash: initialTxHash,
-      chainId: chainId,
-      chainType,
-    });
-
-    const explorerLinks = useMemo(() => {
-      if (txHistoryExplorerLinks.length === 0 && derivedExplorerLink) {
-        return [derivedExplorerLink];
-      }
-      return txHistoryExplorerLinks;
-    }, [derivedExplorerLink, txHistoryExplorerLinks]);
 
     const sourceAssetDetails = useGetAssetDetails({
       assetDenom: sourceAssetDenom,
@@ -181,11 +159,11 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         {showDetails && (
           <TransactionHistoryPageHistoryItemDetails
             status={historyStatus}
+            transactionDetails={transactionDetails}
             sourceChainName={sourceAssetDetails.chainName ?? "--"}
             destinationChainName={destinationAssetDetails.chainName ?? "--"}
             absoluteTimeString={absoluteTimeString}
             onClickDelete={() => removeTransactionHistoryItem(index)}
-            explorerLinks={explorerLinks}
             transferAssetRelease={transferAssetRelease}
           />
         )}
@@ -227,7 +205,7 @@ const RenderAssetAmount = ({
         <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
             {formatDisplayAmount(amount, {
-              decimals: 2
+              decimals: 2,
             })}
           </Text>
         </Tooltip>

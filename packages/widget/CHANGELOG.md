@@ -1,5 +1,32 @@
 ## 0.0.15
 
+## 3.10.9
+
+### Patch Changes
+
+- Updated dependencies [92cef82]
+  - @skip-go/client@1.1.7
+
+## 3.10.8
+
+### Patch Changes
+
+- a806d4e: Add link to skip explorer in history page and swapExecutionPage
+- 6345144: track widget explorer clicks
+- 022c87e: Add tests for crypto utilities.
+- 2442302: Fix incorrect chainType when setting Cosmos wallet state.
+- 7c8c9de: Prevent users to leave the page before all txs signed
+- 974ceb3: Add Spinner icon on SwapPage to show if there's an ongoing tx
+- 78be428: Fix asset icon potentially missing when using filters and invert source/destination button
+- a34f4bb: Add negative margin hack for vertical alignment on asset symbols on windows
+- 6c2500d: Add 15s timeout before expecting transfer asset release in case of failure
+- Updated dependencies [de1ea69]
+- Updated dependencies [d554763]
+- Updated dependencies [7f71bb0]
+- Updated dependencies [7610467]
+- Updated dependencies [5156647]
+  - @skip-go/client@1.1.6
+
 ## 3.10.7
 
 ### Patch Changes

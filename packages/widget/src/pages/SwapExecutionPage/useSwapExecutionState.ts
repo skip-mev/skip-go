@@ -38,7 +38,7 @@ export function useSwapExecutionState({
       return SwapExecutionState.confirmed;
     }
 
-    if (overallStatus === "pending") {
+    if (overallStatus === "pending" || overallStatus === "failed") {
       if (signaturesRemaining > 0) {
         return SwapExecutionState.signaturesRemaining;
       }

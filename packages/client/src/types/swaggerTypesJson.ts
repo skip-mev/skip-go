@@ -1179,7 +1179,7 @@ export enum TransactionStateJson {
   STATE_PENDING_ERROR = "STATE_PENDING_ERROR",
 }
 
-/** A transfer facilitated by the CCTP bridge */
+/** A transfer facilitated by the OP Init bridge */
 export interface OPInitTransferJson {
   /** Canonical chain-id of the source chain of the bridge transaction */
   from_chain_id?: string;
@@ -1208,7 +1208,7 @@ export interface OPInitTransferJson {
 }
 
 export interface OPInitTransferWrapperJson {
-  /** A transfer facilitated by the CCTP bridge */
+  /** A transfer facilitated by the OP Init bridge */
   op_init_transfer?: OPInitTransferJson;
 }
 
@@ -1280,6 +1280,9 @@ export interface TransferJson {
   denom_out?: string;
   /** Amount of the fee asset to be paid as the transfer fee if applicable. */
   fee_amount?: string | null;
+  /** Address of the entry contract on the destination chain */
+  to_chain_entry_contract_address?: string | null;
+  to_chain_callback_contract_address?: string | null;
   /** Amount of the fee asset to be paid as the transfer fee if applicable, converted to USD value */
   usd_fee_amount?: string | null;
   /** Asset to be paid as the transfer fee if applicable. */
@@ -1641,6 +1644,8 @@ export type RouteResponseJson = RouteJson;
 export interface MsgsResponseJson {
   msgs?: MsgJson[];
   txs?: TxJson[];
+  /** Minimum possible output after all operations, including fees and slippage */
+  min_amount_out?: string;
   /** Indicates fees incurred in the execution of the transfer */
   estimated_fees?: FeeJson[];
 }
@@ -1648,6 +1653,8 @@ export interface MsgsResponseJson {
 export interface MsgsDirectResponseJson {
   msgs?: MsgJson[];
   txs?: TxJson[];
+  /** Minimum possible output after all operations, including fees and slippage */
+  min_amount_out?: string;
   route?: RouteJson;
 }
 

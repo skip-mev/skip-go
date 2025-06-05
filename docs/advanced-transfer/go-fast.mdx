@@ -12,7 +12,7 @@ Find integration details for Go Fast [here](../client/advanced-features#use-the-
 Go Fast is a decentralized bridging protocol, built by Skip, designed to enable rapid and secure cross-chain transactions across major blockchain ecosystems such as Ethereum, Cosmos, and Solana. Go Fast accelerates cross-chain actions by up to 25 times, reducing onboarding times from 10+ minutes to seconds.
 
 # How it Works
-The Go Fast Protocol lets you quickly move assets and execute smart contracts between two different blockchains: the source chain and the destination chain. Here’s a simple breakdown of how it all happens.
+The Go Fast Protocol lets you quickly move assets and execute smart contracts between two different blockchains: the source chain and the destination chain. Here's a simple breakdown of how it all happens.
 
 To start, you—the user—initiate a transfer by calling the `submitOrder` function on the protocol contract on your current blockchain (source chain). In this step, you specify the assets, any message you want to send, and the address on the destination chain. This information is then broadcasted as an intent.
 
@@ -20,9 +20,9 @@ Permissionless participants called solvers, who watch for these intents, ingest 
 
 This step transfers the specified assets and processes any additional actions, like executing a contract call with the provided message payload. From your perspective, the assets or messages appear on the destination chain almost instantly, marking the transfer as complete.
 
-After fulfilling the transfer, the solver seeks to recover the assets they fronted, plus any earned fees. They do this by calling the `initiateSettlement` function on the destination chain's Go Fast smart contract, listing the intents they fulfilled. The protocol verifies the solver’s actions, then sends a secure message back to the source chain through a cross-chain messaging system.
+After fulfilling the transfer, the solver seeks to recover the assets they fronted, plus any earned fees. They do this by calling the `initiateSettlement` function on the destination chain's Go Fast smart contract, listing the intents they fulfilled. The protocol verifies the solver's actions, then sends a secure message back to the source chain through a cross-chain messaging system.
 
-A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver’s fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees on the source chain.
+A relayer delivers this message to the source chain, where the settle function on the protocol contract verifies the solver's fulfillment of each intent. Once confirmed, the solver receives back the assets they provided and any earned fees on the source chain.
 
 # Can I become a solver?
 
@@ -53,12 +53,12 @@ Below is a table summarizing the minimum and maximum transfer sizes for each cha
 
 | Source Chain                                | Minimum Transfer Size (in USD) | Maximum Transfer Size (in USD)|
 | ------------------------------------------- | --------------------- | --------------------- |
-| **Ethereum Mainnet**                        | 50                    | 17,500                 |
-| **Arbitrum**                                | 1                     | 17,500                 |
-| **Avalanche**                               | 1                     | 17,500                 |
-| **Base**                                    | 1                     | 17,500                 |
-| **Optimism**                                | 1                     | 17,500                 |
-| **Polygon**                                 | 1                     | 17,500                 |
+| **Ethereum Mainnet**                        | 50                    | 25,000                 |
+| **Arbitrum**                                | 1                     | 25,000                 |
+| **Avalanche**                               | 1                     | 25,000                 |
+| **Base**                                    | 1                     | 25,000                 |
+| **Optimism**                                | 1                     | 25,000                 |
+| **Polygon**                                 | 1                     | 25,000                 |
 
 
 Note: If a user is starting from an asset that is not USDC on the source chain, Skip Go will swap the asset to USDC on the source chain and the post-swap amount is used to see if it is within the min/max bounds of Go Fast transfer sizes.

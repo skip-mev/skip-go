@@ -16,22 +16,19 @@ import {
   onRouteUpdatedEffect,
   routePreferenceAtom,
   slippageAtom,
-  onSourceAssetUpdatedEffect,
   isInvertingSwapAtom,
+  preloadSigningStargateClientEffect,
 } from "@/state/swapPage";
 import { setSwapExecutionStateAtom, chainAddressesAtom } from "@/state/swapExecutionPage";
 import { SwapPageBridge } from "./SwapPageBridge";
-import { SwapPageHeader } from "./SwapPageHeader";
 import { currentPageAtom, Routes } from "@/state/router";
 import { useInsufficientSourceBalance, useMaxAmountTokenMinusFees } from "./useSetMaxAmount";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
-import { ConnectedWalletContent } from "./ConnectedWalletContent";
 import { skipAllBalancesAtom } from "@/state/balances";
 import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { calculatePercentageChange } from "@/utils/number";
-import { transactionHistoryAtom } from "@/state/history";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
@@ -43,12 +40,15 @@ import { useSettingsDrawer } from "@/hooks/useSettingsDrawer";
 import { setUserId, track } from "@amplitude/analytics-browser";
 import { useSwitchEvmChain } from "@/hooks/useSwitchEvmChain";
 import { useGetBalance } from "@/hooks/useGetBalance";
-import { startAmplitudeSessionReplay } from "@/widget/initAmplitude";
+import { SwapPageHeader } from "./SwapPageHeader";
+import { useConnectToMissingCosmosChain } from "./useConnectToMissingCosmosChain";
+import { callbacksAtom } from "@/state/callbacks";
 
 export const SwapPage = () => {
   const { SettingsFooter, drawerOpen } = useSettingsDrawer();
   useAtom(onRouteUpdatedEffect);
-  useAtom(onSourceAssetUpdatedEffect);
+  useAtom(preloadSigningStargateClientEffect);
+  const { isAskingToApproveConnection } = useConnectToMissingCosmosChain();
 
   const [sourceAsset, setSourceAsset] = useAtom(sourceAssetAtom);
   const setSourceAssetAmount = useSetAtom(sourceAssetAmountAtom);
@@ -72,6 +72,7 @@ export const SwapPage = () => {
   const slippage = useAtomValue(slippageAtom);
   const maxAmountMinusFees = useMaxAmountTokenMinusFees();
   const getBalance = useGetBalance();
+  const callbacks = useAtomValue(callbacksAtom);
 
   const setChainAddresses = useSetAtom(chainAddressesAtom);
   useFetchAllBalances();
@@ -80,7 +81,6 @@ export const SwapPage = () => {
   const switchEvmchainId = useSwitchEvmChain();
   const getAccount = useGetAccount();
   const sourceAccount = getAccount(sourceAsset?.chainId);
-  const txHistory = useAtomValue(transactionHistoryAtom);
   const isSwapOperation = useIsSwapOperation(route);
 
   const getClientAsset = useCallback(
@@ -104,13 +104,22 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         switchEvmchainId(asset?.chainId);
         setSourceAssetAmount("");
         setDestinationAssetAmount("");
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAssetAmount, setSourceAsset, setSourceAssetAmount, switchEvmchainId]);
+  }, [
+    callbacks,
+    setDestinationAssetAmount,
+    setSourceAsset,
+    setSourceAssetAmount,
+    switchEvmchainId,
+  ]);
 
   const handleChangeSourceChain = useCallback(() => {
     track("swap page: source chain button - clicked");
@@ -122,13 +131,23 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onSourceAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         switchEvmchainId(asset?.chainId);
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(sourceAsset?.denom, sourceAsset?.chainId),
       selectChain: true,
     });
-  }, [getClientAsset, setSourceAsset, sourceAsset?.chainId, sourceAsset?.denom, switchEvmchainId]);
+  }, [
+    callbacks,
+    getClientAsset,
+    setSourceAsset,
+    sourceAsset?.chainId,
+    sourceAsset?.denom,
+    switchEvmchainId,
+  ]);
 
   const handleChangeDestinationAsset = useCallback(() => {
     track("swap page: destination asset button - clicked");
@@ -140,10 +159,13 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
     });
-  }, [setDestinationAsset]);
+  }, [callbacks, setDestinationAsset]);
 
   const handleChangeDestinationChain = useCallback(() => {
     track("swap page: destination chain button - clicked");
@@ -155,12 +177,21 @@ export const SwapPage = () => {
           ...old,
           ...asset,
         }));
+
+        callbacks?.onDestinationAssetUpdated?.({ chainId: asset?.chainId, denom: asset?.denom });
+
         NiceModal.hide(Modals.AssetAndChainSelectorModal);
       },
       selectedAsset: getClientAsset(destinationAsset?.denom, destinationAsset?.chainId),
       selectChain: true,
     });
-  }, [destinationAsset?.chainId, destinationAsset?.denom, getClientAsset, setDestinationAsset]);
+  }, [
+    callbacks,
+    destinationAsset?.chainId,
+    destinationAsset?.denom,
+    getClientAsset,
+    setDestinationAsset,
+  ]);
 
   const priceChangePercentage = useMemo(() => {
     if (!route?.usdAmountIn || !route?.usdAmountOut || isWaitingForNewRoute) {
@@ -172,6 +203,10 @@ export const SwapPage = () => {
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);
+
+    if (isAskingToApproveConnection) {
+      return <MainButton label="Approving connection..." loading />;
+    }
 
     if (!sourceAccount?.address && !isInvertingSwap) {
       return (
@@ -318,7 +353,6 @@ export const SwapPage = () => {
       setCurrentPage(Routes.SwapExecutionPage);
       setUser({ username: sourceAccount?.address });
       if (sourceAccount?.address) {
-        startAmplitudeSessionReplay();
         const replay = getReplay();
         replay?.start();
       }
@@ -334,11 +368,12 @@ export const SwapPage = () => {
       />
     );
   }, [
+    isAskingToApproveConnection,
+    sourceAccount?.address,
+    isInvertingSwap,
     sourceAsset?.chainId,
     sourceAsset?.amount,
     sourceAsset?.denom,
-    sourceAccount?.address,
-    isInvertingSwap,
     destinationAsset?.chainId,
     destinationAsset?.amount,
     isWaitingForNewRoute,
@@ -348,31 +383,18 @@ export const SwapPage = () => {
     isSwapOperation,
     route,
     routeError?.message,
+    getBalance,
+    maxAmountMinusFees,
     routePreference,
     slippage,
     showCosmosLedgerWarning,
     showGoFastWarning,
     isGoFast,
-    maxAmountMinusFees,
     setChainAddresses,
-    getBalance,
     setCurrentPage,
     setSwapExecutionState,
     setError,
   ]);
-
-  const historyPageButton = useMemo(() => {
-    if (txHistory.length === 0) return;
-
-    return {
-      label: "History",
-      icon: ICONS.history,
-      onClick: () => {
-        track("swap page: history button - clicked");
-        setCurrentPage(Routes.TransactionHistoryPage);
-      },
-    };
-  }, [setCurrentPage, txHistory]);
 
   return (
     <Column
@@ -381,10 +403,7 @@ export const SwapPage = () => {
         opacity: drawerOpen ? 0.3 : 1,
       }}
     >
-      <SwapPageHeader
-        leftButton={historyPageButton}
-        rightContent={sourceAccount ? <ConnectedWalletContent /> : null}
-      />
+      <SwapPageHeader />
       <Column align="center">
         <SwapPageAssetChainInput
           selectedAsset={sourceAsset}
@@ -397,7 +416,6 @@ export const SwapPage = () => {
             track("swap page: source asset amount input - changed", { amount: v });
             setSourceAssetAmount(v);
           }}
-          context="source"
           disabled={sourceAsset?.locked}
         />
         <SwapPageBridge />
@@ -414,7 +432,6 @@ export const SwapPage = () => {
             track("swap page: destination asset amount input - changed", { amount: v });
             setDestinationAssetAmount(v);
           }}
-          context="destination"
           disabled={destinationAsset?.locked}
         />
       </Column>
