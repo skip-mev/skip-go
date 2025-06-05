@@ -34,6 +34,8 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```batchSimulate``` If true, simulate all transactions in a batch before execution; if false, simulate each transaction individually. (defaults to true).
 
+```batchSignTxs``` If true, all transactions in a multi-transaction route will be signed upfront before broadcasting; if false, each transaction will be signed individually just before broadcasting. (defaults to true).
+
 ```beforeMsg / afterMsg``` Optional Cosmos messages to inject at the beginning or end of the route execution.
 
 ```useUnlimitedApproval``` If true, sets Evm token allowances to MAX_UINT256. (defaults to false).
@@ -65,6 +67,7 @@ await executeRoute({
     { chainId: "ethereum", address: evmAddress },
   ],
   simulate: true,
+  batchSignTxs: true,
   slippageTolerancePercent: "0.5",
   beforeMsg: cosmosMsg1,
   afterMsg: cosmosMsg2,

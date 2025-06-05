@@ -60,6 +60,27 @@ routeConfig?: {
 - `goFast`: Enable Go Fast transfers. Default: false. [More info](../advanced-transfer/go-fast).
 - `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](../advanced-swapping/smart-swap-options).
 
+### `batchSignTxs`
+
+Controls whether all transactions in a multi-transaction route should be signed upfront or individually as they are executed.
+
+```ts
+batchSignTxs?: boolean;
+```
+
+- **Default:** `true`
+- When enabled, all transactions in the route will be requested for signature at the beginning of the execution. They will then be broadcast one by one in sequence.
+- When disabled, each transaction will be signed individually just before it is broadcast.
+
+**Example scenario with `batchSignTxs: true`:**
+For a route: Solana → Noble → Cosmos (3 transactions requiring signatures)
+- All 3 transactions will be prompted for signature upfront
+- After signing, they will be broadcast sequentially: Solana first, then Noble, then Cosmos
+
+<Note>
+**EVM Transaction Limitation:** If an EVM transaction appears as the second or later transaction in a route, batch signing cannot be performed upfront. In such cases, the EVM transaction and any subsequent transactions will need to be signed individually when they are ready to be executed.
+</Note>
+
 ### `filter`
 
 Key value pair of chainIds or specific asset denoms allowed
