@@ -1,5 +1,17 @@
 # @skip-go/client
 
+## 1.1.9
+
+### Patch Changes
+
+- 4e97e19: Add apiHeaders to SkipApiOptions
+
+## 1.1.8
+
+### Patch Changes
+
+- de97a32: Fix usage of URL constructor
+
 ## 1.1.7
 
 ### Patch Changes

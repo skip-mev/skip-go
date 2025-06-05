@@ -7,7 +7,7 @@ export const messages = async (request: MessagesRequest) => {
   return api({
     methodName: "msgs",
     method: "post",
-    path: "/v2/fungible/msgs",
+    path: "v2/fungible/msgs",
   })(filterMessagesRequest(request));
 };
 
