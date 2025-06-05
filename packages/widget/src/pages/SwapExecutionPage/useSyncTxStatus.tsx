@@ -36,13 +36,16 @@ export const useSyncTxStatus = ({
   }, [route?.operations]);
 
   const computedSwapStatus = useMemo(() => {
-    if (statusData?.lastTxStatus === "pending" || isPending) {
+    if (statusData?.lastTxStatus === "pending") {
+      if (isPending) {
+        setOverallStatus("pending");
+      }
       return "pending";
     }
 
     if (transferEvents?.length === 0 && !statusData?.isSettled) {
       if (isPending && overallStatus !== "pending") {
-        return "signing";
+        setOverallStatus("signing");
       }
       return;
     }
@@ -63,11 +66,12 @@ export const useSyncTxStatus = ({
       return "unconfirmed";
     }
   }, [
-    isPending,
+    statusData?.lastTxStatus,
     statusData?.isSettled,
     statusData?.isSuccess,
-    statusData?.lastTxStatus,
     transferEvents,
+    isPending,
+    setOverallStatus,
     overallStatus,
   ]);
 
