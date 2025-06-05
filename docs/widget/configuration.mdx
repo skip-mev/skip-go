@@ -3,6 +3,9 @@ title: "Configuration"
 description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
 ---
 
+<Note>
+**Visual Configuration Tool:** Want to see how your configuration options look before implementing them? Try [studio.skip.build](https://studio.skip.build) - our interactive widget builder that lets you customize themes, assets, routes, and more with a live preview.
+</Note>
 
 # Component Props
 
@@ -290,7 +293,7 @@ onTransactionFailed?: (params: { error: Error }) => void;
 
 ### `connectedAddresses` & `signers`
 
-If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you **must provide both** the `connectedAddresses` and corresponding signer functions in order to enable the widget’s injected wallet functionality.
+If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you **must provide both** the `connectedAddresses` and corresponding signer functions in order to enable the widget's injected wallet functionality.
 See an implementation example [here](https://github.com/skip-mev/skip-go/tree/staging/examples/nextjs/src/app/injected/page.tsx).
 
 `WalletClient` comes from the [`viem` package](https://viem.sh/docs/clients/wallet.html). `Adapter` comes from the [`@solana/wallet-adapter-base` package](https://solana.com/developers/cookbook/wallets/connect-wallet-react). And `OfflineSigner` comes from the [`@cosmjs` package](https://docs.keplr.app/api/cosmjs.html).
