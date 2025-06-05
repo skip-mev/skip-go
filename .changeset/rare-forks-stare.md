@@ -1,5 +1,5 @@
----
+y---
 "@skip-go/widget": patch
 ---
 
-Fix syncTxStatus
+Fix overallStatus logic
