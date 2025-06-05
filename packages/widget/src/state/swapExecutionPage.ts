@@ -156,7 +156,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
-      set(setValidatingGasBalanceAtom, { status: "completed" });
       setUser({ id: txInfo?.txHash });
       const chain = chains?.find((chain) => chain.chainId === txInfo.chainId);
       const explorerLink = createExplorerLink({
@@ -280,7 +279,11 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onValidateGasBalance: async (props) => {
       track("execute route: validate gas balance", { props });
-      set(setValidatingGasBalanceAtom, props);
+      if (props.status === "pending") {
+        set(setValidatingGasBalanceAtom, props);
+      } else if (props.status === "completed") {
+        set(setValidatingGasBalanceAtom, { status: "completed" });
+      }
     },
   });
 });
