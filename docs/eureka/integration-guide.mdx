@@ -23,15 +23,31 @@ description: "A guide on how to integrate IBC Eureka for chain developers, asset
 
 If you are interested in a direct Eureka connection to Ethereum or L2s/Solana coming later this year, please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) directly as additional integration work is required.
 
-## Asset Issuers
+## Asset Issuers: Bringing Your Token to Ethereum
 
-**During the initial rollout of IBC Eureka, we will be working closely with asset issuers to ensure their tokens are bridged over and set up in the Skip Go API for application developers to support easily.**
+To bridge assets to Ethereum through Eureka while maintaining full control over your token's representation, you must deploy a custom ERC20 contract. This approach ensures you retain ownership of the token's metadata and on-chain behavior.
 
-If you're an asset issuer looking to expand access to your token across different blockchains connected to the Eureka ecosystem, please reach out to [Jeremy](https://t.me/NotJeremyLiu) or [Susannah](https://t.me/bigsuse) so that we can help set you up!
+**Requirements:**
+1. **Custom ERC20 Implementation**  
+   Deploy an ERC20 contract that implements our required interface standards
+2. **CoinGecko Listing**  
+   Maintain a CoinGecko listing to ensure accurate pricing and metadata in our interfaces
+
+**Why deploy a custom ERC20?**
+- **Full Metadata Control** - Set your token's name, symbol, and other details during deployment
+- **Verified Ownership** - Register the contract under your project's domain on Etherscan
+- **Permanent Governance** - Maintain irrevocable control over the token's core logic
+
+**Ready to get started?**  
+Follow our step-by-step [Custom ERC20 Integration Guide](/eureka/custom-erc20-integration) to deploy your contract.
 
 ## Application Developers
 
 **If you're an application developer looking to give your users access to Eureka assets in your UI or to leverage them within your protocol, integrating into the Eureka ecosystem via Skip Go is super simple!**
+
+### Requesting New Assets
+
+If you want to enable bridging of a new asset (e.g., an Ethereum asset) to Cosmos or Eureka-connected chains, you can submit a request by [joining our Discord](https://skip.build/discord) and opening a support ticket. Our team will review your request and provide guidance on the next steps.
 
 ### New Skip Go Integrator
 
