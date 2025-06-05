@@ -5,7 +5,7 @@ import type { ApiRequest, ApiResponse } from "../utils/generateApi";
 export const balances = api({
   methodName: "balances",
   method: "post",
-  path: "/v2/info/balances",
+  path: "v2/info/balances",
   onSuccess: (response, options) => {
     if (!options) {
       ClientState.skipBalances = response;

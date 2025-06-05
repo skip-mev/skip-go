@@ -4,7 +4,7 @@ import { transformAssetsMap } from "./getAssets";
 export const assetsFromSource = api({
   methodName: "assetsFromSource",
   method: "post",
-  path: "/v2/fungible/assets_from_source",
+  path: "v2/fungible/assets_from_source",
   transformResponse(response) {
     return transformAssetsMap(response.destAssets);
   },

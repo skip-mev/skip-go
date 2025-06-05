@@ -14,8 +14,9 @@ import { ApiState } from "src/state/apiState";
 
 export const setClientOptions = (options: SkipClientOptions = {}) => {
   ApiState.client = createRequestClient({
-    baseUrl: options.apiUrl || "https://api.skip.build",
+    apiUrl: options.apiUrl || "https://api.skip.build",
     apiKey: options.apiKey,
+    apiHeaders: options.apiHeaders,
   });
 
   ClientState.endpointOptions = options.endpointOptions ?? {};
