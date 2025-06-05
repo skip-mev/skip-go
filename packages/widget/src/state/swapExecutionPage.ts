@@ -280,9 +280,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onValidateGasBalance: async (props) => {
       track("execute route: validate gas balance", { props });
       if (props.status === "pending") {
-        set(setValidatingGasBalanceAtom, props);
+        set(setValidatingGasBalanceAtom, { status: "pending" });
       } else if (props.status === "completed") {
         set(setValidatingGasBalanceAtom, { status: "completed" });
+        set(setOverallStatusAtom, "signing");
       }
     },
   });
