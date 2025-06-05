@@ -38,7 +38,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
 }) => {
   const countdown = useCountdown({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
-    enabled: signaturesRemaining === 0,
+    enabled: swapExecutionState === SwapExecutionState.pending,
   });
 
   const theme = useTheme();

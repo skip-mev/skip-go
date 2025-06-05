@@ -43,13 +43,6 @@ export const useSyncTxStatus = ({
       return "pending";
     }
 
-    if (transferEvents?.length === 0 && !statusData?.isSettled) {
-      if (isPending && overallStatus !== "pending") {
-        setOverallStatus("signing");
-      }
-      return;
-    }
-
     if (!transferEvents) return;
 
     if (statusData.isSuccess) {
@@ -72,7 +65,6 @@ export const useSyncTxStatus = ({
     transferEvents,
     isPending,
     setOverallStatus,
-    overallStatus,
   ]);
 
   useEffect(() => {
