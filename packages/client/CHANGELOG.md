@@ -1,5 +1,19 @@
 # @skip-go/client
 
+## 1.2.0
+
+### Minor Changes
+
+- c502e19: Add min_amount_out field to msg and msgdirect v2 endpoint resps
+- 71979b6: batchSignTxs added to sign all txs upfront
+
+### Patch Changes
+
+- cc391ab: remove unused type and fix validation state
+- dffca8c: Add trackTxPollingOptions to ExecuteRouteOptions and waitForTransaction
+- fbc22f6: improve error message copy
+- 0aab36a: Add postRouteHandler as an option to executeRoute
+
 ## 1.1.9
 
 ### Patch Changes
