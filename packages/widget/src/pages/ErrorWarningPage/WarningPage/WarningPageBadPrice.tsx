@@ -9,6 +9,7 @@ import { track } from "@amplitude/analytics-browser";
 import { useMemo } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { PageHeader } from "@/components/PageHeader";
+import { styled } from "styled-components";
 
 export type WarningPageBadPriceProps = {
   onClickContinue: () => void;
@@ -62,14 +63,13 @@ export const WarningPageBadPrice = ({
       return {
         title: `Warning: Bad trade (-${swapDifferencePercentage})`,
         descriptionContent: (
-          <>
+          <StyledDescriptionContent>
             You will lose {swapDifferencePercentage} of your input value with this trade
             <br />
-            Input: {sourceDetails?.amount} {sourceDetails?.symbol} ({usdAmountIn})
+            Input: {sourceDetails?.amount} {sourceDetails?.symbol} (${usdAmountIn})
             <br />
-            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (
-            {usdAmountOut})
-          </>
+            Estimated output: {destinationDetails?.amount} {destinationDetails?.symbol} (${usdAmountOut})
+          </StyledDescriptionContent>
         ),
       };
     }
@@ -154,3 +154,7 @@ export const WarningPageBadPrice = ({
     </>
   );
 };
+
+const StyledDescriptionContent = styled.div`
+  line-height: 1.5;
+`
