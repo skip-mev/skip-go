@@ -36,15 +36,8 @@ const DevMode = () => {
       enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
-      routeConfig: {
-        experimentalFeatures: ["eureka"],
-      },
       apiUrl:
         apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
-      ibcEurekaHighlightedAssets: {
-        USDC: ["cosmoshub-4"],
-        USDT: undefined,
-      },
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",

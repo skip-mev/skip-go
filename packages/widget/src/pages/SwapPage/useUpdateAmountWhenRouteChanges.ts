@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount, hasAmountChanged } from "@/utils/crypto";
-import { formatDisplayAmount } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
 
 export const useUpdateAmountWhenRouteChanges = () => {
@@ -37,20 +36,12 @@ export const useUpdateAmountWhenRouteChanges = () => {
     if (direction === "swap-in" && swapInAmountChanged) {
       setDestinationAsset((old) => ({
         ...old,
-        amount: formatDisplayAmount(swapInAmount, {
-          decimals: destinationAsset.decimals,
-          showLessThanSign: false,
-          abbreviate: false
-        })
+        amount: swapInAmount
       }));
     } else if (direction === "swap-out" && swapOutAmountChanged) {
       setSourceAsset((old) => ({
         ...old,
-        amount: formatDisplayAmount(swapOutAmount, {
-          decimals: sourceAsset.decimals,
-          showLessThanSign: false,
-          abbreviate: false
-        })
+        amount: swapOutAmount
       }));
     }
   }, [route.data, sourceAsset, destinationAsset, direction, setSourceAsset, setDestinationAsset]);
