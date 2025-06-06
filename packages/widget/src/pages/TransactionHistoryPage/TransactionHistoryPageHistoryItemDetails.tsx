@@ -25,12 +25,12 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
 };
 
 const statusMap = {
-  unconfirmed: "Unconfirmed",
   signing: "In Progress",
   broadcasted: "In Progress",
   pending: "In Progress",
   completed: "Completed",
   failed: "Failed",
+  unconfirmed: "Failed",
   approving: "Approving allowance",
   incomplete: "Not completed",
 };
@@ -49,7 +49,7 @@ export const TransactionHistoryPageHistoryItemDetails = ({
   const initialTxHash = transactionDetails?.[0]?.txHash;
 
   const statusColor = useMemo(() => {
-    if (status === "failed" || status === "incomplete") {
+    if (status === "failed" || status === "incomplete" || status === "unconfirmed") {
       if (transferAssetRelease) {
         return theme.warning.text;
       }
@@ -107,11 +107,16 @@ export const TransactionHistoryPageHistoryItemDetails = ({
 
       <StyledHistoryItemDetailRow align="center">
         <StyledDetailsLabel>Route explorer</StyledDetailsLabel>
-        <Link href={skipExplorerLink} target="_blank" gap={5} onClick={() => {
-          track("transaction history page: view route explorer - clicked", {
-            txHash: initialTxHash,
-          });
-        }}>
+        <Link
+          href={skipExplorerLink}
+          target="_blank"
+          gap={5}
+          onClick={() => {
+            track("transaction history page: view route explorer - clicked", {
+              txHash: initialTxHash,
+            });
+          }}
+        >
           <SmallText normalTextColor>{getTruncatedAddress(initialTxHash)}</SmallText>
           <SmallText>
             <ChainIcon />

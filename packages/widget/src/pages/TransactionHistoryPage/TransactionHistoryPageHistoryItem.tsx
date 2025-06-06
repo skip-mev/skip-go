@@ -84,7 +84,6 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
 
     const renderStatus = useMemo(() => {
       switch (historyStatus) {
-        case "unconfirmed":
         case "pending":
           return (
             <StyledAnimatedBorder
@@ -97,6 +96,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         case "completed":
           return <StyledGreenDot />;
         case "incomplete":
+        case "unconfirmed":
         case "failed": {
           if (transferAssetRelease) {
             return <FilledWarningIcon backgroundColor={theme.warning.text} />;
