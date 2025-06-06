@@ -1,5 +1,32 @@
 ## 0.0.15
 
+## 3.11.0
+
+### Minor Changes
+
+- 71979b6: batchSignTxs added to sign all txs upfront
+
+### Patch Changes
+
+- 32f5f7b: Save list of extra chainIds connected per wallet so that we automatically connect to those chains in the future, clear list if theres an error when connecting (in case chain was removed from wallet)
+- b338a30: Update widget to allow getCosmosSigner/getEvmSigner to fallback to default if no signer is found for given chainId
+- 871bec1: Added setAsset that enables setting the source/destination asset manually and onSource/DestinationAssetUpdated callbacks
+- 0dd5d25: change error page explorer link to skip explorer
+- df56981: Add fallback to checking lastHistoryItem isSettled for isFetchingLastTransactionStatusAtom
+- 38200ac: Fix infinite setState caused by erroneously setting amount to formattedDisplayAmount
+- 6a6bb61: Fix overallStatus logic
+- cde6a0c: Fix set destination address to allow manual address entry if the last operation has sign required but fromChainId !== destinationChainId
+- 9cc8751: fix error text line height in bad price warning
+- 24b17d6: Fix infinite spinner if last tx item is 2tx route with only 1 tx in transactionDetails, Add deleting history items that have no chainId and txHash in transactionDetails
+- a14f13d: default sessions replays to on
+- Updated dependencies [c502e19]
+- Updated dependencies [71979b6]
+- Updated dependencies [cc391ab]
+- Updated dependencies [dffca8c]
+- Updated dependencies [fbc22f6]
+- Updated dependencies [0aab36a]
+  - @skip-go/client@1.2.0
+
 ## 3.10.11
 
 ### Patch Changes
