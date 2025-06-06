@@ -101,6 +101,10 @@ const noHistoryItemsAtom = atom((get) => {
 
 const isFetchingLastTransactionStatusAtom = atom((get) => {
   const { overallStatus, route, transactionsSigned } = get(swapExecutionStateAtom);
+  const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
 
-  return overallStatus === "pending" && transactionsSigned === route?.txsRequired;
+  return (
+    (overallStatus === "pending" && transactionsSigned === route?.txsRequired) ||
+    (lastTxHistoryItem?.isSettled !== true && lastTxHistoryItem?.route?.txsRequired === 1)
+  );
 });
