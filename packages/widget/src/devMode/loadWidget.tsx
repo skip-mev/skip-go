@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import "../web-component";
 import { Column, Row } from "@/components/Layout";
 import "./global.css";
-import { resetWidget } from "@/state/swapPage";
+import { resetWidget, setAsset } from "@/state/swapPage";
 import { defaultTheme, lightTheme } from "@/widget/theme";
 import { Widget, WidgetProps } from "@/widget/Widget";
 
@@ -36,15 +36,8 @@ const DevMode = () => {
       enableAmplitudeAnalytics: true,
       disableShadowDom,
       onlyTestnet: testnet,
-      routeConfig: {
-        experimentalFeatures: ["eureka"],
-      },
       apiUrl:
         apiUrl === "prod" ? "https://go.skip.build/api/skip" : "https://dev.go.skip.build/api/skip",
-      ibcEurekaHighlightedAssets: {
-        USDC: ["cosmoshub-4"],
-        USDT: undefined,
-      },
       assetSymbolsSortedToTop: [
         "LBTC",
         "ATOM",
@@ -69,6 +62,12 @@ const DevMode = () => {
         },
       },
       onSourceAndDestinationSwapped(props) {
+        console.log(props);
+      },
+      onSourceAssetUpdated(props) {
+        console.log(props);
+      },
+      onDestinationAssetUpdated(props) {
         console.log(props);
       },
     };
@@ -96,6 +95,20 @@ const DevMode = () => {
         <button onClick={() => resetWidget()}> reset widget </button>
         <button onClick={() => resetWidget({ onlyClearInputValues: true })}>
           reset widget only clear input values
+        </button>
+        <button
+          onClick={() =>
+            setAsset({ type: "source", chainId: "osmosis-1", denom: "uosmo", amount: 1 })
+          }
+        >
+          set source asset to OSMO on Osmosis
+        </button>
+        <button
+          onClick={() =>
+            setAsset({ type: "destination", chainId: "interwoven-1", denom: "uinit", amount: 1 })
+          }
+        >
+          set destination asset to INIT on Initia
         </button>
         <button onClick={() => setTestnet(!testnet)}>{testnet ? "testnet" : "mainnet"}</button>
         <button onClick={() => setApiUrl((v) => (v === "prod" ? "dev" : "prod"))}>

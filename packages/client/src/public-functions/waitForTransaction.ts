@@ -1,11 +1,9 @@
-import { trackTransaction } from "../api/postTrackTransaction";
+import { trackTransaction, type TrackTxRequest } from "../api/postTrackTransaction";
 import { transactionStatus } from "../api/postTransactionStatus";
 import type { TransactionCallbacks } from "../types/callbacks";
 import { wait } from "../utils/timer";
 
-export type WaitForTransactionProps = {
-  chainId: string;
-  txHash: string;
+export type WaitForTransactionProps = TrackTxRequest & {
   onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
 };
 
@@ -13,10 +11,12 @@ export const waitForTransaction = async ({
   chainId,
   txHash,
   onTransactionTracked,
+  ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
   const { explorerLink } = await trackTransaction({
     chainId,
     txHash,
+    ...trackTxPollingOptions,
   });
   await onTransactionTracked?.({ txHash, chainId, explorerLink });
 

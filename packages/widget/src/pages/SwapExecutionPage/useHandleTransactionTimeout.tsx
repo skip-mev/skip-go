@@ -4,6 +4,7 @@ import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecut
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
@@ -29,7 +30,7 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
             onClickBack: () => {
               setOverallStatus("unconfirmed");
             },
-            explorerLink: lastTransaction?.explorerLink ?? "",
+            explorerLink: createSkipExplorerLink(transactionDetailsArray),
             txHash: lastTransaction?.txHash,
           });
         },

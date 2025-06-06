@@ -83,12 +83,16 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
+  const isSafeToleave = route?.txsRequired === transactionDetailsArray.length;
+
   usePreventPageUnload(
     swapExecutionState === SwapExecutionState.signaturesRemaining ||
       swapExecutionState === SwapExecutionState.waitingForSigning ||
       swapExecutionState === SwapExecutionState.approving ||
-      swapExecutionState === SwapExecutionState.validatingGasBalance,
+      swapExecutionState === SwapExecutionState.validatingGasBalance ||
+      !isSafeToleave,
   );
+
   useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
@@ -137,11 +141,13 @@ export const SwapExecutionPage = () => {
 
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
+        signRequired:
+          lastOperation.signRequired && lastOperation.fromChain === route?.destAssetChainId,
         chainId: route?.destAssetChainId,
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };
-  }, [swapExecutionState, route]);
+  }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple

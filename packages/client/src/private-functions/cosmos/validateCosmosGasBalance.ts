@@ -40,12 +40,12 @@ export const validateCosmosGasBalance = async ({
 
   const chain = skipChains?.find((c) => c.chainId === chainId);
   if (!chain) {
-    throw new Error(`failed to find chain id for '${chainId}'`);
+    throw new Error(`failed to find chain id '${chainId}'`);
   }
 
   const { feeAssets } = chain;
   if (!feeAssets) {
-    throw new Error(`failed to find fee assets for chain '${chainId}'`);
+    throw new Error(`failed to find fee assets for chain id '${chainId}'`);
   }
   const estimatedGasAmount = await (async () => {
     try {
@@ -186,11 +186,11 @@ export const validateCosmosGasBalance = async ({
   if (!feeUsed) {
     if (validatedAssets.length > 1) {
       throw new Error(
-        validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chainId}.`,
+        validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chain.prettyName}.`,
       );
     }
     throw new Error(
-      validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chainId}.`,
+      validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chain.prettyName}.`,
     );
   }
   return feeUsed;

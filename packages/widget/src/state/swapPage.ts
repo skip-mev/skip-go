@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { ClientAsset } from "@/state/skipClient";
+import { ClientAsset, skipAssetsAtom } from "@/state/skipClient";
 import { getSigningStargateClient } from "@skip-go/client";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
@@ -13,6 +13,10 @@ import { errorWarningAtom } from "./errorWarning";
 import { getConnectedSignersAtom, walletsAtom } from "./wallets";
 import { getWallet, WalletType } from "graz";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
+import {
+  extraCosmosChainIdsToConnectPerWalletAtom,
+  getInitialChainIds,
+} from "@/hooks/useCreateCosmosWallets";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;
@@ -51,38 +55,46 @@ export const onRouteUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((g
   }
 });
 
-export const onSourceAssetUpdatedEffect: ReturnType<typeof atomEffect> = atomEffect((get) => {
-  const sourceAsset = get(sourceAssetAtom);
-  const wallets = get(walletsAtom);
-  const getSigners = get(getConnectedSignersAtom);
+export const preloadSigningStargateClientEffect: ReturnType<typeof atomEffect> = atomEffect(
+  (get) => {
+    (async () => {
+      const sourceAsset = get(sourceAssetAtom);
+      const wallets = get(walletsAtom);
+      const getSigners = get(getConnectedSignersAtom);
+      const extraChainIdsToConnect = get(extraCosmosChainIdsToConnectPerWalletAtom);
 
-  const wallet = wallets?.cosmos?.walletName && getWallet(wallets.cosmos.walletName as WalletType);
+      const walletName = wallets?.cosmos?.walletName as WalletType | undefined;
+      const signer = getSigners?.getCosmosSigner ?? (walletName && getWallet(walletName));
 
-  const signer = getSigners?.getCosmosSigner ?? wallet;
+      if (!sourceAsset?.chainId || !wallets.cosmos || !signer || !walletName) return;
 
-  if (sourceAsset?.chainId && wallets.cosmos && signer) {
-    getSigningStargateClient({
-      chainId: sourceAsset?.chainId,
-      getOfflineSigner: async (chainId) => {
-        if (getSigners?.getCosmosSigner) {
-          return getSigners.getCosmosSigner(chainId);
-        }
-        if (!wallets.cosmos) {
-          throw new Error("getCosmosSigner error: no cosmos wallet");
-        }
-        const wallet = getWallet(wallets.cosmos.walletName as WalletType);
-        if (!wallet) {
-          throw new Error("getCosmosSigner error: wallet not found");
-        }
-        const key = await wallet.getKey(chainId);
+      const additionalChainIds = extraChainIdsToConnect[walletName] ?? [];
+      const chainIdsToConnect = [...getInitialChainIds(walletName), ...additionalChainIds];
 
-        return key.isNanoLedger
-          ? wallet.getOfflineSignerOnlyAmino(chainId)
-          : wallet.getOfflineSigner(chainId);
-      },
-    });
-  }
-});
+      if (!chainIdsToConnect.includes(sourceAsset.chainId)) return;
+
+      await getSigningStargateClient({
+        chainId: sourceAsset.chainId,
+        getOfflineSigner: async (chainId) => {
+          if (getSigners?.getCosmosSigner?.(chainId)) {
+            return getSigners.getCosmosSigner(chainId);
+          }
+
+          if (!wallets.cosmos) throw new Error("getCosmosSigner error: no cosmos wallet");
+
+          const wallet = getWallet(wallets.cosmos.walletName as WalletType);
+          if (!wallet) throw new Error("getCosmosSigner error: wallet not found");
+          if (!wallet?.getKey) throw new Error("getCosmosSigner error: getKey not found");
+
+          const key = await wallet.getKey(chainId);
+          return key.isNanoLedger
+            ? wallet.getOfflineSignerOnlyAmino(chainId)
+            : wallet.getOfflineSigner(chainId);
+        },
+      });
+    })();
+  },
+);
 
 export const sourceAssetAtom = atomWithStorageNoCrossTabSync<AssetAtom | undefined>(
   LOCAL_STORAGE_KEYS.sourceAsset,
@@ -105,6 +117,45 @@ export const resetWidget = ({ onlyClearInputValues }: { onlyClearInputValues?: b
   set(setRouteToDefaultRouteAtom);
   set(currentPageAtom, Routes.SwapPage);
   set(errorWarningAtom, undefined);
+};
+
+type SetAssetProps = {
+  type: "source" | "destination";
+  chainId: string;
+  denom: string;
+  amount?: number;
+};
+
+/**
+ * Sets the selected asset (source or destination) in the global state
+ * @param {"source" | "destination"} options.type - Indicates whether to update the source or destination asset.
+ * @param {string} options.chainId - The chain Id of the asset.
+ * @param {string} options.denom - The denom (token identifier) of the asset.
+ * @param {number} options.amount - Optional amount to associate with the asset.
+ */
+export const setAsset = ({ type, ...assetDetails }: SetAssetProps) => {
+  const { set, get } = jotaiStore;
+
+  const { data: skipAssets } = get(skipAssetsAtom);
+  const assetFound = skipAssets?.find(
+    (asset) => asset?.chainId === assetDetails.chainId && asset?.denom === assetDetails?.denom,
+  );
+
+  const assetAmount = assetDetails?.amount?.toString();
+
+  switch (type) {
+    case "source":
+      set(sourceAssetAtom, { ...assetFound, amount: assetAmount });
+      if (assetAmount) {
+        set(sourceAssetAmountAtom, assetAmount);
+      }
+      break;
+    case "destination":
+      set(destinationAssetAtom, { ...assetFound, amount: assetAmount });
+      if (assetAmount) {
+        set(destinationAssetAmountAtom, assetAmount);
+      }
+  }
 };
 
 export const sourceAssetAmountAtom = atom(

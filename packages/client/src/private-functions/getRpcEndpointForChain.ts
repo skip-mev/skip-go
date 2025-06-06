@@ -25,7 +25,7 @@ export const getRpcEndpointForChain = async (chainId: string) => {
 
   if (chain.apis?.rpc?.length === 0 || !chain.apis?.rpc) {
     throw new Error(
-      `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainId}'`,
+      `getRpcEndpointForChain error: failed to find RPC endpoint for chain id '${chainId}'`,
     );
   }
   const endpoints = chain.apis?.rpc?.map((api) => api.address);
@@ -33,7 +33,7 @@ export const getRpcEndpointForChain = async (chainId: string) => {
 
   if (!endpoint) {
     throw new Error(
-      `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainId}'`,
+      `getRpcEndpointForChain error: failed to find RPC endpoint for chain id '${chainId}'`,
     );
   }
 

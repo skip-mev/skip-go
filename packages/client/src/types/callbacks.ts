@@ -1,6 +1,6 @@
 import type { Erc20Approval, TransferStatus } from "./swaggerTypes";
 
-type CallbackStatus = "success" | "error" | "pending" | "completed";
+type CallbackStatus = "error" | "pending" | "completed";
 
 export type TransactionCallbacks = {
   onTransactionSigned?: (txInfo: { chainId: string }) => Promise<void>;

@@ -222,7 +222,7 @@ export function api<K extends ValidApiMethodKeys, TransformedResponse = ApiRespo
   });
 }
 
-type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & {
+export type PollingProps<K extends ValidApiMethodKeys> = {
   isSuccess?: (result: ApiResponse<K>) => boolean;
   /**
    * Maximum number of retries
@@ -254,7 +254,9 @@ type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"
   backoffMultiplier?: number;
   onError?: (error: unknown, attempt: number) => void;
   onSuccess?: (result: ApiResponse<K>, attempt: number) => void;
-};
+}
+
+export type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & PollingProps<K>;
 
 export function pollingApi<K extends ValidApiMethodKeys>({
   methodName,
