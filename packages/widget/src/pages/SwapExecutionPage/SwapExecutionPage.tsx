@@ -141,6 +141,7 @@ export const SwapExecutionPage = () => {
 
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
+        signRequired: lastOperation.signRequired && lastOperation.fromChain === route?.destAssetChainId,
         chainId: route?.destAssetChainId,
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
