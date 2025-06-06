@@ -22,7 +22,7 @@ export const getRestEndpointForChain = async (chainId: string) => {
   }
   if (chain.apis?.rest?.length === 0 || !chain.apis?.rest) {
     throw new Error(
-      `getRestEndpointForChain error: failed to find REST endpoint for chain '${chainId}'`,
+      `getRestEndpointForChain error: failed to find REST endpoint for chain id '${chainId}'`,
     );
   }
   const endpoints = chain.apis?.rest?.map((api) => api.address);
@@ -30,7 +30,7 @@ export const getRestEndpointForChain = async (chainId: string) => {
 
   if (!endpoint) {
     throw new Error(
-      `getRestEndpointForChain error: failed to find REST endpoint for chain '${chainId}'`,
+      `getRestEndpointForChain error: failed to find REST endpoint for chain id '${chainId}'`,
     );
   }
 

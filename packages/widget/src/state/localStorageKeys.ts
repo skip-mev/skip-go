@@ -3,4 +3,5 @@ export enum LOCAL_STORAGE_KEYS {
   destinationAsset = "destinationAsset",
   transactionHistory = "transactionHistory",
   swapExecutionState = "swapExecutionState",
+  extraCosmosChainIdsToConnectPerWallet = "extraCosmosChainIdsToConnectPerWallet",
 }

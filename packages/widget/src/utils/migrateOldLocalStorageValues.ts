@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { TransactionHistoryItem } from "@/state/history";
 import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
 
 export const migrateOldLocalStorageValues = () => {
@@ -10,12 +11,24 @@ export const migrateOldLocalStorageValues = () => {
       if (!raw) return;
 
       const parsed = JSON.parse(raw);
-      const camelCased = toCamelCase(parsed);
+      let newLocalStorageValue = toCamelCase(parsed);
 
-      if (JSON.stringify(parsed) !== JSON.stringify(camelCased)) {
-        localStorage.setItem(key, JSON.stringify(camelCased));
+      if (key === LOCAL_STORAGE_KEYS.transactionHistory) {
+        newLocalStorageValue = newLocalStorageValue.filter(
+          (txHistoryItem: TransactionHistoryItem) => {
+            const chainId = txHistoryItem?.transactionDetails?.[0]?.chainId;
+            const txHash = txHistoryItem?.transactionDetails?.[0]?.txHash;
+            if (chainId !== undefined && txHash !== undefined) {
+              return true;
+            }
+          },
+        );
+      }
+
+      if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
+        localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
         // eslint-disable-next-line no-console
-        console.info("migrated old localStorage values");
+        console.info("updated old localStorage values");
       }
     } catch (err) {
       console.warn(`Failed to migrate localStorage key "${key}":`, err);

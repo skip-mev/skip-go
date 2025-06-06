@@ -10,7 +10,11 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { PageHeader } from "@/components/PageHeader";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import {
+  setOverallStatusAtom,
+  skipSubmitSwapExecutionAtom,
+  swapExecutionStateAtom,
+} from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -71,12 +75,20 @@ export const SwapPageHeader = memo(() => {
 
 export const TrackLatestTxHistoryItemStatus = memo(() => {
   const transactionhistory = useAtomValue(transactionHistoryAtom);
+  const setOverallStatus = useSetAtom(setOverallStatusAtom);
+  const { transactionsSigned, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
+
   const lastTxHistoryItem = transactionhistory.at(-1);
 
-  useTxHistory({
+  const { transferAssetRelease } = useTxHistory({
     txHistoryItem: lastTxHistoryItem,
     index: transactionhistory.length - 1,
   });
+
+  if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length && !isPending) {
+    setOverallStatus("failed");
+  }
 
   return null;
 });
@@ -89,6 +101,10 @@ const noHistoryItemsAtom = atom((get) => {
 
 const isFetchingLastTransactionStatusAtom = atom((get) => {
   const { overallStatus, route, transactionsSigned } = get(swapExecutionStateAtom);
+  const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
 
-  return overallStatus === "pending" && transactionsSigned === route?.txsRequired;
+  return (
+    (overallStatus === "pending" && transactionsSigned === route?.txsRequired) ||
+    (lastTxHistoryItem?.isSettled !== true && lastTxHistoryItem?.route?.txsRequired === 1)
+  );
 });

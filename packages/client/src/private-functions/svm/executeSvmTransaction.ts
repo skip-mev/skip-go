@@ -5,65 +5,39 @@ import { submitTransaction } from "src/api/postSubmitTransaction";
 import { wait } from "src/utils/timer";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { signSvmTransaction } from "./signSvmTransaction";
 
 export const executeSvmTransaction = async (
   tx?: { svmTx?: SvmTx },
-  options?: ExecuteRouteOptions,
+  options?: ExecuteRouteOptions
 ) => {
-  const gasArray = ClientState.validateGasResults;
-
-  if (tx === undefined) {
-    throw new Error("executeSvmTransaction error: tx is undefined");
-  }
-
-  const gas = gasArray?.find((gas) => gas?.error !== null && gas?.error !== undefined);
-  if (typeof gas?.error === "string") {
-    throw new Error(gas?.error);
-  }
-
   const svmTx = tx?.svmTx;
-  const getSvmSigner = options?.getSvmSigner;
-  if (!getSvmSigner) {
-    throw new Error(
-      "executeSvmTransaction error: getSvmSigner is not provided",
-    );
-  }
-
-  const signer = await getSvmSigner();
-
   if (!svmTx?.chainId) {
     throw new Error("executeSvmTransaction error: chainId not found in svmTx");
   }
-
-  const txBuffer = Buffer.from(svmTx.tx ?? "", "base64");
-  const transaction = Transaction.from(txBuffer);
+  const signedTx = await signSvmTransaction({ tx, options });
+  if (!signedTx) {
+    throw new Error("executeSvmTransaction error: signedTx is undefined");
+  }
 
   const endpoint = await getRpcEndpointForChain(svmTx.chainId);
   const connection = new Connection(endpoint);
 
   let signature: string | undefined;
 
-  if ("signTransaction" in signer) {
-    const signedTx = await signer.signTransaction(transaction);
-    options?.onTransactionSigned?.({ chainId: svmTx.chainId });
+  await submitTransaction({
+    chainId: svmTx.chainId,
+    tx: signedTx.toString("base64"),
+  }).then((res) => {
+    signature = res?.txHash;
+  });
 
-    const serializedTx = signedTx.serialize();
+  const rpcSig = await connection.sendRawTransaction(signedTx, {
+    preflightCommitment: "confirmed",
+    maxRetries: 5,
+  });
 
-    await submitTransaction({
-      chainId: svmTx.chainId,
-      tx: serializedTx.toString("base64"),
-    }).then((res) => {
-      signature = res?.txHash;
-    });
-
-    const rpcSig = await connection.sendRawTransaction(serializedTx, {
-      preflightCommitment: "confirmed",
-      maxRetries: 5,
-    });
-
-    signature = rpcSig;
-  }
-
+  signature = rpcSig;
   if (!signature) {
     throw new Error("executeSvmTransaction error: signature not found");
   }
@@ -88,7 +62,7 @@ export const executeSvmTransaction = async (
       if (getStatusCount > 12) {
         await wait(3000);
         throw new Error(
-          `executeSvmTransaction error: waiting finalized status timed out for ${signature}`,
+          `executeSvmTransaction error: waiting finalized status timed out for ${signature}`
         );
       }
 

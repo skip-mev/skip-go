@@ -3,6 +3,11 @@ title: "Client Library"
 description: "Selected updates and improvements to the `@skip-go/client` [npm package](https://www.npmjs.com/package/@skip-go/client)."
 ---
 
+## v1.1.9
+
+### Enhancements
+- **Batch Transaction Signing:** Added `batchSignTxs` parameter to `executeRoute`. When enabled (default: true), all transactions in a multi-transaction route are signed upfront before broadcasting, reducing the number of user prompts and improving the overall user experience.
+
 ## v1.1.0
 
 ### Enhancements

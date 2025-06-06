@@ -7,18 +7,12 @@ let isAmplitudeInitialized = false;
 export const initAmplitude = () => {
   if (isAmplitudeInitialized) return;
   
-
   init("14616a575f32087cf0403ab8f3ea3ce0", {
     appVersion: version,
   });
 
-  isAmplitudeInitialized = true;
+  const plugin = sessionReplayPlugin({
+    sampleRate: 1,
+  });
+  add(plugin);
 };
-
-export const startAmplitudeSessionReplay = () => {
-  if (isAmplitudeInitialized) {
-    const plugin = sessionReplayPlugin({});
-    add(plugin);
-  }
-}
-                                                                                                                                                                                                                                                          
