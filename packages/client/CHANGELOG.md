@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.2.1
+
+### Patch Changes
+
+- f138746: fix track path
+
 ## 1.2.0
 
 ### Minor Changes
