@@ -15,7 +15,7 @@ export const trackTransaction = ({
 }: TrackTxRequest) => {
   return pollingApi({
     methodName: "track",
-    path: "/v2/tx/track",
+    path: "v2/tx/track",
     method: "post",
     maxRetries,
     retryInterval,
