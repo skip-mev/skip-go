@@ -46,6 +46,7 @@ jobs:
         run: yarn test-widget
 
       - name: Generate combined image and diff
+        if: always()
         run: |
           yarn combine-images
         working-directory: ./packages/widget
