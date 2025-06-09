@@ -19,6 +19,7 @@ export const CosmosProvider: React.FC<CosmosProviderProps> = ({ children }) => {
         walletDefaultOptions: {
           sign: {
             preferNoSetFee: true,
+            disableBalanceCheck: true,
           },
         },
         walletConnect: {
