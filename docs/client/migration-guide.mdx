@@ -151,6 +151,31 @@ await getRecommendedGasPrice({ chainId: chainID });
 // await getRecommendedGasPrice({ chainId: chainID, apiUrl: YOUR_API_URL, apiKey: YOUR_API_KEY });
 ```
 
+### Removed Internal Functions
+
+The following functions that were previously exported are no longer available in v1.0.0. These were internal functions that were not intended for direct use by integrators, as they are used internally by `executeRoute`:
+
+- `executeTxs`
+- `executeEvmMsg` (merged with `executeEvmTransaction`)
+- `executeCosmosMessage` (merged with `executeCosmosTransaction`)
+- `executeEVMTransaction`
+- `executeSVMTransaction`
+- `signCosmosMessageDirect`
+- `signCosmosMessageAmino`
+- `getRpcEndpointForChain`
+- `getRestEndpointForChain`
+- `validateGasBalances`
+- `validateCosmosGasBalance`
+- `validateEvmGasBalance`
+- `validateEvmTokenApproval`
+- `validateSvmGasBalance`
+- `validateUserAddresses`
+- `getMainnetAndTestnetChains`
+- `getMainnetAndTestnetAssets`
+- `getAccountNumberAndSequence`
+
+If your application was using any of these functions directly, consider using `executeRoute` instead, which handles all transaction execution internally. If you have a specific use case that requires access to any of these functions, please open a ticket on our [Discord](https://discord.gg/skip).
+
 </Update>
 
 <Update label="@skip-router/core v4.0.0">
