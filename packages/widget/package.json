@@ -23,6 +23,7 @@
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",
     "test": "yarn playwright test",
+    "update-screenshots": "UPDATE_SCREENSHOTS=true yarn playwright test Keplr.test.tsx",
     "combine-images": "node scripts/combine-images.mjs"
   },
   "exports": {

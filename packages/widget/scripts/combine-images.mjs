@@ -52,7 +52,9 @@ function generateColoredDiff(expected, actual) {
 }
 
 function stitchTriplet(expected, diff, actual) {
-  const width = expected.width + diff.width + actual.width;
+  const SPACING = 10; // space in pixels between images
+  const width =
+    expected.width + diff.width + actual.width + SPACING * 2;
   const height = expected.height;
 
   const combined = new PNG({ width, height });
@@ -69,9 +71,13 @@ function stitchTriplet(expected, diff, actual) {
     }
   };
 
-  copy(expected, 0);
-  copy(diff, expected.width);
-  copy(actual, expected.width + diff.width);
+  const expectedOffset = 0;
+  const diffOffset = expected.width + SPACING;
+  const actualOffset = expected.width + diff.width + SPACING * 2;
+
+  copy(expected, expectedOffset);
+  copy(diff, diffOffset);
+  copy(actual, actualOffset);
 
   return combined;
 }
