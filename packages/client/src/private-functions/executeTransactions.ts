@@ -81,6 +81,7 @@ export const executeTransactions = async (
     onValidateGasBalance,
     simulate: simulate,
     disabledChainIds: validateChainIds,
+    getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
   });
 
   const validateEnabledChainIds = async (chainId: string) => {
@@ -92,6 +93,7 @@ export const executeTransactions = async (
       onValidateGasBalance,
       simulate: simulate,
       enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
+      getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
     });
   };
 
