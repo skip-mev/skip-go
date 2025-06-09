@@ -111,7 +111,7 @@ export const validateCosmosGasBalance = async ({
         asset.denom.toLowerCase() ===
         "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0".toLowerCase()
       ) {
-        const fee = calculateFee(2_000_000, gasPrice);
+        const fee = calculateFee(200_000, gasPrice);
         return fee;
       }
       const fee = calculateFee(200_000, gasPrice);

@@ -462,6 +462,13 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             if (!solanaWallet) throw new Error("getSvmSigner error: wallet not found");
             return solanaWallet;
           },
+          getCosmosPriorityFeeDenom: async (chainId) => {
+            const chain = chains?.find((c) => c.chainId === chainId);
+            if (!chain) throw new Error(`Chain with ID ${chainId} not found`);
+            if (chain.chainId === "noble-1")
+              return "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0";
+            return undefined;
+          },
         });
       } catch (error: unknown) {
         console.error(error);
