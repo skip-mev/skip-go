@@ -14,11 +14,10 @@ export default defineNuxtPlugin(() => {
    */
   import('@skip-go/widget-web-component');
   /**
-   * Alternative: Use the cdn link for much faster dev startup:
+   * Use the cdn link to see how quickly it loads in production
    * 
-   *   import('https://unpkg.com/@skip-go/widget-web-component/build/index.js') as any
+   * import('https://unpkg.com/@skip-go/widget-web-component/build/index.js') as any
    * 
-   * - This skips bundling entirely — the widget is loaded as an external es module.
-   * - The cdn version is prebuilt and only ~2 KB, since it excludes heavy peer dependencies.
+   * - The cdn version is prebuilt and only ~2 KB
    */
 })
