@@ -92,12 +92,16 @@ export const useInitWidget = (props: WidgetProps) => {
       theme.brandColor = props.brandColor;
     }
 
+    if (props.borderRadius !== undefined) {
+      theme.borderRadius = props.borderRadius;
+    }
+
     if ((props.theme as Theme)?.brandTextColor === undefined && typeof document !== "undefined") {
       theme.brandTextColor = getBrandButtonTextColor(theme.brandColor);
     }
 
     return theme;
-  }, [props.brandColor, props.theme]);
+  }, [props.brandColor, props.borderRadius, props.theme]);
 
   useEffect(() => {
     setSkipClientConfig(mergedSkipClientConfig);
