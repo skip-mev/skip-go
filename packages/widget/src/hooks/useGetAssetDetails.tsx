@@ -1,9 +1,9 @@
 import { ClientAsset, skipAssetsAtom, skipChainsAtom } from "@/state/skipClient";
+import { Chain } from "@skip-go/client";
 import {
   convertTokenAmountToHumanReadableAmount,
   convertHumanReadableAmountToCryptoAmount,
 } from "@/utils/crypto";
-import { Chain } from "@skip-go/client";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 
@@ -54,8 +54,8 @@ export const useGetAssetDetails = ({
     if (!assets) return;
     return assets.find(
       (a) =>
-        a.denom.toLowerCase() === assetDenom.toLowerCase() &&
-        a.chainID.toLowerCase() === chainId.toLowerCase(),
+        a.denom?.toLowerCase() === assetDenom.toLowerCase() &&
+        a.chainId?.toLowerCase() === chainId.toLowerCase(),
     );
   }, [assets, assetDenom, chainId]);
 
@@ -65,20 +65,20 @@ export const useGetAssetDetails = ({
     tokenAmount = convertHumanReadableAmountToCryptoAmount(amount, asset?.decimals);
   }
 
-  const assetImage = asset?.logoURI;
+  const assetImage = asset?.logoUri;
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
   const chain = chains?.find((chain) => {
     if (chainId) {
-      return chain.chainID === chainId;
+      return chain.chainId === chainId;
     }
-    return chain.chainID === asset?.chainID;
+    return chain.chainId === asset?.chainId;
   });
   const chainPrettyName =
     chain?.prettyName && chain?.prettyName.length !== 0 ? chain.prettyName : undefined;
   const chainName = chain?.chainName && chain?.chainName.length !== 0 ? chain.chainName : undefined;
 
-  const chainImage = chain?.logoURI;
+  const chainImage = chain?.logoUri;
   const decimals = asset?.decimals;
 
   if (!chainId) {
@@ -97,12 +97,12 @@ export const useGetAssetDetails = ({
   return {
     asset,
     chain,
-    assetImage,
+    assetImage: assetImage ?? "",
     chainName: chainPrettyName ?? chainName ?? chainId,
-    chainImage,
-    symbol,
+    chainImage: chainImage ?? "",
+    symbol: symbol ?? "",
     amount,
     tokenAmount,
-    decimals,
+    decimals: decimals ?? undefined,
   };
 };

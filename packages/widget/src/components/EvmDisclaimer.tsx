@@ -11,7 +11,7 @@ export const EvmDisclaimer = ({ route }: { route?: RouteResponse } = {}) => {
 
   const usesEvmInOperations = useMemo(() => {
     return route?.requiredChainAddresses?.find((chainId) => {
-      const chainType = chains?.find((chain) => chain.chainID === chainId)?.chainType;
+      const chainType = chains?.find((chain) => chain.chainId === chainId)?.chainType;
       return chainType === "evm";
     });
   }, [chains, route?.requiredChainAddresses]);

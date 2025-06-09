@@ -11,16 +11,18 @@ import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { getTruncatedAddress } from "@/utils/crypto";
+import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
-import { removeTrailingZeros } from "@/utils/number";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { TxsStatus } from "./useBroadcastedTxs";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
-  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
@@ -56,6 +58,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
     chainId,
     tokenAmount,
   });
+  const groupedAssets = useGroupedAssetByRecommendedSymbol();
+  const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -68,7 +72,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
   const chainAddressWallet = useMemo(() => {
     const chainAddressArray = Object.values(chainAddresses);
     const firstChainAddressFoundForChainId = chainAddressArray.find(
-      (chainAddress) => chainAddress.chainID === chainId,
+      (chainAddress) => chainAddress.chainId === chainId,
     );
     const lastChainAddress = chainAddressArray[chainAddressArray.length - 1];
 
@@ -161,7 +165,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
 
   return (
     <Row gap={15} align="center" {...props}>
-      {assetDetails?.assetImage ? (
+      {groupedAsset ? (
         <StyledAnimatedBorder
           width={30}
           height={30}
@@ -169,11 +173,11 @@ export const SwapExecutionPageRouteDetailedRow = ({
           status={status}
           key={`${numberOfTransferEvents}-${latestStatus}`}
         >
-          <StyledChainImage
+          <GroupedAssetImage
             height={30}
             width={30}
-            src={assetDetails.assetImage}
-            title={assetDetails?.asset?.name}
+            style={{ borderRadius: 30, boxSizing: "content-box" }}
+            groupedAsset={groupedAsset}
           />
         </StyledAnimatedBorder>
       ) : (
@@ -190,7 +194,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
           <LeftContent>
             <Row gap={5} align="center">
               <StyledAssetAmount normalTextColor title={assetDetails?.amount}>
-                {removeTrailingZeros(assetDetails?.amount)}
+                {formatDisplayAmount(assetDetails?.amount)}
               </StyledAssetAmount>
               <StyledSymbol normalTextColor>{assetDetails?.symbol}</StyledSymbol>
               <StyledChainName
@@ -243,11 +247,6 @@ const PlaceholderIcon = styled.div`
 
 const AddressText = styled(SmallText)`
   text-transform: lowercase;
-`;
-
-const StyledChainImage = styled.img`
-  border-radius: 50%;
-  box-sizing: content-box;
 `;
 
 export const StyledAnimatedBorder = ({

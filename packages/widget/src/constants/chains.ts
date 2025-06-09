@@ -137,8 +137,8 @@ export const explorers = _explorers as unknown as {
   explorers: Explorer[];
 }[];
 
-export const getChainInfo = (chainID: string) => {
-  const chain = allChains.find((chain) => chain.chainId === chainID);
+export const getChainInfo = (chainId: string) => {
+  const chain = allChains.find((chain) => chain.chainId === chainId);
   if (!chain) return undefined;
   return chain;
 };

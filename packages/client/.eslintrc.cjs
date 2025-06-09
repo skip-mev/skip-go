@@ -1,39 +1,95 @@
 /** @type {import("eslint").Linter.Config} */
 const eslintConfig = {
-  env: {
-    browser: true,
-    node: true,
-  },
+  plugins: ["@typescript-eslint", "prettier", "import", "esm"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/strict",
+    "plugin:@typescript-eslint/stylistic",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:import/errors",
+    "plugin:import/warnings",
   ],
-  ignorePatterns: [
-    "dist/",
-    "node_modules/",
-    "src/codegen/",
-    //
-  ],
+  root: true,
+  env: {
+    browser: true,
+    node: true,
+    es2021: true,
+  },
+  settings: {
+    "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "simple-import-sort"],
+  ignorePatterns: [
+    "dist/",
+    "build/",
+    "node_modules/",
+    "src/codegen/",
+    "scripts/prepublish.cjs",
+    "scripts/generate-chains.cjs",
+  ],
   rules: {
-    "@typescript-eslint/ban-types": [
+    "@typescript-eslint/consistent-type-imports": ["error", {
+      prefer: "type-imports",
+      disallowTypeAnnotations: false,
+    }],
+
+    'import/no-unresolved': 'error',
+
+    "@typescript-eslint/no-import-type-side-effects": "error",
+
+  "import/extensions": ["error", "always", {
+    "ts": "never",
+    "tsx": "never",
+    "js": "always",
+    "jsx": "always",
+  }],
+
+    "esm/no-commonjs": "warn",
+    "import/no-unresolved": ["error", {
+      ignoreExtension: false,
+      caseSensitive: true,
+    }],
+    "prettier/prettier": [
       "error",
       {
-        types: {
-          // un-ban a type that's banned by default
-          "{}": false,
-        },
-        extendDefaults: true,
+        singleQuote: false,
+        trailingComma: "all",
+        tabWidth: 2,
+        semi: true,
+        printWidth: 100,
+        bracketSpacing: true,
+        endOfLine: "auto",
       },
     ],
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        args: "all",
+        argsIgnorePattern: "^_",
+        caughtErrors: "all",
+        caughtErrorsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        ignoreRestSiblings: true,
+      },
+    ],
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "no-console": ["error", { allow: ["warn", "error"] }],
+    quotes: ["error", "double", { avoidEscape: true }],
+    semi: ["error", "always"],
   },
-  root: true,
 };
 
 module.exports = eslintConfig;

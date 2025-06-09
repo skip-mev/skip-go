@@ -14,15 +14,17 @@ import { chainAddressesAtom } from "@/state/swapExecutionPage";
 import { useAtomValue } from "jotai";
 import { getTruncatedAddress } from "@/utils/crypto";
 import { formatUSD } from "@/utils/intl";
-import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
+import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
+import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
+import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
   tokenAmount: ClientOperation["amountIn"] | ClientOperation["amountOut"];
   usdValue?: string;
-  chainId: ClientOperation["fromChainID"] | ClientOperation["chainID"];
+  chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
   status?: SimpleStatus;
@@ -49,6 +51,8 @@ export const SwapExecutionPageRouteSimpleRow = ({
     chainId,
     tokenAmount,
   });
+  const groupedAssets = useGroupedAssetByRecommendedSymbol();
+  const groupedAsset = groupedAssets?.find((i) => i.id === assetDetails?.symbol);
 
   const chainAddresses = useAtomValue(chainAddressesAtom);
 
@@ -71,10 +75,6 @@ export const SwapExecutionPageRouteSimpleRow = ({
       }
     }
   }, [chainAddresses, context]);
-
-  const displayAmount = useMemo(() => {
-    return removeTrailingZeros(limitDecimalsDisplayed(assetDetails.amount));
-  }, [assetDetails.amount]);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
@@ -100,13 +100,12 @@ export const SwapExecutionPageRouteSimpleRow = ({
         backgroundColor={theme.success.text}
         status={status}
       >
-        {assetDetails.assetImage ? (
-          <img
+        {groupedAsset ? (
+          <GroupedAssetImage
             height={50}
             width={50}
             style={{ borderRadius: 50 }}
-            src={assetDetails.assetImage}
-            title={assetDetails?.asset?.name}
+            groupedAsset={groupedAsset}
           />
         ) : (
           <PlaceholderIcon>?</PlaceholderIcon>
@@ -114,7 +113,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
       </StyledAnimatedBorder>
       <Column gap={5}>
         <StyledSymbolAndAmount>
-          {displayAmount} {assetDetails?.symbol}
+          {formatDisplayAmount(assetDetails.amount)} {assetDetails?.symbol}
         </StyledSymbolAndAmount>
         {usdValue && <SmallText>{formatUSD(usdValue)}</SmallText>}
 

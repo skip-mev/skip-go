@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { CapabilityOwners, CapabilityOwnersAmino, CapabilityOwnersSDKType } from "./capability";
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** GenesisOwners defines the capability owners with their corresponding index. */
 export interface GenesisOwners {

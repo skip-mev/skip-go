@@ -8,16 +8,16 @@ import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import { currentPageAtom, Routes } from "@/state/router";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
-import { RouteResponse } from "@skip-go/client";
 import { ClientOperation } from "@/utils/clientType";
 import { GoFastSymbol } from "@/components/GoFastSymbol";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { useCountdown } from "./useCountdown";
 import { track } from "@amplitude/analytics-browser";
 import { useCallback } from "react";
+import { RouteResponse } from "@skip-go/client";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -38,27 +38,27 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
 }) => {
   const countdown = useCountdown({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
-    swapExecutionState,
+    enabled: swapExecutionState === SwapExecutionState.pending,
   });
 
   const theme = useTheme();
-  const setError = useSetAtom(errorAtom);
+  const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const clearAssetInputAmounts = useSetAtom(clearAssetInputAmountsAtom);
   const isGoFast = useIsGoFast(route);
 
   const getDestinationAddreessUnsetText = useCallback(() => {
     const destinationChainIdHasSignRequired =
-      lastOperation.signRequired && lastOperation.fromChainID === route?.destAssetChainID;
+      lastOperation.signRequired && lastOperation.fromChainId === route?.destAssetChainId;
 
     if (destinationChainIdHasSignRequired && route?.txsRequired === 2) {
       return "Set second signing address";
     }
     return "Set destination address";
   }, [
-    lastOperation.fromChainID,
+    lastOperation.fromChainId,
     lastOperation.signRequired,
-    route?.destAssetChainID,
+    route?.destAssetChainId,
     route?.txsRequired,
   ]);
 
@@ -81,11 +81,11 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           icon={ICONS.rightArrow}
           onClick={() => {
             track("swap execution page: set destination address button - clicked");
-            const destinationChainID = route?.destAssetChainID;
-            if (!destinationChainID) return;
+            const destinationChainId = route?.destAssetChainId;
+            if (!destinationChainId) return;
             NiceModal.show(Modals.SetAddressModal, {
-              signRequired: lastOperation.signRequired,
-              chainId: destinationChainID,
+              signRequired: lastOperation.signRequired && lastOperation.fromChain === destinationChainId,
+              chainId: destinationChainId,
               chainAddressIndex: route.requiredChainAddresses.length - 1,
             });
           }}
@@ -95,9 +95,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
       track("swap execution page: confirm button - clicked", { route });
       const onClickConfirmSwap = () => {
         if (route?.txsRequired && route.txsRequired > 1) {
-          track("error page: additional signing required", { route });
-          setError({
-            errorType: ErrorType.AdditionalSigningRequired,
+          track("warning page: additional signing required", { route });
+          setErrorWarning({
+            errorWarningType: ErrorWarningType.AdditionalSigningRequired,
             onClickContinue: () => submitExecuteRouteMutation(),
             signaturesRequired: route.txsRequired,
           });

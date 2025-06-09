@@ -4,7 +4,7 @@ import { Any, AnyAmino, AnySDKType } from "../../../../google/protobuf/any";
 import { Timestamp } from "../../../../google/protobuf/timestamp";
 import { Duration, DurationAmino, DurationSDKType } from "../../../../google/protobuf/duration";
 import { Long, isSet, toTimestamp, fromTimestamp, bytesFromBase64, fromJsonTimestamp, base64FromBytes } from "../../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../../json-safe";
 /** GetRequest is the Query/Get request type. */
 export interface GetRequest {

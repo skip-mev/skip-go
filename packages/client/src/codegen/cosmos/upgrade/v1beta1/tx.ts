@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { Plan, PlanAmino, PlanSDKType } from "./upgrade";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../helpers";
 import { JsonSafe } from "../../../json-safe";
 /**

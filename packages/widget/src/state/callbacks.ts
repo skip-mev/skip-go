@@ -20,9 +20,9 @@ export type onTransactionBroadcastedProps = {
   sourceAddress: string;
   destinationAddress: string;
   sourceAssetDenom: string;
-  sourceAssetChainID: string;
+  sourceAssetChainId: string;
   destAssetDenom: string;
-  destAssetChainID: string;
+  destAssetChainId: string;
 };
 
 export type onTransactionCompleteProps = {
@@ -32,9 +32,9 @@ export type onTransactionCompleteProps = {
   sourceAddress: string;
   destinationAddress: string;
   sourceAssetDenom: string;
-  sourceAssetChainID: string;
+  sourceAssetChainId: string;
   destAssetDenom: string;
-  destAssetChainID: string;
+  destAssetChainId: string;
 };
 
 export type onTransactionFailedProps = {
@@ -51,6 +51,20 @@ export type onRouteUpdatedProps = {
   requiredChainAddresses?: string[];
 };
 
+export type onSourceAndDestinationSwappedProps = {
+  srcChainId?: string;
+  srcAssetDenom?: string;
+  destChainId?: string;
+  destAssetDenom?: string;
+  amountIn?: string;
+  amountOut?: string;
+};
+
+export type onAssetUpdatedProps = {
+  chainId?: string;
+  denom?: string;
+};
+
 export type Callbacks = {
   onWalletConnected?: (props: onWalletConnectedProps) => void;
   onWalletDisconnected?: (props: onWalletDisconnectedProps) => void;
@@ -58,6 +72,9 @@ export type Callbacks = {
   onTransactionComplete?: (props: onTransactionCompleteProps) => void;
   onTransactionFailed?: (props: onTransactionFailedProps) => void;
   onRouteUpdated?: (props: onRouteUpdatedProps) => void;
+  onSourceAndDestinationSwapped?: (props: onSourceAndDestinationSwappedProps) => void;
+  onSourceAssetUpdated?: (props: onAssetUpdatedProps) => void;
+  onDestinationAssetUpdated?: (props: onAssetUpdatedProps) => void;
 };
 
 export const callbacksAtom = atom<Callbacks>();

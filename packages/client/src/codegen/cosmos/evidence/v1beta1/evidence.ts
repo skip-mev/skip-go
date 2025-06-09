@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Timestamp } from "../../../google/protobuf/timestamp";
 import { Long, toTimestamp, fromTimestamp, isSet, fromJsonTimestamp } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /**
  * Equivocation implements the Evidence interface and defines evidence of double

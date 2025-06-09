@@ -3,6 +3,9 @@ title: "Configuration"
 description: "This page details your widget configuration options. Tweak it to fit your exact user experience needs!"
 ---
 
+<Note>
+**Visual Configuration Tool:** Want to see how your configuration options look before implementing them? Try [studio.skip.build](https://studio.skip.build) - our interactive widget builder that lets you customize themes, assets, routes, and more with a live preview.
+</Note>
 
 # Component Props
 
@@ -56,6 +59,27 @@ routeConfig?: {
 - `swapVenues`: Restrict routing to specific swap venues. Default: empty (all venues).
 - `goFast`: Enable Go Fast transfers. Default: false. [More info](../advanced-transfer/go-fast).
 - `smartSwapOptions`: Advanced swapping features like EVM Swaps and split trade routes. [More info](../advanced-swapping/smart-swap-options).
+
+### `batchSignTxs`
+
+Controls whether all transactions in a multi-transaction route should be signed upfront or individually as they are executed.
+
+```ts
+batchSignTxs?: boolean;
+```
+
+- **Default:** `true`
+- When enabled, all transactions in the route will be requested for signature at the beginning of the execution. They will then be broadcast one by one in sequence.
+- When disabled, each transaction will be signed individually just before it is broadcast.
+
+**Example scenario with `batchSignTxs: true`:**
+For a route: Solana → Noble → Cosmos (3 transactions requiring signatures)
+- All 3 transactions will be prompted for signature upfront
+- After signing, they will be broadcast sequentially: Solana first, then Noble, then Cosmos
+
+<Note>
+**EVM Transaction Limitation:** If an EVM transaction appears as the second or later transaction in a route, batch signing cannot be performed upfront. In such cases, the EVM transaction and any subsequent transactions will need to be signed individually when they are ready to be executed.
+</Note>
 
 ### `filter`
 
@@ -290,7 +314,7 @@ onTransactionFailed?: (params: { error: Error }) => void;
 
 ### `connectedAddresses` & `signers`
 
-If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you **must provide both** the `connectedAddresses` and corresponding signer functions in order to enable the widget’s injected wallet functionality.
+If your application has already connected to a user's wallet (e.g., via MetaMask for EVM networks, Phantom for Solana, or Keplr for Cosmos), you **must provide both** the `connectedAddresses` and corresponding signer functions in order to enable the widget's injected wallet functionality.
 See an implementation example [here](https://github.com/skip-mev/skip-go/tree/staging/examples/nextjs/src/app/injected/page.tsx).
 
 `WalletClient` comes from the [`viem` package](https://viem.sh/docs/clients/wallet.html). `Adapter` comes from the [`@solana/wallet-adapter-base` package](https://solana.com/developers/cookbook/wallets/connect-wallet-react). And `OfflineSigner` comes from the [`@cosmjs` package](https://docs.keplr.app/api/cosmjs.html).
@@ -314,10 +338,10 @@ Each signer function below must be implemented to fully leverage the injected wa
 - **`getCosmosSigner(): Promise<OfflineSigner>`**
   Returns a Cosmos-compatible signer.
 
-- **`getEVMSigner(): Promise<WalletClient>`**
+- **`getEvmSigner(): Promise<WalletClient>`**
   Returns an EVM-compatible signer (e.g., from `viem`).
 
-- **`getSVMSigner(): Promise<PhantomWalletAdapter>`**
+- **`getSvmSigner(): Promise<PhantomWalletAdapter>`**
   Returns a Solana-compatible signer, such as a `PhantomWalletAdapter`.
 
 **Complete Example for injected wallet functionality:**
@@ -325,7 +349,7 @@ Each signer function below must be implemented to fully leverage the injected wa
 <Widget
   connectedAddresses={connectedAddresses}
   getCosmosSigner={getCosmosSigner}
-  getEVMSigner={getEVMSigner}
-  getSVMSigner={getSVMSigner}
+  getEvmSigner={getEvmSigner}
+  getSvmSigner={getSvmSigner}
 />
 ```

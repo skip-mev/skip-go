@@ -2,8 +2,8 @@
 import { useMemo } from "react";
 import { ChainAddress } from "@/state/swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
-import { RouteResponse } from "@skip-go/client";
 import { SwapExecutionState } from "./SwapExecutionPage";
+import { RouteResponse } from "@skip-go/client";
 
 type UseSwapExecutionStateParams = {
   chainAddresses: Record<number, ChainAddress>;
@@ -38,7 +38,7 @@ export function useSwapExecutionState({
       return SwapExecutionState.confirmed;
     }
 
-    if (overallStatus === "pending") {
+    if (overallStatus === "pending" || overallStatus === "failed") {
       if (signaturesRemaining > 0) {
         return SwapExecutionState.signaturesRemaining;
       }

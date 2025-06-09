@@ -3,6 +3,76 @@ title: "REST API"
 description: "Selected updates and improvements to the Skip Go REST API."
 ---
 
+## May 2025
+- **Improved Cross-Chain Composability:** Execute EVM swaps immediately following a Eureka cross-chain transfer, enabling more sophisticated multi-step routes.
+- **Enhanced Fee Transparency:** Fees associated with Eureka operations are now clearly displayed within the `estimated_fees` array in API responses from the `/v2/fungible/route` endpoint, providing better cost predictability. For example:
+  ```json
+  "estimated_fees": [
+    {
+      "fee_type": "SMART_RELAY",
+      "bridge_id": "EUREKA",
+      "amount": "76099736314413",
+      "usd_amount": "0.20",
+      "origin_asset": {
+        "denom": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "chain_id": "1",
+        "symbol": "WETH",
+        "name": "Wrapped Ether"
+        // ... other asset details (like decimals, logo_uri etc.)
+      }
+    }
+  ]
+  ```
+  ([See API Docs](/api-reference/prod/fungible/post-v2fungibleroute) for full response structures from the `/v2/fungible/route` endpoint.)
+- **LayerZero and Stargate Integration:** Expanded cross-chain capabilities with the integration of LayerZero and Stargate protocols. This integration adds support for a wide variety of new assets, including USDT, USDe, and ZRO.
+  
+  **Usage:**
+  - **REST API:** Include `"layer_zero"` and/or `"stargate"` in the `experimental_features` array in your POST request to `/v2/fungible/route`.
+    ```json
+    {
+      "source_asset_denom": "uatom",
+      "source_asset_chain_id": "cosmoshub-4",
+      "dest_asset_denom": "uusdc",
+      "dest_asset_chain_id": "noble-1",
+      "amount_in": "1000000",
+      "experimental_features": ["layer_zero", "stargate"]
+    }
+    ```
+  
+  - **Client Library:** Add these features to the `experimentalFeatures` parameter.
+    ```typescript
+    import { route } from '@skip-go/client';
+    
+    const response = await route({
+      sourceAssetDenom: "uatom",
+      sourceAssetChainId: "cosmoshub-4",
+      destAssetDenom: "uusdc",
+      destAssetChainId: "noble-1",
+      amountIn: "1000000",
+      experimentalFeatures: ["layer_zero", "stargate"]
+    });
+    ```
+  
+  - **Widget Integration:** Add LayerZero and Stargate to the `experimentalFeatures` array in the `routeConfig` prop of the Skip Widget component.
+    ```jsx
+    import { Widget } from '@skip-go/widget';
+    
+    <Widget
+      routeConfig={{
+        experimentalFeatures: ["layer_zero", "stargate"]
+      }}
+    />
+    ```
+
+### Status Endpoint Enhancement (Late May)
+- **Transaction Timestamp Information:** Added `on_chain_at` field to individual transaction detail objects (such as `send_tx`, `receive_tx`, `acknowledge_tx`, `execute_tx`) found within the specific transfer type objects (e.g., `ibc_transfer`, `cctp_transfer`, `axelar_transfer`) in the status endpoint response. This field provides RFC3339 formatted UTC timestamps of when each specific transaction landed on its respective chain.
+
+## April 2025
+- **Eureka Protocol Enhancements:**
+    - Native token wrapping (e.g., ETH to WETH) is now supported within Eureka cross-chain transfers, with improved fee handling for routes involving native ETH.
+    - Eureka Protocol now officially supports transfers to and from Ethereum Mainnet and the Cosmos Hub.
+
+
 ## September 28, 2024
 - Speed and performance improvements for `/balances` endpoint
 

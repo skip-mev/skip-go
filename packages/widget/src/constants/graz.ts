@@ -35,7 +35,6 @@ export const keplrMainnetChainIdsInitialConnect = [
   "passage-2",
   "phoenix-1",
   "pryzm-1",
-  "quasar-1",
   "quicksilver-2",
   "regen-1",
   "secret-4",
@@ -92,7 +91,6 @@ export const keplrMainnetWithoutEthermintChainIdsInitialConnect = [
   "passage-2",
   "phoenix-1",
   "pryzm-1",
-  "quasar-1",
   "quicksilver-2",
   "regen-1",
   "secret-4",
@@ -181,11 +179,6 @@ export const walletInfo: Record<
     imgSrc:
       "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-cosmostation.png",
     mobile: true,
-  },
-  [WalletType.CAPSULE]: {
-    name: "Capsule",
-    imgSrc:
-      "https://raw.githubusercontent.com/graz-sh/graz/dev/example/starter/public/assets/wallet-icon-capsule.jpg",
   },
   [WalletType.COSMIFRAME]: {
     name: "DAO DAO",

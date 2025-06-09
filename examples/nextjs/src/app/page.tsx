@@ -1,5 +1,5 @@
 'use client';
-import { Widget, openAssetAndChainSelectorModal, resetWidget } from '@skip-go/widget';
+import { Widget, openAssetAndChainSelectorModal, resetWidget, setAsset } from '@skip-go/widget';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useQueryParams } from '@/hooks/useURLQueryParams';
 
@@ -108,6 +108,20 @@ export default function Home() {
         >
           Reset state only clear input values
         </button>
+        <button
+          onClick={() =>
+            setAsset({ type: "source", chainId: "noble-1", denom: "uusdc", amount: 1 })
+          }
+        >
+          set source asset to USDC on noble
+        </button>
+        <button
+          onClick={() =>
+            setAsset({ type: "destination", chainId: "cosmoshub-4", denom: "uatom", amount: 1 })
+          }
+        >
+          set destination asset to ATOM on cosmoshub
+        </button>
         <button onClick={() => {
           const newDisableShadowDom = !disableShadowDom;
           setDisableShadowDom(newDisableShadowDom);
@@ -159,6 +173,8 @@ export default function Home() {
             onTransactionFailed={(props) => console.log('onTransactionFailed', { ...props })}
             onTransactionComplete={(props) => console.log('onTransactionComplete', { ...props })}
             onRouteUpdated={(props) => console.log('onRouteUpdated', props)}
+            onSourceAssetUpdated={(props) => console.log('onSourceAssetUpdated', props)}
+            onDestinationAssetUpdated={(props) => console.log('onDestinationAssetUpdated', props)}
             disableShadowDom={disableShadowDom}
             onlyTestnet={testnet}
             routeConfig={{
@@ -169,8 +185,6 @@ export default function Home() {
                 ? "https://go.skip.build/api/skip"
                 : "https://dev.go.skip.build/api/skip"
             }
-            hideAssetsUnlessWalletTypeConnected
-
             filterOut={{
               destination: {
                 "pacific-1": [

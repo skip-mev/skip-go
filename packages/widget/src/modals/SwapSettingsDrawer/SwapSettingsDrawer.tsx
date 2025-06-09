@@ -3,7 +3,6 @@ import { createModal } from "@/components/Modal";
 import { Column, Row } from "@/components/Layout";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { RouteArrow } from "@/icons/RouteArrow";
-import { PoweredBySkipGo } from "@/pages/SwapPage/SwapPageFooter";
 import { useAtomValue } from "jotai";
 import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
@@ -21,7 +20,7 @@ export const SwapSettingsDrawer = createModal(() => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const chainsRoute = useMemo(() => {
-    return route?.chainIDs.map((chainID) => chains?.find((chain) => chain.chainID === chainID));
+    return route?.chainIds?.map((chainId) => chains?.find((chain) => chain.chainId === chainId));
   }, [route, chains]);
 
   const fees = useMemo(() => {
@@ -40,7 +39,7 @@ export const SwapSettingsDrawer = createModal(() => {
                 <img
                   width="25"
                   height="25"
-                  src={chain?.logoURI}
+                  src={chain?.logoUri}
                   alt={chain?.prettyName}
                   title={chain?.prettyName}
                 />
@@ -99,7 +98,6 @@ export const SwapSettingsDrawer = createModal(() => {
         >
           Close
         </SmallTextButton>
-        <SmallText>{PoweredBySkipGo()}</SmallText>
       </Row>
     </StyledSwapPageSettings>
   );

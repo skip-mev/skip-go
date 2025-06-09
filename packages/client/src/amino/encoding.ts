@@ -2,7 +2,8 @@
 
 import { toBase64 } from "@cosmjs/encoding";
 
-import { EthSecp256k1Pubkey, pubkeyType } from "./pubkey";
+import { pubkeyType } from "./pubkey";
+import type { EthSecp256k1Pubkey } from "./pubkey";
 
 export function encodeEthSecp256k1Pubkey(
   pubkey: Uint8Array,

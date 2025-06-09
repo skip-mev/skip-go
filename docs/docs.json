@@ -45,6 +45,7 @@
             "pages": [
               "client/getting-started",
               "client/balance-gas-and-fee-tooling",
+              "client/executing-a-route",
               "client/advanced-features",
               "client/migration-guide"
             ]
@@ -53,6 +54,7 @@
             "group": "Advanced Transfer",
             "pages": [
               "advanced-transfer/handling-cross-chain-failure-cases",
+              "advanced-transfer/interpreting-transaction-status",
               "advanced-transfer/ibc-routing-algorithm",
               "advanced-transfer/evm-transactions",
               "advanced-transfer/svm-transaction-details",
@@ -84,7 +86,8 @@
               "eureka/eureka-overview",
               "eureka/eureka-tech-overview",
               "eureka/integration-guide",
-              "eureka/security-properties"
+              "eureka/security-properties",
+              "eureka/contract-addresses"
             ]
           },
           {
@@ -131,6 +134,12 @@
                   "api-reference/prod/transaction/get-v2txstatus"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Reference Guides",
+            "pages": [
+              "api-reference/error-codes"
             ]
           }
         ]

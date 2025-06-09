@@ -3,43 +3,218 @@ title: 'Migration Guide'
 ---
 
 <Warning>
-  Both the Skip Router SDK `@skip-router/core` and Skip Go Core `@skip-go/core`
-  are deprecated. Please migrate to Skip Go Client `@skip-go/client`, our
-  actively maintained [TypeScript package](https://www.npmjs.com/package/@skip-go/client).
+  Both the Skip Router SDK ([`@skip-router/core`](https://www.npmjs.com/package/@skip-router/core)) and Skip Go Core ([`@skip-go/core`](https://www.npmjs.com/package/@skip-go/core))
+  are deprecated. Please migrate to Skip Go Client ([`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client)), our actively maintained client package.
 </Warning>
 
-### 4.0.0 Breaking changes
+<Update label="@skip-go/client v1.0.0">
+## Breaking changes
+
+This section details the migration from previous versions to the latest [`@skip-go/client`](https://www.npmjs.com/package/@skip-go/client).
+
+### No More SkipClient Class
+
+The `SkipClient` class has been removed. Instead, import and use individual functions directly:
+
+```TypeScript Example import
+import {
+  assets,
+  assetsBetweenChains,
+  assetsFromSource,
+  recommendAssets,
+  bridges,
+  balances,
+  chains,
+  venues,
+  ibcOriginAssets,
+  route,
+  messages,
+  messagesDirect,
+  submitTransaction,
+  trackTransaction,
+  transactionStatus,
+  executeRoute,
+  setClientOptions,
+  setApiOptions,
+} from '@skip-go/client';
+```
+
+### Initialization Changes
+
+**If not using `executeRoute`:**
+
+- Call `setApiOptions({ apiUrl, apiKey })` once at initialization.
+- Alternatively, pass `apiUrl` and `apiKey` as arguments to each individual API function call.
+
+**If using `executeRoute`:**
+
+- Call `setClientOptions()` with the same options object previously passed to the `SkipClient` constructor.
+- **Exception:** `getCosmosSigner`, `getEVMSigner`, and `getSVMSigner` have been removed from `setClientOptions`. These signer functions are now passed directly to `executeRoute` when needed.
+- **Renamed:** `getEVMSigner` is now `getEvmSigner`, and `getSVMSigner` is now `getSvmSigner`.
+
+```Diff Example migration
+- const client = new SkipClient(options);
++ setClientOptions(options); // Only if using executeRoute
+
+- client.chains();
++ chains(); // Assuming apiUrl/apiKey were set via setApiOptions or passed in
+```
+
+### Build Format Change
+
+The library build format has changed from CommonJS (CJS) to `ES Modules (ESM)`.
+
+This change enables better tree-shaking, leading to significantly smaller bundle sizes for applications that don't use all the library's features.
+
+<Info>
+If you're **not** using `executeRoute`, your final bundle size should decrease dramatically (e.g., from ~5MB to potentially ~7KB for a single API function usage), assuming tree-shaking is enabled in your bundler.
+</Info>
+
+### Axios Removed
+
+`axios` is no longer a dependency. All API calls now utilize the standard `window.fetch` API internally.
+
+### CamelCase Update
+
+All property names in API responses and configuration objects now strictly adhere to `camelCase`.
+
+**Examples:**
+
+| Before          | After           |
+| --------------- | --------------- |
+| `chainID`       | `chainId`       |
+| `apiURL`        | `apiUrl`        |
+| `logoURI`       | `logoUri`       |
+| `asset.isCW20`  | `asset.isCw20`  |
+
+### Named parameter enforcement for API functions
+
+Some methods now require named parameters or an options object instead of positional arguments:
+
+#### recommendAssets
+
+Old:
+```ts
+await client.recommendAssets(request);
+// OR
+await client.recommendAssets([request1, request2]);
+```
+New:
+```ts
+await recommendAssets({ requests: [request1, request2] });
+```
+Wrap the array in a `{ requests: [...] }` object.
+
+#### ibcOriginAssets
+
+Old:
+```ts
+await client.ibcOriginAssets(assets);
+```
+New:
+```ts
+await ibcOriginAssets({ assets: [asset1, asset2] });
+```
+Wrap the assets array in a `{ assets: [...] }` object.
+
+#### `getFeeInfoForChain`
+
+Parameters for `getFeeInfoForChain` should now be passed as an object.
+
+Old:
+```ts
+await client.getFeeInfoForChain(chainID);
+```
+New:
+```ts
+import { getFeeInfoForChain } from '@skip-go/client'; // Assuming setApiOptions was called
+
+await getFeeInfoForChain({ chainId: chainID });
+// Or, if not using setApiOptions globally for apiUrl/apiKey:
+// await getFeeInfoForChain({ chainId: chainID, apiUrl: YOUR_API_URL, apiKey: YOUR_API_KEY });
+```
+
+#### `getRecommendedGasPrice`
+
+Parameters for `getRecommendedGasPrice` should now be passed as an object.
+
+Old:
+```ts
+await client.getRecommendedGasPrice(chainID);
+```
+New:
+```ts
+import { getRecommendedGasPrice } from '@skip-go/client'; // Assuming setApiOptions was called
+
+await getRecommendedGasPrice({ chainId: chainID });
+// Or, if not using setApiOptions globally for apiUrl/apiKey:
+// await getRecommendedGasPrice({ chainId: chainID, apiUrl: YOUR_API_URL, apiKey: YOUR_API_KEY });
+```
+
+### Removed Internal Functions
+
+The following functions that were previously exported are no longer available in v1.0.0. These were internal functions that were not intended for direct use by integrators, as they are used internally by `executeRoute`:
+
+- `executeTxs`
+- `executeEvmMsg` (merged with `executeEvmTransaction`)
+- `executeCosmosMessage` (merged with `executeCosmosTransaction`)
+- `executeEVMTransaction`
+- `executeSVMTransaction`
+- `signCosmosMessageDirect`
+- `signCosmosMessageAmino`
+- `getRpcEndpointForChain`
+- `getRestEndpointForChain`
+- `validateGasBalances`
+- `validateCosmosGasBalance`
+- `validateEvmGasBalance`
+- `validateEvmTokenApproval`
+- `validateSvmGasBalance`
+- `validateUserAddresses`
+- `getMainnetAndTestnetChains`
+- `getMainnetAndTestnetAssets`
+- `getAccountNumberAndSequence`
+
+If your application was using any of these functions directly, consider using `executeRoute` instead, which handles all transaction execution internally. If you have a specific use case that requires access to any of these functions, please open a ticket on our [Discord](https://discord.gg/skip).
+
+</Update>
+
+<Update label="@skip-router/core v4.0.0">
+
+### Breaking changes
 
 - Removed `clientID` param in `SkipClient`
 - Added `apiKey` param in `SkipClient`
 - Added `requiredChainAddresses` in `SkipClient.route` response
 - Added `smartSwapOptions` in `SkipClient.route`request
 
-```JavaScript JavaScript
-smartSwapOptions:{
+```JavaScript Type signature
+smartSwapOptions: {
 	splitRoutes: boolean
 }
 ```
+</Update>
 
-### 3.0.0 Breaking Changes
+<Update label="@skip-router/core v3.0.0">
+## Breaking changes
 
-- Changed Param Type: `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types:
--
+- Changed parameter type of `userAddresses` from a map of chainIDs to addresses to an array of `UserAddress` types
 
-```TypeScript TypeScript
+```TypeScript Type signature
 export interface UserAddress {
   chainID: string;
   address: string;
 }
 ```
+</Update>
 
-### 2.0.0 Breaking changes
+<Update label="@skip-router/core v2.0.0">
+### Breaking changes
 
-- Removed Method: `SkipClient.executeMultiChainMessage`
-- Renamed Method: `SkipClient.getGasAmountForMessage` \-> `SkipClient.getCosmosGasAmountForMessage`
-- Renamed Method: `SkipClient.getFeeForMessage` \-> `SkipClient.getCosmosFeeForMe`
-- Renamed Type: `MultiChainMsg` \-> `CosmosMsg`
-- Renamed Method & Params changed: `SkipClient.executeMultiChainMsgs`\-> `SkipClient.executeTxs`
+- Removed `SkipClient.executeMultiChainMessage` method
+- Renamed `SkipClient.getGasAmountForMessage` method to `SkipClient.getCosmosGasAmountForMessage`
+- Renamed `SkipClient.getFeeForMessage` to `SkipClient.getCosmosFeeForMe`
+- Renamed `MultiChainMsg` type to `CosmosMsg`
+- Renamed and changed parameters of `SkipClient.executeMultiChainMsgs` to `SkipClient.executeTxs`
 
 ```Diff Diff
 const client = new SkipClient({
@@ -54,7 +229,7 @@ const client = new SkipClient({
 })
 ```
 
-- Param Changed in `SkipClient.executeCosmosMessage`: `message:MultiChainMsg` \-> `messages: CosmosMsg[]`
+- Param of `SkipClient.executeCosmosMessage` changed from `message:MultiChainMsg` to `messages: CosmosMsg[]`
 
 ```Diff Diff
 const client = new SkipClient({
@@ -67,3 +242,4 @@ client.executeCosmosMessage({
 +	messages: CosmosMsg[]
 })
 ```
+</Update>

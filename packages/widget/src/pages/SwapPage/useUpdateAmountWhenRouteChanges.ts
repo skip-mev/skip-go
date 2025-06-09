@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount, hasAmountChanged } from "@/utils/crypto";
-import { limitDecimalsDisplayed, removeTrailingZeros } from "@/utils/number";
 import { skipRouteAtom } from "@/state/route";
-import { DEFAULT_DECIMAL_PLACES } from "@/constants/widget";
 
 export const useUpdateAmountWhenRouteChanges = () => {
   const [route] = useAtom(skipRouteAtom);
@@ -29,23 +27,21 @@ export const useUpdateAmountWhenRouteChanges = () => {
     const swapInAmountChanged = hasAmountChanged(
       swapInAmount,
       destinationAsset?.amount ?? "",
-      DEFAULT_DECIMAL_PLACES,
     );
     const swapOutAmountChanged = hasAmountChanged(
       swapOutAmount,
       sourceAsset?.amount ?? "",
-      DEFAULT_DECIMAL_PLACES,
     );
 
     if (direction === "swap-in" && swapInAmountChanged) {
       setDestinationAsset((old) => ({
         ...old,
-        amount: removeTrailingZeros(limitDecimalsDisplayed(swapInAmount)),
+        amount: swapInAmount
       }));
     } else if (direction === "swap-out" && swapOutAmountChanged) {
       setSourceAsset((old) => ({
         ...old,
-        amount: removeTrailingZeros(limitDecimalsDisplayed(swapOutAmount)),
+        amount: swapOutAmount
       }));
     }
   }, [route.data, sourceAsset, destinationAsset, direction, setSourceAsset, setDestinationAsset]);

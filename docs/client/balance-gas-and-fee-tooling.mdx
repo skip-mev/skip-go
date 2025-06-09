@@ -5,7 +5,7 @@ description: 'This page details the utility functions for token balances, gas ca
 
 ## Getting token balances
 
-To query token balances, you can use the `balances` method on your `SkipClient` instance or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You have the option to specify a set of token denoms to query or leave the array empty to fetch balances for all denoms associated with an address.
+To query token balances, you can use the `balances` function or via the [REST API](https://docs.skip.build/go/api-reference/prod/info/post-v2infobalances). You have the option to specify a set of token denoms to query or leave the array empty to fetch balances for all denoms associated with an address.
 
 - **When no denoms are specified**: The response will include only the denoms for which you have a balance.
 - **When denoms are specified**: The response will include balances for all the specified denoms. If you have no balance for a given denom, it will be included with a balance of zero.
@@ -13,16 +13,12 @@ To query token balances, you can use the `balances` method on your `SkipClient` 
 If there is an error fetching a given denom (e.g. the chain is down), the response will include an error message for that denom.
 
 <Warning>
-The balance query is currently compatible with all Skip Go-supported assets, excluding CW20 assets, across SVM, EVM, and Cosmos chains.
+The balance query is currently compatible with all Skip Go-supported assets, excluding cw20 assets, across svm, evm, and Cosmos chains.
 </Warning>
-
-<Info>
-Learn how to setup your `SkipClient` instance in the [Getting Started](../client/getting-started) guide.
-</Info>
 
 <CodeGroup>
 ```ts TypeScript (Client)
-const balances = await skipClient.balances({
+const balances = await balances({
   chains: {
   "noble-1": {
     address: noble.address, // noblef8js...
@@ -31,7 +27,8 @@ const balances = await skipClient.balances({
   "osmosis-1": {
     address: osmosis.address, // osmois8fo...
     denoms: [] // Fetch all denoms for address
-  }
+  },
+  apiUrl: "https://api.skip.build"
 }
 });
 ```
@@ -67,12 +64,12 @@ Here's a [video overview](https://www.loom.com/share/063e96e126d2422bb621b5b0ecf
 
 These functions are useful for getting information about our default gas and fee values or for estimating the fee for a particular transaction (e.g. so you can build a working MAX button).
 
-### `SkipClient.getRecommendedGasPrice`
+### `getRecommendedGasPrice`
 
 This returns the gas price (i.e. the price of a single unit of gas) the API recommends you use for transactions on a particular chain.
 
 ```ts
-async getRecommendedGasPrice(chainID: string) -> GasPrice
+async getRecommendedGasPrice({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> GasPrice
 ```
 
 `GasPrice` is a [cosmjs](https://cosmos.github.io/cosmjs/latest/stargate/classes/GasPrice.html) type giving the recommended fee denom and recommend price amount (fee/gas):
@@ -84,9 +81,13 @@ type GasPrice = {
 }
 ```
 
-### `SkipClient.getFeeInfoForChain`
+### `getFeeInfoForChain`
 
-This will return high, medium, and low gas prices for a particular chain, given by `chainID`, along with the default fee denom as a `FeeAsset` object:
+This will return high, medium, and low gas prices for a particular chain, given by `chainId`, along with the default fee denom as a `FeeAsset` object:
+
+```ts
+async getFeeInfoForChain({chainId, apiUrl, apiKey}: {chainId: string, apiUrl?:string, apiKey?: string}) -> FeeAsset
+```
 
 ```ts
 type FeeAsset = {
@@ -103,36 +104,13 @@ type GasPriceInfo = {
 
 An undefined response indicates that the API cannot find up-to-date gas price information for the chain.
 
-### `SkipClient.getFeeForMessage`
-
-This will give you the estimated fee and gas for a particular multichainMsg returned by the API.
-
-```ts
-async getFeeForMessage(
-    msg: MultiChainMsg,
-    gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
-    signer?: OfflineSigner,
-    gasPrice?: GasPrice,
-  )
-```
-
-If you provide no additional arguments other than your signer and message, it will use the default gas price and gas amount multipliers in the skip-router, but you can override anything to customize your estimation for your use case:
-
-- You can override the gas price in the `gasPrice` argument (By default, we're pulling this data from various chain registries and serving it through the API)
-- You can override the gas amount multiplier, which provides a multiplicative buffer for the amount of gas the chain estimates a transaction will consume, in the `gasAmountMultiplier` argument. (By default, this is `1.5`)
-
-The return type of the function is a `cosmjs.StdFee`, which includes the following fields:
-
-- `amount`: The estimated fee amount and denom for the fee
-- `gas`: The gas amount for the transaction
-
 ## Settings on `ExecuteRouteOptions` for customizing how gas & fees are set on transactions
 
 ### `ExecuteRouteOptions.getGasPrice`
 
 This field in `ExecuteRouteOptions` allows you to override our default gas price on a per chain basis for any transactions created in the router (e.g. in `executeRoute`):
 
-`getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;`
+`getGasPrice?: (chainId: string) => Promise<GasPrice | undefined>;`
 
 The argument is a function that takes in a chain ID and returns a gas price for that chain as a `GasPrice` object from CosmJS
 

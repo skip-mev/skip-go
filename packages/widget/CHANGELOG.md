@@ -1,5 +1,278 @@
 ## 0.0.15
 
+## 3.11.1
+
+### Patch Changes
+
+- Updated dependencies [f138746]
+  - @skip-go/client@1.2.1
+
+## 3.11.0
+
+### Minor Changes
+
+- 71979b6: batchSignTxs added to sign all txs upfront
+
+### Patch Changes
+
+- 32f5f7b: Save list of extra chainIds connected per wallet so that we automatically connect to those chains in the future, clear list if theres an error when connecting (in case chain was removed from wallet)
+- b338a30: Update widget to allow getCosmosSigner/getEvmSigner to fallback to default if no signer is found for given chainId
+- 871bec1: Added setAsset that enables setting the source/destination asset manually and onSource/DestinationAssetUpdated callbacks
+- 0dd5d25: change error page explorer link to skip explorer
+- df56981: Add fallback to checking lastHistoryItem isSettled for isFetchingLastTransactionStatusAtom
+- 38200ac: Fix infinite setState caused by erroneously setting amount to formattedDisplayAmount
+- 6a6bb61: Fix overallStatus logic
+- cde6a0c: Fix set destination address to allow manual address entry if the last operation has sign required but fromChainId !== destinationChainId
+- 9cc8751: fix error text line height in bad price warning
+- 24b17d6: Fix infinite spinner if last tx item is 2tx route with only 1 tx in transactionDetails, Add deleting history items that have no chainId and txHash in transactionDetails
+- a14f13d: default sessions replays to on
+- Updated dependencies [c502e19]
+- Updated dependencies [71979b6]
+- Updated dependencies [cc391ab]
+- Updated dependencies [dffca8c]
+- Updated dependencies [fbc22f6]
+- Updated dependencies [0aab36a]
+  - @skip-go/client@1.2.0
+
+## 3.10.11
+
+### Patch Changes
+
+- Updated dependencies [4e97e19]
+  - @skip-go/client@1.1.9
+
+## 3.10.10
+
+### Patch Changes
+
+- Updated dependencies [de97a32]
+  - @skip-go/client@1.1.8
+
+## 3.10.9
+
+### Patch Changes
+
+- Updated dependencies [92cef82]
+  - @skip-go/client@1.1.7
+
+## 3.10.8
+
+### Patch Changes
+
+- a806d4e: Add link to skip explorer in history page and swapExecutionPage
+- 6345144: track widget explorer clicks
+- 022c87e: Add tests for crypto utilities.
+- 2442302: Fix incorrect chainType when setting Cosmos wallet state.
+- 7c8c9de: Prevent users to leave the page before all txs signed
+- 974ceb3: Add Spinner icon on SwapPage to show if there's an ongoing tx
+- 78be428: Fix asset icon potentially missing when using filters and invert source/destination button
+- a34f4bb: Add negative margin hack for vertical alignment on asset symbols on windows
+- 6c2500d: Add 15s timeout before expecting transfer asset release in case of failure
+- Updated dependencies [de1ea69]
+- Updated dependencies [d554763]
+- Updated dependencies [7f71bb0]
+- Updated dependencies [7610467]
+- Updated dependencies [5156647]
+  - @skip-go/client@1.1.6
+
+## 3.10.7
+
+### Patch Changes
+
+- e549963: Fix error #525 in web-component
+
+## 3.10.6
+
+### Patch Changes
+
+- Updated dependencies [b74f50d]
+  - @skip-go/client@1.1.5
+
+## 3.10.5
+
+### Patch Changes
+
+- 07fc190: bump registries and fix route response type
+- Updated dependencies [07fc190]
+  - @skip-go/client@1.1.4
+
+## 3.10.4
+
+### Patch Changes
+
+- 49fd0da: Add tests for getClientOperations in clientType utility.
+- 2075ee9: Add tests for utils number functions
+- e6cdb46: Cache Playwright browser binaries and skip reinstall when already cached.
+- 3f8fce1: Fix mobile date formatting by zero-padding hours, minutes, month, and day.
+- cba7980: Fix window existence check in useIsMobileScreenSize hook to avoid runtime errors when `window` is undefined.
+- e6cdb46: Improve widget tests workflow to cache dependencies and Playwright browsers for faster execution.
+- Updated dependencies [fc09b51]
+- Updated dependencies [d71e6b0]
+  - @skip-go/client@1.1.3
+
+## 3.10.3
+
+### Patch Changes
+
+- df9e97c: reduce number of session replays to connected wallet sessions
+- df9e97c: fix history page asset styling and display amount updates
+- df9e97c: separate error and warning
+- df9e97c: Fix using incorrect method on localStorage to remove an item
+- df9e97c: track two tx routes in amplitude
+- df9e97c: bump solana walletconnect deps
+- df9e97c: Add fix for modal animation jank on windows
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+- Updated dependencies [df9e97c]
+  - @skip-go/client@1.1.2
+
+## 3.10.2
+
+### Patch Changes
+
+- cf920fe: update registries
+- 1e9f832: remove unused packages
+- 78281ec: Use virtualization on history page
+- Updated dependencies [5e42be2]
+- Updated dependencies [9bdd303]
+- Updated dependencies [cf920fe]
+- Updated dependencies [11c3c79]
+  - @skip-go/client@1.1.1
+
+## 3.10.1
+
+### Patch Changes
+
+- 6c1ff69: bump graz 0.3.2
+
+## 3.10.0
+
+### Minor Changes
+
+- df62bf0: bump cosmjs package
+
+### Patch Changes
+
+- be7c302: only session record on valid user id
+- c609cd4: fix decimals display for grouped assets
+- c8315f2: asset logo consistency
+- Updated dependencies [376583c]
+- Updated dependencies [df62bf0]
+- Updated dependencies [4458538]
+  - @skip-go/client@1.1.0
+
+## 3.9.7
+
+### Patch Changes
+
+- d5aa812: refetch route on swap settings changed
+- 041a12a: minor improvements to amplitude analytics
+- 9849401: Temporarily remove fadeout animation from selecting asset
+
+## 3.9.6
+
+### Patch Changes
+
+- Updated dependencies [a009e22]
+  - @skip-go/client@1.0.6
+
+## 3.9.5
+
+### Patch Changes
+
+- Updated dependencies [fd69bee]
+  - @skip-go/client@1.0.5
+
+## 3.9.4
+
+### Patch Changes
+
+- Updated dependencies [9b1f4fe]
+  - @skip-go/client@1.0.4
+
+## 3.9.3
+
+### Patch Changes
+
+- Updated dependencies [d0e0de4]
+  - @skip-go/client@1.0.3
+
+## 3.9.2
+
+### Patch Changes
+
+- Updated dependencies [b22c07b]
+  - @skip-go/client@1.0.2
+
+## 3.9.1
+
+### Patch Changes
+
+- Updated dependencies [aba3e58]
+  - @skip-go/client@1.0.1
+
+## 3.9.0
+
+### Minor Changes
+
+- 4007e19: Update widget to use client v1.0.0
+
+### Patch Changes
+
+- 30d7b1f: only record sentry replay on valid user id
+- be8dda4: update registries
+- Updated dependencies [4007e19]
+- Updated dependencies [be8dda4]
+  - @skip-go/client@1.0.0
+
+## 3.8.9
+
+### Patch Changes
+
+- fa63d79: bump graz
+- 5b3b9bc: fix max button cosmos amount
+- 2d5c7ce: Update useGasFeeTokenAmount for EVM
+- b5d0b31: update registries
+- c64a70a: improve number formatting and decrowd settings bar by removing powered by skip go text
+- 2c1967a: Hide signature required for operation once signed
+- 22200c8: Fix showing formattedAmount instead of balance.amount in Asset/Chain selector modal
+- Updated dependencies [b5d0b31]
+  - @skip-go/client@0.17.2
+
+## 3.8.8
+
+### Patch Changes
+
+- 00b842a: improve asset display amount code
+- 31c67f4: Fix prop warning in dev
+- 441a597: enable amplitude session replays
+- 4ca2bb4: add validate evm token approval
+- c928a3c: update registries
+- Updated dependencies [4ca2bb4]
+- Updated dependencies [c928a3c]
+  - @skip-go/client@0.17.1
+
+## 3.8.7
+
+### Patch Changes
+
+- 7e7f1b1: fix swap page footer layout
+- 162f202: update registries
+- cf49d23: improve asset display in history page
+- 4f4db90: Fix clearing validating when returning from user rejected request, Fix no longer showing user rejected request unless currently on swap execution page
+- 41655dd: update low contrast text color
+- 23899c2: add initia to ledger warning
+- 1b601ec: support layer zero
+- a1744b8: Add onSourceAndDestinationSwapped callback
+- c946693: improve gaping in footer
+- Updated dependencies [162f202]
+- Updated dependencies [3f58bf3]
+- Updated dependencies [f5bc62c]
+- Updated dependencies [d2804a0]
+- Updated dependencies [1b601ec]
+  - @skip-go/client@0.17.0
+
 ## 3.8.6
 
 ### Patch Changes

@@ -1,11 +1,11 @@
 const appUrl = "https://go.skip.build";
 
 export const endpointOptions = {
-  getRpcEndpointForChain: async (chainID: string) => {
-    return `${appUrl}/api/rpc/${chainID}`;
+  getRpcEndpointForChain: async (chainId: string) => {
+    return `${appUrl}/api/rpc/${chainId}`;
   },
-  getRestEndpointForChain: async (chainID: string) => {
-    return `${appUrl}/api/rest/${chainID}`;
+  getRestEndpointForChain: async (chainId: string) => {
+    return `${appUrl}/api/rest/${chainId}`;
   },
 };
 

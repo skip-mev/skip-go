@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue, useSetAtom } from "jotai";
-import { errorAtom, ErrorType } from "@/state/errorPage";
+import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
   const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
-  const setError = useSetAtom(errorAtom);
+  const setError = useSetAtom(errorWarningAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [transactionTimeoutTimer, setTransactionTimeoutTimer] = useState<
     NodeJS.Timeout | undefined
@@ -23,13 +24,13 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
       const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
       const timeoutTimer = setTimeout(
         () => {
-          track("error page: transaction overtime", { route });
+          track("unexpected error page: transaction timeover", { route });
           setError({
-            errorType: ErrorType.Timeout,
+            errorWarningType: ErrorWarningType.Timeout,
             onClickBack: () => {
               setOverallStatus("unconfirmed");
             },
-            explorerLink: lastTransaction?.explorerLink ?? "",
+            explorerLink: createSkipExplorerLink(transactionDetailsArray),
             txHash: lastTransaction?.txHash,
           });
         },

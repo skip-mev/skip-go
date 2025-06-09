@@ -1,0 +1,19 @@
+{
+  "name": "client",
+  "private": true,
+  "packageManager": "yarn@3.2.3",
+  "dependencies": {
+    "@skip-go/client": "workspace:^",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2"
+  },
+  "scripts": {
+    "build": "vite build",
+    "visualize": "VISUALIZE=true vite build"
+  },
+  "devDependencies": {
+    "rollup-plugin-visualizer": "^5.14.0",
+    "vite-plugin-inspect": "^11.0.1",
+    "vite-plugin-node-polyfills": "^0.23.0"
+  }
+}

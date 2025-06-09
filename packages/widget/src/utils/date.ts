@@ -1,12 +1,26 @@
-export const getMobileDateFormat = (date: Date) => {
-  const hours = String(date.getHours());
-  const minutes = String(date.getMinutes());
+export const getMobileDateFormat = (date: Date, timeZone?: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: timeZone || undefined, // undefined means local time
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour12: false,
+  };
 
-  const timeZone = date.toLocaleTimeString("en-US", { timeZoneName: "short" }).split(" ").pop();
+  const formatter = new Intl.DateTimeFormat("en-US", options);
+  const parts = formatter.formatToParts(date);
 
-  const month = date.getMonth() + 1; // Months are 0-indexed
-  const day = date.getDate();
-  const year = String(date.getFullYear()).slice(-2); // Get last two digits of the year
+  const lookup = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
 
-  return `${hours}:${minutes} ${timeZone} ${month}/${day}/${year}`;
+  const hours = lookup("hour");
+  const minutes = lookup("minute");
+  const tz = lookup("timeZoneName");
+  const day = lookup("day");
+  const month = lookup("month");
+  const year = lookup("year");
+
+  return `${hours}:${minutes} ${tz} ${month}/${day}/${year}`;
 };

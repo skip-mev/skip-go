@@ -11,36 +11,36 @@ export const useUpdateSourceAssetToDefaultForChainType = () => {
   return (chainType: ChainType) => {
     switch (chainType) {
       case ChainType.Cosmos: {
-        const chain = chains?.find((x) => x.chainID === "cosmoshub-4");
+        const chain = chains?.find((x) => x.chainId === "cosmoshub-4");
         const asset = assets?.find((x) => x.denom === "uatom");
 
         setSourceAsset({
-          chainID: chain?.chainID,
+          chainId: chain?.chainId,
           chainName: chain?.chainName,
           ...asset,
         });
         return;
       }
-      case ChainType.EVM: {
-        const chain = chains?.find((chain) => chain.chainID === "1");
+      case ChainType.Evm: {
+        const chain = chains?.find((chain) => chain.chainId === "1");
         const asset = assets?.find((asset) => asset.denom === "ethereum-native");
 
         setSourceAsset({
-          chainID: chain?.chainID,
+          chainId: chain?.chainId,
           chainName: chain?.chainName,
           ...asset,
         });
         return;
       }
-      case ChainType.SVM: {
-        const chain = chains?.find((x) => x.chainID === "solana");
+      case ChainType.Svm: {
+        const chain = chains?.find((x) => x.chainId === "solana");
         const asset = assets?.find(
           (x) =>
             x.denom.toLowerCase() === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v".toLowerCase(),
         );
 
         setSourceAsset({
-          chainID: chain?.chainID,
+          chainId: chain?.chainId,
           chainName: chain?.chainName,
           ...asset,
         });

@@ -10,7 +10,6 @@ import {
   isGroupedAsset,
 } from "./AssetAndChainSelectorModalRowItem";
 import { AssetAndChainSelectorModalSearchInput } from "./AssetAndChainSelectorModalSearchInput";
-import { Chain } from "@skip-go/client";
 import { useFilteredChains } from "./useFilteredChains";
 import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
@@ -20,18 +19,21 @@ import { StyledModalContainer } from "@/components/ModalHeader";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";
+import { Chain } from "@skip-go/client";
 
 export type GroupedAsset = {
   id: string;
   chains: {
-    chainID: string;
+    chainId: string;
     chainName: string;
-    originChainID: string;
+    originChainId: string;
   }[];
   assets: ClientAsset[];
   totalAmount: number;
   totalUsd: number;
+  formattedTotalAmount: string;
   name?: string;
+  decimals?: number;
 };
 
 export type ChainWithAsset = Chain & {
@@ -137,7 +139,7 @@ export const AssetAndChainSelectorModal = createModal(
             ? true
             : ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol] &&
               ibcEurekaHighlightedAssets?.[chainWithAsset.asset.recommendedSymbol]?.includes(
-                chainWithAsset.chainID,
+                chainWithAsset?.chainId,
               )
           : false;
 
@@ -207,7 +209,7 @@ export const AssetAndChainSelectorModal = createModal(
             listItems={listOfAssetsOrChains ?? []}
             itemHeight={ITEM_HEIGHT}
             itemKey={(item) =>
-              isGroupedAsset(item) ? item.id : `${item.chainID}-${item.asset.denom}`
+              isGroupedAsset(item) ? item.id : `${item.chainId}-${item.asset.denom}`
             }
             renderItem={renderItem}
             empty={{

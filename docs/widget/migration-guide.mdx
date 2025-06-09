@@ -1,9 +1,29 @@
 ---
-title: 'Widget V2 Migration Guide'
-description: 'This guide provides a concise overview of the changes needed to migrate your existing Widget V1 implementation to Widget V2.'
+title: 'Migration Guide'
 ---
 
-## 1. Update Dependency (`latest` or `^3.0.0`)
+## @skip-go/widget v3.9.0
+
+### Prop name changes
+
+**Before:**
+```tsx
+  <Widget
+    getEVMSigner={}
+    getSVMSigner={}
+  />
+```
+**After:**
+  ```tsx
+<Widget
+  getEvmSigner={}
+  getSvmSigner={}
+/>
+  ```
+
+## @skip-go/widget v3.0.0
+
+### 1. Update Dependency (`^3.0.0`)
     <CodeGroup>
     ```shell NPM
     npm install @skip-go/widget@latest
@@ -22,10 +42,10 @@ you may need to install these peer dependencies as well:
 ```
 </Info>
 
-## 2. `theme` Prop Changes
+### 2. `theme` Prop Changes
 
-### More Customization Options
- You can pass either `light`, `dark`, or a custom theme object with granular 
+#### More Customization Options
+ You can pass either `light`, `dark`, or a custom theme object with granular
 control over the widget's appearance.
 
 **Before:**
@@ -66,7 +86,7 @@ control over the widget's appearance.
 />
   ```
 
-  The custom theme object has the following structure: 
+  The custom theme object has the following structure:
 
   ```tsx
   theme = {
@@ -103,14 +123,14 @@ control over the widget's appearance.
     };
   };
 ```
-## 3. Prop Spelling Changes
+### 3. Prop Spelling Changes
 
-### `chainID` Renamed to `chainId`
-### `apiURL` Renamed to `apiUrl`
+#### `chainID` Renamed to `chainId`
+#### `apiURL` Renamed to `apiUrl`
 
 Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` prop.
 
-**Before:** 
+**Before:**
 ```tsx
 <Widget
   apiURL="..."
@@ -137,24 +157,21 @@ Update all instances of `chainID` to `chainId`, notably in the `defaultRoute` pr
   }}
 />
 ```
-## 4. Temporarily Disabled Features
+### 4. Temporarily Disabled Features
 The following props will be reintroduced in future versions of `Widget`.
-### a. `connectedWallet` Prop
+#### a. `connectedWallet` Prop
 The connectedWallet prop, which allowed passing a custom wallet provider, isn't currently supported.
-### b. `CallbackStore` Callback Props
+#### b. `CallbackStore` Callback Props
 The `onWalletConnected`, `onWalletDisconnected`, `onTransactionBroadcasted`, `onTransactionComplete`, and `onTransactionFailed` callback props aren't currently supported.
 
-## 5. Removed Features
-### a. `persistWidgetState`
+### 5. Removed Features
+#### a. `persistWidgetState`
 This prop is no longer supported, as the `Widget` persists state by default.
-### b. `toasterProps`
+#### b. `toasterProps`
 The `toasterProps` prop has been removed because the `Widget` no longer generates notifications.
-### c. `makeDestinationWallets`
+#### c. `makeDestinationWallets`
 The `makeDestinationWallets` prop has been removed. The `Widget` now automatically generates destination wallets from connected wallets or manual user entry.
 
 <Info>
 By implementing these changes, you can successfully migrate your application from Widget V1 to Widget V2. For further assistance, refer to the official documentation or reach out to the [support team](https://discord.com/channels/1010553709987639406/1210022796797677589).
 </Info>
-
-
-

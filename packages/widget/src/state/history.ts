@@ -1,21 +1,23 @@
-import { RouteResponse, TxStatusResponse } from "@skip-go/client";
+import { TxStatusResponse } from "@skip-go/client";
 import { atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { skipClient } from "./skipClient";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
+import { RouteResponse, transactionStatus } from "@skip-go/client";
+import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
   transactionDetails: TransactionDetails[];
   timestamp: number;
   status: SimpleStatus;
-} & TxsStatus;
+  signatures: number;
+} & Partial<TxsStatus>;
 
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
-  "transactionHistory",
+  LOCAL_STORAGE_KEYS.transactionHistory,
   [],
   undefined,
 );
@@ -24,14 +26,16 @@ export const setTransactionHistoryAtom = atom(
   null,
   (get, set, index: number, historyItem: TransactionHistoryItem) => {
     const history = get(transactionHistoryAtom);
-    const oldHistoryItem = history?.[index] ?? {};
-    const newHistory = history;
+
+    const newHistory = [...history];
+
+    const oldHistoryItem = newHistory[index] ?? {};
 
     newHistory[index] = { ...oldHistoryItem, ...historyItem };
+
     set(transactionHistoryAtom, newHistory);
   },
 );
-
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {
   const history = get(transactionHistoryAtom);
   if (!history) return;
@@ -45,7 +49,6 @@ export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: num
 });
 
 export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
-  const skip = get(skipClient);
   const transactionHistory = get(transactionHistoryAtom);
 
   const pendingTransactionHistoryItemsFound = transactionHistory.find(
@@ -59,15 +62,12 @@ export const skipFetchPendingTransactionHistoryStatus = atomWithQuery((get) => {
       const nestedTransactionHistoryPromises = transactionHistory.map(
         async (transactionHistoryItem) => {
           const transactionDetailsPromises = await Promise.all(
-            transactionHistoryItem.transactionDetails.map(async (transactionDetail) => {
+            transactionHistoryItem.transactionDetails?.map(async (transactionDetail) => {
               if (
                 transactionHistoryItem.status !== "completed" &&
                 transactionHistoryItem.status !== "failed"
               ) {
-                return await skip.transactionStatus({
-                  chainID: transactionDetail.chainID,
-                  txHash: transactionDetail.txHash,
-                });
+                return await transactionStatus(transactionDetail);
               }
               return new Promise((resolve) => resolve(null));
             }) as Promise<TxStatusResponse | null>[],

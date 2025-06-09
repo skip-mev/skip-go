@@ -17,7 +17,6 @@ import { useMemo, useState } from "react";
 import { AssetAtom } from "@/state/swapPage";
 import { formatUSD } from "@/utils/intl";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
-import { SelectorContext } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
@@ -32,7 +31,6 @@ export type AssetChainInputProps = {
   priceChangePercentage?: number;
   isWaitingToUpdateInputValue?: boolean;
   badPriceWarning?: boolean;
-  context: SelectorContext;
   disabled?: boolean;
 };
 
@@ -46,7 +44,6 @@ export const SwapPageAssetChainInput = ({
   priceChangePercentage,
   isWaitingToUpdateInputValue,
   badPriceWarning,
-  context,
   disabled,
 }: AssetChainInputProps) => {
   const theme = useTheme();
@@ -57,10 +54,10 @@ export const SwapPageAssetChainInput = ({
   const assetDetails = useGetAssetDetails({
     assetDenom: selectedAsset?.denom,
     amount: value,
-    chainId: selectedAsset?.chainID,
+    chainId: selectedAsset?.chainId,
   });
 
-  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol({ context });
+  const groupedAssetsByRecommendedSymbol = useGroupedAssetByRecommendedSymbol();
   const groupedAsset = groupedAssetsByRecommendedSymbol?.find(
     (group) => group.id === assetDetails.asset?.recommendedSymbol,
   );
@@ -178,7 +175,7 @@ export const SwapPageAssetChainInput = ({
           {assetDetails?.assetImage && assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
-              <Text>{assetDetails.symbol}</Text>
+              <Text useWindowsTextHack>{assetDetails.symbol}</Text>
               {isMobileScreenSize && (
                 <ChevronIcon
                   width="13px"
@@ -229,7 +226,6 @@ export const SwapPageAssetChainInput = ({
             {showPriceChangePercentage && (
               <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
             )}
-
           </Row>
         ) : (
           <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>

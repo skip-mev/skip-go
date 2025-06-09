@@ -1,13 +1,12 @@
 import { Column } from "@/components/Layout";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
-import { SwapPageHeader } from "@/pages/SwapPage/SwapPageHeader";
+import { PageHeader } from "@/components/PageHeader";
 import React, { useMemo, useState } from "react";
 import { ICONS } from "@/icons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { SwapExecutionPageRouteSimple } from "./SwapExecutionPageRouteSimple";
 import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed";
 import { currentPageAtom, Routes } from "@/state/router";
-import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import {
   chainAddressesAtom,
   skipSubmitSwapExecutionAtom,
@@ -23,6 +22,8 @@ import { useSwapExecutionState } from "./useSwapExecutionState";
 import { SwapExecutionButton } from "./SwapExecutionButton";
 import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
+import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -41,6 +42,7 @@ export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const {
     route,
+    clientOperations,
     overallStatus,
     transactionDetailsArray,
     isValidatingGasBalance,
@@ -50,7 +52,7 @@ export const SwapExecutionPage = () => {
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
 
-  const { mutate: submitExecuteRouteMutation } = useAtomValue(skipSubmitSwapExecutionAtom);
+  const { mutate: submitExecuteRouteMutation, error } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const shouldDisplaySignaturesRemaining = route?.txsRequired && route.txsRequired > 1;
   const signaturesRemaining = shouldDisplaySignaturesRemaining
@@ -62,14 +64,13 @@ export const SwapExecutionPage = () => {
     txs: transactionDetailsArray,
   });
 
+  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTxHash = lastTransaction?.txHash;
+  const lastTxChainId = lastTransaction?.chainId;
+
   useSyncTxStatus({
     statusData,
   });
-
-  const clientOperations = useMemo(() => {
-    if (!route?.operations) return [] as ClientOperation[];
-    return getClientOperations(route.operations);
-  }, [route?.operations]);
 
   const lastOperation = clientOperations[clientOperations.length - 1];
 
@@ -82,7 +83,17 @@ export const SwapExecutionPage = () => {
     isLoading,
   });
 
-  useHandleTransactionFailed(statusData);
+  const isSafeToleave = route?.txsRequired === transactionDetailsArray.length;
+
+  usePreventPageUnload(
+    swapExecutionState === SwapExecutionState.signaturesRemaining ||
+      swapExecutionState === SwapExecutionState.waitingForSigning ||
+      swapExecutionState === SwapExecutionState.approving ||
+      swapExecutionState === SwapExecutionState.validatingGasBalance ||
+      !isSafeToleave,
+  );
+
+  useHandleTransactionFailed(error as Error, statusData);
   useHandleTransactionTimeout(swapExecutionState);
 
   const firstOperationStatus = useMemo(() => {
@@ -130,19 +141,24 @@ export const SwapExecutionPage = () => {
 
     return () => {
       NiceModal.show(Modals.SetAddressModal, {
-        chainId: route?.destAssetChainID,
+        signRequired:
+          lastOperation.signRequired && lastOperation.fromChain === route?.destAssetChainId,
+        chainId: route?.destAssetChainId,
         chainAddressIndex: route ? route?.requiredChainAddresses.length - 1 : undefined,
       });
     };
-  }, [swapExecutionState, route]);
+  }, [swapExecutionState, lastOperation.signRequired, lastOperation.fromChain, route]);
 
   const SwapExecutionPageRoute = simpleRoute
     ? SwapExecutionPageRouteSimple
     : SwapExecutionPageRouteDetailed;
 
+  const shouldRenderTrackProgressButton =
+    lastTxHash && lastTxChainId && route?.txsRequired === transactionDetailsArray.length;
+
   return (
     <Column gap={5}>
-      <SwapPageHeader
+      <PageHeader
         leftButton={
           simpleRoute
             ? {
@@ -151,6 +167,19 @@ export const SwapExecutionPage = () => {
                 onClick: () => {
                   track("swap execution page: back button - clicked");
                   setCurrentPage(Routes.SwapPage);
+                },
+              }
+            : undefined
+        }
+        centerButton={
+          shouldRenderTrackProgressButton
+            ? {
+                label: "Track progress",
+                onClick: () => {
+                  window.open(createSkipExplorerLink(transactionDetailsArray), "_blank");
+                  track("swap execution page: track progress button - clicked", {
+                    txHash: lastTxHash,
+                  });
                 },
               }
             : undefined

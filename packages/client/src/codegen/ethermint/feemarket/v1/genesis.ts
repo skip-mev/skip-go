@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Params, ParamsAmino, ParamsSDKType } from "./feemarket";
 import { Long, isSet } from "../../../helpers";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { JsonSafe } from "../../../json-safe";
 /** GenesisState defines the feemarket module's genesis state. */
 export interface GenesisState {

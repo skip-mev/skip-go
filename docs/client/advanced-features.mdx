@@ -18,29 +18,25 @@ const msg = JSON.stringify({
   }]
 });
 
-await skip.executeRoute({
+await executeRoute({
   route,
   userAddresses,
-  beforeMsg: { msg, msgTypeURL: '/cosmos.bank.v1beta1.MsgSend' }
+  beforeMsg: { msg, msgTypeUrl: '/cosmos.bank.v1beta1.MsgSend' }
 });
 ```
 ## Use the Go Fast Transfer system
 
-The `route` method accepts a `goFast` parameter to enable the Go Fast Transfers. Then pass this route to the `executeRoute` method to execute.
+The `route` function accepts a `goFast` parameter to enable the Go Fast Transfers. Then pass this route to the `executeRoute` method to execute.
 ```typescript
-import { SkipClient } from '@skip-go/client';
+import { executeRoute, route } from '@skip-go/client';
 
-const skip = new SkipClient({
-  // ...config,
-});
-
-const route = await skip.route({
+const route = await route({
   goFast: true
-  // ... other params,
+  ...otherParams,
 }); 
 
-await skip.executeRoute({
+await executeRoute({
   route,
-  // ...other params
+  ...otherParams,
 });
 ```

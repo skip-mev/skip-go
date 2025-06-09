@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { Any, AnyAmino, AnySDKType } from "../../../../google/protobuf/any";
 import { BIP44Params, BIP44ParamsAmino, BIP44ParamsSDKType } from "../../hd/v1/hd";
-import * as _m0 from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal.js";
 import { isSet } from "../../../../helpers";
 import { JsonSafe } from "../../../../json-safe";
 /** Record is used for representing a key in the keyring. */
