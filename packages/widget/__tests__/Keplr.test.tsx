@@ -77,4 +77,8 @@ test.describe.serial("Widget tests", async () => {
 
     await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({ timeout: 300_000 });
   });
+
+  test("force test to fail", () => {
+    expect(false, "Intentional failure to trigger bot upload").toBe(true);
+  });
 });
