@@ -2,7 +2,11 @@ import { PublicKey } from "@solana/web3.js";
 import { ClientState } from "../state/clientState";
 import type { TransactionCallbacks } from "../types/callbacks";
 import { ChainType } from "../types/swaggerTypes";
-import type { CosmosMsg, RouteResponse, PostHandler } from "../types/swaggerTypes";
+import type {
+  CosmosMsg,
+  RouteResponse,
+  PostHandler,
+} from "../types/swaggerTypes";
 import type { ApiRequest } from "../utils/generateApi";
 import { bech32m, bech32 } from "bech32";
 import { executeTransactions } from "../private-functions/executeTransactions";
@@ -68,6 +72,11 @@ export type ExecuteRouteOptions = SignerGetters &
      * Specify actions to perform after the route is completed
      */
     postRouteHandler?: PostHandler;
+    /**
+     * If `cosmosPriorityFeeDenom` is provided, it will be used to set the priority fee for Cosmos transactions.
+     * It should be a function that takes a chainId and returns the denom for the priority fee.
+     */
+    getCosmosPriorityFeeDenom?: (chainId: string) => Promise<string | undefined>
   };
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {

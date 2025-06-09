@@ -50,6 +50,22 @@ async executeRoute(options: ExecuteRouteOptions): Promise<void>
 
 ```gasAmountMultiplier``` Overrides the default simulation multiplier (default is 1.5).
 
+```getCosmosPriorityFeeDenom``` function that takes a chainId and returns a ```Promise<string>``` for the priority fee denom to use for Cosmos transactions.
+
+example:
+```ts
+await executeRoute({
+  // ...executeRoute params
+  getCosmosPriorityFeeDenom: async (chainId) => {
+      // this will set the priority fee as ATOM for noble-1 chain
+      if (chainId === "noble-1")
+        return "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0";
+      return undefined;
+    },
+});
+  ```
+
+
 ## Lifecycle callbacks
 You can optionally provide the following callbacks:
 
