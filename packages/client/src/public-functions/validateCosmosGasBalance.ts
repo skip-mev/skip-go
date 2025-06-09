@@ -1,15 +1,15 @@
 import type { OfflineSigner } from "@cosmjs/proto-signing";
-import { ChainType } from "../../types/swaggerTypes";
-import type { CosmosMsg } from "../../types/swaggerTypes";
+import { ChainType } from "../types/swaggerTypes";
+import type { CosmosMsg } from "../types/swaggerTypes";
 import { BigNumber } from "bignumber.js";
-import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
+import { getSigningStargateClient } from "./getSigningStargateClient";
 import { calculateFee, GasPrice } from "@cosmjs/stargate";
 import { Decimal } from "@cosmjs/math";
-import { balances } from "../../api/postBalances";
+import { balances } from "../api/postBalances";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import type { GetFallbackGasAmount } from "src/types/client-types";
-import { getCosmosGasAmountForMessage } from "../../public-functions/getCosmosGasAmountForMessage";
+import { getCosmosGasAmountForMessage } from "./getCosmosGasAmountForMessage";
 
 export type ValidateCosmosGasBalanceProps = {
   chainId: string;
@@ -19,6 +19,7 @@ export type ValidateCosmosGasBalanceProps = {
   getFallbackGasAmount?: GetFallbackGasAmount;
   txIndex?: number;
   simulate?: ExecuteRouteOptions["simulate"];
+  getCosmosPriorityFeeDenom?: ExecuteRouteOptions["getCosmosPriorityFeeDenom"];
 };
 
 /**
@@ -34,10 +35,12 @@ export const validateCosmosGasBalance = async ({
   getOfflineSigner,
   txIndex,
   simulate,
+  getCosmosPriorityFeeDenom,
 }: ValidateCosmosGasBalanceProps) => {
   const skipAssets = (await ClientState.getSkipAssets({ chainId }))?.[chainId];
   const skipChains = await ClientState.getSkipChains();
 
+  const prioFeeDenom = await getCosmosPriorityFeeDenom?.(chainId);
   const chain = skipChains?.find((c) => c.chainId === chainId);
   if (!chain) {
     throw new Error(`failed to find chain id '${chainId}'`);
@@ -62,7 +65,7 @@ export const validateCosmosGasBalance = async ({
         stargateClient,
         signerAddress,
         chainId,
-        messages,
+        messages
       );
       return estimatedGas;
     } catch (e) {
@@ -71,7 +74,10 @@ export const validateCosmosGasBalance = async ({
         throw new Error(`unable to get gas amount for ${chainId}'s message(s)`);
       }
       if (getFallbackGasAmount) {
-        const fallbackGasAmount = await getFallbackGasAmount(chainId, ChainType.Cosmos);
+        const fallbackGasAmount = await getFallbackGasAmount(
+          chainId,
+          ChainType.Cosmos
+        );
         if (!fallbackGasAmount) {
           throw new Error(`unable to estimate gas for message(s) ${messages}`);
         }
@@ -94,13 +100,20 @@ export const validateCosmosGasBalance = async ({
       if (!price) return;
       return new GasPrice(
         Decimal.fromUserInput(BigNumber(price).toFixed(), 18),
-        asset?.denom ?? "",
+        asset?.denom ?? ""
       );
     })();
     if (!gasPrice) {
       return null;
     }
     if (chainId === "noble-1") {
+      if (
+        asset.denom.toLowerCase() ===
+        "ibc/EF48E6B1A1A19F47ECAEA62F5670C37C0580E86A9E88498B7E393EB6F49F33C0".toLowerCase()
+      ) {
+        const fee = calculateFee(2_000_000, gasPrice);
+        return fee;
+      }
       const fee = calculateFee(200_000, gasPrice);
       return fee;
     }
@@ -182,15 +195,29 @@ export const validateCosmosGasBalance = async ({
     };
   });
 
+  if (prioFeeDenom) {
+    const availableAssets = validatedAssets.filter(
+      (res) => res?.error === null
+    );
+    const prioFeeAsset = availableAssets.find(
+      (res) => res?.asset?.denom === prioFeeDenom
+    );
+    if (prioFeeAsset) {
+      return prioFeeAsset;
+    }
+  }
+
   const feeUsed = validatedAssets.find((res) => res?.error === null);
   if (!feeUsed) {
     if (validatedAssets.length > 1) {
       throw new Error(
-        validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chain.prettyName}.`,
+        validatedAssets[0]?.error ||
+          `Insufficient fee token to initiate transfer on ${chain.prettyName}.`
       );
     }
     throw new Error(
-      validatedAssets[0]?.error || `Insufficient fee token to initiate transfer on ${chain.prettyName}.`,
+      validatedAssets[0]?.error ||
+        `Insufficient fee token to initiate transfer on ${chain.prettyName}.`
     );
   }
   return feeUsed;

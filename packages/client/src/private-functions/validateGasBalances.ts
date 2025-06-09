@@ -6,13 +6,14 @@ import type {
   ValidateGasResult,
 } from "src/types/client-types";
 import type { Tx } from "../types/swaggerTypes";
-import { validateCosmosGasBalance } from "./cosmos/validateCosmosGasBalance";
+import { validateCosmosGasBalance } from "../public-functions/validateCosmosGasBalance";
 import { validateEvmGasBalance } from "./evm/validateEvmGasBalance";
 import { validateSvmGasBalance } from "./svm/validateSvmGasBalance";
 
 export type ValidateGasBalancesProps = {
   txs: Tx[];
   onValidateGasBalance?: ExecuteRouteOptions["onValidateGasBalance"];
+  getCosmosPriorityFeeDenom?: ExecuteRouteOptions["getCosmosPriorityFeeDenom"];
   getFallbackGasAmount?: GetFallbackGasAmount;
   simulate?: ExecuteRouteOptions["simulate"];
   // skip gas validation for specific chainId
@@ -32,6 +33,7 @@ export const validateGasBalances = async ({
   disabledChainIds,
   enabledChainIds,
   useUnlimitedApproval,
+  getCosmosPriorityFeeDenom
 }: ValidateGasBalancesProps) => {
   const validateResult = await Promise.all(
     txs.map(async (tx, i) => {
@@ -60,6 +62,7 @@ export const validateGasBalances = async ({
             getOfflineSigner: getCosmosSigner,
             txIndex: i,
             simulate,
+            getCosmosPriorityFeeDenom: getCosmosPriorityFeeDenom,
           });
 
           return res;

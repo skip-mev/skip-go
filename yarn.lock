@@ -8043,6 +8043,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@skip-go/widget-web-component@npm:^3.11.1":
+  version: 3.11.1
+  resolution: "@skip-go/widget-web-component@npm:3.11.1"
+  checksum: a45c11af9e3fb0cfd27effb26ed520da88e3a1167c72925f416adbcd70205a536c8da55141f7fa9a5597ebdcc4ce2024466dc2c0550c365dce42e1058bd36fdd
+  languageName: node
+  linkType: hard
+
 "@skip-go/widget@workspace:^, @skip-go/widget@workspace:packages/widget":
   version: 0.0.0-use.local
   resolution: "@skip-go/widget@workspace:packages/widget"
@@ -23109,6 +23116,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-app@workspace:examples/nuxtjs"
   dependencies:
+    "@skip-go/widget-web-component": ^3.11.1
     nuxt: ^3.13.0
     vue: latest
     vue-router: latest

@@ -39,6 +39,7 @@ export { waitForTransaction } from "./public-functions/waitForTransaction";
 
 export { getCosmosGasAmountForMessage } from "./public-functions/getCosmosGasAmountForMessage";
 export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountForMessage";
+export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBalance";
 
 export type { SkipClientOptions } from "./state/clientState";
 
