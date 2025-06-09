@@ -52,6 +52,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   batchSignTxs: "any",
   onDestinationAssetUpdated: "any",
   onSourceAssetUpdated: "any",
+  borderRadius: "any",
 };
 
 const WebComponent = toWebComponent(Widget, {

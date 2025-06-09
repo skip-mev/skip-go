@@ -86,6 +86,10 @@ export type WidgetProps = {
   assetSymbolsSortedToTop?: string[];
   hideAssetsUnlessWalletTypeConnected?: boolean;
   batchSignTxs?: boolean;
+  /**
+   * Border radius in pixels applied to the widget container
+   */
+  borderRadius?: number;
 } & SkipClientOptions &
   Callbacks &
   SignerGetters &
@@ -120,7 +124,7 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <CosmosProvider>
             <NiceModal.Provider>
-              <WidgetWrapper>
+              <WidgetWrapper borderRadius={props.borderRadius}>
                 <Router />
               </WidgetWrapper>
             </NiceModal.Provider>
@@ -131,7 +135,13 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
   );
 };
 
-const WidgetWrapper = ({ children }: { children: ReactNode }) => {
+const WidgetWrapper = ({
+  children,
+  borderRadius,
+}: {
+  children: ReactNode;
+  borderRadius?: number;
+}) => {
   const setSettingsDrawerContainer = useSetAtom(settingsDrawerAtom);
   const rootId = useAtomValue(rootIdAtom);
 
@@ -146,16 +156,17 @@ const WidgetWrapper = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WidgetContainer data-root-id={rootId}>
+    <WidgetContainer data-root-id={rootId} borderRadius={borderRadius}>
       {children}
       <div ref={onSettingsDrawerContainerLoaded}></div>
     </WidgetContainer>
   );
 };
 
-const WidgetContainer = styled.div`
+const WidgetContainer = styled.div<{ borderRadius?: number }>`
   width: 100%;
   position: relative;
+  ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius}px`};
 
   div,
   p {
