@@ -45,11 +45,15 @@ jobs:
           WORD_PHRASE_KEY: ${{ secrets.WORD_PHRASE_KEY }}
         run: yarn test-widget
 
+      - name: Generate combined image and diff
+        run: |
+          yarn combine-images
+        working-directory: ./packages/widget
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: widget-screenshots
           path: |
-            packages/widget/__tests__/Widget/expected
-            packages/widget/__tests__/Widget/new
+            packages/widget/__tests__/Widget/combined
