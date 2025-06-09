@@ -1,21 +1,17 @@
+/* eslint-disable */
+
 import fs from "fs-extra";
 import path from "path";
 import { PNG } from "pngjs";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-
-// Setup __dirname for ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Directories
-const EXPECTED_DIR = path.join(__dirname, "../__tests__/Widget/expected");
-const NEW_DIR = path.join(__dirname, "../__tests__/Widget/new");
-const DIFF_DIR = path.join(__dirname, "../__tests__/Widget/diff");
-const COMBINED_DIR = path.join(__dirname, "../__tests__/Widget/combined");
+const EXPECTED_DIR = path.join(process.cwd(), "__tests__/Widget/expected");
+const NEW_DIR = path.join(process.cwd(), "__tests__/Widget/new");
+const DIFF_DIR = path.join(process.cwd(), "__tests__/Widget/diff");
+const COMBINED_DIR = path.join(process.cwd(), '__tests__/Widget/combined');
 
 // Threshold to ignore tiny changes (0–255)
-const PIXEL_DIFF_THRESHOLD = 20;
+const PIXEL_DIFF_THRESHOLD = 150;
 
 function pixelDifference(a, b) {
   const dr = Math.abs(a[0] - b[0]);
