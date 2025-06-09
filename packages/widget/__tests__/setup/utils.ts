@@ -38,24 +38,37 @@ export async function saveScreenshots({
   label,
   page,
   expectFn,
+  timeoutMs = 300_000,
 }: {
   label: string;
   page: Page;
   expectFn: () => Promise<void>;
+  timeoutMs?: number;
 }) {
+  const screenshotBase = `__tests__/Widget`;
+  const screenshotExpected = `${screenshotBase}/expected/${label}.png`;
+  const screenshotFailed = `${screenshotBase}/new/${label}.png`;
+
+  const timeoutPromise = new Promise<void>((_, reject) =>
+    setTimeout(() => reject(new Error(`Custom timeout of ${timeoutMs}ms reached`)), timeoutMs)
+  );
+
   try {
-    await expectFn();
-    const screenshotPath = `__tests__/Widget/expected/${label}.png`;
-    if (process.env.UPDATE_SCREENSHOTS === "true") {
-      console.info(`✅ Updating expected screenshot: ${screenshotPath}`);
-      await page.screenshot({ path: screenshotPath, animations: "disabled" });
+    await Promise.race([expectFn(), timeoutPromise]);
+
+    if (process.env.UPDATE_EXPECTED === "true") {
+      console.error(`✅ Updating expected screenshot: ${screenshotExpected}`);
+      await page.screenshot({ path: screenshotExpected, animations: "disabled" });
     } else {
-      console.info("✅ Test passed. Expected screenshot not updated");
+      console.log(`✅ Test passed. Expected screenshot not updated`);
     }
   } catch (err) {
-    const screenshotPath = `__tests__/Widget/new/${label}.png`;
-    console.error(`❌ Step failed: ${label}, saving screenshot: ${screenshotPath}`);
-    await page.screenshot({ path: screenshotPath, animations: "disabled" });
+    console.error(`❌ Step failed: ${label}, saving screenshot: ${screenshotFailed}`);
+    try {
+      await page.screenshot({ path: screenshotFailed });
+    } catch (screenshotErr) {
+      console.error(`⚠️ Failed to take failure screenshot:`, screenshotErr);
+    }
     throw err;
   }
 }
