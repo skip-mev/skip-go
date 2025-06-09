@@ -57,4 +57,4 @@ jobs:
         with:
           name: widget-screenshots
           path: |
-            packages/widget/__tests__/Widget/combined
+            packages/widget/__tests__/Widget
