@@ -1,5 +1,13 @@
 ## 0.0.15
 
+## 3.11.2
+
+### Patch Changes
+
+- 203ac07: wallet disable balance check
+- Updated dependencies [bb09717]
+  - @skip-go/client@1.2.2
+
 ## 3.11.1
 
 ### Patch Changes

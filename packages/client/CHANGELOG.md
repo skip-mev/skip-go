@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.2.2
+
+### Patch Changes
+
+- bb09717: export validateCosmosGasBalance, introduce getCosmosPriorityFeeDenom on executeRoute
+
 ## 1.2.1
 
 ### Patch Changes
