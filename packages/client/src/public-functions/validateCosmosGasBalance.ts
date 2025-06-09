@@ -35,13 +35,12 @@ export const validateCosmosGasBalance = async ({
   getOfflineSigner,
   txIndex,
   simulate,
-  getCosmosPriorityFeeDenom: cosmosPriorityFeeDenom,
+  getCosmosPriorityFeeDenom,
 }: ValidateCosmosGasBalanceProps) => {
   const skipAssets = (await ClientState.getSkipAssets({ chainId }))?.[chainId];
   const skipChains = await ClientState.getSkipChains();
 
-  const prioFeeDenom = await cosmosPriorityFeeDenom?.(chainId);
-  console.log(chainId, "prioFeeDenom", prioFeeDenom);
+  const prioFeeDenom = await getCosmosPriorityFeeDenom?.(chainId);
   const chain = skipChains?.find((c) => c.chainId === chainId);
   if (!chain) {
     throw new Error(`failed to find chain id '${chainId}'`);
