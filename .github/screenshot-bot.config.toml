@@ -7,8 +7,6 @@ screenshotsDiffsPaths = [
   '.*new.*',
 ]
 
-newScreenshotMark = '.*\.png'
-
 branchesIgnore = []
 
 screenshotImageAttrs = ['height="300px"']
