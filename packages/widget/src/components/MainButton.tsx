@@ -166,7 +166,7 @@ const StyledMainButton = styled(Row).attrs({
   height: 70px;
   padding: 20px;
   width: 100%;
-  border-radius: 25px;
+  border-radius: ${(props) => props.theme.borderRadius}px;
   overflow: hidden;
 
   &:hover {
