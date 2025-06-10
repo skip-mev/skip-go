@@ -243,7 +243,7 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   left: 2px;
   right: 0;
   width: calc(100% - 4px);
-  border-radius: 24px;
+  border-radius: ${(props) => props.theme.borderRadius}px;
   background: ${({ theme }) => theme.primary.background.normal};
 
   @media (max-width: 767px) {
