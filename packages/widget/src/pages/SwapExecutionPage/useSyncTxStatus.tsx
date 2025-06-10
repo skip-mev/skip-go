@@ -24,6 +24,7 @@ export const useSyncTxStatus = ({
     overallStatus,
     transactionHistoryIndex: currentTransactionHistoryIndex,
   } = useAtomValue(swapExecutionStateAtom);
+
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
   const txHistory = useAtomValue(transactionHistoryAtom);
@@ -79,7 +80,7 @@ export const useSyncTxStatus = ({
       const oldTxHistoryItem = txHistory[index];
 
       if (JSON.stringify(newTxHistoryItem) !== JSON.stringify(oldTxHistoryItem)) {
-        setTransactionHistory(index, newTxHistoryItem);
+        setTransactionHistory(newTxHistoryItem);
         setOverallStatus(computedSwapStatus);
       }
     }
