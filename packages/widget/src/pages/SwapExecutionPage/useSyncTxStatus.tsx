@@ -74,12 +74,13 @@ export const useSyncTxStatus = ({
         (txHistoryItem) => txHistoryItem.timestamp === timestamp,
       );
 
+      const oldTxHistoryItem = transactionHistoryItems[index];
+
       const newTxHistoryItem = {
-        ...transactionHistoryItems[index],
+        ...oldTxHistoryItem,
         ...statusData,
         status: computedSwapStatus as SimpleStatus,
       };
-      const oldTxHistoryItem = transactionHistoryItems[index];
 
       if (JSON.stringify(newTxHistoryItem) !== JSON.stringify(oldTxHistoryItem)) {
         setTransactionHistory(newTxHistoryItem);
