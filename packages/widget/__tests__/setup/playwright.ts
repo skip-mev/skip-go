@@ -69,21 +69,47 @@ export async function watchKeplrPopupApproveWindow() {
   }
 }
 
-export async function approveInKeplr() {
-  return new Promise((resolve) => {
-    const findKeplr = setInterval(async () => {
-      assignWindows();
-      if (_keplrPopupWindow) {
-        clearInterval(findKeplr);
+export async function approveInKeplr(timeoutMs = 5_000): Promise<"approved" | "no-popup-found"> {
+  return new Promise((resolve, reject) => {
+    let lastSeenPopupAt = Date.now();
+    let isRunning = true;
 
-        const approveButton = _keplrPopupWindow.getByRole("button", { name: "Approve" });
-        await approveButton.click();
+    const poll = async () => {
+      if (!isRunning) return;
 
-        _keplrPopupWindow = undefined;
-        await _mainWindow.bringToFront();
-        resolve("approved");
+      try {
+        assignWindows();
+
+        if (_keplrPopupWindow) {
+          lastSeenPopupAt = Date.now();
+
+          try {
+            const approveButton = _keplrPopupWindow.getByRole("button", {
+              name: /approve/i,
+            });
+            await approveButton.click();
+            _keplrPopupWindow = undefined;
+            await _mainWindow.bringToFront();
+          } catch (_err) {
+            _keplrPopupWindow = undefined;
+          }
+        }
+
+        const timeSinceLastSeen = Date.now() - lastSeenPopupAt;
+        if (timeSinceLastSeen >= timeoutMs) {
+          isRunning = false;
+          resolve("no-popup-found");
+          return;
+        }
+
+        setTimeout(poll, 100);
+      } catch (err) {
+        isRunning = false;
+        reject(new Error(`Keplr approval loop error: ${err instanceof Error ? err.message : err}`));
       }
-    }, 100);
+    };
+
+    poll();
   });
 }
 

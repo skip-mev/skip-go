@@ -11,7 +11,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "yarn run dev",
+    command: "yarn dev:visual-test",
     url: "http://localhost:5173/",
     reuseExistingServer: !process.env.CI,
   },

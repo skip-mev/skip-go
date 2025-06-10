@@ -12,11 +12,11 @@ test.describe.serial("Widget tests", async () => {
 
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
 
     await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
 
     await saveScreenshots({
       page,
@@ -31,10 +31,7 @@ test.describe.serial("Widget tests", async () => {
 
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
-
     await approveInKeplr();
-
-    await page.waitForTimeout(100);
 
     const input = page.getByRole("textbox");
     await input.first().fill("0.01");
@@ -57,9 +54,9 @@ test.describe.serial("Widget tests", async () => {
     await page.evaluate(() => window.localStorage.clear());
     await page.reload();
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
     await selectAsset({ page, asset: "ATOM", chain: "Cosmos Hub" });
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
     await selectAsset({ page, asset: "USDC", chain: "Noble" });
 
     await saveScreenshots({
@@ -76,8 +73,10 @@ test.describe.serial("Widget tests", async () => {
 
     await page.getByText("Connect Wallet").click();
     await page.getByText("Keplr").click();
+    await approveInKeplr();
     const input = page.getByRole("textbox");
     await input.first().fill("0.01");
+
     await page.getByText("Swap").click();
     await page.getByText("Confirm").click();
     await approveInKeplr();
