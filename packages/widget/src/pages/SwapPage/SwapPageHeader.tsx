@@ -81,7 +81,6 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
 
   const { transferAssetRelease } = useTxHistory({
     txHistoryItem: lastTxHistoryItemInTime?.transactionHistoryItem,
-    index: lastTxHistoryItemInTime?.index,
   });
 
   if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length && !isPending) {

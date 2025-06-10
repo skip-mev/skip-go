@@ -7,11 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 type useTxHistoryProps = {
-  index?: number;
   txHistoryItem?: TransactionHistoryItem;
 };
 
-export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
+export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   const { data: chains } = useAtomValue(skipChainsAtom);
 
   const txs = txHistoryItem?.transactionDetails?.map((tx) => ({
@@ -46,7 +45,7 @@ export const useTxHistory = ({ txHistoryItem, index }: useTxHistoryProps) => {
 
   useSyncTxStatus({
     statusData,
-    historyIndex: index,
+    timestamp: txHistoryItem?.timestamp,
   });
 
   const explorerLinks = new Set();
