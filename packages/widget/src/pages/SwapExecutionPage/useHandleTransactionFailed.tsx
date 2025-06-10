@@ -46,7 +46,8 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
       track("unexpected error page: transaction reverted", {
         transferAssetRelease: statusData?.transferAssetRelease,
         lastTransaction,
-        error
+        error,
+        route
       });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionReverted,
