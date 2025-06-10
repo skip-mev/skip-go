@@ -24,26 +24,44 @@ export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
 
 export const setTransactionHistoryAtom = atom(
   null,
-  (get, set, index: number, historyItem: TransactionHistoryItem) => {
+  (get, set, historyItem: TransactionHistoryItem) => {
     const history = get(transactionHistoryAtom);
+
+    const index = history.findIndex((item) => item.timestamp === historyItem.timestamp);
 
     const newHistory = [...history];
 
-    const oldHistoryItem = newHistory[index] ?? {};
-
-    newHistory[index] = { ...oldHistoryItem, ...historyItem };
+    if (index !== -1) {
+      const oldItem = newHistory[index];
+      newHistory[index] = { ...oldItem, ...historyItem };
+    } else {
+      newHistory.push(historyItem);
+    }
 
     set(transactionHistoryAtom, newHistory);
   },
 );
-export const removeTransactionHistoryItemAtom = atom(null, (get, set, index: number) => {
-  const history = get(transactionHistoryAtom);
-  if (!history) return;
-  if (index < 0) return;
-  if (index >= history.length) return;
 
-  // Create a new array without mutating the original
-  const newHistory = history.filter((_, i) => i !== index);
+export const lastTransactionInTimeAtom = atom((get) => {
+  const history = get(transactionHistoryAtom);
+  if (history.length === 0) return undefined;
+
+  const sorted = [...history].sort((a, b) => b.timestamp - a.timestamp);
+  const lastTx = sorted[0];
+
+  const originalIndex = history.findIndex((tx) => tx.timestamp === lastTx.timestamp);
+
+  return {
+    transactionHistoryItem: lastTx,
+    index: originalIndex,
+  };
+});
+
+export const removeTransactionHistoryItemAtom = atom(null, (get, set, timestamp: number) => {
+  const history = get(transactionHistoryAtom);
+  if (!history || !Number.isFinite(timestamp)) return;
+
+  const newHistory = history.filter((item) => item.timestamp !== timestamp);
 
   set(transactionHistoryAtom, newHistory);
 });

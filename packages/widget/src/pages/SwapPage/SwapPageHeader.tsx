@@ -4,7 +4,7 @@ import { ICONS } from "@/icons";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { ConnectedWalletContent } from "./ConnectedWalletContent";
-import { transactionHistoryAtom } from "@/state/history";
+import { lastTransactionInTimeAtom, transactionHistoryAtom } from "@/state/history";
 import { track } from "@amplitude/analytics-browser";
 import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
@@ -74,16 +74,14 @@ export const SwapPageHeader = memo(() => {
 });
 
 export const TrackLatestTxHistoryItemStatus = memo(() => {
-  const transactionhistory = useAtomValue(transactionHistoryAtom);
+  const lastTxHistoryItemInTime = useAtomValue(lastTransactionInTimeAtom);
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const { transactionsSigned, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const lastTxHistoryItem = transactionhistory.at(-1);
-
   const { transferAssetRelease } = useTxHistory({
-    txHistoryItem: lastTxHistoryItem,
-    index: transactionhistory.length - 1,
+    txHistoryItem: lastTxHistoryItemInTime?.transactionHistoryItem,
+    index: lastTxHistoryItemInTime?.index,
   });
 
   if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length && !isPending) {
@@ -101,10 +99,11 @@ const noHistoryItemsAtom = atom((get) => {
 
 const isFetchingLastTransactionStatusAtom = atom((get) => {
   const { overallStatus, route, transactionsSigned } = get(swapExecutionStateAtom);
-  const lastTxHistoryItem = get(transactionHistoryAtom).at(-1);
+  const lastTxHistoryItemInTime = get(lastTransactionInTimeAtom);
 
   return (
     (overallStatus === "pending" && transactionsSigned === route?.txsRequired) ||
-    (lastTxHistoryItem?.isSettled !== true && lastTxHistoryItem?.route?.txsRequired === 1)
+    (lastTxHistoryItemInTime?.transactionHistoryItem?.isSettled !== true &&
+      lastTxHistoryItemInTime?.transactionHistoryItem?.route?.txsRequired === 1)
   );
 });

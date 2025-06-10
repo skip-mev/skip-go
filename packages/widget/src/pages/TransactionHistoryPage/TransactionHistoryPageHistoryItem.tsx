@@ -163,7 +163,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
             sourceChainName={sourceAssetDetails.chainName ?? "--"}
             destinationChainName={destinationAssetDetails.chainName ?? "--"}
             absoluteTimeString={absoluteTimeString}
-            onClickDelete={() => removeTransactionHistoryItem(index)}
+            onClickDelete={() => removeTransactionHistoryItem(txHistoryItem.timestamp)}
             transferAssetRelease={transferAssetRelease}
           />
         )}

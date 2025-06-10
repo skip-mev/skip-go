@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 type useTxHistoryProps = {
-  index: number;
+  index?: number;
   txHistoryItem?: TransactionHistoryItem;
 };
 
