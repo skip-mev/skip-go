@@ -48,6 +48,10 @@ const StyledHeader = styled(Row)`
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
   opacity: 0.2;
   transform: rotate(180deg);
+  transition: opacity 0.2s;
+  button:hover & {
+    opacity: 1;
+  }
 `;
 
 const StyledCenteredTitle = styled(Text)`
