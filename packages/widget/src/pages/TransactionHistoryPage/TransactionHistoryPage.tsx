@@ -77,6 +77,6 @@ const StyledContainer = styled(Column)`
   padding: 20px;
   width: 100%;
   min-height: 300px;
-  border-radius: 25px;
+  border-radius: ${(props) => props.theme.borderRadius}px;
   background: ${({ theme }) => theme.primary.background.normal};
 `;

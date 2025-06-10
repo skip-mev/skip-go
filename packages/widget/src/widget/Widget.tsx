@@ -37,6 +37,11 @@ export type WidgetProps = {
   rootId?: string;
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
+  /**
+   * Customize the corner roundness of widget components
+   * @default 25
+   */
+  borderRadius?: number;
   onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
   settings?: {

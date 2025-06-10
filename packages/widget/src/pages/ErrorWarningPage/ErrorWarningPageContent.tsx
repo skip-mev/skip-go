@@ -62,7 +62,7 @@ export const ErrorWarningPageContent = ({
 const StyledErrorWarningStateContainer = styled(Column)<{ backgroundColor?: string }>`
   width: 100%;
   height: 225px;
-  border-radius: 25px;
+  border-radius: ${(props) => props.theme.borderRadius}px;
   ${({ backgroundColor }) => backgroundColor && `background: ${backgroundColor}`};
 `;
 
