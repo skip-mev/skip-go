@@ -142,3 +142,22 @@ export function limitDecimalsDisplayed(
 
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
+
+export function removeTrailingZeros(input: string | number | undefined): string {
+  if (input === undefined || input === null) {
+    return '';
+  }
+
+  let str = input.toString();
+  if (!str.includes('.')) {
+    return str;
+  }
+  while (str.endsWith('0')) {
+    str = str.slice(0, -1);
+  }
+  if (str.endsWith('.')) {
+    str = str.slice(0, -1);
+  }
+
+  return str;
+}
