@@ -12,9 +12,9 @@ import {
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
 import {
-  lastTransactionInTimeAtom,
   setTransactionHistoryAtom,
   transactionHistoryAtom,
+  TransactionHistoryItem,
 } from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
@@ -56,6 +56,7 @@ type SwapExecutionState = {
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData;
   transactionsSigned: number;
+  timestamp: number;
 };
 
 export type ChainAddress = {
@@ -87,6 +88,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
     transactionsSigned: 0,
+    timestamp: -1,
   },
 );
 
@@ -141,7 +143,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
     transactionsSigned: 0,
+    timestamp: Date.now(),
   });
+
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
@@ -232,14 +236,17 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         };
       });
 
-      const lastTransactionInTime = get(lastTransactionInTimeAtom);
+      const { timestamp } = get(swapExecutionStateAtom);
 
-      if (lastTransactionInTime?.transactionHistoryItem) {
-        set(setTransactionHistoryAtom, {
-          ...lastTransactionInTime.transactionHistoryItem,
-          signatures: transactionsSigned,
-        });
-      }
+      const transactionHistoryItem = get(transactionHistoryAtom).find(
+        (txHistoryItem) => txHistoryItem.timestamp === timestamp,
+      ) as TransactionHistoryItem;
+
+      set(setTransactionHistoryAtom, {
+        ...(transactionHistoryItem ?? {}),
+        timestamp: timestamp,
+        signatures: transactionsSigned,
+      });
 
       set(setOverallStatusAtom, "pending");
     },
@@ -343,7 +350,6 @@ export const setTransactionDetailsAtom = atom(
       route: route as RouteResponse,
       transactionDetails: newTransactionDetailsArray,
       transferEvents: [],
-      timestamp: Date.now(),
       isSettled: false,
       isSuccess: false,
       ...(status && { status }),
