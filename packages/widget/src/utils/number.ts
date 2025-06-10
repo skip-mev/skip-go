@@ -144,20 +144,12 @@ export function limitDecimalsDisplayed(
 }
 
 export function removeTrailingZeros(input: string | number | undefined): string {
-  if (input === undefined || input === null) {
-    return '';
-  }
+  if (input == null) return '';
 
-  let str = input.toString();
-  if (!str.includes('.')) {
-    return str;
-  }
-  while (str.endsWith('0')) {
-    str = str.slice(0, -1);
-  }
-  if (str.endsWith('.')) {
-    str = str.slice(0, -1);
-  }
+  const str = input.toString();
+  if (!str.includes('.')) return str;
 
-  return str;
+  return str
+    .replace(/(\.\d*?[1-9])0+$/g, '$1') 
+    .replace(/\.0+$/g, '');
 }
