@@ -11,7 +11,11 @@ import {
   walletsAtom,
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
+import {
+  lastTransactionInTimeAtom,
+  setTransactionHistoryAtom,
+  transactionHistoryAtom,
+} from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
@@ -228,12 +232,14 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         };
       });
 
-      const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
+      const lastTransactionInTime = get(lastTransactionInTimeAtom);
 
-      set(setTransactionHistoryAtom, {
-        ...transactionHistoryItem,
-        signatures: transactionsSigned,
-      });
+      if (lastTransactionInTime?.transactionHistoryItem) {
+        set(setTransactionHistoryAtom, {
+          ...lastTransactionInTime.transactionHistoryItem,
+          signatures: transactionsSigned,
+        });
+      }
 
       set(setOverallStatusAtom, "pending");
     },
