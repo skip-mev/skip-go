@@ -59,7 +59,7 @@ export const lastTransactionInTimeAtom = atom((get) => {
 
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, timestamp: number) => {
   const history = get(transactionHistoryAtom);
-  if (!history || !Number.isFinite(timestamp)) return;
+  if (!history || isNaN(timestamp)) return;
 
   const newHistory = history.filter((item) => item.timestamp !== timestamp);
 
