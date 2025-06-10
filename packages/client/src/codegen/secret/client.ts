@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { GeneratedType, Registry, OfflineSigner } from "@cosmjs/proto-signing";
 import { defaultRegistryTypes, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
-import { HttpEndpoint } from "@cosmjs/tendermint-rpc";
+import type { HttpEndpoint } from "@cosmjs/stargate";
 import * as secretComputeV1beta1MsgRegistry from "./compute/v1beta1/msg.registry";
 import * as secretComputeV1beta1MsgAmino from "./compute/v1beta1/msg.amino";
 export const secretAminoConverters = {
