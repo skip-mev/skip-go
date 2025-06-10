@@ -157,7 +157,7 @@ export const SwapPageAssetChainInput = ({
   const isLargeNumber = shouldReduceFontSize(value);
 
   return (
-    <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
+    <StyledAssetChainInputWrapper justify="space-between">
       <Row justify="space-between">
         <StyledInput
           type="text"
@@ -260,6 +260,7 @@ const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 100%;
   background: ${(props) => props.theme.primary.background.normal};
+  border-radius: ${(props) => props.theme.borderRadius}px;
   padding: 20px;
   @media (max-width: 767px) {
     padding: 15px;

@@ -147,7 +147,7 @@ const MainButtonContainer = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 25px;
+    border-radius: ${(props) => props.theme.borderRadius}px;
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
     ${transition(["background-color"], "fast", "easeOut")};
@@ -166,7 +166,7 @@ const StyledMainButton = styled(Row).attrs({
   height: 70px;
   padding: 20px;
   width: 100%;
-  border-radius: 25px;
+  border-radius: ${(props) => props.theme.borderRadius}px;
   overflow: hidden;
 
   &:hover {

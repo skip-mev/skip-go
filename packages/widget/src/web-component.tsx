@@ -16,6 +16,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   rootId: "any",
   theme: "any",
   brandColor: "any",
+  borderRadius: "any",
   onlyTestnet: "any",
   defaultRoute: "any",
   settings: "any",
