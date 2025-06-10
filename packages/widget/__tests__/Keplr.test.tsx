@@ -47,7 +47,7 @@ test.describe.serial("Widget tests", async () => {
       label: "noble-usdc-to-atom-cosmoshub-complete",
       expectFn: async () => {
         await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({
-          timeout: 350_000,
+          timeout: 300_000,
         });
       },
     });
@@ -87,7 +87,7 @@ test.describe.serial("Widget tests", async () => {
       label: "atom-cosmoshub-to-usdc-noble-complete",
       expectFn: async () => {
         await expect(page.getByRole("button", { name: /go again/i })).toBeVisible({
-          timeout: 350_000,
+          timeout: 300_000,
         });
       },
     });
