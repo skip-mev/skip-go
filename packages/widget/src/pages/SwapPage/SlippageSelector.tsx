@@ -122,7 +122,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
 
   background: ${({ theme }) => theme.secondary.background.transparent};
   padding: 7px 15px;
-  border-radius: 15px;
+  border-radius: ${({ theme }) => (15 / 25) * theme.borderRadius}px;
   height: 40px;
   display: flex;
   align-items: center;
