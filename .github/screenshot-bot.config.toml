@@ -1,0 +1,11 @@
+workflowWithTests = [
+  '.*Widget Tests.*',
+]
+
+screenshotsDiffsPaths = [
+  '.*combined.*',
+]
+
+branchesIgnore = []
+
+screenshotImageAttrs = ['height="300px"']

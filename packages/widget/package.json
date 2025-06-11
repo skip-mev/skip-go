@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --force --host",
+    "dev:visual-test": "VISUAL_TEST=true yarn dev",
     "dev:storybook": "storybook dev -p 6006",
     "build": "npm run generate-chains && NODE_OPTIONS=--max-old-space-size=16384 vite build",
     "watch:build": "vite build --watch",
@@ -22,7 +23,9 @@
     "post": "git checkout -- package.json",
     "generate-chains": "node scripts/generate-chains.cjs",
     "update-registries": "yarn up @initia/initia-registry chain-registry",
-    "test": "yarn playwright test"
+    "test": "yarn playwright test",
+    "update-screenshots": "UPDATE_SCREENSHOTS=true yarn playwright test Keplr.test.tsx",
+    "combine-images": "node scripts/combine-images.mjs"
   },
   "exports": {
     ".": {
@@ -53,6 +56,7 @@
     "@testing-library/react": "^16.2.0",
     "@types/eslint__js": "^8.42.3",
     "@types/pluralize": "^0.0.33",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
@@ -68,9 +72,12 @@
     "fs-extra": "^11.3.0",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "pino-pretty": "^13.0.0",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.4.2",
     "process": "^0.11.10",
+    "pureimage": "^0.4.18",
     "raw-loader": "^4.0.2",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
