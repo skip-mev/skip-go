@@ -9,6 +9,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
+import { Column } from "./Layout";
+import { convertToPxValue } from "@/utils/style";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -253,4 +255,18 @@ const StyledContent = styled.div<{
           ? fadeOutAndSlideDown
           : fadeOutAndZoomIn}
     150ms cubic-bezier(0.5, 1, 0.89, 1) forwards;
+`;
+export const StyledModalInnerContainer = styled(Column)`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+export const StyledModalContainer = styled(Column)`
+  position: relative;
+  padding: 10px;
+  gap: 10px;
+  width: calc(100% - 20px);
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.modalContainer)};
+  background: ${({ theme }) => theme.primary.background.normal};
+  height: 100%;
 `;

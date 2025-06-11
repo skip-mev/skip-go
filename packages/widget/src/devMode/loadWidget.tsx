@@ -29,7 +29,9 @@ const DevMode = () => {
         ...(theme === "dark" ? defaultTheme : lightTheme),
         brandTextColor: "black",
         brandColor: "#FF66FF",
-        borderRadius: 10,
+        borderRadius: {
+          mainButton: 0,
+        },
       },
       settings: {
         useUnlimitedApproval: true,
