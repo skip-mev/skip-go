@@ -83,7 +83,7 @@ export function useCroppedImage(imageUrl?: string): string | undefined {
       .catch((err) => {
         console.error("Image cropping failed:", err);
         if (!isCancelled) {
-          setCroppedSrc(undefined);
+          setCroppedSrc(imageUrl);
         }
       });
 
