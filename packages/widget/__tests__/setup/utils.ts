@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Page } from "@playwright/test";
 
 export async function selectAsset({
@@ -31,4 +32,31 @@ export async function expectPageLoaded(page: Page) {
     width: 800,
   });
   await page.goto("http://localhost:5173/");
+}
+
+export async function saveScreenshots({
+  label,
+  page,
+  expectFn,
+}: {
+  label: string;
+  page: Page;
+  expectFn: () => Promise<void>;
+}) {
+  try {
+    await expectFn();
+    const screenshotPath = `__tests__/Widget/expected/${label}.png`;
+
+    if (process.env.UPDATE_SCREENSHOTS === "true") {
+      console.error(`✅ Updating expected screenshot: ${screenshotPath}`);
+      await page.screenshot({ path: screenshotPath, animations: "disabled" });
+    } else {
+      console.log(`✅ Test passed. Expected screenshot not updated (UPDATE_EXPECTED not set).`);
+    }
+  } catch (err) {
+    const screenshotPath = `__tests__/Widget/new/${label}.png`;
+    console.error(`❌ Step failed: ${label}, saving screenshot: ${screenshotPath}`);
+    await page.screenshot({ path: screenshotPath, animations: "disabled" });
+    throw err;
+  }
 }

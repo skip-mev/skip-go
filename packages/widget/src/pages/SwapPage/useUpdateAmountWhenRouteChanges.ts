@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { swapDirectionAtom, sourceAssetAtom, destinationAssetAtom } from "@/state/swapPage";
 import { convertTokenAmountToHumanReadableAmount } from "@/utils/crypto";
 import { skipRouteAtom } from "@/state/route";
+import { removeTrailingZeros } from "@/utils/number";
 
 export const useUpdateAmountWhenRouteChanges = () => {
   const [route] = useAtom(skipRouteAtom);
@@ -33,12 +34,12 @@ export const useUpdateAmountWhenRouteChanges = () => {
     if (direction === "swap-in") {
       setDestinationAsset((old) => ({
         ...old,
-        amount: swapInAmount,
+        amount: removeTrailingZeros(swapInAmount),
       }));
     } else if (direction === "swap-out") {
       setSourceAsset((old) => ({
         ...old,
-        amount: swapOutAmount,
+        amount: removeTrailingZeros(swapOutAmount),
       }));
     }
   }, [route.data, direction, sourceAsset, destinationAsset, setSourceAsset, setDestinationAsset]);

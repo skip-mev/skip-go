@@ -52,6 +52,7 @@ type SwapExecutionState = {
   overallStatus: SimpleStatus;
   isValidatingGasBalance?: ValidatingGasBalanceData;
   transactionsSigned: number;
+  timestamp: number;
 };
 
 export type ChainAddress = {
@@ -83,6 +84,7 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
     transactionsSigned: 0,
+    timestamp: -1,
   },
 );
 
@@ -137,14 +139,15 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     overallStatus: "unconfirmed",
     isValidatingGasBalance: undefined,
     transactionsSigned: 0,
+    timestamp: Date.now(),
   });
+
   set(submitSwapExecutionCallbacksAtom, {
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {
         set(setTransactionDetailsAtom, {
           transactionDetails: txInfo,
-          transactionHistoryIndex,
         });
       }
     },
@@ -166,7 +169,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
       set(setTransactionDetailsAtom, {
         transactionDetails: { ...txInfo, explorerLink, status: undefined },
-        transactionHistoryIndex,
       });
 
       callbacks?.onTransactionBroadcasted?.({
@@ -228,10 +230,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         };
       });
 
-      const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
+      const { timestamp } = get(swapExecutionStateAtom);
 
-      set(setTransactionHistoryAtom, transactionHistoryIndex, {
-        ...transactionHistoryItem,
+      set(setTransactionHistoryAtom, {
+        timestamp: timestamp,
         signatures: transactionsSigned,
       });
 
@@ -298,17 +300,12 @@ export const setValidatingGasBalanceAtom = atom(
 
 type SetTransactionDetailsProps = {
   transactionDetails: TransactionDetails;
-  transactionHistoryIndex: number;
   status?: SimpleStatus;
 };
 
 export const setTransactionDetailsAtom = atom(
   null,
-  (
-    get,
-    set,
-    { transactionDetails, transactionHistoryIndex, status }: SetTransactionDetailsProps,
-  ) => {
+  (get, set, { transactionDetails, status }: SetTransactionDetailsProps) => {
     const swapExecutionState = get(swapExecutionStateAtom);
     const { transactionDetailsArray, route } = swapExecutionState;
 
@@ -330,16 +327,13 @@ export const setTransactionDetailsAtom = atom(
       transactionDetailsArray: newTransactionDetailsArray,
     });
 
-    const transactionHistoryItem = get(transactionHistoryAtom)[transactionHistoryIndex];
-
-    set(setTransactionHistoryAtom, transactionHistoryIndex, {
-      ...transactionHistoryItem,
+    set(setTransactionHistoryAtom, {
       route: route as RouteResponse,
       transactionDetails: newTransactionDetailsArray,
       transferEvents: [],
-      timestamp: Date.now(),
       isSettled: false,
       isSuccess: false,
+      timestamp: swapExecutionState?.timestamp,
       ...(status && { status }),
     });
   },

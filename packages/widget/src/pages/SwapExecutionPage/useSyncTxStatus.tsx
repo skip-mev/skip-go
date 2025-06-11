@@ -11,10 +11,10 @@ import { TxsStatus } from "./useBroadcastedTxs";
 
 export const useSyncTxStatus = ({
   statusData,
-  historyIndex,
+  timestamp,
 }: {
   statusData?: TxsStatus;
-  historyIndex?: number;
+  timestamp?: number;
 }) => {
   const transferEvents = statusData?.transferEvents;
   const setOverallStatus = useSetAtom(setOverallStatusAtom);
@@ -24,9 +24,10 @@ export const useSyncTxStatus = ({
     overallStatus,
     transactionHistoryIndex: currentTransactionHistoryIndex,
   } = useAtomValue(swapExecutionStateAtom);
+
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
-  const txHistory = useAtomValue(transactionHistoryAtom);
+  const transactionHistoryItems = useAtomValue(transactionHistoryAtom);
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
@@ -68,18 +69,21 @@ export const useSyncTxStatus = ({
   ]);
 
   useEffect(() => {
-    if (computedSwapStatus) {
-      const index = historyIndex ?? currentTransactionHistoryIndex;
+    if (computedSwapStatus && timestamp !== undefined) {
+      const index = transactionHistoryItems.findIndex(
+        (txHistoryItem) => txHistoryItem.timestamp === timestamp,
+      );
+
+      const oldTxHistoryItem = transactionHistoryItems[index];
 
       const newTxHistoryItem = {
-        ...txHistory[index],
+        ...oldTxHistoryItem,
         ...statusData,
         status: computedSwapStatus as SimpleStatus,
       };
-      const oldTxHistoryItem = txHistory[index];
 
       if (JSON.stringify(newTxHistoryItem) !== JSON.stringify(oldTxHistoryItem)) {
-        setTransactionHistory(index, newTxHistoryItem);
+        setTransactionHistory(newTxHistoryItem);
         setOverallStatus(computedSwapStatus);
       }
     }
@@ -89,10 +93,10 @@ export const useSyncTxStatus = ({
     computedSwapStatus,
     setOverallStatus,
     transactionDetailsArray.length,
-    txHistory,
+    transactionHistoryItems,
     statusData,
     setTransactionHistory,
-    historyIndex,
     currentTransactionHistoryIndex,
+    timestamp,
   ]);
 };

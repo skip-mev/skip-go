@@ -79,6 +79,7 @@ export const useBroadcastedTxsStatus = ({
     enabled:
       txsRequired !== undefined &&
       txs !== undefined &&
+      txs.length > 0 &&
       !isSettled &&
       (!!txs && txs.length > 0 && enabled !== undefined ? enabled : true),
     refetchInterval: 500,

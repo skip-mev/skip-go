@@ -24,6 +24,7 @@ import { useHandleTransactionFailed } from "./useHandleTransactionFailed";
 import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { usePreventPageUnload } from "@/hooks/usePreventPageUnload";
+import { lastTransactionInTimeAtom } from "@/state/history";
 
 export enum SwapExecutionState {
   recoveryAddressUnset,
@@ -48,6 +49,7 @@ export const SwapExecutionPage = () => {
     isValidatingGasBalance,
     transactionsSigned,
   } = useAtomValue(swapExecutionStateAtom);
+  const lastTransactionInTime = useAtomValue(lastTransactionInTimeAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
@@ -70,6 +72,7 @@ export const SwapExecutionPage = () => {
 
   useSyncTxStatus({
     statusData,
+    timestamp: lastTransactionInTime?.transactionHistoryItem?.timestamp,
   });
 
   const lastOperation = clientOperations[clientOperations.length - 1];
