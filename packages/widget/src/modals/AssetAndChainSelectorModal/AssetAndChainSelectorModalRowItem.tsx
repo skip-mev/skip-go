@@ -120,12 +120,7 @@ const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: bo
     <RowLayout
       image={
         chainImage ? (
-          <StyledChainImage
-            height="auto"
-            width={35}
-            src={chainImage}
-            alt={`${item.chainId} logo`}
-          />
+          <StyledChainImage height={35} width={35} src={chainImage} alt={`${item.chainId} logo`} />
         ) : (
           <CircleSkeletonElement height={35} width={35} />
         )
