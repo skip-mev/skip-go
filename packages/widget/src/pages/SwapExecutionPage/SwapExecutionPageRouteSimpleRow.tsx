@@ -78,7 +78,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
     }
   }, [chainAddresses, context]);
 
-  const croppedImage = useCroppedImage(source.image);
+  const walletImage = useCroppedImage(source.image);
 
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
@@ -127,8 +127,8 @@ export const SwapExecutionPageRouteSimpleRow = ({
           </StyledChainName>
 
           <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
-            {croppedImage ? (
-              <img height={10} width={10} src={croppedImage} />
+            {walletImage ? (
+              <img height={10} width={10} src={walletImage} />
             ) : (
               <CircleSkeletonElement height={10} width={10} />
             )}
