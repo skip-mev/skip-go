@@ -106,7 +106,7 @@ export const SwapSettingsDrawer = createModal(() => {
 const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: ${({ theme }) => (20 / 25) * theme.borderRadius}px;
   background: ${(props) => props.theme.primary.background.normal};
 `;
 

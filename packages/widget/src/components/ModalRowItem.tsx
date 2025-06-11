@@ -39,7 +39,7 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
   position: relative;
   width: 100%;
   height: 60px;
-  border-radius: 12px;
+  border-radius: ${({ theme }) => (12 / 25) * theme.borderRadius}px;
   padding: 12px 15px;
   margin-top: 5px;
 
