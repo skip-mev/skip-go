@@ -11,7 +11,7 @@ import { transactionHistoryAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
 import { track } from "@amplitude/analytics-browser";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export const TransactionHistoryPage = () => {
   const theme = useTheme();
@@ -78,6 +78,6 @@ const StyledContainer = styled(Column)`
   padding: 20px;
   width: 100%;
   min-height: 300px;
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   background: ${({ theme }) => theme.primary.background.normal};
 `;

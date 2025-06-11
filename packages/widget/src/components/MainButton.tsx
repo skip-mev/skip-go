@@ -6,7 +6,7 @@ import { ICONS, iconMap } from "@/icons";
 import { ReactNode } from "react";
 import { RouteResponse } from "@skip-go/client";
 import { transition } from "@/utils/transitions";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export type MainButtonProps = {
   label: string;
@@ -148,7 +148,7 @@ const MainButtonContainer = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: ${({ theme }) => px(theme.borderRadius?.mainButton)};
+    border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
     ${transition(["background-color"], "fast", "easeOut")};
@@ -167,7 +167,7 @@ const StyledMainButton = styled(Row).attrs({
   height: 70px;
   padding: 20px;
   width: 100%;
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainButton)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   overflow: hidden;
 
   &:hover {
@@ -244,7 +244,7 @@ const StyledOverlay = styled(Row)<{ backgroundColor?: string }>`
   left: 2px;
   right: 0;
   width: calc(100% - 4px);
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainButton)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   background: ${({ theme }) => theme.primary.background.normal};
 
   @media (max-width: 767px) {

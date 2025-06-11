@@ -9,7 +9,7 @@ import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { SwapExecutionState } from "./SwapExecutionPage";
 import { useMemo } from "react";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export type SwapExecutionPageRouteProps = {
   operations: ClientOperation[];
@@ -93,6 +93,6 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 30px;
   background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   min-height: 225px;
 `;

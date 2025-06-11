@@ -13,7 +13,7 @@ import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export const SwapSettingsDrawer = createModal(() => {
   const theme = useTheme();
@@ -107,7 +107,7 @@ export const SwapSettingsDrawer = createModal(() => {
 const StyledSwapPageSettings = styled(Column)`
   width: 100%;
   padding: 20px;
-  border-radius: ${({ theme }) => px(theme.borderRadius?.modalContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.modalContainer)};
   background: ${(props) => props.theme.primary.background.normal};
 `;
 

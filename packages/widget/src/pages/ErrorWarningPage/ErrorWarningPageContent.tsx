@@ -2,7 +2,7 @@ import { styled, useTheme } from "styled-components";
 import { Column } from "@/components/Layout";
 import { iconMap, ICONS } from "@/icons";
 import { SmallText, Text } from "@/components/Typography";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export type ErrorWarningPageContentProps = {
   icon?: ICONS;
@@ -63,7 +63,7 @@ export const ErrorWarningPageContent = ({
 const StyledErrorWarningStateContainer = styled(Column)<{ backgroundColor?: string }>`
   width: 100%;
   height: 225px;
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   ${({ backgroundColor }) => backgroundColor && `background: ${backgroundColor}`};
 `;
 

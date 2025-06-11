@@ -2,8 +2,7 @@ import "styled-components";
 import { opacityToHex } from "../utils/colors";
 
 export const defaultBorderRadius: WidgetBorderRadius = {
-  mainButton: "25px",
-  mainContainer: "25px",
+  main: "25px",
   selectionButton: "10px",
   ghostButton: "30px",
   modalContainer: "20px",
@@ -84,13 +83,9 @@ export type PartialTheme = Partial<Theme> | undefined;
 
 export type WidgetBorderRadius = {
   /**
-   * Border radius for the main button, used in buttons like "Send" or "Swap" or "Confirm".
+   * Border radius for the main container and buttons, used in main pages container and main used in buttons.
    */
-  mainButton?: string | number;
-  /**
-   * Border radius for the main container, used in main pages like Swap page container, Swap execution page container, History page container, .
-   */
-  mainContainer?: string | number;
+  main?: string | number;
   /**
    * Border radius for the selection button, used in buttons like "Select asset" or "Selector for route preferences and slippage slector button".
    */

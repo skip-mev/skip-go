@@ -13,7 +13,7 @@ import { SwapExecutionPageRouteProps } from "./SwapExecutionPageRouteSimple";
 import React, { useCallback, useMemo } from "react";
 import { Tooltip } from "@/components/Tooltip";
 import { useIsGasStationTx } from "./useIsGasStationTx";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 type operationTypeToIcon = Record<OperationType, React.ReactElement>;
 
@@ -221,7 +221,7 @@ const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 25px;
   gap: 20px;
   background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.main)};
   min-height: 225px;
 `;
 

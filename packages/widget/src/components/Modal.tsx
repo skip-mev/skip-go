@@ -10,7 +10,7 @@ import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { rootIdAtom, themeAtom } from "@/state/skipClient";
 import { createPortal } from "react-dom";
 import { Column } from "./Layout";
-import { px } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 export type ModalProps = {
   children: React.ReactNode;
@@ -266,7 +266,7 @@ export const StyledModalContainer = styled(Column)`
   padding: 10px;
   gap: 10px;
   width: calc(100% - 20px);
-  border-radius: ${({ theme }) => px(theme.borderRadius?.modalContainer)};
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.modalContainer)};
   background: ${({ theme }) => theme.primary.background.normal};
   height: 100%;
 `;
