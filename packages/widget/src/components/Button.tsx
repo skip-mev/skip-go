@@ -2,6 +2,7 @@ import { css, styled } from "styled-components";
 import { FlexProps, flexProps } from "@/components/Layout";
 import { removeButtonStyles, SmallText } from "@/components/Typography";
 import { transition } from "@/utils/transitions";
+import { px } from "@/utils/style";
 
 export type GhostButtonProps = {
   secondary?: boolean;
@@ -42,7 +43,7 @@ export const GhostButton = styled(SmallText).attrs({
   }}
 
   padding: 8px 15px;
-  border-radius: ${({ theme }) => (30 / 25) * theme.borderRadius}px;
+  border-radius: ${({ theme }) => px(theme.borderRadius.ghostButton)};
   ${flexProps};
 `;
 

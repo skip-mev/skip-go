@@ -41,7 +41,6 @@ export type WidgetProps = {
    * Customize the corner roundness of widget components
    * @default 25
    */
-  borderRadius?: number;
   onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
   settings?: {

@@ -1,10 +1,19 @@
 import "styled-components";
 import { opacityToHex } from "../utils/colors";
 
+export const defaultBorderRadius: WidgetBorderRadius = {
+  mainButton: 25,
+  mainContainer: 25,
+  selectionButton: 10,
+  ghostButton: 30,
+  modalContainer: 20,
+  rowItem: 12,
+};
+
 export const defaultTheme = {
   brandColor: "#ff66ff",
   brandTextColor: undefined,
-  borderRadius: 25,
+  borderRadius: defaultBorderRadius,
   primary: {
     background: {
       normal: "#000000",
@@ -39,7 +48,7 @@ export const defaultTheme = {
 export const lightTheme = {
   brandColor: "#ff66ff",
   brandTextColor: undefined,
-  borderRadius: 25,
+  borderRadius: defaultBorderRadius,
   primary: {
     background: {
       normal: "#ffffff",
@@ -73,10 +82,37 @@ export const lightTheme = {
 
 export type PartialTheme = Partial<Theme> | undefined;
 
+export type WidgetBorderRadius = {
+  /**
+   * Border radius for the main button, used in buttons like "Send" or "Swap" or "Confirm".
+   */
+  mainButton?: string | number;
+  /**
+   * Border radius for the main container, used in main pages like Swap page container, Swap execution page container, History page container, .
+   */
+  mainContainer?: string | number;
+  /**
+   * Border radius for the selection button, used in buttons like "Select asset" or "Selector for route preferences and slippage slector button".
+   */
+  selectionButton?: string | number;
+  /**
+   * Border radius for the ghost button, used in buttons like "Max button" or "History button" or "Bottom drawer button".
+   */
+  ghostButton?: string | number;
+  /**
+   * Border radius for the modal container, used in modals like "Asset selector modal" or "History modal" or "Wallet connector modal".
+   */
+  modalContainer?: string | number;
+  /**
+   * Border radius for the row item, used in row items like "History row item" or "Modal row item (Wallet connector or asset selecion)".
+   */
+  rowItem?: string | number;
+};
+
 export type Theme = {
   brandColor: string;
   brandTextColor?: string;
-  borderRadius: number;
+  borderRadius: WidgetBorderRadius;
   primary: {
     background: {
       normal: string;

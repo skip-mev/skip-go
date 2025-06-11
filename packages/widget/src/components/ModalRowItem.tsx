@@ -2,6 +2,7 @@ import { css, styled } from "styled-components";
 import { Row } from "@/components/Layout";
 import { removeButtonStyles, Text } from "@/components/Typography";
 import { transition } from "@/utils/transitions";
+import { px } from "@/utils/style";
 
 export type ModalRowItemProps = {
   leftContent?: React.ReactNode;
@@ -39,7 +40,7 @@ const StyledModalRowItemContainer = styled(Row)<{ onClick?: () => void; eureka?:
   position: relative;
   width: 100%;
   height: 60px;
-  border-radius: ${({ theme }) => (12 / 25) * theme.borderRadius}px;
+  border-radius: ${({ theme }) => px(theme.borderRadius.rowItem)};
   padding: 12px 15px;
   margin-top: 5px;
 
