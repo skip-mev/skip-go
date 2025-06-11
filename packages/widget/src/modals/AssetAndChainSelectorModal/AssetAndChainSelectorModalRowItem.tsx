@@ -12,6 +12,7 @@ import { ChainWithAsset, GroupedAsset, SelectorContext } from "./AssetAndChainSe
 import { useFilteredChains } from "./useFilteredChains";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
 
 export const isGroupedAsset = (
   item: GroupedAsset | ClientAsset | ChainWithAsset,
@@ -114,10 +115,20 @@ const GroupedAssetRow = ({
 };
 
 const ChainWithAssetRow = ({ item, eureka }: { item: ChainWithAsset; eureka?: boolean }) => {
+  const chainImage = useCroppedImage(item?.logoUri);
   return (
     <RowLayout
       image={
-        <StyledChainImage height={35} width={35} src={item?.logoUri} alt={`${item.chainId} logo`} />
+        chainImage ? (
+          <StyledChainImage
+            height="auto"
+            width={35}
+            src={chainImage}
+            alt={`${item.chainId} logo`}
+          />
+        ) : (
+          <CircleSkeletonElement height={35} width={35} />
+        )
       }
       mainText={item.prettyName}
       subText={<SmallText>{item.chainId}</SmallText>}
