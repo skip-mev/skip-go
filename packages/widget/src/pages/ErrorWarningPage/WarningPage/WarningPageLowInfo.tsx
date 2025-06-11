@@ -2,7 +2,7 @@ import { ErrorWarningPageContent } from "@/pages/ErrorWarningPage/ErrorWarningPa
 import { MainButton } from "@/components/MainButton";
 import { SmallText, SmallTextButton } from "@/components/Typography";
 import { ICONS } from "@/icons";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { track } from "@amplitude/analytics-browser";
 import { RouteResponse } from "@skip-go/client";
@@ -54,14 +54,16 @@ export const WarningPageLowInfo = ({
       />
       <ErrorWarningPageContent
         title="Warning: Incomplete Price Data"
-        description={
+          description={
           <>
             <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
-              USD price data is missing for one of the assets, please double check the input and
-              output amounts are acceptable before continuing.
-              <br />
-              {sourceDetails.amount} {sourceDetails.symbol} → {destinationDetails.amount}{" "}
-              {destinationDetails.symbol}
+              <StyledDescriptionContent>
+                USD price data is missing for one of the assets, please double check the input and
+                output amounts are acceptable before continuing.
+                <br />
+                {sourceDetails.amount} {sourceDetails.symbol} → {destinationDetails.amount}{" "}
+                {destinationDetails.symbol}
+              </StyledDescriptionContent>
             </SmallText>
             <SmallTextButton
               onClick={() => {
@@ -90,3 +92,7 @@ export const WarningPageLowInfo = ({
     </>
   );
 };
+
+const StyledDescriptionContent = styled.div`
+  line-height: 1.5;
+`;
