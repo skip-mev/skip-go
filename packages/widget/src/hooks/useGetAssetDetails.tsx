@@ -6,6 +6,7 @@ import {
 } from "@/utils/crypto";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
+import { useCroppedImage } from "./useCroppedImage";
 
 export type AssetDetailsProps = {
   asset?: ClientAsset;
@@ -66,6 +67,8 @@ export const useGetAssetDetails = ({
   }
 
   const assetImage = asset?.logoUri;
+
+  const croppedImage = useCroppedImage(assetImage);
   const symbol = asset?.recommendedSymbol ?? asset?.symbol;
 
   const chain = chains?.find((chain) => {
@@ -97,7 +100,7 @@ export const useGetAssetDetails = ({
   return {
     asset,
     chain,
-    assetImage: assetImage ?? "",
+    assetImage: croppedImage ?? "",
     chainName: chainPrettyName ?? chainName ?? chainId,
     chainImage: chainImage ?? "",
     symbol: symbol ?? "",

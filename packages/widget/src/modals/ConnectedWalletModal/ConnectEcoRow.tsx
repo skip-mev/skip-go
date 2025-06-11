@@ -22,6 +22,8 @@ import { track } from "@amplitude/analytics-browser";
 import { useAccount as useCosmosAccount } from "graz";
 import { usePrimaryChainIdForChainType } from "@/hooks/usePrimaryChainIdForChainType";
 import { ChainType } from "@skip-go/client";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "@/components/Skeleton";
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
@@ -151,6 +153,8 @@ export const ConnectEcoRow = ({
     onClick?.();
   };
 
+  const walletImage = useCroppedImage(account?.wallet.logo);
+
   return (
     <ModalRowItem
       style={{ marginTop: ITEM_GAP, minHeight: `${ITEM_HEIGHT}px` }}
@@ -158,15 +162,17 @@ export const ConnectEcoRow = ({
       leftContent={
         account ? (
           <Row align="center" gap={10}>
-            {account?.wallet.logo && (
+            {walletImage ? (
               <img
                 height={STANDARD_ICON_SIZE}
                 width={STANDARD_ICON_SIZE}
                 style={{ objectFit: "cover" }}
-                src={account?.wallet.logo}
+                src={walletImage}
                 alt={`${account?.wallet.prettyName} logo`}
                 title={account?.wallet.prettyName}
               />
+            ) : (
+              <SkeletonElement height={STANDARD_ICON_SIZE} width={STANDARD_ICON_SIZE} />
             )}
             <Row align="baseline" gap={8}>
               <Tooltip content={account?.address}>

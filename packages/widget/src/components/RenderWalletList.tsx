@@ -14,6 +14,8 @@ import { useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "./Skeleton";
 
 export type RenderWalletListProps = {
   title: string;
@@ -47,6 +49,64 @@ export const isMinimalWallet = (
 
 const ITEM_HEIGHT = 60;
 const ITEM_GAP = 5;
+
+const WalletRowItem = ({
+  wallet,
+  onClick,
+  rightContent,
+}: {
+  wallet: MinimalWallet | ManualWalletEntry;
+  onClick: () => void;
+  rightContent?: React.ReactNode;
+}) => {
+  const name = isMinimalWallet(wallet)
+    ? (wallet.walletPrettyName ?? wallet.walletName)
+    : wallet.walletName;
+
+  const imageUrl = isMinimalWallet(wallet) ? wallet.walletInfo?.logo : undefined;
+  const isAvailable = isMinimalWallet(wallet) ? wallet.isAvailable : undefined;
+
+  const croppedImage = useCroppedImage(imageUrl);
+
+  const renderWalletImage = useMemo(() => {
+    if (!isMinimalWallet(wallet)) return;
+    if (croppedImage) {
+      return (
+        <img
+          height={35}
+          width={35}
+          style={{ objectFit: "cover" }}
+          src={croppedImage}
+          alt={`${name}-logo`}
+        />
+      );
+    } else {
+      return <SkeletonElement width={35} height={35} />;
+    }
+  }, [croppedImage, name, wallet]);
+
+  const leftContent = (
+    <Row style={{ width: "100%" }} align="center" justify="space-between">
+      <Row align="center" gap={10}>
+        {renderWalletImage}
+        <Text>{name}</Text>
+      </Row>
+      {isAvailable !== undefined && (
+        <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>
+      )}
+    </Row>
+  );
+
+  return (
+    <ModalRowItem
+      key={name}
+      onClick={onClick}
+      style={{ marginTop: ITEM_GAP }}
+      leftContent={leftContent}
+      rightContent={rightContent}
+    />
+  );
+};
 
 export const RenderWalletList = ({
   title,
@@ -98,25 +158,7 @@ export const RenderWalletList = ({
 
   const renderItem = useCallback(
     (wallet: ManualWalletEntry | MinimalWallet) => {
-      const name = isMinimalWallet(wallet)
-        ? (wallet.walletPrettyName ?? wallet.walletName)
-        : wallet.walletName;
-
-      const imageUrl = isMinimalWallet(wallet) ? wallet?.walletInfo?.logo : undefined;
-      const rightContent = isManualWalletEntry(wallet) ? wallet?.rightContent : undefined;
-      const isAvailable = isMinimalWallet(wallet) ? wallet?.isAvailable : undefined;
-
-      const renderedRightContent = rightContent?.() ?? <></>;
-
-      const imageElement = imageUrl ? (
-        <img
-          height={35}
-          width={35}
-          style={{ objectFit: "cover" }}
-          src={imageUrl}
-          alt={`${name}-logo`}
-        />
-      ) : null;
+      const rightContent = isManualWalletEntry(wallet) ? wallet?.rightContent?.() : undefined;
 
       const onClickConnectWallet = () => {
         if (!isMinimalWallet(wallet)) {
@@ -131,26 +173,8 @@ export const RenderWalletList = ({
         }
       };
 
-      const leftContent = (
-        <Row style={{ width: "100%" }} align="center" justify="space-between">
-          <Row align="center" gap={10}>
-            {imageElement}
-            <Text>{name}</Text>
-          </Row>
-          {isAvailable !== undefined && (
-            <SmallText>{isAvailable ? "Installed" : "Not Installed"}</SmallText>
-          )}
-        </Row>
-      );
-
       return (
-        <ModalRowItem
-          key={name}
-          onClick={onClickConnectWallet}
-          style={{ marginTop: ITEM_GAP }}
-          leftContent={leftContent}
-          rightContent={renderedRightContent}
-        />
+        <WalletRowItem wallet={wallet} onClick={onClickConnectWallet} rightContent={rightContent} />
       );
     },
     [connectMutation, onSelectWallet],
