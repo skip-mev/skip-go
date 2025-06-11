@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   limitDecimalsDisplayed,
   convertSecondsToMinutesOrHours,
+  removeTrailingZeros,
 } from "./number";
 
 
@@ -38,5 +39,23 @@ test.describe("convertSecondsToMinutesOrHours", () => {
 
   test("returns undefined for falsy input", () => {
     expect(convertSecondsToMinutesOrHours()).toBeUndefined();
+  });
+});
+
+test.describe("removeTrailingZeros", () => {
+  test("handles undefined input", () => {
+    expect(removeTrailingZeros(undefined)).toBe("");
+  });
+
+  test("removes trailing zeros from decimal string", () => {
+    expect(removeTrailingZeros("1.2300")).toBe("1.23");
+  });
+
+  test("removes trailing zeros leaving integer", () => {
+    expect(removeTrailingZeros("1.000")).toBe("1");
+  });
+
+  test("returns original integer string", () => {
+    expect(removeTrailingZeros(100)).toBe("100");
   });
 });
