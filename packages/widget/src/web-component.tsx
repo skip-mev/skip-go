@@ -34,6 +34,7 @@ const widgetPropTypes: Required<PropDescriptors> = {
   hideAssetsUnlessWalletTypeConnected: "any",
   apiUrl: "any",
   apiKey: "any",
+  apiHeaders: "any",
   endpointOptions: "any",
   aminoTypes: "any",
   registryTypes: "any",

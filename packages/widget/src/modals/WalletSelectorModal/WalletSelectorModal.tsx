@@ -13,6 +13,8 @@ import { Column, Row } from "@/components/Layout";
 import { sourceAssetAtom } from "@/state/swapPage";
 import { EcosystemConnectors } from "@/modals/ConnectedWalletModal/EcosystemConnectors";
 import { ChainType } from "@skip-go/client";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export type WalletSelectorModalProps = ModalProps & {
   chainId?: string;
@@ -75,6 +77,8 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
     }
   }, [selectedEcoChain?.chainType, sourceAssetChain?.chainType]);
 
+  const walletIcon = useCroppedImage(selectedEcoChain?.logoUri ?? sourceAssetChain?.logoUri);
+
   return (
     <RenderWalletList
       title={title}
@@ -84,11 +88,11 @@ export const WalletSelectorModal = createModal((modalProps: WalletSelectorModalP
       chainId={chainId}
       headerRightContent={
         <StyledChainLogoContainerRow align="center" justify="center">
-          <img
-            width="25px"
-            height="25px"
-            src={selectedEcoChain?.logoUri ?? sourceAssetChain?.logoUri}
-          />
+          {walletIcon ? (
+            <img width="25px" height="25px" src={walletIcon} />
+          ) : (
+            <SkeletonElement width={25} height={25} />
+          )}
         </StyledChainLogoContainerRow>
       }
       bottomContent={

@@ -18,16 +18,21 @@ import { useIsGoFast } from "@/hooks/useIsGoFast";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
 import { getFeeList, getTotalFees } from "@/utils/route";
 
-
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
-  const formatted = seconds
-    ? convertSecondsToMinutesOrHours(seconds)
-    : null;
-  return formatted ? <Row gap={4} align="flex-end">{formatted}</Row> : null;
+  const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;
+  return formatted ? (
+    <Row gap={4} align="flex-end">
+      {formatted}
+    </Row>
+  ) : null;
 };
 
 const Fee = ({ amount }: { amount?: string }) =>
-  amount ? <Row gap={4} align="flex-end">Fee: {amount}</Row> : null;
+  amount ? (
+    <Row gap={4} align="flex-end">
+      Fee: {amount}
+    </Row>
+  ) : null;
 
 const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
   <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
@@ -66,7 +71,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   showRouteInfo = false,
   showEstimatedTime = false,
   highlightSettings = false,
-  showFee = false
+  showFee = false,
 }) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const routePreference = useAtomValue(routePreferenceAtom);
@@ -101,9 +106,7 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   };
 
   const rightContent = () =>
-    isMobile && isGoFast ? (
-      <RoutePreferenceLabel preference={routePreference} />
-    ) : null;
+    isMobile && isGoFast ? <RoutePreferenceLabel preference={routePreference} /> : null;
 
   return (
     <>

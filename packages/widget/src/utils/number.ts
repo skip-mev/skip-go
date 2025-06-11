@@ -142,3 +142,14 @@ export function limitDecimalsDisplayed(
 
   return flooredAndLimitedDecimalPlacesNumber.toString();
 }
+
+export function removeTrailingZeros(input: string | number | undefined): string {
+  if (input == null) return '';
+
+  const str = input.toString();
+  if (!str.includes('.')) return str;
+
+  return str
+    .replace(/(\.\d*?[1-9])0+$/g, '$1') 
+    .replace(/\.0+$/g, '');
+}

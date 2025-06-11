@@ -19,6 +19,8 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -76,6 +78,15 @@ export const SwapExecutionPageRouteSimpleRow = ({
     }
   }, [chainAddresses, context]);
 
+  const walletImage = useCroppedImage(source.image);
+
+  const renderWalletImage = useMemo(() => {
+    if (!source.address) return;
+    if (walletImage) return <img height={12} width={12} src={walletImage} />;
+
+    return <SkeletonElement height={12} width={12} />;
+  }, [source.address, walletImage]);
+
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
     if (isMobileScreenSize) {
@@ -123,7 +134,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           </StyledChainName>
 
           <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
-            {source.image && <img height={10} width={10} src={source.image} />}
+            {renderWalletImage}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
                 {isShowingCopyAddressFeedback

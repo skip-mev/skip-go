@@ -178,6 +178,10 @@ String to override default Skip Go API proxied endpoints. Whitelisting required,
 
 Customizes the main highlight color of the widget
 
+### `borderRadius`
+
+Controls the corner roundness of cards and buttons in the widget
+
 ### `theme`
 
 Advanced widget appearance customization options
@@ -185,6 +189,13 @@ Advanced widget appearance customization options
 ```tsx
   theme? = {
     brandColor: string;
+    borderRadius: {
+      main?: string | number;
+      selectionButton?: string | number;
+      ghostButton?: string | number;
+      modalContainer?: string | number;
+      rowItem?: string | number;
+    };
     primary: {
       background: {
         normal: string;

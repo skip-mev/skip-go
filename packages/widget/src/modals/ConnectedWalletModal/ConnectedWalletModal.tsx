@@ -1,9 +1,7 @@
 import { createModal, ModalProps } from "@/components/Modal";
-import {
-  ModalHeader,
-  StyledModalContainer,
-  StyledModalInnerContainer,
-} from "@/components/ModalHeader";
+import { ModalHeader } from "@/components/ModalHeader";
+import { StyledModalContainer } from "@/components/Modal";
+import { StyledModalInnerContainer } from "@/components/Modal";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
 import { track } from "@amplitude/analytics-browser";

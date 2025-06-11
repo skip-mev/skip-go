@@ -2407,10 +2407,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.137":
-  version: 0.50.137
-  resolution: "@chain-registry/types@npm:0.50.137"
-  checksum: 55fc68bb97b21b2e1a313ed977177d82255719099af4ffd0f589740a89117de9892dc7fc195c4684ac8bf4a6562e49cd98c342d164d73ac1ac8accfb48d7961e
+"@chain-registry/types@npm:^0.50.149":
+  version: 0.50.149
+  resolution: "@chain-registry/types@npm:0.50.149"
+  checksum: 0278a0fefc3b5de9631b41568666d307de2742e8546cb1bb470d6273cafe3eebe489cc649b302c294d8eb34e66abffaa9b905318e1818f3d583cf21a277332f5
   languageName: node
   linkType: hard
 
@@ -8028,7 +8028,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
-    chain-registry: ^1.69.222
+    chain-registry: ^1.69.240
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -8097,6 +8097,7 @@ __metadata:
     "@testing-library/react": ^16.2.0
     "@types/eslint__js": ^8.42.3
     "@types/pluralize": ^0.0.33
+    "@types/pngjs": ^6.0.5
     "@types/react": ^19.0.10
     "@types/react-dom": ^19.0.4
     "@typescript-eslint/eslint-plugin": ^7.15.0
@@ -8108,7 +8109,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.222
+    chain-registry: ^1.69.240
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -8122,10 +8123,13 @@ __metadata:
     lodash.debounce: ^4.0.8
     node-polyfill-webpack-plugin: ^4.0.0
     pino-pretty: ^13.0.0
+    pixelmatch: ^7.1.0
     pluralize: ^8.0.0
+    pngjs: ^7.0.0
     postcss-loader: ^8.1.1
     prettier: ^3.4.2
     process: ^0.11.10
+    pureimage: ^0.4.18
     raw-loader: ^4.0.2
     rc-virtual-list: ^3.14.5
     react: ">=17.0.0"
@@ -9659,6 +9663,15 @@ __metadata:
   version: 0.0.33
   resolution: "@types/pluralize@npm:0.0.33"
   checksum: 282d42dc0187e5e0912f9f36ee0f5615bfd273a08d40afe5bf5881cb28daf1977abe10564543032aa0f42352ebba739ff3d86bf5562ac4691c6d1761fcc7cf39
+  languageName: node
+  linkType: hard
+
+"@types/pngjs@npm:^6.0.5":
+  version: 6.0.5
+  resolution: "@types/pngjs@npm:6.0.5"
+  dependencies:
+    "@types/node": "*"
+  checksum: 132fce25817d47a784ed48aa678332521b0f7e6edbaa76f3fa4e9ca1228078788ae712f99ad4d1a324d9ba0b14829958677eabf3ebef1fb6e120816f433f0cd8
   languageName: node
   linkType: hard
 
@@ -13691,12 +13704,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.222":
-  version: 1.69.222
-  resolution: "chain-registry@npm:1.69.222"
+"chain-registry@npm:^1.69.240":
+  version: 1.69.240
+  resolution: "chain-registry@npm:1.69.240"
   dependencies:
-    "@chain-registry/types": ^0.50.137
-  checksum: 091eca1d4e092b343fae94f70f6cb5abbff3ebc5ab9f46075d0d19281d819d0edda629e7a62c03eca23f6d19afde6c6beb2595827200ce6da7058c2af40775d6
+    "@chain-registry/types": ^0.50.149
+  checksum: f7fa895a88a4a617e9d2c58608988baf762f42c877d378d551ed6d8a1229f505c82eec4b73e31e9fc245936de93d16c1b9c98882322bcba88f0dfbd89879c89d
   languageName: node
   linkType: hard
 
@@ -20897,6 +20910,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jpeg-js@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "jpeg-js@npm:0.4.4"
+  checksum: bd7cb61aa8df40a9ee2c2106839c3df6054891e56cfc22c0ac581402e06c6295f962a4754b0b2ac50a401789131b1c6dc9df8d24400f1352168be1894833c590
+  languageName: node
+  linkType: hard
+
 "js-base64@npm:^3.7.5":
   version: 3.7.7
   resolution: "js-base64@npm:3.7.7"
@@ -23561,6 +23581,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"opentype.js@npm:^0.4.3":
+  version: 0.4.11
+  resolution: "opentype.js@npm:0.4.11"
+  bin:
+    ot: ./bin/ot
+  checksum: bd5292c83051017b90d0669d656557623248339279f364217ad80a9498eed7b5ef0047ba7c639fa2e5d907e5170b2d8677adbf0288fde004f806416a488f7cc3
+  languageName: node
+  linkType: hard
+
 "optimism@npm:^0.18.0":
   version: 0.18.0
   resolution: "optimism@npm:0.18.0"
@@ -24250,6 +24279,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pixelmatch@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "pixelmatch@npm:7.1.0"
+  dependencies:
+    pngjs: ^7.0.0
+  bin:
+    pixelmatch: bin/pixelmatch
+  checksum: 0ad2e863e0e87ae52289c4366860a4040712a30a1e19c606745b9750b3ecda6f587dc959ce452818c50c7753ef6916f23026c14ef4d5f6c3b13c8205d61b923d
+  languageName: node
+  linkType: hard
+
 "pkce-challenge@npm:^5.0.0":
   version: 5.0.0
   resolution: "pkce-challenge@npm:5.0.0"
@@ -24378,6 +24418,13 @@ __metadata:
   version: 5.0.0
   resolution: "pngjs@npm:5.0.0"
   checksum: 04e912cc45fb9601564e2284efaf0c5d20d131d9b596244f8a6789fc6cdb6b18d2975a6bbf7a001858d7e159d5c5c5dd7b11592e97629b7137f7f5cef05904c8
+  languageName: node
+  linkType: hard
+
+"pngjs@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "pngjs@npm:7.0.0"
+  checksum: b19a018930d27de26229c1b3ff250b3a25d09caa22cbb0b0459987d91eb0a560a18ab5d67da45a38ed7514140f26d1db58de83c31159ec101f2bb270a3c707f1
   languageName: node
   linkType: hard
 
@@ -25541,6 +25588,17 @@ __metadata:
   version: 6.1.0
   resolution: "pure-rand@npm:6.1.0"
   checksum: 8d53bc02bed99eca0b65b505090152ee7e9bd67dd74f8ff32ba1c883b87234067c5bf68d2614759fb217d82594d7a92919e6df80f97885e7b12b42af4bd3316a
+  languageName: node
+  linkType: hard
+
+"pureimage@npm:^0.4.18":
+  version: 0.4.18
+  resolution: "pureimage@npm:0.4.18"
+  dependencies:
+    jpeg-js: ^0.4.4
+    opentype.js: ^0.4.3
+    pngjs: ^7.0.0
+  checksum: 031de4105213aaa473bcd75525581d6f4fb3393c45795a16cf9359ecadd6072858b453be773ba7452611daf9fe06fd670d5e922e3b0f6dcfdbde38f0559ff3b2
   languageName: node
   linkType: hard
 

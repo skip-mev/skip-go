@@ -29,6 +29,9 @@ const DevMode = () => {
         ...(theme === "dark" ? defaultTheme : lightTheme),
         brandTextColor: "black",
         brandColor: "#FF66FF",
+        borderRadius: {
+          mainButton: 0,
+        },
       },
       settings: {
         useUnlimitedApproval: true,
@@ -87,7 +90,10 @@ const DevMode = () => {
 
   return (
     <Column align="flex-end">
-      <Column gap={5} style={{ width: 200 }}>
+      <Column
+        gap={5}
+        style={{ width: 200, display: process.env.VISUAL_TEST === "true" ? "none" : "flex" }}
+      >
         <button onClick={() => toggleTheme()}>Toggle theme (current theme: {theme})</button>
         <button onClick={() => setDisableShadowDom((prev) => !prev)}>
           shadow dom:{(!disableShadowDom).toString()}
