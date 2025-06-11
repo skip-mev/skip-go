@@ -1,18 +1,42 @@
 import { useEffect, useState } from "react";
 
-const MAX_CACHE_ENTRIES = 50;
+const MAX_CACHE_ENTRIES = 20;
 
-const croppedImageCache = new Map<string, string>();
+type CachedImageEntry = {
+  value: string;
+  hits: number;
+};
 
-function setCache(url: string, value: string) {
+const croppedImageCache = new Map<string, CachedImageEntry>();
+
+const getCache = (url: string) => {
+  const entry = croppedImageCache.get(url);
+  if (entry) {
+    entry.hits += 1;
+    console.log(entry);
+    return entry.value;
+  }
+};
+
+const setCache = (url: string, value: string) => {
   if (croppedImageCache.size >= MAX_CACHE_ENTRIES) {
-    const firstKey = croppedImageCache.keys().next().value;
-    if (firstKey) {
-      croppedImageCache.delete(firstKey);
+    let keyToEvict: string | null = null;
+    let lowestHits = Infinity;
+
+    for (const [key, entry] of croppedImageCache.entries()) {
+      if (entry.hits < lowestHits) {
+        lowestHits = entry.hits;
+        keyToEvict = key;
+      }
+    }
+
+    if (keyToEvict) {
+      croppedImageCache.delete(keyToEvict);
     }
   }
-  croppedImageCache.set(url, value);
-}
+
+  croppedImageCache.set(url, { value, hits: 1 });
+};
 
 export function useCroppedImage(imageUrl?: string): string | undefined {
   const [croppedSrc, setCroppedSrc] = useState<string | undefined>(undefined);
@@ -24,7 +48,7 @@ export function useCroppedImage(imageUrl?: string): string | undefined {
     }
 
     if (croppedImageCache.has(imageUrl)) {
-      setCroppedSrc(croppedImageCache.get(imageUrl));
+      setCroppedSrc(getCache(imageUrl));
       return;
     }
 

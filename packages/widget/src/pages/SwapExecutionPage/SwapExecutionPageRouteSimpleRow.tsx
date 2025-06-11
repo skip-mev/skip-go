@@ -80,6 +80,13 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
   const walletImage = useCroppedImage(source.image);
 
+  const renderWalletImage = useMemo(() => {
+    if (!source.address) return;
+    if (walletImage) return <img height={12} width={12} src={walletImage} />;
+
+    return <SkeletonElement height={12} width={12} />;
+  }, [source.address, walletImage]);
+
   const renderExplorerLink = useMemo(() => {
     if (!explorerLink) return;
     if (isMobileScreenSize) {
@@ -127,11 +134,7 @@ export const SwapExecutionPageRouteSimpleRow = ({
           </StyledChainName>
 
           <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
-            {walletImage ? (
-              <img height={12} width={12} src={walletImage} />
-            ) : (
-              <SkeletonElement height={12} width={12} />
-            )}
+            {renderWalletImage}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
                 {isShowingCopyAddressFeedback
