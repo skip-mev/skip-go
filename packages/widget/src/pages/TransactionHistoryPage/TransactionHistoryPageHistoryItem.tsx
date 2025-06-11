@@ -17,6 +17,7 @@ import { useTxHistory } from "@/hooks/useTxHistory";
 import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
 import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
+import { CircleSkeletonElement } from "@/components/Skeleton";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -194,7 +195,12 @@ const RenderAssetAmount = ({
 
   return (
     <Row gap={8} align="center">
-      <img height={30} width={30} src={assetImage} alt={subtitle} />
+      {assetImage ? (
+        <img height="auto" width={30} src={assetImage} alt={subtitle} />
+      ) : (
+        <CircleSkeletonElement height={30} width={30} />
+      )}
+
       <Column style={sourceAsset ? { width: 50 } : undefined}>
         <Tooltip content={amount} style={{ width: "min-content" }}>
           <Text normalTextColor style={{ width: "max-content" }}>
