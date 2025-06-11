@@ -46,6 +46,8 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
       track("unexpected error page: transaction reverted", {
         transferAssetRelease: statusData?.transferAssetRelease,
         lastTransaction,
+        error,
+        route
       });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionReverted,
@@ -61,7 +63,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
         transferAssetRelease: statusData?.transferAssetRelease,
       });
     } else if (explorerLink) {
-      track("unexpected error page: transaction failed", { lastTransaction });
+      track("unexpected error page: transaction failed", { lastTransaction, error, route });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionFailed,
         onClickContactSupport: () => window.open("https://skip.build/discord", "_blank"),
