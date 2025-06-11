@@ -71,6 +71,7 @@ const DevMode = () => {
       onDestinationAssetUpdated(props) {
         console.log(props);
       },
+      batchSignTxs: false,
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);
 

@@ -10,6 +10,9 @@ import { Int53 } from "@cosmjs/math";
 import { ClientState } from "src/state/clientState";
 import { getEncodeObjectFromCosmosMessage } from "./getEncodeObjectFromCosmosMessage";
 import type { SignCosmosMessageDirectOptions } from "src/types/client-types";
+import { MsgExecuteContract, SecretNetworkClient } from "secretjs";
+import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
+import { toBase64 } from "@injectivelabs/sdk-ts";
 
 export const signCosmosMessageDirect = async (
   options: SignCosmosMessageDirectOptions,
@@ -48,6 +51,33 @@ export const signCosmosMessageDirect = async (
 
   const messages = cosmosMsgs.map((cosmosMsg) => getEncodeObjectFromCosmosMessage(cosmosMsg, chainId));
 
+  if (chainId.includes('secret')) {
+    const url = await getRpcEndpointForChain(chainId)
+    const secretjs = new SecretNetworkClient({
+      url,
+      chainId: "secret-4",
+      wallet: signer,
+      walletAddress: signerAddress,
+    });
+    const msg = new MsgExecuteContract({
+      // @ts-expect-error
+      contract_address: toBase64(messages[0].value.contract),
+      // @ts-expect-error
+      sender: toBase64(messages[0].value.sender),
+      // @ts-expect-error
+      msg: toBase64(messages[0].value.msg),
+      // @ts-expect-error
+      sent_funds: messages[0].value.sentFunds,
+    });
+    const tx = await secretjs.tx.broadcast([msg], {
+      gasLimit: 20_000,
+      gasPriceInFeeDenom: 0.1,
+      feeDenom: "uscrt",
+    });
+    console.log("secret tx", tx)
+  }
+
+
   const txBodyEncodeObject: TxBodyEncodeObject = {
     typeUrl: "/cosmos.tx.v1beta1.TxBody",
     value: {
@@ -56,6 +86,7 @@ export const signCosmosMessageDirect = async (
   };
 
   const txBodyBytes = ClientState.registry.encode(txBodyEncodeObject);
+
 
   const gasLimit = Int53.fromString(fee.gas).toNumber();
 

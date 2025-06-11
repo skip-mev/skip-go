@@ -69,7 +69,8 @@
     "@solana/wallet-adapter-base": "^0.9.23",
     "bech32": "^2.0.0",
     "cosmjs-types": "^0.9.0",
-    "keccak": "3.0.4"
+    "keccak": "3.0.4",
+    "secretjs": "^1.15.1"
   },
   "publishConfig": {
     "access": "public"
