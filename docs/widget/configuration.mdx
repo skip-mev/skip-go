@@ -189,7 +189,13 @@ Advanced widget appearance customization options
 ```tsx
   theme? = {
     brandColor: string;
-    borderRadius: number;
+    borderRadius: {
+      main?: string | number;
+      selectionButton?: string | number;
+      ghostButton?: string | number;
+      modalContainer?: string | number;
+      rowItem?: string | number;
+    };
     primary: {
       background: {
         normal: string;
