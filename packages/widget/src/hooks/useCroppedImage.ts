@@ -1,11 +1,30 @@
 import { useEffect, useState } from "react";
 
+const MAX_CACHE_ENTRIES = 50;
+
+const croppedImageCache = new Map<string, string>();
+
+function setCache(url: string, value: string) {
+  if (croppedImageCache.size >= MAX_CACHE_ENTRIES) {
+    const firstKey = croppedImageCache.keys().next().value;
+    if (firstKey) {
+      croppedImageCache.delete(firstKey);
+    }
+  }
+  croppedImageCache.set(url, value);
+}
+
 export function useCroppedImage(imageUrl?: string): string | undefined {
   const [croppedSrc, setCroppedSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!imageUrl) {
       setCroppedSrc(undefined);
+      return;
+    }
+
+    if (croppedImageCache.has(imageUrl)) {
+      setCroppedSrc(croppedImageCache.get(imageUrl));
       return;
     }
 
@@ -75,10 +94,9 @@ export function useCroppedImage(imageUrl?: string): string | undefined {
     loadImage(imageUrl)
       .then((img) => {
         if (isCancelled) return;
-        const cropped = cropImage(img);
-        if (!isCancelled && cropped) {
-          setCroppedSrc(cropped);
-        }
+        const cropped = cropImage(img) ?? imageUrl;
+        setCache(imageUrl, cropped);
+        setCroppedSrc(cropped);
       })
       .catch((err) => {
         console.error("Image cropping failed:", err);
