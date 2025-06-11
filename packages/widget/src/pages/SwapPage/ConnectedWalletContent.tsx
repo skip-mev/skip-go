@@ -12,6 +12,8 @@ import { formatDisplayAmount } from "@/utils/number";
 import NiceModal from "@ebay/nice-modal-react";
 import { Modals } from "@/modals/registerModals";
 import { track } from "@amplitude/analytics-browser";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export const ConnectedWalletContent = () => {
   const sourceAsset = useAtomValue(sourceAssetAtom);
@@ -22,6 +24,8 @@ export const ConnectedWalletContent = () => {
     amount: sourceAsset?.amount,
     chainId: sourceAsset?.chainId,
   });
+
+  const walletImage = useCroppedImage(sourceAccount?.wallet.logo);
 
   const { data: sourceBalance, isLoading } = useGetSourceBalance();
   const handleMaxButton = useSetMaxAmount();
@@ -53,13 +57,10 @@ export const ConnectedWalletContent = () => {
         align="center"
         gap={8}
       >
-        {sourceAccount?.wallet.logo && (
-          <img
-            style={{ objectFit: "cover" }}
-            src={sourceAccount?.wallet.logo}
-            height={16}
-            width={16}
-          />
+        {walletImage ? (
+          <img style={{ objectFit: "cover" }} src={walletImage} height={16} width={16} />
+        ) : (
+          <SkeletonElement height={16} width={16} />
         )}
         {isLoading ? (
           <div

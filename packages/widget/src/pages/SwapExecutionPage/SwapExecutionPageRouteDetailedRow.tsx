@@ -19,7 +19,7 @@ import { TxsStatus } from "./useBroadcastedTxs";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
-import { CircleSkeletonElement } from "@/components/Skeleton";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -124,7 +124,7 @@ export const SwapExecutionPageRouteDetailedRow = ({
               }}
             />
           ) : (
-            <CircleSkeletonElement height={18} width={18} />
+            <SkeletonElement height={18} width={18} />
           )}
           {renderContent()}
         </AddressPillButton>
@@ -140,14 +140,14 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
-    copyAddress,
-    isMobileScreenSize,
-    isShowingCopyAddressFeedback,
-    onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
     chainAddressWallet.address,
-    chainAddressWallet.image,
+    walletImage,
+    isMobileScreenSize,
+    onClickEditDestinationWallet,
     theme.primary.text.lowContrast,
+    isShowingCopyAddressFeedback,
+    copyAddress,
   ]);
 
   const renderExplorerLink = useMemo(() => {

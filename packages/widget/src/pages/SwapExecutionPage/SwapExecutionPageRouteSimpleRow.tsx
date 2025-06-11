@@ -20,7 +20,7 @@ import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
-import { CircleSkeletonElement } from "@/components/Skeleton";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export type SwapExecutionPageRouteSimpleRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -128,9 +128,9 @@ export const SwapExecutionPageRouteSimpleRow = ({
 
           <Button align="center" gap={3} onClick={() => copyAddress(source.address)}>
             {walletImage ? (
-              <img height={10} width={10} src={walletImage} />
+              <img height={12} width={12} src={walletImage} />
             ) : (
-              <CircleSkeletonElement height={10} width={10} />
+              <SkeletonElement height={12} width={12} />
             )}
             {source.address && (
               <SmallText monospace title={source.address} textWrap="nowrap">
