@@ -13,7 +13,6 @@ const getCache = (url: string) => {
   const entry = croppedImageCache.get(url);
   if (entry) {
     entry.hits += 1;
-    console.log(entry);
     return entry.value;
   }
 };
