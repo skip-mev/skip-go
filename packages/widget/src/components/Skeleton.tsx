@@ -1,6 +1,6 @@
 import { css, keyframes, styled } from "styled-components";
 import { getHexColor, opacityToHex } from "@/utils/colors";
-import { toPxValue } from "@/utils/style";
+import { convertToPxValue } from "@/utils/style";
 
 const shimmer = keyframes`
   0% {
@@ -16,8 +16,8 @@ export const SkeletonElement = styled.div<{
   height: number | string;
 }>`
   ${({ width, height, theme }) => css`
-    width: ${toPxValue(width)};
-    height: ${toPxValue(height)};
+    width: ${convertToPxValue(width)};
+    height: ${convertToPxValue(height)};
     border-radius: 4px;
     background: linear-gradient(
       90deg,

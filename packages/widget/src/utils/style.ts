@@ -1,5 +1,5 @@
-export const toPxValue = (value?: string | number): string => {
-  if (value === undefined || value === null) {
+export const convertToPxValue = (value?: string | number): string => {
+  if (!value) {
     return "0px";
   }
   return typeof value === "number" ? `${value}px` : value;
