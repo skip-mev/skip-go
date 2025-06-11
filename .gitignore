@@ -40,3 +40,5 @@ yalc.lock
 
 packages/widget/__tests__/downloads*
 packages/widget/test-results*
+.workbench
+.claude/settings.local.json

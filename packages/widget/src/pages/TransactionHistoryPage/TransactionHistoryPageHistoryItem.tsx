@@ -18,6 +18,7 @@ import { FilledWarningIcon } from "@/icons/FilledWarningIcon";
 import { ThinArrowIcon } from "@/icons/ThinArrowIcon";
 import { Tooltip } from "@/components/Tooltip";
 import { CircleSkeletonElement } from "@/components/Skeleton";
+import { convertToPxValue } from "@/utils/style";
 
 type TransactionHistoryPageHistoryItemProps = {
   index: number;
@@ -223,7 +224,7 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
     background: ${({ theme }) => theme.secondary.background.normal};
   }
   min-height: 55px;
-  border-radius: 6px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.rowItem)};
   justify-content: center;
 `;
 
