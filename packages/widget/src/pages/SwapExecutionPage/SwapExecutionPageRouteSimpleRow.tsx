@@ -19,7 +19,6 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
-import { cropTransparentPaddingFromUrl, removeTransparentPadding } from "@/utils/image";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { CircleSkeletonElement } from "@/components/Skeleton";
 
