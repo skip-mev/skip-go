@@ -78,6 +78,6 @@ const StyledContainer = styled(Column)`
   padding: 20px;
   width: 100%;
   min-height: 300px;
-  border-radius: ${({ theme }) => px(theme.borderRadius.mainContainer)};
+  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
   background: ${({ theme }) => theme.primary.background.normal};
 `;

@@ -266,7 +266,7 @@ export const StyledModalContainer = styled(Column)`
   padding: 10px;
   gap: 10px;
   width: calc(100% - 20px);
-  border-radius: ${({ theme }) => px(theme.borderRadius.modalContainer)};
+  border-radius: ${({ theme }) => px(theme.borderRadius?.modalContainer)};
   background: ${({ theme }) => theme.primary.background.normal};
   height: 100%;
 `;

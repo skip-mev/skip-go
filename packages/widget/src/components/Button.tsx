@@ -43,7 +43,7 @@ export const GhostButton = styled(SmallText).attrs({
   }}
 
   padding: 8px 15px;
-  border-radius: ${({ theme }) => px(theme.borderRadius.ghostButton)};
+  border-radius: ${({ theme }) => px(theme.borderRadius?.ghostButton)};
   ${flexProps};
 `;
 

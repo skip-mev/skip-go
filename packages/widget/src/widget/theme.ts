@@ -2,12 +2,12 @@ import "styled-components";
 import { opacityToHex } from "../utils/colors";
 
 export const defaultBorderRadius: WidgetBorderRadius = {
-  mainButton: 25,
-  mainContainer: 25,
-  selectionButton: 10,
-  ghostButton: 30,
-  modalContainer: 20,
-  rowItem: 12,
+  mainButton: "25px",
+  mainContainer: "25px",
+  selectionButton: "10px",
+  ghostButton: "30px",
+  modalContainer: "20px",
+  rowItem: "12px",
 };
 
 export const defaultTheme = {
@@ -112,7 +112,7 @@ export type WidgetBorderRadius = {
 export type Theme = {
   brandColor: string;
   brandTextColor?: string;
-  borderRadius: WidgetBorderRadius;
+  borderRadius?: WidgetBorderRadius;
   primary: {
     background: {
       normal: string;

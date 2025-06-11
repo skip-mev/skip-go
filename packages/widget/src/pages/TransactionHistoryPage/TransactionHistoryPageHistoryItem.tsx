@@ -218,7 +218,7 @@ const StyledHistoryContainer = styled(Column)<{ showDetails?: boolean }>`
     background: ${({ theme }) => theme.secondary.background.normal};
   }
   min-height: 55px;
-  border-radius: ${({ theme }) => px(theme.borderRadius.rowItem)};
+  border-radius: ${({ theme }) => px(theme.borderRadius?.rowItem)};
   justify-content: center;
 `;
 

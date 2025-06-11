@@ -93,6 +93,6 @@ const StyledBridgeArrowIcon = styled(BridgeArrowIcon)`
 const StyledSwapExecutionPageRoute = styled(Column)`
   padding: 30px;
   background: ${({ theme }) => theme.primary.background.normal};
-  border-radius: ${({ theme }) => px(theme.borderRadius.mainContainer)};
+  border-radius: ${({ theme }) => px(theme.borderRadius?.mainContainer)};
   min-height: 225px;
 `;
