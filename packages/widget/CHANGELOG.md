@@ -1,5 +1,26 @@
 ## 0.0.15
 
+## 3.12.0
+
+### Minor Changes
+
+- b212844: Add borderRadius theme prop and apply it to SwapPageAssetChainInput and MainButton.
+
+### Patch Changes
+
+- 5c0f84e: Add tests for removeTrailingZeros utility.
+- 355110a: Add hover effect to the back arrow in the wallet selector modal.
+- 01630cf: Add autocropping padding from images, Add shimmer animation when loading images
+- bf84dff: add borderRadius theme configuration
+- eb8471b: Use timestamp as unique id for transactionHistoryItem
+- 50554f5: remove trailing zeros from output route amount
+- 95a6314: bump registries
+- 4ccf15b: Increase line height for the subtext on the incomplete price data warning page to match other warning pages.
+- 1c906d4: add apiHeaders in webcomponent types
+- 1a16dc1: Refactored useUpdateAmountWhenRouteChanges to only run if route differes from prevRoute
+- Updated dependencies [95a6314]
+  - @skip-go/client@1.2.3
+
 ## 3.11.2
 
 ### Patch Changes
