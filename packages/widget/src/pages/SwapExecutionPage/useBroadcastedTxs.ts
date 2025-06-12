@@ -114,13 +114,23 @@ export const useBroadcastedTxsStatus = ({
         setPrevData(resData);
         return resData;
       } catch (_error) {
+        const validStatuses: TxStatusResponse[] = (transactionDetails ?? [])
+          .map((tx) => tx.status)
+          .filter((status): status is TxStatusResponse => status !== undefined);
+
+        const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
+
+        const transferAssetRelease = validStatuses
+          .reverse()
+          .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
+
         const fallbackData: TxsStatus = {
           isSuccess: false,
           isSettled: true,
           transactionDetails: transactionDetails ?? [],
           lastTxStatus: "failed",
-          transferEvents: [],
-          transferAssetRelease: undefined,
+          transferEvents: transferEvents,
+          transferAssetRelease: transferAssetRelease,
         };
         setPrevData(fallbackData);
         return fallbackData;
