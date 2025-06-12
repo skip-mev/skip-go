@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.2.3
+
+### Patch Changes
+
+- 95a6314: bump registries
+
 ## 1.2.2
 
 ### Patch Changes
