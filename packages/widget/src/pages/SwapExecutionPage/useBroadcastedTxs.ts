@@ -35,46 +35,60 @@ export const useBroadcastedTxsStatus = ({
     queryFn: async ({ queryKey: [, txsRequired, txs] }) => {
       if (!txs) return;
 
-      const results = await Promise.all(
-        txs.map(async (tx) => {
-          const _res = await transactionStatus(tx);
-          return _res;
-        }),
-      );
-      const transferEvents = getTransferEventsFromTxStatusResponse(results);
-      const _isAllTxSettled = results.every((tx) => {
-        return (
-          tx.state === "STATE_COMPLETED_SUCCESS" ||
-          tx.state === "STATE_COMPLETED_ERROR" ||
-          tx.state === "STATE_ABANDONED"
+      try {
+        const results = await Promise.all(
+          txs.map(async (tx) => {
+            const _res = await transactionStatus(tx);
+            return _res;
+          }),
         );
-      });
+        const transferEvents = getTransferEventsFromTxStatusResponse(results);
+        const _isAllTxSettled = results.every((tx) => {
+          return (
+            tx.state === "STATE_COMPLETED_SUCCESS" ||
+            tx.state === "STATE_COMPLETED_ERROR" ||
+            tx.state === "STATE_ABANDONED"
+          );
+        });
 
-      const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
-      if (isRouteSettled) {
-        setIsSettled(true);
+        const isRouteSettled = txsRequired === results.length && _isAllTxSettled;
+        if (isRouteSettled) {
+          setIsSettled(true);
+        }
+
+        const someTxFailed = results.some((tx) => {
+          return tx.state === "STATE_COMPLETED_ERROR" || tx.state === "STATE_ABANDONED";
+        });
+
+        const lastTxStatus =
+          results.length > 0
+            ? getSimpleOverallStatus(results[results.length - 1].state)
+            : undefined;
+
+        const transferAssetRelease = results
+          .reverse()
+          .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
+
+        const resData: TxsStatus = {
+          isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
+          lastTxStatus,
+          isSettled: isRouteSettled,
+          transferEvents,
+          transferAssetRelease: transferAssetRelease || undefined,
+        };
+        setPrevData(resData);
+        return resData;
+      } catch (_error) {
+        const resData: TxsStatus = {
+          isSuccess: false,
+          isSettled: true,
+          lastTxStatus: "failed",
+          transferEvents: [],
+          transferAssetRelease: undefined,
+        };
+        setPrevData(resData);
+        return resData;
       }
-
-      const someTxFailed = results.some((tx) => {
-        return tx.state === "STATE_COMPLETED_ERROR" || tx.state === "STATE_ABANDONED";
-      });
-
-      const lastTxStatus =
-        results.length > 0 ? getSimpleOverallStatus(results[results.length - 1].state) : undefined;
-
-      const transferAssetRelease = results
-        .reverse()
-        .find((tx) => tx.transferAssetRelease)?.transferAssetRelease;
-
-      const resData: TxsStatus = {
-        isSuccess: isRouteSettled && !someTxFailed && lastTxStatus === "success",
-        lastTxStatus,
-        isSettled: isRouteSettled,
-        transferEvents,
-        transferAssetRelease: transferAssetRelease || undefined,
-      };
-      setPrevData(resData);
-      return resData;
     },
     enabled:
       txsRequired !== undefined &&
