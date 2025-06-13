@@ -152,7 +152,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   outline: none;
   background: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
-  border-radius: 15px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
   color: ${({ theme }) => theme.primary.text.normal};
   width: 100%;
   height: 100%;
