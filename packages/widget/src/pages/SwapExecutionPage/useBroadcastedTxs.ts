@@ -28,6 +28,7 @@ export const useBroadcastedTxsStatus = ({
   txsRequired,
   enabled,
 }: useBroadcastedTxsStatusProps): UseQueryResult<TxsStatus> => {
+  const [isSettled, setIsSettled] = useState(false);
   const [prevData, setPrevData] = useState<TxsStatus | undefined>(undefined);
 
   const queryKey = useMemo(
@@ -90,6 +91,10 @@ export const useBroadcastedTxsStatus = ({
           txsRequired === validStatuses.length &&
           validStatuses.every((status) => isFinalState(status.state));
 
+        if (isAllSettled) {
+          setIsSettled(true);
+        }
+
         const someTxFailed = validStatuses.some(
           (status) =>
             status.state === "STATE_COMPLETED_ERROR" || status.state === "STATE_ABANDONED",
@@ -136,7 +141,7 @@ export const useBroadcastedTxsStatus = ({
         return fallbackData;
       }
     },
-    enabled: queryEnabled,
+    enabled: !isSettled && queryEnabled,
     refetchInterval: 500,
     initialData: prevData,
   });
