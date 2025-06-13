@@ -1,4 +1,3 @@
-import { atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
