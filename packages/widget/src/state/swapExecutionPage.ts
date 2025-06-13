@@ -14,7 +14,6 @@ import { atomEffect } from "jotai-effect";
 import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
-import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
 import { createExplorerLink } from "@/utils/explorerLink";
@@ -36,6 +35,7 @@ import { getWallet, WalletType } from "graz";
 import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
+import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
