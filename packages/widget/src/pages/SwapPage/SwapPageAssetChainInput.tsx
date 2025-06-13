@@ -217,31 +217,33 @@ export const SwapPageAssetChainInput = ({
       </Row>
       <Row justify="space-between" align="center">
         <Row align="center" gap={8}>
-          {priceChangePercentage ? (
-            <Row align="center" gap={6}>
-              <SmallTextButton
-                color={priceChangeColor}
-                onMouseEnter={() => setShowPriceChangePercentage(true)}
-                onMouseLeave={() => setShowPriceChangePercentage(false)}
-              >
-                {usdValue && formatUSD(usdValue)}
-              </SmallTextButton>
-              <TinyTriangleIcon
-                color={priceChangeColor}
-                direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
-                style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
-              />
-
-              {showPriceChangePercentage && (
-                <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
-              )}
-            </Row>
-          ) : (
-            <SmallText>{usdValue && formatUSD(usdValue)}</SmallText>
-          )}
+          <Row align="center" gap={6}>
+            <SmallTextButton
+              color={theme.primary.text.lowContrast}
+              onMouseEnter={() => setShowPriceChangePercentage(true)}
+              onMouseLeave={() => setShowPriceChangePercentage(false)}
+            >
+              {usdValue && formatUSD(usdValue)}
+            </SmallTextButton>
+            {priceChangePercentage ? (
+              <>
+                <TinyTriangleIcon
+                  color={priceChangeColor}
+                  direction={(priceChangePercentage ?? 0) > 0 ? "up" : "down"}
+                  style={{ scale: showPriceChangePercentage ? "1" : "0.7" }}
+                />
+                {showPriceChangePercentage && (
+                  <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
+                )}
+              </>
+            ) : (
+              feeWarning && (
+                <TinyTriangleIcon color={theme.error.text} direction="down" />
+              )
+            )}
+          </Row>
           {feeAmountUsd && (
             <Row align="center" gap={4}>
-              {feeWarning && <TinyTriangleIcon color={theme.error.text} direction="down" />}
               <SmallText color={feeColor}>Fee: {feeAmountUsd}</SmallText>
             </Row>
           )}
