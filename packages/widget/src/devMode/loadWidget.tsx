@@ -30,7 +30,9 @@ const DevMode = () => {
         brandTextColor: "black",
         brandColor: "#FF66FF",
         borderRadius: {
-          mainButton: 0,
+          main: 0,
+          selectionButton: 0,
+          ghostButton: 0,
         },
       },
       settings: {
