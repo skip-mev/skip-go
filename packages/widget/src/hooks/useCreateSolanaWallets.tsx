@@ -22,49 +22,49 @@ export const useCreateSolanaWallets = () => {
   const callbacks = useAtomValue(callbacksAtom);
   const setWCDeepLinkByChainType = useSetAtom(setWalletConnectDeepLinkByChainTypeAtom);
 
-  const { wallets: _wallets } = useWallet();
+  const { wallets: solanaWallets } = useWallet();
 
   const setDefaultSourceAsset = useUpdateSourceAssetToDefaultForChainType();
 
   const createSolanaWallets = useCallback(() => {
     const wallets: MinimalWallet[] = [];
 
-    for (const w of _wallets) {
-      const wallet = w.adapter;
-      const isWalletConnect = wallet.name === "WalletConnect";
+    for (const wallet of solanaWallets) {
+      const adapter = wallet.adapter;
+      const isWalletConnect = adapter.name === "WalletConnect";
 
       const connectWallet = async () => {
         try {
-          await wallet.connect();
+          await adapter.connect();
           const chain = chains?.find((x) => x.chainId === "solana");
 
           if (sourceAsset === undefined) {
             setDefaultSourceAsset(ChainType.Svm);
           }
 
-          const address = wallet.publicKey?.toBase58();
+          const address = adapter.publicKey?.toBase58();
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const walletConnectMetadata = (wallet as any)?._wallet?._UniversalProvider?.session?.peer
+          const walletConnectMetadata = (adapter as any)?._wallet?._UniversalProvider?.session?.peer
             ?.metadata as WalletConnectMetaData;
 
           setWCDeepLinkByChainType(ChainType.Svm);
 
           if (svmWallet === undefined) {
             callbacks?.onWalletConnected?.({
-              walletName: wallet.name,
+              walletName: adapter.name,
               chainId: chain?.chainId,
               address,
             });
             setSvmWallet({
               id: address,
-              walletName: wallet.name,
+              walletName: adapter.name,
               chainType: ChainType.Svm,
-              logo: walletConnectMetadata?.icons[0] ?? wallet.icon,
+              logo: walletConnectMetadata?.icons[0] ?? adapter.icon,
             });
           }
           track("wallet connected", {
-            walletName: wallet.name,
+            walletName: adapter.name,
             chainType: ChainType.Svm,
             chainId: chain?.chainId,
             address,
@@ -78,11 +78,11 @@ export const useCreateSolanaWallets = () => {
       };
 
       const minimalWallet: MinimalWallet = {
-        walletName: wallet.name,
-        walletPrettyName: wallet.name,
+        walletName: adapter.name,
+        walletPrettyName: adapter.name,
         walletChainType: ChainType.Svm,
         walletInfo: {
-          logo: isWalletConnect ? walletConnectLogo : wallet.icon,
+          logo: isWalletConnect ? walletConnectLogo : adapter.icon,
         },
         connect: async () => {
           await connectWallet();
@@ -92,7 +92,7 @@ export const useCreateSolanaWallets = () => {
             if (signRequired) {
               throw new Error("always prompt wallet connection");
             }
-            const address = wallet.publicKey;
+            const address = adapter.publicKey;
             if (!address) {
               throw new Error("Address not found");
             }
@@ -103,19 +103,19 @@ export const useCreateSolanaWallets = () => {
           }
         },
         disconnect: async () => {
-          await wallet.disconnect();
+          await adapter.disconnect();
           track("wallet disconnected", {
-            walletName: wallet.name,
+            walletName: adapter.name,
             chainType: ChainType.Svm,
           });
           setSvmWallet(undefined);
           callbacks?.onWalletDisconnected?.({
-            walletName: wallet.name,
+            walletName: adapter.name,
             chainType: ChainType.Svm,
           });
         },
-        isWalletConnected: wallet.connected,
-        isAvailable: wallet.readyState === "Installed" || wallet.readyState === "Loadable",
+        isWalletConnected: adapter.connected,
+        isAvailable: adapter.readyState === "Installed" || adapter.readyState === "Loadable",
       };
       wallets.push(minimalWallet);
     }
