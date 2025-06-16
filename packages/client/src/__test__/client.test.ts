@@ -1144,7 +1144,7 @@ describe("client", () => {
 
     it("handles 500 Internal Server Error returning early and skipping retries", async () => {
       let retryCount = 0;
-      const maxRetries = 1;
+      const maxRetries = 3;
       server.use(
         rest.get("https://api.skip.build/v2/tx/status", (_, res, ctx) => {
           retryCount++;
