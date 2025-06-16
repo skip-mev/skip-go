@@ -225,7 +225,9 @@ export const SwapPageAssetChainInput = ({
             >
               {usdValue && formatUSD(usdValue)}
             </SmallTextButton>
-            {priceChangePercentage ? (
+            {feeWarning ? (
+              <TinyTriangleIcon color={theme.error.text} direction="down" />
+            ) : priceChangePercentage ? (
               <>
                 <TinyTriangleIcon
                   color={priceChangeColor}
@@ -236,11 +238,7 @@ export const SwapPageAssetChainInput = ({
                   <SmallText color={priceChangeColor}>{priceChangePercentage}%</SmallText>
                 )}
               </>
-            ) : (
-              feeWarning && (
-                <TinyTriangleIcon color={theme.error.text} direction="down" />
-              )
-            )}
+            ) : null}
           </Row>
           {feeAmountUsd && (
             <Row align="center" gap={4}>
