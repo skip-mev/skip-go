@@ -29,7 +29,7 @@ export const WarningPageCosmosLedger = ({ onClickBack }: WarningCosmosLedgerProp
         title={"Warning: Ledger not supported"}
         description={
           <>
-            <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
+            <SmallText lineHeight="1.5" color={theme.error.text} textAlign="center" textWrap="balance">
               Ledger isn't currently supported on Ethermint chains (such as Injective, Dymension,
               EVMOS, and similar networks).
             </SmallText>

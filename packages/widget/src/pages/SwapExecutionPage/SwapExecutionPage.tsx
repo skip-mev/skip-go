@@ -63,7 +63,7 @@ export const SwapExecutionPage = () => {
 
   const { data: statusData } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
-    txs: transactionDetailsArray,
+    transactionDetails: transactionDetailsArray,
   });
 
   const lastTransaction = transactionDetailsArray.at(-1);
