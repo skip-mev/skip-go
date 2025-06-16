@@ -35,7 +35,6 @@ import { config } from "@/constants/wagmi";
 import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
-import { Adapter } from "@solana/wallet-adapter-base";
 import { solanaWalletsAtom } from "@/providers/SyncSolanaWalletsWithAtom";
 
 type ValidatingGasBalanceData = {
