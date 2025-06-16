@@ -121,6 +121,7 @@ export const useCreateSolanaWallets = () => {
     }
     return wallets;
   }, [
+    solanaWallets,
     chains,
     sourceAsset,
     setWCDeepLinkByChainType,
