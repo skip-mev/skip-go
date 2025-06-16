@@ -26,6 +26,7 @@ import { ChainFilter } from "@/state/filters";
 import { migrateHistoryFromLocalStorageToIndexedDB } from "@/utils/migrateOldLocalStorageValues";
 import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
+import { SolanaProvider } from "@/providers/SolanaProvider";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
@@ -123,11 +124,13 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
       <EVMProvider>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <CosmosProvider>
-            <NiceModal.Provider>
-              <WidgetWrapper>
-                <Router />
-              </WidgetWrapper>
-            </NiceModal.Provider>
+            <SolanaProvider>
+              <NiceModal.Provider>
+                <WidgetWrapper>
+                  <Router />
+                </WidgetWrapper>
+              </NiceModal.Provider>
+            </SolanaProvider>
           </CosmosProvider>
         </QueryClientProvider>
       </EVMProvider>
