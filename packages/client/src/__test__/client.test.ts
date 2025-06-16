@@ -1142,7 +1142,7 @@ describe("client", () => {
       });
     });
 
-    it("handles 500 Internal Server Error returning early and skipping retries", async () => {
+    it("handle 500 error throwing immediately without retrying", async () => {
       let retryCount = 0;
       const maxRetries = 3;
       server.use(
@@ -1261,17 +1261,16 @@ describe("client", () => {
         })
       );
 
-      const response = await transactionStatus({
-        chainId: "cosmoshub-4",
-        txHash: "tx_hash123",
-        apiUrl: "https://api.skip.build",
-      });
-
-      expect(response).toEqual({
-        code: 2,
-        message: "internal server error",
-        details: [],
-      });
+      try {
+        await transactionStatus({
+          chainId: "cosmoshub-4",
+          txHash: "tx_hash123",
+          apiUrl: "https://api.skip.build",
+        });
+      } catch (error) {
+        expect(error).toEqual(new Error("internal server error"));
+        expect(retryCount).toEqual(1);
+      }
     });
 
     it("handle 500 error with retry options", async () => {
