@@ -371,5 +371,9 @@ export const StyledAssetButton = styled(Button)`
     ${StyledSelectTokenLabel}::after {
       background-color: rgba(255, 255, 255, 0.15);
     }
+
+    .chevron-icon {
+      background-color: ${({ theme }) => theme.secondary.background.hover};
+    }
   }
 `;
