@@ -36,6 +36,7 @@ import { WalletClient } from "viem";
 import { getWalletClient } from "@wagmi/core";
 import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 import { Adapter } from "@solana/wallet-adapter-base";
+import { solanaWalletsAtom } from "@/providers/SyncSolanaWalletsWithAtom";
 
 type ValidatingGasBalanceData = {
   chainId?: string;
@@ -384,6 +385,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
   const swapSettings = get(swapSettingsAtom);
   const getSigners = get(getConnectedSignersAtom);
   const wallets = get(walletsAtom);
+  const solanaWallets = get(solanaWalletsAtom);
 
   const { timeoutSeconds } = get(routeConfigAtom);
 
@@ -406,7 +408,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
   return {
     gcTime: Infinity,
-    mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
+    mutationFn: async () => {
       if (!route) return;
       if (!userAddresses.length) return;
       try {
@@ -450,11 +452,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
             if (getSigners?.getSvmSigner) {
               return getSigners.getSvmSigner();
             }
-            const adapter = await getSvmSigner();
-            if (!adapter) {
-              throw new Error("getSvmSigner error: no SVM wallet");
+            const walletName = wallets.svm?.walletName;
+            const wallet = solanaWallets.find((w) => w.adapter.name === walletName);
+            if (!wallet) {
+              throw new Error("getSvmSigner error: wallet not found");
             }
-            return adapter;
+            return wallet.adapter;
           },
         });
       } catch (error: unknown) {
