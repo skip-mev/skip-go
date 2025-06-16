@@ -317,6 +317,15 @@ async function signAmino(
 ```
 </CodeGroup>
 
+#### Can I use Safe wallets with Skip Go?
+
+Yes! Safe wallets (the popular multisig wallet at https://app.safe.global) can be used with Skip Go through wallet providers that support importing Safe wallets:
+
+* **Rabby Wallet**: Supports importing and using Safe wallets
+* **WalletConnect**: Supports connecting Safe wallets through WalletConnect protocol
+
+Both options allow you to use your Safe wallet for multi-chain swaps and transfers through Skip Go.
+
 #### How should I set gas prices for Cosmos transactions?
 
 We recommend setting Cosmos chain gas prices using the chainapsis keplr-chain-registry: [https://github.com/chainapsis/keplr-chain-registry](https://github.com/chainapsis/keplr-chain-registry). In our experience, this registry overestimates gas prices somewhat -- but this leads to a very good UX in Cosmos because: 
