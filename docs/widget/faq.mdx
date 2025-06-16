@@ -14,4 +14,13 @@ Here are some polyfill plugins for common environments:
 
 ## Should I put the widget inside a container with a fixed size?
 
-It is recommended to wrap the widget with a container element that has a fixed size. This helps to prevent layout shifting as the widget uses the shadow-dom (which needs to be rendered client-side). We recommend a height of `640px` and a width of `500px`. 
+It is recommended to wrap the widget with a container element that has a fixed size. This helps to prevent layout shifting as the widget uses the shadow-dom (which needs to be rendered client-side). We recommend a height of `640px` and a width of `500px`.
+
+## Can I use Safe Multisig wallets with the Skip Go widget?
+
+Yes! Safe wallets (the popular multisig wallet at https://app.safe.global) can be used with the Skip Go widget through wallet providers that support importing Safe wallets:
+
+* **Rabby Wallet**: Supports importing and using Safe wallets
+* **WalletConnect**: Supports connecting Safe wallets through WalletConnect protocol
+
+Both options allow you to use your Safe wallet for multi-chain swaps and transfers through the Skip Go widget. 
