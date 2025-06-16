@@ -72,6 +72,7 @@ const StyledErrorWarningTextInnerContainer = styled(Column)`
   max-height: 100px;
   overflow-y: auto;
   width: 100%;
+  line-height: 1.5;
   &::-webkit-scrollbar {
     width: 4px;
   }
