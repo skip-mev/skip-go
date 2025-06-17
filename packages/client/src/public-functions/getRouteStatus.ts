@@ -39,17 +39,19 @@ const isFinalState = (state?: string): boolean => {
 };
 
 export type getRouteStatusProps = {
-  initialDetails?: TransactionDetails[];
+  transactionDetails?: TransactionDetails[];
   txsRequired: number;
   options: ExecuteRouteOptions;
 };
 
+let currentDetails: TransactionDetails[] = [];
+
 export const getRouteStatus = async ({
-  initialDetails = [],
+  transactionDetails = [],
   txsRequired: totalTxsRequired,
   options,
 }: getRouteStatusProps) => {
-  let currentDetails: TransactionDetails[] = initialDetails;
+  currentDetails = transactionDetails;
   let isCompletelySettled = false;
   let previousTxsStatus: RouteStatus | undefined = undefined;
 

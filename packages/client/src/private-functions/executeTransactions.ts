@@ -143,6 +143,8 @@ export const executeTransactions = async (
     }
   }
 
+  let txDetails = [];
+
   for (let i = 0; i < txs.length; i++) {
     const tx = txs[i];
     if (!tx) {
@@ -188,10 +190,7 @@ export const executeTransactions = async (
 
     await onTransactionBroadcast?.({ ...txResult });
 
-    const routeStatus = await getRouteStatus({
-      txsRequired: txs.length,
-      options,
-    });
+    txDetails.push(txResult);
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,
@@ -205,6 +204,12 @@ export const executeTransactions = async (
       status: txStatusResponse as TransferStatus,
     });
   }
+
+  const routeStatus = await getRouteStatus({
+    transactionDetails: txDetails,
+    txsRequired: txs.length,
+    options,
+  });
 };
 
 const EVM_GAS_AMOUNT = 150_000;
