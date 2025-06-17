@@ -2170,6 +2170,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
        * @default false
        */
       enable_gas_warnings?: boolean;
+      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers */
+      fee_payer_address?: string;
     },
     params: RequestParams = {},
   ) =>
@@ -2237,6 +2239,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
        * @default false
        */
       enable_gas_warnings?: boolean;
+      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers */
+      fee_payer_address?: string;
     },
     params: RequestParams = {},
   ) =>
