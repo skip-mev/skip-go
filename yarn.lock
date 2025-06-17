@@ -2414,10 +2414,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/types@npm:^0.50.149":
-  version: 0.50.149
-  resolution: "@chain-registry/types@npm:0.50.149"
-  checksum: 0278a0fefc3b5de9631b41568666d307de2742e8546cb1bb470d6273cafe3eebe489cc649b302c294d8eb34e66abffaa9b905318e1818f3d583cf21a277332f5
+"@chain-registry/types@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@chain-registry/types@npm:2.0.5"
+  checksum: c033854a85407ae0f43e23d543b0a70882bb5ea4b7e9b169725224a919f6e7e697e9d22eb3fb68042128a5686ff8e7d5082a016050ccb257a544f908c7d9f8f1
   languageName: node
   linkType: hard
 
@@ -8408,7 +8408,7 @@ __metadata:
     "@solana/wallet-adapter-base": ^0.9.23
     "@types/keccak": 3.0.4
     bech32: ^2.0.0
-    chain-registry: ^1.69.240
+    chain-registry: ^2.0.5
     cosmjs-types: ^0.9.0
     eslint-plugin-esm: ^0.8.1
     eslint-plugin-import: ^2.31.0
@@ -8486,7 +8486,7 @@ __metadata:
     add: ^2.0.6
     bech32: ^2.0.0
     buffer: ^6.0.3
-    chain-registry: ^1.69.240
+    chain-registry: ^2.0.5
     download: ^8.0.0
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
@@ -16032,12 +16032,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chain-registry@npm:^1.69.240":
-  version: 1.69.240
-  resolution: "chain-registry@npm:1.69.240"
+"chain-registry@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "chain-registry@npm:2.0.5"
   dependencies:
-    "@chain-registry/types": ^0.50.149
-  checksum: f7fa895a88a4a617e9d2c58608988baf762f42c877d378d551ed6d8a1229f505c82eec4b73e31e9fc245936de93d16c1b9c98882322bcba88f0dfbd89879c89d
+    "@chain-registry/types": ^2.0.5
+  checksum: 1e01796699a891977a808e2da1364d926a7ac54d42da079b001aed033497601f0e8eb4623d250e26aeba41d8da39ef3d060be07aa35c2f86938ff05e09f18bf9
   languageName: node
   linkType: hard
 
