@@ -4196,6 +4196,15 @@ components:
       enum:
         - SMART_RELAY
       type: string
+    FeeBehavior:
+      type: string
+      enum:
+        - FEE_BEHAVIOR_DEDUCTED
+        - FEE_BEHAVIOR_ADDITIONAL
+      description: |
+        Indicates whether the fee is deducted from the transfer amount or charged additionally.
+        - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
+        - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
     Fee:
       properties:
         fee_type:
@@ -4221,3 +4230,6 @@ components:
           description: The index of the operation in the returned operations list which incurs the fee
           type: integer
           nullable: true
+        fee_behavior:
+          $ref: '#/components/schemas/FeeBehavior'
+          description: Indicates whether this fee is deducted from the transfer amount or charged additionally
