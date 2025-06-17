@@ -873,6 +873,7 @@ export interface OptionalAsset {
 export interface LayerZeroTransferTransactions {
   sendTx?: ChainTransaction;
   receiveTx?: ChainTransaction;
+  composeTx?: ChainTransaction;
   errorTx?: ChainTransaction;
 }
 

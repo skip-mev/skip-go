@@ -873,6 +873,7 @@ export interface OptionalAssetJson {
 export interface LayerZeroTransferTransactionsJson {
   send_tx?: ChainTransactionJson | null;
   receive_tx?: ChainTransactionJson | null;
+  compose_tx?: ChainTransactionJson | null;
   error_tx?: ChainTransactionJson | null;
 }
 

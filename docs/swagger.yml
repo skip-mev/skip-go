@@ -3362,6 +3362,10 @@ components:
           allOf:
             - $ref: '#/components/schemas/ChainTransaction'
           nullable: true
+        compose_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
         error_tx:
           allOf:
             - $ref: '#/components/schemas/ChainTransaction'
