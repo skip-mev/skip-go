@@ -54,12 +54,12 @@ export const UnexpectedErrorPageTransactionReverted = ({
         title="Action Required"
         description={
           <>
-            <SmallText color={theme.warning.text} textAlign="center" textWrap="balance">
+            <SmallText lineHeight="1.5" color={theme.warning.text} textAlign="center" textWrap="balance">
               This transaction reverted while trying to execute.
               <br />
               You can continue executing this transaction now.
             </SmallText>
-            <SmallText color={theme.primary.text.lowContrast} textAlign="center" textWrap="balance">
+            <SmallText lineHeight="1.5" color={theme.primary.text.lowContrast} textAlign="center" textWrap="balance">
               Current asset location: {assetDetails?.amount} {assetDetails?.symbol} on{" "}
               {assetDetails?.chainName}
             </SmallText>

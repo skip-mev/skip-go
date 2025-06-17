@@ -15,7 +15,7 @@ import { useFilteredAssets } from "./useFilteredAssets";
 import { useGroupedAssetByRecommendedSymbol } from "./useGroupedAssetsByRecommendedSymbol";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { Modals } from "../registerModals";
-import { StyledModalContainer } from "@/components/ModalHeader";
+import { StyledModalContainer } from "@/components/Modal";
 import styled from "styled-components";
 import { track } from "@amplitude/analytics-browser";
 import { ibcEurekaHighlightedAssetsAtom } from "@/state/ibcEurekaHighlightedAssets";

@@ -1,6 +1,8 @@
+import { useCroppedImage } from "@/hooks/useCroppedImage";
 import { GroupedAsset } from "@/modals/AssetAndChainSelectorModal/AssetAndChainSelectorModal";
 import { useState } from "react";
 import styled from "styled-components";
+import { CircleSkeletonElement } from "./Skeleton";
 
 const MAX_NUMBER_OF_IMAGES_TO_CHECK = 6;
 
@@ -19,16 +21,18 @@ export const GroupedAssetImage = ({
 }: GroupedAssetImageType) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  if (!groupedAsset?.assets || groupedAsset.assets.length === 0) {
-    return <StyledAssetImage height={height} width={width} src="" alt="No asset" />;
-  }
-
   const allLogoUris = [
-    groupedAsset.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
-    ...groupedAsset.assets.map((asset) => asset.logoUri),
+    groupedAsset?.assets.find((asset) => asset.logoUri?.includes("chain-registry"))?.logoUri,
+    ...(groupedAsset?.assets.map((asset) => asset.logoUri) ?? []),
   ].filter((uri): uri is string => !!uri);
 
   const dedupedLogoUris = Array.from(new Set(allLogoUris));
+
+  const croppedImage = useCroppedImage(dedupedLogoUris[currentImageIndex]);
+
+  if (!groupedAsset?.assets || groupedAsset.assets.length === 0) {
+    return <StyledAssetImage height={height} width={width} src="" alt="No asset" />;
+  }
 
   if (dedupedLogoUris.length === 0) {
     return <StyledAssetImage height={height} width={width} src="" alt="No valid URIs" />;
@@ -45,17 +49,20 @@ export const GroupedAssetImage = ({
     setCurrentImageIndex((prev) => prev + 1);
   };
 
-  return (
-    <StyledAssetImage
-      height={height}
-      width={width}
-      src={dedupedLogoUris[currentImageIndex]}
-      loading="lazy"
-      onError={handleError}
-      alt={`${groupedAsset.assets[0].recommendedSymbol || ""} logo`}
-      style={style}
-    />
-  );
+  if (croppedImage) {
+    return (
+      <StyledAssetImage
+        height={height}
+        width={width}
+        src={croppedImage}
+        loading="lazy"
+        onError={handleError}
+        alt={`${groupedAsset.assets[0].recommendedSymbol || ""} logo`}
+        style={style}
+      />
+    );
+  }
+  return <CircleSkeletonElement height={height ?? 0} width={width ?? 0} />;
 };
 
 const StyledAssetImage = styled.img`

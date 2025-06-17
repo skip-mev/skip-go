@@ -6,8 +6,8 @@ import { useAtomValue } from "jotai";
 import { useCallback } from "react";
 import { useAccount as useEvmAccount, useConnectors } from "wagmi";
 import { walletConnectLogo } from "@/constants/wagmi";
-import { solanaWallets } from "@/constants/solana";
 import { ChainType } from "@skip-go/client";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const useGetAccount = () => {
   const wallet = useAtomValue(walletsAtom);
@@ -20,7 +20,9 @@ export const useGetAccount = () => {
     multiChain: true,
   });
 
-  const solanaWallet = solanaWallets.find((wallet) => wallet.connected === true);
+  const { wallets: _wallets } = useWallet();
+
+  const solanaWallet = _wallets.map((i) => i.adapter).find((wallet) => wallet.connected === true);
 
   const evmAccount = useEvmAccount();
   const connectors = useConnectors();

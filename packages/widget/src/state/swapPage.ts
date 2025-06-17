@@ -3,7 +3,6 @@ import { ClientAsset, skipAssetsAtom } from "@/state/skipClient";
 import { getSigningStargateClient } from "@skip-go/client";
 import { setRouteToDefaultRouteAtom, skipRouteAtom } from "@/state/route";
 import { atomWithDebounce } from "@/utils/atomWithDebounce";
-import { atomWithStorageNoCrossTabSync } from "@/utils/misc";
 import { RoutePreference } from "./types";
 import { atomEffect } from "jotai-effect";
 import { callbacksAtom } from "./callbacks";
@@ -17,6 +16,7 @@ import {
   extraCosmosChainIdsToConnectPerWalletAtom,
   getInitialChainIds,
 } from "@/hooks/useCreateCosmosWallets";
+import { atomWithStorageNoCrossTabSync } from "@/utils/storage";
 
 export type AssetAtom = Partial<ClientAsset> & {
   amount?: string;

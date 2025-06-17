@@ -8,6 +8,7 @@ import { QuestionMarkIcon } from "@/icons/QuestionMarkIcon";
 import styled, { css } from "styled-components";
 import { Tooltip } from "@/components/Tooltip";
 import { track } from "@amplitude/analytics-browser";
+import { convertToPxValue } from "@/utils/style";
 
 const SlippageSelector: React.FC = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -122,7 +123,7 @@ export const StyledSettingsOptionLabel = styled(SmallText)<{
 
   background: ${({ theme }) => theme.secondary.background.transparent};
   padding: 7px 15px;
-  border-radius: 15px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
   height: 40px;
   display: flex;
   align-items: center;
@@ -151,7 +152,7 @@ const CustomSlippageInput = styled(SmallText).attrs({
   outline: none;
   background: ${({ theme }) => theme.primary.background.normal};
   border: 1px solid ${({ theme }) => theme.primary.text.normal};
-  border-radius: 15px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.selectionButton)};
   color: ${({ theme }) => theme.primary.text.normal};
   width: 100%;
   height: 100%;

@@ -18,6 +18,8 @@ import { useCopyAddress } from "@/hooks/useCopyAddress";
 import { TxsStatus } from "./useBroadcastedTxs";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
+import { useCroppedImage } from "@/hooks/useCroppedImage";
+import { SkeletonElement } from "@/components/Skeleton";
 
 export type SwapExecutionPageRouteDetailedRowProps = {
   denom: ClientOperation["denomIn"] | ClientOperation["denomOut"];
@@ -88,6 +90,8 @@ export const SwapExecutionPageRouteDetailedRow = ({
     };
   }, [chainAddresses, chainId, context]);
 
+  const walletImage = useCroppedImage(chainAddressWallet.image);
+
   const renderAddress = useMemo(() => {
     const Container = shouldRenderEditDestinationWallet
       ? ({ children }: { children: React.ReactNode }) => <Row gap={5}>{children}</Row>
@@ -112,13 +116,15 @@ export const SwapExecutionPageRouteDetailedRow = ({
     return (
       <Container>
         <AddressPillButton onClick={() => copyAddress(chainAddressWallet?.address)}>
-          {chainAddressWallet.image && (
+          {walletImage ? (
             <img
-              src={chainAddressWallet.image}
+              src={walletImage}
               style={{
                 height: "100%",
               }}
             />
+          ) : (
+            <SkeletonElement height={18} width={18} />
           )}
           {renderContent()}
         </AddressPillButton>
@@ -134,14 +140,14 @@ export const SwapExecutionPageRouteDetailedRow = ({
       </Container>
     );
   }, [
-    copyAddress,
-    isMobileScreenSize,
-    isShowingCopyAddressFeedback,
-    onClickEditDestinationWallet,
     shouldRenderEditDestinationWallet,
     chainAddressWallet.address,
-    chainAddressWallet.image,
+    walletImage,
+    isMobileScreenSize,
+    onClickEditDestinationWallet,
     theme.primary.text.lowContrast,
+    isShowingCopyAddressFeedback,
+    copyAddress,
   ]);
 
   const renderExplorerLink = useMemo(() => {

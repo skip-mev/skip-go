@@ -48,7 +48,7 @@ export const WarningPageTradeAdditionalSigningRequired = ({
       <ErrorWarningPageContent
         title="This transaction requires additional signing steps"
         description={
-          <SmallText textWrap="balance" textAlign="center" color={theme.warning.text}>
+          <SmallText lineHeight="1.5" textWrap="balance" textAlign="center" color={theme.warning.text}>
             This transaction requires <u>{signaturesRequired} signatures</u>. Please leave this
             window open until both steps have been authorized.
           </SmallText>

@@ -15,6 +15,9 @@ const externalDeps = [
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    "process.env.VISUAL_TEST": JSON.stringify(process.env.VISUAL_TEST),
+  },
   optimizeDeps: {
     include: [
       "vite-plugin-node-polyfills/shims/buffer",

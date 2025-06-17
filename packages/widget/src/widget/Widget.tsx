@@ -23,9 +23,10 @@ import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
-import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
+import { migrateHistoryFromLocalStorageToIndexedDB } from "@/utils/migrateOldLocalStorageValues";
 import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
+import { SolanaProvider } from "@/providers/SolanaProvider";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
@@ -37,6 +38,10 @@ export type WidgetProps = {
   rootId?: string;
   theme?: PartialTheme | "light" | "dark";
   brandColor?: string;
+  /**
+   * Customize the corner roundness of widget components
+   * @default 25
+   */
   onlyTestnet?: boolean;
   defaultRoute?: DefaultRouteConfig;
   settings?: {
@@ -99,7 +104,7 @@ export const queryClient = new QueryClient();
 
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
 
-migrateOldLocalStorageValues();
+migrateHistoryFromLocalStorageToIndexedDB();
 
 export const Widget = (props: WidgetProps) => {
   return (
@@ -119,11 +124,13 @@ export const WidgetWithinProvider = ({ props }: { props: WidgetProps }) => {
       <EVMProvider>
         <QueryClientProvider client={queryClient} key={"skip-widget"}>
           <CosmosProvider>
-            <NiceModal.Provider>
-              <WidgetWrapper>
-                <Router />
-              </WidgetWrapper>
-            </NiceModal.Provider>
+            <SolanaProvider>
+              <NiceModal.Provider>
+                <WidgetWrapper>
+                  <Router />
+                </WidgetWrapper>
+              </NiceModal.Provider>
+            </SolanaProvider>
           </CosmosProvider>
         </QueryClientProvider>
       </EVMProvider>

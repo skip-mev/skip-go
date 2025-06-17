@@ -86,6 +86,7 @@
               "eureka/eureka-overview",
               "eureka/eureka-tech-overview",
               "eureka/integration-guide",
+              "eureka/custom-erc20-integration",
               "eureka/security-properties",
               "eureka/contract-addresses"
             ]

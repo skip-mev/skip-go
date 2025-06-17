@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { defaultTheme, lightTheme, Theme } from "./theme";
+import { defaultBorderRadius, defaultTheme, lightTheme, Theme } from "./theme";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   skipClientConfigAtom,
@@ -90,6 +90,12 @@ export const useInitWidget = (props: WidgetProps) => {
     }
     if (props.brandColor) {
       theme.brandColor = props.brandColor;
+    }
+    if (theme.borderRadius !== undefined) {
+      theme.borderRadius = {
+        ...defaultBorderRadius,
+        ...theme.borderRadius,
+      };
     }
 
     if ((props.theme as Theme)?.brandTextColor === undefined && typeof document !== "undefined") {

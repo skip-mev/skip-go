@@ -20,6 +20,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { transition } from "@/utils/transitions";
+import { convertToPxValue } from "@/utils/style";
 
 export type AssetChainInputProps = {
   value?: string;
@@ -157,7 +158,7 @@ export const SwapPageAssetChainInput = ({
   const isLargeNumber = shouldReduceFontSize(value);
 
   return (
-    <StyledAssetChainInputWrapper justify="space-between" borderRadius={25}>
+    <StyledAssetChainInputWrapper justify="space-between">
       <Row justify="space-between">
         <StyledInput
           type="text"
@@ -203,6 +204,7 @@ export const SwapPageAssetChainInput = ({
               className="chevron-icon"
               color={theme.primary.text.normal}
               backgroundColor={theme.secondary.background.normal}
+              backgroundRx={theme.borderRadius?.selectionButton}
             />
           )}
         </StyledAssetButton>
@@ -260,6 +262,7 @@ const StyledAssetChainInputWrapper = styled(Column)`
   height: 110px;
   width: 100%;
   background: ${(props) => props.theme.primary.background.normal};
+  border-radius: ${(props) => convertToPxValue(props.theme.borderRadius?.main)};
   padding: 20px;
   @media (max-width: 767px) {
     padding: 15px;
@@ -324,7 +327,7 @@ export const StyledAssetLabel = styled(Row).attrs({
   padding: 8,
 })`
   height: 40px;
-  border-radius: 10px;
+  border-radius: ${(props) => convertToPxValue(props.theme.borderRadius?.selectionButton)};
   white-space: nowrap;
   position: relative;
 
@@ -340,7 +343,7 @@ export const StyledAssetLabel = styled(Row).attrs({
     height: 100%;
     background-color: rgba(255, 255, 255, 0);
     pointer-events: none;
-    border-radius: 10px;
+    border-radius: ${(props) => convertToPxValue(props.theme.borderRadius?.selectionButton)};
     ${transition(["background-color"], "fast", "easeOut")};
     z-index: 0;
   }
