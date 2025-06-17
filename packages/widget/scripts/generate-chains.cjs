@@ -9,34 +9,36 @@ const registries = [
   {
     packageName: 'chain-registry',
     registryPath: path.resolve(__dirname, '../../../node_modules/chain-registry'),
+    isCamelCase: true,
   },
   {
     packageName: 'initia-registry',
     registryPath: path.resolve(__dirname, '../../../node_modules/@initia/initia-registry/main'),
+    isCamelCase: false,
   }
 ];
 
-async function collectMainnetChains({ registryPath, packageName }) {
+async function collectMainnetChains({ registryPath, packageName, isCamelCase }) {
   const mainnetDir = path.join(registryPath, 'mainnet');
-  const mainnetChains = await collectChainData(mainnetDir, packageName, 'mainnet');
+  const mainnetChains = await collectChainData(mainnetDir, packageName, 'mainnet', false, isCamelCase);
   return mainnetChains
 }
 
-async function collectTestnetChains({ registryPath, packageName }) {
+async function collectTestnetChains({ registryPath, packageName, isCamelCase }) {
   const testnetDir = path.join(registryPath, 'testnet');
-  const testnetChains = await collectChainData(testnetDir, packageName, 'testnet');
+  const testnetChains = await collectChainData(testnetDir, packageName, 'testnet', false, isCamelCase);
   return testnetChains
 }
 
-async function collectExplorers({ registryPath, packageName }) {
+async function collectExplorers({ registryPath, packageName, isCamelCase }) {
   const mainnetDir = path.join(registryPath, 'mainnet');
-  const mainnetChains = await collectChainData(mainnetDir, packageName, 'mainnet', true);
+  const mainnetChains = await collectChainData(mainnetDir, packageName, 'mainnet', true, isCamelCase);
   const testnetDir = path.join(registryPath, 'testnet');
-  const testnetChains = await collectChainData(testnetDir, packageName, 'testnet', true);
+  const testnetChains = await collectChainData(testnetDir, packageName, 'testnet', true, isCamelCase);
   return mainnetChains.concat(testnetChains);
 }
 
-async function collectChainData(directory, packageName, networkType, isGetExplorers) {
+async function collectChainData(directory, packageName, networkType, isGetExplorers, isCamelCase) {
   const chains = [];
   try {
     const dirEntries = await fs.readdir(directory, { withFileTypes: true });
@@ -51,16 +53,27 @@ async function collectChainData(directory, packageName, networkType, isGetExplor
           const chainArray = Array.isArray(chainData) ? chainData : [chainData];
           const chain = chainArray[0]
           if (isGetExplorers) {
-            const extractedData = extractExplorerUrl(chain);
-            chains.push(extractedData);
+            if (isCamelCase) {
+              const extractedData = extractCamelCaseExplorerUrl(chain);
+              chains.push(extractedData);
+            } else {
+              const extractedData = extractExplorerUrl(chain);
+              chains.push(extractedData);
+            }
           } else {
-            const assetJsPath = path.join(directory, chainName, 'assets.js');
+            const assetJsPath = path.join(directory, chainName, isCamelCase ? 'asset-list.js' :'assets.js');
             const assetModule = require(assetJsPath);
             const assetData = assetModule.default || assetModule;
             const assetArray = Array.isArray(assetData) ? assetData : [assetData];
             const asset = assetArray[0];
-            const extractedData = extractProperties(chain, asset);
-            chains.push(extractedData);
+            if (isCamelCase) {
+              const extractedData = extractCamelCaseProperties(chain, asset);
+              console.log(`Extracted chain info for ${chainName} in ${packageName}:`, extractedData);
+              chains.push(extractedData);
+            } else {
+              const extractedData = extractProperties(chain, asset);
+              chains.push(extractedData);
+            }
           }
 
         } catch (error) {
@@ -71,7 +84,7 @@ async function collectChainData(directory, packageName, networkType, isGetExplor
   } catch (error) {
     console.error(`Error processing ${networkType} ${packageName} directory ${directory}:`, error.message);
   }
-
+  console.log( `Collected ${chains.length} chains from ${directory}`);
   return chains;
 }
 
@@ -137,9 +150,78 @@ function extractProperties(chain, asset) {
   return chainInfo;
 }
 
+function extractCamelCaseProperties(chain, asset) {
+  const { assets } = asset
+  const mainAsset = assets[0]
+  /** @type{import("@keplr-wallet/types").Currency} */
+  const stakeCurrency = {
+    coinDenom: mainAsset.denomUnits[mainAsset.denomUnits.length - 1].denom,
+    coinMinimalDenom: mainAsset.denomUnits[0].denom,
+    coinDecimals: mainAsset.denomUnits[mainAsset.denomUnits.length - 1].exponent,
+  };
+
+  const feeCurrencies = chain.fees?.feeTokens.map((token) => {
+    const isGasPriceStepAvailable = token.lowGasPrice && token.averageGasPrice && token.highGasPrice;
+    const feeAsset = assets.find((asset) => asset.base === token.denom);
+    if (isGasPriceStepAvailable) {
+      return {
+        coinDenom:
+          feeAsset.denomUnits[feeAsset.denomUnits.length - 1]?.denom || token.denom,
+        coinMinimalDenom:
+          feeAsset.denomUnits[0]?.denom || token.denom,
+        coinDecimals: Number(feeAsset.denomUnits[feeAsset.denomUnits.length - 1]?.exponent),
+        gasPriceStep: {
+          low: Number(token.lowGasPrice),
+          average: Number(token.averageGasPrice),
+          high: Number(token.highGasPrice),
+        },
+      };
+    }
+    return {
+      coinDenom:
+        feeAsset?.denomUnits[feeAsset.denomUnits.length - 1]?.denom || token.denom,
+      coinMinimalDenom:
+        feeAsset?.denomUnits[0]?.denom || token.denom,
+      coinDecimals: Number(feeAsset.denomUnits[feeAsset.denomUnits.length - 1]?.exponent),
+    };
+  });
+
+  if (!feeCurrencies) {
+    throw new Error(`⚠️\t${chain.name} has no fee currencies, skipping codegen...`);
+  }
+
+  /** @type{import("@keplr-wallet/types").ChainInfo} */
+  const chainInfo = {
+    chainId: chain.chainId,
+    currencies: assets.map((asset) => ({
+      coinDenom: asset.denomUnits[asset.denomUnits.length - 1].denom,
+      coinMinimalDenom: asset.denomUnits[0].denom,
+      coinDecimals: asset.denomUnits[asset.denomUnits.length - 1].exponent,
+    })),
+    rest: chain.apis.rest[0].address,
+    rpc: chain.apis.rpc[0].address,
+    bech32Config: Bech32Address.defaultBech32Config(chain.bech32Prefix),
+    chainName: chain.chainName,
+    feeCurrencies,
+    stakeCurrency: stakeCurrency,
+    bip44: {
+      coinType: chain.slip44 ?? 0,
+    },
+  }
+
+  return chainInfo;
+}
+
 function extractExplorerUrl(chain) {
   return {
     chainId: chain.chain_id,
+    explorers: chain.explorers
+  }
+}
+
+function extractCamelCaseExplorerUrl(chain) {
+  return {
+    chainId: chain.chainId,
     explorers: chain.explorers
   }
 }
