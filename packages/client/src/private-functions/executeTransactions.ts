@@ -12,6 +12,7 @@ import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { submit } from "src/api/postSubmit";
+import { getRouteStatus } from "src/public-functions/getRouteStatus";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -186,6 +187,11 @@ export const executeTransactions = async (
     }
 
     await onTransactionBroadcast?.({ ...txResult });
+
+    const routeStatus = await getRouteStatus({
+      txsRequired: txs.length,
+      options,
+    });
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,
