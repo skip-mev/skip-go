@@ -58,8 +58,7 @@ export const subscribeToRouteStatus = async ({
   onTransactionTracked,
   trackTxPollingOptions,
 }: subscribeToRouteStatusProps) => {
-  currentDetails = transactionDetails;
-  let isSettled = false;
+  let overallRouteStatus: RouteStatus = "pending";
 
   for (const transaction of transactionDetails) {
     const { explorerLink } = await trackTransaction({
@@ -68,103 +67,96 @@ export const subscribeToRouteStatus = async ({
       ...trackTxPollingOptions,
     });
     await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
-  }
 
-  while (!isSettled) {
-    const incompleteTxs = currentDetails.filter(
-      (tx) => !tx.status || !isFinalState(tx.status.state)
-    );
+    if (transaction.status && isFinalState(transaction.status.state)) {
+      const routeDetails = getRouteDetails(
+        transactionDetails,
+        totalTxsRequired,
+      );
+      onRouteStatusUpdated?.(routeDetails);
+      overallRouteStatus = routeDetails.status;
+    }
 
-    if (incompleteTxs.length > 0) {
-      const statusFetchPromises = incompleteTxs.map(async (txDetail) => {
-        try {
-          const status = await transactionStatus({
-            chainId: txDetail.chainId,
-            txHash: txDetail.txHash,
-          });
-          return {
-            txHash: txDetail.txHash,
-            chainId: txDetail.chainId,
-            status: status as TransferStatus,
-          };
-        } catch (error) {
-          console.warn(
-            `Polling error for ${txDetail.txHash} on ${txDetail.chainId}:`,
-            error
-          );
-        }
-      });
+    while (true) {
+      try {
+        const statusResponse = await transactionStatus({
+          chainId: transaction.chainId,
+          txHash: transaction.txHash,
+        });
 
-      const results = await Promise.all(statusFetchPromises);
+        transaction.status = statusResponse as TransferStatus;
 
-      results.forEach((result) => {
-        const txDetail = currentDetails.find(
-          (d) => d.txHash === result?.txHash && d.chainId === result?.chainId
+        const routeDetails  = getRouteDetails(
+          transactionDetails,
+          totalTxsRequired,
         );
 
-        if (txDetail) {
-          txDetail.status = result?.status;
+        onRouteStatusUpdated?.(routeDetails);
+        overallRouteStatus = routeDetails.status;
 
-          if (result?.status && isFinalState(result.status.state)) {
-            onTransactionCompleted?.({
-              chainId: result.chainId,
-              txHash: result.txHash,
-              status: result.status,
-            });
-          }
+        if (isFinalState(statusResponse.state)) {
+          onTransactionCompleted?.({
+            chainId: transaction.chainId,
+            txHash: transaction.txHash,
+            status: statusResponse as TransferStatus,
+          });
+          break;
         }
-      });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        await wait(500);
+      }
     }
-
-    const validStatuses = currentDetails
-      .map((tx) => tx.status)
-      .filter((status): status is TransferStatus => status !== undefined);
-
-    const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
-
-    const isAllSettled =
-      currentDetails.length === totalTxsRequired &&
-      validStatuses.length === totalTxsRequired &&
-      validStatuses.every((status) => isFinalState(status?.state));
-
-    if (isAllSettled) {
-      isSettled = true;
-    }
-
-    const someTxSucceeded = validStatuses.some(
-      (status) =>
-        isFinalState(status.state) && status.state === "STATE_COMPLETED_SUCCESS"
-    );
-
-    const someTxFailed = validStatuses.some(
-      (status) =>
-        isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS"
-    );
-
-    let routeStatus: RouteStatus = "pending";
-    if (isAllSettled && !someTxFailed) {
-      routeStatus = "completed";
-    } else if (isAllSettled && someTxSucceeded && someTxFailed) {
-      routeStatus = "incomplete";
-    } else if (isAllSettled && someTxFailed) {
-      routeStatus = "failed";
-    } else if (!isAllSettled) {
-      routeStatus = "pending";
-    }
-
-    const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;
-
-    const newRouteDetails: RouteDetails = {
-      status: routeStatus,
-      transactionDetails: [...currentDetails],
-      transferEvents,
-      transferAssetRelease,
-    };
-
-    onRouteStatusUpdated?.(newRouteDetails);
-
-    if (isSettled) break;
-
-    await wait(500);
   }
+};
+
+const getRouteDetails = (
+  transactionDetails: TransactionDetails[],
+  totalTxsRequired: number,
+): RouteDetails => {
+  const validStatuses = transactionDetails
+    .map((tx) => tx.status)
+    .filter((status): status is TransferStatus => status !== undefined);
+
+  const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
+
+  const allTransactionsHaveDetails = transactionDetails.length >= totalTxsRequired;
+  const allKnownDetailsHaveFinalStatus = transactionDetails.every(
+    (tx) => tx.status && isFinalState(tx.status.state),
+  );
+
+  const isAllSettled = allTransactionsHaveDetails && allKnownDetailsHaveFinalStatus;
+
+  const someTxSucceeded = validStatuses.some(
+    (status) => isFinalState(status.state) && status.state === "STATE_COMPLETED_SUCCESS",
+  );
+
+  const someTxFailed = validStatuses.some(
+    (status) => isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS",
+  );
+
+  let routeStatus: RouteStatus = "pending";
+  if (isAllSettled) {
+    if (!someTxFailed) {
+      routeStatus = "completed";
+    } else if (someTxSucceeded && someTxFailed) {
+      routeStatus = "incomplete";
+    } else if (someTxFailed) {
+      routeStatus = "failed";
+    }
+  } else {
+    routeStatus = "pending";
+  }
+
+  const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;
+
+  const newRouteDetails: RouteDetails = {
+    status: routeStatus,
+    transactionDetails: [...transactionDetails],
+    transferEvents,
+    transferAssetRelease,
+  };
+
+  return newRouteDetails;
 };
