@@ -89,21 +89,14 @@ export const getRouteStatus = async ({
       console.log("api response", results);
 
       results.forEach((result) => {
-        const detailIndex = currentDetails.findIndex(
-          (d) =>
-            d.txHash.toLowerCase() === result?.txHash.toLowerCase() &&
-            d.chainId.toLowerCase() === result?.chainId.toLowerCase()
+        const txDetail = currentDetails.find(
+          (d) => d.txHash === result?.txHash && d.chainId === result?.chainId
         );
-        const oldDetails = currentDetails?.[detailIndex];
 
-        if (currentDetails?.[detailIndex]) {
-          currentDetails[detailIndex].status = result?.status;
+        if (txDetail) {
+          txDetail.status = result?.status;
 
-          if (
-            result?.status &&
-            isFinalState(result.status.state) &&
-            (!oldDetails || !isFinalState(oldDetails.status?.state))
-          ) {
+          if (result?.status && isFinalState(result.status.state)) {
             onTransactionCompleted?.({
               chainId: result.chainId,
               txHash: result.txHash,
@@ -116,7 +109,7 @@ export const getRouteStatus = async ({
 
     const validStatuses = currentDetails
       .map((tx) => tx.status)
-      .filter((status) => status !== undefined);
+      .filter((status): status is TransferStatus => status !== undefined);
 
     const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 

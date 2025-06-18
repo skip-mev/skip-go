@@ -19,7 +19,7 @@ export type TransactionCallbacks = {
     txHash: string;
     status?: TransferStatus;
   }) => Promise<void>;
-  onRouteStatusUpdated?: (routeStatus: RouteStatus) => Promise<void>;
+  onRouteStatusUpdated?: (routeStatus: RouteStatus) => void;
   onValidateGasBalance?: (value: {
     chainId?: string;
     txIndex?: number;

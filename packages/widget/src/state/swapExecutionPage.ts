@@ -158,6 +158,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: (routeStatus) => {
+      console.log("route status updated");
       console.log(routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
