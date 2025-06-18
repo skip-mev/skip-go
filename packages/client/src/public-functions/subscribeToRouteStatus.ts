@@ -48,8 +48,6 @@ export type subscribeToRouteStatusProps = {
   trackTxPollingOptions: ExecuteRouteOptions["trackTxPollingOptions"];
 };
 
-let currentDetails: TransactionDetails[] = [];
-
 export const subscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
