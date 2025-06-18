@@ -3370,6 +3370,10 @@ components:
           allOf:
             - $ref: '#/components/schemas/ChainTransaction'
           nullable: true
+        compose_tx:
+          allOf:
+            - $ref: '#/components/schemas/ChainTransaction'
+          nullable: true
         error_tx:
           allOf:
             - $ref: '#/components/schemas/ChainTransaction'
@@ -3868,11 +3872,13 @@ components:
         LayerZero transfer state:
         * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
         * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+        * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
         * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
         * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
       enum:
         - LAYER_ZERO_TRANSFER_UNKNOWN
         - LAYER_ZERO_TRANSFER_SENT
+        - LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE
         - LAYER_ZERO_TRANSFER_RECEIVED
         - LAYER_ZERO_TRANSFER_FAILED
       type: string

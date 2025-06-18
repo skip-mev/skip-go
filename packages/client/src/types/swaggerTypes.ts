@@ -873,6 +873,7 @@ export interface OptionalAsset {
 export interface LayerZeroTransferTransactions {
   sendTx?: ChainTransaction;
   receiveTx?: ChainTransaction;
+  composeTx?: ChainTransaction;
   errorTx?: ChainTransaction;
 }
 
@@ -1248,12 +1249,14 @@ export enum OPInitTransferState {
  * LayerZero transfer state:
  * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
  * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+ * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
  * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
  * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
  */
 export enum LayerZeroTransferState {
   LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
   LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
+  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
   LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
   LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
 }
@@ -1475,6 +1478,7 @@ export interface LayerZeroTransferInfo {
    * LayerZero transfer state:
    * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
    * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+   * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
    * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
    * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
    */
