@@ -14,6 +14,7 @@ import {
   type OverallStatus,
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
+import { trackTransaction } from "../api/postTrackTransaction";
 
 export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
 
@@ -43,6 +44,8 @@ export type subscribeToRouteStatusProps = {
   txsRequired: number;
   onTransactionCompleted: ExecuteRouteOptions["onTransactionCompleted"];
   onRouteStatusUpdated: ExecuteRouteOptions["onRouteStatusUpdated"];
+  onTransactionTracked: ExecuteRouteOptions["onTransactionTracked"];
+  trackTxPollingOptions: ExecuteRouteOptions["trackTxPollingOptions"];
 };
 
 let currentDetails: TransactionDetails[] = [];
@@ -52,9 +55,20 @@ export const subscribeToRouteStatus = async ({
   txsRequired: totalTxsRequired,
   onTransactionCompleted,
   onRouteStatusUpdated,
+  onTransactionTracked,
+  trackTxPollingOptions,
 }: subscribeToRouteStatusProps) => {
   currentDetails = transactionDetails;
   let isSettled = false;
+
+  for (const transaction of transactionDetails) {
+    const { explorerLink } = await trackTransaction({
+      chainId: transaction.chainId,
+      txHash: transaction.txHash,
+      ...trackTxPollingOptions,
+    });
+    await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
+  }
 
   while (!isSettled) {
     const incompleteTxs = currentDetails.filter(

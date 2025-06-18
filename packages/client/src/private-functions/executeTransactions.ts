@@ -22,6 +22,7 @@ export const executeTransactions = async (
     onTransactionBroadcast,
     onRouteStatusUpdated,
     onTransactionCompleted,
+    onTransactionTracked,
     simulate = true,
     batchSimulate = true,
     getFallbackGasAmount = getDefaultFallbackGasAmount,
@@ -209,8 +210,10 @@ export const executeTransactions = async (
   await subscribeToRouteStatus({
     transactionDetails: txDetails,
     txsRequired: txs.length,
-    onRouteStatusUpdated: onRouteStatusUpdated,
-    onTransactionCompleted: onTransactionCompleted,
+    onRouteStatusUpdated,
+    onTransactionCompleted,
+    onTransactionTracked,
+    trackTxPollingOptions,
   });
 };
 
