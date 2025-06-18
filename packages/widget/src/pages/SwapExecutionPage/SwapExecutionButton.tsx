@@ -144,7 +144,7 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     case SwapExecutionState.validatingGasBalance:
       return <MainButton label="Validating" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.waitingForSigning:
-      return <MainButton label="Confirming" icon={ICONS.rightArrow} loading />;
+      return <MainButton label="Confirming in wallet" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.approving:
       return <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.pending:
