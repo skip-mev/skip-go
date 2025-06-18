@@ -1,5 +1,16 @@
 # @skip-go/client
 
+## 1.3.0
+
+### Minor Changes
+
+- 78d4061: Add optional fee payer address field to msgs and msgsdirect v2 endpoints
+
+### Patch Changes
+
+- 5e4b704: update types
+- f32de07: update registries
+
 ## 1.2.3
 
 ### Patch Changes
