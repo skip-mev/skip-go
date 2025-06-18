@@ -42,6 +42,8 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       statusData?.transferAssetRelease?.chainId,
     );
 
+    console.log(statusData);
+
     if (sourceClientAsset) {
       track("unexpected error page: transaction reverted", {
         transferAssetRelease: statusData?.transferAssetRelease,
@@ -90,11 +92,13 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     setErrorWarning,
     setOverallStatus,
     setSourceAsset,
-    statusData?.transferAssetRelease,
+    statusData,
   ]);
 
   useEffect(() => {
-    if (statusData?.status === "completed" || statusData?.status === "pending") return;
+    if (!statusData || statusData?.status === "completed" || statusData?.status === "pending") {
+      return;
+    }
 
     const timeout = setTimeout(() => {
       handleTransactionFailed();
@@ -106,5 +110,5 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     }
 
     return () => clearTimeout(timeout);
-  }, [statusData?.transferAssetRelease, handleTransactionFailed, statusData?.status]);
+  }, [statusData?.transferAssetRelease, handleTransactionFailed, statusData?.status, statusData]);
 };
