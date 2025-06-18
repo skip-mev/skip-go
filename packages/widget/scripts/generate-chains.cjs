@@ -68,7 +68,6 @@ async function collectChainData(directory, packageName, networkType, isGetExplor
             const asset = assetArray[0];
             if (isCamelCase) {
               const extractedData = extractCamelCaseProperties(chain, asset);
-              console.log(`Extracted chain info for ${chainName} in ${packageName}:`, extractedData);
               chains.push(extractedData);
             } else {
               const extractedData = extractProperties(chain, asset);
