@@ -8,6 +8,7 @@ import { skipChainsAtom } from "@/state/skipClient";
 import { skipRouteAtom } from "@/state/route";
 import { Fragment, useMemo } from "react";
 import { getFeeList } from "@/utils/route";
+import { formatDisplayAmount } from "@/utils/number";
 import SlippageSelector from "@/pages/SwapPage/SlippageSelector";
 import RoutePreferenceSelector from "@/pages/SwapPage/RoutePreferenceSelector";
 import NiceModal from "@ebay/nice-modal-react";
@@ -62,14 +63,19 @@ export const SwapSettingsDrawer = createModal(() => {
       </Column>
       {fees.length > 0 && (
         <Column gap={10}>
-          {fees.map(({ label, fee }, index) => (
-            <Row justify="space-between" align="center" key={index} height={25}>
-              <SwapDetailText>{label}</SwapDetailText>
-              <SwapDetailText textAlign="right" monospace>
-                {fee.formattedAssetAmount} ({fee.formattedUsdAmount})
-              </SwapDetailText>
-            </Row>
-          ))}
+          {fees.map(({ label, fee }, index) => {
+            const [amount, symbol] = fee.formattedAssetAmount.split(" ");
+            const formattedAmount = `${formatDisplayAmount(amount)} ${symbol}`;
+
+            return (
+              <Row justify="space-between" align="center" key={index} height={25}>
+                <SwapDetailText>{label}</SwapDetailText>
+                <SwapDetailText textAlign="right" monospace>
+                  {formattedAmount} ({fee.formattedUsdAmount})
+                </SwapDetailText>
+              </Row>
+            );
+          })}
         </Column>
       )}
       <RoutePreferenceSelector />
