@@ -85,20 +85,23 @@ export const getRouteStatus = async ({
 
       const results = await Promise.all(statusFetchPromises);
 
+      console.log("api response", results);
+
       results.forEach((result) => {
         const detailIndex = currentDetails.findIndex(
-          (d) => d.txHash === result?.txHash && d.chainId === result?.chainId
+          (d) =>
+            d.txHash.toLowerCase() === result?.txHash.toLowerCase() &&
+            d.chainId.toLowerCase() === result?.chainId.toLowerCase()
         );
-        if (detailIndex !== -1) {
-          const oldStatus = currentDetails[detailIndex]?.status;
-          if (currentDetails?.[detailIndex]?.status) {
-            currentDetails[detailIndex].status = result?.status;
-          }
+        const oldDetails = currentDetails?.[detailIndex];
+
+        if (currentDetails?.[detailIndex]) {
+          currentDetails[detailIndex].status = result?.status;
 
           if (
             result?.status &&
             isFinalState(result.status.state) &&
-            (!oldStatus || !isFinalState(oldStatus.state))
+            (!oldDetails || !isFinalState(oldDetails.status?.state))
           ) {
             onTransactionCompleted?.({
               chainId: result.chainId,
@@ -110,9 +113,15 @@ export const getRouteStatus = async ({
       });
     }
 
+    console.log("current details", currentDetails);
+
     const validStatuses = currentDetails
       .map((tx) => tx.status)
       .filter((status) => status !== undefined);
+
+    console.log("validStatuses", validStatuses);
+
+    console.log("totalTxsRequired", totalTxsRequired);
 
     const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 
