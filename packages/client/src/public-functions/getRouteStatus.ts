@@ -15,18 +15,18 @@ import {
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 
+export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
+
 export type TransactionDetails = {
   txHash: string;
   chainId: string;
   status?: TransferStatus;
 };
 
-export type RouteStatus = {
-  isSuccess: boolean;
-  isSettled: boolean;
+export type RouteDetails = {
+  status: RouteStatus;
   transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
-  // lastTxStatus?: OverallStatus;
   transferAssetRelease?: TransferAssetRelease;
 };
 
@@ -53,11 +53,10 @@ export const getRouteStatus = async ({
 }: getRouteStatusProps) => {
   currentDetails = transactionDetails;
   let isCompletelySettled = false;
-  let previousTxsStatus: RouteStatus | undefined = undefined;
+  let previousRouteDetails: RouteDetails | undefined = undefined;
 
   const { onTransactionCompleted, onRouteStatusUpdated } = options;
 
-  // eslint-disable-next-line no-constant-condition
   while (!isCompletelySettled) {
     const incompleteTxs = currentDetails.filter(
       (tx) => !tx.status || !isFinalState(tx.status.state)
@@ -70,7 +69,6 @@ export const getRouteStatus = async ({
             chainId: txDetail.chainId,
             txHash: txDetail.txHash,
           });
-          console.log(status);
           return {
             txHash: txDetail.txHash,
             chainId: txDetail.chainId,
@@ -85,8 +83,6 @@ export const getRouteStatus = async ({
       });
 
       const results = await Promise.all(statusFetchPromises);
-
-      console.log("api response", results);
 
       results.forEach((result) => {
         const txDetail = currentDetails.find(
@@ -122,30 +118,41 @@ export const getRouteStatus = async ({
       isCompletelySettled = true;
     }
 
+    const someTxSucceeded = validStatuses.some(
+      (status) =>
+        isFinalState(status.state) && status.state === "STATE_COMPLETED_SUCCESS"
+    );
+
     const someTxFailed = validStatuses.some(
       (status) =>
         isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS"
     );
+
+    let routeStatus: RouteStatus = "pending";
+    if (isAllSettled && !someTxFailed) {
+      routeStatus = "completed";
+    } else if (isAllSettled && someTxSucceeded && someTxFailed) {
+      routeStatus = "incomplete";
+    } else if (isAllSettled && someTxFailed) {
+      routeStatus = "failed";
+    } else if (!isAllSettled) {
+      routeStatus = "pending";
+    }
 
     const transferAssetRelease = validStatuses
       .slice()
       .reverse()
       .find((tx) => tx?.transferAssetRelease)?.transferAssetRelease;
 
-    const newAggregatedStatus: RouteStatus = {
-      isSuccess: isAllSettled && !someTxFailed,
-      isSettled: isAllSettled,
+    const newRouteDetails: RouteDetails = {
+      status: routeStatus,
       transactionDetails: [...currentDetails],
       transferEvents,
       transferAssetRelease,
     };
 
-    if (
-      JSON.stringify(newAggregatedStatus) !== JSON.stringify(previousTxsStatus)
-    ) {
-      onRouteStatusUpdated?.(newAggregatedStatus);
-      previousTxsStatus = newAggregatedStatus;
-    }
+    onRouteStatusUpdated?.(newRouteDetails);
+    previousRouteDetails = newRouteDetails;
 
     if (isCompletelySettled) break;
 
