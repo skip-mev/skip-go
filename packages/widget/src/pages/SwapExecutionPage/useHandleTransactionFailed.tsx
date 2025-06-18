@@ -94,13 +94,13 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   ]);
 
   useEffect(() => {
-    if (statusData?.status !== "pending") return;
+    if (statusData?.status === "completed" || statusData?.status === "pending") return;
 
     const timeout = setTimeout(() => {
       handleTransactionFailed();
     }, DELAY_EXPECTING_TRANSFER_ASSET_RELEASE);
 
-    if (statusData.transferAssetRelease) {
+    if (statusData?.transferAssetRelease) {
       clearTimeout(timeout);
       handleTransactionFailed();
     }
