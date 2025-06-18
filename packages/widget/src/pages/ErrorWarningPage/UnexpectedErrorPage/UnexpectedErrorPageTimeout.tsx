@@ -34,7 +34,7 @@ export const UnexpectedErrorPageTimeout = ({
 
   const { data } = useBroadcastedTxsStatus({
     txsRequired: route?.txsRequired,
-    txs: transactionDetailsArray,
+    transactionDetails: transactionDetailsArray,
   });
 
   useEffect(() => {
@@ -62,7 +62,12 @@ export const UnexpectedErrorPageTimeout = ({
         title="Sorry, your transaction is taking longer than usual."
         description={
           <>
-            <SmallText lineHeight="1.5" color={theme.warning.text} textAlign="center" textWrap="balance">
+            <SmallText
+              lineHeight="1.5"
+              color={theme.warning.text}
+              textAlign="center"
+              textWrap="balance"
+            >
               Your funds are secure.
               <br />
               You can close this window safely while you wait.
