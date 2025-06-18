@@ -6,6 +6,7 @@ import {
 import type {
   TransferAssetRelease,
   TransferStatus,
+  Tx,
 } from "../types/swaggerTypes";
 import {
   getSimpleOverallStatus,
@@ -15,12 +16,13 @@ import {
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
+import type { TxResult } from "src/types";
 
 export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
 
 export type TransactionDetails = {
-  txHash: string;
   chainId: string;
+  txHash?: string;
   status?: TransferStatus;
 };
 
@@ -42,23 +44,31 @@ const isFinalState = (state?: string): boolean => {
 export type subscribeToRouteStatusProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
-  onTransactionCompleted: ExecuteRouteOptions["onTransactionCompleted"];
-  onRouteStatusUpdated: ExecuteRouteOptions["onRouteStatusUpdated"];
-  onTransactionTracked: ExecuteRouteOptions["onTransactionTracked"];
-  trackTxPollingOptions: ExecuteRouteOptions["trackTxPollingOptions"];
+  options?: ExecuteRouteOptions;
+  executeTransaction?: (index: number) => Promise<TxResult>;
 };
 
 export const subscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
-  onTransactionCompleted,
-  onRouteStatusUpdated,
-  onTransactionTracked,
-  trackTxPollingOptions,
+  options,
+  executeTransaction,
 }: subscribeToRouteStatusProps) => {
   let overallRouteStatus: RouteStatus = "pending";
 
-  for (const transaction of transactionDetails) {
+  const { trackTxPollingOptions, onTransactionTracked, onTransactionCompleted, onRouteStatusUpdated } =
+    options ?? {};
+
+  for (const [transactionIndex, transaction] of transactionDetails.entries()) {
+    if (executeTransaction && !transaction.txHash) {
+      const { txHash } = await executeTransaction?.(transactionIndex);
+      transaction.txHash = txHash;
+    }
+
+    if (transaction.txHash === undefined) {
+      throw new Error("subscribeToRouteStatus error: txHash is undefined");
+    }
+
     const { explorerLink } = await trackTransaction({
       chainId: transaction.chainId,
       txHash: transaction.txHash,

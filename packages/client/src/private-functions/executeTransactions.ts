@@ -13,6 +13,7 @@ import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { submit } from "src/api/postSubmit";
 import { subscribeToRouteStatus } from "src/public-functions/subscribeToRouteStatus";
+import type TransactionDetails from "src/public-functions/subscribeToRouteStatus";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -145,18 +146,16 @@ export const executeTransactions = async (
     }
   }
 
-  let txDetails = [];
-
-  for (let i = 0; i < txs.length; i++) {
-    const tx = txs[i];
+  const executeTransaction = async (index: number) => {
+    const tx = txs[index];
     if (!tx) {
-      throw new Error(`executeRoute error: invalid message at index ${i}`);
+      throw new Error(`executeRoute error: invalid message at index ${index}`);
     }
 
     let txResult: TxResult;
 
     // If batchSignTxs is true, we will use the signed transactions from the array
-    const txSigned = signedTxs.find((item) => item.index === i);
+    const txSigned = signedTxs.find((item) => item.index === index);
     if (txSigned) {
       const txResponse = await submit({
         chainId: txSigned.chainId,
@@ -173,7 +172,7 @@ export const executeTransactions = async (
         txResult = await executeCosmosTransaction({
           tx,
           options,
-          index: i,
+          index: index,
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
@@ -192,28 +191,26 @@ export const executeTransactions = async (
 
     await onTransactionBroadcast?.({ ...txResult });
 
-    txDetails.push(txResult);
-
-    // const txStatusResponse = await waitForTransaction({
-    //   ...txResult,
-    //   ...trackTxPollingOptions,
-    //   onTransactionTracked: options.onTransactionTracked,
-    // });
-
-    // await onTransactionCompleted?.({
-    //   chainId: txResult.chainId,
-    //   txHash: txResult.txHash,
-    //   status: txStatusResponse as TransferStatus,
-    // });
+    return txResult;
   }
 
+  const transactionDetails = txs.map(tx => {
+    if ("cosmosTx" in tx) {
+      return { chainId: tx.cosmosTx?.chainId }
+    } else if ("evmTx" in tx) {
+      return { chainId: tx.evmTx?.chainId }
+    } else if ("svmTx" in tx) {
+      return { chainId: tx.svmTx?.chainId }
+    } else {
+      throw new Error("executeRoute error: invalid message type");
+    }
+  });
+
   await subscribeToRouteStatus({
-    transactionDetails: txDetails,
+    transactionDetails: transactionDetails,
     txsRequired: txs.length,
-    onRouteStatusUpdated,
-    onTransactionCompleted,
-    onTransactionTracked,
-    trackTxPollingOptions,
+    options,
+    executeTransaction,
   });
 };
 
