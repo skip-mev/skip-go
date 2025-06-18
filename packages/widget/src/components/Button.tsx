@@ -69,7 +69,7 @@ export const Button = styled.button<FlexProps>`
 export const PillButton = styled(Button)`
   padding: 5px 10px;
   height: 28px;
-  border-radius: 30px;
+  border-radius: ${({ theme }) => convertToPxValue(theme.borderRadius?.ghostButton)};
   box-sizing: border-box;
   background: ${({ theme }) => theme.secondary.background.normal};
   gap: 10px;

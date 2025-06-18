@@ -33,7 +33,7 @@ export const getFeeInfoForChain = async ({ chainId, apiUrl, apiKey }: GetFeeInfo
     return skipFeeInfo;
   }
 
-  const chain = chains().find((chain) => chain.chain_id === chainId);
+  const chain = chains().find((chain) => chain.chainId === chainId);
   if (!chain) {
     return undefined;
   }
@@ -42,7 +42,7 @@ export const getFeeInfoForChain = async ({ chainId, apiUrl, apiKey }: GetFeeInfo
     return undefined;
   }
 
-  const registryFeeInfo = chain.fees.fee_tokens.find(
+  const registryFeeInfo = chain.fees.feeTokens.find(
     (feeToken) => feeToken.denom === defaultGasToken,
   );
 
@@ -53,9 +53,9 @@ export const getFeeInfoForChain = async ({ chainId, apiUrl, apiKey }: GetFeeInfo
   return {
     denom: registryFeeInfo.denom,
     gasPrice: {
-      low: registryFeeInfo.low_gas_price ? `${registryFeeInfo.low_gas_price}` : "",
-      average: registryFeeInfo.average_gas_price ? `${registryFeeInfo.average_gas_price}` : "",
-      high: registryFeeInfo.high_gas_price ? `${registryFeeInfo.high_gas_price}` : "",
+      low: registryFeeInfo.lowGasPrice ? `${registryFeeInfo.lowGasPrice}` : "",
+      average: registryFeeInfo.averageGasPrice ? `${registryFeeInfo.averageGasPrice}` : "",
+      high: registryFeeInfo.highGasPrice ? `${registryFeeInfo.highGasPrice}` : "",
     },
   };
 };

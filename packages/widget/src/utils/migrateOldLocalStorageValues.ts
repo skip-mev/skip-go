@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TransactionHistoryItem } from "@/state/history";
 import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
+import { idbSet } from "./storage";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
@@ -34,6 +35,28 @@ export const migrateOldLocalStorageValues = () => {
       console.warn(`Failed to migrate localStorage key "${key}":`, err);
     }
   });
+
+  migrateHistoryFromLocalStorageToIndexedDB();
+};
+
+export const migrateHistoryFromLocalStorageToIndexedDB = async () => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistory);
+    if (!raw) return;
+
+    const parsed = JSON.parse(raw);
+    const transformed = toCamelCase(parsed);
+
+    await idbSet(LOCAL_STORAGE_KEYS.transactionHistory, transformed);
+
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.transactionHistory);
+    // eslint-disable-next-line no-console
+    console.info("✅ Migrated transactionHistory from localStorage to IndexedDB");
+  } catch (err) {
+    console.warn("⚠️ Failed to migrate transactionHistory", err);
+  }
 };
 
 export function toCamelCase<T extends object>(obj: T) {
