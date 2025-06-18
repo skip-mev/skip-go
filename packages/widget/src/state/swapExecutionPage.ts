@@ -152,6 +152,8 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     timestamp: Date.now(),
   });
 
+  set(routeStatusAtom, undefined);
+
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
       set(routeStatusAtom, routeStatus);
