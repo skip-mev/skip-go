@@ -1,4 +1,4 @@
-import type { RouteDetails } from "../public-functions/getRouteStatus";
+import type { RouteDetails } from "../public-functions/subscribeToRouteStatus";
 import type { Erc20Approval, TransferStatus } from "./swaggerTypes";
 
 type CallbackStatus = "error" | "pending" | "completed";

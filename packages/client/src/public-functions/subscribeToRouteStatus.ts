@@ -41,7 +41,8 @@ const isFinalState = (state?: string): boolean => {
 export type subscribeToRouteStatusProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
-  options: ExecuteRouteOptions;
+  onTransactionCompleted: ExecuteRouteOptions["onTransactionCompleted"];
+  onRouteStatusUpdated: ExecuteRouteOptions["onRouteStatusUpdated"];
 };
 
 let currentDetails: TransactionDetails[] = [];
@@ -49,12 +50,11 @@ let currentDetails: TransactionDetails[] = [];
 export const subscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
-  options,
+  onTransactionCompleted,
+  onRouteStatusUpdated,
 }: subscribeToRouteStatusProps) => {
   currentDetails = transactionDetails;
   let isSettled = false;
-
-  const { onTransactionCompleted, onRouteStatusUpdated } = options;
 
   while (!isSettled) {
     const incompleteTxs = currentDetails.filter(
