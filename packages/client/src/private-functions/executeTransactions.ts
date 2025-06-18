@@ -192,17 +192,17 @@ export const executeTransactions = async (
 
     txDetails.push(txResult);
 
-    const txStatusResponse = await waitForTransaction({
-      ...txResult,
-      ...trackTxPollingOptions,
-      onTransactionTracked: options.onTransactionTracked,
-    });
+    // const txStatusResponse = await waitForTransaction({
+    //   ...txResult,
+    //   ...trackTxPollingOptions,
+    //   onTransactionTracked: options.onTransactionTracked,
+    // });
 
-    await onTransactionCompleted?.({
-      chainId: txResult.chainId,
-      txHash: txResult.txHash,
-      status: txStatusResponse as TransferStatus,
-    });
+    // await onTransactionCompleted?.({
+    //   chainId: txResult.chainId,
+    //   txHash: txResult.txHash,
+    //   status: txStatusResponse as TransferStatus,
+    // });
   }
 
   const routeStatus = await getRouteStatus({

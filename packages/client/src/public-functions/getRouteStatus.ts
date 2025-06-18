@@ -26,7 +26,7 @@ export type RouteStatus = {
   isSettled: boolean;
   transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
-  lastTxStatus?: OverallStatus;
+  // lastTxStatus?: OverallStatus;
   transferAssetRelease?: TransferAssetRelease;
 };
 
@@ -55,7 +55,7 @@ export const getRouteStatus = async ({
   let isCompletelySettled = false;
   let previousTxsStatus: RouteStatus | undefined = undefined;
 
-  const { onTransactionCompleted } = options;
+  const { onTransactionCompleted, onRouteStatusUpdated } = options;
 
   // eslint-disable-next-line no-constant-condition
   while (!isCompletelySettled) {
@@ -70,6 +70,7 @@ export const getRouteStatus = async ({
             chainId: txDetail.chainId,
             txHash: txDetail.txHash,
           });
+          console.log(status);
           return {
             txHash: txDetail.txHash,
             chainId: txDetail.chainId,
@@ -113,21 +114,15 @@ export const getRouteStatus = async ({
       });
     }
 
-    console.log("current details", currentDetails);
-
     const validStatuses = currentDetails
       .map((tx) => tx.status)
       .filter((status) => status !== undefined);
 
-    console.log("validStatuses", validStatuses);
-
-    console.log("totalTxsRequired", totalTxsRequired);
-
     const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 
     const isAllSettled =
-      currentDetails.length === totalTxsRequired && // All expected txs are in our list
-      validStatuses.length === totalTxsRequired && // All txs in our list have a status
+      currentDetails.length === totalTxsRequired &&
+      validStatuses.length === totalTxsRequired &&
       validStatuses.every((status) => isFinalState(status?.state));
 
     if (isAllSettled) {
@@ -147,20 +142,15 @@ export const getRouteStatus = async ({
     const newAggregatedStatus: RouteStatus = {
       isSuccess: isAllSettled && !someTxFailed,
       isSettled: isAllSettled,
-      // lastTxStatus: lastTxOverallStatus,
       transactionDetails: [...currentDetails],
       transferEvents,
       transferAssetRelease,
     };
 
-    console.log(newAggregatedStatus, previousTxsStatus);
-
-    // Only call update if the status has actually changed to avoid redundant callbacks
     if (
       JSON.stringify(newAggregatedStatus) !== JSON.stringify(previousTxsStatus)
     ) {
-      // await onTxsStatusUpdate?.(newAggregatedStatus);
-      console.log(newAggregatedStatus);
+      onRouteStatusUpdated?.(newAggregatedStatus);
       previousTxsStatus = newAggregatedStatus;
     }
 
