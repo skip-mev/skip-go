@@ -49,7 +49,7 @@ export const UnexpectedErrorPageTransactionFailed = ({
         title="Transaction failed"
         description={
           <>
-            <SmallText color={theme.error.text} textAlign="center" textWrap="balance">
+            <SmallText lineHeight="1.5" color={theme.error.text} textAlign="center" textWrap="balance">
               Please contact our support team below.
             </SmallText>
             <Row
