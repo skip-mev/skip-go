@@ -1069,7 +1069,7 @@ paths:
                   default: false
                 fee_payer_address:
                   type: string
-                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers
+                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
                   defauld: false
       responses:
         '200':
@@ -1380,7 +1380,7 @@ paths:
                   default: false
                 fee_payer_address:
                   type: string
-                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers
+                  description: Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format.
                   defauld: false
       responses:
         '200':
