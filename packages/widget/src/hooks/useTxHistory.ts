@@ -19,13 +19,18 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
       transactionDetails: transactionDetails,
       txsRequired: txsRequired ?? 1,
       onRouteStatusUpdated: (routeStatus) => {
-        if (JSON.stringify(txHistoryItem) !== JSON.stringify(routeStatus)) {
+        const newTxHistoryItem = {
+          ...routeStatus,
+          timestamp: txHistoryItem?.timestamp,
+        };
+        if (JSON.stringify(txHistoryItem) !== JSON.stringify(newTxHistoryItem)) {
           console.log("set transaction history");
-          setTransactionHistory(routeStatus as TransactionHistoryItem);
+          console.log(newTxHistoryItem);
+          setTransactionHistory(newTxHistoryItem as TransactionHistoryItem);
         }
       },
     });
-  }, [setTransactionHistory, transactionDetails, txHistoryItem, txsRequired]);
+  }, []);
 
   return {
     status: txHistoryItem?.status,
