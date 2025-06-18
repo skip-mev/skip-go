@@ -376,11 +376,11 @@ const StyledSelectTokenLabel = styled(StyledAssetLabel)`
 
 export const StyledAssetButton = styled(Button)`
   &:hover {
-    ${StyledAssetLabel}::after {
+    ${StyledAssetLabel} {
       background-color: ${({ theme }) => theme.secondary.background.hover};
     }
 
-    ${StyledSelectTokenLabel}::after {
+    ${StyledSelectTokenLabel} {
       background-color: rgba(255, 255, 255, 0.15);
     }
   }
