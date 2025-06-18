@@ -53,7 +53,6 @@ export const getRouteStatus = async ({
 }: getRouteStatusProps) => {
   currentDetails = transactionDetails;
   let isCompletelySettled = false;
-  let previousRouteDetails: RouteDetails | undefined = undefined;
 
   const { onTransactionCompleted, onRouteStatusUpdated } = options;
 
@@ -139,10 +138,7 @@ export const getRouteStatus = async ({
       routeStatus = "pending";
     }
 
-    const transferAssetRelease = validStatuses
-      .slice()
-      .reverse()
-      .find((tx) => tx?.transferAssetRelease)?.transferAssetRelease;
+    const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;
 
     const newRouteDetails: RouteDetails = {
       status: routeStatus,
@@ -152,7 +148,6 @@ export const getRouteStatus = async ({
     };
 
     onRouteStatusUpdated?.(newRouteDetails);
-    previousRouteDetails = newRouteDetails;
 
     if (isCompletelySettled) break;
 
