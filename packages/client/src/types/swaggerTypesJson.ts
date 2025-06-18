@@ -1528,6 +1528,16 @@ export enum FeeTypeJson {
   SMART_RELAY = "SMART_RELAY",
 }
 
+/**
+ * Indicates whether the fee is deducted from the transfer amount or charged additionally.
+ * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
+ * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
+ */
+export enum FeeBehaviorJson {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
+
 export interface FeeJson {
   /**
    * Fee type:
@@ -1557,6 +1567,8 @@ export interface FeeJson {
   tx_index?: number;
   /** The index of the operation in the returned operations list which incurs the fee */
   operation_index?: number | null;
+  /** Indicates whether this fee is deducted from the transfer amount or charged additionally */
+  fee_behavior?: FeeBehaviorJson;
 }
 
 export interface ChainsRequestJson {
