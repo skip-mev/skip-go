@@ -38,7 +38,7 @@ const isFinalState = (state?: string): boolean => {
   );
 };
 
-export type getRouteStatusProps = {
+export type subscribeToRouteStatusProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
   options: ExecuteRouteOptions;
@@ -46,17 +46,17 @@ export type getRouteStatusProps = {
 
 let currentDetails: TransactionDetails[] = [];
 
-export const getRouteStatus = async ({
+export const subscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
   options,
-}: getRouteStatusProps) => {
+}: subscribeToRouteStatusProps) => {
   currentDetails = transactionDetails;
-  let isCompletelySettled = false;
+  let isSettled = false;
 
   const { onTransactionCompleted, onRouteStatusUpdated } = options;
 
-  while (!isCompletelySettled) {
+  while (!isSettled) {
     const incompleteTxs = currentDetails.filter(
       (tx) => !tx.status || !isFinalState(tx.status.state)
     );
@@ -114,7 +114,7 @@ export const getRouteStatus = async ({
       validStatuses.every((status) => isFinalState(status?.state));
 
     if (isAllSettled) {
-      isCompletelySettled = true;
+      isSettled = true;
     }
 
     const someTxSucceeded = validStatuses.some(
@@ -149,8 +149,8 @@ export const getRouteStatus = async ({
 
     onRouteStatusUpdated?.(newRouteDetails);
 
-    if (isCompletelySettled) break;
+    if (isSettled) break;
 
-    await wait(1000);
+    await wait(500);
   }
 };
