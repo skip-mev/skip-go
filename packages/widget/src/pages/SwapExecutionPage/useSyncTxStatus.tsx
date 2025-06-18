@@ -31,11 +31,6 @@ export const useSyncTxStatus = ({
 
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const clientOperations = useMemo(() => {
-    if (!route?.operations) return [] as ClientOperation[];
-    return getClientOperations(route.operations);
-  }, [route?.operations]);
-
   const computedSwapStatus = useMemo(() => {
     if (statusData?.lastTxStatus === "pending") {
       if (isPending) {
@@ -88,7 +83,6 @@ export const useSyncTxStatus = ({
       }
     }
   }, [
-    clientOperations,
     overallStatus,
     computedSwapStatus,
     setOverallStatus,

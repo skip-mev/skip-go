@@ -3,15 +3,15 @@ import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecut
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { Routes, currentPageAtom } from "@/state/router";
 import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPage";
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { RouteDetails } from "@skip-go/client";
 
 const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
-export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus) => {
+export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetails) => {
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
@@ -47,7 +47,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
         transferAssetRelease: statusData?.transferAssetRelease,
         lastTransaction,
         error,
-        route
+        route,
       });
       setErrorWarning({
         errorWarningType: ErrorWarningType.TransactionReverted,
@@ -94,7 +94,7 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
   ]);
 
   useEffect(() => {
-    if (statusData?.isSuccess || !statusData?.isSettled) return;
+    if (statusData?.status !== "pending") return;
 
     const timeout = setTimeout(() => {
       handleTransactionFailed();
@@ -106,10 +106,5 @@ export const useHandleTransactionFailed = (error: Error, statusData?: TxsStatus)
     }
 
     return () => clearTimeout(timeout);
-  }, [
-    statusData?.isSettled,
-    statusData?.isSuccess,
-    statusData?.transferAssetRelease,
-    handleTransactionFailed,
-  ]);
+  }, [statusData?.transferAssetRelease, handleTransactionFailed, statusData?.status]);
 };

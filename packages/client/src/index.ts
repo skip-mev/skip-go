@@ -41,6 +41,8 @@ export { getCosmosGasAmountForMessage } from "./public-functions/getCosmosGasAmo
 export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountForMessage";
 export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBalance";
 
+export type { RouteDetails } from "./public-functions/getRouteStatus";
+
 export type { SkipClientOptions } from "./state/clientState";
 
 export { submit } from "./api/postSubmit";

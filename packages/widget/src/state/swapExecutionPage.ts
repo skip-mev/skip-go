@@ -11,12 +11,12 @@ import {
   walletsAtom,
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
 import {
-  ClientOperation,
-  getClientOperations,
-  SimpleStatus,
-} from "@/utils/clientType";
+  lastTransactionInTimeAtom,
+  setTransactionHistoryAtom,
+  transactionHistoryAtom,
+} from "./history";
+import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
@@ -31,6 +31,7 @@ import {
   TransactionCallbacks,
   UserAddress,
   TxStatusResponse,
+  RouteDetails,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -77,31 +78,27 @@ export type ChainAddress = {
  */
 export const chainAddressesAtom = atom<Record<number, ChainAddress>>({});
 
-export const swapExecutionStateAtom =
-  atomWithStorageNoCrossTabSync<SwapExecutionState>(
-    LOCAL_STORAGE_KEYS.swapExecutionState,
-    {
-      route: undefined,
-      clientOperations: [],
-      userAddresses: [],
-      transactionDetailsArray: [],
-      transactionHistoryIndex: 0,
-      overallStatus: "unconfirmed",
-      isValidatingGasBalance: undefined,
-      transactionsSigned: 0,
-      timestamp: -1,
-    }
-  );
-
-export const setOverallStatusAtom = atom(
-  null,
-  (_get, set, status: SimpleStatus) => {
-    set(swapExecutionStateAtom, (state) => ({
-      ...state,
-      overallStatus: status,
-    }));
-  }
+export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutionState>(
+  LOCAL_STORAGE_KEYS.swapExecutionState,
+  {
+    route: undefined,
+    clientOperations: [],
+    userAddresses: [],
+    transactionDetailsArray: [],
+    transactionHistoryIndex: 0,
+    overallStatus: "unconfirmed",
+    isValidatingGasBalance: undefined,
+    transactionsSigned: 0,
+    timestamp: -1,
+  },
 );
+
+export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
+  set(swapExecutionStateAtom, (state) => ({
+    ...state,
+    overallStatus: status,
+  }));
+});
 
 export const clearIsValidatingGasBalanceAtom = atom(null, (_get, set) => {
   set(swapExecutionStateAtom, (state) => ({
@@ -110,14 +107,14 @@ export const clearIsValidatingGasBalanceAtom = atom(null, (_get, set) => {
   }));
 });
 
+export const routeStatusAtom = atom<RouteDetails>();
+
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
   const transactionHistory = get(transactionHistoryAtom);
   const callbacks = get(callbacksAtom);
-  const transactionHistoryIndex = Array.isArray(transactionHistory)
-    ? transactionHistory.length
-    : 0;
+  const transactionHistoryIndex = Array.isArray(transactionHistory) ? transactionHistory.length : 0;
 
   if (!route) return;
 
@@ -130,8 +127,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   } = route;
 
   const sourceAddress = requiredChainAddresses[0];
-  const destinationAddress =
-    requiredChainAddresses[requiredChainAddresses.length - 1];
+  const destinationAddress = requiredChainAddresses[requiredChainAddresses.length - 1];
 
   const initialChainAddresses: Record<number, ChainAddress> = {};
 
@@ -157,8 +153,26 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   });
 
   set(submitSwapExecutionCallbacksAtom, {
-    onRouteStatusUpdated: (routeStatus) => {
-      console.log("route status updated");
+    onRouteStatusUpdated: async (routeStatus) => {
+      set(routeStatusAtom, routeStatus);
+      set(setOverallStatusAtom, routeStatus.status);
+
+      const lastTransactionInTime = await get(lastTransactionInTimeAtom);
+
+      const timestamp = lastTransactionInTime?.transactionHistoryItem?.timestamp;
+
+      const transactionHistoryItems = await get(transactionHistoryAtom);
+
+      const txHistoryItem = transactionHistoryItems.find(
+        (txHistoryItem) => txHistoryItem.timestamp === timestamp,
+      );
+
+      if (txHistoryItem) {
+        set(setTransactionHistoryAtom, {
+          ...txHistoryItem,
+          status: routeStatus.status,
+        });
+      }
       console.log(routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
@@ -237,8 +251,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         const signRequiredIndex = clientOperations.findIndex((operation) => {
           return (
             operation.signRequired &&
-            (operation.chainId === txInfo.chainId ||
-              operation.fromChainId === txInfo.chainId)
+            (operation.chainId === txInfo.chainId || operation.fromChainId === txInfo.chainId)
           );
         });
 
@@ -280,11 +293,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
             },
           });
         }
-      } else if (
-        (error as Error)?.message
-          ?.toLowerCase()
-          .includes("relay fee quote has expired")
-      ) {
+      } else if ((error as Error)?.message?.toLowerCase().includes("relay fee quote has expired")) {
         track("error page: relay fee quote has expired");
         set(errorWarningAtom, {
           errorWarningType: ErrorWarningType.ExpiredRelayFeeQuote,
@@ -294,9 +303,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
           },
         });
       } else if (
-        (error as Error)?.message
-          ?.toLowerCase()
-          .includes("insufficient balance for gas")
+        (error as Error)?.message?.toLowerCase().includes("insufficient balance for gas")
       ) {
         track("expected error page: insufficient gas balance");
         set(errorWarningAtom, {
@@ -327,7 +334,7 @@ export const setValidatingGasBalanceAtom = atom(
       ...state,
       isValidatingGasBalance,
     }));
-  }
+  },
 );
 
 type SetTransactionDetailsProps = {
@@ -344,9 +351,7 @@ export const setTransactionDetailsAtom = atom(
     const newTransactionDetailsArray = [...transactionDetailsArray];
 
     const transactionIndexFound = newTransactionDetailsArray.findIndex(
-      (transaction) =>
-        transaction.txHash.toLowerCase() ===
-        transactionDetails.txHash.toLowerCase()
+      (transaction) => transaction.txHash.toLowerCase() === transactionDetails.txHash.toLowerCase(),
     );
     if (transactionIndexFound !== -1) {
       newTransactionDetailsArray[transactionIndexFound] = {
@@ -370,13 +375,13 @@ export const setTransactionDetailsAtom = atom(
       timestamp: swapExecutionState?.timestamp,
       ...(status && { status }),
     });
-  }
+  },
 );
 
 export const chainAddressEffectAtom = atomEffect((get, set) => {
   const chainAddresses = get(chainAddressesAtom);
   const addressesMatch = Object.values(chainAddresses).every(
-    (chainAddress) => !!chainAddress.address
+    (chainAddress) => !!chainAddress.address,
   );
   if (!addressesMatch) return;
 
@@ -402,23 +407,16 @@ export type TransactionDetails = {
 
 type SubmitSwapExecutionCallbacks = TransactionCallbacks & {
   onTransactionUpdated?: (transactionDetails: TransactionDetails) => void;
-  onError: (
-    error: unknown,
-    transactionDetailsArray?: TransactionDetails[]
-  ) => void;
+  onError: (error: unknown, transactionDetailsArray?: TransactionDetails[]) => void;
 };
 
-export const submitSwapExecutionCallbacksAtom = atom<
-  SubmitSwapExecutionCallbacks | undefined
->();
+export const submitSwapExecutionCallbacksAtom = atom<SubmitSwapExecutionCallbacks | undefined>();
 
 export const simulateTxAtom = atom<boolean>();
 export const batchSignTxsAtom = atom<boolean>(true);
 
 export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
-  const { route, userAddresses, transactionDetailsArray } = get(
-    swapExecutionStateAtom
-  );
+  const { route, userAddresses, transactionDetailsArray } = get(swapExecutionStateAtom);
   const submitSwapExecutionCallbacks = get(submitSwapExecutionCallbacksAtom);
   const simulateTx = get(simulateTxAtom);
   const batchSignTxs = get(batchSignTxsAtom);
@@ -430,17 +428,12 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
   const { data: chains } = get(skipChainsAtom);
   const sourceAsset = get(sourceAssetAtom);
-  const walletConnectDeepLinkByChainType = get(
-    walletConnectDeepLinkByChainTypeAtom
-  );
+  const walletConnectDeepLinkByChainType = get(walletConnectDeepLinkByChainTypeAtom);
 
-  const chainType = chains?.find(
-    (chain) => chain.chainId === sourceAsset?.chainId
-  )?.chainType;
+  const chainType = chains?.find((chain) => chain.chainId === sourceAsset?.chainId)?.chainType;
 
   if (chainType) {
-    const { deeplink, recentWalletData } =
-      walletConnectDeepLinkByChainType[chainType as ChainType];
+    const { deeplink, recentWalletData } = walletConnectDeepLinkByChainType[chainType as ChainType];
     if (chainType === ChainType.Cosmos) {
       window.localStorage.removeItem(DEEPLINK_CHOICE);
       window.localStorage.removeItem(RECENT_WALLET_DATA);
@@ -452,11 +445,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
 
   return {
     gcTime: Infinity,
-    mutationFn: async ({
-      getSvmSigner,
-    }: {
-      getSvmSigner: () => Promise<Adapter>;
-    }) => {
+    mutationFn: async ({ getSvmSigner }: { getSvmSigner: () => Promise<Adapter> }) => {
       if (!route) return;
       if (!userAddresses.length) return;
       try {
@@ -466,10 +455,7 @@ export const skipSubmitSwapExecutionAtom = atomWithMutation((get) => {
           timeoutSeconds,
           slippageTolerancePercent: swapSettings.slippage.toString(),
           useUnlimitedApproval: swapSettings.useUnlimitedApproval,
-          simulate:
-            simulateTx !== undefined
-              ? simulateTx
-              : route.sourceAssetChainId !== "984122",
+          simulate: simulateTx !== undefined ? simulateTx : route.sourceAssetChainId !== "984122",
           batchSignTxs: batchSignTxs !== undefined ? batchSignTxs : true,
           ...submitSwapExecutionCallbacks,
           getCosmosSigner: async (chainId) => {
