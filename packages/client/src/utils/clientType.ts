@@ -354,7 +354,7 @@ function getClientTransferEvent(transferEvent: TransferEvent) {
 }
 
 export function getTransferEventsFromTxStatusResponse(
-  txStatusResponse?: TransferStatus[]
+  txStatusResponse?: TxStatusResponse[]
 ) {
   if (!txStatusResponse) return [];
   return txStatusResponse?.flatMap((txStatus) => {

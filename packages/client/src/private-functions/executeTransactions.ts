@@ -209,8 +209,8 @@ export const executeTransactions = async (
   await subscribeToRouteStatus({
     transactionDetails: transactionDetails,
     txsRequired: txs.length,
-    options,
     executeTransaction,
+    ...options,
   });
 };
 

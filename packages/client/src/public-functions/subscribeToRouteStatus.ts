@@ -23,7 +23,9 @@ export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
 export type TransactionDetails = {
   chainId: string;
   txHash?: string;
-  status?: TransferStatus;
+  status?: TxStatusResponse;
+  tracked?: boolean;
+  explorerLink?: string;
 };
 
 export type RouteDetails = {
@@ -44,22 +46,35 @@ const isFinalState = (state?: string): boolean => {
 export type subscribeToRouteStatusProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
-  options?: ExecuteRouteOptions;
   executeTransaction?: (index: number) => Promise<TxResult>;
+  trackTxPollingOptions?: ExecuteRouteOptions["trackTxPollingOptions"];
+  onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
+  onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
+  onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
 };
 
 export const subscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
-  options,
   executeTransaction,
+  trackTxPollingOptions,
+  onTransactionTracked,
+  onTransactionCompleted,
+  onRouteStatusUpdated,
 }: subscribeToRouteStatusProps) => {
   let overallRouteStatus: RouteStatus = "pending";
 
-  const { trackTxPollingOptions, onTransactionTracked, onTransactionCompleted, onRouteStatusUpdated } =
-    options ?? {};
-
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
+    if (transaction.status && isFinalState(transaction.status.state)) {
+      const routeDetails = getRouteDetails(
+        transactionDetails,
+        totalTxsRequired,
+      );
+      onRouteStatusUpdated?.(routeDetails);
+      overallRouteStatus = routeDetails.status;
+      continue;
+    }
+
     if (executeTransaction && !transaction.txHash) {
       const { txHash } = await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
@@ -69,20 +84,15 @@ export const subscribeToRouteStatus = async ({
       throw new Error("subscribeToRouteStatus error: txHash is undefined");
     }
 
-    const { explorerLink } = await trackTransaction({
-      chainId: transaction.chainId,
-      txHash: transaction.txHash,
-      ...trackTxPollingOptions,
-    });
-    await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
-
-    if (transaction.status && isFinalState(transaction.status.state)) {
-      const routeDetails = getRouteDetails(
-        transactionDetails,
-        totalTxsRequired,
-      );
-      onRouteStatusUpdated?.(routeDetails);
-      overallRouteStatus = routeDetails.status;
+    if (transaction.tracked === undefined) {
+      const { explorerLink } = await trackTransaction({
+        chainId: transaction.chainId,
+        txHash: transaction.txHash,
+        ...trackTxPollingOptions,
+      });
+      transaction.tracked = true;
+      transaction.explorerLink = explorerLink;
+      await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
     }
 
     while (true) {
@@ -92,7 +102,7 @@ export const subscribeToRouteStatus = async ({
           txHash: transaction.txHash,
         });
 
-        transaction.status = statusResponse as TransferStatus;
+        transaction.status = statusResponse;
 
         const routeDetails  = getRouteDetails(
           transactionDetails,
@@ -125,7 +135,7 @@ const getRouteDetails = (
 ): RouteDetails => {
   const validStatuses = transactionDetails
     .map((tx) => tx.status)
-    .filter((status): status is TransferStatus => status !== undefined);
+    .filter((status): status is TxStatusResponse => status !== undefined);
 
   const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 
