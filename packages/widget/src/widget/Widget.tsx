@@ -27,7 +27,6 @@ import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValu
 import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
 import { SolanaProvider } from "@/providers/SolanaProvider";
-import { transactionHistoryVersionAtom } from "@/state/history";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
