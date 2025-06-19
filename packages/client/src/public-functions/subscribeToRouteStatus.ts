@@ -7,13 +7,10 @@ import type {
   TransactionState,
   TransferAssetRelease,
   TransferStatus,
-  Tx,
 } from "../types/swaggerTypes";
 import {
-  getSimpleOverallStatus,
   getTransferEventsFromTxStatusResponse,
   type ClientTransferEvent,
-  type OverallStatus,
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
@@ -25,6 +22,7 @@ export type TransactionDetails = {
   chainId: string;
   txHash?: string;
   status?: TxStatusResponse;
+  transactionState?: TransactionState;
   tracked?: boolean;
   explorerLink?: string;
 };
@@ -55,14 +53,21 @@ const isFinalState = (state?: string): boolean => {
 export type subscribeToRouteStatusProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
-  executeTransaction?: (index: number) => Promise<TxResult>;
   trackTxPollingOptions?: ExecuteRouteOptions["trackTxPollingOptions"];
-  onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
-  onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
 };
 
-export const subscribeToRouteStatus = async ({
+export type executeAndSubscribeToRouteStatus = subscribeToRouteStatusProps & {
+  executeTransaction?: (index: number) => Promise<TxResult>;
+  onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
+  onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
+};
+
+export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
+  return executeAndSubscribeToRouteStatus(props);
+};
+
+export const executeAndSubscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
   executeTransaction,
@@ -70,10 +75,10 @@ export const subscribeToRouteStatus = async ({
   onTransactionTracked,
   onTransactionCompleted,
   onRouteStatusUpdated,
-}: subscribeToRouteStatusProps) => {
+}: executeAndSubscribeToRouteStatus) => {
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
-    if (transaction.status && isFinalState(transaction.status.state)) {
+    if (transaction.transactionState && isFinalState(transaction.transactionState)) {
       const routeDetails = getRouteDetails(
         transactionDetails,
         totalTxsRequired,
@@ -127,7 +132,7 @@ export const subscribeToRouteStatus = async ({
       } catch (error) {
         console.error(error);
       } finally {
-        await wait(500);
+        await wait(1000);
       }
     }
   }
@@ -167,8 +172,6 @@ const getRouteDetails = (
     } else if (someTxFailed) {
       routeStatus = "failed";
     }
-  } else {
-    routeStatus = "pending";
   }
 
   const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;

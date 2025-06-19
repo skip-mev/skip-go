@@ -12,7 +12,7 @@ import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { submit } from "src/api/postSubmit";
-import { subscribeToRouteStatus } from "src/public-functions/subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus } from "src/public-functions/subscribeToRouteStatus";
 import type TransactionDetails from "src/public-functions/subscribeToRouteStatus";
 
 export const executeTransactions = async (
@@ -206,7 +206,7 @@ export const executeTransactions = async (
     }
   });
 
-  await subscribeToRouteStatus({
+  await executeAndSubscribeToRouteStatus({
     transactionDetails: transactionDetails,
     txsRequired: txs.length,
     executeTransaction,
