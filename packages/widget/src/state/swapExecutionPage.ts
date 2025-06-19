@@ -369,11 +369,9 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, {
-      route: route as RouteResponse,
+      txsRequired: route?.txsRequired,
       transactionDetails: newTransactionDetailsArray,
       transferEvents: [],
-      isSettled: false,
-      isSuccess: false,
       timestamp: swapExecutionState?.timestamp,
       ...(status && { status }),
     });

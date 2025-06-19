@@ -4,6 +4,7 @@ import {
   type TxStatusResponse,
 } from "../api/postTransactionStatus";
 import type {
+  TransactionState,
   TransferAssetRelease,
   TransferStatus,
   Tx,
@@ -28,9 +29,17 @@ export type TransactionDetails = {
   explorerLink?: string;
 };
 
+export type RouteDetailsTransactionDetails = {
+  chainId: string;
+  txHash: string;
+  transactionState: TransactionState;
+  tracked: boolean;
+  explorerLink: string;
+}
+
 export type RouteDetails = {
   status: RouteStatus;
-  transactionDetails: TransactionDetails[];
+  transactionDetails: RouteDetailsTransactionDetails[];
   transferEvents: ClientTransferEvent[];
   transferAssetRelease?: TransferAssetRelease;
 };
@@ -62,7 +71,6 @@ export const subscribeToRouteStatus = async ({
   onTransactionCompleted,
   onRouteStatusUpdated,
 }: subscribeToRouteStatusProps) => {
-  let overallRouteStatus: RouteStatus = "pending";
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (transaction.status && isFinalState(transaction.status.state)) {
@@ -71,20 +79,13 @@ export const subscribeToRouteStatus = async ({
         totalTxsRequired,
       );
       onRouteStatusUpdated?.(routeDetails);
-      overallRouteStatus = routeDetails.status;
       continue;
     }
 
     if (executeTransaction && !transaction.txHash) {
       const { txHash } = await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
-    }
 
-    if (transaction.txHash === undefined) {
-      throw new Error("subscribeToRouteStatus error: txHash is undefined");
-    }
-
-    if (transaction.tracked === undefined) {
       const { explorerLink } = await trackTransaction({
         chainId: transaction.chainId,
         txHash: transaction.txHash,
@@ -93,6 +94,10 @@ export const subscribeToRouteStatus = async ({
       transaction.tracked = true;
       transaction.explorerLink = explorerLink;
       await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
+    }
+
+    if (transaction.txHash === undefined) {
+      throw new Error("subscribeToRouteStatus error: txHash is undefined");
     }
 
     while (true) {
@@ -104,13 +109,12 @@ export const subscribeToRouteStatus = async ({
 
         transaction.status = statusResponse;
 
-        const routeDetails  = getRouteDetails(
+        const routeDetails = getRouteDetails(
           transactionDetails,
           totalTxsRequired,
         );
 
         onRouteStatusUpdated?.(routeDetails);
-        overallRouteStatus = routeDetails.status;
 
         if (isFinalState(statusResponse.state)) {
           onTransactionCompleted?.({
@@ -171,7 +175,13 @@ const getRouteDetails = (
 
   const newRouteDetails: RouteDetails = {
     status: routeStatus,
-    transactionDetails: [...transactionDetails],
+    transactionDetails: transactionDetails.map((tx) => {
+      const { status, txHash, ...rest } = tx;
+      return {
+        ...rest,
+        transactionState: status?.state,
+      } as RouteDetailsTransactionDetails;
+    }),
     transferEvents,
     transferAssetRelease,
   };

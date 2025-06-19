@@ -1,18 +1,20 @@
 import { TransactionDetails } from "./swapExecutionPage";
-import { SimpleStatus } from "@/utils/clientType";
+import { ClientTransferEvent, SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
-import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
-import { RouteResponse } from "@skip-go/client";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import { atomWithIndexedDBStorage } from "@/utils/storage";
+import { RouteResponse, TransferAssetRelease } from "@skip-go/client";
 
 export type TransactionHistoryItem = {
-  route: RouteResponse;
+  route?: RouteResponse; // deprecated
+  status: SimpleStatus;
+  txsRequired?: number;
   transactionDetails: TransactionDetails[];
   timestamp: number;
-  status: SimpleStatus;
   signatures: number;
-} & Partial<TxsStatus>;
+  transferEvents: ClientTransferEvent[];
+  transferAssetRelease?: TransferAssetRelease;
+};
 
 export const transactionHistoryAtom = atomWithIndexedDBStorage<TransactionHistoryItem[]>(
   LOCAL_STORAGE_KEYS.transactionHistory,

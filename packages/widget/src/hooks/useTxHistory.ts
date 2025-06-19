@@ -12,7 +12,7 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
 
   const transactionDetails = txHistoryItem?.transactionDetails;
 
-  const txsRequired = txHistoryItem?.route?.txsRequired;
+  const txsRequired = txHistoryItem?.txsRequired ?? txHistoryItem?.route?.txsRequired;
 
   useEffect(() => {
     subscribeToRouteStatus({
