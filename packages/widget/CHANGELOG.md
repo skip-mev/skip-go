@@ -1,5 +1,23 @@
 ## 0.0.15
 
+## 3.12.1
+
+### Patch Changes
+
+- add29a3: update confirming to confirming in walet
+- 5e4b704: update types
+- ded5434: auto detect solana wallets
+- 415ab64: pill button and slippage input border radius
+- da13834: Fix typescript errors and UnexpectedErrorPageTimeout
+- f32de07: update registries
+- 6589b7b: Add consistent 1.5 line height on error and warning page descriptions.
+- 1202564: update hover background on chevron icon
+- 4bf11ac: Store history in indexedDB instead of localStorage
+- Updated dependencies [5e4b704]
+- Updated dependencies [f32de07]
+- Updated dependencies [78d4061]
+  - @skip-go/client@1.3.0
+
 ## 3.12.0
 
 ### Minor Changes
