@@ -54,6 +54,7 @@ export default defineConfig(async ({ watch }) => {
       dts: true,
       clean: !watch,
       format: ["esm"],
+      outDir: "dist/esm",
     },
     {
       ...sharedConfig,
