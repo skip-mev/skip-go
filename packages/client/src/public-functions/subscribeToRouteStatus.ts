@@ -22,22 +22,13 @@ export type TransactionDetails = {
   chainId: string;
   txHash?: string;
   status?: TxStatusResponse;
-  transactionState?: TransactionState;
   tracked?: boolean;
   explorerLink?: string;
 };
 
-export type RouteDetailsTransactionDetails = {
-  chainId: string;
-  txHash: string;
-  transactionState: TransactionState;
-  tracked: boolean;
-  explorerLink: string;
-}
-
 export type RouteDetails = {
   status: RouteStatus;
-  transactionDetails: RouteDetailsTransactionDetails[];
+  transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
   transferAssetRelease?: TransferAssetRelease;
 };
@@ -78,7 +69,7 @@ export const executeAndSubscribeToRouteStatus = async ({
 }: executeAndSubscribeToRouteStatus) => {
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
-    if (transaction.transactionState && isFinalState(transaction.transactionState)) {
+    if (transaction.status && isFinalState(transaction.status.state)) {
       const routeDetails = getRouteDetails(
         transactionDetails,
         totalTxsRequired,
@@ -178,13 +169,7 @@ const getRouteDetails = (
 
   const newRouteDetails: RouteDetails = {
     status: routeStatus,
-    transactionDetails: transactionDetails.map((tx) => {
-      const { status, txHash, ...rest } = tx;
-      return {
-        ...rest,
-        transactionState: status?.state,
-      } as RouteDetailsTransactionDetails;
-    }),
+    transactionDetails,
     transferEvents,
     transferAssetRelease,
   };
