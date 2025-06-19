@@ -7,7 +7,9 @@ import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 export const signSvmTransaction = async ({
   tx,
   options,
+  index
 }: {
+  index: number;
   tx?: { svmTx?: SvmTx };
   options?: ExecuteRouteOptions;
 }) => {
@@ -42,7 +44,11 @@ export const signSvmTransaction = async ({
   const transaction = Transaction.from(txBuffer);
 
   if (!("signTransaction" in signer)) return;
-
+  options?.onTransactionSignRequested?.({
+    chainId: svmTx.chainId,
+    signerAddress: signer.publicKey?.toBase58(),
+    txIndex: index
+  });
   const signedTx = await signer.signTransaction(transaction);
   options?.onTransactionSigned?.({ chainId: svmTx.chainId });
 

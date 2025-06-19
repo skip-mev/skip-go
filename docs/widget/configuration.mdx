@@ -292,17 +292,14 @@ onWalletDisconnected?: (params: {
   chainType?: string;
 }) => void;
 
+onTransactionSignRequested?: (props: onTransactionSignRequestedProps) => void;
+
 onTransactionBroadcasted?: (params: {
-  txHash: string;
   chainId: string;
-  explorerLink?: string;
-  sourceAddress: string;
-  destinationAddress: string;
-  sourceAssetDenom: string;
-  sourceAssetChainID: string;
-  destAssetDenom: string;
-  destAssetChainID: string;
+  signerAddress?: string;
+  txIndex: number;
 }) => void;
+
 onTransactionComplete?: (params: {
   txHash: string;
   chainId: string;
@@ -314,7 +311,37 @@ onTransactionComplete?: (params: {
   destAssetDenom: string;
   destAssetChainID: string;
 }) => void;
+
 onTransactionFailed?: (params: { error: Error }) => void;
+
+onRouteUpdated?: (props: {
+  srcChainId?: string;
+  srcAssetDenom?: string;
+  destChainId?: string;
+  destAssetDenom?: string;
+  amountIn?: string;
+  amountOut?: string;
+  requiredChainAddresses?: string[];
+}) => void;
+
+onSourceAndDestinationSwapped?: (props: {
+  srcChainId?: string;
+  srcAssetDenom?: string;
+  destChainId?: string;
+  destAssetDenom?: string;
+  amountIn?: string;
+  amountOut?: string;
+}) => void;
+
+onSourceAssetUpdated?: (props: {
+  chainId?: string;
+  denom?: string;
+}) => void;
+
+onDestinationAssetUpdated?: (props: {
+  chainId?: string;
+  denom?: string;
+}) => void;
 ```
 
 - `onWalletConnected`: Called when a wallet is connected.
