@@ -41,9 +41,9 @@ export const migrateOldLocalStorageValues = () => {
       if (!transactionHistoryVersion && key === LOCAL_STORAGE_KEYS.transactionHistory) {
         localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
         console.info(
-          `updated from transactionHistoryVersion ${transactionHistoryVersion} to ${HISTORY_VERSION["0.0.1"]}`,
+          `updated from transactionHistoryVersion ${transactionHistoryVersion} to ${HISTORY_VERSION.camelCase}`,
         );
-        set(transactionHistoryVersionAtom, HISTORY_VERSION["0.0.1"]);
+        set(transactionHistoryVersionAtom, HISTORY_VERSION.camelCase);
       } else if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
         localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
         console.info(`updated old localStorage value for ${key}`);

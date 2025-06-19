@@ -7,7 +7,7 @@ import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
 
 export enum HISTORY_VERSION {
-  "0.0.1" = "0.0.1",
+  "camelCase",
 }
 
 export type TransactionHistoryItem = {
@@ -18,7 +18,7 @@ export type TransactionHistoryItem = {
   signatures: number;
 } & Partial<TxsStatus>;
 
-export const transactionHistoryVersionAtom = atomWithStorage<string | undefined>(
+export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(
   LOCAL_STORAGE_KEYS.transactionHistoryVersion,
   undefined,
 );
