@@ -14,6 +14,7 @@
     },
     "./cjs": {
       "require": "./dist/cjs/index.js",
+      "import": "./dist/cjs/index.js",
       "types": "./dist/index.d.ts"
     },
     "./package.json": "./package.json"
