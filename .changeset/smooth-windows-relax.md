@@ -3,4 +3,4 @@
 "@skip-go/widget": patch
 ---
 
-onTransactionSignRequested
+added onTransactionSignRequested callback
