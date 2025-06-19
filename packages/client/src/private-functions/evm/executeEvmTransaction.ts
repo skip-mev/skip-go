@@ -7,6 +7,7 @@ import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 export const executeEvmTransaction = async (
   message: { evmTx?: EvmTx },
   options: ExecuteRouteOptions,
+  index: number,
 ) => {
   const gasArray = ClientState.validateGasResults;
 
@@ -95,6 +96,11 @@ export const executeEvmTransaction = async (
     });
   }
 
+    options?.onTransactionSignRequested?.({
+    chainId: evmTx.chainId,
+    signerAddress: evmSigner.account.address as `0x${string}`,
+    txIndex: index
+  });
   // Execute the transaction
   const txHash = await extendedSigner.sendTransaction({
     account: evmSigner.account,
