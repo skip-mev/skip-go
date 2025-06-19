@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.12.2
+
+### Patch Changes
+
+- fd0e0dd: Revert indexedDb back to localStorage, add transactionHistoryVersion
+- fd0e0dd: added onTransactionSignRequested callback
+- Updated dependencies [fd0e0dd]
+- Updated dependencies [fd0e0dd]
+  - @skip-go/client@1.3.1
+
 ## 3.12.1
 
 ### Patch Changes

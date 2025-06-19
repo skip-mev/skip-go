@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 1.3.1
+
+### Patch Changes
+
+- fd0e0dd: added onTransactionSignRequested callback
+- fd0e0dd: Add cjs version at /cjs
+
 ## 1.3.0
 
 ### Minor Changes
