@@ -6,6 +6,10 @@ import { RouteResponse } from "@skip-go/client";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
 
+export enum HISTORY_VERSION {
+  "0.0.1" = "0.0.1",
+}
+
 export type TransactionHistoryItem = {
   route: RouteResponse;
   transactionDetails: TransactionDetails[];
