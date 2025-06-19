@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
-import { ChainTransaction } from "@skip-go/client";
+import { ChainTransaction, RouteDetails } from "@skip-go/client";
 import { ClientOperation, SimpleStatus } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
@@ -35,7 +35,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
     address: string;
     image?: string;
   };
-  statusData?: TxsStatus;
+  statusData?: RouteDetails;
 };
 
 export const SwapExecutionPageRouteDetailedRow = ({

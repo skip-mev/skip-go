@@ -63,7 +63,10 @@ export const useBroadcastedTxsStatus = ({
 
         await Promise.all(
           incompleteTxs.map(async (tx) => {
-            const status = await transactionStatus(tx);
+            const status = await transactionStatus({
+              txHash: tx.txHash,
+              chainId: tx.chainId,
+            });
             statusResponseMap.set(tx.txHash, status);
           }),
         );

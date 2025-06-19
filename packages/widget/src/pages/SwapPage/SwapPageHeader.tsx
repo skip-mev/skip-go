@@ -102,7 +102,7 @@ const isFetchingLastTransactionStatusAtom = atom(async (get) => {
 
   return (
     (overallStatus === "pending" && transactionsSigned === route?.txsRequired) ||
-    (lastTxHistoryItemInTime?.transactionHistoryItem?.isSettled !== true &&
-      lastTxHistoryItemInTime?.transactionHistoryItem?.route?.txsRequired === 1)
+    (lastTxHistoryItemInTime?.transactionHistoryItem?.status === "pending" &&
+      lastTxHistoryItemInTime?.transactionHistoryItem?.txsRequired === 1)
   );
 });

@@ -9,6 +9,7 @@ import { SwapExecutionPageRouteDetailed } from "./SwapExecutionPageRouteDetailed
 import { currentPageAtom, Routes } from "@/state/router";
 import {
   chainAddressesAtom,
+  routeStatusAtom,
   skipSubmitSwapExecutionAtom,
   swapExecutionStateAtom,
 } from "@/state/swapExecutionPage";
@@ -49,7 +50,7 @@ export const SwapExecutionPage = () => {
     isValidatingGasBalance,
     transactionsSigned,
   } = useAtomValue(swapExecutionStateAtom);
-  const lastTransactionInTime = useAtomValue(lastTransactionInTimeAtom);
+  const statusData = useAtomValue(routeStatusAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
   const [simpleRoute, setSimpleRoute] = useState(true);
@@ -61,19 +62,9 @@ export const SwapExecutionPage = () => {
     ? route.txsRequired - transactionsSigned
     : 0;
 
-  const { data: statusData } = useBroadcastedTxsStatus({
-    txsRequired: route?.txsRequired,
-    transactionDetails: transactionDetailsArray,
-  });
-
   const lastTransaction = transactionDetailsArray.at(-1);
   const lastTxHash = lastTransaction?.txHash;
   const lastTxChainId = lastTransaction?.chainId;
-
-  useSyncTxStatus({
-    statusData,
-    timestamp: lastTransactionInTime?.transactionHistoryItem?.timestamp,
-  });
 
   const lastOperation = clientOperations[clientOperations.length - 1];
 

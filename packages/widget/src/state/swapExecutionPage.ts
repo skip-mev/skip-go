@@ -11,7 +11,11 @@ import {
   walletsAtom,
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import { setTransactionHistoryAtom, transactionHistoryAtom } from "./history";
+import {
+  lastTransactionInTimeAtom,
+  setTransactionHistoryAtom,
+  transactionHistoryAtom,
+} from "./history";
 import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { isUserRejectedRequestError } from "@/utils/error";
@@ -27,6 +31,7 @@ import {
   TransactionCallbacks,
   UserAddress,
   TxStatusResponse,
+  RouteDetails,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
@@ -89,7 +94,10 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
 );
 
 export const setOverallStatusAtom = atom(null, (_get, set, status: SimpleStatus) => {
-  set(swapExecutionStateAtom, (state) => ({ ...state, overallStatus: status }));
+  set(swapExecutionStateAtom, (state) => ({
+    ...state,
+    overallStatus: status,
+  }));
 });
 
 export const clearIsValidatingGasBalanceAtom = atom(null, (_get, set) => {
@@ -98,6 +106,8 @@ export const clearIsValidatingGasBalanceAtom = atom(null, (_get, set) => {
     isValidatingGasBalance: undefined,
   }));
 });
+
+export const routeStatusAtom = atom<RouteDetails>();
 
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
@@ -142,7 +152,31 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     timestamp: Date.now(),
   });
 
+  set(routeStatusAtom, undefined);
+
   set(submitSwapExecutionCallbacksAtom, {
+    onRouteStatusUpdated: async (routeStatus) => {
+      set(routeStatusAtom, routeStatus);
+      set(setOverallStatusAtom, routeStatus.status);
+
+      const lastTransactionInTime = await get(lastTransactionInTimeAtom);
+
+      const timestamp = lastTransactionInTime?.transactionHistoryItem?.timestamp;
+
+      const transactionHistoryItems = await get(transactionHistoryAtom);
+
+      const txHistoryItem = transactionHistoryItems.find(
+        (txHistoryItem) => txHistoryItem.timestamp === timestamp,
+      );
+
+      if (txHistoryItem) {
+        set(setTransactionHistoryAtom, {
+          ...txHistoryItem,
+          status: routeStatus.status,
+        });
+      }
+      console.log(routeStatus);
+    },
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
       if (txInfo.status?.status !== "STATE_COMPLETED") {
@@ -184,7 +218,11 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
       });
     },
     onTransactionCompleted: async ({ chainId, txHash, status }) => {
-      track("execute route: transaction completed", { chainId, txHash, status });
+      track("execute route: transaction completed", {
+        chainId,
+        txHash,
+        status,
+      });
       setTag("txCompleted", true);
       const chain = chains?.find((chain) => chain.chainId === chainId);
       const explorerLink = createExplorerLink({
@@ -294,7 +332,10 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
 export const setValidatingGasBalanceAtom = atom(
   null,
   (_get, set, isValidatingGasBalance: ValidatingGasBalanceData) => {
-    set(swapExecutionStateAtom, (state) => ({ ...state, isValidatingGasBalance }));
+    set(swapExecutionStateAtom, (state) => ({
+      ...state,
+      isValidatingGasBalance,
+    }));
   },
 );
 
@@ -328,11 +369,9 @@ export const setTransactionDetailsAtom = atom(
     });
 
     set(setTransactionHistoryAtom, {
-      route: route as RouteResponse,
+      txsRequired: route?.txsRequired,
       transactionDetails: newTransactionDetailsArray,
       transferEvents: [],
-      isSettled: false,
-      isSuccess: false,
       timestamp: swapExecutionState?.timestamp,
       ...(status && { status }),
     });
