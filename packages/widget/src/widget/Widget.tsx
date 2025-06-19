@@ -23,10 +23,11 @@ import { rootIdAtom } from "@/state/skipClient";
 import packageJson from "../../package.json";
 import { IbcEurekaHighlightedAssets } from "@/state/ibcEurekaHighlightedAssets";
 import { ChainFilter } from "@/state/filters";
-import { migrateHistoryFromLocalStorageToIndexedDB } from "@/utils/migrateOldLocalStorageValues";
+import { migrateOldLocalStorageValues } from "@/utils/migrateOldLocalStorageValues";
 import { EVMProvider } from "@/providers/EVMProvider";
 import { CosmosProvider } from "@/providers/CosmosProvider";
 import { SolanaProvider } from "@/providers/SolanaProvider";
+import { transactionHistoryVersionAtom } from "@/state/history";
 
 export type WidgetRouteConfig = RouteRequest & Pick<MessagesRequest, "timeoutSeconds">;
 
@@ -104,7 +105,7 @@ export const queryClient = new QueryClient();
 
 export const jotaiStore: ReturnType<typeof createStore> = createStore();
 
-migrateHistoryFromLocalStorageToIndexedDB();
+migrateOldLocalStorageValues();
 
 export const Widget = (props: WidgetProps) => {
   return (

@@ -1,10 +1,18 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionHistoryItem } from "@/state/history";
+import { TransactionHistoryItem, transactionHistoryVersionAtom } from "@/state/history";
 import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
-import { idbSet } from "./storage";
+import { jotaiStore } from "@/widget/Widget";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
+
+  const { set } = jotaiStore;
+
+  const transactionHistoryVersion = localStorage.getItem(
+    LOCAL_STORAGE_KEYS.transactionHistoryVersion,
+  );
+  console.info(`loaded transactionHistory version ${transactionHistoryVersion}`);
 
   Object.values(LOCAL_STORAGE_KEYS).forEach((key) => {
     try {
@@ -26,37 +34,20 @@ export const migrateOldLocalStorageValues = () => {
         );
       }
 
-      if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
+      if (!transactionHistoryVersion && key === LOCAL_STORAGE_KEYS.transactionHistory) {
         localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
-        // eslint-disable-next-line no-console
-        console.info("updated old localStorage values");
+        console.info(
+          `updated from transactionHistoryVersion ${transactionHistoryVersion} to 0.0.1`,
+        );
+        set(transactionHistoryVersionAtom, "0.0.1");
+      } else if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
+        localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
+        console.info(`updated old localStorage value for ${key}`);
       }
     } catch (err) {
       console.warn(`Failed to migrate localStorage key "${key}":`, err);
     }
   });
-
-  migrateHistoryFromLocalStorageToIndexedDB();
-};
-
-export const migrateHistoryFromLocalStorageToIndexedDB = async () => {
-  if (typeof window === "undefined") return;
-
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.transactionHistory);
-    if (!raw) return;
-
-    const parsed = JSON.parse(raw);
-    const transformed = toCamelCase(parsed);
-
-    await idbSet(LOCAL_STORAGE_KEYS.transactionHistory, transformed);
-
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.transactionHistory);
-    // eslint-disable-next-line no-console
-    console.info("✅ Migrated transactionHistory from localStorage to IndexedDB");
-  } catch (err) {
-    console.warn("⚠️ Failed to migrate transactionHistory", err);
-  }
 };
 
 export function toCamelCase<T extends object>(obj: T) {
