@@ -1,5 +1,15 @@
 ## 0.0.15
 
+## 3.12.4
+
+### Patch Changes
+
+- 43663de: Enable auto-reconnect for cosmos
+- 9beee7c: Refactor fees code to get data from estimated_fees, Include missing bridge types
+- ce78bcf: Fix flickering of select asset button when changing assets
+- Updated dependencies [c7bc3b8]
+  - @skip-go/client@1.3.2
+
 ## 3.12.3
 
 ### Patch Changes
