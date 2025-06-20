@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.3.2
+
+### Patch Changes
+
+- c7bc3b8: Fix typo in LayerZeroTransfer, Add layerzero as bridge type
+
 ## 1.3.1
 
 ### Patch Changes
