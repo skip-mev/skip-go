@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.12.3
+
+### Patch Changes
+
+- 9396ecb: Fix react error 426 by wrapping page transition with startTransition and ensuring setCurrentPage is the last step
+
 ## 3.12.2
 
 ### Patch Changes
