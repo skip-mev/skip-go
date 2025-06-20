@@ -181,7 +181,7 @@ export const SwapPageAssetChainInput = ({
           onMouseEnter={() => setIsAssetButtonHovered(true)}
           onMouseLeave={() => setIsAssetButtonHovered(false)}
         >
-          {assetDetails?.assetImage && assetDetails.symbol ? (
+          {assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
