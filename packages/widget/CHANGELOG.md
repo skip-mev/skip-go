@@ -1,5 +1,11 @@
 ## 0.0.15
 
+## 3.12.5
+
+### Patch Changes
+
+- c3838d0: Add LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE state map to pending
+
 ## 3.12.4
 
 ### Patch Changes
