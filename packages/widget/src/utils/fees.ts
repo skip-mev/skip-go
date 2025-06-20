@@ -1,7 +1,6 @@
 import { formatUSD } from "@/utils/intl";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
 import { FeeType, Fee, RouteResponse, BridgeType } from "@skip-go/client";
-import { ClientOperation, OperationType, getClientOperations } from "./clientType";
 
 export type FeeDetail = {
   assetAmount: number;
@@ -11,49 +10,6 @@ export type FeeDetail = {
 export type LabeledFee = {
   label: string;
   fee: FeeDetail;
-};
-
-/** Turn a ClientOperation into a FeeDetail */
-const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
-  if (op.type === OperationType.goFastTransfer && op.fee) {
-    const {
-      feeAsset,
-      sourceChainFeeAmount,
-      destinationChainFeeAmount,
-      bpsFeeAmount,
-      sourceChainFeeUsd,
-      destinationChainFeeUsd,
-      bpsFeeUsd,
-    } = op.fee;
-
-    const totalAmt = [sourceChainFeeAmount, destinationChainFeeAmount, bpsFeeAmount]
-      .reduce((s, a) => s + Number(a), 0)
-      .toString();
-    const totalUsd = [sourceChainFeeUsd, destinationChainFeeUsd, bpsFeeUsd].reduce(
-      (s, u) => s + Number(u),
-      0,
-    );
-
-    const human = convertTokenAmountToHumanReadableAmount(totalAmt, feeAsset.decimals);
-
-    return {
-      assetAmount: Number(human),
-      formattedAssetAmount: `${human} ${feeAsset.symbol}`,
-      formattedUsdAmount: formatUSD(totalUsd.toString()),
-    };
-  }
-
-  // all other ops have a simple fee + usdFeeAmount
-  const { feeAmount, feeAsset, usdFeeAmount } = op;
-  if (!feeAmount || !feeAsset?.decimals) return;
-
-  const human = convertTokenAmountToHumanReadableAmount(feeAmount, feeAsset.decimals);
-
-  return {
-    assetAmount: Number(human),
-    formattedAssetAmount: `${human} ${feeAsset.symbol}`,
-    formattedUsdAmount: usdFeeAmount ? formatUSD(usdFeeAmount) : undefined,
-  };
 };
 
 const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
