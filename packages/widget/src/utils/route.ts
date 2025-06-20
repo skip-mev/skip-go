@@ -1,6 +1,6 @@
 import { formatUSD } from "@/utils/intl";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
-import { FeeType, Fee, RouteResponse } from "@skip-go/client";
+import { FeeType, Fee, RouteResponse, BridgeType } from "@skip-go/client";
 import { ClientOperation, OperationType, getClientOperations } from "./clientType";
 
 export type FeeDetail = {
@@ -56,56 +56,55 @@ const computeOpFee = (op: ClientOperation): FeeDetail | undefined => {
   };
 };
 
-function computeSmartRelayFee(estimatedFees: Fee[]): FeeDetail | undefined {
-  const relay = estimatedFees.filter((f) => f.feeType === FeeType.SMART_RELAY);
-  if (!relay.length) return;
-
-  const totalAmt = relay.reduce((s, f) => s + Number(f.amount), 0).toString();
-  const totalUsd = relay.reduce((s, f) => s + Number(f.usdAmount), 0);
-
-  const { originAsset } = relay[0];
-  const decimals = originAsset.decimals ?? 6;
-  const human = convertTokenAmountToHumanReadableAmount(totalAmt, decimals);
+const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
+  const humanReadableAmount = convertTokenAmountToHumanReadableAmount(
+    estimatedFee.amount ?? 0,
+    estimatedFee.originAsset.decimals,
+  );
+  const totalUsd = Number(estimatedFee.usdAmount);
 
   return {
-    assetAmount: Number(human),
-    formattedAssetAmount: `${human} ${originAsset.symbol}`,
+    assetAmount: Number(humanReadableAmount),
+    formattedAssetAmount: `${humanReadableAmount} ${estimatedFee.originAsset.symbol}`,
     formattedUsdAmount: formatUSD(totalUsd.toString()),
   };
-}
+};
+
+const BRIDGE_ID_TO_LABEL_MAP: Record<BridgeType, string> = {
+  [BridgeType.IBC]: "IBC",
+  [BridgeType.AXELAR]: "Axelar",
+  [BridgeType.HYPERLANE]: "Hyperlane",
+  [BridgeType.GO_FAST]: "Go-Fast",
+  [BridgeType.OPINIT]: "OpInit",
+  [BridgeType.CCTP]: "CCTP",
+  [BridgeType.EUREKA]: "IBC Eureka",
+  [BridgeType.STARGATE]: "Stargate",
+  [BridgeType.LAYER_ZERO]: "Layer Zero",
+};
 
 export function getFeeList(route: RouteResponse): LabeledFee[] {
-  const fees: LabeledFee[] = [];
-
-  if (!route.operations) return fees;
-  const clientOps = getClientOperations(route.operations);
-  clientOps.forEach((op) => {
-    const fee = computeOpFee(op);
-    if (!fee) return;
-
-    let label = "Bridge Fee";
-    switch (op.type) {
-      case OperationType.axelarTransfer:
-        label = "Axelar Bridging Fee";
-        break;
-      case OperationType.hyperlaneTransfer:
-        label = "Hyperlane Bridging Fee";
-        break;
-      case OperationType.goFastTransfer:
-        label = "Go-Fast Transfer Fee";
-        break;
-    }
-
-    fees.push({ label, fee });
-  });
-
-  // 2) if smart-relay is present, append it too
-  const smartFee = computeSmartRelayFee(route.estimatedFees || []);
-  if (smartFee) {
-    fees.push({ label: "Smart Relay Fee", fee: smartFee });
+  if (!route.estimatedFees || route.estimatedFees.length === 0) {
+    return [];
   }
 
-  return fees;
+  return route.estimatedFees.map((fee) => {
+    if (fee.feeType === FeeType.SMART_RELAY) {
+      return {
+        label: "Smart Relay Fee",
+        fee: getFeeDetail(fee),
+      };
+    }
+
+    const label = fee.bridgeId
+      ? `${BRIDGE_ID_TO_LABEL_MAP[fee.bridgeId]} Bridging Fee`
+      : "Bridging Fee";
+    const feeDetail = getFeeDetail(fee);
+
+    return {
+      label,
+      fee: feeDetail,
+    };
+  });
 }
 
 export function getTotalFees(fees: LabeledFee[]): FeeDetail | undefined {
