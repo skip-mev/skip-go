@@ -131,6 +131,7 @@ export interface AxelarTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -229,6 +230,7 @@ export interface CCTPTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -299,6 +301,7 @@ export interface StargateTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -374,6 +377,7 @@ export interface GoFastTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -477,6 +481,7 @@ export interface BridgeJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   id?: BridgeTypeJson;
@@ -495,6 +500,7 @@ export interface BridgeJson {
  * * `OPINIT` - Opinit Bridge
  * * `GO_FAST` - Go Fast Bridge
  * * `STARGATE` - Stargate Bridge
+ * * `LAYER_ZERO` - Layerzero Bridge
  * * `EUREKA` - IBC Eureka Bridge
  */
 export enum BridgeTypeJson {
@@ -505,6 +511,7 @@ export enum BridgeTypeJson {
   OPINIT = "OPINIT",
   GO_FAST = "GO_FAST",
   STARGATE = "STARGATE",
+  LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
 }
 
@@ -754,6 +761,7 @@ export interface HyperlaneTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1201,6 +1209,7 @@ export interface OPInitTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1299,6 +1308,7 @@ export interface TransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1406,6 +1416,7 @@ export interface EurekaTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1450,7 +1461,7 @@ export interface LayerZeroTransferJson {
   denom_in: string;
   /** Denom of the output asset of the transfer */
   denom_out: string;
-  source_oft_cntract_address: string;
+  source_oft_contract_address: string;
   destination_endpoint_id: number;
   messaging_fee_asset: AssetJson;
   messaging_fee_amount: string;
@@ -1464,6 +1475,7 @@ export interface LayerZeroTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id: BridgeTypeJson;
@@ -1553,6 +1565,7 @@ export interface FeeJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
