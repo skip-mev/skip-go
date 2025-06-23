@@ -12,6 +12,7 @@ import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
 import { submitTransaction } from "src/api/postSubmitTransaction";
+import { trackTransaction } from "src/api/postTrackTransaction";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -177,6 +178,16 @@ export const executeTransactions = async (
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
         };
+        try {
+          const { explorerLink } = await trackTransaction({
+            chainId: txResult.chainId,
+            txHash: txResult.txHash,
+            ...trackTxPollingOptions,
+          });
+          txResult.explorerLink = explorerLink;
+        } catch (error) {
+          console.warn(`track failed for txHash:${txResult.txHash}, chainId: ${txResult.chainId}`);
+        }
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
         txResult = await executeSvmTransaction(tx, options, i);
@@ -197,9 +208,6 @@ export const executeTransactions = async (
 
     const txStatusResponse = await waitForTransaction({
       ...txResult,
-      ...trackTxPollingOptions,
-      isEvm: "evmTx" in tx,
-      onTransactionTracked: options.onTransactionTracked,
     });
 
     await onTransactionCompleted?.({

@@ -1,12 +1,10 @@
 import type { TransactionState } from "src/types/swaggerTypes";
-import { trackTransaction, type TrackTxRequest } from "../api/postTrackTransaction";
 import { transactionStatus } from "../api/postTransactionStatus";
-import type { TransactionCallbacks } from "../types/callbacks";
 import { wait } from "../utils/timer";
 
-export type WaitForTransactionProps = TrackTxRequest & {
-  isEvm?: boolean;
-  onTransactionTracked?: TransactionCallbacks["onTransactionTracked"];
+export type WaitForTransactionProps = {
+  chainId: string;
+  txHash: string;
 };
 
 const finalStates = ["STATE_COMPLETED_SUCCESS", "STATE_COMPLETED_ERROR", "STATE_ABANDONED"];
@@ -18,23 +16,7 @@ const isFinalState = (state: TransactionState) => {
 export const waitForTransaction = async ({
   chainId,
   txHash,
-  isEvm,
-  onTransactionTracked,
-  ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
-  if (isEvm) {
-    try {
-      const { explorerLink } = await trackTransaction({
-        chainId,
-        txHash,
-        ...trackTxPollingOptions,
-      });
-      await onTransactionTracked?.({ txHash, chainId, explorerLink });
-    } catch (error) {
-      console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
-    }
-  }
-  
   let txStatusResponse;
 
   while (txStatusResponse?.state && !isFinalState(txStatusResponse?.state)) {
