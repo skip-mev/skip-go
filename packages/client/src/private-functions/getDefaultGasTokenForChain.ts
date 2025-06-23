@@ -7,7 +7,7 @@ export const getDefaultGasTokenForChain = async (chainId: string) => {
     return gasDenom;
   }
 
-  const chain = chains().find((chain) => chain.chain_id === chainId);
+  const chain = chains().find((chain) => chain.chainId === chainId);
   if (!chain) {
     return undefined;
   }
@@ -20,7 +20,7 @@ export const getDefaultGasTokenForChain = async (chainId: string) => {
   const stakingTokens = getStakingTokensForChain(chainId);
 
   if (stakingTokens && stakingTokens.length > 0) {
-    const feeAsset = chain.fees.fee_tokens.find(
+    const feeAsset = chain.fees.feeTokens.find(
       (feeToken) => feeToken.denom === stakingTokens[0]?.denom,
     );
 
@@ -30,24 +30,24 @@ export const getDefaultGasTokenForChain = async (chainId: string) => {
   }
 
   // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
-  const nonIBCAsset = chain.fees.fee_tokens.find(
+  const nonIBCAsset = chain.fees.feeTokens.find(
     (token) => !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
   );
   if (nonIBCAsset) {
     return nonIBCAsset.denom;
   }
 
-  const nonL2Asset = chain.fees.fee_tokens.find((token) => !token.denom.startsWith("l2/"));
+  const nonL2Asset = chain.fees.feeTokens.find((token) => !token.denom.startsWith("l2/"));
   if (nonL2Asset) {
     return nonL2Asset.denom;
   }
 
   // if all else fails, just return the first token in the array
-  return chain.fees.fee_tokens[0]?.denom;
+  return chain.fees.feeTokens[0]?.denom;
 };
 
 const getStakingTokensForChain = (chainId: string) => {
-  const chain = chains().find((chain) => chain.chain_id === chainId);
+  const chain = chains().find((chain) => chain.chainId === chainId);
   if (!chain) {
     throw new Error(
       `getStakingTokensForChain error: failed to find chain id '${chainId}' in registry`,
@@ -58,5 +58,5 @@ const getStakingTokensForChain = (chainId: string) => {
     return undefined;
   }
 
-  return chain.staking.staking_tokens;
+  return chain.staking.stakingTokens;
 };

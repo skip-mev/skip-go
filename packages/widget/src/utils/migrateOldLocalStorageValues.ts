@@ -1,9 +1,22 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TransactionHistoryItem } from "@/state/history";
+import {
+  TransactionHistoryItem,
+  transactionHistoryVersionAtom,
+  HISTORY_VERSION,
+} from "@/state/history";
 import { LOCAL_STORAGE_KEYS } from "@/state/localStorageKeys";
+import { jotaiStore } from "@/widget/Widget";
 
 export const migrateOldLocalStorageValues = () => {
   if (typeof window === "undefined") return;
+
+  const { set } = jotaiStore;
+
+  const transactionHistoryVersion = localStorage.getItem(
+    LOCAL_STORAGE_KEYS.transactionHistoryVersion,
+  );
+  console.info(`loaded transactionHistory version ${transactionHistoryVersion}`);
 
   Object.values(LOCAL_STORAGE_KEYS).forEach((key) => {
     try {
@@ -25,10 +38,15 @@ export const migrateOldLocalStorageValues = () => {
         );
       }
 
-      if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
+      if (!transactionHistoryVersion && key === LOCAL_STORAGE_KEYS.transactionHistory) {
         localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
-        // eslint-disable-next-line no-console
-        console.info("updated old localStorage values");
+        console.info(
+          `updated from transactionHistoryVersion ${transactionHistoryVersion} to ${HISTORY_VERSION.camelCase}`,
+        );
+        set(transactionHistoryVersionAtom, HISTORY_VERSION.camelCase);
+      } else if (JSON.stringify(parsed) !== JSON.stringify(newLocalStorageValue)) {
+        localStorage.setItem(key, JSON.stringify(newLocalStorageValue));
+        console.info(`updated old localStorage value for ${key}`);
       }
     } catch (err) {
       console.warn(`Failed to migrate localStorage key "${key}":`, err);

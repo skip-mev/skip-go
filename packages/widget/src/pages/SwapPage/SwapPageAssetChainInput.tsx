@@ -163,6 +163,8 @@ export const SwapPageAssetChainInput = ({
   const displayedValue = formatNumberWithCommas(value || "");
   const isLargeNumber = shouldReduceFontSize(value);
 
+  const [isAssetButtonHovered, setIsAssetButtonHovered] = useState(false);
+
   return (
     <StyledAssetChainInputWrapper justify="space-between">
       <Row justify="space-between">
@@ -178,8 +180,14 @@ export const SwapPageAssetChainInput = ({
           isWaitingToUpdateInputValue={isWaitingToUpdateInputValue}
           isLargeNumber={isLargeNumber}
         />
-        <StyledAssetButton onClick={handleChangeAsset} disabled={disabled} gap={5}>
-          {assetDetails?.assetImage && assetDetails.symbol ? (
+        <StyledAssetButton
+          onClick={handleChangeAsset}
+          disabled={disabled}
+          gap={5}
+          onMouseEnter={() => setIsAssetButtonHovered(true)}
+          onMouseLeave={() => setIsAssetButtonHovered(false)}
+        >
+          {assetDetails.symbol ? (
             <StyledAssetLabel align="center" justify="center" gap={7}>
               <GroupedAssetImage height={23} width={23} groupedAsset={groupedAsset} />
               <Text useWindowsTextHack>{assetDetails.symbol}</Text>
@@ -209,7 +217,11 @@ export const SwapPageAssetChainInput = ({
             <ChevronIcon
               className="chevron-icon"
               color={theme.primary.text.normal}
-              backgroundColor={theme.secondary.background.normal}
+              backgroundColor={
+                isAssetButtonHovered
+                  ? theme.secondary.background.hover
+                  : theme.secondary.background.normal
+              }
               backgroundRx={theme.borderRadius?.selectionButton}
             />
           )}

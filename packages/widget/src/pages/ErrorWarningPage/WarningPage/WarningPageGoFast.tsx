@@ -55,7 +55,7 @@ export const WarningPageGoFast = ({ onClickBack, onClickContinue }: WarningPageG
       <ErrorWarningPageContent
         title="You're on the fastest route"
         description={
-          <SmallText textAlign="center" textWrap="balance" lineHeight="17px">
+          <SmallText lineHeight="1.5" textAlign="center" textWrap="balance">
             Faster routes may have higher transaction fees. <br />
             You can choose between Fastest and Cheapest routes in the <br />
             <StyledSettingsContainer gap={3}>

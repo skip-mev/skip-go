@@ -30,7 +30,9 @@ const DevMode = () => {
         brandTextColor: "black",
         brandColor: "#FF66FF",
         borderRadius: {
-          mainButton: 0,
+          main: 0,
+          selectionButton: 0,
+          ghostButton: 0,
         },
       },
       settings: {
@@ -65,13 +67,16 @@ const DevMode = () => {
         },
       },
       onSourceAndDestinationSwapped(props) {
-        console.log(props);
+        console.log("onSourceAndDestinationSwapped", props);
       },
       onSourceAssetUpdated(props) {
-        console.log(props);
+        console.log("onSourceAssetUpdated", props);
       },
       onDestinationAssetUpdated(props) {
-        console.log(props);
+        console.log("onDestinationAssetUpdated", props);
+      },
+      onTransactionSignRequested: (props) => {
+        console.log("onTransactionSignRequested", props);
       },
     };
   }, [apiUrl, disableShadowDom, testnet, theme]);

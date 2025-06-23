@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { startTransition, useCallback, useMemo } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -296,6 +296,21 @@ export const SwapPage = () => {
         routePreference,
         slippage,
       });
+
+      const navigateToSwapExecutionPage = () => {
+        startTransition(() => {
+          setError(undefined);
+          setChainAddresses({});
+          setSwapExecutionState();
+
+          setUser({ username: sourceAccount?.address });
+          if (sourceAccount?.address) {
+            const replay = getReplay();
+            replay?.start();
+          }
+          setCurrentPage(Routes.SwapExecutionPage);
+        });
+      };
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
         track("warning page: cosmos ledger", { route });
@@ -312,10 +327,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.BadPriceWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setError(undefined);
@@ -330,10 +342,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.LowInfoWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setError(undefined);
@@ -348,10 +357,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.GoFastWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setCurrentPage(Routes.SwapPage);
@@ -360,14 +366,7 @@ export const SwapPage = () => {
         });
         return;
       }
-      setChainAddresses({});
-      setCurrentPage(Routes.SwapExecutionPage);
-      setUser({ username: sourceAccount?.address });
-      if (sourceAccount?.address) {
-        const replay = getReplay();
-        replay?.start();
-      }
-      setSwapExecutionState();
+      navigateToSwapExecutionPage();
     };
 
     return (

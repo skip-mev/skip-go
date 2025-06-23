@@ -16,6 +16,7 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
+import { getFeeList, getTotalFees } from "@/utils/fees";
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;

@@ -128,7 +128,7 @@ export const executeTransactions = async (
       }
       if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        const signedTx = await signSvmTransaction({ tx, options });
+        const signedTx = await signSvmTransaction({ tx, options, index: i });
         if (!signedTx) {
           throw new Error(`executeRoute error: signedTx is undefined`);
         }
@@ -172,7 +172,7 @@ export const executeTransactions = async (
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-        const txResponse = await executeEvmTransaction(tx, options);
+        const txResponse = await executeEvmTransaction(tx, options, i);
         txResult = {
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,

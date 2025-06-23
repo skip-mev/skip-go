@@ -254,6 +254,7 @@ export type PollingProps<K extends ValidApiMethodKeys> = {
   backoffMultiplier?: number;
   onError?: (error: unknown, attempt: number) => void;
   onSuccess?: (result: ApiResponse<K>, attempt: number) => void;
+  throwOnError?: boolean;
 }
 
 export type PollingApiProps<K extends ValidApiMethodKeys> = Omit<ApiProps<K>, "options"> & PollingProps<K>;
@@ -268,6 +269,7 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   maxRetries = 5,
   retryInterval = 1000,
   backoffMultiplier = 2,
+  throwOnError = false,
 }: PollingApiProps<K>) {
   type Request = ApiRequest<K>;
   type Response = ApiResponse<K>;
@@ -291,6 +293,9 @@ export function pollingApi<K extends ValidApiMethodKeys>({
       } catch (err) {
         lastError = err;
         onError?.(err, attempt);
+        if (throwOnError) {
+          throw err;
+        }
       }
 
       const delay = retryInterval * Math.pow(backoffMultiplier, attempt);

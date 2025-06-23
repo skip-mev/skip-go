@@ -1,10 +1,14 @@
-import { atomWithStorage } from "jotai/utils";
 import { TransactionDetails } from "./swapExecutionPage";
 import { SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { TxsStatus } from "@/pages/SwapExecutionPage/useBroadcastedTxs";
 import { RouteResponse } from "@skip-go/client";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
+import { atomWithStorage } from "jotai/utils";
+
+export enum HISTORY_VERSION {
+  "camelCase",
+}
 
 export type TransactionHistoryItem = {
   route: RouteResponse;
@@ -14,10 +18,14 @@ export type TransactionHistoryItem = {
   signatures: number;
 } & Partial<TxsStatus>;
 
+export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(
+  LOCAL_STORAGE_KEYS.transactionHistoryVersion,
+  undefined,
+);
+
 export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
   LOCAL_STORAGE_KEYS.transactionHistory,
   [],
-  undefined,
 );
 
 export const setTransactionHistoryAtom = atom(

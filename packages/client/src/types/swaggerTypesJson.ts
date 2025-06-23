@@ -131,6 +131,7 @@ export interface AxelarTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -229,6 +230,7 @@ export interface CCTPTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -299,6 +301,7 @@ export interface StargateTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -374,6 +377,7 @@ export interface GoFastTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -477,6 +481,7 @@ export interface BridgeJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   id?: BridgeTypeJson;
@@ -495,6 +500,7 @@ export interface BridgeJson {
  * * `OPINIT` - Opinit Bridge
  * * `GO_FAST` - Go Fast Bridge
  * * `STARGATE` - Stargate Bridge
+ * * `LAYER_ZERO` - Layerzero Bridge
  * * `EUREKA` - IBC Eureka Bridge
  */
 export enum BridgeTypeJson {
@@ -505,6 +511,7 @@ export enum BridgeTypeJson {
   OPINIT = "OPINIT",
   GO_FAST = "GO_FAST",
   STARGATE = "STARGATE",
+  LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
 }
 
@@ -754,6 +761,7 @@ export interface HyperlaneTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -873,6 +881,7 @@ export interface OptionalAssetJson {
 export interface LayerZeroTransferTransactionsJson {
   send_tx?: ChainTransactionJson | null;
   receive_tx?: ChainTransactionJson | null;
+  compose_tx?: ChainTransactionJson | null;
   error_tx?: ChainTransactionJson | null;
 }
 
@@ -1200,6 +1209,7 @@ export interface OPInitTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1248,12 +1258,14 @@ export enum OPInitTransferStateJson {
  * LayerZero transfer state:
  * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
  * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+ * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
  * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
  * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
  */
 export enum LayerZeroTransferStateJson {
   LAYER_ZERO_TRANSFER_UNKNOWN = "LAYER_ZERO_TRANSFER_UNKNOWN",
   LAYER_ZERO_TRANSFER_SENT = "LAYER_ZERO_TRANSFER_SENT",
+  LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE = "LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE",
   LAYER_ZERO_TRANSFER_RECEIVED = "LAYER_ZERO_TRANSFER_RECEIVED",
   LAYER_ZERO_TRANSFER_FAILED = "LAYER_ZERO_TRANSFER_FAILED",
 }
@@ -1296,6 +1308,7 @@ export interface TransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1403,6 +1416,7 @@ export interface EurekaTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1447,7 +1461,7 @@ export interface LayerZeroTransferJson {
   denom_in: string;
   /** Denom of the output asset of the transfer */
   denom_out: string;
-  source_oft_cntract_address: string;
+  source_oft_contract_address: string;
   destination_endpoint_id: number;
   messaging_fee_asset: AssetJson;
   messaging_fee_amount: string;
@@ -1461,6 +1475,7 @@ export interface LayerZeroTransferJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id: BridgeTypeJson;
@@ -1475,6 +1490,7 @@ export interface LayerZeroTransferInfoJson {
    * LayerZero transfer state:
    * * `LAYER_ZERO_TRANSFER_UNKNOWN` - Unknown error
    * * `LAYER_ZERO_TRANSFER_SENT` - The transaction on the source chain has executed
+   * * `LAYER_ZERO_TRANSFER_WAITING_FOR_COMPOSE` - The transfer has been delivered to the destination chain but there is an additional lz_compose transaction that still needs to be delivered before marking this transfer as LAYER_ZERO_TRANSFER_RECEIVED
    * * `LAYER_ZERO_TRANSFER_RECEIVED` - The transfer has been received at the destination chain
    * * `LAYER_ZERO_TRANSFER_FAILED` - The transfer has failed
    */
@@ -1524,6 +1540,16 @@ export enum FeeTypeJson {
   SMART_RELAY = "SMART_RELAY",
 }
 
+/**
+ * Indicates whether the fee is deducted from the transfer amount or charged additionally.
+ * - FEE_BEHAVIOR_DEDUCTED: Fee is subtracted from the transfer amount (default, typical for Cosmos chains)
+ * - FEE_BEHAVIOR_ADDITIONAL: Fee is charged on top of the transfer amount (typical for EVM chains with native tokens)
+ */
+export enum FeeBehaviorJson {
+  FEE_BEHAVIOR_DEDUCTED = "FEE_BEHAVIOR_DEDUCTED",
+  FEE_BEHAVIOR_ADDITIONAL = "FEE_BEHAVIOR_ADDITIONAL",
+}
+
 export interface FeeJson {
   /**
    * Fee type:
@@ -1539,6 +1565,7 @@ export interface FeeJson {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridge_id?: BridgeTypeJson;
@@ -1553,6 +1580,8 @@ export interface FeeJson {
   tx_index?: number;
   /** The index of the operation in the returned operations list which incurs the fee */
   operation_index?: number | null;
+  /** Indicates whether this fee is deducted from the transfer amount or charged additionally */
+  fee_behavior?: FeeBehaviorJson;
 }
 
 export interface ChainsRequestJson {

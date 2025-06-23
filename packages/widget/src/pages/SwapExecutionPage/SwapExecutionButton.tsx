@@ -5,7 +5,7 @@ import { SwapExecutionState } from "./SwapExecutionPage";
 import { useTheme } from "styled-components";
 import pluralize from "pluralize";
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { clearAssetInputAmountsAtom } from "@/state/swapPage";
 import { currentPageAtom, Routes } from "@/state/router";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
@@ -18,6 +18,10 @@ import { useCountdown } from "./useCountdown";
 import { track } from "@amplitude/analytics-browser";
 import { useCallback } from "react";
 import { RouteResponse } from "@skip-go/client";
+import { Adapter } from "@solana/wallet-adapter-base";
+import { MutateFunction } from "jotai-tanstack-query";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { svmWalletAtom } from "@/state/wallets";
 
 type SwapExecutionButtonProps = {
   swapExecutionState: SwapExecutionState | undefined;
@@ -25,7 +29,14 @@ type SwapExecutionButtonProps = {
   signaturesRemaining: number;
   lastOperation: ClientOperation;
   connectRequiredChains: (openModal?: boolean) => Promise<void>;
-  submitExecuteRouteMutation: () => void;
+  submitExecuteRouteMutation: MutateFunction<
+    null | undefined,
+    unknown,
+    {
+      getSvmSigner: () => Promise<Adapter>;
+    },
+    unknown
+  >;
 };
 
 export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
@@ -40,6 +51,9 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
     estimatedRouteDurationSeconds: route?.estimatedRouteDurationSeconds,
     enabled: swapExecutionState === SwapExecutionState.pending,
   });
+
+  const { wallets: solanaWallets } = useWallet();
+  const svmWallet = useAtomValue(svmWalletAtom);
 
   const theme = useTheme();
   const setErrorWarning = useSetAtom(errorWarningAtom);
@@ -84,7 +98,8 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
             const destinationChainId = route?.destAssetChainId;
             if (!destinationChainId) return;
             NiceModal.show(Modals.SetAddressModal, {
-              signRequired: lastOperation.signRequired && lastOperation.fromChain === destinationChainId,
+              signRequired:
+                lastOperation.signRequired && lastOperation.fromChain === destinationChainId,
               chainId: destinationChainId,
               chainAddressIndex: route.requiredChainAddresses.length - 1,
             });
@@ -98,19 +113,38 @@ export const SwapExecutionButton: React.FC<SwapExecutionButtonProps> = ({
           track("warning page: additional signing required", { route });
           setErrorWarning({
             errorWarningType: ErrorWarningType.AdditionalSigningRequired,
-            onClickContinue: () => submitExecuteRouteMutation(),
+            onClickContinue: () =>
+              submitExecuteRouteMutation({
+                getSvmSigner: async () => {
+                  const wallet = solanaWallets.find(
+                    (w) => w.adapter.name === svmWallet?.walletName,
+                  );
+                  if (!wallet) {
+                    throw new Error("SVM wallet not found");
+                  }
+                  return wallet.adapter as Adapter;
+                },
+              }),
             signaturesRequired: route.txsRequired,
           });
           return;
         }
-        submitExecuteRouteMutation();
+        submitExecuteRouteMutation({
+          getSvmSigner: async () => {
+            const wallet = solanaWallets.find((w) => w.adapter.name === svmWallet?.walletName);
+            if (!wallet) {
+              throw new Error("SVM wallet not found");
+            }
+            return wallet.adapter as Adapter;
+          },
+        });
       };
       return <MainButton label="Confirm" icon={ICONS.rightArrow} onClick={onClickConfirmSwap} />;
     }
     case SwapExecutionState.validatingGasBalance:
       return <MainButton label="Validating" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.waitingForSigning:
-      return <MainButton label="Confirming" icon={ICONS.rightArrow} loading />;
+      return <MainButton label="Confirming in wallet" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.approving:
       return <MainButton label="Approving allowance" icon={ICONS.rightArrow} loading />;
     case SwapExecutionState.pending:

@@ -13,6 +13,7 @@ const registries = [
       __dirname,
       "../../../node_modules/chain-registry",
     ),
+    isCamelCase: true,
   },
   {
     packageName: "initia-registry",
@@ -20,8 +21,26 @@ const registries = [
       __dirname,
       "../../../node_modules/@initia/initia-registry/main",
     ),
+    isCamelCase: false,
   },
 ];
+
+function toCamel(obj) {
+  return convertKeys(obj, (key) => key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()));
+}
+
+function convertKeys(obj, convertKey) {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertKeys(item, convertKey))
+  } else if (obj !== null && typeof obj === "object") {
+    return Object.keys(obj).reduce((acc, key) => {
+      acc[convertKey(key)] = convertKeys((obj)[key], convertKey);
+      return acc;
+    }, {});
+  } else {
+    return obj;
+  }
+}
 
 async function genTelescope() {
   try {
@@ -148,13 +167,13 @@ async function genTelescope() {
   }
 }
 
-async function collectChains({ registryPath }) {
+async function collectChains({ registryPath, isCamelCase }) {
   try {
     const mainnetDir = path.join(registryPath, "mainnet");
     const testnetDir = path.join(registryPath, "testnet");
 
-    const mainnetChains = await collectChainData(mainnetDir);
-    const testnetChains = await collectChainData(testnetDir);
+    const mainnetChains = await collectChainData(mainnetDir, isCamelCase);
+    const testnetChains = await collectChainData(testnetDir, isCamelCase);
 
     return [...mainnetChains, ...testnetChains];
   } catch (error) {
@@ -162,7 +181,7 @@ async function collectChains({ registryPath }) {
   }
 }
 
-async function collectChainData(directory) {
+async function collectChainData(directory, isCamelCase) {
   const chains = [];
   try {
     const dirEntries = await fs.readdir(directory, { withFileTypes: true });
@@ -178,8 +197,13 @@ async function collectChainData(directory) {
           // Process the chain data to extract desired properties
           const chainArray = Array.isArray(chainData) ? chainData : [chainData];
           for (const chain of chainArray) {
-            const extractedData = extractProperties(chain);
-            chains.push(extractedData);
+            if (isCamelCase) {
+              const extractedData = extractCamelCaseProperties(chain);
+              chains.push(extractedData);
+            } else {
+              const extractedData = extractProperties(chain);
+              chains.push(extractedData);
+            }
           }
         } catch (error) {
           console.error(`Failed to import ${chainJsPath}:`, error);
@@ -189,18 +213,35 @@ async function collectChainData(directory) {
   } catch (error) {
     console.error(`Error processing directory ${directory}:`, error);
   }
+  console.log( `Collected ${chains.length} chains from ${directory}`);
   return chains;
 }
 
 function extractProperties(chain) {
   return {
-    chain_id: chain.chain_id,
+    chainId: chain.chain_id,
+    fees: {
+      feeTokens: toCamel(chain.fee_tokens || []),
+      gasPriceStep: toCamel(chain.fees?.gas_price_step || {}),
+      gasAdjustment: chain.fees?.gas_adjustment,
+    },
+    apis: {
+      rpc: chain.apis?.rpc || [],
+    },
+    keyAlgos: chain.key_algos,
+    extraCodecs: chain.extra_codecs,
+  };
+}
+
+function extractCamelCaseProperties(chain) {
+  return {
+    chainId: chain.chainId,
     fees: chain.fees,
     apis: {
       rpc: chain.apis?.rpc || [],
     },
-    key_algos: chain.key_algos,
-    extra_codecs: chain.extra_codecs,
+    keyAlgos: chain.keyAlgos,
+    extraCodecs: chain.extraCodecs,
   };
 }
 
@@ -220,7 +261,7 @@ async function codegen() {
     const chains = await collectChains(registry);
     allChains = mergeArrays(allChains, chains);
   }
-
+  console.log(`Collected ${allChains.length} chains from all registries.`);
   // Write all chains to a single JSON file
   const outputFilePath = path.resolve(outPath, "chains.json");
   await fs.writeFile(outputFilePath, JSON.stringify(allChains), "utf-8");
@@ -231,7 +272,7 @@ const mergeArrays = (arr1, arr2) => {
   const map = new Map();
 
   merged.forEach((item) => {
-    map.set(item.chain_id, item); // second occurrence overwrites first
+    map.set(item.chainId, item); // second occurrence overwrites first
   });
 
   return Array.from(map.values());
