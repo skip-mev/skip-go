@@ -10,7 +10,6 @@ export const waitForTransaction = async ({
   chainId,
   txHash,
 }: WaitForTransactionProps) => {
-
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const txStatusResponse = await transactionStatus({
