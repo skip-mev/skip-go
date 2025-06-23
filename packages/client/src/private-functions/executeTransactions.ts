@@ -11,7 +11,7 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { submit } from "src/api/postSubmit";
+import { submitTransaction } from "src/api/postSubmitTransaction";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -153,7 +153,7 @@ export const executeTransactions = async (
     // If batchSignTxs is true, we will use the signed transactions from the array
     const txSigned = signedTxs.find((item) => item.index === i);
     if (txSigned) {
-      const txResponse = await submit({
+      const txResponse = await submitTransaction({
         chainId: txSigned.chainId,
         tx: txSigned.tx,
       });
@@ -179,7 +179,7 @@ export const executeTransactions = async (
         };
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        txResult = await executeSvmTransaction(tx, options);
+        txResult = await executeSvmTransaction(tx, options, i);
       } else {
         throw new Error("executeRoute error: invalid message type");
       }
@@ -187,9 +187,18 @@ export const executeTransactions = async (
 
     await onTransactionBroadcast?.({ ...txResult });
 
+    if (txResult.explorerLink) {
+      options.onTransactionTracked?.({
+        txHash: txResult.txHash,
+        chainId: txResult.chainId,
+        explorerLink: txResult.explorerLink ?? "",
+      });
+    }
+
     const txStatusResponse = await waitForTransaction({
       ...txResult,
       ...trackTxPollingOptions,
+      isEvm: "evmTx" in tx,
       onTransactionTracked: options.onTransactionTracked,
     });
 
