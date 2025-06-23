@@ -220,7 +220,6 @@ export const SwapPageAssetChainInput = ({
           {priceChangePercentage ? (
             <Row align="center" gap={6}>
               <SmallTextButton
-                color={priceChangeColor}
                 onMouseEnter={() => setShowPriceChangePercentage(true)}
                 onMouseLeave={() => setShowPriceChangePercentage(false)}
               >
@@ -241,8 +240,7 @@ export const SwapPageAssetChainInput = ({
           )}
           {feeAmountUsd && (
             <Row align="center" gap={4}>
-              {feeWarning && <TinyTriangleIcon color={theme.error.text} direction="down" />}
-              <SmallText color={feeColor}>Fee: {feeAmountUsd}</SmallText>
+              <SmallText color={feeColor}>{feeAmountUsd} in fees</SmallText>
             </Row>
           )}
         </Row>
