@@ -11,7 +11,8 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { submit } from "src/api/postSubmit";
+import { submitTransaction } from "src/api/postSubmitTransaction";
+import { trackTransaction } from "src/api/postTrackTransaction";
 
 export const executeTransactions = async (
   options: ExecuteRouteOptions & { txs?: Tx[] }
@@ -153,7 +154,7 @@ export const executeTransactions = async (
     // If batchSignTxs is true, we will use the signed transactions from the array
     const txSigned = signedTxs.find((item) => item.index === i);
     if (txSigned) {
-      const txResponse = await submit({
+      const txResponse = await submitTransaction({
         chainId: txSigned.chainId,
         tx: txSigned.tx,
       });
@@ -177,9 +178,19 @@ export const executeTransactions = async (
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
         };
+        try {
+          const { explorerLink } = await trackTransaction({
+            chainId: txResult.chainId,
+            txHash: txResult.txHash,
+            ...trackTxPollingOptions,
+          });
+          txResult.explorerLink = explorerLink;
+        } catch (error) {
+          console.warn(`track failed for txHash:${txResult.txHash}, chainId: ${txResult.chainId}`);
+        }
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        txResult = await executeSvmTransaction(tx, options);
+        txResult = await executeSvmTransaction(tx, options, i);
       } else {
         throw new Error("executeRoute error: invalid message type");
       }
@@ -187,11 +198,15 @@ export const executeTransactions = async (
 
     await onTransactionBroadcast?.({ ...txResult });
 
-    const txStatusResponse = await waitForTransaction({
-      ...txResult,
-      ...trackTxPollingOptions,
-      onTransactionTracked: options.onTransactionTracked,
-    });
+    if (txResult.explorerLink) {
+      options.onTransactionTracked?.({
+        txHash: txResult.txHash,
+        chainId: txResult.chainId,
+        explorerLink: txResult.explorerLink ?? "",
+      });
+    }
+
+    const txStatusResponse = await waitForTransaction(txResult);
 
     await onTransactionCompleted?.({
       chainId: txResult.chainId,

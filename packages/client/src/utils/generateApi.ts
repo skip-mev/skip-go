@@ -266,7 +266,7 @@ export function pollingApi<K extends ValidApiMethodKeys>({
   onSuccess,
   onError,
   isSuccess = () => true,
-  maxRetries = 5,
+  maxRetries = 10,
   retryInterval = 1000,
   backoffMultiplier = 2,
   throwOnError = false,
