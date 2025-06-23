@@ -1,6 +1,7 @@
 import { formatUSD } from "@/utils/intl";
 import { convertTokenAmountToHumanReadableAmount } from "./crypto";
 import { FeeType, Fee, RouteResponse, BridgeType } from "@skip-go/client";
+import { formatDisplayAmount } from "./number";
 
 export type FeeDetail = {
   assetAmount: number;
@@ -21,7 +22,7 @@ const getFeeDetail = (estimatedFee: Fee): FeeDetail => {
 
   return {
     assetAmount: Number(humanReadableAmount),
-    formattedAssetAmount: `${humanReadableAmount} ${estimatedFee.originAsset.symbol}`,
+    formattedAssetAmount: `${formatDisplayAmount(humanReadableAmount)} ${estimatedFee.originAsset.symbol}`,
     formattedUsdAmount: formatUSD(totalUsd.toString()),
   };
 };
