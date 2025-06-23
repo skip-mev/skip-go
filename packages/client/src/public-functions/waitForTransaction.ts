@@ -1,4 +1,3 @@
-import type { TransactionState } from "src/types/swaggerTypes";
 import { transactionStatus } from "../api/postTransactionStatus";
 import { wait } from "../utils/timer";
 
