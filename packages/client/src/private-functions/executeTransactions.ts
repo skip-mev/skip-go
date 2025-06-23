@@ -206,9 +206,7 @@ export const executeTransactions = async (
       });
     }
 
-    const txStatusResponse = await waitForTransaction({
-      ...txResult,
-    });
+    const txStatusResponse = await waitForTransaction(txResult);
 
     await onTransactionCompleted?.({
       chainId: txResult.chainId,
