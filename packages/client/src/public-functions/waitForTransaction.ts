@@ -19,7 +19,7 @@ export const waitForTransaction = async ({
 }: WaitForTransactionProps) => {
   let txStatusResponse;
 
-  while (txStatusResponse?.state && !isFinalState(txStatusResponse?.state)) {
+  while (!txStatusResponse?.state || !isFinalState(txStatusResponse?.state)) {
     txStatusResponse = await transactionStatus({
       chainId,
       txHash,
