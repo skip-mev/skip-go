@@ -7,23 +7,21 @@ export type WaitForTransactionProps = {
   txHash: string;
 };
 
-const finalStates = ["STATE_COMPLETED_SUCCESS", "STATE_COMPLETED_ERROR", "STATE_ABANDONED"];
-
-const isFinalState = (state: TransactionState) => {
-  return finalStates.includes(state);
-}
-
 export const waitForTransaction = async ({
   chainId,
   txHash,
 }: WaitForTransactionProps) => {
-  let txStatusResponse;
 
-  while (!txStatusResponse?.state || !isFinalState(txStatusResponse?.state)) {
-    txStatusResponse = await transactionStatus({
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const txStatusResponse = await transactionStatus({
       chainId,
       txHash,
     });
+
+    if (txStatusResponse.state === "STATE_COMPLETED_SUCCESS") {
+      return txStatusResponse;
+    }
 
     if (txStatusResponse.state === "STATE_COMPLETED_ERROR") {
       throw new Error(`${txStatusResponse.error?.type}: ${txStatusResponse.error?.message}`);
@@ -35,5 +33,4 @@ export const waitForTransaction = async ({
     await wait(1000);
   }
 
-  return txStatusResponse;
 };
