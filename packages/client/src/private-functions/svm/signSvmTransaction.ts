@@ -1,6 +1,5 @@
 import type { SvmTx } from "src/types/swaggerTypes";
-import { Connection, Message, PublicKey, Transaction } from "@solana/web3.js";
-import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 

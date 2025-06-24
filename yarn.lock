@@ -8414,7 +8414,6 @@ __metadata:
     eslint-plugin-import: ^2.31.0
     keccak: 3.0.4
     minimatch: ^9.0.3
-    nacl: ^0.1.3
     proxy-from-env: ^1.1.0
     swagger-typescript-api: ^13.0.28
     vitest: ^1.2.2
@@ -25070,13 +25069,6 @@ __metadata:
     object-assign: ^4.0.1
     thenify-all: ^1.0.0
   checksum: 8427de0ece99a07e9faed3c0c6778820d7543e3776f9a84d22cf0ec0a8eb65f6e9aee9c9d353ff9a105ff62d33a9463c6ca638974cc652ee8140cd1e35951c87
-  languageName: node
-  linkType: hard
-
-"nacl@npm:^0.1.3":
-  version: 0.1.3
-  resolution: "nacl@npm:0.1.3"
-  checksum: f1fbc577d4efef7d8fcf6f35554dbce12326fff49d51b9a2ae0915e38f660fc1cd145de27bd9d15d72492c274fd96af214cf7286074ae63c0d563e745c21c85b
   languageName: node
   linkType: hard
 
