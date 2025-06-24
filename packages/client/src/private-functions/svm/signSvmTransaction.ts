@@ -1,5 +1,5 @@
 import type { SvmTx } from "src/types/swaggerTypes";
-import { Connection, Transaction } from "@solana/web3.js";
+import { Connection, Message, PublicKey, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
@@ -7,7 +7,7 @@ import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 export const signSvmTransaction = async ({
   tx,
   options,
-  index
+  index,
 }: {
   index: number;
   tx?: { svmTx?: SvmTx };
@@ -42,16 +42,26 @@ export const signSvmTransaction = async ({
 
   const txBuffer = Buffer.from(svmTx.tx ?? "", "base64");
   const transaction = Transaction.from(txBuffer);
+  if (options.svmFeePayer) {
+    const message = transaction.serializeMessage();
+    const resSignTx = await options.svmFeePayer.signTransaction(message);
+    transaction.addSignature(
+      new PublicKey(options.svmFeePayer.address),
+      Buffer.from(resSignTx)
+    );
+  }
 
   if (!("signTransaction" in signer)) return;
   options?.onTransactionSignRequested?.({
     chainId: svmTx.chainId,
     signerAddress: signer.publicKey?.toBase58(),
-    txIndex: index
+    txIndex: index,
   });
+
   const signedTx = await signer.signTransaction(transaction);
+
   options?.onTransactionSigned?.({ chainId: svmTx.chainId });
 
   const serializedTx = signedTx.serialize();
-  return serializedTx
+  return serializedTx;
 };

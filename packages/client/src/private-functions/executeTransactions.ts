@@ -181,7 +181,21 @@ export const executeTransactions = async (
         };
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        txResult = await executeSvmTransaction(tx, options, i);
+        const txResponse = await executeSvmTransaction(tx, options, i);
+        txResult = {
+          chainId: tx?.svmTx?.chainId ?? "",
+          txHash: txResponse.txHash,
+        };
+        try {
+          const { explorerLink } = await trackTransaction({
+            chainId: txResult.chainId,
+            txHash: txResult.txHash,
+            ...trackTxPollingOptions,
+          });
+          txResult.explorerLink = explorerLink;
+        } catch (error) {
+          console.warn(`track failed for txHash:${txResult.txHash}, chainId: ${txResult.chainId}`);
+        }
       } else {
         throw new Error("executeRoute error: invalid message type");
       }

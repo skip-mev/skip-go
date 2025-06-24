@@ -33,10 +33,41 @@ import { executeRoute, route } from '@skip-go/client';
 const route = await route({
   goFast: true
   ...otherParams,
-}); 
+});
 
 await executeRoute({
   route,
   ...otherParams,
 });
 ```
+
+## Add a fee payer in solana transaction
+
+The `executeRoute` method accepts a `svmFeePayer` parameter to specify a fee payer for Solana transactions. This is useful when you want to have a different account pay the transaction fees.
+
+```typescript
+import { Keypair } from "@solana/web3.js";
+import nacl from "tweetnacl";
+import bs58 from "bs58";
+import { executeRoute, route } from '@skip-go/client';
+
+
+const route = await route({
+  // ... other parameters
+});
+
+await executeRoute({
+  route,
+  userAddresses,
+  svmFeePayer: {
+    address: 'FEE_PAYER_ADDRESS.', // Replace with the fee payer's Solana address
+    signTransaction: async (dataToSign: Buffer) => {
+      // this is an example the fee payer signer is using a private key
+      const privateKey = "FEE_PAYER_PRIVATE_KEY";
+      const keypairBytes = bs58.decode(privateKey);
+      const keypair = Keypair.fromSecretKey(keypairBytes);
+      return nacl.sign.detached(dataToSign, keypair.secretKey);
+    },
+  }
+  ...otherParams,
+})
