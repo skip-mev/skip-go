@@ -10789,10 +10789,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.81.2":
+  version: 5.81.2
+  resolution: "@tanstack/query-core@npm:5.81.2"
+  checksum: 375ab5cad3ddd571f24fc0be173349622366ef1fdc69a9222933028bc9ab3694b09251e0e9089d4a8146470d9fee91c95f93b6ddccb1e7e6d320bcea8e149748
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:^5.51.21":
   version: 5.56.2
   resolution: "@tanstack/query-core@npm:5.56.2"
   checksum: e78430464de89fd2543155449391415983c7cdcd1ff2bb86da019414204b6800e2405e341db88000b36a101d3619ee7e94e90da1fa5497b2e021c5765924a64c
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:5.81.2":
+  version: 5.81.2
+  resolution: "@tanstack/react-query@npm:5.81.2"
+  dependencies:
+    "@tanstack/query-core": 5.81.2
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 69191bc6dc57c4c6a6620948ea10dbfaa39f46a73a46df6f28c8c82f94a17d1f513b59595a6b5a77d9215c6619c6b380deb28bc7c17e3076ab0fb5ef7039212e
   languageName: node
   linkType: hard
 
@@ -25214,6 +25232,7 @@ __metadata:
   resolution: "nextjs@workspace:examples/nextjs"
   dependencies:
     "@skip-go/widget": "workspace:^"
+    "@tanstack/react-query": 5.81.2
     "@types/node": ^20
     "@types/react": ^18
     "@types/react-dom": ^18
