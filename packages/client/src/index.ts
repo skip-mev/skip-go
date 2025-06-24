@@ -20,6 +20,7 @@ export { route } from "./api/postRoute";
 export type { RouteRequest } from "./api/postRoute";
 
 export { submitTransaction } from "./api/postSubmitTransaction";
+export type { SubmitTransactionRequest, SubmitTransactionResponse } from "./api/postSubmitTransaction";
 export { trackTransaction } from "./api/postTrackTransaction";
 export { transactionStatus } from "./api/postTransactionStatus";
 export type { TxStatusResponse } from "./api/postTransactionStatus";
@@ -45,8 +46,5 @@ export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatu
 export type { RouteDetails } from "./public-functions/subscribeToRouteStatus";
 
 export type { SkipClientOptions } from "./state/clientState";
-
-export { submit } from "./api/postSubmit";
-export type { SubmitRequest, SubmitResponse } from "./api/postSubmit";
 
 export { GAS_STATION_CHAIN_IDS } from "./constants/constants";

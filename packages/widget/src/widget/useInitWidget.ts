@@ -178,6 +178,7 @@ export const useInitWidget = (props: WidgetProps) => {
       onSourceAndDestinationSwapped: props.onSourceAndDestinationSwapped,
       onSourceAssetUpdated: props.onSourceAssetUpdated,
       onDestinationAssetUpdated: props.onDestinationAssetUpdated,
+      onTransactionSignRequested: props.onTransactionSignRequested,
     };
 
     if (Object.values(callbacks).some((callback) => callback !== undefined)) {
@@ -221,6 +222,7 @@ export const useInitWidget = (props: WidgetProps) => {
     props.onDestinationAssetUpdated,
     props.batchSignTxs,
     setBatchSignTxs,
+    props.onTransactionSignRequested,
   ]);
 
   return { theme: mergedTheme };

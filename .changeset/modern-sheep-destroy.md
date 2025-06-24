@@ -2,4 +2,4 @@
 "@skip-go/widget": patch
 ---
 
-auto detect solana wallets
+Enable auto-reconnect for cosmos

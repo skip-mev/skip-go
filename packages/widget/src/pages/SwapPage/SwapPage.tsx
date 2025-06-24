@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { startTransition, useCallback, useMemo } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Column } from "@/components/Layout";
 import { MainButton } from "@/components/MainButton";
@@ -29,6 +29,7 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { calculatePercentageChange } from "@/utils/number";
+import { getFeeList, getTotalFees } from "@/utils/fees";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
@@ -201,6 +202,16 @@ export const SwapPage = () => {
     return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
 
+  const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
+  const totalFeeUsd = getTotalFees(fees)?.formattedUsdAmount;
+
+  const feeWarning = useMemo(() => {
+    if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
+    return (
+      parseFloat(route.usdAmountOut) <= parseFloat(route.usdAmountIn) * 0.9
+    );
+  }, [route?.usdAmountIn, route?.usdAmountOut]);
+
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);
 
@@ -285,6 +296,21 @@ export const SwapPage = () => {
         routePreference,
         slippage,
       });
+
+      const navigateToSwapExecutionPage = () => {
+        startTransition(() => {
+          setError(undefined);
+          setChainAddresses({});
+          setSwapExecutionState();
+
+          setUser({ username: sourceAccount?.address });
+          if (sourceAccount?.address) {
+            const replay = getReplay();
+            replay?.start();
+          }
+          setCurrentPage(Routes.SwapExecutionPage);
+        });
+      };
       setUserId(sourceAccount?.address);
       if (showCosmosLedgerWarning) {
         track("warning page: cosmos ledger", { route });
@@ -301,10 +327,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.BadPriceWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setError(undefined);
@@ -319,10 +342,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.LowInfoWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setError(undefined);
@@ -337,10 +357,7 @@ export const SwapPage = () => {
         setError({
           errorWarningType: ErrorWarningType.GoFastWarning,
           onClickContinue: () => {
-            setError(undefined);
-            setChainAddresses({});
-            setCurrentPage(Routes.SwapExecutionPage);
-            setSwapExecutionState();
+            navigateToSwapExecutionPage();
           },
           onClickBack: () => {
             setCurrentPage(Routes.SwapPage);
@@ -349,14 +366,7 @@ export const SwapPage = () => {
         });
         return;
       }
-      setChainAddresses({});
-      setCurrentPage(Routes.SwapExecutionPage);
-      setUser({ username: sourceAccount?.address });
-      if (sourceAccount?.address) {
-        const replay = getReplay();
-        replay?.start();
-      }
-      setSwapExecutionState();
+      navigateToSwapExecutionPage();
     };
 
     return (
@@ -428,6 +438,8 @@ export const SwapPage = () => {
           value={destinationAsset?.amount}
           priceChangePercentage={Number(priceChangePercentage)}
           badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
+          feeAmountUsd={totalFeeUsd}
+          feeWarning={feeWarning}
           onChangeValue={(v) => {
             track("swap page: destination asset amount input - changed", { amount: v });
             setDestinationAssetAmount(v);

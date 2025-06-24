@@ -1,15 +1,8 @@
-import { ClientState } from "../../state/clientState";
-import { getSigningStargateClient } from "../../public-functions/getSigningStargateClient";
 import type { CosmosTx } from "../../types/swaggerTypes";
-import { getAccountNumberAndSequence } from "../getAccountNumberAndSequence";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import type { TxRaw as TxRawType } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
-import { isOfflineDirectSigner } from "@cosmjs/proto-signing";
-import { signCosmosMessageDirect } from "./signCosmosMessageDirect";
-import { signCosmosMessageAmino } from "./signCosmosMessageAmino";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
-import { submit } from "src/api/postSubmit";
+
 import { signCosmosTransaction } from "./signCosmosTransaction";
+import { submitTransaction } from "src/api/postSubmitTransaction";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {
@@ -35,7 +28,7 @@ export const executeCosmosTransaction = async ({
   });
   const chainId = tx.cosmosTx?.chainId;
 
-  const txResponse = await submit({
+  const txResponse = await submitTransaction({
     chainId,
     tx: rawTxBase64,
   });
@@ -43,5 +36,6 @@ export const executeCosmosTransaction = async ({
   return {
     chainId: tx?.cosmosTx?.chainId ?? "",
     txHash: txResponse?.txHash ?? "",
+    explorerLink: txResponse?.explorerLink ?? '',
   };
 };

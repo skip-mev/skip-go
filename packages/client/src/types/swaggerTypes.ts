@@ -131,6 +131,7 @@ export interface AxelarTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -229,6 +230,7 @@ export interface CCTPTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -299,6 +301,7 @@ export interface StargateTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -374,6 +377,7 @@ export interface GoFastTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -477,6 +481,7 @@ export interface Bridge {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   id?: BridgeType;
@@ -495,6 +500,7 @@ export interface Bridge {
  * * `OPINIT` - Opinit Bridge
  * * `GO_FAST` - Go Fast Bridge
  * * `STARGATE` - Stargate Bridge
+ * * `LAYER_ZERO` - Layerzero Bridge
  * * `EUREKA` - IBC Eureka Bridge
  */
 export enum BridgeType {
@@ -505,6 +511,7 @@ export enum BridgeType {
   OPINIT = "OPINIT",
   GO_FAST = "GO_FAST",
   STARGATE = "STARGATE",
+  LAYER_ZERO = "LAYER_ZERO",
   EUREKA = "EUREKA",
 }
 
@@ -754,6 +761,7 @@ export interface HyperlaneTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -1201,6 +1209,7 @@ export interface OPInitTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -1299,6 +1308,7 @@ export interface Transfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -1406,6 +1416,7 @@ export interface EurekaTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -1450,7 +1461,7 @@ export interface LayerZeroTransfer {
   denomIn: string;
   /** Denom of the output asset of the transfer */
   denomOut: string;
-  sourceOftCntractAddress: string;
+  sourceOftContractAddress: string;
   destinationEndpointId: number;
   messagingFeeAsset: Asset;
   messagingFeeAmount: string;
@@ -1464,6 +1475,7 @@ export interface LayerZeroTransfer {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId: BridgeType;
@@ -1553,6 +1565,7 @@ export interface Fee {
    * * `OPINIT` - Opinit Bridge
    * * `GO_FAST` - Go Fast Bridge
    * * `STARGATE` - Stargate Bridge
+   * * `LAYER_ZERO` - Layerzero Bridge
    * * `EUREKA` - IBC Eureka Bridge
    */
   bridgeId?: BridgeType;
@@ -2186,7 +2199,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
        * @default false
        */
       enable_gas_warnings?: boolean;
-      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers */
+      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
       fee_payer_address?: string;
     },
     params: RequestParams = {},
@@ -2255,7 +2268,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
        * @default false
        */
       enable_gas_warnings?: boolean;
-      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers */
+      /** Alternative address to use for paying for fees, currently only for SVM source CCTP transfers, in b58 format. */
       fee_payer_address?: string;
     },
     params: RequestParams = {},
