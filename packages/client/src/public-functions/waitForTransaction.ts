@@ -15,20 +15,19 @@ export const waitForTransaction = async ({
   onTransactionTracked,
   ...trackTxPollingOptions
 }: WaitForTransactionProps) => {
-  console.log(explorerLink);
-    try {
-      if (!explorerLink) {
-        const response = await trackTransaction({
-          chainId: chainId,
-          txHash: txHash,
-          ...trackTxPollingOptions,
-        });
-        explorerLink = response.explorerLink;
-      }
-      await onTransactionTracked?.({ txHash, chainId, explorerLink });
-    } catch (error) {
-      console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
+  try {
+    if (!explorerLink) {
+      const response = await trackTransaction({
+        chainId: chainId,
+        txHash: txHash,
+        ...trackTxPollingOptions,
+      });
+      explorerLink = response.explorerLink;
     }
+    await onTransactionTracked?.({ txHash, chainId, explorerLink });
+  } catch (error) {
+    console.warn(`track failed for txHash:${txHash}, chainId: ${chainId}`);
+  }
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
