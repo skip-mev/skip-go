@@ -14,7 +14,8 @@ import {
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
-import type { TxResult } from "src/types";
+import type { TxResult, UserAddress } from "src/types";
+import { v4 as uuidv4 } from 'uuid';
 
 export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
 
@@ -27,6 +28,8 @@ export type TransactionDetails = {
 };
 
 export type RouteDetails = {
+  id?: string;
+  timestamp?: number;
   status: RouteStatus;
   transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
@@ -48,7 +51,7 @@ export type subscribeToRouteStatusProps = {
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
 };
 
-export type executeAndSubscribeToRouteStatus = subscribeToRouteStatusProps & {
+export type executeAndSubscribeToRouteStatus = subscribeToRouteStatusProps & Partial<ExecuteRouteOptions> & {
   executeTransaction?: (index: number) => Promise<TxResult>;
   onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
   onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
@@ -58,6 +61,9 @@ export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps)
   return executeAndSubscribeToRouteStatus(props);
 };
 
+const id = uuidv4();
+const timestamp = Date.now();
+
 export const executeAndSubscribeToRouteStatus = async ({
   transactionDetails = [],
   txsRequired: totalTxsRequired,
@@ -66,6 +72,7 @@ export const executeAndSubscribeToRouteStatus = async ({
   onTransactionTracked,
   onTransactionCompleted,
   onRouteStatusUpdated,
+  userAddresses,
 }: executeAndSubscribeToRouteStatus) => {
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
@@ -73,6 +80,7 @@ export const executeAndSubscribeToRouteStatus = async ({
       const routeDetails = getRouteDetails(
         transactionDetails,
         totalTxsRequired,
+        executeTransaction !== undefined,
       );
       onRouteStatusUpdated?.(routeDetails);
       continue;
@@ -112,6 +120,7 @@ export const executeAndSubscribeToRouteStatus = async ({
         const routeDetails = getRouteDetails(
           transactionDetails,
           totalTxsRequired,
+          executeTransaction !== undefined,
         );
 
         onRouteStatusUpdated?.(routeDetails);
@@ -136,6 +145,7 @@ export const executeAndSubscribeToRouteStatus = async ({
 const getRouteDetails = (
   transactionDetails: TransactionDetails[],
   totalTxsRequired: number,
+  shouldReturnIdAndTimestamp?: boolean,
 ): RouteDetails => {
   const validStatuses = transactionDetails
     .map((tx) => tx.status)
@@ -177,6 +187,11 @@ const getRouteDetails = (
     transferEvents,
     transferAssetRelease,
   };
+
+  if (shouldReturnIdAndTimestamp) {
+    newRouteDetails.id = id;
+    newRouteDetails.timestamp = timestamp;
+  }
 
   return newRouteDetails;
 };
