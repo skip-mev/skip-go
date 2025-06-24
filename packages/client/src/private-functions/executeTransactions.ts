@@ -161,6 +161,7 @@ export const executeTransactions = async (
       txResult = {
         chainId: txSigned.chainId,
         txHash: txResponse?.txHash ?? "",
+        explorerLink: txResponse?.explorerLink ?? '',
       };
       // If the tx not signed we will execute the transaction normally
     } else {
@@ -178,16 +179,6 @@ export const executeTransactions = async (
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
         };
-        try {
-          const { explorerLink } = await trackTransaction({
-            chainId: txResult.chainId,
-            txHash: txResult.txHash,
-            ...trackTxPollingOptions,
-          });
-          txResult.explorerLink = explorerLink;
-        } catch (error) {
-          console.warn(`track failed for txHash:${txResult.txHash}, chainId: ${txResult.chainId}`);
-        }
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
         txResult = await executeSvmTransaction(tx, options, i);
@@ -198,15 +189,11 @@ export const executeTransactions = async (
 
     await onTransactionBroadcast?.({ ...txResult });
 
-    if (txResult.explorerLink) {
-      options.onTransactionTracked?.({
-        txHash: txResult.txHash,
-        chainId: txResult.chainId,
-        explorerLink: txResult.explorerLink ?? "",
-      });
-    }
-
-    const txStatusResponse = await waitForTransaction(txResult);
+    const txStatusResponse = await waitForTransaction({
+      ...txResult,
+      ...trackTxPollingOptions,
+      onTransactionTracked: options.onTransactionTracked,
+    });
 
     await onTransactionCompleted?.({
       chainId: txResult.chainId,
