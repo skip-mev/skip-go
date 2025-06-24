@@ -29,6 +29,7 @@ import { useFetchAllBalances } from "@/hooks/useFetchAllBalances";
 import { SwapPageAssetChainInput } from "./SwapPageAssetChainInput";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { calculatePercentageChange } from "@/utils/number";
+import { getFeeList, getTotalFees } from "@/utils/fees";
 import { useCleanupDebouncedAtoms } from "./useCleanupDebouncedAtoms";
 import { useUpdateAmountWhenRouteChanges } from "./useUpdateAmountWhenRouteChanges";
 import NiceModal from "@ebay/nice-modal-react";
@@ -200,6 +201,16 @@ export const SwapPage = () => {
 
     return calculatePercentageChange(route.usdAmountIn, route.usdAmountOut);
   }, [isWaitingForNewRoute, route?.usdAmountIn, route?.usdAmountOut]);
+
+  const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
+  const totalFeeUsd = getTotalFees(fees)?.formattedUsdAmount;
+
+  const feeWarning = useMemo(() => {
+    if (!route?.usdAmountIn || !route?.usdAmountOut) return false;
+    return (
+      parseFloat(route.usdAmountOut) <= parseFloat(route.usdAmountIn) * 0.9
+    );
+  }, [route?.usdAmountIn, route?.usdAmountOut]);
 
   const swapButton = useMemo(() => {
     const computeFontSize = (label: string) => (label.length > 36 ? 18 : 24);
@@ -427,6 +438,8 @@ export const SwapPage = () => {
           value={destinationAsset?.amount}
           priceChangePercentage={Number(priceChangePercentage)}
           badPriceWarning={route?.warning?.type === "BAD_PRICE_WARNING"}
+          feeAmountUsd={totalFeeUsd}
+          feeWarning={feeWarning}
           onChangeValue={(v) => {
             track("swap page: destination asset amount input - changed", { amount: v });
             setDestinationAssetAmount(v);

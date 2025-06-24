@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Row } from "@/components/Layout";
 import { GhostButton } from "@/components/Button";
 import { SignatureIcon } from "@/icons/SignatureIcon";
@@ -16,7 +16,6 @@ import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { useIsGoFast } from "@/hooks/useIsGoFast";
 
 import { convertSecondsToMinutesOrHours } from "@/utils/number";
-import { getFeeList, getTotalFees } from "@/utils/fees";
 
 const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   const formatted = seconds ? convertSecondsToMinutesOrHours(seconds) : null;
@@ -27,12 +26,6 @@ const EstimatedDuration = ({ seconds }: { seconds?: number }) => {
   ) : null;
 };
 
-const Fee = ({ amount }: { amount?: string }) =>
-  amount ? (
-    <Row gap={4} align="flex-end">
-      Fee: {amount}
-    </Row>
-  ) : null;
 
 const SettingsButton = ({ highlight, changed }: { highlight?: boolean; changed: boolean }) => (
   <StyledSettingsContainer align="flex-end" gap={3} highlightSettings={highlight}>
@@ -63,7 +56,6 @@ export type SwapPageFooterItemsProps = {
   showRouteInfo?: boolean;
   showEstimatedTime?: boolean;
   highlightSettings?: boolean;
-  showFee?: boolean;
 };
 
 export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
@@ -71,7 +63,6 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   showRouteInfo = false,
   showEstimatedTime = false,
   highlightSettings = false,
-  showFee = false,
 }) => {
   const { data: route, isLoading } = useAtomValue(skipRouteAtom);
   const routePreference = useAtomValue(routePreferenceAtom);
@@ -80,8 +71,6 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
   const isGoFast = useIsGoFast(route);
 
   const estimatedSeconds = route?.estimatedRouteDurationSeconds;
-  const fees = useMemo(() => (route ? getFeeList(route) : []), [route]);
-  const totalFees = getTotalFees(fees)?.formattedUsdAmount;
   const signaturesRequired = route?.txsRequired ?? 1;
 
   const leftContent = () => {
@@ -96,7 +85,6 @@ export const SwapPageFooterItems: React.FC<SwapPageFooterItemsProps> = ({
             <EstimatedDuration seconds={estimatedSeconds} />
           </>
         )}
-        {showFee && <Fee amount={totalFees} />}
         {!isMobile && signaturesRequired > 1 && <SignatureRequired count={signaturesRequired} />}
         {!isMobile && signaturesRequired <= 1 && isGoFast && (
           <RoutePreferenceLabel preference={routePreference} />
