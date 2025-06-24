@@ -6,6 +6,8 @@ import {
 import type { SimulatedTransactionResponse } from "@solana/web3.js";
 import type { SvmTx } from "../../types/swaggerTypes";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
+import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+
 export type SimulationResult = {
   success: boolean;
   logs?: string[];
@@ -14,10 +16,21 @@ export type SimulationResult = {
 
 export const validateSvmGasBalance = async ({
   tx,
+  simulate
 }: {
   tx?: SvmTx;
+  simulate: ExecuteRouteOptions["simulate"];
 }): Promise<SimulationResult & { asset?: null; fee?: null }> => {
   if (!tx) throw new Error("Transaction is required");
+  if (simulate === false) {
+    return {
+      success: true,
+      logs: [],
+      error: null,
+      asset: null,
+      fee: null,
+    };
+  }
 
   const endpoint = await getRpcEndpointForChain(tx.chainId ?? "");
   const connection = new Connection(endpoint);
