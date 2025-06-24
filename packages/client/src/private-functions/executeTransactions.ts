@@ -181,11 +181,7 @@ export const executeTransactions = async (
         };
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        const txResponse = await executeSvmTransaction(tx, options, i);
-        txResult = {
-          chainId: tx?.svmTx?.chainId ?? "",
-          txHash: txResponse.txHash,
-        };
+        txResult = await executeSvmTransaction(tx, options, i);
       } else {
         throw new Error("executeRoute error: invalid message type");
       }
