@@ -79,14 +79,18 @@ export const executeAndSubscribeToRouteStatus = async ({
     }
 
     if (executeTransaction && !transaction.txHash) {
-      const { txHash } = await executeTransaction?.(transactionIndex);
+      let { txHash, explorerLink } = await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
 
-      const { explorerLink } = await trackTransaction({
-        chainId: transaction.chainId,
-        txHash: transaction.txHash,
-        ...trackTxPollingOptions,
-      });
+      if (!explorerLink) {
+        const trackResponse = await trackTransaction({
+          chainId: transaction.chainId,
+          txHash: transaction.txHash,
+          ...trackTxPollingOptions,
+        });
+        explorerLink = trackResponse.explorerLink;
+      }
+
       transaction.tracked = true;
       transaction.explorerLink = explorerLink;
       await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
