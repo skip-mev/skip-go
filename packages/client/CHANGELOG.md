@@ -1,5 +1,11 @@
 # @skip-go/client
 
+## 1.3.4
+
+### Patch Changes
+
+- f2852b6: Add svmPayer object param in executeRoute
+
 ## 1.3.3
 
 ### Patch Changes
