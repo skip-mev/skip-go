@@ -60,11 +60,9 @@ export const TransactionHistoryPage = () => {
               }}
             />
           )}
-          itemKey={(item) => item.timestamp?.toString()}
+          itemKey={(item) => item.id}
           expandedItemKey={
-            itemIndexToShowDetail
-              ? historyList[itemIndexToShowDetail]?.timestamp?.toString()
-              : undefined
+            itemIndexToShowDetail ? historyList[itemIndexToShowDetail]?.id : undefined
           }
         />
       </StyledContainer>

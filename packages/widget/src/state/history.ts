@@ -10,6 +10,7 @@ export enum HISTORY_VERSION {
 }
 
 export type TransactionHistoryItem = {
+  id: string;
   route?: RouteResponse; // deprecated
   status: SimpleStatus;
   txsRequired?: number;
