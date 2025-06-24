@@ -1,5 +1,12 @@
 # @skip-go/client
 
+## 1.3.3
+
+### Patch Changes
+
+- 5e2f94c: Remove redundant submit function (use submitTransaction instead), remove track call for non-evm txs, increase default maxRetries to 10
+- cadc8cc: Add calling track back for svm/evm
+
 ## 1.3.2
 
 ### Patch Changes
