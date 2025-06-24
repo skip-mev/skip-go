@@ -1,5 +1,14 @@
 ## 0.0.15
 
+## 3.12.6
+
+### Patch Changes
+
+- 069bed8: Move fee display from footer to destination input and show warning when output value is 90% or less of input.
+- Updated dependencies [5e2f94c]
+- Updated dependencies [cadc8cc]
+  - @skip-go/client@1.3.3
+
 ## 3.12.5
 
 ### Patch Changes
