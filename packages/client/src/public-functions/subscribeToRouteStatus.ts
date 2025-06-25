@@ -83,6 +83,7 @@ export type subscribeToRouteStatusProps = {
 };
 
 export type executeAndSubscribeToRouteStatusProps = {
+  routeDetails?: RouteDetails;
   transactionDetails?: TransactionDetails[];
   txsRequired: number;
   trackTxPollingOptions?: ExecuteRouteOptions["trackTxPollingOptions"];
@@ -91,15 +92,6 @@ export type executeAndSubscribeToRouteStatusProps = {
   onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
   onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
   options?: ExecuteRouteOptions;
-};
-
-export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
-  const { routeDetails, onRouteStatusUpdated } = props;
-  return executeAndSubscribeToRouteStatus({
-    transactionDetails: routeDetails?.transactionDetails,
-    txsRequired: routeDetails?.txsRequired ?? 1,
-    onRouteStatusUpdated
-  });
 };
 
 let currentRouteDetails = {
@@ -118,18 +110,29 @@ const resetCurrentRouteDetails = () => {
     transactionDetails: [] as TransactionDetails[],
     transferEvents: [] as ClientTransferEvent[],
   } as RouteDetails;
-
 }
 
+export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
+  const { routeDetails, onRouteStatusUpdated } = props;
+  return executeAndSubscribeToRouteStatus({
+    transactionDetails: routeDetails?.transactionDetails,
+    txsRequired: routeDetails?.txsRequired ?? 1,
+    onRouteStatusUpdated
+  });
+};
+
 export const executeAndSubscribeToRouteStatus = async ({
-  transactionDetails = currentRouteDetails.transactionDetails,
-  txsRequired = currentRouteDetails.txsRequired,
+  transactionDetails,
+  txsRequired,
   executeTransaction,
   trackTxPollingOptions,
   onTransactionTracked,
   onTransactionCompleted,
+  routeDetails,
   options,
 }: executeAndSubscribeToRouteStatusProps) => {
+  transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails;
+  txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (transaction.status && isFinalState(transaction.statusResponse?.state)) {
@@ -194,6 +197,7 @@ export const executeAndSubscribeToRouteStatus = async ({
 };
 
 type updateRouteDetailsProps = {
+  routeDetails?: RouteDetails;
   transactionDetails?: TransactionDetails[];
   txsRequired?: number;
   options?: Partial<ExecuteRouteOptions>;
@@ -202,12 +206,17 @@ type updateRouteDetailsProps = {
 }
 
 export const updateRouteDetails = ({
-  transactionDetails = currentRouteDetails.transactionDetails,
-  txsRequired = currentRouteDetails.txsRequired,
+  transactionDetails,
+  txsRequired,
+  routeDetails,
   options,
   status,
   initialize,
 }: updateRouteDetailsProps): RouteDetails => {
+
+  transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails;
+  txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
+
   if (initialize) {
     resetCurrentRouteDetails();
     transactionDetails = currentRouteDetails.transactionDetails;
@@ -256,25 +265,17 @@ export const updateRouteDetails = ({
   const receiverAddress = options?.userAddresses?.at(-1);
 
   const newRouteDetails: RouteDetails = {
-    id: currentRouteDetails.id,
-    timestamp: currentRouteDetails.timestamp,
+    id: routeDetails?.id ?? currentRouteDetails.id,
+    timestamp: routeDetails?.timestamp ?? currentRouteDetails.timestamp,
     status: routeStatus,
-    route: {
-      amountIn: options?.route?.amountIn ?? '',
-      amountOut: options?.route?.amountOut ?? '',
-      sourceAssetDenom: options?.route?.sourceAssetDenom ?? '',
-      sourceAssetChainId: options?.route?.sourceAssetChainId ?? '',
-      destAssetDenom: options?.route?.destAssetDenom ?? '',
-      destAssetChainId: options?.route?.destAssetChainId ?? '',
-      estimatedRouteDurationSeconds: options?.route?.estimatedRouteDurationSeconds ?? 0,
-    },
+    route: routeDetails?.route ?? options?.route as SimpleRoute,
     txsRequired,
     transactionDetails,
     transferEvents,
     transferAssetRelease,
-    senderAddress: senderAddress?.address ?? '',
-    receiverAddress: receiverAddress?.address ?? '',
-    txsSigned: currentRouteDetails.txsSigned,
+    senderAddress: routeDetails?.senderAddress ?? senderAddress?.address ?? '',
+    receiverAddress: routeDetails?.receiverAddress ?? receiverAddress?.address ?? '',
+    txsSigned: routeDetails?.txsSigned ?? currentRouteDetails.txsSigned,
   };
 
   const newRouteStatus = {
