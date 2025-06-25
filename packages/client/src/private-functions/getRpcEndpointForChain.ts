@@ -18,7 +18,7 @@ export const getRpcEndpointForChain = async (chainId: string) => {
     "Warning: You are using unreliable public endpoints. We strongly recommend overriding them via endpointOptions for use beyond development settings.",
   );
 
-  const chain = chains().find((chain) => chain.chain_id === chainId);
+  const chain = chains().find((chain) => chain.chainId === chainId);
   if (!chain) {
     throw new Error(`getRpcEndpointForChain: failed to find chain id '${chainId}' in registry`);
   }
