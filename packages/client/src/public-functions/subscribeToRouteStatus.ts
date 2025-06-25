@@ -92,7 +92,7 @@ export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps)
 };
 
 let currentRouteDetails = {
-  status: "unconfirmed",
+  status: "unconfirmed" as RouteStatus,
   id: uuidv4(),
   timestamp: Date.now(),
   txsRequired: 1,
@@ -214,7 +214,8 @@ export const updateRouteDetails = ({
     (status) => isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS",
   );
 
-  let routeStatus: RouteStatus = status ?? "pending";
+  let routeStatus: RouteStatus = status ?? currentRouteDetails?.status;
+
   if (isAllSettled) {
     if (!someTxFailed) {
       routeStatus = "completed";
