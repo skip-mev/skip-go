@@ -113,7 +113,7 @@ export const executeAndSubscribeToRouteStatus = async ({
 }: executeAndSubscribeToRouteStatus) => {
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
-    if (transaction.status && isFinalState(transaction.status.state)) {
+    if (transaction.status && isFinalState(transaction.statusResponse?.state)) {
       updateRouteDetails({
         transactionDetails,
         txsRequired,

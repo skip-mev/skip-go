@@ -59,6 +59,23 @@ export const executeTransactions = async (
     }
   });
 
+  const transactionDetails = txs.map(tx => {
+    if ("cosmosTx" in tx) {
+      return { chainId: tx.cosmosTx?.chainId }
+    } else if ("evmTx" in tx) {
+      return { chainId: tx.evmTx?.chainId }
+    } else if ("svmTx" in tx) {
+      return { chainId: tx.svmTx?.chainId }
+    } else {
+      throw new Error("executeRoute error: invalid message type");
+    }
+  });
+
+  updateRouteDetails({
+    transactionDetails,
+    options,
+  });
+
   const isGasStationSourceEVM = chainIds.find((item, i, array) => {
     return (
       GAS_STATION_CHAIN_IDS.includes(item?.chainId ?? "") &&
@@ -174,14 +191,14 @@ export const executeTransactions = async (
         });
       } else if ("evmTx" in tx) {
         await validateEnabledChainIds(tx.evmTx?.chainId ?? "");
-        const txResponse = await executeEvmTransaction(tx, options, i);
+        const txResponse = await executeEvmTransaction(tx, options, index);
         txResult = {
           chainId: tx?.evmTx?.chainId ?? "",
           txHash: txResponse.transactionHash,
         };
       } else if ("svmTx" in tx) {
         await validateEnabledChainIds(tx.svmTx?.chainId ?? "");
-        txResult = await executeSvmTransaction(tx, options, i);
+        txResult = await executeSvmTransaction(tx, options, index);
       } else {
         throw new Error("executeRoute error: invalid message type");
       }
@@ -191,18 +208,6 @@ export const executeTransactions = async (
 
     return txResult;
   }
-
-  const transactionDetails = txs.map(tx => {
-    if ("cosmosTx" in tx) {
-      return { chainId: tx.cosmosTx?.chainId }
-    } else if ("evmTx" in tx) {
-      return { chainId: tx.evmTx?.chainId }
-    } else if ("svmTx" in tx) {
-      return { chainId: tx.svmTx?.chainId }
-    } else {
-      throw new Error("executeRoute error: invalid message type");
-    }
-  });
 
   console.log(options);
 
