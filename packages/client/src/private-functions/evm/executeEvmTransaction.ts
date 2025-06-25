@@ -70,7 +70,6 @@ export const executeEvmTransaction = async (
       });
 
       updateRouteDetails({
-        shouldReturnIdAndTimestamp: true,
         status: "allowance",
         options
       });

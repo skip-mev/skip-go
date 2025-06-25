@@ -5,6 +5,7 @@ import { wait } from "src/utils/timer";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 import { signSvmTransaction } from "./signSvmTransaction";
 import { submitTransaction } from "src/api/postSubmitTransaction";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export const executeSvmTransaction = async (
   tx: { svmTx?: SvmTx },

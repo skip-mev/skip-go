@@ -85,7 +85,6 @@ export const executeRoute = async (options: ExecuteRouteOptions) => {
 
   updateRouteDetails({
     txsRequired: route.txsRequired,
-    shouldReturnIdAndTimestamp: true,
     status: "unconfirmed",
     options
   });

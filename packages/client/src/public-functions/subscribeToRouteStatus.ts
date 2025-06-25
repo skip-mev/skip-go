@@ -19,12 +19,13 @@ import type { TxResult, UserAddress } from "src/types";
 import { v4 as uuidv4 } from 'uuid';
 
 export type RouteStatus = "unconfirmed" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
+export type TransactionStatus = "pending" | "success" | "failed";
 
 export type TransactionDetails = {
   chainId: string;
   txHash?: string;
-  status?: TxStatusResponse;
-  tracked?: boolean;
+  status?: TransactionStatus;
+  statusResponse?: TxStatusResponse;
   explorerLink?: string;
 };
 
@@ -50,6 +51,20 @@ export type RouteDetails = {
   senderAddress: string;
   receiverAddress: string;
 };
+
+export function getSimpleOverallStatus(state?: TransactionState): TransactionStatus {
+  switch (state) {
+    case "STATE_SUBMITTED":
+    case "STATE_PENDING":
+      return "pending";
+    case "STATE_COMPLETED_SUCCESS":
+      return "success";
+    case "STATE_COMPLETED_ERROR":
+    case "STATE_PENDING_ERROR":
+    default:
+      return "failed";
+  }
+}
 
 const isFinalState = (state?: string): boolean => {
   return (
@@ -102,7 +117,6 @@ export const executeAndSubscribeToRouteStatus = async ({
       updateRouteDetails({
         transactionDetails,
         txsRequired,
-        shouldReturnIdAndTimestamp: executeTransaction !== undefined,
         options
       });
       continue;
@@ -121,7 +135,6 @@ export const executeAndSubscribeToRouteStatus = async ({
         explorerLink = trackResponse.explorerLink;
       }
 
-      transaction.tracked = true;
       transaction.explorerLink = explorerLink;
       await onTransactionTracked?.({ txHash: transaction.txHash, chainId: transaction.chainId, explorerLink });
     }
@@ -137,12 +150,11 @@ export const executeAndSubscribeToRouteStatus = async ({
           txHash: transaction.txHash,
         });
 
-        transaction.status = statusResponse;
+        transaction.statusResponse = statusResponse;
 
         updateRouteDetails({
           transactionDetails,
           txsRequired,
-          shouldReturnIdAndTimestamp: executeTransaction !== undefined,
           options
         });
 
@@ -166,7 +178,6 @@ export const executeAndSubscribeToRouteStatus = async ({
 type updateRouteDetailsProps = {
   transactionDetails?: TransactionDetails[];
   txsRequired?: number;
-  shouldReturnIdAndTimestamp?: boolean;
   options?: Partial<ExecuteRouteOptions>;
   status?: RouteStatus;
 }
@@ -174,20 +185,23 @@ type updateRouteDetailsProps = {
 export const updateRouteDetails = ({
   transactionDetails = currentRouteDetails.transactionDetails,
   txsRequired = currentRouteDetails.txsRequired,
-  shouldReturnIdAndTimestamp,
   options,
   status,
 }: updateRouteDetailsProps): RouteDetails => {
 
+  if (status === "pending" && currentRouteDetails.status === "signing") {
+    currentRouteDetails.txsSigned += 1;
+  }
+
   const validStatuses = transactionDetails
-    .map((tx) => tx.status)
+    .map((tx) => tx.statusResponse)
     .filter((status): status is TxStatusResponse => status !== undefined);
 
   const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 
   const allTransactionsHaveDetails = transactionDetails.length >= txsRequired;
   const allKnownDetailsHaveFinalStatus = transactionDetails.every(
-    (tx) => tx.status && isFinalState(tx.status.state),
+    (tx) => tx.status && isFinalState(tx.statusResponse?.state),
   );
 
   const isAllSettled = allTransactionsHaveDetails && allKnownDetailsHaveFinalStatus;
@@ -229,7 +243,11 @@ export const updateRouteDetails = ({
       destAssetChainId:  options?.route?.destAssetChainId ?? '',
     },
     txsRequired,
-    transactionDetails,
+    transactionDetails: transactionDetails.map(txDetails => ({
+      ...txDetails,
+      statusResponse: undefined,
+      status: getSimpleOverallStatus(txDetails.statusResponse?.state),
+    })),
     transferEvents,
     transferAssetRelease,
     senderAddress: senderAddress?.address ?? '',

@@ -11,7 +11,7 @@ import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
 import { signSvmTransaction } from "./svm/signSvmTransaction";
-import { executeAndSubscribeToRouteStatus } from "src/public-functions/subscribeToRouteStatus";
+import { executeAndSubscribeToRouteStatus, updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 import { submitTransaction } from "src/api/postSubmitTransaction";
 
 export const executeTransactions = async (
@@ -157,6 +157,7 @@ export const executeTransactions = async (
         chainId: txSigned.chainId,
         tx: txSigned.tx,
       });
+
       txResult = {
         chainId: txSigned.chainId,
         txHash: txResponse?.txHash ?? "",
