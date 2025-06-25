@@ -52,7 +52,7 @@ export type RouteDetails = {
   receiverAddress: string;
 };
 
-export function getSimpleOverallStatus(state?: TransactionState): TransactionStatus {
+export function getTransactionStatus(state?: TransactionState): TransactionStatus {
   switch (state) {
     case "STATE_SUBMITTED":
     case "STATE_PENDING":
@@ -61,8 +61,9 @@ export function getSimpleOverallStatus(state?: TransactionState): TransactionSta
       return "success";
     case "STATE_COMPLETED_ERROR":
     case "STATE_PENDING_ERROR":
-    default:
       return "failed";
+    default:
+      return "pending";
   }
 }
 
@@ -244,11 +245,13 @@ export const updateRouteDetails = ({
       destAssetChainId:  options?.route?.destAssetChainId ?? '',
     },
     txsRequired,
-    transactionDetails: transactionDetails.map(txDetails => ({
-      ...txDetails,
-      statusResponse: undefined,
-      status: getSimpleOverallStatus(txDetails.statusResponse?.state),
-    })),
+    transactionDetails: transactionDetails.map(txDetails => {
+      const { statusResponse, ...rest } = txDetails;
+      return {
+        ...rest,
+        status: getTransactionStatus(txDetails.statusResponse?.state),
+      }
+    }),
     transferEvents,
     transferAssetRelease,
     senderAddress: senderAddress?.address ?? '',
