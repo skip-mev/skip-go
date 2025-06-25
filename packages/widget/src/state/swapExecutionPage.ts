@@ -11,12 +11,8 @@ import {
   walletsAtom,
 } from "./wallets";
 import { atomEffect } from "jotai-effect";
-import {
-  currentTransactionAtom,
-  setTransactionHistoryAtom,
-  transactionHistoryAtom,
-} from "./history";
-import { ClientOperation, getClientOperations, SimpleStatus } from "@/utils/clientType";
+import { currentTransactionAtom, setTransactionHistoryAtom } from "./history";
+import { ClientOperation, getClientOperations } from "@/utils/clientType";
 import { errorWarningAtom, ErrorWarningType } from "./errorWarning";
 import { isUserRejectedRequestError } from "@/utils/error";
 import { sourceAssetAtom, swapSettingsAtom } from "./swapPage";
@@ -30,8 +26,6 @@ import {
   RouteResponse,
   TransactionCallbacks,
   UserAddress,
-  TxStatusResponse,
-  RouteDetails,
   TransactionDetails,
 } from "@skip-go/client";
 import { currentPageAtom, Routes } from "./router";

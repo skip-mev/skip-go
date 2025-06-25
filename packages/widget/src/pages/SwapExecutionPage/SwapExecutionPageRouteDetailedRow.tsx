@@ -5,8 +5,8 @@ import React, { useMemo } from "react";
 import { ChainIcon } from "@/icons/ChainIcon";
 import { PenIcon } from "@/icons/PenIcon";
 import { Button, PillButton, Link, PillButtonLink } from "@/components/Button";
-import { ChainTransaction, RouteDetails } from "@skip-go/client";
-import { ClientOperation, SimpleStatus } from "@/utils/clientType";
+import { ChainTransaction, RouteDetails, RouteStatus } from "@skip-go/client";
+import { ClientOperation } from "@/utils/clientType";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { useAtomValue } from "jotai";
 import { chainAddressesAtom } from "@/state/swapExecutionPage";
@@ -15,7 +15,6 @@ import { formatDisplayAmount } from "@/utils/number";
 import { useIsMobileScreenSize } from "@/hooks/useIsMobileScreenSize";
 import { CopyIcon } from "@/icons/CopyIcon";
 import { useCopyAddress } from "@/hooks/useCopyAddress";
-import { TxsStatus } from "./useBroadcastedTxs";
 import { useGroupedAssetByRecommendedSymbol } from "@/modals/AssetAndChainSelectorModal/useGroupedAssetsByRecommendedSymbol";
 import { GroupedAssetImage } from "@/components/GroupedAssetImage";
 import { useCroppedImage } from "@/hooks/useCroppedImage";
@@ -27,7 +26,7 @@ export type SwapExecutionPageRouteDetailedRowProps = {
   chainId: ClientOperation["fromChainId"] | ClientOperation["chainId"];
   onClickEditDestinationWallet?: () => void;
   explorerLink?: ChainTransaction["explorerLink"];
-  status?: SimpleStatus;
+  status?: RouteStatus;
   isSignRequired?: boolean;
   index: number;
   context: "source" | "destination" | "intermediary";
@@ -268,7 +267,7 @@ export const StyledAnimatedBorder = ({
   width: number;
   height: number;
   borderSize?: number;
-  status?: SimpleStatus;
+  status?: RouteStatus;
 }) => (
   <StyledLoadingContainer
     align="center"
@@ -295,7 +294,7 @@ const StyledLoadingContainer = styled(Row)<{
   height: number;
   width: number;
   borderSize: number;
-  status?: SimpleStatus;
+  status?: RouteStatus;
   backgroundColor?: string;
 }>`
   flex-shrink: 0;
