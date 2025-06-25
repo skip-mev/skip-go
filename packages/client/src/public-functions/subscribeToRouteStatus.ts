@@ -141,15 +141,6 @@ export const executeAndSubscribeToRouteStatus = async ({
   txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
-    if (isFinalTransactionStatus(transaction.status) || isFinalState(transaction.statusResponse?.state)) {
-      updateRouteDetails({
-        transactionDetails,
-        txsRequired,
-        options
-      });
-      continue;
-    }
-
     if (executeTransaction && !transaction.txHash) {
       let { txHash, explorerLink } = await executeTransaction?.(transactionIndex);
       transaction.txHash = txHash;
@@ -168,6 +159,15 @@ export const executeAndSubscribeToRouteStatus = async ({
 
     if (transaction.txHash === undefined) {
       throw new Error("subscribeToRouteStatus error: txHash is undefined");
+    }
+
+    if (isFinalTransactionStatus(transaction.status) || isFinalState(transaction.statusResponse?.state)) {
+      updateRouteDetails({
+        transactionDetails,
+        txsRequired,
+        options
+      });
+      continue;
     }
 
     while (true) {
