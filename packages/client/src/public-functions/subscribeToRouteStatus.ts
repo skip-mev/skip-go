@@ -210,8 +210,9 @@ export const updateRouteDetails = ({
 }: updateRouteDetailsProps): RouteDetails => {
   if (initialize) {
     resetCurrentRouteDetails();
+    transactionDetails = currentRouteDetails.transactionDetails;
   }
-  if (status === "pending" && currentRouteDetails.status === "signing") {
+  if (currentRouteDetails.status === "signing" && status === "pending") {
     currentRouteDetails.txsSigned += 1;
   }
 

@@ -54,6 +54,7 @@ export const TransactionHistoryPage = () => {
                 });
                 setItemIndexToShowDetail((prev) => (prev === index ? undefined : index));
               }}
+              onClickDelete={() => setItemIndexToShowDetail(undefined)}
             />
           )}
           itemKey={(item) => item.id}

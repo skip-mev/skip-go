@@ -51,7 +51,6 @@ export const setTransactionHistoryAtom = atom(
 export const currentTransactionAtom = atom((get): RouteDetails | undefined => {
   const { currentTransactionId } = get(swapExecutionStateAtom);
   const history = get(transactionHistoryAtom);
-  console.log(currentTransactionId);
   return history.find((historyItem) => historyItem.id === currentTransactionId);
 });
 
