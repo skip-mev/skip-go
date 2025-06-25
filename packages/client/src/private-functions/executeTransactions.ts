@@ -20,9 +20,6 @@ export const executeTransactions = async (
   const {
     txs,
     onTransactionBroadcast,
-    onRouteStatusUpdated,
-    onTransactionCompleted,
-    onTransactionTracked,
     simulate = true,
     batchSimulate = true,
     getFallbackGasAmount = getDefaultFallbackGasAmount,

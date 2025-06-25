@@ -19,6 +19,7 @@ import type {
 } from "src/types/client-types";
 import { ApiState } from "src/state/apiState";
 import type { TrackTxPollingProps } from "src/api/postTrackTransaction";
+import { updateRouteDetails } from "./subscribeToRouteStatus";
 
 /** Execute Route Options */
 export type ExecuteRouteOptions = SignerGetters &
@@ -81,6 +82,13 @@ export type ExecuteRouteOptions = SignerGetters &
 
 export const executeRoute = async (options: ExecuteRouteOptions) => {
   const { route, userAddresses, beforeMsg, afterMsg, timeoutSeconds } = options;
+
+  updateRouteDetails({
+    txsRequired: route.txsRequired,
+    shouldReturnIdAndTimestamp: true,
+    status: "unconfirmed",
+    options
+  });
 
   let addressList: string[] = [];
   userAddresses.forEach((userAddress, index) => {

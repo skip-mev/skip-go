@@ -18,7 +18,7 @@ import { trackTransaction } from "../api/postTrackTransaction";
 import type { TxResult, UserAddress } from "src/types";
 import { v4 as uuidv4 } from 'uuid';
 
-export type RouteStatus = "pending" | "completed" | "incomplete" | "failed";
+export type RouteStatus = "unconfirmed" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
 
 export type TransactionDetails = {
   chainId: string;
@@ -38,14 +38,17 @@ type SimpleRoute = {
 }
 
 export type RouteDetails = {
-  id?: string;
-  timestamp?: number;
+  id: string;
+  timestamp: number;
   status: RouteStatus;
-  route?: SimpleRoute;
+  route: SimpleRoute;
   txsRequired: number;
+  txsSigned: number;
   transactionDetails: TransactionDetails[];
   transferEvents: ClientTransferEvent[];
   transferAssetRelease?: TransferAssetRelease;
+  senderAddress: string;
+  receiverAddress: string;
 };
 
 const isFinalState = (state?: string): boolean => {
@@ -73,12 +76,19 @@ export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps)
   return executeAndSubscribeToRouteStatus(props);
 };
 
-const id = uuidv4();
-const timestamp = Date.now();
+let currentRouteDetails = {
+  status: "unconfirmed",
+  id: uuidv4(),
+  timestamp: Date.now(),
+  txsRequired: 1,
+  txsSigned: 0,
+  transactionDetails: [] as TransactionDetails[],
+  transferEvents: [] as ClientTransferEvent[],
+};
 
 export const executeAndSubscribeToRouteStatus = async ({
-  transactionDetails = [],
-  txsRequired: totalTxsRequired,
+  transactionDetails = currentRouteDetails.transactionDetails,
+  txsRequired = currentRouteDetails.txsRequired,
   executeTransaction,
   trackTxPollingOptions,
   onTransactionTracked,
@@ -89,13 +99,12 @@ export const executeAndSubscribeToRouteStatus = async ({
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (transaction.status && isFinalState(transaction.status.state)) {
-      const routeDetails = getRouteDetails({
+      updateRouteDetails({
         transactionDetails,
-        totalTxsRequired,
+        txsRequired,
         shouldReturnIdAndTimestamp: executeTransaction !== undefined,
         options
       });
-      onRouteStatusUpdated?.(routeDetails);
       continue;
     }
 
@@ -130,14 +139,12 @@ export const executeAndSubscribeToRouteStatus = async ({
 
         transaction.status = statusResponse;
 
-        const routeDetails = getRouteDetails({
+        updateRouteDetails({
           transactionDetails,
-          totalTxsRequired,
+          txsRequired,
           shouldReturnIdAndTimestamp: executeTransaction !== undefined,
           options
         });
-
-        onRouteStatusUpdated?.(routeDetails);
 
         if (isFinalState(statusResponse.state)) {
           onTransactionCompleted?.({
@@ -156,26 +163,29 @@ export const executeAndSubscribeToRouteStatus = async ({
   }
 };
 
-type getRouteDetailsProps = {
-  transactionDetails: TransactionDetails[];
-  totalTxsRequired: number;
+type updateRouteDetailsProps = {
+  transactionDetails?: TransactionDetails[];
+  txsRequired?: number;
   shouldReturnIdAndTimestamp?: boolean;
   options?: Partial<ExecuteRouteOptions>;
+  status?: RouteStatus;
 }
 
-const getRouteDetails = ({
-  transactionDetails,
-  totalTxsRequired,
+export const updateRouteDetails = ({
+  transactionDetails = currentRouteDetails.transactionDetails,
+  txsRequired = currentRouteDetails.txsRequired,
   shouldReturnIdAndTimestamp,
   options,
-}: getRouteDetailsProps): RouteDetails => {
+  status,
+}: updateRouteDetailsProps): RouteDetails => {
+
   const validStatuses = transactionDetails
     .map((tx) => tx.status)
     .filter((status): status is TxStatusResponse => status !== undefined);
 
   const transferEvents = getTransferEventsFromTxStatusResponse(validStatuses);
 
-  const allTransactionsHaveDetails = transactionDetails.length >= totalTxsRequired;
+  const allTransactionsHaveDetails = transactionDetails.length >= txsRequired;
   const allKnownDetailsHaveFinalStatus = transactionDetails.every(
     (tx) => tx.status && isFinalState(tx.status.state),
   );
@@ -190,7 +200,7 @@ const getRouteDetails = ({
     (status) => isFinalState(status.state) && status.state !== "STATE_COMPLETED_SUCCESS",
   );
 
-  let routeStatus: RouteStatus = "pending";
+  let routeStatus: RouteStatus = status ?? "pending";
   if (isAllSettled) {
     if (!someTxFailed) {
       routeStatus = "completed";
@@ -203,19 +213,35 @@ const getRouteDetails = ({
 
   const transferAssetRelease = validStatuses?.at(-1)?.transferAssetRelease;
 
+  const senderAddress = options?.userAddresses?.at(0);
+  const receiverAddress = options?.userAddresses?.at(-1);
+
   const newRouteDetails: RouteDetails = {
+    id: currentRouteDetails.id,
+    timestamp: currentRouteDetails.timestamp,
     status: routeStatus,
-    route: options?.route,
-    txsRequired: totalTxsRequired,
+    route: {
+      amountIn: options?.route?.amountIn ?? '',
+      amountOut: options?.route?.amountOut ?? '',
+      sourceAssetDenom:  options?.route?.sourceAssetDenom ?? '',
+      sourceAssetChainId:  options?.route?.sourceAssetChainId ?? '',
+      destAssetDenom:  options?.route?.destAssetDenom ?? '',
+      destAssetChainId:  options?.route?.destAssetChainId ?? '',
+    },
+    txsRequired,
     transactionDetails,
     transferEvents,
     transferAssetRelease,
+    senderAddress: senderAddress?.address ?? '',
+    receiverAddress: receiverAddress?.address ?? '',
+    txsSigned: currentRouteDetails.txsSigned,
   };
 
-  if (shouldReturnIdAndTimestamp) {
-    newRouteDetails.id = id;
-    newRouteDetails.timestamp = timestamp;
+  if (options?.onRouteStatusUpdated) {
+    options.onRouteStatusUpdated(newRouteDetails);
   }
+
+  currentRouteDetails = newRouteDetails;
 
   return newRouteDetails;
 };

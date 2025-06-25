@@ -3,6 +3,7 @@ import { Connection, Transaction } from "@solana/web3.js";
 import { getRpcEndpointForChain } from "../getRpcEndpointForChain";
 import { ClientState } from "src/state/clientState";
 import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export const signSvmTransaction = async ({
   tx,
@@ -49,8 +50,19 @@ export const signSvmTransaction = async ({
     signerAddress: signer.publicKey?.toBase58(),
     txIndex: index
   });
+
+  updateRouteDetails({
+    status: "signing",
+    options
+  });
+
   const signedTx = await signer.signTransaction(transaction);
   options?.onTransactionSigned?.({ chainId: svmTx.chainId });
+
+  updateRouteDetails({
+    status: "pending",
+    options
+  });
 
   const serializedTx = signedTx.serialize();
   return serializedTx
