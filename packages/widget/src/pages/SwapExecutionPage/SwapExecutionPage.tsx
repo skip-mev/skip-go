@@ -39,7 +39,7 @@ export enum SwapExecutionState {
 
 export const SwapExecutionPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
-  const { route, clientOperations, isValidatingGasBalance } = useAtomValue(swapExecutionStateAtom);
+  const { route, clientOperations } = useAtomValue(swapExecutionStateAtom);
   const currentTransaction = useAtomValue(currentTransactionAtom);
   const chainAddresses = useAtomValue(chainAddressesAtom);
   const { connectRequiredChains, isLoading } = useAutoSetAddress();
@@ -61,8 +61,6 @@ export const SwapExecutionPage = () => {
   const swapExecutionState = useSwapExecutionState({
     chainAddresses,
     route,
-    isValidatingGasBalance,
-    signaturesRemaining,
     isLoading,
   });
 

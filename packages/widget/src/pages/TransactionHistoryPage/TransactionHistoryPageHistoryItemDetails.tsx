@@ -6,15 +6,14 @@ import { Button, Link } from "@/components/Button";
 import { TrashIcon } from "@/icons/TrashIcon";
 import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
-import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { TransactionDetails, TransferAssetRelease } from "@skip-go/client";
+import { RouteStatus, TransactionDetails, TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { track } from "@amplitude/analytics-browser";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {
-  status?: SimpleStatus;
+  status?: RouteStatus;
   sourceChainName: string;
   destinationChainName: string;
   absoluteTimeString: string;
@@ -25,6 +24,8 @@ type TransactionHistoryPageHistoryItemDetailsProps = {
 
 const statusMap = {
   unconfirmed: "Unconfirmed",
+  allowance: "In Progress",
+  validating: "In Progress",
   signing: "In Progress",
   broadcasted: "In Progress",
   pending: "In Progress",

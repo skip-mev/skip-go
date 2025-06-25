@@ -5,9 +5,11 @@ import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { currentTransactionAtom } from "@/state/history";
+import { setCurrentTransactionIdAtom } from "@/state/swapExecutionPage";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
   const currentTransaction = useAtomValue(currentTransactionAtom);
+  const setCurrentTransactionId = useSetAtom(setCurrentTransactionIdAtom);
   const setError = useSetAtom(errorWarningAtom);
   const [transactionTimeoutTimer, setTransactionTimeoutTimer] = useState<
     NodeJS.Timeout | undefined
@@ -31,6 +33,9 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
           });
           setError({
             errorWarningType: ErrorWarningType.Timeout,
+            onClickBack: () => {
+              setCurrentTransactionId();
+            },
             explorerLink: currentTransaction?.transactionDetails
               ? createSkipExplorerLink(currentTransaction.transactionDetails)
               : "",
@@ -50,6 +55,7 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
     currentTransaction?.route,
     currentTransaction?.transactionDetails,
     currentTransaction?.txsRequired,
+    setCurrentTransactionId,
     setError,
     swapExecutionState,
     transactionTimeoutTimer,

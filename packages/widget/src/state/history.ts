@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
 import { RouteDetails } from "@skip-go/client";
-import { swapExecutionStateAtom } from "./swapExecutionPage";
+import { setCurrentTransactionIdAtom, swapExecutionStateAtom } from "./swapExecutionPage";
 
 export enum HISTORY_VERSION {
   "camelCase",
@@ -18,6 +18,13 @@ export const transactionHistoryAtom = atomWithStorage<RouteDetails[]>(
   [],
 );
 
+export const sortedHistoryItemsAtom = atom((get): RouteDetails[] => {
+  const history = get(transactionHistoryAtom);
+  return history
+    .filter((historyItem) => historyItem.txsSigned > 0)
+    .sort((a, b) => b.timestamp - a.timestamp);
+});
+
 export const setTransactionHistoryAtom = atom(
   null,
   (get, set, historyItem: Partial<RouteDetails>) => {
@@ -31,20 +38,20 @@ export const setTransactionHistoryAtom = atom(
       const oldItem = newHistory[index];
       newHistory[index] = { ...oldItem, ...historyItem };
     } else {
-      set(swapExecutionStateAtom, (state) => ({
-        ...state,
-        currentTransactionId: historyItem.id,
-      }));
-      newHistory.push(historyItem as RouteDetails);
+      if (historyItem.id) {
+        set(setCurrentTransactionIdAtom, historyItem.id);
+        newHistory.push(historyItem as RouteDetails);
+      }
     }
 
     set(transactionHistoryAtom, newHistory);
   },
 );
 
-export const currentTransactionAtom = atom((get) => {
+export const currentTransactionAtom = atom((get): RouteDetails | undefined => {
   const { currentTransactionId } = get(swapExecutionStateAtom);
   const history = get(transactionHistoryAtom);
+  console.log(currentTransactionId);
   return history.find((historyItem) => historyItem.id === currentTransactionId);
 });
 

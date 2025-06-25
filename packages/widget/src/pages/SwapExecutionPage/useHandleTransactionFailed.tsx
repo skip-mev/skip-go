@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { setCurrentTransactionIdAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
@@ -8,6 +8,7 @@ import { debouncedSourceAssetAmountAtom, sourceAssetAtom } from "@/state/swapPag
 import { skipAssetsAtom } from "@/state/skipClient";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
 import { RouteDetails } from "@skip-go/client";
+import { currentTransactionAtom } from "@/state/history";
 
 const DELAY_EXPECTING_TRANSFER_ASSET_RELEASE = 15_000;
 
@@ -15,12 +16,14 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   const setErrorWarning = useSetAtom(errorWarningAtom);
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
+  const setCurrentTransactionId = useSetAtom(setCurrentTransactionIdAtom);
   const setDebouncedSourceAssetAmount = useSetAtom(debouncedSourceAssetAmountAtom);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
-  const { transactionDetailsArray, route } = useAtomValue(swapExecutionStateAtom);
+  const { route } = useAtomValue(swapExecutionStateAtom);
 
-  const lastTransaction = transactionDetailsArray.at(-1);
+  const lastTransaction = currentTransaction?.transactionDetails.at(-1);
   const lastTxHash = lastTransaction?.txHash;
 
   const getClientAsset = useCallback(
@@ -33,15 +36,13 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     [assets],
   );
 
-  const explorerLink = createSkipExplorerLink(transactionDetailsArray);
+  const explorerLink = createSkipExplorerLink(currentTransaction?.transactionDetails);
 
   const handleTransactionFailed = useCallback(() => {
     const sourceClientAsset = getClientAsset(
       statusData?.transferAssetRelease?.denom,
       statusData?.transferAssetRelease?.chainId,
     );
-
-    console.log(statusData);
 
     if (sourceClientAsset) {
       track("unexpected error page: transaction reverted", {
@@ -76,6 +77,9 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       setErrorWarning({
         errorWarningType: ErrorWarningType.Unexpected,
         error,
+        onClickBack: () => {
+          setCurrentTransactionId();
+        },
       });
     }
   }, [
@@ -86,10 +90,11 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     lastTxHash,
     route,
     setCurrentPage,
+    setCurrentTransactionId,
     setDebouncedSourceAssetAmount,
     setErrorWarning,
     setSourceAsset,
-    statusData,
+    statusData?.transferAssetRelease,
   ]);
 
   useEffect(() => {

@@ -85,6 +85,13 @@ export const swapExecutionStateAtom = atomWithStorageNoCrossTabSync<SwapExecutio
   },
 );
 
+export const setCurrentTransactionIdAtom = atom(null, (_get, set, transactionId?: string) => {
+  set(swapExecutionStateAtom, (prev) => ({
+    ...prev,
+    currentTransactionId: transactionId,
+  }));
+});
+
 export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   const { data: route } = get(skipRouteAtom);
   const { data: chains } = get(skipChainsAtom);
@@ -184,6 +191,7 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     },
     onError: (error: unknown) => {
       const currentPage = get(currentPageAtom);
+      set(setCurrentTransactionIdAtom);
       track("execute route: error", { error, route });
       callbacks?.onTransactionFailed?.({
         error: (error as Error)?.message,

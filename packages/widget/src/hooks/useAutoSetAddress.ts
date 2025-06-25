@@ -152,7 +152,7 @@ export const useAutoSetAddress = () => {
   );
 
   useEffect(() => {
-    if (currentTransaction?.status !== "unconfirmed") {
+    if (currentTransaction && currentTransaction?.status !== "unconfirmed") {
       setIsLoading(false);
       return;
     }
@@ -170,6 +170,7 @@ export const useAutoSetAddress = () => {
     currentSourceWallets?.cosmos?.id,
     currentSourceWallets?.evm?.id,
     currentSourceWallets?.svm?.id,
+    currentTransaction,
     currentTransaction?.status,
     isLoading,
     requiredChainAddresses,

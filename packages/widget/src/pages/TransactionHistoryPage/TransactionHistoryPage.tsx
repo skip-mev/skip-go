@@ -4,10 +4,10 @@ import { PageHeader } from "@/components/PageHeader";
 import { SwapPageFooter } from "@/pages/SwapPage/SwapPageFooter";
 import { ICONS } from "@/icons";
 import { VirtualList } from "@/components/VirtualList";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { HistoryIcon } from "@/icons/HistoryIcon";
 import { useAtomValue, useSetAtom } from "jotai";
-import { transactionHistoryAtom } from "@/state/history";
+import { sortedHistoryItemsAtom } from "@/state/history";
 import { TransactionHistoryPageHistoryItem } from "./TransactionHistoryPageHistoryItem";
 import { currentPageAtom, Routes } from "@/state/router";
 import { track } from "@amplitude/analytics-browser";
@@ -18,11 +18,7 @@ export const TransactionHistoryPage = () => {
   const setCurrentPage = useSetAtom(currentPageAtom);
   const [itemIndexToShowDetail, setItemIndexToShowDetail] = useState<number | undefined>(undefined);
 
-  const txHistory = useAtomValue(transactionHistoryAtom);
-  const historyList = useMemo(
-    () => txHistory.sort((a, b) => b.timestamp - a.timestamp),
-    [txHistory],
-  );
+  const sortedHistoryItems = useAtomValue(sortedHistoryItemsAtom);
 
   return (
     <Column gap={5}>
@@ -38,8 +34,8 @@ export const TransactionHistoryPage = () => {
       />
       <StyledContainer gap={5}>
         <VirtualList
-          key={txHistory.length}
-          listItems={historyList}
+          key={sortedHistoryItems.length}
+          listItems={sortedHistoryItems}
           height={262}
           empty={{
             details: "No transactions yet",
@@ -62,7 +58,7 @@ export const TransactionHistoryPage = () => {
           )}
           itemKey={(item) => item.id}
           expandedItemKey={
-            itemIndexToShowDetail ? historyList[itemIndexToShowDetail]?.id : undefined
+            itemIndexToShowDetail ? sortedHistoryItems[itemIndexToShowDetail]?.id : undefined
           }
         />
       </StyledContainer>

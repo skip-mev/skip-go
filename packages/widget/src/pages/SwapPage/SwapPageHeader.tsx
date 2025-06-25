@@ -73,12 +73,12 @@ export const TrackLatestTxHistoryItemStatus = memo(() => {
   const lastTxHistoryItemInTime = useAtomValue(lastTransactionInTimeAtom);
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
-  const { transferAssetRelease } = useTxHistory({
+  const txHistoryItem = useTxHistory({
     txHistoryItem: lastTxHistoryItemInTime,
   });
 
   if (
-    transferAssetRelease &&
+    txHistoryItem?.transferAssetRelease &&
     lastTxHistoryItemInTime?.txsSigned !== lastTxHistoryItemInTime?.transactionDetails.length &&
     !isPending
   ) {

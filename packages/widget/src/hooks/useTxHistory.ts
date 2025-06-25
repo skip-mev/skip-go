@@ -1,39 +1,23 @@
-import { setTransactionHistoryAtom, TransactionHistoryItem } from "@/state/history";
-import { subscribeToRouteStatus } from "@skip-go/client";
+import { setTransactionHistoryAtom } from "@/state/history";
+import { RouteDetails, subscribeToRouteStatus } from "@skip-go/client";
 import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 type useTxHistoryProps = {
-  txHistoryItem?: TransactionHistoryItem;
+  txHistoryItem?: RouteDetails;
 };
 
 export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
   const setTransactionHistory = useSetAtom(setTransactionHistoryAtom);
 
-  const transactionDetails = txHistoryItem?.transactionDetails;
-
-  const txsRequired = txHistoryItem?.txsRequired ?? txHistoryItem?.route?.txsRequired;
-
   useEffect(() => {
     subscribeToRouteStatus({
-      transactionDetails: transactionDetails,
-      txsRequired: txsRequired ?? 1,
+      routeDetails: txHistoryItem,
       onRouteStatusUpdated: (routeStatus) => {
-        const newTxHistoryItem = {
-          ...routeStatus,
-          timestamp: txHistoryItem?.timestamp,
-        };
-        if (JSON.stringify(txHistoryItem) !== JSON.stringify(newTxHistoryItem)) {
-          console.log("set transaction history");
-          console.log(newTxHistoryItem);
-          setTransactionHistory(newTxHistoryItem as TransactionHistoryItem);
-        }
+        setTransactionHistory(routeStatus);
       },
     });
   }, []);
 
-  return {
-    status: txHistoryItem?.status,
-    transferAssetRelease: txHistoryItem?.transferAssetRelease,
-  };
+  return txHistoryItem;
 };

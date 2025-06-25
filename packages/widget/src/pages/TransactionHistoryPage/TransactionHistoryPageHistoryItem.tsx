@@ -34,7 +34,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
   const theme = useTheme();
   const isMobileScreenSize = useIsMobileScreenSize();
 
-  const { status: historyStatus, transferAssetRelease } = useTxHistory({
+  const historyItem = useTxHistory({
     txHistoryItem,
   });
 
@@ -80,7 +80,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
   };
 
   const renderStatus = useMemo(() => {
-    switch (historyStatus) {
+    switch (historyItem?.status) {
       case "unconfirmed":
       case "pending":
         return (
@@ -95,17 +95,17 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
         return <StyledGreenDot />;
       case "incomplete":
       case "failed": {
-        if (transferAssetRelease) {
+        if (historyItem?.transferAssetRelease) {
           return <FilledWarningIcon backgroundColor={theme.warning.text} />;
         } else return <XIcon color={theme.error.text} />;
       }
     }
   }, [
-    historyStatus,
+    historyItem?.status,
+    historyItem?.transferAssetRelease,
     theme.primary.text.normal,
     theme.error.text,
     theme.warning.text,
-    transferAssetRelease,
   ]);
 
   const absoluteTimeString = useMemo(() => {
@@ -117,7 +117,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
 
   const relativeTime = useMemo(() => {
     // get relative time based on timestamp
-    if (historyStatus === "pending") {
+    if (historyItem?.status === "pending") {
       return "In Progress";
     }
     if (!timestamp) return "";
@@ -134,7 +134,7 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       .replace("month", "mo")
       .replace("years", "yrs")
       .replace("year", "yr");
-  }, [timestamp, historyStatus]);
+  }, [historyItem?.status, timestamp]);
 
   if (!txHistoryItem.route) return null;
 
@@ -155,13 +155,13 @@ export const TransactionHistoryPageHistoryItem = forwardRef<
       </StyledHistoryItemRow>
       {showDetails && (
         <TransactionHistoryPageHistoryItemDetails
-          status={historyStatus}
+          status={historyItem?.status}
           transactionDetails={transactionDetails}
           sourceChainName={sourceAssetDetails.chainName ?? "--"}
           destinationChainName={destinationAssetDetails.chainName ?? "--"}
           absoluteTimeString={absoluteTimeString}
           onClickDelete={() => removeTransactionHistoryItem(txHistoryItem.timestamp)}
-          transferAssetRelease={transferAssetRelease}
+          transferAssetRelease={historyItem?.transferAssetRelease}
         />
       )}
     </StyledHistoryContainer>

@@ -43,7 +43,7 @@ export { getEVMGasAmountForMessage } from "./public-functions/getEvmGasAmountFor
 export { validateCosmosGasBalance } from "./public-functions/validateCosmosGasBalance";
 
 export { subscribeToRouteStatus } from "./public-functions/subscribeToRouteStatus";
-export type { RouteDetails, TransactionDetails } from "./public-functions/subscribeToRouteStatus";
+export type { RouteDetails, TransactionDetails, RouteStatus } from "./public-functions/subscribeToRouteStatus";
 
 export type { SkipClientOptions } from "./state/clientState";
 
