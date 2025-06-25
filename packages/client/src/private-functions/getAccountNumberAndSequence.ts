@@ -45,9 +45,19 @@ type AccountResponse = {
 const getAccountNumberAndSequenceFromDymension = async (address: string, chainId: string) => {
   const endpoint = await getRestEndpointForChain(chainId);
 
-  const jsonResponse: AccountResponse = await createRequestClient({
-    baseUrl: `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-  }).get();
+  const res = await fetch(
+    `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to fetch account data: ${res.statusText}`);
+  }
+
+  const jsonResponse = await res.json();
 
   const response = toCamel(jsonResponse);
 
