@@ -77,6 +77,12 @@ const isFinalState = (state?: string): boolean => {
   );
 };
 
+const isFinalTransactionStatus = (status?: TransactionStatus) => {
+  return (
+    status === "failed" || status === "success"
+  )
+}
+
 export type subscribeToRouteStatusProps = {
   routeDetails?: RouteDetails;
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
@@ -135,7 +141,7 @@ export const executeAndSubscribeToRouteStatus = async ({
   txsRequired ??= routeDetails?.txsRequired ?? currentRouteDetails?.txsRequired;
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
-    if (transaction.status && isFinalState(transaction.statusResponse?.state)) {
+    if (isFinalTransactionStatus(transaction.status) || isFinalState(transaction.statusResponse?.state)) {
       updateRouteDetails({
         transactionDetails,
         txsRequired,
