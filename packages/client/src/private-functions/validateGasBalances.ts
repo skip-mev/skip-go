@@ -9,6 +9,7 @@ import type { Tx } from "../types/swaggerTypes";
 import { validateCosmosGasBalance } from "../public-functions/validateCosmosGasBalance";
 import { validateEvmGasBalance } from "./evm/validateEvmGasBalance";
 import { validateSvmGasBalance } from "./svm/validateSvmGasBalance";
+import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 export type ValidateGasBalancesProps = {
   txs: Tx[];
@@ -21,6 +22,7 @@ export type ValidateGasBalancesProps = {
   // run gas validation for specific chainId
   enabledChainIds?: string[];
   useUnlimitedApproval?: boolean;
+  options: ExecuteRouteOptions;
 } & Pick<SignerGetters, "getCosmosSigner" | "getEvmSigner">;
 
 export const validateGasBalances = async ({
@@ -33,7 +35,8 @@ export const validateGasBalances = async ({
   disabledChainIds,
   enabledChainIds,
   useUnlimitedApproval,
-  getCosmosPriorityFeeDenom
+  getCosmosPriorityFeeDenom,
+  options
 }: ValidateGasBalancesProps) => {
   const validateResult = await Promise.all(
     txs.map(async (tx, i) => {
@@ -48,6 +51,10 @@ export const validateGasBalances = async ({
       ) {
         onValidateGasBalance?.({
           status: "pending",
+        });
+        updateRouteDetails({
+          status: "validating",
+          options
         });
         if (!tx?.cosmosTx?.msgs) {
           throw new Error(`invalid msgs ${tx?.cosmosTx?.msgs}`);
@@ -85,6 +92,10 @@ export const validateGasBalances = async ({
         onValidateGasBalance?.({
           status: "pending",
         });
+        updateRouteDetails({
+          status: "validating",
+          options
+        });
         const signer = await getEvmSigner?.(tx?.evmTx?.chainId ?? "");
         if (!signer) {
           throw new Error(
@@ -117,6 +128,10 @@ export const validateGasBalances = async ({
       ) {
         onValidateGasBalance?.({
           status: "pending",
+        });
+        updateRouteDetails({
+          status: "validating",
+          options
         });
         try {
           const res = await validateSvmGasBalance({

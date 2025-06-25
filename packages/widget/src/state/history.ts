@@ -1,46 +1,29 @@
-import { TransactionDetails } from "./swapExecutionPage";
-import { ClientTransferEvent, SimpleStatus } from "@/utils/clientType";
 import { atom } from "jotai";
 import { LOCAL_STORAGE_KEYS } from "./localStorageKeys";
 import { atomWithStorage } from "jotai/utils";
-import { RouteResponse, TransferAssetRelease } from "@skip-go/client";
+import { RouteDetails } from "@skip-go/client";
+import { swapExecutionStateAtom } from "./swapExecutionPage";
 
 export enum HISTORY_VERSION {
   "camelCase",
 }
-
-export type TransactionHistoryItem = {
-  id: string;
-  route?: RouteResponse; // deprecated
-  status: SimpleStatus;
-  txsRequired?: number;
-  transactionDetails: TransactionDetails[];
-  timestamp: number;
-  signatures: number;
-  transferEvents: ClientTransferEvent[];
-  transferAssetRelease?: TransferAssetRelease;
-};
 
 export const transactionHistoryVersionAtom = atomWithStorage<number | undefined>(
   LOCAL_STORAGE_KEYS.transactionHistoryVersion,
   undefined,
 );
 
-export const transactionHistoryAtom = atomWithStorage<TransactionHistoryItem[]>(
+export const transactionHistoryAtom = atomWithStorage<RouteDetails[]>(
   LOCAL_STORAGE_KEYS.transactionHistory,
   [],
 );
 
 export const setTransactionHistoryAtom = atom(
   null,
-  (
-    get,
-    set,
-    historyItem: Partial<TransactionHistoryItem> & Pick<TransactionHistoryItem, "timestamp">,
-  ) => {
+  (get, set, historyItem: Partial<RouteDetails>) => {
     const history = get(transactionHistoryAtom);
 
-    const index = history.findIndex((item) => item.timestamp === historyItem.timestamp);
+    const index = history.findIndex((item) => item.id === historyItem.id);
 
     const newHistory = [...history];
 
@@ -48,26 +31,30 @@ export const setTransactionHistoryAtom = atom(
       const oldItem = newHistory[index];
       newHistory[index] = { ...oldItem, ...historyItem };
     } else {
-      newHistory.push(historyItem as TransactionHistoryItem);
+      set(swapExecutionStateAtom, (state) => ({
+        ...state,
+        currentTransactionId: historyItem.id,
+      }));
+      newHistory.push(historyItem as RouteDetails);
     }
 
     set(transactionHistoryAtom, newHistory);
   },
 );
 
+export const currentTransactionAtom = atom((get) => {
+  const { currentTransactionId } = get(swapExecutionStateAtom);
+  const history = get(transactionHistoryAtom);
+  return history.find((historyItem) => historyItem.id === currentTransactionId);
+});
+
 export const lastTransactionInTimeAtom = atom((get) => {
   const history = get(transactionHistoryAtom);
   if (history.length === 0) return;
 
   const sorted = [...history].sort((a, b) => b.timestamp - a.timestamp);
-  const lastTx = sorted[0];
 
-  const originalIndex = history.findIndex((tx) => tx.timestamp === lastTx.timestamp);
-
-  return {
-    transactionHistoryItem: lastTx,
-    index: originalIndex,
-  };
+  return sorted.at(0);
 });
 
 export const removeTransactionHistoryItemAtom = atom(null, (get, set, timestamp: number) => {

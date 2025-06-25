@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
+import { swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
@@ -16,7 +16,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   const setCurrentPage = useSetAtom(currentPageAtom);
   const setSourceAsset = useSetAtom(sourceAssetAtom);
   const setDebouncedSourceAssetAmount = useSetAtom(debouncedSourceAssetAmountAtom);
-  const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [{ data: assets }] = useAtom(skipAssetsAtom);
 
   const { transactionDetailsArray, route } = useAtomValue(swapExecutionStateAtom);
@@ -77,7 +76,6 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
       setErrorWarning({
         errorWarningType: ErrorWarningType.Unexpected,
         error,
-        onClickBack: () => setOverallStatus("unconfirmed"),
       });
     }
   }, [
@@ -90,13 +88,11 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
     setCurrentPage,
     setDebouncedSourceAssetAmount,
     setErrorWarning,
-    setOverallStatus,
     setSourceAsset,
     statusData,
   ]);
 
   useEffect(() => {
-    console.log(statusData);
     if (statusData?.status === "failed" || statusData?.status === "incomplete") {
       const timeout = setTimeout(() => {
         handleTransactionFailed();

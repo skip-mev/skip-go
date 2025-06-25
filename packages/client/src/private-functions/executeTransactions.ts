@@ -99,6 +99,7 @@ export const executeTransactions = async (
     simulate: simulate,
     disabledChainIds: validateChainIds,
     getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
+    options,
   });
 
   const validateEnabledChainIds = async (chainId: string) => {
@@ -111,6 +112,7 @@ export const executeTransactions = async (
       simulate: simulate,
       enabledChainIds: !batchSimulate ? [chainId] : validateChainIds,
       getCosmosPriorityFeeDenom: options.getCosmosPriorityFeeDenom,
+      options,
     });
   };
 
@@ -209,13 +211,11 @@ export const executeTransactions = async (
     return txResult;
   }
 
-  console.log(options);
-
   await executeAndSubscribeToRouteStatus({
     transactionDetails: transactionDetails,
     txsRequired: txs.length,
     executeTransaction,
-    ...options,
+    options
   });
 };
 

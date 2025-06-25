@@ -10,11 +10,7 @@ import { SpinnerIcon } from "@/icons/SpinnerIcon";
 import { useGetAccount } from "@/hooks/useGetAccount";
 import { useTxHistory } from "@/hooks/useTxHistory";
 import { PageHeader } from "@/components/PageHeader";
-import {
-  setOverallStatusAtom,
-  skipSubmitSwapExecutionAtom,
-  swapExecutionStateAtom,
-} from "@/state/swapExecutionPage";
+import { skipSubmitSwapExecutionAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 
 export const SwapPageHeader = memo(() => {
   const setCurrentPage = useSetAtom(currentPageAtom);
@@ -75,16 +71,19 @@ export const SwapPageHeader = memo(() => {
 
 export const TrackLatestTxHistoryItemStatus = memo(() => {
   const lastTxHistoryItemInTime = useAtomValue(lastTransactionInTimeAtom);
-  const setOverallStatus = useSetAtom(setOverallStatusAtom);
-  const { transactionsSigned, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
   const { isPending } = useAtomValue(skipSubmitSwapExecutionAtom);
 
   const { transferAssetRelease } = useTxHistory({
-    txHistoryItem: lastTxHistoryItemInTime?.transactionHistoryItem,
+    txHistoryItem: lastTxHistoryItemInTime,
   });
 
-  if (transferAssetRelease && transactionsSigned !== transactionDetailsArray.length && !isPending) {
-    setOverallStatus("failed");
+  if (
+    transferAssetRelease &&
+    lastTxHistoryItemInTime?.txsSigned !== lastTxHistoryItemInTime?.transactionDetails.length &&
+    !isPending
+  ) {
+    // update current tx to be incomplete
+    // setOverallStatus("failed");
   }
 
   return null;

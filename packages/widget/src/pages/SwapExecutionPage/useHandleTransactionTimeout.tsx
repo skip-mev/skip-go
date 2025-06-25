@@ -1,40 +1,43 @@
 import { useEffect, useState } from "react";
 import { SwapExecutionState } from "./SwapExecutionPage";
-import { setOverallStatusAtom, swapExecutionStateAtom } from "@/state/swapExecutionPage";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorWarningAtom, ErrorWarningType } from "@/state/errorWarning";
 import { track } from "@amplitude/analytics-browser";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
+import { currentTransactionAtom } from "@/state/history";
 
 export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionState) => {
-  const { route, transactionDetailsArray } = useAtomValue(swapExecutionStateAtom);
+  const currentTransaction = useAtomValue(currentTransactionAtom);
   const setError = useSetAtom(errorWarningAtom);
-  const setOverallStatus = useSetAtom(setOverallStatusAtom);
   const [transactionTimeoutTimer, setTransactionTimeoutTimer] = useState<
     NodeJS.Timeout | undefined
   >();
 
   useEffect(() => {
-    if (!route?.estimatedRouteDurationSeconds || !route?.txsRequired) return;
+    if (
+      !currentTransaction?.route?.estimatedRouteDurationSeconds ||
+      !currentTransaction?.txsRequired
+    )
+      return;
     if (
       swapExecutionState === SwapExecutionState.pending &&
       transactionTimeoutTimer === undefined &&
-      route.txsRequired === transactionDetailsArray.length
+      currentTransaction?.txsRequired === currentTransaction?.transactionDetails?.length
     ) {
-      const lastTransaction = transactionDetailsArray[transactionDetailsArray.length - 1];
       const timeoutTimer = setTimeout(
         () => {
-          track("unexpected error page: transaction timeover", { route });
+          track("unexpected error page: transaction timeover", {
+            route: currentTransaction?.route,
+          });
           setError({
             errorWarningType: ErrorWarningType.Timeout,
-            onClickBack: () => {
-              setOverallStatus("unconfirmed");
-            },
-            explorerLink: createSkipExplorerLink(transactionDetailsArray),
-            txHash: lastTransaction?.txHash,
+            explorerLink: currentTransaction?.transactionDetails
+              ? createSkipExplorerLink(currentTransaction.transactionDetails)
+              : "",
+            txHash: currentTransaction?.transactionDetails?.at(-1)?.txHash ?? "",
           });
         },
-        route.estimatedRouteDurationSeconds * 1_000 * 3,
+        currentTransaction?.route?.estimatedRouteDurationSeconds * 1_000 * 3,
       );
 
       setTransactionTimeoutTimer(timeoutTimer);
@@ -44,11 +47,11 @@ export const useHandleTransactionTimeout = (swapExecutionState?: SwapExecutionSt
       clearTimeout(transactionTimeoutTimer);
     };
   }, [
-    route,
+    currentTransaction?.route,
+    currentTransaction?.transactionDetails,
+    currentTransaction?.txsRequired,
     setError,
-    setOverallStatus,
     swapExecutionState,
-    transactionDetailsArray,
     transactionTimeoutTimer,
   ]);
 };

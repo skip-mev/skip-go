@@ -8,10 +8,9 @@ import { useMemo } from "react";
 import { HistoryArrowIcon } from "@/icons/HistoryArrowIcon";
 import { SimpleStatus } from "@/utils/clientType";
 import { getTruncatedAddress } from "@/utils/crypto";
-import { TransferAssetRelease } from "@skip-go/client";
+import { TransactionDetails, TransferAssetRelease } from "@skip-go/client";
 import { useGetAssetDetails } from "@/hooks/useGetAssetDetails";
 import { createSkipExplorerLink } from "@/utils/explorerLink";
-import { TransactionDetails } from "@/state/swapExecutionPage";
 import { track } from "@amplitude/analytics-browser";
 
 type TransactionHistoryPageHistoryItemDetailsProps = {

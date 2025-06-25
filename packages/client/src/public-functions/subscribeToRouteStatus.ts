@@ -18,7 +18,8 @@ import { trackTransaction } from "../api/postTrackTransaction";
 import type { TxResult, UserAddress } from "src/types";
 import { v4 as uuidv4 } from 'uuid';
 
-export type RouteStatus = "unconfirmed" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
+export type RouteStatus = "unconfirmed" | "validating" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";
+
 export type TransactionStatus = "pending" | "success" | "failed";
 
 export type TransactionDetails = {
@@ -36,6 +37,7 @@ type SimpleRoute = {
   sourceAssetChainId: Route["sourceAssetChainId"];
   destAssetDenom: Route["destAssetDenom"];
   destAssetChainId: Route["destAssetChainId"];
+  estimatedRouteDurationSeconds: Route["estimatedRouteDurationSeconds"];
 }
 
 export type RouteDetails = {
@@ -82,10 +84,11 @@ export type subscribeToRouteStatusProps = {
   onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
 };
 
-export type executeAndSubscribeToRouteStatus = subscribeToRouteStatusProps & Partial<ExecuteRouteOptions> & {
+export type executeAndSubscribeToRouteStatusProps = subscribeToRouteStatusProps & {
   executeTransaction?: (index: number) => Promise<TxResult>;
   onTransactionTracked?: ExecuteRouteOptions["onTransactionTracked"];
   onTransactionCompleted?: ExecuteRouteOptions["onTransactionCompleted"];
+  options?: ExecuteRouteOptions;
 };
 
 export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
@@ -109,9 +112,8 @@ export const executeAndSubscribeToRouteStatus = async ({
   trackTxPollingOptions,
   onTransactionTracked,
   onTransactionCompleted,
-  onRouteStatusUpdated,
-  ...options
-}: executeAndSubscribeToRouteStatus) => {
+  options,
+}: executeAndSubscribeToRouteStatusProps) => {
 
   for (const [transactionIndex, transaction] of transactionDetails.entries()) {
     if (transaction.status && isFinalState(transaction.statusResponse?.state)) {
@@ -189,7 +191,6 @@ export const updateRouteDetails = ({
   options,
   status,
 }: updateRouteDetailsProps): RouteDetails => {
-
   if (status === "pending" && currentRouteDetails.status === "signing") {
     currentRouteDetails.txsSigned += 1;
   }
@@ -202,8 +203,9 @@ export const updateRouteDetails = ({
 
   const allTransactionsHaveDetails = transactionDetails.length >= txsRequired;
   const allKnownDetailsHaveFinalStatus = transactionDetails.every(
-    (tx) => tx.status && isFinalState(tx.statusResponse?.state),
+    (tx) => tx.statusResponse && isFinalState(tx.statusResponse?.state),
   );
+
 
   const isAllSettled = allTransactionsHaveDetails && allKnownDetailsHaveFinalStatus;
 
@@ -243,15 +245,10 @@ export const updateRouteDetails = ({
       sourceAssetChainId:  options?.route?.sourceAssetChainId ?? '',
       destAssetDenom:  options?.route?.destAssetDenom ?? '',
       destAssetChainId:  options?.route?.destAssetChainId ?? '',
+      estimatedRouteDurationSeconds: options?.route?.estimatedRouteDurationSeconds ?? 0,
     },
     txsRequired,
-    transactionDetails: transactionDetails.map(txDetails => {
-      const { statusResponse, ...rest } = txDetails;
-      return {
-        ...rest,
-        status: getTransactionStatus(txDetails.statusResponse?.state),
-      }
-    }),
+    transactionDetails,
     transferEvents,
     transferAssetRelease,
     senderAddress: senderAddress?.address ?? '',
@@ -260,7 +257,16 @@ export const updateRouteDetails = ({
   };
 
   if (options?.onRouteStatusUpdated) {
-    options.onRouteStatusUpdated(newRouteDetails);
+    options.onRouteStatusUpdated({
+      ...newRouteDetails,
+      transactionDetails: transactionDetails.map(txDetails => {
+        const { statusResponse, ...rest } = txDetails;
+        return {
+          ...rest,
+          status: getTransactionStatus(txDetails.statusResponse?.state),
+        }
+      })
+    });
   }
 
   currentRouteDetails = newRouteDetails;
