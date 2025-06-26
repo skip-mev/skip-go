@@ -15,7 +15,7 @@ import {
 } from "../utils/clientType";
 import type { ExecuteRouteOptions } from "./executeRoute";
 import { trackTransaction } from "../api/postTrackTransaction";
-import type { TxResult, UserAddress } from "src/types";
+import type { TxResult } from "src/types";
 import { v4 as uuidv4 } from 'uuid';
 
 export type RouteStatus = "unconfirmed" | "validating" | "allowance" | "signing" | "pending" | "completed" | "incomplete" | "failed";

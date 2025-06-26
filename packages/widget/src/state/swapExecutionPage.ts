@@ -125,7 +125,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
   set(submitSwapExecutionCallbacksAtom, {
     onRouteStatusUpdated: async (routeStatus) => {
       set(setTransactionHistoryAtom, routeStatus);
-      console.log(routeStatus);
     },
     onTransactionUpdated: (txInfo) => {
       track("execute route: transaction updated", { txInfo });
