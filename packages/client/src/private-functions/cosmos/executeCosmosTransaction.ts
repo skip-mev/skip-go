@@ -3,7 +3,6 @@ import type { ExecuteRouteOptions } from "src/public-functions/executeRoute";
 
 import { signCosmosTransaction } from "./signCosmosTransaction";
 import { submitTransaction } from "src/api/postSubmitTransaction";
-import { updateRouteDetails } from "src/public-functions/subscribeToRouteStatus";
 
 type ExecuteCosmosTransactionProps = {
   tx?: {

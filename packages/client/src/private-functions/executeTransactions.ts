@@ -1,12 +1,11 @@
 import type { TxResult } from "src/types/client-types";
 import type { ExecuteRouteOptions } from "../public-functions/executeRoute";
 import { ClientState } from "../state/clientState";
-import { ChainType, type TransferStatus, type Tx } from "../types/swaggerTypes";
+import { ChainType, type Tx } from "../types/swaggerTypes";
 import { executeCosmosTransaction } from "./cosmos/executeCosmosTransaction";
 import { executeEvmTransaction } from "./evm/executeEvmTransaction";
 import { executeSvmTransaction } from "./svm/executeSvmTransaction";
 import { validateGasBalances } from "./validateGasBalances";
-import { waitForTransaction } from "../public-functions/waitForTransaction";
 import { GAS_STATION_CHAIN_IDS } from "src/constants/constants";
 import { venues } from "src/api/getVenues";
 import { signCosmosTransaction } from "./cosmos/signCosmosTransaction";
