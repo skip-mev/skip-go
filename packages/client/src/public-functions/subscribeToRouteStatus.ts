@@ -218,7 +218,7 @@ export const updateRouteDetails = ({
   }
 
   transactionDetails ??= routeDetails?.transactionDetails ?? currentRouteDetails?.transactionDetails;
-  const txsRequired = routeDetails?.txsRequired ?? options?.route?.txsRequired ?? Infinity;
+  const txsRequired = routeDetails?.txsRequired ?? options?.route?.txsRequired ?? 1;
 
   if (currentRouteDetails.status === "signing" && status === "pending") {
     currentRouteDetails.txsSigned += 1;
