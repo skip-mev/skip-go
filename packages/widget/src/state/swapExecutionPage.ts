@@ -133,6 +133,9 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
     onApproveAllowance: async ({ status, allowance }) => {
       track("execute route: approve allowance", { status, allowance });
     },
+    onTransactionSigned: async () => {
+      track("execute route: transaction signed");
+    },
     onTransactionBroadcast: async (txInfo) => {
       track("execute route: transaction broadcasted", { txInfo });
       setUser({ id: txInfo?.txHash });
@@ -179,9 +182,6 @@ export const setSwapExecutionStateAtom = atom(null, (get, set) => {
         destAssetDenom,
         destAssetChainId,
       });
-    },
-    onTransactionSigned: async () => {
-      track("execute route: transaction signed");
     },
     onError: (error: unknown) => {
       const currentPage = get(currentPageAtom);
