@@ -37,9 +37,17 @@ export const useFilteredAssets = ({
       })
       .filter(Boolean) as GroupedAsset[];
 
+    const searchLower = searchQuery.toLowerCase();
+
     return sanitizedAssets
-      .filter((asset) => asset.id?.toLowerCase()?.includes(searchQuery.toLowerCase()))
+      .filter((asset) => asset.id?.toLowerCase()?.includes(searchLower))
       .sort((assetA, assetB) => {
+        const exactA = assetA.id.toLowerCase() === searchLower;
+        const exactB = assetB.id.toLowerCase() === searchLower;
+
+        if (exactA && !exactB) return -1;
+        if (exactB && !exactA) return 1;
+
         // 1. Sort by totalUsd descending
         if (assetA.totalUsd !== assetB.totalUsd) {
           return assetB.totalUsd - assetA.totalUsd;
