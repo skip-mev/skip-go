@@ -107,23 +107,32 @@ export type executeAndSubscribeToRouteStatusProps = {
   options?: ExecuteRouteOptions;
 };
 
-let currentRouteDetails = {
+let currentRouteDetails: RouteDetails = {
   status: "unconfirmed" as RouteStatus,
+  id: '',
+  timestamp: -1,
+  senderAddress: '',
+  receiverAddress: '',
+  route: {} as SimpleRoute,
+  txsRequired: 1,
   txsSigned: 0,
   transactionDetails: [] as TransactionDetails[],
   transferEvents: [] as ClientTransferEvent[],
-} as RouteDetails;
+};
 
 const resetCurrentRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
   currentRouteDetails = {
     status: "unconfirmed" as RouteStatus,
+    route: getSimpleRoute(options?.route),
     id: uuidv4(),
     timestamp: Date.now(),
-    txsRequired: options?.route?.txsRequired,
+    senderAddress: '',
+    receiverAddress: '',
+    txsRequired: options?.route?.txsRequired ?? 1,
     txsSigned: 0,
     transactionDetails: [] as TransactionDetails[],
     transferEvents: [] as ClientTransferEvent[],
-  } as RouteDetails;
+  };
 }
 
 export const subscribeToRouteStatus = async (props: subscribeToRouteStatusProps) => {
