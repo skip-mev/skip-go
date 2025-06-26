@@ -61,8 +61,8 @@ export const useFilteredChains = ({
 
         const isFilteredOutUnlessUserHasBalance = Boolean(
           blockedchainIdsUnlessUserHasBalance?.[chain?.chainId ?? ""] &&
-          blockedchainIdsUnlessUserHasBalance?.[chain?.chainId ?? ""] === undefined &&
-          hasBalance === undefined,
+            blockedchainIdsUnlessUserHasBalance?.[chain?.chainId ?? ""] === undefined &&
+            hasBalance === undefined,
         );
 
         const isAllowedByFilter = !allowedchainIds || chain?.chainId in allowedchainIds;
