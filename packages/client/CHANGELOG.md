@@ -1,5 +1,24 @@
 # @skip-go/client
 
+## 1.3.4
+
+### Patch Changes
+
+- f2852b6: Add svmPayer object param in executeRoute
+
+## 1.3.3
+
+### Patch Changes
+
+- 5e2f94c: Remove redundant submit function (use submitTransaction instead), remove track call for non-evm txs, increase default maxRetries to 10
+- cadc8cc: Add calling track back for svm/evm
+
+## 1.3.2
+
+### Patch Changes
+
+- c7bc3b8: Fix typo in LayerZeroTransfer, Add layerzero as bridge type
+
 ## 1.3.1
 
 ### Patch Changes

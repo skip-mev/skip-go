@@ -1,19 +1,19 @@
 import type { Chain } from "@chain-registry/types";
 import chainRegistryChains from "./codegen/chains.json";
 
-const SOLANA_CHAIN = {
-  chain_name: "solana",
-  chain_id: "solana",
-  pretty_name: "Solana",
-  network_type: "mainnet",
+const SOLANA_CHAIN: Chain = {
+  chainName: "solana",
+  chainId: "solana",
+  prettyName: "Solana",
+  networkType: "mainnet",
   website: "https://solana.com",
-  bech32_prefix: "",
-  daemon_name: "", // Not applicable for Solana
-  node_home: "", // Not applicable for Solana
+  bech32Prefix: "",
+  daemonName: "",
+  nodeHome: "",
   codebase: {
-    git_repo: "https://github.com/solana-labs/solana",
+    gitRepo: "https://github.com/solana-labs/solana",
   },
-  logo_URIs: {
+  logoURIs: {
     png: "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/solana/asset/sol.png",
   },
   apis: {
@@ -23,8 +23,7 @@ const SOLANA_CHAIN = {
         provider: "Solana Foundation",
       },
       {
-        address:
-          "https://mainnet.helius-rpc.com/?api-key=6cadbc95-3333-488f-a187-21ffd0c5fef3",
+        address: "https://mainnet.helius-rpc.com/?api-key=6cadbc95-3333-488f-a187-21ffd0c5fef3",
         provider: "Helius",
       },
     ],
@@ -33,14 +32,14 @@ const SOLANA_CHAIN = {
     {
       kind: "blockchain",
       url: "https://explorer.solana.com",
-      tx_page: "https://explorer.solana.com/tx/${txHash}",
-      account_page: "https://explorer.solana.com/address/${accountAddress}",
+      txPage: "https://explorer.solana.com/tx/${txHash}",
+      accountPage: "https://explorer.solana.com/address/${accountAddress}",
     },
     {
       kind: "Solscan",
       url: "https://solscan.io",
-      tx_page: "https://solscan.io/tx/${txHash}",
-      account_page: "https://solscan.io/account/${accountAddress}",
+      txPage: "https://solscan.io/tx/${txHash}",
+      accountPage: "https://solscan.io/account/${accountAddress}",
     },
   ],
   images: [
@@ -48,10 +47,11 @@ const SOLANA_CHAIN = {
       png: "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/solana/asset/sol.png",
     },
   ],
+  chainType: "solana"
 };
 
 const lombardTestnet: Chain = {
-  chain_id: "ledger-testnet-1",
+  chainId: "ledger-testnet-1",
   apis: {
     rpc: [
       {
@@ -70,22 +70,22 @@ const lombardTestnet: Chain = {
     ],
   },
   fees: {
-    fee_tokens: [
+    feeTokens: [
       {
         denom: "ulom",
-        fixed_min_gas_price: 1,
-        low_gas_price: 1,
-        average_gas_price: 1,
-        high_gas_price: 1,
+        fixedMinGasPrice: 1,
+        lowGasPrice: 1,
+        averageGasPrice: 1,
+        highGasPrice: 1,
       },
     ],
   },
-  chain_name: "Ledger",
-  chain_type: "cosmos",
+  chainName: "Ledger",
+  chainType: "cosmos",
 };
 
 const lombardMainnet: Chain = {
-  chain_id: "ledger-mainnet-1",
+  chainId: "ledger-mainnet-1",
   apis: {
     rpc: [
       {
@@ -104,18 +104,18 @@ const lombardMainnet: Chain = {
     ],
   },
   fees: {
-    fee_tokens: [
+    feeTokens: [
       {
         denom: "ulom",
-        fixed_min_gas_price: 100,
-        low_gas_price: 100,
-        average_gas_price: 100,
-        high_gas_price: 100,
+        fixedMinGasPrice: 100,
+        lowGasPrice: 100,
+        averageGasPrice: 100,
+        highGasPrice: 100,
       },
     ],
   },
-  chain_name: "Ledger",
-  chain_type: "cosmos",
+  chainName: "Ledger",
+  chainType: "cosmos",
 };
 
 const additionalChains = [
@@ -124,10 +124,10 @@ const additionalChains = [
   lombardMainnet,
 ] as Chain[];
 const existingChainIds = new Set(
-  chainRegistryChains.map((chain) => chain.chain_id),
+  chainRegistryChains.map((chain) => chain.chainId),
 );
 const newChains = additionalChains.filter(
-  (chain) => !existingChainIds.has(chain.chain_id),
+  (chain) => !existingChainIds.has(chain.chainId),
 );
 
 export function chains(): Chain[] {
@@ -135,10 +135,10 @@ export function chains(): Chain[] {
 }
 
 export const getIsEthermint = (chainId: string) => {
-  const chain = chains().find((c) => c.chain_id === chainId);
+  const chain = chains().find((c) => c.chainId === chainId);
   if (!chain) return false;
-  const keyAlgos = chain.key_algos;
-  const extraCodecs = chain.extra_codecs;
+  const keyAlgos = chain.keyAlgos;
+  const extraCodecs = chain.extraCodecs;
   return (
     Boolean(keyAlgos?.includes("ethsecp256k1")) ||
     Boolean(extraCodecs?.includes("ethermint"))
@@ -146,9 +146,9 @@ export const getIsEthermint = (chainId: string) => {
 };
 
 export const getIsInitia = (chainId: string) => {
-  const chain = chains().find((c) => c.chain_id === chainId);
+  const chain = chains().find((c) => c.chainId === chainId);
   if (!chain) return false;
-  const keyAlgos = chain.key_algos;
+  const keyAlgos = chain.keyAlgos;
 
   // @ts-expect-error - initia chain have special key algo in the initia-registry
   return Boolean(keyAlgos?.includes("initia_ethsecp256k1"));

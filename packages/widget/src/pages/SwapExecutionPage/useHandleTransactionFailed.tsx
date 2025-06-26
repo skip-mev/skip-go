@@ -39,6 +39,9 @@ export const useHandleTransactionFailed = (error: Error, statusData?: RouteDetai
   const explorerLink = createSkipExplorerLink(currentTransaction?.transactionDetails);
 
   const handleTransactionFailed = useCallback(() => {
+    // Track a high level error event for overall monitoring
+    track("unexpected error page: error occurred", { error, route });
+
     const sourceClientAsset = getClientAsset(
       statusData?.transferAssetRelease?.denom,
       statusData?.transferAssetRelease?.chainId,

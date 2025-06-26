@@ -52,7 +52,7 @@ export const validateCosmosGasBalance = async ({
   }
   const estimatedGasAmount = await (async () => {
     try {
-      if (!simulate) throw new Error("simulate");
+      if (simulate === false) throw new Error("simulate");
       // Skip gas estimation for noble-1 in multi tx route
       if (txIndex !== 0 && chainId === "noble-1") {
         return "0";

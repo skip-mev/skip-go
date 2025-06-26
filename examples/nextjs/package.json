@@ -1,6 +1,6 @@
 {
   "name": "nextjs",
-  "version": "0.1.116",
+  "version": "0.1.120",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@skip-go/widget": "workspace:^",
+    "@tanstack/react-query": "5.81.2",
     "eruda": "^3.4.1",
     "next": "15.0.3",
     "react": "^18.2.0",

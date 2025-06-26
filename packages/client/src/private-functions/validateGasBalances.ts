@@ -136,6 +136,7 @@ export const validateGasBalances = async ({
         try {
           const res = await validateSvmGasBalance({
             tx: tx.svmTx,
+            simulate,
           });
           return res;
         } catch (e) {
