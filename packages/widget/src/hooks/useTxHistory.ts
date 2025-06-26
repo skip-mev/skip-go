@@ -15,10 +15,7 @@ export const useTxHistory = ({ txHistoryItem }: useTxHistoryProps) => {
     if (txHistoryItem && !subscribed) {
       subscribeToRouteStatus({
         routeDetails: txHistoryItem,
-        onRouteStatusUpdated: (routeStatus) => {
-          console.log(routeStatus);
-          setTransactionHistory(routeStatus);
-        },
+        onRouteStatusUpdated: (routeStatus) => setTransactionHistory(routeStatus),
       });
       setSubscribed(true);
     }

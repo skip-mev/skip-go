@@ -34,7 +34,9 @@ export const updateHistoryFromCamelCaseToRouteDetails = () => {
               txHistoryItem.transactionDetails,
             ),
             transferEvents: txHistoryItem.transferEvents,
-            transferAssetRelease: txHistoryItem.transferAssetRelease,
+            transferAssetRelease:
+              txHistoryItem.transferAssetRelease ??
+              txHistoryItem.transactionDetails?.at(-1)?.status?.transferAssetRelease,
           };
         },
       );

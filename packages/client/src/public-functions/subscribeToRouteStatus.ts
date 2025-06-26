@@ -114,7 +114,7 @@ let currentRouteDetails = {
   transferEvents: [] as ClientTransferEvent[],
 } as RouteDetails;
 
-const resetCurrentRouteDetails = (options?: ExecuteRouteOptions) => {
+const resetCurrentRouteDetails = (options?: Partial<ExecuteRouteOptions>) => {
   currentRouteDetails = {
     status: "unconfirmed" as RouteStatus,
     id: uuidv4(),
@@ -163,43 +163,36 @@ export const executeAndSubscribeToRouteStatus = async ({
       throw new Error("subscribeToRouteStatus error: txHash is undefined");
     }
 
-    if (isFinalState(transaction)) {
-      updateRouteDetails({
-        routeDetails,
-        transactionDetails,
-        onRouteStatusUpdated,
-        options,
-      });
-    } else {
-      while (true) {
-        try {
-          const statusResponse = await transactionStatus({
+    while (!isFinalState(transaction)) {
+      try {
+        const statusResponse = await transactionStatus({
+          chainId: transaction.chainId,
+          txHash: transaction.txHash,
+        });
+
+        transaction.statusResponse = statusResponse;
+
+        updateRouteDetails({
+          routeDetails,
+          transactionDetails,
+          options: {
+            onRouteStatusUpdated,
+            ...options,
+          }
+        });
+
+        if (isFinalState(transaction)) {
+          onTransactionCompleted?.({
             chainId: transaction.chainId,
             txHash: transaction.txHash,
+            status: statusResponse as TransferStatus,
           });
-
-          transaction.statusResponse = statusResponse;
-
-          updateRouteDetails({
-            routeDetails,
-            transactionDetails,
-            onRouteStatusUpdated,
-            options
-          });
-
-          if (isFinalState(transaction)) {
-            onTransactionCompleted?.({
-              chainId: transaction.chainId,
-              txHash: transaction.txHash,
-              status: statusResponse as TransferStatus,
-            });
-            break;
-          }
-        } catch (error) {
-          console.error(error);
-        } finally {
-          await wait(1000);
+          break;
         }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        await wait(1000);
       }
     }
   }
@@ -208,10 +201,9 @@ export const executeAndSubscribeToRouteStatus = async ({
 type updateRouteDetailsProps = {
   routeDetails?: RouteDetails;
   transactionDetails?: TransactionDetails[];
-  options?: ExecuteRouteOptions;
+  options?: Partial<ExecuteRouteOptions>;
   status?: RouteStatus;
   initialize?: boolean;
-  onRouteStatusUpdated?: ExecuteRouteOptions["onRouteStatusUpdated"];
 }
 
 export const updateRouteDetails = ({
@@ -220,7 +212,6 @@ export const updateRouteDetails = ({
   options,
   status,
   initialize,
-  onRouteStatusUpdated,
 }: updateRouteDetailsProps): RouteDetails => {
   if (initialize) {
     resetCurrentRouteDetails(options);
@@ -233,7 +224,7 @@ export const updateRouteDetails = ({
     currentRouteDetails.txsSigned += 1;
   }
 
-  const transferEvents = getTransferEventsFromTxStatusResponse(transactionDetails
+  const transferEvents = routeDetails?.transferEvents ?? getTransferEventsFromTxStatusResponse(transactionDetails
     .map((tx) => tx.statusResponse)
     .filter((status): status is TxStatusResponse => status !== undefined));
 
@@ -285,8 +276,7 @@ export const updateRouteDetails = ({
 
   const previousRouteStatus = getRouteDetailsWithSimpleTransactionDetailsStatus(routeDetails ?? currentRouteDetails);
 
-  if ((onRouteStatusUpdated ?? options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
-    onRouteStatusUpdated?.(newRouteStatus);
+  if ((options?.onRouteStatusUpdated) && JSON.stringify(newRouteStatus) !== JSON.stringify(previousRouteStatus)) {
     options?.onRouteStatusUpdated?.(newRouteStatus);
   }
 
